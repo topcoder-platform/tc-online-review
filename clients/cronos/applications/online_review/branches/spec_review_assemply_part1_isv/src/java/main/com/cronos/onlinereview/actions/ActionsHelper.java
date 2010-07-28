@@ -203,6 +203,7 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *     <code>Specification Submission</code> and <code>Specification Review</code> deliverbales.</li>
  *     <li>Added {@link #findSubmissionTypeByName(SubmissionType[], String)} method.</li>
  *     <li>Added {@link #getSpecificationSubmissions(long, UploadManager)} method.</li>
+ *     <li>Added {@link #getActiveSpecificationSubmission(long, long, UploadManager, ResourceManager)} method.</li>
  *   </ol>
  * </p>
 
@@ -4399,7 +4400,6 @@ public class ActionsHelper {
         removeForumWatch(project, userToUsers(user), forumId);
     }
 
-
     /**
      * <p>Gets the specification submissions for the specified project.</p>
      *
@@ -4424,7 +4424,35 @@ public class ActionsHelper {
         Submission[] specificationSubmissions = upMgr.searchSubmissions(filter);
         return specificationSubmissions;
     }
-    
+
+    /**
+     * <p>Gets the active specification submission for the specified project and specified phase.</p>
+     *
+     * @param projectId a <code>long</code> providing the ID of a project.
+     * @param phaseId a <code>long</code> providing the ID of a phase.
+     * @param upMgr an <code>UploadManager</code> to be used for searching for submissions.
+     * @param resMgr an <code>ResourceManager</code> to be used for searching for resources.
+     * @return a <code>Submission</code> array listing the specification submissions for specified project.
+     * @throws UploadPersistenceException if an unexpected error occurs.
+     * @throws SearchBuilderException if an unexpected error occurs.
+     * @since 1.9
+     */
+    public static Submission[] getActiveSpecificationSubmission(long projectId, long phaseId, UploadManager upMgr,
+                                                                ResourceManager resMgr)
+        throws UploadPersistenceException, SearchBuilderException {
+        Submission[] specificationSubmissions = getSpecificationSubmissions(projectId, upMgr);
+        for (Submission submission : specificationSubmissions) {
+            if (submission.getSubmissionStatus().getName().equalsIgnoreCase("Active")) {
+                long resourceId = submission.getUpload().getOwner();
+                Resource resource = resMgr.getResource(resourceId);
+                if (phaseId == resource.getPhase()) {
+                    return submission;
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * <p>Updates the payments for existing submitters.</p>
      *

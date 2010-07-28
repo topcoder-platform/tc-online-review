@@ -1081,15 +1081,10 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         // Check if specification is already submitted
+        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
         UploadManager upMgr = ActionsHelper.createUploadManager(request);
-        SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
-        SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
-        SubmissionType specSubmissionType
-            = ActionsHelper.findSubmissionTypeByName(submissionTypes, "Specification Submission");
-        SubmissionStatus submissionActiveStatus
-            = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active");
-
-        Submission[] oldSubmissions = getSubmissions(project, specSubmissionType, submissionActiveStatus, upMgr);
+        Submission[] oldSubmissions = ActionsHelper.getActiveSpecificationSubmission(project.getId(),
+            specificationPhase.getId(), upMgr, resourceManager);
         if ((oldSubmissions != null) && (oldSubmissions.length > 0)) {
             // Disallow submitting more than one Specification Submission for project
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
@@ -1133,6 +1128,13 @@ public class ProjectDetailsActions extends DispatchAction {
         upload.setParameter(uploadedFile.getFileId());
 
         submission.setUpload(upload);
+
+        SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
+        SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
+        SubmissionType specSubmissionType
+            = ActionsHelper.findSubmissionTypeByName(submissionTypes, "Specification Submission");
+        SubmissionStatus submissionActiveStatus
+            = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active");
         submission.setSubmissionStatus(submissionActiveStatus);
         submission.setSubmissionType(specSubmissionType);
 
@@ -1140,47 +1142,10 @@ public class ProjectDetailsActions extends DispatchAction {
         upMgr.createUpload(upload, operator);
         upMgr.createSubmission(submission, operator);
         resource.addSubmission(submission.getId());
-        ActionsHelper.createResourceManager(request).updateResource(resource, operator);
+        resourceManager.updateResource(resource, operator);
 
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
-    }
-
-    /**
-     *
-     * @param project
-     * @param submissionType
-     * @param submissionStatus
-     * @param upMgr
-     * @return
-     * @throws UploadPersistenceException
-     * @throws SearchBuilderException
-     */
-    private static Submission getSpecificationSubmission(Phase specificationPhase, HttpServletRequest request)
-        throws UploadPersistenceException, SearchBuilderException {
-
-        UploadManager upMgr = ActionsHelper.createUploadManager(request);
-        SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
-        SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
-        SubmissionType specSubmissionType
-            = ActionsHelper.findSubmissionTypeByName(submissionTypes, "Specification Submission");
-        SubmissionStatus submissionActiveStatus
-            = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active");
-
-        Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(specificationPhase.getProject().getId());
-        Filter filterStatus = SubmissionFilterBuilder.createSubmissionStatusIdFilter(submissionActiveStatus.getId());
-        Filter filterType = SubmissionFilterBuilder.createSubmissionTypeIdFilter(specSubmissionType.getId());
-        Filter filter = new AndFilter(Arrays.asList(filterProject, filterType, filterStatus));
-        Submission[] submissions = upMgr.searchSubmissions(filter);
-        if ((submissions != null) && (submissions.length > 0) ) {
-            for (int i = 0; i < submissions.length; i++) {
-                Submission submission = submissions[i];
-                submission.getUpload().getOwner()
-            }
-            return submissions[0];
-        } else {
-            return null;
-        }
     }
 
     /**
