@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.topcoder.management.deliverable.SubmissionType;
+import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
+import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.filter.*;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -630,9 +632,15 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToUploadFF",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_FIX_PERM_NAME) &&
                         AuthorizationHelper.getLoggedInUserId(request) == winnerExtUserId));
+        request.setAttribute("isAllowedToUploadSpec",
+                Boolean.valueOf(
+                    AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME)));
         request.setAttribute("isAllowedToPerformFinalReview",
                 Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.FINAL_REVIEW_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformSpecReview",
+                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.SPECIFICATION_REVIEW_PHASE_NAME) != null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SPECIFICATION_REVIEW_PERM_NAME)));
         request.setAttribute("isAllowedToPerformApproval",
                 Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME)));
@@ -1060,7 +1068,8 @@ public class ProjectDetailsActions extends DispatchAction {
         // Get all phases for the current project
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
 
-        if (ActionsHelper.getPhase(phases, true, Constants.SPECIFICATION_SUBMISSION_PHASE_NAME) == null) {
+        Phase specificationPhase = ActionsHelper.getPhase(phases, true, Constants.SPECIFICATION_SUBMISSION_PHASE_NAME);
+        if (specificationPhase == null) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME, "Error.IncorrectPhase", null);
         }
@@ -1077,12 +1086,10 @@ public class ProjectDetailsActions extends DispatchAction {
         SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
         SubmissionType specSubmissionType
             = ActionsHelper.findSubmissionTypeByName(submissionTypes, "Specification Submission");
-        Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
-        Filter filterStatus = SubmissionFilterBuilder.createSubmissionStatusIdFilter(
-                ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active").getId());
-        Filter filterType = SubmissionFilterBuilder.createSubmissionTypeIdFilter(specSubmissionType.getId());
-        Filter filter = new AndFilter(Arrays.asList(filterProject, filterType, filterStatus));
-        Submission[] oldSubmissions = upMgr.searchSubmissions(filter);
+        SubmissionStatus submissionActiveStatus
+            = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active");
+
+        Submission[] oldSubmissions = getSubmissions(project, specSubmissionType, submissionActiveStatus, upMgr);
         if ((oldSubmissions != null) && (oldSubmissions.length > 0)) {
             // Disallow submitting more than one Specification Submission for project
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
@@ -1126,7 +1133,7 @@ public class ProjectDetailsActions extends DispatchAction {
         upload.setParameter(uploadedFile.getFileId());
 
         submission.setUpload(upload);
-        submission.setSubmissionStatus(ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active"));
+        submission.setSubmissionStatus(submissionActiveStatus);
         submission.setSubmissionType(specSubmissionType);
 
         String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
@@ -1137,6 +1144,43 @@ public class ProjectDetailsActions extends DispatchAction {
 
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
+    }
+
+    /**
+     *
+     * @param project
+     * @param submissionType
+     * @param submissionStatus
+     * @param upMgr
+     * @return
+     * @throws UploadPersistenceException
+     * @throws SearchBuilderException
+     */
+    private static Submission getSpecificationSubmission(Phase specificationPhase, HttpServletRequest request)
+        throws UploadPersistenceException, SearchBuilderException {
+
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
+        SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
+        SubmissionType specSubmissionType
+            = ActionsHelper.findSubmissionTypeByName(submissionTypes, "Specification Submission");
+        SubmissionStatus submissionActiveStatus
+            = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active");
+
+        Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(specificationPhase.getProject().getId());
+        Filter filterStatus = SubmissionFilterBuilder.createSubmissionStatusIdFilter(submissionActiveStatus.getId());
+        Filter filterType = SubmissionFilterBuilder.createSubmissionTypeIdFilter(specSubmissionType.getId());
+        Filter filter = new AndFilter(Arrays.asList(filterProject, filterType, filterStatus));
+        Submission[] submissions = upMgr.searchSubmissions(filter);
+        if ((submissions != null) && (submissions.length > 0) ) {
+            for (int i = 0; i < submissions.length; i++) {
+                Submission submission = submissions[i];
+                submission.getUpload().getOwner()
+            }
+            return submissions[0];
+        } else {
+            return null;
+        }
     }
 
     /**

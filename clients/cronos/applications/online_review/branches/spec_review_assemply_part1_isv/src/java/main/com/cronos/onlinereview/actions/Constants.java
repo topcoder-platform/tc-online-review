@@ -49,6 +49,7 @@ package com.cronos.onlinereview.actions;
  *     <li>Added {@link #SPECIFICATION_SUBMISSION_PHASE_NAME} constant.</li>
  *     <li>Added {@link #SPECIFICATION_SUBMISSION_DELIVERABLE_NAME} constant.</li>
  *     <li>Added {@link #PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME} constant.</li>
+ *     <li>Added {@link #PERFORM_SPECIFICATION_REVIEW_PERM_NAME} constant.</li>
  *     <li>Added {@link #SPEC_REVIEW_APP_FUNC} constant.</li>
  *     <li>Changed value of {@link #PERFORM_SUBM_PERM_NAME} constant.</li>
  *   </ol>
@@ -379,6 +380,13 @@ public class Constants {
      * @since 1.6
      */
     public static final String PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME = "Perform Specification Submission";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Perform Specification Review</code> permission.</p>
+     *
+     * @since 1.6
+     */
+    public static final String PERFORM_SPECIFICATION_REVIEW_PERM_NAME = "Perform Specification Review";
 
     /**
      * This member variable is a string constant that defines the name of the View All Submissions

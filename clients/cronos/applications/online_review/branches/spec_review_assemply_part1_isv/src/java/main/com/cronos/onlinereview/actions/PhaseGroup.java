@@ -34,8 +34,16 @@ import com.topcoder.project.phases.Phase;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, isv
- * @version 1.2
+ * <p>
+ * Version 1.3 (Specification Review Part 1 Assembly v1.0) Change notes:
+ *   <ol>
+ *     <li>Expanded the bean with new <code>specificationReview</code>, <code>specificationReviewer</code>,
+ *     <code>specificationSubmission</code> and <code>specificationSubmitter</code> properties.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, isv, TCSDEVELOPER
+ * @version 1.3
  */
 public class PhaseGroup {
 
@@ -349,6 +357,34 @@ public class PhaseGroup {
      * @since 1.2
      */
     private long postMortemPhaseStatus;
+
+    /**
+     * <p>A <code>Review</code> providing the details for Specification Review.</p>
+     *
+     * @since 1.3
+     */
+    private Review specificationReview;
+
+    /**
+     * <p>A <code>Resource</code> providing the details on specification reviewer.</p>
+     *
+     * @since 1.3
+     */
+    private Resource specificationReviewer;
+
+    /**
+     * <p>A <code>Submission</code> providing the details on specification submission.</p>
+     *
+     * @since 1.3
+     */
+    private Submission specificationSubmission;
+
+    /**
+     * <p>A <code>Resource</code> providing the details for specification submitter.</p>
+     *
+     * @since 1.3
+     */
+    private Resource specificationSubmitter;
 
     /**
      * Constructs a new instance of the <code>PhaseGroup</code> class setting all fields to their
@@ -1075,5 +1111,85 @@ public class PhaseGroup {
      */
     public void setPostMortemPhaseStatus(long postMortemPhaseStatus) {
         this.postMortemPhaseStatus = postMortemPhaseStatus;
+    }
+
+    /**
+     * <p>Gets the details on specification submission.</p>
+     *
+     * @return a <code>Submission</code> providing the details on specification submission.
+     * @since 1.3
+     */
+    public Submission getSpecificationSubmission() {
+        return this.specificationSubmission;
+    }
+
+    /**
+     * <p>Sets the details on specification submission.</p>
+     *
+     * @param specificationSubmission a <code>Submission</code> providing the details on specification submission.
+     * @since 1.3
+     */
+    public void setSpecificationSubmission(Submission specificationSubmission) {
+        this.specificationSubmission = specificationSubmission;
+    }
+
+    /**
+     * <p>Gets the details on specification reviewer.</p>
+     *
+     * @return a <code>Resource</code> providing the details on specification reviewer.
+     * @since 1.3
+     */
+    public Resource getSpecificationReviewer() {
+        return this.specificationReviewer;
+    }
+
+    /**
+     * <p>Sets the details on specification reviewer.</p>
+     *
+     * @param specificationReviewer a <code>Resource</code> providing the details on specification reviewer.
+     * @since 1.3
+     */
+    public void setSpecificationReviewer(Resource specificationReviewer) {
+        this.specificationReviewer = specificationReviewer;
+    }
+
+    /**
+     * <p>Gets the details for Specification Review.</p>
+     *
+     * @return a <code>Review</code> providing the details for Specification Review.
+     * @since 1.3
+     */
+    public Review getSpecificationReview() {
+        return this.specificationReview;
+    }
+
+    /**
+     * <p>Sets the details for Specification Review.</p>
+     *
+     * @param specificationReview a <code>Review</code> providing the details for Specification Review.
+     * @since 1.3
+     */
+    public void setSpecificationReview(Review specificationReview) {
+        this.specificationReview = specificationReview;
+    }
+
+    /**
+     * <p>Gets the details for specification submitter.</p>
+     *
+     * @return a <code>Resource</code> providing the details for specification submitter.
+     * @since 1.3
+     */
+    public Resource getSpecificationSubmitter() {
+        return this.specificationSubmitter;
+    }
+
+    /**
+     * <p>Sets the details for specification submitter.</p>
+     *
+     * @param specificationSubmitter a <code>Resource</code> providing the details for specification submitter.
+     * @since 1.3
+     */
+    public void setSpecificationSubmitter(Resource specificationSubmitter) {
+        this.specificationSubmitter = specificationSubmitter;
     }
 }

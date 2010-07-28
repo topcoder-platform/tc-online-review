@@ -202,6 +202,7 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *     <li>Updated {@link #createDeliverableManager(HttpServletRequest)} method to set the checkers for
  *     <code>Specification Submission</code> and <code>Specification Review</code> deliverbales.</li>
  *     <li>Added {@link #findSubmissionTypeByName(SubmissionType[], String)} method.</li>
+ *     <li>Added {@link #getSpecificationSubmissions(long, UploadManager)} method.</li>
  *   </ol>
  * </p>
 
@@ -4399,7 +4400,30 @@ public class ActionsHelper {
     }
 
 
-    
+    /**
+     * <p>Gets the specification submissions for the specified project.</p>
+     *
+     * @param projectId a <code>long</code> providing the ID of a project.
+     * @param upMgr an <code>UploadManager</code> to be used for searching for submissions.
+     * @return a <code>Submission</code> array listing the specification submissions for specified project.
+     * @throws UploadPersistenceException if an unexpected error occurs.
+     * @throws SearchBuilderException if an unexpected error occurs.
+     * @since 1.9
+     */
+    public static Submission[] getSpecificationSubmissions(long projectId, UploadManager upMgr)
+        throws UploadPersistenceException, SearchBuilderException {
+        SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
+        SubmissionType specSubmissionType
+            = ActionsHelper.findSubmissionTypeByName(submissionTypes, "Specification Submission");
+
+        Filter submissionTypeFilter
+            = SubmissionFilterBuilder.createSubmissionTypeIdFilter(specSubmissionType.getId());
+        Filter projectFilter = SubmissionFilterBuilder.createProjectIdFilter(projectId);
+
+        Filter filter = new AndFilter(Arrays.asList(projectFilter, submissionTypeFilter));
+        Submission[] specificationSubmissions = upMgr.searchSubmissions(filter);
+        return specificationSubmissions;
+    }
     
     /**
      * <p>Updates the payments for existing submitters.</p>

@@ -12,7 +12,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.topcoder.project.phases.Dependency;
+import com.topcoder.management.deliverable.SubmissionType;
+import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
+import com.topcoder.management.resource.ResourceManager;
+import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.filter.OrFilter;
 import org.apache.struts.util.MessageResources;
 
@@ -79,8 +82,8 @@ import com.topcoder.util.errorhandling.BaseException;
  * <p>
  * Version 1.4 (Specification Review Part 1 Assembly 1.0) Change notes:
  *   <ol>
- *     <li>Added {@link #serviceSpecReviewAppFunc(HttpServletRequest, PhaseGroup, Project, Phase, Resource[],
- *         FinalFixesInfo, boolean)} method.</li>
+ *     <li>Added {@link #serviceSpecReviewAppFunc(HttpServletRequest, PhaseGroup, Project, Phase, Resource[], SpecificationsInfo)} method.
+ *     </li>
  *   </ol>
  * </p>
  *
@@ -160,6 +163,7 @@ final class PhasesDetailsServices {
         int activeTabIdx = -1;
         Resource[] submitters = null;
         FinalFixesInfo finalFixes = new FinalFixesInfo();
+        SpecificationsInfo specifications = new SpecificationsInfo();
 
         for (int phaseIdx = 0; phaseIdx < phases.length; ++phaseIdx) {
             // Get a phase for the current iteration
@@ -251,8 +255,7 @@ final class PhasesDetailsServices {
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.POST_MORTEM_APP_FUNC)) {
                 servicePostMortemAppFunc(request, phaseGroup, project, phase, allProjectResources);
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.SPEC_REVIEW_APP_FUNC)) {
-                serviceSpecReviewAppFunc(request, phaseGroup, project, phase, allProjectResources, finalFixes,
-                    isAfterAppealsResponse);
+                serviceSpecReviewAppFunc(request, phaseGroup, project, phase, allProjectResources, specifications);
             }
         }
 
@@ -910,95 +913,55 @@ final class PhasesDetailsServices {
     }
 
     /**
-     * TODO: Write documentation for this method.
+     * <p>Sets the specified phase group with details for <code>Specification Submission/Review</code> phases.</p>
      *
-     * @param request a
-     * @param phaseGroup a
-     * @param project a
-     * @param phase a
-     * @param allProjectResources a
-     * @param finalFixes a
-     * @param isAfterAppealsResponse a
+     * @param request an <code>HttpServletRequest</code> representing incoming request from client.
+     * @param phaseGroup a <code>PhaseGroup</code> providing the details for group of phase the current phase belongs
+     *        to.
+     * @param project a <code>Project</code> providing the details for current project.
+     * @param phase a <code>Phase</code> providing the details for <code>Post-Mortem</code> phase.
+     * @param allProjectResources a <code>Resource</code> array listing all existing resources for specified project.
+     * @param specifications a <code>SpecificationsInfo</code> providing the details for specification submissions for
+     *        project. 
      * @throws BaseException if an unexpected error occurs.
      * @since 1.4
      */
     private static void serviceSpecReviewAppFunc(HttpServletRequest request, PhaseGroup phaseGroup, Project project,
-        Phase phase, Resource[] allProjectResources, FinalFixesInfo finalFixes, boolean isAfterAppealsResponse)
-        throws BaseException {
+                                                 Phase phase, Resource[] allProjectResources,
+                                                 SpecificationsInfo specifications) throws BaseException {
 
-        retrieveSubmissions(request, phaseGroup, project, isAfterAppealsResponse);
+        if (specifications.specifications == null) {
+            UploadManager upMgr = ActionsHelper.createUploadManager(request);
+            specifications.specifications
+                = ActionsHelper.getSpecificationSubmissions(phase.getProject().getId(), upMgr);
+            specifications.specificationIdx = 0;
+            Arrays.sort(specifications.specifications, new Comparators.SpecificationComparer());
+        }
 
         String phaseName = phase.getPhaseType().getName();
-
-        if (phaseGroup.getSubmitters() != null) {
-            Resource winner = phaseGroup.getWinner();
-            if (winner == null) {
-                winner = ActionsHelper.getWinner(request, phase.getProject().getId());
-                phaseGroup.setWinner(winner);
-            }
-            if (winner == null) {
-                return;
-            }
-
-            if (finalFixes.finalFixes == null) {
-                // Obtain an instance of Upload Manager
-                UploadManager upMgr = ActionsHelper.createUploadManager(request);
-                UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
-
-                Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
-                        ActionsHelper.findUploadTypeByName(allUploadTypes, "Final Fix").getId());
-                Filter filterResource = UploadFilterBuilder.createResourceIdFilter(winner.getId());
-
-                Filter filter = new AndFilter(Arrays.asList(filterType, filterResource));
-                finalFixes.finalFixes = upMgr.searchUploads(filter);
-
-                Arrays.sort(finalFixes.finalFixes, new Comparators.UploadComparer());
-
-                finalFixes.finalFixIdx = 0;
-                finalFixes.finalFixApprovalIdx = 0;
+        if (phaseName.equalsIgnoreCase(Constants.SPECIFICATION_SUBMISSION_PHASE_NAME)) {
+            if (specifications.specificationIdx < specifications.specifications.length) {
+                phaseGroup.setSpecificationSubmission(specifications.specifications[specifications.specificationIdx++]);
+                if (phaseGroup.getSpecificationSubmission() != null) {
+                    ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+                    phaseGroup.setSpecificationSubmitter(
+                        resourceManager.getResource(phaseGroup.getSpecificationSubmission().getUpload().getOwner()));
+                }
             }
         }
 
-        if (phaseName.equalsIgnoreCase(Constants.FINAL_FIX_PHASE_NAME) && finalFixes.finalFixes != null) {
-            if (finalFixes.finalFixIdx < finalFixes.finalFixes.length) {
-                phaseGroup.setFinalFix(finalFixes.finalFixes[finalFixes.finalFixIdx++]);
-            }
-        }
-
-        if (phaseName.equalsIgnoreCase(Constants.FINAL_REVIEW_PHASE_NAME) &&
-                phaseGroup.getSubmitters() != null) {
-            Resource[] reviewer = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
-
-            if (reviewer == null || reviewer.length == 0) {
+        if (phaseName.equalsIgnoreCase(Constants.SPECIFICATION_REVIEW_PHASE_NAME)) {
+            Resource[] reviewers = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
+            if ((reviewers == null) || (reviewers.length == 0)) {
                 return;
             }
-
-            Filter filterResource = new EqualToFilter("reviewer", new Long(reviewer[0].getId()));
+            Filter filterResource = new EqualToFilter("reviewer", new Long(reviewers[0].getId()));
             Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
-
             Filter filter = new AndFilter(filterResource, filterProject);
-
-            // Obtain an instance of Review Manager
             ReviewManager revMgr = ActionsHelper.createReviewManager(request);
             Review[] reviews = revMgr.searchReviews(filter, true);
-
             if (reviews.length != 0) {
-                phaseGroup.setFinalReview(reviews[0]);
-                // If final fixes are accepted then set the index of accepted final fixes to be mapped to next
-                // Approval phase
-                Comment[] comments = reviews[0].getAllComments();
-                boolean rejected = false;
-                for (int i = 0; !rejected && i < comments.length; i++) {
-                    String value = (String) comments[i].getExtraInfo();
-                    if (comments[i].getCommentType().getName().equals("Final Review Comment")) {
-                        if ("Rejected".equalsIgnoreCase(value)) {
-                            rejected = true;
-                        }
-                    }
-                }
-                if (!rejected) {
-                    finalFixes.finalFixApprovalIdx = finalFixes.finalFixIdx - 1;
-                }
+                phaseGroup.setSpecificationReview(reviews[0]);
             }
         }
     }
@@ -1291,6 +1254,33 @@ final class PhasesDetailsServices {
         public int finalFixApprovalIdx = -1;
 
         public FinalFixesInfo() {
+            // empty constructor
+        }
+    }
+
+    /**
+     * <p>A helper class combining the details for specification submissions for project.</p>
+     *
+     * @author TCSDEVELOPER
+     * @since 1.4
+     */
+    private static class SpecificationsInfo {
+
+        /**
+         * <p>An <code>Submission</code> array listing the uploads for </p>
+         */
+        private Submission[] specifications = null;
+
+        /**
+         * <p>An <code>int</code> index to be used for tracking the processed specification submissions for mapping them
+         * to appropriate phase groups.</p>
+         */
+        private int specificationIdx = -1;
+
+        /**
+         * <p>Constructs new <code>SpecificationsInfo</code> instance. This implementation does nothing.</p>
+         */
+        private SpecificationsInfo() {
             // empty constructor
         }
     }

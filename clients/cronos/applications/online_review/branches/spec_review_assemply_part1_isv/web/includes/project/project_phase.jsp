@@ -848,7 +848,6 @@
                             </table>
                         </c:when>
                         <c:when test='${group.appFunc == "SPEC_REVIEW"}'>
-<%--
                             <table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
                                 <tr>
                                     <td class="title" colspan="5">${group.tableName}</td>
@@ -859,69 +858,55 @@
                                     <td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.SpecificationReview.Date" arg0="${group.groupIndex}" /></td>
                                     <td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.SpecificationReview.Review" arg0="${group.groupIndex}" /></td>
                                 </tr>
-                                <c:set var="winningSubmission" value="" />
-                                <c:forEach items="${group.submissions}" var="submission">
-                                    <c:if test="${(not empty group.winner) && (group.winner.id == submission.upload.owner)}">
-                                        <c:set var="winningSubmission" value="${submission}" />
-                                    </c:if>
-                                </c:forEach>
-                                <c:if test="${not empty winningSubmission}">
+                                <c:if test="${not empty group.specificationSubmission}">
                                     <tr class="light">
                                         <td class="value" nowrap="nowrap">
-                                            <html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
-                                            <html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningSubmission.upload.id}"
-                                                titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
-                                            (<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
+                                            <html:link page="/actions/DownloadSpecificationSubmission.do?method=downloadSpecificationSubmission&uid=${group.specificationSubmission.upload.id}"
+                                                titleKey="viewProjectDetails.box.Submission.Download">${group.specificationSubmission.id}</html:link>
+                                            (<tc-webtag:handle coderId='${group.specificationSubmitter.allProperties["External Reference ID"]}'
+                                                               context="${orfn:getHandlerContext(pageContext.request)}" />)
                                         </td>
-                                        <c:if test="${not empty group.finalFix}">
-                                            <td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.finalFix.modificationTimestamp)}</td>
-                                            <td class="valueC" nowrap="nowrap">
-                                                <html:link page="/actions/DownloadFinalFix.do?method=downloadFinalFix&uid=${group.finalFix.id}"
-                                                    titleKey="viewProjectDetails.box.FinalFix.Download.alt"><bean:message
-                                                    key="viewProjectDetails.box.FinalFix.Download" /></html:link>
-                                            </td>
-                                        </c:if>
-                                        <c:if test="${empty group.finalFix}">
-                                            <td class="value"><!-- @ --></td>
-                                            <c:if test="${isAllowedToUploadFF}">
-                                                <td class="valueC" nowrap="nowrap">
-                                                    <html:link page="/actions/UploadFinalFix.do?method=uploadFinalFix&pid=${project.id}"><bean:message
-                                                        key="viewProjectDetails.box.FinalFix.Upload" /></html:link></td>
-                                            </c:if>
-                                            <c:if test="${not isAllowedToUploadFF}">
-                                                <td class="valueC"><bean:message key="Incomplete" /></td>
-                                            </c:if>
-                                        </c:if>
-                                        <c:if test="${not empty group.finalReview}">
-                                            <c:if test="${group.finalReview.committed}">
-                                                <td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.finalReview.modificationTimestamp)}</td>
-                                                <td class="valueC" nowrap="nowrap">
-                                                    <html:link page="/actions/ViewFinalReview.do?method=viewFinalReview&rid=${group.finalReview.id}"><bean:message
-                                                        key="viewProjectDetails.box.FinalReview.ViewResults" /></html:link></td>
-                                            </c:if>
-                                            <c:if test="${not group.finalReview.committed}">
+                                        <td class="valueC"
+                                            nowrap="nowrap">${orfn:displayDate(pageContext.request, group.specificationSubmission.modificationTimestamp)}</td>
+                                        <c:choose>
+                                            <c:when test="${not empty group.specificationReview}">
+                                                <c:choose>
+                                                    <c:when test="${group.specificationReview.committed}">
+                                                        <td class="valueC" nowrap="nowrap">
+                                                           ${orfn:displayDate(pageContext.request, group.specificationReview.modificationTimestamp)}
+                                                        </td>
+                                                        <td class="valueC" nowrap="nowrap">
+                                                            <html:link page="/actions/ViewSpecificationReview.do?method=viewSpecificationReview&rid=${group.specificationReview.id}">
+                                                                <bean:message key="viewProjectDetails.box.SpecificationReview.ViewResults"/></html:link>
+                                                        </td>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <td class="value"><!-- @ --></td>
+                                                        <c:choose>
+                                                            <c:when test="${isAllowedToPerformSpecReview}">
+                                                            <td class="valueC" nowrap="nowrap">
+                                                                <html:link page="/actions/EditSpecificationReview.do?method=editSpecificationReview&rid=${group.specificationReview.id}">
+                                                                <b><bean:message key="viewProjectDetails.box.SpecificationReview.Submit"/></b></html:link>
+                                                            </td>
+                                                        </c:when>
+                                                        <c:otherwise">
+                                                            <td class="valueC" nowrap="nowrap"><bean:message key="Pending"/></td>
+                                                        </c:otherwise>
+                                                        </c:choose>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:when>
+                                            <c:otherwise>
                                                 <td class="value"><!-- @ --></td>
-                                                <c:if test="${isAllowedToPerformFinalReview}">
-                                                    <td class="valueC" nowrap="nowrap"><html:link
-                                                        page="/actions/EditFinalReview.do?method=editFinalReview&rid=${group.finalReview.id}"><b><bean:message
-                                                        key="viewProjectDetails.box.FinalReview.Submit" /></b></html:link></td>
-                                                </c:if>
-                                                <c:if test="${not isAllowedToPerformFinalReview}">
-                                                    <td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
-                                                </c:if>
-                                            </c:if>
-                                        </c:if>
-                                        <c:if test="${empty group.finalReview}">
-                                            <td class="value"><!-- @ --></td>
-                                            <td class="valueC" nowrap="nowrap"><bean:message key="NotAvailable" /></td>
-                                        </c:if>
+                                                <td class="valueC" nowrap="nowrap"><bean:message key="NotAvailable" /></td>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </tr>
                                 </c:if>
                                 <tr>
                                     <td class="lastRowTD" colspan="5"><!-- @ --></td>
                                 </tr>
                             </table>
---%>
                         </c:when>
 					</c:choose>
 				</c:if>

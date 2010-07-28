@@ -22,9 +22,17 @@ import com.topcoder.project.phases.PhaseStatus;
  * that implement <code>Comparator</code> interface, and are used throughout application's code to
  * compare different objects (mostly for sorting purposes).
  *
+ * <p>
+ * Version 1.1 (Specification Review Part 1 Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link SpecificationComparer} class.</li>
+ *   </ol>
+ * </p>
+
+ *
  * @author George1
- * @author real_vg
- * @version 1.0
+ * @author real_vg, TCSDEVELOPER
+ * @version 1.1
  */
 final class Comparators {
 
@@ -370,6 +378,29 @@ final class Comparators {
         public int compare(Review review1, Review review2) {
             // Compare reviews by their creation times
             return review1.getCreationTimestamp().compareTo(review2.getCreationTimestamp());
+        }
+    }
+
+    /**
+     * <p>This class implements <code>Comparator</code> interface and is used to sort submissions for specifications in
+     * array. It sorts submissions by their creation time, from the least recent to the most recent ones.</p>
+     *
+     * @author TCSDEVELOPER
+     * @since 1.1
+     */
+    static class SpecificationComparer implements Comparator<Submission> {
+
+        /**
+         * <p>This method compares its two arguments for order. This method expects that type of the objects passed as
+         * arguments is <code>Submission</code>.</p>
+         *
+         * @param submission1 the first submission to be compared.
+         * @param submission2 the second submission to be compared.
+         * @return a negative integer, zero, or a positive integer as the first argument is less than, equal to, or
+         *         greater than the second respectively.
+         */
+        public int compare(Submission submission1, Submission submission2) {
+            return submission1.getCreationTimestamp().compareTo(submission2.getCreationTimestamp());
         }
     }
 }

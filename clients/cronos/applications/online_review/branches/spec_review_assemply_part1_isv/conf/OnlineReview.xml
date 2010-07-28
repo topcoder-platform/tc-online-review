@@ -4887,6 +4887,9 @@
             <Property name="Perform Specification Submission">
                 <Value>Specification Submitter</Value>
             </Property>
+            <Property name="Perform Specification Review">
+                <Value>Specification Reviewer</Value>
+            </Property>
             <Property name="View All Submissions">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
