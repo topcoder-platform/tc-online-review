@@ -81,7 +81,7 @@
                                enctype="application/x-www-form-urlencoded">
                         <html:hidden property="method" value="uploadSpecificationSubmission" />
                         <html:hidden property="postBack" value="y" />
-                        <html:hidden property="pid" svalue="${project.id}" />
+                        <html:hidden property="pid" value="${project.id}" />
                         <html:hidden property="specificationType" value="text" />
 
                         <table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
