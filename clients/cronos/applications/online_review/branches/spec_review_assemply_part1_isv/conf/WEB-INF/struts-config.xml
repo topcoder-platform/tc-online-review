@@ -367,7 +367,7 @@
         <action path="/actions/UploadSpecificationSubmission" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectDetailsActions"
             parameter="method" scope="request"
-            name="fileUploadForm"
+            name="specificationUploadForm"
             input="/jsp/uploadSpecification.jsp">
             <forward name="displayPage" path="/jsp/uploadSpecification.jsp" redirect="false" />
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
