@@ -4435,11 +4435,12 @@ public class ActionsHelper {
      * @return a <code>Submission</code> array listing the specification submissions for specified project.
      * @throws UploadPersistenceException if an unexpected error occurs.
      * @throws SearchBuilderException if an unexpected error occurs.
+     * @throws ResourcePersistenceException if an unexpected error occurs.
      * @since 1.9
      */
     public static Submission getActiveSpecificationSubmission(long projectId, long phaseId, UploadManager upMgr,
                                                                 ResourceManager resMgr)
-        throws UploadPersistenceException, SearchBuilderException {
+        throws UploadPersistenceException, SearchBuilderException, ResourcePersistenceException {
         Submission[] specificationSubmissions = getSpecificationSubmissions(projectId, upMgr);
         for (Submission submission : specificationSubmissions) {
             if (submission.getSubmissionStatus().getName().equalsIgnoreCase("Active")) {
