@@ -23,6 +23,10 @@ import com.topcoder.management.deliverable.SubmissionType;
 import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
 import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.filter.*;
+import com.topcoder.servlet.request.ConfigurationException;
+import com.topcoder.servlet.request.DisallowedDirectoryException;
+import com.topcoder.servlet.request.FileDoesNotExistException;
+import com.topcoder.servlet.request.PersistenceException;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -146,6 +150,8 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *        HttpServletResponse)} method.</li>
  *    <li>Added {@link #uploadContestSubmission(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
  *        method to set type for uploaded submission.</li>
+ *    <li>Added {@link #downloadSpecificationSubmission(ActionMapping, ActionForm, HttpServletRequest,
+ *        HttpServletResponse)} method.</li>
  *   </ol>
  * </p>
  *
@@ -1295,59 +1301,89 @@ public class ProjectDetailsActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     "ViewSubmission", "Error.NoPermission", Boolean.TRUE);
         }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
 
-        Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(upload.getProject());
-        Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(upload.getOwner());
-        Filter filterUpload = SubmissionFilterBuilder.createUploadIdFilter(upload.getId());
+        processSubmissionDownload(upload, request, response);
 
-        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterProject, filterResource, filterUpload}));
+        return null;
+    }
 
-        // Obtain an instance of Upload Manager
-        UploadManager upMgr = ActionsHelper.createUploadManager(request);
-        Submission[] submissions = upMgr.searchSubmissions(filter);
-        Submission submission = (submissions.length != 0) ? submissions[0] : null;
+    /**
+     * <p>This method is an implementation of &quot;Download Specification Submission&quot; Struts Action defined for
+     * this assembly, which is supposed to let the user download a submission from the server.</p>
+     *
+     * @return a <code>null</code> code if everything went fine, or an action forward to /jsp/userError.jsp page which
+     *         will display the information about the cause of error.
+     * @param mapping action mapping.
+     * @param form action form.
+     * @param request the http request.
+     * @param response the http response.
+     * @throws BaseException if any error occurs.
+     * @throws IOException if some error occurs during disk input/output operation.
+     * @since 1.6
+     */
+    public ActionForward downloadSpecificationSubmission(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws BaseException, IOException {
+        LoggingHelper.logAction(request);
 
-        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
-        UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
-
-        InputStream in = uploadedFile.getInputStream();
-
-        response.setHeader("Content-Type", "application/octet-stream");
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
-        if (submission != null) {
-            response.setHeader("Content-Disposition",
-                    "attachment; filename=\"submission-" + submission.getId() +
-                    "-" + uploadedFile.getRemoteFileName() + "\"");
-        } else {
-            response.setHeader("Content-Disposition",
-                    "attachment; filename=\"upload-" + upload.getId() +
-                    "-" + uploadedFile.getRemoteFileName() + "\"");
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification = checkForCorrectUploadId(mapping, request, "ViewSubmission");
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
         }
 
-        response.flushBuffer();
+        // Get an upload the user wants to download
+        Upload upload = verification.getUpload();
+        // Verify that upload is a submission
+        if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request, "ViewSubmission",
+                "Error.NotASubmission", null);
+        }
 
-        OutputStream out = null;
+        // Verify the status of upload and check whether the user has permission to download old uploads
+        boolean hasViewAllSpecSubmissionsPermission
+            = AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SPECIFICATION_SUBMISSIONS_PERM_NAME);
+        if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted") && !hasViewAllSpecSubmissionsPermission) {
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, "ViewSubmission", "Error.UploadDeleted", null);
+        }
 
-        try {
-            out = response.getOutputStream();
-            byte[] buffer = new byte[65536];
+        boolean noRights = true;
 
-            for (;;) {
-                int numOfBytesRead = in.read(buffer);
-                if (numOfBytesRead == -1) {
+        if (hasViewAllSpecSubmissionsPermission) {
+            noRights = false;
+        }
+
+        if (noRights
+            && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SPECIFICATION_SUBMISSIONS_PERM_NAME)) {
+            long owningResourceId = upload.getOwner();
+            Resource[] myResources = (Resource[]) request.getAttribute("myResources");
+            for (int i = 0; i < myResources.length; ++i) {
+                if (myResources[i].getId() == owningResourceId) {
+                    noRights = false;
                     break;
                 }
-                out.write(buffer, 0, numOfBytesRead);
-            }
-        } finally {
-            in.close();
-            if (out != null) {
-                out.close();
             }
         }
+
+        if (noRights && AuthorizationHelper.hasUserPermission(
+                            request, Constants.VIEW_RECENT_SPECIFICATION_SUBMISSIONS_PERM_NAME)) {
+            Phase[] phases = ActionsHelper.getPhasesForProject(
+                    ActionsHelper.createPhaseManager(request, false), verification.getProject());
+            final boolean isReviewOpen = ActionsHelper.isInOrAfterPhase(phases, 0,
+                Constants.SPECIFICATION_REVIEW_PHASE_NAME);
+            if (AuthorizationHelper.hasUserRole(request, Constants.SPECIFICATION_REVIEWER_ROLE_NAME) && !isReviewOpen) {
+                return ActionsHelper.produceErrorReport(
+                        mapping, getResources(request), request, "ViewSubmission", "Error.IncorrectPhase", null);
+            }
+            noRights = false;
+        }
+
+        if (noRights) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request, "ViewSubmission",
+                "Error.NoPermission", Boolean.TRUE);
+        }
+
+        processSubmissionDownload(upload, request, response);
 
         return null;
     }
@@ -1540,36 +1576,8 @@ public class ProjectDetailsActions extends DispatchAction {
 
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
-
-        InputStream in = uploadedFile.getInputStream();
-
-        response.setHeader("Content-Type", "application/octet-stream");
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
-        response.setHeader("Content-Disposition",
-                "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"");
-
-        response.flushBuffer();
-
-        OutputStream out = null;
-
-        try {
-            out = response.getOutputStream();
-            byte[] buffer = new byte[65536];
-
-            for (;;) {
-                int numOfBytesRead = in.read(buffer);
-                if (numOfBytesRead == -1) {
-                    break;
-                }
-                out.write(buffer, 0, numOfBytesRead);
-            }
-        } finally {
-            in.close();
-            if (out != null) {
-                out.close();
-            }
-        }
+        outputDownloadedFile(uploadedFile, "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"",
+                             request, response);
 
         return null;
     }
@@ -1802,36 +1810,8 @@ public class ProjectDetailsActions extends DispatchAction {
 
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
-
-        InputStream in = uploadedFile.getInputStream();
-
-        response.setHeader("Content-Type", "application/octet-stream");
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
-        response.setHeader("Content-Disposition",
-                "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"");
-
-        response.flushBuffer();
-
-        OutputStream out = null;
-
-        try {
-            out = response.getOutputStream();
-            byte[] buffer = new byte[65536];
-
-            for (;;) {
-                int numOfBytesRead = in.read(buffer);
-                if (numOfBytesRead == -1) {
-                    break;
-                }
-                out.write(buffer, 0, numOfBytesRead);
-            }
-        } finally {
-            in.close();
-            if (out != null) {
-                out.close();
-            }
-        }
+        outputDownloadedFile(uploadedFile, "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"",
+                             request, response);
 
         return null;
     }
@@ -2212,36 +2192,8 @@ public class ProjectDetailsActions extends DispatchAction {
 
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
-
-        InputStream in = uploadedFile.getInputStream();
-
-        response.setHeader("Content-Type", "application/octet-stream");
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
-        response.setHeader("Content-Disposition",
-                "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"");
-
-        response.flushBuffer();
-
-        OutputStream out = null;
-
-        try {
-            out = response.getOutputStream();
-            byte[] buffer = new byte[65536];
-
-            for (;;) {
-                int numOfBytesRead = in.read(buffer);
-                if (numOfBytesRead == -1) {
-                    break;
-                }
-                out.write(buffer, 0, numOfBytesRead);
-            }
-        } finally {
-            in.close();
-            if (out != null) {
-                out.close();
-            }
-        }
+        outputDownloadedFile(uploadedFile, "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"",
+                             request, response);
 
         return null;
     }
@@ -2975,5 +2927,102 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Return the first found review if any, or null
         return (reviews.length != 0) ? reviews[0] : null;
+    }
+
+    /**
+     * <p>Sends the content of specified file for downloading by client.</p>
+     *
+     * @param upload an <code>Upload</code> providing the details for the filr to be downloaded by client.
+     * @param request an <code>HttpServletRequest</code> representing the incoming request.
+     * @param response an <code>HttpServletResponse</code> representing the outgoing response.
+     * @throws UploadPersistenceException if an unexpected error occurs.
+     * @throws SearchBuilderException if an unexpected error occurs.
+     * @throws DisallowedDirectoryException if an unexpected error occurs.
+     * @throws ConfigurationException if an unexpected error occurs.
+     * @throws PersistenceException if an unexpected error occurs.
+     * @throws FileDoesNotExistException if an unexpected error occurs.
+     * @throws IOException if an unexpected error occurs.
+     * @since 1.6
+     */
+    private void processSubmissionDownload(Upload upload, HttpServletRequest request, HttpServletResponse response)
+        throws UploadPersistenceException, SearchBuilderException, DisallowedDirectoryException,
+               ConfigurationException, PersistenceException, FileDoesNotExistException, IOException {
+
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
+
+        Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(upload.getProject());
+        Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(upload.getOwner());
+        Filter filterUpload = SubmissionFilterBuilder.createUploadIdFilter(upload.getId());
+
+        Filter filter = new AndFilter(Arrays.asList(filterProject, filterResource, filterUpload));
+
+        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
+        UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
+        
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        Submission[] submissions = upMgr.searchSubmissions(filter);
+        Submission submission = (submissions.length != 0) ? submissions[0] : null;
+
+        String contentDisposition;
+        if (submission != null) {
+            contentDisposition = "attachment; filename=\"submission-" + submission.getId() + "-"
+                                 + uploadedFile.getRemoteFileName() + "\"";
+        } else {
+            contentDisposition = "attachment; filename=\"upload-" + upload.getId() + "-"
+                                 + uploadedFile.getRemoteFileName() + "\"";
+        }
+
+        outputDownloadedFile(uploadedFile, contentDisposition, request, response);
+    }
+
+    /**
+     *
+     * <p>Outputs the content of specified file to specified response for downloading by client.</p>
+     *
+     * @param uploadedFile an <code>UploadedFile</code> providing the details for the filr to be downloaded by client.
+     * @param contentDisposition a <code>String</code> providing the value for <code>Content-Disposition</code> header.
+     * @param request an <code>HttpServletRequest</code> representing the incoming request.
+     * @param response an <code>HttpServletResponse</code> representing the outgoing response.
+     * @throws DisallowedDirectoryException if an unexpected error occurs.
+     * @throws ConfigurationException if an unexpected error occurs.
+     * @throws PersistenceException if an unexpected error occurs.
+     * @throws FileDoesNotExistException if an unexpected error occurs.
+     * @throws IOException if an unexpected error occurs.
+     * @since 1.6
+     */
+    private void outputDownloadedFile(UploadedFile uploadedFile, String contentDisposition, HttpServletRequest request,
+                                      HttpServletResponse response)
+        throws DisallowedDirectoryException, ConfigurationException, PersistenceException, FileDoesNotExistException,
+               IOException {
+
+        InputStream in = uploadedFile.getInputStream();
+
+        response.setHeader("Content-Type", "application/octet-stream");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
+        response.setHeader("Content-Disposition", contentDisposition);
+
+        response.flushBuffer();
+
+        OutputStream out = null;
+
+        try {
+            out = response.getOutputStream();
+            byte[] buffer = new byte[65536];
+
+            for (;;) {
+                int numOfBytesRead = in.read(buffer);
+                if (numOfBytesRead == -1) {
+                    break;
+                }
+                out.write(buffer, 0, numOfBytesRead);
+            }
+        } finally {
+            in.close();
+            if (out != null) {
+                out.close();
+            }
+        }
     }
 }

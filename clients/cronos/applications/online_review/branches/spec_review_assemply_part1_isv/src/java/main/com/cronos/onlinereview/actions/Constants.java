@@ -51,6 +51,10 @@ package com.cronos.onlinereview.actions;
  *     <li>Added {@link #PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME} constant.</li>
  *     <li>Added {@link #PERFORM_SPECIFICATION_REVIEW_PERM_NAME} constant.</li>
  *     <li>Added {@link #SPEC_REVIEW_APP_FUNC} constant.</li>
+ *     <li>Added {@link #VIEW_MY_SPECIFICATION_SUBMISSIONS_PERM_NAME} constant.</li>
+ *     <li>Added {@link #VIEW_ALL_SPECIFICATION_SUBMISSIONS_PERM_NAME} constant.</li>
+ *     <li>Added {@link #VIEW_ALL_SPECIFICATION_SUBMISSIONS_PERM_NAME} constant.</li>
+ *     <li>Added {@link #SPECIFICATION_REVIEWER_ROLE_NAME} constant.</li>
  *     <li>Changed value of {@link #PERFORM_SUBM_PERM_NAME} constant.</li>
  *   </ol>
  * </p>
@@ -142,6 +146,13 @@ public class Constants {
      * @see #FAILURE_REVIEWER_ROLE_NAME
      */
     public static final String STRESS_REVIEWER_ROLE_NAME = "Stress Reviewer";
+
+    /**
+     * <p>A <code>String</code> providing the name of <code>Specification Reviewer</code> resource role name.</p>
+     *
+     * @since 1.6
+     */
+    public static final String SPECIFICATION_REVIEWER_ROLE_NAME = "Specification Reviewer";
 
     /**
      * This member variable is a constant array that holds names of different reviewer roles.
@@ -395,10 +406,24 @@ public class Constants {
     public static final String VIEW_ALL_SUBM_PERM_NAME = "View All Submissions";
 
     /**
+     * <p>A <code>String</code> providing the name for <code>View All Specification Submissions</code> permission.</p>
+     *
+     * @since 1.6
+     */
+    public static final String VIEW_ALL_SPECIFICATION_SUBMISSIONS_PERM_NAME = "View All Specification Submissions";
+
+    /**
      * This member variable is a string constant that defines the name of the View My Submissions
      * permission.
      */
     public static final String VIEW_MY_SUBM_PERM_NAME = "View My Submissions";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>View My Specification Submissions</code> permission.</p>
+     *
+     * @since 1.6
+     */
+    public static final String VIEW_MY_SPECIFICATION_SUBMISSIONS_PERM_NAME = "View My Specification Submissions";
 
     /**
      * This member variable is a string constant that defines the name of the
@@ -411,6 +436,15 @@ public class Constants {
      * View Most Recent Submissions permission.
      */
     public static final String VIEW_RECENT_SUBM_PERM_NAME = "View Most Recent Submissions";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>VIEW_RECENT_SPECIFICATION_SUBMISSIONS_PERM_NAME</code>
+     * permission.</p>
+     *
+     * @since 1.6
+     */
+    public static final String VIEW_RECENT_SPECIFICATION_SUBMISSIONS_PERM_NAME
+        = "View Most Recent Specification Submissions";
 
     /**
      * This member variable is a string constant that defines the name of the

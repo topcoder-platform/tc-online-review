@@ -4900,8 +4900,21 @@
                 <Value>Client Manager</Value>
                 <Value>Observer</Value>		
             </Property>
+            <Property name="View All Specification Submissions">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
+                <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+                <Value>Observer</Value>
+            </Property>
             <Property name="View My Submissions">
                 <Value>Submitter</Value>
+            </Property>
+            <Property name="View My Specification Submissions">
+                <Value>Speciciation Submitter</Value>
             </Property>
             <Property name="View Screener Submission">
                 <Value>Screener</Value>
@@ -4913,6 +4926,12 @@
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+            </Property>
+            <Property name="View Most Recent Specification Submissions">
+                <Value>Observer</Value>
+                <Value>Specification Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
