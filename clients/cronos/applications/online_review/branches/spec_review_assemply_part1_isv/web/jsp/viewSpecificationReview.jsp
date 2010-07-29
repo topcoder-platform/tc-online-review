@@ -356,6 +356,33 @@
                         </c:forEach>
                     </table><br />
                     </html:form>
+                    <c:forEach items="${review.allComments}" var="comment">
+                        <c:if test='${comment.commentType.name == "Specification Review Comment"}'>
+                            <c:set var="acceptSpecComment" value="${comment}" />
+                        </c:if>
+                    </c:forEach>
+
+                    <table class="scorecard" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;">
+                        <tr>
+                            <td class="title"><bean:message key="editSpecificationReview.box.Approval" /></td>
+                        </tr>
+                        <tr class="highlighted">
+                            <td class="value">
+                                <c:choose>
+                                    <c:when test='${(acceptSpecComment.extraInfo == "Rejected")}'>
+                                        <bean:message key="SpecificationReviewStatus.Rejected" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <bean:message key="SpecificationReviewStatus.Approved" />
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="lastRowTD"><!-- @ --></td>
+                        </tr>
+                    </table>
+                    <br/>
 
                     <div align="right">
                         <c:if test="${isPreview}">
