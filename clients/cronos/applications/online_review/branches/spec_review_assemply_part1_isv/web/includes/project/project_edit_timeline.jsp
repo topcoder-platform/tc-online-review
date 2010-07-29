@@ -327,6 +327,33 @@
                 </td>
             </tr>
         </c:if>
+        <c:if test="${(phaseIdx eq 0) or (projectForm.map['phase_name'][phaseIdx] eq 'Specification Review')}">
+            <c:if test="${phaseIdx eq 0}">
+                <tr class="highlighted" id="specification_review_scorecard_row_template" style="display: none;">
+            </c:if>
+            <c:if test="${phaseIdx ne 0}">
+                <tr class="highlighted">
+            </c:if>
+                <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
+                <td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
+                    <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" disabled="${isPhaseClosed}">
+                        <c:forEach items="${specificationReviewScorecards}" var="scorecard">
+                            <c:if test="${(newProject && scorecard.category == 1)
+                                          || (not newProject && project.projectCategory.id == scorecard.category)
+                                          || projectCategoriesMap[scorecard.category].projectType.generic}">
+                                <html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>
+                            </c:if>
+                        </c:forEach>
+                    </html:select>
+                    <script type="text/javascript">
+                        <!--
+                         specReviewScorecardNodes[specReviewScorecardNodes.length]
+                             = document.getElementsByName("phase_scorecard[${phaseIdx}]")[0];
+                        -->
+                    </script>
+                </td>
+            </tr>
+        </c:if>
         <c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_view_appeal_responses'][phaseIdx])}">
             <tr class="highlighted" ${(phaseIdx eq 0) ? 'id="view_appeal_responses_row_template" style="display:none;"' : ''}>
                 <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>

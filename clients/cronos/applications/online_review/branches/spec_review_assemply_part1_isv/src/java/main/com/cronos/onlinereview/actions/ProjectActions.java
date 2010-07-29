@@ -428,12 +428,14 @@ public class ProjectActions extends DispatchAction {
         Scorecard[] reviewScorecards = searchActiveScorecards(scorecardManager, "Review");
         Scorecard[] approvalScorecards = searchActiveScorecards(scorecardManager, "Approval");
         Scorecard[] postMortemScorecards = searchActiveScorecards(scorecardManager, "Post-Mortem");
+        Scorecard[] specificationReviewScorecards = searchActiveScorecards(scorecardManager, "Specification Review");
 
         // Store them in the request
         request.setAttribute("screeningScorecards", screeningScorecards);
         request.setAttribute("reviewScorecards", reviewScorecards);
         request.setAttribute("approvalScorecards", approvalScorecards);
         request.setAttribute("postMortemScorecards", postMortemScorecards);
+        request.setAttribute("specificationReviewScorecards", specificationReviewScorecards);
         request.setAttribute("defaultScorecards", ActionsHelper.getDefaultScorecards());
 
         // Load phase template names
