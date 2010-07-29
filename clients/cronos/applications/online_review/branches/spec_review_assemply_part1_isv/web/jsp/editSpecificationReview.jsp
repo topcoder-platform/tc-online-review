@@ -110,6 +110,15 @@
     }
     // -->
     </script>
+
+    <script language="JavaScript" type="text/javascript">
+        function OnCompleteScorecardClick() {
+            var approveCheckBox = document.getElementById("approveSpec");
+            var isRejected = !(approveCheckBox.checked);
+
+            return (isRejected) ? confirm("<bean:message key='editSpecificationReview.BeforeReject' />") : true;
+        }
+    </script>
 </head>
 
 <body>
@@ -189,7 +198,7 @@
                                             <td class="value" colspan="${managerEdit ? 2 : 3}">
                                                 <html:hidden property="comment_count[${itemIdx}]" />
                                                 <c:forEach var="commentIdx" begin="0" end="${specificationReviewForm.map['comment_count'][itemIdx]}">
-                                                    <div name="response" style="${commentIdx eq 0 ? 'display: none;' : ''}" id="isv${commentIdx}-">
+                                                    <div name="response" style="${commentIdx eq 0 ? 'display: none;' : ''}">
                                                         <c:if test="${not managerEdit}">
                                                             <b><bean:message key="editReview.Question.Response.title"/>
                                                                 <span name="comment_number">${commentIdx}</span>:
@@ -246,10 +255,25 @@
                             </table><br />
                         </c:forEach>
 
+                        <table class="scorecard" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;">
+                            <tr>
+                                <td class="title"><label for="rejectFixes"><bean:message key="editSpecificationReview.box.Approval" /></label></td>
+                            </tr>
+                            <tr class="highlighted">
+                                <td class="value">
+                                    <html:checkbox styleId="approveSpec" property="approve_specification" />
+                                    <b><bean:message key="editSpecificationReview.ApproveSpecification" /></b></td>
+                            </tr>
+                            <tr>
+                                <td class="lastRowTD"><!-- @ --></td>
+                            </tr>
+                        </table>
+                        <br/>
+
                         <div align="right">
                             <html:hidden property="save" value="" />
                             <c:if test="${not managerEdit}">
-                                <html:image onclick="javascript:this.form.save.value='submit'; this.parentNode.parentNode.target='_self';" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0"/>&#160;
+                                <html:image onclick="javascript:this.form.save.value='submit'; this.parentNode.parentNode.target='_self';return OnCompleteScorecardClick();" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0"/>&#160;
                                 <html:image onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0"/>&#160;
                             </c:if>
                             <c:if test="${managerEdit}">

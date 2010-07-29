@@ -204,7 +204,7 @@
                                                 <html:hidden property="comment_count[${itemIdx}]" />
 
                                                 <c:forEach var="commentIdx" begin="0" end="${approvalForm.map['comment_count'][itemIdx]}">
-                                                    <div name="response" style="${commentIdx eq 0 ? 'display: none;' : ''}" id="isv${commentIdx}-${approvalForm.map['comment_count'][itemIdx]}">
+                                                    <div name="response" style="${commentIdx eq 0 ? 'display: none;' : ''}">
                                                         <c:if test="${not managerEdit}">
                                                             <b><bean:message key="editReview.Question.Response.title"/>
                                                                 <span name="comment_number">${commentIdx}</span>:

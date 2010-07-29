@@ -2841,7 +2841,6 @@ public class ProjectReviewActions extends DispatchAction {
         Integer[] commentCounts = new Integer[questionsCount];
         Arrays.fill(commentCounts, new Integer(DEFAULT_COMMENTS_NUMBER));
         reviewForm.set("comment_count", commentCounts);
-        System.out.println("ISV : commentCounts = " + Arrays.toString(commentCounts));
 
         for (int i = 0; i < questionsCount; i++) {
             for (int j = 0; j <= DEFAULT_COMMENTS_NUMBER; j++) {
@@ -3042,6 +3041,7 @@ public class ProjectReviewActions extends DispatchAction {
         String phaseName;
         String scorecardTypeName;
         boolean isApprovalPhase = false;
+        boolean isSpecReviewPhase = false;
         boolean isSubmissionDependentPhase = true;
         // Determine permission name and phase name from the review type
         if ("Screening".equals(reviewType)) {
@@ -3058,6 +3058,7 @@ public class ProjectReviewActions extends DispatchAction {
             phaseName = Constants.APPROVAL_PHASE_NAME;
             scorecardTypeName = "Approval";
         } else if ("Specification Review".equals(reviewType)) {
+            isSpecReviewPhase = true;
             permName = Constants.PERFORM_SPECIFICATION_REVIEW_PERM_NAME;
             phaseName = Constants.SPECIFICATION_REVIEW_PHASE_NAME;
             scorecardTypeName = "Specification Review";
@@ -3419,12 +3420,13 @@ public class ProjectReviewActions extends DispatchAction {
         boolean possibleFinalScoreUpdate = false;
         boolean possibleSubmissionStatusUpdate = false;
 
-        Comment reviewLevelComment1 = null;
-        Comment reviewLevelComment2 = null;
-        boolean rejectFixes = false;
-        boolean acceptButRequireOtherFixes = false;
 
         if (isApprovalPhase) {
+            Comment reviewLevelComment1 = null;
+            Comment reviewLevelComment2 = null;
+            boolean rejectFixes = false;
+            boolean acceptButRequireOtherFixes = false;
+
             Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.APPROVER_ROLE_NAME);
 
             Boolean rejectFixesObj = (Boolean) reviewForm.get("reject_fixes");
@@ -3463,6 +3465,33 @@ public class ProjectReviewActions extends DispatchAction {
             reviewLevelComment2.setExtraInfo(acceptButRequireOtherFixes ? "Required" : "");
             reviewLevelComment2.setComment("");
             review.addComment(reviewLevelComment2);
+        }
+
+        if (isSpecReviewPhase) {
+            Comment reviewLevelComment1 = null;
+            Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.SPECIFICATION_REVIEWER_ROLE_NAME);
+
+            Boolean approveSpecObj = (Boolean) reviewForm.get("approve_specification");
+            boolean approveSpecification = false;
+            approveSpecification = (approveSpecObj != null && approveSpecObj.booleanValue());
+
+            for (int i = 0; i < review.getNumberOfComments(); ++i) {
+                Comment comment = review.getComment(i);
+                if (comment.getCommentType().getName().equalsIgnoreCase("Specification Review Comment")) {
+                    reviewLevelComment1 = comment;
+                }
+            }
+
+            if (reviewLevelComment1 == null) {
+                reviewLevelComment1 = new Comment();
+            }
+
+            reviewLevelComment1.setCommentType(
+                ActionsHelper.findCommentTypeByName(commentTypes, "Specification Review Comment"));
+            reviewLevelComment1.setAuthor(resource.getId());
+            reviewLevelComment1.setExtraInfo(approveSpecification ? "Approved" : "Rejected");
+            reviewLevelComment1.setComment("");
+            review.addComment(reviewLevelComment1);
         }
 
 
