@@ -2841,6 +2841,7 @@ public class ProjectReviewActions extends DispatchAction {
         Integer[] commentCounts = new Integer[questionsCount];
         Arrays.fill(commentCounts, new Integer(DEFAULT_COMMENTS_NUMBER));
         reviewForm.set("comment_count", commentCounts);
+        System.out.println("ISV : commentCounts = " + Arrays.toString(commentCounts));
 
         for (int i = 0; i < questionsCount; i++) {
             for (int j = 0; j <= DEFAULT_COMMENTS_NUMBER; j++) {

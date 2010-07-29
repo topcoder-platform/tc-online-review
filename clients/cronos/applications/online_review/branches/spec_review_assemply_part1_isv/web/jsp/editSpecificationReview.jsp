@@ -189,7 +189,7 @@
                                             <td class="value" colspan="${managerEdit ? 2 : 3}">
                                                 <html:hidden property="comment_count[${itemIdx}]" />
                                                 <c:forEach var="commentIdx" begin="0" end="${reviewForm.map['comment_count'][itemIdx]}">
-                                                    <div name="response" style="${commentIdx eq 0 ? 'display: none;' : ''}">
+                                                    <div name="response" style="${commentIdx eq 0 ? 'display: none;' : ''}" id="isv${commentIdx}">
                                                         <c:if test="${not managerEdit}">
                                                             <b><bean:message key="editReview.Question.Response.title"/>
                                                                 <span name="comment_number">${commentIdx}</span>:
