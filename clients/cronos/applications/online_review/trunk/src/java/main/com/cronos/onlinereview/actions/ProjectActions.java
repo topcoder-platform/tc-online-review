@@ -56,6 +56,7 @@ import org.apache.struts.validator.LazyValidatorForm;
 
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
+import com.cronos.onlinereview.model.ClientProject;
 import com.topcoder.date.workdays.DefaultWorkdaysFactory;
 import com.topcoder.date.workdays.Workdays;
 import com.topcoder.date.workdays.WorkdaysUnitOfTime;
@@ -727,10 +728,32 @@ public class ProjectActions extends DispatchAction {
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME)));
 
         // since Online Review Update - Add Project Dropdown v1.0
-        request.setAttribute("isAdmin",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
+        boolean isAdmin = Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
                         || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
-                        || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)));
+                        || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME));
+        request.setAttribute("isAdmin", isAdmin);
+       
+       // start BUGR 4309 - Check whether the billing project id is in the user's allowed billing projects list
+       List<ClientProject> availableClientProjects = (List<ClientProject>) request.getAttribute("billingProjects");
+       Long currentClientProjectId = (Long) form.get("billing_project");
+       boolean inList = false;
+       
+       if(currentClientProjectId == null) {
+       		// no billing project yet, allow set 
+       		inList = true;
+       	} else {
+       		for(ClientProject cp : availableClientProjects) { 
+       			if(cp.getId() == currentClientProjectId.longValue()) {  
+       				inList = true;
+       				break;
+       			} 
+       		}
+       	}
+       	
+       request.setAttribute("allowBillingEdit", isAdmin && inList);
+       
+       
+       // end BUG-4309
     }
 
     /**
