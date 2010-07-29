@@ -862,7 +862,7 @@
                                     <tr class="light">
                                         <td class="value" nowrap="nowrap">
                                             <html:link page="/actions/DownloadSpecificationSubmission.do?method=downloadSpecificationSubmission&uid=${group.specificationSubmission.upload.id}"
-                                                titleKey="viewProjectDetails.box.Submission.Download">${group.specificationSubmission.id}</html:link>
+                                                titleKey="viewProjectDetails.box.Specification.Download">${group.specificationSubmission.id}</html:link>
                                             (<tc-webtag:handle coderId='${group.specificationSubmitter.allProperties["External Reference ID"]}'
                                                                context="${orfn:getHandlerContext(pageContext.request)}" />)
                                         </td>
