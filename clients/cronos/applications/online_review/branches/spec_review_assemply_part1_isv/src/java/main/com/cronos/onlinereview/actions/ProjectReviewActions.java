@@ -2715,6 +2715,9 @@ public class ProjectReviewActions extends DispatchAction {
         } else if ("Approval".equals(reviewType)) {
             permName = Constants.PERFORM_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
+        } else if ("Specification Review".equals(reviewType)) {
+            permName = Constants.PERFORM_SPECIFICATION_REVIEW_PERM_NAME;
+            phaseName = Constants.SPECIFICATION_REVIEW_PHASE_NAME;
         } else {
             isPostMortemPhase = true;
             permName = Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME;
