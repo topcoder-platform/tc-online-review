@@ -884,21 +884,31 @@
                                                         <td class="value"><!-- @ --></td>
                                                         <c:choose>
                                                             <c:when test="${isAllowedToPerformSpecReview}">
-                                                            <td class="valueC" nowrap="nowrap">
-                                                                <html:link page="/actions/EditSpecificationReview.do?method=editSpecificationReview&rid=${group.specificationReview.id}">
-                                                                <b><bean:message key="viewProjectDetails.box.SpecificationReview.Submit"/></b></html:link>
-                                                            </td>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <td class="valueC" nowrap="nowrap"><bean:message key="Pending"/></td>
-                                                        </c:otherwise>
+                                                                <td class="valueC" nowrap="nowrap">
+                                                                    <html:link page="/actions/EditSpecificationReview.do?method=editSpecificationReview&rid=${group.specificationReview.id}">
+                                                                    <b><bean:message key="viewProjectDetails.box.SpecificationReview.Submit"/></b></html:link>
+                                                                </td>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <td class="valueC" nowrap="nowrap"><bean:message key="Pending"/></td>
+                                                            </c:otherwise>
                                                         </c:choose>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </c:when>
                                             <c:otherwise>
                                                 <td class="value"><!-- @ --></td>
-                                                <td class="valueC" nowrap="nowrap"><bean:message key="NotAvailable" /></td>
+                                                <td class="valueC" nowrap="nowrap">
+                                                <c:choose>
+                                                    <c:when test="${isAllowedToPerformSpecReview}">
+                                                        <html:link page="/actions/CreateSpecificationReview.do?method=createSpecificationReview&sid=${group.specificationSubmission.id}">
+                                                        <b><bean:message key="viewProjectDetails.box.SpecificationReview.Submit"/></b></html:link>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <bean:message key="Pending"/>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                                </td>
                                             </c:otherwise>
                                         </c:choose>
                                     </tr>
