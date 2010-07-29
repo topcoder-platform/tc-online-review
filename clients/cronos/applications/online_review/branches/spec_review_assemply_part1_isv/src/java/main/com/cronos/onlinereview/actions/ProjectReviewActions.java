@@ -2685,6 +2685,8 @@ public class ProjectReviewActions extends DispatchAction {
         // Place the type of the review into the request
         if (reviewType.equals("Post-Mortem")) {
             request.setAttribute("reviewType", "PostMortem");
+        } else if (reviewType.equals("Specification Review")) {
+            request.setAttribute("reviewType", "SpecificationReview");
         } else {
             request.setAttribute("reviewType", reviewType);
         }

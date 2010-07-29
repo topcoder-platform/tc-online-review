@@ -11,7 +11,7 @@
 
 <head>
     <jsp:include page="/includes/project/project_title.jsp">
-        <jsp:param name="thirdLevelPageKey" value="editReview.title.${reviewType}" />
+        <jsp:param name="thirdLevelPageKey" value="editReview.title.SpecificationReview" />
     </jsp:include>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
@@ -127,8 +127,8 @@
                     <jsp:include page="/includes/review/review_project.jsp" />
                     <h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
 
-                    <html:form action="/actions/Save${reviewType}" method="POST" enctype="multipart/form-data">
-                        <html:hidden property="method" value="save${reviewType}" />
+                    <html:form action="/actions/SaveSpecificationReview" method="POST" enctype="multipart/form-data">
+                        <html:hidden property="method" value="saveSpecificationReview" />
                         <c:choose>
                             <c:when test="${review.id > -1}">
                                 <html:hidden property="rid" value="${review.id}" />
