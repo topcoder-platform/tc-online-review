@@ -4187,7 +4187,7 @@ public class ProjectReviewActions extends DispatchAction {
         } else if (reviewType.equals("Specification Review")) {
             permName = Constants.VIEW_SPECIFICATION_REVIEW_PERM_NAME;
             phaseName = Constants.SPECIFICATION_REVIEW_PHASE_NAME;
-            scorecardTypeName = "Approval";
+            scorecardTypeName = "Specification Review";
         } else if (reviewType.equals("Post-Mortem")) {
             isSubmissionDependentPhase = false;
             permName = Constants.VIEW_POST_MORTEM_PERM_NAME;
