@@ -55,6 +55,7 @@ package com.cronos.onlinereview.actions;
  *     <li>Added {@link #VIEW_ALL_SPECIFICATION_SUBMISSIONS_PERM_NAME} constant.</li>
  *     <li>Added {@link #VIEW_ALL_SPECIFICATION_SUBMISSIONS_PERM_NAME} constant.</li>
  *     <li>Added {@link #SPECIFICATION_REVIEWER_ROLE_NAME} constant.</li>
+ *     <li>Added {@link #SPECIFICATION_REVIEW_DELIVERABLE_NAME} constant.</li>
  *     <li>Changed value of {@link #PERFORM_SUBM_PERM_NAME} constant.</li>
  *   </ol>
  * </p>
@@ -845,6 +846,13 @@ public class Constants {
      * @since 1.6
      */
     public static final String SPECIFICATION_SUBMISSION_DELIVERABLE_NAME = "Specification Submission";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Specification Review</code> deliverable.</p>
+     *
+     * @since 1.6
+     */
+    public static final String SPECIFICATION_REVIEW_DELIVERABLE_NAME = "Specification Review";
 
     /**
      * This member variable is a string constant that defines the name of the Screening Scorecard

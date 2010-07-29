@@ -2530,7 +2530,27 @@ public class ProjectDetailsActions extends DispatchAction {
             if (delivName.equalsIgnoreCase(Constants.SUBMISSION_DELIVERABLE_NAME)) {
                 links[i] = "UploadContestSubmission.do?method=uploadContestSubmission&pid=" + deliverable.getProject();
             } else if (delivName.equalsIgnoreCase(Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME)) {
-                links[i] = "UploadSpecificationSubmission.do?method=uploadSpecificationSubmission&pid=" + deliverable.getProject();
+                links[i] = "UploadSpecificationSubmission.do?method=uploadSpecificationSubmission&pid="
+                           + deliverable.getProject();
+            } else if (delivName.equalsIgnoreCase(Constants.SPECIFICATION_REVIEW_DELIVERABLE_NAME)) {
+                if (deliverable.getSubmission() == null) {
+                    continue;
+                } else if (allScorecardTypes == null) {
+                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                }
+
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Specification Review"),
+                        deliverable.getSubmission(), deliverable.getResource(), false);
+
+                if (review == null) {
+                    links[i] = "CreateSpecificationReview.do?method=createSpecificationReview&sid="
+                               + deliverable.getSubmission();
+                } else if (!review.isCommitted()) {
+                    links[i] = "EditSpecificationReview.do?method=editSpecificationReview&rid=" + review.getId();
+                } else {
+                    links[i] = "ViewReview.do?method=viewSpecificationReview&rid=" + review.getId();
+                }
             } else if (delivName.equalsIgnoreCase(Constants.SCREENING_DELIVERABLE_NAME) ||
                     delivName.equalsIgnoreCase(Constants.PRIMARY_SCREENING_DELIVERABLE_NAME)) {
                 // Skip deliverables with empty Submission ID field,

@@ -130,8 +130,23 @@ import com.topcoder.util.weightedcalculator.LineItem;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, isv
- * @version 1.1
+ * <p>
+ * Version 1.2 (Specification Review Part 1 Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added logic for processing Specification reviews.</li>
+ *     <li>Updated {@link #saveGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
+ *     saving review comments for <code>Approval</code> phase.</li>
+ *     <li>Updated {@link #createGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
+ *     handling <code>Post-Mortem</code> phase.</li>
+ *     <li>Updated {@link #viewGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
+ *     handling <code>Post-Mortem</code> phase.</li>
+ *     <li>Updated {@link #editGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
+ *     handling <code>Post-Mortem</code> phase.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, isv, TCSDEVELOPER
+ * @version 1.2
  */
 public class ProjectReviewActions extends DispatchAction {
     private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory
@@ -5109,5 +5124,101 @@ public class ProjectReviewActions extends DispatchAction {
         throws BaseException {
         LoggingHelper.logAction(request);
         return viewGenericReview(mapping, form, request, "Post-Mortem");
+    }
+
+    /**
+     * This method is an implementation of &quot;Create Approval&quot; Struts Action defined for
+     * this assembly, which is supposed to gather needed information (scorecard template) and
+     * present it to editReview.jsp page, which will fill the required fields and post them to the
+     * &quot;Save Approval&quot; action. The action implemented by this method is executed to edit
+     * approval that does not exist yet, and hence is supposed to be created.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent submission id, or the lack of
+     *         permissions, etc.).
+     * @param mapping action mapping.
+     * @param form action form.
+     * @param request the http request.
+     * @param response the http response.
+     * @throws BaseException if any error occurs.
+     * @since 1.2
+     */
+    public ActionForward createSpecificationReview(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                                   HttpServletResponse response) throws BaseException{
+        LoggingHelper.logAction(request);
+        return createGenericReview(mapping, form, request, "Specification Review");
+    }
+
+    /**
+     * This method is an implementation of &quot;Edit Post-Mortem&quot; Struts Action defined for this
+     * assembly, which is supposed to gather needed information (post-mortem and scorecard template)
+     * and present it to editReview.jsp page, which will fill the required fields and post them to
+     * the &quot;Save Post-Mortem&quot; action. The action implemented by this method is executed to
+     * edit post-mortem that has already been created, but has not been submitted yet, and hence is
+     * supposed to be edited.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
+     * @param mapping action mapping.
+     * @param form action form.
+     * @param request the http request.
+     * @param response the http response.
+     * @throws BaseException if any error occurs.
+     * @since 1.2
+     */
+    public ActionForward editSpecificationReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, 
+                                                 HttpServletResponse response) throws BaseException{
+        LoggingHelper.logAction(request);
+        return editGenericReview(mapping, form, request, "Specification Review");
+    }
+
+    /**
+     * This method is an implementation of &quot;Save Specification Review&quot; Struts Action defined for this
+     * assembly, which is supposed to save information posted from /jsp/editReview.jsp page. This
+     * method will either create new post-mortem or update (edit) an existing one depending on which
+     * action was called to display /jsp/editReview.jsp page.
+     *
+     * @return &quot;success&quot; forward, which forwards to the &quot;View Project Details&quot;
+     *         action, or &quot;userError&quot; forward, which forwards to the /jsp/userError.jsp
+     *         page, which displays information about an error that is usually caused by incorrect
+     *         user input (such as absent submission id, or the lack of permissions, etc.).
+     * @param mapping action mapping.
+     * @param form action form.
+     * @param request the http request.
+     * @param response the http response.
+     * @throws BaseException if any error occurs.
+     * @since 1.2
+     */
+    public ActionForward saveSpecificationReview(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                                 HttpServletResponse response) throws BaseException {
+        LoggingHelper.logAction(request);
+        return saveGenericReview(mapping, form, request, "Specification Review");
+    }
+
+    /**
+     * This method is an implementation of &quot;View Specification Review&quot; Struts Action defined for this
+     * assembly, which is supposed to view completed post-mortem.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/viewReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
+     * @param mapping action mapping.
+     * @param form action form.
+     * @param request the http request.
+     * @param response the http response.
+     * @throws BaseException if any error occurs.
+     * @since 1.2
+     */
+    public ActionForward viewSpecificationReview(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                                 HttpServletResponse response) throws BaseException {
+        LoggingHelper.logAction(request);
+        return viewGenericReview(mapping, form, request, "Specification Review");
     }
 }
