@@ -2871,6 +2871,8 @@ public class ProjectReviewActions extends DispatchAction {
             scorecardTypeName = "Review";
         } else if ("Approval".equals(reviewType)) {
             scorecardTypeName = "Approval";
+        } else if ("Specification Review".equals(reviewType)) {
+            scorecardTypeName = "Specification Review";
         } else {
             scorecardTypeName = "Post-Mortem";
         }
@@ -3054,6 +3056,10 @@ public class ProjectReviewActions extends DispatchAction {
             permName = Constants.PERFORM_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
             scorecardTypeName = "Approval";
+        } else if ("Specification Review".equals(reviewType)) {
+            permName = Constants.PERFORM_SPECIFICATION_REVIEW_PERM_NAME;
+            phaseName = Constants.SPECIFICATION_REVIEW_PHASE_NAME;
+            scorecardTypeName = "Specification Review";
         } else {
             isSubmissionDependentPhase = false;
             permName = Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME;
@@ -4147,6 +4153,10 @@ public class ProjectReviewActions extends DispatchAction {
         } else if (reviewType.equals("Approval")) {
             permName = Constants.VIEW_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
+            scorecardTypeName = "Approval";
+        } else if (reviewType.equals("Specification Review")) {
+            permName = Constants.VIEW_SPECIFICATION_REVIEW_PERM_NAME;
+            phaseName = Constants.SPECIFICATION_REVIEW_PHASE_NAME;
             scorecardTypeName = "Approval";
         } else if (reviewType.equals("Post-Mortem")) {
             isSubmissionDependentPhase = false;

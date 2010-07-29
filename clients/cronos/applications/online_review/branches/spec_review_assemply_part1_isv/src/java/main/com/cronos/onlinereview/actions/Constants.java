@@ -56,6 +56,7 @@ package com.cronos.onlinereview.actions;
  *     <li>Added {@link #VIEW_ALL_SPECIFICATION_SUBMISSIONS_PERM_NAME} constant.</li>
  *     <li>Added {@link #SPECIFICATION_REVIEWER_ROLE_NAME} constant.</li>
  *     <li>Added {@link #SPECIFICATION_REVIEW_DELIVERABLE_NAME} constant.</li>
+ *     <li>Added {@link #VIEW_SPECIFICATION_REVIEW_PERM_NAME} constant.</li>
  *     <li>Changed value of {@link #PERFORM_SUBM_PERM_NAME} constant.</li>
  *   </ol>
  * </p>
@@ -627,6 +628,13 @@ public class Constants {
      * permission.
      */
     public static final String VIEW_APPROVAL_PERM_NAME = "View Approval";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>View Specification Review</code> permission.</p>
+     *
+     * @since 1.6
+     */
+    public static final String VIEW_SPECIFICATION_REVIEW_PERM_NAME = "View Specification Review";
 
     /**
      * This member variable is a string constant that defines the name of the Perform Post-Mortem Review
