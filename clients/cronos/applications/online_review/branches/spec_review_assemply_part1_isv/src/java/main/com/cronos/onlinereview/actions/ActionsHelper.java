@@ -2840,6 +2840,7 @@ public class ActionsHelper {
 
             checkers.put(Constants.SUBMISSION_DELIVERABLE_NAME, new SubmissionDeliverableChecker(dbconn));
             checkers.put(Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME, new SubmissionDeliverableChecker(dbconn));
+            checkers.put(Constants.SPECIFICATION_REVIEW_DELIVERABLE_NAME, committedChecker);
             checkers.put(Constants.SCREENING_DELIVERABLE_NAME, new IndividualReviewDeliverableChecker(dbconn));
             checkers.put(Constants.PRIMARY_SCREENING_DELIVERABLE_NAME, committedChecker);
             checkers.put(Constants.REVIEW_DELIVERABLE_NAME, committedChecker);
