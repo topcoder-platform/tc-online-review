@@ -1100,7 +1100,7 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         // Analyze the nature of the submitted specification - uploaded file vs plain text and construct appropriate
-        // requets parser based on that
+        // request parser based on that
         DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
         String specFormatType = (String) uploadSubmissionForm.get("specificationType");
         RequestParser parser;
@@ -1115,7 +1115,11 @@ public class ProjectDetailsActions extends DispatchAction {
             strutsParser.AddFile(file);
             parser = strutsParser;
         } else {
-            String specificationText = (String) uploadSubmissionForm.get("specificationType");
+            String specificationText = (String) uploadSubmissionForm.get("specificationText");
+            if ((specificationText == null) || (specificationText.trim().length() == 0)) {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME, "Error.EmptySpecification", null);
+            }
             parser = new TextContentRequestParser(specificationText);
         }
 
