@@ -26,7 +26,9 @@ import com.topcoder.search.builder.filter.*;
 import com.topcoder.servlet.request.ConfigurationException;
 import com.topcoder.servlet.request.DisallowedDirectoryException;
 import com.topcoder.servlet.request.FileDoesNotExistException;
+import com.topcoder.servlet.request.MemoryUploadedFile;
 import com.topcoder.servlet.request.PersistenceException;
+import com.topcoder.servlet.request.RequestParser;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -1097,31 +1099,33 @@ public class ProjectDetailsActions extends DispatchAction {
                     Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME, "Error.SpecificationAlreadyUploaded", null);
         }
 
-        // TODO: Analyze the type of specification - text or file
-
+        // Analyze the nature of the submitted specification - uploaded file vs plain text and construct appropriate
+        // requets parser based on that
         DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
-        FormFile file = (FormFile) uploadSubmissionForm.get("file");
-
-        // Disallow uploading of empty files
-        if (file.getFileSize() == 0) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME, "Error.EmptyFileUploaded", null);
+        String specFormatType = (String) uploadSubmissionForm.get("specificationType");
+        RequestParser parser;
+        if ("file".equalsIgnoreCase(specFormatType)) {
+            FormFile file = (FormFile) uploadSubmissionForm.get("file");
+            // Disallow uploading of empty files
+            if (file.getFileSize() == 0) {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME, "Error.EmptyFileUploaded", null);
+            }
+            StrutsRequestParser strutsParser = new StrutsRequestParser();
+            strutsParser.AddFile(file);
+            parser = strutsParser;
+        } else {
+            String specificationText = (String) uploadSubmissionForm.get("specificationType");
+            parser = new TextContentRequestParser(specificationText);
         }
 
-        StrutsRequestParser parser = new StrutsRequestParser();
-        parser.AddFile(file);
-
-        // Obtain an instance of File Upload Manager
+        // Parse request and save specification as uploaded file
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
-
+        Resource resource = ActionsHelper.getMyResourceForRole(request, "Specification Submitter");
         FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
         UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
 
-        // Get my resource
-        Resource resource = ActionsHelper.getMyResourceForRole(request, "Specification Submitter");
-
         // Always create a new submission/ upload
-        Submission submission = new Submission();
         Upload upload = new Upload();
 
         UploadStatus[] uploadStatuses = upMgr.getAllUploadStatuses();
@@ -1133,6 +1137,7 @@ public class ProjectDetailsActions extends DispatchAction {
         upload.setUploadType(ActionsHelper.findUploadTypeByName(uploadTypes, "Submission"));
         upload.setParameter(uploadedFile.getFileId());
 
+        Submission submission = new Submission();
         submission.setUpload(upload);
 
         SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
