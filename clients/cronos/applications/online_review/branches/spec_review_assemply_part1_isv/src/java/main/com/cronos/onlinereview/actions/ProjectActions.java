@@ -257,7 +257,7 @@ public class ProjectActions extends DispatchAction {
      *
      * @since 1.8
      */
-    private static final Set<Long> SINGLE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(2L, 8L, 9L));
+    private static final Set<Long> SINGLE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(2L, 8L, 9L, 18L));
 
     /**
      * Creates a new instance of the <code>ProjectActions</code> class.
