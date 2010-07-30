@@ -2143,6 +2143,7 @@ public class ActionsHelper {
         case 1:
             // If there is only one phase in the provided array,
             // create filter for it directly (no OR filters needed)
+            System.out.println("ISV : AH : single phas efilter : " + phases[0].getId());
             filter = DeliverableFilterBuilder.createPhaseIdFilter(phases[0].getId());
             break;
 
@@ -2153,6 +2154,7 @@ public class ActionsHelper {
                 phaseFilters.add(DeliverableFilterBuilder.createPhaseIdFilter(phases[i].getId()));
             }
             // Combine all filters using OR operator
+            System.out.println("ISV : AH : multi phas efilter : " + phases[0].getId());
             filter = new OrFilter(phaseFilters);
         }
 

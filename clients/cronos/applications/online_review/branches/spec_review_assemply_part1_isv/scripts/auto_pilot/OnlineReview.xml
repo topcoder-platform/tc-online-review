@@ -3086,6 +3086,7 @@
                          WHERE deliverable_lu.resource_role_id = resource.resource_role_id
                            AND deliverable_lu.phase_type_id = project_phase.phase_type_id
                            AND resource.project_id = project_phase.project_id
+                           AND (resource.project_phase_id = project_phase.project_phase_id OR resource.project_phase_id IS NULL)
                            AND
                     </Value>
                 </Property>
