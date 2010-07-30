@@ -167,7 +167,7 @@ public class ProjectDetailsActions extends DispatchAction {
     }
 
     private String toString(Deliverable d) {
-        System.out.println("ISV : Deliverable : " + d.getName() + ", " + d.getCompletionDate() + ", "
+        return ("ISV : Deliverable : " + d.getName() + ", " + d.getCompletionDate() + ", "
             + d.getProject() + ", " + d.getPhase() + ", " + d.getResource() + ", " + d.getSubmission());
     }
     /**
