@@ -652,6 +652,7 @@ public class ProjectActions extends DispatchAction {
                     form.set("phase_start_dayshrs", i + 1, "mins");
                     form.set("phase_start_amount", i + 1, new Integer((int) (lagTime / (60 * 1000L))));
                 }
+            }
             if (phases[i].getFixedStartDate() != null) {
                 populateDatetimeFormProperties(form, "phase_start_date", "phase_start_time", i + 1,
                         phases[i].getFixedStartDate());
