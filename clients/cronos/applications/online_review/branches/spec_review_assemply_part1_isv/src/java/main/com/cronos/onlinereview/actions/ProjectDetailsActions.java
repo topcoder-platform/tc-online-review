@@ -166,6 +166,10 @@ public class ProjectDetailsActions extends DispatchAction {
     public ProjectDetailsActions() {
     }
 
+    private String toString(Deliverable d) {
+        System.out.println("ISV : Deliverable : " + d.getName() + ", " + d.getCompletionDate() + ", "
+            + d.getProject() + ", " + d.getPhase() + ", " + d.getResource() + ", " + d.getSubmission());
+    }
     /**
      * This method is an implementation of &quot;View project Details&quot; Struts Action defined
      * for this assembly, which is supposed to gather all possible information about the project and
@@ -368,6 +372,10 @@ public class ProjectDetailsActions extends DispatchAction {
 
         Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForPhases(
                 ActionsHelper.createDeliverableManager(request), activePhases, allProjectResources, winnerExtUserId);
+        System.out.println("ISV : deliverables = ");
+        for (Deliverable d : deliverables) {
+            System.out.println(toString(d));
+        }
 
         // For approval phase
         Phase approvalPhase = ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME);
