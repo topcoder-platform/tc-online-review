@@ -166,9 +166,27 @@ public class ProjectDetailsActions extends DispatchAction {
     public ProjectDetailsActions() {
     }
 
-    private String toString(Deliverable d) {
-        return ("ISV : Deliverable : " + d.getName() + ", " + d.getCompletionDate() + ", "
-            + d.getProject() + ", " + d.getPhase() + ", " + d.getResource() + ", " + d.getSubmission());
+    private static String toString(Deliverable d) {
+        if (d != null) {
+            return ("ISV : PDA : Deliverable : " + d.getName() + ", " + d.getCompletionDate() + ", "
+                + d.getProject() + ", " + d.getPhase() + ", " + d.getResource() + ", " + d.getSubmission());
+        } else {
+            return "null";
+        }
+    }
+    private static String toString(Phase d) {
+        if (d != null) {
+            return ("ISV : PDA : Phase : " + d.getPhaseType().getName() + ", " + d.getId());
+        } else {
+            return "null";
+        }
+    }
+    private static String toString(Resource r) {
+        if (r != null) {
+            return ("ISV : PDA : Resource : " + r.getId() + ", " + r.getResourceRole().getName() + ", " + r.getPhase());
+        } else {
+            return "null";
+        }
     }
     /**
      * This method is an implementation of &quot;View project Details&quot; Struts Action defined
@@ -370,6 +388,14 @@ public class ProjectDetailsActions extends DispatchAction {
             winnerExtUserId = Long.parseLong(winnerExtRefId, 10);
         }
 
+        System.out.println("ISV : activePhases");
+        for (Phase p : activePhases) {
+            System.out.println(toString(p));
+        }
+        System.out.println("ISV : allProjectResources");
+        for (Resource r : allProjectResources) {
+            System.out.println(toString(r));
+        }
         Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForPhases(
                 ActionsHelper.createDeliverableManager(request), activePhases, allProjectResources, winnerExtUserId);
         System.out.println("ISV : deliverables = ");

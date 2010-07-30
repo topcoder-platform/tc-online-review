@@ -152,8 +152,8 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  * <p>
  * Version 1.4 (Contest Dependency Automation Assembly v1.0) Change notes:
  *   <ol>
- *     <li>Added {@link #adjustDependentProjects(com.topcoder.project.phases.Project,
- *     com.topcoder.management.phase.PhaseManager, com.topcoder.management.phase.ContestDependencyAutomation, String)}
+ *     <li>Added <code>adjustDependentProjects(com.topcoder.project.phases.Project,
+ *     com.topcoder.management.phase.PhaseManager, ContestDependencyAutomation, String)</code>
  *     and {@link #recalculateScheduledDates(com.topcoder.project.phases.Phase[])} methods.</li>
  *   </ol>
  * </p>
@@ -212,6 +212,28 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  * @since 1.0
  */
 public class ActionsHelper {
+    private static String toString(Deliverable d) {
+        if (d != null) {
+            return ("ISV : AH : Deliverable : " + d.getName() + ", " + d.getCompletionDate() + ", "
+                + d.getProject() + ", " + d.getPhase() + ", " + d.getResource() + ", " + d.getSubmission());
+        } else {
+            return "null";
+        }
+    }
+    private static String toString(Phase d) {
+        if (d != null) {
+            return ("ISV : AH : Phase : " + d.getPhaseType().getName() + ", " + d.getId());
+        } else {
+            return "null";
+        }
+    }
+    private static String toString(Resource r) {
+        if (r != null) {
+            return ("ISV : AH : Resource : " + r.getId() + ", " + r.getResourceRole().getName() + ", " + r.getPhase());
+        } else {
+            return "null";
+        }
+    }
 
     
     /**
@@ -2136,6 +2158,10 @@ public class ActionsHelper {
 
         // Perform a search for the deliverables
         Deliverable[] allDeliverables = manager.searchDeliverables(filter, null);
+        System.out.println("ISV : AH : allDeliverables.length = " + allDeliverables.length);
+        for (Deliverable d : allDeliverables) {
+            System.out.println(toString(d));
+        }
 
         List<Deliverable> deliverables = new ArrayList<Deliverable>();
 
@@ -2157,6 +2183,8 @@ public class ActionsHelper {
             }
             // There must be a resource associated with this deliverable, but
             // in case there isn't skip this deliverable for safety
+            System.out.println("ISV : AH : Deliverable : " + toString(deliverable));
+            System.out.println("ISV : AH : forResource : " + toString(forResource));
             if (forResource == null) {
                 continue;
             }
@@ -2230,6 +2258,7 @@ public class ActionsHelper {
             }
 
             // Add current deliverable to the list of deliverables
+            System.out.println("ISV : AH : Adding deliverable : " + toString(deliverable));
             deliverables.add(deliverable);
         }
 
