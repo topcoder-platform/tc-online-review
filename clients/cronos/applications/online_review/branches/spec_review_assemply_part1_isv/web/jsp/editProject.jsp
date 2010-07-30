@@ -865,14 +865,14 @@
             for (var i = 0; i < phaseNodes.length; i++) {
                 var newPhaseRow = phaseRows[i];
                 var dependencies = phaseNodes[i].getElementsByTagName("dependency");
-                var phaseStartButtons = getChildrenByNamePrefix(newPhaseRow, "phase_start_by_phase");
-                for (var j = 0; j < phaseStartButtons.length; j++) {
-                    if (phaseStartButtons[j].value == "true") {
-                        phaseStartButtons[j].checked = (dependencies.length != 0);
-                    } else {
-                        phaseStartButtons[j].checked = (dependencies.length == 0);
-                    }
-                }
+//                var phaseStartButtons = getChildrenByNamePrefix(newPhaseRow, "phase_start_by_phase");
+//                for (var j = 0; j < phaseStartButtons.length; j++) {
+//                    if (phaseStartButtons[j].value == "true") {
+//                        phaseStartButtons[j].checked = (dependencies.length != 0);
+//                    } else {
+//                        phaseStartButtons[j].checked = (dependencies.length == 0);
+//                    }
+//                }
 
                 if (dependencies.length != 0) {
                     var dependencyId =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-id")[0]);

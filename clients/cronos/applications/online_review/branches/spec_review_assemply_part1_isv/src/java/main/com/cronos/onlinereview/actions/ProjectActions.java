@@ -635,7 +635,7 @@ public class ProjectActions extends DispatchAction {
             form.set("phase_action", i + 1, "update");
             form.set("phase_js_id", i + 1, "loaded_" + phases[i].getId());
             if (phases[i].getAllDependencies().length > 0) {
-                form.set("phase_start_by_phase", i + 1, Boolean.TRUE);
+//                form.set("phase_start_by_phase", i + 1, Boolean.TRUE);
                 // TODO: Probably will need to rewrite all those dependency stuff
                 // TODO: It is very incomplete actually
                 Dependency dependency = phases[i].getAllDependencies()[0];
@@ -652,13 +652,10 @@ public class ProjectActions extends DispatchAction {
                     form.set("phase_start_dayshrs", i + 1, "mins");
                     form.set("phase_start_amount", i + 1, new Integer((int) (lagTime / (60 * 1000L))));
                 }
-
-            } else {
-                form.set("phase_start_by_phase", i + 1, Boolean.FALSE);
+            if (phases[i].getFixedStartDate() != null) {
+                populateDatetimeFormProperties(form, "phase_start_date", "phase_start_time", i + 1,
+                        phases[i].getFixedStartDate());
             }
-
-            populateDatetimeFormProperties(form, "phase_start_date", "phase_start_time", i + 1,
-                    phases[i].calcStartDate());
 
             populateDatetimeFormProperties(form, "phase_end_date", "phase_end_time", i + 1,
                     phases[i].calcEndDate());
@@ -1419,23 +1416,39 @@ public class ProjectActions extends DispatchAction {
             }
 
             // If phase is not started by other phase end
-            if (Boolean.FALSE.equals(lazyForm.get("phase_start_by_phase", i))) {
-                // Get phase start date from form
-                Date phaseStartDate = parseDatetimeFormProperties(lazyForm, i, "phase_start_date",
+            String datePart = (String) lazyForm.get("phase_start_date", i);
+            String timePart = (String) lazyForm.get("phase_start_time", i);
+            boolean startTimeSet = !(isEmpty(datePart) && isEmpty(timePart));
+            if (startTimeSet) {
+                if (isEmpty(datePart)) {
+                    ActionsHelper.addErrorToRequest(request,
+                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.PhaseStartDateNotSet",
+                                    phase.getPhaseType().getName()));
+                } else if (isEmpty(timePart)) {
+                    ActionsHelper.addErrorToRequest(request,
+                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.PhaseStartTimeNotSet",
+                                    phase.getPhaseType().getName()));
+                } else {
+                    // Get phase start date from form
+                    // Set phase fixed start date
+                    Date phaseStartDate = parseDatetimeFormProperties(lazyForm, i, "phase_start_date",
                         "phase_start_time");
-                // Set phase fixed start date
-                phase.setFixedStartDate(phaseStartDate);
-
-                // Check if the current date is minimal
-                if (minDate == null || phaseStartDate.getTime() < minDate.getTime()) {
-                    minDate = phaseStartDate;
+                    phase.setFixedStartDate(phaseStartDate);
+                    // Check if the current date is minimal
+                    if (minDate == null || phaseStartDate.getTime() < minDate.getTime()) {
+                        minDate = phaseStartDate;
+                    }
                 }
-            } else {
+            }
+
                 // Get the dependency phase
                 String phaseJsId = (String) lazyForm.get("phase_start_phase", i);
+            boolean mainPhaseSet = false;
+            if (phaseJsId != null && phaseJsId.trim().length() > 0) {
                 Phase dependencyPhase = (Phase) phasesJsMap.get(phaseJsId);
 
                 if (dependencyPhase != null) {
+                    mainPhaseSet = true;
                     boolean dependencyStart;
                     boolean dependantStart;
                     if ("ends".equals(lazyForm.get("phase_start_when", i))) {
@@ -1458,7 +1471,11 @@ public class ProjectActions extends DispatchAction {
                     phase.addDependency(dependency);
                 }
             }
-
+             if (!startTimeSet && !mainPhaseSet) {
+                 ActionsHelper.addErrorToRequest(request,
+                         new ActionMessage("error.com.cronos.onlinereview.actions.editProject.PhaseStartBad",
+                                 phase.getPhaseType().getName()));
+             }
             /*
              *  Set phase criteria
              */
@@ -1563,7 +1580,8 @@ public class ProjectActions extends DispatchAction {
                     continue;
                 }
                 // If the phase is scheduled to start before some other phase start/end
-                if (Boolean.TRUE.equals(lazyForm.get("phase_start_by_phase", paramIndex)) &&
+                String phaseStartPhase = (String) lazyForm.get("phase_start_phase", paramIndex);
+                if (phaseStartPhase != null && phaseStartPhase.trim().length() > 0 &&
                         "minus".equals(lazyForm.get("phase_start_plusminus", paramIndex))) {
                     Dependency dependency = phase.getAllDependencies()[0];
 
@@ -3210,11 +3228,12 @@ public class ProjectActions extends DispatchAction {
         return result;
     }
 
-    private String toString(Phase phase) {
-        if (phase == null) {
-            return "null";
-        } else {
-            return phase.getId() + "-" + phase.getPhaseType().getName();
-        }
+    /**
+     * <p>Checks if specified string is empty.</p>
+     *
+     * @param value <code>true</code> if specified value is <code>null</code> or empty; <code>false</code> otherwise.
+     */
+    private static boolean isEmpty(String value) {
+        return (value == null) || (value.trim().length() == 0);
     }
 }

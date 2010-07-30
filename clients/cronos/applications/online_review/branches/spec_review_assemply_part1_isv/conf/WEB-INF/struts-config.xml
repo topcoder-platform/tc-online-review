@@ -64,7 +64,9 @@
             <form-property name="phase_number" type="java.lang.Integer[]" />
             <form-property name="phase_js_id" type="java.lang.String[]" />
             <form-property name="phase_action" type="java.lang.String[]" />
+<!--
             <form-property name="phase_start_by_phase" type="java.lang.Boolean[]" />
+-->
             <form-property name="phase_start_date" type="java.lang.String[]" />
             <form-property name="phase_start_time" type="java.lang.String[]" />
             <form-property name="phase_start_phase" type="java.lang.String[]" />

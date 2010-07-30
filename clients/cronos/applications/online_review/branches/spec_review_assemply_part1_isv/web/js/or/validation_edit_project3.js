@@ -309,8 +309,8 @@ function validate_timeline(thisForm, msgList) {
 		msgDiv.innerHTML = "";
 		msgDiv.style.display = "none";
 
-		var start_by_phase = thisForm["phase_start_by_phase[" + i + "]"][1].checked;
-		if (!start_by_phase) {
+//		var start_by_phase = thisForm["phase_start_by_phase[" + i + "]"][1].checked;
+//		if (!start_by_phase) {
 			// if the phase does not start by another phase, try to validate its start datetime
 
 			// validate start date
@@ -326,7 +326,7 @@ function validate_timeline(thisForm, msgList) {
 				msg = "Start Time should be in the form of \"hh:mm\"";
 				add_error_message(msg, msgPrefix, msgDiv, msgList);
 			}
-		} else {
+//		} else {
 			// if the phase starts by another phase, try to validate its additional days/hours
 
 			var start_amount = thisForm["phase_start_amount[" + i + "]"].value;
@@ -336,7 +336,7 @@ function validate_timeline(thisForm, msgList) {
 				msg = "Additional Days/Hours should be an integer";
 				add_error_message(msg, msgPrefix, msgDiv, msgList);
 			}
-		}
+//		}
 
 		// get the message div and hide it
 		msgDiv = getChildByName(phase_row, "end_date_validation_msg");
