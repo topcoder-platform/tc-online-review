@@ -1498,6 +1498,10 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve a review to edit
         Review review = verification.getReview();
 
+        // Check if project has SVN Module property set
+        Object svnModule = verification.getProject().getProperty("SVN Module");
+        request.setAttribute("projectHasSVNModuleSet", svnModule != null);
+
         // Obtain an instance of Scorecard Manager
         ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
         // Retrieve a scorecard template for the review
@@ -1656,6 +1660,10 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve a review to save
         Review review = verification.getReview();
+
+        // Check if project has SVN Module property set
+        Object svnModule = verification.getProject().getProperty("SVN Module");
+        request.setAttribute("projectHasSVNModuleSet", svnModule != null);
 
         // Obtain an instance of Scorecard Manager
         ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);

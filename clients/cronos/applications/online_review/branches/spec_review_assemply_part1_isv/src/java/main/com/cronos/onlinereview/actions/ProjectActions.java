@@ -2096,7 +2096,8 @@ public class ProjectActions extends DispatchAction {
                     }
                 } else if (SINGLE_REVIEWER_ROLE_IDS.contains(resourceRoleId)) {
                     if (primaryReviewerRoles.containsKey(resourceRoleId)) {
-                        if (resourceRoleId != 9 || !primaryReviewerRoles.get(resourceRoleId).equals(handle)) {
+                        if ((resourceRoleId != 9) && (resourceRoleId != 18)
+                            || !primaryReviewerRoles.get(resourceRoleId).equals(handle)) {
                             ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                                                             "error.com.cronos.onlinereview.actions."
                                                             + "editProject.Resource.MoreThanOneReviewer");

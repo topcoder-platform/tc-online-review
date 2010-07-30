@@ -31,7 +31,18 @@ function OnCompleteScorecardClick() {
     var approveCheckBox = document.getElementById("approveFixes");
     var isRejected = (approveCheckBox.checked != true);
 
-    return (isRejected) ? confirm("<bean:message key='editFinalReview.BeforeReject' />") : true;
+    if (isRejected) {
+        return confirm("<bean:message key='editFinalReview.BeforeReject' />");
+    } else {
+        <c:choose>
+            <c:when test="${requestScope.projectHasSVNModuleSet}">
+                return confirm("<bean:message key='editFinalReview.SVNConfirm' />");
+            </c:when>
+            <c:otherwise>
+                return true;
+            </c:otherwise>
+        </c:choose>
+    }
 }
     </script>
 </head>
