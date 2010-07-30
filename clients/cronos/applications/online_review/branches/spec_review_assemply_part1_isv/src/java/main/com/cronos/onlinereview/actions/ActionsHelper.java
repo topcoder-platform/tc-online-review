@@ -212,30 +212,7 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  * @since 1.0
  */
 public class ActionsHelper {
-    private static String toString(Deliverable d) {
-        if (d != null) {
-            return ("ISV : AH : Deliverable : " + d.getName() + ", " + d.getCompletionDate() + ", "
-                + d.getProject() + ", " + d.getPhase() + ", " + d.getResource() + ", " + d.getSubmission());
-        } else {
-            return "null";
-        }
-    }
-    private static String toString(Phase d) {
-        if (d != null) {
-            return ("ISV : AH : Phase : " + d.getPhaseType().getName() + ", " + d.getId());
-        } else {
-            return "null";
-        }
-    }
-    private static String toString(Resource r) {
-        if (r != null) {
-            return ("ISV : AH : Resource : " + r.getId() + ", " + r.getResourceRole().getName() + ", " + r.getPhase());
-        } else {
-            return "null";
-        }
-    }
 
-    
     /**
      * The logger instance.
      */
@@ -2143,7 +2120,6 @@ public class ActionsHelper {
         case 1:
             // If there is only one phase in the provided array,
             // create filter for it directly (no OR filters needed)
-            System.out.println("ISV : AH : single phas efilter : " + phases[0].getId());
             filter = DeliverableFilterBuilder.createPhaseIdFilter(phases[0].getId());
             break;
 
@@ -2154,16 +2130,11 @@ public class ActionsHelper {
                 phaseFilters.add(DeliverableFilterBuilder.createPhaseIdFilter(phases[i].getId()));
             }
             // Combine all filters using OR operator
-            System.out.println("ISV : AH : multi phas efilter : " + phases[0].getId());
             filter = new OrFilter(phaseFilters);
         }
 
         // Perform a search for the deliverables
         Deliverable[] allDeliverables = manager.searchDeliverables(filter, null);
-        System.out.println("ISV : AH : allDeliverables.length = " + allDeliverables.length);
-        for (Deliverable d : allDeliverables) {
-            System.out.println(toString(d));
-        }
 
         List<Deliverable> deliverables = new ArrayList<Deliverable>();
 
@@ -2185,8 +2156,6 @@ public class ActionsHelper {
             }
             // There must be a resource associated with this deliverable, but
             // in case there isn't skip this deliverable for safety
-            System.out.println("ISV : AH : Deliverable : " + toString(deliverable));
-            System.out.println("ISV : AH : forResource : " + toString(forResource));
             if (forResource == null) {
                 continue;
             }
@@ -2260,7 +2229,6 @@ public class ActionsHelper {
             }
 
             // Add current deliverable to the list of deliverables
-            System.out.println("ISV : AH : Adding deliverable : " + toString(deliverable));
             deliverables.add(deliverable);
         }
 
