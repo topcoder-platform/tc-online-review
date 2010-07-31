@@ -82,7 +82,8 @@ import com.topcoder.util.errorhandling.BaseException;
  * <p>
  * Version 1.4 (Specification Review Part 1 Assembly 1.0) Change notes:
  *   <ol>
- *     <li>Added {@link #serviceSpecReviewAppFunc(HttpServletRequest, PhaseGroup, Project, Phase, Resource[], SpecificationsInfo)} method.
+ *     <li>Added {@link #serviceSpecReviewAppFunc(HttpServletRequest, PhaseGroup, Project, Phase, Resource[],
+ *     SpecificationsInfo)} method.
  *     </li>
  *   </ol>
  * </p>

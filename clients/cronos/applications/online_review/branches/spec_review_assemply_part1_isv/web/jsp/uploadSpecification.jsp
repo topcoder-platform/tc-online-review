@@ -1,3 +1,10 @@
+<%--
+  - Author: TCSDEVELOPER
+  - Version: 1.1 (Specification Review Part 1 Assembly)
+  - Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page renders the web forms for uploading the specifications either by file or as text.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ page import="com.topcoder.shared.util.ApplicationServer"%>

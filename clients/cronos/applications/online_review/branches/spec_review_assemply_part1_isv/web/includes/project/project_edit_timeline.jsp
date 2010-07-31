@@ -1,6 +1,6 @@
 <%--
-  - Author: isv
-  - Version: 1.2
+  - Author: isv, TCSDEVELOPER
+  - Version: 1.3
   - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment displays the form input elements group for editing the timeline and other
@@ -10,6 +10,9 @@
   - Updated logic for supporting Approval phase.
   -
   - Version 1.2 (Impersonation Login Release assembly) changes: Disabled all input fields for phases which are closed.
+  -
+  - Version 1.3 (Specification Review Part 1 assembly) changes: Removed radio buttons for selecting the type of
+  - phase start
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -92,15 +95,9 @@
                 <html:hidden property="phase_action[${phaseIdx}]" disabled="${isPhaseClosed}" />
                 <html:hidden property="phase_name[${phaseIdx}]" disabled="${isPhaseClosed}" />
                 <html:hidden property="phase_number[${phaseIdx}]" disabled="${isPhaseClosed}" />
-<%--
-                <html:radio property="phase_start_by_phase[${phaseIdx}]" value="false" disabled="${isPhaseClosed}"/>
---%>
                 <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="phase_start_date[${phaseIdx}]" disabled="${isPhaseClosed}"/>
                 <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="phase_start_time[${phaseIdx}]" disabled="${isPhaseClosed}"/>
                 <c:out value="${currentTimezone}"/><br />
-<%--
-                <html:radio property="phase_start_by_phase[${phaseIdx}]" value="true" disabled="${isPhaseClosed}"/>
---%>
                 <bean:message key="editProject.Phases.When" />
                 <div style="margin-left: 20px;">
                 <html:select styleClass="inputBox" property="phase_start_phase[${phaseIdx}]" style="width:120px;" disabled="${isPhaseClosed}">

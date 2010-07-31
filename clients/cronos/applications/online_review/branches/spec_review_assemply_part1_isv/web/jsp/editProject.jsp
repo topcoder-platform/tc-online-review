@@ -1,6 +1,6 @@
 <%--
-  - Author: pulky, isv
-  - Version: 1.2
+  - Author: pulky, isv, TCSDEVELOPER
+  - Version: 1.3
   - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays project edition page
@@ -10,6 +10,8 @@
   -
   - Version 1.2 (Online Review End of Project Analysis v1.0) changes: Integrated newly defined Generic project types,
   - categories and scorecards.
+  -
+  - Version 1.3 (Specification Review Part 1 assembly) changes: Added support for Specification Review phase.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>

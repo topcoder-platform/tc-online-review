@@ -1,12 +1,15 @@
 <%--
-  - Author: isv
-  - Version: 1.1
+  - Author: isv, TCSDEVELOPER
+  - Version: 1.2
   - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment displays the content of tab for single project phase on Project Details screen.
   -
   - Version 1.1 (Online Review End of Project Analysis v1.0) changes: Added logic for supporting Post-Mortem phase.
   - Updated logic for supporting Approval phase.
+  -
+  - Version 1.3 (Specification Review Part 1 assembly) changes: Added support for Specification Submission/Review
+  - phases.
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>

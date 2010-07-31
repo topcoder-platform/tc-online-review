@@ -1,3 +1,10 @@
+<%--
+  - Author: TCSDEVELOPER
+  - Version: 1.0 (Specification Review Part 1 Assembly)
+  - Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page renders the Specification Review scorecard for editing.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>

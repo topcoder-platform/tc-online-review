@@ -1,3 +1,12 @@
+<%--
+  - Author: TCSDEVELOPER
+  - Version: 1.1
+  - Copyright (C) 2005-2010 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page renders the Specification Review scorecard.
+  -
+  - Version 1.1 (Specification Review Part 1 assembly) changes: Changed URL for action for submission upload. 
+--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ page import="com.topcoder.shared.util.ApplicationServer"%>

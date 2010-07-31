@@ -1,12 +1,9 @@
 <%--
-  - Author: George1, real_vg, isv
-  - Version: 1.1
-  - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
+  - Author: TCSDEVELOPER
+  - Version: 1.0 (Specification Review Part 1 Assembly)
+  - Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
   -
-  - Description: This page renders the Review scorecard.
-  -
-  - Version 1.1 (Impersonation Login Release assembly) changes: Updated link for "Back" button to refer to
-  - "View Project Details" screen.
+  - Description: This page renders the Specification Review scorecard.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
