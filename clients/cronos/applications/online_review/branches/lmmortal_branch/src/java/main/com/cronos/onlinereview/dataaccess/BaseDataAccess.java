@@ -19,9 +19,17 @@ import java.util.Map;
 
 /**
  * <p>A base class for DAO implementations backed up by Query Tool.</p>
- * 
+ *
+ * <p>
+ * Version 1.1 (Impersonation Login Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Renamed <code>PROJECT_STATUS_INACTIVE_ID</code> constant to <code>PROJECT_STATUS_DRAFT_ID</code> constant.
+ *     </li>
+ *   </ol>
+ * </p>
+ *
  * @author isv
- * @version 1.0
+ * @version 1.1
  */
 public abstract class BaseDataAccess {
 
@@ -31,9 +39,9 @@ public abstract class BaseDataAccess {
     protected static final long PROJECT_STATUS_ACTIVE_ID = 1;
 
     /**
-     * <p>A <code>long</code> providing the ID of project status <code>Inactive</code>. </p>
+     * <p>A <code>long</code> providing the ID of project status <code>Draft</code>. </p>
      */
-    protected static final long PROJECT_STATUS_INACTIVE_ID = 2; 
+    protected static final long PROJECT_STATUS_DRAFT_ID = 2;
 
     /**
      * <p>Constructs new <code>BaseDataAccess</code> instance. This implementation does nothing.</p>

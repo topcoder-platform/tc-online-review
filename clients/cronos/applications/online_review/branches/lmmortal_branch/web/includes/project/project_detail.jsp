@@ -1,3 +1,13 @@
+<%--
+  - Author: George1, real_vg, isv
+  - Version: 1.1
+  - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page fragment renders the details on selected project.
+  -
+  - Version 1.1 (Impersonation Login Release assembly) changes: Turned scorecard titles into links referring to
+  - View Scorecard Template for scorecard; added details on associated Cockpit project.
+--%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -48,13 +58,16 @@
 			</tr>
 			<c:set var="rowIndex" value="${rowIndex+1}" />
 		</c:if>
-		<c:forEach items="${scorecardTemplates}" var="scorecard">
+		<c:forEach items="${scorecardTemplates}" var="scorecard" varStatus="index">
 			<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
 				<td class="value" width="15%" nowrap="nowrap">
 					<b><bean:message key='ScorecardType.${fn:replace(scorecard.scorecardType.name, " ", "")}.scorecard' />:</b></td>
 				<td class="value" width="100%">
+                    <a href="${requestScope.scorecardLinks[index.index]}">
 					${orfn:htmlEncode(scorecard.name)}
-					<bean:message key="global.version.shortened"/>${orfn:htmlEncode(scorecard.version)}</td>
+					<bean:message key="global.version.shortened"/>${orfn:htmlEncode(scorecard.version)}
+                    </a>
+                </td>
 			</tr>
 			<c:set var="rowIndex" value="${rowIndex+1}" />
 		</c:forEach>
@@ -62,6 +75,12 @@
 			<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
 					<td class="value" width="15%" nowrap="nowrap"><b><bean:message key="viewProjectDetails.BillingProject" /></b></td>
 					<td class="value" width="100%">${billingProject}</td>
+			</tr><c:set var="rowIndex" value="${rowIndex+1}" />
+		</c:if>
+		<c:if test="${not empty requestScope.cockpitProject and requestScope.isAllowedToViewCockpitProjectName}">
+			<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
+				<td class="value" width="15%" nowrap="nowrap"><b><bean:message key="viewProjectDetails.CockpitProject" /></b></td>
+				<td class="value" width="100%">${requestScope.cockpitProject}</td>
 			</tr><c:set var="rowIndex" value="${rowIndex+1}" />
 		</c:if>
 		<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>

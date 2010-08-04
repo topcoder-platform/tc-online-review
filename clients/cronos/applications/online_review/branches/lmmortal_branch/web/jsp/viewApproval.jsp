@@ -1,9 +1,12 @@
 <%--
   - Author: isv
-  - Version: 1.0 (Online Review End of Project Analysis v1.0)
+  - Version: 1.1
   - Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays view page for Approval scorecard
+  -
+  - Version 1.1 (Impersonation Login Release assembly) changes: Updated link for "Back" button to refer to
+  - "View Project Details" screen.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -397,7 +400,8 @@
                             <a href="javascript:window.close();"><html:img srcKey="btnClose.img" altKey="btnClose.alt" border="0" /></a>
                         </c:if>
                         <c:if test="${not isPreview}">
-                            <a href="javascript:history.go(-1)"><html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></a>
+                            <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}">
+                                <html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></html:link>
                         </c:if>
                         <br />
                     </div>

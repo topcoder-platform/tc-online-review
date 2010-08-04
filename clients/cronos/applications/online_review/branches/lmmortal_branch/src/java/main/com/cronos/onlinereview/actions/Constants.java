@@ -32,8 +32,18 @@ package com.cronos.onlinereview.actions;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.4 (Impersonation Login Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Renamed <code>VIEW_PROJECTS_INACTIVE_PERM_NAME</code> constant to <code>VIEW_PROJECTS_DRAFT_PERM_NAME</code>
+ *     constant.</li>
+ *     <li>Added {@link #COCKPIT_PROJECT_USER_ROLE_NAME} constant.</li>
+ *     <li>Added {@link #VIEW_COCKPIT_PROJECT_NAME_PERM_NAME} constant.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv
- * @version 1.3
+ * @version 1.4
  */
 public class Constants {
 
@@ -198,6 +208,13 @@ public class Constants {
     public static final String GLOBAL_MANAGER_ROLE_NAME = "Global Manager";
 
     /**
+     * <p>A <code>String</code> providing the name for <code>Cockpit Project User</code> role.</p>
+     *
+     * @since 1.4
+     */
+    public static final String COCKPIT_PROJECT_USER_ROLE_NAME = "Cockpit Project User";
+
+    /**
      * This member variable is a string constant that defines the name of the Payment Manager role.
      * Payment Manager role can either be assigned on a project basis or as on the global level.
      * Payment Managers have permission to create payments.
@@ -218,7 +235,8 @@ public class Constants {
      * @see #MANAGER_ROLE_NAME
      * @see #GLOBAL_MANAGER_ROLE_NAME
      */
-    public static final String[] MANAGER_ROLE_NAMES = new String[] {MANAGER_ROLE_NAME, GLOBAL_MANAGER_ROLE_NAME};
+    public static final String[] MANAGER_ROLE_NAMES = new String[] {MANAGER_ROLE_NAME, GLOBAL_MANAGER_ROLE_NAME,
+            COCKPIT_PROJECT_USER_ROLE_NAME};
 
     /**
      * <p>This member variable is a string constant that defines the name of the <code>Client Manager</code>
@@ -284,10 +302,10 @@ public class Constants {
     public static final String VIEW_MY_PROJECTS_PERM_NAME = "View My Projects";
 
     /**
-     * This member variable is a string constant that defines the name of the View Projects Inactive
+     * This member variable is a string constant that defines the name of the View Projects Draft
      * permission.
      */
-    public static final String VIEW_PROJECTS_INACTIVE_PERM_NAME = "View Projects Inactive";
+    public static final String VIEW_PROJECTS_DRAFT_PERM_NAME = "View Projects Draft";
 
     /**
      * This member variable is a string constant that defines the name of the View Project Detail
@@ -589,6 +607,14 @@ public class Constants {
      * @since 1.2
      */
     public static final String VIEW_PROJECT_MANAGEMENT_CONSOLE_PERM_NAME = "View Project Management Console";
+
+    /**
+     * <p>A <code>String</code> providing the name for permission for viewing the <code>Cockpit</code> project
+     * name.</p>
+     *
+     * @since 1.4
+     */
+    public static final String VIEW_COCKPIT_PROJECT_NAME_PERM_NAME = "View Cockpit Project Name";
 
     /**
      * <p>This member variable is a string constant that defines the name of the <code>Project Management</code>

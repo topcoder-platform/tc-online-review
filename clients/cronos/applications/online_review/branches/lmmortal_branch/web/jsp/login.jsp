@@ -1,3 +1,12 @@
+<%--
+  - Author: George1, real_vg, isv
+  - Version: 1.1
+  - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page renders the Login form for Online Review application.
+  -
+  - Version 1.1 (Impersonation Login Release assembly) changes: Added "Remember me" checkbox.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -42,7 +51,7 @@
                     <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
                         <div align="center">
                             <bean:message key="error.com.cronos.onlinereview.Errors" />
-                            <br /><span class="bigRed"><html:errors /></span>
+                            <br /><span class="bigRed"><html:errors suffix="errors.suffix.login"/></span>
                         </div>
                     </c:if>
 
@@ -70,6 +79,14 @@
                             <tr>
                                 <td class="value"><div align="right"><bean:message key="login.formLogin.password" /> </div></td>
                                 <td class="value"><input type="password" name="password" /></td>
+                            </tr>
+                            <tr>
+                                <td class="value" colspan="2">
+                                    <div class="rememberMe">
+                                        <html:checkbox property="rememberMe" value="on"/>
+                                        <bean:message key="login.formLogin.rememberMe"/>
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
                                 <td class="valueLast">&#160;</td>

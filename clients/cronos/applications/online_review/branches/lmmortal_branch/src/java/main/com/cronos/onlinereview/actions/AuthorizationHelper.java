@@ -10,8 +10,14 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
+import com.cronos.onlinereview.login.AuthCookieManagementException;
+import com.cronos.onlinereview.login.AuthCookieManager;
+import com.cronos.onlinereview.login.ConfigurationException;
+import com.cronos.onlinereview.login.LoginActions;
+import com.cronos.onlinereview.login.Util;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.Resource;
@@ -41,8 +47,18 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.3 (Impersonation Login Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #gatherUserRoles(HttpServletRequest)} method.</li>
+ *     <li>Added {@link #authCookieManager} field.</li>
+ *     <li>Added {@link #getAuthCookieManager()} method.</li>
+ *     <li>Added {@link #checkUserAuthentication(HttpServletRequest)} method.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv
- * @version 1.2
+ * @version 1.3
  */
 public class AuthorizationHelper {
 
@@ -53,6 +69,21 @@ public class AuthorizationHelper {
     public static final long NO_USER_LOGGED_IN_ID = -1;
 
     public static final String REDIRECT_BACK_URL_ATTRIBUTE = "redirectBackUrl";
+
+    /**
+     * <p>An <code>AuthCookieManager</code> to be used for user authentication based on cookies.</p>
+     *
+     * @since 1.3
+     */
+    private static final AuthCookieManager authCookieManager;
+
+    static {
+        try {
+            authCookieManager = createAuthCookieManager();
+        } catch (ConfigurationException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     /**
      * Private constructor, just to prevent instantiation of the class.
@@ -121,13 +152,23 @@ public class AuthorizationHelper {
      * This static method returns the ID of the user currently logged in.
      *
      * @return the ID of the currently logged in user, or <code>NO_USER_LOGGED_IN_ID</code> if no
-     * user has been logged in.
+     *         user has been logged in.
      * @param request
      *            an <code>HttpServletRequest</code> object containing the information about
      *            the user possibly logged in.
      */
     public static long getLoggedInUserId(HttpServletRequest request) {
         Long userId = (Long) request.getSession().getAttribute(ConfigHelper.getUserIdAttributeName());
+        if (userId == null) {
+            try {
+                userId = getAuthCookieManager().checkAuthCookie(request);
+                if (userId != null) {
+                    request.getSession().setAttribute(ConfigHelper.getUserIdAttributeName(), userId);
+                }
+            } catch (AuthCookieManagementException e) {
+                e.printStackTrace();
+            }
+        }
         return (userId != null) ? userId.longValue() : NO_USER_LOGGED_IN_ID;
     }
 
@@ -253,8 +294,6 @@ public class AuthorizationHelper {
         }
 
         // Determine some common permissions
-        request.setAttribute("isAllowedToViewInactiveProjects",
-                new Boolean(hasUserPermission(request, Constants.VIEW_PROJECTS_INACTIVE_PERM_NAME)));
         request.setAttribute("isAllowedToCreateProject",
                 new Boolean(hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME)));
     }
@@ -280,6 +319,12 @@ public class AuthorizationHelper {
 
         // At this moment the request should have "roles" attribute
         Set roles = (Set) request.getAttribute("roles");
+
+        // Check if user is Cockpit Project User for selected project
+        ProjectDataAccess projectDataAccess = new ProjectDataAccess();
+        if (projectDataAccess.isCockpitProjectUser(projectId, getLoggedInUserId(request))) {
+            roles.add(Constants.COCKPIT_PROJECT_USER_ROLE_NAME);
+        }
 
         // Create an instance of Project Manager
         ProjectManager projMgr = ActionsHelper.createProjectManager(request);
@@ -409,5 +454,37 @@ public class AuthorizationHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * <p>Gets the cookie manager to be used for authenticating users based on cookie.</p>
+     *
+     * @return a a <code>AuthCookieManager</code> to be used for user authentication based on cookie.
+     * @since 1.3
+     */
+    public static AuthCookieManager getAuthCookieManager() {
+        return authCookieManager;
+    }
+
+    /**
+     * <p>Gets the cookie manager to be used for authenticating users based on cookie.</p>
+     *
+     * @return a <code>AuthCookieManager</code> to be used for user authentication based on cookie. 
+     * @throws ConfigurationException if an unexpected error occurs while accessing the configuration.
+     * @since 1.3
+     */
+    private static AuthCookieManager createAuthCookieManager() throws ConfigurationException {
+        // instantiate the cookie manager instance via reflection
+        String defaultNamespace = LoginActions.class.getName();
+        String className = Util.getRequiredPropertyString(defaultNamespace, "auth_cookie_manager.class");
+        String namespace = Util.getOptionalPropertyString(defaultNamespace, "auth_cookie_manager.namespace");
+
+        if ((namespace == null) || (namespace.trim().length() == 0)) {
+            return (AuthCookieManager) Util.creatObject(className, new Class[] {}, new Object[] {},
+                    AuthCookieManager.class);
+        } else {
+            return (AuthCookieManager) Util.creatObject(className, new Class[] { String.class },
+                    new Object[]{namespace }, AuthCookieManager.class);
+        }
     }
 }

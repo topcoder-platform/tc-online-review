@@ -190,8 +190,11 @@ final class Comparators {
          */
         public int compare(Project project1, Project project2) {
             // Get the names of the projects
-            final String strName1 = (String) project1.getProperty("Project Name");
-            final String strName2 = (String) project2.getProperty("Project Name");
+            String strName1 = (String) project1.getProperty("Project Name");
+            String strName2 = (String) project2.getProperty("Project Name");
+            if (strName1 == null) strName1 = "";
+            if (strName2 == null) strName2 = "";
+
             // Compare project names using natural alphabetic order
             int result = strName1.compareToIgnoreCase(strName2);
             if (result != 0) {
@@ -203,8 +206,11 @@ final class Comparators {
              */
 
             // Get versions of the projects
-            final String strVersion1 = (String) project1.getProperty("Project Version");
-            final String strVersion2 = (String) project2.getProperty("Project Version");
+            String strVersion1 = (String) project1.getProperty("Project Version");
+            String strVersion2 = (String) project2.getProperty("Project Version");
+            if (strVersion1 == null) strVersion1 = "";
+            if (strVersion2 == null) strVersion2 = "";
+
             // Split version strings into array of sub-versions (assuming that separator is a dot)
             final String[] versions1 = strVersion1.split("\\.");
             final String[] versions2 = strVersion2.split("\\.");

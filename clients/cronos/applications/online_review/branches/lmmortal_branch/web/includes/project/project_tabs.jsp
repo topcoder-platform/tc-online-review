@@ -1,3 +1,12 @@
+<%--
+  - Author: George1, real_vg, isv
+  - Version: 1.1
+  - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page fragment renders the tabs for all pages from Online Review application.
+  -
+  - Version 1.1 (Impersonation Login Release assembly) changes: Changed project status from Inactive to Draft.
+--%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ page import="java.text.DecimalFormat,com.topcoder.shared.util.ApplicationServer" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -31,16 +40,15 @@
     </c:if>
     </div>
     <div style="float: left;">
-    <c:if test="${isAllowedToViewInactiveProjects}">
         <c:if test="${(not empty projectTabIndex) and (projectTabIndex == 4)}">
-            <html:img src="/i/or/tab_inactive_projects_on.gif" width="119" height="36" border="0" imageName="tab4" />
+            <html:img src="/i/or/tab_draft_projects_on.gif" width="119" height="36" border="0" imageName="tab4"/>
         </c:if>
         <c:if test="${(empty projectTabIndex) or (projectTabIndex != 4)}">
-            <html:link page="/actions/ListProjects.do?method=listProjects&amp;scope=inactive" onmouseover="img_act('tab4')" onmouseout="img_inact('tab4')">
-                <html:img src="/i/or/tab_inactive_projects.gif" width="119"height="36" border="0" imageName="tab4" />
+            <html:link page="/actions/ListProjects.do?method=listProjects&amp;scope=draft" onmouseover="img_act('tab4')"
+                       onmouseout="img_inact('tab4')">
+                <html:img src="/i/or/tab_draft_projects.gif" width="119" height="36" border="0" imageName="tab4"/>
             </html:link>
         </c:if>
-    </c:if>
     </div>
     <div style="float: left;">
     <c:if test="${isAllowedToCreateProject}">

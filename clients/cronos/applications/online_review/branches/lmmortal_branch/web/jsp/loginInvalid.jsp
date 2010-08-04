@@ -41,8 +41,7 @@
 
                         <div align="center">
                             <bean:message key="error.com.cronos.onlinereview.Errors" />
-                            <html:errors />
-                            <br /><span class="bigRed"><bean:message key="error.com.cronos.onlinereview.login.invalid" />
+                            <br/><span class="bigRed"><html:errors suffix="errors.suffix.login"/></span>
                         </div>
 
                     <br />
@@ -69,6 +68,14 @@
                             <tr>
                                 <td class="value"><div align="right"><bean:message key="login.formLogin.password" /> </div></td>
                                 <td class="value"><input type="password" name="password" /></td>
+                            </tr>
+                            <tr>
+                                <td class="value" colspan="2">
+                                    <div class="rememberMe">
+                                        <html:checkbox property="rememberMe" value="on"/>
+                                        <bean:message key="login.formLogin.rememberMe"/>
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
                                 <td class="valueLast">&#160;</td>

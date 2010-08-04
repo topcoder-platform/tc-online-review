@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 
 <table class="scorecard" id="resources_tbl" cellpadding="0" width="100%" style="border-collapse: collapse;">
 	<tr>
@@ -16,15 +17,18 @@
 		<td class="headerC"><!-- @ --></td>
 	</tr>
 	<c:forEach var="resourceIdx" varStatus="resourceStatus" begin="0" end="${fn:length(projectForm.map['resources_role']) - 1}">
+        <c:set var="resourceRoles" value="${resourceStatus.index == 0 ? requestScope.allowedResourceRoles : requestScope.resourceRoles}"/>
 		<tr class="${(resourceStatus.index % 2 == 0) ? 'light' : 'dark'}" style="${projectForm.map['resources_action'][resourceIdx] eq 'delete' ? 'display:none' : ''}">
 			<td class="value" nowrap="nowrap">
 				<html:select styleClass="inputBox" property="resources_role[${resourceIdx}]"
                              disabled="${requestScope.trueSubmitters[resourceIdx] or requestScope.trueReviewers[resourceIdx]}"
 						style="width:150px;" onchange="onResourceRoleChange(this.parentNode.parentNode);">
 					<html:option key="editProject.Resources.SelectRole" value="-1" />
-					<c:forEach items="${requestScope.resourceRoles}" var="role">
-						<html:option key="ResourceRole.${fn:replace(role.name, ' ', '')}" value="${role.id}" />
-					</c:forEach>
+					<c:forEach items="${resourceRoles}" var="role">
+                        <c:if test="${role.id eq projectForm.map['resources_role'][resourceIdx] or not orfn:contains(requestScope.disabledResourceRoles, role.id)}">
+                            <html:option key="ResourceRole.${fn:replace(role.name, ' ', '')}" value="${role.id}"/>
+                        </c:if>
+                    </c:forEach>
 				</html:select>
 				<html:select styleClass="inputBox" property="resources_phase[${resourceIdx}]"
                              disabled="${requestScope.trueSubmitters[resourceIdx] or requestScope.trueReviewers[resourceIdx]}">

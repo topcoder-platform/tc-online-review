@@ -23,9 +23,9 @@ tab3on = new Image(119, 36);
 tab3on.src = "/i/or/tab_create_project_o.gif";
 
 tab4off = new Image(119, 36);
-tab4off.src = "/i/or/tab_inactive_projects.gif";
+tab4off.src = "/i/or/tab_draft_projects.gif";
 tab4on = new Image(119, 36);
-tab4on.src = "/i/or/tab_inactive_projects_o.gif";
+tab4on.src = "/i/or/tab_draft_projects_o.gif";
 
 
 function showLayer(layername) {

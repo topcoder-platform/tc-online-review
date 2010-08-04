@@ -22,8 +22,15 @@ import java.util.Map;
 /**
  * <p>A simple DAO for project phases backed up by Query Tool.</p>
  *
+ * <p>
+ * Version 1.1 (Impersonation Login Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Renamed <code>searchInactiveProjectPhases</code> method to <code>searchDraftProjectPhases</code> method.</li>
+ *   </ol>
+ * </p>
+ * 
  * @author isv
- * @version 1.0
+ * @version 1.1
  */
 public class ProjectPhaseDataAccess extends BaseDataAccess {
 
@@ -46,15 +53,15 @@ public class ProjectPhaseDataAccess extends BaseDataAccess {
     }
 
     /**
-     * <p>Gets the phases for projects of <code>Inactive</code> status.</p>
+     * <p>Gets the phases for projects of <code>Draft</code> status.</p>
      *
      * @param phaseStatuses a <code>PhaseStatus</code> array listing the available phase statuses.
      * @param phaseTypes a <code>PhaseType</code> array listing the available phase types.
      * @return a <code>Map</code> mapping project IDs to the project phases.
      */
-    public Map<Long, Project> searchInactiveProjectPhases(PhaseStatus[] phaseStatuses, PhaseType[] phaseTypes) {
+    public Map<Long, Project> searchDraftProjectPhases(PhaseStatus[] phaseStatuses, PhaseType[] phaseTypes) {
         return searchProjectPhasesByQueryTool("tcs_project_phases_by_status", "stid",
-                                              String.valueOf(PROJECT_STATUS_INACTIVE_ID), phaseStatuses, phaseTypes);
+                                              String.valueOf(PROJECT_STATUS_DRAFT_ID), phaseStatuses, phaseTypes);
     }
 
     /**

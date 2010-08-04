@@ -9,20 +9,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.ejb.CreateException;
 import javax.naming.Context;
@@ -30,9 +20,11 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.dataaccess.ResourceDataAccess;
+import com.cronos.onlinereview.deliverables.*;
 import com.topcoder.management.phase.ContestDependencyAutomation;
 import com.topcoder.management.resource.persistence.ResourcePersistenceException;
 import com.topcoder.management.review.ReviewManagementException;
+import com.topcoder.project.phases.Dependency;
 import com.topcoder.search.builder.filter.EqualToFilter;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
@@ -45,16 +37,6 @@ import org.apache.struts.util.MessageResources;
 
 import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
-import com.cronos.onlinereview.deliverables.AggregationDeliverableChecker;
-import com.cronos.onlinereview.deliverables.AggregationReviewDeliverableChecker;
-import com.cronos.onlinereview.deliverables.AppealResponsesDeliverableChecker;
-import com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker;
-import com.cronos.onlinereview.deliverables.FinalFixesDeliverableChecker;
-import com.cronos.onlinereview.deliverables.FinalReviewDeliverableChecker;
-import com.cronos.onlinereview.deliverables.IndividualReviewDeliverableChecker;
-import com.cronos.onlinereview.deliverables.SubmissionDeliverableChecker;
-import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
-import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.RetrievalException;
 import com.cronos.onlinereview.external.UserRetrieval;
@@ -202,8 +184,19 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.8 (Impersonation Login Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #arePhaseDependenciesMet(Phase, boolean)}, {@link #isPhaseOpen(PhaseStatus)},
+ *     {@link #isPhaseClosed(PhaseStatus)} methods and {@link #PHASE_STATUS_OPEN} and {@link #PHASE_STATUS_CLOSED}
+ *     constants.</li>
+ *     <li>Added {@link #getMyPayments(Resource[], HttpServletRequest)} method.</li>
+ *     <li>Added {@link #getMyPaymentStatuses(Resource[])} method.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv
- * @version 1.7
+ * @version 1.8
  * @since 1.0
  */
 public class ActionsHelper {
@@ -248,6 +241,12 @@ public class ActionsHelper {
      */
     private static final String SOFTWARE_MODERATOR_FORUM_ROLE_PREFIX = "Software_Moderators_";
 
+
+    /** constant for "Open" phase status. */
+    private static final String PHASE_STATUS_OPEN = "Open";
+
+    /** constant for "Closed" phase status. */
+    private static final String PHASE_STATUS_CLOSED = "Closed";
 
 
     /**
@@ -503,9 +502,9 @@ public class ActionsHelper {
      *
      * @return found comment type, or <code>null</code> if a type with the specified name has not
      *         been found in the provided array of comment types.
-     * @param projectCategories
+     * @param commentTypes
      *            an array of comment types to search for wanted comment type among.
-     * @param typeId
+     * @param typeName
      *            the name of the needed comment type.
      * @throws IllegalArgumentException
      *             if any of the parameters are <code>null</code>, or <code>typeName</code>
@@ -1454,6 +1453,9 @@ public class ActionsHelper {
         if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
             return messages.getMessage("ResourceRole." + Constants.MANAGER_ROLE_NAME.replaceAll(" ", ""));
         }
+        if (AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
+            return messages.getMessage("ResourceRole." + Constants.MANAGER_ROLE_NAME.replaceAll(" ", ""));
+        }
 
         List<String> roleNames = new ArrayList<String>();
         // Add individual roles to the list
@@ -1489,48 +1491,53 @@ public class ActionsHelper {
     }
 
     /**
-     * TODO: Write docs for this method.
+     * <p>Gets the list of payments per resource roles assigned to user.</p>
      *
-     * @return
-     * @param myResources
+     * @param myResources a <code>Resource</code> array listing the resources associated with user.
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @return a <code>Map</code> mapping the resource roles to respective payments.
+     * @throws ResourcePersistenceException if an unexpected error occurs.
+     * @since 1.8
      */
-    public static Double determineMyPayment(Resource[] myResources) {
-        double totalPayment = -1.0; // -1 will mean N/A
+    public static Map<ResourceRole, Double> getMyPayments(Resource[] myResources, HttpServletRequest request)
+            throws ResourcePersistenceException {
+        Map<ResourceRole, Double> payments = new LinkedHashMap<ResourceRole, Double>();
 
         for (int i = 0; i < myResources.length; ++i) {
-            // Get a resource for the current iteration
             Resource resource = myResources[i];
             String paymentStr = (String) resource.getProperty("Payment");
             if (paymentStr != null && paymentStr.trim().length() != 0) {
                 double payment = Double.parseDouble(paymentStr);
-                if (totalPayment == -1.0) {
-                    totalPayment = payment;
-                } else {
-                    totalPayment += payment;
-                }
+                payments.put(resource.getResourceRole(), payment);
+            } else {
+                payments.put(resource.getResourceRole(), null);
             }
         }
 
-        return (totalPayment != -1.0) ? new Double(totalPayment) : null;
+        return payments;
     }
 
     /**
-     * TODO: Write docs for this method.
+     * <p>Gets the list of statuses of payments per resource roles assigned to user.</p>
      *
-     * @return
-     * @param myResources
+     * @param myResources a <code>Resource</code> array listing the resources associated with user.
+     * @return a <code>Map</code> mapping the resource roles to respective payment statuses.
+     * @since 1.8
      */
-    public static Boolean determineMyPaymentPaid(Resource[] myResources) {
+    public static Map<ResourceRole, Boolean> getMyPaymentStatuses(Resource[] myResources) {
+        Map<ResourceRole, Boolean> paymentStatuses = new LinkedHashMap<ResourceRole, Boolean>();
+
         for (int i = 0; i < myResources.length; ++i) {
-            // Get a resource for the current iteration
             Resource resource = myResources[i];
             String paid = (String) resource.getProperty("Payment Status");
-            if (!("Yes".equalsIgnoreCase(paid))) {
-                return Boolean.FALSE;
+            if ("Yes".equalsIgnoreCase(paid)) {
+                paymentStatuses.put(resource.getResourceRole(), Boolean.TRUE);
+            } else {
+                paymentStatuses.put(resource.getResourceRole(), Boolean.FALSE);
             }
         }
 
-        return Boolean.TRUE;
+        return paymentStatuses;
     }
 
     /**
@@ -2808,7 +2815,7 @@ public class ActionsHelper {
             checkers.put(Constants.FINAL_FIX_DELIVERABLE_NAME, new FinalFixesDeliverableChecker(dbconn));
             checkers.put(Constants.SCORECARD_COMM_DELIVERABLE_NAME, new SubmitterCommentDeliverableChecker(dbconn));
             checkers.put(Constants.FINAL_REVIEW_PHASE_NAME, new FinalReviewDeliverableChecker(dbconn));
-            checkers.put(Constants.APPROVAL_DELIVERABLE_NAME, committedChecker);
+            checkers.put(Constants.APPROVAL_DELIVERABLE_NAME, new ApprovalDeliverableChecker(dbconn));
             checkers.put(Constants.POST_MORTEM_DELIVERABLE_NAME, submissionIndependentReviewChecker);
 
             // Initialize the PersistenceDeliverableManager
@@ -3282,8 +3289,9 @@ public class ActionsHelper {
         AuthorizationHelper.gatherUserRoles(request, pid);
 
         request.setAttribute("isAdmin",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) || 
-                                    AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)));
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
+                        || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)
+                        || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)));
 
         // If permission parameter was not null or empty string ...
         if (permission != null) {
@@ -4542,5 +4550,70 @@ public class ActionsHelper {
         throws ResourcePersistenceException {
         ResourceDataAccess resourceDataAccess = new ResourceDataAccess();
         return resourceDataAccess.searchUserResources(userId, status, resourceManager);
+    }
+
+    /**
+     * <p>Checks if all all dependencies for specified phase (if any) are met.</p>
+     *
+     * @param phase a <code>Phase</code> providing the details for phase to check.
+     * @param phaseStarting <code>true</code> if specified phase is going to be started; <code>false</code> otherwise.
+     * @return <code>true</code> if specified phase has no dependencies or all existing dependencies have been met;
+     *         <code>false</code> otherwise.
+     * @since 1.8
+     */
+    static boolean arePhaseDependenciesMet(Phase phase, boolean phaseStarting) {
+        Dependency[] dependencies = phase.getAllDependencies();
+
+        if ((dependencies == null) || (dependencies.length == 0)) {
+            return true;
+        }
+
+        for (int i = 0; i < dependencies.length; i++) {
+            Phase dependency = dependencies[i].getDependency();
+            if (phaseStarting) {
+                if (dependencies[i].isDependencyStart() && dependencies[i].isDependentStart()) {
+                    if (!(isPhaseOpen(dependency.getPhaseStatus()) || isPhaseClosed(dependency.getPhaseStatus()))) {
+                        return false;
+                    }
+                } else if (!dependencies[i].isDependencyStart() && dependencies[i].isDependentStart()) {
+                    if (!isPhaseClosed(dependency.getPhaseStatus())) {
+                        return false;
+                    }
+                }
+            } else {
+                if (dependencies[i].isDependencyStart() && !dependencies[i].isDependentStart()) {
+                    if (!(isPhaseOpen(dependency.getPhaseStatus()) || isPhaseClosed(dependency.getPhaseStatus()))) {
+                        return false;
+                    }
+                } else if (!dependencies[i].isDependencyStart() && !dependencies[i].isDependentStart()) {
+                    if (!isPhaseClosed(dependency.getPhaseStatus())) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * <p>Checks if specified phase status is <code>Closed</code> status.</p>
+     *
+     * @param status a <code>PhaseStatus</code> to check.
+     * @return <code>true</code> if specified phase status is <code>Closed</code> status; <code>false</code> otherwise.
+     * @since 1.8
+     */
+    static boolean isPhaseClosed(PhaseStatus status) {
+        return (PHASE_STATUS_CLOSED.equals(status.getName()));
+    }
+
+    /**
+     * <p>Checks if specified phase status is <code>Open</code> status.</p>
+     *
+     * @param status a <code>PhaseStatus</code> to check.
+     * @return <code>true</code> if specified phase status is <code>Open</code> status; <code>false</code> otherwise.
+     * @since 1.8
+     */
+    static boolean isPhaseOpen(PhaseStatus status) {
+        return (PHASE_STATUS_OPEN.equals(status.getName()));
     }
 }
