@@ -734,7 +734,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("isAdmin", isAdmin);
        
        // start BUGR 4309 - Check whether the billing project id is in the user's allowed billing projects list
-       List<ClientProject> availableClientProjects = (List<ClientProject>) request.getAttribute("billingProjects");
+       List<ClientProject> availableClientProjects = ActionsHelper.getClientProjects(request);
        Long currentClientProjectId = (Long) form.get("billing_project");
        boolean inList = false;
        
