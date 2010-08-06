@@ -150,7 +150,7 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *        <code>downloadSubmission</code> to <code>downloadContestSubmission</code> methods.</li>
  *    <li>Added {@link #uploadSpecificationSubmission(ActionMapping, ActionForm, HttpServletRequest,
  *        HttpServletResponse)} method.</li>
- *    <li>Added {@link #uploadContestSubmission(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
+ *    <li>Updated {@link #uploadContestSubmission(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
  *        method to set type for uploaded submission.</li>
  *    <li>Added {@link #downloadSpecificationSubmission(ActionMapping, ActionForm, HttpServletRequest,
  *        HttpServletResponse)} method.</li>
@@ -1053,6 +1053,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * @param request the http request.
      * @param response the http response.
      * @throws BaseException if any error occurs.
+     * @since 1.6
      */
     public ActionForward uploadSpecificationSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
