@@ -833,7 +833,7 @@ Note: The security manager that comes with the app may not be compatible with th
             <fileset dir="lib/tcs/logging_wrapper/1.2/" includes="logging_wrapper.jar"/>
             <fileset dir="lib/tcs/magic_numbers/1.0/" includes="magic_numbers.jar"/>
             <fileset dir="lib/tcs/object_factory/2.0.1/" includes="object_factory.jar"/>
-            <fileset dir="lib/tcs/online_review_deliverables/1.0/" includes="online_review_deliverables.jar"/>
+            <fileset dir="lib/tcs/online_review_deliverables/1.0.1/" includes="online_review_deliverables.jar"/>
             <fileset dir="lib/tcs/online_review_phases/1.4/" includes="online_review_phases.jar"/>
             <fileset dir="lib/tcs/phase_management/1.0.4/" includes="phase_management.jar"/>
             <fileset dir="lib/tcs/phase_management_persistence/1.0.2/" includes="phase_management_persistence.jar"/>
