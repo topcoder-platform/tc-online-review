@@ -823,7 +823,7 @@ Note: The security manager that comes with the app may not be compatible with th
             <fileset dir="lib/tcs/db_connection_factory/1.0/" includes="db_connection_factory.jar"/>
             <fileset dir="lib/tcs/deliverable_management/1.1.0/" includes="deliverable_management.jar"/>
             <fileset dir="lib/tcs/deliverable_management_persistence/1.1.0/" includes="deliverable_management_persistence.jar"/>
-            <fileset dir="lib/tcs/document_generator/2.0/" includes="document_generator.jar"/>
+            <fileset dir="lib/tcs/document_generator/2.1/" includes="document_generator.jar"/>
             <fileset dir="lib/tcs/email_engine/3.0/" includes="email_engine.jar"/>
             <fileset dir="lib/tcs/executable_wrapper/1.0/" includes="executable_wrapper.jar"/>
             <fileset dir="lib/tcs/generic_event_manager/1.0/" includes="generic_event_manager.jar"/>
