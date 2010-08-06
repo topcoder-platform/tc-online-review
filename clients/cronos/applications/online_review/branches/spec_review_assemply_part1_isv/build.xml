@@ -814,7 +814,7 @@ Note: The security manager that comes with the app may not be compatible with th
             <fileset dir="lib/tcs/phase_handler_extend/1.0/" includes="phase_handler_extend.jar"/>
             <fileset dir="lib/tcs/auto_pilot/1.0/" includes="auto_pilot.jar"/>
             <fileset dir="lib/tcs/auto_screening_management/1.0/" includes="auto_screening_management.jar"/>
-            <fileset dir="lib/tcs/base_exception/1.0/" includes="base_exception.jar"/>
+            <fileset dir="lib/tcs/base_exception/2.0.0/" includes="base_exception.jar"/>
             <fileset dir="lib/tcs/class_associations/1.0/" includes="class_associations.jar"/>
             <fileset dir="lib/tcs/command_line_utility/1.0/" includes="command_line_utility.jar"/>
             <fileset dir="lib/tcs/configuration_manager/2.1.5/" includes="configuration_manager.jar"/>
