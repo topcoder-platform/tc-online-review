@@ -68,6 +68,7 @@ CP=$CP:lib/Project.jar
 CP=$CP:lib/tcwebcommon.jar
 CP=$CP:lib/tcsUtil.jar
 CP=$CP:lib/shared.jar
+CP=$CP:lib/pr_phase_handlers.jar
 
 OPTIONS="-cp $CP"
 
