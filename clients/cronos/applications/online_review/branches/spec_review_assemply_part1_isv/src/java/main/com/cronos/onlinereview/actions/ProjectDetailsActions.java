@@ -2540,8 +2540,10 @@ public class ProjectDetailsActions extends DispatchAction {
             if (delivName.equalsIgnoreCase(Constants.SUBMISSION_DELIVERABLE_NAME)) {
                 links[i] = "UploadContestSubmission.do?method=uploadContestSubmission&pid=" + deliverable.getProject();
             } else if (delivName.equalsIgnoreCase(Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME)) {
-                links[i] = "UploadSpecificationSubmission.do?method=uploadSpecificationSubmission&pid="
-                           + deliverable.getProject();
+                if (!deliverable.isComplete()) {
+                    links[i] = "UploadSpecificationSubmission.do?method=uploadSpecificationSubmission&pid="
+                               + deliverable.getProject();
+                }
             } else if (delivName.equalsIgnoreCase(Constants.SPECIFICATION_REVIEW_DELIVERABLE_NAME)) {
                 if (deliverable.getSubmission() == null) {
                     continue;

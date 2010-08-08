@@ -4919,6 +4919,8 @@
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
                 <Value>Observer</Value>
+                <Value>Speciciation Submitter</Value>
+                <Value>Speciciation Reviewer</Value>
             </Property>
             <Property name="View My Submissions">
                 <Value>Submitter</Value>
@@ -4944,6 +4946,10 @@
                 <Value>Specification Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
+                <Value>Speciciation Submitter</Value>
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
             </Property>
             <Property name="View Winning Submission">
                 <Value>Submitter</Value>
