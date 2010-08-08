@@ -4709,7 +4709,6 @@ public class ActionsHelper {
                "id=" + r.getId() +
                ", project=" + r.getProject() +
                ", phase=" + r.getPhase() +
-               ", name='" + r.getName() + '\'' +
                ", resourceRole=" + r.getResourceRole().getName() +
                '}';
     }
