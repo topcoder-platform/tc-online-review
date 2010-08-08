@@ -2251,43 +2251,18 @@ public class ActionsHelper {
      * @return an array of outstanding deliverables.
      * @param allDeliverables
      *            an array of all deliverables to search for outstanding ones.
-     * @param deliverableManager a manager for accessing deliverables.
-     * @throws DeliverableCheckingException if an unexpected error occurs.
-     * @throws SearchBuilderException if an unexpected error occurs.
-     * @throws DeliverablePersistenceException if an unexpected error occurs.
      * @throws IllegalArgumentException
      *             if <code>allDeliverables</code> parameter is <code>null</code>.
      */
-    public static Deliverable[] getOutstandingDeliverables(Deliverable[] allDeliverables,
-                                                           DeliverableManager deliverableManager)
-        throws DeliverableCheckingException, SearchBuilderException, DeliverablePersistenceException {
+    public static Deliverable[] getOutstandingDeliverables(Deliverable[] allDeliverables) {
         // Validate parameter
         validateParameterNotNull(allDeliverables, "allDeliverables");
 
         List<Deliverable> deliverables = new ArrayList<Deliverable>();
         // Perform a search for outstanding deliverables
         for (int i = 0; i < allDeliverables.length; ++i) {
-            Deliverable deliverable = allDeliverables[i];
-            if (!deliverable.isComplete()) {
-                boolean toAdd = true;
-                // For specification submission deliverables there is a need to check if there is no
-                // specification submission already submitted for same phase by another resource
-                if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(deliverable.getName())) {
-                    Filter phaseIdFilter = DeliverableFilterBuilder.createPhaseIdFilter(deliverable.getPhase());
-                    Filter nameFilter =
-                        DeliverableFilterBuilder.createNameFilter(Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME);
-                    AndFilter andFilter = new AndFilter(phaseIdFilter, nameFilter);
-                    Deliverable[] specSubmissionDeliverables = deliverableManager.searchDeliverables(andFilter, false);
-                    for (Deliverable specSubmissionDeliverable : specSubmissionDeliverables) {
-                        if (specSubmissionDeliverable.isComplete()) {
-                            toAdd = false;
-                            break;
-                        }
-                    }
-                }
-                if (toAdd) {
-                    deliverables.add(deliverable);
-                }
+            if (!allDeliverables[i].isComplete()) {
+                deliverables.add(allDeliverables[i]);
             }
         }
         // Return a list of outstanding deliverables converted to array
