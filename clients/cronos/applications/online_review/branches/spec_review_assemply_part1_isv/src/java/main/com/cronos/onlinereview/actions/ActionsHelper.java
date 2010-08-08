@@ -2111,7 +2111,7 @@ public class ActionsHelper {
 
         // A filter to search for deliverables for specific phase(s) of the project
         Filter filter = null;
-
+        System.out.println("ISV : phases.length = " + phases.length);
         switch (phases.length) {
         case 0:
             // No phases -- no deliverables
@@ -2120,6 +2120,7 @@ public class ActionsHelper {
         case 1:
             // If there is only one phase in the provided array,
             // create filter for it directly (no OR filters needed)
+            System.out.println("ISV : phases[0].getId() = " + phases[0].getId());
             filter = DeliverableFilterBuilder.createPhaseIdFilter(phases[0].getId());
             break;
 
@@ -2127,6 +2128,7 @@ public class ActionsHelper {
             List<Filter> phaseFilters = new ArrayList<Filter>();
             // Prepare a list of filters for each phase in the array of phases
             for (int i = 0; i < phases.length; ++i) {
+                System.out.println("ISV : phases[i].getId() = " + phases[i].getId());
                 phaseFilters.add(DeliverableFilterBuilder.createPhaseIdFilter(phases[i].getId()));
             }
             // Combine all filters using OR operator
@@ -2143,6 +2145,7 @@ public class ActionsHelper {
         for (int i = 0; i < allDeliverables.length; ++i) {
             // Get a deliverable for the current iteration
             final Deliverable deliverable = allDeliverables[i];
+            System.out.println("ISV : Deliverable = " + toString(deliverable));
             // Get an ID of resource this deliverable is for
             final long deliverableResourceId = deliverable.getResource();
             Resource forResource = null;
@@ -2157,8 +2160,10 @@ public class ActionsHelper {
             // There must be a resource associated with this deliverable, but
             // in case there isn't skip this deliverable for safety
             if (forResource == null) {
+                System.out.println("ISV : forResource = null");
                 continue;
             }
+            System.out.println("ISV : forResource = " + toString(forResource));
 
             // Make sure this is the correct resource first. Some deliverables are
             // assigned to resources not in their phase, and that's still considered correct
@@ -2168,6 +2173,7 @@ public class ActionsHelper {
             if (forResource.getPhase() != null &&
                     (resourceRole.equalsIgnoreCase(Constants.FINAL_REVIEWER_ROLE_NAME) ||
                     resourceRole.equalsIgnoreCase(Constants.AGGREGATOR_ROLE_NAME) ||
+                    resourceRole.equalsIgnoreCase(Constants.SPECIFICATION_REVIEWER_ROLE_NAME) ||
                     resourceRole.equalsIgnoreCase(Constants.APPROVER_ROLE_NAME))) {
                 final long resourcePhaseId = forResource.getPhase().longValue();
                 for (j = 0; j < phases.length; ++j) {
@@ -2177,6 +2183,7 @@ public class ActionsHelper {
                 }
                 // No phases for this resource, wrong deliverable, skip it
                 if (j == phases.length) {
+                    System.out.println("ISV : forResource has no phase ");
                     continue;
                 }
             }
@@ -2229,6 +2236,7 @@ public class ActionsHelper {
             }
 
             // Add current deliverable to the list of deliverables
+            System.out.println("ISV : Adding deliverable : " + deliverable);
             deliverables.add(deliverable);
         }
 
@@ -4682,5 +4690,27 @@ public class ActionsHelper {
      */
     static boolean isPhaseOpen(PhaseStatus status) {
         return (PHASE_STATUS_OPEN.equals(status.getName()));
+    }
+
+    static String toString(Deliverable d) {
+        return "Deliverable{" +
+               ", name=" + d.getName() +
+               ", project=" + d.getProject() +
+               ", phase=" + d.getPhase() +
+               ", resource=" + d.getResource() +
+               ", submission=" + d.getSubmission() +
+               ", required=" + d.isRequired() +
+               ", completionDate=" + d.getCompletionDate() +
+               '}';
+    }
+
+    static String toString(Resource r) {
+        return "Resource{" +
+               "id=" + r.getId() +
+               ", project=" + r.getProject() +
+               ", phase=" + r.getPhase() +
+               ", name='" + r.getName() + '\'' +
+               ", resourceRole=" + r.getResourceRole().getName() +
+               '}';
     }
 }
