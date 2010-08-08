@@ -2261,8 +2261,9 @@ public class ActionsHelper {
         List<Deliverable> deliverables = new ArrayList<Deliverable>();
         // Perform a search for outstanding deliverables
         for (int i = 0; i < allDeliverables.length; ++i) {
-            if (!allDeliverables[i].isComplete()) {
-                deliverables.add(allDeliverables[i]);
+            Deliverable deliverable = allDeliverables[i];
+            if (!deliverable.isComplete()) {
+                addDeliverable(deliverable, allDeliverables, deliverables);
             }
         }
         // Return a list of outstanding deliverables converted to array
@@ -2304,25 +2305,7 @@ public class ActionsHelper {
             // If found is true, it means that current
             // deliverable is assigned to currently logged in user
             if (found == true) {
-                // For specification submission deliverables there is a need to check if there is no specification
-                // submission deliverable already completed by other resource
-                boolean toAdd = true;
-                if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(deliverable.getName())) {
-                    for (Deliverable otherDeliverable : allDeliverables) {
-                        if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(otherDeliverable.getName())
-                            && (otherDeliverable.getPhase() == deliverable.getPhase())
-                            && otherDeliverable.isComplete()
-                            && (otherDeliverable.getResource() != deliverable.getResource())) {
-                            System.out.println("ISV : GMD : will not add due to " + toString(otherDeliverable));
-                            toAdd = false;
-                            break;
-                        }
-                    }
-                }
-                if (toAdd) {
-                    System.out.println("ISV : GMD : Will Add : " + toString(deliverable));
-                    deliverables.add(deliverable);
-                }
+                addDeliverable(deliverable, allDeliverables, deliverables);
             }
         }
         // Return a list of "my" deliverables converted to array
@@ -4710,6 +4693,37 @@ public class ActionsHelper {
      */
     static boolean isPhaseOpen(PhaseStatus status) {
         return (PHASE_STATUS_OPEN.equals(status.getName()));
+    }
+
+    /**
+     * <p>Adds specified deliverable to specified list of collected deliverables.</p>
+     *
+     * @param deliverable a <code>Deliverable</code> to be added to collected list of deliverables.
+     * @param allDeliverables an <code>Deliverable</code> array listing all deliverables for project.
+     * @param collectedDeliverables a <code>List</code> collecting the valid deliverables.
+     * @since 1.9
+     */
+    private static void addDeliverable(Deliverable deliverable, Deliverable[] allDeliverables,
+                                       List<Deliverable> collectedDeliverables) {
+        // For specification submission deliverables there is a need to check if there is no specification
+        // submission deliverable already completed by other resource
+        boolean toAdd = true;
+        if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(deliverable.getName())) {
+            for (Deliverable otherDeliverable : allDeliverables) {
+                if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(otherDeliverable.getName())
+                    && (otherDeliverable.getPhase() == deliverable.getPhase())
+                    && otherDeliverable.isComplete()
+                    && (otherDeliverable.getResource() != deliverable.getResource())) {
+                    System.out.println("ISV : gOD : will not add due to " + toString(otherDeliverable));
+                    toAdd = false;
+                    break;
+                }
+            }
+        }
+        if (toAdd) {
+            System.out.println("ISV : gOD : Will Add : " + toString(deliverable));
+            collectedDeliverables.add(deliverable);
+        }
     }
 
     static String toString(Deliverable d) {
