@@ -4739,7 +4739,11 @@ public class ActionsHelper {
      */
     public static boolean isSpecificationSubmissionAlreadyDelivered(Deliverable deliverable,
                                                                     Deliverable[] allDeliverables) {
+        System.out.println("ISV : AH : isSpecificationSubmissionAlreadyDelivered : deliverable = "
+                           + toString(deliverable));
         for (Deliverable otherDeliverable : allDeliverables) {
+            System.out.println("ISV : AH : isSpecificationSubmissionAlreadyDelivered : other = "
+                               + toString(otherDeliverable));
             if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(otherDeliverable.getName())
                 && (otherDeliverable.getPhase() == deliverable.getPhase())
                 && otherDeliverable.isComplete()
