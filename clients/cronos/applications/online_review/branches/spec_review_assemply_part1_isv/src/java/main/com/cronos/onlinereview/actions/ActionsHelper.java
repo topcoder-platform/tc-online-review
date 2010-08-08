@@ -2302,7 +2302,22 @@ public class ActionsHelper {
             // If found is true, it means that current
             // deliverable is assigned to currently logged in user
             if (found == true) {
-                deliverables.add(deliverable);
+                // For specification submission deliverables there is a need to check if there is no specification
+                // submission deliverable already completed by other resource
+                boolean toAdd = true;
+                if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(deliverable.getName())) {
+                    for (Deliverable otherDeliverable : allDeliverables) {
+                        if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(otherDeliverable.getName())
+                            && (otherDeliverable.getPhase() == deliverable.getPhase())
+                            && otherDeliverable.isComplete()
+                            && (otherDeliverable.getResource() != deliverable.getResource())) {
+                            toAdd = false;
+                        }
+                    }
+                }
+                if (toAdd) {
+                    deliverables.add(deliverable);
+                }
             }
         }
         // Return a list of "my" deliverables converted to array
