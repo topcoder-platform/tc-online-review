@@ -2291,6 +2291,7 @@ public class ActionsHelper {
         for (int i = 0; i < allDeliverables.length; ++i) {
             // Get a deliverable for current iteration
             Deliverable deliverable = allDeliverables[i];
+            System.out.println("ISV : GMD : Will analyze : " + toString(deliverable));
             boolean found = false;
             // Determine if this deliverable is assigned to currently logged in user
             for (int j = 0; j < myResources.length; ++j) {
@@ -2299,6 +2300,7 @@ public class ActionsHelper {
                     break;
                 }
             }
+            System.out.println("ISV : GMD : found = " + found);
             // If found is true, it means that current
             // deliverable is assigned to currently logged in user
             if (found == true) {
@@ -2311,11 +2313,14 @@ public class ActionsHelper {
                             && (otherDeliverable.getPhase() == deliverable.getPhase())
                             && otherDeliverable.isComplete()
                             && (otherDeliverable.getResource() != deliverable.getResource())) {
+                            System.out.println("ISV : GMD : will not add due to " + toString(otherDeliverable));
                             toAdd = false;
+                            break;
                         }
                     }
                 }
                 if (toAdd) {
+                    System.out.println("ISV : GMD : Will Add : " + toString(deliverable));
                     deliverables.add(deliverable);
                 }
             }
