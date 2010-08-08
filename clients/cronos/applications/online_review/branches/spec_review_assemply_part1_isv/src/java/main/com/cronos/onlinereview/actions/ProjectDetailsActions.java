@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
+import com.topcoder.management.deliverable.DeliverableManager;
 import com.topcoder.management.deliverable.SubmissionType;
 import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
 import com.topcoder.search.builder.SearchBuilderException;
@@ -368,8 +369,9 @@ public class ProjectDetailsActions extends DispatchAction {
             winnerExtUserId = Long.parseLong(winnerExtRefId, 10);
         }
 
+        DeliverableManager deliverableManager = ActionsHelper.createDeliverableManager(request);
         Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForPhases(
-                ActionsHelper.createDeliverableManager(request), activePhases, allProjectResources, winnerExtUserId);
+                deliverableManager, activePhases, allProjectResources, winnerExtUserId);
 
         // For approval phase
         Phase approvalPhase = ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME);
@@ -405,7 +407,8 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         Deliverable[] myDeliverables = ActionsHelper.getMyDeliverables(deliverables, myResources);
-        Deliverable[] outstandingDeliverables = ActionsHelper.getOutstandingDeliverables(deliverables);
+        Deliverable[] outstandingDeliverables = ActionsHelper.getOutstandingDeliverables(deliverables,
+                                                                                         deliverableManager);
 
         request.setAttribute("myDeliverables", myDeliverables);
         request.setAttribute("outstandingDeliverables", outstandingDeliverables);
