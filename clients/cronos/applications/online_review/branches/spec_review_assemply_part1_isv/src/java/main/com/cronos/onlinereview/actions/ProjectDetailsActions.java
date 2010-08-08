@@ -1093,7 +1093,7 @@ public class ProjectDetailsActions extends DispatchAction {
         ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
         UploadManager upMgr = ActionsHelper.createUploadManager(request);
         Submission oldSubmission = ActionsHelper.getActiveSpecificationSubmission(project.getId(),
-            specificationPhase.getId(), upMgr, resourceManager);
+            specificationPhase.getId(), phases, upMgr);
         if (oldSubmission != null) {
             // Disallow submitting more than one Specification Submission for project
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
