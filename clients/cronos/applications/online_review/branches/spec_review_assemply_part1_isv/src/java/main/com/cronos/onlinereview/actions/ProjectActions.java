@@ -3163,7 +3163,7 @@ public class ProjectActions extends DispatchAction {
             if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(deliverable.getName())) {
                 System.out.println("ISV : getMyDeliverablesForPhases : " + ActionsHelper.toString(deliverable));
                 Submission submission = ActionsHelper.getActiveSpecificationSubmission(phases[0].getProject().getId(),
-                    deliverable.getPhase(), phases, ActionsHelper.createUploadManager(request));
+                    deliverable.getPhase(), phases[0].getProject().getAllPhases(), ActionsHelper.createUploadManager(request));
                 System.out.println("ISV : getMyDeliverablesForPhases : submission = " + submission);
                 if ((submission != null) && (submission.getUpload().getOwner() != deliverable.getResource())) {
                     System.out.println("ISV : getMyDeliverablesForPhases : submission.getUpload().getOwner() = " + submission.getUpload().getOwner());
