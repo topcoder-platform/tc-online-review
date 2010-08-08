@@ -200,7 +200,7 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   <ol>
  *     <li>Removed dependency on <code>ContestDependencyAutomation</code> class.</li>
  *     <li>Updated {@link #createDeliverableManager(HttpServletRequest)} method to set the checkers for
- *     <code>Specification Submission</code> and <code>Specification Review</code> deliverbales.</li>
+ *     <code>Specification Submission</code> and <code>Specification Review</code> deliverables.</li>
  *     <li>Added {@link #findSubmissionTypeByName(SubmissionType[], String)} method.</li>
  *     <li>Added {@link #getSpecificationSubmissions(long, UploadManager)} method.</li>
  *     <li>Added {@link #getActiveSpecificationSubmission(long, long, UploadManager, ResourceManager)} method.</li>
@@ -2838,7 +2838,8 @@ public class ActionsHelper {
             DeliverableChecker testCasesChecker = new TestCasesDeliverableChecker(dbconn);
 
             checkers.put(Constants.SUBMISSION_DELIVERABLE_NAME, new SubmissionDeliverableChecker(dbconn));
-            checkers.put(Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME, new SubmissionDeliverableChecker(dbconn));
+            checkers.put(Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME,
+                         new SpecificationSubmissionDeliverableChecker(dbconn));
             checkers.put(Constants.SPECIFICATION_REVIEW_DELIVERABLE_NAME, committedChecker);
             checkers.put(Constants.SCREENING_DELIVERABLE_NAME, new IndividualReviewDeliverableChecker(dbconn));
             checkers.put(Constants.PRIMARY_SCREENING_DELIVERABLE_NAME, committedChecker);
