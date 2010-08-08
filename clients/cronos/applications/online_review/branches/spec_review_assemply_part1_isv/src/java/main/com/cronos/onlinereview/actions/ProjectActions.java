@@ -3093,6 +3093,7 @@ public class ProjectActions extends DispatchAction {
         for (int i = 0; i < deliverables.length; ++i) {
             // Get a deliverable for the current iteration
             Deliverable deliverable = deliverables[i];
+            System.out.println("ISV : getMyDeliverablesForPhases : deliverable = " + ActionsHelper.toString(deliverable));
 
             // Check if this deliverable is for any of the phases in question
             int j = 0;
