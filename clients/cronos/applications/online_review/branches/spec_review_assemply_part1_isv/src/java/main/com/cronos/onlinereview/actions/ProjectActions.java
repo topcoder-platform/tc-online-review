@@ -3154,6 +3154,13 @@ public class ProjectActions extends DispatchAction {
                 }
             }
 
+            // Some additional special checking is need for Specification Submission type of deliverables
+            if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(deliverable.getName())) {
+                if (ActionsHelper.isSpecificationSubmissionAlreadyDelivered(deliverable, deliverables)) {
+                    continue;
+                }
+            }
+
             // Skip deliverables that are not for winning submitter
             if (winnerExtUserId != null) {
                 if (forResource.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME) &&

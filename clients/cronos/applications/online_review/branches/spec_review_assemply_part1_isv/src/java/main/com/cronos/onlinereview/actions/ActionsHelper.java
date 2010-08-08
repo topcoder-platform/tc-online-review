@@ -4719,21 +4719,36 @@ public class ActionsHelper {
         // submission deliverable already completed by other resource
         boolean toAdd = true;
         if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(deliverable.getName())) {
-            for (Deliverable otherDeliverable : allDeliverables) {
-                if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(otherDeliverable.getName())
-                    && (otherDeliverable.getPhase() == deliverable.getPhase())
-                    && otherDeliverable.isComplete()
-                    && (otherDeliverable.getResource() != deliverable.getResource())) {
-                    System.out.println("ISV : gOD : will not add due to " + toString(otherDeliverable));
-                    toAdd = false;
-                    break;
-                }
-            }
+            toAdd = !isSpecificationSubmissionAlreadyDelivered(deliverable, allDeliverables);
         }
         if (toAdd) {
             System.out.println("ISV : gOD : Will Add : " + toString(deliverable));
             collectedDeliverables.add(deliverable);
         }
+    }
+
+    /**
+     * <p>Checks if <code>Specification Submission</code> is already delivered by another resource for same phase mapped
+     * to specified deliverable.</p>
+     *  
+     * @param deliverable a <code>Deliverable</code> to be added to collected list of deliverables.
+     * @param allDeliverables an <code>Deliverable</code> array listing all deliverables for project.
+     * @return <code>true</code> if <code>Specification Submission</code> is already delivered; <code>false</code>
+     *         otherwise.
+     * @since 1.9
+     */
+    public static boolean isSpecificationSubmissionAlreadyDelivered(Deliverable deliverable,
+                                                                    Deliverable[] allDeliverables) {
+        for (Deliverable otherDeliverable : allDeliverables) {
+            if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(otherDeliverable.getName())
+                && (otherDeliverable.getPhase() == deliverable.getPhase())
+                && otherDeliverable.isComplete()
+                && (otherDeliverable.getResource() != deliverable.getResource())) {
+                System.out.println("ISV : gOD : will not add due to " + toString(otherDeliverable));
+                return true;
+            }
+        }
+        return false;
     }
 
     static String toString(Deliverable d) {
