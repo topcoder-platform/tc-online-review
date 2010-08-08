@@ -21,7 +21,9 @@ import java.util.Stack;
 
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.dataaccess.ProjectPhaseDataAccess;
+import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.UploadManager;
+import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
@@ -2822,7 +2824,7 @@ public class ProjectActions extends DispatchAction {
                     }
 
                     deliverables[j] = getMyDeliverablesForPhases(
-                            messages, allMyDeliverables, phases[i][j], myResources[i][j], winnerIdStr);
+                            messages, allMyDeliverables, phases[i][j], myResources[i][j], winnerIdStr, request);
                 }
                 myDeliverables[i] = deliverables;
             }
@@ -3070,9 +3072,12 @@ public class ProjectActions extends DispatchAction {
      *            winner for the project, this parameter must be <code>null</code>.
      * @throws IllegalArgumentException
      *             if parameter <code>messages</code> is <code>null</code>.
+     * @throws UploadPersistenceException if an unexpected error occurs.
+     * @throws SearchBuilderException if an unexpected error occurs.
      */
     private static String getMyDeliverablesForPhases(MessageResources messages,
-            Deliverable[] deliverables, Phase[] phases, Resource[] resources, String winnerExtUserId) {
+            Deliverable[] deliverables, Phase[] phases, Resource[] resources, String winnerExtUserId,
+            HttpServletRequest request) throws SearchBuilderException, UploadPersistenceException {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(messages, "messages");
 
@@ -3156,7 +3161,9 @@ public class ProjectActions extends DispatchAction {
 
             // Some additional special checking is need for Specification Submission type of deliverables
             if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(deliverable.getName())) {
-                if (ActionsHelper.isSpecificationSubmissionAlreadyDelivered(deliverable, deliverables)) {
+                Submission submission = ActionsHelper.getActiveSpecificationSubmission(phases[0].getProject().getId(),
+                    deliverable.getPhase(), phases, ActionsHelper.createUploadManager(request));
+                if ((submission != null) && (submission.getUpload().getOwner() != deliverable.getResource())) {
                     continue;
                 }
             }

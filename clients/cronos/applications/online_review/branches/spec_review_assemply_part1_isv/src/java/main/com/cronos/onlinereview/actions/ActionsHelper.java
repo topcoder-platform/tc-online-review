@@ -203,7 +203,7 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *     <code>Specification Submission</code> and <code>Specification Review</code> deliverables.</li>
  *     <li>Added {@link #findSubmissionTypeByName(SubmissionType[], String)} method.</li>
  *     <li>Added {@link #getSpecificationSubmissions(long, UploadManager)} method.</li>
- *     <li>Added {@link #getActiveSpecificationSubmission(long, long, UploadManager, ResourceManager)} method.</li>
+ *     <li>Added {@link #getActiveSpecificationSubmission(long, long, UploadManager)} method.</li>
  *   </ol>
  * </p>
 
