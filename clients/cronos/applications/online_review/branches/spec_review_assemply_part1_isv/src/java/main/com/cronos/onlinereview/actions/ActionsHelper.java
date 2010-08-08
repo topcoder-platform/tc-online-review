@@ -4464,11 +4464,14 @@ public class ActionsHelper {
                 }
             }
         }
+        System.out.println("ISV : getActiveSpecificationSubmission : specSubmissionPhaseIndex = "
+                           + specSubmissionPhaseIndex);
 
         // Get the respective submission for requested phase based on assumption that there is no more than 1
         // submission for each of the existing specification submission phases 
         if (specSubmissionPhaseIndex >= 0) {
             Submission[] specificationSubmissions = getSpecificationSubmissions(projectId, upMgr);
+            System.out.println("ISV : getActiveSpecificationSubmission : " + specificationSubmissions.length);
             if (specSubmissionPhaseIndex < specificationSubmissions.length) {
                 return specificationSubmissions[specSubmissionPhaseIndex];
             }
@@ -4773,6 +4776,15 @@ public class ActionsHelper {
                ", project=" + r.getProject() +
                ", phase=" + r.getPhase() +
                ", resourceRole=" + r.getResourceRole().getName() +
+               '}';
+    }
+
+    static String toString(Submission s) {
+        return "Submission{" +
+               "upload=" + s.getUpload().getId() +
+               "upload.resourceId=" + s.getUpload().getOwner() +
+               ", submissionStatus=" + s.getSubmissionStatus().getName() +
+               ", submissionType=" + s.getSubmissionType().getName() +
                '}';
     }
 }
