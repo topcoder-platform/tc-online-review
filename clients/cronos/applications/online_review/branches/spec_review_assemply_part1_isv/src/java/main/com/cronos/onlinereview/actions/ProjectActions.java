@@ -2961,6 +2961,7 @@ public class ProjectActions extends DispatchAction {
 
         for (int i = 0; i < projects.length; ++i) {
             for (int j = 0; j < projects[i].length; ++j) {
+                System.out.println("ISV : getDeliverables : will look for project : " + projects[i][j].getId());
                 projectIds.add(projects[i][j].getId());
 
                 // Get an array of active phases for the project
@@ -2971,6 +2972,7 @@ public class ProjectActions extends DispatchAction {
                 }
 
                 for (int k = 0; k < activePhases.length; ++k) {
+                    System.out.println("ISV : getDeliverables : will look for phase : " + activePhases[k].getId());
                     phaseTypeIds.add(activePhases[k].getId());
                 }
 

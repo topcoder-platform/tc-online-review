@@ -1084,4 +1084,8 @@ Note: The security manager that comes with the app may not be compatible with th
         <compile_component component="online_review_deliverables" version="1.0.1"
                            path="../../Components/online_review_deliverables"/>
     </target>
+    <target name="compile_component_4">
+        <compile_component component="deliverable_management_persistence" version="1.1.0"
+                           path="../../ComponentsRepository/deliverable_management_persistence/1.1.0.1"/>
+    </target>
 </project>
