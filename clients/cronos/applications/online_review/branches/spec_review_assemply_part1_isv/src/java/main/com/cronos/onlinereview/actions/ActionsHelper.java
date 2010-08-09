@@ -2386,11 +2386,16 @@ public class ActionsHelper {
         validateParameterNotNull(project, "project");
 
         SubmissionStatus[] allSubmissionStatuses = manager.getAllSubmissionStatuses();
+        SubmissionType[] allSubmissionTypes = manager.getAllSubmissionTypes();
+        SubmissionType submissionType
+            = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes, "Contest Submission");
+
 
         Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
+        Filter filterType = SubmissionFilterBuilder.createSubmissionTypeIdFilter(submissionType.getId());
         Filter filterStatus = createSubmissionStatusFilter(allSubmissionStatuses);
 
-        Filter filter = new AndFilter(filterProject, filterStatus);
+        Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterType));
 
         return manager.searchSubmissions(filter);
     }
