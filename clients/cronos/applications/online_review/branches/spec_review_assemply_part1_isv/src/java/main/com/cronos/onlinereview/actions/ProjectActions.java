@@ -2982,6 +2982,8 @@ public class ProjectActions extends DispatchAction {
                 }
 
                 for (int k = 0; k < myResources.length; ++k) {
+                    System.out.println("ISV : getDeliverables : will look del for resource : "
+                                       + ActionsHelper.toString(myResources[k]));
                     resourceIds.add(myResources[k].getId());
                 }
             }

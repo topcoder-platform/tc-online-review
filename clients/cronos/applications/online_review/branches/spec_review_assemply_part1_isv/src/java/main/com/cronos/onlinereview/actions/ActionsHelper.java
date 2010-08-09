@@ -1986,8 +1986,10 @@ public class ActionsHelper {
         for (int i = 0; i < allResources.length; ++i) {
             // Get a resource for the current iteration
             Resource resource = allResources[i];
+            System.out.println("ISV : AH : getResourcesForProject : analyze : " + toString(resource));
             // Determine if the resource is for current project
             if (resource.getProject() != null && resource.getProject().longValue() == project.getId()) {
+                System.out.println("ISV : AH : getResourcesForProject : will add : " + toString(resource));
                 myResources.add(resource);
             }
         }
@@ -4758,7 +4760,7 @@ public class ActionsHelper {
         return false;
     }
 
-    static String toString(Deliverable d) {
+    public static String toString(Deliverable d) {
         return "Deliverable{" +
                ", name=" + d.getName() +
                ", project=" + d.getProject() +
@@ -4770,7 +4772,7 @@ public class ActionsHelper {
                '}';
     }
 
-    static String toString(Resource r) {
+    public static String toString(Resource r) {
         return "Resource{" +
                "id=" + r.getId() +
                ", project=" + r.getProject() +
@@ -4779,7 +4781,7 @@ public class ActionsHelper {
                '}';
     }
 
-    static String toString(Submission s) {
+    public static String toString(Submission s) {
         return "Submission{" +
                "upload=" + s.getUpload().getId() +
                "upload.resourceId=" + s.getUpload().getOwner() +
