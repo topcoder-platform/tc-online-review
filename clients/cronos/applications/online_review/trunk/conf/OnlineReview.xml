@@ -4966,7 +4966,11 @@
                 <Value>Approver</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
-                <Value>Final Reviewer</Value>		
+                <Value>Reviewer</Value>		
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Final Reviewer</Value>
             </Property>
             <Property name="Perform Post-Mortem Review">
                 <Value>Post-Mortem Reviewer</Value>
