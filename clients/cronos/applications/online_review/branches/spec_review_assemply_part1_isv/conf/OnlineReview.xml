@@ -3167,7 +3167,7 @@
                         INNER JOIN upload
                                 ON submission.upload_id = upload.upload_id
                              WHERE submission_status_lu.name = 'Active'
-                               AND deliverable_lu.per_submission = 1
+                               AND deliverable_lu.per_submission > 0
                                AND upload.project_id = resource.project_id
                                AND deliverable_lu.resource_role_id = resource.resource_role_id
                                AND deliverable_lu.phase_type_id = project_phase.phase_type_id
