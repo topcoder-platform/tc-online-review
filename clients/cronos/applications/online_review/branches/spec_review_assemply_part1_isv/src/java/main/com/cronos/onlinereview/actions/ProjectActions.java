@@ -243,7 +243,7 @@ public class ProjectActions extends DispatchAction {
      */
     private static final Set<String> REVIEWER_ROLE_NAMES = new HashSet<String>(Arrays.asList("Reviewer",
         "Accuracy Reviewer", "Failure Reviewer", "Stress Reviewer", "Screener", "Primary Screener", "Aggregator",
-        "Final Reviewer", "Approver", "Post-Mortem Reviewer"));
+        "Final Reviewer", "Approver", "Post-Mortem Reviewer", "Specification Reviewer"));
 
     /**
      * <p>A <code>Set</code> holding the IDs for reviewer roles which do not allow duplicate users to be assigned to.
@@ -591,7 +591,8 @@ public class ProjectActions extends DispatchAction {
             // Save the flags for those Submitters who have submitted for project and reviewers who have review
             // scorecards associated
             String resourceRoleName = resources[i].getResourceRole().getName();
-            if ("Submitter".equalsIgnoreCase(resourceRoleName)) {
+            if ("Submitter".equalsIgnoreCase(resourceRoleName)
+                || "Specification Submitter".equalsIgnoreCase(resourceRoleName)) {
                 Long[] submissionIds = resources[i].getSubmissions();
                 if ((submissionIds != null) && (submissionIds.length > 0)) {
                     trueSubmitters.put(i + 1, Boolean.TRUE);
@@ -920,7 +921,8 @@ public class ProjectActions extends DispatchAction {
             Set<Long> reviewersWithScorecards = findResourcesWithReviewsForProject(reviewManager, project.getId());
             for (int i = 0; i < resources.length; ++i) {
                 String resourceRoleName = resources[i].getResourceRole().getName();
-                if ("Submitter".equalsIgnoreCase(resourceRoleName)) {
+                if ("Submitter".equalsIgnoreCase(resourceRoleName)
+                    || "Specification Submitter".equalsIgnoreCase(resourceRoleName)) {
                     Long[] submissionIds = resources[i].getSubmissions();
                     if ((submissionIds != null) && (submissionIds.length > 0)) {
                         trueSubmitters.put(i + 1, Boolean.TRUE);
