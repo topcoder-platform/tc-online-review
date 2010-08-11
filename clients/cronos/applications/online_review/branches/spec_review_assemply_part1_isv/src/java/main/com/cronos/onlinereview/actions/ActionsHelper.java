@@ -1986,10 +1986,8 @@ public class ActionsHelper {
         for (int i = 0; i < allResources.length; ++i) {
             // Get a resource for the current iteration
             Resource resource = allResources[i];
-            System.out.println("ISV : AH : getResourcesForProject : analyze : " + toString(resource));
             // Determine if the resource is for current project
             if (resource.getProject() != null && resource.getProject().longValue() == project.getId()) {
-                System.out.println("ISV : AH : getResourcesForProject : will add : " + toString(resource));
                 myResources.add(resource);
             }
         }
@@ -2113,7 +2111,6 @@ public class ActionsHelper {
 
         // A filter to search for deliverables for specific phase(s) of the project
         Filter filter = null;
-        System.out.println("ISV : phases.length = " + phases.length);
         switch (phases.length) {
         case 0:
             // No phases -- no deliverables
@@ -2122,7 +2119,6 @@ public class ActionsHelper {
         case 1:
             // If there is only one phase in the provided array,
             // create filter for it directly (no OR filters needed)
-            System.out.println("ISV : phases[0].getId() = " + phases[0].getId());
             filter = DeliverableFilterBuilder.createPhaseIdFilter(phases[0].getId());
             break;
 
@@ -2130,7 +2126,6 @@ public class ActionsHelper {
             List<Filter> phaseFilters = new ArrayList<Filter>();
             // Prepare a list of filters for each phase in the array of phases
             for (int i = 0; i < phases.length; ++i) {
-                System.out.println("ISV : phases[i].getId() = " + phases[i].getId());
                 phaseFilters.add(DeliverableFilterBuilder.createPhaseIdFilter(phases[i].getId()));
             }
             // Combine all filters using OR operator
@@ -2147,7 +2142,6 @@ public class ActionsHelper {
         for (int i = 0; i < allDeliverables.length; ++i) {
             // Get a deliverable for the current iteration
             final Deliverable deliverable = allDeliverables[i];
-            System.out.println("ISV : Deliverable = " + toString(deliverable));
             // Get an ID of resource this deliverable is for
             final long deliverableResourceId = deliverable.getResource();
             Resource forResource = null;
@@ -2162,10 +2156,8 @@ public class ActionsHelper {
             // There must be a resource associated with this deliverable, but
             // in case there isn't skip this deliverable for safety
             if (forResource == null) {
-                System.out.println("ISV : forResource = null");
                 continue;
             }
-            System.out.println("ISV : forResource = " + toString(forResource));
 
             // Make sure this is the correct resource first. Some deliverables are
             // assigned to resources not in their phase, and that's still considered correct
@@ -2185,7 +2177,6 @@ public class ActionsHelper {
                 }
                 // No phases for this resource, wrong deliverable, skip it
                 if (j == phases.length) {
-                    System.out.println("ISV : forResource has no phase ");
                     continue;
                 }
             }
@@ -2238,7 +2229,6 @@ public class ActionsHelper {
             }
 
             // Add current deliverable to the list of deliverables
-            System.out.println("ISV : Adding deliverable : " + deliverable);
             deliverables.add(deliverable);
         }
 
@@ -2294,7 +2284,6 @@ public class ActionsHelper {
         for (int i = 0; i < allDeliverables.length; ++i) {
             // Get a deliverable for current iteration
             Deliverable deliverable = allDeliverables[i];
-            System.out.println("ISV : GMD : Will analyze : " + toString(deliverable));
             boolean found = false;
             // Determine if this deliverable is assigned to currently logged in user
             for (int j = 0; j < myResources.length; ++j) {
@@ -2303,7 +2292,6 @@ public class ActionsHelper {
                     break;
                 }
             }
-            System.out.println("ISV : GMD : found = " + found);
             // If found is true, it means that current
             // deliverable is assigned to currently logged in user
             if (found == true) {
@@ -4471,14 +4459,11 @@ public class ActionsHelper {
                 }
             }
         }
-        System.out.println("ISV : getActiveSpecificationSubmission : specSubmissionPhaseIndex = "
-                           + specSubmissionPhaseIndex);
 
         // Get the respective submission for requested phase based on assumption that there is no more than 1
         // submission for each of the existing specification submission phases 
         if (specSubmissionPhaseIndex >= 0) {
             Submission[] specificationSubmissions = getSpecificationSubmissions(projectId, upMgr);
-            System.out.println("ISV : getActiveSpecificationSubmission : " + specificationSubmissions.length);
             if (specSubmissionPhaseIndex < specificationSubmissions.length) {
                 return specificationSubmissions[specSubmissionPhaseIndex];
             }
@@ -4732,7 +4717,6 @@ public class ActionsHelper {
             toAdd = !isSpecificationSubmissionAlreadyDelivered(deliverable, allDeliverables);
         }
         if (toAdd) {
-            System.out.println("ISV : gOD : Will Add : " + toString(deliverable));
             collectedDeliverables.add(deliverable);
         }
     }
@@ -4749,16 +4733,11 @@ public class ActionsHelper {
      */
     public static boolean isSpecificationSubmissionAlreadyDelivered(Deliverable deliverable,
                                                                     Deliverable[] allDeliverables) {
-        System.out.println("ISV : AH : isSpecificationSubmissionAlreadyDelivered : deliverable = "
-                           + toString(deliverable));
         for (Deliverable otherDeliverable : allDeliverables) {
-            System.out.println("ISV : AH : isSpecificationSubmissionAlreadyDelivered : other = "
-                               + toString(otherDeliverable));
             if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(otherDeliverable.getName())
                 && (otherDeliverable.getPhase() == deliverable.getPhase())
                 && otherDeliverable.isComplete()
                 && (otherDeliverable.getResource() != deliverable.getResource())) {
-                System.out.println("ISV : gOD : will not add due to " + toString(otherDeliverable));
                 return true;
             }
         }

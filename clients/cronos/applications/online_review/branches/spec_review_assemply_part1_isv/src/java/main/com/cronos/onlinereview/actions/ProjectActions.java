@@ -2963,7 +2963,6 @@ public class ProjectActions extends DispatchAction {
 
         for (int i = 0; i < projects.length; ++i) {
             for (int j = 0; j < projects[i].length; ++j) {
-                System.out.println("ISV : getDeliverables : will look for project : " + projects[i][j].getId());
                 projectIds.add(projects[i][j].getId());
 
                 // Get an array of active phases for the project
@@ -2974,7 +2973,6 @@ public class ProjectActions extends DispatchAction {
                 }
 
                 for (int k = 0; k < activePhases.length; ++k) {
-                    System.out.println("ISV : getDeliverables : will look for phase : " + activePhases[k].getId());
                     phaseTypeIds.add(activePhases[k].getId());
                 }
 
@@ -2986,8 +2984,6 @@ public class ProjectActions extends DispatchAction {
                 }
 
                 for (int k = 0; k < myResources.length; ++k) {
-                    System.out.println("ISV : getDeliverables : will look del for resource : "
-                                       + ActionsHelper.toString(myResources[k]));
                     resourceIds.add(myResources[k].getId());
                 }
             }
@@ -3099,7 +3095,6 @@ public class ProjectActions extends DispatchAction {
         for (int i = 0; i < deliverables.length; ++i) {
             // Get a deliverable for the current iteration
             Deliverable deliverable = deliverables[i];
-            System.out.println("ISV : getMyDeliverablesForPhases : deliverable = " + ActionsHelper.toString(deliverable));
 
             // Check if this deliverable is for any of the phases in question
             int j = 0;
@@ -3168,12 +3163,9 @@ public class ProjectActions extends DispatchAction {
 
             // Some additional special checking is need for Specification Submission type of deliverables
             if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(deliverable.getName())) {
-                System.out.println("ISV : getMyDeliverablesForPhases : " + ActionsHelper.toString(deliverable));
                 Submission submission = ActionsHelper.getActiveSpecificationSubmission(phases[0].getProject().getId(),
                     deliverable.getPhase(), phases[0].getProject().getAllPhases(), ActionsHelper.createUploadManager(request));
-                System.out.println("ISV : getMyDeliverablesForPhases : submission = " + submission);
                 if ((submission != null) && (submission.getUpload().getOwner() != deliverable.getResource())) {
-                    System.out.println("ISV : getMyDeliverablesForPhases : submission.getUpload().getOwner() = " + submission.getUpload().getOwner());
                     continue;
                 }
             }

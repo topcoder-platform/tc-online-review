@@ -97,8 +97,6 @@ public class ResourceDataAccess extends BaseDataAccess {
             resource.setModificationUser(modifyUser);
             resource.setModificationTimestamp(modifyDate);
 
-            System.out.println("ISV : RDA : found : " + ActionsHelper.toString(resource));
-
             resources[i] = resource;
             cachedResources.put(resourceId, resource);
         }
