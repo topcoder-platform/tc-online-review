@@ -878,7 +878,7 @@
                     var dependencyStart =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-start")[0]);
                     getChildByNamePrefix(newPhaseRow, "phase_start_phase").value = "template_" + dependencyId;
                     getChildByNamePrefix(newPhaseRow, "phase_start_when").value = (dependencyStart == "true") ? "starts" : "ends";
-                    var phaseStartButtons = getChildrenByNamePrefix(newPhaseRow, "phase_start_by_phase");
+                    var phaseStartButtons = getChildByNamePrefix(newPhaseRow, "phase_start_by_phase");
                     phaseStartButtons.checked = true;
                     getChildByNamePrefix(newPhaseRow, "phase_start_phase").removeAttribute("disabled");
                     getChildByNamePrefix(newPhaseRow, "phase_start_when").removeAttribute("disabled");
