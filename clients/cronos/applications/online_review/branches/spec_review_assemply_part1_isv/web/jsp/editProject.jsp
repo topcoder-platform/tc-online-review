@@ -849,6 +849,9 @@
 
                 getChildByNamePrefix(newPhaseRow, "phase_start_date").value = startDateParts[0];
                 getChildByNamePrefix(newPhaseRow, "phase_start_time").value = startDateParts[1];
+                if (startDateParts[0] && startDateParts[0] != '') {
+                    getChildByNamePrefix(newPhaseRow, "phase_start_by_fixed_time").checked = true;
+                }
 
                 var endDate = dojo.dom.textContent(phaseNodes[i].getElementsByTagName("end-date")[0]);
                 var endDateParts = endDate.split(" ");
@@ -867,7 +870,8 @@
             for (var i = 0; i < phaseNodes.length; i++) {
                 var newPhaseRow = phaseRows[i];
                 var dependencies = phaseNodes[i].getElementsByTagName("dependency");
-//                var phaseStartButtons = getChildrenByNamePrefix(newPhaseRow, "phase_start_by_phase");
+                var phaseStartButtons = getChildrenByNamePrefix(newPhaseRow, "phase_start_by_phase");
+                phaseStartButtons.checked = (dependencies.length != 0);
 //                for (var j = 0; j < phaseStartButtons.length; j++) {
 //                    if (phaseStartButtons[j].value == "true") {
 //                        phaseStartButtons[j].checked = (dependencies.length != 0);

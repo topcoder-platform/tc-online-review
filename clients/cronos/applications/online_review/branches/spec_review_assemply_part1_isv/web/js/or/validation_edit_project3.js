@@ -484,7 +484,10 @@ function validate_form(thisForm, popup) {
     return msgList.length == 0;
 }
 
-function fixedStartTimeBoxChanged(box, phaseIdx) {
+function fixedStartTimeBoxChanged(box, p) {
+    var p1 = box.name.indexOf('[');
+    var p2 = box.name.indexOf(']');
+    var phaseIdx = box.name.substring(p1 + 1, p2);
     var form = box.form;
     if (box.checked) {
         form["phase_start_date[" + phaseIdx + "]"].removeAttribute("disabled");
@@ -496,7 +499,10 @@ function fixedStartTimeBoxChanged(box, phaseIdx) {
     return true;
 }
 
-function phaseStartByPhaseBoxChanged(box, phaseIdx) {
+function phaseStartByPhaseBoxChanged(box, p) {
+    var p1 = box.name.indexOf('[');
+    var p2 = box.name.indexOf(']');
+    var phaseIdx = box.name.substring(p1 + 1, p2);
     var form = box.form;
     if (box.checked) {
         form["phase_start_phase[" + phaseIdx + "]"].removeAttribute("disabled");
