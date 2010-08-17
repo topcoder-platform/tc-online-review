@@ -483,3 +483,14 @@ function validate_form(thisForm, popup) {
 
     return msgList.length == 0;
 }
+
+function fixedStartTimeBoxChanged(box, phaseIdx) {
+    alert(box.checked);
+    alert(box.form);
+    var thisForm = box.form;
+}
+
+function phaseStartByPhaseBoxChanged(box, phaseIdx) {
+    alert(box.checked);
+    alert(box.form);
+}
