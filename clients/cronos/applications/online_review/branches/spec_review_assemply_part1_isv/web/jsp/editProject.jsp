@@ -851,6 +851,8 @@
                 getChildByNamePrefix(newPhaseRow, "phase_start_time").value = startDateParts[1];
                 if (startDateParts[0] && startDateParts[0] != '') {
                     getChildByNamePrefix(newPhaseRow, "phase_start_by_fixed_time").checked = true;
+                    getChildByNamePrefix(newPhaseRow, "phase_start_date").removeAttribute("disabled");
+                    getChildByNamePrefix(newPhaseRow, "phase_start_time").removeAttribute("disabled");
                 }
 
                 var endDate = dojo.dom.textContent(phaseNodes[i].getElementsByTagName("end-date")[0]);
@@ -870,21 +872,19 @@
             for (var i = 0; i < phaseNodes.length; i++) {
                 var newPhaseRow = phaseRows[i];
                 var dependencies = phaseNodes[i].getElementsByTagName("dependency");
-                var phaseStartButtons = getChildrenByNamePrefix(newPhaseRow, "phase_start_by_phase");
-                phaseStartButtons.checked = (dependencies.length != 0);
-//                for (var j = 0; j < phaseStartButtons.length; j++) {
-//                    if (phaseStartButtons[j].value == "true") {
-//                        phaseStartButtons[j].checked = (dependencies.length != 0);
-//                    } else {
-//                        phaseStartButtons[j].checked = (dependencies.length == 0);
-//                    }
-//                }
 
                 if (dependencies.length != 0) {
                     var dependencyId =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-id")[0]);
                     var dependencyStart =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-start")[0]);
                     getChildByNamePrefix(newPhaseRow, "phase_start_phase").value = "template_" + dependencyId;
                     getChildByNamePrefix(newPhaseRow, "phase_start_when").value = (dependencyStart == "true") ? "starts" : "ends";
+                    var phaseStartButtons = getChildrenByNamePrefix(newPhaseRow, "phase_start_by_phase");
+                    phaseStartButtons.checked = true;
+                    getChildrenByNamePrefix(newPhaseRow, "phase_start_phase").removeAttribute("disabled");
+                    getChildrenByNamePrefix(newPhaseRow, "phase_start_when").removeAttribute("disabled");
+                    getChildrenByNamePrefix(newPhaseRow, "phase_start_plusminus").removeAttribute("disabled");
+                    getChildrenByNamePrefix(newPhaseRow, "phase_start_amount").removeAttribute("disabled");
+                    getChildrenByNamePrefix(newPhaseRow, "phase_start_dayshrs").removeAttribute("disabled");
                 }
             }
 
