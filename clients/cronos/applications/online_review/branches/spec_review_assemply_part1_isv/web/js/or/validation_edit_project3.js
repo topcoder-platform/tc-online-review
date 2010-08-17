@@ -487,10 +487,11 @@ function validate_form(thisForm, popup) {
 function fixedStartTimeBoxChanged(box, phaseIdx) {
     alert(box.checked);
     alert(box.form);
-    var thisForm = box.form;
+    return true;
 }
 
 function phaseStartByPhaseBoxChanged(box, phaseIdx) {
     alert(box.checked);
     alert(box.form);
+    return true;
 }

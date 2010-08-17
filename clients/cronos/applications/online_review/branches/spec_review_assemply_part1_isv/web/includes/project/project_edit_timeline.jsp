@@ -98,12 +98,12 @@
                 <html:hidden property="phase_name[${phaseIdx}]" disabled="${isPhaseClosed}" />
                 <html:hidden property="phase_number[${phaseIdx}]" disabled="${isPhaseClosed}" />
                 <html:checkbox property="phase_start_by_fixed_time[${phaseIdx}]" disabled="${isPhaseClosed}"
-                               onclick="fixedStartTimeBoxChanged(this, ${phaseIdx})"/>
+                               onclick="return fixedStartTimeBoxChanged(this, ${phaseIdx})"/>
                 <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="phase_start_date[${phaseIdx}]" disabled="${isPhaseClosed or not isFixedStartTimeSet}"/>
                 <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="phase_start_time[${phaseIdx}]" disabled="${isPhaseClosed or not isFixedStartTimeSet}"/>
                 <c:out value="${currentTimezone}"/><br />
                 <html:checkbox property="phase_start_by_phase[${phaseIdx}]" disabled="${isPhaseClosed}"
-                               onclick="phaseStartByPhaseBoxChanged(this, ${phaseIdx})"/>
+                               onclick="return phaseStartByPhaseBoxChanged(this, ${phaseIdx})"/>
                 <bean:message key="editProject.Phases.When" />
                 <div style="margin-left: 20px;">
                 <html:select styleClass="inputBox" property="phase_start_phase[${phaseIdx}]" style="width:150px;" disabled="${isPhaseClosed or not isPhaseDependencySet}">
