@@ -11,7 +11,7 @@
         <PhaseType id="appeals_response" typeId="6" typeName="Appeals Response"/>
         <PhaseType id="aggregation" typeId="7" typeName="Aggregation"/>
         <PhaseType id="aggregation_review" typeId="8" typeName="Aggregation Review"/>
-        <PhaseType id="final_fixes" typeId="9" typeName="Final Fixes"/>
+        <PhaseType id="final_fixes" typeId="9" typeName="Final Fix"/>
         <PhaseType id="final_review" typeId="10" typeName="Final Review"/>
         <PhaseType id="specification_submission" typeId="13" typeName="Specification Submission"/>
         <PhaseType id="specification_review" typeId="14" typeName="Specification Review"/>
