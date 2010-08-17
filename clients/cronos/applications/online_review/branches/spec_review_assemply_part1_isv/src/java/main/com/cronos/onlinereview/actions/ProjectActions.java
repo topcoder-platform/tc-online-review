@@ -3163,8 +3163,9 @@ public class ProjectActions extends DispatchAction {
 
             // Some additional special checking is need for Specification Submission type of deliverables
             if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(deliverable.getName())) {
-                Submission submission = ActionsHelper.getActiveSpecificationSubmission(phases[0].getProject().getId(),
-                    deliverable.getPhase(), phases[0].getProject().getAllPhases(), ActionsHelper.createUploadManager(request));
+                Submission submission
+                    = ActionsHelper.getActiveSpecificationSubmission(phases[0].getProject().getId(),
+                                                                     ActionsHelper.createUploadManager(request));
                 if ((submission != null) && (submission.getUpload().getOwner() != deliverable.getResource())) {
                     continue;
                 }

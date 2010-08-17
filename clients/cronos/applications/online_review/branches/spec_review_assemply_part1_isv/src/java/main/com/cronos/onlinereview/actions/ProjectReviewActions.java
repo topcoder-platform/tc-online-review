@@ -1499,8 +1499,8 @@ public class ProjectReviewActions extends DispatchAction {
         Review review = verification.getReview();
 
         // Check if project has SVN Module property set
-        Object svnModule = verification.getProject().getProperty("SVN Module");
-        request.setAttribute("projectHasSVNModuleSet", svnModule != null);
+        String svnModule = (String) verification.getProject().getProperty("SVN Module");
+        request.setAttribute("projectHasSVNModuleSet", (svnModule != null) && (svnModule.trim().length() > 0));
 
         // Obtain an instance of Scorecard Manager
         ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
@@ -1662,8 +1662,8 @@ public class ProjectReviewActions extends DispatchAction {
         Review review = verification.getReview();
 
         // Check if project has SVN Module property set
-        Object svnModule = verification.getProject().getProperty("SVN Module");
-        request.setAttribute("projectHasSVNModuleSet", svnModule != null);
+        String svnModule = verification.getProject().getProperty("SVN Module");
+        request.setAttribute("projectHasSVNModuleSet", (svnModule != null) && (svnModule.trim().length() > 0));
 
         // Obtain an instance of Scorecard Manager
         ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
@@ -5180,13 +5180,13 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * This method is an implementation of &quot;Create Approval&quot; Struts Action defined for
+     * This method is an implementation of &quot;Create Specification Review&quot; Struts Action defined for
      * this assembly, which is supposed to gather needed information (scorecard template) and
-     * present it to editReview.jsp page, which will fill the required fields and post them to the
-     * &quot;Save Approval&quot; action. The action implemented by this method is executed to edit
-     * approval that does not exist yet, and hence is supposed to be created.
+     * present it to editSpecificationReview page, which will fill the required fields and post them to the
+     * &quot;Save Specification Review&quot; action. The action implemented by this method is executed to edit
+     * specification review that does not exist yet, and hence is supposed to be created.
      *
-     * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editSpecificationReview.jsp page (as
      *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
      *         to the /jsp/userError.jsp page, which displays information about an error that is
      *         usually caused by incorrect user input (such as absent submission id, or the lack of
@@ -5205,14 +5205,14 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * This method is an implementation of &quot;Edit Post-Mortem&quot; Struts Action defined for this
-     * assembly, which is supposed to gather needed information (post-mortem and scorecard template)
-     * and present it to editReview.jsp page, which will fill the required fields and post them to
-     * the &quot;Save Post-Mortem&quot; action. The action implemented by this method is executed to
-     * edit post-mortem that has already been created, but has not been submitted yet, and hence is
+     * This method is an implementation of &quot;Edit Specification Review&quot; Struts Action defined for this
+     * assembly, which is supposed to gather needed information (specification review scorecard template)
+     * and present it to editSpecificationReview.jsp page, which will fill the required fields and post them to
+     * the &quot;Save Specification Reviewquot; action. The action implemented by this method is executed to
+     * edit specification review that has already been created, but has not been submitted yet, and hence is
      * supposed to be edited.
      *
-     * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editSpecificationReview.jsp page (as
      *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
      *         to the /jsp/userError.jsp page, which displays information about an error that is
      *         usually caused by incorrect user input (such as absent review id, or the lack of
@@ -5232,9 +5232,9 @@ public class ProjectReviewActions extends DispatchAction {
 
     /**
      * This method is an implementation of &quot;Save Specification Review&quot; Struts Action defined for this
-     * assembly, which is supposed to save information posted from /jsp/editReview.jsp page. This
-     * method will either create new post-mortem or update (edit) an existing one depending on which
-     * action was called to display /jsp/editReview.jsp page.
+     * assembly, which is supposed to save information posted from /jsp/editSpecificationReview.jsp page. This
+     * method will either create new specification review or update (edit) an existing one depending on which
+     * action was called to display /jsp/editSpecificationReview.jsp page.
      *
      * @return &quot;success&quot; forward, which forwards to the &quot;View Project Details&quot;
      *         action, or &quot;userError&quot; forward, which forwards to the /jsp/userError.jsp
@@ -5255,9 +5255,9 @@ public class ProjectReviewActions extends DispatchAction {
 
     /**
      * This method is an implementation of &quot;View Specification Review&quot; Struts Action defined for this
-     * assembly, which is supposed to view completed post-mortem.
+     * assembly, which is supposed to view completed specification review.
      *
-     * @return &quot;success&quot; forward, which forwards to the /jsp/viewReview.jsp page (as
+     * @return &quot;success&quot; forward, which forwards to the /jsp/viewSpecificationReview.jsp page (as
      *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
      *         to the /jsp/userError.jsp page, which displays information about an error that is
      *         usually caused by incorrect user input (such as absent review id, or the lack of

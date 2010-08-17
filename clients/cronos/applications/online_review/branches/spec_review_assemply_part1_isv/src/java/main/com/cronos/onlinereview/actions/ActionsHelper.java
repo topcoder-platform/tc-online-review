@@ -26,6 +26,7 @@ import com.topcoder.management.resource.persistence.ResourcePersistenceException
 import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.project.phases.Dependency;
 import com.topcoder.search.builder.filter.EqualToFilter;
+import com.topcoder.search.builder.filter.NotFilter;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForward;
@@ -4436,39 +4437,30 @@ public class ActionsHelper {
      * <p>Gets the active specification submission for the specified project and specified phase.</p>
      *
      * @param projectId a <code>long</code> providing the ID of a project.
-     * @param phaseId a <code>long</code> providing the ID of a phase.
-     * @param phases a <code>Phase</code> array listing the existing phases for project. 
      * @param upMgr an <code>UploadManager</code> to be used for searching for submissions.
      * @return a <code>Submission</code> array listing the specification submissions for specified project.
      * @throws UploadPersistenceException if an unexpected error occurs.
      * @throws SearchBuilderException if an unexpected error occurs.
      * @since 1.9
      */
-    public static Submission getActiveSpecificationSubmission(long projectId, long phaseId, Phase[] phases,
-                                                              UploadManager upMgr)
+    public static Submission getActiveSpecificationSubmission(long projectId, UploadManager upMgr)
         throws UploadPersistenceException, SearchBuilderException {
-        // Locate the index of requested specification submission phase among other specification submission phases
-        // for project
-        int specSubmissionPhaseIndex = -1;
-        for (int i = 0; i < phases.length; i++) {
-            Phase projectPhase = phases[i];
-            if (projectPhase.getPhaseType().getName().equals(Constants.SPECIFICATION_SUBMISSION_PHASE_NAME)) {
-                specSubmissionPhaseIndex++;
-                if (projectPhase.getId() == phaseId) {
-                    break;
-                }
-            }
-        }
 
-        // Get the respective submission for requested phase based on assumption that there is no more than 1
-        // submission for each of the existing specification submission phases 
-        if (specSubmissionPhaseIndex >= 0) {
-            Submission[] specificationSubmissions = getSpecificationSubmissions(projectId, upMgr);
-            if (specSubmissionPhaseIndex < specificationSubmissions.length) {
-                return specificationSubmissions[specSubmissionPhaseIndex];
-            }
-        }
-        return null;
+        SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
+        SubmissionType specSubmissionType
+            = ActionsHelper.findSubmissionTypeByName(submissionTypes, "Specification Submission");
+        SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
+        SubmissionStatus activeSubmissionStatus
+            = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active");
+
+        Filter submissionTypeFilter
+            = SubmissionFilterBuilder.createSubmissionTypeIdFilter(specSubmissionType.getId());
+        Filter projectFilter = SubmissionFilterBuilder.createProjectIdFilter(projectId);
+        Filter statusFilter = SubmissionFilterBuilder.createSubmissionStatusIdFilter(activeSubmissionStatus.getId());
+
+        Filter filter = new AndFilter(Arrays.asList(projectFilter, submissionTypeFilter, statusFilter));
+        Submission[] specificationSubmissions = upMgr.searchSubmissions(filter);
+        return specificationSubmissions[0];
     }
 
     /**

@@ -100,7 +100,7 @@
                 <c:out value="${currentTimezone}"/><br />
                 <bean:message key="editProject.Phases.When" />
                 <div style="margin-left: 20px;">
-                <html:select styleClass="inputBox" property="phase_start_phase[${phaseIdx}]" style="width:120px;" disabled="${isPhaseClosed}">
+                <html:select styleClass="inputBox" property="phase_start_phase[${phaseIdx}]" style="width:150px;" disabled="${isPhaseClosed}">
                     <html:option key="editProject.Phases.SelectPhase" value="" />
                     <c:forEach var="i" begin="1" end="${fn:length(projectForm.map['phase_id']) - 1}">
                         <c:if test="${phaseIdx ne i}">
@@ -416,7 +416,7 @@
 --%>
             <bean:message key="editProject.Phases.When" />
             <div style="margin-left: 20px;">
-            <html:select styleClass="inputBox" property="addphase_start_phase" style="width:120px;">
+            <html:select styleClass="inputBox" property="addphase_start_phase" style="width:150px;">
                 <html:option key="editProject.Phases.SelectPhase" value="" />
                 <c:forEach var="i" begin="1" end="${fn:length(projectForm.map['phase_id']) - 1}">
                     <html:option value="${projectForm.map['phase_js_id'][i]}">${projectForm.map['phase_name'][i]}</html:option>
