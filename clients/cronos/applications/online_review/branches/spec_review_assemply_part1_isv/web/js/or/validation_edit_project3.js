@@ -485,13 +485,31 @@ function validate_form(thisForm, popup) {
 }
 
 function fixedStartTimeBoxChanged(box, phaseIdx) {
-    alert(box.checked);
-    alert(box.form);
+    var form = box.form;
+    if (box.checked) {
+        form["phase_start_date[" + phaseIdx + "]"].removeAttribute("disabled");
+        form["phase_start_time[" + phaseIdx + "]"].removeAttribute("disabled");
+    } else {
+        form["phase_start_date[" + phaseIdx + "]"].setAttribute("disabled", "disabled");
+        form["phase_start_time[" + phaseIdx + "]"].setAttribute("disabled", "disabled");
+    }
     return true;
 }
 
 function phaseStartByPhaseBoxChanged(box, phaseIdx) {
-    alert(box.checked);
-    alert(box.form);
+    var form = box.form;
+    if (box.checked) {
+        form["phase_start_phase[" + phaseIdx + "]"].removeAttribute("disabled");
+        form["phase_start_when[" + phaseIdx + "]"].removeAttribute("disabled");
+        form["phase_start_plusminus[" + phaseIdx + "]"].removeAttribute("disabled");
+        form["phase_start_amount[" + phaseIdx + "]"].removeAttribute("disabled");
+        form["phase_start_dayshrs[" + phaseIdx + "]"].removeAttribute("disabled");
+    } else {
+        form["phase_start_phase[" + phaseIdx + "]"].setAttribute("disabled", "disabled");
+        form["phase_start_when[" + phaseIdx + "]"].setAttribute("disabled", "disabled");
+        form["phase_start_plusminus[" + phaseIdx + "]"].setAttribute("disabled", "disabled");
+        form["phase_start_amount[" + phaseIdx + "]"].setAttribute("disabled", "disabled");
+        form["phase_start_dayshrs[" + phaseIdx + "]"].setAttribute("disabled", "disabled");
+    }
     return true;
 }
