@@ -3,8 +3,6 @@
 <Template name="Application">
     <!--	 An enumeration of project phase types defined in this template -->
     <PhaseTypes>
-        <PhaseType id="specification_submission" typeId="13" typeName="Specification Submission"/>
-        <PhaseType id="specification_review" typeId="14" typeName="Specification Review"/>
         <PhaseType id="registration" typeId="1" typeName="Registration"/>
         <PhaseType id="submission" typeId="2" typeName="Submission"/>
         <PhaseType id="screening" typeId="3" typeName="Screening"/>
@@ -15,6 +13,8 @@
         <PhaseType id="aggregation_review" typeId="8" typeName="Aggregation Review"/>
         <PhaseType id="final_fixes" typeId="9" typeName="Final Fixes"/>
         <PhaseType id="final_review" typeId="10" typeName="Final Review"/>
+        <PhaseType id="specification_submission" typeId="13" typeName="Specification Submission"/>
+        <PhaseType id="specification_review" typeId="14" typeName="Specification Review"/>
     </PhaseTypes>
     <!--	 A set of project phases defined in this template. -->
     <Phases>
