@@ -313,10 +313,10 @@ function validate_timeline(thisForm, msgList) {
         var startByPhase = false;
 
 		// validate start date
-    	var start_date = thisForm["phase_start_date[" + i + "]"].value;
-        var start_time = thisForm["phase_start_time[" + i + "]"].value;
-        if (start_date.length > 0 || start_time.length > 0) {
+        if (thisForm["phase_start_by_fixed_time[" + i + "]"].checked) {
             startByFixedTime = true;
+            var start_date = thisForm["phase_start_date[" + i + "]"].value;
+            var start_time = thisForm["phase_start_time[" + i + "]"].value;
             if (!isDateString(start_date)) {
                 msg = "Start Date should be in the form of \"mm.dd.yy\"";
                 add_error_message(msg, msgPrefix, msgDiv, msgList);
@@ -330,16 +330,18 @@ function validate_timeline(thisForm, msgList) {
         }
 
 		// if the phase starts by another phase, try to validate its additional days/hours
-        var start_by_phase = thisForm["phase_start_phase[" + i + "]"].value;
-        if (start_by_phase.length > 0) {
+        if (thisForm["phase_start_by_phase[" + i + "]"].checked) {
             startByPhase = true;
-            var start_amount = thisForm["phase_start_amount[" + i + "]"].value;
-            if (start_amount == '') {
-                start_amount = 0;
-            } else {
-                if (!isAllDigits(start_amount) || !isInteger(start_amount)) {
-                    msg = "Additional Days/Hours should be an integer";
-                    add_error_message(msg, msgPrefix, msgDiv, msgList);
+            var start_by_phase = thisForm["phase_start_phase[" + i + "]"].value;
+            if (start_by_phase.length > 0) {
+                var start_amount = thisForm["phase_start_amount[" + i + "]"].value;
+                if (start_amount == '') {
+                    start_amount = 0;
+                } else {
+                    if (!isAllDigits(start_amount) || !isInteger(start_amount)) {
+                        msg = "Additional Days/Hours should be an integer";
+                        add_error_message(msg, msgPrefix, msgDiv, msgList);
+                    }
                 }
             }
         }
