@@ -880,11 +880,11 @@
                     getChildByNamePrefix(newPhaseRow, "phase_start_when").value = (dependencyStart == "true") ? "starts" : "ends";
                     var phaseStartButtons = getChildrenByNamePrefix(newPhaseRow, "phase_start_by_phase");
                     phaseStartButtons.checked = true;
-                    getChildrenByNamePrefix(newPhaseRow, "phase_start_phase").removeAttribute("disabled");
-                    getChildrenByNamePrefix(newPhaseRow, "phase_start_when").removeAttribute("disabled");
-                    getChildrenByNamePrefix(newPhaseRow, "phase_start_plusminus").removeAttribute("disabled");
-                    getChildrenByNamePrefix(newPhaseRow, "phase_start_amount").removeAttribute("disabled");
-                    getChildrenByNamePrefix(newPhaseRow, "phase_start_dayshrs").removeAttribute("disabled");
+                    getChildByNamePrefix(newPhaseRow, "phase_start_phase").removeAttribute("disabled");
+                    getChildByNamePrefix(newPhaseRow, "phase_start_when").removeAttribute("disabled");
+                    getChildByNamePrefix(newPhaseRow, "phase_start_plusminus").removeAttribute("disabled");
+                    getChildByNamePrefix(newPhaseRow, "phase_start_amount").removeAttribute("disabled");
+                    getChildByNamePrefix(newPhaseRow, "phase_start_dayshrs").removeAttribute("disabled");
                 }
             }
 
