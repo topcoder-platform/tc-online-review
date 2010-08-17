@@ -1662,7 +1662,7 @@ public class ProjectReviewActions extends DispatchAction {
         Review review = verification.getReview();
 
         // Check if project has SVN Module property set
-        String svnModule = verification.getProject().getProperty("SVN Module");
+        String svnModule = (String) verification.getProject().getProperty("SVN Module");
         request.setAttribute("projectHasSVNModuleSet", (svnModule != null) && (svnModule.trim().length() > 0));
 
         // Obtain an instance of Scorecard Manager
