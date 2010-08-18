@@ -4460,7 +4460,11 @@ public class ActionsHelper {
 
         Filter filter = new AndFilter(Arrays.asList(projectFilter, submissionTypeFilter, statusFilter));
         Submission[] specificationSubmissions = upMgr.searchSubmissions(filter);
-        return specificationSubmissions[0];
+        if (specificationSubmissions == null || specificationSubmissions.length == 0) {
+            return null;
+        } else {
+            return specificationSubmissions[0];
+        }
     }
 
     /**
