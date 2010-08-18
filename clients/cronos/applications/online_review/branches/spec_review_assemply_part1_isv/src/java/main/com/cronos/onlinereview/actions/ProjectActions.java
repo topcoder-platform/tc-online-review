@@ -1134,6 +1134,7 @@ public class ProjectActions extends DispatchAction {
         // Check if there are any validation errors and return appropriate forward
         if (ActionsHelper.isErrorsPresent(request)) {
             // TODO: Check if the form is really for new project
+            System.out.println("ISV : VALIDATION ERROR");
             editProject(mapping, form, request, response);
             request.setAttribute("newProject", Boolean.valueOf(newProject));
 
