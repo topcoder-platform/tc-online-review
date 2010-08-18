@@ -357,7 +357,6 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Obtain an array of all active phases of the project
         Phase[] activePhases = ActionsHelper.getActivePhases(phases);
-        print(activePhases, "activePhases");
 
         // Place all phases of the project into the request
         request.setAttribute("phases", phases);
@@ -407,10 +406,6 @@ public class ProjectDetailsActions extends DispatchAction {
 
         Deliverable[] myDeliverables = ActionsHelper.getMyDeliverables(deliverables, myResources);
         Deliverable[] outstandingDeliverables = ActionsHelper.getOutstandingDeliverables(deliverables);
-
-        print(deliverables, "deliverables");
-        print(myDeliverables, "myDeliverables");
-        print(outstandingDeliverables, "outstandingDeliverables");
 
         request.setAttribute("myDeliverables", myDeliverables);
         request.setAttribute("outstandingDeliverables", outstandingDeliverables);
@@ -3061,39 +3056,4 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
     }
-
-    public String toString(Deliverable d) {
-        return "Deliverable{" +
-               "project=" + d.getProject() +
-               ", phase=" + d.getPhase() +
-               ", resource=" + d.getResource() +
-               ", submission=" + d.getSubmission() +
-               ", required=" + d.isRequired() +
-               ", completionDate=" + d.getCompletionDate() +
-               '}';
-    }
-
-    public void print(Deliverable[] d, String title) {
-        System.out.println("ISV : " + title + " :");
-        for (int i = 0; i < d.length; i++) {
-            Deliverable deliverable = d[i];
-            System.out.println("ISV : " + i + " : " + toString(deliverable));
-        }
-    }
-
-    public String toString(Phase p) {
-        return "Phase{" +
-               "id=" + p.getId() +
-               ", phaseType=" + p.getPhaseType().getName() +
-               '}';
-    }
-
-    public void print(Phase[] d, String title) {
-        System.out.println("ISV : " + title + " :");
-        for (int i = 0; i < d.length; i++) {
-            Phase p = d[i];
-            System.out.println("ISV : " + i + " : " + toString(p));
-        }
-    }
-
 }

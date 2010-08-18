@@ -2135,7 +2135,6 @@ public class ActionsHelper {
 
         // Perform a search for the deliverables
         Deliverable[] allDeliverables = manager.searchDeliverables(filter, null);
-        print(allDeliverables, "allDeliverables returned by DeliverableManager");
 
         List<Deliverable> deliverables = new ArrayList<Deliverable>();
 
@@ -2231,7 +2230,6 @@ public class ActionsHelper {
             }
 
             // Add current deliverable to the list of deliverables
-            System.out.println("ISV : AH : deliverables.add(deliverable) = " + toString(deliverable));
             deliverables.add(deliverable);
         }
 
@@ -4740,58 +4738,5 @@ public class ActionsHelper {
             }
         }
         return false;
-    }
-
-    public static String toString(Deliverable d) {
-        return "Deliverable{" +
-               ", name=" + d.getName() +
-               ", project=" + d.getProject() +
-               ", phase=" + d.getPhase() +
-               ", resource=" + d.getResource() +
-               ", submission=" + d.getSubmission() +
-               ", required=" + d.isRequired() +
-               ", completionDate=" + d.getCompletionDate() +
-               '}';
-    }
-
-    public static String toString(Resource r) {
-        return "Resource{" +
-               "id=" + r.getId() +
-               ", project=" + r.getProject() +
-               ", phase=" + r.getPhase() +
-               ", resourceRole=" + r.getResourceRole().getName() +
-               '}';
-    }
-
-    public static String toString(Submission s) {
-        return "Submission{" +
-               "upload=" + s.getUpload().getId() +
-               "upload.resourceId=" + s.getUpload().getOwner() +
-               ", submissionStatus=" + s.getSubmissionStatus().getName() +
-               ", submissionType=" + s.getSubmissionType().getName() +
-               '}';
-    }
-
-    public static void print(Deliverable[] d, String title) {
-        System.out.println("ISV : " + title + " :");
-        for (int i = 0; i < d.length; i++) {
-            Deliverable deliverable = d[i];
-            System.out.println("ISV : " + i + " : " + toString(deliverable));
-        }
-    }
-
-    public static String toString(Phase p) {
-        return "Phase{" +
-               "id=" + p.getId() +
-               ", phaseType=" + p.getPhaseType().getName() +
-               '}';
-    }
-
-    public static void print(Phase[] d, String title) {
-        System.out.println("ISV : " + title + " :");
-        for (int i = 0; i < d.length; i++) {
-            Phase p = d[i];
-            System.out.println("ISV : " + i + " : " + toString(p));
-        }
     }
 }
