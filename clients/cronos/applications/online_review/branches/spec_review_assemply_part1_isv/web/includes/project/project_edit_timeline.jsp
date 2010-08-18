@@ -108,7 +108,7 @@
                                onclick="return fixedStartTimeBoxChanged(this, ${phaseIdx})"/>
                 <html:text onblur="JavaScript:this.value=getDateString(this.value);"
                            styleClass="inputBoxDate" property="phase_start_date[${phaseIdx}]"
-                           disabled="${isPhaseClosed or not isFixedStartTimeSeta and arePhaseDependenciesEditable}"/>
+                           disabled="${isPhaseClosed or not isFixedStartTimeSet and arePhaseDependenciesEditable}"/>
                 <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);"
                            styleClass="inputBoxTime" property="phase_start_time[${phaseIdx}]"
                            disabled="${isPhaseClosed or not isFixedStartTimeSet and arePhaseDependenciesEditable}"/>
