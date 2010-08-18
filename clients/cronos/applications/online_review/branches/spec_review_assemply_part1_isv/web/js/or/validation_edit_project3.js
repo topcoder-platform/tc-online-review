@@ -308,47 +308,52 @@ function validate_timeline(thisForm, msgList) {
 		msgDiv = getChildByName(phase_row, "start_date_validation_msg");
 		msgDiv.innerHTML = "";
 		msgDiv.style.display = "none";
+        
+        var isPhaseClosed = thisForm["isPhaseClosed[" + i + "]"].value == 'true';
 
-        var startByFixedTime = false;
-        var startByPhase = false;
+        if (!isPhaseClosed) {
+            var startByFixedTime = false;
+            var startByPhase = false;
 
-		// validate start date
-        if (thisForm["phase_start_by_fixed_time[" + i + "]"].checked) {
-            startByFixedTime = true;
-            var start_date = thisForm["phase_start_date[" + i + "]"].value;
-            var start_time = thisForm["phase_start_time[" + i + "]"].value;
-            if (!isDateString(start_date)) {
-                msg = "Start Date should be in the form of \"mm.dd.yy\"";
-                add_error_message(msg, msgPrefix, msgDiv, msgList);
+            // validate start date
+            if (thisForm["phase_start_by_fixed_time[" + i + "]"].checked
+                    || thisForm['arePhaseDependenciesEditable'].value != 'true') {
+                startByFixedTime = true;
+                var start_date = thisForm["phase_start_date[" + i + "]"].value;
+                var start_time = thisForm["phase_start_time[" + i + "]"].value;
+                if (!isDateString(start_date)) {
+                    msg = "Start Date should be in the form of \"mm.dd.yy\"";
+                    add_error_message(msg, msgPrefix, msgDiv, msgList);
+                }
+
+                // validate start time
+                if (!isTimeString(start_time)) {
+                    msg = "Start Time should be in the form of \"hh:mm\"";
+                    add_error_message(msg, msgPrefix, msgDiv, msgList);
+                }
             }
 
-            // validate start time
-            if (!isTimeString(start_time)) {
-                msg = "Start Time should be in the form of \"hh:mm\"";
-                add_error_message(msg, msgPrefix, msgDiv, msgList);
-            }
-        }
-
-		// if the phase starts by another phase, try to validate its additional days/hours
-        if (thisForm["phase_start_by_phase[" + i + "]"].checked) {
-            startByPhase = true;
-            var start_by_phase = thisForm["phase_start_phase[" + i + "]"].value;
-            if (start_by_phase.length > 0) {
-                var start_amount = thisForm["phase_start_amount[" + i + "]"].value;
-                if (start_amount == '') {
-                    start_amount = 0;
-                } else {
-                    if (!isAllDigits(start_amount) || !isInteger(start_amount)) {
-                        msg = "Additional Days/Hours should be an integer";
-                        add_error_message(msg, msgPrefix, msgDiv, msgList);
+            // if the phase starts by another phase, try to validate its additional days/hours
+            if (thisForm["phase_start_by_phase[" + i + "]"].checked) {
+                startByPhase = true;
+                var start_by_phase = thisForm["phase_start_phase[" + i + "]"].value;
+                if (start_by_phase.length > 0) {
+                    var start_amount = thisForm["phase_start_amount[" + i + "]"].value;
+                    if (start_amount == '') {
+                        start_amount = 0;
+                    } else {
+                        if (!isAllDigits(start_amount) || !isInteger(start_amount)) {
+                            msg = "Additional Days/Hours should be an integer";
+                            add_error_message(msg, msgPrefix, msgDiv, msgList);
+                        }
                     }
                 }
             }
-        }
 
-        if (!(startByFixedTime || startByPhase)) {
-            msg = "Either fixed start time or main phase must be set for phase";
-            add_error_message(msg, msgPrefix, msgDiv, msgList);
+            if (!(startByFixedTime || startByPhase)) {
+                msg = "Either fixed start time or main phase must be set for phase";
+                add_error_message(msg, msgPrefix, msgDiv, msgList);
+            }
         }
 
 		// get the message div and hide it

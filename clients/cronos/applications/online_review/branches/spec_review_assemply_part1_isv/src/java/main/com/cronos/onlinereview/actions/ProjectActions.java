@@ -420,6 +420,7 @@ public class ProjectActions extends DispatchAction {
         PhaseType[] phaseTypes = phaseManager.getAllPhaseTypes();
         // Place them into request as an attribute
         request.setAttribute("phaseTypes", phaseTypes);
+        request.setAttribute("arePhaseDependenciesEditable", true);
 
         // Obtain an instance of Scorecard Manager
         ScorecardManager scorecardManager = ActionsHelper.createScorecardManager(request);
@@ -836,6 +837,9 @@ public class ProjectActions extends DispatchAction {
 
         // Load the lookup data
         loadProjectEditLookups(request);
+        String phaseDependenciesEditable
+            = (String) verification.getProject().getProperty("Phase Dependencies Editable");
+        request.setAttribute("arePhaseDependenciesEditable", "true".equalsIgnoreCase(phaseDependenciesEditable));
 
         // Obtain an instance of Project Manager
         ProjectManager manager = ActionsHelper.createProjectManager(request);
