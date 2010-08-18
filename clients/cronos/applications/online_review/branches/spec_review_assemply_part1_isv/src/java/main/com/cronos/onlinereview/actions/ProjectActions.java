@@ -1833,9 +1833,6 @@ public class ProjectActions extends DispatchAction {
         for (int i = 0; i < projectPhases.length; i++) {
             final String previousPhaseName = i > 0 ? projectPhases[i - 1].getPhaseType().getName() : "";
             final String currentPhaseName = projectPhases[i].getPhaseType().getName();
-            System.out.println("ISV : previousPhaseName = " + previousPhaseName);
-            System.out.println("ISV : currentPhaseName = " + currentPhaseName);
-            System.out.println("ISV : ???????????????????");
             if (currentPhaseName.equals(SUBMISSION_PHASE_NAME)) {
                 // Submission should follow registration or post-mortem if it exists
                 if (i > 0 && !previousPhaseName.equals(REGISTRATION_PHASE_NAME)

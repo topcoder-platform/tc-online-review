@@ -407,6 +407,10 @@ public class ProjectDetailsActions extends DispatchAction {
         Deliverable[] myDeliverables = ActionsHelper.getMyDeliverables(deliverables, myResources);
         Deliverable[] outstandingDeliverables = ActionsHelper.getOutstandingDeliverables(deliverables);
 
+        print(deliverables, "deliverables");
+        print(myDeliverables, "myDeliverables");
+        print(outstandingDeliverables, "outstandingDeliverables");
+
         request.setAttribute("myDeliverables", myDeliverables);
         request.setAttribute("outstandingDeliverables", outstandingDeliverables);
 
@@ -3054,6 +3058,25 @@ public class ProjectDetailsActions extends DispatchAction {
             if (out != null) {
                 out.close();
             }
+        }
+    }
+
+    public String toString(Deliverable d) {
+        return "Deliverable{" +
+               "project=" + d.getProject() +
+               ", phase=" + d.getPhase() +
+               ", resource=" + d.getResource() +
+               ", submission=" + d.getSubmission() +
+               ", required=" + d.isRequired() +
+               ", completionDate=" + d.getCompletionDate() +
+               '}';
+    }
+
+    public void print(Deliverable[] d, String title) {
+        System.out.println("ISV : " + title + " :");
+        for (int i = 0; i < d.length; i++) {
+            Deliverable deliverable = d[i];
+            System.out.println("ISV : " + i + " : " + toString(deliverable));
         }
     }
 }
