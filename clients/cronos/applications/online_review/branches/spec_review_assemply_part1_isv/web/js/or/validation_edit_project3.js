@@ -310,14 +310,13 @@ function validate_timeline(thisForm, msgList) {
 		msgDiv.style.display = "none";
         
         var isPhaseClosed = thisForm["isPhaseClosed[" + i + "]"].value == 'true';
-
-        if (!isPhaseClosed) {
+        var arePhaseDependenciesEditable = thisForm['arePhaseDependenciesEditable'].value == 'true';
+        if (!isPhaseClosed && arePhaseDependenciesEditable) {
             var startByFixedTime = false;
             var startByPhase = false;
 
             // validate start date
-            if (thisForm["phase_start_by_fixed_time[" + i + "]"].checked
-                    || thisForm['arePhaseDependenciesEditable'].value != 'true') {
+            if (thisForm["phase_start_by_fixed_time[" + i + "]"].checked) {
                 startByFixedTime = true;
                 var start_date = thisForm["phase_start_date[" + i + "]"].value;
                 var start_time = thisForm["phase_start_time[" + i + "]"].value;

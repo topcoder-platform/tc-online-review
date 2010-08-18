@@ -100,19 +100,32 @@
                 <html:hidden property="phase_action[${phaseIdx}]" disabled="${isPhaseClosed}" />
                 <html:hidden property="phase_name[${phaseIdx}]" disabled="${isPhaseClosed}" />
                 <html:hidden property="phase_number[${phaseIdx}]" disabled="${isPhaseClosed}" />
-                <c:if test="${not arePhaseDependenciesEditable}">
-                    <html:hidden property="phase_start_by_fixed_time[${phaseIdx}]" value="true" disabled="${isPhaseClosed}"/>
+
+                <c:if test="${not arePhaseDependenciesEditable and not isPhaseClosed}">
+                    <html:hidden property="phase_start_by_fixed_time[${phaseIdx}]"/>
+                    <html:hidden property="phase_start_date[${phaseIdx}]"/>
+                    <html:hidden property="phase_start_time[${phaseIdx}]"/>
                 </c:if>
                 <html:checkbox property="phase_start_by_fixed_time[${phaseIdx}]"
                                disabled="${isPhaseClosed or not arePhaseDependenciesEditable}"
                                onclick="return fixedStartTimeBoxChanged(this, ${phaseIdx})"/>
                 <html:text onblur="JavaScript:this.value=getDateString(this.value);"
                            styleClass="inputBoxDate" property="phase_start_date[${phaseIdx}]"
-                           disabled="${isPhaseClosed or not isFixedStartTimeSet and arePhaseDependenciesEditable}"/>
+                           disabled="${isPhaseClosed or not isFixedStartTimeSet or not arePhaseDependenciesEditable}"/>
                 <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);"
                            styleClass="inputBoxTime" property="phase_start_time[${phaseIdx}]"
-                           disabled="${isPhaseClosed or not isFixedStartTimeSet and arePhaseDependenciesEditable}"/>
+                           disabled="${isPhaseClosed or not isFixedStartTimeSet or not arePhaseDependenciesEditable}"/>
+
                 <c:out value="${currentTimezone}"/><br />
+
+                <c:if test="${not arePhaseDependenciesEditable and not isPhaseClosed}">
+                    <html:hidden property="phase_start_by_phase[${phaseIdx}]"/>
+                    <html:hidden property="phase_start_phase[${phaseIdx}]"/>
+                    <html:hidden property="phase_start_when[${phaseIdx}]"/>
+                    <html:hidden property="phase_start_plusminus[${phaseIdx}]"/>
+                    <html:hidden property="phase_start_amount[${phaseIdx}]"/>
+                    <html:hidden property="phase_start_dayshrs[${phaseIdx}]"/>
+                </c:if>
                 <html:checkbox property="phase_start_by_phase[${phaseIdx}]"
                                disabled="${isPhaseClosed or not arePhaseDependenciesEditable}"
                                onclick="return phaseStartByPhaseBoxChanged(this, ${phaseIdx})"/>
