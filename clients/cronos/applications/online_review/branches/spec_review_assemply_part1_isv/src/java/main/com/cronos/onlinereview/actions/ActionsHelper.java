@@ -2135,6 +2135,7 @@ public class ActionsHelper {
 
         // Perform a search for the deliverables
         Deliverable[] allDeliverables = manager.searchDeliverables(filter, null);
+        print(allDeliverables, "allDeliverables returned by DeliverableManager");
 
         List<Deliverable> deliverables = new ArrayList<Deliverable>();
 
@@ -2230,6 +2231,7 @@ public class ActionsHelper {
             }
 
             // Add current deliverable to the list of deliverables
+            System.out.println("ISV : AH : deliverables.add(deliverable) = " + toString(deliverable));
             deliverables.add(deliverable);
         }
 
@@ -4768,5 +4770,28 @@ public class ActionsHelper {
                ", submissionStatus=" + s.getSubmissionStatus().getName() +
                ", submissionType=" + s.getSubmissionType().getName() +
                '}';
+    }
+
+    public static void print(Deliverable[] d, String title) {
+        System.out.println("ISV : " + title + " :");
+        for (int i = 0; i < d.length; i++) {
+            Deliverable deliverable = d[i];
+            System.out.println("ISV : " + i + " : " + toString(deliverable));
+        }
+    }
+
+    public static String toString(Phase p) {
+        return "Phase{" +
+               "id=" + p.getId() +
+               ", phaseType=" + p.getPhaseType().getName() +
+               '}';
+    }
+
+    public static void print(Phase[] d, String title) {
+        System.out.println("ISV : " + title + " :");
+        for (int i = 0; i < d.length; i++) {
+            Phase p = d[i];
+            System.out.println("ISV : " + i + " : " + toString(p));
+        }
     }
 }

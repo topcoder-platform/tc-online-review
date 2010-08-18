@@ -357,6 +357,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Obtain an array of all active phases of the project
         Phase[] activePhases = ActionsHelper.getActivePhases(phases);
+        print(activePhases, "activePhases");
 
         // Place all phases of the project into the request
         request.setAttribute("phases", phases);
@@ -3079,4 +3080,20 @@ public class ProjectDetailsActions extends DispatchAction {
             System.out.println("ISV : " + i + " : " + toString(deliverable));
         }
     }
+
+    public String toString(Phase p) {
+        return "Phase{" +
+               "id=" + p.getId() +
+               ", phaseType=" + p.getPhaseType().getName() +
+               '}';
+    }
+
+    public void print(Phase[] d, String title) {
+        System.out.println("ISV : " + title + " :");
+        for (int i = 0; i < d.length; i++) {
+            Phase p = d[i];
+            System.out.println("ISV : " + i + " : " + toString(p));
+        }
+    }
+
 }
