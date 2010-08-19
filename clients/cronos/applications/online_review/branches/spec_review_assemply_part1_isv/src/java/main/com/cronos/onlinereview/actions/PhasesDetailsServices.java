@@ -400,6 +400,7 @@ final class PhasesDetailsServices {
             if (submissions == null &&
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
                 // Obtain an instance of Upload Manager
+                System.out.println("ISV : 1");
                 UploadManager upMgr = ActionsHelper.createUploadManager(request);
                 SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
                 SubmissionType[] allSubmissionTypes = upMgr.getAllSubmissionTypes();
@@ -417,6 +418,7 @@ final class PhasesDetailsServices {
                 Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterResource, filterType));
 
                 submissions = upMgr.searchSubmissions(filter);
+                System.out.println("ISV : 2 : " + submissions.length);
             }
 
             if (submissions == null) {
