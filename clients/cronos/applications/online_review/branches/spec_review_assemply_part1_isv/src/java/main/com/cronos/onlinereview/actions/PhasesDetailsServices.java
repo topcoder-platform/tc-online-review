@@ -408,7 +408,7 @@ final class PhasesDetailsServices {
                                                                                        "Contest Submission");
 
                 // Get "my" (submitter's) resource
-                Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
+                Resource myResource = ActionsHelper.getMyResourceForPhase(request, phases[phaseIdx]);
 
                 Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
                 Filter filterStatus = ActionsHelper.createSubmissionStatusFilter(allSubmissionStatuses);
