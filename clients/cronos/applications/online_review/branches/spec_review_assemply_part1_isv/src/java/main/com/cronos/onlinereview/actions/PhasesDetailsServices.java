@@ -402,6 +402,9 @@ final class PhasesDetailsServices {
                 // Obtain an instance of Upload Manager
                 UploadManager upMgr = ActionsHelper.createUploadManager(request);
                 SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
+                SubmissionType[] allSubmissionTypes = upMgr.getAllSubmissionTypes();
+                SubmissionType submissionType = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes,
+                                                                                       "Contest Submission");
 
                 // Get "my" (submitter's) resource
                 Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
@@ -409,8 +412,9 @@ final class PhasesDetailsServices {
                 Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
                 Filter filterStatus = ActionsHelper.createSubmissionStatusFilter(allSubmissionStatuses);
                 Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
+                Filter filterType = SubmissionFilterBuilder.createSubmissionTypeIdFilter(submissionType.getId());
 
-                Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterResource));
+                Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterResource, filterType));
 
                 submissions = upMgr.searchSubmissions(filter);
             }

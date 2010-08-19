@@ -2560,7 +2560,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else if (!review.isCommitted()) {
                     links[i] = "EditSpecificationReview.do?method=editSpecificationReview&rid=" + review.getId();
                 } else {
-                    links[i] = "ViewReview.do?method=viewSpecificationReview&rid=" + review.getId();
+                    links[i] = "ViewSpecificationReview.do?method=viewSpecificationReview&rid=" + review.getId();
                 }
             } else if (delivName.equalsIgnoreCase(Constants.SCREENING_DELIVERABLE_NAME) ||
                     delivName.equalsIgnoreCase(Constants.PRIMARY_SCREENING_DELIVERABLE_NAME)) {

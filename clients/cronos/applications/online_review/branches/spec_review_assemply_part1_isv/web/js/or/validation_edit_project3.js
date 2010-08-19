@@ -311,12 +311,13 @@ function validate_timeline(thisForm, msgList) {
         
         var isPhaseClosed = thisForm["isPhaseClosed[" + i + "]"].value == 'true';
         var arePhaseDependenciesEditable = thisForm['arePhaseDependenciesEditable'].value == 'true';
-        if (!isPhaseClosed && arePhaseDependenciesEditable) {
+        if (!isPhaseClosed) {
             var startByFixedTime = false;
             var startByPhase = false;
 
             // validate start date
-            if (thisForm["phase_start_by_fixed_time[" + i + "]"].checked) {
+            if (thisForm["phase_start_by_fixed_time[" + i + "]"].checked
+                    || thisForm["phase_start_by_fixed_time[" + i + "]"].value == 'true') {
                 startByFixedTime = true;
                 var start_date = thisForm["phase_start_date[" + i + "]"].value;
                 var start_time = thisForm["phase_start_time[" + i + "]"].value;
@@ -333,7 +334,7 @@ function validate_timeline(thisForm, msgList) {
             }
 
             // if the phase starts by another phase, try to validate its additional days/hours
-            if (thisForm["phase_start_by_phase[" + i + "]"].checked) {
+            if (thisForm["phase_start_by_phase[" + i + "]"].checked && arePhaseDependenciesEditable) {
                 startByPhase = true;
                 var start_by_phase = thisForm["phase_start_phase[" + i + "]"].value;
                 if (start_by_phase.length > 0) {
@@ -350,7 +351,7 @@ function validate_timeline(thisForm, msgList) {
             }
 
             if (!(startByFixedTime || startByPhase)) {
-                msg = "Either fixed start time or main phase must be set for phase";
+                msg = "Either fixed start time or dependency phase must be set for phase";
                 add_error_message(msg, msgPrefix, msgDiv, msgList);
             }
         }
