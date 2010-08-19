@@ -104,6 +104,8 @@
                 <c:if test="${not arePhaseDependenciesEditable and not isPhaseClosed}">
                     <html:hidden property="phase_start_by_fixed_time[${phaseIdx}]"/>
                 </c:if>
+                <input type="hidden" name="isPhaseFixedStartTimeEnabled[${phaseIdx}]"
+                       value="${projectForm.map['phase_start_by_fixed_time'][phaseIdx]}"/>
                 <html:checkbox property="phase_start_by_fixed_time[${phaseIdx}]"
                                disabled="${isPhaseClosed or not arePhaseDependenciesEditable}"
                                onclick="return fixedStartTimeBoxChanged(this, ${phaseIdx})"/>
@@ -124,6 +126,8 @@
                     <html:hidden property="phase_start_amount[${phaseIdx}]"/>
                     <html:hidden property="phase_start_dayshrs[${phaseIdx}]"/>
                 </c:if>
+                <input type="hidden" name="isPhaseDependencySet[${phaseIdx}]"
+                       value="${projectForm.map['phase_start_by_phase'][phaseIdx]}"/>
                 <html:checkbox property="phase_start_by_phase[${phaseIdx}]"
                                disabled="${isPhaseClosed or not arePhaseDependenciesEditable}"
                                onclick="return phaseStartByPhaseBoxChanged(this, ${phaseIdx})"/>

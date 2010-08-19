@@ -771,7 +771,10 @@
             var phaseId = phaseRow.id;
             var actionPhaseNode = document.getElementsByName("action_phase")[0];
             actionPhaseNode.value = phaseId;
-            actionNode.form.submit();
+            var s = validate_form(actionNode.form, true);
+            if (s) {
+                actionNode.form.submit();
+            }
         }
 
         /**
@@ -874,6 +877,12 @@
                 var dependencies = phaseNodes[i].getElementsByTagName("dependency");
 
                 if (dependencies.length != 0) {
+                    getChildByNamePrefix(newPhaseRow, "phase_start_date").value = '';
+                    getChildByNamePrefix(newPhaseRow, "phase_start_date").setAttribute("disabled", "disabled");
+                    getChildByNamePrefix(newPhaseRow, "phase_start_time").value = '';
+                    getChildByNamePrefix(newPhaseRow, "phase_start_time").setAttribute("disabled", "disabled");
+                    getChildByNamePrefix(newPhaseRow, "phase_start_by_fixed_time").checked = false;
+
                     var dependencyId =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-id")[0]);
                     var dependencyStart =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-start")[0]);
                     getChildByNamePrefix(newPhaseRow, "phase_start_phase").value = "template_" + dependencyId;

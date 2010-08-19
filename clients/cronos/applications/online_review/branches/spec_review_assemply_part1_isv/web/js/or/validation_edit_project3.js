@@ -316,8 +316,9 @@ function validate_timeline(thisForm, msgList) {
             var startByPhase = false;
 
             // validate start date
-            if (thisForm["phase_start_by_fixed_time[" + i + "]"].checked
-                    || thisForm["phase_start_by_fixed_time[" + i + "]"].value == 'true') {
+            var startDateInput = thisForm["phase_start_date[" + i + "]"];
+            var isPhaseStartTimeEnabled = startDateInput && startDateInput.getAttribute("disabled") != "disabled";
+            if (isPhaseStartTimeEnabled) {
                 startByFixedTime = true;
                 var start_date = thisForm["phase_start_date[" + i + "]"].value;
                 var start_time = thisForm["phase_start_time[" + i + "]"].value;
@@ -334,20 +335,26 @@ function validate_timeline(thisForm, msgList) {
             }
 
             // if the phase starts by another phase, try to validate its additional days/hours
-            if (thisForm["phase_start_by_phase[" + i + "]"].checked && arePhaseDependenciesEditable) {
-                startByPhase = true;
-                var start_by_phase = thisForm["phase_start_phase[" + i + "]"].value;
-                if (start_by_phase.length > 0) {
-                    var start_amount = thisForm["phase_start_amount[" + i + "]"].value;
-                    if (start_amount == '') {
-                        start_amount = 0;
-                    } else {
-                        if (!isAllDigits(start_amount) || !isInteger(start_amount)) {
-                            msg = "Additional Days/Hours should be an integer";
-                            add_error_message(msg, msgPrefix, msgDiv, msgList);
+            if (arePhaseDependenciesEditable) {
+                var depPhaseInput = thisForm["phase_start_phase[" + i + "]"];
+                var isPhaseDependencyEnabled = depPhaseInput && depPhaseInput.getAttribute("disabled") != "disabled";
+                if (isPhaseDependencyEnabled) {
+                    startByPhase = true;
+                    var start_by_phase = thisForm["phase_start_phase[" + i + "]"].value;
+                    if (start_by_phase.length > 0) {
+                        var start_amount = thisForm["phase_start_amount[" + i + "]"].value;
+                        if (start_amount == '') {
+                            start_amount = 0;
+                        } else {
+                            if (!isAllDigits(start_amount) || !isInteger(start_amount)) {
+                                msg = "Additional Days/Hours should be an integer";
+                                add_error_message(msg, msgPrefix, msgDiv, msgList);
+                            }
                         }
                     }
                 }
+            } else {
+                startByPhase = true;
             }
 
             if (!(startByFixedTime || startByPhase)) {
