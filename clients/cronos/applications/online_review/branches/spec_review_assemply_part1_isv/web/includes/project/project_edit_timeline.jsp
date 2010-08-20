@@ -183,7 +183,7 @@
 
             <td class="value">
                 <c:choose>
-                    <c:when test="${isPhaseClosed}">&nbsp;</c:when>
+                    <c:when test="${isPhaseClosed or arePhaseDependenciesEditable}">&nbsp;</c:when>
                     <c:otherwise>
                         <html:img srcKey="editProject.Phases.DeletePhase.img"
                             altKey="editProject.Phases.DeletePhase.alt"
@@ -406,6 +406,7 @@
     </c:forEach>
 </table><br />
 
+<c:if test="${not arePhaseDependenciesEditable}">
 <table class="scorecard" id="addphase_tbl" width="100%">
     <tr class="highlighted">
         <td class="valueB"><bean:message key="editProject.Phases.AddNewPhase" /></td>
@@ -502,3 +503,4 @@
         <td class="lastRowTD" colspan="5"><!-- @ --></td>
     </tr>
 </table><br />
+</c:if>

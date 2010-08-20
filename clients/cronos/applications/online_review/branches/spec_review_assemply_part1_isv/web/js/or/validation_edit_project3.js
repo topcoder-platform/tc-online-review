@@ -180,9 +180,9 @@ function validate_svn_module(thisForm, msgList) {
 
 	var svnModule = thisForm["SVN_module"].value;
 
-	//This check actually not required	
+	//This check actually not required
 	/*
-	 
+
 	if (emptyString.test(svnModule)) {
 		msg = "SVN Module is a required field";
 		add_error_message(msg, "", msgDiv, msgList);
@@ -308,7 +308,7 @@ function validate_timeline(thisForm, msgList) {
 		msgDiv = getChildByName(phase_row, "start_date_validation_msg");
 		msgDiv.innerHTML = "";
 		msgDiv.style.display = "none";
-        
+
         var isPhaseClosed = thisForm["isPhaseClosed[" + i + "]"].value == 'true';
         var arePhaseDependenciesEditable = thisForm['arePhaseDependenciesEditable'].value == 'true';
         if (!isPhaseClosed) {
@@ -335,26 +335,40 @@ function validate_timeline(thisForm, msgList) {
             }
 
             // if the phase starts by another phase, try to validate its additional days/hours
-            if (arePhaseDependenciesEditable) {
-                var depPhaseInput = thisForm["phase_start_phase[" + i + "]"];
-                var isPhaseDependencyEnabled = depPhaseInput && depPhaseInput.getAttribute("disabled") != "disabled";
-                if (isPhaseDependencyEnabled) {
-                    startByPhase = true;
-                    var start_by_phase = thisForm["phase_start_phase[" + i + "]"].value;
-                    if (start_by_phase.length > 0) {
-                        var start_amount = thisForm["phase_start_amount[" + i + "]"].value;
-                        if (start_amount == '') {
-                            start_amount = 0;
-                        } else {
-                            if (!isAllDigits(start_amount) || !isInteger(start_amount)) {
-                                msg = "Additional Days/Hours should be an integer";
-                                add_error_message(msg, msgPrefix, msgDiv, msgList);
-                            }
-                        }
+            var depPhaseInput = thisForm["phase_start_by_phase[" + i + "]"];
+            var phaseStartPhaseInput;
+            var phaseStartAmountInput;
+            var isPhaseDependencyEnabled = false;
+            var startByPhaseId;
+            if (depPhaseInput) {
+                if (depPhaseInput.length) {
+                    isPhaseDependencyEnabled = depPhaseInput[1].checked;
+                    phaseStartPhaseInput = thisForm["phase_start_phase[" + i + "]"][0];
+                    startByPhaseId = phaseStartPhaseInput.value;
+                    phaseStartAmountInput = thisForm["phase_start_amount[" + i + "]"][0];
+                } else {
+                    isPhaseDependencyEnabled = depPhaseInput.checked;
+                    phaseStartPhaseInput = thisForm["phase_start_phase[" + i + "]"];
+                    startByPhaseId = phaseStartPhaseInput.options[phaseStartPhaseInput.selectedIndex].value;
+                    phaseStartAmountInput = thisForm["phase_start_amount[" + i + "]"];
+                }
+            }
+            if (isPhaseDependencyEnabled) {
+                startByPhase = true;
+                if (startByPhaseId == '') {
+                    msg = "Dependency phase must be selected";
+                    add_error_message(msg, msgPrefix, msgDiv, msgList);
+                }
+
+                var start_amount = phaseStartAmountInput.value;
+                if (start_amount == '') {
+                    start_amount = 0;
+                } else {
+                    if (!isAllDigits(start_amount) || !isInteger(start_amount)) {
+                        msg = "Additional Days/Hours should be an integer";
+                        add_error_message(msg, msgPrefix, msgDiv, msgList);
                     }
                 }
-            } else {
-                startByPhase = true;
             }
 
             if (!(startByFixedTime || startByPhase)) {
@@ -435,7 +449,7 @@ function validate_notes(thisForm, msgList) {
 	msgDiv.innerHTML = "";
 	msgDiv.style.display = "none";
 
-	//This check actually not required	
+	//This check actually not required
 	/*
 	var strNotes = thisForm["notes"].value;
 	if (emptyString.test(strNotes)) {
