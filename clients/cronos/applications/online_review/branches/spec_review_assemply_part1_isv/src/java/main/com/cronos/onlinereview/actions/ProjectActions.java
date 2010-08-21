@@ -1364,6 +1364,7 @@ public class ProjectActions extends DispatchAction {
         boolean hasCircularDependencies = false;
         Set<Phase> processed = new HashSet<Phase>();
         for (int i = 1; i < phaseTypes.length; i++) {
+            System.out.println("ISV : 3rd PASS : phaseType : " + phaseTypes[i]);
             if (phaseTypes[i] == null) {
                 continue;
             }
@@ -1374,9 +1375,11 @@ public class ProjectActions extends DispatchAction {
             }
 
             Phase phase = (Phase) phaseObj;
+            System.out.println("ISV : 3rd PASS : phase : " + toString(phase));
 
             // If phase was already processed, skip it
             if (processed.contains(phase)) {
+                System.out.println("ISV : 3rd pass : already processed");
                 continue;
             }
 
@@ -3324,10 +3327,14 @@ public class ProjectActions extends DispatchAction {
     }
 
     public String toString(Phase p) {
-        return "Phase{" +
-               "id=" + p.getId() +
-               ", phaseType=" + p.getPhaseType().getName() +
-               ", dependencies=" + Arrays.toString(p.getAllDependencies()) +
-               '}';
+        if (p != null) {
+            return "Phase{" +
+                   "id=" + p.getId() +
+                   ", phaseType=" + p.getPhaseType().getName() +
+                   ", dependencies=" + Arrays.toString(p.getAllDependencies()) +
+                   '}';
+        } else {
+            return "null";
+        }
     }
 }
