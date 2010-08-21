@@ -1408,6 +1408,7 @@ public class ProjectActions extends DispatchAction {
 
             while (!stack.empty()) {
                 phase = (Phase) stack.pop();
+                System.out.println("ISV : phase = " + toString(phase));
                 int paramIndex = ((Integer) phasesToForm.get(phase)).intValue();
                 if (phaseTypes[paramIndex] == null) {
                     continue;
@@ -3319,5 +3320,13 @@ public class ProjectActions extends DispatchAction {
                         Boolean.valueOf("Yes".equals(phases[i].getAttribute("View Response During Appeals"))));
             }
         }
+    }
+
+    public String toString(Phase p) {
+        return "Phase{" +
+               "id=" + p.getId() +
+               ", phaseType=" + p.getPhaseType().getName() +
+               ", dependencies=" + Arrays.toString(p.getAllDependencies()) +
+               '}';
     }
 }
