@@ -1293,6 +1293,8 @@ public class ProjectActions extends DispatchAction {
                         long unitMutiplier
                             = 1000 * 60 * ("days".equals(phaseLag) ? 24 * 60 : ("hrs".equals(phaseLag) ? 60 : 1));
                         long lagTime = unitMutiplier * ((Integer) lazyForm.get("phase_start_amount", i)).longValue();
+                        System.out.println("ISV : lagTime = " + lagTime + " for " + toString(phase) + " depending on "
+                                           + toString(dependencyPhase));
 
                         // Create phase Dependency
                         Dependency dependency = new Dependency(dependencyPhase, phase,
@@ -1424,6 +1426,7 @@ public class ProjectActions extends DispatchAction {
                 String phaseStartPhase = (String) lazyForm.get("phase_start_phase", paramIndex);
                 if (phaseStartPhase != null && phaseStartPhase.trim().length() > 0 &&
                         "minus".equals(lazyForm.get("phase_start_plusminus", paramIndex))) {
+                    System.out.println("ISV : MINUS");
                     Dependency dependency = phase.getAllDependencies()[0];
 
                     Date dependencyDate;
@@ -1432,7 +1435,9 @@ public class ProjectActions extends DispatchAction {
                     } else {
                         dependencyDate = dependency.getDependency().getScheduledStartDate();
                     }
+                    System.out.println("ISV : dependencyDate = " + dependencyDate + ", lagTime = " + dependency.getLagTime());
                     phase.setFixedStartDate(new Date(dependencyDate.getTime() - dependency.getLagTime()));
+                    System.out.println("ISV : fixed date for phase : " + toString(phase) + " is " + phase.getFixedStartDate());
                     System.out.println("ISV : phase dependencies cleared");
                     phase.clearDependencies();
                 }
