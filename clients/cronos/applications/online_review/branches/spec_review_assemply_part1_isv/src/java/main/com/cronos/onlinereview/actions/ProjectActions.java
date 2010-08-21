@@ -1387,6 +1387,7 @@ public class ProjectActions extends DispatchAction {
                 processed.add(phase);
                 visited.add(phase);
                 stack.push(phase);
+                System.out.println("ISV : phase to stack = " + toString(phase));
 
                 Dependency[] dependencies = phase.getAllDependencies();
                 // Actually there should be either zero or one dependency, we'll assume it
@@ -1408,7 +1409,7 @@ public class ProjectActions extends DispatchAction {
 
             while (!stack.empty()) {
                 phase = (Phase) stack.pop();
-                System.out.println("ISV : phase = " + toString(phase));
+                System.out.println("ISV : phase from stack = " + toString(phase));
                 int paramIndex = ((Integer) phasesToForm.get(phase)).intValue();
                 if (phaseTypes[paramIndex] == null) {
                     continue;
@@ -1426,7 +1427,7 @@ public class ProjectActions extends DispatchAction {
                         dependencyDate = dependency.getDependency().getScheduledStartDate();
                     }
                     phase.setFixedStartDate(new Date(dependencyDate.getTime() - dependency.getLagTime()));
-
+                    System.out.println("ISV : phase dependencies cleared");
                     phase.clearDependencies();
                 }
 
