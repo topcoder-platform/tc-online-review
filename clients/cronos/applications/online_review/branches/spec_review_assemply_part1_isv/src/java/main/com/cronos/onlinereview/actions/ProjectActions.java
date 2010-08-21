@@ -1412,6 +1412,9 @@ public class ProjectActions extends DispatchAction {
 
             while (!stack.empty()) {
                 phase = (Phase) stack.pop();
+                if (processed.contains(phase)) {
+                    continue;
+                }
                 System.out.println("ISV : phase from stack = " + toString(phase));
                 int paramIndex = ((Integer) phasesToForm.get(phase)).intValue();
                 if (phaseTypes[paramIndex] == null) {
