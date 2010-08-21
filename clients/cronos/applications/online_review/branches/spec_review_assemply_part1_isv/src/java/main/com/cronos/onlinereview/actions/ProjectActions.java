@@ -1414,9 +1414,6 @@ public class ProjectActions extends DispatchAction {
 
             while (!stack.empty()) {
                 phase = (Phase) stack.pop();
-                if (processed.contains(phase)) {
-                    continue;
-                }
                 System.out.println("ISV : phase from stack = " + toString(phase));
                 int paramIndex = ((Integer) phasesToForm.get(phase)).intValue();
                 if (phaseTypes[paramIndex] == null) {
@@ -1427,7 +1424,8 @@ public class ProjectActions extends DispatchAction {
                 System.out.println("ISV : phaseStartPhase = " + phaseStartPhase);
                 System.out.println("ISV : lazyForm.get(\"phase_start_plusminus\", paramIndex) = " + lazyForm.get("phase_start_plusminus", paramIndex));
                 if (phaseStartPhase != null && phaseStartPhase.trim().length() > 0 &&
-                        "minus".equals(lazyForm.get("phase_start_plusminus", paramIndex))) {
+                        "minus".equals(lazyForm.get("phase_start_plusminus", paramIndex))
+                        && phase.getAllDependencies().length > 0) {
                     System.out.println("ISV : MINUS");
                     Dependency dependency = phase.getAllDependencies()[0];
 
