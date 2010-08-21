@@ -1293,8 +1293,6 @@ public class ProjectActions extends DispatchAction {
                         long unitMutiplier
                             = 1000 * 60 * ("days".equals(phaseLag) ? 24 * 60 : ("hrs".equals(phaseLag) ? 60 : 1));
                         long lagTime = unitMutiplier * ((Integer) lazyForm.get("phase_start_amount", i)).longValue();
-                        System.out.println("ISV : lagTime = " + lagTime + " for " + toString(phase) + " depending on "
-                                           + toString(dependencyPhase));
 
                         // Create phase Dependency
                         Dependency dependency = new Dependency(dependencyPhase, phase,
@@ -1366,7 +1364,6 @@ public class ProjectActions extends DispatchAction {
         boolean hasCircularDependencies = false;
         Set<Phase> processed = new HashSet<Phase>();
         for (int i = 1; i < phaseTypes.length; i++) {
-            System.out.println("ISV : 3rd PASS : phaseType : " + phaseTypes[i]);
             if (phaseTypes[i] == null) {
                 continue;
             }
@@ -1377,11 +1374,9 @@ public class ProjectActions extends DispatchAction {
             }
 
             Phase phase = (Phase) phaseObj;
-            System.out.println("ISV : 3rd PASS : phase : " + toString(phase));
 
             // If phase was already processed, skip it
             if (processed.contains(phase)) {
-                System.out.println("ISV : 3rd pass : already processed");
                 continue;
             }
 
@@ -1392,7 +1387,6 @@ public class ProjectActions extends DispatchAction {
                 processed.add(phase);
                 visited.add(phase);
                 stack.push(phase);
-                System.out.println("ISV : phase to stack = " + toString(phase));
 
                 Dependency[] dependencies = phase.getAllDependencies();
                 // Actually there should be either zero or one dependency, we'll assume it
@@ -1414,19 +1408,15 @@ public class ProjectActions extends DispatchAction {
 
             while (!stack.empty()) {
                 phase = (Phase) stack.pop();
-                System.out.println("ISV : phase from stack = " + toString(phase));
                 int paramIndex = ((Integer) phasesToForm.get(phase)).intValue();
                 if (phaseTypes[paramIndex] == null) {
                     continue;
                 }
                 // If the phase is scheduled to start before some other phase start/end
                 String phaseStartPhase = (String) lazyForm.get("phase_start_phase", paramIndex);
-                System.out.println("ISV : phaseStartPhase = " + phaseStartPhase);
-                System.out.println("ISV : lazyForm.get(\"phase_start_plusminus\", paramIndex) = " + lazyForm.get("phase_start_plusminus", paramIndex));
                 if (phaseStartPhase != null && phaseStartPhase.trim().length() > 0 &&
                         "minus".equals(lazyForm.get("phase_start_plusminus", paramIndex))
                         && phase.getAllDependencies().length > 0) {
-                    System.out.println("ISV : MINUS");
                     Dependency dependency = phase.getAllDependencies()[0];
 
                     Date dependencyDate;
@@ -1435,10 +1425,7 @@ public class ProjectActions extends DispatchAction {
                     } else {
                         dependencyDate = dependency.getDependency().getScheduledStartDate();
                     }
-                    System.out.println("ISV : dependencyDate = " + dependencyDate + ", lagTime = " + dependency.getLagTime());
                     phase.setFixedStartDate(new Date(dependencyDate.getTime() - dependency.getLagTime()));
-                    System.out.println("ISV : fixed date for phase : " + toString(phase) + " is " + phase.getFixedStartDate());
-                    System.out.println("ISV : phase dependencies cleared");
                     phase.clearDependencies();
                 }
 
