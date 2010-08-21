@@ -1424,6 +1424,8 @@ public class ProjectActions extends DispatchAction {
                 }
                 // If the phase is scheduled to start before some other phase start/end
                 String phaseStartPhase = (String) lazyForm.get("phase_start_phase", paramIndex);
+                System.out.println("ISV : phaseStartPhase = " + phaseStartPhase);
+                System.out.println("ISV : lazyForm.get(\"phase_start_plusminus\", paramIndex) = " + lazyForm.get("phase_start_plusminus", paramIndex));
                 if (phaseStartPhase != null && phaseStartPhase.trim().length() > 0 &&
                         "minus".equals(lazyForm.get("phase_start_plusminus", paramIndex))) {
                     System.out.println("ISV : MINUS");
