@@ -1143,11 +1143,9 @@ public class ProjectActions extends DispatchAction {
 
                     // Clear all the pre-existing dependencies
                     phase.clearDependencies();
-                    System.out.println("ISV : 1st pass : cleared dependencies for phase : " + toString(phase));
 
                     // Clear the previously set fixed start date
                     phase.setFixedStartDate(null);
-                    System.out.println("ISV : 1st pass : set fixed start time to NULL for phase : " + toString(phase));
                 } else {
                     // -1 value as id marks the phases that were't persisted in DB yet
                     // and so should be skipped for actions other than "add"
@@ -1185,7 +1183,6 @@ public class ProjectActions extends DispatchAction {
                     }
                     // Set phase length
                     phase.setLength(length);
-                    System.out.println("ISV : 1st pass : set length to " + length + "for phase : " + toString(phase));
                 } catch (NumberFormatException nfe) {
                     // the hh or mm is not valid integer
                     ActionsHelper.addErrorToRequest(request,
@@ -1196,17 +1193,12 @@ public class ProjectActions extends DispatchAction {
             } else {
                 // Length is undetermined at current pass
                 phase.setLength(0);
-                System.out.println("ISV : 1st pass : set length to " + 0 + "for phase : " + toString(phase));
             }
 
             // Put the phase to the map from phase JS ids to phases
             phasesJsMap.put(lazyForm.get("phase_js_id", i), phase);
-            System.out.println("ISV : 1st pass : mapped phase : " + toString(phase) + " to "
-                               + lazyForm.get("phase_js_id", i) + " in phasesJsMap");
             // Put the phase to the map from phases to the indexes of form inputs
             phasesToForm.put(phase, i);
-            System.out.println("ISV : 1st pass : mapped phase : " + toString(phase) + " to "
-                               + i + " in phasesToForm");
         }
 
         // Minimal date will be the project start date
@@ -1235,8 +1227,7 @@ public class ProjectActions extends DispatchAction {
             }
 
             Phase phase = (Phase) phaseObj;
-            System.out.println("ISV : 2nd pass : Starting to process phase at index " + i + " : " + toString(phase));
-            
+
             /*
              * Set phase properties
              */
@@ -1272,12 +1263,9 @@ public class ProjectActions extends DispatchAction {
                         Date phaseStartDate = parseDatetimeFormProperties(lazyForm, i, "phase_start_date",
                             "phase_start_time");
                         phase.setFixedStartDate(phaseStartDate);
-                        System.out.println("ISV : 2nd pass : set fixed start date to " + phaseStartDate + " for phase "
-                                           + toString(phase));
                         // Check if the current date is minimal
                         if (minDate == null || phaseStartDate.getTime() < minDate.getTime()) {
                             minDate = phaseStartDate;
-                            System.out.println("ISV : SET minDate = " + minDate);
                         }
                     }
                 }
@@ -1312,8 +1300,6 @@ public class ProjectActions extends DispatchAction {
 
                         // Add dependency to phase
                         phase.addDependency(dependency);
-                        System.out.println("ISV : 2nd pass : added dependency on " + toString(dependencyPhase)
-                                           + " for phase " + toString(phase));
                     }
                 }
             }
@@ -1374,7 +1360,6 @@ public class ProjectActions extends DispatchAction {
             if (minDate.compareTo(phProject.getStartDate()) < 0) {
                 phProject.setStartDate(minDate);
             }
-            System.out.println("ISV : FFFFFF : Set project start date = " + minDate);
         }
 
         // THIRD PASS
@@ -1391,7 +1376,6 @@ public class ProjectActions extends DispatchAction {
             }
 
             Phase phase = (Phase) phaseObj;
-            System.out.println("ISV : 3rd pass : Starting to process phase : " + toString(phase));
 
             // If phase was already processed, skip it
             if (processed.contains(phase)) {
@@ -1444,17 +1428,12 @@ public class ProjectActions extends DispatchAction {
                         dependencyDate = dependency.getDependency().getScheduledStartDate();
                     }
                     phase.setFixedStartDate(new Date(dependencyDate.getTime() - dependency.getLagTime()));
-                    System.out.println("ISV : 3rd pass : set fixed start date to "
-                                       + new Date(dependencyDate.getTime() - dependency.getLagTime()) + "for phase " + toString(phase));
                     phase.clearDependencies();
-                    System.out.println("ISV : 3rd pass : cleared dependencies for phase : " + toString(phase));
                 }
 
                 try {
                     // Set scheduled start date to calculated start date
                     Date date = phase.calcStartDate();
-                    System.out.println("ISV : 3rd PASS : setting scheduled start date for phase " + toString(phase)
-                                       + " to " + date);
                     phase.setScheduledStartDate(phase.calcStartDate());
 
                     // flag value indicates using end date or using duration
@@ -1506,7 +1485,6 @@ public class ProjectActions extends DispatchAction {
                     }
 
                     // Set scheduled phase end date to calculated phase end date
-                    System.out.println("ISV 3rd pass : set scheduled end date to " + phase.calcEndDate());
                     phase.setScheduledEndDate(phase.calcEndDate());
                 } catch (CyclicDependencyException e) {
                     // There is circular dependency, report it and stop processing
@@ -1691,6 +1669,23 @@ public class ProjectActions extends DispatchAction {
                             && !postMortemPhaseExists) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.RegistrationMustBeFollowed");
+                        arePhasesValid = false;
+                    }
+                } else if (currentPhaseName.equals(SPECIFICATION_SUBMISSION_PHASE_NAME)) {
+                    // Specification Submission should be followed by Specification Review
+                    if (!nextPhaseName.equals(SPECIFICATION_REVIEW_PHASE_NAME)) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.SpecSubmissionMustBeFollowed");
+                        arePhasesValid = false;
+                    }
+                } else if (currentPhaseName.equals(SPECIFICATION_REVIEW_PHASE_NAME)) {
+                    // Specification Review should be followed either by Specification Submission, Registration
+                    // or Submission
+                    if (!nextPhaseName.equals(SPECIFICATION_SUBMISSION_PHASE_NAME)
+                        && !nextPhaseName.equals(REGISTRATION_PHASE_NAME)
+                        && !nextPhaseName.equals(SUBMISSION_PHASE_NAME)) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.SpecReviewMustBeFollowed");
                         arePhasesValid = false;
                     }
                 } else if (currentPhaseName.equals(REVIEW_PHASE_NAME)) {
