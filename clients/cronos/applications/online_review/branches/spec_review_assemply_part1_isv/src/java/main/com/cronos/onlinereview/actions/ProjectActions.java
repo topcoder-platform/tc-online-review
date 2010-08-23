@@ -1277,6 +1277,7 @@ public class ProjectActions extends DispatchAction {
                         // Check if the current date is minimal
                         if (minDate == null || phaseStartDate.getTime() < minDate.getTime()) {
                             minDate = phaseStartDate;
+                            System.out.println("ISV : SET minDate = " + minDate);
                         }
                     }
                 }
@@ -1371,6 +1372,7 @@ public class ProjectActions extends DispatchAction {
         // Update project start date if needed
         if (minDate != null) {
             phProject.setStartDate(minDate);
+            System.out.println("ISV : FFFFFF : Set project start date = " + minDate);
         }
 
         // THIRD PASS
