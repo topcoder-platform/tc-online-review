@@ -3347,12 +3347,12 @@ public class ProjectActions extends DispatchAction {
             return "Phase{" +
                    "id=" + p.getId() +
                    ", phaseType=" + p.getPhaseType().getName() +
-                   ", asd=" + p.getActualStartDate() +
+                   ", \nasd=" + p.getActualStartDate() +
                    ", aed=" + p.getActualEndDate() +
-                   ", sdd=" + p.getScheduledStartDate() +
+                   ", \nsdd=" + p.getScheduledStartDate() +
                    ", sed=" + p.getScheduledEndDate() +
-                   ", fsd=" + p.getFixedStartDate() +
-                   ", dependencies=" + Arrays.toString(p.getAllDependencies()) +
+                   ", \nfsd=" + p.getFixedStartDate() +
+                   ", \ndependencies=" + Arrays.toString(p.getAllDependencies()) +
                    '}';
         } else {
             return "null";
