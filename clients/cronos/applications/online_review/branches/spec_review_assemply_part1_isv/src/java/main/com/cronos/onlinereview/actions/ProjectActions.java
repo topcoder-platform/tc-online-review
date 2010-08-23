@@ -1431,6 +1431,9 @@ public class ProjectActions extends DispatchAction {
 
                 try {
                     // Set scheduled start date to calculated start date
+                    Date date = phase.calcStartDate();
+                    System.out.println("ISV : 3rd PASS : setting scheduled start date for phase " + toString(phase)
+                                       + " to " + date);
                     phase.setScheduledStartDate(phase.calcStartDate());
 
                     // flag value indicates using end date or using duration
