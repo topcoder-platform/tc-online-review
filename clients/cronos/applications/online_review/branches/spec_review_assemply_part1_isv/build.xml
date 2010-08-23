@@ -1092,4 +1092,8 @@ Note: The security manager that comes with the app may not be compatible with th
         <compile_component component="project_phase_template" version="1.2.0"
                            path="../../Components/project_phase_template"/>
     </target>
+    <target name="compile_component_6">
+        <compile_component component="project_phases" version="2.0"
+                           path="../../Components/project_phases"/>
+    </target>
 </project>
