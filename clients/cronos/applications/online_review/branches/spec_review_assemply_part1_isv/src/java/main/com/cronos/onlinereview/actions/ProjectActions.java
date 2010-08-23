@@ -1370,10 +1370,12 @@ public class ProjectActions extends DispatchAction {
         }
 
         // Update project start date if needed
-//        if (minDate != null) {
-//            phProject.setStartDate(minDate);
-//            System.out.println("ISV : FFFFFF : Set project start date = " + minDate);
-//        }
+        if (minDate != null) {
+            if (minDate.compareTo(phProject.getStartDate()) < 0) {
+                phProject.setStartDate(minDate);
+            }
+            System.out.println("ISV : FFFFFF : Set project start date = " + minDate);
+        }
 
         // THIRD PASS
         boolean hasCircularDependencies = false;
