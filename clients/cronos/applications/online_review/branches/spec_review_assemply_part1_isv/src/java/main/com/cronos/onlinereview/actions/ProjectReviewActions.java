@@ -3477,7 +3477,6 @@ public class ProjectReviewActions extends DispatchAction {
 
         if (isSpecReviewPhase) {
             Comment reviewLevelComment1 = null;
-            Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.SPECIFICATION_REVIEWER_ROLE_NAME);
 
             Boolean approveSpecObj = (Boolean) reviewForm.get("approve_specification");
             boolean approveSpecification = false;
@@ -3496,7 +3495,7 @@ public class ProjectReviewActions extends DispatchAction {
 
             reviewLevelComment1.setCommentType(
                 ActionsHelper.findCommentTypeByName(commentTypes, "Specification Review Comment"));
-            reviewLevelComment1.setAuthor(resource.getId());
+            reviewLevelComment1.setAuthor(myResource.getId());
             reviewLevelComment1.setExtraInfo(approveSpecification ? "Approved" : "Rejected");
             reviewLevelComment1.setComment("");
             review.addComment(reviewLevelComment1);
