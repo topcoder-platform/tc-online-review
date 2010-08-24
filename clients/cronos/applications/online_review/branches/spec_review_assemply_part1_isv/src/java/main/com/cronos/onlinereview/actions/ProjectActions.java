@@ -1433,7 +1433,6 @@ public class ProjectActions extends DispatchAction {
 
                 try {
                     // Set scheduled start date to calculated start date
-                    Date date = phase.calcStartDate();
                     phase.setScheduledStartDate(phase.calcStartDate());
 
                     // flag value indicates using end date or using duration
@@ -1529,7 +1528,7 @@ public class ProjectActions extends DispatchAction {
 
         if (!validationSucceeded) {
             // If project validation has failed, return immediately
-            return projectPhases;
+            return oldPhases;
         }
 
         // FIXME: Refactor it
@@ -3343,7 +3342,7 @@ public class ProjectActions extends DispatchAction {
 
     public String toString(Phase p) {
         if (p != null) {
-            return "Phase{" +
+            return "\nPhase{" +
                    "id=" + p.getId() +
                    ", phaseType=" + p.getPhaseType().getName() +
                    ", \nasd=" + p.getActualStartDate() +
