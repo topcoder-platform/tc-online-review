@@ -65,6 +65,7 @@
             <form-property name="phase_js_id" type="java.lang.String[]" />
             <form-property name="phase_action" type="java.lang.String[]" />
             <form-property name="phase_start_by_phase" type="java.lang.Boolean[]" />
+            <form-property name="phase_start_by_fixed_time" type="java.lang.Boolean[]" />
             <form-property name="phase_start_date" type="java.lang.String[]" />
             <form-property name="phase_start_time" type="java.lang.String[]" />
             <form-property name="phase_start_phase" type="java.lang.String[]" />
@@ -94,6 +95,13 @@
         <form-bean name="fileUploadForm" dynamic="true"
             type="org.apache.struts.validator.DynaValidatorForm">
             <form-property name="file" type="org.apache.struts.upload.FormFile" />
+        </form-bean>
+
+        <form-bean name="specificationUploadForm" dynamic="true"
+            type="org.apache.struts.validator.DynaValidatorForm">
+            <form-property name="file" type="org.apache.struts.upload.FormFile" />
+            <form-property name="specificationType" type="java.lang.String" />
+            <form-property name="specificationText" type="java.lang.String" />
         </form-bean>
 
         <form-bean name="reviewForm" dynamic="true"
@@ -147,7 +155,20 @@
             <form-property name="final_comment" type="java.lang.String[]" />
             <form-property name="approve_fixes" type="java.lang.Boolean" />
         </form-bean>
-        
+
+        <form-bean name="specificationReviewForm" dynamic="true"
+            type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="rid" type="java.lang.Long" />
+            <form-property name="sid" type="java.lang.Long" />
+            <form-property name="save" type="java.lang.String" />
+            <form-property name="answer" type="java.lang.String[]" />
+            <form-property name="comment_count" type="java.lang.Integer[]" />
+            <form-property name="comment_type" type="java.util.HashMap" />
+            <form-property name="comment" type="java.util.HashMap" />
+            <form-property name="file" type="org.apache.struts.upload.FormFile[]" />
+            <form-property name="approve_specification" type="java.lang.Boolean" />
+        </form-bean>
+
         <!-- OR Project Linking Assembly -->
         <!-- Project Link Form -->        
         <form-bean name="projectLinkForm" dynamic="true"
@@ -346,8 +367,8 @@
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
         </action>
 
-        <!-- "Upload Submission" action -->
-        <action path="/actions/UploadSubmission" unknown="false"
+        <!-- "Upload Contest Submission" action -->
+        <action path="/actions/UploadContestSubmission" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectDetailsActions"
             parameter="method" scope="request"
             name="fileUploadForm"
@@ -356,8 +377,25 @@
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
         </action>
 
-        <!-- "Download Submission" action -->
-        <action path="/actions/DownloadSubmission" unknown="false"
+        <!-- "Upload Specification Submission" action -->
+        <action path="/actions/UploadSpecificationSubmission" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectDetailsActions"
+            parameter="method" scope="request"
+            name="specificationUploadForm"
+            input="/jsp/uploadSpecification.jsp">
+            <forward name="displayPage" path="/jsp/uploadSpecification.jsp" redirect="false" />
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
+        </action>
+
+        <!-- "Download Contest Submission" action -->
+        <action path="/actions/DownloadContestSubmission" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectDetailsActions"
+            parameter="method" scope="request"
+            input="/jsp/viewProjectDetails.jsp">
+        </action>
+
+        <!-- "Download Specification Submission" action -->
+        <action path="/actions/DownloadSpecificationSubmission" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectDetailsActions"
             parameter="method" scope="request"
             input="/jsp/viewProjectDetails.jsp">
@@ -707,6 +745,45 @@
             parameter="method" scope="request"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/viewCompositeScorecard.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Create Specification Review" action -->
+        <action path="/actions/CreateSpecificationReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="specificationReviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editSpecificationReview.jsp" redirect="false"/>
+            <forward name="edit" path="/actions/EditSpecificationReview.do?method=editSpecificationReview"
+                     redirect="true"/>
+        </action>
+
+        <!-- "Edit Specification Review" action -->
+        <action path="/actions/EditSpecificationReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="specificationReviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editSpecificationReview.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Save Specification Review" action -->
+        <action path="/actions/SaveSpecificationReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="specificationReviewForm"
+            input="/jsp/editSpecificationReview.jsp">
+            <forward name="preview" path="/jsp/viewSpecificationReview.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+
+        <!-- "View Specification Review" action -->
+        <action path="/actions/ViewSpecificationReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="specificationReviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/viewSpecificationReview.jsp" redirect="false"/>
         </action>
 
         <!--

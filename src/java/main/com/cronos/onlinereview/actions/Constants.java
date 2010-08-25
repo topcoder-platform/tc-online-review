@@ -42,8 +42,27 @@ package com.cronos.onlinereview.actions;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.6 (Specification Review Part 1 Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #SPECIFICATION_REVIEW_PHASE_NAME} constant.</li>
+ *     <li>Added {@link #SPECIFICATION_SUBMISSION_PHASE_NAME} constant.</li>
+ *     <li>Added {@link #SPECIFICATION_SUBMISSION_DELIVERABLE_NAME} constant.</li>
+ *     <li>Added {@link #PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME} constant.</li>
+ *     <li>Added {@link #PERFORM_SPECIFICATION_REVIEW_PERM_NAME} constant.</li>
+ *     <li>Added {@link #SPEC_REVIEW_APP_FUNC} constant.</li>
+ *     <li>Added {@link #VIEW_MY_SPECIFICATION_SUBMISSIONS_PERM_NAME} constant.</li>
+ *     <li>Added {@link #VIEW_ALL_SPECIFICATION_SUBMISSIONS_PERM_NAME} constant.</li>
+ *     <li>Added {@link #VIEW_ALL_SPECIFICATION_SUBMISSIONS_PERM_NAME} constant.</li>
+ *     <li>Added {@link #SPECIFICATION_REVIEWER_ROLE_NAME} constant.</li>
+ *     <li>Added {@link #SPECIFICATION_REVIEW_DELIVERABLE_NAME} constant.</li>
+ *     <li>Added {@link #VIEW_SPECIFICATION_REVIEW_PERM_NAME} constant.</li>
+ *     <li>Changed value of {@link #PERFORM_SUBM_PERM_NAME} constant.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv
- * @version 1.4
+ * @version 1.6
  */
 public class Constants {
 
@@ -129,6 +148,13 @@ public class Constants {
      * @see #FAILURE_REVIEWER_ROLE_NAME
      */
     public static final String STRESS_REVIEWER_ROLE_NAME = "Stress Reviewer";
+
+    /**
+     * <p>A <code>String</code> providing the name of <code>Specification Reviewer</code> resource role name.</p>
+     *
+     * @since 1.6
+     */
+    public static final String SPECIFICATION_REVIEWER_ROLE_NAME = "Specification Reviewer";
 
     /**
      * This member variable is a constant array that holds names of different reviewer roles.
@@ -356,10 +382,24 @@ public class Constants {
     public static final String VIEW_REGISTRATIONS_PERM_NAME = "View Registrations";
 
     /**
-     * This member variable is a string constant that defines the name of the Perform Submission
+     * This member variable is a string constant that defines the name of the Perform Contest Submission
      * permission.
      */
-    public static final String PERFORM_SUBM_PERM_NAME = "Perform Submission";
+    public static final String PERFORM_SUBM_PERM_NAME = "Perform Contest Submission";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Perform Specification Submission</code> permission.</p>
+     *
+     * @since 1.6
+     */
+    public static final String PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME = "Perform Specification Submission";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Perform Specification Review</code> permission.</p>
+     *
+     * @since 1.6
+     */
+    public static final String PERFORM_SPECIFICATION_REVIEW_PERM_NAME = "Perform Specification Review";
 
     /**
      * This member variable is a string constant that defines the name of the View All Submissions
@@ -368,10 +408,24 @@ public class Constants {
     public static final String VIEW_ALL_SUBM_PERM_NAME = "View All Submissions";
 
     /**
+     * <p>A <code>String</code> providing the name for <code>View All Specification Submissions</code> permission.</p>
+     *
+     * @since 1.6
+     */
+    public static final String VIEW_ALL_SPECIFICATION_SUBMISSIONS_PERM_NAME = "View All Specification Submissions";
+
+    /**
      * This member variable is a string constant that defines the name of the View My Submissions
      * permission.
      */
     public static final String VIEW_MY_SUBM_PERM_NAME = "View My Submissions";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>View My Specification Submissions</code> permission.</p>
+     *
+     * @since 1.6
+     */
+    public static final String VIEW_MY_SPECIFICATION_SUBMISSIONS_PERM_NAME = "View My Specification Submissions";
 
     /**
      * This member variable is a string constant that defines the name of the
@@ -384,6 +438,15 @@ public class Constants {
      * View Most Recent Submissions permission.
      */
     public static final String VIEW_RECENT_SUBM_PERM_NAME = "View Most Recent Submissions";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>VIEW_RECENT_SPECIFICATION_SUBMISSIONS_PERM_NAME</code>
+     * permission.</p>
+     *
+     * @since 1.6
+     */
+    public static final String VIEW_RECENT_SPECIFICATION_SUBMISSIONS_PERM_NAME
+        = "View Most Recent Specification Submissions";
 
     /**
      * This member variable is a string constant that defines the name of the
@@ -567,6 +630,13 @@ public class Constants {
     public static final String VIEW_APPROVAL_PERM_NAME = "View Approval";
 
     /**
+     * <p>A <code>String</code> providing the name for <code>View Specification Review</code> permission.</p>
+     *
+     * @since 1.6
+     */
+    public static final String VIEW_SPECIFICATION_REVIEW_PERM_NAME = "View Specification Review";
+
+    /**
      * This member variable is a string constant that defines the name of the Perform Post-Mortem Review
      * permission.
      *
@@ -691,6 +761,20 @@ public class Constants {
      */
     public static final String POST_MORTEM_PHASE_NAME = "Post-Mortem";
 
+    /**
+     * <p>A <code>String</code> providing the name for <code>Specification Submission</code> phase.</p>
+     *
+     * @since 1.6
+     */
+    public static final String SPECIFICATION_SUBMISSION_PHASE_NAME = "Specification Submission";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Specification Review</code> phase.</p>
+     *
+     * @since 1.6
+     */
+    public static final String SPECIFICATION_REVIEW_PHASE_NAME = "Specification Review";
+
 
     // ------------------------------------------------------------------- Phase Status names -----
 
@@ -749,6 +833,12 @@ public class Constants {
      */
     public static final String POST_MORTEM_APP_FUNC = "POSTMORTEM";
 
+    /**
+     * <p>A <code>String</code> providing the logical name for phase group for <code>Specification Review</code>.</p>
+     *
+     * @since 1.6
+     */
+    public static final String SPEC_REVIEW_APP_FUNC = "SPEC_REVIEW";
 
     // -------------------------------------------------------------------- Deliverable names -----
 
@@ -757,6 +847,20 @@ public class Constants {
      * deliverable.
      */
     public static final String SUBMISSION_DELIVERABLE_NAME = "Submission";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Specification Submission</code> deliverable.</p>
+     *
+     * @since 1.6
+     */
+    public static final String SPECIFICATION_SUBMISSION_DELIVERABLE_NAME = "Specification Submission";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Specification Review</code> deliverable.</p>
+     *
+     * @since 1.6
+     */
+    public static final String SPECIFICATION_REVIEW_DELIVERABLE_NAME = "Specification Review";
 
     /**
      * This member variable is a string constant that defines the name of the Screening Scorecard
