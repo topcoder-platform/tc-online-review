@@ -12,7 +12,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.topcoder.project.phases.Dependency;
+import com.topcoder.management.deliverable.SubmissionType;
+import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
+import com.topcoder.management.resource.ResourceManager;
+import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.filter.OrFilter;
 import org.apache.struts.util.MessageResources;
 
@@ -76,8 +79,17 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.4 (Specification Review Part 1 Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #serviceSpecReviewAppFunc(HttpServletRequest, PhaseGroup, Project, Phase, Resource[],
+ *     SpecificationsInfo)} method.
+ *     </li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, isv
- * @version 1.3
+ * @version 1.4
  */
 final class PhasesDetailsServices {
 
@@ -152,6 +164,7 @@ final class PhasesDetailsServices {
         int activeTabIdx = -1;
         Resource[] submitters = null;
         FinalFixesInfo finalFixes = new FinalFixesInfo();
+        SpecificationsInfo specifications = new SpecificationsInfo();
 
         for (int phaseIdx = 0; phaseIdx < phases.length; ++phaseIdx) {
             // Get a phase for the current iteration
@@ -242,6 +255,8 @@ final class PhasesDetailsServices {
                         allProjectResources, isAfterAppealsResponse, finalFixes);
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.POST_MORTEM_APP_FUNC)) {
                 servicePostMortemAppFunc(request, phaseGroup, project, phase, allProjectResources);
+            } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.SPEC_REVIEW_APP_FUNC)) {
+                serviceSpecReviewAppFunc(request, phaseGroup, project, phase, allProjectResources, specifications);
             }
         }
 
@@ -387,15 +402,27 @@ final class PhasesDetailsServices {
                 // Obtain an instance of Upload Manager
                 UploadManager upMgr = ActionsHelper.createUploadManager(request);
                 SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
+                SubmissionType[] allSubmissionTypes = upMgr.getAllSubmissionTypes();
+                SubmissionType submissionType = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes,
+                                                                                       "Contest Submission");
 
                 // Get "my" (submitter's) resource
-                Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
+                Resource myResource = null;
+                Resource[] myResources = ActionsHelper.getMyResourcesForPhase(request, null);
+                for (int i = 0; i < myResources.length; i++) {
+                    Resource resource = myResources[i];
+                    if (resource.getResourceRole().getName().equals("Submitter")) {
+                        myResource = resource;
+                        break;
+                    }
+                }
 
                 Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
                 Filter filterStatus = ActionsHelper.createSubmissionStatusFilter(allSubmissionStatuses);
                 Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
+                Filter filterType = SubmissionFilterBuilder.createSubmissionTypeIdFilter(submissionType.getId());
 
-                Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterResource));
+                Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterResource, filterType));
 
                 submissions = upMgr.searchSubmissions(filter);
             }
@@ -899,6 +926,60 @@ final class PhasesDetailsServices {
     }
 
     /**
+     * <p>Sets the specified phase group with details for <code>Specification Submission/Review</code> phases.</p>
+     *
+     * @param request an <code>HttpServletRequest</code> representing incoming request from client.
+     * @param phaseGroup a <code>PhaseGroup</code> providing the details for group of phase the current phase belongs
+     *        to.
+     * @param project a <code>Project</code> providing the details for current project.
+     * @param phase a <code>Phase</code> providing the details for <code>Post-Mortem</code> phase.
+     * @param allProjectResources a <code>Resource</code> array listing all existing resources for specified project.
+     * @param specifications a <code>SpecificationsInfo</code> providing the details for specification submissions for
+     *        project. 
+     * @throws BaseException if an unexpected error occurs.
+     * @since 1.4
+     */
+    private static void serviceSpecReviewAppFunc(HttpServletRequest request, PhaseGroup phaseGroup, Project project,
+                                                 Phase phase, Resource[] allProjectResources,
+                                                 SpecificationsInfo specifications) throws BaseException {
+
+        if (specifications.specifications == null) {
+            UploadManager upMgr = ActionsHelper.createUploadManager(request);
+            specifications.specifications
+                = ActionsHelper.getSpecificationSubmissions(phase.getProject().getId(), upMgr);
+            specifications.specificationIdx = 0;
+            Arrays.sort(specifications.specifications, new Comparators.SpecificationComparer());
+        }
+
+        String phaseName = phase.getPhaseType().getName();
+        if (phaseName.equalsIgnoreCase(Constants.SPECIFICATION_SUBMISSION_PHASE_NAME)) {
+            if (specifications.specificationIdx < specifications.specifications.length) {
+                phaseGroup.setSpecificationSubmission(specifications.specifications[specifications.specificationIdx++]);
+                if (phaseGroup.getSpecificationSubmission() != null) {
+                    ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+                    phaseGroup.setSpecificationSubmitter(
+                        resourceManager.getResource(phaseGroup.getSpecificationSubmission().getUpload().getOwner()));
+                }
+            }
+        }
+
+        if (phaseName.equalsIgnoreCase(Constants.SPECIFICATION_REVIEW_PHASE_NAME)) {
+            Resource[] reviewers = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
+            if ((reviewers == null) || (reviewers.length == 0)) {
+                return;
+            }
+            Filter filterResource = new EqualToFilter("reviewer", new Long(reviewers[0].getId()));
+            Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
+            Filter filter = new AndFilter(filterResource, filterProject);
+            ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+            Review[] reviews = revMgr.searchReviews(filter, true);
+            if (reviews.length != 0) {
+                phaseGroup.setSpecificationReview(reviews[0]);
+            }
+        }
+    }
+
+    /**
      * <p>Sets the specified phase group with details for <code>Approval</code> phase.</p>
      *
      * @param request an <code>HttpServletRequest</code> providing incoming request from the client.
@@ -1186,6 +1267,33 @@ final class PhasesDetailsServices {
         public int finalFixApprovalIdx = -1;
 
         public FinalFixesInfo() {
+            // empty constructor
+        }
+    }
+
+    /**
+     * <p>A helper class combining the details for specification submissions for project.</p>
+     *
+     * @author isv
+     * @since 1.4
+     */
+    private static class SpecificationsInfo {
+
+        /**
+         * <p>An <code>Submission</code> array listing the uploads for </p>
+         */
+        private Submission[] specifications = null;
+
+        /**
+         * <p>An <code>int</code> index to be used for tracking the processed specification submissions for mapping them
+         * to appropriate phase groups.</p>
+         */
+        private int specificationIdx = -1;
+
+        /**
+         * <p>Constructs new <code>SpecificationsInfo</code> instance. This implementation does nothing.</p>
+         */
+        private SpecificationsInfo() {
             // empty constructor
         }
     }

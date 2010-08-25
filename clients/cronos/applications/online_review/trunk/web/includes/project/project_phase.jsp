@@ -1,12 +1,15 @@
 <%--
   - Author: isv
-  - Version: 1.1
+  - Version: 1.2
   - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment displays the content of tab for single project phase on Project Details screen.
   -
   - Version 1.1 (Online Review End of Project Analysis v1.0) changes: Added logic for supporting Post-Mortem phase.
   - Updated logic for supporting Approval phase.
+  -
+  - Version 1.3 (Specification Review Part 1 assembly) changes: Added support for Specification Submission/Review
+  - phases.
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -161,7 +164,7 @@
 													<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" alt="${placeStr}" border="0" />
 												</c:if>
 											</c:if>
-											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
+											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
 											<c:if test="${not empty submitter}">
 												(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 											</c:if>
@@ -268,7 +271,7 @@
 										<tr id="PrevSubm${submBoxIdx}_${submissionStatus.index}" class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}' style="display:none;">
 											<td class="value" colspan="2" nowrap="nowrap">
 												<html:img border="0" srcKey="viewProjectDetails.box.Submission.icoShowMore.img" styleClass="Outline" style="visibility:hidden;" />
-												<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&amp;uid=${pastSubmission.id}">
+												<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&amp;uid=${pastSubmission.id}">
 													<bean:message key="viewProjectDetails.box.Submission.Previous.UploadID" />
 													${pastSubmission.id}</html:link></td>
 											<td class="value" width="22%">${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
@@ -416,7 +419,7 @@
 														<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" alt="${placeStr}" border="0" />
 													</c:if>
 												</c:if>
-												<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${submission.upload.id}"
+												<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${submission.upload.id}"
 													titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
 												<c:if test="${not empty submitter}">
 													(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
@@ -516,7 +519,7 @@
 									<tr class="light">
 										<td class="value" nowrap="nowrap">
 											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
-											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${winningSubmission.upload.id}"
+											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningSubmission.upload.id}"
 												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
 											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 										</td>
@@ -603,7 +606,7 @@
 									<tr class="light">
 										<td class="value" nowrap="nowrap">
 											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
-											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${winningSubmission.upload.id}"
+											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningSubmission.upload.id}"
 												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
 											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 										</td>
@@ -691,7 +694,7 @@
                                                           altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0"
                                                           styleClass="Outline"/>
                                                 <html:link
-                                                        page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${winningSubmission.upload.id}"
+                                                        page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningSubmission.upload.id}"
                                                         titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
                                                 (<tc-webtag:handle
                                                     coderId='${group.winner.allProperties["External Reference ID"]}'
@@ -844,6 +847,77 @@
                                 </c:forEach>
                                 <tr>
                                     <td class="lastRowTD" colspan="3"><!-- @ --></td>
+                                </tr>
+                            </table>
+                        </c:when>
+                        <c:when test='${group.appFunc == "SPEC_REVIEW"}'>
+                            <table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+                                <tr>
+                                    <td class="title" colspan="5">${group.tableName}</td>
+                                </tr>
+                                <tr>
+                                    <td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
+                                    <td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Specification.Date" arg0="${group.groupIndex}" /></td>
+                                    <td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.SpecificationReview.Date" arg0="${group.groupIndex}" /></td>
+                                    <td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.SpecificationReview.Review" arg0="${group.groupIndex}" /></td>
+                                </tr>
+                                <c:if test="${not empty group.specificationSubmission}">
+                                    <tr class="light">
+                                        <td class="value" nowrap="nowrap">
+                                            <html:link page="/actions/DownloadSpecificationSubmission.do?method=downloadSpecificationSubmission&uid=${group.specificationSubmission.upload.id}"
+                                                titleKey="viewProjectDetails.box.Specification.Download">${group.specificationSubmission.id}</html:link>
+                                            (<tc-webtag:handle coderId='${group.specificationSubmitter.allProperties["External Reference ID"]}'
+                                                               context="${orfn:getHandlerContext(pageContext.request)}" />)
+                                        </td>
+                                        <td class="valueC"
+                                            nowrap="nowrap">${orfn:displayDate(pageContext.request, group.specificationSubmission.modificationTimestamp)}</td>
+                                        <c:choose>
+                                            <c:when test="${not empty group.specificationReview}">
+                                                <c:choose>
+                                                    <c:when test="${group.specificationReview.committed}">
+                                                        <td class="valueC" nowrap="nowrap">
+                                                           ${orfn:displayDate(pageContext.request, group.specificationReview.modificationTimestamp)}
+                                                        </td>
+                                                        <td class="valueC" nowrap="nowrap">
+                                                            <html:link page="/actions/ViewSpecificationReview.do?method=viewSpecificationReview&rid=${group.specificationReview.id}">
+                                                                <bean:message key="viewProjectDetails.box.SpecificationReview.ViewResults"/></html:link>
+                                                        </td>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <td class="value"><!-- @ --></td>
+                                                        <c:choose>
+                                                            <c:when test="${isAllowedToPerformSpecReview}">
+                                                                <td class="valueC" nowrap="nowrap">
+                                                                    <html:link page="/actions/EditSpecificationReview.do?method=editSpecificationReview&rid=${group.specificationReview.id}">
+                                                                    <b><bean:message key="viewProjectDetails.box.SpecificationReview.Submit"/></b></html:link>
+                                                                </td>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <td class="valueC" nowrap="nowrap"><bean:message key="Pending"/></td>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <td class="value"><!-- @ --></td>
+                                                <td class="valueC" nowrap="nowrap">
+                                                <c:choose>
+                                                    <c:when test="${isAllowedToPerformSpecReview}">
+                                                        <html:link page="/actions/CreateSpecificationReview.do?method=createSpecificationReview&sid=${group.specificationSubmission.id}">
+                                                        <b><bean:message key="viewProjectDetails.box.SpecificationReview.Submit"/></b></html:link>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <bean:message key="Pending"/>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                                </td>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </tr>
+                                </c:if>
+                                <tr>
+                                    <td class="lastRowTD" colspan="5"><!-- @ --></td>
                                 </tr>
                             </table>
                         </c:when>

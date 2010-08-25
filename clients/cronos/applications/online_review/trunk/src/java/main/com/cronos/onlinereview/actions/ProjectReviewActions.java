@@ -130,8 +130,23 @@ import com.topcoder.util.weightedcalculator.LineItem;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.2 (Specification Review Part 1 Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added logic for processing Specification reviews.</li>
+ *     <li>Updated {@link #saveGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
+ *     saving review comments for <code>Approval</code> phase.</li>
+ *     <li>Updated {@link #createGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
+ *     handling <code>Post-Mortem</code> phase.</li>
+ *     <li>Updated {@link #viewGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
+ *     handling <code>Post-Mortem</code> phase.</li>
+ *     <li>Updated {@link #editGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
+ *     handling <code>Post-Mortem</code> phase.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, isv
- * @version 1.1
+ * @version 1.2
  */
 public class ProjectReviewActions extends DispatchAction {
     private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory
@@ -1483,6 +1498,10 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve a review to edit
         Review review = verification.getReview();
 
+        // Check if project has SVN Module property set
+        String svnModule = (String) verification.getProject().getProperty("SVN Module");
+        request.setAttribute("projectHasSVNModuleSet", (svnModule != null) && (svnModule.trim().length() > 0));
+
         // Obtain an instance of Scorecard Manager
         ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
         // Retrieve a scorecard template for the review
@@ -1641,6 +1660,10 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve a review to save
         Review review = verification.getReview();
+
+        // Check if project has SVN Module property set
+        String svnModule = (String) verification.getProject().getProperty("SVN Module");
+        request.setAttribute("projectHasSVNModuleSet", (svnModule != null) && (svnModule.trim().length() > 0));
 
         // Obtain an instance of Scorecard Manager
         ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
@@ -2670,6 +2693,8 @@ public class ProjectReviewActions extends DispatchAction {
         // Place the type of the review into the request
         if (reviewType.equals("Post-Mortem")) {
             request.setAttribute("reviewType", "PostMortem");
+        } else if (reviewType.equals("Specification Review")) {
+            request.setAttribute("reviewType", "SpecificationReview");
         } else {
             request.setAttribute("reviewType", reviewType);
         }
@@ -2700,6 +2725,9 @@ public class ProjectReviewActions extends DispatchAction {
         } else if ("Approval".equals(reviewType)) {
             permName = Constants.PERFORM_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
+        } else if ("Specification Review".equals(reviewType)) {
+            permName = Constants.PERFORM_SPECIFICATION_REVIEW_PERM_NAME;
+            phaseName = Constants.SPECIFICATION_REVIEW_PHASE_NAME;
         } else {
             isPostMortemPhase = true;
             permName = Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME;
@@ -2851,6 +2879,8 @@ public class ProjectReviewActions extends DispatchAction {
             scorecardTypeName = "Review";
         } else if ("Approval".equals(reviewType)) {
             scorecardTypeName = "Approval";
+        } else if ("Specification Review".equals(reviewType)) {
+            scorecardTypeName = "Specification Review";
         } else {
             scorecardTypeName = "Post-Mortem";
         }
@@ -3019,6 +3049,7 @@ public class ProjectReviewActions extends DispatchAction {
         String phaseName;
         String scorecardTypeName;
         boolean isApprovalPhase = false;
+        boolean isSpecReviewPhase = false;
         boolean isSubmissionDependentPhase = true;
         // Determine permission name and phase name from the review type
         if ("Screening".equals(reviewType)) {
@@ -3034,6 +3065,11 @@ public class ProjectReviewActions extends DispatchAction {
             permName = Constants.PERFORM_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
             scorecardTypeName = "Approval";
+        } else if ("Specification Review".equals(reviewType)) {
+            isSpecReviewPhase = true;
+            permName = Constants.PERFORM_SPECIFICATION_REVIEW_PERM_NAME;
+            phaseName = Constants.SPECIFICATION_REVIEW_PHASE_NAME;
+            scorecardTypeName = "Specification Review";
         } else {
             isSubmissionDependentPhase = false;
             permName = Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME;
@@ -3392,12 +3428,13 @@ public class ProjectReviewActions extends DispatchAction {
         boolean possibleFinalScoreUpdate = false;
         boolean possibleSubmissionStatusUpdate = false;
 
-        Comment reviewLevelComment1 = null;
-        Comment reviewLevelComment2 = null;
-        boolean rejectFixes = false;
-        boolean acceptButRequireOtherFixes = false;
 
         if (isApprovalPhase) {
+            Comment reviewLevelComment1 = null;
+            Comment reviewLevelComment2 = null;
+            boolean rejectFixes = false;
+            boolean acceptButRequireOtherFixes = false;
+
             Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.APPROVER_ROLE_NAME);
 
             Boolean rejectFixesObj = (Boolean) reviewForm.get("reject_fixes");
@@ -3436,6 +3473,32 @@ public class ProjectReviewActions extends DispatchAction {
             reviewLevelComment2.setExtraInfo(acceptButRequireOtherFixes ? "Required" : "");
             reviewLevelComment2.setComment("");
             review.addComment(reviewLevelComment2);
+        }
+
+        if (isSpecReviewPhase) {
+            Comment reviewLevelComment1 = null;
+
+            Boolean approveSpecObj = (Boolean) reviewForm.get("approve_specification");
+            boolean approveSpecification = false;
+            approveSpecification = (approveSpecObj != null && approveSpecObj.booleanValue());
+
+            for (int i = 0; i < review.getNumberOfComments(); ++i) {
+                Comment comment = review.getComment(i);
+                if (comment.getCommentType().getName().equalsIgnoreCase("Specification Review Comment")) {
+                    reviewLevelComment1 = comment;
+                }
+            }
+
+            if (reviewLevelComment1 == null) {
+                reviewLevelComment1 = new Comment();
+            }
+
+            reviewLevelComment1.setCommentType(
+                ActionsHelper.findCommentTypeByName(commentTypes, "Specification Review Comment"));
+            reviewLevelComment1.setAuthor(myResource.getId());
+            reviewLevelComment1.setExtraInfo(approveSpecification ? "Approved" : "Rejected");
+            reviewLevelComment1.setComment("");
+            review.addComment(reviewLevelComment1);
         }
 
 
@@ -4128,6 +4191,10 @@ public class ProjectReviewActions extends DispatchAction {
             permName = Constants.VIEW_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
             scorecardTypeName = "Approval";
+        } else if (reviewType.equals("Specification Review")) {
+            permName = Constants.VIEW_SPECIFICATION_REVIEW_PERM_NAME;
+            phaseName = Constants.SPECIFICATION_REVIEW_PHASE_NAME;
+            scorecardTypeName = "Specification Review";
         } else if (reviewType.equals("Post-Mortem")) {
             isSubmissionDependentPhase = false;
             permName = Constants.VIEW_POST_MORTEM_PERM_NAME;
@@ -5109,5 +5176,101 @@ public class ProjectReviewActions extends DispatchAction {
         throws BaseException {
         LoggingHelper.logAction(request);
         return viewGenericReview(mapping, form, request, "Post-Mortem");
+    }
+
+    /**
+     * This method is an implementation of &quot;Create Specification Review&quot; Struts Action defined for
+     * this assembly, which is supposed to gather needed information (scorecard template) and
+     * present it to editSpecificationReview page, which will fill the required fields and post them to the
+     * &quot;Save Specification Review&quot; action. The action implemented by this method is executed to edit
+     * specification review that does not exist yet, and hence is supposed to be created.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editSpecificationReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent submission id, or the lack of
+     *         permissions, etc.).
+     * @param mapping action mapping.
+     * @param form action form.
+     * @param request the http request.
+     * @param response the http response.
+     * @throws BaseException if any error occurs.
+     * @since 1.2
+     */
+    public ActionForward createSpecificationReview(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                                   HttpServletResponse response) throws BaseException{
+        LoggingHelper.logAction(request);
+        return createGenericReview(mapping, form, request, "Specification Review");
+    }
+
+    /**
+     * This method is an implementation of &quot;Edit Specification Review&quot; Struts Action defined for this
+     * assembly, which is supposed to gather needed information (specification review scorecard template)
+     * and present it to editSpecificationReview.jsp page, which will fill the required fields and post them to
+     * the &quot;Save Specification Reviewquot; action. The action implemented by this method is executed to
+     * edit specification review that has already been created, but has not been submitted yet, and hence is
+     * supposed to be edited.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editSpecificationReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
+     * @param mapping action mapping.
+     * @param form action form.
+     * @param request the http request.
+     * @param response the http response.
+     * @throws BaseException if any error occurs.
+     * @since 1.2
+     */
+    public ActionForward editSpecificationReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, 
+                                                 HttpServletResponse response) throws BaseException{
+        LoggingHelper.logAction(request);
+        return editGenericReview(mapping, form, request, "Specification Review");
+    }
+
+    /**
+     * This method is an implementation of &quot;Save Specification Review&quot; Struts Action defined for this
+     * assembly, which is supposed to save information posted from /jsp/editSpecificationReview.jsp page. This
+     * method will either create new specification review or update (edit) an existing one depending on which
+     * action was called to display /jsp/editSpecificationReview.jsp page.
+     *
+     * @return &quot;success&quot; forward, which forwards to the &quot;View Project Details&quot;
+     *         action, or &quot;userError&quot; forward, which forwards to the /jsp/userError.jsp
+     *         page, which displays information about an error that is usually caused by incorrect
+     *         user input (such as absent submission id, or the lack of permissions, etc.).
+     * @param mapping action mapping.
+     * @param form action form.
+     * @param request the http request.
+     * @param response the http response.
+     * @throws BaseException if any error occurs.
+     * @since 1.2
+     */
+    public ActionForward saveSpecificationReview(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                                 HttpServletResponse response) throws BaseException {
+        LoggingHelper.logAction(request);
+        return saveGenericReview(mapping, form, request, "Specification Review");
+    }
+
+    /**
+     * This method is an implementation of &quot;View Specification Review&quot; Struts Action defined for this
+     * assembly, which is supposed to view completed specification review.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/viewSpecificationReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
+     * @param mapping action mapping.
+     * @param form action form.
+     * @param request the http request.
+     * @param response the http response.
+     * @throws BaseException if any error occurs.
+     * @since 1.2
+     */
+    public ActionForward viewSpecificationReview(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                                 HttpServletResponse response) throws BaseException {
+        LoggingHelper.logAction(request);
+        return viewGenericReview(mapping, form, request, "Specification Review");
     }
 }

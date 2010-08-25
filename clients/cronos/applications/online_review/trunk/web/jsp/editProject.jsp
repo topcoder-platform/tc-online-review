@@ -1,6 +1,6 @@
 <%--
   - Author: pulky, isv
-  - Version: 1.2
+  - Version: 1.3
   - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays project edition page
@@ -10,6 +10,8 @@
   -
   - Version 1.2 (Online Review End of Project Analysis v1.0) changes: Integrated newly defined Generic project types,
   - categories and scorecards.
+  -
+  - Version 1.3 (Specification Review Part 1 assembly) changes: Added support for Specification Review phase.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -114,6 +116,14 @@
             postMortemScorecards[postMortemScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";
         </c:forEach>
 
+        var specificationReviewScorecards = [];
+        <c:forEach items="${requestScope.specificationReviewScorecards}" var="scorecard">
+        specificationReviewScorecards.push({});
+        specificationReviewScorecards[postMortemScorecards.length - 1]["id"] = ${scorecard.id};
+        specificationReviewScorecards[postMortemScorecards.length - 1]["category"] = ${scorecard.category};
+        specificationReviewScorecards[postMortemScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";
+        </c:forEach>
+
         var defaultScorecards = [];
         <c:forEach items="${defaultScorecards}" var="scorecard">
             defaultScorecards.push({});
@@ -154,6 +164,7 @@
         var reviewScorecardNodes = new Array();;
         var approvalScorecardNodes = new Array();;
         var postMortemScorecardNodes = new Array();;
+        var specReviewScorecardNodes = new Array();;
 
         /*
          * TODO: Document it
@@ -213,6 +224,9 @@
             templateRow = document.getElementById("post_mortem_scorecard_row_template");
             changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, approvalScorecards, 'Post-Mortem');
 
+            templateRow = document.getElementById("specification_review_scorecard_row_template");
+            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, specificationReviewScorecards, 'Specification Review');
+
             for (var i = 0; i < screeningScorecardNodes.length; i++) {
                 changeScorecardByCategory(screeningScorecardNodes[i], projectCategoryNode.value, screeningScorecards, 'Screening');
             }
@@ -225,6 +239,9 @@
 
             for (var i = 0; i < postMortemScorecardNodes.length; i++) {
                 changeScorecardByCategory(postMortemScorecardNodes[i], projectCategoryNode.value, postMortemScorecards, 'Post-Mortem');
+            }
+            for (var i = 0; i < specReviewScorecardNodes.length; i++) {
+                changeScorecardByCategory(specReviewScorecardNodes[i], projectCategoryNode.value, specificationReviewScorecards, 'Specification Review');
             }
 
             //var digitalRunChecked = false;
@@ -460,6 +477,8 @@
                       templateRow = document.getElementById("view_appeal_responses_row_template");
                 } else if (phaseName == "Post-Mortem") {
                       templateRow = document.getElementById("post_mortem_scorecard_row_template");
+                } else if (phaseName == "Specification Review") {
+                      templateRow = document.getElementById("specification_review_scorecard_row_template");
                 }
 
                  criterionRow = cloneInputRow(templateRow);
@@ -483,6 +502,8 @@
                     approvalScorecardNodes[approvalScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
                  } else if (phaseName == "Post-Mortem") {
                      postMortemScorecardNodes[postMortemScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
+                 } else if (phaseName == "Specification Review") {
+                     specReviewScorecardNodes[specReviewScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
                 }
             }
         }
@@ -750,7 +771,10 @@
             var phaseId = phaseRow.id;
             var actionPhaseNode = document.getElementsByName("action_phase")[0];
             actionPhaseNode.value = phaseId;
-            actionNode.form.submit();
+            var s = validate_form(actionNode.form, true);
+            if (s) {
+                actionNode.form.submit();
+            }
         }
 
         /**
@@ -828,6 +852,11 @@
 
                 getChildByNamePrefix(newPhaseRow, "phase_start_date").value = startDateParts[0];
                 getChildByNamePrefix(newPhaseRow, "phase_start_time").value = startDateParts[1];
+                if (startDateParts[0] && startDateParts[0] != '') {
+                    getChildByNamePrefix(newPhaseRow, "phase_start_by_fixed_time").checked = true;
+                    getChildByNamePrefix(newPhaseRow, "phase_start_date").removeAttribute("disabled");
+                    getChildByNamePrefix(newPhaseRow, "phase_start_time").removeAttribute("disabled");
+                }
 
                 var endDate = dojo.dom.textContent(phaseNodes[i].getElementsByTagName("end-date")[0]);
                 var endDateParts = endDate.split(" ");
@@ -846,20 +875,25 @@
             for (var i = 0; i < phaseNodes.length; i++) {
                 var newPhaseRow = phaseRows[i];
                 var dependencies = phaseNodes[i].getElementsByTagName("dependency");
-                var phaseStartButtons = getChildrenByNamePrefix(newPhaseRow, "phase_start_by_phase");
-                for (var j = 0; j < phaseStartButtons.length; j++) {
-                    if (phaseStartButtons[j].value == "true") {
-                        phaseStartButtons[j].checked = (dependencies.length != 0);
-                    } else {
-                        phaseStartButtons[j].checked = (dependencies.length == 0);
-                    }
-                }
 
                 if (dependencies.length != 0) {
+                    getChildByNamePrefix(newPhaseRow, "phase_start_date").value = '';
+                    getChildByNamePrefix(newPhaseRow, "phase_start_date").setAttribute("disabled", "disabled");
+                    getChildByNamePrefix(newPhaseRow, "phase_start_time").value = '';
+                    getChildByNamePrefix(newPhaseRow, "phase_start_time").setAttribute("disabled", "disabled");
+                    getChildByNamePrefix(newPhaseRow, "phase_start_by_fixed_time").checked = false;
+
                     var dependencyId =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-id")[0]);
                     var dependencyStart =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-start")[0]);
                     getChildByNamePrefix(newPhaseRow, "phase_start_phase").value = "template_" + dependencyId;
                     getChildByNamePrefix(newPhaseRow, "phase_start_when").value = (dependencyStart == "true") ? "starts" : "ends";
+                    var phaseStartButtons = getChildByNamePrefix(newPhaseRow, "phase_start_by_phase");
+                    phaseStartButtons.checked = true;
+                    getChildByNamePrefix(newPhaseRow, "phase_start_phase").removeAttribute("disabled");
+                    getChildByNamePrefix(newPhaseRow, "phase_start_when").removeAttribute("disabled");
+                    getChildByNamePrefix(newPhaseRow, "phase_start_plusminus").removeAttribute("disabled");
+                    getChildByNamePrefix(newPhaseRow, "phase_start_amount").removeAttribute("disabled");
+                    getChildByNamePrefix(newPhaseRow, "phase_start_dayshrs").removeAttribute("disabled");
                 }
             }
 
@@ -882,6 +916,9 @@
 
             templateRow = document.getElementById("post_mortem_scorecard_row_template");
             changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, postMortemScorecards, 'Post-Mortem');
+
+            templateRow = document.getElementById("specification_review_scorecard_row_template");
+            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, specificationReviewScorecards, 'Specification Review');
         }
 
     //--></script>

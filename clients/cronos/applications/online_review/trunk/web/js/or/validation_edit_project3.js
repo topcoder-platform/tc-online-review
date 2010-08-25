@@ -308,35 +308,74 @@ function validate_timeline(thisForm, msgList) {
 		msgDiv = getChildByName(phase_row, "start_date_validation_msg");
 		msgDiv.innerHTML = "";
 		msgDiv.style.display = "none";
+        
+        var isPhaseClosed = thisForm["isPhaseClosed[" + i + "]"].value == 'true';
+        var arePhaseDependenciesEditable = thisForm['arePhaseDependenciesEditable'].value == 'true';
+        if (!isPhaseClosed) {
+            var startByFixedTime = false;
+            var startByPhase = false;
 
-		var start_by_phase = thisForm["phase_start_by_phase[" + i + "]"][1].checked;
-		if (!start_by_phase) {
-			// if the phase does not start by another phase, try to validate its start datetime
+            // validate start date
+            var startDateInput = thisForm["phase_start_date[" + i + "]"];
+            var isPhaseStartTimeEnabled = startDateInput && startDateInput.getAttribute("disabled") != "disabled";
+            if (isPhaseStartTimeEnabled) {
+                startByFixedTime = true;
+                var start_date = thisForm["phase_start_date[" + i + "]"].value;
+                var start_time = thisForm["phase_start_time[" + i + "]"].value;
+                if (!isDateString(start_date)) {
+                    msg = "Start Date should be in the form of \"mm.dd.yy\"";
+                    add_error_message(msg, msgPrefix, msgDiv, msgList);
+                }
 
-			// validate start date
-			var start_date = thisForm["phase_start_date[" + i + "]"].value;
-			if (!isDateString(start_date)) {
-				msg = "Start Date should be in the form of \"mm.dd.yy\"";
-				add_error_message(msg, msgPrefix, msgDiv, msgList);
-			}
+                // validate start time
+                if (!isTimeString(start_time)) {
+                    msg = "Start Time should be in the form of \"hh:mm\"";
+                    add_error_message(msg, msgPrefix, msgDiv, msgList);
+                }
+            }
 
-			// validate start time
-			var start_time = thisForm["phase_start_time[" + i + "]"].value;
-			if (!isTimeString(start_time)) {
-				msg = "Start Time should be in the form of \"hh:mm\"";
-				add_error_message(msg, msgPrefix, msgDiv, msgList);
-			}
-		} else {
-			// if the phase starts by another phase, try to validate its additional days/hours
+            // if the phase starts by another phase, try to validate its additional days/hours
+            var depPhaseInput = thisForm["phase_start_by_phase[" + i + "]"];
+            var phaseStartPhaseInput;
+            var phaseStartAmountInput;
+            var isPhaseDependencyEnabled = false;
+            var startByPhaseId;
+            if (depPhaseInput) {
+                if (depPhaseInput.length) {
+                    isPhaseDependencyEnabled = depPhaseInput[1].checked;
+                    phaseStartPhaseInput = thisForm["phase_start_phase[" + i + "]"][0];
+                    startByPhaseId = phaseStartPhaseInput.value;
+                    phaseStartAmountInput = thisForm["phase_start_amount[" + i + "]"][0];
+                } else {
+                    isPhaseDependencyEnabled = depPhaseInput.checked;
+                    phaseStartPhaseInput = thisForm["phase_start_phase[" + i + "]"];
+                    startByPhaseId = phaseStartPhaseInput.options[phaseStartPhaseInput.selectedIndex].value;
+                    phaseStartAmountInput = thisForm["phase_start_amount[" + i + "]"];
+                }
+            }
+            if (isPhaseDependencyEnabled) {
+                startByPhase = true;
+                if (startByPhaseId == '') {
+                    msg = "Dependency phase must be selected";
+                    add_error_message(msg, msgPrefix, msgDiv, msgList);
+                }
 
-			var start_amount = thisForm["phase_start_amount[" + i + "]"].value;
-			if (start_amount == '') {
-				start_amount = 0;
-			} else if (!isAllDigits(start_amount) || !isInteger(start_amount)) {
-				msg = "Additional Days/Hours should be an integer";
-				add_error_message(msg, msgPrefix, msgDiv, msgList);
-			}
-		}
+                var start_amount = phaseStartAmountInput.value;
+                if (start_amount == '') {
+                    start_amount = 0;
+                } else {
+                    if (!isAllDigits(start_amount) || !isInteger(start_amount)) {
+                        msg = "Additional Days/Hours/Minutes should be an integer";
+                        add_error_message(msg, msgPrefix, msgDiv, msgList);
+                    }
+                }
+            }
+
+            if (!(startByFixedTime || startByPhase)) {
+                msg = "Either fixed start time or dependency phase must be set for phase";
+                add_error_message(msg, msgPrefix, msgDiv, msgList);
+            }
+        }
 
 		// get the message div and hide it
 		msgDiv = getChildByName(phase_row, "end_date_validation_msg");
@@ -469,4 +508,40 @@ function validate_form(thisForm, popup) {
         alert("There have been validation errors:\n\n* " + msgList.join(';\n* ') + ".");
 
     return msgList.length == 0;
+}
+
+function fixedStartTimeBoxChanged(box, p) {
+    var p1 = box.name.indexOf('[');
+    var p2 = box.name.indexOf(']');
+    var phaseIdx = box.name.substring(p1 + 1, p2);
+    var form = box.form;
+    if (box.checked) {
+        form["phase_start_date[" + phaseIdx + "]"].removeAttribute("disabled");
+        form["phase_start_time[" + phaseIdx + "]"].removeAttribute("disabled");
+    } else {
+        form["phase_start_date[" + phaseIdx + "]"].setAttribute("disabled", "disabled");
+        form["phase_start_time[" + phaseIdx + "]"].setAttribute("disabled", "disabled");
+    }
+    return true;
+}
+
+function phaseStartByPhaseBoxChanged(box, p) {
+    var p1 = box.name.indexOf('[');
+    var p2 = box.name.indexOf(']');
+    var phaseIdx = box.name.substring(p1 + 1, p2);
+    var form = box.form;
+    if (box.checked) {
+        form["phase_start_phase[" + phaseIdx + "]"].removeAttribute("disabled");
+        form["phase_start_when[" + phaseIdx + "]"].removeAttribute("disabled");
+        form["phase_start_plusminus[" + phaseIdx + "]"].removeAttribute("disabled");
+        form["phase_start_amount[" + phaseIdx + "]"].removeAttribute("disabled");
+        form["phase_start_dayshrs[" + phaseIdx + "]"].removeAttribute("disabled");
+    } else {
+        form["phase_start_phase[" + phaseIdx + "]"].setAttribute("disabled", "disabled");
+        form["phase_start_when[" + phaseIdx + "]"].setAttribute("disabled", "disabled");
+        form["phase_start_plusminus[" + phaseIdx + "]"].setAttribute("disabled", "disabled");
+        form["phase_start_amount[" + phaseIdx + "]"].setAttribute("disabled", "disabled");
+        form["phase_start_dayshrs[" + phaseIdx + "]"].setAttribute("disabled", "disabled");
+    }
+    return true;
 }

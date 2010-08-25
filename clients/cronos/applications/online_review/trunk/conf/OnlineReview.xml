@@ -778,6 +778,9 @@
             <Property name="SubmissionStatusIdGeneratorName">
                 <Value>submission_status_id_seq</Value>
             </Property>
+            <Property name="SubmissionTypeIdGeneratorName">
+                <Value>submission_type_id_seq</Value>
+            </Property>
             <Property name="PersistenceClassName">
                 <Value>com.topcoder.management.deliverable.persistence.sql.SqlUploadPersistence</Value>
             </Property>
@@ -808,6 +811,222 @@
     <!--
         ===== Configuration for Phase Handlers from Online Review Phases component =====
     -->
+    <!-- Default namespace for Specification Submission handler -->
+    <Config name="com.cronos.onlinereview.phases.SpecificationSubmissionPhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/specification_submission/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/specification_submission/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- Default namespace for Specification Review handler -->
+    <Config name="com.cronos.onlinereview.phases.SpecificationReviewPhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/specification_review/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/specification_review/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
     <!-- Default namespace for Registration handler -->
     <Config name="com.cronos.onlinereview.phases.RegistrationPhaseHandler">
         <Property name="ConnectionFactoryNS">
@@ -1910,7 +2129,7 @@
     <!-- Default namespace for Approval handler -->
     <Config name="com.cronos.onlinereview.phases.ApprovalPhaseHandler">
         <Property name="ApprovalPhaseDuration">
-            <Value>24</Value>
+            <Value>120</Value>
         </Property>
         <Property name="ApprovalPhaseDefaultReviewersNumber">
             <Value>1</Value>
@@ -2948,7 +3167,7 @@
                         INNER JOIN upload
                                 ON submission.upload_id = upload.upload_id
                              WHERE submission_status_lu.name = 'Active'
-                               AND deliverable_lu.per_submission = 1
+                               AND NOT deliverable_lu.submission_type_id IS NULL
                                AND upload.project_id = resource.project_id
                                AND deliverable_lu.resource_role_id = resource.resource_role_id
                                AND deliverable_lu.phase_type_id = project_phase.phase_type_id
@@ -3043,14 +3262,23 @@
                                submission.screening_score,
                                submission.initial_score,
                                submission.final_score,
-                               submission.placement
+                               submission.placement,
+                               submission_type_lu.submission_type_id AS submission_type_id,
+                               submission_type_lu.create_user AS submission_type_create_user,
+                               submission_type_lu.create_date AS submission_type_create_date,
+                               submission_type_lu.modify_user AS submission_type_modify_user,
+                               submission_type_lu.modify_date AS submission_type_modify_date,
+                               submission_type_lu.name AS submission_type_name,
+                               submission_type_lu.description AS submission_type_description
                           FROM submission,
                                upload,
                                submission_status_lu,
+                               submission_type_lu,
                                upload_type_lu,
                                upload_status_lu
                          WHERE submission.upload_id = upload.upload_id
                            AND submission.submission_status_id = submission_status_lu.submission_status_id
+                           AND submission.submission_type_id = submission_type_lu.submission_type_id
                            AND upload.upload_type_id = upload_type_lu.upload_type_id
                            AND upload.upload_status_id = upload_status_lu.upload_status_id
                            AND
@@ -3065,6 +3293,9 @@
                     </Property>
                     <Property name="submission_status_id">
                         <Value>submission.submission_status_id</Value>
+                    </Property>
+                    <Property name="submission_type_id">
+                        <Value>submission.submission_type_id</Value>
                     </Property>
                     <Property name="project_id">
                         <Value>upload.project_id</Value>
@@ -4512,6 +4743,8 @@
                 <Value>Screener</Value>
                 <Value>Primary Screener</Value>
                 <Value>Reviewer</Value>
+                <Value>Specification Reviewer</Value>
+                <Value>Specification Submitter</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
@@ -4537,6 +4770,8 @@
                 <Value>Screener</Value>
                 <Value>Primary Screener</Value>
                 <Value>Reviewer</Value>
+                <Value>Specification Reviewer</Value>
+                <Value>Specification Submitter</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
@@ -4565,6 +4800,8 @@
                 <Value>Screener</Value>
                 <Value>Primary Screener</Value>
                 <Value>Reviewer</Value>
+                <Value>Specification Reviewer</Value>
+                <Value>Specification Submitter</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
@@ -4614,6 +4851,8 @@
                 <Value>Screener</Value>
                 <Value>Primary Screener</Value>
                 <Value>Reviewer</Value>
+                <Value>Specification Reviewer</Value>
+                <Value>Specification Submitter</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
@@ -4630,6 +4869,8 @@
                 <Value>Submitter</Value>
                 <Value>Screener</Value>
                 <Value>Primary Screener</Value>
+                <Value>Specification Reviewer</Value>
+                <Value>Specification Submitter</Value>
                 <Value>Reviewer</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
@@ -4650,8 +4891,14 @@
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
-            <Property name="Perform Submission">
+            <Property name="Perform Contest Submission">
                 <Value>Submitter</Value>
+            </Property>
+            <Property name="Perform Specification Submission">
+                <Value>Specification Submitter</Value>
+            </Property>
+            <Property name="Perform Specification Review">
+                <Value>Specification Reviewer</Value>
             </Property>
             <Property name="View All Submissions">
                 <Value>Global Manager</Value>
@@ -4663,8 +4910,23 @@
                 <Value>Client Manager</Value>
                 <Value>Observer</Value>		
             </Property>
+            <Property name="View All Specification Submissions">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
+                <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+                <Value>Observer</Value>
+                <Value>Specification Submitter</Value>
+                <Value>Specification Reviewer</Value>
+            </Property>
             <Property name="View My Submissions">
                 <Value>Submitter</Value>
+            </Property>
+            <Property name="View My Specification Submissions">
+                <Value>Specification Submitter</Value>
             </Property>
             <Property name="View Screener Submission">
                 <Value>Screener</Value>
@@ -4678,6 +4940,16 @@
                 <Value>Stress Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
+            </Property>
+            <Property name="View Most Recent Specification Submissions">
+                <Value>Observer</Value>
+                <Value>Specification Reviewer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+                <Value>Specification Submitter</Value>
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
             </Property>
             <Property name="View Winning Submission">
                 <Value>Submitter</Value>
@@ -4787,6 +5059,26 @@
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
+            <Property name="View Specification Review">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Aggregator</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
+                <Value>Designer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+                <Value>Specification Submitter</Value>
+                <Value>Specification Reviewer</Value>
+            </Property>
             <Property name="View Reviewer Reviews">
                 <Value>Reviewer</Value>
                 <Value>Accuracy Reviewer</Value>
@@ -4812,6 +5104,7 @@
                 <Value>Stress Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Post-Mortem Reviewer</Value>
+                <Value>Specification Reviewer</Value>
             </Property>
             <Property name="Perform Appeal">
                 <Value>Submitter</Value>
@@ -4941,7 +5234,7 @@
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Final Reviewer</Value>
-                <Value>Reviewer</Value>		
+                <Value>Reviewer</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>			
@@ -4998,6 +5291,8 @@
                 <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
+                <Value>Specification Reviewer</Value>
+                <Value>Specification Submitter</Value>
                 <Value>Reviewer</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
@@ -5062,6 +5357,21 @@
         </Property>
 
         <Property name="PhaseGrouping">
+            <Property name="Specification_Review">
+                <Property name="NameKey">
+                    <Value>ProjectPhaseGroup.Specification_Review</Value>
+                </Property>
+                <Property name="TableNameKey">
+                    <Value>ProjectPhaseGroup.Specification_Review.table</Value>
+                </Property>
+                <Property name="Phases">
+                    <Value>Specification Submission</Value>
+                    <Value>Specification Review</Value>
+                </Property>
+                <Property name="AppFunction">
+                    <Value>SPEC_REVIEW</Value>
+                </Property>
+            </Property>
             <Property name="Registration">
                 <Property name="NameKey">
                     <Value>ProjectPhaseGroup.Registration</Value>
