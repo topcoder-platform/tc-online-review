@@ -74,8 +74,7 @@
                             </tr>
                             <tr class="light">
                                 <td class="value">
-                                    <bean:message key="uploadSubmission.HelpLine1" />
-                                    <a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&d1=dev&d2=support&d3=${(project.projectCategory.id eq 1) ? 'des' : 'dev'}ScreeningSample"><bean:message key="linkHere" /></a>.<br /><br />
+                                    <bean:message key="uploadSubmission.HelpLine1" /><br /><br />
                                     <bean:message key="uploadSubmission.UploadSubmission" />
                                     <html:file property="file" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
                                     <html:image srcKey="btnUpload.img" altKey="btnUpload.alt" border="0" style="vertical-align:bottom;" /><br /><br />
