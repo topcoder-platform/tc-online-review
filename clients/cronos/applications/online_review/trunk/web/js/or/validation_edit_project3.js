@@ -317,7 +317,10 @@ function validate_timeline(thisForm, msgList) {
 
             // validate start date
             var startDateInput = thisForm["phase_start_date[" + i + "]"];
-            var isPhaseStartTimeEnabled = startDateInput && startDateInput.getAttribute("disabled") != "disabled";
+            var isPhaseStartTimeEnabled = startDateInput
+                    && (startDateInput.getAttribute("disabled") != "disabled")
+                    && (startDateInput.getAttribute("disabled") != true);
+
             if (isPhaseStartTimeEnabled) {
                 startByFixedTime = true;
                 var start_date = thisForm["phase_start_date[" + i + "]"].value;
