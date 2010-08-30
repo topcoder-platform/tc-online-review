@@ -1109,5 +1109,17 @@ Note: The security manager that comes with the app may not be compatible with th
              url="jdbc:informix-sqli://env.topcoder.com:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp"
              userid="informix" autocommit="true"
              src="/tmp/bulk-test-data.sql" classpathref="buildlibs"/>
-    </target>    
+    </target>
+
+    <target name="bulk-users-data-refresh" description="recreates the test data">
+        <sql driver="com.informix.jdbc.IfxDriver" password="1nf0rm1x"
+             url="jdbc:informix-sqli://env.topcoder.com:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp"
+             userid="informix"
+             autocommit="true"
+             src="/tmp/clear-db-user.sql" classpathref="buildlibs"/>
+        <sql driver="com.informix.jdbc.IfxDriver" password="1nf0rm1x"
+             url="jdbc:informix-sqli://env.topcoder.com:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp"
+             userid="informix" autocommit="true"
+             src="/tmp/bulk-user-data.sql" classpathref="buildlibs"/>
+    </target>
 </project>
