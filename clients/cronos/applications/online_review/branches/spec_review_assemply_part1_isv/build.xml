@@ -134,12 +134,12 @@
     <property name="db_connection_factory.path" value="db_connection_factory/${db_connection_factory.version}" />
     <property name="db_connection_factory.jar" value="${tcs_libdir}/${db_connection_factory.path}/${db_connection_factory.jar.name}" />
 
-    <property name="deliverable_management.version" value="1.1.0" />
+    <property name="deliverable_management.version" value="1.1.1" />
     <property name="deliverable_management.jar.name" value="deliverable_management.jar" />
     <property name="deliverable_management.path" value="deliverable_management/${deliverable_management.version}" />
     <property name="deliverable_management.jar" value="${tcs_libdir}/${deliverable_management.path}/${deliverable_management.jar.name}" />
 
-    <property name="deliverable_management_persistence.version" value="1.1.0" />
+    <property name="deliverable_management_persistence.version" value="1.1.1" />
     <property name="deliverable_management_persistence.jar.name" value="deliverable_management_persistence.jar" />
     <property name="deliverable_management_persistence.path" value="deliverable_management_persistence/${deliverable_management_persistence.version}" />
     <property name="deliverable_management_persistence.jar" value="${tcs_libdir}/${deliverable_management_persistence.path}/${deliverable_management_persistence.jar.name}" />
@@ -204,7 +204,7 @@
     <property name="online_review_ajax_support.path" value="online_review_ajax_support/${online_review_ajax_support.version}" />
     <property name="online_review_ajax_support.jar" value="${tcs_libdir}/${online_review_ajax_support.path}/${online_review_ajax_support.jar.name}" />
 
-    <property name="online_review_deliverables.version" value="1.0.1" />
+    <property name="online_review_deliverables.version" value="1.0.2" />
     <property name="online_review_deliverables.jar.name" value="online_review_deliverables.jar" />
     <property name="online_review_deliverables.path" value="online_review_deliverables/${online_review_deliverables.version}" />
     <property name="online_review_deliverables.jar" value="${tcs_libdir}/${online_review_deliverables.path}/${online_review_deliverables.jar.name}" />
@@ -214,7 +214,7 @@
     <property name="online_review_login.path" value="online_review_login/${online_review_login.version}" />
     <property name="online_review_login.jar" value="${tcs_libdir}/${online_review_login.path}/${online_review_login.jar.name}" />
 
-    <property name="online_review_phases.version" value="1.4" />
+    <property name="online_review_phases.version" value="1.4.2" />
     <property name="online_review_phases.jar.name" value="online_review_phases.jar" />
     <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}" />
     <property name="online_review_phases.jar" value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}" />
@@ -808,71 +808,6 @@ Note: The security manager that comes with the app may not be compatible with th
 
     <target name="main" depends="deploy, test" />
 
-    <target name="set_auto_pilot_libs" depends="compile">
-        <jar destfile="scripts/auto_pilot/lib/pr_phase_handlers.jar">
-            <fileset dir="${build_classdir}">
-                <include name="com/cronos/onlinereview/phases/**/*.class"/>
-            </fileset>
-        </jar>
-        <mkdir dir="scripts/auto_pilot/lib"/>
-        <copy todir="scripts/auto_pilot/lib" flatten="true" overwrite="true">
-            <fileset dir="lib/tcs/phase_handler_extend/1.0/" includes="phase_handler_extend.jar"/>
-            <fileset dir="lib/tcs/auto_pilot/1.0/" includes="auto_pilot.jar"/>
-            <fileset dir="lib/tcs/auto_screening_management/1.0/" includes="auto_screening_management.jar"/>
-            <fileset dir="lib/tcs/base_exception/2.0.0/" includes="base_exception.jar"/>
-            <fileset dir="lib/tcs/class_associations/1.0/" includes="class_associations.jar"/>
-            <fileset dir="lib/tcs/command_line_utility/1.0/" includes="command_line_utility.jar"/>
-            <fileset dir="lib/tcs/configuration_manager/2.1.5/" includes="configuration_manager.jar"/>
-            <fileset dir="lib/tcs/data_validation/1.1.1/" includes="data_validation.jar"/>
-            <fileset dir="lib/tcs/database_abstraction/1.1/" includes="database_abstraction.jar"/>
-            <fileset dir="lib/tcs/db_connection_factory/1.0/" includes="db_connection_factory.jar"/>
-            <fileset dir="lib/tcs/deliverable_management/1.1.0/" includes="deliverable_management.jar"/>
-            <fileset dir="lib/tcs/deliverable_management_persistence/1.1.0/" includes="deliverable_management_persistence.jar"/>
-            <fileset dir="lib/tcs/document_generator/2.1/" includes="document_generator.jar"/>
-            <fileset dir="lib/tcs/email_engine/3.1.0/" includes="email_engine.jar"/>
-            <fileset dir="lib/tcs/executable_wrapper/1.0/" includes="executable_wrapper.jar"/>
-            <fileset dir="lib/tcs/generic_event_manager/1.0/" includes="generic_event_manager.jar"/>
-            <fileset dir="lib/tcs/guid_generator/1.0/" includes="guid_generator.jar"/>
-            <fileset dir="lib/tcs/id_generator/3.0/" includes="id_generator.jar"/>
-            <fileset dir="lib/tcs/job_scheduler/1.0/" includes="job_scheduler.jar"/>
-            <fileset dir="lib/tcs/logging_wrapper/1.2/" includes="logging_wrapper.jar"/>
-            <fileset dir="lib/tcs/magic_numbers/1.0/" includes="magic_numbers.jar"/>
-            <fileset dir="lib/tcs/object_factory/2.0.1/" includes="object_factory.jar"/>
-            <fileset dir="lib/tcs/online_review_deliverables/1.0.1/" includes="online_review_deliverables.jar"/>
-            <fileset dir="lib/tcs/online_review_phases/1.4/" includes="online_review_phases.jar"/>
-            <fileset dir="lib/tcs/phase_management/1.0.4/" includes="phase_management.jar"/>
-            <fileset dir="lib/tcs/phase_management_persistence/1.0.2/" includes="phase_management_persistence.jar"/>
-            <fileset dir="lib/tcs/project_management/1.0.1/" includes="project_management.jar"/>
-            <fileset dir="lib/tcs/project_management_persistence/1.1.2/" includes="project_management_persistence.jar"/>
-            <fileset dir="lib/tcs/project_phases/2.0/" includes="project_phases.jar"/>
-            <fileset dir="lib/tcs/project_phase_template/1.2.0/" includes="project_phase_template.jar"/>
-            <fileset dir="lib/tcs/resource_management/1.1.1/" includes="resource_management.jar"/>
-            <fileset dir="lib/tcs/resource_management_persistence/1.2.2/" includes="resource_management_persistence.jar"/>
-            <fileset dir="lib/tcs/review_data_structure/1.0/" includes="review_data_structure.jar"/>
-            <fileset dir="lib/tcs/review_management/1.0/" includes="review_management.jar"/>
-            <fileset dir="lib/tcs/review_management_persistence/1.0.1/" includes="review_management_persistence.jar"/>
-            <fileset dir="lib/tcs/review_score_aggregator/1.0/" includes="review_score_aggregator.jar"/>
-            <fileset dir="lib/tcs/review_score_calculator/1.0.3/" includes="review_score_calculator.jar"/>
-            <fileset dir="lib/tcs/scorecard_data_structure/1.0/" includes="scorecard_data_structure.jar"/>
-            <fileset dir="lib/tcs/scorecard_management/1.0.1/" includes="scorecard_management.jar"/>
-            <fileset dir="lib/tcs/scorecard_management_persistence/1.0.1/" includes="scorecard_management_persistence.jar"/>
-            <fileset dir="lib/tcs/search_builder/1.3.1/" includes="search_builder.jar"/>
-            <fileset dir="lib/tcs/simple_cache/2.0/" includes="simple_cache.jar"/>
-            <fileset dir="lib/tcs/typesafe_enum/1.0/" includes="typesafe_enum.jar"/>
-            <fileset dir="lib/tcs/user_project_data_store/1.0.1/" includes="user_project_data_store.jar"/>
-            <fileset dir="lib/tcs/weighted_calculator/1.0/" includes="weighted_calculator.jar"/>
-            <fileset dir="lib/tcs/workdays/1.0/" includes="workdays.jar"/>
-            <fileset dir="lib/tcs/pacts_services" includes="PactsClientServices.jar"/>
-            <fileset dir="lib/shared/" includes="shared.jar"/>
-            <fileset dir="lib/shared/" includes="tcwebcommon.jar"/>
-            <fileset dir="lib/tcs/" includes="tcsUtil.jar"/>
-            <fileset dir="lib/third_party/" includes="ifx-jdbc.jar"/>
-            <fileset dir="lib/third_party/" includes="mail.jar"/>
-            <fileset dir="lib/third_party/" includes="log4j.jar"/>
-            <fileset dir="lib/third_party/" includes="activation.jar"/>
-            <fileset dir="lib/third_party/" includes="xerces.jar"/>
-        </copy>
-    </target>
 
     <!-- ************************************************************************** -->
     <!-- ************ REMOVE EVERYTHING BELOW HERE FOR THE DISTRIBUTION ************* -->
@@ -1029,71 +964,16 @@ Note: The security manager that comes with the app may not be compatible with th
     <!-- ************************ END REMOVE EVERYTHING ***************************** -->
     <!-- ************************************************************************** -->
 
-    <!--
-        ++ =======================================================================
-        ++ Macro: compile_component
-        ++ Compiles specified component
-        ++ =======================================================================
-    -->
-    <macrodef name="compile_component" description="Compiles the component">
-        <attribute name="component"/>
-        <attribute name="version"/>
-        <attribute name="path"/>
 
-        <sequential>
-            <property name="component_base_dir" value="@{path}"/>
-            <property name="component_src_dir" value="${component_base_dir}/src/java/main"/>
-            <property name="component_build_dir" value="${component_base_dir}/build"/>
-            <property name="component_build_classes_dir" value="${component_build_dir}/classes"/>
-            <property name="component_jar_file" value="${component_build_dir}/@{component}.jar"/>
-            <property name="component_dist_dir" value="${tcs_libdir}/@{component}/@{version}"/>
-
-            <delete dir="${component_build_dir}"/>
-            <mkdir dir="${component_build_dir}"/>
-            <mkdir dir="${component_build_classes_dir}"/>
-
-            <echo message="Base: ${component_base_dir}"/>
-            <echo message="Build: ${component_build_dir}"/>
-            <echo message="Src: ${component_src_dir}"/>
-            <echo message="Dist: ${component_dist_dir}"/>
-            <echo message="Jar: ${component_jar_file}"/>
-
-            <javac srcdir="${component_src_dir}"
-                   destdir="${component_build_classes_dir}"
-                   deprecation="${deprecation}"
-                   debug="on"
-                   source="1.5" target="1.5" memoryMaximumSize="512M" memoryInitialSize="64M" fork="true">
-                <classpath refid="buildlibs"/>
-                <include name="**/*"/>
-            </javac>
-            <jar basedir="${component_build_classes_dir}" jarfile="${component_jar_file}" includes="**"/>
-            <mkdir dir="${component_dist_dir}"/>
-            <copy file="${component_jar_file}" todir="${component_dist_dir}"/>
-        </sequential>
-    </macrodef>
-
-    <target name="compile_component_1">
-        <compile_component component="online_review_phases" version="1.4"
-                           path="../../Components/online_review_phases"/>
-    </target>
-    <target name="compile_component_2">
-        <compile_component component="deliverable_management" version="1.1.0"
-                           path="../../Components/deliverable_management"/>
-    </target>
-    <target name="compile_component_3">
-        <compile_component component="online_review_deliverables" version="1.0.1"
-                           path="../../Components/online_review_deliverables"/>
-    </target>
-    <target name="compile_component_4">
-        <compile_component component="deliverable_management_persistence" version="1.1.0"
-                           path="../../ComponentsRepository/deliverable_management_persistence/1.1.0.1"/>
-    </target>
-    <target name="compile_component_5">
-        <compile_component component="project_phase_template" version="1.2.0"
-                           path="../../Components/project_phase_template"/>
-    </target>
-    <target name="compile_component_6">
-        <compile_component component="project_phases" version="2.0"
-                           path="../../Components/project_phases"/>
+    <target name="bulk-test-data-refresh" description="recreates the test data">
+        <sql driver="com.informix.jdbc.IfxDriver" password="1nf0rm1x"
+             url="jdbc:informix-sqli://env.topcoder.com:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp"
+             userid="informix"
+             autocommit="true"
+             src="/tmp/clear-db.sql" classpathref="buildlibs"/>
+        <sql driver="com.informix.jdbc.IfxDriver" password="1nf0rm1x"
+             url="jdbc:informix-sqli://env.topcoder.com:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp"
+             userid="informix" autocommit="true"
+             src="/tmp/bulk-test-data.sql" classpathref="buildlibs"/>
     </target>
 </project>
