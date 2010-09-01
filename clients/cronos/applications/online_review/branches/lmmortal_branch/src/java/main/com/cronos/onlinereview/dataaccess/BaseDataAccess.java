@@ -14,6 +14,9 @@ import com.topcoder.shared.dataAccess.Request;
 import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
 import com.topcoder.shared.util.DBMS;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,8 +31,15 @@ import java.util.Map;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.2 (TopCoder Online Review Switch To Local Calls Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #getTCSCatalogDBConnection()} method.</li>
+ *   </ol>
+ * </p>
+ *
  * @author isv
- * @version 1.1
+ * @version 1.2
  */
 public abstract class BaseDataAccess {
 
@@ -176,6 +186,51 @@ public abstract class BaseDataAccess {
             return dataAccess.getData(request);
         } catch (Exception e) {
             throw new DataAccessException("Failed to run " + queryName + " query via Query Tool", e);
+        }
+    }
+
+    /**
+     * <p>Gets a connection to TCS Catalog database.</p>
+     *
+     * @return a <code>Connection</code> providing the connection to TCS Catalog database.
+     * @throws DataAccessException if an SQL error occurs while establishing connection to TCS Catalog database.
+     * @since 1.2
+     */
+    protected Connection getTCSCatalogDBConnection() {
+        try {
+            return DBMS.getConnection(DBMS.TCS_OLTP_DATASOURCE_NAME);
+        } catch (SQLException e) {
+            throw new DataAccessException("Failed to connect to TCS Catalog database", e);
+        }
+    }
+
+    /**
+     * <p>Closes the specified statement. If an SQL error occurs while closing the statement it is ignored.</p>
+     *
+     * @param statement a <code>Statement</code> to be closed.
+     */
+    protected void close(Statement statement) {
+        if (statement != null) {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                // Ignore
+            }
+        }
+    }
+
+    /**
+     * <p>Closes the specified connection. If an SQL error occurs while closing the connection it is ignored.</p>
+     *
+     * @param connection a <code>Connection</code> to be closed.
+     */
+    protected void close(Connection connection) {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                // Ignore
+            }
         }
     }
 }

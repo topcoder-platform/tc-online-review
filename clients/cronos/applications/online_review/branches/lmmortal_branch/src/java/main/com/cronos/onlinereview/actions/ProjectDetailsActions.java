@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
+import com.topcoder.management.deliverable.SubmissionType;
+import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
+import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.filter.*;
+import com.topcoder.servlet.request.ConfigurationException;
+import com.topcoder.servlet.request.DisallowedDirectoryException;
+import com.topcoder.servlet.request.FileDoesNotExistException;
+import com.topcoder.servlet.request.MemoryUploadedFile;
+import com.topcoder.servlet.request.PersistenceException;
+import com.topcoder.servlet.request.RequestParser;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -134,8 +144,22 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.6 (Specification Review Part 1 Assembly 1.0) Change notes:
+ *   <ol>
+ *    <li>Renamed <code>uploadSubmission</code> to <code>uploadContestSubmission</code> and
+ *        <code>downloadSubmission</code> to <code>downloadContestSubmission</code> methods.</li>
+ *    <li>Added {@link #uploadSpecificationSubmission(ActionMapping, ActionForm, HttpServletRequest,
+ *        HttpServletResponse)} method.</li>
+ *    <li>Updated {@link #uploadContestSubmission(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
+ *        method to set type for uploaded submission.</li>
+ *    <li>Added {@link #downloadSpecificationSubmission(ActionMapping, ActionForm, HttpServletRequest,
+ *        HttpServletResponse)} method.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv
- * @version 1.5
+ * @version 1.6
  */
 public class ProjectDetailsActions extends DispatchAction {
 
@@ -187,6 +211,8 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
+        LOG isvLog = new LOG("Project ID=" + request.getParameter("pid"));
+        isvLog.startRecording("viewProjectDetails");
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME, false);
@@ -195,14 +221,19 @@ public class ProjectDetailsActions extends DispatchAction {
             return verification.getForward();
         }
 
+        isvLog.startRecording("verification.getProject()");
         // Retrieve a review to view
         Project project = verification.getProject();
         // Get Message Resources used for this request
         MessageResources messages = getResources(request);
+        isvLog.stopRecording("verification.getProject()");
 
         // Retrieve some basic project info (such as icons' names) and place it into request
+        isvLog.startRecording("ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, messages)");
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, messages);
+        isvLog.stopRecording("ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, messages)");
 
+        isvLog.startRecording("Block 1");
         final String projectTypeName = project.getProjectCategory().getProjectType().getName();
 
         long projectId = project.getId();
@@ -244,12 +275,14 @@ public class ProjectDetailsActions extends DispatchAction {
                 request.setAttribute("projectDRP", Double.valueOf(drpointStr));
             }
         }
+        isvLog.stopRecording("Block 1");
 
         // since Online Review Update - Add Project Dropdown v1.0
         // Retrieve the billing project id from property.
         // And retrieve the list of all client projects, find billing project name by matching on id
         // set billing project name in request.
         // Retrieve Cockpit project also
+        isvLog.startRecording("Block 2");
         if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
                 || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
                 || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
@@ -272,7 +305,8 @@ public class ProjectDetailsActions extends DispatchAction {
                 request.setAttribute("billingProject", "");
             }
         }
-
+        isvLog.stopRecording("Block 2");
+        isvLog.startRecording("Block 3");
         boolean isAllowedToViewCockpitProjectName
                 = AuthorizationHelper.hasUserPermission(request, Constants.VIEW_COCKPIT_PROJECT_NAME_PERM_NAME);
         request.setAttribute("isAllowedToViewCockpitProjectName", isAllowedToViewCockpitProjectName);
@@ -280,8 +314,10 @@ public class ProjectDetailsActions extends DispatchAction {
             ProjectDataAccess projectDataAccess = new ProjectDataAccess();
             request.setAttribute("cockpitProject", projectDataAccess.getCockpitProjectName(projectId));
         }
+        isvLog.stopRecording("Block 3");
 
         // Place a string that represents "my" current role(s) into the request
+        isvLog.startRecording("Block 4");
         MessageResources messageResources = getResources(request);
         ActionsHelper.retrieveAndStoreMyRole(request, messageResources);
         // Obtain an array of "my" resources
@@ -309,16 +345,20 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("totalPayment", totalPayment);
         // Place an information about my payment status into the request
         request.setAttribute("wasPaid", ActionsHelper.getMyPaymentStatuses(myResources));
+        isvLog.stopRecording("Block 4");
 
         // Obtain an instance of Resource Manager
+        isvLog.startRecording("Block 5");
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Get an array of all resources for the project
         Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(resMgr, project);
         for (int i = 0; i < allProjectResources.length; i++) {
             ActionsHelper.populateEmailProperty(request, allProjectResources[i]);
         }
+        isvLog.stopRecording("Block 5");
 
         // Obtain an instance of Phase Manager
+        isvLog.startRecording("Block 6");
         PhaseManager phaseMgr = ActionsHelper.createPhaseManager(request, false);
         com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(project.getId());
         Phase[] phases;
@@ -331,8 +371,10 @@ public class ProjectDetailsActions extends DispatchAction {
         } else {
             phases = new Phase[0];
         }
+        isvLog.stopRecording("Block 6");
 
         // Obtain an array of all active phases of the project
+        isvLog.startRecording("Block 7");
         Phase[] activePhases = ActionsHelper.getActivePhases(phases);
 
         // Place all phases of the project into the request
@@ -344,11 +386,15 @@ public class ProjectDetailsActions extends DispatchAction {
         if (winnerExtRefId != null && winnerExtRefId.trim().length() != 0) {
             winnerExtUserId = Long.parseLong(winnerExtRefId, 10);
         }
+        isvLog.stopRecording("Block 7");
 
+        isvLog.startRecording("Block 8 POTENTIAL");
         Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForPhases(
                 ActionsHelper.createDeliverableManager(request), activePhases, allProjectResources, winnerExtUserId);
+        isvLog.stopRecording("Block 8 POTENTIAL");
 
         // For approval phase
+        isvLog.startRecording("Block 9");
         Phase approvalPhase = ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME);
         if (approvalPhase != null) {
             ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
@@ -380,10 +426,16 @@ public class ProjectDetailsActions extends DispatchAction {
                 }
             }
         }
+        isvLog.stopRecording("Block 9");
 
+        isvLog.startRecording("Block 10 POTENTIAL");
         Deliverable[] myDeliverables = ActionsHelper.getMyDeliverables(deliverables, myResources);
+        isvLog.stopRecording("Block 10 POTENTIAL");
+        isvLog.startRecording("Block 11 POTENTIAL");
         Deliverable[] outstandingDeliverables = ActionsHelper.getOutstandingDeliverables(deliverables);
+        isvLog.stopRecording("Block 11 POTENTIAL");
 
+        isvLog.startRecording("Block 12");
         request.setAttribute("myDeliverables", myDeliverables);
         request.setAttribute("outstandingDeliverables", outstandingDeliverables);
 
@@ -393,7 +445,9 @@ public class ProjectDetailsActions extends DispatchAction {
         int[] myDeliverableStatuses = getDeliverableStatusCodes(myDeliverables, activePhases, currentTime);
         int[] outstandingDeliverableStatuses =
             getDeliverableStatusCodes(outstandingDeliverables, activePhases, currentTime);
+        isvLog.stopRecording("Block 12");
 
+        isvLog.startRecording("Block 13 POTENTIAL");
         Date[] myDeliverableDates = new Date[myDeliverables.length];
         Date[] outstandingDeliverableDates = new Date[outstandingDeliverables.length];
 
@@ -406,6 +460,8 @@ public class ProjectDetailsActions extends DispatchAction {
                 myDeliverableDates[i] = phase.getScheduledEndDate();
             }
         }
+        isvLog.stopRecording("Block 13 POTENTIAL");
+        isvLog.startRecording("Block 14 POTENTIAL");
         for (int i = 0; i < outstandingDeliverables.length; ++i) {
             Deliverable deliverable = outstandingDeliverables[i];
             if (deliverable.isComplete()) {
@@ -415,12 +471,19 @@ public class ProjectDetailsActions extends DispatchAction {
                 outstandingDeliverableDates[i] = phase.getScheduledEndDate();
             }
         }
+        isvLog.stopRecording("Block 14 POTENTIAL");
 
+        isvLog.startRecording("Block 15 POTENTIAL");
         String[] myDeliverableLinks = generateDeliverableLinks(request, myDeliverables, phases);
+        isvLog.stopRecording("Block 15 POTENTIAL");
+        isvLog.startRecording("Block 16 POTENTIAL");
         String[] outstandingDeliverableUserIds = getDeliverableUserIds(outstandingDeliverables, allProjectResources);
+        isvLog.stopRecording("Block 16 POTENTIAL");
+        isvLog.startRecording("Block 17 POTENTIAL");
         String[] outstandingDeliverableSubmissionUserIds =
             getDeliverableSubmissionUserIds(request, outstandingDeliverables);
-
+        isvLog.stopRecording("Block 17 POTENTIAL");
+        isvLog.startRecording("Block 18");
         request.setAttribute("myDeliverableDates", myDeliverableDates);
         request.setAttribute("outstandingDeliverableDates", outstandingDeliverableDates);
         request.setAttribute("myDeliverableStatuses", myDeliverableStatuses);
@@ -438,7 +501,8 @@ public class ProjectDetailsActions extends DispatchAction {
         // List of scorecard templates used for this project
         List<Scorecard> scorecardTemplates = new ArrayList<Scorecard>();
         List<String> scorecardLinks = new ArrayList<String>();
-
+        isvLog.stopRecording("Block 18");
+        isvLog.startRecording("Block 19");
         Float minimumScreeningScore = 75f;
         // Iterate over all phases determining dates, durations and assigned scorecards
         for (int i = 0; i < phases.length; ++i) {
@@ -477,12 +541,15 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Collect Open / Closing / Late / Closed codes for phases
         int[] phaseStatuseCodes = getPhaseStatusCodes(phases, currentTime);
+        isvLog.stopRecording("Block 19");
 
         /*
          * Place all gathered information about phases into the request as attributes
          */
 
         // Place phases' start/end dates
+        isvLog.startRecording("Block 20");
+
         request.setAttribute("originalStart", originalStart);
         request.setAttribute("originalEnd", originalEnd);
         request.setAttribute("phaseStatuseCodes", phaseStatuseCodes);
@@ -492,10 +559,12 @@ public class ProjectDetailsActions extends DispatchAction {
         // Place information about used scorecard templates
         request.setAttribute("scorecardTemplates", scorecardTemplates);
         request.setAttribute("scorecardLinks", scorecardLinks);
+        isvLog.stopRecording("Block 20");
 
         ExternalUser[] allProjectExtUsers = null;
 
         // Determine if the user has permission to view a list of resources for the project
+        isvLog.startRecording("Block 21");
         if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECT_RESOURCES_PERM_NAME)) {
             // Get an array of external users for the corresponding resources
             allProjectExtUsers = ActionsHelper.getExternalUsersForResources(
@@ -505,17 +574,22 @@ public class ProjectDetailsActions extends DispatchAction {
             request.setAttribute("resources", allProjectResources);
             request.setAttribute("users", allProjectExtUsers);
         }
-
+        isvLog.stopRecording("Block 21");
+        isvLog.startRecording("Block 22 POTENTIAL");
         PhasesDetails phasesDetails = PhasesDetailsServices.getPhasesDetails(
                 request, messages, project, phases, allProjectResources, allProjectExtUsers);
+        isvLog.stopRecording("Block 22 POTENTIAL");
 
+        isvLog.startRecording("Block 23");
         request.setAttribute("phaseGroupIndexes", phasesDetails.getPhaseGroupIndexes());
         request.setAttribute("phaseGroups", phasesDetails.getPhaseGroups());
         request.setAttribute("activeTabIdx", phasesDetails.getActiveTabIndex());
         request.setAttribute("passingMinimum", minimumScreeningScore);
+        isvLog.stopRecording("Block 23");
 
         boolean sendTLNotifications = false;
 
+        isvLog.startRecording("Block 24");
         if (AuthorizationHelper.isUserLoggedIn(request)) {
             Filter filterTNproject = NotificationFilterBuilder.createProjectIdFilter(project.getId());
             Filter filterTNuser = NotificationFilterBuilder.createExternalRefIdFilter(
@@ -528,6 +602,7 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         request.setAttribute("sendTLNotifications", (sendTLNotifications) ? "On" : "Off");
+        isvLog.stopRecording("Block 24");
 
         // Check resource roles
         request.setAttribute("isManager",
@@ -536,6 +611,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)));
 
         // check if registration phase is open
+        isvLog.startRecording("Block 25");
         boolean registrationOpen = false;
         for (int i = 0; i < activePhases.length && !registrationOpen; i++) {
             if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.REGISTRATION_PHASE_NAME)) {
@@ -549,16 +625,20 @@ public class ProjectDetailsActions extends DispatchAction {
                 appealsOpen = true;
             }
         }
+        isvLog.stopRecording("Block 25");
 
         // check if the user already submitted
+        isvLog.startRecording("Block 26");
         Resource submitter = ActionsHelper.getMyResourceForRole(request, "Submitter");
         boolean alreadySubmitted = submitter != null && submitter.getSubmissions() != null && submitter.getSubmissions().length > 0;
 
         request.setAttribute("isAllowedToUnregister",
             Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) && registrationOpen
             && !alreadySubmitted);
+        isvLog.stopRecording("Block 26");
 
         // get appeals completed early property value
+        isvLog.startRecording("Block 27");
         boolean appealsCompletedFlag = false;
         if (submitter != null) {
             String value = (String) submitter.getProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY);
@@ -571,11 +651,14 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToCompleteAppeals",
             Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) &&
             appealsOpen && !appealsCompletedFlag);
+        isvLog.stopRecording("Block 27");
 
         // check if the user can resume appeals
         request.setAttribute("isAllowedToResumeAppeals",
             Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) &&
             appealsOpen && appealsCompletedFlag);
+
+        isvLog.startRecording("Block 28");
 
         // Check permissions
         request.setAttribute("isAllowedToManageProjects",
@@ -617,17 +700,24 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToUploadFF",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_FIX_PERM_NAME) &&
                         AuthorizationHelper.getLoggedInUserId(request) == winnerExtUserId));
+        request.setAttribute("isAllowedToUploadSpec",
+                Boolean.valueOf(
+                    AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME)));
         request.setAttribute("isAllowedToPerformFinalReview",
                 Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.FINAL_REVIEW_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformSpecReview",
+                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.SPECIFICATION_REVIEW_PHASE_NAME) != null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SPECIFICATION_REVIEW_PERM_NAME)));
         request.setAttribute("isAllowedToPerformApproval",
                 Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME)));
         request.setAttribute("isAllowedToPerformPortMortemReview",
                 Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME)));
+        isvLog.stopRecording("Block 28");
 
-
+        isvLog.startRecording("Block 29");
         String status = project.getProjectStatus().getName();
         request.setAttribute("isAllowedToPay",
             Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PAYMENT_PERM_NAME))
@@ -643,6 +733,9 @@ public class ProjectDetailsActions extends DispatchAction {
                 !AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)) {
             allowedToReviewAggregation = true;
         }
+        isvLog.stopRecording("Block 29");
+
+        isvLog.startRecording("Block 30");
         if (allowedToReviewAggregation && AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) {
             final String winnerExtId = (String) project.getProperty("Winner External Reference ID");
 
@@ -668,8 +761,10 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
         request.setAttribute("isAllowedToPerformAggregationReview", Boolean.valueOf(allowedToReviewAggregation));
+        isvLog.stopRecording("Block 30");
 
         // since Online Review Update - Add Project Dropdown v1.0
+        isvLog.startRecording("Block 31");
         request.setAttribute("isAdmin",
                 Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) 
                         || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
@@ -679,7 +774,9 @@ public class ProjectDetailsActions extends DispatchAction {
         ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager(request);
         request.setAttribute("destProjectLinks", linkManager.getDestProjectLinks(project.getId()));
         request.setAttribute("srcProjectLinks", linkManager.getSourceProjectLinks(project.getId()));
+        isvLog.stopRecording("Block 31");
 
+        isvLog.stopRecording("viewProjectDetails");
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
@@ -886,7 +983,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * @throws BaseException
      *             if any error occurs.
      */
-    public ActionForward uploadSubmission(ActionMapping mapping, ActionForm form,
+    public ActionForward uploadContestSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
@@ -942,6 +1039,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Obtain an instance of Upload Manager
         UploadManager upMgr = ActionsHelper.createUploadManager(request);
         SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
+        SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
 
         Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
         Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(resource.getId());
@@ -970,6 +1068,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         submission.setUpload(upload);
         submission.setSubmissionStatus(ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active"));
+        submission.setSubmissionType(ActionsHelper.findSubmissionTypeByName(submissionTypes, "Contest Submission"));
 
         // Get the name (id) of the user performing the operations
         String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
@@ -1005,6 +1104,134 @@ public class ProjectDetailsActions extends DispatchAction {
     }
 
     /**
+     * <p>This method is an implementation of &quot;Upload Submission&quot; Struts Action defined for
+     * this assembly, which is supposed to let the user upload his submission to the server. This
+     * action gets executed twice &#x96; once to display the page with the form, and once to process
+     * the uploaded file.</p>
+     *
+     * @return an action forward to the appropriate page. If no error has occured and this action
+     *         was called the first time, the forward will be to uploadSubmission.jsp page, which
+     *         displays the form where user can specify the file he/she wants to upload. If this
+     *         action was called during the post back (the second time), then the request should
+     *         contain the file uploaded by user. In this case, this method verifies if everything
+     *         is correct, stores the file on file server and returns a forward to the View Project
+     *         Details page.
+     * @param mapping action mapping.
+     * @param form action form.
+     * @param request the http request.
+     * @param response the http response.
+     * @throws BaseException if any error occurs.
+     * @since 1.6
+     */
+    public ActionForward uploadSpecificationSubmission(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws BaseException {
+        LoggingHelper.logAction(request);
+
+        // Determine if this request is a post back
+        final boolean postBack = (request.getParameter("postBack") != null);
+
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+            mapping, getResources(request), request, Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME,
+            postBack);
+
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Retrieve current project
+        Project project = verification.getProject();
+        // Get all phases for the current project
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
+
+        Phase specificationPhase = ActionsHelper.getPhase(phases, true, Constants.SPECIFICATION_SUBMISSION_PHASE_NAME);
+        if (specificationPhase == null) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME, "Error.IncorrectPhase", null);
+        }
+
+        if (!postBack) {
+            // Retrieve some basic project info (such as icons' names) and place it into request
+            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+            return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
+        }
+
+        // Check if specification is already submitted
+        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        Submission oldSubmission = ActionsHelper.getActiveSpecificationSubmission(project.getId(), upMgr);
+        if (oldSubmission != null) {
+            // Disallow submitting more than one Specification Submission for project
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME, "Error.SpecificationAlreadyUploaded", null);
+        }
+
+        // Analyze the nature of the submitted specification - uploaded file vs plain text and construct appropriate
+        // request parser based on that
+        DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
+        String specFormatType = (String) uploadSubmissionForm.get("specificationType");
+        RequestParser parser;
+        if ("file".equalsIgnoreCase(specFormatType)) {
+            FormFile file = (FormFile) uploadSubmissionForm.get("file");
+            // Disallow uploading of empty files
+            if (file.getFileSize() == 0) {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME, "Error.EmptyFileUploaded", null);
+            }
+            StrutsRequestParser strutsParser = new StrutsRequestParser();
+            strutsParser.AddFile(file);
+            parser = strutsParser;
+        } else {
+            String specificationText = (String) uploadSubmissionForm.get("specificationText");
+            if ((specificationText == null) || (specificationText.trim().length() == 0)) {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME, "Error.EmptySpecification", null);
+            }
+            parser = new TextContentRequestParser(specificationText);
+        }
+
+        // Parse request and save specification as uploaded file
+        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
+        Resource resource = ActionsHelper.getMyResourceForRole(request, "Specification Submitter");
+        FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
+        UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
+
+        // Always create a new submission/ upload
+        Upload upload = new Upload();
+
+        UploadStatus[] uploadStatuses = upMgr.getAllUploadStatuses();
+        UploadType[] uploadTypes = upMgr.getAllUploadTypes();
+
+        upload.setProject(project.getId());
+        upload.setOwner(resource.getId());
+        upload.setUploadStatus(ActionsHelper.findUploadStatusByName(uploadStatuses, "Active"));
+        upload.setUploadType(ActionsHelper.findUploadTypeByName(uploadTypes, "Submission"));
+        upload.setParameter(uploadedFile.getFileId());
+
+        Submission submission = new Submission();
+        submission.setUpload(upload);
+
+        SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
+        SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
+        SubmissionType specSubmissionType
+            = ActionsHelper.findSubmissionTypeByName(submissionTypes, "Specification Submission");
+        SubmissionStatus submissionActiveStatus
+            = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active");
+        submission.setSubmissionStatus(submissionActiveStatus);
+        submission.setSubmissionType(specSubmissionType);
+
+        String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
+        upMgr.createUpload(upload, operator);
+        upMgr.createSubmission(submission, operator);
+        resource.addSubmission(submission.getId());
+        resourceManager.updateResource(resource, operator);
+
+        return ActionsHelper.cloneForwardAndAppendToPath(
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
+    }
+
+    /**
      * This method is an implementation of &quot;Download Submission&quot; Struts Action defined for
      * this assembly, which is supposed to let the user download a submission from the server.
      *
@@ -1023,7 +1250,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * @throws IOException
      *             if some error occurs during disk input/output operation.
      */
-    public ActionForward downloadSubmission(ActionMapping mapping, ActionForm form,
+    public ActionForward downloadContestSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
         LoggingHelper.logAction(request);
@@ -1151,59 +1378,89 @@ public class ProjectDetailsActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     "ViewSubmission", "Error.NoPermission", Boolean.TRUE);
         }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
 
-        Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(upload.getProject());
-        Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(upload.getOwner());
-        Filter filterUpload = SubmissionFilterBuilder.createUploadIdFilter(upload.getId());
+        processSubmissionDownload(upload, request, response);
 
-        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterProject, filterResource, filterUpload}));
+        return null;
+    }
 
-        // Obtain an instance of Upload Manager
-        UploadManager upMgr = ActionsHelper.createUploadManager(request);
-        Submission[] submissions = upMgr.searchSubmissions(filter);
-        Submission submission = (submissions.length != 0) ? submissions[0] : null;
+    /**
+     * <p>This method is an implementation of &quot;Download Specification Submission&quot; Struts Action defined for
+     * this assembly, which is supposed to let the user download a submission from the server.</p>
+     *
+     * @return a <code>null</code> code if everything went fine, or an action forward to /jsp/userError.jsp page which
+     *         will display the information about the cause of error.
+     * @param mapping action mapping.
+     * @param form action form.
+     * @param request the http request.
+     * @param response the http response.
+     * @throws BaseException if any error occurs.
+     * @throws IOException if some error occurs during disk input/output operation.
+     * @since 1.6
+     */
+    public ActionForward downloadSpecificationSubmission(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws BaseException, IOException {
+        LoggingHelper.logAction(request);
 
-        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
-        UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
-
-        InputStream in = uploadedFile.getInputStream();
-
-        response.setHeader("Content-Type", "application/octet-stream");
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
-        if (submission != null) {
-            response.setHeader("Content-Disposition",
-                    "attachment; filename=\"submission-" + submission.getId() +
-                    "-" + uploadedFile.getRemoteFileName() + "\"");
-        } else {
-            response.setHeader("Content-Disposition",
-                    "attachment; filename=\"upload-" + upload.getId() +
-                    "-" + uploadedFile.getRemoteFileName() + "\"");
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification = checkForCorrectUploadId(mapping, request, "ViewSubmission");
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
         }
 
-        response.flushBuffer();
+        // Get an upload the user wants to download
+        Upload upload = verification.getUpload();
+        // Verify that upload is a submission
+        if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request, "ViewSubmission",
+                "Error.NotASubmission", null);
+        }
 
-        OutputStream out = null;
+        // Verify the status of upload and check whether the user has permission to download old uploads
+        boolean hasViewAllSpecSubmissionsPermission
+            = AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SPECIFICATION_SUBMISSIONS_PERM_NAME);
+        if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted") && !hasViewAllSpecSubmissionsPermission) {
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, "ViewSubmission", "Error.UploadDeleted", null);
+        }
 
-        try {
-            out = response.getOutputStream();
-            byte[] buffer = new byte[65536];
+        boolean noRights = true;
 
-            for (;;) {
-                int numOfBytesRead = in.read(buffer);
-                if (numOfBytesRead == -1) {
+        if (hasViewAllSpecSubmissionsPermission) {
+            noRights = false;
+        }
+
+        if (noRights
+            && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SPECIFICATION_SUBMISSIONS_PERM_NAME)) {
+            long owningResourceId = upload.getOwner();
+            Resource[] myResources = (Resource[]) request.getAttribute("myResources");
+            for (int i = 0; i < myResources.length; ++i) {
+                if (myResources[i].getId() == owningResourceId) {
+                    noRights = false;
                     break;
                 }
-                out.write(buffer, 0, numOfBytesRead);
-            }
-        } finally {
-            in.close();
-            if (out != null) {
-                out.close();
             }
         }
+
+        if (noRights && AuthorizationHelper.hasUserPermission(
+                            request, Constants.VIEW_RECENT_SPECIFICATION_SUBMISSIONS_PERM_NAME)) {
+            Phase[] phases = ActionsHelper.getPhasesForProject(
+                    ActionsHelper.createPhaseManager(request, false), verification.getProject());
+            final boolean isReviewOpen = ActionsHelper.isInOrAfterPhase(phases, 0,
+                Constants.SPECIFICATION_REVIEW_PHASE_NAME);
+            if (AuthorizationHelper.hasUserRole(request, Constants.SPECIFICATION_REVIEWER_ROLE_NAME) && !isReviewOpen) {
+                return ActionsHelper.produceErrorReport(
+                        mapping, getResources(request), request, "ViewSubmission", "Error.IncorrectPhase", null);
+            }
+            noRights = false;
+        }
+
+        if (noRights) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request, "ViewSubmission",
+                "Error.NoPermission", Boolean.TRUE);
+        }
+
+        processSubmissionDownload(upload, request, response);
 
         return null;
     }
@@ -1396,36 +1653,8 @@ public class ProjectDetailsActions extends DispatchAction {
 
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
-
-        InputStream in = uploadedFile.getInputStream();
-
-        response.setHeader("Content-Type", "application/octet-stream");
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
-        response.setHeader("Content-Disposition",
-                "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"");
-
-        response.flushBuffer();
-
-        OutputStream out = null;
-
-        try {
-            out = response.getOutputStream();
-            byte[] buffer = new byte[65536];
-
-            for (;;) {
-                int numOfBytesRead = in.read(buffer);
-                if (numOfBytesRead == -1) {
-                    break;
-                }
-                out.write(buffer, 0, numOfBytesRead);
-            }
-        } finally {
-            in.close();
-            if (out != null) {
-                out.close();
-            }
-        }
+        outputDownloadedFile(uploadedFile, "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"",
+                             request, response);
 
         return null;
     }
@@ -1658,36 +1887,8 @@ public class ProjectDetailsActions extends DispatchAction {
 
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
-
-        InputStream in = uploadedFile.getInputStream();
-
-        response.setHeader("Content-Type", "application/octet-stream");
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
-        response.setHeader("Content-Disposition",
-                "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"");
-
-        response.flushBuffer();
-
-        OutputStream out = null;
-
-        try {
-            out = response.getOutputStream();
-            byte[] buffer = new byte[65536];
-
-            for (;;) {
-                int numOfBytesRead = in.read(buffer);
-                if (numOfBytesRead == -1) {
-                    break;
-                }
-                out.write(buffer, 0, numOfBytesRead);
-            }
-        } finally {
-            in.close();
-            if (out != null) {
-                out.close();
-            }
-        }
+        outputDownloadedFile(uploadedFile, "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"",
+                             request, response);
 
         return null;
     }
@@ -2068,36 +2269,8 @@ public class ProjectDetailsActions extends DispatchAction {
 
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
-
-        InputStream in = uploadedFile.getInputStream();
-
-        response.setHeader("Content-Type", "application/octet-stream");
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
-        response.setHeader("Content-Disposition",
-                "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"");
-
-        response.flushBuffer();
-
-        OutputStream out = null;
-
-        try {
-            out = response.getOutputStream();
-            byte[] buffer = new byte[65536];
-
-            for (;;) {
-                int numOfBytesRead = in.read(buffer);
-                if (numOfBytesRead == -1) {
-                    break;
-                }
-                out.write(buffer, 0, numOfBytesRead);
-            }
-        } finally {
-            in.close();
-            if (out != null) {
-                out.close();
-            }
-        }
+        outputDownloadedFile(uploadedFile, "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"",
+                             request, response);
 
         return null;
     }
@@ -2432,7 +2605,31 @@ public class ProjectDetailsActions extends DispatchAction {
             Deliverable deliverable = deliverables[i];
             String delivName = deliverable.getName();
             if (delivName.equalsIgnoreCase(Constants.SUBMISSION_DELIVERABLE_NAME)) {
-                links[i] = "UploadSubmission.do?method=uploadSubmission&pid=" + deliverable.getProject();
+                links[i] = "UploadContestSubmission.do?method=uploadContestSubmission&pid=" + deliverable.getProject();
+            } else if (delivName.equalsIgnoreCase(Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME)) {
+                if (!deliverable.isComplete()) {
+                    links[i] = "UploadSpecificationSubmission.do?method=uploadSpecificationSubmission&pid="
+                               + deliverable.getProject();
+                }
+            } else if (delivName.equalsIgnoreCase(Constants.SPECIFICATION_REVIEW_DELIVERABLE_NAME)) {
+                if (deliverable.getSubmission() == null) {
+                    continue;
+                } else if (allScorecardTypes == null) {
+                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                }
+
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Specification Review"),
+                        deliverable.getSubmission(), deliverable.getResource(), false);
+
+                if (review == null) {
+                    links[i] = "CreateSpecificationReview.do?method=createSpecificationReview&sid="
+                               + deliverable.getSubmission();
+                } else if (!review.isCommitted()) {
+                    links[i] = "EditSpecificationReview.do?method=editSpecificationReview&rid=" + review.getId();
+                } else {
+                    links[i] = "ViewSpecificationReview.do?method=viewSpecificationReview&rid=" + review.getId();
+                }
             } else if (delivName.equalsIgnoreCase(Constants.SCREENING_DELIVERABLE_NAME) ||
                     delivName.equalsIgnoreCase(Constants.PRIMARY_SCREENING_DELIVERABLE_NAME)) {
                 // Skip deliverables with empty Submission ID field,
@@ -2829,5 +3026,129 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Return the first found review if any, or null
         return (reviews.length != 0) ? reviews[0] : null;
+    }
+
+    /**
+     * <p>Sends the content of specified file for downloading by client.</p>
+     *
+     * @param upload an <code>Upload</code> providing the details for the filr to be downloaded by client.
+     * @param request an <code>HttpServletRequest</code> representing the incoming request.
+     * @param response an <code>HttpServletResponse</code> representing the outgoing response.
+     * @throws UploadPersistenceException if an unexpected error occurs.
+     * @throws SearchBuilderException if an unexpected error occurs.
+     * @throws DisallowedDirectoryException if an unexpected error occurs.
+     * @throws ConfigurationException if an unexpected error occurs.
+     * @throws PersistenceException if an unexpected error occurs.
+     * @throws FileDoesNotExistException if an unexpected error occurs.
+     * @throws IOException if an unexpected error occurs.
+     * @since 1.6
+     */
+    private void processSubmissionDownload(Upload upload, HttpServletRequest request, HttpServletResponse response)
+        throws UploadPersistenceException, SearchBuilderException, DisallowedDirectoryException,
+               ConfigurationException, PersistenceException, FileDoesNotExistException, IOException {
+
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
+
+        Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(upload.getProject());
+        Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(upload.getOwner());
+        Filter filterUpload = SubmissionFilterBuilder.createUploadIdFilter(upload.getId());
+
+        Filter filter = new AndFilter(Arrays.asList(filterProject, filterResource, filterUpload));
+
+        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
+        UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
+        
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        Submission[] submissions = upMgr.searchSubmissions(filter);
+        Submission submission = (submissions.length != 0) ? submissions[0] : null;
+
+        String contentDisposition;
+        if (submission != null) {
+            contentDisposition = "attachment; filename=\"submission-" + submission.getId() + "-"
+                                 + uploadedFile.getRemoteFileName() + "\"";
+        } else {
+            contentDisposition = "attachment; filename=\"upload-" + upload.getId() + "-"
+                                 + uploadedFile.getRemoteFileName() + "\"";
+        }
+
+        outputDownloadedFile(uploadedFile, contentDisposition, request, response);
+    }
+
+    /**
+     *
+     * <p>Outputs the content of specified file to specified response for downloading by client.</p>
+     *
+     * @param uploadedFile an <code>UploadedFile</code> providing the details for the filr to be downloaded by client.
+     * @param contentDisposition a <code>String</code> providing the value for <code>Content-Disposition</code> header.
+     * @param request an <code>HttpServletRequest</code> representing the incoming request.
+     * @param response an <code>HttpServletResponse</code> representing the outgoing response.
+     * @throws DisallowedDirectoryException if an unexpected error occurs.
+     * @throws ConfigurationException if an unexpected error occurs.
+     * @throws PersistenceException if an unexpected error occurs.
+     * @throws FileDoesNotExistException if an unexpected error occurs.
+     * @throws IOException if an unexpected error occurs.
+     * @since 1.6
+     */
+    private void outputDownloadedFile(UploadedFile uploadedFile, String contentDisposition, HttpServletRequest request,
+                                      HttpServletResponse response)
+        throws DisallowedDirectoryException, ConfigurationException, PersistenceException, FileDoesNotExistException,
+               IOException {
+
+        InputStream in = uploadedFile.getInputStream();
+
+        response.setHeader("Content-Type", "application/octet-stream");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
+        response.setHeader("Content-Disposition", contentDisposition);
+
+        response.flushBuffer();
+
+        OutputStream out = null;
+
+        try {
+            out = response.getOutputStream();
+            byte[] buffer = new byte[65536];
+
+            for (;;) {
+                int numOfBytesRead = in.read(buffer);
+                if (numOfBytesRead == -1) {
+                    break;
+                }
+                out.write(buffer, 0, numOfBytesRead);
+            }
+        } finally {
+            in.close();
+            if (out != null) {
+                out.close();
+            }
+        }
+    }
+
+    private class LOG {
+
+        private Map<String, Long> timestamps = new HashMap<String, Long>();
+
+        private String ID;
+
+        private LOG(String ID) {
+            this.ID = ID;
+        }
+
+        private boolean startRecording(String action) {
+            timestamps.put(action, System.currentTimeMillis());
+            return true;
+        }
+
+        private boolean stopRecording(String action) {
+            long t2 = System.currentTimeMillis();
+            if (timestamps.containsKey(action)) {
+                long t1 = timestamps.get(action);
+                System.out.println("ISV : " + ID + " : " + action + " took " + (t2 - t1) + " ms");
+            } else {
+                System.out.println("ISV : " + ID + " : " + action + " not logged correctly");
+            }
+            return true;
+        }
     }
 }

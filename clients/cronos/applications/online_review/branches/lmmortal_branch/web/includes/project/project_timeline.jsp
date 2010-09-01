@@ -16,7 +16,7 @@
     <table class="stat" width="100%" cellpadding="0" cellspacing="0"
            style="table-layout: fixed; border-bottom: 1px solid #999999;">
         <tr>
-            <td class="title" width="420"><bean:message key="viewProjectDetails.box.Timeline" /></td>
+            <td class="title" width="47%"><bean:message key="viewProjectDetails.box.Timeline" /></td>
             <c:if test="${isAllowedToSetTL}">
                 <td class="title" style="text-align:right;">
                     <input id="notifCheckbox" type="checkbox" onclick="setTimelineNotification(${project.id}, this)"
@@ -25,7 +25,7 @@
                 </td>
             </c:if>
             <c:if test="${not isAllowedToSetTL}">
-                <td class="title">&#160;</td>
+                <td class="title" width="53%">&#160;</td>
             </c:if>
         </tr>
         <tr>
@@ -90,7 +90,7 @@
                           <tr class='${(phaseStatus.index % 2) == 0 ? "light" : "dark"}'>
                             <td class="ganttRow">
                             <c:set var="ganttOffset" value="${orfn:getGanttLen(ganttOffsets[phaseStatus.index])}" />
-                            <dl style="margin-left:${ganttOffset}; width: ${orfn:getGanttLen(ganttLengths[phaseStatus.index]) + 70}px;">
+                            <dl style="margin-left:${ganttOffset}; width: ${orfn:getGanttLen(ganttLengths[phaseStatus.index]) + 80}px;">
                             <dt style="width:${orfn:getGanttLen(ganttLengths[phaseStatus.index])}px;"><bean:message key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></dt>
                             <dd>${orfn:getGanttHours(pageContext, ganttLengths[phaseStatus.index])}</dd>
                             </dl>

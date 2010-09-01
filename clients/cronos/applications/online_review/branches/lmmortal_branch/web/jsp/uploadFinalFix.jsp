@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
+<%@ page import="com.topcoder.shared.util.ApplicationServer"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
@@ -63,14 +64,13 @@
                             </tr>
                             <tr class="light">
                                 <td class="value">
-                                    <bean:message key="uploadFinalFix.HelpLine1" />
-                                    <a href="#"><bean:message key="linkHere" /></a>.<br /><br />
+                                    <bean:message key="uploadFinalFix.HelpLine1" /><br /><br />
                                     <bean:message key="uploadFinalFix.UploadFinalFix" />
                                     <html:file property="file" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
                                     <html:image srcKey="btnUpload.img" altKey="btnUpload.alt" border="0" style="vertical-align:bottom;" /><br /><br />
                                     <bean:message key="uploadFinalFix.HelpLine2" />
                                     <bean:message key="uploadFinalFix.HelpLine3" />
-                                    <a href="#"><bean:message key="uploadFinalFix.SampleSubmissionAndDocs" /></a>
+                                    <a href="http://<%=ApplicationServer.SERVER_NAME%>/wiki/display/tc/Documentation+and+Submission+Guidelines"><bean:message key="uploadFinalFix.SampleSubmissionAndDocs" /></a>
                                     <bean:message key="uploadFinalFix.HelpLine4" />
                                 </td>
                             </tr>

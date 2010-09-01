@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import com.cronos.onlinereview.actions.EJBLibraryServicesLocator;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.management.phase.PhaseManagementException;
@@ -213,7 +214,7 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 	private PactsClientServices getPactsClientServices() throws ServiceLocatorNamingException, ServiceLocatorCreateException,
 			com.cronos.onlinereview.phases.ConfigurationException {
 		if (pactsClientServices == null) {
-			pactsClientServices = ServiceLocator.getInstance().getPactsClientServices();
+			pactsClientServices = EJBLibraryServicesLocator.getPactsClientServices();
 		}
 		return pactsClientServices;
 	}

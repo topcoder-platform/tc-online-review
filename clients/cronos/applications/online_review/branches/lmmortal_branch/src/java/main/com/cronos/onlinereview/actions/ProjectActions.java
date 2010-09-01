@@ -21,8 +21,9 @@ import java.util.Stack;
 
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.dataaccess.ProjectPhaseDataAccess;
+import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.UploadManager;
-import com.topcoder.management.phase.ContestDependencyAutomation;
+import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
@@ -43,6 +44,7 @@ import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.naming.NamingException;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -82,12 +84,9 @@ import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityVali
 import com.topcoder.shared.util.DBMS;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
-import com.topcoder.web.ejb.project.ProjectRoleTermsOfUseLocator;
 import com.topcoder.web.ejb.termsofuse.TermsOfUse;
 import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
-import com.topcoder.web.ejb.termsofuse.TermsOfUseLocator;
 import com.topcoder.web.ejb.user.UserTermsOfUse;
-import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
 
 import static com.cronos.onlinereview.actions.Constants.REGISTRATION_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.SUBMISSION_PHASE_NAME;
@@ -101,6 +100,8 @@ import static com.cronos.onlinereview.actions.Constants.FINAL_FIX_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.FINAL_REVIEW_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.APPROVAL_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.SPECIFICATION_SUBMISSION_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.SPECIFICATION_REVIEW_PHASE_NAME;
 
 /**
  * This class contains Struts Actions that are meant to deal with Projects. There are following
@@ -206,8 +207,15 @@ import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.10 (Specification Review Part 1 Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Removed dependency on <code>ContestDependencyAutomation</code> class.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv
- * @version 1.9
+ * @version 1.10
  */
 public class ProjectActions extends DispatchAction {
 
@@ -234,7 +242,7 @@ public class ProjectActions extends DispatchAction {
      */
     private static final Set<String> REVIEWER_ROLE_NAMES = new HashSet<String>(Arrays.asList("Reviewer",
         "Accuracy Reviewer", "Failure Reviewer", "Stress Reviewer", "Screener", "Primary Screener", "Aggregator",
-        "Final Reviewer", "Approver", "Post-Mortem Reviewer"));
+        "Final Reviewer", "Approver", "Post-Mortem Reviewer", "Specification Reviewer"));
 
     /**
      * <p>A <code>Set</code> holding the IDs for reviewer roles which do not allow duplicate users to be assigned to.
@@ -250,7 +258,7 @@ public class ProjectActions extends DispatchAction {
      *
      * @since 1.8
      */
-    private static final Set<Long> SINGLE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(2L, 8L, 9L));
+    private static final Set<Long> SINGLE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(2L, 8L, 9L, 18L));
 
     /**
      * Creates a new instance of the <code>ProjectActions</code> class.
@@ -411,6 +419,7 @@ public class ProjectActions extends DispatchAction {
         PhaseType[] phaseTypes = phaseManager.getAllPhaseTypes();
         // Place them into request as an attribute
         request.setAttribute("phaseTypes", phaseTypes);
+        request.setAttribute("arePhaseDependenciesEditable", true);
 
         // Obtain an instance of Scorecard Manager
         ScorecardManager scorecardManager = ActionsHelper.createScorecardManager(request);
@@ -421,12 +430,14 @@ public class ProjectActions extends DispatchAction {
         Scorecard[] reviewScorecards = searchActiveScorecards(scorecardManager, "Review");
         Scorecard[] approvalScorecards = searchActiveScorecards(scorecardManager, "Approval");
         Scorecard[] postMortemScorecards = searchActiveScorecards(scorecardManager, "Post-Mortem");
+        Scorecard[] specificationReviewScorecards = searchActiveScorecards(scorecardManager, "Specification Review");
 
         // Store them in the request
         request.setAttribute("screeningScorecards", screeningScorecards);
         request.setAttribute("reviewScorecards", reviewScorecards);
         request.setAttribute("approvalScorecards", approvalScorecards);
         request.setAttribute("postMortemScorecards", postMortemScorecards);
+        request.setAttribute("specificationReviewScorecards", specificationReviewScorecards);
         request.setAttribute("defaultScorecards", ActionsHelper.getDefaultScorecards());
 
         // Load phase template names
@@ -532,9 +543,6 @@ public class ProjectActions extends DispatchAction {
         // Populate project notes
         populateProjectFormProperty(form, String.class, "notes", project, "Notes");
 
-        // Populate the default values of some project form fields
-        populateProjectFormDefaults(form, request);
-
         // Obtain Resource Manager instance
         ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
 
@@ -550,12 +558,6 @@ public class ProjectActions extends DispatchAction {
         form.set("resources_paid", 0, "N/A");
 
         // Populate form with resources data
-        ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
-        Set<Long> reviewersWithScorecards = findResourcesWithReviewsForProject(reviewManager, project.getId());
-        Map<Integer, Boolean> trueSubmitters = new HashMap<Integer, Boolean>();
-        Map<Integer, Boolean> trueReviewers = new HashMap<Integer, Boolean>();
-        request.setAttribute("trueSubmitters", trueSubmitters);
-        request.setAttribute("trueReviewers", trueReviewers);
         for (int i = 0; i < resources.length; ++i) {
             form.set("resources_id", i + 1, new Long(resources[i].getId()));
             form.set("resources_action", i + 1, "update");
@@ -576,20 +578,6 @@ public class ProjectActions extends DispatchAction {
             } else {
                 form.set("resources_paid", i + 1, "N/A");
             }
-
-            // Save the flags for those Submitters who have submitted for project and reviewers who have review
-            // scorecards associated
-            String resourceRoleName = resources[i].getResourceRole().getName();
-            if ("Submitter".equalsIgnoreCase(resourceRoleName)) {
-                Long[] submissionIds = resources[i].getSubmissions();
-                if ((submissionIds != null) && (submissionIds.length > 0)) {
-                    trueSubmitters.put(i + 1, Boolean.TRUE);
-                }
-            } else if (REVIEWER_ROLE_NAMES.contains(resourceRoleName)) {
-                if (reviewersWithScorecards.contains(resources[i].getId())) {
-                    trueReviewers.put(i + 1, Boolean.TRUE);
-                }
-            }
         }
 
         // Obtain Phase Manager instance
@@ -600,132 +588,8 @@ public class ProjectActions extends DispatchAction {
         // Sort project phases
         Arrays.sort(phases, new Comparators.ProjectPhaseComparer());
 
-        Map<Long, Integer> phaseNumberMap = new HashMap<Long, Integer>();
-
-        // Populate form with phases data
-        for (int i = 0; i < phases.length; ++i) {
-            form.set("phase_id", i + 1, new Long(phases[i].getId()));
-
-            form.set("phase_can_open", i + 1,
-                    Boolean.valueOf(phases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())));
-            form.set("phase_can_close", i + 1,
-                    Boolean.valueOf(phases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())));
-
-            Long phaseTypeId = new Long(phases[i].getPhaseType().getId());
-            form.set("phase_type", i + 1, phaseTypeId);
-            Integer phaseNumber = (Integer) phaseNumberMap.get(phaseTypeId);
-            if (phaseNumber == null) {
-                phaseNumber = new Integer(1);
-            } else {
-                phaseNumber = new Integer(phaseNumber.intValue() + 1);
-            }
-            phaseNumberMap.put(phaseTypeId, phaseNumber);
-            form.set("phase_number", i + 1, phaseNumber);
-
-            form.set("phase_name", i + 1, phases[i].getPhaseType().getName());
-            form.set("phase_action", i + 1, "update");
-            form.set("phase_js_id", i + 1, "loaded_" + phases[i].getId());
-            if (phases[i].getAllDependencies().length > 0) {
-                form.set("phase_start_by_phase", i + 1, Boolean.TRUE);
-                // TODO: Probably will need to rewrite all those dependency stuff
-                // TODO: It is very incomplete actually
-                Dependency dependency = phases[i].getAllDependencies()[0];
-                form.set("phase_start_phase", i + 1, "loaded_" + dependency.getDependency().getId());
-                form.set("phase_start_when", i + 1, dependency.isDependencyStart() ? "starts" : "ends");
-                long lagTime = dependency.getLagTime();
-                if (lagTime % (24 * 3600 * 1000L) == 0) {
-                    form.set("phase_start_dayshrs", i + 1, "days");
-                    form.set("phase_start_amount", i + 1, new Integer((int) (lagTime / (24 * 3600 * 1000L))));
-                } else if (lagTime % (3600 * 1000L) == 0) {
-                    form.set("phase_start_dayshrs", i + 1, "hrs");
-                    form.set("phase_start_amount", i + 1, new Integer((int) (lagTime / (3600 * 1000L))));
-                } else {
-                    form.set("phase_start_dayshrs", i + 1, "mins");
-                    form.set("phase_start_amount", i + 1, new Integer((int) (lagTime / (60 * 1000L))));
-                }
-
-            } else {
-                form.set("phase_start_by_phase", i + 1, Boolean.FALSE);
-            }
-
-            populateDatetimeFormProperties(form, "phase_start_date", "phase_start_time", i + 1,
-                    phases[i].calcStartDate());
-
-            populateDatetimeFormProperties(form, "phase_end_date", "phase_end_time", i + 1,
-                    phases[i].calcEndDate());
-            // always use duration
-            form.set("phase_use_duration", i + 1, Boolean.TRUE);
-
-            // populate the phase duration
-            long phaseLength = phases[i].getLength();
-            String phaseDuration = "";
-            if (phaseLength % (3600*1000) == 0) {
-                phaseDuration = "" + phaseLength / (3600 * 1000);
-            } else {
-                long hour = phaseLength / 3600 / 1000;
-                long min = (phaseLength % (3600 * 1000)) / 1000 / 60;
-                phaseDuration = hour + ":" + (min >= 10 ? "" + min : "0" + min);
-            }
-
-            form.set("phase_duration", i + 1, phaseDuration);
-
-            // Populate phase criteria
-            if (phases[i].getAttribute("Scorecard ID") != null) {
-                form.set("phase_scorecard", i + 1, Long.valueOf((String) phases[i].getAttribute("Scorecard ID")));
-            }
-            if (phases[i].getAttribute("Registration Number") != null) {
-                form.set("phase_required_registrations", i + 1,
-                        Integer.valueOf((String) phases[i].getAttribute("Registration Number")));
-            }
-            if (phases[i].getAttribute("Submission Number") != null) {
-                form.set("phase_required_submissions", i + 1,
-                        Integer.valueOf((String) phases[i].getAttribute("Submission Number")));
-                form.set("phase_manual_screening", i + 1,
-                        Boolean.valueOf("Yes".equals(phases[i].getAttribute("Manual Screening"))));
-            }
-            if (phases[i].getAttribute("Reviewer Number") != null) {
-                form.set("phase_required_reviewers", i + 1,
-                        Integer.valueOf((String) phases[i].getAttribute("Reviewer Number")));
-            }
-            if (phases[i].getAttribute("View Response During Appeals") != null) {
-                form.set("phase_view_appeal_responses", i + 1,
-                        Boolean.valueOf("Yes".equals(phases[i].getAttribute("View Response During Appeals"))));
-            }
-        }
-
-        PhasesDetails phasesDetails = PhasesDetailsServices.getPhasesDetails(
-                request, getResources(request), project, phases, resources, externalUsers);
-
-        request.setAttribute("phaseGroupIndexes", phasesDetails.getPhaseGroupIndexes());
-        request.setAttribute("phaseGroups", phasesDetails.getPhaseGroups());
-        request.setAttribute("activeTabIdx", phasesDetails.getActiveTabIndex());
-        request.setAttribute("passingMinimum", new Float(75.0)); // TODO: Take this value from scorecard template
-
-        request.setAttribute("isManager",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)));
-        request.setAttribute("isAllowedToPerformScreening",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SCREENING_PERM_NAME) &&
-                        ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME) != null));
-        request.setAttribute("isAllowedToViewScreening",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENING_PERM_NAME)));
-        request.setAttribute("isAllowedToUploadTC",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.UPLOAD_TEST_CASES_PERM_NAME)));
-        request.setAttribute("isAllowedToPerformAggregation",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)));
-        request.setAttribute("isAllowedToPerformAggregationReview",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME) &&
-                        !AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)));
-        request.setAttribute("isAllowedToUploadFF",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_FIX_PERM_NAME)));
-        request.setAttribute("isAllowedToPerformFinalReview",
-                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.FINAL_REVIEW_PHASE_NAME) != null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME)));
-        request.setAttribute("isAllowedToPerformApproval",
-                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME)));
-        request.setAttribute("isAllowedToPerformPortMortemReview",
-                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME)));
+        setEditProjectPhasesData(form, phases, false);
+        setEditProjectRequestAttributes(request, project, resources, externalUsers, phases);
 
         // since Online Review Update - Add Project Dropdown v1.0
         boolean isAdmin = Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
@@ -733,8 +597,8 @@ public class ProjectActions extends DispatchAction {
                         || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME));
         request.setAttribute("isAdmin", isAdmin);
        
-       // start BUGR 4309 - Check whether the billing project id is in the user's allowed billing projects list
-       List<ClientProject> availableClientProjects = (List<ClientProject>) request.getAttribute("billingProjects");
+       // start BUGR 4039 - Check whether the billing project id is in the user's allowed billing projects list
+       List<ClientProject> availableClientProjects = ActionsHelper.getClientProjects(request);
        Long currentClientProjectId = (Long) form.get("billing_project");
        boolean inList = false;
        
@@ -753,7 +617,7 @@ public class ProjectActions extends DispatchAction {
        request.setAttribute("allowBillingEdit", isAdmin && inList);
        
        
-       // end BUG-4309
+       // end BUG-4039
     }
 
     /**
@@ -842,18 +706,7 @@ public class ProjectActions extends DispatchAction {
             return verification.getForward();
         }
 
-        // Place the flag, indicating that we are editing the existing project, into request
-        request.setAttribute("newProject", Boolean.FALSE);
-
-        // Load the lookup data
-        loadProjectEditLookups(request);
-
-        // Obtain an instance of Project Manager
-        ProjectManager manager = ActionsHelper.createProjectManager(request);
-        // Retrieve the list of all project statuses
-        ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
-        // Store it in the request
-        request.setAttribute("projectStatuses", projectStatuses);
+        setEditProjectFormData(request, verification, (LazyValidatorForm) form);
 
         // Populate the form with project properties
         populateProjectForm(request, (LazyValidatorForm) form, verification.getProject());
@@ -921,29 +774,6 @@ public class ProjectActions extends DispatchAction {
 
             project = verification.getProject();
 
-            // Set the list of submitters who have already submitted and reviewers who have scorecards for project
-            ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
-            ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
-            Resource[] resources =
-                resourceManager.searchResources(ResourceFilterBuilder.createProjectIdFilter(project.getId()));
-            Map<Integer, Boolean> trueSubmitters = new HashMap<Integer, Boolean>();
-            Map<Integer, Boolean> trueReviewers = new HashMap<Integer, Boolean>();
-            request.setAttribute("trueSubmitters", trueSubmitters);
-            request.setAttribute("trueReviewers", trueReviewers);
-            Set<Long> reviewersWithScorecards = findResourcesWithReviewsForProject(reviewManager, project.getId());
-            for (int i = 0; i < resources.length; ++i) {
-                String resourceRoleName = resources[i].getResourceRole().getName();
-                if ("Submitter".equalsIgnoreCase(resourceRoleName)) {
-                    Long[] submissionIds = resources[i].getSubmissions();
-                    if ((submissionIds != null) && (submissionIds.length > 0)) {
-                        trueSubmitters.put(i + 1, Boolean.TRUE);
-                    }
-                } else if (REVIEWER_ROLE_NAMES.contains(resourceRoleName)) {
-                    if (reviewersWithScorecards.contains(resources[i].getId())) {
-                        trueReviewers.put(i + 1, Boolean.TRUE);
-                    }
-                }
-            }
         }
 
         // Obtain an instance of Project Manager
@@ -1109,7 +939,7 @@ public class ProjectActions extends DispatchAction {
             // generate new project role terms of use associations for the recently created project.
             try {
                 generateProjectRoleTermsOfUseAssociations(project.getId(),
-                        project.getProjectCategory().getId(), categoryChanged);
+                        project.getProjectCategory().getId(), categoryChanged, request);
             } catch (NamingException ne) {
                 throw new BaseException(ne);
             } catch (RemoteException re) {
@@ -1140,7 +970,15 @@ public class ProjectActions extends DispatchAction {
         // Check if there are any validation errors and return appropriate forward
         if (ActionsHelper.isErrorsPresent(request)) {
             // TODO: Check if the form is really for new project
-            editProject(mapping, form, request, response);
+            setEditProjectFormData(request, verification, lazyForm);
+            setEditProjectPhasesData(lazyForm, projectPhases, true);
+            ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+            Resource[] resources = resourceManager.searchResources(
+                ResourceFilterBuilder.createProjectIdFilter(project.getId()));
+            ExternalUser[] externalUsers = ActionsHelper.getExternalUsersForResources(
+                ActionsHelper.createUserRetrieval(request), resources);
+            setEditProjectRequestAttributes(request, project, resources, externalUsers, projectPhases);
+
             request.setAttribute("newProject", Boolean.valueOf(newProject));
 
             return mapping.getInputForward();
@@ -1156,6 +994,8 @@ public class ProjectActions extends DispatchAction {
      *
      * @param projectId the project id for the associations
      * @param projectTypeId the project type id of the provided project id
+     * @param categoryChanged <code>true</code> if category was changed; <code>false</code> otherwise.
+     * @param request an <code>HttpServletRequest</code> representing incoming request. 
      * @throws NamingException if any errors occur during EJB lookup
      * @throws RemoteException if any errors occur during EJB remote invocation
      * @throws CreateException if any errors occur during EJB creation
@@ -1163,10 +1003,11 @@ public class ProjectActions extends DispatchAction {
      *
      * @since 1.1
      */
-    private void generateProjectRoleTermsOfUseAssociations(long projectId, long projectTypeId, boolean categoryChanged)
+    private void generateProjectRoleTermsOfUseAssociations(long projectId, long projectTypeId, boolean categoryChanged,
+                                                           HttpServletRequest request)
         throws NamingException, RemoteException, CreateException, EJBException {
 
-        ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
+        ProjectRoleTermsOfUse projectRoleTermsOfUse = EJBLibraryServicesLocator.getProjectRoleTermsOfUseService();
 
         if (categoryChanged) {
             projectRoleTermsOfUse.removeAllProjectRoleTermsOfUse(new Long(projectId).intValue(),
@@ -1432,46 +1273,73 @@ public class ProjectActions extends DispatchAction {
             }
 
             // If phase is not started by other phase end
-            if (Boolean.FALSE.equals(lazyForm.get("phase_start_by_phase", i))) {
-                // Get phase start date from form
-                Date phaseStartDate = parseDatetimeFormProperties(lazyForm, i, "phase_start_date",
-                        "phase_start_time");
-                // Set phase fixed start date
-                phase.setFixedStartDate(phaseStartDate);
-
-                // Check if the current date is minimal
-                if (minDate == null || phaseStartDate.getTime() < minDate.getTime()) {
-                    minDate = phaseStartDate;
-                }
-            } else {
-                // Get the dependency phase
-                String phaseJsId = (String) lazyForm.get("phase_start_phase", i);
-                Phase dependencyPhase = (Phase) phasesJsMap.get(phaseJsId);
-
-                if (dependencyPhase != null) {
-                    boolean dependencyStart;
-                    boolean dependantStart;
-                    if ("ends".equals(lazyForm.get("phase_start_when", i))) {
-                        dependencyStart = false;
-                        dependantStart = true;
+            Boolean startsByFixedTime = (Boolean) lazyForm.get("phase_start_by_fixed_time", i);
+            boolean startTimeSet = false;
+            if (startsByFixedTime != null && startsByFixedTime) {
+                String datePart = (String) lazyForm.get("phase_start_date", i);
+                String timePart = (String) lazyForm.get("phase_start_time", i);
+                startTimeSet = !(isEmpty(datePart) && isEmpty(timePart));
+                if (startTimeSet) {
+                    if (isEmpty(datePart)) {
+                        ActionsHelper.addErrorToRequest(request,
+                                new ActionMessage("error.com.cronos.onlinereview.actions.editProject.PhaseStartDateNotSet",
+                                        phase.getPhaseType().getName()));
+                    } else if (isEmpty(timePart)) {
+                        ActionsHelper.addErrorToRequest(request,
+                                new ActionMessage("error.com.cronos.onlinereview.actions.editProject.PhaseStartTimeNotSet",
+                                        phase.getPhaseType().getName()));
                     } else {
-                        dependencyStart = true;
-                        dependantStart = true;
+                        // Get phase start date from form
+                        // Set phase fixed start date
+                        Date phaseStartDate = parseDatetimeFormProperties(lazyForm, i, "phase_start_date",
+                            "phase_start_time");
+                        phase.setFixedStartDate(phaseStartDate);
+                        // Check if the current date is minimal
+                        if (minDate == null || phaseStartDate.getTime() < minDate.getTime()) {
+                            minDate = phaseStartDate;
+                        }
                     }
-                    Object phaseLag = lazyForm.get("phase_start_dayshrs", i);
-                    long unitMutiplier
-                        = 1000 * 60 * ("days".equals(phaseLag) ? 24 * 60 : ("hrs".equals(phaseLag) ? 60 : 1));
-                    long lagTime = unitMutiplier * ((Integer) lazyForm.get("phase_start_amount", i)).longValue();
-
-                    // Create phase Dependency
-                    Dependency dependency = new Dependency(dependencyPhase, phase,
-                            dependencyStart, dependantStart, lagTime);
-
-                    // Add dependency to phase
-                    phase.addDependency(dependency);
                 }
             }
 
+            // Get the dependency phase
+            Boolean startsByAnotherPhase = (Boolean) lazyForm.get("phase_start_by_phase", i);
+            boolean mainPhaseSet = false;
+            if (startsByAnotherPhase != null && startsByAnotherPhase) {
+                String phaseJsId = (String) lazyForm.get("phase_start_phase", i);
+                if (phaseJsId != null && phaseJsId.trim().length() > 0) {
+                    Phase dependencyPhase = (Phase) phasesJsMap.get(phaseJsId);
+                    if (dependencyPhase != null) {
+                        mainPhaseSet = true;
+                        boolean dependencyStart;
+                        boolean dependantStart;
+                        if ("ends".equals(lazyForm.get("phase_start_when", i))) {
+                            dependencyStart = false;
+                            dependantStart = true;
+                        } else {
+                            dependencyStart = true;
+                            dependantStart = true;
+                        }
+                        Object phaseLag = lazyForm.get("phase_start_dayshrs", i);
+                        long unitMutiplier
+                            = 1000 * 60 * ("days".equals(phaseLag) ? 24 * 60 : ("hrs".equals(phaseLag) ? 60 : 1));
+                        long lagTime = unitMutiplier * ((Integer) lazyForm.get("phase_start_amount", i)).longValue();
+
+                        // Create phase Dependency
+                        Dependency dependency = new Dependency(dependencyPhase, phase,
+                                dependencyStart, dependantStart, lagTime);
+
+                        // Add dependency to phase
+                        phase.addDependency(dependency);
+                    }
+                }
+            }
+
+            if (!startTimeSet && !mainPhaseSet) {
+                ActionsHelper.addErrorToRequest(request,
+                        new ActionMessage("error.com.cronos.onlinereview.actions.editProject.PhaseStartBad",
+                                phase.getPhaseType().getName()));
+            }
             /*
              *  Set phase criteria
              */
@@ -1520,7 +1388,9 @@ public class ProjectActions extends DispatchAction {
 
         // Update project start date if needed
         if (minDate != null) {
-            phProject.setStartDate(minDate);
+            if (minDate.compareTo(phProject.getStartDate()) < 0) {
+                phProject.setStartDate(minDate);
+            }
         }
 
         // THIRD PASS
@@ -1576,8 +1446,10 @@ public class ProjectActions extends DispatchAction {
                     continue;
                 }
                 // If the phase is scheduled to start before some other phase start/end
-                if (Boolean.TRUE.equals(lazyForm.get("phase_start_by_phase", paramIndex)) &&
-                        "minus".equals(lazyForm.get("phase_start_plusminus", paramIndex))) {
+                String phaseStartPhase = (String) lazyForm.get("phase_start_phase", paramIndex);
+                if (phaseStartPhase != null && phaseStartPhase.trim().length() > 0 &&
+                        "minus".equals(lazyForm.get("phase_start_plusminus", paramIndex))
+                        && phase.getAllDependencies().length > 0) {
                     Dependency dependency = phase.getAllDependencies()[0];
 
                     Date dependencyDate;
@@ -1587,7 +1459,6 @@ public class ProjectActions extends DispatchAction {
                         dependencyDate = dependency.getDependency().getScheduledStartDate();
                     }
                     phase.setFixedStartDate(new Date(dependencyDate.getTime() - dependency.getLagTime()));
-
                     phase.clearDependencies();
                 }
 
@@ -1688,7 +1559,7 @@ public class ProjectActions extends DispatchAction {
 
         if (!validationSucceeded) {
             // If project validation has failed, return immediately
-            return projectPhases;
+            return oldPhases;
         }
 
         // FIXME: Refactor it
@@ -1709,13 +1580,8 @@ public class ProjectActions extends DispatchAction {
                     Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
 
-        // Adjust the depending projects timelines if necessary
-        String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
-        ContestDependencyAutomation auto
-            = new ContestDependencyAutomation(phaseManager, projectManager, projectLinkManager);
-        ActionsHelper.adjustDependentProjects(phProject, phaseManager, auto, operator);
-
         // Save the phases at the persistence level
+        String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
         phaseManager.updatePhases(phProject, operator);
         // TODO: The following line was added just to be safe. May be unneeded as well as another one
         projectPhases = phProject.getAllPhases();
@@ -1802,6 +1668,7 @@ public class ProjectActions extends DispatchAction {
 
         // Check the beginning phase, it should be either Registration or submission
         if (projectPhases.length > 0 &&
+                !projectPhases[0].getPhaseType().getName().equals(SPECIFICATION_SUBMISSION_PHASE_NAME) &&
                 !projectPhases[0].getPhaseType().getName().equals(REGISTRATION_PHASE_NAME) &&
                 !projectPhases[0].getPhaseType().getName().equals(SUBMISSION_PHASE_NAME) &&
                 !projectPhases[0].getPhaseType().getName().equals(POST_MORTEM_PHASE_NAME)) {
@@ -1832,6 +1699,23 @@ public class ProjectActions extends DispatchAction {
                             && !postMortemPhaseExists) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.RegistrationMustBeFollowed");
+                        arePhasesValid = false;
+                    }
+                } else if (currentPhaseName.equals(SPECIFICATION_SUBMISSION_PHASE_NAME)) {
+                    // Specification Submission should be followed by Specification Review
+                    if (!nextPhaseName.equals(SPECIFICATION_REVIEW_PHASE_NAME)) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.SpecSubmissionMustBeFollowed");
+                        arePhasesValid = false;
+                    }
+                } else if (currentPhaseName.equals(SPECIFICATION_REVIEW_PHASE_NAME)) {
+                    // Specification Review should be followed either by Specification Submission, Registration
+                    // or Submission
+                    if (!nextPhaseName.equals(SPECIFICATION_SUBMISSION_PHASE_NAME)
+                        && !nextPhaseName.equals(REGISTRATION_PHASE_NAME)
+                        && !nextPhaseName.equals(SUBMISSION_PHASE_NAME)) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.SpecReviewMustBeFollowed");
                         arePhasesValid = false;
                     }
                 } else if (currentPhaseName.equals(REVIEW_PHASE_NAME)) {
@@ -2113,7 +1997,8 @@ public class ProjectActions extends DispatchAction {
                     }
                 } else if (SINGLE_REVIEWER_ROLE_IDS.contains(resourceRoleId)) {
                     if (primaryReviewerRoles.containsKey(resourceRoleId)) {
-                        if (resourceRoleId != 9 || !primaryReviewerRoles.get(resourceRoleId).equals(handle)) {
+                        if ((resourceRoleId != 9) && (resourceRoleId != 18)
+                            || !primaryReviewerRoles.get(resourceRoleId).equals(handle)) {
                             ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                                                             "error.com.cronos.onlinereview.actions."
                                                             + "editProject.Resource.MoreThanOneReviewer");
@@ -2437,9 +2322,10 @@ public class ProjectActions extends DispatchAction {
         boolean allResourcesValid = true;
 
         // get remote services
-        ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
-        UserTermsOfUse userTermsOfUse = UserTermsOfUseLocator.getService();
-        TermsOfUse termsOfUse = TermsOfUseLocator.getService();
+        ProjectRoleTermsOfUse projectRoleTermsOfUse
+            = EJBLibraryServicesLocator.getProjectRoleTermsOfUseService();
+        UserTermsOfUse userTermsOfUse = EJBLibraryServicesLocator.getUserTermsOfUseService();
+        TermsOfUse termsOfUse = EJBLibraryServicesLocator.getTermsOfUseService();
 
         // validate that new resources have agreed to the necessary terms of use
         // 0-index resource is skipped as it is a "dummy" one
@@ -2530,7 +2416,8 @@ public class ProjectActions extends DispatchAction {
                         continue;
                     }
 
-                    if (!ContestEligibilityServiceLocator.getServices().isEligible(userId, project.getId(), false))
+                    if (!EJBLibraryServicesLocator.getContestEligibilityService().isEligible(userId, project.getId(),
+                                                                                             false))
                     {
                         ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                                         new ActionMessage("error.com.cronos.onlinereview.actions.editProject.Resource.NotEligible"));
@@ -2819,7 +2706,7 @@ public class ProjectActions extends DispatchAction {
                     }
 
                     deliverables[j] = getMyDeliverablesForPhases(
-                            messages, allMyDeliverables, phases[i][j], myResources[i][j], winnerIdStr);
+                            messages, allMyDeliverables, phases[i][j], myResources[i][j], winnerIdStr, request);
                 }
                 myDeliverables[i] = deliverables;
             }
@@ -2883,7 +2770,7 @@ public class ProjectActions extends DispatchAction {
         Set<Long> projectsWithEligibilityConstraints;
         try {
             projectsWithEligibilityConstraints =
-                ContestEligibilityServiceLocator.getServices().haveEligibility(
+                EJBLibraryServicesLocator.getContestEligibilityService().haveEligibility(
                     projectFilters.toArray(new Long[projectFilters.size()]), false);
         } catch (Exception e) {
             log.error("It was not possible to retrieve eligibility constraints: "+e);
@@ -3067,9 +2954,12 @@ public class ProjectActions extends DispatchAction {
      *            winner for the project, this parameter must be <code>null</code>.
      * @throws IllegalArgumentException
      *             if parameter <code>messages</code> is <code>null</code>.
+     * @throws UploadPersistenceException if an unexpected error occurs.
+     * @throws SearchBuilderException if an unexpected error occurs.
      */
     private static String getMyDeliverablesForPhases(MessageResources messages,
-            Deliverable[] deliverables, Phase[] phases, Resource[] resources, String winnerExtUserId) {
+            Deliverable[] deliverables, Phase[] phases, Resource[] resources, String winnerExtUserId,
+            HttpServletRequest request) throws SearchBuilderException, UploadPersistenceException {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(messages, "messages");
 
@@ -3151,6 +3041,16 @@ public class ProjectActions extends DispatchAction {
                 }
             }
 
+            // Some additional special checking is need for Specification Submission type of deliverables
+            if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(deliverable.getName())) {
+                Submission submission
+                    = ActionsHelper.getActiveSpecificationSubmission(phases[0].getProject().getId(),
+                                                                     ActionsHelper.createUploadManager(request));
+                if ((submission != null) && (submission.getUpload().getOwner() != deliverable.getResource())) {
+                    continue;
+                }
+            }
+
             // Skip deliverables that are not for winning submitter
             if (winnerExtUserId != null) {
                 if (forResource.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME) &&
@@ -3226,11 +3126,244 @@ public class ProjectActions extends DispatchAction {
         return result;
     }
 
-    private String toString(Phase phase) {
-        if (phase == null) {
-            return "null";
-        } else {
-            return phase.getId() + "-" + phase.getPhaseType().getName();
+    /**
+     * <p>Checks if specified string is empty.</p>
+     *
+     * @param value <code>true</code> if specified value is <code>null</code> or empty; <code>false</code> otherwise.
+     */
+    private static boolean isEmpty(String value) {
+        return (value == null) || (value.trim().length() == 0);
+    }
+
+    /**
+     * <p>Sets the basic form data for <code>Edit Project</code> sceen.</p>
+     *
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @param verification a <code>CorrectnessCheckResult</code> providing the verificaiton result.
+     * @param form a <code>LazyValidatorForm</code> providing the current action form.
+     * @throws BaseException if an unexpected error occurs.
+     */
+    private void setEditProjectFormData(HttpServletRequest request, CorrectnessCheckResult verification,
+                                        LazyValidatorForm form)
+        throws BaseException {
+        
+        // Load the lookup data
+        loadProjectEditLookups(request);
+        String phaseDependenciesEditable
+            = (String) verification.getProject().getProperty("Phase Dependencies Editable");
+        request.setAttribute("arePhaseDependenciesEditable", "true".equalsIgnoreCase(phaseDependenciesEditable));
+        // Place the flag, indicating that we are editing the existing project, into request
+        request.setAttribute("newProject", Boolean.FALSE);
+
+        ProjectManager manager = ActionsHelper.createProjectManager(request);
+        ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
+        request.setAttribute("projectStatuses", projectStatuses);
+        request.setAttribute("project", verification.getProject());
+
+        populateProjectFormDefaults(form, request);
+    }
+
+    /**
+     * <p>Sets the basic request attributes for <code>Edit Project</code> sceen.</p>
+     *
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @param project a <code>Project</code> representing the project to edit.
+     * @param resources a <code>Resource</code> array listing existing project resources.
+     * @param externalUsers an <code>ExternalUser</code> array listing the users mapped to specified resources.
+     * @param phases a <code>Phase</code> array listing existing project phases.
+     * @throws BaseException if an unexpected error occurs.
+     */
+    private void setEditProjectRequestAttributes(HttpServletRequest request, Project project, Resource[] resources,
+                                                 ExternalUser[] externalUsers, Phase[] phases) throws BaseException {
+        PhasesDetails phasesDetails = PhasesDetailsServices.getPhasesDetails(
+                request, getResources(request), project, phases, resources, externalUsers);
+
+        request.setAttribute("phaseGroupIndexes", phasesDetails.getPhaseGroupIndexes());
+        request.setAttribute("phaseGroups", phasesDetails.getPhaseGroups());
+        request.setAttribute("activeTabIdx", phasesDetails.getActiveTabIndex());
+        request.setAttribute("passingMinimum", new Float(75.0)); // TODO: Take this value from scorecard template
+
+        request.setAttribute("isManager",
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)));
+        request.setAttribute("isAllowedToPerformScreening",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SCREENING_PERM_NAME) &&
+                        ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME) != null));
+        request.setAttribute("isAllowedToViewScreening",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENING_PERM_NAME)));
+        request.setAttribute("isAllowedToUploadTC",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.UPLOAD_TEST_CASES_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformAggregation",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformAggregationReview",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME) &&
+                        !AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)));
+        request.setAttribute("isAllowedToUploadFF",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_FIX_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformFinalReview",
+                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.FINAL_REVIEW_PHASE_NAME) != null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformApproval",
+                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformPortMortemReview",
+                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME)));
+
+        collectTrueSubmittersAndReviewers(project, resources, ActionsHelper.createReviewManager(request), request);
+    }
+
+    /**
+     * <p>Collects the lists of resources for specified project which are either submitters with submissions or
+     * reviewers with reviews and binds them to request.</p>
+     *
+     * @param project a <code>Project</code> representing the project to edit.
+     * @param resources a <code>Resource</code> array listing existing project resources.
+     * @param reviewManager a <code>ReviewManager</code> to be used for accessing reviews.
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @throws ReviewManagementException if an unexpected error occurs.
+     */
+    private void collectTrueSubmittersAndReviewers(Project project, Resource[] resources, ReviewManager reviewManager,
+                                                   HttpServletRequest request) throws ReviewManagementException {
+        Map<Integer, Boolean> trueSubmitters = new HashMap<Integer, Boolean>();
+        Map<Integer, Boolean> trueReviewers = new HashMap<Integer, Boolean>();
+        request.setAttribute("trueSubmitters", trueSubmitters);
+        request.setAttribute("trueReviewers", trueReviewers);
+        Set<Long> reviewersWithScorecards = findResourcesWithReviewsForProject(reviewManager, project.getId());
+        for (int i = 0; i < resources.length; ++i) {
+            collectSingleTrueSubmitterOrReviewer(resources[i], reviewersWithScorecards.contains(resources[i].getId()),
+                                                 i, trueSubmitters, trueReviewers);
+        }
+    }
+
+    /**
+     * <p>Checks if specified resource is either submitter with submissions or reviewer with reviews and adds it to
+     * respective map in either case.</p>
+     *
+     * @param resource a <code>Resource</code> to be verified.
+     * @param hasReviewScorecardFilled <code>true</code> if resource has review filled; <code>false</code> otherwise.
+     * @param index an <code>int</code> providing the index in the form for specified resource.
+     * @param trueSubmitters a <code>Map</code> collecting the submiters.
+     * @param trueReviewers a <code>Map</code> collecting the reviewers.
+     */
+    private void collectSingleTrueSubmitterOrReviewer(Resource resource, boolean hasReviewScorecardFilled, int index,
+                                                      Map<Integer, Boolean> trueSubmitters,
+                                                      Map<Integer, Boolean> trueReviewers) {
+        String resourceRoleName = resource.getResourceRole().getName();
+        if ("Submitter".equalsIgnoreCase(resourceRoleName)
+            || "Specification Submitter".equalsIgnoreCase(resourceRoleName)) {
+            Long[] submissionIds = resource.getSubmissions();
+            if ((submissionIds != null) && (submissionIds.length > 0)) {
+                trueSubmitters.put(index + 1, Boolean.TRUE);
+            }
+        } else if (REVIEWER_ROLE_NAMES.contains(resourceRoleName)) {
+            if (hasReviewScorecardFilled) {
+                trueReviewers.put(index + 1, Boolean.TRUE);
+            }
+        }
+    }
+
+    /**
+     * <p>Sets the form data for <code>Edit Project</code> sceen with data for project phases.</p>
+     *
+     * @param form a <code>LazyValidatorForm</code> providing the current action form.
+     * @param phases a <code>Phase</code> array listing existing project phases.
+     * @param closedPhasesOnly <code>true</code> if only closed phases are to be processed; <code>false</code>
+     *        otherwise.
+     */
+    private void setEditProjectPhasesData(LazyValidatorForm form, Phase[] phases, boolean closedPhasesOnly) {
+        Map<Long, Integer> phaseNumberMap = new HashMap<Long, Integer>();
+
+        // Populate form with phases data
+        for (int i = 0; i < phases.length; ++i) {
+            if (closedPhasesOnly && phases[i].getPhaseStatus().getId() != 3) {
+                continue;
+            }
+            form.set("phase_id", i + 1, new Long(phases[i].getId()));
+
+            form.set("phase_can_open", i + 1,
+                    Boolean.valueOf(phases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())));
+            form.set("phase_can_close", i + 1,
+                    Boolean.valueOf(phases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())));
+
+            Long phaseTypeId = new Long(phases[i].getPhaseType().getId());
+            form.set("phase_type", i + 1, phaseTypeId);
+            Integer phaseNumber = (Integer) phaseNumberMap.get(phaseTypeId);
+            if (phaseNumber == null) {
+                phaseNumber = new Integer(1);
+            } else {
+                phaseNumber = new Integer(phaseNumber.intValue() + 1);
+            }
+            phaseNumberMap.put(phaseTypeId, phaseNumber);
+            form.set("phase_number", i + 1, phaseNumber);
+
+            form.set("phase_name", i + 1, phases[i].getPhaseType().getName());
+            form.set("phase_action", i + 1, "update");
+            form.set("phase_js_id", i + 1, "loaded_" + phases[i].getId());
+            if (phases[i].getAllDependencies().length > 0) {
+                form.set("phase_start_by_phase", i + 1, Boolean.TRUE);
+                // TODO: Probably will need to rewrite all those dependency stuff
+                // TODO: It is very incomplete actually
+                Dependency dependency = phases[i].getAllDependencies()[0];
+                form.set("phase_start_phase", i + 1, "loaded_" + dependency.getDependency().getId());
+                form.set("phase_start_when", i + 1, dependency.isDependencyStart() ? "starts" : "ends");
+                long lagTime = dependency.getLagTime();
+                if (lagTime % (24 * 3600 * 1000L) == 0) {
+                    form.set("phase_start_dayshrs", i + 1, "days");
+                    form.set("phase_start_amount", i + 1, new Integer((int) (lagTime / (24 * 3600 * 1000L))));
+                } else if (lagTime % (3600 * 1000L) == 0) {
+                    form.set("phase_start_dayshrs", i + 1, "hrs");
+                    form.set("phase_start_amount", i + 1, new Integer((int) (lagTime / (3600 * 1000L))));
+                } else {
+                    form.set("phase_start_dayshrs", i + 1, "mins");
+                    form.set("phase_start_amount", i + 1, new Integer((int) (lagTime / (60 * 1000L))));
+                }
+            }
+            if (phases[i].getFixedStartDate() != null) {
+                form.set("phase_start_by_fixed_time", i + 1, Boolean.TRUE);
+                populateDatetimeFormProperties(form, "phase_start_date", "phase_start_time", i + 1,
+                        phases[i].getFixedStartDate());
+            }
+
+            populateDatetimeFormProperties(form, "phase_end_date", "phase_end_time", i + 1,
+                    phases[i].calcEndDate());
+            // always use duration
+            form.set("phase_use_duration", i + 1, Boolean.TRUE);
+
+            // populate the phase duration
+            long phaseLength = phases[i].getLength();
+            String phaseDuration = "";
+            if (phaseLength % (3600*1000) == 0) {
+                phaseDuration = "" + phaseLength / (3600 * 1000);
+            } else {
+                long hour = phaseLength / 3600 / 1000;
+                long min = (phaseLength % (3600 * 1000)) / 1000 / 60;
+                phaseDuration = hour + ":" + (min >= 10 ? "" + min : "0" + min);
+            }
+
+            form.set("phase_duration", i + 1, phaseDuration);
+
+            // Populate phase criteria
+            if (phases[i].getAttribute("Scorecard ID") != null) {
+                form.set("phase_scorecard", i + 1, Long.valueOf((String) phases[i].getAttribute("Scorecard ID")));
+            }
+            if (phases[i].getAttribute("Registration Number") != null) {
+                form.set("phase_required_registrations", i + 1,
+                        Integer.valueOf((String) phases[i].getAttribute("Registration Number")));
+            }
+            if (phases[i].getAttribute("Submission Number") != null) {
+                form.set("phase_required_submissions", i + 1,
+                        Integer.valueOf((String) phases[i].getAttribute("Submission Number")));
+                form.set("phase_manual_screening", i + 1,
+                        Boolean.valueOf("Yes".equals(phases[i].getAttribute("Manual Screening"))));
+            }
+            if (phases[i].getAttribute("Reviewer Number") != null) {
+                form.set("phase_required_reviewers", i + 1,
+                        Integer.valueOf((String) phases[i].getAttribute("Reviewer Number")));
+            }
+            if (phases[i].getAttribute("View Response During Appeals") != null) {
+                form.set("phase_view_appeal_responses", i + 1,
+                        Boolean.valueOf("Yes".equals(phases[i].getAttribute("View Response During Appeals"))));
+            }
         }
     }
 }

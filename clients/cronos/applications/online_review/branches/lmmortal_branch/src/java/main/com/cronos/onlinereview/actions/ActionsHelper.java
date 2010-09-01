@@ -17,15 +17,17 @@ import java.util.*;
 import javax.ejb.CreateException;
 import javax.naming.Context;
 import javax.naming.NamingException;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.dataaccess.ResourceDataAccess;
 import com.cronos.onlinereview.deliverables.*;
-import com.topcoder.management.phase.ContestDependencyAutomation;
+import com.topcoder.management.deliverable.SubmissionType;
 import com.topcoder.management.resource.persistence.ResourcePersistenceException;
 import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.project.phases.Dependency;
 import com.topcoder.search.builder.filter.EqualToFilter;
+import com.topcoder.search.builder.filter.NotFilter;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForward;
@@ -152,8 +154,8 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  * <p>
  * Version 1.4 (Contest Dependency Automation Assembly v1.0) Change notes:
  *   <ol>
- *     <li>Added {@link #adjustDependentProjects(com.topcoder.project.phases.Project,
- *     com.topcoder.management.phase.PhaseManager, com.topcoder.management.phase.ContestDependencyAutomation, String)}
+ *     <li>Added <code>adjustDependentProjects(com.topcoder.project.phases.Project,
+ *     com.topcoder.management.phase.PhaseManager, ContestDependencyAutomation, String)</code>
  *     and {@link #recalculateScheduledDates(com.topcoder.project.phases.Phase[])} methods.</li>
  *   </ol>
  * </p>
@@ -195,13 +197,24 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.8
+ * <p>
+ * Version 1.9 (Specification Review Part 1 Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Removed dependency on <code>ContestDependencyAutomation</code> class.</li>
+ *     <li>Updated {@link #createDeliverableManager(HttpServletRequest)} method to set the checkers for
+ *     <code>Specification Submission</code> and <code>Specification Review</code> deliverables.</li>
+ *     <li>Added {@link #findSubmissionTypeByName(SubmissionType[], String)} method.</li>
+ *     <li>Added {@link #getSpecificationSubmissions(long, UploadManager)} method.</li>
+ *     <li>Added {@link #getActiveSpecificationSubmission(long, long, UploadManager)} method.</li>
+ *   </ol>
+ * </p>
+
+ * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @version 1.9
  * @since 1.0
  */
 public class ActionsHelper {
 
-    
     /**
      * The logger instance.
      */
@@ -901,6 +914,30 @@ public class ActionsHelper {
         for (int i = 0; i < submissionStatuses.length; ++i) {
             if (submissionStatuses[i].getName().equalsIgnoreCase(submissionStatusName)) {
                 return submissionStatuses[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * <p>This static method searches for the submission type with the specified name in a provided array of submission
+     * types. The search is case-insensitive.</p>
+     *
+     * @param submissionTypes an array of submission types to search for wanted submission type among.
+     * @param submissionTypeName the name of the needed submission type.
+     * @return found submission type, or <code>null</code> if a type with the specified name has not been found in
+     *         the provided array of submission types.
+     * @throws IllegalArgumentException if any of the parameters are <code>null</code> or
+     *         <code>submissionTypeName</code> parameter is empty string.
+     * @since 1.9
+     */
+    public static SubmissionType findSubmissionTypeByName(SubmissionType[] submissionTypes, String submissionTypeName) {
+        validateParameterNotNull(submissionTypes, "submissionTypes");
+        validateParameterStringNotEmpty(submissionTypeName, "submissionTypeName");
+
+        for (SubmissionType submissionType :  submissionTypes) {
+            if (submissionType.getName().equalsIgnoreCase(submissionTypeName)) {
+                return submissionType;
             }
         }
         return null;
@@ -2076,7 +2113,6 @@ public class ActionsHelper {
 
         // A filter to search for deliverables for specific phase(s) of the project
         Filter filter = null;
-
         switch (phases.length) {
         case 0:
             // No phases -- no deliverables
@@ -2133,6 +2169,7 @@ public class ActionsHelper {
             if (forResource.getPhase() != null &&
                     (resourceRole.equalsIgnoreCase(Constants.FINAL_REVIEWER_ROLE_NAME) ||
                     resourceRole.equalsIgnoreCase(Constants.AGGREGATOR_ROLE_NAME) ||
+                    resourceRole.equalsIgnoreCase(Constants.SPECIFICATION_REVIEWER_ROLE_NAME) ||
                     resourceRole.equalsIgnoreCase(Constants.APPROVER_ROLE_NAME))) {
                 final long resourcePhaseId = forResource.getPhase().longValue();
                 for (j = 0; j < phases.length; ++j) {
@@ -2218,8 +2255,9 @@ public class ActionsHelper {
         List<Deliverable> deliverables = new ArrayList<Deliverable>();
         // Perform a search for outstanding deliverables
         for (int i = 0; i < allDeliverables.length; ++i) {
-            if (!allDeliverables[i].isComplete()) {
-                deliverables.add(allDeliverables[i]);
+            Deliverable deliverable = allDeliverables[i];
+            if (!deliverable.isComplete()) {
+                addDeliverable(deliverable, allDeliverables, deliverables);
             }
         }
         // Return a list of outstanding deliverables converted to array
@@ -2259,7 +2297,7 @@ public class ActionsHelper {
             // If found is true, it means that current
             // deliverable is assigned to currently logged in user
             if (found == true) {
-                deliverables.add(deliverable);
+                addDeliverable(deliverable, allDeliverables, deliverables);
             }
         }
         // Return a list of "my" deliverables converted to array
@@ -2338,11 +2376,16 @@ public class ActionsHelper {
         validateParameterNotNull(project, "project");
 
         SubmissionStatus[] allSubmissionStatuses = manager.getAllSubmissionStatuses();
+        SubmissionType[] allSubmissionTypes = manager.getAllSubmissionTypes();
+        SubmissionType submissionType
+            = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes, "Contest Submission");
+
 
         Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
+        Filter filterType = SubmissionFilterBuilder.createSubmissionTypeIdFilter(submissionType.getId());
         Filter filterStatus = createSubmissionStatusFilter(allSubmissionStatuses);
 
-        Filter filter = new AndFilter(filterProject, filterStatus);
+        Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterType));
 
         return manager.searchSubmissions(filter);
     }
@@ -2803,6 +2846,9 @@ public class ActionsHelper {
             DeliverableChecker testCasesChecker = new TestCasesDeliverableChecker(dbconn);
 
             checkers.put(Constants.SUBMISSION_DELIVERABLE_NAME, new SubmissionDeliverableChecker(dbconn));
+            checkers.put(Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME,
+                         new SpecificationSubmissionDeliverableChecker(dbconn));
+            checkers.put(Constants.SPECIFICATION_REVIEW_DELIVERABLE_NAME, committedChecker);
             checkers.put(Constants.SCREENING_DELIVERABLE_NAME, new IndividualReviewDeliverableChecker(dbconn));
             checkers.put(Constants.PRIMARY_SCREENING_DELIVERABLE_NAME, committedChecker);
             checkers.put(Constants.REVIEW_DELIVERABLE_NAME, committedChecker);
@@ -3313,9 +3359,10 @@ public class ActionsHelper {
                 // if the user is logged in and is a resource of this project or a global manager, continue
                 Resource[] myResources = (Resource[]) request.getAttribute("myResources");
                 if ((myResources == null || myResources.length == 0) && 
-                               !AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
+                               !AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) &&
+                               !AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
                     // if he's not a resource, check if the project has eligibility constraints
-                    if (ContestEligibilityServiceLocator.getServices().hasEligibility(pid, false)) {
+                    if (EJBLibraryServicesLocator.getContestEligibilityService().hasEligibility(pid, false)) {
                         result.setForward(produceErrorReport(
                                 mapping, resources, request, permission, "Error.ProjectNotFound", null));
                         // Return the result of the check
@@ -3324,7 +3371,7 @@ public class ActionsHelper {
                 }
             } else {
                 // if the user is not logged in and the project has any eligibility constraint, ask for login
-                if (ContestEligibilityServiceLocator.getServices().hasEligibility(pid, false)) {
+                if (EJBLibraryServicesLocator.getContestEligibilityService().hasEligibility(pid, false)) {
                     result.setForward(produceErrorReport(mapping, resources, request,
                             permission, "Error.NoPermission", Boolean.valueOf(getRedirectUrlFromReferer)));
                     // Return the result of the check
@@ -3831,7 +3878,7 @@ public class ActionsHelper {
     /**
      * Get the catalog for a component.
      *
-     * @param projectId project id
+     * @param componentId project id
      *
      * @throws Exception if error occurs
      */
@@ -3914,7 +3961,7 @@ public class ActionsHelper {
      *
      * @param project the project
      * @param userId userId
-     * @param roleId roleId
+     * @param oldRoleId roleId
      * @throws BaseException if error occurs
      */
     public static void changeResourceRole(Project project, long userId, long oldRoleId, long newRoleId) throws BaseException {
@@ -4114,7 +4161,7 @@ public class ActionsHelper {
      * retrieves all Reviewed submissions for the given project id.
      *
      * @param request request instance to use for searching.
-     * @param projectId project id.
+     * @param project project.
      *
      * @return all active submissions for the given project id.
      *
@@ -4274,6 +4321,7 @@ public class ActionsHelper {
         Context context = TCContext.getInitial(ApplicationServer.FORUMS_HOST_URL);
         ForumsHome forumsHome = (ForumsHome) context.lookup(ForumsHome.EJB_REF_NAME);
         return forumsHome.create();
+//        return EJBLibraryServicesLocator.getForumsService();
     }
     
     public static void addForumPermissions(Project project, Collection<Long> users) throws BaseException {
@@ -4363,9 +4411,65 @@ public class ActionsHelper {
         removeForumWatch(project, userToUsers(user), forumId);
     }
 
+    /**
+     * <p>Gets the specification submissions for the specified project.</p>
+     *
+     * @param projectId a <code>long</code> providing the ID of a project.
+     * @param upMgr an <code>UploadManager</code> to be used for searching for submissions.
+     * @return a <code>Submission</code> array listing the specification submissions for specified project.
+     * @throws UploadPersistenceException if an unexpected error occurs.
+     * @throws SearchBuilderException if an unexpected error occurs.
+     * @since 1.9
+     */
+    public static Submission[] getSpecificationSubmissions(long projectId, UploadManager upMgr)
+        throws UploadPersistenceException, SearchBuilderException {
+        SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
+        SubmissionType specSubmissionType
+            = ActionsHelper.findSubmissionTypeByName(submissionTypes, "Specification Submission");
 
-    
-    
+        Filter submissionTypeFilter
+            = SubmissionFilterBuilder.createSubmissionTypeIdFilter(specSubmissionType.getId());
+        Filter projectFilter = SubmissionFilterBuilder.createProjectIdFilter(projectId);
+
+        Filter filter = new AndFilter(Arrays.asList(projectFilter, submissionTypeFilter));
+        Submission[] specificationSubmissions = upMgr.searchSubmissions(filter);
+        return specificationSubmissions;
+    }
+
+    /**
+     * <p>Gets the active specification submission for the specified project and specified phase.</p>
+     *
+     * @param projectId a <code>long</code> providing the ID of a project.
+     * @param upMgr an <code>UploadManager</code> to be used for searching for submissions.
+     * @return a <code>Submission</code> array listing the specification submissions for specified project.
+     * @throws UploadPersistenceException if an unexpected error occurs.
+     * @throws SearchBuilderException if an unexpected error occurs.
+     * @since 1.9
+     */
+    public static Submission getActiveSpecificationSubmission(long projectId, UploadManager upMgr)
+        throws UploadPersistenceException, SearchBuilderException {
+
+        SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
+        SubmissionType specSubmissionType
+            = ActionsHelper.findSubmissionTypeByName(submissionTypes, "Specification Submission");
+        SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
+        SubmissionStatus activeSubmissionStatus
+            = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active");
+
+        Filter submissionTypeFilter
+            = SubmissionFilterBuilder.createSubmissionTypeIdFilter(specSubmissionType.getId());
+        Filter projectFilter = SubmissionFilterBuilder.createProjectIdFilter(projectId);
+        Filter statusFilter = SubmissionFilterBuilder.createSubmissionStatusIdFilter(activeSubmissionStatus.getId());
+
+        Filter filter = new AndFilter(Arrays.asList(projectFilter, submissionTypeFilter, statusFilter));
+        Submission[] specificationSubmissions = upMgr.searchSubmissions(filter);
+        if (specificationSubmissions == null || specificationSubmissions.length == 0) {
+            return null;
+        } else {
+            return specificationSubmissions[0];
+        }
+    }
+
     /**
      * <p>Updates the payments for existing submitters.</p>
      *
@@ -4402,28 +4506,6 @@ public class ActionsHelper {
         } finally {
             close(ps);
             close(conn);
-        }
-    }
-
-    /**
-     * <p>Adjusts the timelines for projects depending on specified project if necessary.</p>
-     *
-     * @param mainProject a <code>Project</code> providing the project details.
-     * @param phaseManager a <code>PhaseManager</code> to be used for managing phases.
-     * @param auto a <code>ContestDependencyAutomation</code> to be used for processing dependencies.
-     * @param operator a <code>String</code> providing the operator for audit.
-     * @throws PhaseManagementException if an unexpected error occurs.
-     * @throws com.topcoder.management.project.PersistenceException if an unexpected error occurs.
-     * @since 1.3
-     */
-    static void adjustDependentProjects(com.topcoder.project.phases.Project mainProject, PhaseManager phaseManager,
-                                        ContestDependencyAutomation auto, String operator)
-        throws PhaseManagementException, com.topcoder.management.project.PersistenceException {
-        List<Phase[]> phases = auto.adjustDependingProjectPhases(mainProject.getAllPhases());
-        for (Phase[] p : phases) {
-            if (p.length > 0) {
-                phaseManager.updatePhases(p[0].getProject(), operator);
-            }
         }
     }
 
@@ -4615,5 +4697,49 @@ public class ActionsHelper {
      */
     static boolean isPhaseOpen(PhaseStatus status) {
         return (PHASE_STATUS_OPEN.equals(status.getName()));
+    }
+
+    /**
+     * <p>Adds specified deliverable to specified list of collected deliverables.</p>
+     *
+     * @param deliverable a <code>Deliverable</code> to be added to collected list of deliverables.
+     * @param allDeliverables an <code>Deliverable</code> array listing all deliverables for project.
+     * @param collectedDeliverables a <code>List</code> collecting the valid deliverables.
+     * @since 1.9
+     */
+    private static void addDeliverable(Deliverable deliverable, Deliverable[] allDeliverables,
+                                       List<Deliverable> collectedDeliverables) {
+        // For specification submission deliverables there is a need to check if there is no specification
+        // submission deliverable already completed by other resource
+        boolean toAdd = true;
+        if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(deliverable.getName())) {
+            toAdd = !isSpecificationSubmissionAlreadyDelivered(deliverable, allDeliverables);
+        }
+        if (toAdd) {
+            collectedDeliverables.add(deliverable);
+        }
+    }
+
+    /**
+     * <p>Checks if <code>Specification Submission</code> is already delivered by another resource for same phase mapped
+     * to specified deliverable.</p>
+     *  
+     * @param deliverable a <code>Deliverable</code> to be added to collected list of deliverables.
+     * @param allDeliverables an <code>Deliverable</code> array listing all deliverables for project.
+     * @return <code>true</code> if <code>Specification Submission</code> is already delivered; <code>false</code>
+     *         otherwise.
+     * @since 1.9
+     */
+    public static boolean isSpecificationSubmissionAlreadyDelivered(Deliverable deliverable,
+                                                                    Deliverable[] allDeliverables) {
+        for (Deliverable otherDeliverable : allDeliverables) {
+            if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(otherDeliverable.getName())
+                && (otherDeliverable.getPhase() == deliverable.getPhase())
+                && otherDeliverable.isComplete()
+                && (otherDeliverable.getResource() != deliverable.getResource())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

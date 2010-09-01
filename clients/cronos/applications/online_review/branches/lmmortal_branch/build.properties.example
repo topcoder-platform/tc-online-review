@@ -27,3 +27,6 @@ svn.username=xxx
 svn.password=xxx
 ## uncomment the line bellow to allow update through ant
 # svn.update=yes
+
+# A path to Web module installation
+web.module.path=/mnt/shared/web

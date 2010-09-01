@@ -28,16 +28,16 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.Locale;
 import java.text.DateFormat;
-import java.text.Format;
 import java.text.SimpleDateFormat;
 
 import javax.ejb.CreateException;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cronos.onlinereview.dataaccess.CatalogDataAccess;
+import com.cronos.onlinereview.ejblibrary.SpringContextProvider;
+import com.topcoder.dde.catalog.ComponentVersionInfo;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -50,8 +50,6 @@ import com.cronos.onlinereview.external.ConfigException;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.RetrievalException;
 import com.cronos.onlinereview.external.UserRetrieval;
-import com.topcoder.dde.catalog.ComponentManager;
-import com.topcoder.dde.catalog.ComponentManagerHome;
 import com.topcoder.dde.catalog.Document;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.phase.PhaseStatusEnum;
@@ -68,14 +66,10 @@ import com.topcoder.shared.util.DBMS;
 import com.topcoder.util.distribution.DistributionTool;
 import com.topcoder.util.distribution.DistributionToolException;
 import com.topcoder.util.errorhandling.BaseException;
-import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
-import com.topcoder.web.ejb.project.ProjectRoleTermsOfUseLocator;
 import com.topcoder.web.ejb.termsofuse.TermsOfUse;
 import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
-import com.topcoder.web.ejb.termsofuse.TermsOfUseLocator;
 import com.topcoder.web.ejb.user.UserTermsOfUse;
-import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
 
 /**
  * <p>A <code>Struts</code> action to be used for handling requests related to <code>Project Management Console</code>
@@ -475,11 +469,11 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             return false;
         }
 
-        ComponentManager componentManager = getComponentManager(componentId, versionId);
+        CatalogDataAccess catalogDataAccess = SpringContextProvider.getCatalogDataAccess();
+        ComponentVersionInfo componentVersion = catalogDataAccess.getComponentVersionInfo(componentId, versionId);
 
         String rootDir = ConfigHelper.getCatalogOutputDir() + File.separator;
-        String dir = "" + componentId + File.separator + componentManager.getVersionInfo().getVersionId()
-            + File.separator;
+        String dir = "" + componentId + File.separator + componentVersion.getVersionId() + File.separator;
 
         File dirFile = new File(rootDir + dir);
 
@@ -508,16 +502,17 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             documentName = DEVELOPMENT_DISTRIBUTION_DOC_TYPE;
         }
 
-        Document document = getDocumentOfType(componentManager.getDocuments(), documentType);
+        Document document
+            = getDocumentOfType(catalogDataAccess.getDocuments(componentVersion.getVersionId()), documentType);
 
         if (document == null) {
             // Add document to component
             document = new Document(documentName, url, documentType);
-            componentManager.addDocument(document);
+            catalogDataAccess.addDocument(componentVersion.getVersionId(), document);
         } else {
             // Update document
             document.setURL(url);
-            componentManager.updateDocument(document);
+            catalogDataAccess.updateDocument(componentVersion.getVersionId(), document);
         }
 
         return true;
@@ -541,27 +536,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         }
         // Not found
         return null;
-    }
-
-    /**
-     * <p>
-     * Returns the component manager EJB.
-     * </p>
-     *
-     * @param componentId the component ID used to create the ComponentManager remote object.
-     * @param versionId the component version ID used to create the ComponentManager remote object.
-     * @return the component manager EJB.
-     * @throws RemoteException if any error occurs while creating the remote object.
-     * @throws CreateException if any error occurs while creating the remote object.
-     * @throws NamingException if any error occurs looking up the home interface.
-     * @since 1.1
-     */
-    private ComponentManager getComponentManager(long componentId, long versionId) throws RemoteException,
-        CreateException, NamingException {
-        Context context = new InitialContext();
-        ComponentManagerHome componentManagerHome = (ComponentManagerHome) context
-            .lookup(ComponentManagerHome.EJB_REF_NAME);
-        return componentManagerHome.create(componentId, versionId);
     }
 
     /**
@@ -1723,9 +1697,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         List<TermsOfUseEntity> unAcceptedTerms = new ArrayList<TermsOfUseEntity>();
 
         // get remote services
-        ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
-        UserTermsOfUse userTermsOfUse = UserTermsOfUseLocator.getService();
-        TermsOfUse termsOfUse = TermsOfUseLocator.getService();
+        ProjectRoleTermsOfUse projectRoleTermsOfUse = EJBLibraryServicesLocator.getProjectRoleTermsOfUseService();
+        UserTermsOfUse userTermsOfUse = EJBLibraryServicesLocator.getUserTermsOfUseService();
+        TermsOfUse termsOfUse = EJBLibraryServicesLocator.getTermsOfUseService();
 
         List<Long>[] necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(
             (int) projectId, new int[]{new Long(roleId).intValue()}, DBMS.COMMON_OLTP_DATASOURCE_NAME);
@@ -1750,18 +1724,18 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      *
      * @param projectId a <code>long</code> providing the project ID.
      * @param userId a <code>long</code> providing the user ID.
-     * @param roleId a <code>long</code> providing the role ID.
      * @return a <code>List</code> of terms of use which are not yet accepted by the specified user or empty list if all
      *         necessary terms of use are accepted.
      * @throws NamingException if any errors occur during EJB lookup.
      * @throws RemoteException if any errors occur during EJB remote invocation.
      * @throws CreateException if any errors occur during EJB creation.
+     * @throws BaseException if an unexpected error occurs.
      */
     private boolean validateResourceEligibility(long projectId, long userId)
         throws CreateException, NamingException, RemoteException, BaseException {
 
         try {
-            return ContestEligibilityServiceLocator.getServices().isEligible(userId, projectId, false);
+            return EJBLibraryServicesLocator.getContestEligibilityService().isEligible(userId, projectId, false);
         }catch (ContestEligibilityValidatorException e) {
             throw new BaseException(e);
         }

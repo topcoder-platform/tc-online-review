@@ -1,3 +1,12 @@
+<%--
+  - Author: isv
+  - Version: 1.1
+  - Copyright (C) 2005-2010 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page renders the Specification Review scorecard.
+  -
+  - Version 1.1 (Specification Review Part 1 assembly) changes: Changed URL for action for submission upload. 
+--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ page import="com.topcoder.shared.util.ApplicationServer"%>
@@ -54,8 +63,8 @@
                     </div><br />
 
                     <html:errors />
-                    <html:form action="/actions/UploadSubmission" method="POST" enctype="multipart/form-data">
-                        <html:hidden property="method" value="uploadSubmission" />
+                    <html:form action="/actions/UploadContestSubmission" method="POST" enctype="multipart/form-data">
+                        <html:hidden property="method" value="uploadContestSubmission" />
                         <html:hidden property="postBack" value="y" />
                         <html:hidden property="pid" value="${project.id}" />
 
@@ -65,15 +74,14 @@
                             </tr>
                             <tr class="light">
                                 <td class="value">
-                                    <bean:message key="uploadSubmission.HelpLine1" />
-                                    <a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&d1=dev&d2=support&d3=${(project.projectCategory.id eq 1) ? 'des' : 'dev'}ScreeningSample"><bean:message key="linkHere" /></a>.<br /><br />
+                                    <bean:message key="uploadSubmission.HelpLine1" /><br /><br />
                                     <bean:message key="uploadSubmission.UploadSubmission" />
                                     <html:file property="file" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
                                     <html:image srcKey="btnUpload.img" altKey="btnUpload.alt" border="0" style="vertical-align:bottom;" /><br /><br />
                                     <bean:message key="uploadSubmission.HelpLine2" />
                                     <bean:message key="uploadSubmission.HelpLine3" />
 
-                                    <a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&d1=dev&d2=support&d3=${(project.projectCategory.id eq 1) ? 'des' : 'dev'}Documentation"><bean:message key="uploadSubmission.SampleSubmissionAndDocs" /></a>
+                                    <a href="http://<%=ApplicationServer.SERVER_NAME%>/wiki/display/tc/Documentation+and+Submission+Guidelines"><bean:message key="uploadSubmission.SampleSubmissionAndDocs" /></a>
 
                                     <bean:message key="uploadSubmission.HelpLine4" />
                                 </td>

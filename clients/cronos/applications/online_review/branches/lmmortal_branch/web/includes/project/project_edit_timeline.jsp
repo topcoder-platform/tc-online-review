@@ -1,6 +1,6 @@
 <%--
   - Author: isv
-  - Version: 1.2
+  - Version: 1.3
   - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment displays the form input elements group for editing the timeline and other
@@ -10,6 +10,9 @@
   - Updated logic for supporting Approval phase.
   -
   - Version 1.2 (Impersonation Login Release assembly) changes: Disabled all input fields for phases which are closed.
+  -
+  - Version 1.3 (Specification Review Part 1 assembly) changes: Removed radio buttons for selecting the type of
+  - phase start
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -57,10 +60,14 @@
     </tr>
 
     <%-- PHASE ROW GOES HERE --%>
+    <c:set var="arePhaseDependenciesEditable" value="${requestScope.arePhaseDependenciesEditable}"/>
+    <input type="hidden" name="arePhaseDependenciesEditable" value="${arePhaseDependenciesEditable}"/>
     <c:set var="approvalPhaseMet" value="${false}"/>
     <c:set var="disableApprovalReviewerNumberInput" value="${false}"/>
     <c:forEach var="phaseIdx" begin="0" end="${fn:length(projectForm.map['phase_id']) - 1}">
         <c:set var="isPhaseClosed" value="${not (projectForm.map['phase_can_open'][phaseIdx] || projectForm.map['phase_can_close'][phaseIdx])}"/>
+        <c:set var="isFixedStartTimeSet" value="${projectForm.map['phase_start_by_fixed_time'][phaseIdx]}"/>
+        <c:set var="isPhaseDependencySet" value="${projectForm.map['phase_start_by_phase'][phaseIdx]}"/>
         <c:if test="${phaseIdx eq 0}">
             <tr class="dark" style="display: none;" id="phase_row_template">
         </c:if>
@@ -86,20 +93,48 @@
                 &#160; <span name="phase_number_text">${projectForm.map['phase_number'][phaseIdx]}</span>
             </td>
             <td class="value" nowrap="nowrap">
+                <input type="hidden" name="isPhaseClosed[${phaseIdx}]" value="${isPhaseClosed}"/>
                 <html:hidden property="phase_type[${phaseIdx}]" disabled="${isPhaseClosed}" />
                 <html:hidden property="phase_id[${phaseIdx}]" disabled="${isPhaseClosed}" />
                 <html:hidden property="phase_js_id[${phaseIdx}]" />
                 <html:hidden property="phase_action[${phaseIdx}]" disabled="${isPhaseClosed}" />
                 <html:hidden property="phase_name[${phaseIdx}]" disabled="${isPhaseClosed}" />
                 <html:hidden property="phase_number[${phaseIdx}]" disabled="${isPhaseClosed}" />
-                <html:radio property="phase_start_by_phase[${phaseIdx}]" value="false" disabled="${isPhaseClosed}"/>
-                <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="phase_start_date[${phaseIdx}]" disabled="${isPhaseClosed}"/>
-                <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="phase_start_time[${phaseIdx}]" disabled="${isPhaseClosed}"/>
+
+                <c:if test="${not arePhaseDependenciesEditable and not isPhaseClosed}">
+                    <html:hidden property="phase_start_by_fixed_time[${phaseIdx}]"/>
+                </c:if>
+                <input type="hidden" name="isPhaseFixedStartTimeEnabled[${phaseIdx}]"
+                       value="${projectForm.map['phase_start_by_fixed_time'][phaseIdx]}"/>
+                <html:checkbox property="phase_start_by_fixed_time[${phaseIdx}]"
+                               disabled="${isPhaseClosed or not arePhaseDependenciesEditable}"
+                               onclick="return fixedStartTimeBoxChanged(this, ${phaseIdx})"/>
+                <html:text onblur="JavaScript:this.value=getDateString(this.value);"
+                           styleClass="inputBoxDate" property="phase_start_date[${phaseIdx}]"
+                           disabled="${isPhaseClosed or not isFixedStartTimeSet}"/>
+                <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);"
+                           styleClass="inputBoxTime" property="phase_start_time[${phaseIdx}]"
+                           disabled="${isPhaseClosed or not isFixedStartTimeSet}"/>
+
                 <c:out value="${currentTimezone}"/><br />
-                <html:radio property="phase_start_by_phase[${phaseIdx}]" value="true" disabled="${isPhaseClosed}"/>
+
+                <c:if test="${not arePhaseDependenciesEditable and not isPhaseClosed}">
+                    <html:hidden property="phase_start_by_phase[${phaseIdx}]"/>
+                    <html:hidden property="phase_start_phase[${phaseIdx}]"/>
+                    <html:hidden property="phase_start_when[${phaseIdx}]"/>
+                    <html:hidden property="phase_start_plusminus[${phaseIdx}]"/>
+                    <html:hidden property="phase_start_amount[${phaseIdx}]"/>
+                    <html:hidden property="phase_start_dayshrs[${phaseIdx}]"/>
+                </c:if>
+                <input type="hidden" name="isPhaseDependencySet[${phaseIdx}]"
+                       value="${projectForm.map['phase_start_by_phase'][phaseIdx]}"/>
+                <html:checkbox property="phase_start_by_phase[${phaseIdx}]"
+                               disabled="${isPhaseClosed or not arePhaseDependenciesEditable}"
+                               onclick="return phaseStartByPhaseBoxChanged(this, ${phaseIdx})"/>
                 <bean:message key="editProject.Phases.When" />
                 <div style="margin-left: 20px;">
-                <html:select styleClass="inputBox" property="phase_start_phase[${phaseIdx}]" style="width:120px;" disabled="${isPhaseClosed}">
+                <html:select styleClass="inputBox" property="phase_start_phase[${phaseIdx}]" style="width:150px;"
+                             disabled="${isPhaseClosed or not isPhaseDependencySet or not arePhaseDependenciesEditable}">
                     <html:option key="editProject.Phases.SelectPhase" value="" />
                     <c:forEach var="i" begin="1" end="${fn:length(projectForm.map['phase_id']) - 1}">
                         <c:if test="${phaseIdx ne i}">
@@ -108,19 +143,23 @@
                     </c:forEach>
                 </html:select>
                 <br />
-                <html:select styleClass="inputBox" property="phase_start_when[${phaseIdx}]" disabled="${isPhaseClosed}">
+                <html:select styleClass="inputBox" property="phase_start_when[${phaseIdx}]"
+                             disabled="${isPhaseClosed or not isPhaseDependencySet or not arePhaseDependenciesEditable}">
                     <html:option key="editProject.Phases.Starts" value="starts" />
                     <html:option key="editProject.Phases.Ends" value="ends" />
                 </html:select>
                 <br />
-                <html:select styleClass="inputBox" property="phase_start_plusminus[${phaseIdx}]" disabled="${isPhaseClosed}">
+                <html:select styleClass="inputBox" property="phase_start_plusminus[${phaseIdx}]"
+                             disabled="${isPhaseClosed or not isPhaseDependencySet or not arePhaseDependenciesEditable}">
                     <html:option value="plus">+</html:option>
                     <html:option value="minus">-</html:option>
                 </html:select>
                 <br />
-                <html:text styleClass="inputBox" property="phase_start_amount[${phaseIdx}]" style="width:30px;" disabled="${isPhaseClosed}"/>
+                <html:text styleClass="inputBox" property="phase_start_amount[${phaseIdx}]" style="width:30px;"
+                           disabled="${isPhaseClosed or not isPhaseDependencySet or not arePhaseDependenciesEditable}"/>
                 <br />
-                <html:select styleClass="inputBox" property="phase_start_dayshrs[${phaseIdx}]" disabled="${isPhaseClosed}">
+                <html:select styleClass="inputBox" property="phase_start_dayshrs[${phaseIdx}]"
+                             disabled="${isPhaseClosed or not isPhaseDependencySet or not arePhaseDependenciesEditable}">
                     <html:option key="editProject.Phases.Days" value="days" />
                     <html:option key="editProject.Phases.Hrs" value="hrs" />
                     <html:option key="editProject.Phases.Mins" value="mins" />
@@ -144,7 +183,7 @@
 
             <td class="value">
                 <c:choose>
-                    <c:when test="${isPhaseClosed}">&nbsp;</c:when>
+                    <c:when test="${isPhaseClosed or not arePhaseDependenciesEditable}">&nbsp;</c:when>
                     <c:otherwise>
                         <html:img srcKey="editProject.Phases.DeletePhase.img"
                             altKey="editProject.Phases.DeletePhase.alt"
@@ -327,6 +366,33 @@
                 </td>
             </tr>
         </c:if>
+        <c:if test="${(phaseIdx eq 0) or (projectForm.map['phase_name'][phaseIdx] eq 'Specification Review')}">
+            <c:if test="${phaseIdx eq 0}">
+                <tr class="highlighted" id="specification_review_scorecard_row_template" style="display: none;">
+            </c:if>
+            <c:if test="${phaseIdx ne 0}">
+                <tr class="highlighted">
+            </c:if>
+                <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
+                <td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
+                    <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" disabled="${isPhaseClosed}">
+                        <c:forEach items="${specificationReviewScorecards}" var="scorecard">
+                            <c:if test="${(newProject && scorecard.category == 1)
+                                          || (not newProject && project.projectCategory.id == scorecard.category)
+                                          || projectCategoriesMap[scorecard.category].projectType.generic}">
+                                <html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>
+                            </c:if>
+                        </c:forEach>
+                    </html:select>
+                    <script type="text/javascript">
+                        <!--
+                         specReviewScorecardNodes[specReviewScorecardNodes.length]
+                             = document.getElementsByName("phase_scorecard[${phaseIdx}]")[0];
+                        -->
+                    </script>
+                </td>
+            </tr>
+        </c:if>
         <c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_view_appeal_responses'][phaseIdx])}">
             <tr class="highlighted" ${(phaseIdx eq 0) ? 'id="view_appeal_responses_row_template" style="display:none;"' : ''}>
                 <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
@@ -340,6 +406,7 @@
     </c:forEach>
 </table><br />
 
+<c:if test="${arePhaseDependenciesEditable}">
 <table class="scorecard" id="addphase_tbl" width="100%">
     <tr class="highlighted">
         <td class="valueB"><bean:message key="editProject.Phases.AddNewPhase" /></td>
@@ -377,14 +444,18 @@
         </td>
         <td class="value" nowrap="nowrap">
             <%--<bean:message key="editProject.Phases.PhaseStart" />--%>
+<%--
             <html:radio property="addphase_start_by_phase" value="false" />
+--%>
             <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="addphase_start_date" />
             <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="addphase_start_time" />
             <c:out value="${currentTimezone}"/><br />
+<%--
             <html:radio property="addphase_start_by_phase" value="true" />
+--%>
             <bean:message key="editProject.Phases.When" />
             <div style="margin-left: 20px;">
-            <html:select styleClass="inputBox" property="addphase_start_phase" style="width:120px;">
+            <html:select styleClass="inputBox" property="addphase_start_phase" style="width:150px;">
                 <html:option key="editProject.Phases.SelectPhase" value="" />
                 <c:forEach var="i" begin="1" end="${fn:length(projectForm.map['phase_id']) - 1}">
                     <html:option value="${projectForm.map['phase_js_id'][i]}">${projectForm.map['phase_name'][i]}</html:option>
@@ -432,3 +503,4 @@
         <td class="lastRowTD" colspan="5"><!-- @ --></td>
     </tr>
 </table><br />
+</c:if>
