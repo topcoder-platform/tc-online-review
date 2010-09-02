@@ -2662,6 +2662,7 @@ public class ProjectActions extends DispatchAction {
         if (ungroupedProjects.length != 0 && myProjects) {
             Deliverable[] allMyDeliverables = getDeliverables(
                     ActionsHelper.createDeliverableManager(request), projects, phases, myResources);
+            System.out.println("ISV : allMyDeliverables = " + Arrays.toString(allMyDeliverables));
 
             // Group the deliverables per projects in list
             for (int i = 0; i < projects.length; ++i) {
@@ -2675,6 +2676,7 @@ public class ProjectActions extends DispatchAction {
                     deliverables[j] = getMyDeliverablesForPhases(
                             messages, allMyDeliverables, phases[i][j], myResources[i][j], winnerIdStr, request);
                 }
+                System.out.println("ISV : myDeliverables[i] for " + + "= " + Arrays.toString(myDeliverables[i]));
                 myDeliverables[i] = deliverables;
             }
         }
