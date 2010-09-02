@@ -596,7 +596,15 @@ final class PhasesDetailsServices {
                                                                                        "Contest Submission");
 
                 // Get "my" (submitter's) resource
-                Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
+                Resource myResource = null;
+                Resource[] myResources = ActionsHelper.getMyResourcesForPhase(request, null);
+                for (int i = 0; i < myResources.length; i++) {
+                    Resource resource = myResources[i];
+                    if (resource.getResourceRole().getName().equals("Submitter")) {
+                        myResource = resource;
+                        break;
+                    }
+                }
 
                 Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
                 Filter filterStatus = ActionsHelper.createSubmissionStatusFilter(allSubmissionStatuses);
@@ -1166,7 +1174,15 @@ final class PhasesDetailsServices {
                                                                                    "Contest Submission");
 
             // Get "my" (submitter's) resource
-            Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
+            Resource myResource = null;
+            Resource[] myResources = ActionsHelper.getMyResourcesForPhase(request, null);
+            for (int i = 0; i < myResources.length; i++) {
+                Resource resource = myResources[i];
+                if (resource.getResourceRole().getName().equals("Submitter")) {
+                    myResource = resource;
+                    break;
+                }
+            }
 
             Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
             Filter filterStatus = SubmissionFilterBuilder.createSubmissionStatusIdFilter(
