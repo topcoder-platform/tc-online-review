@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import com.cronos.onlinereview.dataaccess.DeliverableDataAccess;
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.dataaccess.ProjectPhaseDataAccess;
 import com.topcoder.management.deliverable.Submission;
@@ -2802,6 +2803,9 @@ public class ProjectActions extends DispatchAction {
     private static Deliverable[] getDeliverables(DeliverableManager manager, Project[][] projects, Phase[][][] phases,
             Resource[][][] resources)
             throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
+        DeliverableDataAccess deliverableDataAccess = new DeliverableDataAccess();
+        Map<Long, Map<Long, Long>> deliverableTypes = deliverableDataAccess.getDeliverablesList();
+
         // Validate parameters
         ActionsHelper.validateParameterNotNull(manager, "manager");
         ActionsHelper.validateParameterNotNull(projects, "projects");
@@ -2839,11 +2843,16 @@ public class ProjectActions extends DispatchAction {
                     if (myResources[k].getPhase() != null) {
                         toAdd = false;
                         // Filter out those resources which do not correspond to active phases
-                        for (int m = 0; m < activePhases.length; m++) {
+                        for (int m = 0; !toAdd && (m < activePhases.length); m++) {
                             Phase activePhase = activePhases[m];
                             if (activePhase.getId() == myResources[k].getPhase()) {
                                 toAdd = true;
-                                break;
+                            } else {
+                                Map<Long, Long> roleDeliverables =
+                                    deliverableTypes.get(myResources[k].getResourceRole().getId());
+                                if (roleDeliverables.containsKey(activePhase.getPhaseType().getId())) {
+                                    toAdd = true;
+                                }
                             }
                         }
                     }
