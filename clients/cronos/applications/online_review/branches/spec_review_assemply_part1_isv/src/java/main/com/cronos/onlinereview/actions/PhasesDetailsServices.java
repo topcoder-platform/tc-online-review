@@ -602,6 +602,9 @@ final class PhasesDetailsServices {
                 Filter filterStatus = ActionsHelper.createSubmissionStatusFilter(allSubmissionStatuses);
                 Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
                 Filter filterType = SubmissionFilterBuilder.createSubmissionTypeIdFilter(submissionType.getId());
+                System.out.println("ISV : project.getId() = " + project.getId());
+                System.out.println("ISV : myResource.getId() = " + myResource.getId());
+                System.out.println("ISV : submissionType.getId() = " + submissionType.getId());
 
                 Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterResource, filterType));
 
