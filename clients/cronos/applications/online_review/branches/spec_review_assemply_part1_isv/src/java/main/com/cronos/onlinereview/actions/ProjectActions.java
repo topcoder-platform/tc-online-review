@@ -2835,7 +2835,21 @@ public class ProjectActions extends DispatchAction {
                 }
 
                 for (int k = 0; k < myResources.length; ++k) {
-                    resourceIds.add(myResources[k].getId());
+                    boolean toAdd = true;
+                    if (myResources[k].getPhase() != null) {
+                        toAdd = false;
+                        // Filter out those resources which do not correspond to active phases
+                        for (int m = 0; m < activePhases.length; m++) {
+                            Phase activePhase = activePhases[m];
+                            if (activePhase.getId() == myResources[k].getPhase()) {
+                                toAdd = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (toAdd) {
+                        resourceIds.add(myResources[k].getId());
+                    }
                 }
             }
         }
