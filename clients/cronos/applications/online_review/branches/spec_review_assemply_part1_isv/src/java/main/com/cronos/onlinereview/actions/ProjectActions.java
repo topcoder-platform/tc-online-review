@@ -2849,8 +2849,10 @@ public class ProjectActions extends DispatchAction {
                         } else {
                             Map<Long, Long> roleDeliverables
                                 = deliverableTypes.get(myResources[k].getResourceRole().getId());
-                            if (roleDeliverables.containsKey(activePhase.getPhaseType().getId())) {
-                                toAdd = true;
+                            if (roleDeliverables != null) {
+                                if (roleDeliverables.containsKey(activePhase.getPhaseType().getId())) {
+                                    toAdd = true;
+                                }
                             }
                         }
                     }
