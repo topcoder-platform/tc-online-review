@@ -2839,12 +2839,17 @@ public class ProjectActions extends DispatchAction {
                     continue;
                 }
 
-                // Filter out those resources which do not correspond to active phases
+                // Filter out those resources which do not correspond to active phases. If resource has phase set
+                // explicitly (but is not one of the reviewer roles) then check if it's phase is in list of active
+                // phases; otherwise check if it's role has a deliverable for one of the active phases 
                 for (int k = 0; k < myResources.length; ++k) {
                     boolean toAdd = false;
+                    long resourceRoleId = myResources[k].getResourceRole().getId();
+                    boolean isReviewer = (resourceRoleId == 4) || (resourceRoleId == 5) || (resourceRoleId == 6)
+                                         || (resourceRoleId == 7);
                     for (int m = 0; !toAdd && (m < activePhases.length); m++) {
                         Phase activePhase = activePhases[m];
-                        if (myResources[k].getPhase() != null) {
+                        if (myResources[k].getPhase() != null && !isReviewer) {
                             toAdd = (activePhase.getId() == myResources[k].getPhase());
                         } else {
                             Map<Long, Long> roleDeliverables
