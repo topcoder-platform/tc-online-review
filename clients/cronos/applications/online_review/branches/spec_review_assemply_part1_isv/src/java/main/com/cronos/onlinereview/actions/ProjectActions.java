@@ -2675,10 +2675,10 @@ public class ProjectActions extends DispatchAction {
 
                     deliverables[j] = getMyDeliverablesForPhases(
                             messages, allMyDeliverables, phases[i][j], myResources[i][j], winnerIdStr, request);
+                    System.out.println("ISV : myDeliverables[i] for phases " + Arrays.toString(phases[i][j])
+                                       + " and for resources " + Arrays.toString(myResources[i][j]) + " = "
+                                       + Arrays.toString(deliverables[j]));
                 }
-                System.out.println("ISV : myDeliverables[i] for phases " + Arrays.toString(phases[i][j])
-                                   + " and for resources " + Arrays.toString(myResources[i][j]) + " = "
-                                   + Arrays.toString(myDeliverables[i]));
                 myDeliverables[i] = deliverables;
             }
         }
@@ -3365,7 +3365,6 @@ public class ProjectActions extends DispatchAction {
         return "Resource{" +
                "id=" + r.getId() +
                ", resourceRole=" + r.getResourceRole().getName() +
-               ", name='" + r.getName() + '\'' +
                ", phase='" + r.getPhase() + '\'' +
                '}';
     }
