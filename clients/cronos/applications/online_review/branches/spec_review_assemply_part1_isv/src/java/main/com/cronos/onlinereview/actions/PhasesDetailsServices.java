@@ -570,6 +570,7 @@ final class PhasesDetailsServices {
             Submission[] submissions = null;
 
             if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
+                System.out.println("ISV : Submissions : 1");
                 submissions =
                     ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
             }
@@ -580,11 +581,13 @@ final class PhasesDetailsServices {
             if (submissions == null &&
                     ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse) ||
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME))) {
+                System.out.println("ISV : Submissions : 2");
                 submissions =
                     ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
             }
             if (submissions == null &&
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
+                System.out.println("ISV : Submissions : 3");
                 // Obtain an instance of Upload Manager
                 UploadManager upMgr = ActionsHelper.createUploadManager(request);
                 SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
@@ -603,6 +606,7 @@ final class PhasesDetailsServices {
             // No submissions -- nothing to review,
             // but the list of submissions must not be null in this case
             if (submissions == null) {
+                System.out.println("ISV : Submissions : 4");
                 submissions = new Submission[0];
             }
 
