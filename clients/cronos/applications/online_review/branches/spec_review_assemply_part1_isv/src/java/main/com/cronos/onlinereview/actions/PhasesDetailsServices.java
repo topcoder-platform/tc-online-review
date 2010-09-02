@@ -606,6 +606,7 @@ final class PhasesDetailsServices {
                 Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterResource, filterType));
 
                 submissions = upMgr.searchSubmissions(filter);
+                System.out.println("ISV : submissions = " + Arrays.toString(submissions));
             }
             // No submissions -- nothing to review,
             // but the list of submissions must not be null in this case
