@@ -2844,8 +2844,8 @@ public class ProjectActions extends DispatchAction {
                     boolean toAdd = false;
                     for (int m = 0; !toAdd && (m < activePhases.length); m++) {
                         Phase activePhase = activePhases[m];
-                        if ((myResources[k].getPhase() != null) && (activePhase.getId() == myResources[k].getPhase())) {
-                            toAdd = true;
+                        if (myResources[k].getPhase() != null) {
+                            toAdd = (activePhase.getId() == myResources[k].getPhase());
                         } else {
                             Map<Long, Long> roleDeliverables
                                 = deliverableTypes.get(myResources[k].getResourceRole().getId());
