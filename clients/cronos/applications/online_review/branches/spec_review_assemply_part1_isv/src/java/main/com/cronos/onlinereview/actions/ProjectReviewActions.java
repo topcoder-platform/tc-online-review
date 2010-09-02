@@ -4229,6 +4229,21 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Get "My" resource for the appropriate phase (for reviewers actually)
         Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
+
+        // If no resource found and Appeals phase is opened then try to find Submitter role
+        if (myResource == null) {
+            if (activePhases.contains(Constants.APPEALS_PHASE_NAME)) {
+                Resource[] myResources = ActionsHelper.getMyResourcesForPhase(request, null);
+                for (int i = 0; i < myResources.length; i++) {
+                    Resource resource = myResources[i];
+                    if (resource.getResourceRole().getName().equals("Submitter")) {
+                        myResource = resource;
+                        break;
+                    }
+                }
+            }
+        }
+
         // If no resource found for particular phase, try to find resource without phase assigned
         if (myResource == null) {
             myResource = ActionsHelper.getMyResourceForPhase(request, null);
