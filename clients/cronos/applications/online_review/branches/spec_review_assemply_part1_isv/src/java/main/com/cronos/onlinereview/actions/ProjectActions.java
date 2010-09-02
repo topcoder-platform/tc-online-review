@@ -2805,6 +2805,7 @@ public class ProjectActions extends DispatchAction {
             throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
         DeliverableDataAccess deliverableDataAccess = new DeliverableDataAccess();
         Map<Long, Map<Long, Long>> deliverableTypes = deliverableDataAccess.getDeliverablesList();
+        System.out.println("ISV : deliverableTypes = " + deliverableTypes);
 
         // Validate parameters
         ActionsHelper.validateParameterNotNull(manager, "manager");
@@ -2854,6 +2855,7 @@ public class ProjectActions extends DispatchAction {
                         }
                     }
 
+                    System.out.println("ISV : Will add resource? " + myResources[k].getId() + " " + toAdd);
                     if (toAdd) {
                         resourceIds.add(myResources[k].getId());
                     }
