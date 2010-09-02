@@ -2838,24 +2838,22 @@ public class ProjectActions extends DispatchAction {
                     continue;
                 }
 
+                // Filter out those resources which do not correspond to active phases
                 for (int k = 0; k < myResources.length; ++k) {
-                    boolean toAdd = true;
-                    if (myResources[k].getPhase() != null) {
-                        toAdd = false;
-                        // Filter out those resources which do not correspond to active phases
-                        for (int m = 0; !toAdd && (m < activePhases.length); m++) {
-                            Phase activePhase = activePhases[m];
-                            if (activePhase.getId() == myResources[k].getPhase()) {
+                    boolean toAdd = false;
+                    for (int m = 0; !toAdd && (m < activePhases.length); m++) {
+                        Phase activePhase = activePhases[m];
+                        if ((myResources[k].getPhase() != null) && (activePhase.getId() == myResources[k].getPhase())) {
+                            toAdd = true;
+                        } else {
+                            Map<Long, Long> roleDeliverables
+                                = deliverableTypes.get(myResources[k].getResourceRole().getId());
+                            if (roleDeliverables.containsKey(activePhase.getPhaseType().getId())) {
                                 toAdd = true;
-                            } else {
-                                Map<Long, Long> roleDeliverables =
-                                    deliverableTypes.get(myResources[k].getResourceRole().getId());
-                                if (roleDeliverables.containsKey(activePhase.getPhaseType().getId())) {
-                                    toAdd = true;
-                                }
                             }
                         }
                     }
+
                     if (toAdd) {
                         resourceIds.add(myResources[k].getId());
                     }
