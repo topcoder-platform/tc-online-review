@@ -2677,7 +2677,7 @@ public class ProjectActions extends DispatchAction {
                             messages, allMyDeliverables, phases[i][j], myResources[i][j], winnerIdStr, request);
                     System.out.println("ISV : myDeliverables[i] for phases " + Arrays.toString(phases[i][j])
                                        + " and for resources " + Arrays.toString(myResources[i][j]) + " = "
-                                       + Arrays.toString(deliverables[j]));
+                                       + deliverables[j]);
                 }
                 myDeliverables[i] = deliverables;
             }
