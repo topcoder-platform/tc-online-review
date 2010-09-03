@@ -2663,7 +2663,6 @@ public class ProjectActions extends DispatchAction {
         if (ungroupedProjects.length != 0 && myProjects) {
             Deliverable[] allMyDeliverables = getDeliverables(
                     ActionsHelper.createDeliverableManager(request), projects, phases, myResources);
-            System.out.println("ISV : allMyDeliverables = " + Arrays.toString(allMyDeliverables));
 
             // Group the deliverables per projects in list
             for (int i = 0; i < projects.length; ++i) {
@@ -2676,9 +2675,6 @@ public class ProjectActions extends DispatchAction {
 
                     deliverables[j] = getMyDeliverablesForPhases(
                             messages, allMyDeliverables, phases[i][j], myResources[i][j], winnerIdStr, request);
-                    System.out.println("ISV : myDeliverables[i] for phases " + Arrays.toString(phases[i][j])
-                                       + " and for resources " + Arrays.toString(myResources[i][j]) + " = "
-                                       + deliverables[j]);
                 }
                 myDeliverables[i] = deliverables;
             }
@@ -2805,7 +2801,6 @@ public class ProjectActions extends DispatchAction {
             throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
         DeliverableDataAccess deliverableDataAccess = new DeliverableDataAccess();
         Map<Long, Map<Long, Long>> deliverableTypes = deliverableDataAccess.getDeliverablesList();
-        System.out.println("ISV : deliverableTypes = " + deliverableTypes);
 
         // Validate parameters
         ActionsHelper.validateParameterNotNull(manager, "manager");
@@ -2862,7 +2857,6 @@ public class ProjectActions extends DispatchAction {
                         }
                     }
 
-                    System.out.println("ISV : Will add resource? " + myResources[k].getId() + " " + toAdd);
                     if (toAdd) {
                         resourceIds.add(myResources[k].getId());
                     }

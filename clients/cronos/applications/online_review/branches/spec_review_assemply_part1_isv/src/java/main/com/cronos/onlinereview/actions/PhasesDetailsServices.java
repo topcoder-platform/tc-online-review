@@ -539,7 +539,6 @@ final class PhasesDetailsServices {
             Submission[] submissions = null;
 
             if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
-                System.out.println("ISV : Submissions : 1");
                 submissions =
                     ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
             }
@@ -550,13 +549,11 @@ final class PhasesDetailsServices {
             if (submissions == null &&
                     ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse) ||
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME))) {
-                System.out.println("ISV : Submissions : 2");
                 submissions =
                     ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
             }
             if (submissions == null &&
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
-                System.out.println("ISV : Submissions : 3");
                 // Obtain an instance of Upload Manager
                 UploadManager upMgr = ActionsHelper.createUploadManager(request);
                 SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
@@ -579,19 +576,14 @@ final class PhasesDetailsServices {
                 Filter filterStatus = ActionsHelper.createSubmissionStatusFilter(allSubmissionStatuses);
                 Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
                 Filter filterType = SubmissionFilterBuilder.createSubmissionTypeIdFilter(submissionType.getId());
-                System.out.println("ISV : project.getId() = " + project.getId());
-                System.out.println("ISV : myResource.getId() = " + myResource.getId());
-                System.out.println("ISV : submissionType.getId() = " + submissionType.getId());
 
                 Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterResource, filterType));
 
                 submissions = upMgr.searchSubmissions(filter);
-                System.out.println("ISV : submissions = " + Arrays.toString(submissions));
             }
             // No submissions -- nothing to review,
             // but the list of submissions must not be null in this case
             if (submissions == null) {
-                System.out.println("ISV : Submissions : 4");
                 submissions = new Submission[0];
             }
 
