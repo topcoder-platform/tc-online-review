@@ -103,8 +103,6 @@ final class PhasesDetailsServices {
     public static PhasesDetails getPhasesDetails(HttpServletRequest request, MessageResources messages, Project project,
             Phase[] phases, Resource[] allProjectResources, ExternalUser[] allProjectExternalUsers)
             throws BaseException {
-        LOG isvLog = new LOG("PhasesDetailsServices.getPhasesDetails");
-        isvLog.startRecording("Block 1");
 
         // Validate parameters first
         ActionsHelper.validateParameterNotNull(request, "request");
@@ -117,11 +115,9 @@ final class PhasesDetailsServices {
         Phase[] phasesCopy = new Phase[phases.length];
         System.arraycopy(phases, 0, phasesCopy, 0, phases.length);
         phases = phasesCopy;
-        isvLog.stopRecording("Block 1");
 
         // Determine the index of Post-Mortem phase in array and if it is present get the phase which Post-Mortem
         // phase depends on
-        isvLog.startRecording("Block 2");
         Phase postMortemPhasePredecessor = null;
         Phase postMortemPhase = null;
         for (int i = 0; i < phases.length; i++) {
@@ -135,10 +131,8 @@ final class PhasesDetailsServices {
                 }
             }
         }
-        isvLog.stopRecording("Block 2");
 
         // If Post-Mortem phase exists and depends on some other phase then 
-        isvLog.startRecording("Block 3");
         if (postMortemPhase != null) {
             if (postMortemPhasePredecessor != null) {
                 for (int i = 0; i < phases.length; i++) {
@@ -161,9 +155,7 @@ final class PhasesDetailsServices {
                 }
             }
         }
-        isvLog.stopRecording("Block 3");
 
-        isvLog.startRecording("Block 4");
         List<PhaseGroup> phaseGroups = new ArrayList<PhaseGroup>();
         Map<String, Integer> similarPhaseGroupIndexes = new HashMap<String, Integer>();
         PhaseGroup phaseGroup = null;
@@ -173,9 +165,7 @@ final class PhasesDetailsServices {
         Resource[] submitters = null;
         FinalFixesInfo finalFixes = new FinalFixesInfo();
         SpecificationsInfo specifications = new SpecificationsInfo();
-        isvLog.stopRecording("Block 4");
 
-        isvLog.startRecording("Block 5");
         for (int phaseIdx = 0; phaseIdx < phases.length; ++phaseIdx) {
             // Get a phase for the current iteration
             Phase phase = phases[phaseIdx];
@@ -183,7 +173,6 @@ final class PhasesDetailsServices {
             // Take next phase (if the current one is not the last)
             Phase nextPhase = (phaseIdx + 1 != phases.length) ? phases[phaseIdx + 1] : null;
 
-            isvLog.startRecording("Block 5.1");
             if (phaseGroup == null || !ConfigHelper.isPhaseGroupContainsPhase(phaseGroupIdx, phaseName) ||
                     phaseGroup.isPhaseInThisGroup(phase)) {
                 // Get an index of this potential phase group in the configuration
@@ -220,9 +209,7 @@ final class PhasesDetailsServices {
             }
 
             phaseGroup.addPhase(phase);
-            isvLog.stopRecording("Block 5.1");
 
-            isvLog.startRecording("Block 5.2");
             String phaseStatus = phase.getPhaseStatus().getName();
 
             if (phaseStatus.equalsIgnoreCase("Closed") || phaseStatus.equalsIgnoreCase("Open")) {
@@ -236,7 +223,6 @@ final class PhasesDetailsServices {
 
             submitters = getSubmitters(request, allProjectResources, isAfterAppealsResponse, submitters);
             phaseGroup.setSubmitters(submitters);
-            isvLog.startRecording("Block 5.2");
 
             // Determine an index of the current phase group (needed for timeline phases list)
             for (int i = 0; i < originalPhases.length; i++) {
@@ -251,45 +237,28 @@ final class PhasesDetailsServices {
             }
 
             if (phaseGroup.getAppFunc().equals(Constants.VIEW_REGISTRANTS_APP_FUNC)) {
-                isvLog.startRecording("Block 5.3");
                 serviceRegistrantsAppFunc(request, phaseGroup, submitters, allProjectExternalUsers);
-                isvLog.stopRecording("Block 5.3");
             } else if (phaseGroup.getAppFunc().equals(Constants.VIEW_SUBMISSIONS_APP_FUNC)) {
-                isvLog.startRecording("Block 5.4");
                 serviceSubmissionsAppFunc(request, phaseGroup, project, phases, phaseIdx,
                         allProjectResources, submitters, isAfterAppealsResponse);
-                isvLog.stopRecording("Block 5.4");
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.VIEW_REVIEWS_APP_FUNC)) {
-                isvLog.startRecording("Block 5.5");
                 serviceReviewsAppFunc(request, phaseGroup, project, phase, nextPhase,
                         allProjectResources, submitters, isAfterAppealsResponse);
-                isvLog.stopRecording("Block 5.5");
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.AGGREGATION_APP_FUNC)) {
-                isvLog.startRecording("Block 5.6");
                 serviceAggregationAppFunc(request, phaseGroup, project, phase,
                         allProjectResources, isAfterAppealsResponse);
-                isvLog.stopRecording("Block 5.6");
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC)) {
-                isvLog.startRecording("Block 5.7");
                 serviceFinalFixAppFunc(request, phaseGroup, project, phase,
                         allProjectResources, finalFixes, isAfterAppealsResponse);
-                isvLog.stopRecording("Block 5.7");
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.APPROVAL_APP_FUNC)) {
-                isvLog.startRecording("Block 5.8");
                 serviceApprovalAppFunc(request, phaseGroup, project, phase,
                         allProjectResources, isAfterAppealsResponse, finalFixes);
-                isvLog.stopRecording("Block 5.8");
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.POST_MORTEM_APP_FUNC)) {
-                isvLog.startRecording("Block 5.9");
                 servicePostMortemAppFunc(request, phaseGroup, project, phase, allProjectResources);
-                isvLog.stopRecording("Block 5.9");
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.SPEC_REVIEW_APP_FUNC)) {
-                isvLog.startRecording("Block 5.10");
                 serviceSpecReviewAppFunc(request, phaseGroup, project, phase, allProjectResources, specifications);
-                isvLog.stopRecording("Block 5.10");
             }
         }
-        isvLog.stopRecording("Block 5");
 
         PhasesDetails details = new PhasesDetails();
 
@@ -1358,33 +1327,6 @@ final class PhasesDetailsServices {
          */
         private SpecificationsInfo() {
             // empty constructor
-        }
-    }
-
-    private static class LOG {
-
-        private Map<String, Long> timestamps = new HashMap<String, Long>();
-
-        private String ID;
-
-        private LOG(String ID) {
-            this.ID = ID;
-        }
-
-        private boolean startRecording(String action) {
-            timestamps.put(action, System.currentTimeMillis());
-            return true;
-        }
-
-        private boolean stopRecording(String action) {
-            long t2 = System.currentTimeMillis();
-            if (timestamps.containsKey(action)) {
-                long t1 = timestamps.get(action);
-                System.out.println("ISV : " + ID + " : " + action + " took " + (t2 - t1) + " ms");
-            } else {
-                System.out.println("ISV : " + ID + " : " + action + " not logged correctly");
-            }
-            return true;
         }
     }
 }

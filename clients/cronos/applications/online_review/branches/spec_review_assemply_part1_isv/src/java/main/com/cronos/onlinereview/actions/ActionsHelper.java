@@ -2105,8 +2105,6 @@ public class ActionsHelper {
     public static Deliverable[] getAllDeliverablesForPhases(
             DeliverableManager manager, Phase[] phases, Resource[] resources, long winnerExtUserId)
             throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
-        LOG isvLog = new LOG("ActionsHelper.getAllDeliverablesForPhases");
-        isvLog.startRecording("Block AH 1");
         // Validate parameters
         validateParameterNotNull(manager, "manager");
         validateParameterNotNull(phases, "phases");
@@ -2133,14 +2131,10 @@ public class ActionsHelper {
             // Combine all filters using OR operator
             filter = new OrFilter(phaseFilters);
         }
-        isvLog.stopRecording("Block AH 1");
 
         // Perform a search for the deliverables
-        isvLog.startRecording("Block AH 2");
         Deliverable[] allDeliverables = manager.searchDeliverables(filter, null);
-        isvLog.stopRecording("Block AH 2");
 
-        isvLog.startRecording("Block AH 3");
         List<Deliverable> deliverables = new ArrayList<Deliverable>();
 
         // Additionally filter deliverables because sometimes deliverables
@@ -2237,7 +2231,6 @@ public class ActionsHelper {
             // Add current deliverable to the list of deliverables
             deliverables.add(deliverable);
         }
-        isvLog.stopRecording("Block AH 3");
 
         // Convert the list of deliverables into array and return it
         return deliverables.toArray(new Deliverable[deliverables.size()]);
@@ -4744,32 +4737,5 @@ public class ActionsHelper {
             }
         }
         return false;
-    }
-
-    private static class LOG {
-
-        private Map<String, Long> timestamps = new HashMap<String, Long>();
-
-        private String ID;
-
-        private LOG(String ID) {
-            this.ID = ID;
-        }
-
-        private boolean startRecording(String action) {
-            timestamps.put(action, System.currentTimeMillis());
-            return true;
-        }
-
-        private boolean stopRecording(String action) {
-            long t2 = System.currentTimeMillis();
-            if (timestamps.containsKey(action)) {
-                long t1 = timestamps.get(action);
-                System.out.println("ISV : " + ID + " : " + action + " took " + (t2 - t1) + " ms");
-            } else {
-                System.out.println("ISV : " + ID + " : " + action + " not logged correctly");
-            }
-            return true;
-        }
     }
 }

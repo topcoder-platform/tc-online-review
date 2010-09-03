@@ -211,8 +211,6 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
-        LOG isvLog = new LOG("Project ID=" + request.getParameter("pid"));
-        isvLog.startRecording("viewProjectDetails");
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME, false);
@@ -221,19 +219,14 @@ public class ProjectDetailsActions extends DispatchAction {
             return verification.getForward();
         }
 
-        isvLog.startRecording("verification.getProject()");
         // Retrieve a review to view
         Project project = verification.getProject();
         // Get Message Resources used for this request
         MessageResources messages = getResources(request);
-        isvLog.stopRecording("verification.getProject()");
 
         // Retrieve some basic project info (such as icons' names) and place it into request
-        isvLog.startRecording("ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, messages)");
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, messages);
-        isvLog.stopRecording("ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, messages)");
 
-        isvLog.startRecording("Block 1");
         final String projectTypeName = project.getProjectCategory().getProjectType().getName();
 
         long projectId = project.getId();
@@ -275,14 +268,12 @@ public class ProjectDetailsActions extends DispatchAction {
                 request.setAttribute("projectDRP", Double.valueOf(drpointStr));
             }
         }
-        isvLog.stopRecording("Block 1");
 
         // since Online Review Update - Add Project Dropdown v1.0
         // Retrieve the billing project id from property.
         // And retrieve the list of all client projects, find billing project name by matching on id
         // set billing project name in request.
         // Retrieve Cockpit project also
-        isvLog.startRecording("Block 2");
         if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
                 || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
                 || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
@@ -305,8 +296,6 @@ public class ProjectDetailsActions extends DispatchAction {
                 request.setAttribute("billingProject", "");
             }
         }
-        isvLog.stopRecording("Block 2");
-        isvLog.startRecording("Block 3");
         boolean isAllowedToViewCockpitProjectName
                 = AuthorizationHelper.hasUserPermission(request, Constants.VIEW_COCKPIT_PROJECT_NAME_PERM_NAME);
         request.setAttribute("isAllowedToViewCockpitProjectName", isAllowedToViewCockpitProjectName);
@@ -314,10 +303,8 @@ public class ProjectDetailsActions extends DispatchAction {
             ProjectDataAccess projectDataAccess = new ProjectDataAccess();
             request.setAttribute("cockpitProject", projectDataAccess.getCockpitProjectName(projectId));
         }
-        isvLog.stopRecording("Block 3");
 
         // Place a string that represents "my" current role(s) into the request
-        isvLog.startRecording("Block 4");
         MessageResources messageResources = getResources(request);
         ActionsHelper.retrieveAndStoreMyRole(request, messageResources);
         // Obtain an array of "my" resources
@@ -345,20 +332,16 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("totalPayment", totalPayment);
         // Place an information about my payment status into the request
         request.setAttribute("wasPaid", ActionsHelper.getMyPaymentStatuses(myResources));
-        isvLog.stopRecording("Block 4");
 
         // Obtain an instance of Resource Manager
-        isvLog.startRecording("Block 5");
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Get an array of all resources for the project
         Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(resMgr, project);
         for (int i = 0; i < allProjectResources.length; i++) {
             ActionsHelper.populateEmailProperty(request, allProjectResources[i]);
         }
-        isvLog.stopRecording("Block 5");
 
         // Obtain an instance of Phase Manager
-        isvLog.startRecording("Block 6");
         PhaseManager phaseMgr = ActionsHelper.createPhaseManager(request, false);
         com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(project.getId());
         Phase[] phases;
@@ -371,10 +354,8 @@ public class ProjectDetailsActions extends DispatchAction {
         } else {
             phases = new Phase[0];
         }
-        isvLog.stopRecording("Block 6");
 
         // Obtain an array of all active phases of the project
-        isvLog.startRecording("Block 7");
         Phase[] activePhases = ActionsHelper.getActivePhases(phases);
 
         // Place all phases of the project into the request
@@ -386,15 +367,11 @@ public class ProjectDetailsActions extends DispatchAction {
         if (winnerExtRefId != null && winnerExtRefId.trim().length() != 0) {
             winnerExtUserId = Long.parseLong(winnerExtRefId, 10);
         }
-        isvLog.stopRecording("Block 7");
 
-        isvLog.startRecording("Block 8 POTENTIAL");
         Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForPhases(
                 ActionsHelper.createDeliverableManager(request), activePhases, allProjectResources, winnerExtUserId);
-        isvLog.stopRecording("Block 8 POTENTIAL");
 
         // For approval phase
-        isvLog.startRecording("Block 9");
         Phase approvalPhase = ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME);
         if (approvalPhase != null) {
             ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
@@ -426,16 +403,10 @@ public class ProjectDetailsActions extends DispatchAction {
                 }
             }
         }
-        isvLog.stopRecording("Block 9");
 
-        isvLog.startRecording("Block 10 POTENTIAL");
         Deliverable[] myDeliverables = ActionsHelper.getMyDeliverables(deliverables, myResources);
-        isvLog.stopRecording("Block 10 POTENTIAL");
-        isvLog.startRecording("Block 11 POTENTIAL");
         Deliverable[] outstandingDeliverables = ActionsHelper.getOutstandingDeliverables(deliverables);
-        isvLog.stopRecording("Block 11 POTENTIAL");
 
-        isvLog.startRecording("Block 12");
         request.setAttribute("myDeliverables", myDeliverables);
         request.setAttribute("outstandingDeliverables", outstandingDeliverables);
 
@@ -445,9 +416,7 @@ public class ProjectDetailsActions extends DispatchAction {
         int[] myDeliverableStatuses = getDeliverableStatusCodes(myDeliverables, activePhases, currentTime);
         int[] outstandingDeliverableStatuses =
             getDeliverableStatusCodes(outstandingDeliverables, activePhases, currentTime);
-        isvLog.stopRecording("Block 12");
 
-        isvLog.startRecording("Block 13 POTENTIAL");
         Date[] myDeliverableDates = new Date[myDeliverables.length];
         Date[] outstandingDeliverableDates = new Date[outstandingDeliverables.length];
 
@@ -460,8 +429,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 myDeliverableDates[i] = phase.getScheduledEndDate();
             }
         }
-        isvLog.stopRecording("Block 13 POTENTIAL");
-        isvLog.startRecording("Block 14 POTENTIAL");
+
         for (int i = 0; i < outstandingDeliverables.length; ++i) {
             Deliverable deliverable = outstandingDeliverables[i];
             if (deliverable.isComplete()) {
@@ -471,19 +439,12 @@ public class ProjectDetailsActions extends DispatchAction {
                 outstandingDeliverableDates[i] = phase.getScheduledEndDate();
             }
         }
-        isvLog.stopRecording("Block 14 POTENTIAL");
 
-        isvLog.startRecording("Block 15 POTENTIAL");
         String[] myDeliverableLinks = generateDeliverableLinks(request, myDeliverables, phases);
-        isvLog.stopRecording("Block 15 POTENTIAL");
-        isvLog.startRecording("Block 16 POTENTIAL");
         String[] outstandingDeliverableUserIds = getDeliverableUserIds(outstandingDeliverables, allProjectResources);
-        isvLog.stopRecording("Block 16 POTENTIAL");
-        isvLog.startRecording("Block 17 POTENTIAL");
         String[] outstandingDeliverableSubmissionUserIds =
             getDeliverableSubmissionUserIds(request, outstandingDeliverables);
-        isvLog.stopRecording("Block 17 POTENTIAL");
-        isvLog.startRecording("Block 18");
+
         request.setAttribute("myDeliverableDates", myDeliverableDates);
         request.setAttribute("outstandingDeliverableDates", outstandingDeliverableDates);
         request.setAttribute("myDeliverableStatuses", myDeliverableStatuses);
@@ -501,8 +462,6 @@ public class ProjectDetailsActions extends DispatchAction {
         // List of scorecard templates used for this project
         List<Scorecard> scorecardTemplates = new ArrayList<Scorecard>();
         List<String> scorecardLinks = new ArrayList<String>();
-        isvLog.stopRecording("Block 18");
-        isvLog.startRecording("Block 19");
         Float minimumScreeningScore = 75f;
         // Iterate over all phases determining dates, durations and assigned scorecards
         for (int i = 0; i < phases.length; ++i) {
@@ -541,14 +500,12 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Collect Open / Closing / Late / Closed codes for phases
         int[] phaseStatuseCodes = getPhaseStatusCodes(phases, currentTime);
-        isvLog.stopRecording("Block 19");
 
         /*
          * Place all gathered information about phases into the request as attributes
          */
 
         // Place phases' start/end dates
-        isvLog.startRecording("Block 20");
 
         request.setAttribute("originalStart", originalStart);
         request.setAttribute("originalEnd", originalEnd);
@@ -559,12 +516,10 @@ public class ProjectDetailsActions extends DispatchAction {
         // Place information about used scorecard templates
         request.setAttribute("scorecardTemplates", scorecardTemplates);
         request.setAttribute("scorecardLinks", scorecardLinks);
-        isvLog.stopRecording("Block 20");
 
         ExternalUser[] allProjectExtUsers = null;
 
         // Determine if the user has permission to view a list of resources for the project
-        isvLog.startRecording("Block 21");
         if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECT_RESOURCES_PERM_NAME)) {
             // Get an array of external users for the corresponding resources
             allProjectExtUsers = ActionsHelper.getExternalUsersForResources(
@@ -574,22 +529,16 @@ public class ProjectDetailsActions extends DispatchAction {
             request.setAttribute("resources", allProjectResources);
             request.setAttribute("users", allProjectExtUsers);
         }
-        isvLog.stopRecording("Block 21");
-        isvLog.startRecording("Block 22 POTENTIAL");
         PhasesDetails phasesDetails = PhasesDetailsServices.getPhasesDetails(
                 request, messages, project, phases, allProjectResources, allProjectExtUsers);
-        isvLog.stopRecording("Block 22 POTENTIAL");
 
-        isvLog.startRecording("Block 23");
         request.setAttribute("phaseGroupIndexes", phasesDetails.getPhaseGroupIndexes());
         request.setAttribute("phaseGroups", phasesDetails.getPhaseGroups());
         request.setAttribute("activeTabIdx", phasesDetails.getActiveTabIndex());
         request.setAttribute("passingMinimum", minimumScreeningScore);
-        isvLog.stopRecording("Block 23");
 
         boolean sendTLNotifications = false;
 
-        isvLog.startRecording("Block 24");
         if (AuthorizationHelper.isUserLoggedIn(request)) {
             Filter filterTNproject = NotificationFilterBuilder.createProjectIdFilter(project.getId());
             Filter filterTNuser = NotificationFilterBuilder.createExternalRefIdFilter(
@@ -602,7 +551,6 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         request.setAttribute("sendTLNotifications", (sendTLNotifications) ? "On" : "Off");
-        isvLog.stopRecording("Block 24");
 
         // Check resource roles
         request.setAttribute("isManager",
@@ -611,7 +559,6 @@ public class ProjectDetailsActions extends DispatchAction {
                 Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)));
 
         // check if registration phase is open
-        isvLog.startRecording("Block 25");
         boolean registrationOpen = false;
         for (int i = 0; i < activePhases.length && !registrationOpen; i++) {
             if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.REGISTRATION_PHASE_NAME)) {
@@ -625,20 +572,16 @@ public class ProjectDetailsActions extends DispatchAction {
                 appealsOpen = true;
             }
         }
-        isvLog.stopRecording("Block 25");
 
         // check if the user already submitted
-        isvLog.startRecording("Block 26");
         Resource submitter = ActionsHelper.getMyResourceForRole(request, "Submitter");
         boolean alreadySubmitted = submitter != null && submitter.getSubmissions() != null && submitter.getSubmissions().length > 0;
 
         request.setAttribute("isAllowedToUnregister",
             Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) && registrationOpen
             && !alreadySubmitted);
-        isvLog.stopRecording("Block 26");
 
         // get appeals completed early property value
-        isvLog.startRecording("Block 27");
         boolean appealsCompletedFlag = false;
         if (submitter != null) {
             String value = (String) submitter.getProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY);
@@ -651,14 +594,11 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToCompleteAppeals",
             Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) &&
             appealsOpen && !appealsCompletedFlag);
-        isvLog.stopRecording("Block 27");
 
         // check if the user can resume appeals
         request.setAttribute("isAllowedToResumeAppeals",
             Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) &&
             appealsOpen && appealsCompletedFlag);
-
-        isvLog.startRecording("Block 28");
 
         // Check permissions
         request.setAttribute("isAllowedToManageProjects",
@@ -715,9 +655,7 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformPortMortemReview",
                 Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME)));
-        isvLog.stopRecording("Block 28");
 
-        isvLog.startRecording("Block 29");
         String status = project.getProjectStatus().getName();
         request.setAttribute("isAllowedToPay",
             Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PAYMENT_PERM_NAME))
@@ -733,9 +671,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 !AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)) {
             allowedToReviewAggregation = true;
         }
-        isvLog.stopRecording("Block 29");
 
-        isvLog.startRecording("Block 30");
         if (allowedToReviewAggregation && AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) {
             final String winnerExtId = (String) project.getProperty("Winner External Reference ID");
 
@@ -761,10 +697,8 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
         request.setAttribute("isAllowedToPerformAggregationReview", Boolean.valueOf(allowedToReviewAggregation));
-        isvLog.stopRecording("Block 30");
 
         // since Online Review Update - Add Project Dropdown v1.0
-        isvLog.startRecording("Block 31");
         request.setAttribute("isAdmin",
                 Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
                         || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
@@ -774,9 +708,7 @@ public class ProjectDetailsActions extends DispatchAction {
         ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager(request);
         request.setAttribute("destProjectLinks", linkManager.getDestProjectLinks(project.getId()));
         request.setAttribute("srcProjectLinks", linkManager.getSourceProjectLinks(project.getId()));
-        isvLog.stopRecording("Block 31");
 
-        isvLog.stopRecording("viewProjectDetails");
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
@@ -3122,33 +3054,6 @@ public class ProjectDetailsActions extends DispatchAction {
             if (out != null) {
                 out.close();
             }
-        }
-    }
-
-    private class LOG {
-
-        private Map<String, Long> timestamps = new HashMap<String, Long>();
-
-        private String ID;
-
-        private LOG(String ID) {
-            this.ID = ID;
-        }
-
-        private boolean startRecording(String action) {
-            timestamps.put(action, System.currentTimeMillis());
-            return true;
-        }
-
-        private boolean stopRecording(String action) {
-            long t2 = System.currentTimeMillis();
-            if (timestamps.containsKey(action)) {
-                long t1 = timestamps.get(action);
-                System.out.println("ISV : " + ID + " : " + action + " took " + (t2 - t1) + " ms");
-            } else {
-                System.out.println("ISV : " + ID + " : " + action + " not logged correctly");
-            }
-            return true;
         }
     }
 }
