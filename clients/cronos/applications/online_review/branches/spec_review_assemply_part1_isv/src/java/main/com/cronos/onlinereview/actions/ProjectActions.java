@@ -3367,29 +3367,4 @@ public class ProjectActions extends DispatchAction {
             }
         }
     }
-
-    public String toString(Phase p) {
-        if (p != null) {
-            return "\nPhase{" +
-                   "id=" + p.getId() +
-                   ", phaseType=" + p.getPhaseType().getName() +
-                   ", \nasd=" + p.getActualStartDate() +
-                   ", aed=" + p.getActualEndDate() +
-                   ", \nsdd=" + p.getScheduledStartDate() +
-                   ", sed=" + p.getScheduledEndDate() +
-                   ", \nfsd=" + p.getFixedStartDate() +
-                   ", \ndependencies=" + Arrays.toString(p.getAllDependencies()) +
-                   '}';
-        } else {
-            return "null";
-        }
-    }
-
-    public String toString(Resource r) {
-        return "Resource{" +
-               "id=" + r.getId() +
-               ", resourceRole=" + r.getResourceRole().getName() +
-               ", phase='" + r.getPhase() + '\'' +
-               '}';
-    }
 }
