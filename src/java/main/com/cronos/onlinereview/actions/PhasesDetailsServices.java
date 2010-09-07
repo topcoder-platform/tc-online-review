@@ -557,15 +557,27 @@ final class PhasesDetailsServices {
                 // Obtain an instance of Upload Manager
                 UploadManager upMgr = ActionsHelper.createUploadManager(request);
                 SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
+                SubmissionType[] allSubmissionTypes = upMgr.getAllSubmissionTypes();
+                SubmissionType submissionType = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes,
+                                                                                       "Contest Submission");
 
                 // Get "my" (submitter's) resource
-                Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
+                Resource myResource = null;
+                Resource[] myResources = ActionsHelper.getMyResourcesForPhase(request, null);
+                for (int i = 0; i < myResources.length; i++) {
+                    Resource resource = myResources[i];
+                    if (resource.getResourceRole().getName().equals("Submitter")) {
+                        myResource = resource;
+                        break;
+                    }
+                }
 
                 Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
                 Filter filterStatus = ActionsHelper.createSubmissionStatusFilter(allSubmissionStatuses);
                 Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
+                Filter filterType = SubmissionFilterBuilder.createSubmissionTypeIdFilter(submissionType.getId());
 
-                Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterResource));
+                Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterResource, filterType));
 
                 submissions = upMgr.searchSubmissions(filter);
             }
@@ -1118,16 +1130,28 @@ final class PhasesDetailsServices {
             // Obtain an instance of Upload Manager
             UploadManager upMgr = ActionsHelper.createUploadManager(request);
             SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
+            SubmissionType[] allSubmissionTypes = upMgr.getAllSubmissionTypes();
+            SubmissionType submissionType = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes,
+                                                                                   "Contest Submission");
 
             // Get "my" (submitter's) resource
-            Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
+            Resource myResource = null;
+            Resource[] myResources = ActionsHelper.getMyResourcesForPhase(request, null);
+            for (int i = 0; i < myResources.length; i++) {
+                Resource resource = myResources[i];
+                if (resource.getResourceRole().getName().equals("Submitter")) {
+                    myResource = resource;
+                    break;
+                }
+            }
 
             Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
             Filter filterStatus = SubmissionFilterBuilder.createSubmissionStatusIdFilter(
                     ActionsHelper.findSubmissionStatusByName(allSubmissionStatuses, "Active").getId());
             Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
+            Filter filterType = SubmissionFilterBuilder.createSubmissionTypeIdFilter(submissionType.getId());
 
-            Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterResource));
+            Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterResource, filterType));
 
             submissions = upMgr.searchSubmissions(filter);
         }

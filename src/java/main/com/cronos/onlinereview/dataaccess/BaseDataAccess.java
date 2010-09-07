@@ -147,7 +147,9 @@ public abstract class BaseDataAccess {
         DataAccess dataAccess = new DataAccess(DBMS.TCS_OLTP_DATASOURCE_NAME);
         Request request = new Request();
         request.setContentHandle(queryName);
-        request.setProperty(paramName, paramValue);
+        if (paramName != null) {
+            request.setProperty(paramName, paramValue);
+        }
         try {
             return dataAccess.getData(request);
         } catch (Exception e) {
