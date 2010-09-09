@@ -3722,8 +3722,9 @@ public class ProjectReviewActions extends DispatchAction {
         // resMgr.updateResource(submitter, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
         // Old Code Ends
 
-        // Retrieve all reviewed submissions to reset placement/submission status if need
-        Submission[] submissions = ActionsHelper.searchReviewedSubmissions(request, project);
+        // Retrieve all reviewed submissions of "Contest Submission" type 
+        // to reset placement/submission status if need
+        Submission[] submissions = ActionsHelper.searchReviewedContestSubmissions(request, project);
         List<Long> submissionIds = new ArrayList<Long>();
 
         for (int i = 0; i < submissions.length; ++i) {
