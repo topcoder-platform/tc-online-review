@@ -90,17 +90,18 @@ public class AutoPaymentUtil {
         "       submission, " +
         "       submission_status_lu " +
         " WHERE upload.resource_id = resource.resource_id " +
+        "   AND submission.submission_type_id = 1 " +
         "   AND submission.upload_id = upload.upload_id " +
         "   AND submission.submission_status_id = submission_status_lu.submission_status_id " +
         "   AND submission_status_lu.name in ('Active', 'Completed Without Win') " +
         "   AND resource.project_id = ? " +
         "   AND submission.placement = ? ";
 
-	/**
-	 * The SQL statement to retrieve a project info value.
-	 */
-	private static final String SELECT_PROJECT_INFO_VALUE =
-		"select value from project_info where project_id = ? and project_info_type_id = ?";
+    /**
+     * The SQL statement to retrieve a project info value.
+     */
+    private static final String SELECT_PROJECT_INFO_VALUE =
+        "select value from project_info where project_id = ? and project_info_type_id = ?";
 
     private static final String USER_ID = "phase_handler";
 
@@ -126,9 +127,9 @@ public class AutoPaymentUtil {
      * @throws SQLException if an error occurs in the persistence layer
      */
     public static void populateReviewerPayments(long projectId, Connection conn, int phaseId) throws SQLException {
-		if (!isMemberPaymentEligible(projectId, conn)) {
-			return;
-		}
+        if (!isMemberPaymentEligible(projectId, conn)) {
+            return;
+        }
 
         long projectCategoryId = getProjectCategoryId(projectId, conn);
 
@@ -143,7 +144,7 @@ public class AutoPaymentUtil {
         && projectCategoryId != 23    // Conceptualization
         && projectCategoryId != 19    // UI Prototype
         && projectCategoryId != 24    // RIA Build
-		&& projectCategoryId != 27	  // Spec Review
+        && projectCategoryId != 27    // Spec Review
         && projectCategoryId != 25) { // RIA Component
                 return;
         }
@@ -206,6 +207,7 @@ public class AutoPaymentUtil {
                 "select count(s.submission_id) " +
                 "       from submission s, upload u " +
                 "       where u.upload_id = s.upload_id " +
+                "       and s.submission_type_id = 1 " +
                 "       and s.submission_status_id <> 5 " +
                 "       and upload_type_id = 1 " +
                 "       and u.project_id = ?";
@@ -238,6 +240,7 @@ public class AutoPaymentUtil {
                 "select count(s.submission_id) " +
                 "       from submission s, upload u " +
                 "       where u.upload_id = s.upload_id " +
+                "       and s.submission_type_id = 1 " +
                 "       and s.submission_status_id in (1, 3, 4) " +
                 "       and upload_type_id = 1 " +
                 "       and u.project_id = ?";
@@ -312,25 +315,25 @@ public class AutoPaymentUtil {
         }
     }
 
-	/**
-	 * Retrieve spec review payment from project_info type.
-	 * @param projectId the project id
-	 * @param conn the connection
-	 *
-	 * @return payments for the spec reviewer (only primary is required, the secondary is always zero)
-	 * @throws SQLException if anything is wrong with the db access
-	 */
-	private static float[] getSpecReviewPayments(long projectId, Connection conn) throws SQLException {
+    /**
+     * Retrieve spec review payment from project_info type.
+     * @param projectId the project id
+     * @param conn the connection
+     *
+     * @return payments for the spec reviewer (only primary is required, the secondary is always zero)
+     * @throws SQLException if anything is wrong with the db access
+     */
+    private static float[] getSpecReviewPayments(long projectId, Connection conn) throws SQLException {
 
-		float[] payments = new float[2];
-		try {
-			String str = getProjectInfo(projectId, 33, conn);
-			payments[0] = str == null ? 0.0f : Float.parseFloat(str);
-		} catch (NumberFormatException e) {
+        float[] payments = new float[2];
+        try {
+            String str = getProjectInfo(projectId, 33, conn);
+            payments[0] = str == null ? 0.0f : Float.parseFloat(str);
+        } catch (NumberFormatException e) {
             logger.log(Level.WARN, "can't parse the spec review payment, projectId:" + projectId);
-		}
-		return payments;
-	}
+        }
+        return payments;
+    }
 
     /**
      * Retrieve payment from rboard_payment table.
@@ -410,9 +413,9 @@ public class AutoPaymentUtil {
      */
     static void populateSubmitterPayments(long projectId, Connection conn)
             throws SQLException {
-		if (!isMemberPaymentEligible(projectId, conn)) {
-			return;
-		}
+        if (!isMemberPaymentEligible(projectId, conn)) {
+            return;
+        }
         // Retrieve the price
         double price = getPriceByProjectId(projectId, conn);
 
@@ -510,44 +513,44 @@ public class AutoPaymentUtil {
         PRHelper.close(pstmt);
     }
 
-	/**
-	 * Check whether the member payment is eligible.
-	 * @param projectId the project id
-	 * @param conn the db connection
-	 */
-	private static boolean isMemberPaymentEligible(long projectId, Connection conn)
-		throws SQLException {
-			String str = getProjectInfo(projectId, 46, conn);
-			return "true".equalsIgnoreCase(str);
-	}
+    /**
+     * Check whether the member payment is eligible.
+     * @param projectId the project id
+     * @param conn the db connection
+     */
+    private static boolean isMemberPaymentEligible(long projectId, Connection conn)
+        throws SQLException {
+            String str = getProjectInfo(projectId, 46, conn);
+            return "true".equalsIgnoreCase(str);
+    }
 
-	/**
-	 * Retrieve the project info value for the given project and info type.
-	 * @param projectId the project id
-	 * @param projectInfoTypeId the project info type id
-	 * @param conn the db connection
-	 */
-	private static String getProjectInfo(long projectId, long projectInfoTypeId, Connection conn) 
-		throws SQLException {
-			PreparedStatement pstmt = null;
-			ResultSet rs = null;
-	        try {
-	            pstmt = conn.prepareStatement(SELECT_PROJECT_INFO_VALUE);
-				pstmt.setLong(1, projectId);
-				pstmt.setLong(2, projectInfoTypeId);
+    /**
+     * Retrieve the project info value for the given project and info type.
+     * @param projectId the project id
+     * @param projectInfoTypeId the project info type id
+     * @param conn the db connection
+     */
+    private static String getProjectInfo(long projectId, long projectInfoTypeId, Connection conn) 
+        throws SQLException {
+            PreparedStatement pstmt = null;
+            ResultSet rs = null;
+            try {
+                pstmt = conn.prepareStatement(SELECT_PROJECT_INFO_VALUE);
+                pstmt.setLong(1, projectId);
+                pstmt.setLong(2, projectInfoTypeId);
 
-	            rs = pstmt.executeQuery();
+                rs = pstmt.executeQuery();
 
-	            if (rs.next()) {
-					return rs.getString(1);
-	            }
-	        } finally {
-	            PRHelper.close(rs);
-	            PRHelper.close(pstmt);
-	        }
-			return null;
+                if (rs.next()) {
+                    return rs.getString(1);
+                }
+            } finally {
+                PRHelper.close(rs);
+                PRHelper.close(pstmt);
+            }
+            return null;
 
-	}
+    }
 
     /**
      * Update or insert project info with given value.
@@ -608,13 +611,13 @@ public class AutoPaymentUtil {
     private static double getPriceByProjectId(long projectId, Connection conn)
         throws SQLException {
 
-		try {
-			String str = getProjectInfo(projectId, 16, conn);
-			return str == null ? 0.0 : Double.parseDouble(str);
-		} catch (NumberFormatException e) {
-	        logger.log(Level.WARN, "can't parse the price for projectId:" + projectId);
-		}
-		return 0.0;
+        try {
+            String str = getProjectInfo(projectId, 16, conn);
+            return str == null ? 0.0 : Double.parseDouble(str);
+        } catch (NumberFormatException e) {
+            logger.log(Level.WARN, "can't parse the price for projectId:" + projectId);
+        }
+        return 0.0;
     }
 
     /**
