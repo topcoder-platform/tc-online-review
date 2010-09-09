@@ -3765,8 +3765,6 @@ public class ProjectReviewActions extends DispatchAction {
             submissionScores[iSub] = new com.topcoder.management.review.scoreaggregator.Submission(subId, scores);
         }
 
-        ActionsHelper.resetProjectResultWithChangedScores(project.getId(), userId);
-
         //this will hold as many elements as submissions
         AggregatedSubmission[] aggregations = aggregator.aggregateScores(submissionScores);
         RankedSubmission[] placements = aggregator.calcPlacements(aggregations);
@@ -3785,7 +3783,8 @@ public class ProjectReviewActions extends DispatchAction {
             // Check if submission status is changed
             if ((oldScore < minScore && newScore < minScore) ||
                     (oldScore >= minScore && newScore >= minScore)) {
-                // the submission status is not changed
+                // the submission status is not changed, but we still need to update the project_result
+                ActionsHelper.resetProjectResultWithChangedScores(project.getId(), userId);
                 return;
             }
         }
@@ -3810,15 +3809,8 @@ public class ProjectReviewActions extends DispatchAction {
             float aggScore = rankedSubmission.getAggregatedScore();
             int placement = rankedSubmission.getRank();
 
-            // OrChange - Update placement
             // update submitter's Placement
             submission.setPlacement(new Long(placement));
-
-            long submitterId = submission.getUpload().getOwner();
-            submitter = resMgr.getResource(submitterId);
-            // Old Code
-            // submitter.setProperty("Placement", String.valueOf(placement));
-            // Old Code Ends
 
             SubmissionStatus newStatus = null; 
                 
@@ -3834,21 +3826,17 @@ public class ProjectReviewActions extends DispatchAction {
                 }
             }
 
-            // submission status is changed
-            if (!newStatus.equals(submission.getSubmissionStatus())) {
-                submission.setSubmissionStatus(newStatus);
-                upMgr.updateSubmission(submission, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));                
-            }
+            submission.setSubmissionStatus(newStatus);
 
             //cache winning and runner up submitter.
             if (placement == 1 && aggScore >= minScore) {
-                winningSubmitter = submitter;
+                winningSubmitter = resMgr.getResource( submission.getUpload().getOwner() );
             } else if (placement == 2 && aggScore >= minScore) {
-                runnerUpSubmitter = submitter;
+                runnerUpSubmitter = resMgr.getResource( submission.getUpload().getOwner() );
             }
 
             //persist the change
-            resMgr.updateResource(submitter, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
+            upMgr.updateSubmission(submission, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
         } //end for
 
         ProjectManager projectManager = ActionsHelper.createProjectManager(request);
@@ -3874,6 +3862,8 @@ public class ProjectReviewActions extends DispatchAction {
         //update the project
         projectManager.updateProject(project, "Update the winner and runner up.",
                 String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
+
+        ActionsHelper.resetProjectResultWithChangedScores(project.getId(), userId);
     }
 
     /**
