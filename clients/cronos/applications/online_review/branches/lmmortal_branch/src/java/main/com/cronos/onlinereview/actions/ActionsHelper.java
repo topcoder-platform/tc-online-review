@@ -4167,17 +4167,23 @@ public class ActionsHelper {
      *
      * @throws Exception if error occurs
      */
-    static Submission[] searchReviewedSubmissions(HttpServletRequest request, Project project)
+    static Submission[] searchReviewedContestSubmissions(HttpServletRequest request, Project project)
         throws BaseException {
         UploadManager upMgr = ActionsHelper.createUploadManager(request);
 
+        SubmissionType[] allSubmissionTypes = upMgr.getAllSubmissionTypes();
+
+        SubmissionType contestSubmissionType
+            = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes, "Contest Submission");
+
         //first get submission status id for "Active" status
-        Filter filterSubmissionStatuss = new InFilter("submission_status_id",
+        Filter submissionStatusFilter = new InFilter("submission_status_id",
                 Arrays.asList(new Long[] {new Long(1), new Long(3), new Long(4)}));
 
         //then search for submissions
         Filter projectIdFilter = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
-        Filter fullFilter = new AndFilter(projectIdFilter, filterSubmissionStatuss);
+        Filter typeFilter = SubmissionFilterBuilder.createSubmissionTypeIdFilter(contestSubmissionType.getId());
+        Filter fullFilter = new AndFilter(Arrays.asList(projectIdFilter, typeFilter, submissionStatusFilter));
 
         try {
             return upMgr.searchSubmissions(fullFilter);

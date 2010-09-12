@@ -130,7 +130,7 @@
   <property name="contest_eligibility_validation.path" value="contest_eligibility_validation/${contest_eligibility_validation.version}"/>
   <property name="contest_eligibility_validation.jar" value="${tcs_libdir}/${contest_eligibility_validation.path}/${contest_eligibility_validation.jar.name}"/>
 
-    <property name="deliverable_management_persistence.version" value="1.1.1" />
+    <property name="deliverable_management_persistence.version" value="1.1.2" />
     <property name="deliverable_management_persistence.jar.name" value="deliverable_management_persistence.jar" />
     <property name="deliverable_management_persistence.path" value="deliverable_management_persistence/${deliverable_management_persistence.version}" />
     <property name="deliverable_management_persistence.jar" value="${tcs_libdir}/${deliverable_management_persistence.path}/${deliverable_management_persistence.jar.name}" />

@@ -23,7 +23,7 @@
     </Config>
     <Config name="AutoPilotJob">
         <Property name="AutoPilotJob">
-            <Value>StartDTG:September 1, 2010 12:00:00 AM</Value>
+            <Value>StartDTG:September 12, 2010 12:00:00 AM</Value>
             <Value>EndDTG:</Value>
             <Value>IntervalValue:1</Value>
             <Value>IntervalUnit:MINUTE</Value>
