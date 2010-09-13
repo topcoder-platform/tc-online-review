@@ -447,34 +447,40 @@
 <%--
             <html:radio property="addphase_start_by_phase" value="false" />
 --%>
-            <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="addphase_start_date" />
-            <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="addphase_start_time" />
+            <html:checkbox property="addphase_start_by_fixed_time"
+                           onclick="return addPhaseFixedStartTimeBoxChanged(this)"/>
+            <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate"
+                       property="addphase_start_date" disabled="true"/>
+            <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);"
+                       styleClass="inputBoxTime" property="addphase_start_time" disabled="true"/>
             <c:out value="${currentTimezone}"/><br />
 <%--
             <html:radio property="addphase_start_by_phase" value="true" />
 --%>
+            <html:checkbox property="addphase_start_by_phase"
+                           onclick="return addPhasePhaseStartByPhaseBoxChanged(this)"/>
             <bean:message key="editProject.Phases.When" />
             <div style="margin-left: 20px;">
-            <html:select styleClass="inputBox" property="addphase_start_phase" style="width:150px;">
+            <html:select styleClass="inputBox" property="addphase_start_phase" style="width:150px;" disabled="true">
                 <html:option key="editProject.Phases.SelectPhase" value="" />
                 <c:forEach var="i" begin="1" end="${fn:length(projectForm.map['phase_id']) - 1}">
                     <html:option value="${projectForm.map['phase_js_id'][i]}">${projectForm.map['phase_name'][i]}</html:option>
                 </c:forEach>
             </html:select>
             <br />
-            <html:select styleClass="inputBox" property="addphase_start_when">
+            <html:select styleClass="inputBox" property="addphase_start_when" disabled="true">
                 <html:option key="editProject.Phases.Starts" value="starts" />
                 <html:option key="editProject.Phases.Ends" value="ends" />
             </html:select>
             <br />
-            <html:select styleClass="inputBox" property="addphase_start_plusminus">
+            <html:select styleClass="inputBox" property="addphase_start_plusminus" disabled="true">
                 <html:option value="plus">+</html:option>
                 <html:option value="minus">-</html:option>
             </html:select>
             <br />
-            <html:text styleClass="inputBox" property="addphase_start_amount" style="width:30px;" />
+            <html:text styleClass="inputBox" property="addphase_start_amount" style="width:30px;"  disabled="true"/>
             <br />
-            <html:select styleClass="inputBox" property="addphase_start_dayshrs">
+            <html:select styleClass="inputBox" property="addphase_start_dayshrs"  disabled="true">
                 <html:option key="editProject.Phases.Days" value="days" />
                 <html:option key="editProject.Phases.Hrs" value="hrs" />
                 <html:option key="editProject.Phases.Mins" value="mins" />

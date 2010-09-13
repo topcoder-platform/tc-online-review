@@ -548,3 +548,34 @@ function phaseStartByPhaseBoxChanged(box, p) {
     }
     return true;
 }
+
+
+function addPhaseFixedStartTimeBoxChanged(box) {
+    var form = box.form;
+    if (box.checked) {
+        form["addphase_start_date"].removeAttribute("disabled");
+        form["addphase_start_time"].removeAttribute("disabled");
+    } else {
+        form["addphase_start_date"].setAttribute("disabled", "disabled");
+        form["addphase_start_time"].setAttribute("disabled", "disabled");
+    }
+    return true;
+}
+
+function addPhasePhaseStartByPhaseBoxChanged(box) {
+    var form = box.form;
+    if (box.checked) {
+        form["addphase_start_phase"].removeAttribute("disabled");
+        form["addphase_start_when"].removeAttribute("disabled");
+        form["addphase_start_plusminus"].removeAttribute("disabled");
+        form["addphase_start_amount"].removeAttribute("disabled");
+        form["addphase_start_dayshrs"].removeAttribute("disabled");
+    } else {
+        form["addphase_start_phase"].setAttribute("disabled", "disabled");
+        form["addphase_start_when"].setAttribute("disabled", "disabled");
+        form["addphase_start_plusminus"].setAttribute("disabled", "disabled");
+        form["addphase_start_amount"].setAttribute("disabled", "disabled");
+        form["addphase_start_dayshrs"].setAttribute("disabled", "disabled");
+    }
+    return true;
+}
