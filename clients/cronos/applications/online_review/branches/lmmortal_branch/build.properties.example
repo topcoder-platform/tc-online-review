@@ -1,16 +1,16 @@
 # TopCoder Software Component Development Environment
 
-# If you ever run tests (ant test), you should specify the correct value for
-# this property, which specifies the Tomcat 5.5 server installation path.
-# The example of the property's value is shown below. Change it to something
-# more appropriate for you.
+# The Tomcat 5.5 server installation path.
 cactus.home.tomcat5x=c:/tools/tomcat/5.5.28
 
-# The location of the deployment directory for JBoss server. If you ever
-# execute ant with "deploy" target, set this property to the correct value.
-# Otherwise you may ignore it (say, if you copy the WAR file by hand).
-# The example of the property's value is shown below. Change it to something
-# more appropriate for you if you need it.
+# Properties to automatically start/stop Jboss. Supposed to be used mostly for Continuos Integration server
+jdk_home=<<path_to_jdk>
+db_scripts_path=<<path_to_database_scripts>>
+bind_addr=127.0.0.1
+jnp_port=1099
+jboss_heap_size=512m
+
+# The location of the deployment directory for JBoss server.
 JBOSS_HOME=C:/jboss-4.0.2
 
 # remote deploy information
