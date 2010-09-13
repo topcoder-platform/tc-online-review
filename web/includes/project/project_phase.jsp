@@ -870,7 +870,7 @@
                                                                context="${orfn:getHandlerContext(pageContext.request)}" />)
                                         </td>
                                         <td class="valueC"
-                                            nowrap="nowrap">${orfn:displayDate(pageContext.request, group.specificationSubmission.modificationTimestamp)}</td>
+                                            nowrap="nowrap">${orfn:displayDate(pageContext.request, group.specificationSubmission.upload.creationTimestamp)}</td>
                                         <c:choose>
                                             <c:when test="${not empty group.specificationReview}">
                                                 <c:choose>

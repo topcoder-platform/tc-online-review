@@ -572,7 +572,9 @@
             for (var i = 0; i < resourceRoleNodes.length; i++) {
                 var curPhaseTypeId = resourceRoleToPhaseTypeMap[resourceRoleNodes[i].value];
                 if (curPhaseTypeId == phaseTypeId) {
-                    addComboOption(resourcePhaseNodes[i], phaseNumber, phaseId);
+                    if (resourcePhaseNodes[i].tagName == 'SELECT') {
+                        addComboOption(resourcePhaseNodes[i], phaseNumber, phaseId);
+                    }
                 }
             }
 
@@ -610,10 +612,19 @@
 
             // Populate newly created phase inputs from the add phase form
             var inputNames = ["type",
-                "start_date", "start_time", "start_AMPM",
-                "start_by_phase", "start_phase", "start_when",
-                "start_plusminus", "start_amount", "start_dayshrs", "use_duration",
-                "end_date", "end_time", "end_AMPM", "duration"];
+                "start_date",
+                "start_time", 
+                "start_phase",
+                "start_when",
+                "start_plusminus",
+                "start_amount",
+                "start_dayshrs",
+                "use_duration",
+                "end_date",
+                "end_time",
+                "duration",
+                "start_by_fixed_time",
+                "start_by_phase"];
             for (var i = 0; i < inputNames.length; i++) {
                 populatePhaseParam(newRow, addPhaseTable, inputNames[i], lastPhaseIndex);
             }
@@ -638,6 +649,22 @@
                     }
 
                     dojo.dom.insertAfter(newRow, wherePhaseNode);
+                }
+            }
+
+            // Trigger enabling/disabling
+            var chkInputNames = ["start_by_fixed_time", "start_by_phase"];
+            for (var i = 0; i < chkInputNames.length; i++) {
+                var srcInputs = getChildrenByName(addPhaseTable, "addphase_" + chkInputNames[i]);
+                var destInputs = getChildrenByName(newRow, "phase_" + chkInputNames[i] + "[" + lastPhaseIndex + "]");
+                if (srcInputs[0].checked) {
+                    if (chkInputNames[i] == 'start_by_fixed_time') {
+                        fixedStartTimeBoxChanged(destInputs[0]);
+                    } else {
+                        if (chkInputNames[i] == 'start_by_phase') {
+                            phaseStartByPhaseBoxChanged(destInputs[0]);
+                        }
+                    }
                 }
             }
 
