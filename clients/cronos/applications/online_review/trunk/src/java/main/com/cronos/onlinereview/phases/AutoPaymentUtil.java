@@ -154,20 +154,29 @@ public class AutoPaymentUtil {
         int levelId = SoftwareComponent.LEVEL1;
         int count = getCount(projectId, conn);
         int passedCount = getScreenPassedCount(projectId, conn);
-        float[] payments = projectCategoryId == 27 ? getSpecReviewPayments(projectId, conn) : getPayments(projectId, projectCategoryId, conn);
+        float[] payments = getPayments(projectId, projectCategoryId, conn);
+
+        // Temporary fix for the transition period until we get rid of the Spec Review projects completely.
+        if (projectCategoryId == 27) {
+            payments[0] = payments[2];
+            payments[1] = payments[2];
+        }
 
         float prize = (float) getPriceByProjectId(projectId, conn);
         float drPoints = (float) getDrPointsByProjectId(projectId, conn);
 
         FixedPriceComponent fpc = new FixedPriceComponent(levelId, count, passedCount,
                                                           (int) (projectCategoryId + 111),
-                                                          payments[0], payments[1],
+                                                          payments[0], payments[1], payments[2],
                                                           prize, drPoints);
         List<Reviewer> reviewers = getReviewers(projectId, conn);
 
-        // this is added to pay final review and aggregation only once.
+        boolean passedReview = projectPassedReview(projectId, conn);
+
+        // this is added to pay final review, aggregator and spec reviewer only once.
         boolean alreadyPaidAggregator = false;
         boolean alreadyPaidFinalReviewer = false;
+        boolean alreadyPaidSpecReviewer = false;        
         for (Iterator<Reviewer> iter = reviewers.iterator(); iter.hasNext();) {
             Reviewer reviewer = iter.next();
 
@@ -186,9 +195,17 @@ public class AutoPaymentUtil {
             } else if (reviewer.isPrimaryReviewer() && phaseId == REVIEW_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getCoreReviewCost(), conn);
             } else if (reviewer.isReviewer() && phaseId == REVIEW_PHASE) {
-                updateResourcePayment(reviewer.getResourceId(), fpc.getReviewPrice(), conn);
+                updateResourcePayment(reviewer.getResourceId(), fpc.getReviewCost(), conn);
             } else if (reviewer.isPostMortemReviewer() && phaseId == POST_MORTEM_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getPostMortemCost(), conn);
+            }
+
+            // Unlike other reviewer payments specification reviewer is paid only after
+            // at least one submission passed review.
+            if (reviewer.isSpecificationReviewer() && passedReview) {
+                updateResourcePayment(reviewer.getResourceId(),
+                    alreadyPaidSpecReviewer ? 0 : fpc.getSpecReviewCost(), conn);
+                alreadyPaidSpecReviewer = true;
             }
         }
     }
@@ -279,7 +296,7 @@ public class AutoPaymentUtil {
             "   resource_info ri" +
             "   where r.resource_id = ri.resource_id" +
             "   and ri.resource_info_type_id = 1" +
-            "   and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9, 16)" +
+            "   and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9, 16, 18)" +
             "   and r.project_id = ? " +
             "   and not exists (select ri1.resource_id from resource_info ri1 " +
             "           where r.resource_id = ri1.resource_id" +
@@ -316,27 +333,41 @@ public class AutoPaymentUtil {
     }
 
     /**
-     * Retrieve spec review payment from project_info type.
-     * @param projectId the project id
-     * @param conn the connection
+     * Returns true if at least one submission passed review for the specified project.
      *
-     * @return payments for the spec reviewer (only primary is required, the secondary is always zero)
-     * @throws SQLException if anything is wrong with the db access
+     * @param projectId project id
+     * @param conn connection
+     *
+     * @return true if there is at least one submission that passed review and false otherwise.
+     *
+     * @throws SQLException if error occurs
      */
-    private static float[] getSpecReviewPayments(long projectId, Connection conn) throws SQLException {
+    private static boolean projectPassedReview(long projectId, Connection conn) throws SQLException {
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        boolean passedReview = false;
 
-        float[] payments = new float[2];
         try {
-            String str = getProjectInfo(projectId, 33, conn);
-            payments[0] = str == null ? 0.0f : Float.parseFloat(str);
-        } catch (NumberFormatException e) {
-            logger.log(Level.WARN, "can't parse the spec review payment, projectId:" + projectId);
+            pstmt = conn.prepareStatement(
+                    "SELECT user_id FROM project_result WHERE project_id=? AND passed_review_ind = 1");
+            pstmt.setLong(1, projectId);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                passedReview = true;
+                break;
+            }
+
+        } finally {
+            PRHelper.close(rs);
+            PRHelper.close(pstmt);
         }
-        return payments;
+
+        return passedReview;
     }
 
     /**
-     * Retrieve payment from rboard_payment table.
+     * Retrieve review payment from rboard_payment table and spec review payment from project_info.
      *
      * @param projectId project id
      * @param projectCategoryId project category id
@@ -350,7 +381,7 @@ public class AutoPaymentUtil {
         throws SQLException {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        float[] payments = new float[2];
+        float[] payments = new float[3];
 
         try {
             pstmt = conn.prepareStatement(
@@ -367,11 +398,16 @@ public class AutoPaymentUtil {
                 }
             }
 
-            return payments;
+            String str = getProjectInfo(projectId, 33, conn);
+            payments[2] = (str == null) ? 0.0f : Float.parseFloat(str);
+        } catch (NumberFormatException e) {
+            logger.log(Level.WARN, "can't parse the spec review payment, projectId:" + projectId);
         } finally {
             PRHelper.close(rs);
             PRHelper.close(pstmt);
         }
+
+        return payments;
     }
 
     /**
@@ -803,10 +839,19 @@ class Reviewer {
     /**
      * isPostMortemReviewer
      *
-     * @return isAggregator
+     * @return isPostMortemReviewer
      */
     public boolean isPostMortemReviewer() {
         return this.resourceRoleId == 16;
+    }
+
+    /**
+     * isSpecificationReviewer
+     *
+     * @return isSpecificationReviewer
+     */
+    public boolean isSpecificationReviewer() {
+        return this.resourceRoleId == 18;
     }
 
     /**
