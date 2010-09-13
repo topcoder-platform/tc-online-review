@@ -1,8 +1,5 @@
 # TopCoder Software Component Development Environment
 
-# The Tomcat 5.5 server installation path.
-cactus.home.tomcat5x=c:/tools/tomcat/5.5.28
-
 # Properties to automatically start/stop Jboss. Supposed to be used mostly for Continuos Integration server
 jdk_home=<<path_to_jdk>
 db_scripts_path=<<path_to_database_scripts>>
@@ -27,6 +24,3 @@ svn.username=xxx
 svn.password=xxx
 ## uncomment the line bellow to allow update through ant
 # svn.update=yes
-
-# A path to Web module installation
-web.module.path=/mnt/shared/web

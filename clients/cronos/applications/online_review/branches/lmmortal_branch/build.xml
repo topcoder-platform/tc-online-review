@@ -23,10 +23,6 @@
     </and>
   </condition>
 
-  <condition property="jboss_online" >
-    <socket server="${bind_port}" port="${jnp_port}"  />
-  </condition>
-
   <!-- COMPONENT PARAMETERS -->
   <property name="component" value="online_review" />
   <property name="package" value="com.cronos.onlinereview" />
@@ -149,6 +145,10 @@
   <property name="configuration_api.jar.name" value="configuration_api.jar" />
   <property name="configuration_api.path" value="configuration_api/${configuration_api.version}" />
   <property name="configuration_api.jar" value="${tcs_libdir}/${configuration_api.path}/${configuration_api.jar.name}" />
+  <property name="deliverable_management_persistence.version" value="1.1.2" />
+  <property name="deliverable_management_persistence.jar.name" value="deliverable_management_persistence.jar" />
+  <property name="deliverable_management_persistence.path" value="deliverable_management_persistence/${deliverable_management_persistence.version}" />
+  <property name="deliverable_management_persistence.jar" value="${tcs_libdir}/${deliverable_management_persistence.path}/${deliverable_management_persistence.jar.name}" />
 
   <property name="configuration_manager.version" value="2.1.5" />
   <property name="configuration_manager.jar.name" value="configuration_manager.jar" />
@@ -220,10 +220,10 @@
   <property name="file_upload.path" value="file_upload/${file_upload.version}" />
   <property name="file_upload.jar" value="${tcs_libdir}/${file_upload.path}/${file_upload.jar.name}" />
 
-    <property name="online_review_phases.version" value="1.4.3" />
-    <property name="online_review_phases.jar.name" value="online_review_phases.jar" />
-    <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}" />
-    <property name="online_review_phases.jar" value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}" />
+  <property name="online_review_phases.version" value="1.4.3" />
+  <property name="online_review_phases.jar.name" value="online_review_phases.jar" />
+  <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}" />
+  <property name="online_review_phases.jar" value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}" />
   <property name="guid_generator.version" value="1.0" />
   <property name="guid_generator.jar.name" value="guid_generator.jar" />
   <property name="guid_generator.path" value="guid_generator/${guid_generator.version}" />
@@ -673,7 +673,7 @@
 
   <!-- updates Online Review files from SVN -->
   <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="svnant.jar" />
-  <target name="svn_update" if="svn.update">
+  <target name="svn_update" if="or.svn.update">
     <svn username="${svn.username}" password="${svn.password}">
       <info target="${basedir}" verbose="true" />
       <update dir="${basedir}" recurse="true" />
@@ -948,11 +948,72 @@
   </target>
 
   <!-- stops Jboss, reinstalls database, redeploys OR and starts jboss. -->
-  <target name="redeploy" >
-    <stop_jboss   />
-    <ant antfile="${db_scripts_path}/build.xml" target="drop_db" dir="${db_scripts_path}" />
-    <ant antfile="${db_scripts_path}/build.xml" target="setup_db" />
+  <target name="redeploy" depends="stop_jboss, deploy">
+    <if>
+      <isset property="update_db" />
+      <then>
+        <ant antfile="${db_scripts_path}/build.xml" target="drop_db" dir="${db_scripts_path}"  />
+        <ant antfile="${db_scripts_path}/build.xml" target="setup_db" />
+      </then>
+    </if>
     <start_jboss background="true" />
+  </target>
+
+  <!-- JBoss start / stop -->
+  <macrodef name="start_jboss">
+    <attribute name="background" default="false"/>
+    <sequential>
+      <available file="${jdk_home}/lib/tools.jar" property="java.tools.jar.exists"/>
+      <fail unless="java.tools.jar.exists" message="Unable to find ${jdk_home}/lib/tools.jar"/>
+      <available file="${JBOSS_HOME}/bin/run.jar" property="jboss.run.jar.exists"/>
+      <fail unless="jboss.run.jar.exists" message="Unable to find ${JBOSS_HOME}/bin/run.jar"/>
+      <echo>Starting JBoss in ${JBOSS_HOME}...</echo>
+      <java jvm="${jdk_home}/bin/java"
+            dir="${JBOSS_HOME}/bin"
+            classname="org.jboss.Main" fork="true" spawn="@{background}">
+        <jvmarg value="-Xms${jboss_heap_size}"/>
+        <jvmarg value="-Xmx${jboss_heap_size}"/>
+        <jvmarg value="-Djava.endorsed.dirs=${JBOSS_HOME}/lib/endorsed"/>
+        <classpath>
+          <pathelement path="${JBOSS_HOME}/bin/run.jar"/>
+          <pathelement path="${jdk_home}/lib/tools.jar"/>
+        </classpath>
+      </java>
+    </sequential>
+  </macrodef>
+
+  <target name="stop_jboss">
+    <sequential >
+      <available file="${JBOSS_HOME}/bin/shutdown.jar" property="jboss.shutdown.jar.exists"/>
+      <fail unless="jboss.shutdown.jar.exists" message="Unable to find ${JBOSS_HOME}/bin/sutdown.jar"/>
+      <available file="${JBOSS_HOME}/client/jbossall-client.jar" property="jboss.client.jar.exists"/>
+      <fail unless="jboss.client.jar.exists"
+            message="Unable to find ${JBOSS_HOME}/client/jbossall-client.jar"/>
+      <if>
+        <socket server="${bind_addr}" port="${jnp_port}"  />
+        <then>
+          <java jvm="${jdk_home}/bin/java"
+                classname="org.jboss.Shutdown" fork="true" resultproperty="shutdown.rc" failonerror="false" >
+            <arg line="-s jnp://${bind_addr}:${jnp_port}"/>
+            <classpath>
+              <pathelement path="${JBOSS_HOME}/bin/shutdown.jar"/>
+              <pathelement path="${JBOSS_HOME}/client/jbossall-client.jar"/>
+            </classpath>
+          </java>
+          <echo>Shutdown rc = ${shutdown.rc}</echo>
+          <condition property="shutdown.okay">
+            <equals arg1="${shutdown.rc}" arg2="0"/>
+          </condition>
+          <fail unless="shutdown.okay" message="Unable to shut down JBoss (maybe it hasn't fully started yet?)."/>
+          <echo>Waiting for ${bind_addr}:${jnp_port} to stop listening...</echo>
+          <waitfor maxwait="2" maxwaitunit="minute">
+            <not>
+              <socket server="${bind_addr}" port="${jnp_port}"/>
+            </not>
+          </waitfor>
+        </then>
+      </if>
+    </sequential>
   </target>
 
   <target name="compile_tests" depends="compile">
@@ -1050,7 +1111,7 @@
 
   <target name="reports" depends="test">
     <mkdir dir="${reports}" />
-    
+
     <junitreport todir="${reports}">
       <fileset dir="${testlogdir}">
         <include name="*.xml" />
@@ -1060,64 +1121,42 @@
     <echo>The execution of reports is complete.  Reports are available in /${reports}</echo>
   </target>
 
+  <target name="deploy-common">
+    <mkdir dir="${deploy-dir}" />
+    <unwar src="${component.war}" dest="${deploy-dir}" />
+    <move todir="${deploy-dir}/../../lib" overwrite="true" verbose="true">
+      <fileset dir="${deploy-dir}/WEB-INF/lib">
+        <include name="${tcsUtil.jar.name}"/>
+        <include name="${tcwebcommon.jar.name}"/>
+        <include name="${catalog.jar.name}"/>
+        <include name="${shared.jar.name}"/>
+        <include name="${forums.jar.name}"/>
+        <include name="${contest_eligibility_validation_client.jar.name}"/>
+      </fileset>
+    </move>
+    <delete verbose="true">
+      <fileset dir="${deploy-dir}/WEB-INF/lib">
+        <include name="log4j.jar"/>
+      </fileset>
+    </delete>
+  </target>
 
-  <!-- JBoss start / stop -->
-  <macrodef name="start_jboss">
-    <attribute name="background" default="false"/>
-    <sequential>
-      <available file="${jdk_home}/lib/tools.jar" property="java.tools.jar.exists"/>
-      <fail unless="java.tools.jar.exists" message="Unable to find ${jdk_home}/lib/tools.jar"/>
-      <available file="${JBOSS_HOME}/bin/run.jar" property="jboss.run.jar.exists"/>
-      <fail unless="jboss.run.jar.exists" message="Unable to find ${JBOSS_HOME}/bin/run.jar"/>
-      <echo>Starting JBoss in ${JBOSS_HOME}...</echo>
-      <java jvm="${jdk_home}/bin/java"
-            dir="${JBOSS_HOME}/bin"
-            classname="org.jboss.Main" fork="true" spawn="@{background}">
-        <jvmarg value="-Xms${jboss_heap_size}"/>
-        <jvmarg value="-Xmx${jboss_heap_size}"/>
-        <jvmarg value="-Djava.endorsed.dirs=${JBOSS_HOME}/lib/endorsed"/>
-        <classpath>
-          <pathelement path="${JBOSS_HOME}/bin/run.jar"/>
-          <pathelement path="${jdk_home}/lib/tools.jar"/>
-        </classpath>
-      </java>
-    </sequential>
-  </macrodef>
+  <!-- - - - - - - - - - - - - - - - - -
+      target: prod-init
+    - - - - - - - - - - - - - - - - - -->
+  <target name="prod-init">
+    <property name="component.war" value="${distfilename}.war" />
+  </target>
 
-  <macrodef name="stop_jboss">
-    <sequential >
-      <available file="${JBOSS_HOME}/bin/shutdown.jar" property="jboss.shutdown.jar.exists"/>
-      <fail unless="jboss.shutdown.jar.exists" message="Unable to find ${JBOSS_HOME}/bin/sutdown.jar"/>
-      <available file="${JBOSS_HOME}/client/jbossall-client.jar" property="jboss.client.jar.exists"/>
-      <fail unless="jboss.client.jar.exists"
-            message="Unable to find ${JBOSS_HOME}/client/jbossall-client.jar"/>
-      <if>
-        
-          <socket server="${bind_port}" port="${jnp_port}"  />
-        
-        <then>
-          <java jvm="${jdk_home}/bin/java"
-                classname="org.jboss.Shutdown" fork="true" resultproperty="shutdown.rc" failonerror="false" >
-            <arg line="-s jnp://${bind_addr}:${jnp_port}"/>
-            <classpath>
-              <pathelement path="${JBOSS_HOME}/bin/shutdown.jar"/>
-              <pathelement path="${JBOSS_HOME}/client/jbossall-client.jar"/>
-            </classpath>
-          </java>
-          <echo>Shutdown rc = ${shutdown.rc}</echo>
-          <condition property="shutdown.okay">
-            <equals arg1="${shutdown.rc}" arg2="0"/>
-          </condition>
-          <fail unless="shutdown.okay" message="Unable to shut down JBoss (maybe it hasn't fully started yet?)."/>
-          <echo>Waiting for ${bind_addr}:${jnp_port} to stop listening...</echo>
-          <waitfor maxwait="2" maxwaitunit="minute">
-            <not>
-              <socket server="${bind_addr}" port="${jnp_port}"/>
-            </not>
-          </waitfor>
-        </then>
-      </if>
-    </sequential>
-  </macrodef>
+  <target name="deploy-prod" depends="prod-init, deploy-common" />
+
+  <target name="main" depends="deploy, test" />
+
+  <target name="package-phase-handler-extend" depends="compile">
+    <jar jarfile="${build_distdir}/phase_handler_extend.jar">
+      <zipfileset dir="${build_classdir}" includes="com/cronos/onlinereview/phases/**/*.class"/>
+      <metainf dir="${javamain}/com/cronos/onlinereview/phases/" includes="*.xml"/>
+    </jar>
+  </target>
 
 </project>
