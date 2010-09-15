@@ -1,22 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/java/main"/>
+	<classpathentry excluding="**/.svn/**" kind="src" path="src/java/main"/>
 	<classpathentry kind="src" path="web"/>
 	<classpathentry kind="src" path="src/java/tests"/>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v5.5"/>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.generic.runtimeTarget/JBoss v4.0"/>
-	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/authentication_factory/2.0/authentication_factory.jar" sourcepath="/authentication_factory/src/java/main">
+	<classpathentry exported="true" kind="lib" path="lib/tcs/authentication_factory/2.0/authentication_factory.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/auto_screening_management/1.0/auto_screening_management.jar" sourcepath="/auto_screening_management/src/java/main">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/base_exception/1.0/base_exception.jar">
+	<classpathentry exported="true" kind="lib" path="lib/tcs/auto_screening_management/1.0/auto_screening_management.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -31,7 +23,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/configuration_manager/2.1.5/configuration_manager.jar" sourcepath="/configuration_manager/src/java/main">
+	<classpathentry exported="true" kind="lib" path="lib/tcs/configuration_manager/2.1.5/configuration_manager.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -41,7 +33,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/data_validation/1.0/data_validation.jar">
+	<classpathentry kind="lib" path="lib/tcs/data_validation/1.1.1/data_validation.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -51,22 +43,12 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/document_generator/2.0/document_generator.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/email_engine/3.0/email_engine.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/file_system_server/1.0/file_system_server.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/file_upload/2.0/file_upload.jar" sourcepath="/file_upload/src/java/main">
+	<classpathentry exported="true" kind="lib" path="lib/tcs/file_upload/2.0/file_upload.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -91,7 +73,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/logging_wrapper/1.2/logging_wrapper.jar" sourcepath="D:/Documents/Projects/components/logging_wrapper/src/java/main">
+	<classpathentry exported="true" kind="lib" path="lib/tcs/logging_wrapper/1.2/logging_wrapper.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -101,17 +83,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/online_review_deliverables/1.0/online_review_deliverables.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/online_review_login/1.0.1/online_review_login.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/phase_management/1.0.3/phase_management.jar" sourcepath="/phase_management/src/java/main">
+	<classpathentry kind="lib" path="lib/tcs/phase_management/1.0.4/phase_management.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -121,17 +93,17 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/tcs/resource_management/1.1.1/resource_management.jar" sourcepath="D:/Documents/Projects/components/resource_management/src/java/main">
+	<classpathentry kind="lib" path="lib/tcs/resource_management/1.1.1/resource_management.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/review_data_structure/1.0/review_data_structure.jar" sourcepath="/review_data_structure/src/java/main">
+	<classpathentry exported="true" kind="lib" path="lib/tcs/review_data_structure/1.0/review_data_structure.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/review_management/1.0/review_management.jar" sourcepath="/review_management/src/java/main">
+	<classpathentry exported="true" kind="lib" path="lib/tcs/review_management/1.0/review_management.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -146,17 +118,17 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/scorecard_data_structure/1.0/scorecard_data_structure.jar" sourcepath="/scorecard_data_structure/src/java/main">
+	<classpathentry exported="true" kind="lib" path="lib/tcs/scorecard_data_structure/1.0/scorecard_data_structure.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/scorecard_management_persistence/1.0.1/scorecard_management_persistence.jar" sourcepath="/scorecard_management_persistence/src/java/main">
+	<classpathentry exported="true" kind="lib" path="lib/tcs/scorecard_management_persistence/1.0.1/scorecard_management_persistence.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/search_builder/1.3.1/search_builder.jar" sourcepath="D:/Documents/Projects/components/search_builder/src/java/main">
+	<classpathentry exported="true" kind="lib" path="lib/tcs/search_builder/1.3.1/search_builder.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -176,7 +148,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/user_project_data_store/1.0.1/user_project_data_store.jar" sourcepath="/user_project_data_store/src/java/main">
+	<classpathentry exported="true" kind="lib" path="lib/tcs/user_project_data_store/1.0.1/user_project_data_store.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -191,17 +163,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/shared.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/tcsUtil.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/tcwebcommon.jar" sourcepath="/web/src/main">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -232,11 +194,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/third_party/commons-validator.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/third_party/ejb-2_0.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -341,12 +298,12 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/project_phase_template/1.0.1/project_phase_template.jar">
+	<classpathentry kind="lib" path="lib/tcs/project_phase_template/1.2.0/project_phase_template.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/tcs/deliverable_management/1.0.3/deliverable_management.jar" sourcepath="/deliverable_management/src/java/main">
+	<classpathentry kind="lib" path="lib/tcs/deliverable_management/1.1.1/deliverable_management.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -361,26 +318,57 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/tcs/deliverable_management_persistence/1.0.3/deliverable_management_persistence.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/online_review_upload_services/1.0/online_review_upload_services.jar" sourcepath="/online_review_upload_services/src/java/main"/>
+	<classpathentry kind="lib" path="lib/tcs/deliverable_management_persistence/1.1.1/deliverable_management_persistence.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/online_review_upload_services/1.0/online_review_upload_services.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/activation.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/axis_dok.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/commons-discovery-0.2.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/saaj.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/wsdl4j-1.5.1.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/project_management/1.0.1/project_management.jar" sourcepath="/project_management/src/java/main"/>
-	<classpathentry kind="lib" path="lib/tcs/pacts_services/PactsClientServices.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.5.0_21"/>
+	<classpathentry kind="lib" path="lib/tcs/project_management/1.0.1/project_management.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/project_ejb/Project.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/user_ejb/User.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/terms_of_use_ejb/TermsOfUse.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.0.6/online_review_phases.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/resource_management_persistence/1.2.2/resource_management_persistence.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/web_module"/>
-	<classpathentry kind="lib" path="lib/tcs/contest_eligibility_validation_client/1.0.0/contest_eligibility_validation_client.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/phase_management_persistence/1.0.2/phase_management_persistence.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/project_management_persistence/1.1.2/project_management_persistence.jar"/>
-    <classpathentry kind="lib" path="lib/third_party/jivebase.jar"/>
-    <classpathentry kind="lib" path="lib/third_party/jiveforums.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/jivebase.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/jiveforums.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/base_exception/2.0.0/base_exception.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/document_generator/2.1/document_generator.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/email_engine/3.1.0/email_engine.jar"/>
+	<classpathentry kind="lib" path="lib/shared/tcwebcommon.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/distribution_tool/1.0.1/distribution_tool.jar"/>
+	<classpathentry kind="lib" path="lib/shared/forums.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/jsp-api.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/servlet-api.jar"/>
+	<classpathentry kind="lib" path="lib/shared/catalog.jar"/>
+	<classpathentry kind="lib" path="lib/shared/shared.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/pacts_services/PactsServices.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/third_party/jboss/jboss-ejb3-client.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/jboss/jboss-ejb3x.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/jboss/jboss-j2ee.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/mail.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/contest_eligibility_persistence/1.0.0/contest_eligibility_persistence.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/contest_eligibility_validation/1.0.0/contest_eligibility_validation.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/hibernate/hibernate-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/hibernate/hibernate-entitymanager.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/hibernate/hibernate3.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/spring/spring-beans.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/spring/spring-context.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/spring/spring-core.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/spring/spring-web.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/spring/spring-webmvc-struts.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/ejb3-persistence.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/jboss/jboss-aop-jdk50-client.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/jboss/jboss-aspect-jdk50-client.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/jboss/jboss-remoting.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/jboss/jbossall-client.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/online_review_login/1.1.3/online_review_login.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.4.2/online_review_phases.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/tc_id_generator.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/tcjive.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/online_review_deliverables/1.0.2/online_review_deliverables.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

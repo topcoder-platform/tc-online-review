@@ -1,30 +1,22 @@
 <?xml version="1.0" ?>
 <!DOCTYPE CMConfig [
-       <!ENTITY localFileUploadDir "/home/tcs/downloads">
-       <!ENTITY catalogOutputDir "/home/tcs/temp_files">
-       <!ENTITY distributionToolOutputDir "/home/tcs/temp_files/tmp_dist">
-       <!ENTITY distributionScriptsBase "/home/tcs/onlinereview/distribution_scripts">
-       <!ENTITY phasesEmailTemplate "/home/tcs/online_review/scripts/auto_pilot/email_template.txt">
-       <!ENTITY winnersEmailTemplate "/home/tcs/online_review/scripts/auto_pilot/winners_email_template.txt">
-       <!ENTITY timelineTemplateDir "/home/tcs">
-       <!ENTITY contactManagersTemplate "/home/tcs/online_review/conf/templates/contact_manager_template.txt">
-       <!ENTITY managerNotificationEmailTemplatesBase "/home/tcs/online_review/conf/templates">
+       <!ENTITY localFileUploadDir "D:/TopCoder/copilot/OR/tmp/upload">
+       <!ENTITY catalogOutputDir "D:/TopCoder/copilot/OR/tmp/temp_files">
+       <!ENTITY distributionToolOutputDir "D:/TopCoder/copilot/OR/tmp/temp_files/tmp_dist">
+       <!ENTITY distributionScriptsBase "D:/TopCoder/copilot/OR/local_build/conf/distribution_scripts/windows">
+       <!ENTITY phasesEmailTemplate "D:/TopCoder/copilot/OR/local_build/conf/templates/email_template.txt">
+       <!ENTITY winnersEmailTemplate "D:/TopCoder/copilot/OR/local_build/conf/templates/winners_email_template.txt">
+       <!ENTITY timelineTemplateDir "D:/TopCoder/copilot/OR/local_build/conf/templates">
+       <!ENTITY contactManagersTemplate "D:/TopCoder/copilot/OR/local_build/conf/templates/contact_manager_template.txt">
+       <!ENTITY managerNotificationEmailTemplatesBase "D:/TopCoder/copilot/OR/local_build/conf/templates">
        <!ENTITY notificationEmailFromAddress "service@topcodersoftware.com">
        <!ENTITY smtpServerAuthAddress "service@topcodersoftware.com">
-       <!ENTITY pactJNDIAddress "jnp://63.118.154.181:1199">
+       <!ENTITY pactJNDIAddress "jnp://localhost:1099">
 ]>
 <CMConfig>
 <!-- [OR-584] don't need this anymore
     <!ENTITY assignmentDocumentsFlag "false">
 -->
-   <Config name="com.topcoder.util.log">
-        <Property name="logClass">
-            <Value>com.topcoder.util.log.log4j.Log4jLog</Value>
-        </Property>
-        <Property name="config.file">
-            <Value>log4j.properties</Value>
-        </Property>
-    </Config>
     <!--
         ==========  Configuration for DB Connection Factory component ==========
     -->
@@ -42,7 +34,7 @@
                         <Value>com.informix.jdbc.IfxDriver</Value>
                     </Property>
                     <Property name="jdbc_url">
-                        <Value>jdbc:informix-sqli://env.topcoder.com:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp</Value>
+                        <Value>jdbc:informix-sqli://127.0.0.1:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp</Value>
                     </Property>
                     <Property name="user">
                         <Value>coder</Value>
@@ -99,12 +91,17 @@
         </Property>
 
         <Property name="login_bean_name">
-            <Value>com.topcoder.security.login.LoginRemoteHome</Value>
+            <Value>com.cronos.onlinereview.ejblibrary.LoginLibraryHome</Value>
         </Property>
     </Config>
 
+  <Config name="com.cronos.onlinereview.mockups.MockXMLAuthenticator">
+    <Property name="xmlfile">
+      <Value>/MockXmlAuthenticator.xml</Value>
+    </Property>
+  </Config>
 
-    <!--
+  <!--
         ==========  Configuration for Authentication Factory component  ==========
     -->
     <Config name="com.topcoder.security.authenticationfactory.AuthenticationFactory">
@@ -119,7 +116,17 @@
                 </Property>
             </Property>
 
-            <Property name="ORAuthenticator">
+          <Property name="MockXMLAuthenticator">
+              <Property name="class">
+                  <Value>com.cronos.onlinereview.mockups.MockXMLAuthenticator</Value>
+              </Property>
+              <Property name="namespace">
+                  <Value>com.cronos.onlinereview.mockups.MockXMLAuthenticator</Value>
+              </Property>
+          </Property>
+
+
+          <Property name="ORAuthenticator">
                 <Property name="class">
                     <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
                 </Property>
@@ -127,6 +134,16 @@
                     <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
                 </Property>
             </Property>
+        </Property>
+    </Config>
+
+
+    <!--
+        ===============  Configuration for Log Factory component  ===============
+    -->
+    <Config name="com.topcoder.util.log">
+        <Property name="logClass">
+            <Value>com.topcoder.util.log.log4j.Log4jLog</Value>
         </Property>
     </Config>
 
@@ -477,10 +494,10 @@
             <Value>25</Value>
         </Property>
         <Property name="username">
-            <Value>&smtpServerAuthAddress;</Value>
+            <Value></Value>
         </Property>
         <Property name="password">
-            <Value>top_coder</Value>
+            <Value></Value>
         </Property>
     </Config>
 

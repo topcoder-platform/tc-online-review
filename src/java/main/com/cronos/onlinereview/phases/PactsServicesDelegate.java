@@ -4,6 +4,7 @@
  */
 package com.cronos.onlinereview.phases;
 
+import com.cronos.onlinereview.actions.EJBLibraryServicesLocator;
 import com.topcoder.web.ejb.pacts.PactsClientServices;
 
 /**
@@ -27,15 +28,7 @@ public class PactsServicesDelegate {
 	private PactsClientServices pactsClientServices;
 
 	public PactsServicesDelegate() throws PactsServicesCreationException {
-		try {
-			pactsClientServices = ServiceLocator.getInstance().getPactsClientServices();
-		} catch (ServiceLocatorNamingException e) {
-			throw new PactsServicesCreationException(e);
-		} catch (ServiceLocatorCreateException e) {
-			throw new PactsServicesCreationException(e);
-		} catch (ConfigurationException e) {
-			throw new PactsServicesCreationException(e);
-		}
+        pactsClientServices = EJBLibraryServicesLocator.getPactsClientServices();
 	}
 	
 /*
