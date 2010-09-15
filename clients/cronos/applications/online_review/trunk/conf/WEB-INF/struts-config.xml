@@ -7,7 +7,6 @@
 <struts-config>
 
 <!-- ================================================ Form Bean Definitions -->
-
     <form-beans>
 
         <form-bean name="loginForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
@@ -813,6 +812,10 @@
 
     </action-mappings>
 
+    <controller>
+        <set-property property="processorClass"
+                      value="org.springframework.web.struts.DelegatingRequestProcessor"/>
+    </controller>
 
 <!-- ======================================== Message Resources Definitions -->
 
@@ -826,5 +829,8 @@
     <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
         <set-property property="pathnames" value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml"/>
         <!-- set-property property="stopOnFirstError" value="false"/ -->
+    </plug-in>
+    <plug-in className="org.springframework.web.struts.ContextLoaderPlugIn">
+        <set-property property="contextConfigLocation" value="/WEB-INF/applicationContext.xml"/>
     </plug-in>
 </struts-config>

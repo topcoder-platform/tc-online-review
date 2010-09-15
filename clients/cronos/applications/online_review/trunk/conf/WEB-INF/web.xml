@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee"
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-   version="2.4">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+         version="2.4">
 
     <display-name>Online Review</display-name>
 
-  <filter>
-    <filter-name>set_character_encoding</filter-name>
-    <filter-class>com.cronos.onlinereview.actions.EncodeFilter</filter-class>
-    <init-param>    
-        <param-name>encoding</param-name>   
-        <param-value>UTF-8</param-value>    
-    </init-param>   
-    <init-param>    
-        <param-name>ignore</param-name> 
-        <param-value>true</param-value> 
-    </init-param>   
-  </filter>
-    
+    <filter>
+        <filter-name>set_character_encoding</filter-name>
+        <filter-class>com.cronos.onlinereview.actions.EncodeFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>ignore</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+
     <!-- Filter Mapping -->
-    
-    <filter-mapping>    
-        <filter-name>set_character_encoding</filter-name>   
+
+    <filter-mapping>
+        <filter-name>set_character_encoding</filter-name>
         <url-pattern>*.do</url-pattern>
     </filter-mapping>
 
@@ -69,7 +69,7 @@
         <url-pattern>/ajaxSupport</url-pattern>
     </servlet-mapping>
 
-  <!-- Axis HTTP transport Servlet Mappings -->
+    <!-- Axis HTTP transport Servlet Mappings -->
     <servlet-mapping>
         <servlet-name>AxisServlet</servlet-name>
         <url-pattern>/servlet/AxisServlet</url-pattern>
@@ -85,9 +85,9 @@
         <url-pattern>/services/*</url-pattern>
     </servlet-mapping>
 
-   <session-config>
-      <session-timeout>1440</session-timeout>
-   </session-config>
+    <session-config>
+        <session-timeout>1440</session-timeout>
+    </session-config>
 
     <!-- The Usual Welcome File List -->
     <welcome-file-list>
@@ -131,16 +131,10 @@
         </taglib>
     </jsp-config>
 
-    <ejb-ref>
-        <ejb-ref-name>security/Login</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <home>com.topcoder.security.login.LoginRemoteHome</home>
-        <remote>com.topcoder.security.login.LoginRemote</remote>
-    </ejb-ref>
-    <ejb-ref>
-        <ejb-ref-name>com.topcoder.dde.catalog.ComponentManagerHome</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <home>com.topcoder.dde.catalog.ComponentManagerHome</home>
-        <remote>com.topcoder.dde.catalog.ComponentManager</remote>
-    </ejb-ref>
+    <resource-ref>
+      <res-ref-name>jdbc/DefaultDS</res-ref-name>
+      <res-type>javax.sql.DataSource</res-type>
+      <res-auth>Container</res-auth>
+      <res-sharing-scope>Shareable</res-sharing-scope>
+    </resource-ref>
 </web-app>

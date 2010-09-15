@@ -45,6 +45,7 @@ import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.naming.NamingException;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -84,12 +85,9 @@ import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityVali
 import com.topcoder.shared.util.DBMS;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
-import com.topcoder.web.ejb.project.ProjectRoleTermsOfUseLocator;
 import com.topcoder.web.ejb.termsofuse.TermsOfUse;
 import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
-import com.topcoder.web.ejb.termsofuse.TermsOfUseLocator;
 import com.topcoder.web.ejb.user.UserTermsOfUse;
-import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
 
 import static com.cronos.onlinereview.actions.Constants.REGISTRATION_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.SUBMISSION_PHASE_NAME;
@@ -942,7 +940,7 @@ public class ProjectActions extends DispatchAction {
             // generate new project role terms of use associations for the recently created project.
             try {
                 generateProjectRoleTermsOfUseAssociations(project.getId(),
-                        project.getProjectCategory().getId(), categoryChanged);
+                        project.getProjectCategory().getId(), categoryChanged, request);
             } catch (NamingException ne) {
                 throw new BaseException(ne);
             } catch (RemoteException re) {
@@ -997,6 +995,8 @@ public class ProjectActions extends DispatchAction {
      *
      * @param projectId the project id for the associations
      * @param projectTypeId the project type id of the provided project id
+     * @param categoryChanged <code>true</code> if category was changed; <code>false</code> otherwise.
+     * @param request an <code>HttpServletRequest</code> representing incoming request. 
      * @throws NamingException if any errors occur during EJB lookup
      * @throws RemoteException if any errors occur during EJB remote invocation
      * @throws CreateException if any errors occur during EJB creation
@@ -1004,10 +1004,11 @@ public class ProjectActions extends DispatchAction {
      *
      * @since 1.1
      */
-    private void generateProjectRoleTermsOfUseAssociations(long projectId, long projectTypeId, boolean categoryChanged)
+    private void generateProjectRoleTermsOfUseAssociations(long projectId, long projectTypeId, boolean categoryChanged,
+                                                           HttpServletRequest request)
         throws NamingException, RemoteException, CreateException, EJBException {
 
-        ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
+        ProjectRoleTermsOfUse projectRoleTermsOfUse = EJBLibraryServicesLocator.getProjectRoleTermsOfUseService();
 
         if (categoryChanged) {
             projectRoleTermsOfUse.removeAllProjectRoleTermsOfUse(new Long(projectId).intValue(),
@@ -2322,9 +2323,10 @@ public class ProjectActions extends DispatchAction {
         boolean allResourcesValid = true;
 
         // get remote services
-        ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
-        UserTermsOfUse userTermsOfUse = UserTermsOfUseLocator.getService();
-        TermsOfUse termsOfUse = TermsOfUseLocator.getService();
+        ProjectRoleTermsOfUse projectRoleTermsOfUse
+            = EJBLibraryServicesLocator.getProjectRoleTermsOfUseService();
+        UserTermsOfUse userTermsOfUse = EJBLibraryServicesLocator.getUserTermsOfUseService();
+        TermsOfUse termsOfUse = EJBLibraryServicesLocator.getTermsOfUseService();
 
         // validate that new resources have agreed to the necessary terms of use
         // 0-index resource is skipped as it is a "dummy" one
@@ -2415,7 +2417,8 @@ public class ProjectActions extends DispatchAction {
                         continue;
                     }
 
-                    if (!ContestEligibilityServiceLocator.getServices().isEligible(userId, project.getId(), false))
+                    if (!EJBLibraryServicesLocator.getContestEligibilityService().isEligible(userId, project.getId(),
+                                                                                             false))
                     {
                         ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                                         new ActionMessage("error.com.cronos.onlinereview.actions.editProject.Resource.NotEligible"));
@@ -2768,7 +2771,7 @@ public class ProjectActions extends DispatchAction {
         Set<Long> projectsWithEligibilityConstraints;
         try {
             projectsWithEligibilityConstraints =
-                ContestEligibilityServiceLocator.getServices().haveEligibility(
+                EJBLibraryServicesLocator.getContestEligibilityService().haveEligibility(
                     projectFilters.toArray(new Long[projectFilters.size()]), false);
         } catch (Exception e) {
             log.error("It was not possible to retrieve eligibility constraints: "+e);

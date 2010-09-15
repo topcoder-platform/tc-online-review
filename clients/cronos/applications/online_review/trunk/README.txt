@@ -6,7 +6,7 @@ Notes on testing some actions from Project Admin & Review
      To go to the upload submission page you should enter the following into
      the Address field of your browser:
 
-       http://localhost:8080/online_review/actions/UploadSubmission.do?method=uploadSubmission&pid=<id-of-project>
+       http://localhost:8080/review/actions/UploadSubmission.do?method=uploadSubmission&pid=<id-of-project>
 
      where <id-of-project> part is the ID of any of the existing projects. The
      user you are logged under must have a Submitter role for that project to
@@ -28,7 +28,7 @@ Notes on testing some actions from Project Admin & Review
      upload (Managers can download even uploads that have "Deleted" status
      though). Here is the link to start download:
 
-       http://localhost:8080/online_review/actions/DownloadSubmission.do?method=downloadSubmission&uid=<id-of-upload>
+       http://localhost:8080/review/actions/DownloadSubmission.do?method=downloadSubmission&uid=<id-of-upload>
 
      It is advisable to first use Upload Submission action to create some
      uploads in the file store.
@@ -41,7 +41,7 @@ Notes on testing some actions from Project Review assembly.
      To create screening you should enter the following into the Address field of
      your browser:
 
-       http://localhost:8080/online_review/actions/CreateScreening.do?method=createScreening&sid=<id-of-submission>
+       http://localhost:8080/review/actions/CreateScreening.do?method=createScreening&sid=<id-of-submission>
 
      where <id-of-submission> part is an integer number. If you used helper SQL
      scripts, which insert test data into the database, there are following
@@ -52,11 +52,11 @@ Notes on testing some actions from Project Review assembly.
      The links for these two actions are almost the same as the link for Create
      Screening action:
 
-       http://localhost:8080/online_review/actions/CreateReview.do?method=createReview&sid=<id-of-submission>
+       http://localhost:8080/review/actions/CreateReview.do?method=createReview&sid=<id-of-submission>
 
      for Create Review, and
 
-       http://localhost:8080/online_review/actions/CreateApproval.do?method=createApproval&sid=<id-of-submission>
+       http://localhost:8080/review/actions/CreateApproval.do?method=createApproval&sid=<id-of-submission>
 
      for Create Approval actions.
 
@@ -66,7 +66,7 @@ Notes on testing some actions from Project Review assembly.
      Create Screening action). After that, you can use the following link to
      edit screening:
 
-       http://localhost:8080/online_review/actions/EditScreening.do?method=editScreening&rid=<id-of-review>
+       http://localhost:8080/review/actions/EditScreening.do?method=editScreening&rid=<id-of-review>
 
      where <id-of-review> is the ID of screening review created by Create Screening
      action. You may find out the actual value for this ID by inspecting the contents
@@ -76,9 +76,9 @@ Notes on testing some actions from Project Review assembly.
 
      The links for these two actions are:
 
-       http://localhost:8080/online_review/actions/EditReview.do?method=editReview&rid=<id-of-review>
+       http://localhost:8080/review/actions/EditReview.do?method=editReview&rid=<id-of-review>
      and
-       http://localhost:8080/online_review/actions/EditApproval.do?method=editApproval&rid=<id-of-review>
+       http://localhost:8080/review/actions/EditApproval.do?method=editApproval&rid=<id-of-review>
 
      respectively. Refer to the previous section to find out where to ged a value
      for <id-of-review> part of the above two links.
@@ -93,7 +93,7 @@ Notes on testing some actions from Project Review assembly.
      To view screening you must finish (commit) some screening review.
      The link for this Struts Action is:
 
-       http://localhost:8080/online_review/actions/ViewScreening.do?method=viewScreening&rid=<id-of-review>
+       http://localhost:8080/review/actions/ViewScreening.do?method=viewScreening&rid=<id-of-review>
 
      Refer to section 3 for information on <id-of-review>.
      Note, that you may view only finished (committed) screenings.
@@ -102,9 +102,9 @@ Notes on testing some actions from Project Review assembly.
 
      The links for these two actions are:
 
-       http://localhost:8080/online_review/actions/ViewReview.do?method=viewReview&rid=<id-of-review>
+       http://localhost:8080/review/actions/ViewReview.do?method=viewReview&rid=<id-of-review>
      and
-       http://localhost:8080/online_review/actions/ViewApproval.do?method=viewApproval&rid=<id-of-review>
+       http://localhost:8080/review/actions/ViewApproval.do?method=viewApproval&rid=<id-of-review>
 
      Refer to section 3 for information on <id-of-review>.
      Note, that you may view only finished (committed) reviews and approvals.
@@ -119,7 +119,7 @@ Notes on testing some actions from Project Review assembly.
      from sample file, or by any other means), you should be able to open Edit
      Aggregation page by following this link:
 
-       http://localhost:8080/online_review/actions/EditAggregation.do?method=editAggregation&rid=<id-of-review>
+       http://localhost:8080/review/actions/EditAggregation.do?method=editAggregation&rid=<id-of-review>
 
   9. View Aggregation
 
@@ -129,7 +129,7 @@ Notes on testing some actions from Project Review assembly.
      Aggregation you should be able to open View Aggregation page by following
      this link:
 
-       http://localhost:8080/online_review/actions/ViewAggregation.do?method=viewAggregation&rid=<id-of-review>
+       http://localhost:8080/review/actions/ViewAggregation.do?method=viewAggregation&rid=<id-of-review>
 
      Note, that review ID will be the same as the one you used with Edit
      Aggregation action.
@@ -141,7 +141,7 @@ Notes on testing some actions from Project Review assembly.
      Aggregation). The following link will lead you to Edit Aggregation Review
      page:
 
-       http://localhost:8080/online_review/actions/EditAggregationReview.do?method=editAggregationReview&rid=<id-of-review>
+       http://localhost:8080/review/actions/EditAggregationReview.do?method=editAggregationReview&rid=<id-of-review>
 
      As with View Aggregation action, the ID of review is the same as the one
      used to Edit Aggregation.
@@ -160,7 +160,7 @@ Notes on testing some actions from Project Review assembly.
      The following link will open View Aggregaton Review with comments from all
      participants for you:
 
-       http://localhost:8080/online_review/actions/ViewAggregationReview.do?method=viewAggregationReview&rid=<id-of-review>
+       http://localhost:8080/review/actions/ViewAggregationReview.do?method=viewAggregationReview&rid=<id-of-review>
 
  13. Edit Final Review
 
@@ -172,7 +172,7 @@ Notes on testing some actions from Project Review assembly.
      from sample file, or by any other means), you should be able to open Edit
      Final Review page by following this link:
 
-       http://localhost:8080/online_review/actions/EditFinalReview.do?method=editFinalReview&rid=<id-of-review>
+       http://localhost:8080/review/actions/EditFinalReview.do?method=editFinalReview&rid=<id-of-review>
 
  14. View Final Review
 
@@ -182,7 +182,7 @@ Notes on testing some actions from Project Review assembly.
      Review you should be able to open View Final Review page by following this
      link:
 
-       http://localhost:8080/online_review/actions/ViewFinalReview.do?method=viewFinalReview&rid=<id-of-review>
+       http://localhost:8080/review/actions/ViewFinalReview.do?method=viewFinalReview&rid=<id-of-review>
 
      Note, that review ID will be the same as the one you used with Edit
      Final Review action.

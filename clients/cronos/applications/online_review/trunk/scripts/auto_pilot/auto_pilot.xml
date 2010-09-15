@@ -23,7 +23,7 @@
     </Config>
     <Config name="AutoPilotJob">
         <Property name="AutoPilotJob">
-            <Value>StartDTG:February 23, 2010 12:00:00 AM</Value>
+            <Value>StartDTG:September 12, 2010 12:00:00 AM</Value>
             <Value>EndDTG:</Value>
             <Value>IntervalValue:1</Value>
             <Value>IntervalUnit:MINUTE</Value>
@@ -132,7 +132,6 @@
                 <Value>com.topcoder.management.project</Value>
             </Property>
         </Property>
-
         <Property name="ProjectLinkManager">
             <Property name="className">
                 <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
@@ -987,7 +986,7 @@
                     </Property>
                 </Property>
             </Property>
-        </Property>		
+        </Property>
         <!-- The defination for handler -->
         <Property name="handler_registration_def">
             <Property name="type">
@@ -1058,6 +1057,6 @@
             <Property name="type">
                 <Value>com.cronos.onlinereview.phases.SpecificationReviewPhaseHandler</Value>
             </Property>
-        </Property>		
+        </Property>
     </Config>
 </CMConfig>

@@ -17,6 +17,7 @@ import java.util.*;
 import javax.ejb.CreateException;
 import javax.naming.Context;
 import javax.naming.NamingException;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.dataaccess.ResourceDataAccess;
@@ -3361,7 +3362,7 @@ public class ActionsHelper {
                                !AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) &&
                                !AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
                     // if he's not a resource, check if the project has eligibility constraints
-                    if (ContestEligibilityServiceLocator.getServices().hasEligibility(pid, false)) {
+                    if (EJBLibraryServicesLocator.getContestEligibilityService().hasEligibility(pid, false)) {
                         result.setForward(produceErrorReport(
                                 mapping, resources, request, permission, "Error.ProjectNotFound", null));
                         // Return the result of the check
@@ -3370,7 +3371,7 @@ public class ActionsHelper {
                 }
             } else {
                 // if the user is not logged in and the project has any eligibility constraint, ask for login
-                if (ContestEligibilityServiceLocator.getServices().hasEligibility(pid, false)) {
+                if (EJBLibraryServicesLocator.getContestEligibilityService().hasEligibility(pid, false)) {
                     result.setForward(produceErrorReport(mapping, resources, request,
                             permission, "Error.NoPermission", Boolean.valueOf(getRedirectUrlFromReferer)));
                     // Return the result of the check
@@ -3877,7 +3878,7 @@ public class ActionsHelper {
     /**
      * Get the catalog for a component.
      *
-     * @param projectId project id
+     * @param componentId project id
      *
      * @throws Exception if error occurs
      */
@@ -3960,7 +3961,7 @@ public class ActionsHelper {
      *
      * @param project the project
      * @param userId userId
-     * @param roleId roleId
+     * @param oldRoleId roleId
      * @throws BaseException if error occurs
      */
     public static void changeResourceRole(Project project, long userId, long oldRoleId, long newRoleId) throws BaseException {
@@ -4160,7 +4161,7 @@ public class ActionsHelper {
      * retrieves all Reviewed submissions for the given project id.
      *
      * @param request request instance to use for searching.
-     * @param projectId project id.
+     * @param project project.
      *
      * @return all active submissions for the given project id.
      *
@@ -4326,6 +4327,7 @@ public class ActionsHelper {
         Context context = TCContext.getInitial(ApplicationServer.FORUMS_HOST_URL);
         ForumsHome forumsHome = (ForumsHome) context.lookup(ForumsHome.EJB_REF_NAME);
         return forumsHome.create();
+//        return EJBLibraryServicesLocator.getForumsService();
     }
     
     public static void addForumPermissions(Project project, Collection<Long> users) throws BaseException {
