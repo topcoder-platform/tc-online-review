@@ -20,6 +20,6 @@ scp_remoteserver=<<remote server ip>>
 scp_remotejboss=<<remove jboss path>>
 
 # SVN credentials
-svn.username=<<svn username>>
-svn.password=<<svn password>>
+or.svn.username=<<svn username>>
+or.svn.password=<<svn password>>
 # or.svn.update=uncomment this line to allow update through ant on each compile

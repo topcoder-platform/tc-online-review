@@ -953,12 +953,12 @@
       <isset property="update_db" />
       <then>
         <ant antfile="${db_scripts_path}/build.xml" target="drop_db" dir="${db_scripts_path}"  />
-        <ant antfile="${db_scripts_path}/build.xml" target="setup_db" />
+        <ant antfile="${db_scripts_path}/build.xml" target="setup_db" dir="${db_scripts_path}" />
       </then>
     </if>
     <start_jboss background="true" />
   </target>
-
+  
   <!-- JBoss start / stop -->
   <macrodef name="start_jboss">
     <attribute name="background" default="false"/>
@@ -981,6 +981,10 @@
       </java>
     </sequential>
   </macrodef>
+
+  <target name="start_jboss" >
+    <start_jboss background="true" />
+  </target>
 
   <target name="stop_jboss">
     <sequential >
