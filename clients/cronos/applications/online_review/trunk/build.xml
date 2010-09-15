@@ -674,7 +674,7 @@
   <!-- updates Online Review files from SVN -->
   <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="svnant.jar" />
   <target name="svn_update" if="or.svn.update">
-    <svn username="${svn.username}" password="${svn.password}">
+    <svn username="${or.svn.username}" password="${or.svn.password}">
       <info target="${basedir}" verbose="true" />
       <update dir="${basedir}" recurse="true" />
     </svn>
