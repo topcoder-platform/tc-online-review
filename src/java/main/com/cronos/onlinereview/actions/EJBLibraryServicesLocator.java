@@ -9,7 +9,7 @@ import com.topcoder.service.contest.eligibility.dao.ContestEligibilityManager;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityService;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidationManager;
 import com.topcoder.web.ejb.forums.Forums;
-import com.topcoder.web.ejb.pacts.PactsClientServices;
+//import com.topcoder.web.ejb.pacts.PactsClientServices;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
 import com.topcoder.web.ejb.termsofuse.TermsOfUse;
 import com.topcoder.web.ejb.user.UserTermsOfUse;
@@ -69,17 +69,6 @@ public class EJBLibraryServicesLocator {
     public static Forums getForumsService() {
         ApplicationContext appContext = SpringContextProvider.getApplicationContext();
         return (Forums) appContext.getBean("forumsLibrary");
-    }
-
-    /**
-     * <p>Gets the library interface to <code>PACTS Client</code> service.</p>
-     *
-     * @return a <code>PactsClientServices</code> implementation providing library-style calls to
-     *         <code>PACTS Client Services EJB</code>.
-     */
-    public static PactsClientServices getPactsClientServices() {
-        ApplicationContext appContext = SpringContextProvider.getApplicationContext();
-        return (PactsClientServices) appContext.getBean("pactsClientServicesLibrary");
     }
 
     /**
