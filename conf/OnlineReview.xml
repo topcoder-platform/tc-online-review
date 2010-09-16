@@ -4875,6 +4875,7 @@
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Post-Mortem Reviewer</Value>
+                <Value>Copilot</Value>
             </Property>
             <Property name="Contact Project Managers">
                 <Value>Global Manager</Value>
