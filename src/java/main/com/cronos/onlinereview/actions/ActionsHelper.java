@@ -218,7 +218,7 @@ public class ActionsHelper {
     /**
      * The logger instance.
      */
-    private static final Log log = LogFactory.getLog(ActionsHelper.class.getName());
+    private static final Log log = LogFact ory.getLog(ActionsHelper.class.getName());
 
     /**
      * This member variable is a string constant that defines the name of the configuration
