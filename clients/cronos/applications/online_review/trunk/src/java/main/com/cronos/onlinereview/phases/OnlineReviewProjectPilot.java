@@ -2,60 +2,20 @@ package com.cronos.onlinereview.phases;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 
-import com.cronos.onlinereview.actions.EJBLibraryServicesLocator;
-import com.cronos.onlinereview.external.ExternalUser;
-import com.topcoder.management.phase.PhaseHandlingException;
-import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.phase.autopilot.AutoPilotResult;
 import com.topcoder.management.phase.autopilot.ConfigurationException;
 import com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceRole;
-import com.topcoder.management.resource.search.ResourceFilterBuilder;
-import com.topcoder.message.email.EmailEngine;
-import com.topcoder.message.email.TCSEmailMessage;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.util.file.DocumentGenerator;
-import com.topcoder.util.file.Template;
-import com.topcoder.util.file.fieldconfig.Field;
-import com.topcoder.util.file.fieldconfig.Node;
-import com.topcoder.util.file.fieldconfig.TemplateFields;
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
-import com.topcoder.web.ejb.pacts.PactsClientServices;
-import com.topcoder.web.ejb.pacts.assignmentdocuments.AssignmentDocument;
-import com.topcoder.web.ejb.pacts.assignmentdocuments.AssignmentDocumentStatus;
 
 public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 	private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory
 			.getLog(OnlineReviewProjectPilot.class.getName());
-
-	/** constant for "Project Name" project info. */
-	private static final String PROJECT_NAME = "Project Name";
-
-	/** constant for "Project Version" project info. */
-	private static final String PROJECT_VERSION = "Project Version";
- 
-	private static final AssignmentDocumentStatus AD_PENDING_STATUS = new AssignmentDocumentStatus(
-			AssignmentDocumentStatus.PENDING_STATUS_ID);
-	private static final AssignmentDocumentStatus AD_AFFIRMED_STATUS = new AssignmentDocumentStatus(
-			AssignmentDocumentStatus.AFFIRMED_STATUS_ID);
-	private static final String AUTO_PILOT_AD_CHANGE = "AutoPilot AD Change";
-	private static final SimpleDateFormat RUN_DATE_FORMATTER = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 	
 	/** default namespace to read configuration parameters from  */
 	private static final String DEFAULT_NAMESPACE = OnlineReviewProjectPilot.class.getName();
-
-	/** format for the email timestamp. Will format as "Fri, Jul 28, 2006 01:34 PM EST". */
-	private static final SimpleDateFormat EMAIL_TIMESTAMP_FORMAT = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm a z");
 
 	/** Assignment Document status change email template source for managers */
 	private String managersEmailTemplateSource = null;
@@ -68,12 +28,6 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 	
 	/** Switch that indicates if AP should check AD status changes */
 	private boolean checkAssignmentDocumentsStatus = false;
-	
-	/**
-	 * Represents the <code>PactsServices</code> instance.
-	 */
-	private PactsClientServices pactsClientServices = null;
-	private ManagerHelper managerHelper = null;
 
 	/**
 	 * <p>
@@ -149,7 +103,6 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 	}
 	
 	private void configure(String namespace) {		
-		createManagerHelper();
 		try {
 		    String propertyValue = PhasesHelper.getPropertyValue(namespace, "CheckAssignmentDocumentsStatus", false);
 			checkAssignmentDocumentsStatus = propertyValue!=null && "true".equals(propertyValue.trim());
@@ -171,29 +124,12 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 		}
 	}
 	
-	private void createManagerHelper() {
-		try {
-			managerHelper = new ManagerHelper();
-		} catch (com.cronos.onlinereview.phases.ConfigurationException e) {
-			throw new IllegalStateException("error creating the ManagerHelper", e);
-		}
-	}
-
 	public AutoPilotResult advancePhases(long projectId, String operator) {
 		AutoPilotResult result = null;
 		try {
 			getLogger().log(Level.DEBUG, "before super.advancePhases");
 			result = super.advancePhases(projectId, operator);
 			getLogger().log(Level.DEBUG, "after super.advancePhases");
-			if (isCheckAssignmentDocumentsStatus()) {
-				Project project = managerHelper.getProjectManager().getProject(projectId);
-				if ("Component".equals(project.getProjectCategory().getProjectType().getName())) {
-					log.log(Level.DEBUG, "check AD for projectId: " + projectId);
-					checkAssignmentDocumentStatusChange(project, operator);
-				}
-			} else if (log.isEnabled(Level.DEBUG)) {
-				log.log(Level.DEBUG, "skiping AD status check: " + projectId);
-			}
 		} catch (Throwable e) {
 			ByteArrayOutputStream s = new ByteArrayOutputStream();
 			e.printStackTrace(new PrintStream(s));
@@ -203,157 +139,6 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 							+ ", stack trace : " + s.toString());
 		}
 		return result;
-	}
-
-	/**
-	 * @return
-	 * @throws ServiceLocatorNamingException
-	 * @throws ServiceLocatorCreateException
-	 * @throws com.cronos.onlinereview.phases.ConfigurationException
-	 */
-	private PactsClientServices getPactsClientServices() throws ServiceLocatorNamingException, ServiceLocatorCreateException,
-			com.cronos.onlinereview.phases.ConfigurationException {
-		if (pactsClientServices == null) {
-			pactsClientServices = EJBLibraryServicesLocator.getPactsClientServices();
-		}
-		return pactsClientServices;
-	}
-
-	private void checkAssignmentDocumentStatusChange(Project project, String operator) throws PhaseManagementException {
-		try {
-			List assignmentsDocuments = getPactsClientServices().getAssignmentDocumentByProjectId(project.getId());
-			log.log(Level.DEBUG, "projectId: " + project.getId() + " ADs: " + assignmentsDocuments);
-			for (Iterator i = assignmentsDocuments.iterator(); i.hasNext();) {
-				AssignmentDocument ad = (AssignmentDocument) i.next();
-				String runDateValue = (String) project.getProperty(AUTO_PILOT_AD_CHANGE);
-				Date runDate = (runDateValue == null) ? null : RUN_DATE_FORMATTER.parse(runDateValue);
-				log.log(Level.DEBUG, "projectId: " + project.getId() + " Autopilot date: " + runDateValue
-						+ " ad modify date: " + RUN_DATE_FORMATTER.format(ad.getModifyDate()));
-				if ((runDate == null || runDate.compareTo(ad.getModifyDate()) < 0) && !ad.getStatus().equals(AD_AFFIRMED_STATUS)
-						 && !ad.getStatus().equals(AD_PENDING_STATUS)) {
-					informAssignmentDocumentStatusChange(project, ad);
-					project.setProperty(AUTO_PILOT_AD_CHANGE, RUN_DATE_FORMATTER.format(new Date()));
-					managerHelper.getProjectManager().updateProject(project, AUTO_PILOT_AD_CHANGE, operator);
-				}
-			}
-		} catch (Exception e) {
-			throw new PhaseManagementException(e.getMessage(), e);
-		}
-	}
-
-	private long[] getManagersForProject(Project project) throws PhaseManagementException {
-		try {
-			ResourceRole managerRole = null;
-			ResourceRole[] roles = managerHelper.getResourceManager().getAllResourceRoles();
-			for (int i = 0; i < roles.length; i++) {
-				ResourceRole role = roles[i];
-				if ("Manager".equals(role.getName())) {
-					managerRole = role;
-					break;
-				}
-			}
-			if (managerRole == null) {
-				throw new PhaseHandlingException("can't find manager role id");
-			}
-			// Create filter to filter only the resources for the project in question
-			Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
-			Filter filterManager = ResourceFilterBuilder.createResourceRoleIdFilter(managerRole.getId());
-			// Create combined final filter
-			Filter filter = new AndFilter(filterProject, filterManager);
-
-			// Perform search for resources
-			Resource[] managers = managerHelper.getResourceManager().searchResources(filter);
-			if (managers.length == 0) {
-				return new long[0];
-			}
-			long[] usersId = new long[managers.length];
-			for (int i = 0; i < managers.length; i++) {
-				usersId[i] = Long.parseLong((String) managers[i].getProperty("External Reference ID"));
-			}
-			return usersId;
-		} catch (Exception e) {
-			throw new PhaseManagementException(e.getMessage(), e);
-		}
-	}
-
-	private Template getEmailTemplate() throws Exception {
-		return DocumentGenerator.getInstance().getTemplate(getManagersEmailTemplateSource(), getManagersEmailTemplateName());
-	}
-
-	private void informAssignmentDocumentStatusChange(Project project, AssignmentDocument ad)
-			throws PhaseManagementException {
-		try {
-			long[] usersId = getManagersForProject(project);
-			if (usersId.length == 0) {
-				return;
-			}
-
-			DocumentGenerator docGenerator = DocumentGenerator.getInstance();
-			Template template = getEmailTemplate();
-			ExternalUser[] users = managerHelper.getUserRetrieval().retrieveUsers(usersId);
-			for (int i = 0; i < users.length; i++) {
-				ExternalUser user = users[i];
-				log.log(Level.DEBUG, "sending email for: " + user.getHandle() + " - email: " + user.getEmail());
-				// for each external user, set field values
-				TemplateFields root = setTemplateFieldValues(docGenerator.getFields(template), user, project, ad);
-
-				String emailContent = docGenerator.applyTemplate(root);
-
-				TCSEmailMessage message = new TCSEmailMessage();
-				message.setSubject("[Assignment Document] - " + project.getProperty(PROJECT_NAME));
-				message.setBody(emailContent);
-				message.setFromAddress(getManagersEmailFromAddress());
-				message.setToAddress(user.getEmail(), TCSEmailMessage.TO);
-				EmailEngine.send(message);
-			}
-
-		} catch (Exception e) {
-			throw new PhaseManagementException(e.getMessage(), e);
-		}
-	}
-
-	/**
-	 * This method sets the values of the template fields with user and project information based on bStart variable
-	 * which is true if phase is to start, false if phase is to end.
-	 * 
-	 * @param root
-	 *            template fields.
-	 * @param user
-	 *            the user to be notified.
-	 * @param project
-	 *            project instance.
-	 * 
-	 * @return template fields with data set.
-	 */
-	private TemplateFields setTemplateFieldValues(TemplateFields root, ExternalUser user, Project project,
-			AssignmentDocument ad) {
-		Node[] nodes = root.getNodes();
-
-		for (int i = 0; i < nodes.length; i++) {
-			if (nodes[i] instanceof Field) {
-				Field field = (Field) nodes[i];
-
-				if ("TIMESTAMP".equals(field.getName())) {
-					field.setValue(EMAIL_TIMESTAMP_FORMAT.format(new Date()));
-				} else if ("USER_FIRST_NAME".equals(field.getName())) {
-					field.setValue(user.getFirstName());
-				} else if ("USER_LAST_NAME".equals(field.getName())) {
-					field.setValue(user.getLastName());
-				} else if ("USER_HANDLE".equals(field.getName())) {
-					field.setValue(user.getHandle());
-				} else if ("PROJECT_NAME".equals(field.getName())) {
-					field.setValue((String) project.getProperty(PROJECT_NAME));
-				} else if ("PROJECT_VERSION".equals(field.getName())) {
-					field.setValue((String) project.getProperty(PROJECT_VERSION));
-				} else if ("ASSIGNMENT_DOCUMENT".equals(field.getName())) {
-					field.setValue(ad.getSubmissionTitle());
-				} else if ("ASSIGNMENT_DOCUMENT_STATUS".equals(field.getName())) {
-					field.setValue(ad.getStatus().getDescription());
-				}
-			}
-		}
-
-		return root;
 	}
 
 	public String getManagersEmailTemplateName() {

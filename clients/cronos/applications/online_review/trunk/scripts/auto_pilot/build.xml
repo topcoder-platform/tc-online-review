@@ -2,8 +2,6 @@
 
 <project name="Online Review" default="dist" basedir=".">
 
-    <property file="topcoder_global.properties" />
-
     <!-- COMPONENT PARAMETERS -->
     <property name="component" value="auto_pilot" />
     <property name="package" value="com.topcoder.onlinereview" />
@@ -325,11 +323,7 @@
     <property name="tcwebcommon.jar" value="${shared_libdir}/tcwebcommon.jar" />
     <property name="tcsUtil.jar" value="${tcs_libdir}/tcsUtil.jar" />
     <property name="shared.jar" value="${shared_libdir}/shared.jar" />
-	
-    <property name="pactsServices.path" value="pacts_services" />
-    <property name="pactsServices.jar.name" value="PactsClientServices.jar" />
-    <property name="pactsServices.jar" value="${tcs_libdir}/${pactsServices.path}/${pactsServices.jar.name}" />
-	
+		
     <property name="projectEJB.path" value="project_ejb" />
     <property name="projectEJB.jar.name" value="Project.jar" />
     <property name="projectEJB.jar" value="${tcs_libdir}/${projectEJB.path}/${projectEJB.jar.name}" />
@@ -356,8 +350,7 @@
         <pathelement location="${log4j.jar}" />
         <pathelement location="${activation.jar}" />	 
         <pathelement location="${xerces.jar}" />
-    	<pathelement location="${ejb-2_0.jar}" />
-    	
+    	  <pathelement location="${ejb-2_0.jar}" />	
         <pathelement location="${auto_pilot.jar}" />
         <pathelement location="${auto_screening_management.jar}" />
         <pathelement location="${base_exception.jar}" />
@@ -404,7 +397,6 @@
         <pathelement location="${user_project_data_store.jar}" />
         <pathelement location="${weighted_calculator.jar}" />
         <pathelement location="${workdays.jar}" />
-    	<pathelement location="${pactsServices.jar}" />
         <pathelement location="${termsOfUseEJB.jar}" />
         <pathelement location="${userEJB.jar}" />
         <pathelement location="${projectEJB.jar}" />
@@ -422,8 +414,7 @@
         </delete>
         <javac srcdir="${javamain}" destdir="${build_classdir}" includes="com/cronos/onlinereview/phases/**/*.java" 
         		debug="true" verbose="${verbose}"
-	        	source="1.5" target="1.5"
-        >
+	        	source="1.5" target="1.5">
             <classpath refid="buildlibs" />
         </javac>
     </target>

@@ -61,7 +61,6 @@ CP=$CP:lib/mail.jar
 CP=$CP:lib/log4j.jar
 CP=$CP:lib/activation.jar
 CP=$CP:lib/xerces.jar
-CP=$CP:lib/PactsClientServices.jar
 CP=$CP:lib/TermsOfUse.jar
 CP=$CP:lib/User.jar
 CP=$CP:lib/Project.jar

@@ -787,10 +787,13 @@
       <lib dir="${jar_tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}" includes="tc_id_generator.jar" />
       <lib dir="${jar_tcs_libdir}" includes="tcjive.jar" />
+      <lib dir="${jar_tcs_libdir}" includes="${tcsUtil.jar.name}" />
       <lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar, servlet-api.jar, jsp-api.jar, log4j.jar" />
       <lib dir="${jar_ext_libdir}/spring" includes="*.jar"/>
       <lib dir="${jar_ext_libdir}/hibernate" includes="*.jar"/>
-      <lib dir="${shared_libdir}" includes="catalog.jar"/>
+      <lib dir="${shared_libdir}" includes="${catalog.jar.name}"/>
+      <lib dir="${shared_libdir}" includes="${tcwebcommon.jar.name}"/>
+      <lib dir="${shared_libdir}" includes="${shared.jar.name}"/>
 
       <!-- Added libs to support ejb3 calls -->
       <lib dir="${jar_ext_libdir}/jboss/">
@@ -1135,7 +1138,6 @@
         <include name="${catalog.jar.name}"/>
         <include name="${shared.jar.name}"/>
         <include name="${forums.jar.name}"/>
-        <include name="${contest_eligibility_validation_client.jar.name}"/>
       </fileset>
     </move>
     <delete verbose="true">

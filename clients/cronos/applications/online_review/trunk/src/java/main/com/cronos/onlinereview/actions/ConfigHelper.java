@@ -14,7 +14,6 @@ import java.util.Set;
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.Property;
 import com.topcoder.util.config.UnknownNamespaceException;
-import com.topcoder.web.ejb.pacts.ParentReferencePayment;
 
 /**
  * This class is a helper class that loads application's configuration parameters on application
