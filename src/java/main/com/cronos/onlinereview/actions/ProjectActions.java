@@ -3,6 +3,21 @@
  */
 package com.cronos.onlinereview.actions;
 
+import static com.cronos.onlinereview.actions.Constants.AGGREGATION_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.AGGREGATION_REVIEW_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.APPEALS_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.APPEALS_RESPONSE_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.APPROVAL_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.FINAL_FIX_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.FINAL_REVIEW_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.REGISTRATION_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.REVIEW_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.SCREENING_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.SPECIFICATION_REVIEW_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.SPECIFICATION_SUBMISSION_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.SUBMISSION_PHASE_NAME;
+
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.Format;
@@ -19,33 +34,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import com.cronos.onlinereview.dataaccess.DeliverableDataAccess;
-import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
-import com.cronos.onlinereview.dataaccess.ProjectPhaseDataAccess;
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.UploadManager;
-import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectCategory;
-import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectPropertyType;
-import com.topcoder.management.project.ProjectStatus;
-import com.topcoder.management.project.ProjectType;
-import com.topcoder.management.project.link.ProjectLinkManager;
-import com.topcoder.management.review.ReviewManagementException;
-import com.topcoder.management.review.ReviewManager;
-import com.topcoder.management.review.data.Review;
-import com.topcoder.project.phases.Dependency;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.project.phases.PhaseStatus;
-import com.topcoder.project.phases.PhaseType;
-import com.topcoder.search.builder.filter.EqualToFilter;
-import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
-
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.naming.NamingException;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -57,6 +48,9 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.MessageResources;
 import org.apache.struts.validator.LazyValidatorForm;
 
+import com.cronos.onlinereview.dataaccess.DeliverableDataAccess;
+import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
+import com.cronos.onlinereview.dataaccess.ProjectPhaseDataAccess;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.model.ClientProject;
@@ -65,20 +59,38 @@ import com.topcoder.date.workdays.Workdays;
 import com.topcoder.date.workdays.WorkdaysUnitOfTime;
 import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.DeliverableManager;
+import com.topcoder.management.deliverable.Submission;
+import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
+import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
 import com.topcoder.management.phase.PhaseManager;
+import com.topcoder.management.project.Project;
+import com.topcoder.management.project.ProjectCategory;
+import com.topcoder.management.project.ProjectManager;
+import com.topcoder.management.project.ProjectPropertyType;
+import com.topcoder.management.project.ProjectStatus;
+import com.topcoder.management.project.ProjectType;
+import com.topcoder.management.project.link.ProjectLinkManager;
 import com.topcoder.management.resource.NotificationType;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
+import com.topcoder.management.review.ReviewManagementException;
+import com.topcoder.management.review.ReviewManager;
+import com.topcoder.management.review.data.Review;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardSearchBundle;
 import com.topcoder.management.scorecard.data.Scorecard;
 import com.topcoder.project.phases.CyclicDependencyException;
+import com.topcoder.project.phases.Dependency;
+import com.topcoder.project.phases.Phase;
+import com.topcoder.project.phases.PhaseStatus;
+import com.topcoder.project.phases.PhaseType;
 import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.filter.AndFilter;
+import com.topcoder.search.builder.filter.EqualToFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.InFilter;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
@@ -88,21 +100,6 @@ import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
 import com.topcoder.web.ejb.termsofuse.TermsOfUse;
 import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
 import com.topcoder.web.ejb.user.UserTermsOfUse;
-
-import static com.cronos.onlinereview.actions.Constants.REGISTRATION_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.SUBMISSION_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.SCREENING_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.REVIEW_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.APPEALS_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.APPEALS_RESPONSE_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.AGGREGATION_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.AGGREGATION_REVIEW_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.FINAL_FIX_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.FINAL_REVIEW_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.APPROVAL_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.SPECIFICATION_SUBMISSION_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.SPECIFICATION_REVIEW_PHASE_NAME;
 
 /**
  * This class contains Struts Actions that are meant to deal with Projects. There are following
