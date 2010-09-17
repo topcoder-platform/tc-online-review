@@ -400,10 +400,6 @@
   <property name="workdays.jar" value="${tcs_libdir}/${workdays.path}/${workdays.jar.name}" />
 
   <!-- TCS Dependencies - non-versioned -->
-  <property name="pactsServices.path" value="pacts_services" />
-  <property name="pactsServices.jar.name" value="PactsServices.jar" />
-  <property name="pactsServices.jar" value="${tcs_libdir}/${pactsServices.path}/${pactsServices.jar.name}" />
-
   <property name="projectEJB.path" value="project_ejb" />
   <property name="projectEJB.jar.name" value="Project.jar" />
   <property name="projectEJB.jar" value="${tcs_libdir}/${projectEJB.path}/${projectEJB.jar.name}" />
@@ -495,7 +491,6 @@
     <pathelement location="${forums.jar}" />
     <pathelement location="${shared.jar}" />
     <pathelement location="${tcwebcommon.jar}" />
-    <pathelement location="${pactsServices.jar}" />
     <pathelement location="${projectEJB.jar}" />
     <pathelement location="${termsOfUseEJB.jar}" />
     <pathelement location="${userEJB.jar}" />
@@ -781,7 +776,6 @@
       <lib dir="${jar_tcs_libdir}/${user_project_data_store.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}/${weighted_calculator.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}/${workdays.path}" includes="*.jar" />
-      <lib dir="${jar_tcs_libdir}/${pactsServices.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}/${projectEJB.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}/${userEJB.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar" />
