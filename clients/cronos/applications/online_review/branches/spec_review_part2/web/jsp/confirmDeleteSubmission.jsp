@@ -69,7 +69,9 @@
 
                     <div align="right">
                         <html:link page="/actions/DeleteSubmission.do?method=deleteSubmission&uid=${uid}&delete=y"><html:img srcKey="confirmDeleteSubmission.btnDelete.img" altKey="confirmDeleteSubmission.btnDelete.alt" border="0" /></html:link>&#160;
-                        <a href="javascript:history.go(-1)"><html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0" /></a>
+                        <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}">
+                            <html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0" />
+                        </html:link>
                     </div><br />
 
                 </div>

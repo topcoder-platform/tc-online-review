@@ -64,7 +64,6 @@
                             <tr class="light">
                                 <td class="value">
                                     <br />
-                                    <bean:message key="uploadFinalFix.HelpLine1" />
                                     <bean:message key="uploadTestCase.UploadTestCase" />
                                     <html:file property="file" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
                                     <html:image srcKey="btnUpload.img" altKey="btnUpload.alt" border="0" style="vertical-align:bottom;" /><br /><br />
@@ -77,7 +76,9 @@
                     </html:form>
 
                     <div align="right">
-                        <a href="javascript:history.go(-1)"><html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></a>
+                        <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}">
+                            <html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" />
+                        </html:link>
                     </div><br />
 
                 </div>
