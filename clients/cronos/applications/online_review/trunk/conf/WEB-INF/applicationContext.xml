@@ -23,12 +23,6 @@
 
     <bean id="projectRoleTermsOfUseLibrary" class="com.cronos.onlinereview.ejblibrary.ProjectRoleTermsOfUseLibrary"/>
 
-<!--
-    <bean id="forumsLibrary" class="com.cronos.onlinereview.ejblibrary.ForumsLibrary"/>
--->
-
-    <bean id="pactsClientServicesLibrary" class="com.cronos.onlinereview.ejblibrary.PactsClientServicesLibrary"/>
-
     <bean id="loginLibrary" class="com.cronos.onlinereview.ejblibrary.LoginLibrary"/>
 
     <bean id="contestEligibilityServiceLibrary"

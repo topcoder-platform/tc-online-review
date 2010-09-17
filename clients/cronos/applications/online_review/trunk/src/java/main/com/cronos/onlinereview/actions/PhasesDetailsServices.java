@@ -13,9 +13,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.topcoder.management.deliverable.SubmissionType;
-import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
 import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.filter.OrFilter;
 import org.apache.struts.util.MessageResources;
 
