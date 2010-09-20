@@ -945,7 +945,7 @@
   </target>
 
   <!-- stops Jboss, reinstalls database, redeploys OR and starts jboss. -->
-  <target name="redeploy" depends="stop_jboss, deploy">
+  <target name="redeploy" depends="stop_jboss, first_deploy">
     <if>
       <isset property="update_db" />
       <then>
