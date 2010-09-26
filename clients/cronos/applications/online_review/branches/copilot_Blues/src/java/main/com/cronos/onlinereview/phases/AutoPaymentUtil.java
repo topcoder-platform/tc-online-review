@@ -145,7 +145,8 @@ public class AutoPaymentUtil {
         && projectCategoryId != 19    // UI Prototype
         && projectCategoryId != 24    // RIA Build
         && projectCategoryId != 27    // Spec Review
-        && projectCategoryId != 25) { // RIA Component
+        && projectCategoryId != 25    // RIA Component
+        && projectCategoryId != 29) { // Copilot Posting
                 return;
         }
 
