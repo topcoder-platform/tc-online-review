@@ -76,7 +76,9 @@
 
                     <div align="right">
                         <html:link page="/actions/Unregister.do?method=unregister&amp;pid=${project.id}&unregister=y"><html:img srcKey="confirmUnregistration.btnConfirm.img" altKey="confirmUnregistration.btnConfirm.alt" border="0" /></html:link>&#160;
-                        <a href="javascript:history.go(-1)"><html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0" /></a>
+                        <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}">
+                            <html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0" />
+                        </html:link>
                     </div><br />
 
                 </div>

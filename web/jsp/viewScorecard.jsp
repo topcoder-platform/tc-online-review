@@ -103,16 +103,6 @@
                         </c:forEach>
                     </table><br />
 
-                    <div align="right">
-                        <c:if test="${isPreview}">
-                            <a href="javascript:window.close();"><html:img srcKey="btnClose.img" altKey="btnClose.alt" border="0" /></a>
-                        </c:if>
-                        <c:if test="${not isPreview}">
-                            <a href="javascript:history.go(-1)"><html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></a>
-                        </c:if>
-                        <br />
-                    </div>
-
                 </div>
             </div>
         

@@ -158,8 +158,8 @@ public class AutoPaymentUtil {
 
         // Temporary fix for the transition period until we get rid of the Spec Review projects completely.
         if (projectCategoryId == 27) {
-            payments[0] = payments[2];
-            payments[1] = payments[2];
+            payments[1] = payments[0];
+            payments[2] = payments[0];
         }
 
         float prize = (float) getPriceByProjectId(projectId, conn);
@@ -385,23 +385,21 @@ public class AutoPaymentUtil {
 
         try {
             pstmt = conn.prepareStatement(
-                    "SELECT primary_ind, amount FROM rboard_payment WHERE project_id = ? AND phase_id = ?");
+                    "SELECT primary_ind, amount, phase_id FROM rboard_payment WHERE project_id = ? AND (phase_id = ? OR phase_id = ?)");
             pstmt.setLong(1, projectId);
             pstmt.setLong(2, projectCategoryId + 111);
+            pstmt.setLong(3, projectCategoryId + 1111);
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                if (rs.getInt("primary_ind") == 1) {
+                if (rs.getInt("phase_id") == projectCategoryId + 111 && rs.getInt("primary_ind") == 1) {
                     payments[0] = rs.getFloat("amount");
-                } else {
+                } else if (rs.getInt("phase_id") == projectCategoryId + 111 && rs.getInt("primary_ind") == 0) {
                     payments[1] = rs.getFloat("amount");
+                } else if (rs.getInt("phase_id") == projectCategoryId + 1111 && rs.getInt("primary_ind") == 0) {
+                    payments[2] = rs.getFloat("amount");
                 }
             }
-
-            String str = getProjectInfo(projectId, 33, conn);
-            payments[2] = (str == null) ? 0.0f : Float.parseFloat(str);
-        } catch (NumberFormatException e) {
-            logger.log(Level.WARN, "can't parse the spec review payment, projectId:" + projectId);
         } finally {
             PRHelper.close(rs);
             PRHelper.close(pstmt);
