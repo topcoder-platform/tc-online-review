@@ -3646,6 +3646,9 @@ public class ActionsHelper {
             // Add reviewers to the rboard_application.
             addRBoardApplications(conn, project, newReviewers, newResponseIDs, newPrimaries, newCreateDates);
 
+            // Finally, add specification reviewer to the rboard_application if present
+            addSpecReviewer(conn, project);
+
         } catch (UnknownConnectionException e) {
             throw new BaseException("Failed to create connection", e);
         } catch (ConfigurationException e) {
@@ -3812,7 +3815,7 @@ public class ActionsHelper {
             PreparedStatement ps = null;
             ResultSet rs = null;
             try {
-                // Due to a strange behavior of the review signup page the primary reviewer should always get a specific response id.
+                // Due to a strange behavior of the RBoardApplication bean the primary reviewer should always get a specific response id.
                 // For all tracks we have so far, the primary response id is the smallest response id (except for
                 // component development track for which it corresponds to the failure reviewer).
                 // So, we retrieve all response ids for the specified track ordered by its value.
@@ -3866,6 +3869,62 @@ public class ActionsHelper {
         }
 
         return responseIDs;
+    }
+
+    /**
+     * This private helper method adds Specification Reviewer resource into the rboard_application table for the specified project.
+     *
+     * @param conn DB connection to be used.
+     * @param project the project
+     * @throws BaseException if error occurs.
+     */
+    private static void addSpecReviewer(Connection conn, Project project) throws BaseException {
+        long projectId = project.getId();
+        // 1111 is the offset for specification review.
+        long specReviewPhaseId = 1111 + project.getProjectCategory().getId();
+
+        log.log(Level.INFO,"addSpecReviewer projectId= " + projectId);
+
+        PreparedStatement addStmt = null;
+        PreparedStatement resourceSelectStmt = null;
+        ResultSet resourceResultSet = null;
+        try {
+            // Select specification reviewer(s) for the project and order them by the create_date
+            resourceSelectStmt = conn.prepareStatement(
+                    "SELECT resource_info.value, resource.create_date FROM resource, resource_info WHERE " +
+                            "resource.project_id = ? AND resource.resource_id = resource_info.resource_id AND " +
+                            "resource.resource_role_id=18 AND resource_info.resource_info_type_id=1 " +
+                            "order by resource.create_date");
+
+            resourceSelectStmt.setLong(1, projectId);
+            resourceResultSet = resourceSelectStmt.executeQuery();
+            // If there is more than one Specification Reviewer resource we pick only the first one, which is the one
+            // with the smallest create date.
+            if (resourceResultSet.next()) {
+                long userID = resourceResultSet.getLong(1);
+                java.sql.Timestamp create_date = resourceResultSet.getTimestamp(2);
+
+                // We retrieve review_resp_id from the review_resp table by the phase_id in the inner query below.
+                addStmt = conn.prepareStatement(
+                        "insert into rboard_application values (?, ?, ?, " +
+                        "(select min(review_resp_id) from review_resp where resource_role_id=18 and phase_id=?), " +
+                        "0, ?, current)");
+
+                addStmt.setLong(1, userID);
+                addStmt.setLong(2, projectId);
+                addStmt.setLong(3, specReviewPhaseId);
+                addStmt.setLong(4, specReviewPhaseId);
+                addStmt.setTimestamp(5, create_date);
+                addStmt.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            throw new BaseException("Failed to populate rboard_application for the specification reviewer", e);
+        } finally {
+            close(resourceResultSet);
+            close(resourceSelectStmt);
+            close(addStmt);
+        }
     }
 
     /**

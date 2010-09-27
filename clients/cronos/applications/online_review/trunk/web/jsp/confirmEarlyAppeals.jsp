@@ -86,7 +86,9 @@
 
                     <div align="right">
                         <html:link page="/actions/EarlyAppeals.do?method=earlyAppeals&amp;pid=${project.id}&perform=y"><html:img srcKey="confirmEarlyAppeals.btnConfirm.img" altKey="confirmEarlyAppeals.btnConfirm.alt" border="0" /></html:link>&#160;
-                        <a href="javascript:history.go(-1)"><html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0" /></a>
+                        <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}">
+                            <html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0" />
+                        </html:link>
                     </div><br />
 
                 </div>

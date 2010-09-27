@@ -81,7 +81,9 @@
                     </html:form>
 
                     <div align="right">
-                        <a href="javascript:history.go(-1)"><html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></a>
+                        <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}">
+                            <html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" />
+                        </html:link>
                     </div><br />
 
                 </div>

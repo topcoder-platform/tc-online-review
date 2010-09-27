@@ -81,7 +81,9 @@
                                     <p><!-- @ --></p>
                                     <div align="right">
                                         <html:image srcKey="btnSubmit.img" altKey="btnSubmit.alt" border="0" />&#160;
-                                        <a href="javascript:history.go(-1)"><html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0" /></a>
+                                        <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}">
+                                            <html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0" />
+                                        </html:link>
                                     </div><br />
                                 </td>
                             </tr>
