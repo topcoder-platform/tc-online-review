@@ -4632,10 +4632,10 @@
             <!-- Icons added for copilot posting -->
             <Property name="Copilot Posting">
                 <Property name="IconSmall">
-                    <Value>iconRIAComponentCompetitionSm.png</Value>
+                    <Value>iconCopilotPostingSm.png</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>iconRIAComponentCompetition.png</Value>
+                    <Value>iconCopilotPosting.png</Value>
                 </Property>
             </Property>
         </Property>

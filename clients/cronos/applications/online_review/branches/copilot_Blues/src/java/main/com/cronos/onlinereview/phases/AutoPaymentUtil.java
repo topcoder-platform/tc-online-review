@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2009 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -31,9 +31,12 @@ import java.util.List;
  *
  * <p>Version 1.3 (Appeals Early Completion Release Assembly 1.0) Change notes:
  *  Updated Reviewer payments to pay final review and aggregation just once.</p>
+ * 
+ * <p>Version 1.4 (Copilot Selection Contest Online Review and TC Site Integration Assembly 1.0) Change notes:
+ *  Updated to support copilot posting project type.</p>
  *
- * @author George1, brain_cn, pulky
- * @version 1.3
+ * @author George1, brain_cn, pulky, TCSASSEMBLER
+ * @version 1.4
  */
 public class AutoPaymentUtil {
         /**
