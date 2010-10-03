@@ -7,6 +7,7 @@ bind_addr=127.0.0.1
 jnp_port=1099
 jboss_heap_size=512m
 db_scripts_path=<<path to db scripts>>
+sleep_before_stopping=10
 
 # The location of the deployment directory for JBoss server.
 JBOSS_HOME=<<path_to_jboss>>

@@ -102,7 +102,7 @@
         </Property>
 
         <Property name="login_bean_name">
-            <Value>com.topcoder.security.login.LoginRemoteHome</Value>
+            <Value>com.cronos.onlinereview.ejblibrary.LoginLibraryHome</Value>
         </Property>
     </Config>
 

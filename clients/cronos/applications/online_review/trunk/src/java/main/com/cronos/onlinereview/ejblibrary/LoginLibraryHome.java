@@ -39,7 +39,7 @@ public class LoginLibraryHome implements LoginRemoteHome, Serializable {
      *         local library style.
      */
     public LoginRemote create() {
-        return new LoginLibrary();
+        return EJBLibraryServicesLocator.getLoginService() ;
     }
 
     /**

@@ -269,7 +269,7 @@
   <property name="online_review_deliverables.path" value="online_review_deliverables/${online_review_deliverables.version}" />
   <property name="online_review_deliverables.jar" value="${tcs_libdir}/${online_review_deliverables.path}/${online_review_deliverables.jar.name}" />
 
-  <property name="online_review_login.version" value="1.1.3" />
+  <property name="online_review_login.version" value="1.1.3.1" />
   <property name="online_review_login.jar.name" value="online_review_login.jar" />
   <property name="online_review_login.path" value="online_review_login/${online_review_login.version}" />
   <property name="online_review_login.jar" value="${tcs_libdir}/${online_review_login.path}/${online_review_login.jar.name}" />
@@ -369,10 +369,10 @@
   <property name="search_builder.path" value="search_builder/${search_builder.version}" />
   <property name="search_builder.jar" value="${tcs_libdir}/${search_builder.path}/${search_builder.jar.name}" />
 
-  <property name="security_manager.version" value="1.1" />
+  <!--<property name="security_manager.version" value="1.1" />
   <property name="security_manager.jar.name" value="security_manager.jar" />
   <property name="security_manager.path" value="security_manager/${security_manager.version}" />
-  <property name="security_manager.jar" value="${tcs_libdir}/${security_manager.path}/${security_manager.jar.name}" />
+  <property name="security_manager.jar" value="${tcs_libdir}/${security_manager.path}/${security_manager.jar.name}" />-->
 
   <property name="simple_cache.version" value="2.0" />
   <property name="simple_cache.jar.name" value="simple_cache.jar" />
@@ -411,6 +411,10 @@
   <property name="userEJB.path" value="user_ejb" />
   <property name="userEJB.jar.name" value="User.jar" />
   <property name="userEJB.jar" value="${tcs_libdir}/${userEJB.path}/${userEJB.jar.name}" />
+
+  <property name="securityEJB.path" value="security_ejb" />
+  <property name="securityEJB.jar.name" value="Security.jar" />
+  <property name="securityEJB.jar" value="${tcs_libdir}/${securityEJB.path}/${securityEJB.jar.name}" />
 
   <!-- Shared libraries -->
   <property name="catalog.jar.name" value="catalog.jar" />
@@ -494,6 +498,7 @@
     <pathelement location="${projectEJB.jar}" />
     <pathelement location="${termsOfUseEJB.jar}" />
     <pathelement location="${userEJB.jar}" />
+    <pathelement location="${securityEJB.jar}" />
     <pathelement location="${JNDI_Utility.jar}" />
     <pathelement location="${tcIdGenerator.jar}" />
     <pathelement location="${authentication_factory.jar}" />
@@ -539,7 +544,7 @@
     <pathelement location="${scorecard_data_structure.jar}" />
     <pathelement location="${scorecard_management.jar}" />
     <pathelement location="${scorecard_management_persistence.jar}" />
-    <pathelement location="${security_manager.jar}" />
+    <!--<pathelement location="${security_manager.jar}" />-->
     <pathelement location="${user_project_data_store.jar}" />
     <pathelement location="${typesafe_enum.jar}" />
     <pathelement location="${weighted_calculator.jar}" />
@@ -778,6 +783,7 @@
       <lib dir="${jar_tcs_libdir}/${workdays.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}/${projectEJB.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}/${userEJB.path}" includes="*.jar" />
+      <lib dir="${jar_tcs_libdir}/${securityEJB.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}" includes="tc_id_generator.jar" />
       <lib dir="${jar_tcs_libdir}" includes="tcjive.jar" />
@@ -990,6 +996,7 @@
       <available file="${JBOSS_HOME}/client/jbossall-client.jar" property="jboss.client.jar.exists"/>
       <fail unless="jboss.client.jar.exists"
             message="Unable to find ${JBOSS_HOME}/client/jbossall-client.jar"/>
+      <sleep seconds="${sleep_before_stopping}" />
       <if>
         <socket server="${bind_addr}" port="${jnp_port}"  />
         <then>

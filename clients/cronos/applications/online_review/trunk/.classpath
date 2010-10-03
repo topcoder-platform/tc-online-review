@@ -133,11 +133,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/security_manager/1.1/security_manager.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/simple_cache/2.0/simple_cache.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
@@ -369,5 +364,6 @@
 	<classpathentry kind="lib" path="lib/tcs/online_review_deliverables/1.0.2/online_review_deliverables.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/deliverable_management_persistence/1.1.2/deliverable_management_persistence.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.4.3/online_review_phases.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/security_ejb/Security.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
