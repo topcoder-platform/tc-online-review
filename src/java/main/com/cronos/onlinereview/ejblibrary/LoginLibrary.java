@@ -9,6 +9,8 @@ import com.topcoder.security.login.AuthenticationException;
 import com.topcoder.security.login.LoginBean;
 import com.topcoder.security.login.LoginRemote;
 
+import javax.naming.NamingException;
+
 /**
  * <p>An implementation of {@link LoginRemote} interface which provides the library-call style for API of <code>Login
  * EJB</code>.</p>
@@ -27,9 +29,11 @@ public class LoginLibrary extends BaseEJBLibrary implements LoginRemote {
 
     /**
      * <p>Constructs new <code>LoginLibrary</code> instance.</p>
+     *
+     * @param impersonationRoleId a <code>long</code> providing the ID for impersonation role.
      */
-    public LoginLibrary() {
-        this.bean = new LoginBean();
+    public LoginLibrary(Long impersonationRoleId) {
+        this.bean = new Extender(impersonationRoleId);
     }
 
     /**
@@ -59,5 +63,38 @@ public class LoginLibrary extends BaseEJBLibrary implements LoginRemote {
      */
     public TCSubject login(String username, String password, String dataSource) throws GeneralSecurityException {
         return this.bean.login(username, password, dataSource);
+    }
+
+    /**
+     * <p>An extension to wrapped bean class providing access to it's protected methods.</p>
+     *
+     * @author isv
+     * @version 1.0
+     */
+    private static class Extender extends LoginBean {
+
+        /**
+         * <p>A <code>long</code> providing the ID for impersonation role.</p>
+         */
+        private Long impersonationRoleId;
+
+        /**
+         * <p>Constructs new <code>Extender</code> instance. This implementation does nothing.</p>
+         *
+         * @param impersonationRoleId a <code>long</code> providing the ID for impersonation role.
+         */
+        private Extender(Long impersonationRoleId) {
+            this.impersonationRoleId = impersonationRoleId;
+        }
+
+        /**
+         * <p>Gets the ID for the role allowing impersonated logins.</p>
+         *
+         * @return a <code>long</code> providing the ID for impersonation role.
+         */
+        @Override
+        protected Long getImpersonationRoleId() {
+            return this.impersonationRoleId;
+        }
     }
 }

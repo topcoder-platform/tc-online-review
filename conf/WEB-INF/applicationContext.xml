@@ -23,7 +23,9 @@
 
     <bean id="projectRoleTermsOfUseLibrary" class="com.cronos.onlinereview.ejblibrary.ProjectRoleTermsOfUseLibrary"/>
 
-    <bean id="loginLibrary" class="com.cronos.onlinereview.ejblibrary.LoginLibrary"/>
+    <bean id="loginLibrary" class="com.cronos.onlinereview.ejblibrary.LoginLibrary">
+        <constructor-arg type="java.lang.Long" value="28"/>
+    </bean>
 
     <bean id="contestEligibilityServiceLibrary"
           class="com.cronos.onlinereview.ejblibrary.ContestEligibilityServiceLibrary"/>
