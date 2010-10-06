@@ -601,17 +601,17 @@ public class ProjectActions extends DispatchAction {
        boolean inList = false;
        
        if(currentClientProjectId == null) {
-       		// no billing project yet, allow set 
-       		inList = true;
-       	} else {
-       		for(ClientProject cp : availableClientProjects) { 
-       			if(cp.getId() == currentClientProjectId.longValue()) {  
-       				inList = true;
-       				break;
-       			} 
-       		}
-       	}
-       	
+            // no billing project yet, allow set 
+            inList = true;
+        } else {
+            for(ClientProject cp : availableClientProjects) { 
+                if(cp.getId() == currentClientProjectId.longValue()) {  
+                    inList = true;
+                    break;
+                } 
+            }
+        }
+        
        request.setAttribute("allowBillingEdit", isAdmin && inList);
        
        
@@ -1998,7 +1998,7 @@ public class ProjectActions extends DispatchAction {
                     }
                 } else if (SINGLE_REVIEWER_ROLE_IDS.contains(resourceRoleId)) {
                     if (primaryReviewerRoles.containsKey(resourceRoleId)) {
-                        if ((resourceRoleId != 9) && (resourceRoleId != 18)
+                        if ((resourceRoleId != 9) && (resourceRoleId != 18) && (resourceRoleId != 8)
                             || !primaryReviewerRoles.get(resourceRoleId).equals(handle)) {
                             ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                                                             "error.com.cronos.onlinereview.actions."
