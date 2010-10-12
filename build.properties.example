@@ -24,6 +24,3 @@ scp_remotejboss=<<remove jboss path>>
 or.svn.username=<<svn username>>
 or.svn.password=<<svn password>>
 # or.svn.update=uncomment this line to allow update through ant on each compile
-
-# uncomment line below to exclue mockxmlauthenticator configuration file.
-# exclude.mockxmlauthenticator.xmlfile = true
