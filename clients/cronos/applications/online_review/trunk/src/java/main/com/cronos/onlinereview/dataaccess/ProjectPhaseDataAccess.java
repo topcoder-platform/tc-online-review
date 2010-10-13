@@ -132,7 +132,11 @@ public class ProjectPhaseDataAccess extends BaseDataAccess {
                 currentPhase.setPhaseStatus(statusesMap.get(phasesData.getLongItem(i, "phase_status_id")));
                 currentPhase.setPhaseType(typesMap.get(phasesData.getLongItem(i, "phase_type_id")));
                 cachedPhases.put(phaseId, currentPhase);
-                currentPhProject.setStartDate(currentPhase.getScheduledStartDate());
+                Date currentPhaseStartDate = currentPhase.getScheduledStartDate();
+                Date currentProjectStartDate = currentPhProject.getStartDate();
+                if (currentProjectStartDate.compareTo(currentPhaseStartDate) > 0) {
+                    currentPhProject.setStartDate(currentPhaseStartDate);
+                }
             }
 
             if (phasesData.getItem(i, "dependent_phase_id").getResultData() != null) {
