@@ -2508,6 +2508,11 @@
         <Property name="RIA Builds">
             <Value>135</Value>
         </Property>
+        
+        <!-- rating type added for copilot posting -->
+        <Property name="Copilot Posting">
+            <Value>140</Value>
+        </Property>
     </Config>
 
 
@@ -4622,6 +4627,15 @@
                 </Property>
                 <Property name="Icon">
                     <Value>iconRIAComponentCompetition.png</Value>
+                </Property>
+            </Property>
+            <!-- Icons added for copilot posting -->
+            <Property name="Copilot Posting">
+                <Property name="IconSmall">
+                    <Value>iconCopilotPostingSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconCopilotPosting.png</Value>
                 </Property>
             </Property>
         </Property>
