@@ -1963,12 +1963,15 @@ public class ProjectActions extends DispatchAction {
         // Check for duplicate reviewers and disallowed resource roles
         Set<String> disabledResourceRoles = new HashSet<String>(Arrays.asList(ConfigHelper.getDisabledResourceRoles()));
         Set<String> reviewerHandles = new HashSet<String>();
-        Map<Long, String> primaryReviewerRoles = new HashMap<Long, String>();
+        Map<String, String> primaryReviewerRoles = new HashMap<String, String>();
         for (int i = 1; i < resourceNames.length; i++) {
             String resourceAction = (String) lazyForm.get("resources_action", i);
             if (!"delete".equalsIgnoreCase(resourceAction)) {
                 String handle = resourceNames[i];
                 long resourceRoleId = (Long) lazyForm.get("resources_role", i);
+                String resourcePhaseId = String.valueOf( lazyForm.get("resources_phase", i) );
+                String resourceKey = String.valueOf(resourceRoleId) + resourcePhaseId;
+                
                 if (disabledResourceRoles.contains(String.valueOf(resourceRoleId))) {
                     boolean attemptingToAssignDisabledRole = false;
                     if ("add".equalsIgnoreCase(resourceAction)) {
@@ -1997,16 +2000,16 @@ public class ProjectActions extends DispatchAction {
                         reviewerHandles.add(handle);
                     }
                 } else if (SINGLE_REVIEWER_ROLE_IDS.contains(resourceRoleId)) {
-                    if (primaryReviewerRoles.containsKey(resourceRoleId)) {
+                    if (primaryReviewerRoles.containsKey(resourceKey)) {
                         if ((resourceRoleId != 9) && (resourceRoleId != 18) && (resourceRoleId != 8)
-                            || !primaryReviewerRoles.get(resourceRoleId).equals(handle)) {
+                            || !primaryReviewerRoles.get(resourceKey).equals(handle)) {
                             ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                                                             "error.com.cronos.onlinereview.actions."
                                                             + "editProject.Resource.MoreThanOneReviewer");
                             allResourcesValid = false;
                         }
                     } else {
-                        primaryReviewerRoles.put(resourceRoleId, handle);
+                        primaryReviewerRoles.put(resourceKey, handle);
                     }
                 }
             }
