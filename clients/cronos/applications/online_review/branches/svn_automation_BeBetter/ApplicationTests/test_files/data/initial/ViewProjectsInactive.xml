@@ -1,0 +1,779 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <!-- *** project *** -->
+    <project project_id="1" project_status_id="2" project_category_id="1"
+             create_user="System" create_date="2006-07-29 02:45:11.0"
+             modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Component, Design, Active, Project1 -->
+    <!-- *** phase *** -->
+    <project_phase project_phase_id="1" project_id="1" phase_type_id="1" phase_status_id="2"
+           scheduled_start_time="2006-07-29 00:00:00.0" scheduled_end_time="2006-07-29 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Registration phase -->
+    <project_phase project_phase_id="2" project_id="1" phase_type_id="2" phase_status_id="1"
+           scheduled_start_time="2006-07-30 00:00:00.0" scheduled_end_time="2006-07-30 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Submission phase -->
+    <project_phase project_phase_id="3" project_id="1" phase_type_id="3" phase_status_id="1"
+           scheduled_start_time="2006-07-31 00:00:00.0" scheduled_end_time="2006-07-31 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Screening phase -->
+    <project_phase project_phase_id="4" project_id="1" phase_type_id="4" phase_status_id="1"
+           scheduled_start_time="2006-08-01 00:00:00.0" scheduled_end_time="2006-08-01 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Review phase -->
+    <project_phase project_phase_id="5" project_id="1" phase_type_id="5" phase_status_id="1"
+           scheduled_start_time="2006-08-02 00:00:00.0" scheduled_end_time="2006-08-02 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Appeals phase -->
+    <project_phase project_phase_id="6" project_id="1" phase_type_id="6" phase_status_id="1"
+           scheduled_start_time="2006-08-03 00:00:00.0" scheduled_end_time="2006-08-03 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Appeal Response phase -->
+    <project_phase project_phase_id="7" project_id="1" phase_type_id="7" phase_status_id="1"
+           scheduled_start_time="2006-08-04 00:00:00.0" scheduled_end_time="2006-08-04 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Aggregation phase -->
+    <project_phase project_phase_id="8" project_id="1" phase_type_id="8" phase_status_id="1"
+           scheduled_start_time="2006-08-05 00:00:00.0" scheduled_end_time="2006-08-05 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Aggregation Review phase -->
+    <project_phase project_phase_id="9" project_id="1" phase_type_id="9" phase_status_id="1"
+           scheduled_start_time="2006-08-06 00:00:00.0" scheduled_end_time="2006-08-06 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Final Fix phase -->
+    <project_phase project_phase_id="10" project_id="1" phase_type_id="10" phase_status_id="1"
+           scheduled_start_time="2006-08-07 00:00:00.0" scheduled_end_time="2006-08-07 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Final Review phase -->
+    <project_phase project_phase_id="11" project_id="1" phase_type_id="11" phase_status_id="1"
+           scheduled_start_time="2006-08-08 00:00:00.0" scheduled_end_time="2006-08-08 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Approval phase -->
+    <!-- *** project_info *** -->
+    <project_info project_info_type_id="1" project_id="1" value="1"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Ext. Reference ID -->
+    <project_info project_info_type_id="2" project_id="1" value="1"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Component ID -->
+    <project_info project_info_type_id="3" project_id="1" value="1"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Version ID -->
+    <project_info project_info_type_id="4" project_id="1" value="1"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Developer Forum ID -->
+    <project_info project_info_type_id="5" project_id="1" value="1"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Root Catalog ID -->
+    <project_info project_info_type_id="6" project_id="1" value="Project1"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Project Name -->
+    <project_info project_info_type_id="7" project_id="1" value="1.0"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Project Version -->
+    <project_info project_info_type_id="8" project_id="1" value="http://svn.acme.org/project1/trunk"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- SVN Module -->
+    <project_info project_info_type_id="9" project_id="1" value="On"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Auto Pilot option -->
+    <project_info project_info_type_id="10" project_id="1" value="Off"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Status Notification option -->
+    <project_info project_info_type_id="11" project_id="1" value="Off"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Timeline Notification option -->
+    <project_info project_info_type_id="12" project_id="1" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Public -->
+    <project_info project_info_type_id="13" project_id="1" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Rated -->
+    <project_info project_info_type_id="14" project_id="1" value="TBD"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Eligibility -->
+    <project_info project_info_type_id="15" project_id="1" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payments Required option -->
+    <project_info project_info_type_id="16" project_id="1" value="100,200,300"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payments -->
+    <project_info project_info_type_id="17" project_id="1" value="This is the public Java component."
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Notes -->
+    <project_info project_info_type_id="18" project_id="1" value="2006-07-29 02:45:11.0"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Timestamp -->
+    <project_info project_info_type_id="19" project_id="1" value="2"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Phase -->
+    <project_info project_info_type_id="20" project_id="1" value="Something went wrong"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Reason -->
+
+    <!-- *** project *** -->
+    <project project_id="2" project_status_id="2" project_category_id="1"
+             create_user="System" create_date="2006-07-29 02:45:11.0"
+             modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Component, Design, Active, Project2 -->
+    <!-- *** phase *** -->
+    <project_phase project_phase_id="12" project_id="2" phase_type_id="1" phase_status_id="2"
+           scheduled_start_time="2006-07-29 00:00:00.0" scheduled_end_time="2006-07-29 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Registration phase -->
+    <project_phase project_phase_id="13" project_id="2" phase_type_id="2" phase_status_id="1"
+           scheduled_start_time="2006-07-30 00:00:00.0" scheduled_end_time="2006-07-30 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Submission phase -->
+    <project_phase project_phase_id="14" project_id="2" phase_type_id="3" phase_status_id="1"
+           scheduled_start_time="2006-07-31 00:00:00.0" scheduled_end_time="2006-07-31 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Screening phase -->
+    <project_phase project_phase_id="15" project_id="2" phase_type_id="4" phase_status_id="1"
+           scheduled_start_time="2006-08-01 00:00:00.0" scheduled_end_time="2006-08-01 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Review phase -->
+    <project_phase project_phase_id="16" project_id="2" phase_type_id="5" phase_status_id="1"
+           scheduled_start_time="2006-08-02 00:00:00.0" scheduled_end_time="2006-08-02 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Appeals phase -->
+    <project_phase project_phase_id="17" project_id="2" phase_type_id="6" phase_status_id="1"
+           scheduled_start_time="2006-08-03 00:00:00.0" scheduled_end_time="2006-08-03 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Appeal Response phase -->
+    <project_phase project_phase_id="18" project_id="2" phase_type_id="7" phase_status_id="1"
+           scheduled_start_time="2006-08-04 00:00:00.0" scheduled_end_time="2006-08-04 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Aggregation phase -->
+    <project_phase project_phase_id="19" project_id="2" phase_type_id="8" phase_status_id="1"
+           scheduled_start_time="2006-08-05 00:00:00.0" scheduled_end_time="2006-08-05 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Aggregation Review phase -->
+    <project_phase project_phase_id="20" project_id="2" phase_type_id="9" phase_status_id="1"
+           scheduled_start_time="2006-08-06 00:00:00.0" scheduled_end_time="2006-08-06 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Final Fix phase -->
+    <project_phase project_phase_id="21" project_id="2" phase_type_id="10" phase_status_id="1"
+           scheduled_start_time="2006-08-07 00:00:00.0" scheduled_end_time="2006-08-07 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Final Review phase -->
+    <project_phase project_phase_id="22" project_id="2" phase_type_id="11" phase_status_id="1"
+           scheduled_start_time="2006-08-08 00:00:00.0" scheduled_end_time="2006-08-08 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Approval phase -->
+    <!-- *** project_info *** -->
+    <project_info project_info_type_id="1" project_id="2" value="2"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Ext. Reference ID -->
+    <project_info project_info_type_id="2" project_id="2" value="2"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Component ID -->
+    <project_info project_info_type_id="3" project_id="2" value="2"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Version ID -->
+    <project_info project_info_type_id="4" project_id="2" value="2"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Developer Forum ID -->
+    <project_info project_info_type_id="5" project_id="2" value="2"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Root Catalog ID -->
+    <project_info project_info_type_id="6" project_id="2" value="Project2"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Project Name -->
+    <project_info project_info_type_id="7" project_id="2" value="2.0"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Project Version -->
+    <project_info project_info_type_id="8" project_id="2" value="http://svn.acme.org/project2/trunk"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- SVN Module -->
+    <project_info project_info_type_id="9" project_id="2" value="On"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Auto Pilot option -->
+    <project_info project_info_type_id="10" project_id="2" value="Off"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Status Notification option -->
+    <project_info project_info_type_id="11" project_id="2" value="Off"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Timeline Notification option -->
+    <project_info project_info_type_id="12" project_id="2" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Public -->
+    <project_info project_info_type_id="13" project_id="2" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Rated -->
+    <project_info project_info_type_id="14" project_id="2" value="TBD"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Eligibility -->
+    <project_info project_info_type_id="15" project_id="2" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payments Required option -->
+    <project_info project_info_type_id="16" project_id="2" value="100,200,300"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payments -->
+    <project_info project_info_type_id="17" project_id="2" value="This is the public Java component."
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Notes -->
+    <project_info project_info_type_id="18" project_id="2" value="2006-07-29 02:45:11.0"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Timestamp -->
+    <project_info project_info_type_id="19" project_id="2" value="2"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Phase -->
+    <project_info project_info_type_id="20" project_id="2" value="Something went wrong"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Reason -->
+
+    <!-- *** project *** -->
+    <project project_id="3" project_status_id="2" project_category_id="2"
+             create_user="System" create_date="2006-07-29 02:45:11.0"
+             modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Component, Development, Active, Project3 -->
+    <!-- *** phase *** -->
+    <project_phase project_phase_id="23" project_id="3" phase_type_id="1" phase_status_id="2"
+           scheduled_start_time="2006-07-29 00:00:00.0" scheduled_end_time="2006-07-29 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Registration phase -->
+    <project_phase project_phase_id="24" project_id="3" phase_type_id="2" phase_status_id="1"
+           scheduled_start_time="2006-07-30 00:00:00.0" scheduled_end_time="2006-07-30 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Submission phase -->
+    <project_phase project_phase_id="25" project_id="3" phase_type_id="3" phase_status_id="1"
+           scheduled_start_time="2006-07-31 00:00:00.0" scheduled_end_time="2006-07-31 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Screening phase -->
+    <project_phase project_phase_id="26" project_id="3" phase_type_id="4" phase_status_id="1"
+           scheduled_start_time="2006-08-01 00:00:00.0" scheduled_end_time="2006-08-01 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Review phase -->
+    <project_phase project_phase_id="27" project_id="3" phase_type_id="5" phase_status_id="1"
+           scheduled_start_time="2006-08-02 00:00:00.0" scheduled_end_time="2006-08-02 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Appeals phase -->
+    <project_phase project_phase_id="28" project_id="3" phase_type_id="6" phase_status_id="1"
+           scheduled_start_time="2006-08-03 00:00:00.0" scheduled_end_time="2006-08-03 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Appeal Response phase -->
+    <project_phase project_phase_id="29" project_id="3" phase_type_id="7" phase_status_id="1"
+           scheduled_start_time="2006-08-04 00:00:00.0" scheduled_end_time="2006-08-04 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Aggregation phase -->
+    <project_phase project_phase_id="30" project_id="3" phase_type_id="8" phase_status_id="1"
+           scheduled_start_time="2006-08-05 00:00:00.0" scheduled_end_time="2006-08-05 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Aggregation Review phase -->
+    <project_phase project_phase_id="31" project_id="3" phase_type_id="9" phase_status_id="1"
+           scheduled_start_time="2006-08-06 00:00:00.0" scheduled_end_time="2006-08-06 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Final Fix phase -->
+    <project_phase project_phase_id="32" project_id="3" phase_type_id="10" phase_status_id="1"
+           scheduled_start_time="2006-08-07 00:00:00.0" scheduled_end_time="2006-08-07 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Final Review phase -->
+    <project_phase project_phase_id="33" project_id="3" phase_type_id="11" phase_status_id="1"
+           scheduled_start_time="2006-08-08 00:00:00.0" scheduled_end_time="2006-08-08 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Approval phase -->
+    <!-- *** project_info *** -->
+    <project_info project_info_type_id="1" project_id="3" value="3"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Ext. Reference ID -->
+    <project_info project_info_type_id="2" project_id="3" value="3"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Component ID -->
+    <project_info project_info_type_id="3" project_id="3" value="3"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Version ID -->
+    <project_info project_info_type_id="4" project_id="3" value="3"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Developer Forum ID -->
+    <project_info project_info_type_id="5" project_id="3" value="3"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Root Catalog ID -->
+    <project_info project_info_type_id="6" project_id="3" value="Project3"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Project Name -->
+    <project_info project_info_type_id="7" project_id="3" value="3.0"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Project Version -->
+    <project_info project_info_type_id="8" project_id="3" value="http://svn.acme.org/project3/trunk"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- SVN Module -->
+    <project_info project_info_type_id="9" project_id="3" value="On"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Auto Pilot option -->
+    <project_info project_info_type_id="10" project_id="3" value="Off"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Status Notification option -->
+    <project_info project_info_type_id="11" project_id="3" value="Off"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Timeline Notification option -->
+    <project_info project_info_type_id="12" project_id="3" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Public -->
+    <project_info project_info_type_id="13" project_id="3" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Rated -->
+    <project_info project_info_type_id="14" project_id="3" value="TBD"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Eligibility -->
+    <project_info project_info_type_id="15" project_id="3" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payments Required option -->
+    <project_info project_info_type_id="16" project_id="3" value="100,200,300"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payments -->
+    <project_info project_info_type_id="17" project_id="3" value="This is the public Java component."
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Notes -->
+    <project_info project_info_type_id="18" project_id="3" value="2006-07-29 02:45:11.0"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Timestamp -->
+    <project_info project_info_type_id="19" project_id="3" value="2"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Phase -->
+    <project_info project_info_type_id="20" project_id="3" value="Something went wrong"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Reason -->
+
+    <!-- *** project *** -->
+    <project project_id="4" project_status_id="2" project_category_id="3"
+             create_user="System" create_date="2006-07-29 02:45:11.0"
+             modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Component, Security, Active, Project4 -->
+    <!-- *** phase *** -->
+    <project_phase project_phase_id="34" project_id="4" phase_type_id="1" phase_status_id="2"
+           scheduled_start_time="2006-07-29 00:00:00.0" scheduled_end_time="2006-07-29 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Registration phase -->
+    <project_phase project_phase_id="35" project_id="4" phase_type_id="2" phase_status_id="1"
+           scheduled_start_time="2006-07-30 00:00:00.0" scheduled_end_time="2006-07-30 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Submission phase -->
+    <project_phase project_phase_id="36" project_id="4" phase_type_id="3" phase_status_id="1"
+           scheduled_start_time="2006-07-31 00:00:00.0" scheduled_end_time="2006-07-31 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Screening phase -->
+    <project_phase project_phase_id="37" project_id="4" phase_type_id="4" phase_status_id="1"
+           scheduled_start_time="2006-08-01 00:00:00.0" scheduled_end_time="2006-08-01 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Review phase -->
+    <project_phase project_phase_id="38" project_id="4" phase_type_id="5" phase_status_id="1"
+           scheduled_start_time="2006-08-02 00:00:00.0" scheduled_end_time="2006-08-02 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Appeals phase -->
+    <project_phase project_phase_id="39" project_id="4" phase_type_id="6" phase_status_id="1"
+           scheduled_start_time="2006-08-03 00:00:00.0" scheduled_end_time="2006-08-03 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Appeal Response phase -->
+    <project_phase project_phase_id="40" project_id="4" phase_type_id="7" phase_status_id="1"
+           scheduled_start_time="2006-08-04 00:00:00.0" scheduled_end_time="2006-08-04 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Aggregation phase -->
+    <project_phase project_phase_id="41" project_id="4" phase_type_id="8" phase_status_id="1"
+           scheduled_start_time="2006-08-05 00:00:00.0" scheduled_end_time="2006-08-05 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Aggregation Review phase -->
+    <project_phase project_phase_id="42" project_id="4" phase_type_id="9" phase_status_id="1"
+           scheduled_start_time="2006-08-06 00:00:00.0" scheduled_end_time="2006-08-06 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Final Fix phase -->
+    <project_phase project_phase_id="43" project_id="4" phase_type_id="10" phase_status_id="1"
+           scheduled_start_time="2006-08-07 00:00:00.0" scheduled_end_time="2006-08-07 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Final Review phase -->
+    <project_phase project_phase_id="44" project_id="4" phase_type_id="11" phase_status_id="1"
+           scheduled_start_time="2006-08-08 00:00:00.0" scheduled_end_time="2006-08-08 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Approval phase -->
+    <!-- *** project_info *** -->
+    <project_info project_info_type_id="1" project_id="4" value="4"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Ext. Reference ID -->
+    <project_info project_info_type_id="2" project_id="4" value="4"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Component ID -->
+    <project_info project_info_type_id="3" project_id="4" value="4"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Version ID -->
+    <project_info project_info_type_id="4" project_id="4" value="4"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Developer Forum ID -->
+    <project_info project_info_type_id="5" project_id="4" value="4"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Root Catalog ID -->
+    <project_info project_info_type_id="6" project_id="4" value="Project4"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Project Name -->
+    <project_info project_info_type_id="7" project_id="4" value="4.0"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Project Version -->
+    <project_info project_info_type_id="8" project_id="4" value="http://svn.acme.org/project4/trunk"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- SVN Module -->
+    <project_info project_info_type_id="9" project_id="4" value="On"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Auto Pilot option -->
+    <project_info project_info_type_id="10" project_id="4" value="Off"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Status Notification option -->
+    <project_info project_info_type_id="11" project_id="4" value="Off"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Timeline Notification option -->
+    <project_info project_info_type_id="12" project_id="4" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Public -->
+    <project_info project_info_type_id="13" project_id="4" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Rated -->
+    <project_info project_info_type_id="14" project_id="4" value="TBD"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Eligibility -->
+    <project_info project_info_type_id="15" project_id="4" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payments Required option -->
+    <project_info project_info_type_id="16" project_id="4" value="100,200,300"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payments -->
+    <project_info project_info_type_id="17" project_id="4" value="This is the public Java component."
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Notes -->
+    <project_info project_info_type_id="18" project_id="4" value="2006-07-29 02:45:11.0"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Timestamp -->
+    <project_info project_info_type_id="19" project_id="4" value="2"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Phase -->
+    <project_info project_info_type_id="20" project_id="4" value="Something went wrong"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Reason -->
+
+    <!-- *** project *** -->
+    <project project_id="5" project_status_id="2" project_category_id="14"
+             create_user="System" create_date="2006-07-29 02:45:11.0"
+             modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Application, Assembly Competition, Active, Project5 -->
+    <!-- *** phase *** -->
+    <project_phase project_phase_id="45" project_id="5" phase_type_id="1" phase_status_id="2"
+           scheduled_start_time="2006-07-29 00:00:00.0" scheduled_end_time="2006-07-29 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Registration phase -->
+    <project_phase project_phase_id="46" project_id="5" phase_type_id="2" phase_status_id="1"
+           scheduled_start_time="2006-07-30 00:00:00.0" scheduled_end_time="2006-07-30 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Submission phase -->
+    <project_phase project_phase_id="47" project_id="5" phase_type_id="3" phase_status_id="1"
+           scheduled_start_time="2006-07-31 00:00:00.0" scheduled_end_time="2006-07-31 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Screening phase -->
+    <project_phase project_phase_id="48" project_id="5" phase_type_id="4" phase_status_id="1"
+           scheduled_start_time="2006-08-01 00:00:00.0" scheduled_end_time="2006-08-01 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Review phase -->
+    <project_phase project_phase_id="49" project_id="5" phase_type_id="5" phase_status_id="1"
+           scheduled_start_time="2006-08-02 00:00:00.0" scheduled_end_time="2006-08-02 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Appeals phase -->
+    <project_phase project_phase_id="50" project_id="5" phase_type_id="6" phase_status_id="1"
+           scheduled_start_time="2006-08-03 00:00:00.0" scheduled_end_time="2006-08-03 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Appeal Response phase -->
+    <project_phase project_phase_id="51" project_id="5" phase_type_id="7" phase_status_id="1"
+           scheduled_start_time="2006-08-04 00:00:00.0" scheduled_end_time="2006-08-04 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Aggregation phase -->
+    <project_phase project_phase_id="52" project_id="5" phase_type_id="8" phase_status_id="1"
+           scheduled_start_time="2006-08-05 00:00:00.0" scheduled_end_time="2006-08-05 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Aggregation Review phase -->
+    <project_phase project_phase_id="53" project_id="5" phase_type_id="9" phase_status_id="1"
+           scheduled_start_time="2006-08-06 00:00:00.0" scheduled_end_time="2006-08-06 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Final Fix phase -->
+    <project_phase project_phase_id="54" project_id="5" phase_type_id="10" phase_status_id="1"
+           scheduled_start_time="2006-08-07 00:00:00.0" scheduled_end_time="2006-08-07 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Final Review phase -->
+    <project_phase project_phase_id="55" project_id="5" phase_type_id="11" phase_status_id="1"
+           scheduled_start_time="2006-08-08 00:00:00.0" scheduled_end_time="2006-08-08 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Approval phase -->
+    <!-- *** project_info *** -->
+    <project_info project_info_type_id="1" project_id="5" value="5"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Ext. Reference ID -->
+    <project_info project_info_type_id="2" project_id="5" value="5"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Component ID -->
+    <project_info project_info_type_id="3" project_id="5" value="5"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Version ID -->
+    <project_info project_info_type_id="4" project_id="5" value="5"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Developer Forum ID -->
+    <project_info project_info_type_id="5" project_id="5" value="5"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Root Catalog ID -->
+    <project_info project_info_type_id="6" project_id="5" value="Project5"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Project Name -->
+    <project_info project_info_type_id="7" project_id="5" value="5.0"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Project Version -->
+    <project_info project_info_type_id="8" project_id="5" value="http://svn.acme.org/project5/trunk"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- SVN Module -->
+    <project_info project_info_type_id="9" project_id="5" value="On"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Auto Pilot option -->
+    <project_info project_info_type_id="10" project_id="5" value="Off"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Status Notification option -->
+    <project_info project_info_type_id="11" project_id="5" value="Off"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Timeline Notification option -->
+    <project_info project_info_type_id="12" project_id="5" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Public -->
+    <project_info project_info_type_id="13" project_id="5" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Rated -->
+    <project_info project_info_type_id="14" project_id="5" value="TBD"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Eligibility -->
+    <project_info project_info_type_id="15" project_id="5" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payments Required option -->
+    <project_info project_info_type_id="16" project_id="5" value="100,200,300"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payments -->
+    <project_info project_info_type_id="17" project_id="5" value="This is the public Java component."
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Notes -->
+    <project_info project_info_type_id="18" project_id="5" value="2006-07-29 02:45:11.0"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Timestamp -->
+    <project_info project_info_type_id="19" project_id="5" value="2"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Phase -->
+    <project_info project_info_type_id="20" project_id="5" value="Something went wrong"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Reason -->
+
+    <!-- *** project *** -->
+    <project project_id="6" project_status_id="2" project_category_id="14"
+             create_user="System" create_date="2006-07-29 02:45:11.0"
+             modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Application, Assembly Competition, Active, Project6 -->
+    <!-- *** phase *** -->
+    <project_phase project_phase_id="56" project_id="6" phase_type_id="1" phase_status_id="2"
+           scheduled_start_time="2006-07-29 00:00:00.0" scheduled_end_time="2006-07-29 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Registration phase -->
+    <project_phase project_phase_id="57" project_id="6" phase_type_id="2" phase_status_id="1"
+           scheduled_start_time="2006-07-30 00:00:00.0" scheduled_end_time="2006-07-30 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Submission phase -->
+    <project_phase project_phase_id="58" project_id="6" phase_type_id="3" phase_status_id="1"
+           scheduled_start_time="2006-07-31 00:00:00.0" scheduled_end_time="2006-07-31 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Screening phase -->
+    <project_phase project_phase_id="59" project_id="6" phase_type_id="4" phase_status_id="1"
+           scheduled_start_time="2006-08-01 00:00:00.0" scheduled_end_time="2006-08-01 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Review phase -->
+    <project_phase project_phase_id="60" project_id="6" phase_type_id="5" phase_status_id="1"
+           scheduled_start_time="2006-08-02 00:00:00.0" scheduled_end_time="2006-08-02 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Appeals phase -->
+    <project_phase project_phase_id="61" project_id="6" phase_type_id="6" phase_status_id="1"
+           scheduled_start_time="2006-08-03 00:00:00.0" scheduled_end_time="2006-08-03 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Appeal Response phase -->
+    <project_phase project_phase_id="62" project_id="6" phase_type_id="7" phase_status_id="1"
+           scheduled_start_time="2006-08-04 00:00:00.0" scheduled_end_time="2006-08-04 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Aggregation phase -->
+    <project_phase project_phase_id="63" project_id="6" phase_type_id="8" phase_status_id="1"
+           scheduled_start_time="2006-08-05 00:00:00.0" scheduled_end_time="2006-08-05 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Aggregation Review phase -->
+    <project_phase project_phase_id="64" project_id="6" phase_type_id="9" phase_status_id="1"
+           scheduled_start_time="2006-08-06 00:00:00.0" scheduled_end_time="2006-08-06 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Final Fix phase -->
+    <project_phase project_phase_id="65" project_id="6" phase_type_id="10" phase_status_id="1"
+           scheduled_start_time="2006-08-07 00:00:00.0" scheduled_end_time="2006-08-07 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Final Review phase -->
+    <project_phase project_phase_id="66" project_id="6" phase_type_id="11" phase_status_id="1"
+           scheduled_start_time="2006-08-08 00:00:00.0" scheduled_end_time="2006-08-08 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Approval phase -->
+    <!-- *** project_info *** -->
+    <project_info project_info_type_id="1" project_id="6" value="6"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Ext. Reference ID -->
+    <project_info project_info_type_id="2" project_id="6" value="6"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Component ID -->
+    <project_info project_info_type_id="3" project_id="6" value="6"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Version ID -->
+    <project_info project_info_type_id="4" project_id="6" value="6"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Developer Forum ID -->
+    <project_info project_info_type_id="5" project_id="6" value="6"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Root Catalog ID -->
+    <project_info project_info_type_id="6" project_id="6" value="Project6"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Project Name -->
+    <project_info project_info_type_id="7" project_id="6" value="6.0"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Project Version -->
+    <project_info project_info_type_id="8" project_id="6" value="http://svn.acme.org/project6/trunk"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- SVN Module -->
+    <project_info project_info_type_id="9" project_id="6" value="On"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Auto Pilot option -->
+    <project_info project_info_type_id="10" project_id="6" value="Off"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Status Notification option -->
+    <project_info project_info_type_id="11" project_id="6" value="Off"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Timeline Notification option -->
+    <project_info project_info_type_id="12" project_id="6" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Public -->
+    <project_info project_info_type_id="13" project_id="6" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Rated -->
+    <project_info project_info_type_id="14" project_id="6" value="TBD"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Eligibility -->
+    <project_info project_info_type_id="15" project_id="6" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payments Required option -->
+    <project_info project_info_type_id="16" project_id="6" value="100,200,300"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payments -->
+    <project_info project_info_type_id="17" project_id="6" value="This is the public Java component."
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Notes -->
+    <project_info project_info_type_id="18" project_id="6" value="2006-07-29 02:45:11.0"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Timestamp -->
+    <project_info project_info_type_id="19" project_id="6" value="2"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Phase -->
+    <project_info project_info_type_id="20" project_id="6" value="Something went wrong"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Reason -->
+
+    <!-- *** project *** -->
+    <project project_id="7" project_status_id="2" project_category_id="13"
+             create_user="System" create_date="2006-07-29 02:45:11.0"
+             modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Application, Testing Competition, Active, Project7 -->
+    <!-- *** phase *** -->
+    <project_phase project_phase_id="67" project_id="7" phase_type_id="1" phase_status_id="2"
+           scheduled_start_time="2006-07-29 00:00:00.0" scheduled_end_time="2006-07-29 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Registration phase -->
+    <project_phase project_phase_id="68" project_id="7" phase_type_id="2" phase_status_id="1"
+           scheduled_start_time="2006-07-30 00:00:00.0" scheduled_end_time="2006-07-30 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Submission phase -->
+    <project_phase project_phase_id="69" project_id="7" phase_type_id="3" phase_status_id="1"
+           scheduled_start_time="2006-07-31 00:00:00.0" scheduled_end_time="2006-07-31 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Screening phase -->
+    <project_phase project_phase_id="70" project_id="7" phase_type_id="4" phase_status_id="1"
+           scheduled_start_time="2006-08-01 00:00:00.0" scheduled_end_time="2006-08-01 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Review phase -->
+    <project_phase project_phase_id="71" project_id="7" phase_type_id="5" phase_status_id="1"
+           scheduled_start_time="2006-08-02 00:00:00.0" scheduled_end_time="2006-08-02 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Appeals phase -->
+    <project_phase project_phase_id="72" project_id="7" phase_type_id="6" phase_status_id="1"
+           scheduled_start_time="2006-08-03 00:00:00.0" scheduled_end_time="2006-08-03 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Appeal Response phase -->
+    <project_phase project_phase_id="73" project_id="7" phase_type_id="7" phase_status_id="1"
+           scheduled_start_time="2006-08-04 00:00:00.0" scheduled_end_time="2006-08-04 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Aggregation phase -->
+    <project_phase project_phase_id="74" project_id="7" phase_type_id="8" phase_status_id="1"
+           scheduled_start_time="2006-08-05 00:00:00.0" scheduled_end_time="2006-08-05 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Aggregation Review phase -->
+    <project_phase project_phase_id="75" project_id="7" phase_type_id="9" phase_status_id="1"
+           scheduled_start_time="2006-08-06 00:00:00.0" scheduled_end_time="2006-08-06 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Final Fix phase -->
+    <project_phase project_phase_id="76" project_id="7" phase_type_id="10" phase_status_id="1"
+           scheduled_start_time="2006-08-07 00:00:00.0" scheduled_end_time="2006-08-07 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Final Review phase -->
+    <project_phase project_phase_id="77" project_id="7" phase_type_id="11" phase_status_id="1"
+           scheduled_start_time="2006-08-08 00:00:00.0" scheduled_end_time="2006-08-08 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Approval phase -->
+    <!-- *** project_info *** -->
+    <project_info project_info_type_id="1" project_id="7" value="7"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Ext. Reference ID -->
+    <project_info project_info_type_id="2" project_id="7" value="7"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Component ID -->
+    <project_info project_info_type_id="3" project_id="7" value="7"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Version ID -->
+    <project_info project_info_type_id="4" project_id="7" value="7"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Developer Forum ID -->
+    <project_info project_info_type_id="5" project_id="7" value="7"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Root Catalog ID -->
+    <project_info project_info_type_id="6" project_id="7" value="Project7"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Project Name -->
+    <project_info project_info_type_id="7" project_id="7" value="7.0"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Project Version -->
+    <project_info project_info_type_id="8" project_id="7" value="http://svn.acme.org/project7/trunk"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- SVN Module -->
+    <project_info project_info_type_id="9" project_id="7" value="On"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Auto Pilot option -->
+    <project_info project_info_type_id="10" project_id="7" value="Off"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Status Notification option -->
+    <project_info project_info_type_id="11" project_id="7" value="Off"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Timeline Notification option -->
+    <project_info project_info_type_id="12" project_id="7" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Public -->
+    <project_info project_info_type_id="13" project_id="7" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Rated -->
+    <project_info project_info_type_id="14" project_id="7" value="TBD"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Eligibility -->
+    <project_info project_info_type_id="15" project_id="7" value="Yes"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payments Required option -->
+    <project_info project_info_type_id="16" project_id="7" value="100,200,300"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payments -->
+    <project_info project_info_type_id="17" project_id="7" value="This is the public Java component."
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Notes -->
+    <project_info project_info_type_id="18" project_id="7" value="2006-07-29 02:45:11.0"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Timestamp -->
+    <project_info project_info_type_id="19" project_id="7" value="2"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Phase -->
+    <project_info project_info_type_id="20" project_id="7" value="Something went wrong"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Deactivated Reason -->
+</dataset>
