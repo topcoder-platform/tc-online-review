@@ -4405,7 +4405,7 @@
                     <Value>27355736</Value>
                 </Property>
                 <Property name="IconSmall">
-                    <Value>transparentSm.gif</Value>
+                    <Value>pythonSm.gif</Value>
                 </Property>
                 <Property name="AltTextKey">
                     <Value>RootCatalog.Python</Value>
@@ -4419,7 +4419,7 @@
                     <Value>27355738</Value>
                 </Property>
                 <Property name="IconSmall">
-                    <Value>transparentSm.gif</Value>
+                    <Value>pythonCustomSm.gif</Value>
                 </Property>
                 <Property name="AltTextKey">
                     <Value>RootCatalog.CustomPython</Value>
@@ -4433,7 +4433,7 @@
                     <Value>27355740</Value>
                 </Property>
                 <Property name="IconSmall">
-                    <Value>transparentSm.gif</Value>
+                    <Value>otherCustomSm.gif</Value>
                 </Property>
                 <Property name="AltTextKey">
                     <Value>RootCatalog.CustomOther</Value>
@@ -4503,10 +4503,10 @@
             </Property>
             <Property name="Specification">
                 <Property name="IconSmall">
-                    <Value>specificationSm.gif</Value>
+                    <Value>IconSpecSm.gif</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>specification.gif</Value>
+                    <Value>IconSpec.gif</Value>
                 </Property>
             </Property>
             <Property name="Architecture">
@@ -4583,10 +4583,10 @@
             </Property>
             <Property name="UI Prototype Competition">
                 <Property name="IconSmall">
-                    <Value>iconUIPrototypeCompetitionSm.png</Value>
+                    <Value>IconProtoSm.gif</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>iconUIPrototypeCompetition.png</Value>
+                    <Value>IconProto.gif</Value>
                 </Property>
             </Property>
             <Property name="Logos">
@@ -4607,18 +4607,18 @@
             </Property>
             <Property name="Conceptualization">
                 <Property name="IconSmall">
-                    <Value>conceptSm.gif</Value>
+                    <Value>IconConceptSm.gif</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>concept.gif</Value>
+                    <Value>IconConcept.gif</Value>
                 </Property>
             </Property>
             <Property name="RIA Build Competition">
                 <Property name="IconSmall">
-                    <Value>iconRIABuildCompetitionSm.png</Value>
+                    <Value>IconRIASm.gif</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>iconRIABuildCompetition.png</Value>
+                    <Value>IconRIA.gif</Value>
                 </Property>
             </Property>
             <Property name="RIA Component Competition">
