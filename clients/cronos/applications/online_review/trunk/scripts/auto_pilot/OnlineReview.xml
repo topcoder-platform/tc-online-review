@@ -645,7 +645,7 @@
     -->
     <Config name="com.cronos.onlinereview.phases.ManagerHelper">
         <Property name="ProjectDetailsURL">
-            <Value>http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
+            <Value>https://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
         </Property>
         <Property name="ProjectManager">
             <Property name="ClassName">
@@ -3994,7 +3994,7 @@
             </Property>
         </Property>
         <Property name="ProjectDetailsURL">
-            <Value>http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
+            <Value>https://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
         </Property>
         <Property name="submitter_terms_id">
             <Value>20703</Value>
