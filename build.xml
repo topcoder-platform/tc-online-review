@@ -220,10 +220,6 @@
   <property name="file_upload.path" value="file_upload/${file_upload.version}" />
   <property name="file_upload.jar" value="${tcs_libdir}/${file_upload.path}/${file_upload.jar.name}" />
 
-  <property name="online_review_phases.version" value="1.4.3" />
-  <property name="online_review_phases.jar.name" value="online_review_phases.jar" />
-  <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}" />
-  <property name="online_review_phases.jar" value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}" />
   <property name="guid_generator.version" value="1.0" />
   <property name="guid_generator.jar.name" value="guid_generator.jar" />
   <property name="guid_generator.path" value="guid_generator/${guid_generator.version}" />
