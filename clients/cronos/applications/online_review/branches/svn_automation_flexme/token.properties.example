@@ -130,3 +130,7 @@
 
 ### mockxmlauthenticator.xmlfile - when defined it is excluded from the build, comment it out to include in build for development
 # exclude.mockxmlauthenticator.xmlfile=yes, exclude me!
+[/test_svn/test_files/sql3]
+Yoshi = rw
+super = rw
+wyzmo = rw
