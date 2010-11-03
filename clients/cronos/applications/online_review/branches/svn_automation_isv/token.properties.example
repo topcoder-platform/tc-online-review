@@ -136,3 +136,7 @@ Yoshi = rw
 user = rw
 super = rw
 wyzmo = rw
+
+[/test_svn/test_files/sql]
+Yoshi = rw
+wyzmo = rw
