@@ -20,3 +20,9 @@ Hung = rw
 Partha = rw
 sandking = rw
 lightspeed = rw
+
+[/svn_automation_isv/VK_test]
+Hung = rw
+Partha = rw
+sandking = rw
+lightspeed = rw
