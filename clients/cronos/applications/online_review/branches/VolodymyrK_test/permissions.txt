@@ -11,3 +11,6 @@ lightspeed = rw
 Hung = rw
 Partha = rw
 lightspeed = rw
+
+[/svn_automation_isv/VK_test]
+sandking = rw
