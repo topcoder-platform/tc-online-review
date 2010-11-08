@@ -130,3 +130,16 @@
 
 ### mockxmlauthenticator.xmlfile - when defined it is excluded from the build, comment it out to include in build for development
 # exclude.mockxmlauthenticator.xmlfile=yes, exclude me!
+
+###############################################################
+# tokens used to run integration tests
+############################################################### 
+@tests.username@=heffan
+@tests.password@=password
+@tests.projectlink@=/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=
+@tests.baseurl@=http://localhost:8080/review
+@tests.seleniumport@=5555
+@tests.seleniumbrowser@=*chrome
+@tests.seleniumdomain@=http://localhost:8080
+@tests.distributionurl@=<<online_review_trunk>>/test_files/Test_Distribution.jar
+@tests.browserspeed@=0
