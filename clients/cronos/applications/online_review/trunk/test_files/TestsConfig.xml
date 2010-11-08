@@ -2,19 +2,19 @@
 <CMConfig>
     <Config name="com.cronos.onlinereview">
 	    <Property name="domain">
-	    	<Value>@functionaltests.seleniumdomain@</Value>
+	    	<Value>@tests.seleniumdomain@</Value>
 	    </Property>
 	    <Property name="browser">
-	    	<Value>@functionaltests.seleniumbrowser@</Value><!-- you can use *iexplore here for testing using IE-->
+	    	<Value>@tests.seleniumbrowser@</Value><!-- you can use *iexplore here for testing using IE-->
 	    </Property>
         <Property name="port"><!-- The selenium listening port. -->
-            <Value>@functionaltests.seleniumport@</Value>
+            <Value>@tests.seleniumport@</Value>
         </Property>
         <Property name="base_url">
-            <Value>@functionaltests.baseurl@</Value>
+            <Value>@tests.baseurl@</Value>
         </Property>
         <Property name="project_link">
-            <Value>@functionaltests.projectlink@</Value>
+            <Value>@tests.projectlink@</Value>
         </Property>
         <Property name="timeout"><!-- the timeout for the page loading -->
             <Value>30000</Value>
@@ -23,10 +23,10 @@
             <Value>@tests.browserspeed@</Value>
         </Property> 
        <Property name="username">
-            <Value>@functionaltests.username@</Value>
+            <Value>@tests.username@</Value>
         </Property>
         <Property name="password">
-            <Value>@functionaltests.password@</Value>
+            <Value>@tests.password@</Value>
         </Property>
         <Property name="db_username"> <!-- local informix username -->
             <Value>@database.username@</Value>
@@ -38,7 +38,7 @@
             <Value>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@</Value>
         </Property>
         <Property name="distribution_location"> <!-- The development distribution for upload features -->
-            <Value>@functionaltests.distributionurl@</Value>
+            <Value>@tests.distributionurl@</Value>
         </Property>
     </Config>
     <!-- Namespace for DBConnectionFactory component -->
