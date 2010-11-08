@@ -58,13 +58,14 @@
 
   <property name="builddir" value="build/ant" />
   <property name="build_conf" value="${builddir}/conf" />
+  <property name="build_tests" value="${builddir}/tests" />
   <property name="build_shared" value="${builddir}/shared" />
   <property name="build_jboss_files" value="${builddir}/jboss_files" />
   <property name="build_jboss_files_conf" value="${build_jboss_files}/conf" />
   <property name="build_jboss_files_deploy" value="${build_jboss_files}/deploy" />
   <property name="build_classdir" value="${builddir}/classes" />
-  <property name="build_testclassdir" value="${builddir}/testClasses" />
-  <property name="build_targetclassdir" value="${builddir}/targetclasses" />
+  <property name="build_testclassdir" value="${build_tests}/testClasses" />
+  <property name="build_testconfdir" value="${build_tests}/conf" />
   <property name="build_distdir" value="${builddir}/dist" />
   <property name="build_explodedwar" value="${build_distdir}/exploded/${distfilename}.war" />
   <property name="build_docsdir" value="${builddir}/${docsdir}" />
@@ -72,9 +73,6 @@
   <property name="build_webdir" value="${builddir}/${webdir}" />
   <property name="build_lib" value="${builddir}/lib" />
   <property name="build_tcsdistdir" value="${build_distdir}/${distfilename}-${component_version}" />
-
-  <!-- Server installation directories -->
-  <property name="cactus.home.tomcat5x" value="d:\tomcat" />
 
   <property name="deploy-dir" value="${JBOSS_HOME}/server/default/deploy/${distfilename}.war" />
   <property name="deploy-conf-dir" value="${JBOSS_HOME}/server/default/conf"/>
@@ -90,25 +88,8 @@
   <property name="verbose" value="no" />
 
   <!-- COMPONENT DISTRIBUTION STRUCTURE -->
-  <property name="dist_conf" value="${build_tcsdistdir}/${configdir}" />
-  <property name="dist_lib" value="${build_distdir}/lib/tcs" />
-  <property name="dist_src" value="${build_tcsdistdir}/${srcdir}" />
-  <property name="dist_docs" value="${build_tcsdistdir}/${docsdir}" />
-  <property name="dist_javadocs" value="${build_tcsdistdir}/${javadocsdir}" />
-  <property name="dist_testfiles" value="${build_tcsdistdir}/${testfiles}" />
-
-  <!-- NAME FOR .JAR AND .WAR FILES -->
-  <property name="component.jar" value="${dist_lib}/${component_path}/${distfilename}.jar" />
-  <property name="javadoc.jar" value="${builddir}/javadocs.jar" />
-  <property name="component.tests.jar" value="${dist_lib}/${distfilename}_tests.jar" />
-  <property name="component_test.war" value="${build_distdir}/${distfilename}_test.war" />
-  <property name="component.dist.jar" value="${build_distdir}/${distfilename}-${component_version}.jar" />
-  <property name="dev_submission.jar" value="${component}_${component_version}_dev_submission.jar" />
-  <property name="design_submission.jar" value="${component}_${component_version}_design_submission.jar" />
-  <property name="dev_dist.jar" value="${component}_${component_version}_dev_dist.jar" />
-  <property name="design_dist.jar" value="${component}_${component_version}_design_dist.jar" />
   <property name="component.war" value="${build_distdir}/${distfilename}.war" />
-
+  <property name="dist_javadocs" value="${build_tcsdistdir}/${javadocsdir}" />
 
   <!-- TCS Dependencies -->
   <property name="authentication_factory.version" value="2.0" />
@@ -365,11 +346,6 @@
   <property name="search_builder.path" value="search_builder/${search_builder.version}" />
   <property name="search_builder.jar" value="${tcs_libdir}/${search_builder.path}/${search_builder.jar.name}" />
 
-  <!--<property name="security_manager.version" value="1.1" />
-  <property name="security_manager.jar.name" value="security_manager.jar" />
-  <property name="security_manager.path" value="security_manager/${security_manager.version}" />
-  <property name="security_manager.jar" value="${tcs_libdir}/${security_manager.path}/${security_manager.jar.name}" />-->
-
   <property name="simple_cache.version" value="2.0" />
   <property name="simple_cache.jar.name" value="simple_cache.jar" />
   <property name="simple_cache.path" value="simple_cache/${simple_cache.version}" />
@@ -437,9 +413,7 @@
   <property name="jboss-ejb3x.jar" value="${jar_ext_libdir}/jboss/jboss-ejb3x.jar" />
   <property name="jstl.jar" value="${ext_libdir}/jstl.jar" />
   <property name="jboss-j2ee.jar" value="${jar_ext_libdir}/jboss/jboss-j2ee.jar" />
-  <property name="servlet.jar" value="${cactus.home.tomcat5x}/common/lib/servlet-api.jar" />
   <property name="jbossall-client.jar" value="${jar_ext_libdir}/jboss/jbossall-client.jar" />
-  <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar" />
   <property name="jiveforums.jar" value="${jar_ext_libdir}/jiveforums.jar" />
   <property name="jsp-api.jar" value="${jar_ext_libdir}/jsp-api.jar" />
   <property name="mail.jar" value="${jar_ext_libdir}/mail.jar" />
@@ -449,23 +423,18 @@
   <property name="commons.beanutils.jar" value="${ext_libdir}/commons-beanutils.jar" />
   <property name="log4j.jar" value="${ext_libdir}/log4j.jar" />
 
-  <property name="aspectjrt.jar" value="${ext_libdir}/testing/aspectjrt-1.2.1.jar" />
-  <property name="cactus.jar" value="${ext_libdir}/testing/cactus-1.7.2.jar" />
-  <property name="cactus.ant.jar" value="${ext_libdir}/testing/cactus-ant-1.7.2.jar" />
-  <property name="cargo.jar" value="${ext_libdir}/testing/cargo-0.5.jar" />
-  <property name="commons.collections.jar" value="${ext_libdir}/testing/commons-collections-2.1.jar" />
-  <property name="commons.httpclient.jar" value="${ext_libdir}/testing/commons-httpclient-2.0.2.jar" />
-  <property name="commons.logging.jar" value="${ext_libdir}/testing/commons-logging-1.0.4.jar" />
-  <property name="httpunit.jar" value="${ext_libdir}/testing/httpunit-1.6.jar" />
-  <property name="junit.jar" value="${ext_libdir}/testing/junit-3.8.1.jar" />
-  <property name="nekohtml.jar" value="${ext_libdir}/testing/nekohtml-0.9.1.jar" />
-
   <property name="jiveforums.jar.name" value="jiveforums.jar" />
   <property name="jiveforums.jar" value="${ext_libdir}/${jiveforums.jar.name}" />
 
   <property name="jivebase.jar.name" value="jivebase.jar" />
   <property name="jivebase.jar" value="${ext_libdir}/${jivebase.jar.name}" />
-  <property name="strutstest.jar" value="${ext_libdir}/testing/strutstest-2.1.3.jar" />
+
+  <!-- testing libs -->
+  <property name="junit.jar.name" value="junit-3.8.1.jar" />
+  <property name="junit.jar" value="${ext_libdir}/testing/${junit.jar.name}" />
+
+  <property name="selenium_client.jar.name" value="selenium-java-client-driver.jar" />
+  <property name="selenium_client.jar" value="${ext_libdir}/testing/${selenium_client.jar.name}" />
 
   <path id="spring_libs">
     <fileset dir="${ext_libdir}/spring">
@@ -540,32 +509,12 @@
     <pathelement location="${scorecard_data_structure.jar}" />
     <pathelement location="${scorecard_management.jar}" />
     <pathelement location="${scorecard_management_persistence.jar}" />
-    <!--<pathelement location="${security_manager.jar}" />-->
     <pathelement location="${user_project_data_store.jar}" />
     <pathelement location="${typesafe_enum.jar}" />
     <pathelement location="${weighted_calculator.jar}" />
     <pathelement location="${workdays.jar}" />
     <path refid="spring_libs"/>
   </path>
-
-  <path id="cactus.classpath">
-    <pathelement location="${junit.jar}" />
-    <pathelement location="${aspectjrt.jar}" />
-    <pathelement location="${cactus.jar}" />
-    <pathelement location="${cactus.ant.jar}" />
-    <pathelement location="${commons.beanutils.jar}" />
-    <pathelement location="${commons.httpclient.jar}" />
-    <pathelement location="${commons.logging.jar}" />
-    <pathelement location="${commons.collections.jar}"/>
-    <pathelement location="${httpunit.jar}" />
-    <pathelement location="${nekohtml.jar}" />
-    <pathelement location="${strutstest.jar}" />
-    <pathelement location="${cargo.jar}" />
-    <pathelement location="${build_testclassdir}" />
-    <path refid="buildlibs" />
-  </path>
-
-  <taskdef resource="cactus.tasks" classpathref="cactus.classpath" />
 
   <path id="test.build.classpath">
     <pathelement location="${build_testclassdir}" />
@@ -574,7 +523,6 @@
     <path path="${JBOSS_HOME}/server/default/conf"/>
     <path path="${JBOSS_HOME}/server/default/deploy/review.war/WEB-INF/classes"/>
     <path refid="buildlibs" />
-    <path refid="cactus.classpath" />
   </path>
 
 
@@ -957,7 +905,7 @@
     </if>
     <start_jboss background="true" />
   </target>
-  
+
   <!-- JBoss start / stop -->
   <macrodef name="start_jboss">
     <attribute name="background" default="false"/>
@@ -1020,97 +968,11 @@
     </sequential>
   </target>
 
-  <target name="compile_tests" depends="compile">
-    <mkdir dir="${build_testclassdir}" />
-    <javac srcdir="${javatests}"
-           destdir="${build_testclassdir}"
-           includes="**/*.java"
-           debug="true"
-           verbose="${verbose}"
-           source="1.5"
-           target="1.5"
-               >
-      <classpath refid="test.build.classpath" />
-    </javac>
-  </target>
-
-  <target name="compile_ws" depends="compile">
-    <mkdir dir="${build_testclassdir}" />
-
-    <echo>${axis.jar}</echo>
-    <echo>${jboss-client.jar}</echo>
-    <javac srcdir="${javatests}"
-           destdir="${build_testclassdir}"
-           includes="**/UploadServiceClient.java"
-           debug="true"
-           verbose="${verbose}"
-           source="1.5"
-           target="1.5"
-               >
-      <classpath >
-        <fileset dir="${ext_libdir}" includes="**/*.jar"/>
-        <fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
-      </classpath>
-    </javac>
-
-    <java classname="com.cronos.onlinereview.uploadservices.UploadServiceClient"
-            fork="true" maxmemory="512m">
-      <classpath >
-        <fileset dir="${ext_libdir}" includes="**/*.jar"/>
-        <fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
-        <path path="${build_testclassdir}"/>
-      </classpath>
-    </java>
-  </target>
-
   <target name="javadoc" depends="compile">
     <mkdir dir="${dist_javadocs}" />
     <javadoc packagenames="${package}.*" sourcepath="${javamain}" classpath="${build_classdir}" classpathref="buildlibs" destdir="${dist_javadocs}" windowtitle="Topcoder Software" header="&lt;table border=0 cellpadding=0 cellspacing=2&gt;&lt;tr&gt;&lt;td&gt;&lt;font class=tcoder2&gt;&#091; &lt;/font&gt;&lt;font class=tcoder1&gt;TOP&lt;/font&gt;&lt;font class=tcoder2&gt;CODER &lt;/font&gt;&lt;font class=tcoder2&gt;&#093;&lt;/font&gt;&lt;/td&gt;&lt;td&gt;&lt;font class=tcoder4&gt;&#153;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=tcoder3 align=center&gt;&lt;font class=tcoder3&gt;SOFTWARE&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" footer="&lt;table border=0 cellpadding=0 cellspacing=2&gt;&lt;tr&gt;&lt;td&gt;&lt;font class=tcoder2&gt;&#091; &lt;/font&gt;&lt;font class=tcoder1&gt;TOP&lt;/font&gt;&lt;font class=tcoder2&gt;CODER &lt;/font&gt;&lt;font class=tcoder2&gt;&#093;&lt;/font&gt;&lt;/td&gt;&lt;td&gt;&lt;font class=tcoder4&gt;&#153;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=tcoder3 align=center&gt;&lt;font class=tcoder3&gt;SOFTWARE&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" bottom="&lt;font class=tcoder5&gt;Contact TopCoder Software at &lt;a href='http://www.topcodersoftware.com'&gt;www.topcodersoftware.com&lt;/a&gt;&lt;/font&gt;" stylesheetfile="${javadocsdir}/stylesheet.css" verbose="${verbose}">
       <tag name="copyright" description="Copyright:" scope="types" />
     </javadoc>
-  </target>
-
-  <target name="prepare_tests_war" depends="dist, compile_tests">
-
-    <!-- Cactify the web-app archive -->
-    <!-- Done manually becaue of Cactus itself being buggy with out web.xml -->
-
-    <copy file="${component.war}" tofile="${component_test.war}"/>
-
-    <war destfile="${component_test.war}" webxml="${testfiles}/web.xml" update="true">
-      <classes dir="${build_testclassdir}" />
-      <lib dir="${jar_ext_libdir}/testing" includes="*.jar" />
-      <fileset
-          dir="${testfiles}"
-          includes="jspRedirector.jsp"
-            />
-    </war>
-
-  </target>
-
-  <target name="test" depends="prepare_tests_war">
-    <mkdir dir="${testlogdir}" />
-
-    <!-- Run the tests -->
-    <cactus warfile="${component_test.war}" fork="yes">
-      <classpath refid="cactus.classpath" />
-      <containerset timeout="180000">
-        <tomcat5x if="cactus.home.tomcat5x"
-            dir="${cactus.home.tomcat5x}" port="8080"
-            output="${testlogdir}/tomcat5x.out"
-            todir="${testlogdir}"
-            serverxml="${testfiles}/server.xml"
-                />
-      </containerset>
-      <formatter type="brief" usefile="true" />
-      <formatter type="xml" />
-      <batchtest>
-        <fileset dir="${javatests}">
-          <include name="**/*.java" />
-        </fileset>
-      </batchtest>
-    </cactus>
-
   </target>
 
   <target name="reports" depends="test">
@@ -1123,6 +985,13 @@
       <report format="frames" todir="${reports}" />
     </junitreport>
     <echo>The execution of reports is complete.  Reports are available in /${reports}</echo>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+      target: prod-init
+    - - - - - - - - - - - - - - - - - -->
+  <target name="prod-init">
+    <property name="component.war" value="${distfilename}.war" />
   </target>
 
   <target name="deploy-common">
@@ -1144,22 +1013,69 @@
     </delete>
   </target>
 
-  <!-- - - - - - - - - - - - - - - - - -
-      target: prod-init
-    - - - - - - - - - - - - - - - - - -->
-  <target name="prod-init">
-    <property name="component.war" value="${distfilename}.war" />
-  </target>
-
   <target name="deploy-prod" depends="prod-init, deploy-common" />
-
-  <target name="main" depends="deploy, test" />
 
   <target name="package-phase-handler-extend" depends="compile">
     <jar jarfile="${build_distdir}/phase_handler_extend.jar">
       <zipfileset dir="${build_classdir}" includes="com/cronos/onlinereview/phases/**/*.class"/>
       <metainf dir="${javamain}/com/cronos/onlinereview/phases/" includes="*.xml"/>
     </jar>
+  </target>
+
+  <!-- integration tests targets -->
+  <target name="tokenize_tests">
+    <mkdir dir="${build_testconfdir}" />
+    <copy todir="${build_testconfdir}" overwrite="true">
+      <fileset dir="${testfiles}">
+        <include name="**/*.xml"/>
+        <include name="**/*.properties"/>
+      </fileset>
+    </copy>
+
+    <replace dir="${build_testconfdir}" replacefilterfile="${token.properties}">
+      <include name="**/*.properties"/>
+      <include name="**/*.xml"/>
+      <include name="**/*.xsl"/>
+      <include name="**/*.xsd"/>
+    </replace>
+  </target>
+
+  <target name="compile_tests">
+    <mkdir dir="${build_testclassdir}" />
+    <javac srcdir="${javatests}"
+           destdir="${build_testclassdir}"
+           includes="**/*Tests.java,**/TestHelper.java"
+           debug="true"
+           verbose="${verbose}"
+           source="1.5"
+           target="1.5">
+      <classpath refid="test.build.classpath" />
+    </javac>
+  </target>
+
+  <path id="test.build.classpath">
+    <pathelement location="${base_exception.jar}"/>
+    <pathelement location="${configuration_manager.jar}"/>
+    <pathelement location="${db_connection_factory.jar}"/>
+    <pathelement location="${id_generator.jar}"/>
+    <pathelement location="${ifx-jdbc.jar}"/>
+    <pathelement location="${junit.jar}"/>
+    <pathelement location="${selenium_client.jar}"/>
+    <path path="${build_testconfdir}"/>
+  </path>
+
+  <target name="test" depends="tokenize_tests, compile_tests">
+    <sequential>
+      <mkdir dir="${testlogdir}"/>
+      <junit fork="true" haltonerror="false">
+        <classpath location="${build_testclassdir}"/>
+        <classpath refid="test.build.classpath"/>
+        <test name="${package}.FunctionalTests" todir="${testlogdir}">
+          <formatter type="plain" usefile="true"/>
+          <formatter type="xml" usefile="true"/>
+        </test>
+      </junit>
+    </sequential>
   </target>
 
 </project>

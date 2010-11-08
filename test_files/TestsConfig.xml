@@ -1,0 +1,71 @@
+<?xml version="1.0" ?>
+<CMConfig>
+    <Config name="com.cronos.onlinereview">
+	    <Property name="domain">
+	    	<Value>@functionaltests.seleniumdomain@</Value>
+	    </Property>
+	    <Property name="browser">
+	    	<Value>@functionaltests.seleniumbrowser@</Value><!-- you can use *iexplore here for testing using IE-->
+	    </Property>
+        <Property name="port"><!-- The selenium listening port. -->
+            <Value>@functionaltests.seleniumport@</Value>
+        </Property>
+        <Property name="base_url">
+            <Value>@functionaltests.baseurl@</Value>
+        </Property>
+        <Property name="project_link">
+            <Value>@functionaltests.projectlink@</Value>
+        </Property>
+        <Property name="timeout"><!-- the timeout for the page loading -->
+            <Value>30000</Value>
+        </Property>
+        <Property name="browser_speed"><!-- browser speed when running tests -->
+            <Value>@tests.browserspeed@</Value>
+        </Property> 
+       <Property name="username">
+            <Value>@functionaltests.username@</Value>
+        </Property>
+        <Property name="password">
+            <Value>@functionaltests.password@</Value>
+        </Property>
+        <Property name="db_username"> <!-- local informix username -->
+            <Value>@database.username@</Value>
+        </Property>
+        <Property name="db_password"> <!-- local informix password -->
+            <Value>@database.password@</Value>
+        </Property>
+        <Property name="db_url"> <!-- local informix connection url -->
+            <Value>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@</Value>
+        </Property>
+        <Property name="distribution_location"> <!-- The development distribution for upload features -->
+            <Value>@functionaltests.distributionurl@</Value>
+        </Property>
+    </Config>
+    <!-- Namespace for DBConnectionFactory component -->
+    <Config name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+        <Property name="connections">
+            <Property name="default">
+                <Value>informix_connection</Value>
+            </Property>
+            <Property name="informix_connection">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>@database.username@</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>@database.password@</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+</CMConfig>
