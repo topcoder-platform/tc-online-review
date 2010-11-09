@@ -11,6 +11,9 @@
         <Property name="Operator">
             <Value>22841596</Value>
         </Property>
+        <Property name="GuardFile">
+            <Value>@auto_pilot_guard_file@</Value>
+        </Property>
     </Config>
     <Config name="com.topcoder.management.phase.autopilot.AutoPilotJob.factory">
         <Property name="com/topcoder/management/phase/autopilot/AutoPilotJob">
@@ -23,7 +26,7 @@
     </Config>
     <Config name="AutoPilotJob">
         <Property name="AutoPilotJob">
-            <Value>StartDTG:September 16, 2010 12:00:00 AM</Value>
+            <Value>StartDTG:October 12, 2010 12:00:00 AM</Value>
             <Value>EndDTG:</Value>
             <Value>IntervalValue:1</Value>
             <Value>IntervalUnit:MINUTE</Value>

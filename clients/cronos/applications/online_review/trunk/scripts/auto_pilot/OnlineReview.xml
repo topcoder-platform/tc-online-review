@@ -1,17 +1,17 @@
 <?xml version="1.0" ?>
 <!DOCTYPE CMConfig [
-       <!ENTITY localFileUploadDir "/home/tcs/downloads">
-       <!ENTITY catalogOutputDir "/home/tcs/temp_files">
-       <!ENTITY distributionToolOutputDir "/home/tcs/temp_files/tmp_dist">
-       <!ENTITY distributionScriptsBase "/home/tcs/onlinereview/distribution_scripts">
-       <!ENTITY phasesEmailTemplate "/home/tcs/online_review/scripts/auto_pilot/email_template.txt">
-       <!ENTITY winnersEmailTemplate "/home/tcs/online_review/scripts/auto_pilot/winners_email_template.txt">
-       <!ENTITY timelineTemplateDir "/home/tcs">
-       <!ENTITY contactManagersTemplate "/home/tcs/online_review/conf/templates/contact_manager_template.txt">
-       <!ENTITY managerNotificationEmailTemplatesBase "/home/tcs/online_review/conf/templates">
+       <!ENTITY localFileUploadDir "@localFileUploadDir@">
+       <!ENTITY catalogOutputDir "@catalogOutputDir@">
+       <!ENTITY distributionToolOutputDir "@distributionToolOutputDir@">
+       <!ENTITY distributionScriptsBase "@distributionScriptsBase@">
+       <!ENTITY phasesEmailTemplate "@auto_pilot_templates_dir@/email_template.txt">
+       <!ENTITY winnersEmailTemplate "@auto_pilot_templates_dir@/winners_email_template.txt">
+       <!ENTITY timelineTemplateDir "@exttemplatesdir@">
+       <!ENTITY contactManagersTemplate "@exttemplatesdir@/contact_manager_template.txt">
+       <!ENTITY managerNotificationEmailTemplatesBase "@exttemplatesdir@">
        <!ENTITY notificationEmailFromAddress "service@topcodersoftware.com">
-       <!ENTITY smtpServerAuthAddress "service@topcodersoftware.com">
-       <!ENTITY pactJNDIAddress "jnp://63.118.154.181:1199">
+       <!ENTITY smtpServerAuthAddress "@emailengine_smtp_user@">
+       <!ENTITY pactJNDIAddress "@pactJNDIAddress@">
 ]>
 <CMConfig>
 <!-- [OR-584] don't need this anymore
@@ -42,13 +42,13 @@
                         <Value>com.informix.jdbc.IfxDriver</Value>
                     </Property>
                     <Property name="jdbc_url">
-                        <Value>jdbc:informix-sqli://env.topcoder.com:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp</Value>
+                        <Value>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@</Value>
                     </Property>
                     <Property name="user">
-                        <Value>coder</Value>
+                        <Value>@database.username@</Value>
                     </Property>
                     <Property name="password">
-                        <Value>c0d3r4T</Value>
+                        <Value>@database.password@</Value>
                     </Property>
                 </Property>
             </Property>
@@ -85,7 +85,7 @@
         </Property>
 
         <Property name="authenticator_name">
-            <Value>ORAuthenticator</Value>
+            <Value>@login.authenticator@</Value>
         </Property>
 
         <Property name="logger_name">
@@ -471,16 +471,16 @@
     -->
     <Config name="com.topcoder.message.email.EmailEngine">
         <Property name="smtp_host_addr">
-            <Value>localhost</Value>
+            <Value>@emailengine_smtp_host@</Value>
         </Property>
         <Property name="smtp_host_port">
-            <Value>25</Value>
+            <Value>@emailengine_smtp_port@</Value>
         </Property>
         <Property name="username">
             <Value>&smtpServerAuthAddress;</Value>
         </Property>
         <Property name="password">
-            <Value>top_coder</Value>
+            <Value>@emailengine_smtp_password@</Value>
         </Property>
     </Config>
 
@@ -645,7 +645,7 @@
     -->
     <Config name="com.cronos.onlinereview.phases.ManagerHelper">
         <Property name="ProjectDetailsURL">
-            <Value>https://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
+            <Value>http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
         </Property>
         <Property name="ProjectManager">
             <Property name="ClassName">
@@ -3994,7 +3994,7 @@
             </Property>
         </Property>
         <Property name="ProjectDetailsURL">
-            <Value>https://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
+            <Value>http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
         </Property>
         <Property name="submitter_terms_id">
             <Value>20703</Value>
