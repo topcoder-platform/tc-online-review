@@ -127,6 +127,9 @@
                 <include name="**/*.sh" />
             </patternset>
         </unjar>
+        <fixcrlf srcdir="${basedir}" eol="lf" eof="remove" includes="**/*.sh" />
+        <fixcrlf srcdir="${basedir}" eol="crlf" includes="**/*.bat" />
+        <chmod dir="." perm="u+x" includes="**/*.sh"/>
     </target>
 
     <target name="main" depends="dist" description="Builds the JAR file with binary distribution of Auto Screening Tool"/>
