@@ -387,7 +387,7 @@
       </then>
     </if>
 
-    <!-- Re-deploy Auto Pilot -->
+    <!-- Re-deploy Auto Pilot --><!--
     <ant antfile="${online_review_home}/scripts/auto_pilot/build.xml" dir="${online_review_home}/scripts/auto_pilot"
          target="stop_ap" inheritall="false" inheritrefs="true"/>
     <ant antfile="${online_review_home}/scripts/auto_pilot/build.xml" dir="${online_review_home}/scripts/auto_pilot"
@@ -397,7 +397,7 @@
     <ant antfile="${online_review_home}/scripts/auto_pilot/build.xml" dir="${online_review_home}/scripts/auto_pilot"
          target="deploy" inheritall="false" inheritrefs="true"/>
 
-    <!-- Re-deploy Auto Screening -->
+    --><!-- Re-deploy Auto Screening --><!--
     <ant antfile="${online_review_home}/scripts/auto_screening/build.xml" dir="${online_review_home}/scripts/auto_screening"
          target="stop_as" inheritall="false" inheritrefs="true"/>
     <ant antfile="${online_review_home}/scripts/auto_screening/build.xml" dir="${online_review_home}/scripts/auto_screening"
@@ -405,7 +405,7 @@
     <ant antfile="${online_review_home}/scripts/auto_screening/build.xml" dir="${online_review_home}/scripts/auto_screening"
          target="dist" inheritall="false" inheritrefs="true"/>
     <ant antfile="${online_review_home}/scripts/auto_screening/build.xml" dir="${online_review_home}/scripts/auto_screening"
-         target="deploy" inheritall="false" inheritrefs="true"/>
+         target="deploy" inheritall="false" inheritrefs="true"/>-->
   </target>
 
   <target name="restart" depends="redeploy" >
