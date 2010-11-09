@@ -386,7 +386,6 @@
         <ant antfile="${db_scripts_path}/build.xml" target="setup_db" dir="${db_scripts_path}"/>
       </then>
     </if>
-    <start_jboss background="true"/>
 
     <!-- Re-deploy Auto Pilot -->
     <ant antfile="${online_review_home}/scripts/auto_pilot/build.xml" dir="${online_review_home}/scripts/auto_pilot"
@@ -409,6 +408,10 @@
          target="deploy" inheritall="false" inheritrefs="true"/>
   </target>
 
+  <target name="restart" depends="redeploy" >
+    <start_jboss background="true"/>
+  </target>
+  
   <!-- JBoss start / stop -->
   <macrodef name="start_jboss">
     <attribute name="background" default="false"/>
