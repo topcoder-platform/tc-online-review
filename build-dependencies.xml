@@ -490,7 +490,6 @@
     <property name="jivebase.jar.name" value="jivebase.jar"/>
     <property name="jivebase.jar" value="${ext_libdir}/${jivebase.jar.name}"/>
     <property name="strutstest.jar" value="${ext_libdir}/testing/strutstest-2.1.3.jar"/>
-    <property name="svnant.jar" value="${ext_libdir}/svn/svnant.jar"/>
     <property name="checkstyle.jar" value="${ext_libdir}/checkstyle-all-4.2.jar"/>
     <property name="ant-contrib.jar" value="${ext_libdir}/ant-contrib-1.0b3.jar"/>
     <property name="activation.jar" value="${ext_libdir}/activation.jar" />
