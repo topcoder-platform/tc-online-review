@@ -1,6 +1,6 @@
 <%--
   - Author: pulky, isv
-  - Version: 1.3
+  - Version: 1.3.1
   - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays project edition page
@@ -12,6 +12,9 @@
   - categories and scorecards.
   -
   - Version 1.3 (Specification Review Part 1 assembly) changes: Added support for Specification Review phase.
+  -
+  - Version 1.3.1 (SVN Automation and Late Deliverables Tracking Assembly 1.0) changes: SVN Module property is no longer
+  - editable
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -1195,8 +1198,7 @@
                                     <b><bean:message key="editProject.References.SVNModule" /></b><br />
                                 </td>
                                 <td class="value" nowrap="nowrap">
-                                    <html:text styleClass="inputBox" property="SVN_module" style="width: 350px;" />
-                                    <span id="SVN_module_validation_msg" style="display:none;" class="error"></span>
+                                    <c:out value="${projectForm.map['SVN_module']}"/>
                                 </td>
                             </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
                             <!-- since: Online Review Update - Add Project Dropdown v1.0 -->

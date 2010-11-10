@@ -203,6 +203,7 @@
            excludes="mail.jar, ejb-2_0.jar, servlet-api.jar, jsp-api.jar, log4j.jar"/>
       <lib dir="${jar_ext_libdir}/spring" includes="*.jar"/>
       <lib dir="${jar_ext_libdir}/hibernate" includes="*.jar"/>
+      <lib dir="${jar_ext_libdir}/svnkit" includes="*.jar"/>
       <lib dir="${shared_libdir}" includes="${catalog.jar.name}"/>
       <lib dir="${shared_libdir}" includes="${tcwebcommon.jar.name}"/>
       <lib dir="${shared_libdir}" includes="${shared.jar.name}"/>
