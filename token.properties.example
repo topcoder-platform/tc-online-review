@@ -210,3 +210,39 @@
 #@auto_screening_checkstyle_main_exec@=/home/apps/auto_screening/checkstyle.sh
 # A path to Checkstyle executable for test classes
 #@auto_screening_checkstyle_tests_exec@=/home/apps/auto_screening/checkstyle_test.sh
+
+####################################################
+# Parameters specific to Late Deliverables Tracker #
+####################################################
+# Comma separated list of ID for types of deliverables to track
+# (maps to deliverable_lu.deliverable_id column values)
+@tracked_deliverable_ids@=<<deliverable_ids>>
+# An interval (in seconds) for sending notification emails on late deliverables
+@late_deliverables_notification_interval@=<<number_of_seconds>>
+# A mailbox to send notification emails on late deliverables from
+@late_deliverables_notification_mailbox@=<<mailbox>>
+# A path to file to signal to Late Deliverables Tracker to stop the job
+@late_deliverables_tracker_guard_file@=<<path_to_guard_file>>
+# A path to file to signal to Late Deliverables Tracker that there is another tool instance already running
+@late_deliverables_tracker_running_file@=<<path_to_file_indicating_on_running_job>>
+# An interval (in milliseconds) between Late Deliverables Tracker job executions
+@late_deliverables_tracker_poll_interval@=<<poll_interval>>
+# A path to log file for Late Deliverables Tracker
+@late_deliverables_tracker_log_file@=<<path_to_log_file>>
+
+#####################
+# SVN configuration #
+#####################
+# An URL for SVN repository root
+@svn.root@=<<URL_for_SVN_repository>>
+# A username for authenticating to SVN repository
+@svn.username@=<<username>>
+# A password for authenticating to SVN repository
+@svn.password@=<<password>>
+# A message for committing the updates to path-based permission file
+@svn.mkdir.commit.message@=<<commit_message>>
+# A base directory for temporary files and directories
+@svn.temp.files.basedir@=<<path_to_directory>>
+# An URL for path-based permissions file in SVN repository
+@svn.authz.file.url@=<<URL_for_permissions_file>>
+

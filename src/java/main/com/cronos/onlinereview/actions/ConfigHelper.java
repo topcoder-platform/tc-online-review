@@ -70,8 +70,17 @@ import com.topcoder.util.config.UnknownNamespaceException;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, romanoTC
- * @version 1.6
+ * <p>
+ * Version 1.6.1 (SVN Automation and Late Deliverables Tracker Integration Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #disabledResourceRoles} field with respective accessor method and updated static initializer to
+ *     set that field with data read from configuration file.</li>
+ *     <li>Added configuration for SVN environment.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, romanoTC, isv
+ * @version 1.6.1
  */
 public class ConfigHelper {
 
@@ -604,6 +613,23 @@ public class ConfigHelper {
     private static final String DISABLED_RESOURCE_ROLES_PROP = "DisabledResourceRoles";
 
     /**
+     * <p>A <code>String</code> providing the name for configuration property listing the resource roles which are to be
+     * granted permission for accessing SVN module for project once the project enters <code>Final Review</code> phase.
+     * </p>
+     *
+     * @since 1.6.1
+     */
+    private static final String SVN_PERM_GRANT_RESOURCE_ROLES_PROP = "SVNPermissionGrantResourceRoles";
+
+    /**
+     * <p>A <code>String</code> providing the name for configuration property listing the parameters for SVN repository.
+     * </p>
+     *
+     * @since 1.6.1
+     */
+    private static final String SVN_CONFIG_PROP = "SVNConfig";
+
+    /**
      * This member variable holds the name of the session attribute which ID of the currently logged
      * in user will be stored in.
      */
@@ -926,9 +952,24 @@ public class ConfigHelper {
     /**
      * <p>A <code>String</code> array listing the IDs for resource roles which are not allowed for selection.</p>
      *
-     * @since 1.6
+     * @since 1.6.1
      */
     private static String[] disabledResourceRoles;
+
+    /**
+     * <p>A <code>String</code> array listing the IDs for resource roles which are to be granted permission for
+     * accessing SVN repository for project once the project enters <code>Final Review</code> phase.</p>
+     *
+     * @since 1.6.1
+     */
+    private static String[] svnPermissionGrantResourceRoles;
+
+    /**
+     * <p>A <code>String</code> array providing the SVN configuration.</p>
+     *
+     * @since 1.6.1
+     */
+    private static String[] svnConfig;
 
     static {
         // Obtaining the instance of Configuration Manager
@@ -1461,6 +1502,17 @@ public class ConfigHelper {
                 = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DISABLED_RESOURCE_ROLES_PROP);
             disabledResourceRoles = disabledResourceRolesConfig.getValues();
 
+            Property svnPermissionGrantResourceRolesConfig
+                = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, SVN_PERM_GRANT_RESOURCE_ROLES_PROP);
+            svnPermissionGrantResourceRoles = svnPermissionGrantResourceRolesConfig.getValues();
+
+            Property svnRepoConfig = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, SVN_CONFIG_PROP);
+            svnConfig = new String[] {svnRepoConfig.getValue("Root"),
+                                      svnRepoConfig.getValue("AuthUsername"),
+                                      svnRepoConfig.getValue("AuthPassword"),
+                                      svnRepoConfig.getValue("MkDirCommitMessage"),
+                                      svnRepoConfig.getValue("TempFilesBaseDir"),
+                                      svnRepoConfig.getValue("PathBasedPermissionsFileURL")};
         } catch (UnknownNamespaceException une) {
             // TODO: Add proper logging here
             System.out.println(une.getMessage());
@@ -2069,5 +2121,77 @@ public class ConfigHelper {
      */
     public static String[] getDisabledResourceRoles() {
         return disabledResourceRoles;
+    }
+
+    /**
+     * <p>Gets the list of resource role IDs which are to be granted permission for accessing SVN module for project
+     * once the project enters the <code>Final Review</code> phase.</p>
+     *
+     * @return a <code>String</code> array listing the IDs for resource roles which are to be granted SVN permission.
+     * @since 1.6.1
+     */
+    public static String[] getSvnPermissionGrantResourceRoles() {
+        return svnPermissionGrantResourceRoles;
+    }
+
+    /**
+     * <p>Gets the URL for SVN repository.</p>
+     *
+     * @return a <code>String</code> providing the URL for SVN repository.
+     * @since 1.6.1
+     */
+    public static String getSVNRoot() {
+        return svnConfig[0];
+    }
+
+    /**
+     * <p>Gets the username for authentication to SVN repository.</p>
+     *
+     * @return a <code>String</code> providing the username to be used for authenticating to SVN repository.
+     * @since 1.6.1
+     */
+    public static String getSVNAuthnUsername() {
+        return svnConfig[1];
+    }
+
+    /**
+     * <p>Gets the password for authentication to SVN repository.</p>
+     *
+     * @return a <code>String</code> providing the password to be used for authenticating to SVN repository.
+     * @since 1.6.1
+     */
+    public static String getSVNAuthnPassword() {
+        return svnConfig[2];
+    }
+
+    /**
+     * <p>Gets the message for committing the new directories to SVN repository.</p>
+     *
+     * @return a <code>String</code> providing message for committing the new directories to SVN repository.
+     * @since 1.6.1
+     */
+    public static String getSVNCommitMessage() {
+        return svnConfig[3];
+    }
+
+    /**
+     * <p>Gets the path to local directory where the SVN files can be temporarily checked to.</p>
+     *
+     * @return a <code>String</code> providing the path to local directory where the SVN files can be temporarily
+     *         checked to.
+     * @since 1.6.1
+     */
+    public static String getSVNTemporaryFilesBaseDir() {
+        return svnConfig[4];
+    }
+
+    /**
+     * <p>Gets the URL for path-based permissions file in SVN repository.</p>
+     *
+     * @return a <code>String</code> providing the URL for path-based permissions file in SVN repository.
+     * @since 1.6.1
+     */
+    public static String getSVNPathBasedPermissionsFileURL() {
+        return svnConfig[5];
     }
 }

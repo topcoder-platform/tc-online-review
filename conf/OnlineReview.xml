@@ -4730,6 +4730,36 @@
             <Value>1001</Value><!-- Team Captain -->
         </Property>
 
+        <Property name="SVNPermissionGrantResourceRoles">
+            <Value>1</Value><!-- Submitter -->
+            <Value>4</Value><!-- Reviewer -->
+            <Value>5</Value><!-- Accuracy Reviewer -->
+            <Value>6</Value><!-- Failure Reviewer -->
+            <Value>7</Value><!-- Stress Reviewer -->
+            <Value>9</Value><!-- Final Reviewer -->
+        </Property>
+
+        <Property name="SVNConfig">
+            <Property name="Root">
+                <Value>@svn.root@</Value>
+            </Property>
+            <Property name="AuthUsername">
+                <Value>@svn.username@</Value>
+            </Property>
+            <Property name="AuthPassword">
+                <Value>@svn.password@</Value>
+            </Property>
+            <Property name="MkDirCommitMessage">
+                <Value>@svn.mkdir.commit.message@</Value>
+            </Property>
+            <Property name="TempFilesBaseDir">
+                <Value>@svn.temp.files.basedir@</Value>
+            </Property>
+            <Property name="PathBasedPermissionsFileURL">
+                <Value>@svn.authz.file.url@</Value>
+            </Property>
+        </Property>
+
         <!-- Definition of the Permissions Matrix.  Each property inside the main one denotes one
             certain permission, while the name attribute for that property specifies the name of
             the permission.  The values contained inside each property specify the names of the

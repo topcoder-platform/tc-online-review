@@ -212,8 +212,16 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.11 (SVN Automation and Late Deliverables Tracking Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #saveProject(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method to
+ *     skip updating the <code>SVN Module</code> property of the project.</li>
+ *   </ol>
+ * </p>
+
  * @author George1, real_vg, pulky, isv
- * @version 1.10
+ * @version 1.11
  */
 public class ProjectActions extends DispatchAction {
 
@@ -873,8 +881,6 @@ public class ProjectActions extends DispatchAction {
         // Populate project dr points
         Double drPoints = (Double)lazyForm.get("dr_points");
         project.setProperty("DR points", drPoints.equals(0d) ? null : drPoints);
-        // Populate project SVN module
-        project.setProperty("SVN Module", lazyForm.get("SVN_module"));
 
         if (newProject && lazyForm.get("external_reference_id") != null) {
             // Retrieve and populate version

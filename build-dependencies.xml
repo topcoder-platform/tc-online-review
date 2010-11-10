@@ -124,7 +124,7 @@
     <property name="database_abstraction.jar"
               value="${tcs_libdir}/${database_abstraction.path}/${database_abstraction.jar.name}"/>
 
-    <property name="db_connection_factory.version" value="1.0"/>
+    <property name="db_connection_factory.version" value="1.1.0"/>
     <property name="db_connection_factory.jar.name" value="db_connection_factory.jar"/>
     <property name="db_connection_factory.path" value="db_connection_factory/${db_connection_factory.version}"/>
     <property name="db_connection_factory.jar"
@@ -155,7 +155,13 @@
     <property name="document_generator.jar"
               value="${tcs_libdir}/${document_generator.path}/${document_generator.jar.name}"/>
 
-    <property name="email_engine.version" value="3.1.0"/>
+    <!-- Document Generator 3.1.0 is used by the Late Deliverables Tracker component -->
+    <property name="document_generator_3_1_0.version" value="3.1.0"/>
+    <property name="document_generator_3_1_0.jar.name" value="document_generator.jar"/>
+    <property name="document_generator_3_1_0.path" value="document_generator/${document_generator_3_1_0.version}"/>
+    <property name="document_generator_3_1_0.jar" value="${tcs_libdir}/${document_generator_3_1_0.path}/${document_generator_3_1_0.jar.name}"/>
+
+    <property name="email_engine.version" value="3.2.0"/>
     <property name="email_engine.jar.name" value="email_engine.jar"/>
     <property name="email_engine.path" value="email_engine/${email_engine.version}"/>
     <property name="email_engine.jar" value="${tcs_libdir}/${email_engine.path}/${email_engine.jar.name}"/>
@@ -191,6 +197,16 @@
     <property name="job_scheduler.path" value="job_scheduler/${job_scheduler.version}" />
     <property name="job_scheduler.jar" value="${tcs_libdir}/${job_scheduler.path}/${job_scheduler.jar.name}" />
 
+    <property name="job_processor.version" value="3.0.1"/>
+    <property name="job_processor.jar.name" value="job_processor.jar"/>
+    <property name="job_processor.path" value="job_processor/${job_processor.version}"/>
+    <property name="job_processor.jar" value="${tcs_libdir}/${job_processor.path}/${job_processor.jar.name}"/>
+    
+    <property name="job_scheduling.version" value="3.2.0"/>
+    <property name="job_scheduling.jar.name" value="job_scheduling.jar"/>
+    <property name="job_scheduling.path" value="job_scheduling/${job_scheduling.version}"/>
+    <property name="job_scheduling.jar" value="${tcs_libdir}/${job_scheduling.path}/${job_scheduling.jar.name}"/>
+    
     <property name="magic_numbers.version" value="1.0" />
     <property name="magic_numbers.jar.name" value="magic_numbers.jar" />
     <property name="magic_numbers.path" value="magic_numbers/${magic_numbers.version}" />
@@ -221,6 +237,11 @@
     <property name="JNDI_Utility.path" value="JNDI_Utility/${JNDI_Utility.version}"/>
     <property name="JNDI_Utility.jar" value="${tcs_libdir}/${JNDI_Utility.path}/${JNDI_Utility.jar.name}"/>
 
+    <property name="late_deliverables_tracker.version" value="1.0.1"/>
+    <property name="late_deliverables_tracker.jar.name" value="late_deliverables_tracker.jar"/>
+    <property name="late_deliverables_tracker.path" value="late_deliverables_tracker/${late_deliverables_tracker.version}"/>
+    <property name="late_deliverables_tracker.jar" value="${tcs_libdir}/${late_deliverables_tracker.path}/${late_deliverables_tracker.jar.name}"/>
+    
     <property name="logging_wrapper.version" value="1.2"/>
     <property name="logging_wrapper.jar.name" value="logging_wrapper.jar"/>
     <property name="logging_wrapper.path" value="logging_wrapper/${logging_wrapper.version}"/>
@@ -495,6 +516,7 @@
     <property name="activation.jar" value="${ext_libdir}/activation.jar" />
     <property name="xerces.jar" value="${ext_libdir}/xerces.jar" />
     <property name="ejb-2_0.jar" value="${ext_libdir}/ejb-2_0.jar" />
+    <property name="svnkit.jar" value="${ext_libdir}/svnkit/svnkit.jar"/>
 
     <path id="spring_libs">
         <fileset dir="${ext_libdir}/spring">
@@ -580,6 +602,7 @@
         <pathelement location="${directory_validation.jar}"/>
         <pathelement location="${heartbeat.jar}"/>
         <pathelement location="${compression_utility.jar}"/>
+        <pathelement location="${svnkit.jar}"/>
         <path refid="spring_libs"/>
     </path>
 
