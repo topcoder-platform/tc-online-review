@@ -129,8 +129,8 @@
                 <include name="**/*.sh" />
             </patternset>
         </unjar>
-        <fixcrlf srcdir="${basedir}" eol="lf" eof="remove" includes="**/*.sh" />
-        <fixcrlf srcdir="${basedir}" eol="crlf" includes="**/*.bat" />
+        <fixcrlf srcdir="${deploy-dir}" eol="lf" eof="remove" includes="**/*.sh" />
+        <fixcrlf srcdir="${deploy-dir}" eol="crlf" includes="**/*.bat" />
         <chmod dir="${deploy-dir}" perm="u+x" includes="**/*.sh"/>
     </target>
 
