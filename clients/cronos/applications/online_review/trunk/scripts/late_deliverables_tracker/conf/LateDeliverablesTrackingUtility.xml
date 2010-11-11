@@ -426,7 +426,7 @@
                     </Property>
                 </Property>
                 <Property name="notificationDeliverableIds">
-                    <Value>@tracked_deliverable_ids@</Value>
+                    <Value>@notification_deliverable_ids@</Value>
                 </Property>
                 <Property name="defaultEmailSubjectTemplateText">
                     <Value>WARNING\: Your %DELIVERABLE_NAME% is late for %PROJECT_NAME%</Value>

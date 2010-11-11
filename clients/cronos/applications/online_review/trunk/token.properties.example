@@ -217,6 +217,9 @@
 # Comma separated list of ID for types of deliverables to track
 # (maps to deliverable_lu.deliverable_id column values)
 @tracked_deliverable_ids@=<<deliverable_ids>>
+# Comma separated list of ID for types of deliverables to email about
+# (maps to deliverable_lu.deliverable_id column values)
+@notification_deliverable_ids@=<<deliverable_ids>>
 # An interval (in seconds) for sending notification emails on late deliverables
 @late_deliverables_notification_interval@=<<number_of_seconds>>
 # A mailbox to send notification emails on late deliverables from
@@ -239,7 +242,7 @@
 @svn.username@=<<username>>
 # A password for authenticating to SVN repository
 @svn.password@=<<password>>
-# A message for committing the updates to path-based permission file
+# A message for committing the updates to path-based permission file and for creating SVN directories
 @svn.mkdir.commit.message@=<<commit_message>>
 # A base directory for temporary files and directories
 @svn.temp.files.basedir@=<<path_to_directory>>
