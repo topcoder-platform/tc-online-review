@@ -73,6 +73,8 @@
             <fileset file="${compression_utility.jar}"/>
             <fileset file="${command_line_utility.jar}"/>
             <fileset file="${configuration_manager.jar}"/>
+            <fileset file="${configuration_api.jar}"/>
+            <fileset file="${configuration_persistence.jar}" />
             <fileset file="${data_validation.jar}"/>
             <fileset file="${database_abstraction.jar}"/>
             <fileset file="${db_connection_factory.jar}"/>
