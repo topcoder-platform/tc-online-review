@@ -137,6 +137,7 @@
             <fileset file="${tcsUtil.jar}"/>
             <fileset file="${shared.jar}"/>
             <fileset file="${jbossall-client.jar}"/>
+            <fileset file="${svnkit.jar}"/>
             <fileset dir=".">
                 <include name="build.xml"/>
             </fileset>
