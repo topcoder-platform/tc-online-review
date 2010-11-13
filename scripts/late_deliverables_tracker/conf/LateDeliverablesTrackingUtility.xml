@@ -75,10 +75,57 @@
                 <Property name="loggerName">
                     <Value>myLogger</Value>
                 </Property>
+                <Property name="resourceManagerKey">
+                    <Value>resourceManager</Value>
+                </Property>
                 <Property name="trackingDeliverableIds">
                     <Value>@tracked_deliverable_ids@</Value>
                 </Property>
                 <Property name="objectFactoryConfig">
+                    <property name="resourceManager">
+                        <property name="type">
+                            <value>com.topcoder.management.resource.persistence.PersistenceResourceManager</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="name">
+                                    <Value>ResourcePersistence</Value>
+                                </Property>
+                            </Property>
+                            <Property name="param2">
+                                <Property name="name">
+                                    <Value>SearchBundleManager</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="ResourcePersistence">
+                        <property name="type">
+                            <value>com.topcoder.management.resource.persistence.sql.SqlResourcePersistence</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="name">
+                                    <Value>DBConnectionFactory</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="SearchBundleManager">
+                        <property name="type">
+                            <value>com.topcoder.search.builder.SearchBundleManager</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="type">
+                                    <Value>String</Value>
+                                </Property>
+                                <Property name="value">
+                                    <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
                     <property name="projectManager">
                         <property name="type">
                             <value>com.topcoder.management.project.ProjectManagerImpl</value>
