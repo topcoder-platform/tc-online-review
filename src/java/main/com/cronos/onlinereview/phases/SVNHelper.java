@@ -3,7 +3,9 @@
  */
 package com.cronos.onlinereview.phases;
 
-import com.cronos.onlinereview.actions.ConfigHelper;
+import com.topcoder.util.config.ConfigManager;
+import com.topcoder.util.config.Property;
+import com.topcoder.util.config.UnknownNamespaceException;
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
 import com.topcoder.util.log.LogFactory;
@@ -43,12 +45,32 @@ public final class SVNHelper {
     private static final Log log = LogFactory.getLog(SVNHelper.class.getName());
 
     /**
+     * <p>A <code>String</code> array providing the SVN configuration.</p>
+     *
+     * @since 1.6.1
+     */
+    private static String[] svnConfig;
+
+    /**
      * <p>This static initializer sets up the SVN repository factories for <code>svn://</code> and <code>http://</code>/
      * <code>https://</code> protocols.</p>
      */
     static {
         SVNRepositoryFactoryImpl.setup();
         DAVRepositoryFactory.setup();
+        try {
+            ConfigManager cfgMgr = ConfigManager.getInstance();
+            Property svnRepoConfig = cfgMgr.getPropertyObject("com.cronos.OnlineReview", "SVNConfig");
+            svnConfig = new String[] {svnRepoConfig.getValue("Root"),
+                                      svnRepoConfig.getValue("AuthUsername"),
+                                      svnRepoConfig.getValue("AuthPassword"),
+                                      svnRepoConfig.getValue("MkDirCommitMessage"),
+                                      svnRepoConfig.getValue("TempFilesBaseDir"),
+                                      svnRepoConfig.getValue("PathBasedPermissionsFileURL")};
+        } catch (UnknownNamespaceException e) {
+            e.printStackTrace(System.out);
+            throw new ExceptionInInitializerError(e);
+        }
     }
 
     /**
@@ -78,7 +100,7 @@ public final class SVNHelper {
         SVNURL dirURL = SVNURL.parseURIDecoded(path);
         SVNCommitClient commitClient = svnClientManager.getCommitClient();
         try {
-            commitClient.doMkDir(new SVNURL[]{dirURL}, ConfigHelper.getSVNCommitMessage(), null, true);
+            commitClient.doMkDir(new SVNURL[]{dirURL}, getSVNCommitMessage(), null, true);
             log.log(Level.INFO, "SVN directory " + path + " has been created successfully");
             return true;
         } catch (SVNException e) {
@@ -121,7 +143,7 @@ public final class SVNHelper {
             throw new IllegalArgumentException("The parameter [svnModule] is not valid. [" + svnModule + "]");
         }
         // Check if requested SVN module corresponds to SVN repository root
-        String svnRoot = ConfigHelper.getSVNRoot();
+        String svnRoot = getSVNRoot();
         if (!svnRoot.endsWith("/")) {
             svnRoot += "/";
         }
@@ -146,7 +168,7 @@ public final class SVNHelper {
             SVNUpdateClient updateClient = svnClientManager.getUpdateClient();
 
             // Create the temporary directory for checking out the
-            File baseTempDir = new File(ConfigHelper.getSVNTemporaryFilesBaseDir());
+            File baseTempDir = new File(getSVNTemporaryFilesBaseDir());
             String tempDirName = System.currentTimeMillis() + "_" + random.nextInt();
             tempDir = new File(baseTempDir, tempDirName);
             boolean tempDirCreated = tempDir.mkdirs();
@@ -157,7 +179,7 @@ public final class SVNHelper {
             tempDir.deleteOnExit();
 
             // Parse the URL for path-based permissions file into directory and file name
-            String permissionsFileURL = ConfigHelper.getSVNPathBasedPermissionsFileURL();
+            String permissionsFileURL = getSVNPathBasedPermissionsFileURL();
             int pos = permissionsFileURL.lastIndexOf("/");
             String fileName = permissionsFileURL.substring(pos + 1);
             String dirURL = permissionsFileURL.substring(0, pos);
@@ -179,7 +201,7 @@ public final class SVNHelper {
 
             // Commit updated path-based authorization file back to repository
             SVNCommitInfo commitInfo = commitClient
-                .doCommit(new File[]{authzFileLocalCopy}, false, ConfigHelper.getSVNCommitMessage(), null, null,
+                .doCommit(new File[]{authzFileLocalCopy}, false, getSVNCommitMessage(), null, null,
                           false, false, SVNDepth.EMPTY);
             SVNErrorMessage svnErrorMessage = commitInfo.getErrorMessage();
             if (svnErrorMessage != null) {
@@ -240,7 +262,7 @@ public final class SVNHelper {
      */
     private static SVNClientManager getSVNClientManager() {
         ISVNAuthenticationManager authnManager = new BasicAuthenticationManager(
-            ConfigHelper.getSVNAuthnUsername(), ConfigHelper.getSVNAuthnPassword());
+            getSVNAuthnUsername(), getSVNAuthnPassword());
         SVNClientManager svnClientManager = SVNClientManager.newInstance();
         svnClientManager.setAuthenticationManager(authnManager);
         return svnClientManager;
@@ -258,5 +280,66 @@ public final class SVNHelper {
         if (value == null) {
             throw new IllegalArgumentException("The parameter [" + paramName + "] is NULL");
         }
+    }
+
+    /**
+     * <p>Gets the URL for SVN repository.</p>
+     *
+     * @return a <code>String</code> providing the URL for SVN repository.
+     * @since 1.6.1
+     */
+    public static String getSVNRoot() {
+        return svnConfig[0];
+    }
+
+    /**
+     * <p>Gets the username for authentication to SVN repository.</p>
+     *
+     * @return a <code>String</code> providing the username to be used for authenticating to SVN repository.
+     * @since 1.6.1
+     */
+    public static String getSVNAuthnUsername() {
+        return svnConfig[1];
+    }
+
+    /**
+     * <p>Gets the password for authentication to SVN repository.</p>
+     *
+     * @return a <code>String</code> providing the password to be used for authenticating to SVN repository.
+     * @since 1.6.1
+     */
+    public static String getSVNAuthnPassword() {
+        return svnConfig[2];
+    }
+
+    /**
+     * <p>Gets the message for committing the new directories to SVN repository.</p>
+     *
+     * @return a <code>String</code> providing message for committing the new directories to SVN repository.
+     * @since 1.6.1
+     */
+    public static String getSVNCommitMessage() {
+        return svnConfig[3];
+    }
+
+    /**
+     * <p>Gets the path to local directory where the SVN files can be temporarily checked to.</p>
+     *
+     * @return a <code>String</code> providing the path to local directory where the SVN files can be temporarily
+     *         checked to.
+     * @since 1.6.1
+     */
+    public static String getSVNTemporaryFilesBaseDir() {
+        return svnConfig[4];
+    }
+
+    /**
+     * <p>Gets the URL for path-based permissions file in SVN repository.</p>
+     *
+     * @return a <code>String</code> providing the URL for path-based permissions file in SVN repository.
+     * @since 1.6.1
+     */
+    public static String getSVNPathBasedPermissionsFileURL() {
+        return svnConfig[5];
     }
 }
