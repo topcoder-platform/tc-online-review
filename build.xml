@@ -576,6 +576,8 @@
     <pathelement location="${ifx-jdbc.jar}"/>
     <pathelement location="${junit.jar}"/>
     <pathelement location="${selenium_client.jar}"/>
+    <pathelement location="${configuration_api.jar}" />
+    <pathelement location="${configuration_persistence.jar}" />
     <path path="${build_testconfdir}"/>
   </path>
 

@@ -22,12 +22,12 @@ public class LoginTests extends BaseTests {
         browser.click("rememberMe");
         browser.click("//input[@name='']");
         browser.waitForPageToLoad(TIMEOUT);
-        assertTrue("user should be logged in", browser.isTextPresent("Hello, heffan"));
+        assertTrue("user should be logged in", browser.isTextPresent("Hello, "+TestHelper.getUsername()));
         // reopen the browser
         browser.open(TestHelper.getBaseURL());
         // open the browser again
         browser.waitForPageToLoad(TIMEOUT);
-        assertTrue("user should be logged in", browser.isTextPresent("Hello, heffan"));
+        assertTrue("user should be logged in", browser.isTextPresent("Hello, "+TestHelper.getUsername()));
         // logout the user
         browser.click("link=Logout");
         browser.waitForPageToLoad(TIMEOUT);
