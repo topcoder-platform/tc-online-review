@@ -491,6 +491,7 @@
 
     <property name="junit.jar" value="${ext_libdir}/testing/junit-3.8.1.jar"/>
     <property name="selenium_client.jar" value="${ext_libdir}/testing/selenium-java-client-driver.jar" />
+    <property name="selenium_server.jar" value="${ext_libdir}/testing/selenium-server.jar" />
 
     <property name="jiveforums.jar.name" value="jiveforums.jar"/>
     <property name="jiveforums.jar" value="${ext_libdir}/${jiveforums.jar.name}"/>

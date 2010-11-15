@@ -169,7 +169,7 @@
 
     <target name="main" depends="dist" description="Builds the JAR file with binary distribution of Auto Pilot"/>
 
-    <target name="all" depends="clean, main" description="--> cleans and rebuilds the Auto Pilot project"/>
+    <target name="all" depends="clean, main, deploy" description="--> cleans and rebuilds the Auto Pilot project"/>
 
     <target name="start_ap" description="Starts Auto Pilot in background thread">
         <launch_auto_pilot background="true"/>
