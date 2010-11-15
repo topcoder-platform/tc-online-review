@@ -379,7 +379,10 @@
   </target>
 
   <!-- stops Jboss, reinstalls database, redeploys OR and starts jboss. -->
-  <target name="redeploy" depends="stop_jboss, first_deploy">
+  <target name="redeploy">
+    <antcall target="stop_tools" />
+
+    <!-- install databases -->
     <if>
       <isset property="update_db"/>
       <then>
@@ -388,31 +391,73 @@
       </then>
     </if>
 
-    <!-- Re-deploy Auto Pilot --><!--
-    <ant antfile="${online_review_home}/scripts/auto_pilot/build.xml" dir="${online_review_home}/scripts/auto_pilot"
-         target="stop_ap" inheritall="false" inheritrefs="true"/>
-    <ant antfile="${online_review_home}/scripts/auto_pilot/build.xml" dir="${online_review_home}/scripts/auto_pilot"
-         target="clean" inheritall="false" inheritrefs="true"/>
-    <ant antfile="${online_review_home}/scripts/auto_pilot/build.xml" dir="${online_review_home}/scripts/auto_pilot"
-         target="dist" inheritall="false" inheritrefs="true"/>
-    <ant antfile="${online_review_home}/scripts/auto_pilot/build.xml" dir="${online_review_home}/scripts/auto_pilot"
-         target="deploy" inheritall="false" inheritrefs="true"/>
+    <antcall target="deploy_tools" />
 
-    --><!-- Re-deploy Auto Screening --><!--
-    <ant antfile="${online_review_home}/scripts/auto_screening/build.xml" dir="${online_review_home}/scripts/auto_screening"
-         target="stop_as" inheritall="false" inheritrefs="true"/>
-    <ant antfile="${online_review_home}/scripts/auto_screening/build.xml" dir="${online_review_home}/scripts/auto_screening"
-         target="clean" inheritall="false" inheritrefs="true"/>
-    <ant antfile="${online_review_home}/scripts/auto_screening/build.xml" dir="${online_review_home}/scripts/auto_screening"
-         target="dist" inheritall="false" inheritrefs="true"/>
-    <ant antfile="${online_review_home}/scripts/auto_screening/build.xml" dir="${online_review_home}/scripts/auto_screening"
-         target="deploy" inheritall="false" inheritrefs="true"/>-->
+    <antcall target="start_jboss" />
+    <sleep seconds="${sleep_before_stopping}" />
+    <antcall target="test" />
+    <antcall target="stop_jboss" />
   </target>
 
-  <target name="restart" depends="redeploy" >
-    <start_jboss background="true"/>
+  <target name="restart">
+    <antcall target="stop_tools" />
+    <antcall target="deploy_tools" />
+    <antcall target="start_tools" />
+  </target>
+
+  <!-- Starts all tools -->
+  <target name="start_tools">
+    <antcall target="start_jboss"/>
+
+    <if>
+      <available file="${auto_pilot_deploy_dir}/build.xml" />
+      <then>
+        <ant antfile="${auto_pilot_deploy_dir}/build.xml" dir="${auto_pilot_deploy_dir}"
+             target="start_ap" inheritall="false" inheritrefs="true"/>
+      </then>
+    </if>
+
+    <if>
+      <available file="${auto_screening_deploy_dir}/build.xml" />
+      <then>
+        <ant antfile="${auto_screening_deploy_dir}/build.xml" dir="${auto_screening_deploy_dir}"
+         target="start_as" inheritall="false" inheritrefs="true"/>
+      </then>
+    </if>
+  </target>
+
+  <!-- Stops all tools -->
+  <target name="stop_tools">
+    <antcall target="stop_jboss" />
+
+    <if>
+      <available file="${auto_pilot_deploy_dir}/build.xml" />
+      <then>
+        <ant antfile="${auto_pilot_deploy_dir}/build.xml" dir="${auto_pilot_deploy_dir}"
+         target="stop_ap" inheritall="false" inheritrefs="true"/>
+      </then>
+    </if>
+
+    <if>
+      <available file="${auto_screening_deploy_dir}/build.xml" />
+      <then>
+        <ant antfile="${auto_screening_deploy_dir}/build.xml" dir="${auto_screening_deploy_dir}"
+         target="stop_as" inheritall="false" inheritrefs="true"/>
+      </then>
+    </if>
+
   </target>
   
+  <!-- Redeploy tools -->
+  <target name="deploy_tools" >
+    <!-- redeploy tools -->
+    <antcall target="first_deploy" />
+    <ant antfile="${online_review_home}/scripts/auto_pilot/build.xml" dir="${online_review_home}/scripts/auto_pilot"
+         target="all" inheritall="false" inheritrefs="true"/>
+    <ant antfile="${online_review_home}/scripts/auto_screening/build.xml" dir="${online_review_home}/scripts/auto_screening"
+         target="all" inheritall="false" inheritrefs="true"/>
+  </target>
+
   <!-- JBoss start / stop -->
   <macrodef name="start_jboss">
     <attribute name="background" default="false"/>
@@ -471,6 +516,7 @@
               <socket server="${bind_addr}" port="${jnp_port}"/>
             </not>
           </waitfor>
+          <sleep seconds="${sleep_before_stopping}" />
         </then>
       </if>
     </sequential>
@@ -487,7 +533,7 @@
       <tag name="copyright" description="Copyright:" scope="types"/>
     </javadoc>
   </target>
-  
+
   <target name="reports" depends="test">
     <mkdir dir="${reports}" />
 
@@ -581,7 +627,14 @@
     <path path="${build_testconfdir}"/>
   </path>
 
+
   <target name="test" depends="tokenize_tests, compile_tests">
+    <antcall target="tests.setup" />
+    <antcall target="tests.execute" />
+    <antcall target="tests.teardown" />
+  </target>
+
+  <target name="tests.execute" >
     <sequential>
       <mkdir dir="${testlogdir}"/>
       <junit fork="true" haltonerror="false">
@@ -595,4 +648,31 @@
     </sequential>
   </target>
 
+  <!-- Starts Selenium server -->
+  <target name="tests.setup" >
+    <sequential>
+      <if>
+        <not>
+          <socket server="${bind_addr}" port="${selenium_port}"/>
+        </not>
+        <then>
+          <java jar="${selenium_server.jar}" fork="true" spawn="true">
+            <arg line="-port ${selenium_port}"/>
+          </java>
+          <waitfor maxwait="30" maxwaitunit="second">
+            <and>
+              <socket server="${bind_addr}" port="${selenium_port}"/>
+              <http url="http://${bind_addr}:${selenium_port}/selenium-server/core/index.html" errorsBeginAt="404" />
+            </and>
+          </waitfor>
+        </then>
+      </if>
+    </sequential>
+  </target>
+
+  <target name="tests.teardown" >
+    <get taskname="selenium-shutdown"
+         src="http://${bind_addr}:${selenium_port}/selenium-server/driver/?cmd=shutDownSeleniumServer"
+         dest="${testlogdir}/result.txt" ignoreerrors="true" />
+  </target>
 </project>

@@ -138,6 +138,8 @@
 
     <target name="main" depends="dist" description="Builds the JAR file with binary distribution of Auto Screening Tool"/>
 
+    <target name="all" depends="clean, main, deploy" description="--> cleans and rebuilds the Auto Screening project"/>
+
     <target name="start_as" description="Starts Auto Screening Tool in background thread">
         <launch_auto_screening background="true"/>
     </target>
