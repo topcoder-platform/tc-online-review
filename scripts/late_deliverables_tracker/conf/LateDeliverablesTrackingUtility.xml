@@ -2,7 +2,7 @@
 <CMConfig>
     <Config name="com.topcoder.management.deliverable.latetracker.utility.LateDeliverablesTrackingUtility">
         <Property name="loggerName">
-            <Value>myLogger</Value>
+            <Value>LDTLogger</Value>
         </Property>
         <Property name="schedulerConfig">
             <Property name="lateDeliverablesTrackingJob">
@@ -48,7 +48,7 @@
 
         <Property name="jobConfig">
             <Property name="loggerName">
-                <Value>myLogger</Value>
+                <Value>LDTLogger</Value>
             </Property>
 
             <Property name="objectFactoryConfig">
@@ -73,7 +73,7 @@
 
             <Property name="lateDeliverablesRetrieverConfig">
                 <Property name="loggerName">
-                    <Value>myLogger</Value>
+                    <Value>LDTLogger</Value>
                 </Property>
                 <Property name="resourceManagerKey">
                     <Value>resourceManager</Value>
@@ -366,7 +366,7 @@
 
             <Property name="lateDeliverableProcessorConfig">
                 <Property name="loggerName">
-                    <Value>myLogger</Value>
+                    <Value>LDTLogger</Value>
                 </Property>
                 <Property name="connectionName">
                     <Value>informix_connection</Value>
