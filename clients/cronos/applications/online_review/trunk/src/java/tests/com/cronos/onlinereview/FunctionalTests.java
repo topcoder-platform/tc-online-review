@@ -22,7 +22,7 @@ public class FunctionalTests extends TestCase {
         suite.addTestSuite(ManageProjectTests.class);
         suite.addTestSuite(LinkProjectsTests.class);
         suite.addTestSuite(OpenPhaseTests.class);
-        suite.addTestSuite(EditProjectTests.class);
+        //suite.addTestSuite(EditProjectTests.class);
         return suite;
     }
 }

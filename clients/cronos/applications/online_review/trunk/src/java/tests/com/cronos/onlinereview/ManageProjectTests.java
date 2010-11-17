@@ -102,16 +102,16 @@ public class ManageProjectTests extends ProjectTests {
      *
      * @throws Exception if any error occurs
      */
-    public void testUploadDevelopmentDistribution() throws Exception {
-    	// login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
-        browser.click("//img[@alt='Manage Project']");
-        browser.waitForPageToLoad(TIMEOUT);
-        browser.click("link=Distributions");
-        browser.type("distribution_file", TestHelper.getDistributionLocation());
-        browser.click("//table[@id='upload_distribution_tbl']/tbody/tr[2]/td[2]/input[2]");
-        browser.waitForPageToLoad(TIMEOUT);
-        assertNoErrorsOccurred();
-    }
+//    public void testUploadDevelopmentDistribution() throws Exception {
+//    	// login the user first
+//    	TestHelper.loginUser(browser);
+//    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+//        browser.click("//img[@alt='Manage Project']");
+//        browser.waitForPageToLoad(TIMEOUT);
+//        browser.click("link=Distributions");
+//        browser.type("distribution_file", TestHelper.getDistributionLocation());
+//        browser.click("//table[@id='upload_distribution_tbl']/tbody/tr[2]/td[2]/input[2]");
+//        browser.waitForPageToLoad(TIMEOUT);
+//        assertNoErrorsOccurred();
+//    }
 }
