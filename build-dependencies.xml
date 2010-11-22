@@ -17,6 +17,7 @@
     <property name="ext_libdir" location="./lib/third_party"/>
     <property name="jar_ext_libdir" location="${ext_libdir}"/>
     <property name="jar_shared_libdir" location="${shared_libdir}"/>
+    <property name="build_components" location="${online_review_home}/build/ant/components" />
 
     <property name="authentication_factory.version" value="2.0"/>
     <property name="authentication_factory.jar.name" value="authentication_factory.jar"/>
@@ -296,7 +297,7 @@
     <property name="phase_handler_extend.version" value="1.0" />
     <property name="phase_handler_extend.jar.name" value="phase_handler_extend.jar" />
     <property name="phase_handler_extend.path" value="phase_handler_extend/${phase_handler_extend.version}" />
-    <property name="phase_handler_extend.jar" value="${tcs_libdir}/${phase_handler_extend.path}/${phase_handler_extend.jar.name}" />
+    <property name="phase_handler_extend.jar" value="${build_components}/${phase_handler_extend.path}/${phase_handler_extend.jar.name}" />
 
     <property name="phase_management.version" value="1.0.4"/>
     <property name="phase_management.jar.name" value="phase_management.jar"/>

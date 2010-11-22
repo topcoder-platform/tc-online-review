@@ -39,7 +39,7 @@
     <target name="compile">
         <mkdir dir="${build_classdir}"/>
         <delete failonerror="false">
-            <fileset dir="${build_classdir}" includes="com/cronos/onlinereview/phases/*.class"/>
+            <fileset dir="${build_classdir}" includes="**/*.class"/>
         </delete>
         <javac srcdir="${javamain}" destdir="${build_classdir}" includes="com/cronos/onlinereview/phases/**/*.java"
                debug="${debug}" verbose="${verbose}"
@@ -71,6 +71,7 @@
 
     <target name="dist_phase_handler" depends="compile"
             description="Compiles and builds the distribution for Phase Handler Extend component">
+      <mkdir dir="${build_components}/${phase_handler_extend.path}" />
         <jar destfile="${phase_handler_extend.jar}" basedir="${build_classdir}"
              includes="com/cronos/onlinereview/phases/**"/>
     </target>
