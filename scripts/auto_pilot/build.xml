@@ -36,10 +36,7 @@
         <delete failonerror="false" dir="${builddir}"/>
     </target>
 
-    <property name="phase_handler_extend.version" value="1.0" />
-    <property name="phase_handler_extend.jar.name" value="phase_handler_extend.jar" />
-    <property name="phase_handler_extend.path" value="phase_handler_extend/${phase_handler_extend.version}" />
-    <property name="phase_handler_extend.jar" value="${build_components}/${phase_handler_extend.path}/${phase_handler_extend.jar.name}" />
+    <property name="phase_handler_extend.jar" value="${build_components}/phase_handler_extend/phase_handler_extend.jar" />
 
     <target name="compile">
         <mkdir dir="${build_classdir}"/>
