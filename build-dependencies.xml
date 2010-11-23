@@ -294,11 +294,6 @@
     <property name="online_review_upload_services.jar"
               value="${tcs_libdir}/${online_review_upload_services.path}/${online_review_upload_services.jar.name}"/>
 
-    <property name="phase_handler_extend.version" value="1.0" />
-    <property name="phase_handler_extend.jar.name" value="phase_handler_extend.jar" />
-    <property name="phase_handler_extend.path" value="phase_handler_extend/${phase_handler_extend.version}" />
-    <property name="phase_handler_extend.jar" value="${build_components}/${phase_handler_extend.path}/${phase_handler_extend.jar.name}" />
-
     <property name="phase_management.version" value="1.0.4"/>
     <property name="phase_management.jar.name" value="phase_management.jar"/>
     <property name="phase_management.path" value="phase_management/${phase_management.version}"/>
