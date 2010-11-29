@@ -28,15 +28,6 @@
         <Property name="password">
             <Value>@tests.password@</Value>
         </Property>
-        <Property name="db_username"> <!-- local informix username -->
-            <Value>@database.username@</Value>
-        </Property>
-        <Property name="db_password"> <!-- local informix password -->
-            <Value>@database.password@</Value>
-        </Property>
-        <Property name="db_url"> <!-- local informix connection url -->
-            <Value>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@</Value>
-        </Property>
         <Property name="distribution_location"> <!-- The development distribution for upload features -->
             <Value>@tests.distributionurl@</Value>
         </Property>
@@ -63,6 +54,12 @@
                     </Property>
                     <Property name="password">
                         <Value>@database.password@</Value>
+                    </Property>
+                    <Property name="CLIENT_LOCALE">
+                        <Value>@database.locale@</Value>
+                    </Property>
+                    <Property name="DB_LOCALE">
+                        <Value>@database.locale@</Value>
                     </Property>
                 </Property>
             </Property>
