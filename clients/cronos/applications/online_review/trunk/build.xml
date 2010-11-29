@@ -644,11 +644,6 @@
   <!-- Starts Selenium server -->
   <target name="tests.setup" >
     <sequential>
-      <if>
-        <not>
-          <socket server="${bind_addr}" port="${selenium_port}"/>
-        </not>
-        <then>
           <java jar="${selenium_server.jar}" fork="true" spawn="true">
             <arg line="-port ${selenium_port}"/>
           </java>
@@ -658,8 +653,6 @@
               <http url="http://${bind_addr}:${selenium_port}/selenium-server/core/index.html" errorsBeginAt="404" />
             </and>
           </waitfor>
-        </then>
-      </if>
     </sequential>
   </target>
 
