@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 
+
 <project name="Online Review" default="build" basedir=".">
   <!-- property file defining the component's dependencies -->
   <property file="build.properties"/>
