@@ -4453,7 +4453,23 @@
                     <Value>icon_design.gif</Value>
                 </Property>
             </Property>
+             <Property name="Component Design">
+                <Property name="IconSmall">
+                    <Value>iconStatusSpecSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>icon_design.gif</Value>
+                </Property>
+            </Property>
             <Property name="Development">
+                <Property name="IconSmall">
+                    <Value>iconStatusDevSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>icon_development.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Component Development">
                 <Property name="IconSmall">
                     <Value>iconStatusDevSm.gif</Value>
                 </Property>
@@ -4589,6 +4605,14 @@
                     <Value>IconProto.gif</Value>
                 </Property>
             </Property>
+            <Property name="UI Prototype">
+                <Property name="IconSmall">
+                    <Value>IconProtoSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconProto.gif</Value>
+                </Property>
+            </Property>
             <Property name="Logos">
                 <Property name="IconSmall">
                     <Value>iconBlankSm.png</Value>
@@ -4621,7 +4645,23 @@
                     <Value>IconRIA.gif</Value>
                 </Property>
             </Property>
+            <Property name="RIA Build">
+                <Property name="IconSmall">
+                    <Value>IconRIASm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconRIA.gif</Value>
+                </Property>
+            </Property>
             <Property name="RIA Component Competition">
+                <Property name="IconSmall">
+                    <Value>iconRIAComponentCompetitionSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconRIAComponentCompetition.png</Value>
+                </Property>
+            </Property>
+            <Property name="RIA Component">
                 <Property name="IconSmall">
                     <Value>iconRIAComponentCompetitionSm.png</Value>
                 </Property>
