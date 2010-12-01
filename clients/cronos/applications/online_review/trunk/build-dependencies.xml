@@ -248,7 +248,7 @@
     <property name="logging_wrapper.path" value="logging_wrapper/${logging_wrapper.version}"/>
     <property name="logging_wrapper.jar" value="${tcs_libdir}/${logging_wrapper.path}/${logging_wrapper.jar.name}"/>
 
-    <property name="object_factory.version" value="2.1.2"/>
+    <property name="object_factory.version" value="2.0.1"/>
     <property name="object_factory.jar.name" value="object_factory.jar"/>
     <property name="object_factory.path" value="object_factory/${object_factory.version}"/>
     <property name="object_factory.jar" value="${tcs_libdir}/${object_factory.path}/${object_factory.jar.name}"/>
