@@ -1557,11 +1557,7 @@ public class ProjectActions extends DispatchAction {
 
         // Validate Explanation, but only if status has not been changed
         if (explanationText == null || explanationText.trim().length() == 0) {
-            // Indicate unsuccessful validation
-            validationSucceeded = false;
-            // Add error that explains the validation error
-            ActionsHelper.addErrorToRequest(request, "explanation",
-                    "error.com.cronos.onlinereview.actions.editProject.explanation");
+            explanationText = "No explanation.";
         }
 
         if (!validationSucceeded) {

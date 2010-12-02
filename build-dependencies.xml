@@ -213,7 +213,7 @@
     <property name="magic_numbers.path" value="magic_numbers/${magic_numbers.version}" />
     <property name="magic_numbers.jar" value="${tcs_libdir}/${magic_numbers.path}/${magic_numbers.jar.name}" />
 
-    <property name="online_review_phases.version" value="1.4.4"/>
+    <property name="online_review_phases.version" value="1.4.5"/>
     <property name="online_review_phases.jar.name" value="online_review_phases.jar"/>
     <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}"/>
     <property name="online_review_phases.jar"

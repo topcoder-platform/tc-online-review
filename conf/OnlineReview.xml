@@ -2264,7 +2264,7 @@
             <Value>24</Value>
         </Property>
         <Property name="PostMortemPhaseDefaultReviewersNumber">
-            <Value>2</Value>
+            <Value>1</Value>
         </Property>
         <Property name="PostMortemPhaseDefaultScorecardID">
             <Value>30000721</Value>
