@@ -200,9 +200,12 @@ public class AutoPaymentUtil {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getCoreReviewCost(), conn);
             } else if (reviewer.isReviewer() && phaseId == REVIEW_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getReviewCost(), conn);
-            } else if (reviewer.isPostMortemReviewer() && phaseId == POST_MORTEM_PHASE) {
-                updateResourcePayment(reviewer.getResourceId(), fpc.getPostMortemCost(), conn);
             }
+
+            // Uncomment this block to pay Post-Mortem reviewers
+            // else if (reviewer.isPostMortemReviewer() && phaseId == POST_MORTEM_PHASE) {
+            //    updateResourcePayment(reviewer.getResourceId(), fpc.getPostMortemCost(), conn);
+            //}
 
             // Unlike other reviewer payments specification reviewer is paid only after
             // at least one submission passed review.
