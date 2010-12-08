@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Auto Screening Tool" basedir=".">
+
+    <!-- property file defining the component's dependencies -->
+    <property file="build.properties"/>
+
+    <condition property="is_windows">
+        <and>
+            <os family="windows"/>
+        </and>
+    </condition>
+
+    <condition property="is_unix">
+        <and>
+            <os family="unix"/>
+        </and>
+    </condition>
+
+    <!-- Import the dependencies of this build file -->
+    <import file="${basedir}/../../build-dependencies.xml" optional="yes"/>
+
+    <!-- DIRECTORY SETUP -->
+    <property name="srcdir" value="${online_review_home}/src"/>
+    <property name="javasrc" value="${srcdir}/java"/>
+    <property name="javamain" value="${javasrc}/main"/>
+
+    <property name="builddir" value="${online_review_home}/build/ant/auto_screening"/>
+    <property name="build_classdir" value="${builddir}/classes"/>
+    <property name="build_distdir" value="${builddir}/dist"/>
+
+    <!-- EXECUTION TAGS -->
+    <property name="debug" value="true"/>
+    <property name="verbose" value="no"/>
+
+    <target name="clean" description="Removes the build directory for Auto Screeningg Tool">
+        <delete failonerror="false" dir="${builddir}"/>
+    </target>
+
+    <!-- replaces variables in configuration files with values for the target environment -->
+    <target name="tokenize"
+            description="Initializes the configuration files for Auto Screening Tool with parameters set in token.properties file">
+        <mkdir dir="${build_distdir}"/>
+
+        <copy todir="${build_distdir}" overwrite="true">
+            <fileset dir=".">
+                <include name="**/*.properties"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.sh" if="is_unix" />
+                <include name="**/*.bat" if="is_windows" />
+                <include name="**/*.dtd" />
+                <include name="**/*.header" />
+                <exclude name="build.xml"/>            
+            </fileset>
+        </copy>
+
+        <replace dir="${build_distdir}" replacefilterfile="${token.properties}">
+            <include name="**/*.properties"/>
+            <include name="**/*.xml"/>
+            <include name="**/*.sh" />
+            <include name="**/*.bat" />
+        </replace>
+    </target>
+
+    <target name="dist" depends="tokenize"
+            description="Builds the JAR file with binary distribution of Auto Screening Tool">
+        <delete file="${build_distdir}/auto_screening_app.jar" failonerror="false"/>
+        <jar destfile="${build_distdir}/auto_screening_app.jar" filesonly="true">
+            <fileset file="${auto_screening_management.jar}"/>
+            <fileset file="${auto_screening_tool.jar}"/>
+            <fileset file="${auto_screening_tool_persistence.jar}"/>
+            <fileset file="${base_exception.jar}"/>
+            <fileset file="${class_associations.jar}"/>
+            <fileset file="${compression_utility.jar}"/>
+            <fileset file="${command_line_utility.jar}"/>
+            <fileset file="${configuration_manager.jar}"/>
+            <fileset file="${configuration_api.jar}"/>
+            <fileset file="${configuration_persistence.jar}" />
+            <fileset file="${data_validation.jar}"/>
+            <fileset file="${database_abstraction.jar}"/>
+            <fileset file="${db_connection_factory.jar}"/>
+            <fileset file="${directory_validation.jar}"/>
+            <fileset file="${executable_wrapper.jar}"/>
+            <fileset file="${file_system_server.jar}"/>
+            <fileset file="${file_upload.jar}"/>
+            <fileset file="${generic_event_manager.jar}"/>
+            <fileset file="${guid_generator.jar}"/>
+            <fileset file="${heartbeat.jar}"/>
+            <fileset file="${id_generator.jar}"/>
+            <fileset file="${ip_server.jar}"/>
+            <fileset file="${job_scheduler.jar}"/>
+            <fileset file="${logging_wrapper.jar}"/>
+            <fileset file="${magic_numbers.jar}"/>
+            <fileset file="${object_factory.jar}"/>
+            <fileset file="${search_builder.jar}"/>
+            <fileset file="${simple_cache.jar}"/>
+            <fileset file="${typesafe_enum.jar}"/>
+            <fileset file="${user_project_data_store.jar}"/>
+            <fileset file="${xmi_parser.jar}"/>
+            <fileset file="${ifx-jdbc.jar}"/>
+            <fileset file="${log4j.jar}"/>
+            <fileset file="${xerces.jar}"/>
+            <fileset file="${checkstyle.jar}"/>
+            <fileset dir=".">
+                <include name="build.xml"/>
+            </fileset>
+            <fileset dir="${build_distdir}">
+                <include name="**/*.header"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.properties"/>
+                <include name="**/*.dtd"/>
+                <include name="**/*.sh" />
+                <include name="**/*.bat" />
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="deploy" description="Deploys Auto Screening Tool to target directory">
+        <mkdir dir="${deploy-dir}"/>
+        <unjar src="${build_distdir}/auto_screening_app.jar" dest="${deploy-dir}/lib">
+            <patternset>
+                <include name="**/*.jar"/>
+            </patternset>
+        </unjar>
+        <unjar src="${build_distdir}/auto_screening_app.jar" dest="${deploy-dir}">
+            <patternset>
+                <include name="**/*.header"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.properties"/>
+                <include name="**/*.dtd"/>
+                <include name="**/*.bat" />
+                <include name="**/*.sh" />
+            </patternset>
+        </unjar>
+        <fixcrlf srcdir="${deploy-dir}" eol="lf" eof="remove" includes="**/*.sh" />
+        <fixcrlf srcdir="${deploy-dir}" eol="crlf" includes="**/*.bat" />
+        <chmod dir="${deploy-dir}" perm="u+x" includes="**/*.sh"/>
+    </target>
+
+    <target name="main" depends="dist" description="Builds the JAR file with binary distribution of Auto Screening Tool"/>
+
+    <target name="all" depends="clean, main, deploy" description="--> cleans and rebuilds the Auto Screening project"/>
+
+    <target name="start_as" description="Starts Auto Screening Tool in background thread">
+        <launch_auto_screening background="true"/>
+    </target>
+
+    <target name="stop_as"
+            description="Raises a flag to currently running Auto Screening Tool causing it to stop it's activity and exit">
+        <touch file="${guard_file}" />
+        <delete file="${running_file}"/>
+        <sleep seconds="10"/>
+        <echo message="Stopped Auto Screening Tool job"/>
+    </target>
+
+    <target name="restart_as" description="Restarts the Auto Screening Tool which is currently running">
+        <antcall target="stop_as"/>
+        <sleep seconds="10"/>
+        <antcall target="start_as"/>
+    </target>
+
+    <target name="test_as" description="Starts Auto Screening Tool in current thread (useful for testing mostly)">
+        <launch_auto_screening background="false"/>
+    </target>
+
+    <!-- Macro for launching Auto Screening Tool -->
+    <macrodef name="launch_auto_screening">
+        <attribute name="background" default="false"/>
+        <sequential>
+            <available file="${running_file}" property="isAlreadyRunning"/>
+            <fail message="Auto Screening Tool is already running. The file ${running_file} is found">
+                <condition>
+                    <istrue value="${isAlreadyRunning}"/>
+                </condition>
+            </fail>
+            <delete file="${guard_file}" failonerror="no"/>
+            <tstamp>
+                <format property="touch.time" pattern="MM/dd/yyyy hh:mm aa" />
+            </tstamp>
+            <echo message="Launching Auto Screening Too job with following parameters:"/>
+            <echo message="    pollInterval: ${poll_interval}"/>
+            <echo message="    startTime   : ${touch.time}"/>
+            <echo message="    guardFile   : ${guard_file}"/>
+            <echo message="    runningFile : ${running_file}"/>
+            <java classname="com.cronos.onlinereview.autoscreening.tool.ScreeningTool" fork="true" spawn="@{background}">
+                <arg value="-interval"/>
+                <arg value="${poll_interval}"/>
+                <arg value="-configNamespace"/>
+                <arg value="com.cronos.onlinereview.autoscreening.tool.Screener"/>
+                <arg value="-screenerId"/>
+                <arg value="${screener_id}"/>
+                <arg value="-guardFile"/>
+                <arg value="${guard_file}"/>
+                <classpath>
+                    <fileset dir="./lib" includes="*.jar"/>
+                </classpath>
+                <classpath path="."/>
+                <classpath path="./conf"/>
+            </java>
+            <property name="background" value="@{background}"/>
+            <antcall target="create_running_file" inheritall="true"/>
+        </sequential>
+    </macrodef>
+
+    <target name="create_running_file" if="background">
+        <touch file="${running_file}"/>
+    </target>
+</project>
