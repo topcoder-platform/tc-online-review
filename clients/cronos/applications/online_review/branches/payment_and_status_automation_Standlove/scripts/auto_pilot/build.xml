@@ -1,0 +1,241 @@
+<?xml version="1.0"?>
+
+<project name="Auto Pilot" basedir=".">
+    <!-- property file defining the component's dependencies -->
+    <property file="build.properties"/>
+
+    <condition property="is_windows">
+        <and>
+            <os family="windows"/>
+        </and>
+    </condition>
+
+    <condition property="is_unix">
+        <and>
+            <os family="unix"/>
+        </and>
+    </condition>
+
+    <!-- Import the dependencies of this build file -->
+    <import file="${basedir}/../../build-dependencies.xml" optional="yes"/>
+
+    <!-- DIRECTORY SETUP -->
+    <property name="srcdir" value="${online_review_home}/src"/>
+    <property name="javasrc" value="${srcdir}/java"/>
+    <property name="javamain" value="${javasrc}/main"/>
+
+    <property name="builddir" value="${online_review_home}/build/ant/auto_pilot"/>
+    <property name="build_classdir" value="${builddir}/classes"/>
+    <property name="build_distdir" value="${builddir}/dist"/>
+
+    <!-- EXECUTION TAGS -->
+    <property name="debug" value="true"/>
+    <property name="verbose" value="no"/>
+
+    <target name="clean" description="Removes the build directory for Auto Pilot">
+        <delete failonerror="false" dir="${builddir}"/>
+    </target>
+
+    <property name="phase_handler_extend.path" value="${build_components}/phase_handler_extend" />
+    <property name="phase_handler_extend.jar" value="${phase_handler_extend.path}/phase_handler_extend.jar" />
+
+    <target name="compile">
+        <mkdir dir="${build_classdir}"/>
+        <delete failonerror="false">
+            <fileset dir="${build_classdir}" includes="**/*.class"/>
+        </delete>
+        <javac srcdir="${javamain}" destdir="${build_classdir}" includes="com/cronos/onlinereview/phases/**/*.java"
+               debug="${debug}" verbose="${verbose}"
+               source="1.5" target="1.5">
+            <classpath refid="buildlibs"/>
+        </javac>
+    </target>
+
+    <!-- replaces variables in configuration files with values for the target environment -->
+    <target name="tokenize"
+            description="Initializes the configuration files for Auto Pilot with parameters set in token.properties file">
+        <mkdir dir="${build_distdir}"/>
+
+        <copy todir="${build_distdir}" overwrite="true">
+            <fileset dir=".">
+                <include name="**/*.txt"/>
+                <include name="**/*.properties"/>
+                <include name="**/*.xml"/>
+                <exclude name="build.xml"/>
+            </fileset>
+        </copy>
+
+        <replace dir="${build_distdir}" replacefilterfile="${token.properties}">
+            <include name="**/*.properties"/>
+            <include name="**/*.xml"/>
+            <include name="**/*template.txt"/>
+        </replace>
+    </target>
+
+    <target name="dist_phase_handler" depends="compile"
+            description="Compiles and builds the distribution for Phase Handler Extend component">
+      <mkdir dir="${phase_handler_extend.path}" />
+        <jar destfile="${phase_handler_extend.jar}" basedir="${build_classdir}"
+             includes="com/cronos/onlinereview/phases/**"/>
+    </target>
+
+    <target name="dist" depends="dist_phase_handler, tokenize"
+            description="Builds the JAR file with binary distribution of Auto Pilot">
+        <delete file="${build_distdir}/auto_pilot_app.jar" failonerror="no"/>
+        <jar destfile="${build_distdir}/auto_pilot_app.jar" filesonly="true">
+            <fileset file="${auto_pilot.jar}"/>
+            <fileset file="${auto_screening_management.jar}"/>
+            <fileset file="${base_exception.jar}"/>
+            <fileset file="${class_associations.jar}"/>
+            <fileset file="${command_line_utility.jar}"/>
+            <fileset file="${configuration_manager.jar}"/>
+            <fileset file="${configuration_api.jar}"/>
+            <fileset file="${configuration_persistence.jar}" />
+            <fileset file="${data_validation.jar}"/>
+            <fileset file="${database_abstraction.jar}"/>
+            <fileset file="${db_connection_factory.jar}"/>
+            <fileset file="${deliverable_management.jar}"/>
+            <fileset file="${deliverable_management_persistence.jar}"/>
+            <fileset file="${document_generator.jar}"/>
+            <fileset file="${email_engine.jar}"/>
+            <fileset file="${executable_wrapper.jar}"/>
+            <fileset file="${generic_event_manager.jar}"/>
+            <fileset file="${guid_generator.jar}"/>
+            <fileset file="${id_generator.jar}"/>
+            <fileset file="${job_scheduler.jar}"/>
+            <fileset file="${logging_wrapper.jar}"/>
+            <fileset file="${magic_numbers.jar}"/>
+            <fileset file="${object_factory.jar}"/>
+            <fileset file="${online_review_deliverables.jar}"/>
+            <fileset file="${online_review_phases.jar}"/>
+            <fileset file="${phase_handler_extend.jar}"/>
+            <fileset file="${phase_management.jar}"/>
+            <fileset file="${phase_management_persistence.jar}"/>
+            <fileset file="${project_management.jar}"/>
+            <fileset file="${project_management_persistence.jar}"/>
+            <fileset file="${project_phases.jar}"/>
+            <fileset file="${project_phase_template.jar}"/>
+            <fileset file="${resource_management.jar}"/>
+            <fileset file="${resource_management_persistence.jar}"/>
+            <fileset file="${review_data_structure.jar}"/>
+            <fileset file="${review_management.jar}"/>
+            <fileset file="${review_management_persistence.jar}"/>
+            <fileset file="${review_score_aggregator.jar}"/>
+            <fileset file="${review_score_calculator.jar}"/>
+            <fileset file="${scorecard_data_structure.jar}"/>
+            <fileset file="${scorecard_management.jar}"/>
+            <fileset file="${scorecard_management_persistence.jar}"/>
+            <fileset file="${search_builder.jar}"/>
+            <fileset file="${simple_cache.jar}"/>
+            <fileset file="${typesafe_enum.jar}"/>
+            <fileset file="${user_project_data_store.jar}"/>
+            <fileset file="${weighted_calculator.jar}"/>
+            <fileset file="${workdays.jar}"/>
+            <fileset file="${ifx-jdbc.jar}"/>
+            <fileset file="${mail.jar}"/>
+            <fileset file="${log4j.jar}"/>
+            <fileset file="${activation.jar}"/>
+            <fileset file="${xerces.jar}"/>
+            <fileset file="${termsOfUseEJB.jar}"/>
+            <fileset file="${userEJB.jar}"/>
+            <fileset file="${projectEJB.jar}"/>
+            <fileset file="${tcwebcommon.jar}"/>
+            <fileset file="${tcsUtil.jar}"/>
+            <fileset file="${shared.jar}"/>
+            <fileset file="${jbossall-client.jar}"/>
+            <fileset file="${svnkit.jar}"/>
+            <fileset dir=".">
+                <include name="build.xml"/>
+            </fileset>
+            <fileset dir="${build_distdir}">
+                <include name="**/*.xml"/>
+                <include name="**/*.txt"/>
+                <include name="**/*.properties"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="deploy" description="Deploys Auto Pilot to target directory">
+        <mkdir dir="${deploy-dir}"/>
+        <unjar src="${build_distdir}/auto_pilot_app.jar" dest="${deploy-dir}/lib">
+            <patternset>
+                <include name="**/*.jar"/>
+            </patternset>
+        </unjar>
+        <unjar src="${build_distdir}/auto_pilot_app.jar" dest="${deploy-dir}">
+            <patternset>
+                <include name="**/*.xml"/>
+                <include name="**/*.txt"/>
+                <include name="**/*.properties"/>
+            </patternset>
+        </unjar>
+    </target>
+
+    <target name="main" depends="dist" description="Builds the JAR file with binary distribution of Auto Pilot"/>
+
+    <target name="all" depends="clean, main, deploy" description="--> cleans and rebuilds the Auto Pilot project"/>
+
+    <target name="start_ap" description="Starts Auto Pilot in background thread">
+        <launch_auto_pilot background="true"/>
+    </target>
+
+    <target name="stop_ap"
+            description="Raises a flag to currently running Auto Pilot causing it to stop it's activity and exit">
+        <touch file="${guard_file}" />
+        <delete file="${running_file}"/>
+        <sleep seconds="10"/>
+        <echo message="Stopped Auto Pilot job"/>
+    </target>
+
+    <target name="restart_ap" description="Restarts the Auto Pilot which is currently running">
+        <antcall target="stop_ap"/>
+        <sleep seconds="10"/>
+        <antcall target="start_ap"/>
+    </target>
+
+    <target name="test_ap" description="Starts Auto Pilot in current thread (useful for testing mostly)">
+        <launch_auto_pilot background="false"/>
+    </target>
+
+    <!-- Macro for launching Auto Pilot -->
+    <macrodef name="launch_auto_pilot">
+        <attribute name="background" default="false"/>
+        <sequential>
+            <available file="${running_file}" property="isAlreadyRunning"/>
+            <fail message="Auto Pilot is already running. The file ${running_file} is found">
+                <condition>
+                    <istrue value="${isAlreadyRunning}"/>
+                </condition>
+            </fail>
+            <tstamp>
+                <format property="touch.time" pattern="MM/dd/yyyy hh:mm aa" />
+            </tstamp>
+            <echo message="Launching Auto Pilot job with following parameters:"/>
+            <echo message="    pollInterval: ${poll_interval}"/>
+            <echo message="    startTime   : ${touch.time}"/>
+            <echo message="    guardFile   : ${guard_file}"/>
+            <echo message="    runningFile : ${running_file}"/>
+            <delete file="${guard_file}" failonerror="no"/>
+            <java classname="com.topcoder.management.phase.autopilot.AutoPilotJob" fork="true" spawn="@{background}">
+            <arg value="-config"/>
+                <arg value="auto_pilot.xml"/>
+                <arg value="-namespace"/>
+                <arg value="AutoPilotJob"/>
+                <arg value="-autopilot"/>
+                <arg value="com.topcoder.management.phase.autopilot.AutoPilot"/>
+                <arg value="-poll" />
+                <arg value="${poll_interval}" />
+                <classpath>
+                    <fileset dir="./lib" includes="*.jar"/>
+                </classpath>
+                <classpath path="."/>
+            </java>
+            <property name="background" value="@{background}"/>
+            <antcall target="create_running_file" inheritall="true"/>
+        </sequential>
+    </macrodef>
+
+    <target name="create_running_file" if="background">
+        <touch file="${running_file}"/>
+    </target>
+</project>
