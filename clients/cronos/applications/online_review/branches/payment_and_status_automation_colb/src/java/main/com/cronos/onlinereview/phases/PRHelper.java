@@ -281,6 +281,22 @@ public class PRHelper {
      * @throws PhaseHandlingException
      *             if error occurs
      */
+    static void processApprovalPR(long projectId, Connection conn, boolean toStart) throws SQLException {
+        if (!toStart) {
+            logger.log(Level.INFO,
+                    new LoggerMessage("project", new Long(projectId), null, "Process approval phase."));
+            populateProjectResult(projectId, conn);
+        }
+    }
+
+    /**
+     * Pull data to project_result.
+     * 
+     * @param projectId
+     *            the projectId
+     * @throws PhaseHandlingException
+     *             if error occurs
+     */
     static void processFinalReviewPR(long projectId, Connection conn, boolean toStart) throws SQLException {
         if (!toStart) {
             logger.log(Level.INFO,

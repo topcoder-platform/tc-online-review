@@ -150,11 +150,13 @@ public class ManagerCreationHelper implements ManagersProvider {
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAppealResponsePhaseHandler(),
                     Constants.APPEALS_RESPONSE_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAggregationPhaseHandler(),
-                    Constants.AGGREGATION_PHASE_NAME);
+					Constants.AGGREGATION_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAggregationReviewPhaseHandler(),
                     Constants.AGGREGATION_REVIEW_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRFinalFixPhaseHandler(),
                     Constants.FINAL_FIX_PHASE_NAME);
+            registerPHaseHandlerForOperation(phaseManager, phaseTypes, new PRApprovalPhaseHandler(),
+            		Constants.APPROVAL_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRFinalReviewPhaseHandler(),
                     Constants.FINAL_REVIEW_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new ApprovalPhaseHandler(),
