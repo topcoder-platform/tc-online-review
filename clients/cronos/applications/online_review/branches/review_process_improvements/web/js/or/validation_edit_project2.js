@@ -376,7 +376,7 @@ function validate_form(thisForm, popup) {
 	validate_timeline(thisForm, msgList);
 	validate_resources(thisForm, msgList);
 	validate_notes(thisForm, msgList);
-	validate_explanation(thisForm, msgList);
+	// validate_explanation(thisForm, msgList);
 
 	// try to show an alert window
 	if (popup && msgList.length != 0)

@@ -489,7 +489,7 @@
                         <Value>String</Value>
                     </Property>
                     <Property name="value">
-                        <Value>/home/apps/auto_screening/checkstyle.sh</Value>
+                        <Value>@auto_screening_checkstyle_main_exec@</Value>
                     </Property>
                 </Property>
                 <Property name="param2">
@@ -512,7 +512,7 @@
                         <Value>String</Value>
                     </Property>
                     <Property name="value">
-                        <Value>/home/apps/auto_screening/checkstyle_test.sh</Value>
+                        <Value>@auto_screening_checkstyle_tests_exec@</Value>
                     </Property>
                 </Property>
                 <Property name="param2">

@@ -2264,7 +2264,7 @@
             <Value>24</Value>
         </Property>
         <Property name="PostMortemPhaseDefaultReviewersNumber">
-            <Value>2</Value>
+            <Value>1</Value>
         </Property>
         <Property name="PostMortemPhaseDefaultScorecardID">
             <Value>30000721</Value>
@@ -4462,7 +4462,23 @@
                     <Value>icon_design.gif</Value>
                 </Property>
             </Property>
+             <Property name="Component Design">
+                <Property name="IconSmall">
+                    <Value>iconStatusSpecSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>icon_design.gif</Value>
+                </Property>
+            </Property>
             <Property name="Development">
+                <Property name="IconSmall">
+                    <Value>iconStatusDevSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>icon_development.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Component Development">
                 <Property name="IconSmall">
                     <Value>iconStatusDevSm.gif</Value>
                 </Property>
@@ -4598,6 +4614,14 @@
                     <Value>IconProto.gif</Value>
                 </Property>
             </Property>
+            <Property name="UI Prototype">
+                <Property name="IconSmall">
+                    <Value>IconProtoSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconProto.gif</Value>
+                </Property>
+            </Property>
             <Property name="Logos">
                 <Property name="IconSmall">
                     <Value>iconBlankSm.png</Value>
@@ -4630,7 +4654,23 @@
                     <Value>IconRIA.gif</Value>
                 </Property>
             </Property>
+            <Property name="RIA Build">
+                <Property name="IconSmall">
+                    <Value>IconRIASm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconRIA.gif</Value>
+                </Property>
+            </Property>
             <Property name="RIA Component Competition">
+                <Property name="IconSmall">
+                    <Value>iconRIAComponentCompetitionSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconRIAComponentCompetition.png</Value>
+                </Property>
+            </Property>
+            <Property name="RIA Component">
                 <Property name="IconSmall">
                     <Value>iconRIAComponentCompetitionSm.png</Value>
                 </Property>
@@ -4746,6 +4786,36 @@
             <Value>3</Value><!-- Screener -->
             <Value>86</Value><!-- Deactivated -->
             <Value>1001</Value><!-- Team Captain -->
+        </Property>
+
+        <Property name="SVNPermissionGrantResourceRoles">
+            <Value>1</Value><!-- Submitter -->
+            <Value>4</Value><!-- Reviewer -->
+            <Value>5</Value><!-- Accuracy Reviewer -->
+            <Value>6</Value><!-- Failure Reviewer -->
+            <Value>7</Value><!-- Stress Reviewer -->
+            <Value>9</Value><!-- Final Reviewer -->
+        </Property>
+
+        <Property name="SVNConfig">
+            <Property name="Root">
+                <Value>@svn.root@</Value>
+            </Property>
+            <Property name="AuthUsername">
+                <Value>@svn.username@</Value>
+            </Property>
+            <Property name="AuthPassword">
+                <Value>@svn.password@</Value>
+            </Property>
+            <Property name="MkDirCommitMessage">
+                <Value>@svn.mkdir.commit.message@</Value>
+            </Property>
+            <Property name="TempFilesBaseDir">
+                <Value>@svn.temp.files.basedir@</Value>
+            </Property>
+            <Property name="PathBasedPermissionsFileURL">
+                <Value>@svn.authz.file.url@</Value>
+            </Property>
         </Property>
 
         <!-- Definition of the Permissions Matrix.  Each property inside the main one denotes one
