@@ -1,57 +1,70 @@
 <?xml version="1.0"?>
 
 <project name="Online Review" default="build" basedir=".">
-  <!-- property file defining the component's dependencies -->
-  <property file="build.properties"/>
-
-  <!-- Import the dependencies of this build file -->
-  <import file="${basedir}/build-dependencies.xml"/>
 
   <!-- include ant contrib tasks -->
-  <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${ant-contrib.jar}"/>
+  <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
   <!-- Load build properties -->
-  <property file="build.properties"/>
-  <property file="${db_scripts_path}/build.properties"/>
+  <property file="build.properties" />
+  <property file="${db_scripts_path}/build.properties" />
+
+  <property name="token.properties" value="token.properties" />
+
+  <condition property="is_windows">
+    <and>
+      <os family="windows"/>
+    </and>
+  </condition>
+
+  <condition property="is_unix">
+    <and>
+      <os family="unix"/>
+    </and>
+  </condition>
 
   <!-- COMPONENT PARAMETERS -->
-  <property name="component" value="online_review"/>
-  <property name="package" value="com.cronos.onlinereview"/>
-  <property name="packagedir" value="com/cronos/onlinereview"/>
-  <property name="distfilename" value="review"/>
-  <property name="component_version" value="1.0"/>
-  <property name="component_path" value="${distfilename}/${component_version}"/>
+  <property name="component" value="online_review" />
+  <property name="package" value="com.cronos.onlinereview" />
+  <property name="packagedir" value="com/cronos/onlinereview" />
+  <property name="distfilename" value="review" />
+  <property name="component_version" value="1.0" />
+  <property name="component_path" value="${distfilename}/${component_version}" />
 
   <!-- DIRECTORY SETUP -->
-  <property name="srcdir" value="src"/>
+  <property name="srcdir" value="src" />
+  <property name="tcs_libdir" value="lib/tcs" />
+  <property name="ext_libdir" location="lib/third_party" />
+  <property name="shared_libdir" value="lib/shared" />
+  <property name="jar_tcs_libdir" value="lib/tcs" />
+  <property name="jar_ext_libdir" location="lib/third_party" />
+  <property name="jar_shared_libdir" location="lib/shared" />
+  <property name="docsdir" value="docs" />
+  <property name="configdir" value="conf" />
+  <property name="testlogdir" value="log" />
+  <property name="testfiles" value="test_files" />
+  <property name="javadocsdir" value="${docsdir}/javadocs" />
+  <property name="webdir" value="web" />
+  <property name="reports" value="reports" />
+  <property name="jboss_files" value="jboss_files" />
+  <property name="jboss_files_conf" value="${jboss_files}/conf" />
+  <property name="jboss_files_deploy" value="${jboss_files}/deploy" />
+  <property name="jboss_files_lib" value="${jboss_files}/lib" />
 
-  <property name="docsdir" value="docs"/>
-  <property name="configdir" value="conf"/>
-  <property name="testlogdir" value="log"/>
-  <property name="testfiles" value="test_files"/>
-  <property name="javadocsdir" value="${docsdir}/javadocs"/>
-  <property name="webdir" value="web"/>
-  <property name="reports" value="reports"/>
-  <property name="jboss_files" value="jboss_files"/>
-  <property name="jboss_files_conf" value="${jboss_files}/conf"/>
-  <property name="jboss_files_deploy" value="${jboss_files}/deploy"/>
-  <property name="jboss_files_lib" value="${jboss_files}/lib"/>
-
-  <property name="javasrc" value="${srcdir}/java"/>
-  <property name="javamain" value="${javasrc}/main"/>
-  <property name="javatests" value="${javasrc}/tests"/>
-  <property name="sqlsrc" value="${srcdir}/sql"/>
+  <property name="javasrc" value="${srcdir}/java" />
+  <property name="javamain" value="${javasrc}/main" />
+  <property name="javatests" value="${javasrc}/tests" />
+  <property name="sqlsrc" value="${srcdir}/sql" />
 
   <property name="builddir" value="build/ant" />
   <property name="build_conf" value="${builddir}/conf" />
-  <property name="build_tests" value="${builddir}/tests" />
   <property name="build_shared" value="${builddir}/shared" />
   <property name="build_jboss_files" value="${builddir}/jboss_files" />
   <property name="build_jboss_files_conf" value="${build_jboss_files}/conf" />
   <property name="build_jboss_files_deploy" value="${build_jboss_files}/deploy" />
   <property name="build_classdir" value="${builddir}/classes" />
-  <property name="build_testclassdir" value="${build_tests}/testClasses" />
-  <property name="build_testconfdir" value="${build_tests}/conf" />
+  <property name="build_testclassdir" value="${builddir}/testClasses" />
+  <property name="build_targetclassdir" value="${builddir}/targetclasses" />
   <property name="build_distdir" value="${builddir}/dist" />
   <property name="build_explodedwar" value="${build_distdir}/exploded/${distfilename}.war" />
   <property name="build_docsdir" value="${builddir}/${docsdir}" />
@@ -60,24 +73,30 @@
   <property name="build_lib" value="${builddir}/lib" />
   <property name="build_tcsdistdir" value="${build_distdir}/${distfilename}-${component_version}" />
 
-  <property name="deploy-dir" value="${JBOSS_HOME}/server/default/deploy/${distfilename}.war"/>
+  <!-- Server installation directories -->
+  <property name="cactus.home.tomcat5x" value="d:\tomcat" />
+
+  <property name="deploy-dir" value="${JBOSS_HOME}/server/default/deploy/${distfilename}.war" />
   <property name="deploy-conf-dir" value="${JBOSS_HOME}/server/default/conf"/>
   <property name="deploy-deploy-dir" value="${JBOSS_HOME}/server/default/deploy"/>
   <property name="deploy-lib-dir" value="${JBOSS_HOME}/server/default/lib"/>
 
-  <property name="remotedeploy-dir" value="${scp_remotejboss}/server/default/deploy/"/>
+  <property name="remotedeploy-dir" value="${scp_remotejboss}/server/default/deploy/" />
   <property name="remotedeploy-conf-dir" value="${scp_remotejboss}/server/default/conf"/>
   <property name="remotedeploy-lib-dir" value="${scp_remotejboss}/server/default/lib"/>
 
   <!-- EXECUTION TAGS -->
-  <property name="debug" value="off"/>
-  <property name="verbose" value="no"/>
+  <property name="debug" value="off" />
+  <property name="verbose" value="no" />
 
   <!-- COMPONENT DISTRIBUTION STRUCTURE -->
-  <property name="component.war" value="${build_distdir}/${distfilename}.war" />
+  <property name="dist_conf" value="${build_tcsdistdir}/${configdir}" />
+  <property name="dist_lib" value="${build_distdir}/lib/tcs" />
+  <property name="dist_src" value="${build_tcsdistdir}/${srcdir}" />
+  <property name="dist_docs" value="${build_tcsdistdir}/${docsdir}" />
   <property name="dist_javadocs" value="${build_tcsdistdir}/${javadocsdir}" />
+  <property name="dist_testfiles" value="${build_tcsdistdir}/${testfiles}" />
 
-<<<<<<< .working
   <!-- NAME FOR .JAR AND .WAR FILES -->
   <property name="component.jar" value="${dist_lib}/${component_path}/${distfilename}.jar" />
   <property name="javadoc.jar" value="${builddir}/javadocs.jar" />
@@ -669,25 +688,23 @@
     </sequential>
   </macrodef>
 
-=======
->>>>>>> .merge-right.r195035
   <!-- Clean output folder -->
   <target name="clean">
-    <delete failonerror="false" dir="${builddir}"/>
+    <delete failonerror="false" dir="${builddir}" />
   </target>
 
   <!-- updates Online Review files from SVN -->
-  <typedef resource="org/tigris/subversion/svnant/svnantlib.xml"/>
+  <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="svnant.jar" />
   <target name="svn_update" if="or.svn.update">
     <svn username="${or.svn.username}" password="${or.svn.password}">
-      <info target="${basedir}" verbose="true"/>
-      <update dir="${basedir}" recurse="true"/>
+      <info target="${basedir}" verbose="true" />
+      <update dir="${basedir}" recurse="true" />
     </svn>
   </target>
 
   <!-- compiles the application -->
   <target name="compile">
-    <mkdir dir="${build_classdir}"/>
+    <mkdir dir="${build_classdir}" />
     <javac srcdir="${javamain}"
            destdir="${build_classdir}"
            includes="**/*.java"
@@ -695,20 +712,20 @@
            verbose="${verbose}"
            source="1.5"
            target="1.5"
-                >
-      <classpath refid="buildlibs"/>
+               >
+      <classpath refid="buildlibs" />
     </javac>
   </target>
 
   <!-- updates Online Review files from SVN and builds application -->
-  <target name="build" depends="svn_update, compile"/>
+  <target name="build" depends="svn_update, compile" />
 
   <!-- replaces variables in configuration files with values for the target environment -->
   <target name="tokenize">
-    <mkdir dir="${build_conf}"/>
+    <mkdir dir="${build_conf}" />
     <copy todir="${build_conf}" overwrite="true">
       <fileset dir="${configdir}">
-        <exclude if="exclude.mockxmlauthenticator.xmlfile" name="mockxmlauthenticator.xml"/>
+        <exclude if="exclude.mockxmlauthenticator.xmlfile" name="mockxmlauthenticator.xml" />
         <include name="**"/>
       </fileset>
     </copy>
@@ -722,13 +739,12 @@
   </target>
 
   <!-- creates the application war file -->
-  <target name="war" depends="compile, tokenize">
-    <mkdir dir="${build_distdir}"/>
+  <target name="war" depends="compile, tokenize" >
+    <mkdir dir="${build_distdir}" />
 
     <war destfile="${component.war}" webxml="${build_conf}/WEB-INF/web.xml" duplicate="fail">
-      <webinf dir="${build_conf}/WEB-INF" includes="*.tld, *.xml, server-config.wsdd" excludes="web.xml"/>
+      <webinf dir="${build_conf}/WEB-INF" includes="*.tld, *.xml, server-config.wsdd" excludes="web.xml" />
       <metainf dir="${build_conf}/META-INF" includes="*.xml"/>
-<<<<<<< .working
       <classes dir="${build_classdir}" includes="**" />
       <classes dir="${build_conf}" includes="**" excludes="WEB-INF/**, META-INF/**" />
       <classes dir="${build_conf}/WEB-INF/classes" />
@@ -799,78 +815,8 @@
       <lib dir="${jar_tcs_libdir}" includes="tcjive.jar" />
       <lib dir="${jar_tcs_libdir}" includes="${tcsUtil.jar.name}" />
       <lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar, servlet-api.jar, jsp-api.jar, log4j.jar" />
-=======
-      <classes dir="${build_classdir}" includes="**"/>
-      <classes dir="${build_conf}" includes="**" excludes="WEB-INF/**, META-INF/**"/>
-      <classes dir="${build_conf}/WEB-INF/classes"/>
-      <lib dir="${jar_tcs_libdir}/${authentication_factory.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${auto_pilot.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${auto_screening_management.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${base_exception.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${class_associations.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${command_line_utility.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${configuration_api.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${configuration_manager.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${configuration_persistence.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${contest_eligibility_persistence.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${contest_eligibility_validation.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${data_validation.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${database_abstraction.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${db_connection_factory.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${deliverable_management.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${deliverable_management_persistence.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${document_generator.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${email_engine.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${file_system_server.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${file_upload.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${guid_generator.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${id_generator.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${ip_server.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${JNDI_Utility.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${logging_wrapper.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${object_factory.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${object_factory_configuration_api_plugin.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${online_review_ajax_support.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${online_review_deliverables.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${online_review_login.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${online_review_phases.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${online_review_upload_services.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${distribution_tool.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${phase_management.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${phase_management_persistence.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${project_management.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${project_management_persistence.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${project_phases.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${project_phase_template.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${resource_management.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${resource_management_persistence.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${review_data_structure.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${review_management.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${review_management_persistence.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${review_score_aggregator.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${review_score_calculator.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${scorecard_data_structure.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${scorecard_management.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${scorecard_management_persistence.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${search_builder.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${simple_cache.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${typesafe_enum.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${user_project_data_store.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${weighted_calculator.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${workdays.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${projectEJB.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${userEJB.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${securityEJB.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}" includes="tc_id_generator.jar"/>
-      <lib dir="${jar_tcs_libdir}" includes="tcjive.jar"/>
-      <lib dir="${jar_tcs_libdir}" includes="${tcsUtil.jar.name}"/>
-      <lib dir="${jar_ext_libdir}" includes="*.jar"
-           excludes="mail.jar, ejb-2_0.jar, servlet-api.jar, jsp-api.jar, log4j.jar"/>
->>>>>>> .merge-right.r195035
       <lib dir="${jar_ext_libdir}/spring" includes="*.jar"/>
       <lib dir="${jar_ext_libdir}/hibernate" includes="*.jar"/>
-      <lib dir="${jar_ext_libdir}/svnkit" includes="*.jar"/>
       <lib dir="${shared_libdir}" includes="${catalog.jar.name}"/>
       <lib dir="${shared_libdir}" includes="${tcwebcommon.jar.name}"/>
       <lib dir="${shared_libdir}" includes="${shared.jar.name}"/>
@@ -884,23 +830,23 @@
         <include name="jboss-remoting.jar"/>
       </lib>
 
-      <fileset dir="${webdir}" includes="**" excludes="i/**, js/**, css/**"/>
+      <fileset dir="${webdir}" includes="**" excludes="i/**, js/**, css/**" />
     </war>
   </target>
 
   <!-- Explode the war file for future staging -->
-  <target name="explode_war" depends="war">
-    <mkdir dir="${build_explodedwar}"/>
+  <target name="explode_war" depends="war" >
+    <mkdir dir="${build_explodedwar}" />
 
-    <unwar src="${component.war}" dest="${build_explodedwar}"/>
+    <unwar src="${component.war}" dest="${build_explodedwar}" />
   </target>
 
   <!-- Prepares the distribution for deployment -->
-  <target name="dist" depends="explode_war"/>
+  <target name="dist" depends="explode_war" />
 
   <!-- replaces variables in configuration files with values for the target environment -->
   <target name="tokenize_shared_files">
-    <mkdir dir="${build_shared}"/>
+    <mkdir dir="${build_shared}" />
 
     <copy todir="${build_shared}" overwrite="true">
       <fileset dir="${shared_libdir}">
@@ -922,7 +868,7 @@
   <!-- copy jboss dependency files to jboss lib folder -->
   <target name="copy_shared_files" depends="tokenize_shared_files">
     <copy todir="${deploy-conf-dir}" overwrite="true">
-      <fileset dir="${build_shared}"/>
+      <fileset dir="${build_shared}" />
     </copy>
     <copy todir="${deploy-lib-dir}" overwrite="true" verbose="${verbose}" flatten="true">
       <fileset dir="${shared_libdir}">
@@ -936,34 +882,27 @@
   </target>
 
   <target name="copy_shared_files_remote_unix" if="is_unix" depends="tokenize_shared_files">
-    <scp_unix id="aa" file="${build_shared}" remotefile="${remotedeploy-conf-dir}" isdir="true"/>
-    <scp_unix id="ab" file="${shared_libdir}/${forums.jar.name}" remotefile="${remotedeploy-lib-dir}"
-              isdir="false"/>
-    <scp_unix id="ac" file="${shared_libdir}/${shared.jar.name}" remotefile="${remotedeploy-lib-dir}"
-              isdir="false"/>
-    <scp_unix id="ad" file="${shared_libdir}/${tcwebcommon.jar.name}" remotefile="${remotedeploy-lib-dir}"
-              isdir="false"/>
-    <scp_unix id="ae" file="${tcs_libdir}/${tcsUtil.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false"/>
+    <scp_unix id="aa" file="${build_shared}" remotefile="${remotedeploy-conf-dir}" isdir="true" />
+    <scp_unix id="ab" file="${shared_libdir}/${forums.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
+    <scp_unix id="ac" file="${shared_libdir}/${shared.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
+    <scp_unix id="ad" file="${shared_libdir}/${tcwebcommon.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
+    <scp_unix id="ae" file="${tcs_libdir}/${tcsUtil.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
   </target>
 
   <target name="copy_shared_files_remote_windows" if="is_windows" depends="tokenize_shared_files">
-    <scp_windows id="aa" file="${build_shared}" remotefile="${remotedeploy-conf-dir}" isdir="true"/>
-    <scp_windows id="ab" file="${shared_libdir}/${forums.jar.name}" remotefile="${remotedeploy-lib-dir}"
-                 isdir="false"/>
-    <scp_windows id="ac" file="${shared_libdir}/${shared.jar.name}" remotefile="${remotedeploy-lib-dir}"
-                 isdir="false"/>
-    <scp_windows id="ad" file="${shared_libdir}/${tcwebcommon.jar.name}" remotefile="${remotedeploy-lib-dir}"
-                 isdir="false"/>
-    <scp_windows id="ae" file="${tcs_libdir}/${tcsUtil.jar.name}" remotefile="${remotedeploy-lib-dir}"
-                 isdir="false"/>
+    <scp_windows id="aa" file="${build_shared}" remotefile="${remotedeploy-conf-dir}" isdir="true" />
+    <scp_windows id="ab" file="${shared_libdir}/${forums.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
+    <scp_windows id="ac" file="${shared_libdir}/${shared.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
+    <scp_windows id="ad" file="${shared_libdir}/${tcwebcommon.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
+    <scp_windows id="ae" file="${tcs_libdir}/${tcsUtil.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
   </target>
 
-  <target name="copy_shared_files_remote" depends="copy_shared_files_remote_unix, copy_shared_files_remote_windows"/>
+  <target name="copy_shared_files_remote" depends="copy_shared_files_remote_unix, copy_shared_files_remote_windows" />
 
   <!-- replaces variables in configuration files with values for the target environment -->
   <target name="tokenize_jboss_files">
-    <mkdir dir="${build_jboss_files_conf}"/>
-    <mkdir dir="${build_jboss_files_deploy}"/>
+    <mkdir dir="${build_jboss_files_conf}" />
+    <mkdir dir="${build_jboss_files_deploy}" />
 
     <copy todir="${build_jboss_files_conf}" overwrite="true">
       <fileset dir="${jboss_files_conf}">
@@ -994,137 +933,61 @@
   <!-- Use this task carefully !!! -->
   <target name="copy_jboss_files" depends="tokenize_jboss_files">
     <copy todir="${deploy-conf-dir}" overwrite="true">
-      <fileset dir="${build_jboss_files_conf}"/>
+      <fileset dir="${build_jboss_files_conf}" />
     </copy>
     <copy todir="${deploy-deploy-dir}" overwrite="true">
-      <fileset dir="${build_jboss_files_deploy}"/>
+      <fileset dir="${build_jboss_files_deploy}" />
     </copy>
     <copy todir="${deploy-deploy-dir}" overwrite="true">
-      <fileset dir="${jboss_files_deploy}" excludes="tcs_informix-ds.xml" includes="**"/>
-    </copy>
-    <mkdir dir="${deploy-deploy-dir}/static.ear/static.war"/>
-    <copy todir="${deploy-deploy-dir}/static.ear/static.war" overwrite="true">
-      <fileset dir="${webdir}">
-        <include name="css/**/*"/>
-        <include name="i/**/*"/>
-        <include name="js/**/*"/>
-      </fileset>
+      <fileset dir="${jboss_files_deploy}" excludes="tcs_informix-ds.xml" includes="**" />
     </copy>
     <copy todir="${deploy-lib-dir}" overwrite="true" verbose="${verbose}" flatten="true">
-      <fileset dir="${jboss_files_lib}"/>
+      <fileset dir="${jboss_files_lib}" />
     </copy>
   </target>
 
   <!-- move the built files to the target deployment location -->
   <target name="deploy_locally" depends="clean, dist, copy_shared_files">
-    <mkdir dir="${deploy-dir}"/>
+    <mkdir dir="${deploy-dir}" />
 
     <copy todir="${deploy-dir}" overwrite="true">
-      <fileset dir="${build_explodedwar}" includes="**"/>
+      <fileset dir="${build_explodedwar}" includes="**" />
     </copy>
   </target>
 
   <target name="deploy_remote_unix" if="is_unix" depends="dist, copy_shared_files_remote">
-    <scp_unix id="ba" file="${build_explodedwar}" remotefile="${remotedeploy-dir}" isdir="true"/>
+    <scp_unix id="ba" file="${build_explodedwar}" remotefile="${remotedeploy-dir}" isdir="true" />
   </target>
 
   <target name="deploy_remote_windows" if="is_windows" depends="dist, copy_shared_files_remote">
-    <scp_windows id="ba" file="${build_explodedwar}" remotefile="${remotedeploy-dir}" isdir="true"/>
+    <scp_windows id="ba" file="${build_explodedwar}" remotefile="${remotedeploy-dir}" isdir="true" />
   </target>
 
   <!-- remove the exploded dir from jboss -->
   <target name="undeploy">
-    <delete failonerror="false" dir="${deploy-dir}"/>
+    <delete failonerror="false" dir="${deploy-dir}" />
   </target>
 
   <!-- builds,tokenizes and deploys the application -->
-  <target name="deploy" depends="clean, build, deploy_locally"/>
-  <target name="deploy_remote" depends="clean, build, deploy_remote_unix, deploy_remote_windows"/>
+  <target name="deploy" depends="clean, build, deploy_locally" />
+  <target name="deploy_remote" depends="clean, build, deploy_remote_unix, deploy_remote_windows" />
 
   <!-- builds db schema, deploys OR, deploys. -->
   <target name="first_deploy" depends="deploy, copy_jboss_files">
   </target>
 
   <!-- stops Jboss, reinstalls database, redeploys OR and starts jboss. -->
-  <target name="redeploy">
-    <antcall target="stop_tools" />
-
-    <!-- install databases -->
+  <target name="redeploy" depends="stop_jboss, first_deploy">
     <if>
-      <isset property="update_db"/>
+      <isset property="update_db" />
       <then>
-        <ant antfile="${db_scripts_path}/build.xml" target="drop_db" dir="${db_scripts_path}"/>
-        <ant antfile="${db_scripts_path}/build.xml" target="setup_db" dir="${db_scripts_path}"/>
+        <ant antfile="${db_scripts_path}/build.xml" target="drop_db" dir="${db_scripts_path}"  />
+        <ant antfile="${db_scripts_path}/build.xml" target="setup_db" dir="${db_scripts_path}" />
       </then>
     </if>
-
-    <antcall target="deploy_tools" />
-
-    <antcall target="start_jboss" />
-    <sleep seconds="${sleep_before_stopping}" />
-    <antcall target="test" />
-    <antcall target="stop_jboss" />
-  </target>
-
-  <target name="restart">
-    <antcall target="stop_tools" />
-    <antcall target="deploy_tools" />
-    <antcall target="start_tools" />
-  </target>
-
-  <!-- Starts all tools -->
-  <target name="start_tools">
-    <antcall target="start_jboss"/>
-
-    <if>
-      <available file="${auto_pilot_deploy_dir}/build.xml" />
-      <then>
-        <ant antfile="${auto_pilot_deploy_dir}/build.xml" dir="${auto_pilot_deploy_dir}"
-             target="start_ap" inheritall="false" inheritrefs="true"/>
-      </then>
-    </if>
-
-    <if>
-      <available file="${auto_screening_deploy_dir}/build.xml" />
-      <then>
-        <ant antfile="${auto_screening_deploy_dir}/build.xml" dir="${auto_screening_deploy_dir}"
-         target="start_as" inheritall="false" inheritrefs="true"/>
-      </then>
-    </if>
-  </target>
-
-  <!-- Stops all tools -->
-  <target name="stop_tools">
-    <antcall target="stop_jboss" />
-
-    <if>
-      <available file="${auto_pilot_deploy_dir}/build.xml" />
-      <then>
-        <ant antfile="${auto_pilot_deploy_dir}/build.xml" dir="${auto_pilot_deploy_dir}"
-         target="stop_ap" inheritall="false" inheritrefs="true"/>
-      </then>
-    </if>
-
-    <if>
-      <available file="${auto_screening_deploy_dir}/build.xml" />
-      <then>
-        <ant antfile="${auto_screening_deploy_dir}/build.xml" dir="${auto_screening_deploy_dir}"
-         target="stop_as" inheritall="false" inheritrefs="true"/>
-      </then>
-    </if>
-
+    <start_jboss background="true" />
   </target>
   
-  <!-- Redeploy tools -->
-  <target name="deploy_tools" >
-    <!-- redeploy tools -->
-    <antcall target="first_deploy" />
-    <ant antfile="${online_review_home}/scripts/auto_pilot/build.xml" dir="${online_review_home}/scripts/auto_pilot"
-         target="all" inheritall="false" inheritrefs="true"/>
-    <ant antfile="${online_review_home}/scripts/auto_screening/build.xml" dir="${online_review_home}/scripts/auto_screening"
-         target="all" inheritall="false" inheritrefs="true"/>
-  </target>
-
   <!-- JBoss start / stop -->
   <macrodef name="start_jboss">
     <attribute name="background" default="false"/>
@@ -1148,23 +1011,23 @@
     </sequential>
   </macrodef>
 
-  <target name="start_jboss">
-    <start_jboss background="true"/>
+  <target name="start_jboss" >
+    <start_jboss background="true" />
   </target>
 
   <target name="stop_jboss">
-    <sequential>
+    <sequential >
       <available file="${JBOSS_HOME}/bin/shutdown.jar" property="jboss.shutdown.jar.exists"/>
       <fail unless="jboss.shutdown.jar.exists" message="Unable to find ${JBOSS_HOME}/bin/sutdown.jar"/>
       <available file="${JBOSS_HOME}/client/jbossall-client.jar" property="jboss.client.jar.exists"/>
       <fail unless="jboss.client.jar.exists"
             message="Unable to find ${JBOSS_HOME}/client/jbossall-client.jar"/>
-      <sleep seconds="${sleep_before_stopping}"/>
+      <sleep seconds="${sleep_before_stopping}" />
       <if>
-        <socket server="${bind_addr}" port="${jnp_port}"/>
+        <socket server="${bind_addr}" port="${jnp_port}"  />
         <then>
           <java jvm="${jdk_home}/bin/java"
-                classname="org.jboss.Shutdown" fork="true" resultproperty="shutdown.rc" failonerror="false">
+                classname="org.jboss.Shutdown" fork="true" resultproperty="shutdown.rc" failonerror="false" >
             <arg line="-s jnp://${bind_addr}:${jnp_port}"/>
             <classpath>
               <pathelement path="${JBOSS_HOME}/bin/shutdown.jar"/>
@@ -1175,30 +1038,109 @@
           <condition property="shutdown.okay">
             <equals arg1="${shutdown.rc}" arg2="0"/>
           </condition>
-          <fail unless="shutdown.okay"
-                message="Unable to shut down JBoss (maybe it hasn't fully started yet?)."/>
+          <fail unless="shutdown.okay" message="Unable to shut down JBoss (maybe it hasn't fully started yet?)."/>
           <echo>Waiting for ${bind_addr}:${jnp_port} to stop listening...</echo>
           <waitfor maxwait="2" maxwaitunit="minute">
             <not>
               <socket server="${bind_addr}" port="${jnp_port}"/>
             </not>
           </waitfor>
-          <sleep seconds="${sleep_before_stopping}" />
         </then>
       </if>
     </sequential>
   </target>
 
+  <target name="compile_tests" depends="compile">
+    <mkdir dir="${build_testclassdir}" />
+    <javac srcdir="${javatests}"
+           destdir="${build_testclassdir}"
+           includes="**/*.java"
+           debug="true"
+           verbose="${verbose}"
+           source="1.5"
+           target="1.5"
+               >
+      <classpath refid="test.build.classpath" />
+    </javac>
+  </target>
+
+  <target name="compile_ws" depends="compile">
+    <mkdir dir="${build_testclassdir}" />
+
+    <echo>${axis.jar}</echo>
+    <echo>${jboss-client.jar}</echo>
+    <javac srcdir="${javatests}"
+           destdir="${build_testclassdir}"
+           includes="**/UploadServiceClient.java"
+           debug="true"
+           verbose="${verbose}"
+           source="1.5"
+           target="1.5"
+               >
+      <classpath >
+        <fileset dir="${ext_libdir}" includes="**/*.jar"/>
+        <fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
+      </classpath>
+    </javac>
+
+    <java classname="com.cronos.onlinereview.uploadservices.UploadServiceClient"
+            fork="true" maxmemory="512m">
+      <classpath >
+        <fileset dir="${ext_libdir}" includes="**/*.jar"/>
+        <fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
+        <path path="${build_testclassdir}"/>
+      </classpath>
+    </java>
+  </target>
+
   <target name="javadoc" depends="compile">
-    <mkdir dir="${dist_javadocs}"/>
-    <javadoc packagenames="${package}.*" sourcepath="${javamain}" classpath="${build_classdir}"
-             classpathref="buildlibs" destdir="${dist_javadocs}" windowtitle="Topcoder Software"
-             header="&lt;table border=0 cellpadding=0 cellspacing=2&gt;&lt;tr&gt;&lt;td&gt;&lt;font class=tcoder2&gt;&#091; &lt;/font&gt;&lt;font class=tcoder1&gt;TOP&lt;/font&gt;&lt;font class=tcoder2&gt;CODER &lt;/font&gt;&lt;font class=tcoder2&gt;&#093;&lt;/font&gt;&lt;/td&gt;&lt;td&gt;&lt;font class=tcoder4&gt;&#153;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=tcoder3 align=center&gt;&lt;font class=tcoder3&gt;SOFTWARE&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;"
-             footer="&lt;table border=0 cellpadding=0 cellspacing=2&gt;&lt;tr&gt;&lt;td&gt;&lt;font class=tcoder2&gt;&#091; &lt;/font&gt;&lt;font class=tcoder1&gt;TOP&lt;/font&gt;&lt;font class=tcoder2&gt;CODER &lt;/font&gt;&lt;font class=tcoder2&gt;&#093;&lt;/font&gt;&lt;/td&gt;&lt;td&gt;&lt;font class=tcoder4&gt;&#153;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=tcoder3 align=center&gt;&lt;font class=tcoder3&gt;SOFTWARE&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;"
-             bottom="&lt;font class=tcoder5&gt;Contact TopCoder Software at &lt;a href='http://www.topcodersoftware.com'&gt;www.topcodersoftware.com&lt;/a&gt;&lt;/font&gt;"
-             stylesheetfile="${javadocsdir}/stylesheet.css" verbose="${verbose}">
-      <tag name="copyright" description="Copyright:" scope="types"/>
+    <mkdir dir="${dist_javadocs}" />
+    <javadoc packagenames="${package}.*" sourcepath="${javamain}" classpath="${build_classdir}" classpathref="buildlibs" destdir="${dist_javadocs}" windowtitle="Topcoder Software" header="&lt;table border=0 cellpadding=0 cellspacing=2&gt;&lt;tr&gt;&lt;td&gt;&lt;font class=tcoder2&gt;&#091; &lt;/font&gt;&lt;font class=tcoder1&gt;TOP&lt;/font&gt;&lt;font class=tcoder2&gt;CODER &lt;/font&gt;&lt;font class=tcoder2&gt;&#093;&lt;/font&gt;&lt;/td&gt;&lt;td&gt;&lt;font class=tcoder4&gt;&#153;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=tcoder3 align=center&gt;&lt;font class=tcoder3&gt;SOFTWARE&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" footer="&lt;table border=0 cellpadding=0 cellspacing=2&gt;&lt;tr&gt;&lt;td&gt;&lt;font class=tcoder2&gt;&#091; &lt;/font&gt;&lt;font class=tcoder1&gt;TOP&lt;/font&gt;&lt;font class=tcoder2&gt;CODER &lt;/font&gt;&lt;font class=tcoder2&gt;&#093;&lt;/font&gt;&lt;/td&gt;&lt;td&gt;&lt;font class=tcoder4&gt;&#153;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=tcoder3 align=center&gt;&lt;font class=tcoder3&gt;SOFTWARE&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" bottom="&lt;font class=tcoder5&gt;Contact TopCoder Software at &lt;a href='http://www.topcodersoftware.com'&gt;www.topcodersoftware.com&lt;/a&gt;&lt;/font&gt;" stylesheetfile="${javadocsdir}/stylesheet.css" verbose="${verbose}">
+      <tag name="copyright" description="Copyright:" scope="types" />
     </javadoc>
+  </target>
+
+  <target name="prepare_tests_war" depends="dist, compile_tests">
+
+    <!-- Cactify the web-app archive -->
+    <!-- Done manually becaue of Cactus itself being buggy with out web.xml -->
+
+    <copy file="${component.war}" tofile="${component_test.war}"/>
+
+    <war destfile="${component_test.war}" webxml="${testfiles}/web.xml" update="true">
+      <classes dir="${build_testclassdir}" />
+      <lib dir="${jar_ext_libdir}/testing" includes="*.jar" />
+      <fileset
+          dir="${testfiles}"
+          includes="jspRedirector.jsp"
+            />
+    </war>
+
+  </target>
+
+  <target name="test" depends="prepare_tests_war">
+    <mkdir dir="${testlogdir}" />
+
+    <!-- Run the tests -->
+    <cactus warfile="${component_test.war}" fork="yes">
+      <classpath refid="cactus.classpath" />
+      <containerset timeout="180000">
+        <tomcat5x if="cactus.home.tomcat5x"
+            dir="${cactus.home.tomcat5x}" port="8080"
+            output="${testlogdir}/tomcat5x.out"
+            todir="${testlogdir}"
+            serverxml="${testfiles}/server.xml"
+                />
+      </containerset>
+      <formatter type="brief" usefile="true" />
+      <formatter type="xml" />
+      <batchtest>
+        <fileset dir="${javatests}">
+          <include name="**/*.java" />
+        </fileset>
+      </batchtest>
+    </cactus>
+
   </target>
 
   <target name="reports" depends="test">
@@ -1211,13 +1153,6 @@
       <report format="frames" todir="${reports}" />
     </junitreport>
     <echo>The execution of reports is complete.  Reports are available in /${reports}</echo>
-  </target>
-
-  <!-- - - - - - - - - - - - - - - - - -
-      target: prod-init
-    - - - - - - - - - - - - - - - - - -->
-  <target name="prod-init">
-    <property name="component.war" value="${distfilename}.war" />
   </target>
 
   <target name="deploy-common">
@@ -1239,62 +1174,24 @@
     </delete>
   </target>
 
-  <target name="deploy-prod" depends="prod-init, deploy-common"/>
-
-  <target name="main" depends="deploy, test"/>
-
-  <!-- integration tests targets -->
-  <target name="tokenize_tests">
-    <mkdir dir="${build_testconfdir}" />
-    <copy todir="${build_testconfdir}" overwrite="true">
-      <fileset dir="${testfiles}">
-        <include name="**/*.xml"/>
-        <include name="**/*.properties"/>
-      </fileset>
-    </copy>
-
-    <replace dir="${build_testconfdir}" replacefilterfile="${token.properties}">
-      <include name="**/*.properties"/>
-      <include name="**/*.xml"/>
-      <include name="**/*.xsl"/>
-      <include name="**/*.xsd"/>
-    </replace>
+  <!-- - - - - - - - - - - - - - - - - -
+      target: prod-init
+    - - - - - - - - - - - - - - - - - -->
+  <target name="prod-init">
+    <property name="component.war" value="${distfilename}.war" />
   </target>
 
-  <target name="compile_tests">
-    <mkdir dir="${build_testclassdir}" />
-    <javac srcdir="${javatests}"
-           destdir="${build_testclassdir}"
-           includes="**/*Tests.java,**/TestHelper.java"
-           debug="true"
-           verbose="${verbose}"
-           source="1.5"
-           target="1.5">
-      <classpath refid="test.build.classpath" />
-    </javac>
+  <target name="deploy-prod" depends="prod-init, deploy-common" />
+
+  <target name="main" depends="deploy, test" />
+
+  <target name="package-phase-handler-extend" depends="compile">
+    <jar jarfile="${build_distdir}/phase_handler_extend.jar">
+      <zipfileset dir="${build_classdir}" includes="com/cronos/onlinereview/phases/**/*.class"/>
+      <metainf dir="${javamain}/com/cronos/onlinereview/phases/" includes="*.xml"/>
+    </jar>
   </target>
 
-  <path id="test.build.classpath">
-    <pathelement location="${base_exception.jar}"/>
-    <pathelement location="${configuration_manager.jar}"/>
-    <pathelement location="${db_connection_factory.jar}"/>
-    <pathelement location="${id_generator.jar}"/>
-    <pathelement location="${ifx-jdbc.jar}"/>
-    <pathelement location="${junit.jar}"/>
-    <pathelement location="${selenium_client.jar}"/>
-    <pathelement location="${configuration_api.jar}" />
-    <pathelement location="${configuration_persistence.jar}" />
-    <path path="${build_testconfdir}"/>
-  </path>
-
-
-  <target name="test" depends="tokenize_tests, compile_tests">
-    <antcall target="tests.setup" />
-    <antcall target="tests.execute" />
-    <antcall target="tests.teardown" />
-  </target>
-
-<<<<<<< .working
     <!--
         ++ =======================================================================
         ++ Macro: compile_component
@@ -1384,39 +1281,3 @@
     </target>
 
 </project>
-=======
-  <target name="tests.execute" >
-    <sequential>
-      <mkdir dir="${testlogdir}"/>
-      <junit fork="true" haltonerror="false">
-        <classpath location="${build_testclassdir}"/>
-        <classpath refid="test.build.classpath"/>
-        <test name="${package}.FunctionalTests" todir="${testlogdir}">
-          <formatter type="plain" usefile="true"/>
-          <formatter type="xml" usefile="true"/>
-        </test>
-      </junit>
-    </sequential>
-  </target>
-
-  <!-- Starts Selenium server -->
-  <target name="tests.setup" >
-    <sequential>
-          <java jar="${selenium_server.jar}" fork="true" spawn="true">
-            <arg line="-port ${selenium_port}"/>
-          </java>
-          <waitfor maxwait="30" maxwaitunit="second">
-            <and>
-              <socket server="${bind_addr}" port="${selenium_port}"/>
-              <http url="http://${bind_addr}:${selenium_port}/selenium-server/core/index.html" errorsBeginAt="404" />
-            </and>
-          </waitfor>
-    </sequential>
-  </target>
-
-  <target name="tests.teardown" >
-    <get taskname="selenium-shutdown"
-         src="http://${bind_addr}:${selenium_port}/selenium-server/driver/?cmd=shutDownSeleniumServer"
-         dest="${testlogdir}/result.txt" ignoreerrors="true" />
-  </target>
-</project>>>>>>>> .merge-right.r195035
