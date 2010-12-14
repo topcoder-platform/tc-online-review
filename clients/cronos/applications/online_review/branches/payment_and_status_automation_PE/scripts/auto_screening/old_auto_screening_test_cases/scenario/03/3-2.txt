@@ -1,0 +1,4 @@
+Jave Design - CS in DOC format.
+
+ Fatal Errors: 
+ TCS-004: Your submission does not contain a component specification document in rich text format (rtf).  
