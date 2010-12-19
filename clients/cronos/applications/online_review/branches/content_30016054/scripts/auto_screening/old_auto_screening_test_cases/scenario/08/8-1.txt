@@ -1,0 +1,5 @@
+.NET Design - CS contains email.
+
+Warnings: 
+ TCS-014: Your submission contains personal information. 
+component specification.rtf contains email address (foo@fooonyou.com).  
