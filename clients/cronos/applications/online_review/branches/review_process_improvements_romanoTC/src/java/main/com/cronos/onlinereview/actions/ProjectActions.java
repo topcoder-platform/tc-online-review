@@ -17,6 +17,10 @@ import static com.cronos.onlinereview.actions.Constants.SCREENING_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.SPECIFICATION_REVIEW_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.SPECIFICATION_SUBMISSION_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.SUBMISSION_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.REVIEW_REGISTRATION_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME;
 
 import java.rmi.RemoteException;
 import java.text.DateFormat;
@@ -594,27 +598,27 @@ public class ProjectActions extends DispatchAction {
                         || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
                         || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME));
         request.setAttribute("isAdmin", isAdmin);
-       
+
        // start BUGR 4039 - Check whether the billing project id is in the user's allowed billing projects list
        List<ClientProject> availableClientProjects = ActionsHelper.getClientProjects(request);
        Long currentClientProjectId = (Long) form.get("billing_project");
        boolean inList = false;
-       
+
        if(currentClientProjectId == null) {
-            // no billing project yet, allow set 
+            // no billing project yet, allow set
             inList = true;
         } else {
-            for(ClientProject cp : availableClientProjects) { 
-                if(cp.getId() == currentClientProjectId.longValue()) {  
+            for(ClientProject cp : availableClientProjects) {
+                if(cp.getId() == currentClientProjectId.longValue()) {
                     inList = true;
                     break;
-                } 
+                }
             }
         }
-        
+
        request.setAttribute("allowBillingEdit", isAdmin && inList);
-       
-       
+
+
        // end BUG-4039
     }
 
@@ -915,7 +919,7 @@ public class ProjectActions extends DispatchAction {
 
         // since Online Review Update - Add Project Dropdown v1.0
         // Populate project notes
-        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) 
+        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
                 || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
                  || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
                 project.setProperty("Billing Project", lazyForm.get("billing_project"));
@@ -996,7 +1000,7 @@ public class ProjectActions extends DispatchAction {
      * @param projectId the project id for the associations
      * @param projectTypeId the project type id of the provided project id
      * @param categoryChanged <code>true</code> if category was changed; <code>false</code> otherwise.
-     * @param request an <code>HttpServletRequest</code> representing incoming request. 
+     * @param request an <code>HttpServletRequest</code> representing incoming request.
      * @throws NamingException if any errors occur during EJB lookup
      * @throws RemoteException if any errors occur during EJB remote invocation
      * @throws CreateException if any errors occur during EJB creation
@@ -1671,6 +1675,7 @@ public class ProjectActions extends DispatchAction {
         if (projectPhases.length > 0 &&
                 !projectPhases[0].getPhaseType().getName().equals(SPECIFICATION_SUBMISSION_PHASE_NAME) &&
                 !projectPhases[0].getPhaseType().getName().equals(REGISTRATION_PHASE_NAME) &&
+                !projectPhases[0].getPhaseType().getName().equals(REVIEW_REGISTRATION_PHASE_NAME) &&
                 !projectPhases[0].getPhaseType().getName().equals(SUBMISSION_PHASE_NAME) &&
                 !projectPhases[0].getPhaseType().getName().equals(POST_MORTEM_PHASE_NAME)) {
             ActionsHelper.addErrorToRequest(request,
@@ -1686,6 +1691,7 @@ public class ProjectActions extends DispatchAction {
             if (currentPhaseName.equals(SUBMISSION_PHASE_NAME)) {
                 // Submission should follow registration or post-mortem if it exists
                 if (i > 0 && !previousPhaseName.equals(REGISTRATION_PHASE_NAME)
+                          && !previousPhaseName.equals(REVIEW_REGISTRATION_PHASE_NAME)
                           && !postMortemPhaseExists) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.SubmissionMustFollow");
@@ -1697,6 +1703,7 @@ public class ProjectActions extends DispatchAction {
                     // Registration should be followed by submission or post-mortem
                     if (i == projectPhases.length - 1
                             || !nextPhaseName.equals(SUBMISSION_PHASE_NAME)
+                            && !nextPhaseName.equals(REVIEW_REGISTRATION_PHASE_NAME)
                             && !postMortemPhaseExists) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.RegistrationMustBeFollowed");
@@ -1714,6 +1721,7 @@ public class ProjectActions extends DispatchAction {
                     // or Submission
                     if (!nextPhaseName.equals(SPECIFICATION_SUBMISSION_PHASE_NAME)
                         && !nextPhaseName.equals(REGISTRATION_PHASE_NAME)
+                        && !nextPhaseName.equals(REVIEW_REGISTRATION_PHASE_NAME)
                         && !nextPhaseName.equals(SUBMISSION_PHASE_NAME)) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.SpecReviewMustBeFollowed");
@@ -1721,9 +1729,9 @@ public class ProjectActions extends DispatchAction {
                     }
                 } else if (currentPhaseName.equals(REVIEW_PHASE_NAME)) {
                     // Review should follow submission or screening or post-mortem
-                    if (i == 0 || (!previousPhaseName.equals(SUBMISSION_PHASE_NAME) &&
-                            !previousPhaseName.equals(SCREENING_PHASE_NAME)
-                            && !postMortemPhaseExists)) {
+                    if (i == 0 || (!previousPhaseName.equals(SUBMISSION_PHASE_NAME)
+                                   && !previousPhaseName.equals(SCREENING_PHASE_NAME)
+                                   && !postMortemPhaseExists)) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.ReviewMustFollow");
                         arePhasesValid = false;
@@ -1757,6 +1765,7 @@ public class ProjectActions extends DispatchAction {
                     if (i == 0 ||
                             (!previousPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME) &&
                             !previousPhaseName.equals(REVIEW_PHASE_NAME) &&
+                            !previousPhaseName.equals(PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME) &&
                             !previousPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME) &&
                             !postMortemPhaseExists)) {
                         ActionsHelper.addErrorToRequest(request,
@@ -1971,7 +1980,7 @@ public class ProjectActions extends DispatchAction {
                 long resourceRoleId = (Long) lazyForm.get("resources_role", i);
                 String resourcePhaseId = String.valueOf( lazyForm.get("resources_phase", i) );
                 String resourceKey = String.valueOf(resourceRoleId) + resourcePhaseId;
-                
+
                 if (disabledResourceRoles.contains(String.valueOf(resourceRoleId))) {
                     boolean attemptingToAssignDisabledRole = false;
                     if ("add".equalsIgnoreCase(resourceAction)) {
@@ -2102,7 +2111,7 @@ public class ProjectActions extends DispatchAction {
             ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
 
             Resource resource;
-            
+
             // BUGR-2807: Parse resource payment
             Double resourcePayment = null;
             if (Boolean.TRUE.equals(lazyForm.get("resources_payment", i))) {
@@ -2154,8 +2163,9 @@ public class ProjectActions extends DispatchAction {
 
             // Set resource properties
             resource.setProject(new Long(project.getId()));
-            resource.setProperty("Payment", resourcePayment);
-            resource.setProperty("Payment Status", lazyForm.get("resources_paid", i));
+            resource.setProperty("Payment", resourcePayment == null ? null : resourcePayment.toString());
+            resource.setProperty("Payment Status", lazyForm.get("resources_paid", i) == null
+                                                   ? null : lazyForm.get("resources_paid", i).toString());
 
             boolean resourceRoleChanged = false;
             ResourceRole role = ActionsHelper.findResourceRoleById(
@@ -2190,7 +2200,7 @@ public class ProjectActions extends DispatchAction {
             }
 
             // Set resource properties copied from external user
-            resource.setProperty("External Reference ID", new Long(user.getId()));
+            resource.setProperty("External Reference ID", String.valueOf(user.getId()));
             // not store in resource info resource.setProperty("Email", user.getEmail());
 
             String resourceRole = resource.getResourceRole().getName();
@@ -2872,7 +2882,7 @@ public class ProjectActions extends DispatchAction {
 
                 // Filter out those resources which do not correspond to active phases. If resource has phase set
                 // explicitly (but is not one of the reviewer roles) then check if it's phase is in list of active
-                // phases; otherwise check if it's role has a deliverable for one of the active phases 
+                // phases; otherwise check if it's role has a deliverable for one of the active phases
                 for (int k = 0; k < myResources.length; ++k) {
                     boolean toAdd = false;
                     long resourceRoleId = myResources[k].getResourceRole().getId();
@@ -3142,7 +3152,7 @@ public class ProjectActions extends DispatchAction {
      * @param manager an instance of <code>ReviewManager</code> class that retrieves a review from the database.
      * @param projectId an ID of the project which the review was made for.
      * @return a <code>Set</code> providing the Ids of project resources which have review scorecards associated with
-     *         them. 
+     *         them.
      * @throws ReviewManagementException if any error occurs during review search or retrieval.
      * @since 1.8
      */
@@ -3177,7 +3187,7 @@ public class ProjectActions extends DispatchAction {
     private void setEditProjectFormData(HttpServletRequest request, CorrectnessCheckResult verification,
                                         LazyValidatorForm form)
         throws BaseException {
-        
+
         // Load the lookup data
         loadProjectEditLookups(request);
         String phaseDependenciesEditable

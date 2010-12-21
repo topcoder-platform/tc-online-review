@@ -179,9 +179,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @since 1.1
      */
     private static final Pattern VERSION_PATTERN = Pattern.compile("\\s*([1-9][0-9]*)(\\.[0-9]+){0,3}\\s*");
-    
+
     /**
-     * DistributionTool is thread-safe, so we can keep it as an instance variable. 
+     * DistributionTool is thread-safe, so we can keep it as an instance variable.
      * @since 1.1
      */
     private static final DistributionTool DISTRIBUTION_TOOL = new DistributionTool();
@@ -339,7 +339,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
                 request.getSession().setAttribute("success_upload",
                     getResources(request).getMessage("manageProject.Distributions.Successful_upload"));
-                
+
                 return ActionsHelper.cloneForwardAndAppendToPath(mapping
                     .findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
             }
@@ -421,7 +421,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         };
 
         boolean isDesign = (projectCategoryId == DESIGN_PROJECT_ID);
-        
+
         // Saves the distribution file into the catalog directory
         if (!saveDistributionFileToCatalog(project, descriptor, request, isDesign)) {
 
@@ -924,12 +924,12 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         // Must select at least one of these options
         if (!uploadToServer && !returnDistribution) {
             // Add the error message to both checkboxes if design distribution
-            
+
             if (projectCategoryId == DESIGN_PROJECT_ID) {
                 ActionsHelper.addErrorToRequest(request, "upload_to_server", new ActionMessage(
                     "error.com.cronos.onlinereview.actions.manageProject.Distributions.Upload.Unchecked"));
             }
-            
+
             ActionsHelper.addErrorToRequest(request, "return_distribution", new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.Upload.Unchecked"));
         }
@@ -1401,7 +1401,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                             resource.setProperty("Payment Status", "N/A");
                             resource.setResourceRole(roleMapping.get(resourceRoleId));
                             resource.setProperty("Handle", handle);
-                            resource.setProperty("External Reference ID", userId);
+                            resource.setProperty("External Reference ID", userId == null ? null : userId.toString());
                             resource.setProperty("Registration Date", DATE_FORMAT.format(new Date()));
 
                             newUsersForumWatch.add(userId);

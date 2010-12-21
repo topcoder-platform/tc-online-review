@@ -61,8 +61,18 @@ package com.cronos.onlinereview.actions;
  *   </ol>
  * </p>
  *
+  * <p>
+  * Version 1.6.1 (Review Process Backend Integration Assembly 1.0) Change notes:
+  *   <ol>
+  *     <li>Added {@link #PRIMARY_REVIEW_EVALUATION_PHASE_NAME} constant.</li>
+  *     <li>Added {@link #SECONDARY_REVIEWER_REVIEW_PHASE_NAME} constant.</li>
+  *     <li>Added {@link #REVIEW_REGISTRATION_PHASE_NAME} constant.</li>
+  *     <li>Added {@link #PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME} constant.</li>
+  *   </ol>
+  * </p>
+  *
  * @author George1, real_vg, pulky, isv
- * @version 1.6
+ * @version 1.6.1
  */
 public class Constants {
 
@@ -774,6 +784,34 @@ public class Constants {
      * @since 1.6
      */
     public static final String SPECIFICATION_REVIEW_PHASE_NAME = "Specification Review";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Primary Review Evaluation</code> phase.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String PRIMARY_REVIEW_EVALUATION_PHASE_NAME = "Primary Review Evaluation";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Secondary Reviewer Review</code> phase.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String SECONDARY_REVIEWER_REVIEW_PHASE_NAME = "Secondary Reviewer Review";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Review Registration</code> phase.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String REVIEW_REGISTRATION_PHASE_NAME = "Review Registration";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Primary Review Appeals Response</code> phase.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME = "Primary Review Appeals Response";
 
 
     // ------------------------------------------------------------------- Phase Status names -----

@@ -3703,7 +3703,7 @@ public class ProjectReviewActions extends DispatchAction {
         // long oldPlacement = temp == null ? -1 : Long.parseLong(temp.toString());
         // Old Code Ends
         
-        Object userId = submitter.getProperty("External Reference ID");
+        Object userId = (Object) submitter.getProperty("External Reference ID");
         
         UploadManager upMgr = ActionsHelper.createUploadManager(request);
 
@@ -3846,7 +3846,7 @@ public class ProjectReviewActions extends DispatchAction {
         if (winningSubmitter != null) {
             //Set project properties to store the winner and the runner up
             //Get the project instance
-            Object winnerExtId = winningSubmitter.getProperty("External Reference ID");
+            Object winnerExtId = (Object) winningSubmitter.getProperty("External Reference ID");
             project.setProperty("Winner External Reference ID", winnerExtId);
         } else {
             project.setProperty("Winner External Reference ID", null);
@@ -3854,7 +3854,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         //if there is a runner up
         if (runnerUpSubmitter != null) {
-            Object runnerExtId = runnerUpSubmitter.getProperty("External Reference ID");
+            Object runnerExtId = (Object) runnerUpSubmitter.getProperty("External Reference ID");
             project.setProperty("Runner-up External Reference ID", runnerExtId);
         }else {
             project.setProperty("Runner-up External Reference ID", null);
