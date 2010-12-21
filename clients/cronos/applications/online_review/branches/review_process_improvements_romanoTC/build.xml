@@ -270,7 +270,7 @@
   <property name="online_review_login.path" value="online_review_login/${online_review_login.version}" />
   <property name="online_review_login.jar" value="${tcs_libdir}/${online_review_login.path}/${online_review_login.jar.name}" />
 
-  <property name="online_review_phases.version" value="1.4.4" />
+  <property name="online_review_phases.version" value="1.5.0" />
   <property name="online_review_phases.jar.name" value="online_review_phases.jar" />
   <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}" />
   <property name="online_review_phases.jar" value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}" />
@@ -290,7 +290,7 @@
   <property name="phase_management_persistence.path" value="phase_management_persistence/${phase_management_persistence.version}" />
   <property name="phase_management_persistence.jar" value="${tcs_libdir}/${phase_management_persistence.path}/${phase_management_persistence.jar.name}" />
 
-  <property name="project_management.version" value="1.0.1" />
+  <property name="project_management.version" value="1.1.0" />
   <property name="project_management.jar.name" value="project_management.jar" />
   <property name="project_management.path" value="project_management/${project_management.version}" />
   <property name="project_management.jar" value="${tcs_libdir}/${project_management.path}/${project_management.jar.name}" />
@@ -310,7 +310,7 @@
   <property name="project_phase_template.path" value="project_phase_template/${project_phase_template.version}" />
   <property name="project_phase_template.jar" value="${tcs_libdir}/${project_phase_template.path}/${project_phase_template.jar.name}" />
 
-  <property name="resource_management.version" value="1.1.1" />
+  <property name="resource_management.version" value="1.4.0" />
   <property name="resource_management.jar.name" value="resource_management.jar" />
   <property name="resource_management.path" value="resource_management/${resource_management.version}" />
   <property name="resource_management.jar" value="${tcs_libdir}/${resource_management.path}/${resource_management.jar.name}" />
@@ -320,20 +320,36 @@
   <property name="resource_management_persistence.path" value="resource_management_persistence/${resource_management_persistence.version}" />
   <property name="resource_management_persistence.jar" value="${tcs_libdir}/${resource_management_persistence.path}/${resource_management_persistence.jar.name}" />
 
-  <property name="review_data_structure.version" value="1.0" />
+  <property name="review_data_structure.version" value="1.1.0" />
   <property name="review_data_structure.jar.name" value="review_data_structure.jar" />
   <property name="review_data_structure.path" value="review_data_structure/${review_data_structure.version}" />
   <property name="review_data_structure.jar" value="${tcs_libdir}/${review_data_structure.path}/${review_data_structure.jar.name}" />
 
-  <property name="review_management.version" value="1.0" />
+  <property name="review_management.version" value="1.1.0" />
   <property name="review_management.jar.name" value="review_management.jar" />
   <property name="review_management.path" value="review_management/${review_management.version}" />
   <property name="review_management.jar" value="${tcs_libdir}/${review_management.path}/${review_management.jar.name}" />
 
-  <property name="review_management_persistence.version" value="1.0.1" />
+  <property name="review_management_persistence.version" value="1.1.0" />
   <property name="review_management_persistence.jar.name" value="review_management_persistence.jar" />
   <property name="review_management_persistence.path" value="review_management_persistence/${review_management_persistence.version}" />
   <property name="review_management_persistence.jar" value="${tcs_libdir}/${review_management_persistence.path}/${review_management_persistence.jar.name}" />
+
+  <property name="review_payment_calculator.version" value="1.0.0"/>
+  <property name="review_payment_calculator.jar.name" value="review_payment_calculator.jar"/>
+  <property name="review_payment_calculator.path" value="review_payment_calculator/${review_payment_calculator.version}"/>
+  <property name="review_payment_calculator.jar" value="${tcs_libdir}/${review_payment_calculator.path}/${review_payment_calculator.jar.name}"/>
+
+  <property name="review_selection.version" value="1.0.0"/>
+  <property name="review_selection.jar.name" value="review_selection.jar"/>
+  <property name="review_selection.path" value="review_selection/${review_selection.version}"/>
+  <property name="review_selection.jar" value="${tcs_libdir}/${review_selection.path}/${review_selection.jar.name}"/>
+
+    <property name="review_statistics_calculator.version" value="1.0.0"/>
+    <property name="review_statistics_calculator.jar.name" value="review_statistics_calculator.jar"/>
+    <property name="review_statistics_calculator.path" value="review_statistics_calculator/${review_statistics_calculator.version}"/>
+    <property name="review_statistics_calculator.jar" value="${tcs_libdir}/${review_statistics_calculator.path}/${review_statistics_calculator.jar.name}"/>
+
 
   <property name="review_score_aggregator.version" value="1.0" />
   <property name="review_score_aggregator.jar.name" value="review_score_aggregator.jar" />
@@ -411,6 +427,10 @@
   <property name="securityEJB.path" value="security_ejb" />
   <property name="securityEJB.jar.name" value="Security.jar" />
   <property name="securityEJB.jar" value="${tcs_libdir}/${securityEJB.path}/${securityEJB.jar.name}" />
+
+    <property name="rboardEJB.path" value="rboard_ejb" />
+    <property name="rboardEJB.jar.name" value="RBoard.jar" />
+    <property name="rboardEJB.jar" value="${tcs_libdir}/${rboardEJB.path}/${rboardEJB.jar.name}" />
 
   <!-- Shared libraries -->
   <property name="catalog.jar.name" value="catalog.jar" />
@@ -511,6 +531,12 @@
     <pathelement location="${deliverable_management.jar}" />
     <pathelement location="${deliverable_management_persistence.jar}" />
     <pathelement location="${distribution_tool.jar}" />
+    <pathelement location="${database_abstraction.jar}" />
+    <pathelement location="${simple_cache.jar}" />
+    <pathelement location="${rboardEJB.jar}" />
+    <pathelement location="${review_payment_calculator.jar}" />
+    <pathelement location="${review_selection.jar}" />
+    <pathelement location="${review_statistics_calculator.jar}" />
     <pathelement location="${document_generator.jar}" />
     <pathelement location="${email_engine.jar}" />
     <pathelement location="${file_upload.jar}" />
@@ -768,6 +794,9 @@
       <lib dir="${jar_tcs_libdir}/${review_management_persistence.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}/${review_score_aggregator.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}/${review_score_calculator.path}" includes="*.jar" />
+      <lib dir="${jar_tcs_libdir}/${review_selection.path}" includes="*.jar" />
+      <lib dir="${jar_tcs_libdir}/${review_payment_calculator.path}" includes="*.jar" />
+      <lib dir="${jar_tcs_libdir}/${review_statistics_calculator.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}/${scorecard_data_structure.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}/${scorecard_management.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}/${scorecard_management_persistence.path}" includes="*.jar" />
@@ -779,6 +808,7 @@
       <lib dir="${jar_tcs_libdir}/${workdays.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}/${projectEJB.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}/${userEJB.path}" includes="*.jar" />
+      <lib dir="${jar_tcs_libdir}/${rboardEJB.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}/${securityEJB.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar" />
       <lib dir="${jar_tcs_libdir}" includes="tc_id_generator.jar" />
@@ -1161,5 +1191,93 @@
       <metainf dir="${javamain}/com/cronos/onlinereview/phases/" includes="*.xml"/>
     </jar>
   </target>
+
+    <!--
+        ++ =======================================================================
+        ++ Macro: compile_component
+        ++ Compiles specified component
+        ++ =======================================================================
+    -->
+    <macrodef name="compile_component" description="Compiles the component">
+        <attribute name="component"/>
+        <attribute name="version"/>
+        <attribute name="path"/>
+
+        <sequential>
+            <property name="component_base_dir" value="@{path}"/>
+            <property name="component_src_dir" value="${component_base_dir}/src/java/main"/>
+            <property name="component_build_dir" value="${component_base_dir}/build"/>
+            <property name="component_build_classes_dir" value="${component_build_dir}/classes"/>
+            <property name="component_jar_file" value="${component_build_dir}/@{component}.jar"/>
+            <property name="component_dist_dir" value="${tcs_libdir}/@{component}/@{version}"/>
+
+            <delete dir="${component_build_dir}"/>
+            <mkdir dir="${component_build_dir}"/>
+            <mkdir dir="${component_build_classes_dir}"/>
+
+            <echo message="Base: ${component_base_dir}"/>
+            <echo message="Build: ${component_build_dir}"/>
+            <echo message="Src: ${component_src_dir}"/>
+            <echo message="Dist: ${component_dist_dir}"/>
+            <echo message="Jar: ${component_jar_file}"/>
+
+            <javac srcdir="${component_src_dir}"
+                   destdir="${component_build_classes_dir}"
+                   deprecation="on"
+                   debug="on"
+                   source="1.5" target="1.5" memoryMaximumSize="512M" memoryInitialSize="64M" fork="true">
+                <classpath refid="buildlibs"/>
+                <include name="**/*"/>
+            </javac>
+            <jar basedir="${component_build_classes_dir}" jarfile="${component_jar_file}" includes="**"/>
+            <mkdir dir="${component_dist_dir}"/>
+            <copy file="${component_jar_file}" todir="${component_dist_dir}"/>
+        </sequential>
+    </macrodef>
+
+    <target name="compile_component_1">
+        <compile_component component="online_review_phases" version="1.5.0"
+                           path="../Components/online_review_phases-1.5_1.0.0"/>
+    </target>
+
+    <target name="compile_component_2">
+        <compile_component component="project_management" version="1.1.0"
+                           path="../Components/project_management-1.1.0"/>
+    </target>
+
+    <target name="compile_component_3">
+        <compile_component component="resource_management" version="1.4.0"
+                           path="../Components/resource_management-1.4.0"/>
+    </target>
+
+    <target name="compile_component_4">
+        <compile_component component="review_data_structure" version="1.1.0"
+                           path="../Components/review_data_structure-1.1.0"/>
+    </target>
+
+    <target name="compile_component_5">
+        <compile_component component="review_management" version="1.1.0"
+                           path="../Components/review_management-1.1.0"/>
+    </target>
+
+    <target name="compile_component_6">
+        <compile_component component="review_management_persistence" version="1.1.0"
+                           path="../Components/review_management_persistence-1.1.0"/>
+    </target>
+
+    <target name="compile_component_7">
+        <compile_component component="review_payment_calculator" version="1.0.0"
+                           path="../Components/review_payment_calculator-1.0.0"/>
+    </target>
+
+    <target name="compile_component_8">
+        <compile_component component="review_selection" version="1.0.0"
+                           path="../Components/review_selection-1.0.0"/>
+    </target>
+
+    <target name="compile_component_9">
+        <compile_component component="review_statistics_calculator" version="1.0.0"
+                           path="../Components/review_statistics_calculator-1.0.0"/>
+    </target>
 
 </project>
