@@ -1,0 +1,57 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  http://www.springframework.org/schema/aop
+  http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context-2.5.xsd
+  http://www.springframework.org/schema/tx
+  http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+  http://www.springframework.org/schema/security
+  http://www.springframework.org/schema/security/spring-security-2.0.xsd">
+
+    <bean id="springContextProvider" class="com.cronos.onlinereview.ejblibrary.SpringContextProvider" 
+          scope="singleton"/>
+
+    <bean id="userTermsOfUseLibrary" class="com.cronos.onlinereview.ejblibrary.UserTermsOfUseLibrary"
+          scope="singleton"/>
+
+    <bean id="termsOfUseLibrary" class="com.cronos.onlinereview.ejblibrary.TermsOfUseLibrary"/>
+
+    <bean id="projectRoleTermsOfUseLibrary" class="com.cronos.onlinereview.ejblibrary.ProjectRoleTermsOfUseLibrary"/>
+
+    <bean id="loginLibrary" class="com.cronos.onlinereview.ejblibrary.LoginLibrary">
+        <constructor-arg type="java.lang.Long" value="28"/>
+    </bean>
+
+    <bean id="contestEligibilityServiceLibrary"
+          class="com.cronos.onlinereview.ejblibrary.ContestEligibilityServiceLibrary"/>
+
+    <bean id="entityManagerFactory" class="javax.persistence.Persistence" factory-method="createEntityManagerFactory">
+        <constructor-arg type="java.lang.String" value="ContestEligibilityPersistence"/>
+    </bean>
+
+    <bean id="contestEligibilityManagerLibrary"
+          class="com.cronos.onlinereview.ejblibrary.ContestEligibilityManagerLibrary"/>
+
+    <bean id="contestEligibilityValidationManagerLibrary"
+          class="com.cronos.onlinereview.ejblibrary.ContestEligibilityValidationManagerLibrary"/>
+
+    <!-- Component catalog ID generator settings -->
+    <bean id="catalogIdGeneratorDB" class="com.topcoder.util.idgenerator.sql.SimpleDB"/>
+
+    <bean id="catalogDataAccess" class="com.cronos.onlinereview.dataaccess.CatalogDataAccess">
+        <property name="idGeneratorDB" ref="catalogIdGeneratorDB"/>
+        <property name="idGeneratorDataSourceName" value="java:TCS_CATALOG"/>
+        <property name="idGeneratorTableName" value="sequence_object"/>
+        <property name="idGeneratorUserDefColumnName" value="name"/>
+        <property name="idGeneratorHighValueColumnName" value="current_value"/>
+        <property name="idGeneratorMaxHighValue" value="9999999999"/>
+        <property name="idGeneratorMaxLowValue" value="1"/>
+        <property name="idGeneratorAutoInit" value="false"/>
+    </bean>
+</beans>
+        
