@@ -1,27 +1,18 @@
 <?xml version="1.0"?>
 
 <project name="Online Review" default="build" basedir=".">
+  <!-- property file defining the component's dependencies -->
+  <property file="build.properties"/>
+
+  <!-- Import the dependencies of this build file -->
+  <import file="${basedir}/build-dependencies.xml"/>
 
   <!-- include ant contrib tasks -->
-  <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+  <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${ant-contrib.jar}"/>
 
   <!-- Load build properties -->
   <property file="build.properties" />
   <property file="${db_scripts_path}/build.properties" />
-
-  <property name="token.properties" value="token.properties" />
-
-  <condition property="is_windows">
-    <and>
-      <os family="windows"/>
-    </and>
-  </condition>
-
-  <condition property="is_unix">
-    <and>
-      <os family="unix"/>
-    </and>
-  </condition>
 
   <!-- COMPONENT PARAMETERS -->
   <property name="component" value="online_review" />
@@ -33,12 +24,7 @@
 
   <!-- DIRECTORY SETUP -->
   <property name="srcdir" value="src" />
-  <property name="tcs_libdir" value="lib/tcs" />
-  <property name="ext_libdir" location="lib/third_party" />
-  <property name="shared_libdir" value="lib/shared" />
-  <property name="jar_tcs_libdir" value="lib/tcs" />
-  <property name="jar_ext_libdir" location="lib/third_party" />
-  <property name="jar_shared_libdir" location="lib/shared" />
+
   <property name="docsdir" value="docs" />
   <property name="configdir" value="conf" />
   <property name="testlogdir" value="log" />
@@ -58,13 +44,14 @@
 
   <property name="builddir" value="build/ant" />
   <property name="build_conf" value="${builddir}/conf" />
+  <property name="build_tests" value="${builddir}/tests" />
   <property name="build_shared" value="${builddir}/shared" />
   <property name="build_jboss_files" value="${builddir}/jboss_files" />
   <property name="build_jboss_files_conf" value="${build_jboss_files}/conf" />
   <property name="build_jboss_files_deploy" value="${build_jboss_files}/deploy" />
   <property name="build_classdir" value="${builddir}/classes" />
-  <property name="build_testclassdir" value="${builddir}/testClasses" />
-  <property name="build_targetclassdir" value="${builddir}/targetclasses" />
+  <property name="build_testclassdir" value="${build_tests}/testClasses" />
+  <property name="build_testconfdir" value="${build_tests}/conf" />
   <property name="build_distdir" value="${builddir}/dist" />
   <property name="build_explodedwar" value="${build_distdir}/exploded/${distfilename}.war" />
   <property name="build_docsdir" value="${builddir}/${docsdir}" />
@@ -72,9 +59,6 @@
   <property name="build_webdir" value="${builddir}/${webdir}" />
   <property name="build_lib" value="${builddir}/lib" />
   <property name="build_tcsdistdir" value="${build_distdir}/${distfilename}-${component_version}" />
-
-  <!-- Server installation directories -->
-  <property name="cactus.home.tomcat5x" value="d:\tomcat" />
 
   <property name="deploy-dir" value="${JBOSS_HOME}/server/default/deploy/${distfilename}.war" />
   <property name="deploy-conf-dir" value="${JBOSS_HOME}/server/default/conf"/>
@@ -90,603 +74,8 @@
   <property name="verbose" value="no" />
 
   <!-- COMPONENT DISTRIBUTION STRUCTURE -->
-  <property name="dist_conf" value="${build_tcsdistdir}/${configdir}" />
-  <property name="dist_lib" value="${build_distdir}/lib/tcs" />
-  <property name="dist_src" value="${build_tcsdistdir}/${srcdir}" />
-  <property name="dist_docs" value="${build_tcsdistdir}/${docsdir}" />
-  <property name="dist_javadocs" value="${build_tcsdistdir}/${javadocsdir}" />
-  <property name="dist_testfiles" value="${build_tcsdistdir}/${testfiles}" />
-
-  <!-- NAME FOR .JAR AND .WAR FILES -->
-  <property name="component.jar" value="${dist_lib}/${component_path}/${distfilename}.jar" />
-  <property name="javadoc.jar" value="${builddir}/javadocs.jar" />
-  <property name="component.tests.jar" value="${dist_lib}/${distfilename}_tests.jar" />
-  <property name="component_test.war" value="${build_distdir}/${distfilename}_test.war" />
-  <property name="component.dist.jar" value="${build_distdir}/${distfilename}-${component_version}.jar" />
-  <property name="dev_submission.jar" value="${component}_${component_version}_dev_submission.jar" />
-  <property name="design_submission.jar" value="${component}_${component_version}_design_submission.jar" />
-  <property name="dev_dist.jar" value="${component}_${component_version}_dev_dist.jar" />
-  <property name="design_dist.jar" value="${component}_${component_version}_design_dist.jar" />
   <property name="component.war" value="${build_distdir}/${distfilename}.war" />
-
-
-  <!-- TCS Dependencies -->
-  <property name="authentication_factory.version" value="2.0" />
-  <property name="authentication_factory.jar.name" value="authentication_factory.jar" />
-  <property name="authentication_factory.path" value="authentication_factory/${authentication_factory.version}" />
-  <property name="authentication_factory.jar" value="${tcs_libdir}/${authentication_factory.path}/${authentication_factory.jar.name}" />
-
-  <property name="auto_pilot.version" value="1.0" />
-  <property name="auto_pilot.jar.name" value="auto_pilot.jar" />
-  <property name="auto_pilot.path" value="auto_pilot/${auto_pilot.version}" />
-  <property name="auto_pilot.jar" value="${tcs_libdir}/${auto_pilot.path}/${auto_pilot.jar.name}" />
-
-  <property name="auto_screening_management.version" value="1.0" />
-  <property name="auto_screening_management.jar.name" value="auto_screening_management.jar" />
-  <property name="auto_screening_management.path" value="auto_screening_management/${auto_screening_management.version}" />
-  <property name="auto_screening_management.jar" value="${tcs_libdir}/${auto_screening_management.path}/${auto_screening_management.jar.name}" />
-
-  <property name="base_exception.version" value="2.0.0" />
-  <property name="base_exception.jar.name" value="base_exception.jar" />
-  <property name="base_exception.path" value="base_exception/${base_exception.version}" />
-  <property name="base_exception.jar" value="${tcs_libdir}/${base_exception.path}/${base_exception.jar.name}" />
-
-  <property name="class_associations.version" value="1.0" />
-  <property name="class_associations.jar.name" value="class_associations.jar" />
-  <property name="class_associations.path" value="class_associations/${class_associations.version}" />
-  <property name="class_associations.jar" value="${tcs_libdir}/${class_associations.path}/${class_associations.jar.name}" />
-
-  <property name="command_line_utility.version" value="1.0" />
-  <property name="command_line_utility.jar.name" value="command_line_utility.jar" />
-  <property name="command_line_utility.path" value="command_line_utility/${command_line_utility.version}" />
-  <property name="command_line_utility.jar" value="${tcs_libdir}/${command_line_utility.path}/${command_line_utility.jar.name}" />
-
-  <property name="configuration_api.version" value="1.0.0" />
-  <property name="configuration_api.jar.name" value="configuration_api.jar" />
-  <property name="configuration_api.path" value="configuration_api/${configuration_api.version}" />
-  <property name="configuration_api.jar" value="${tcs_libdir}/${configuration_api.path}/${configuration_api.jar.name}" />
-  <property name="deliverable_management_persistence.version" value="1.1.2" />
-  <property name="deliverable_management_persistence.jar.name" value="deliverable_management_persistence.jar" />
-  <property name="deliverable_management_persistence.path" value="deliverable_management_persistence/${deliverable_management_persistence.version}" />
-  <property name="deliverable_management_persistence.jar" value="${tcs_libdir}/${deliverable_management_persistence.path}/${deliverable_management_persistence.jar.name}" />
-
-  <property name="configuration_manager.version" value="2.1.5" />
-  <property name="configuration_manager.jar.name" value="configuration_manager.jar" />
-  <property name="configuration_manager.path" value="configuration_manager/${configuration_manager.version}" />
-  <property name="configuration_manager.jar" value="${tcs_libdir}/${configuration_manager.path}/${configuration_manager.jar.name}" />
-
-  <property name="configuration_persistence.version" value="1.0.2" />
-  <property name="configuration_persistence.jar.name" value="configuration_persistence.jar" />
-  <property name="configuration_persistence.path" value="configuration_persistence/${configuration_persistence.version}" />
-  <property name="configuration_persistence.jar" value="${tcs_libdir}/${configuration_persistence.path}/${configuration_persistence.jar.name}" />
-
-  <property name="contest_eligibility_persistence.version" value="1.0.0"/>
-  <property name="contest_eligibility_persistence.jar.name" value="contest_eligibility_persistence.jar"/>
-  <property name="contest_eligibility_persistence.path" value="contest_eligibility_persistence/${contest_eligibility_persistence.version}"/>
-  <property name="contest_eligibility_persistence.jar" value="${tcs_libdir}/${contest_eligibility_persistence.path}/${contest_eligibility_persistence.jar.name}"/>
-
-  <property name="contest_eligibility_validation.version" value="1.0.0"/>
-  <property name="contest_eligibility_validation.jar.name" value="contest_eligibility_validation.jar"/>
-  <property name="contest_eligibility_validation.path" value="contest_eligibility_validation/${contest_eligibility_validation.version}"/>
-  <property name="contest_eligibility_validation.jar" value="${tcs_libdir}/${contest_eligibility_validation.path}/${contest_eligibility_validation.jar.name}"/>
-
-  <property name="data_validation.version" value="1.1.1"/>
-  <property name="data_validation.jar.name" value="data_validation.jar"/>
-  <property name="data_validation.path" value="data_validation/${data_validation.version}"/>
-  <property name="data_validation.jar" value="${tcs_libdir}/${data_validation.path}/${data_validation.jar.name}"/>
-
-  <property name="database_abstraction.version" value="1.1" />
-  <property name="database_abstraction.jar.name" value="database_abstraction.jar" />
-  <property name="database_abstraction.path" value="database_abstraction/${database_abstraction.version}" />
-  <property name="database_abstraction.jar" value="${tcs_libdir}/${database_abstraction.path}/${database_abstraction.jar.name}" />
-
-  <property name="db_connection_factory.version" value="1.0" />
-  <property name="db_connection_factory.jar.name" value="db_connection_factory.jar" />
-  <property name="db_connection_factory.path" value="db_connection_factory/${db_connection_factory.version}" />
-  <property name="db_connection_factory.jar" value="${tcs_libdir}/${db_connection_factory.path}/${db_connection_factory.jar.name}" />
-
-  <property name="deliverable_management.version" value="1.1.1" />
-  <property name="deliverable_management.jar.name" value="deliverable_management.jar" />
-  <property name="deliverable_management.path" value="deliverable_management/${deliverable_management.version}" />
-  <property name="deliverable_management.jar" value="${tcs_libdir}/${deliverable_management.path}/${deliverable_management.jar.name}" />
-
-  <property name="deliverable_management_persistence.version" value="1.1.2" />
-  <property name="deliverable_management_persistence.jar.name" value="deliverable_management_persistence.jar" />
-  <property name="deliverable_management_persistence.path" value="deliverable_management_persistence/${deliverable_management_persistence.version}" />
-  <property name="deliverable_management_persistence.jar" value="${tcs_libdir}/${deliverable_management_persistence.path}/${deliverable_management_persistence.jar.name}" />
-
-  <property name="distribution_tool.version" value="1.0.1" />
-  <property name="distribution_tool.jar.name" value="distribution_tool.jar" />
-  <property name="distribution_tool.path" value="distribution_tool/${distribution_tool.version}" />
-  <property name="distribution_tool.jar" value="${tcs_libdir}/${distribution_tool.path}/${distribution_tool.jar.name}" />
-
-  <property name="document_generator.version" value="2.1"/>
-  <property name="document_generator.jar.name" value="document_generator.jar"/>
-  <property name="document_generator.path" value="document_generator/${document_generator.version}"/>
-  <property name="document_generator.jar" value="${tcs_libdir}/${document_generator.path}/${document_generator.jar.name}"/>
-
-  <property name="email_engine.version" value="3.1.0" />
-  <property name="email_engine.jar.name" value="email_engine.jar" />
-  <property name="email_engine.path" value="email_engine/${email_engine.version}" />
-  <property name="email_engine.jar" value="${tcs_libdir}/${email_engine.path}/${email_engine.jar.name}" />
-
-  <property name="file_system_server.version" value="1.0" />
-  <property name="file_system_server.jar.name" value="file_system_server.jar" />
-  <property name="file_system_server.path" value="file_system_server/${file_system_server.version}" />
-  <property name="file_system_server.jar" value="${tcs_libdir}/${file_system_server.path}/${file_system_server.jar.name}" />
-
-  <property name="file_upload.version" value="2.0" />
-  <property name="file_upload.jar.name" value="file_upload.jar" />
-  <property name="file_upload.path" value="file_upload/${file_upload.version}" />
-  <property name="file_upload.jar" value="${tcs_libdir}/${file_upload.path}/${file_upload.jar.name}" />
-
-  <property name="guid_generator.version" value="1.0" />
-  <property name="guid_generator.jar.name" value="guid_generator.jar" />
-  <property name="guid_generator.path" value="guid_generator/${guid_generator.version}" />
-  <property name="guid_generator.jar" value="${tcs_libdir}/${guid_generator.path}/${guid_generator.jar.name}" />
-
-  <property name="id_generator.version" value="3.0" />
-  <property name="id_generator.jar.name" value="id_generator.jar" />
-  <property name="id_generator.path" value="id_generator/${id_generator.version}" />
-  <property name="id_generator.jar" value="${tcs_libdir}/${id_generator.path}/${id_generator.jar.name}" />
-
-  <property name="ip_server.version" value="2.0.1" />
-  <property name="ip_server.jar.name" value="ip_server.jar" />
-  <property name="ip_server.path" value="ip_server/${ip_server.version}" />
-  <property name="ip_server.jar" value="${tcs_libdir}/${ip_server.path}/${ip_server.jar.name}" />
-
-  <property name="JNDI_Utility.version" value="1.0" />
-  <property name="JNDI_Utility.jar.name" value="JNDI_Utility.jar" />
-  <property name="JNDI_Utility.path" value="JNDI_Utility/${JNDI_Utility.version}" />
-  <property name="JNDI_Utility.jar" value="${tcs_libdir}/${JNDI_Utility.path}/${JNDI_Utility.jar.name}" />
-
-  <property name="logging_wrapper.version" value="1.2" />
-  <property name="logging_wrapper.jar.name" value="logging_wrapper.jar" />
-  <property name="logging_wrapper.path" value="logging_wrapper/${logging_wrapper.version}" />
-  <property name="logging_wrapper.jar" value="${tcs_libdir}/${logging_wrapper.path}/${logging_wrapper.jar.name}" />
-
-  <property name="object_factory.version" value="2.0.1" />
-  <property name="object_factory.jar.name" value="object_factory.jar" />
-  <property name="object_factory.path" value="object_factory/${object_factory.version}" />
-  <property name="object_factory.jar" value="${tcs_libdir}/${object_factory.path}/${object_factory.jar.name}" />
-
-  <property name="object_factory_configuration_api_plugin.version" value="1.0.0" />
-  <property name="object_factory_configuration_api_plugin.jar.name" value="object_factory_configuration_api_plugin.jar" />
-  <property name="object_factory_configuration_api_plugin.path" value="object_factory_configuration_api_plugin/${object_factory_configuration_api_plugin.version}" />
-  <property name="object_factory_configuration_api_plugin.jar" value="${tcs_libdir}/${object_factory_configuration_api_plugin.path}/${object_factory_configuration_api_plugin.jar.name}" />
-
-  <property name="online_review_ajax_support.version" value="1.0.2" />
-  <property name="online_review_ajax_support.jar.name" value="online_review_ajax_support.jar" />
-  <property name="online_review_ajax_support.path" value="online_review_ajax_support/${online_review_ajax_support.version}" />
-  <property name="online_review_ajax_support.jar" value="${tcs_libdir}/${online_review_ajax_support.path}/${online_review_ajax_support.jar.name}" />
-
-  <property name="online_review_deliverables.version" value="1.0.2" />
-  <property name="online_review_deliverables.jar.name" value="online_review_deliverables.jar" />
-  <property name="online_review_deliverables.path" value="online_review_deliverables/${online_review_deliverables.version}" />
-  <property name="online_review_deliverables.jar" value="${tcs_libdir}/${online_review_deliverables.path}/${online_review_deliverables.jar.name}" />
-
-  <property name="online_review_login.version" value="1.1.3.1" />
-  <property name="online_review_login.jar.name" value="online_review_login.jar" />
-  <property name="online_review_login.path" value="online_review_login/${online_review_login.version}" />
-  <property name="online_review_login.jar" value="${tcs_libdir}/${online_review_login.path}/${online_review_login.jar.name}" />
-
-  <property name="online_review_phases.version" value="1.5.0" />
-  <property name="online_review_phases.jar.name" value="online_review_phases.jar" />
-  <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}" />
-  <property name="online_review_phases.jar" value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}" />
-
-  <property name="online_review_upload_services.version" value="1.0" />
-  <property name="online_review_upload_services.jar.name" value="online_review_upload_services.jar" />
-  <property name="online_review_upload_services.path" value="online_review_upload_services/${online_review_upload_services.version}" />
-  <property name="online_review_upload_services.jar" value="${tcs_libdir}/${online_review_upload_services.path}/${online_review_upload_services.jar.name}" />
-
-  <property name="phase_management.version" value="1.0.4" />
-  <property name="phase_management.jar.name" value="phase_management.jar" />
-  <property name="phase_management.path" value="phase_management/${phase_management.version}" />
-  <property name="phase_management.jar" value="${tcs_libdir}/${phase_management.path}/${phase_management.jar.name}" />
-
-  <property name="phase_management_persistence.version" value="1.0.2" />
-  <property name="phase_management_persistence.jar.name" value="phase_management_persistence.jar" />
-  <property name="phase_management_persistence.path" value="phase_management_persistence/${phase_management_persistence.version}" />
-  <property name="phase_management_persistence.jar" value="${tcs_libdir}/${phase_management_persistence.path}/${phase_management_persistence.jar.name}" />
-
-  <property name="project_management.version" value="1.1.0" />
-  <property name="project_management.jar.name" value="project_management.jar" />
-  <property name="project_management.path" value="project_management/${project_management.version}" />
-  <property name="project_management.jar" value="${tcs_libdir}/${project_management.path}/${project_management.jar.name}" />
-
-  <property name="project_management_persistence.version" value="1.1.2" />
-  <property name="project_management_persistence.jar.name" value="project_management_persistence.jar" />
-  <property name="project_management_persistence.path" value="project_management_persistence/${project_management_persistence.version}" />
-  <property name="project_management_persistence.jar" value="${tcs_libdir}/${project_management_persistence.path}/${project_management_persistence.jar.name}" />
-
-  <property name="project_phases.version" value="2.0" />
-  <property name="project_phases.jar.name" value="project_phases.jar" />
-  <property name="project_phases.path" value="project_phases/${project_phases.version}" />
-  <property name="project_phases.jar" value="${tcs_libdir}/${project_phases.path}/${project_phases.jar.name}" />
-
-  <property name="project_phase_template.version" value="1.2.0" />
-  <property name="project_phase_template.jar.name" value="project_phase_template.jar" />
-  <property name="project_phase_template.path" value="project_phase_template/${project_phase_template.version}" />
-  <property name="project_phase_template.jar" value="${tcs_libdir}/${project_phase_template.path}/${project_phase_template.jar.name}" />
-
-  <property name="resource_management.version" value="1.4.0" />
-  <property name="resource_management.jar.name" value="resource_management.jar" />
-  <property name="resource_management.path" value="resource_management/${resource_management.version}" />
-  <property name="resource_management.jar" value="${tcs_libdir}/${resource_management.path}/${resource_management.jar.name}" />
-
-  <property name="resource_management_persistence.version" value="1.2.2" />
-  <property name="resource_management_persistence.jar.name" value="resource_management_persistence.jar" />
-  <property name="resource_management_persistence.path" value="resource_management_persistence/${resource_management_persistence.version}" />
-  <property name="resource_management_persistence.jar" value="${tcs_libdir}/${resource_management_persistence.path}/${resource_management_persistence.jar.name}" />
-
-  <property name="review_data_structure.version" value="1.1.0" />
-  <property name="review_data_structure.jar.name" value="review_data_structure.jar" />
-  <property name="review_data_structure.path" value="review_data_structure/${review_data_structure.version}" />
-  <property name="review_data_structure.jar" value="${tcs_libdir}/${review_data_structure.path}/${review_data_structure.jar.name}" />
-
-  <property name="review_management.version" value="1.1.0" />
-  <property name="review_management.jar.name" value="review_management.jar" />
-  <property name="review_management.path" value="review_management/${review_management.version}" />
-  <property name="review_management.jar" value="${tcs_libdir}/${review_management.path}/${review_management.jar.name}" />
-
-  <property name="review_management_persistence.version" value="1.1.0" />
-  <property name="review_management_persistence.jar.name" value="review_management_persistence.jar" />
-  <property name="review_management_persistence.path" value="review_management_persistence/${review_management_persistence.version}" />
-  <property name="review_management_persistence.jar" value="${tcs_libdir}/${review_management_persistence.path}/${review_management_persistence.jar.name}" />
-
-  <property name="review_payment_calculator.version" value="1.0.0"/>
-  <property name="review_payment_calculator.jar.name" value="review_payment_calculator.jar"/>
-  <property name="review_payment_calculator.path" value="review_payment_calculator/${review_payment_calculator.version}"/>
-  <property name="review_payment_calculator.jar" value="${tcs_libdir}/${review_payment_calculator.path}/${review_payment_calculator.jar.name}"/>
-
-  <property name="review_selection.version" value="1.0.0"/>
-  <property name="review_selection.jar.name" value="review_selection.jar"/>
-  <property name="review_selection.path" value="review_selection/${review_selection.version}"/>
-  <property name="review_selection.jar" value="${tcs_libdir}/${review_selection.path}/${review_selection.jar.name}"/>
-
-    <property name="review_statistics_calculator.version" value="1.0.0"/>
-    <property name="review_statistics_calculator.jar.name" value="review_statistics_calculator.jar"/>
-    <property name="review_statistics_calculator.path" value="review_statistics_calculator/${review_statistics_calculator.version}"/>
-    <property name="review_statistics_calculator.jar" value="${tcs_libdir}/${review_statistics_calculator.path}/${review_statistics_calculator.jar.name}"/>
-
-
-  <property name="review_score_aggregator.version" value="1.0" />
-  <property name="review_score_aggregator.jar.name" value="review_score_aggregator.jar" />
-  <property name="review_score_aggregator.path" value="review_score_aggregator/${review_score_aggregator.version}" />
-  <property name="review_score_aggregator.jar" value="${tcs_libdir}/${review_score_aggregator.path}/${review_score_aggregator.jar.name}" />
-
-  <property name="review_score_calculator.version" value="1.0.3" />
-  <property name="review_score_calculator.jar.name" value="review_score_calculator.jar" />
-  <property name="review_score_calculator.path" value="review_score_calculator/${review_score_calculator.version}" />
-  <property name="review_score_calculator.jar" value="${tcs_libdir}/${review_score_calculator.path}/${review_score_calculator.jar.name}" />
-
-  <property name="scorecard_data_structure.version" value="1.0" />
-  <property name="scorecard_data_structure.jar.name" value="scorecard_data_structure.jar" />
-  <property name="scorecard_data_structure.path" value="scorecard_data_structure/${scorecard_data_structure.version}" />
-  <property name="scorecard_data_structure.jar" value="${tcs_libdir}/${scorecard_data_structure.path}/${scorecard_data_structure.jar.name}" />
-
-  <property name="scorecard_management.version" value="1.0.1" />
-  <property name="scorecard_management.jar.name" value="scorecard_management.jar" />
-  <property name="scorecard_management.path" value="scorecard_management/${scorecard_management.version}" />
-  <property name="scorecard_management.jar" value="${tcs_libdir}/${scorecard_management.path}/${scorecard_management.jar.name}" />
-
-  <property name="scorecard_management_persistence.version" value="1.0.1" />
-  <property name="scorecard_management_persistence.jar.name" value="scorecard_management_persistence.jar" />
-  <property name="scorecard_management_persistence.path" value="scorecard_management_persistence/${scorecard_management_persistence.version}" />
-  <property name="scorecard_management_persistence.jar" value="${tcs_libdir}/${scorecard_management_persistence.path}/${scorecard_management_persistence.jar.name}" />
-
-  <property name="search_builder.version" value="1.3.1" />
-  <property name="search_builder.jar.name" value="search_builder.jar" />
-  <property name="search_builder.path" value="search_builder/${search_builder.version}" />
-  <property name="search_builder.jar" value="${tcs_libdir}/${search_builder.path}/${search_builder.jar.name}" />
-
-  <!--<property name="security_manager.version" value="1.1" />
-  <property name="security_manager.jar.name" value="security_manager.jar" />
-  <property name="security_manager.path" value="security_manager/${security_manager.version}" />
-  <property name="security_manager.jar" value="${tcs_libdir}/${security_manager.path}/${security_manager.jar.name}" />-->
-
-  <property name="simple_cache.version" value="2.0" />
-  <property name="simple_cache.jar.name" value="simple_cache.jar" />
-  <property name="simple_cache.path" value="simple_cache/${simple_cache.version}" />
-  <property name="simple_cache.jar" value="${tcs_libdir}/${simple_cache.path}/${simple_cache.jar.name}" />
-
-  <property name="typesafe_enum.version" value="1.0" />
-  <property name="typesafe_enum.jar.name" value="typesafe_enum.jar" />
-  <property name="typesafe_enum.path" value="typesafe_enum/${typesafe_enum.version}" />
-  <property name="typesafe_enum.jar" value="${tcs_libdir}/${typesafe_enum.path}/${typesafe_enum.jar.name}" />
-
-  <property name="user_project_data_store.version" value="1.0.1" />
-  <property name="user_project_data_store.jar.name" value="user_project_data_store.jar" />
-  <property name="user_project_data_store.path" value="user_project_data_store/${user_project_data_store.version}" />
-  <property name="user_project_data_store.jar" value="${tcs_libdir}/${user_project_data_store.path}/${user_project_data_store.jar.name}" />
-
-  <property name="weighted_calculator.version" value="1.0" />
-  <property name="weighted_calculator.jar.name" value="weighted_calculator.jar" />
-  <property name="weighted_calculator.path" value="weighted_calculator/${weighted_calculator.version}" />
-  <property name="weighted_calculator.jar" value="${tcs_libdir}/${weighted_calculator.path}/${weighted_calculator.jar.name}" />
-
-  <property name="workdays.version" value="1.0" />
-  <property name="workdays.jar.name" value="workdays.jar" />
-  <property name="workdays.path" value="workdays/${workdays.version}" />
-  <property name="workdays.jar" value="${tcs_libdir}/${workdays.path}/${workdays.jar.name}" />
-
-  <!-- TCS Dependencies - non-versioned -->
-  <property name="projectEJB.path" value="project_ejb" />
-  <property name="projectEJB.jar.name" value="Project.jar" />
-  <property name="projectEJB.jar" value="${tcs_libdir}/${projectEJB.path}/${projectEJB.jar.name}" />
-
-  <property name="termsOfUseEJB.path" value="terms_of_use_ejb" />
-  <property name="termsOfUseEJB.jar.name" value="TermsOfUse.jar" />
-  <property name="termsOfUseEJB.jar" value="${tcs_libdir}/${termsOfUseEJB.path}/${termsOfUseEJB.jar.name}" />
-
-  <property name="userEJB.path" value="user_ejb" />
-  <property name="userEJB.jar.name" value="User.jar" />
-  <property name="userEJB.jar" value="${tcs_libdir}/${userEJB.path}/${userEJB.jar.name}" />
-
-  <property name="securityEJB.path" value="security_ejb" />
-  <property name="securityEJB.jar.name" value="Security.jar" />
-  <property name="securityEJB.jar" value="${tcs_libdir}/${securityEJB.path}/${securityEJB.jar.name}" />
-
-    <property name="rboardEJB.path" value="rboard_ejb" />
-    <property name="rboardEJB.jar.name" value="RBoard.jar" />
-    <property name="rboardEJB.jar" value="${tcs_libdir}/${rboardEJB.path}/${rboardEJB.jar.name}" />
-
-  <!-- Shared libraries -->
-  <property name="catalog.jar.name" value="catalog.jar" />
-  <property name="catalog.jar" value="${shared_libdir}/${catalog.jar.name}" />
-
-  <property name="forums.jar.name" value="forums.jar" />
-  <property name="forums.jar" value="${shared_libdir}/${forums.jar.name}" />
-
-  <property name="shared.jar.name" value="shared.jar" />
-  <property name="shared.jar" value="${shared_libdir}/${shared.jar.name}" />
-
-  <property name="tcsUtil.jar.name" value="tcsUtil.jar" />
-  <property name="tcsUtil.jar" value="${tcs_libdir}/${tcsUtil.jar.name}" />
-
-  <property name="tcIdGenerator.jar.name" value="tc_id_generator.jar" />
-  <property name="tcIdGenerator.jar" value="${tcs_libdir}/${tcIdGenerator.jar.name}" />
-
-  <property name="tcwebcommon.jar.name" value="tcwebcommon.jar" />
-  <property name="tcwebcommon.jar" value="${shared_libdir}/${tcwebcommon.jar.name}" />
-
-  <!-- 3rd Party Dependencies  -->
-  <property name="ejb3-persistence.jar" value="${jar_ext_libdir}/ejb3-persistence.jar" />
-  <property name="ifx-jdbc.jar" value="${ext_libdir}/ifx-jdbc.jar" />
-  <property name="jboss-ejb3x.jar" value="${jar_ext_libdir}/jboss/jboss-ejb3x.jar" />
-  <property name="jstl.jar" value="${ext_libdir}/jstl.jar" />
-  <property name="jboss-j2ee.jar" value="${jar_ext_libdir}/jboss/jboss-j2ee.jar" />
-  <property name="servlet.jar" value="${cactus.home.tomcat5x}/common/lib/servlet-api.jar" />
-  <property name="jbossall-client.jar" value="${jar_ext_libdir}/jboss/jbossall-client.jar" />
-  <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar" />
-  <property name="jiveforums.jar" value="${jar_ext_libdir}/jiveforums.jar" />
-  <property name="jsp-api.jar" value="${jar_ext_libdir}/jsp-api.jar" />
-  <property name="mail.jar" value="${jar_ext_libdir}/mail.jar" />
-  <property name="servlet-api.jar" value="${jar_ext_libdir}/servlet-api.jar" />
-  <property name="struts.jar" value="${jar_ext_libdir}/struts-1.2.9.jar" />
-  <property name="axis.jar" value="${ext_libdir}/axis-dok.jar" />
-  <property name="commons.beanutils.jar" value="${ext_libdir}/commons-beanutils.jar" />
-  <property name="log4j.jar" value="${ext_libdir}/log4j.jar" />
-
-  <property name="aspectjrt.jar" value="${ext_libdir}/testing/aspectjrt-1.2.1.jar" />
-  <property name="cactus.jar" value="${ext_libdir}/testing/cactus-1.7.2.jar" />
-  <property name="cactus.ant.jar" value="${ext_libdir}/testing/cactus-ant-1.7.2.jar" />
-  <property name="cargo.jar" value="${ext_libdir}/testing/cargo-0.5.jar" />
-  <property name="commons.collections.jar" value="${ext_libdir}/testing/commons-collections-2.1.jar" />
-  <property name="commons.httpclient.jar" value="${ext_libdir}/testing/commons-httpclient-2.0.2.jar" />
-  <property name="commons.logging.jar" value="${ext_libdir}/testing/commons-logging-1.0.4.jar" />
-  <property name="httpunit.jar" value="${ext_libdir}/testing/httpunit-1.6.jar" />
-  <property name="junit.jar" value="${ext_libdir}/testing/junit-3.8.1.jar" />
-  <property name="nekohtml.jar" value="${ext_libdir}/testing/nekohtml-0.9.1.jar" />
-
-  <property name="jiveforums.jar.name" value="jiveforums.jar" />
-  <property name="jiveforums.jar" value="${ext_libdir}/${jiveforums.jar.name}" />
-
-  <property name="jivebase.jar.name" value="jivebase.jar" />
-  <property name="jivebase.jar" value="${ext_libdir}/${jivebase.jar.name}" />
-  <property name="strutstest.jar" value="${ext_libdir}/testing/strutstest-2.1.3.jar" />
-
-  <path id="spring_libs">
-    <fileset dir="${ext_libdir}/spring">
-      <include name="spring-beans.jar"/>
-      <include name="spring-core.jar"/>
-      <include name="spring-context.jar"/>
-      <include name="spring-web.jar"/>
-      <include name="spring-webmvc-struts.jar"/>
-    </fileset>
-  </path>
-
-  <path id="buildlibs">
-    <pathelement location="${ejb3-persistence.jar}" />
-    <pathelement location="${jboss-ejb3x.jar}" />
-    <pathelement location="${jbossall-client.jar}" />
-    <pathelement location="${jboss-j2ee.jar}" />
-    <pathelement location="${jiveforums.jar}" />
-    <pathelement location="${jsp-api.jar}" />
-    <pathelement location="${mail.jar}" />
-    <pathelement location="${servlet-api.jar}" />
-    <pathelement location="${struts.jar}" />
-    <pathelement location="${catalog.jar}" />
-    <pathelement location="${forums.jar}" />
-    <pathelement location="${shared.jar}" />
-    <pathelement location="${tcwebcommon.jar}" />
-    <pathelement location="${projectEJB.jar}" />
-    <pathelement location="${termsOfUseEJB.jar}" />
-    <pathelement location="${userEJB.jar}" />
-    <pathelement location="${securityEJB.jar}" />
-    <pathelement location="${JNDI_Utility.jar}" />
-    <pathelement location="${tcIdGenerator.jar}" />
-    <pathelement location="${authentication_factory.jar}" />
-    <pathelement location="${auto_pilot.jar}" />
-    <pathelement location="${auto_screening_management.jar}" />
-    <pathelement location="${base_exception.jar}" />
-    <pathelement location="${configuration_manager.jar}" />
-    <pathelement location="${contest_eligibility_validation.jar}" />
-    <pathelement location="${contest_eligibility_persistence.jar}" />
-    <pathelement location="${configuration_api.jar}" />
-    <pathelement location="${configuration_persistence.jar}" />
-    <pathelement location="${data_validation.jar}" />
-    <pathelement location="${db_connection_factory.jar}" />
-    <pathelement location="${deliverable_management.jar}" />
-    <pathelement location="${deliverable_management_persistence.jar}" />
-    <pathelement location="${distribution_tool.jar}" />
-    <pathelement location="${database_abstraction.jar}" />
-    <pathelement location="${simple_cache.jar}" />
-    <pathelement location="${rboardEJB.jar}" />
-    <pathelement location="${review_payment_calculator.jar}" />
-    <pathelement location="${review_selection.jar}" />
-    <pathelement location="${review_statistics_calculator.jar}" />
-    <pathelement location="${document_generator.jar}" />
-    <pathelement location="${email_engine.jar}" />
-    <pathelement location="${file_upload.jar}" />
-    <pathelement location="${id_generator.jar}" />
-    <pathelement location="${logging_wrapper.jar}" />
-    <pathelement location="${object_factory.jar}" />
-    <pathelement location="${object_factory_configuration_api_plugin.jar}" />
-    <pathelement location="${online_review_ajax_support.jar}" />
-    <pathelement location="${online_review_deliverables.jar}" />
-    <pathelement location="${online_review_login.jar}" />
-    <pathelement location="${online_review_phases.jar}" />
-    <pathelement location="${online_review_upload_services.jar}" />
-    <pathelement location="${phase_management.jar}" />
-    <pathelement location="${phase_management_persistence.jar}" />
-    <pathelement location="${project_management.jar}" />
-    <pathelement location="${project_management_persistence.jar}" />
-    <pathelement location="${project_phases.jar}" />
-    <pathelement location="${project_phase_template.jar}" />
-    <pathelement location="${resource_management.jar}" />
-    <pathelement location="${resource_management_persistence.jar}" />
-    <pathelement location="${review_data_structure.jar}" />
-    <pathelement location="${review_management.jar}" />
-    <pathelement location="${review_management_persistence.jar}" />
-    <pathelement location="${search_builder.jar}" />
-    <pathelement location="${review_score_aggregator.jar}" />
-    <pathelement location="${review_score_calculator.jar}" />
-    <pathelement location="${scorecard_data_structure.jar}" />
-    <pathelement location="${scorecard_management.jar}" />
-    <pathelement location="${scorecard_management_persistence.jar}" />
-    <!--<pathelement location="${security_manager.jar}" />-->
-    <pathelement location="${user_project_data_store.jar}" />
-    <pathelement location="${typesafe_enum.jar}" />
-    <pathelement location="${weighted_calculator.jar}" />
-    <pathelement location="${workdays.jar}" />
-    <path refid="spring_libs"/>
-  </path>
-
-  <path id="cactus.classpath">
-    <pathelement location="${junit.jar}" />
-    <pathelement location="${aspectjrt.jar}" />
-    <pathelement location="${cactus.jar}" />
-    <pathelement location="${cactus.ant.jar}" />
-    <pathelement location="${commons.beanutils.jar}" />
-    <pathelement location="${commons.httpclient.jar}" />
-    <pathelement location="${commons.logging.jar}" />
-    <pathelement location="${commons.collections.jar}"/>
-    <pathelement location="${httpunit.jar}" />
-    <pathelement location="${nekohtml.jar}" />
-    <pathelement location="${strutstest.jar}" />
-    <pathelement location="${cargo.jar}" />
-    <pathelement location="${build_testclassdir}" />
-    <path refid="buildlibs" />
-  </path>
-
-  <taskdef resource="cactus.tasks" classpathref="cactus.classpath" />
-
-  <path id="test.build.classpath">
-    <pathelement location="${build_testclassdir}" />
-    <pathelement location="${build_classdir}" />
-    <pathelement location="${log4j.jar}" />
-    <path path="${JBOSS_HOME}/server/default/conf"/>
-    <path path="${JBOSS_HOME}/server/default/deploy/review.war/WEB-INF/classes"/>
-    <path refid="buildlibs" />
-    <path refid="cactus.classpath" />
-  </path>
-
-
-  <macrodef name="scp_windows">
-    <attribute name="id" />
-    <attribute name="file" />
-    <attribute name="remotefile" />
-    <attribute name="isdir" />
-
-    <sequential>
-      <condition property="@{id}0" value="-r" else="">
-        <and>
-          <istrue value="@{isdir}" />
-        </and>
-      </condition>
-
-      <!-- if defined a key file add to command line -->
-      <condition property="@{id}1" value="${@{id}0} -i ${scp_keyfile}" else="${@{id}0}">
-        <and>
-          <isset property="scp_keyfile" />
-        </and>
-      </condition>
-
-      <!-- if defined user add to command line -->
-      <condition property="@{id}2" value="${@{id}1} -l ${scp_username}" else="${@{id}1}">
-        <and>
-          <isset property="scp_username" />
-        </and>
-      </condition>
-
-      <!-- if defined password add to command line-->
-      <condition property="@{id}3" value="${@{id}2} -pw ${scp_password}" else="${@{id}2}">
-        <and>
-          <isset property="scp_password" />
-        </and>
-      </condition>
-
-      <property name="scp_commandline@{id}" value="${@{id}3} @{file} ${scp_remoteserver}:@{remotefile}" />
-
-      <echo message="scp_commandline: ${scp_commandline@{id}}" />
-
-      <exec executable="${scp_path}">
-        <arg line="${scp_commandline@{id}}"/>
-      </exec>
-    </sequential>
-  </macrodef>
-
-  <macrodef name="scp_unix">
-    <attribute name="id" />
-    <attribute name="file" />
-    <attribute name="remotefile" />
-    <attribute name="isdir" />
-
-    <sequential>
-      <!-- Unix has to run in 'batch mode' and you must previously setup the remote box to not need password prompt -->
-      <condition property="@{id}0" value="-B -r" else="-B">
-        <and>
-          <istrue value="@{isdir}" />
-        </and>
-      </condition>
-
-      <!-- if defined a key file add to command line -->
-      <condition property="@{id}1" value="${@{id}0} -i ${scp_keyfile}" else="${@{id}0}">
-        <and>
-          <isset property="scp_keyfile" />
-        </and>
-      </condition>
-
-      <!-- if defined user add to command line -->
-      <condition property="scp_commandline@{id}"
-                    value="${@{id}1} @{file} ${scp_username}@${scp_remoteserver}:@{remotefile}"
-                     else="${@{id}1} @{file} ${scp_remoteserver}:@{remotefile}">
-        <and>
-          <isset property="scp_username" />
-        </and>
-      </condition>
-
-      <property name="" value="${@{id}3} @{file} ${scp_remoteserver}:@{remotefile}" />
-
-      <echo message="scp_commandline: ${scp_commandline@{id}}" />
-
-      <exec executable="${scp_path}">
-        <arg line="${scp_commandline@{id}}"/>
-      </exec>
-    </sequential>
-  </macrodef>
+  <property name="dist_javadocs" value="${build_tcsdistdir}/${javadocsdir}" />
 
   <!-- Clean output folder -->
   <target name="clean">
@@ -694,7 +83,7 @@
   </target>
 
   <!-- updates Online Review files from SVN -->
-  <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="svnant.jar" />
+  <typedef resource="org/tigris/subversion/svnant/svnantlib.xml"/>
   <target name="svn_update" if="or.svn.update">
     <svn username="${or.svn.username}" password="${or.svn.password}">
       <info target="${basedir}" verbose="true" />
@@ -814,9 +203,11 @@
       <lib dir="${jar_tcs_libdir}" includes="tc_id_generator.jar" />
       <lib dir="${jar_tcs_libdir}" includes="tcjive.jar" />
       <lib dir="${jar_tcs_libdir}" includes="${tcsUtil.jar.name}" />
-      <lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar, servlet-api.jar, jsp-api.jar, log4j.jar" />
+      <lib dir="${jar_ext_libdir}" includes="*.jar"
+           excludes="mail.jar, ejb-2_0.jar, servlet-api.jar, jsp-api.jar, log4j.jar"/>
       <lib dir="${jar_ext_libdir}/spring" includes="*.jar"/>
       <lib dir="${jar_ext_libdir}/hibernate" includes="*.jar"/>
+      <lib dir="${jar_ext_libdir}/svnkit" includes="*.jar"/>
       <lib dir="${shared_libdir}" includes="${catalog.jar.name}"/>
       <lib dir="${shared_libdir}" includes="${tcwebcommon.jar.name}"/>
       <lib dir="${shared_libdir}" includes="${shared.jar.name}"/>
@@ -883,18 +274,25 @@
 
   <target name="copy_shared_files_remote_unix" if="is_unix" depends="tokenize_shared_files">
     <scp_unix id="aa" file="${build_shared}" remotefile="${remotedeploy-conf-dir}" isdir="true" />
-    <scp_unix id="ab" file="${shared_libdir}/${forums.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
-    <scp_unix id="ac" file="${shared_libdir}/${shared.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
-    <scp_unix id="ad" file="${shared_libdir}/${tcwebcommon.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
+    <scp_unix id="ab" file="${shared_libdir}/${forums.jar.name}" remotefile="${remotedeploy-lib-dir}"
+              isdir="false"/>
+    <scp_unix id="ac" file="${shared_libdir}/${shared.jar.name}" remotefile="${remotedeploy-lib-dir}"
+              isdir="false"/>
+    <scp_unix id="ad" file="${shared_libdir}/${tcwebcommon.jar.name}" remotefile="${remotedeploy-lib-dir}"
+              isdir="false"/>
     <scp_unix id="ae" file="${tcs_libdir}/${tcsUtil.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
   </target>
 
   <target name="copy_shared_files_remote_windows" if="is_windows" depends="tokenize_shared_files">
     <scp_windows id="aa" file="${build_shared}" remotefile="${remotedeploy-conf-dir}" isdir="true" />
-    <scp_windows id="ab" file="${shared_libdir}/${forums.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
-    <scp_windows id="ac" file="${shared_libdir}/${shared.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
-    <scp_windows id="ad" file="${shared_libdir}/${tcwebcommon.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
-    <scp_windows id="ae" file="${tcs_libdir}/${tcsUtil.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
+    <scp_windows id="ab" file="${shared_libdir}/${forums.jar.name}" remotefile="${remotedeploy-lib-dir}"
+                 isdir="false"/>
+    <scp_windows id="ac" file="${shared_libdir}/${shared.jar.name}" remotefile="${remotedeploy-lib-dir}"
+                 isdir="false"/>
+    <scp_windows id="ad" file="${shared_libdir}/${tcwebcommon.jar.name}" remotefile="${remotedeploy-lib-dir}"
+                 isdir="false"/>
+    <scp_windows id="ae" file="${tcs_libdir}/${tcsUtil.jar.name}" remotefile="${remotedeploy-lib-dir}"
+                 isdir="false"/>
   </target>
 
   <target name="copy_shared_files_remote" depends="copy_shared_files_remote_unix, copy_shared_files_remote_windows" />
@@ -941,6 +339,14 @@
     <copy todir="${deploy-deploy-dir}" overwrite="true">
       <fileset dir="${jboss_files_deploy}" excludes="tcs_informix-ds.xml" includes="**" />
     </copy>
+    <mkdir dir="${deploy-deploy-dir}/static.ear/static.war"/>
+    <copy todir="${deploy-deploy-dir}/static.ear/static.war" overwrite="true">
+      <fileset dir="${webdir}">
+        <include name="css/**/*"/>
+        <include name="i/**/*"/>
+        <include name="js/**/*"/>
+      </fileset>
+    </copy>
     <copy todir="${deploy-lib-dir}" overwrite="true" verbose="${verbose}" flatten="true">
       <fileset dir="${jboss_files_lib}" />
     </copy>
@@ -977,7 +383,10 @@
   </target>
 
   <!-- stops Jboss, reinstalls database, redeploys OR and starts jboss. -->
-  <target name="redeploy" depends="stop_jboss, first_deploy">
+  <target name="redeploy">
+    <antcall target="stop_tools" />
+
+    <!-- install databases -->
     <if>
       <isset property="update_db" />
       <then>
@@ -985,9 +394,74 @@
         <ant antfile="${db_scripts_path}/build.xml" target="setup_db" dir="${db_scripts_path}" />
       </then>
     </if>
-    <start_jboss background="true" />
+
+    <antcall target="deploy_tools" />
+
+    <antcall target="start_jboss" />
+    <sleep seconds="${sleep_before_stopping}" />
+    <antcall target="test" />
+    <antcall target="stop_jboss" />
   </target>
   
+  <target name="restart">
+    <antcall target="stop_tools" />
+    <antcall target="deploy_tools" />
+    <antcall target="start_tools" />
+  </target>
+
+  <!-- Starts all tools -->
+  <target name="start_tools">
+    <antcall target="start_jboss"/>
+
+    <if>
+      <available file="${auto_pilot_deploy_dir}/build.xml" />
+      <then>
+        <ant antfile="${auto_pilot_deploy_dir}/build.xml" dir="${auto_pilot_deploy_dir}"
+             target="start_ap" inheritall="false" inheritrefs="true"/>
+      </then>
+    </if>
+
+    <if>
+      <available file="${auto_screening_deploy_dir}/build.xml" />
+      <then>
+        <ant antfile="${auto_screening_deploy_dir}/build.xml" dir="${auto_screening_deploy_dir}"
+         target="start_as" inheritall="false" inheritrefs="true"/>
+      </then>
+    </if>
+  </target>
+
+  <!-- Stops all tools -->
+  <target name="stop_tools">
+    <antcall target="stop_jboss" />
+
+    <if>
+      <available file="${auto_pilot_deploy_dir}/build.xml" />
+      <then>
+        <ant antfile="${auto_pilot_deploy_dir}/build.xml" dir="${auto_pilot_deploy_dir}"
+         target="stop_ap" inheritall="false" inheritrefs="true"/>
+      </then>
+    </if>
+
+    <if>
+      <available file="${auto_screening_deploy_dir}/build.xml" />
+      <then>
+        <ant antfile="${auto_screening_deploy_dir}/build.xml" dir="${auto_screening_deploy_dir}"
+         target="stop_as" inheritall="false" inheritrefs="true"/>
+      </then>
+    </if>
+
+  </target>
+  
+  <!-- Redeploy tools -->
+  <target name="deploy_tools" >
+    <!-- redeploy tools -->
+    <antcall target="first_deploy" />
+    <ant antfile="${online_review_home}/scripts/auto_pilot/build.xml" dir="${online_review_home}/scripts/auto_pilot"
+         target="all" inheritall="false" inheritrefs="true"/>
+    <ant antfile="${online_review_home}/scripts/auto_screening/build.xml" dir="${online_review_home}/scripts/auto_screening"
+         target="all" inheritall="false" inheritrefs="true"/>
+  </target>
+
   <!-- JBoss start / stop -->
   <macrodef name="start_jboss">
     <attribute name="background" default="false"/>
@@ -1038,109 +512,30 @@
           <condition property="shutdown.okay">
             <equals arg1="${shutdown.rc}" arg2="0"/>
           </condition>
-          <fail unless="shutdown.okay" message="Unable to shut down JBoss (maybe it hasn't fully started yet?)."/>
+          <fail unless="shutdown.okay"
+                message="Unable to shut down JBoss (maybe it hasn't fully started yet?)."/>
           <echo>Waiting for ${bind_addr}:${jnp_port} to stop listening...</echo>
           <waitfor maxwait="2" maxwaitunit="minute">
             <not>
               <socket server="${bind_addr}" port="${jnp_port}"/>
             </not>
           </waitfor>
+          <sleep seconds="${sleep_before_stopping}" />
         </then>
       </if>
     </sequential>
   </target>
 
-  <target name="compile_tests" depends="compile">
-    <mkdir dir="${build_testclassdir}" />
-    <javac srcdir="${javatests}"
-           destdir="${build_testclassdir}"
-           includes="**/*.java"
-           debug="true"
-           verbose="${verbose}"
-           source="1.5"
-           target="1.5"
-               >
-      <classpath refid="test.build.classpath" />
-    </javac>
-  </target>
-
-  <target name="compile_ws" depends="compile">
-    <mkdir dir="${build_testclassdir}" />
-
-    <echo>${axis.jar}</echo>
-    <echo>${jboss-client.jar}</echo>
-    <javac srcdir="${javatests}"
-           destdir="${build_testclassdir}"
-           includes="**/UploadServiceClient.java"
-           debug="true"
-           verbose="${verbose}"
-           source="1.5"
-           target="1.5"
-               >
-      <classpath >
-        <fileset dir="${ext_libdir}" includes="**/*.jar"/>
-        <fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
-      </classpath>
-    </javac>
-
-    <java classname="com.cronos.onlinereview.uploadservices.UploadServiceClient"
-            fork="true" maxmemory="512m">
-      <classpath >
-        <fileset dir="${ext_libdir}" includes="**/*.jar"/>
-        <fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
-        <path path="${build_testclassdir}"/>
-      </classpath>
-    </java>
-  </target>
-
   <target name="javadoc" depends="compile">
     <mkdir dir="${dist_javadocs}" />
-    <javadoc packagenames="${package}.*" sourcepath="${javamain}" classpath="${build_classdir}" classpathref="buildlibs" destdir="${dist_javadocs}" windowtitle="Topcoder Software" header="&lt;table border=0 cellpadding=0 cellspacing=2&gt;&lt;tr&gt;&lt;td&gt;&lt;font class=tcoder2&gt;&#091; &lt;/font&gt;&lt;font class=tcoder1&gt;TOP&lt;/font&gt;&lt;font class=tcoder2&gt;CODER &lt;/font&gt;&lt;font class=tcoder2&gt;&#093;&lt;/font&gt;&lt;/td&gt;&lt;td&gt;&lt;font class=tcoder4&gt;&#153;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=tcoder3 align=center&gt;&lt;font class=tcoder3&gt;SOFTWARE&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" footer="&lt;table border=0 cellpadding=0 cellspacing=2&gt;&lt;tr&gt;&lt;td&gt;&lt;font class=tcoder2&gt;&#091; &lt;/font&gt;&lt;font class=tcoder1&gt;TOP&lt;/font&gt;&lt;font class=tcoder2&gt;CODER &lt;/font&gt;&lt;font class=tcoder2&gt;&#093;&lt;/font&gt;&lt;/td&gt;&lt;td&gt;&lt;font class=tcoder4&gt;&#153;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=tcoder3 align=center&gt;&lt;font class=tcoder3&gt;SOFTWARE&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" bottom="&lt;font class=tcoder5&gt;Contact TopCoder Software at &lt;a href='http://www.topcodersoftware.com'&gt;www.topcodersoftware.com&lt;/a&gt;&lt;/font&gt;" stylesheetfile="${javadocsdir}/stylesheet.css" verbose="${verbose}">
+    <javadoc packagenames="${package}.*" sourcepath="${javamain}" classpath="${build_classdir}"
+             classpathref="buildlibs" destdir="${dist_javadocs}" windowtitle="Topcoder Software"
+             header="&lt;table border=0 cellpadding=0 cellspacing=2&gt;&lt;tr&gt;&lt;td&gt;&lt;font class=tcoder2&gt;&#091; &lt;/font&gt;&lt;font class=tcoder1&gt;TOP&lt;/font&gt;&lt;font class=tcoder2&gt;CODER &lt;/font&gt;&lt;font class=tcoder2&gt;&#093;&lt;/font&gt;&lt;/td&gt;&lt;td&gt;&lt;font class=tcoder4&gt;&#153;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=tcoder3 align=center&gt;&lt;font class=tcoder3&gt;SOFTWARE&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;"
+             footer="&lt;table border=0 cellpadding=0 cellspacing=2&gt;&lt;tr&gt;&lt;td&gt;&lt;font class=tcoder2&gt;&#091; &lt;/font&gt;&lt;font class=tcoder1&gt;TOP&lt;/font&gt;&lt;font class=tcoder2&gt;CODER &lt;/font&gt;&lt;font class=tcoder2&gt;&#093;&lt;/font&gt;&lt;/td&gt;&lt;td&gt;&lt;font class=tcoder4&gt;&#153;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=tcoder3 align=center&gt;&lt;font class=tcoder3&gt;SOFTWARE&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;"
+             bottom="&lt;font class=tcoder5&gt;Contact TopCoder Software at &lt;a href='http://www.topcodersoftware.com'&gt;www.topcodersoftware.com&lt;/a&gt;&lt;/font&gt;"
+             stylesheetfile="${javadocsdir}/stylesheet.css" verbose="${verbose}">
       <tag name="copyright" description="Copyright:" scope="types" />
     </javadoc>
-  </target>
-
-  <target name="prepare_tests_war" depends="dist, compile_tests">
-
-    <!-- Cactify the web-app archive -->
-    <!-- Done manually becaue of Cactus itself being buggy with out web.xml -->
-
-    <copy file="${component.war}" tofile="${component_test.war}"/>
-
-    <war destfile="${component_test.war}" webxml="${testfiles}/web.xml" update="true">
-      <classes dir="${build_testclassdir}" />
-      <lib dir="${jar_ext_libdir}/testing" includes="*.jar" />
-      <fileset
-          dir="${testfiles}"
-          includes="jspRedirector.jsp"
-            />
-    </war>
-
-  </target>
-
-  <target name="test" depends="prepare_tests_war">
-    <mkdir dir="${testlogdir}" />
-
-    <!-- Run the tests -->
-    <cactus warfile="${component_test.war}" fork="yes">
-      <classpath refid="cactus.classpath" />
-      <containerset timeout="180000">
-        <tomcat5x if="cactus.home.tomcat5x"
-            dir="${cactus.home.tomcat5x}" port="8080"
-            output="${testlogdir}/tomcat5x.out"
-            todir="${testlogdir}"
-            serverxml="${testfiles}/server.xml"
-                />
-      </containerset>
-      <formatter type="brief" usefile="true" />
-      <formatter type="xml" />
-      <batchtest>
-        <fileset dir="${javatests}">
-          <include name="**/*.java" />
-        </fileset>
-      </batchtest>
-    </cactus>
-
   </target>
 
   <target name="reports" depends="test">
@@ -1153,6 +548,13 @@
       <report format="frames" todir="${reports}" />
     </junitreport>
     <echo>The execution of reports is complete.  Reports are available in /${reports}</echo>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+      target: prod-init
+    - - - - - - - - - - - - - - - - - -->
+  <target name="prod-init">
+    <property name="component.war" value="${distfilename}.war" />
   </target>
 
   <target name="deploy-common">
@@ -1174,110 +576,93 @@
     </delete>
   </target>
 
-  <!-- - - - - - - - - - - - - - - - - -
-      target: prod-init
-    - - - - - - - - - - - - - - - - - -->
-  <target name="prod-init">
-    <property name="component.war" value="${distfilename}.war" />
-  </target>
-
   <target name="deploy-prod" depends="prod-init, deploy-common" />
 
   <target name="main" depends="deploy, test" />
 
-  <target name="package-phase-handler-extend" depends="compile">
-    <jar jarfile="${build_distdir}/phase_handler_extend.jar">
-      <zipfileset dir="${build_classdir}" includes="com/cronos/onlinereview/phases/**/*.class"/>
-      <metainf dir="${javamain}/com/cronos/onlinereview/phases/" includes="*.xml"/>
-    </jar>
+  <!-- integration tests targets -->
+  <target name="tokenize_tests">
+    <mkdir dir="${build_testconfdir}" />
+    <copy todir="${build_testconfdir}" overwrite="true">
+      <fileset dir="${testfiles}">
+        <include name="**/*.xml"/>
+        <include name="**/*.properties"/>
+      </fileset>
+    </copy>
+
+    <replace dir="${build_testconfdir}" replacefilterfile="${token.properties}">
+      <include name="**/*.properties"/>
+      <include name="**/*.xml"/>
+      <include name="**/*.xsl"/>
+      <include name="**/*.xsd"/>
+    </replace>
   </target>
 
-    <!--
-        ++ =======================================================================
-        ++ Macro: compile_component
-        ++ Compiles specified component
-        ++ =======================================================================
-    -->
-    <macrodef name="compile_component" description="Compiles the component">
-        <attribute name="component"/>
-        <attribute name="version"/>
-        <attribute name="path"/>
+  <target name="compile_tests">
+    <mkdir dir="${build_testclassdir}" />
+    <javac srcdir="${javatests}"
+           destdir="${build_testclassdir}"
+           includes="**/*Tests.java,**/TestHelper.java"
+           debug="true"
+           verbose="${verbose}"
+           source="1.5"
+           target="1.5">
+      <classpath refid="test.build.classpath" />
+    </javac>
+  </target>
 
-        <sequential>
-            <property name="component_base_dir" value="@{path}"/>
-            <property name="component_src_dir" value="${component_base_dir}/src/java/main"/>
-            <property name="component_build_dir" value="${component_base_dir}/build"/>
-            <property name="component_build_classes_dir" value="${component_build_dir}/classes"/>
-            <property name="component_jar_file" value="${component_build_dir}/@{component}.jar"/>
-            <property name="component_dist_dir" value="${tcs_libdir}/@{component}/@{version}"/>
+  <path id="test.build.classpath">
+    <pathelement location="${base_exception.jar}"/>
+    <pathelement location="${configuration_manager.jar}"/>
+    <pathelement location="${db_connection_factory.jar}"/>
+    <pathelement location="${id_generator.jar}"/>
+    <pathelement location="${ifx-jdbc.jar}"/>
+    <pathelement location="${junit.jar}"/>
+    <pathelement location="${selenium_client.jar}"/>
+    <pathelement location="${configuration_api.jar}" />
+    <pathelement location="${configuration_persistence.jar}" />
+    <path path="${build_testconfdir}"/>
+  </path>
 
-            <delete dir="${component_build_dir}"/>
-            <mkdir dir="${component_build_dir}"/>
-            <mkdir dir="${component_build_classes_dir}"/>
 
-            <echo message="Base: ${component_base_dir}"/>
-            <echo message="Build: ${component_build_dir}"/>
-            <echo message="Src: ${component_src_dir}"/>
-            <echo message="Dist: ${component_dist_dir}"/>
-            <echo message="Jar: ${component_jar_file}"/>
+  <target name="test" depends="tokenize_tests, compile_tests">
+    <antcall target="tests.setup" />
+    <antcall target="tests.execute" />
+    <antcall target="tests.teardown" />
+  </target>
 
-            <javac srcdir="${component_src_dir}"
-                   destdir="${component_build_classes_dir}"
-                   deprecation="on"
-                   debug="on"
-                   source="1.5" target="1.5" memoryMaximumSize="512M" memoryInitialSize="64M" fork="true">
-                <classpath refid="buildlibs"/>
-                <include name="**/*"/>
-            </javac>
-            <jar basedir="${component_build_classes_dir}" jarfile="${component_jar_file}" includes="**"/>
-            <mkdir dir="${component_dist_dir}"/>
-            <copy file="${component_jar_file}" todir="${component_dist_dir}"/>
-        </sequential>
-    </macrodef>
+  <target name="tests.execute" >
+    <sequential>
+      <mkdir dir="${testlogdir}"/>
+      <junit fork="true" haltonerror="false">
+        <classpath location="${build_testclassdir}"/>
+        <classpath refid="test.build.classpath"/>
+        <test name="${package}.FunctionalTests" todir="${testlogdir}">
+          <formatter type="plain" usefile="true"/>
+          <formatter type="xml" usefile="true"/>
+        </test>
+      </junit>
+    </sequential>
+  </target>
 
-    <target name="compile_component_1">
-        <compile_component component="online_review_phases" version="1.5.0"
-                           path="../Components/online_review_phases-1.5_1.0.0"/>
-    </target>
+  <!-- Starts Selenium server -->
+  <target name="tests.setup" >
+    <sequential>
+          <java jar="${selenium_server.jar}" fork="true" spawn="true">
+            <arg line="-port ${selenium_port}"/>
+          </java>
+          <waitfor maxwait="30" maxwaitunit="second">
+            <and>
+              <socket server="${bind_addr}" port="${selenium_port}"/>
+              <http url="http://${bind_addr}:${selenium_port}/selenium-server/core/index.html" errorsBeginAt="404" />
+            </and>
+          </waitfor>
+    </sequential>
+  </target>
 
-    <target name="compile_component_2">
-        <compile_component component="project_management" version="1.1.0"
-                           path="../Components/project_management-1.1.0"/>
-    </target>
-
-    <target name="compile_component_3">
-        <compile_component component="resource_management" version="1.4.0"
-                           path="../Components/resource_management-1.4.0"/>
-    </target>
-
-    <target name="compile_component_4">
-        <compile_component component="review_data_structure" version="1.1.0"
-                           path="../Components/review_data_structure-1.1.0"/>
-    </target>
-
-    <target name="compile_component_5">
-        <compile_component component="review_management" version="1.1.0"
-                           path="../Components/review_management-1.1.0"/>
-    </target>
-
-    <target name="compile_component_6">
-        <compile_component component="review_management_persistence" version="1.1.0"
-                           path="../Components/review_management_persistence-1.1.0"/>
-    </target>
-
-    <target name="compile_component_7">
-        <compile_component component="review_payment_calculator" version="1.0.0"
-                           path="../Components/review_payment_calculator-1.0.0"/>
-    </target>
-
-    <target name="compile_component_8">
-        <compile_component component="review_selection" version="1.0.0"
-                           path="../Components/review_selection-1.0.0"/>
-    </target>
-
-    <target name="compile_component_9">
-        <compile_component component="review_statistics_calculator" version="1.0.0"
-                           path="../Components/review_statistics_calculator-1.0.0"/>
-    </target>
-
+  <target name="tests.teardown" >
+    <get taskname="selenium-shutdown"
+         src="http://${bind_addr}:${selenium_port}/selenium-server/driver/?cmd=shutDownSeleniumServer"
+         dest="${testlogdir}/result.txt" ignoreerrors="true" />
+  </target>
 </project>
