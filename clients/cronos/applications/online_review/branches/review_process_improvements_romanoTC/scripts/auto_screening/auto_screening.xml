@@ -1825,10 +1825,10 @@
     </Config>
     <Config name="com.topcoder.servlet.request.LocalFileUpload">
         <Property name="allowed_dirs">
-            <Value>/home/onlinereview/downloads</Value>
+            <Value>@localFileUploadDir@</Value>
         </Property>
         <Property name="default_dir">
-            <Value>/home/onlinereview/downloads</Value>
+            <Value>@localFileUploadDir@</Value>
         </Property>
         <Property name="overwrite">
             <Value>false</Value>
@@ -1927,13 +1927,19 @@
                         <Value>com.informix.jdbc.IfxDriver</Value>
                     </Property>
                     <Property name="jdbc_url">
-                        <Value>jdbc:informix-sqli://63.118.154.218:1526/tcs_catalog:INFORMIXSERVER=devinformix10_shm;</Value>
+                        <Value>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@</Value>
                     </Property>
                     <Property name="user">
-                        <Value>coder</Value>
+                        <Value>@database.username@</Value>
                     </Property>
                     <Property name="password">
-                        <Value>altec</Value>
+                        <Value>@database.password@</Value>
+                    </Property>
+                    <Property name="CLIENT_LOCALE">
+                      <Value>@database.locale@</Value>
+                    </Property>
+                    <Property name="DB_LOCALE">
+                      <Value>@database.locale@</Value>
                     </Property>
                 </Property>
             </Property>

@@ -1,17 +1,17 @@
 <?xml version="1.0" ?>
 <!DOCTYPE CMConfig [
-       <!ENTITY localFileUploadDir "/home/tcs/downloads">
-       <!ENTITY catalogOutputDir "/home/tcs/temp_files">
-       <!ENTITY distributionToolOutputDir "/home/tcs/temp_files/tmp_dist">
-       <!ENTITY distributionScriptsBase "/home/tcs/onlinereview/distribution_scripts">
-       <!ENTITY phasesEmailTemplate "/home/tcs/online_review/scripts/auto_pilot/email_template.txt">
-       <!ENTITY winnersEmailTemplate "/home/tcs/online_review/scripts/auto_pilot/winners_email_template.txt">
-       <!ENTITY timelineTemplateDir "/home/tcs">
-       <!ENTITY contactManagersTemplate "/home/tcs/online_review/conf/templates/contact_manager_template.txt">
-       <!ENTITY managerNotificationEmailTemplatesBase "/home/tcs/online_review/conf/templates">
+       <!ENTITY localFileUploadDir "@localFileUploadDir@">
+       <!ENTITY catalogOutputDir "@catalogOutputDir@">
+       <!ENTITY distributionToolOutputDir "@distributionToolOutputDir@">
+       <!ENTITY distributionScriptsBase "@distributionScriptsBase@">
+       <!ENTITY phasesEmailTemplate "@auto_pilot_templates_dir@/email_template.txt">
+       <!ENTITY winnersEmailTemplate "@auto_pilot_templates_dir@/winners_email_template.txt">
+       <!ENTITY timelineTemplateDir "@exttemplatesdir@">
+       <!ENTITY contactManagersTemplate "@exttemplatesdir@/contact_manager_template.txt">
+       <!ENTITY managerNotificationEmailTemplatesBase "@exttemplatesdir@">
        <!ENTITY notificationEmailFromAddress "service@topcodersoftware.com">
-       <!ENTITY smtpServerAuthAddress "service@topcodersoftware.com">
-       <!ENTITY pactJNDIAddress "jnp://63.118.154.181:1199">
+       <!ENTITY smtpServerAuthAddress "@emailengine_smtp_user@">
+       <!ENTITY pactJNDIAddress "@pactJNDIAddress@">
 ]>
 <CMConfig>
 <!-- [OR-584] don't need this anymore
@@ -42,13 +42,19 @@
                         <Value>com.informix.jdbc.IfxDriver</Value>
                     </Property>
                     <Property name="jdbc_url">
-                        <Value>jdbc:informix-sqli://env.topcoder.com:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp</Value>
+                        <Value>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@</Value>
                     </Property>
                     <Property name="user">
-                        <Value>coder</Value>
+                        <Value>@database.username@</Value>
                     </Property>
                     <Property name="password">
-                        <Value>c0d3r4T</Value>
+                        <Value>@database.password@</Value>
+                    </Property>
+                    <Property name="CLIENT_LOCALE">
+                      <Value>@database.locale@</Value>
+                    </Property>
+                    <Property name="DB_LOCALE">
+                      <Value>@database.locale@</Value>
                     </Property>
                 </Property>
             </Property>
@@ -85,7 +91,7 @@
         </Property>
 
         <Property name="authenticator_name">
-            <Value>ORAuthenticator</Value>
+            <Value>@login.authenticator@</Value>
         </Property>
 
         <Property name="logger_name">
@@ -471,16 +477,16 @@
     -->
     <Config name="com.topcoder.message.email.EmailEngine">
         <Property name="smtp_host_addr">
-            <Value>localhost</Value>
+            <Value>@emailengine_smtp_host@</Value>
         </Property>
         <Property name="smtp_host_port">
-            <Value>25</Value>
+            <Value>@emailengine_smtp_port@</Value>
         </Property>
         <Property name="username">
             <Value>&smtpServerAuthAddress;</Value>
         </Property>
         <Property name="password">
-            <Value>top_coder</Value>
+            <Value>@emailengine_smtp_password@</Value>
         </Property>
     </Config>
 
@@ -645,7 +651,7 @@
     -->
     <Config name="com.cronos.onlinereview.phases.ManagerHelper">
         <Property name="ProjectDetailsURL">
-            <Value>https://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
+            <Value>http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
         </Property>
         <Property name="ProjectManager">
             <Property name="ClassName">
@@ -2236,7 +2242,7 @@
             <Value>24</Value>
         </Property>
         <Property name="PostMortemPhaseDefaultReviewersNumber">
-            <Value>2</Value>
+            <Value>1</Value>
         </Property>
         <Property name="PostMortemPhaseDefaultScorecardID">
             <Value>30000721</Value>
@@ -3997,7 +4003,7 @@
             </Property>
         </Property>
         <Property name="ProjectDetailsURL">
-            <Value>https://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
+            <Value>http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
         </Property>
         <Property name="submitter_terms_id">
             <Value>20703</Value>
@@ -4698,6 +4704,36 @@
             <Value>3</Value><!-- Screener -->
             <Value>86</Value><!-- Deactivated -->
             <Value>1001</Value><!-- Team Captain -->
+        </Property>
+
+        <Property name="SVNPermissionGrantResourceRoles">
+            <Value>1</Value><!-- Submitter -->
+            <Value>4</Value><!-- Reviewer -->
+            <Value>5</Value><!-- Accuracy Reviewer -->
+            <Value>6</Value><!-- Failure Reviewer -->
+            <Value>7</Value><!-- Stress Reviewer -->
+            <Value>9</Value><!-- Final Reviewer -->
+        </Property>
+
+        <Property name="SVNConfig">
+            <Property name="Root">
+                <Value>@svn.root@</Value>
+            </Property>
+            <Property name="AuthUsername">
+                <Value>@svn.username@</Value>
+            </Property>
+            <Property name="AuthPassword">
+                <Value>@svn.password@</Value>
+            </Property>
+            <Property name="MkDirCommitMessage">
+                <Value>@svn.mkdir.commit.message@</Value>
+            </Property>
+            <Property name="TempFilesBaseDir">
+                <Value>@svn.temp.files.basedir@</Value>
+            </Property>
+            <Property name="PathBasedPermissionsFileURL">
+                <Value>@svn.authz.file.url@</Value>
+            </Property>
         </Property>
 
         <!-- Definition of the Permissions Matrix.  Each property inside the main one denotes one
