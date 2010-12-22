@@ -307,7 +307,8 @@ public class ActionsHelper {
                 || categoryId == 23   // Application Conceptualization
                 || categoryId == 19   // UI Prototype
                 || categoryId == 24   // RIA Build
-                || categoryId == 25); // RIA Component
+                || categoryId == 25   // RIA Component
+                || categoryId == 29);
     }
 
     /**
