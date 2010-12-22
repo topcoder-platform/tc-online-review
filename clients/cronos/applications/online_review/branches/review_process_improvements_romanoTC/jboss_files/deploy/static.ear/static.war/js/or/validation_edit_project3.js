@@ -180,9 +180,9 @@ function validate_svn_module(thisForm, msgList) {
 
 	var svnModule = thisForm["SVN_module"].value;
 
-	//This check actually not required	
+	//This check actually not required
 	/*
-	 
+
 	if (emptyString.test(svnModule)) {
 		msg = "SVN Module is a required field";
 		add_error_message(msg, "", msgDiv, msgList);
@@ -308,7 +308,7 @@ function validate_timeline(thisForm, msgList) {
 		msgDiv = getChildByName(phase_row, "start_date_validation_msg");
 		msgDiv.innerHTML = "";
 		msgDiv.style.display = "none";
-        
+
         var isPhaseClosed = thisForm["isPhaseClosed[" + i + "]"].value == 'true';
         var arePhaseDependenciesEditable = thisForm['arePhaseDependenciesEditable'].value == 'true';
         if (!isPhaseClosed) {
@@ -452,7 +452,7 @@ function validate_notes(thisForm, msgList) {
 	msgDiv.innerHTML = "";
 	msgDiv.style.display = "none";
 
-	//This check actually not required	
+	//This check actually not required
 	/*
 	var strNotes = thisForm["notes"].value;
 	if (emptyString.test(strNotes)) {
@@ -500,7 +500,6 @@ function validate_form(thisForm, popup) {
     validate_external_reference_id(thisForm, msgList);
     validate_price(thisForm, msgList);
     validate_dr_points(thisForm, msgList);
-    validate_svn_module(thisForm, msgList);
     validate_timeline(thisForm, msgList);
     validate_resources(thisForm, msgList);
     validate_notes(thisForm, msgList);

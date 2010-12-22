@@ -12,7 +12,7 @@
 <datasources>
   <local-tx-datasource>
     <jndi-name>InformixDS</jndi-name>
-    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@</connection-url>
+    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@;DB_LOCALE=@database.locale@;CLIENT_LOCALE=@database.locale@</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
@@ -30,7 +30,7 @@
 
   <no-tx-datasource>
     <jndi-name>OLTP</jndi-name>
-    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/informixoltp:INFORMIXSERVER=@database.INFORMIXSERVER@</connection-url>
+    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/informixoltp:INFORMIXSERVER=@database.INFORMIXSERVER@;DB_LOCALE=@database.locale@;CLIENT_LOCALE=@database.locale@</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
@@ -48,7 +48,7 @@
 
   <local-tx-datasource>
     <jndi-name>DW</jndi-name>
-    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/topcoder_dw:INFORMIXSERVER=@database.INFORMIXSERVER@</connection-url>
+    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/topcoder_dw:INFORMIXSERVER=@database.INFORMIXSERVER@;DB_LOCALE=@database.locale@;CLIENT_LOCALE=@database.locale@</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
@@ -64,7 +64,7 @@
   </local-tx-datasource>
   <no-tx-datasource>
     <jndi-name>TCS_DW</jndi-name>
-    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/tcs_dw:INFORMIXSERVER=@database.INFORMIXSERVER@</connection-url>
+    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/tcs_dw:INFORMIXSERVER=@database.INFORMIXSERVER@;DB_LOCALE=@database.locale@;CLIENT_LOCALE=@database.locale@</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
@@ -85,7 +85,7 @@
 
 <no-tx-datasource>
     <jndi-name>TCS_CATALOG</jndi-name>
-    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@</connection-url>
+    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@;DB_LOCALE=@database.locale@;CLIENT_LOCALE=@database.locale@</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
@@ -102,7 +102,7 @@
 
   <no-tx-datasource>
     <jndi-name>DS</jndi-name>
-    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/common_oltp:INFORMIXSERVER=@database.INFORMIXSERVER@</connection-url>
+    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/common_oltp:INFORMIXSERVER=@database.INFORMIXSERVER@;DB_LOCALE=@database.locale@;CLIENT_LOCALE=@database.locale@</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
@@ -120,7 +120,7 @@
 
   <local-tx-datasource>
     <jndi-name>JTS_TCS_CATALOG</jndi-name>
-    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@</connection-url>
+    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@;DB_LOCALE=@database.locale@;CLIENT_LOCALE=@database.locale@</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
@@ -136,7 +136,7 @@
   </local-tx-datasource>
   <local-tx-datasource>
     <jndi-name>JTS_TCS_CATALOG_NEW</jndi-name>
-    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@</connection-url>
+    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@;DB_LOCALE=@database.locale@;CLIENT_LOCALE=@database.locale@</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
@@ -153,7 +153,7 @@
 
   <no-tx-datasource>
     <jndi-name>JTS_TCS_CATALOG_IDGEN</jndi-name>
-    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@</connection-url>
+    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@;DB_LOCALE=@database.locale@;CLIENT_LOCALE=@database.locale@</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
@@ -170,7 +170,7 @@
 
   <local-tx-datasource>
     <jndi-name>OR_BUG</jndi-name>
-    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@</connection-url>
+    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@;DB_LOCALE=@database.locale@;CLIENT_LOCALE=@database.locale@</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
@@ -187,7 +187,7 @@
 
   <no-tx-datasource>
     <jndi-name>JiveDS</jndi-name>
-    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/jive3:INFORMIXSERVER=@database.INFORMIXSERVER@</connection-url>
+    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/jive3:INFORMIXSERVER=@database.INFORMIXSERVER@;DB_LOCALE=@database.locale@;CLIENT_LOCALE=@database.locale@</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
@@ -203,7 +203,7 @@
 
   <local-tx-datasource>
     <jndi-name>TimeDS</jndi-name>
-    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/time_oltp:INFORMIXSERVER=@database.INFORMIXSERVER@</connection-url>
+    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/time_oltp:INFORMIXSERVER=@database.INFORMIXSERVER@;DB_LOCALE=@database.locale@;CLIENT_LOCALE=@database.locale@</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
