@@ -17,6 +17,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 
 /**
@@ -300,16 +302,16 @@ public class AutoPaymentUtil {
                 "       resource_role_id, " +
                 "       value " +
                 "       from resource r, " +
-            "   resource_info ri" +
-            "   where r.resource_id = ri.resource_id" +
-            "   and ri.resource_info_type_id = 1" +
-            "   and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9, 16, 18)" +
+            "   resource_info ri " +
+            "   where r.resource_id = ri.resource_id " +
+            "   and ri.resource_info_type_id = 1 " +
+            "   and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9, 16, 18) " +
             "   and r.project_id = ? " +
             "   and not exists (select ri1.resource_id from resource_info ri1 " +
-            "           where r.resource_id = ri1.resource_id" +
-            "           and ri1.resource_info_type_id = 8" +
-            "           and ri1.value = 'N/A')" +
-            "   and r.resource_id in (select resource_id from review where committed = 1)" +
+            "           where r.resource_id = ri1.resource_id " +
+            "           and ri1.resource_info_type_id = 8 " +
+            "           and (ri1.value = 'N/A' or ri1.value = 'Yes')) " +
+            "   and r.resource_id in (select resource_id from review where committed = 1) " +
             "order by resource_role_id";
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -465,30 +467,50 @@ public class AutoPaymentUtil {
             return;
         }
 
-        String clearPayment = "update resource_info set value = 0 " +
-                              " where resource_info_type_id = 7 " +
-                              " and resource_id in (select resource_id from resource where resource_role_id = 1 and project_id = ?)";
+        logger.log(Level.INFO, "Setting submitter payment for the project : " + projectId);
 
-        PreparedStatement pstmt = conn.prepareStatement(clearPayment);
-        pstmt.setLong(1, projectId);
-        pstmt.executeUpdate();
-        PRHelper.close(pstmt);
+        // Select submitter resources that have not been paid yet. The ones that already have been paid shouldn't change.
+        String SELECT_SQL  = "select resource_id from resource_info where " +
+                             " resource_info_type_id = 8 and value != 'Yes' and " +
+                             " resource_id in (select resource_id from resource where resource_role_id = 1 and project_id = ?)";
 
-        logger.log(Level.INFO, "Clear submitter payment for the project :" + projectId);
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
 
-        // Prepare prices for differnt places
-        double[] prices = new double[] { price, Math.round(price * 0.5) };
-        long[] places = new long[] { 1, 2 };
+            pstmt = conn.prepareStatement(SELECT_SQL);
+            pstmt.setLong(1, projectId);
+            rs = pstmt.executeQuery();
 
-        // Update the payment resource_info and paid resource_info
-        for (int i = 0; i < places.length; ++i) {
-            long submitterId = getPassingSubmitterIdByPlace(projectId, places[i], conn);
+            Set<Long> resourceIds = new HashSet<Long>();
+            while (rs.next()) {
+                resourceIds.add(rs.getLong(1));
 
-            if (submitterId != 0) {
-                // Update the payment for given submitter which has placed
-                updateResourcePayment(submitterId, prices[i], conn);
+                // Clear payment value.
+                deleteResourceInfo(rs.getLong(1), 7, conn);
+
+                // Set payment status to "N/A"
+                updateResourceInfo(rs.getLong(1), 8, "N/A", conn);
             }
+
+            // Prepare prices for different places.
+            double[] prices = new double[] { price, Math.round(price * 0.5) };
+            long[] places = new long[] { 1, 2 };
+
+            // Update the payment value and payment status for the winners.
+            for (int i = 0; i < places.length; ++i) {
+                long submitterId = getPassingSubmitterIdByPlace(projectId, places[i], conn);
+
+                if (resourceIds.contains(submitterId)) {
+                    updateResourcePayment(submitterId, prices[i], conn);
+                }
+            }
+
+        } finally {
+            PRHelper.close(rs);
+            PRHelper.close(pstmt);
         }
+
     }
 
     /**
@@ -507,6 +529,30 @@ public class AutoPaymentUtil {
 
         // set to Not Paid
         updateResourceInfo(resourceId, 8, "No", conn);
+    }
+
+    /**
+     * Deletes resource info for the specified resource and resoruce info type.
+     *
+     * @param resourceId the Resource id
+     * @param resourceInfoTypeId Resource info type Id.
+     * @param conn the connection
+     *
+     * @throws SQLException if error occurs
+     */
+    private static void deleteResourceInfo(long resourceId, long resourceInfoTypeId, Connection conn)
+        throws SQLException {
+        String DELETE_SQL = "delete from resource_info where resource_id = ? and resource_info_type_id = ?";
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(DELETE_SQL);
+            pstmt.setLong(1, resourceId);
+            pstmt.setLong(2, resourceInfoTypeId);
+
+            pstmt.executeUpdate();
+        } finally {
+            PRHelper.close(pstmt);
+        }
     }
 
     /**

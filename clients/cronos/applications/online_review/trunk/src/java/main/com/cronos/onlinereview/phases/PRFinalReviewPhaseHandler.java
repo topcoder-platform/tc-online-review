@@ -11,9 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.tmatesoft.svn.core.SVNException;
+
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
 import com.topcoder.management.phase.PhaseHandlingException;
+import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.project.PersistenceException;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
@@ -28,6 +31,8 @@ import com.topcoder.management.resource.search.NotificationFilterBuilder;
 import com.topcoder.management.resource.search.NotificationTypeFilterBuilder;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.resource.search.ResourceRoleFilterBuilder;
+import com.topcoder.management.review.data.Comment;
+import com.topcoder.management.review.data.Review;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.SearchBundle;
@@ -42,7 +47,6 @@ import com.topcoder.util.datavalidator.ObjectValidator;
 import com.topcoder.util.datavalidator.StringValidator;
 import com.topcoder.util.idgenerator.IDGenerator;
 import com.topcoder.util.idgenerator.IDGeneratorFactory;
-import org.tmatesoft.svn.core.SVNException;
 
 /**
  * The PRFinalReviewPhaseHandler.
@@ -54,12 +58,20 @@ import org.tmatesoft.svn.core.SVNException;
  *     in case Final Review phase starts and project has SVN module specified by settings.</li>
  *   </ol>
  * </p>
+ *
+ * <p>
+ * Version 1.1 (Online Review Payments and Status Automation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Update {@link #perform(Phase, String)} to set the the project status to "Completed" when the project ends
+ *         and the final fix is approved, and there's no Approval phase in Scheduled or Open status and that
+ *         "Approval Required" project property is not set to "true".</li>
+ *   </ol>
+ * </p>
 
- * @author brain_cn, isv
- * @version 1.0.1
+ * @author brain_cn, isv, FireIce
+ * @version 1.1
  */
 public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
-
     /**
      * <p>A <code>String</code> providing the name of resource property providing the flag indicating whether the
      * resource has permission for accessing the project's SVN module set or not.</p>
@@ -112,9 +124,35 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
         Connection conn = this.createConnection();
         try {
             processPR(phase.getProject().getId(), conn, toStart);
+
+            // If stopping phase and final fix is approved.
+            if (!toStart && !checkFinalReview(conn, phase, operator)) {
+                // checks the existence of approval phase
+                Phase approvalPhase = PhasesHelper.locatePhase(phase, "Approval", true, false);
+
+                if (approvalPhase == null) {
+                    try {
+                        // check "Approval Required" project property
+                        ProjectManager projectManager = getManagerHelper().getProjectManager();
+                        com.topcoder.management.project.Project project = projectManager.getProject(phase.getProject()
+                                .getId());
+
+                        if (!"true".equalsIgnoreCase((String) project.getProperty("Approval Required"))) {
+                            // update project status to Complete
+                            PRHelper.completeProject(getManagerHelper(), phase, operator);
+                        }
+                    } catch (PersistenceException e) {
+                        throw new PhaseHandlingException("Problem when retrieving project", e);
+                    }
+                }
+
+            }
+
         } finally {
             PRHelper.close(conn);
         }
+
+
     }
 
     /**
@@ -233,7 +271,7 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
             // get connection factory
             DBConnectionFactory dbconn
                 = new DBConnectionFactoryImpl("com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
-            
+
             // get the persistence
             ResourcePersistence persistence = new SqlResourcePersistence(dbconn);
             // get the id generators
@@ -302,5 +340,49 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
         fields.put(NotificationTypeFilterBuilder.NAME_FIELD_NAME, StringValidator.startsWith(""));
 
         searchBundle.setSearchableFields(fields);
+    }
+
+    /**
+     * This method is called from perform method when the phase is stopping. It
+     * checks if the final review is rejected.
+     *
+     * @param phase phase instance.
+     * @param operator operator name
+     * @return if pass the final review of not
+     *
+     * @throws PhaseHandlingException if an error occurs when retrieving/saving
+     *         data.
+     */
+    private boolean checkFinalReview(Connection conn, Phase phase, String operator) throws PhaseHandlingException {
+        try {
+            ManagerHelper managerHelper = getManagerHelper();
+            Review finalWorksheet = PhasesHelper.getFinalReviewWorksheet(conn, managerHelper, phase.getId());
+
+            // check for approved/rejected comments.
+            Comment[] comments = finalWorksheet.getAllComments();
+            boolean rejected = false;
+
+            for (int i = 0; i < comments.length; i++) {
+                String value = (String) comments[i].getExtraInfo();
+
+                if (comments[i].getCommentType().getName().equals("Final Review Comment")) {
+                    if (PhasesHelper.APPROVED.equalsIgnoreCase(value) || PhasesHelper.ACCEPTED.equalsIgnoreCase(value)) {
+                        continue;
+                    } else if (PhasesHelper.REJECTED.equalsIgnoreCase(value)) {
+                        rejected = true;
+
+                        break;
+                    } else {
+                        throw new PhaseHandlingException("Comment can either be Approved or Rejected.");
+                    }
+                }
+            }
+
+            return rejected;
+        } catch (SQLException e) {
+            throw new PhaseHandlingException("Problem when connecting to database", e);
+        } catch (PhaseManagementException e) {
+            throw new PhaseHandlingException("Problem when persisting phases", e);
+        }
     }
 }

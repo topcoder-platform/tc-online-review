@@ -10,17 +10,17 @@ import com.cronos.onlinereview.autoscreening.management.ConfigurationException;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManagerFactory;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
-import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
+import com.cronos.onlinereview.phases.PRApprovalPhaseHandler;
 import com.cronos.onlinereview.phases.PRFinalFixPhaseHandler;
 import com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler;
+import com.cronos.onlinereview.phases.PRPostMortemPhaseHandler;
 import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
 import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
-import com.cronos.onlinereview.phases.PRPostMortemPhaseHandler;
 import com.cronos.onlinereview.phases.SpecificationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.SpecificationSubmissionPhaseHandler;
 import com.cronos.onlinereview.services.uploads.ManagersProvider;
@@ -80,8 +80,15 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  *   </ol>
  * </p>
  *
- * @author evilisneo, BeBetter, isv
- * @version 1.3
+ * <p>
+ * Version 1.4 (Online Review Payments and Status Automation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #getPhaseManager()} method to use the new PRApprovalPhaseHandler for <code>Approval</code> phase.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author evilisneo, BeBetter, isv, FireIce
+ * @version 1.4
  * @since 1.0
  */
 public class ManagerCreationHelper implements ManagersProvider {
@@ -125,7 +132,7 @@ public class ManagerCreationHelper implements ManagersProvider {
      * Returns a <code>PhaseManager</code> instance. This is used in <code>UploadServices</code> to retrieve
      * this manager and perform all its operations.
      * </p>
-     * 
+     *
      * @return a <code>PhaseManager</code> instance
      * @see ManagersProvider#getPhaseManager()
      */
@@ -157,7 +164,7 @@ public class ManagerCreationHelper implements ManagersProvider {
                     Constants.FINAL_FIX_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRFinalReviewPhaseHandler(),
                     Constants.FINAL_REVIEW_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new ApprovalPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRApprovalPhaseHandler(),
                     Constants.APPROVAL_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRPostMortemPhaseHandler(),
                     Constants.POST_MORTEM_PHASE_NAME);
@@ -176,7 +183,7 @@ public class ManagerCreationHelper implements ManagersProvider {
      * Returns a <code>ProjectManager</code> instance. This is used in <code>UploadServices</code> to retrieve
      * this manager and perform all its operations.
      * </p>
-     * 
+     *
      * @return a <code>ProjectManager</code> instance
      * @see ManagersProvider#getProjectManager()
      */
@@ -215,7 +222,7 @@ public class ManagerCreationHelper implements ManagersProvider {
      * Returns a <code>ResourceManager</code> instance. This is used in <code>UploadServices</code> to retrieve this
      * manager and perform all its operations.
      * </p>
-     * 
+     *
      * @return a <code>ResourceManager</code> instance
      * @see ManagersProvider#getResourceManager
      */
@@ -268,7 +275,7 @@ public class ManagerCreationHelper implements ManagersProvider {
      * Returns a <code>ScreeningManager</code> instance. This is used in <code>UploadServices</code> to
      * retrieve this manager and perform all its operations.
      * </p>
-     * 
+     *
      * @return a <code>ScreeningManager</code> instance
      * @see ManagersProvider#getScreeningManager()
      */
@@ -288,7 +295,7 @@ public class ManagerCreationHelper implements ManagersProvider {
      * Returns a <code>UploadManager</code> instance. This is used in <code>UploadServices</code> to retrieve
      * this manager and perform all its operations.
      * </p>
-     * 
+     *
      * @return a <code>UploadManager</code> instance
      * @see ManagersProvider#getUploadManager()
      */
@@ -332,7 +339,7 @@ public class ManagerCreationHelper implements ManagersProvider {
 
     /**
      * Sets the searchable fields to the search bundle.
-     * 
+     *
      * @param searchBundle
      *            the search bundle to set.
      */
@@ -367,7 +374,7 @@ public class ManagerCreationHelper implements ManagersProvider {
 
     /**
      * Sets the phase operation with the handler to the given phase manager.
-     * 
+     *
      * @param manager
      *            the phase manager
      * @param phaseTypes

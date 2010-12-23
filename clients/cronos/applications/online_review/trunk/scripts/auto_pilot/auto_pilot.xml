@@ -1043,7 +1043,7 @@
         </Property>
         <Property name="handler_approval_def">
             <Property name="type">
-                <Value>com.cronos.onlinereview.phases.ApprovalPhaseHandler</Value>
+                <Value>com.cronos.onlinereview.phases.PRApprovalPhaseHandler</Value>
             </Property>
         </Property>
         <Property name="handler_post-mortem_def">

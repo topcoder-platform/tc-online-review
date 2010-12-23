@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,16 +19,6 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
-import com.topcoder.management.deliverable.SubmissionType;
-import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
-import com.topcoder.search.builder.SearchBuilderException;
-import com.topcoder.search.builder.filter.*;
-import com.topcoder.servlet.request.ConfigurationException;
-import com.topcoder.servlet.request.DisallowedDirectoryException;
-import com.topcoder.servlet.request.FileDoesNotExistException;
-import com.topcoder.servlet.request.PersistenceException;
-import com.topcoder.servlet.request.RequestParser;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -40,16 +31,19 @@ import com.cronos.onlinereview.autoscreening.management.ResponseSeverity;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.autoscreening.management.ScreeningResult;
 import com.cronos.onlinereview.autoscreening.management.ScreeningTask;
+import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.model.ClientProject;
 import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.SubmissionStatus;
+import com.topcoder.management.deliverable.SubmissionType;
 import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.UploadStatus;
 import com.topcoder.management.deliverable.UploadType;
+import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
 import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
 import com.topcoder.management.deliverable.search.UploadFilterBuilder;
 import com.topcoder.management.phase.PhaseManager;
@@ -71,8 +65,19 @@ import com.topcoder.management.scorecard.data.ScorecardType;
 import com.topcoder.message.email.EmailEngine;
 import com.topcoder.message.email.TCSEmailMessage;
 import com.topcoder.project.phases.Phase;
+import com.topcoder.search.builder.SearchBuilderException;
+import com.topcoder.search.builder.filter.AndFilter;
+import com.topcoder.search.builder.filter.EqualToFilter;
+import com.topcoder.search.builder.filter.Filter;
+import com.topcoder.search.builder.filter.InFilter;
+import com.topcoder.search.builder.filter.OrFilter;
+import com.topcoder.servlet.request.ConfigurationException;
+import com.topcoder.servlet.request.DisallowedDirectoryException;
+import com.topcoder.servlet.request.FileDoesNotExistException;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.FileUploadResult;
+import com.topcoder.servlet.request.PersistenceException;
+import com.topcoder.servlet.request.RequestParser;
 import com.topcoder.servlet.request.UploadedFile;
 import com.topcoder.util.config.ConfigManagerException;
 import com.topcoder.util.errorhandling.BaseException;
@@ -156,8 +161,19 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.6
+ * <p>
+ * Version 1.7 (Online Review Payments and Status Automation Assembly 1.0) Change notes:
+ *   <ol>
+ *    <li>Update {@link #viewProjectDetails(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method
+ *        to fix the duplication of scorecard templates.</li>
+ *    <li>Update {@link #viewProjectDetails(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method
+ *        to show the &quot;Pay Project&quot; button in the Online Review shows when there's at least one resource with
+ *        non-zero payment value and payment status other than "Paid".</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, FireIce
+ * @version 1.7
  */
 public class ProjectDetailsActions extends DispatchAction {
 
@@ -458,8 +474,9 @@ public class ProjectDetailsActions extends DispatchAction {
         long[] ganttOffsets = new long[phases.length];
         long[] ganttLengths = new long[phases.length];
         // List of scorecard templates used for this project
-        List<Scorecard> scorecardTemplates = new ArrayList<Scorecard>();
-        List<String> scorecardLinks = new ArrayList<String>();
+
+        Map<String, Scorecard> phaseScorecardTemplates = new LinkedHashMap<String, Scorecard>();
+        Map<String, String> phaseScorecardLinks = new LinkedHashMap<String, String>();
         Float minimumScreeningScore = 75f;
         // Iterate over all phases determining dates, durations and assigned scorecards
         for (int i = 0; i < phases.length; ++i) {
@@ -481,14 +498,15 @@ public class ProjectDetailsActions extends DispatchAction {
             ganttOffsets[i] = startTime - projectStartTime;
             ganttLengths[i] = endTime - startTime;
 
+            String phaseTypeName = phase.getPhaseType().getName();
             // Get a scorecard template associated with this phase if any
-            Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(
-                    ActionsHelper.createScorecardManager(request), phase);
+            Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(ActionsHelper
+                    .createScorecardManager(request), phase);
             // If there is a scorecard template for the phase, store it in the list
             if (scorecardTemplate != null) {
-                scorecardTemplates.add(scorecardTemplate);
-                scorecardLinks.add(ConfigHelper.getProjectTypeScorecardLink(projectTypeName,
-                                                                            scorecardTemplate.getId()));
+                // override the previous scorecard, here assume the phases are ordered sequentially.
+                phaseScorecardTemplates.put(phaseTypeName, scorecardTemplate);
+                phaseScorecardLinks.put(phaseTypeName, ConfigHelper.getProjectTypeScorecardLink(projectTypeName, scorecardTemplate.getId()));
 
                 if (phase.getPhaseType().getName().equals(Constants.SCREENING_PHASE_NAME)) {
                     minimumScreeningScore = scorecardTemplate.getMinScore();
@@ -512,8 +530,8 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("ganttOffsets", ganttOffsets);
         request.setAttribute("ganttLengths", ganttLengths);
         // Place information about used scorecard templates
-        request.setAttribute("scorecardTemplates", scorecardTemplates);
-        request.setAttribute("scorecardLinks", scorecardLinks);
+        request.setAttribute("scorecardTemplates", new ArrayList<Scorecard>(phaseScorecardTemplates.values()));
+        request.setAttribute("scorecardLinks", new ArrayList<String>(phaseScorecardLinks.values()));
 
         ExternalUser[] allProjectExtUsers = null;
 
@@ -653,12 +671,7 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformPortMortemReview",
                 Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME)));
-
-        String status = project.getProjectStatus().getName();
-        request.setAttribute("isAllowedToPay",
-            Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PAYMENT_PERM_NAME))
-            && ("Completed".equals(status) || "Cancelled - Failed Review".equals(status)
-                 || "Cancelled - Failed Screening".equals(status)  || "Cancelled - Zero Submissions".equals(status)));
+        request.setAttribute("isAllowedToPay", Boolean.valueOf(isAllowedToPay(request, allProjectResources)));
 
         // Checking whether some user is allowed to submit his approval or comments for the
         // Aggregation worksheet needs more robust verification since this check includes a test
@@ -3053,6 +3066,48 @@ public class ProjectDetailsActions extends DispatchAction {
                 out.close();
             }
         }
+    }
+
+    /**
+     * Checks whether to show the 'Pay Project' button in OR. The following criteria is used.
+     * <ul>
+     * <li>The user has permissions to pay the project</li>
+     * <li>The project has at least one resource with non-zero Payment amount value and payment status other than
+     * 'Paid'.</li>
+     * </ul>
+     *
+     * @param request
+     *            the http servlet request
+     * @param allProjectResources
+     *            the array of all resources of this project.
+     * @return true to show the 'Pay Project' button in OR, otherwise false.
+     * @since Online Review Payments and Status Automation Assembly 1.0
+     */
+    private static boolean isAllowedToPay(HttpServletRequest request, Resource[] allProjectResources) {
+        boolean hasUserPermission = AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PAYMENT_PERM_NAME);
+
+        if (!hasUserPermission) {
+            return false;
+        }
+
+        for (Resource resource : allProjectResources) {
+
+            String paymentStr = (String) resource.getProperty("Payment");
+
+            try {
+            if (paymentStr != null && paymentStr.trim().length() != 0 && Double.parseDouble(paymentStr) > 0
+                    && !"Yes".equals(resource.getProperty("Payment Status"))) {
+                return true;
+            }
+
+            } catch (NumberFormatException e) {
+                // the payment string is not double format, we simply ignore it.
+                continue;
+            }
+
+        }
+
+        return false;
     }
 }
 
