@@ -544,8 +544,9 @@ public class AutoPaymentUtil {
         throws SQLException {
         String DELETE_SQL = "delete from resource_info where resource_id = ? and resource_info_type_id = ?";
 
+        PreparedStatement pstmt = null;
         try {
-            PreparedStatement pstmt = conn.prepareStatement(DELETE_SQL);
+            pstmt = conn.prepareStatement(DELETE_SQL);
             pstmt.setLong(1, resourceId);
             pstmt.setLong(2, resourceInfoTypeId);
 
