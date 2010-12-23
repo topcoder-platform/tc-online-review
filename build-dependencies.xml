@@ -421,7 +421,7 @@
     <property name="weighted_calculator.jar"
               value="${tcs_libdir}/${weighted_calculator.path}/${weighted_calculator.jar.name}"/>
 
-    <property name="workdays.version" value="1.0"/>
+    <property name="workdays.version" value="1.1.0"/>
     <property name="workdays.jar.name" value="workdays.jar"/>
     <property name="workdays.path" value="workdays/${workdays.version}"/>
     <property name="workdays.jar" value="${tcs_libdir}/${workdays.path}/${workdays.jar.name}"/>

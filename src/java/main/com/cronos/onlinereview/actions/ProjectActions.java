@@ -219,9 +219,19 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  *     skip updating the <code>SVN Module</code> property of the project.</li>
  *   </ol>
  * </p>
+ *
+ * <p>
+ * Version 1.12 (Online Review Payments and Status Automation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #saveProjectPhases(boolean, HttpServletRequest, LazyValidatorForm, Project, Map, List, boolean)} method to
+ *     support negative lag time, notes, workdays component is updated to support the functionality.</li>
+ *     <li>Updated {@link #saveResources(boolean, HttpServletRequest, LazyValidatorForm, Project, Phase[], Map)} method is
+ *     updated to support reset to resource related to project phase properly.</li>
+ *   </ol>
+ * </p>
 
- * @author George1, real_vg, pulky, isv
- * @version 1.11
+ * @author George1, real_vg, pulky, isv, FireIce
+ * @version 1.12
  */
 public class ProjectActions extends DispatchAction {
 
@@ -602,27 +612,27 @@ public class ProjectActions extends DispatchAction {
                         || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
                         || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME));
         request.setAttribute("isAdmin", isAdmin);
-       
+
        // start BUGR 4039 - Check whether the billing project id is in the user's allowed billing projects list
        List<ClientProject> availableClientProjects = ActionsHelper.getClientProjects(request);
        Long currentClientProjectId = (Long) form.get("billing_project");
        boolean inList = false;
-       
+
        if(currentClientProjectId == null) {
-            // no billing project yet, allow set 
+            // no billing project yet, allow set
             inList = true;
         } else {
-            for(ClientProject cp : availableClientProjects) { 
-                if(cp.getId() == currentClientProjectId.longValue()) {  
+            for(ClientProject cp : availableClientProjects) {
+                if(cp.getId() == currentClientProjectId.longValue()) {
                     inList = true;
                     break;
-                } 
+                }
             }
         }
-        
+
        request.setAttribute("allowBillingEdit", isAdmin && inList);
-       
-       
+
+
        // end BUG-4039
     }
 
@@ -921,7 +931,7 @@ public class ProjectActions extends DispatchAction {
 
         // since Online Review Update - Add Project Dropdown v1.0
         // Populate project notes
-        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) 
+        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
                 || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
                  || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
                 project.setProperty("Billing Project", lazyForm.get("billing_project"));
@@ -1002,7 +1012,7 @@ public class ProjectActions extends DispatchAction {
      * @param projectId the project id for the associations
      * @param projectTypeId the project type id of the provided project id
      * @param categoryChanged <code>true</code> if category was changed; <code>false</code> otherwise.
-     * @param request an <code>HttpServletRequest</code> representing incoming request. 
+     * @param request an <code>HttpServletRequest</code> representing incoming request.
      * @throws NamingException if any errors occur during EJB lookup
      * @throws RemoteException if any errors occur during EJB remote invocation
      * @throws CreateException if any errors occur during EJB creation
@@ -1332,7 +1342,12 @@ public class ProjectActions extends DispatchAction {
                             = 1000 * 60 * ("days".equals(phaseLag) ? 24 * 60 : ("hrs".equals(phaseLag) ? 60 : 1));
                         long lagTime = unitMutiplier * ((Integer) lazyForm.get("phase_start_amount", i)).longValue();
 
+                        // negative lag time.
+                        if ("minus".equals(lazyForm.get("phase_start_plusminus", i))) {
+                            lagTime *= -1;
+                        }
                         // Create phase Dependency
+                        // Notes, Dependency class does support negative lagTime.
                         Dependency dependency = new Dependency(dependencyPhase, phase,
                                 dependencyStart, dependantStart, lagTime);
 
@@ -1451,22 +1466,6 @@ public class ProjectActions extends DispatchAction {
                 int paramIndex = ((Integer) phasesToForm.get(phase)).intValue();
                 if (phaseTypes[paramIndex] == null) {
                     continue;
-                }
-                // If the phase is scheduled to start before some other phase start/end
-                String phaseStartPhase = (String) lazyForm.get("phase_start_phase", paramIndex);
-                if (phaseStartPhase != null && phaseStartPhase.trim().length() > 0 &&
-                        "minus".equals(lazyForm.get("phase_start_plusminus", paramIndex))
-                        && phase.getAllDependencies().length > 0) {
-                    Dependency dependency = phase.getAllDependencies()[0];
-
-                    Date dependencyDate;
-                    if ("ends".equals(lazyForm.get("phase_start_when", paramIndex))) {
-                        dependencyDate = dependency.getDependency().getScheduledEndDate();
-                    } else {
-                        dependencyDate = dependency.getDependency().getScheduledStartDate();
-                    }
-                    phase.setFixedStartDate(new Date(dependencyDate.getTime() - dependency.getLagTime()));
-                    phase.clearDependencies();
                 }
 
                 try {
@@ -1973,7 +1972,7 @@ public class ProjectActions extends DispatchAction {
                 long resourceRoleId = (Long) lazyForm.get("resources_role", i);
                 String resourcePhaseId = String.valueOf( lazyForm.get("resources_phase", i) );
                 String resourceKey = String.valueOf(resourceRoleId) + resourcePhaseId;
-                
+
                 if (disabledResourceRoles.contains(String.valueOf(resourceRoleId))) {
                     boolean attemptingToAssignDisabledRole = false;
                     if ("add".equalsIgnoreCase(resourceAction)) {
@@ -2104,7 +2103,7 @@ public class ProjectActions extends DispatchAction {
             ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
 
             Resource resource;
-            
+
             // BUGR-2807: Parse resource payment
             Double resourcePayment = null;
             if (Boolean.TRUE.equals(lazyForm.get("resources_payment", i))) {
@@ -2189,6 +2188,10 @@ public class ProjectActions extends DispatchAction {
                 } else {
                     // TODO: Probably issue validation error here
                 }
+            } else {
+                // the resource role is not associated with any phase
+                // reset the phase, if the new resource role does not tied to any phase
+                resource.setPhase(null);
             }
 
             // Set resource properties copied from external user
@@ -2874,7 +2877,7 @@ public class ProjectActions extends DispatchAction {
 
                 // Filter out those resources which do not correspond to active phases. If resource has phase set
                 // explicitly (but is not one of the reviewer roles) then check if it's phase is in list of active
-                // phases; otherwise check if it's role has a deliverable for one of the active phases 
+                // phases; otherwise check if it's role has a deliverable for one of the active phases
                 for (int k = 0; k < myResources.length; ++k) {
                     boolean toAdd = false;
                     long resourceRoleId = myResources[k].getResourceRole().getId();
@@ -3144,7 +3147,7 @@ public class ProjectActions extends DispatchAction {
      * @param manager an instance of <code>ReviewManager</code> class that retrieves a review from the database.
      * @param projectId an ID of the project which the review was made for.
      * @return a <code>Set</code> providing the Ids of project resources which have review scorecards associated with
-     *         them. 
+     *         them.
      * @throws ReviewManagementException if any error occurs during review search or retrieval.
      * @since 1.8
      */
@@ -3179,11 +3182,13 @@ public class ProjectActions extends DispatchAction {
     private void setEditProjectFormData(HttpServletRequest request, CorrectnessCheckResult verification,
                                         LazyValidatorForm form)
         throws BaseException {
-        
+
         // Load the lookup data
         loadProjectEditLookups(request);
-        String phaseDependenciesEditable
-            = (String) verification.getProject().getProperty("Phase Dependencies Editable");
+        String phaseDependenciesEditable = null;
+        if (verification != null) {
+            phaseDependenciesEditable = (String) verification.getProject().getProperty("Phase Dependencies Editable");
+        }
         request.setAttribute("arePhaseDependenciesEditable", "true".equalsIgnoreCase(phaseDependenciesEditable));
         // Place the flag, indicating that we are editing the existing project, into request
         request.setAttribute("newProject", Boolean.FALSE);
@@ -3339,7 +3344,13 @@ public class ProjectActions extends DispatchAction {
                 Dependency dependency = phases[i].getAllDependencies()[0];
                 form.set("phase_start_phase", i + 1, "loaded_" + dependency.getDependency().getId());
                 form.set("phase_start_when", i + 1, dependency.isDependencyStart() ? "starts" : "ends");
+                // lagTime may be negative
                 long lagTime = dependency.getLagTime();
+                if (lagTime < 0) {
+                    // negative lagTime
+                    form.set("phase_start_plusminus", i + 1, "minus");
+                    lagTime *= -1;
+                }
                 if (lagTime % (24 * 3600 * 1000L) == 0) {
                     form.set("phase_start_dayshrs", i + 1, "days");
                     form.set("phase_start_amount", i + 1, new Integer((int) (lagTime / (24 * 3600 * 1000L))));
