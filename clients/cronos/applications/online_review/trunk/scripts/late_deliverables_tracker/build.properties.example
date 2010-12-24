@@ -1,7 +1,6 @@
-########################################
-# Build parameters for Auto Pilot tool #
-########################################
-
+#######################################################
+# Build parameters for Late Deliverables Tracker tool #
+#######################################################
 
 # The online_review_home is the directory where the development distribution for
 # Online Review application is checked to
@@ -20,17 +19,17 @@ ext_libdir=${online_review_home}/lib/third_party
 shared_libdir=${online_review_home}/lib/shared
 
 
-# A deployment directory for Auto Pilot tool
-deploy-dir=<<path_to_directory_where_to_deploy_the_AUTOPILOT_to>>
+# A deployment directory for Late Deliverables Tracker tool
+deploy-dir=<<path_to_directory_where_to_deploy_the_LDT_to>>
 
 
-# A path to file to signal to Auto Pilot to stop the job
-guard_file=@auto_pilot_guard_file@
+# A path to file to signal to Late Deliverables Tracker to stop the job
+guard_file=@late_deliverables_tracker_guard_file@
 
 
-# A path to file to signal to Auto Pilot that there is another tool instance already running
-running_file=@auto_pilot_running_file@
+# A path to file to signal to Late Deliverables Tracker that there is another tool instance already running
+running_file=@late_deliverables_tracker_running_file@
 
 
-# An interval (in minutes) between Auto Pilot job executions
-poll_interval=@auto_pilot_poll_interval@
+# An interval (in milliseconds) between Late Deliverables Tracker job executions
+poll_interval=@late_deliverables_tracker_poll_interval@
