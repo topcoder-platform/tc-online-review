@@ -158,7 +158,7 @@ public final class Functions {
      * This static method returns context of handler base projectCategory.
      *
      * <p>
-     * This method is an implementeation of <code>getLoggedInUserId</code> function used from EL
+     * This method is an implementeation of <code>getHandlerContext</code> function used from EL
      * expressions in JSP pages.
      * </p>
      *
@@ -184,6 +184,22 @@ public final class Functions {
             return "development";
         } else if (project.getProjectCategory().getId() == 5) {
             return "development";
+        } else if (project.getProjectCategory().getId() == 6) {
+            return "specification";
+        } else if (project.getProjectCategory().getId() == 7) {
+            return "architecture";
+        } else if (project.getProjectCategory().getId() == 13) {
+            return "test_suites";
+        } else if (project.getProjectCategory().getId() == 14) {
+            return "assembly";
+        } else if (project.getProjectCategory().getId() == 19) {
+            return "ui_prototype";
+        } else if (project.getProjectCategory().getId() == 23) {
+            return "conceptualization";
+        } else if (project.getProjectCategory().getId() == 24) {
+            return "ria_build";
+        } else if (project.getProjectCategory().getId() == 26) {
+            return "test_scenarios";
         } else {
             return "";
         }
