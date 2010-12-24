@@ -362,6 +362,9 @@
                 <Property name="searchBundleManagerNamespace">
                     <Value>com.topcoder.search.builder.SearchBundleManager</Value>
                 </Property>
+                <Property name="maxDurationOfPhaseWithCompensatedDeadline">
+                    <Value>86400000</Value>
+                </Property>
             </Property>
 
             <Property name="lateDeliverableProcessorConfig">

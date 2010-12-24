@@ -238,7 +238,7 @@
     <property name="JNDI_Utility.path" value="JNDI_Utility/${JNDI_Utility.version}"/>
     <property name="JNDI_Utility.jar" value="${tcs_libdir}/${JNDI_Utility.path}/${JNDI_Utility.jar.name}"/>
 
-    <property name="late_deliverables_tracker.version" value="1.0.1"/>
+    <property name="late_deliverables_tracker.version" value="1.1.0"/>
     <property name="late_deliverables_tracker.jar.name" value="late_deliverables_tracker.jar"/>
     <property name="late_deliverables_tracker.path" value="late_deliverables_tracker/${late_deliverables_tracker.version}"/>
     <property name="late_deliverables_tracker.jar" value="${tcs_libdir}/${late_deliverables_tracker.path}/${late_deliverables_tracker.jar.name}"/>
