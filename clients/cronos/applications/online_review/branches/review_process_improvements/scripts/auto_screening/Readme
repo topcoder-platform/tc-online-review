@@ -1,0 +1,36 @@
+. make sure file_server tool is running
+
+Notes: screening tool depents on file_server tool which will start ipserver with file_system_srver handler to receive and send upload file
+
+ make sure temp dir exist under current dir, temp is used for store temp submission file to auto_screening
+
+. auto_screening.xml
+	com.topcoder.servlet.request.RemoteFileUpload
+	make sure below properties the same as file_server tools
+	
+	ip_address (127.0.0.1)
+	port	(9998)
+	handler_id (needn't change, use fss_handler now)
+
+Notes: Onlinereview application should use the same above configuration for its file upload component to accept submission and store to file system server which is start by file_server tool.
+
+. checkstyle.sh (.bat) checkstyle_test.sh (.bat)
+	change lib path
+	
+. object_factory.xml
+	property: CheckStyleRule:javaMainSource and CheckStyleRule:javaTestSource
+	
+	modify checkstyle/checkstyletest command for windows/unix platform
+	
+	windows platform
+		checkstyle.bat
+		checkstyle_test.bat
+
+	unix platform	
+		checkstyle.sh
+		checkstyle_test.sh
+		
+. ant dist
+. copy build.xml and auto_screening_app.jar to the deploy dir
+. ant deploy
+. ant auto_screening (auto_screening_background)		

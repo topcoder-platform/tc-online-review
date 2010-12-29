@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- FINISHED -->
+<!--
+    Adds data for submissions from registered competitors (submitters);
+    Adds payment and payment status for the primary screener;
+    Advances to Screening phase;
+-->
+<dataset>
+    <!-- *** phase *** -->
+    <!-- Phases for Ajax Timed Survey 1.0 -->
+    <project_phase project_phase_id="2" project_id="1" phase_type_id="2" phase_status_id="3"
+           scheduled_start_time="2006-07-30 00:00:00.0" scheduled_end_time="2006-07-30 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Submission phase -->
+    <project_phase project_phase_id="3" project_id="1" phase_type_id="3" phase_status_id="2"
+           scheduled_start_time="2006-07-31 00:00:00.0" scheduled_end_time="2006-07-31 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Screening phase -->
+
+    <!--   Primary Screener, Screening phase -->
+    <resource_info resource_info_type_id="7" resource_id="4" value="50.00"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payment -->
+    <resource_info resource_info_type_id="8" resource_id="4" value="No"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payment Status -->
+
+    <!-- *** upload *** -->
+    <!-- Ajax Timed Survey -->
+    <!-- Upload for Submission from Winning Submitter -->
+    <upload upload_id="1" project_id="1" resource_id="1" upload_type_id="1" upload_status_id="1" parameter="Path?"
+            create_user="System" create_date="2006-07-29 02:45:11.0"
+            modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <!-- Upload for Submission from 2nd Place Submitter -->
+    <upload upload_id="2" project_id="1" resource_id="2" upload_type_id="1" upload_status_id="1" parameter="Path?"
+            create_user="System" create_date="2006-07-29 02:45:11.0"
+            modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <!-- Upload for Submission from 3rd Place Submitter -->
+    <upload upload_id="3" project_id="1" resource_id="3" upload_type_id="1" upload_status_id="1" parameter="Path?"
+            create_user="System" create_date="2006-07-29 02:45:11.0"
+            modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+
+    <!-- *** submission *** -->
+    <!-- Ajax Timed Survey 1.0 -->
+    <!-- Submission from Winning Submitter -->
+    <submission submission_id="1" upload_id="1" submission_status_id="1"
+                create_user="System" create_date="2006-07-29 02:45:11.0"
+                modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <!-- Submission from 2nd Place Submitter -->
+    <submission submission_id="2" upload_id="2" submission_status_id="1"
+                create_user="System" create_date="2006-07-29 02:45:11.0"
+                modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <!-- Submission from 3rd Place Submitter -->
+    <submission submission_id="3" upload_id="3" submission_status_id="1"
+                create_user="System" create_date="2006-07-29 02:45:11.0"
+                modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+
+    <!-- *** resource_submission *** -->
+    <!-- Resource Submissions Ajax Timed Survey -->
+    <!-- Submission from Winning Submitter -->
+    <resource_submission submission_id="1" resource_id="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <!-- Submission from 2nd place Submitter -->
+    <resource_submission submission_id="2" resource_id="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <!-- Submission from 3rd place Submitter -->
+    <resource_submission submission_id="3" resource_id="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+</dataset>
