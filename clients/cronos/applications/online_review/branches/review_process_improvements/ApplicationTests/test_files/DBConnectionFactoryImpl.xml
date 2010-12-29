@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<CMConfig>  
+    <Config name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+        <Property name="connections">
+            <Property name="default">
+                <Value>tcs</Value>
+            </Property>
+            <Property name="tcs">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>jdbc:informix-sqli://tcsdesigner:1526/ortest:INFORMIXSERVER=tcs;</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>coder</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>altec</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+</CMConfig>

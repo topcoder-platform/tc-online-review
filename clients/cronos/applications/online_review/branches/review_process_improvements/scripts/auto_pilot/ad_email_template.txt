@@ -1,0 +1,6 @@
+%TIMESTAMP{timestamp}%
+Hello %USER_FIRST_NAME{User first name}% %USER_LAST_NAME{User last name}%,
+Handle\: %USER_HANDLE{User handle}%
+This is the notification on project\: %PROJECT_NAME{Project name}%
+Version\: %PROJECT_VERSION{Project version}%
+The Assignment Document\: %ASSIGNMENT_DOCUMENT{AD Submission Title}% change the status to \: %ASSIGNMENT_DOCUMENT_STATUS{status}%
