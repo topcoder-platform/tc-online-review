@@ -21,7 +21,6 @@
 @database.username@=informix
 @database.password@=1nf0rm1x
 @database.INFORMIXSERVER@=informixoltp_tcp
-@database.locale@=en_us.utf8
 
 # typical VM configuration
 #@database.server@=env.topcoder.com

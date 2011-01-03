@@ -55,12 +55,6 @@
                     <Property name="password">
                         <Value>@database.password@</Value>
                     </Property>
-                    <Property name="CLIENT_LOCALE">
-                        <Value>@database.locale@</Value>
-                    </Property>
-                    <Property name="DB_LOCALE">
-                        <Value>@database.locale@</Value>
-                    </Property>
                 </Property>
             </Property>
         </Property>
