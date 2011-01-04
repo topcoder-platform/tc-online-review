@@ -8,6 +8,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import com.cronos.onlinereview.phases.logging.LoggerMessage;
 import com.topcoder.management.phase.PhaseHandlingException;
@@ -34,6 +37,11 @@ import com.topcoder.util.log.Level;
  * @version 1.1
  */
 public class PRHelper {
+    /**
+     * This member variable holds the formatting string used to format dates.
+     */
+    private static String dateFormat = "MM.dd.yyyy HH:mm z";
+
     private static final com.topcoder.util.log.Log logger = com.topcoder.util.log.LogFactory.getLog(PRHelper.class
             .getName());
     // OrChange : Modified the statement to take the placed and final score from submission table
@@ -546,6 +554,10 @@ public class PRHelper {
         try {
             ProjectManager projectManager = managerHelper.getProjectManager();
             com.topcoder.management.project.Project project = projectManager.getProject(phase.getProject().getId());
+
+            Format format = new SimpleDateFormat(dateFormat);
+            project.setProperty("Completion Timestamp", format.format(new Date()));
+
             ProjectStatus completedStatus = PRHelper.findProjectStatusByName(projectManager, "Completed");
             project.setProjectStatus(completedStatus);
             projectManager.updateProject(project, "Setting the project status to Completed automatically", operator);
