@@ -591,6 +591,7 @@
         <pathelement location="${heartbeat.jar}"/>
         <pathelement location="${compression_utility.jar}"/>
         <pathelement location="${svnkit.jar}"/>
+        <pathelement location="${late_deliverables_management.jar}" />
         <path refid="spring_libs"/>
     </path>
 
