@@ -196,6 +196,7 @@
       <lib dir="${jar_tcs_libdir}/${userEJB.path}" includes="*.jar"/>
       <lib dir="${jar_tcs_libdir}/${securityEJB.path}" includes="*.jar"/>
       <lib dir="${jar_tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar"/>
+      <lib dir="${jar_tcs_libdir}/${late_deliverables_management.path}" includes="*.jar"/>
       <lib dir="${jar_tcs_libdir}" includes="tc_id_generator.jar"/>
       <lib dir="${jar_tcs_libdir}" includes="tcjive.jar"/>
       <lib dir="${jar_tcs_libdir}" includes="${tcsUtil.jar.name}"/>

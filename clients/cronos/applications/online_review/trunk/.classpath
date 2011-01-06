@@ -148,11 +148,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/workdays/1.0/workdays.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/tcsUtil.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
@@ -348,7 +343,6 @@
 	<classpathentry kind="lib" path="lib/tcs/tcjive.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/online_review_deliverables/1.0.2/online_review_deliverables.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/deliverable_management_persistence/1.1.2/deliverable_management_persistence.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.4.4/online_review_phases.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/security_ejb/Security.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/testing/selenium-java-client-driver.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.generic.runtimeTarget/JBoss v4.0">
@@ -360,6 +354,9 @@
 	<classpathentry kind="lib" path="lib/tcs/contest_eligibility_validation/1.0.1/contest_eligibility_validation.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/db_connection_factory/1.1.0/db_connection_factory.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/auto_pilot/1.1/auto_pilot.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.4.5/online_review_phases.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/workdays/1.1.0/workdays.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/late_deliverables_management/1.0.1/late_deliverables_management.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/tcs/email_engine/3.2.0/email_engine.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/online_review_login/1.1.4/online_review_login.jar"/>

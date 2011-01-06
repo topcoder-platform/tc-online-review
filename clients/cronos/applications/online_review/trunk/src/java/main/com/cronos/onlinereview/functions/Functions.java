@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2007 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2010 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.functions;
 
@@ -11,7 +11,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Set;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -25,6 +25,10 @@ import com.cronos.onlinereview.actions.ActionsHelper;
 import com.cronos.onlinereview.actions.AuthorizationHelper;
 import com.cronos.onlinereview.actions.ConfigHelper;
 import com.topcoder.management.project.Project;
+import com.topcoder.management.resource.Resource;
+import com.topcoder.management.resource.ResourceManager;
+import com.topcoder.management.resource.persistence.ResourcePersistenceException;
+import com.topcoder.util.errorhandling.BaseException;
 
 /**
  * This class implements several helper-functions that can be used from JSP pages.
@@ -39,9 +43,21 @@ import com.topcoder.management.project.Project;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.2 (Online Review Late Deliverables Search Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #getDeliverableName(long)} method.</li>
+ *     <li>Added {@link #getUserId(HttpServletRequest, long)} method.</li>
+ *     <li>Added {@link #displayDelay(Long)} method.</li>
+ *     <li>Added {@link #getHandlerContext(long)} method.</li>
+ *     <li>Updated {@link #getHandlerContext(HttpServletRequest)} method to reuse
+ *     {@link #getHandlerContext(long)} method.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1
- * @author real_vg, isv
- * @version 1.1
+ * @author real_vg, isv, FireIce
+ * @version 1.2
  */
 public final class Functions {
 
@@ -178,31 +194,7 @@ public final class Functions {
             return "";
         }
 
-        if (project.getProjectCategory().getId() == 1) {
-            return "design";
-        } else if (project.getProjectCategory().getId() == 2) {
-            return "development";
-        } else if (project.getProjectCategory().getId() == 5) {
-            return "development";
-        } else if (project.getProjectCategory().getId() == 6) {
-            return "specification";
-        } else if (project.getProjectCategory().getId() == 7) {
-            return "architecture";
-        } else if (project.getProjectCategory().getId() == 13) {
-            return "test_suites";
-        } else if (project.getProjectCategory().getId() == 14) {
-            return "assembly";
-        } else if (project.getProjectCategory().getId() == 19) {
-            return "ui_prototype";
-        } else if (project.getProjectCategory().getId() == 23) {
-            return "conceptualization";
-        } else if (project.getProjectCategory().getId() == 24) {
-            return "ria_build";
-        } else if (project.getProjectCategory().getId() == 26) {
-            return "test_scenarios";
-        } else {
-            return "";
-        }
+        return getHandlerContext(project.getProjectCategory().getId());
     }
 
     /**
@@ -608,5 +600,111 @@ public final class Functions {
      */
     public static boolean contains(Collection collection, Object value) {
         return collection.contains(String.valueOf(value));
+    }
+
+    /**
+     * <p>Gets the configured Deliverable Name for the given deliverable id.</p>
+     *
+     * @param deliverableId the deliverable id.
+     * @return the specified deliverable name.
+     * @since 1.2
+     */
+    public static String getDeliverableName(HttpServletRequest request, long deliverableId) {
+        try {
+            Map<Long, String> deliverableIdToNameMap = ActionsHelper.getDeliverableIdToNameMap(request);
+
+            return deliverableIdToNameMap.get(deliverableId);
+        } catch (BaseException e) {
+            return "Unknown";
+        }
+    }
+
+    /**
+     * <p>
+     * Get the user id.
+     * </p>
+     *
+     * @param request
+     *            the http servlet request
+     * @param resourceId
+     *            the resource id.
+     * @return the corresponding user id, or -1 if any problem occurs.
+     * @since 1.2
+     */
+    public static long getUserId(HttpServletRequest request, long resourceId) {
+        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+
+        try {
+            Resource resource = resourceManager.getResource(resourceId);
+
+            String userId = (String) resource.getProperty("External Reference ID");
+
+            return Long.parseLong(userId);
+        } catch (ResourcePersistenceException e) {
+            return -1;
+        }
+    }
+
+    /**
+     * <p>
+     * Displays the delay as formatted string.
+     * </p>
+     *
+     * @param delay
+     *            the delay in seconds
+     * @return the formatted string of delay.
+     * @since 1.2
+     */
+    public static String displayDelay(Long delay) {
+        long diff[] = new long[] {0, 0, 0};
+        long diffInMinutes = delay / 60;
+
+        // minutes
+        diff[2] = (diffInMinutes >= 60) ? diffInMinutes % 60 : diffInMinutes;
+        // hours
+        diff[1] = (diffInMinutes = (diffInMinutes / 60)) >= 24 ? diffInMinutes % 24 : diffInMinutes;
+        // days
+        diff[0] = (diffInMinutes = (diffInMinutes / 24));
+
+        return String.format("%d day%s %02d:%02d", diff[0], diff[0] != 1 ? "s" : "", diff[1], diff[2]);
+    }
+
+
+    /**
+     * This static method returns context of handler based on the project category.
+     * <p>
+     * This method is an implementation of <code>getHandlerContext</code> function used from EL expressions in JSP
+     * pages.
+     * </p>
+     *
+     * @param projectCategoryId
+     *            the project category id.
+     * @return context of handler based on the project category.
+     * @since 1.2
+     */
+    public static String getHandlerContext(long projectCategoryId) {
+        if (projectCategoryId == 1) {
+            return "design";
+        } else if (projectCategoryId == 2 || projectCategoryId == 5) {
+            return "development";
+        } else if (projectCategoryId == 6) {
+            return "specification";
+        } else if (projectCategoryId == 7) {
+            return "architecture";
+        } else if (projectCategoryId == 13) {
+            return "test_suites";
+        } else if (projectCategoryId == 14) {
+            return "assembly";
+        } else if (projectCategoryId == 19) {
+            return "ui_prototype";
+        } else if (projectCategoryId == 23) {
+            return "conceptualization";
+        } else if (projectCategoryId == 24) {
+            return "ria_build";
+        } else if (projectCategoryId == 26) {
+            return "test_scenarios";
+        } else {
+            return "";
+        }
     }
 }

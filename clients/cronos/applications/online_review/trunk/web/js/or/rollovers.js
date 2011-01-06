@@ -27,6 +27,10 @@ tab4off.src = "/i/or/tab_draft_projects.gif";
 tab4on = new Image(119, 36);
 tab4on.src = "/i/or/tab_draft_projects_o.gif";
 
+tab5off = new Image(119, 36);
+tab5off.src = "/i/or/tab_late_deliverables.gif";
+tab5on = new Image(119, 36);
+tab5on.src = "/i/or/tab_late_deliverables_o.gif";
 
 function showLayer(layername) {
 	document.getElementById(layername).style.display = "block";
