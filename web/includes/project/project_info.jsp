@@ -1,12 +1,13 @@
 <%--
-  - Author: pulky
-  - Version: 1.2
-  - Copyright (C) 2004 - 2009 TopCoder Inc., All Rights Reserved.
+  - Author: pulky, FireIce
+  - Version: 1.3
+  - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays project information
   -
   - Version 1.1 (Configurable Contest Terms Release Assembly v1.0) changes: added Unregistration link.
   - Version 1.2 (Appeals Early Completion Release Assembly 1.0) changes: added "appeals completed" / "resume appeals" links.
+  - Version 1.3 (Online Review Late Deliverables Search Assembly 1.0) changes: added "Late Deliverables" link.
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -33,6 +34,7 @@
                 <c:if test="${isAllowedToUnregister}">
                     <html:link page="/actions/Unregister.do?method=unregister&amp;pid=${project.id}"><bean:message key="viewProjectDetails.Unregister" /></html:link> |
                 </c:if>
+                <html:link page="/actions/ViewLateDeliverables.do?method=viewLateDeliverables&amp;project_id=${project.id}"><bean:message key="viewProjectDetails.LateDeliverables" /></html:link> |
                 <c:if test="${isAllowedToContactPM}">
                     <html:link page="/actions/ContactManager.do?method=contactManager&amp;pid=${project.id}"><bean:message key="viewProjectDetails.ContactPM" /></html:link> |
                 </c:if>

@@ -77,6 +77,8 @@ import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.UploadStatus;
 import com.topcoder.management.deliverable.UploadType;
+import com.topcoder.management.deliverable.late.LateDeliverableManager;
+import com.topcoder.management.deliverable.late.impl.LateDeliverableManagerImpl;
 import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistence;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
@@ -88,6 +90,8 @@ import com.topcoder.management.phase.DefaultPhaseManager;
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.phase.PhaseManager;
+import com.topcoder.management.phase.PhasePersistence;
+import com.topcoder.management.phase.db.InformixPhasePersistence;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
@@ -226,9 +230,18 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *     <li>Added {@link #getActiveSpecificationSubmission(long, long, UploadManager)} method.</li>
  *   </ol>
  * </p>
+ *
+ * <p>
+ * Version 1.10 (Online Review Late Deliverables Search Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #createPhasePersistence(HttpServletRequest)} method.</li>
+ *     <li>Added {@link #createLateDeliverableManager(HttpServletRequest)} method.</li>
+ *     <li>Added {@link #getDeliverableIdToNameMap()} method.</li>
+ *   </ol>
+ * </p>
 
- * @author George1, real_vg, pulky, isv, TCSDEVELOPER
- * @version 1.9
+ * @author George1, real_vg, pulky, isv, FireIce
+ * @version 1.10
  * @since 1.0
  */
 public class ActionsHelper {
@@ -2656,6 +2669,40 @@ public class ActionsHelper {
     }
 
     /**
+     * This static method helps to create an object of the <code>PhasePersistence</code> class.
+     *
+     * @return a newly created instance of the class.
+     * @param request
+     *            an <code>HttpServletRequest</code> object, where created
+     *            <code>PhaseManager</code> object can be stored to let reusing it later for the
+     *            same request.
+     * @throws IllegalArgumentException
+     *             if <code>request</code> parameter is <code>null</code>.
+     * @throws BaseException
+     *             if any error happens during object creation.
+     * @since 1.10
+     */
+    public static PhasePersistence createPhasePersistence(HttpServletRequest request)
+        throws BaseException {
+        // Validate parameter
+        validateParameterNotNull(request, "request");
+
+        // Try retrieving Phase Persistence from the request's attribute first
+        PhasePersistence persistence = (PhasePersistence) request.getAttribute("phasePersistence");
+
+        // If this is the first time this method is called for the request,
+        if (persistence == null) {
+            persistence = new InformixPhasePersistence("com.topcoder.management.phase");
+
+            // Place newly-created object into the request as attribute
+            request.setAttribute("phasePersistence", persistence);
+        }
+
+        // Return the Phase Persistence object
+        return persistence;
+    }
+
+    /**
      * This static method helps to create an object of the <code>ProjectManager</code> class.
      *
      * @return a newly created instance of the class.
@@ -2745,6 +2792,39 @@ public class ActionsHelper {
         }
 
         // Return the Review Manager object
+        return manager;
+    }
+
+    /**
+     * This static method helps to create an object of the <code>LateDeliverableManager</code> class.
+     *
+     * @return a newly created instance of the class.
+     * @param request
+     *            an <code>HttpServletRequest</code> object, where created
+     *            <code>LateDeliverableManager</code> object can be stored to let reusing it later for the
+     *            same request.
+     * @throws IllegalArgumentException
+     *             if <code>request</code> parameter is <code>null</code>.
+     * @throws LateDeliverableManagementConfigurationException
+     *             if fail to initialize the <code>LateDeliverableManagerImpl</code> instance.
+     * @since 1.10
+     */
+    public static LateDeliverableManager createLateDeliverableManager(HttpServletRequest request) {
+        // Validate parameter
+        validateParameterNotNull(request, "request");
+
+        // Try retrieving Review Manager from the request's attribute first
+        LateDeliverableManager manager = (LateDeliverableManager) request.getAttribute("lateDeliverableManager");
+        // If this is the first time this method is called for the request,
+        // create a new instance of the object
+        if (manager == null) {
+            manager = new LateDeliverableManagerImpl("com/topcoder/util/config/ConfigManager.properties",
+                    LateDeliverableManagerImpl.DEFAULT_CONFIG_NAMESPACE);
+            // Place newly-created object into the request as attribute
+            request.setAttribute("lateDeliverableManager", manager);
+        }
+
+        // Return the Late Deliverable Manager object
         return manager;
     }
 
@@ -4825,5 +4905,48 @@ public class ActionsHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * Retrieves the mapping from deliverable id to deliverable name.
+     *
+     * @param request the http request
+     * @return the mapping from deliverable id to deliverable name.
+     * @throws BaseException
+     *             if error occurs
+     * @since 1.10
+     */
+    public static Map<Long, String> getDeliverableIdToNameMap(HttpServletRequest request) throws BaseException {
+        Map<Long, String> idToNameMap = (Map<Long, String>) request.getAttribute("deliverableIdToNameMap");
+
+        if (idToNameMap == null) {
+            Connection conn = null;
+            Statement stmt = null;
+            ResultSet rs = null;
+            try {
+                idToNameMap = new HashMap<Long, String>();
+
+                DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+                conn = dbconn.createConnection();
+
+                stmt = conn.createStatement();
+                rs = stmt.executeQuery("SELECT deliverable_id, name FROM deliverable_lu");
+
+                while (rs.next()) {
+                    idToNameMap.put(rs.getLong("deliverable_id"), rs.getString("name"));
+                }
+
+                request.setAttribute("deliverableIdToNameMap", idToNameMap);
+            } catch (SQLException e) {
+                throw new BaseException("Failed to retrieve map for deliverable id to deliverable name", e);
+            } finally {
+                close(rs);
+                close(stmt);
+                close(conn);
+            }
+
+        }
+
+        return idToNameMap;
     }
 }

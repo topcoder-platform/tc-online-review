@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.Upload;
+import com.topcoder.management.deliverable.late.LateDeliverable;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.resource.Resource;
@@ -28,11 +29,18 @@ import com.topcoder.project.phases.PhaseStatus;
  *     <li>Added {@link SpecificationComparer} class.</li>
  *   </ol>
  * </p>
+ *
+ * <p>
+ * Version 1.2 (Online Review Late Deliverables Search Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link LateDeliverableComparer} class.</li>
+ *   </ol>
+ * </p>
 
  *
  * @author George1
- * @author real_vg, isv
- * @version 1.1
+ * @author real_vg, isv, FireIce
+ * @version 1.2
  */
 final class Comparators {
 
@@ -402,6 +410,29 @@ final class Comparators {
          */
         public int compare(Submission submission1, Submission submission2) {
             return submission1.getCreationTimestamp().compareTo(submission2.getCreationTimestamp());
+        }
+    }
+
+    /**
+     * <p>This class implements <code>Comparator</code> interface and is used to sort late deliverables in
+     * the list. It sorts late deliverables by their deadline, from the least recent to the most recent ones.</p>
+     *
+     * @author FireIce
+     * @since 1.2
+     */
+    static class LateDeliverableComparer implements Comparator<LateDeliverable> {
+
+        /**
+         * <p>This method compares its two arguments for order. This method expects that type of the objects passed as
+         * arguments is <code>LateDeliverable</code>.</p>
+         *
+         * @param lateDeliverable1 the first late deliverable to be compared.
+         * @param lateDeliverable2 the second late deliverable to be compared.
+         * @return a negative integer, zero, or a positive integer as the first argument is less than, equal to, or
+         *         greater than the second respectively.
+         */
+        public int compare(LateDeliverable lateDeliverable1, LateDeliverable lateDeliverable2) {
+            return lateDeliverable1.getDeadline().compareTo(lateDeliverable2.getDeadline());
         }
     }
 }

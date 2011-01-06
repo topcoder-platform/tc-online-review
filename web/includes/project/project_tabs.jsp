@@ -1,11 +1,13 @@
 <%--
-  - Author: George1, real_vg, isv
-  - Version: 1.1
+  - Author: George1, real_vg, isv, FireIce
+  - Version: 1.2
   - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment renders the tabs for all pages from Online Review application.
   -
   - Version 1.1 (Impersonation Login Release assembly) changes: Changed project status from Inactive to Draft.
+  - Version 1.2 (Online Review Late Deliverables Search Assembly 1.0) changes:
+  - Added 'Late Deliverables' tab.
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ page import="java.text.DecimalFormat,com.topcoder.shared.util.ApplicationServer" %>
@@ -49,6 +51,19 @@
                 <html:img src="/i/or/tab_draft_projects.gif" width="119" height="36" border="0" imageName="tab4"/>
             </html:link>
         </c:if>
+    </div>
+    <div style="float: left;">
+    <c:if test="${orfn:isUserLoggedIn(pageContext.request)}">
+        <c:if test="${(not empty projectTabIndex) and (projectTabIndex == 5)}">
+            <html:img src="/i/or/tab_late_deliverables_on.gif" width="119" height="36" border="0" imageName="tab5"/>
+        </c:if>
+        <c:if test="${(empty projectTabIndex) or (projectTabIndex != 5)}">
+            <html:link page="/actions/ViewLateDeliverables.do?method=viewLateDeliverables" onmouseover="img_act('tab5')"
+                       onmouseout="img_inact('tab5')">
+                <html:img src="/i/or/tab_late_deliverables.gif" width="119" height="36" border="0" imageName="tab5"/>
+            </html:link>
+        </c:if>
+    </c:if>
     </div>
     <div style="float: left;">
     <c:if test="${isAllowedToCreateProject}">

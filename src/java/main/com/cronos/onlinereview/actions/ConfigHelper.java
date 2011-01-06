@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -79,8 +80,17 @@ import com.topcoder.util.config.UnknownNamespaceException;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, romanoTC, isv
- * @version 1.6.1
+ * <p>
+ * Version 1.7 (Online Review Late Deliverables Search Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #deliverableTypes} field with respective accessor method and updated static initializer to
+ *     set that field with data read from configuration file.</li>
+ *     <li>Added configuration for deliverable types.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, romanoTC, isv, FireIce
+ * @version 1.7
  */
 public class ConfigHelper {
 
@@ -293,6 +303,13 @@ public class ConfigHelper {
      * @since 1.6
      */
     private static final String PROJECT_TYPE_SCORECARD_LINKS_PROP = "ProjectTypeScorecardLinks";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains definitions of Deliverable Type Lookups for 'Late Deliverable' page.
+     * @since 1.7
+     */
+    private static final String DELIVERABLE_TYPES_PROP = "DeliverableTypes";
 
     /**
      * This member variable is a string constant that specifies the name of the property which
@@ -764,6 +781,16 @@ public class ConfigHelper {
      * @since 1.6
      */
     private static final Map<String, String> projectTypeScorecardLinks = new HashMap<String, String>();
+
+    /**
+     * <p>
+     * A <code>Map</code> mapping the deliverable type to deliverable id, use LinkedHashMap as order
+     * should be maintained.
+     * </p>
+     *
+     * @since 1.7
+     */
+    private static final Map<String, String> deliverableTypes = new LinkedHashMap<String, String>();
 
     /**
      * This member variable holds the amount of pixels displayed in the Gantt Chart per every hour.
@@ -1249,6 +1276,20 @@ public class ConfigHelper {
                 String strLink = propProjTypeScorecard.getValue(strPropName);
                 if (strLink != null && strLink.trim().length() != 0) {
                     projectTypeScorecardLinks.put(strPropName, strLink);
+                }
+            }
+
+            // Retrieve property that contains deliverable types definitions
+            Property propDeliverableType = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS,
+                                                                      DELIVERABLE_TYPES_PROP);
+            // Prepare to enumerate all the nested properties
+            Enumeration propDeliverableTypes = propDeliverableType.propertyNames();
+
+            while (propDeliverableTypes.hasMoreElements()) {
+                String strDeliverableTypeName = (String) propDeliverableTypes.nextElement();
+                String strDeliverableIds = propDeliverableType.getValue(strDeliverableTypeName);
+                if (strDeliverableIds != null && strDeliverableIds.trim().length() != 0) {
+                    deliverableTypes.put(strDeliverableTypeName, strDeliverableIds);
                 }
             }
 
@@ -2193,5 +2234,16 @@ public class ConfigHelper {
      */
     public static String getSVNPathBasedPermissionsFileURL() {
         return svnConfig[5];
+    }
+
+    /**
+     * <p>Gets the mapping from deliverable type name to deliverable ids.</p>
+     *
+     * @return a map of mapping from deliverable type name to deliverable ids.
+     *
+     * @since 1.7
+     */
+    public static Map<String, String> getDeliverableTypes() {
+        return deliverableTypes;
     }
 }

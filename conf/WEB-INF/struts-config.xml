@@ -212,6 +212,16 @@
             <form-property name="distribution_file" type="org.apache.struts.upload.FormFile" />
         </form-bean>
 
+        <!-- Late Deliverable Search form -->
+        <form-bean name="lateDeliverableSearchForm" dynamic="true" type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="project_id" type="java.lang.String" />
+            <form-property name="project_categories" type="java.lang.Long[]" />
+            <form-property name="project_statuses" type="java.lang.Long[]" />
+            <form-property name="deliverable_types" type="java.lang.String[]" />
+            <form-property name="forgiven" type="java.lang.String" />
+            <form-property name="handle" type="java.lang.String" />
+        </form-bean>
+
     </form-beans>
 
 
@@ -783,6 +793,19 @@
             name="specificationReviewForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/viewSpecificationReview.jsp" redirect="false"/>
+        </action>
+
+    <!--
+        =====  Late Deliverables Actions  =====
+    -->
+
+        <!-- "View Late Deliverbales" action -->
+        <action path="/actions/ViewLateDeliverables" unknown="false"
+            type="com.cronos.onlinereview.actions.LateDeliverablesActions"
+            parameter="method" scope="request"
+            name="lateDeliverableSearchForm"
+            input="/jsp/viewLateDeliverables.jsp">
+            <forward name="success" path="/jsp/viewLateDeliverables.jsp" redirect="false" />
         </action>
 
         <!--
