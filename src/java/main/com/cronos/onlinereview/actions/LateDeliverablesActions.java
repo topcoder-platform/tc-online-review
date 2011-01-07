@@ -114,6 +114,8 @@ public class LateDeliverablesActions extends DispatchAction {
      */
     public ActionForward viewLateDeliverables(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws BaseException {
+        LoggingHelper.logAction(request);
+
         // check user login
         if (!AuthorizationHelper.isUserLoggedIn(request)) {
             // set url for login redirect.
