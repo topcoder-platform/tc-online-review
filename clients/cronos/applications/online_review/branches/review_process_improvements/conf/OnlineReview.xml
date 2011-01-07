@@ -5558,6 +5558,7 @@
                 </Property>
                 <Property name="Phases">
                     <Value>Registration</Value>
+                    <Value>Review Registration</Value>
                 </Property>
                 <Property name="AppFunction">
                     <Value>VIEW_REGISTRANTS</Value>
