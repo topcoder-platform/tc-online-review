@@ -191,7 +191,16 @@
                                             <td class="value" width="20%"><tc-webtag:handle coderId="${orfn:getUserId(pageContext.request, lateDeliverable.resourceId)}" context="${orfn:getHandlerContextByCategoryId(project.projectCategory.id)}" /></td>
                                             <td class="value" width="20%">${orfn:getDeliverableName(pageContext.request, lateDeliverable.deliverableId)}</td>
                                             <td class="value" width="20%">${orfn:displayDate(pageContext.request, lateDeliverable.deadline)}</td>
-                                            <td class="value" width="20%">${orfn:displayDelay(lateDeliverable.delay)}</td>
+
+                                            <c:choose>
+                                                <c:when test="${lateDeliverable.delay != null}">
+                                                    <td class="value" width="20%">${orfn:displayDelay(lateDeliverable.delay)}</td>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <td class="value" width="20%">N/A</td>
+                                                </c:otherwise>
+                                            </c:choose>
+					    
                                             <td class="value" width="20%">${lateDeliverable.forgiven ? 'Yes' : 'No'}</td>
                                         </tr>
                                         </c:forEach>
