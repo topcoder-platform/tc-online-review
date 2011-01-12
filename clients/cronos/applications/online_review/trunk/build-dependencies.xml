@@ -243,7 +243,7 @@
     <property name="late_deliverables_tracker.path" value="late_deliverables_tracker/${late_deliverables_tracker.version}"/>
     <property name="late_deliverables_tracker.jar" value="${tcs_libdir}/${late_deliverables_tracker.path}/${late_deliverables_tracker.jar.name}"/>
     
-    <property name="late_deliverables_management.version" value="1.0.1"/>
+    <property name="late_deliverables_management.version" value="1.0.2"/>
     <property name="late_deliverables_management.jar.name" value="late_deliverables_management.jar"/>
     <property name="late_deliverables_management.path" value="late_deliverables_management/${late_deliverables_management.version}"/>
     <property name="late_deliverables_management.jar" value="${tcs_libdir}/${late_deliverables_management.path}/${late_deliverables_management.jar.name}"/>
