@@ -25,7 +25,6 @@ import com.topcoder.management.deliverable.late.LateDeliverable;
 import com.topcoder.management.deliverable.late.LateDeliverableManagementException;
 import com.topcoder.management.deliverable.late.LateDeliverableManager;
 import com.topcoder.management.deliverable.late.search.LateDeliverableFilterBuilder;
-import com.topcoder.management.phase.PhasePersistence;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
@@ -390,18 +389,12 @@ public class LateDeliverablesActions extends DispatchAction {
      */
     private static Map<Long, List<LateDeliverable>> groupLateDeliverablesByProject(HttpServletRequest request,
             List<LateDeliverable> lateDeliverables) throws BaseException {
-        // Obtain the phase persistence
-        PhasePersistence phasePersistence = ActionsHelper.createPhasePersistence(request);
-
         Map<Long, List<LateDeliverable>> groupedLateDeliverables = new HashMap<Long, List<LateDeliverable>>();
 
         // we should group the late deliverables by project.
         for (LateDeliverable lateDeliverable : lateDeliverables) {
-            // retrieve the Phase
-            Phase phase = phasePersistence.getPhase(lateDeliverable.getProjectPhaseId());
-
             // get the project id.
-            long projectId = phase.getProject().getId();
+            long projectId = lateDeliverable.getProjectId();
 
             List<LateDeliverable> value = groupedLateDeliverables.get(projectId);
 

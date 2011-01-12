@@ -153,7 +153,7 @@
                             </tr>
 
                             <tr>
-                                <td class="header" width="700"><bean:message key="viewLateDeliverables.SearchResults.column.ProjectName" /></td>
+                                <td class="header" width="580"><bean:message key="viewLateDeliverables.SearchResults.column.ProjectName" /></td>
                                 <td class="header" nowrap="nowrap"><bean:message key="viewLateDeliverables.SearchResults.column.ProjectCategory" /></td>
                                 <td class="header" nowrap="nowrap"><bean:message key="viewLateDeliverables.SearchResults.column.ProjectStatus" /></td>
                             </tr>
