@@ -150,6 +150,8 @@
         <launch_late_deliverables_tracker background="false"/>
     </target>
 
+    <target name="all" depends="clean, main, deploy" description="--> cleans and rebuilds the Late Deliverables Tracker"/>
+  
     <!-- Macro for launching Auto Pilot -->
     <macrodef name="launch_late_deliverables_tracker">
         <attribute name="background" default="false"/>

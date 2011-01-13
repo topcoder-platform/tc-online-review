@@ -419,10 +419,10 @@
     </if>
 
     <if>
-      <available file="${auto_screening_deploy_dir}/build.xml" />
+      <available file="${ldt_deploy_dir}/build.xml" />
       <then>
-        <ant antfile="${auto_screening_deploy_dir}/build.xml" dir="${auto_screening_deploy_dir}"
-         target="start_as" inheritall="false" inheritrefs="true"/>
+        <ant antfile="${ldt_deploy_dir}/build.xml" dir="${ldt_deploy_dir}"
+         target="start_ldt" inheritall="false" inheritrefs="true"/>
       </then>
     </if>
   </target>
@@ -440,10 +440,10 @@
     </if>
 
     <if>
-      <available file="${auto_screening_deploy_dir}/build.xml" />
+      <available file="${ldt_deploy_dir}/build.xml" />
       <then>
-        <ant antfile="${auto_screening_deploy_dir}/build.xml" dir="${auto_screening_deploy_dir}"
-         target="stop_as" inheritall="false" inheritrefs="true"/>
+        <ant antfile="${ldt_deploy_dir}/build.xml" dir="${ldt_deploy_dir}"
+         target="stop_ldt" inheritall="false" inheritrefs="true"/>
       </then>
     </if>
 
@@ -455,7 +455,7 @@
     <antcall target="first_deploy" />
     <ant antfile="${online_review_home}/scripts/auto_pilot/build.xml" dir="${online_review_home}/scripts/auto_pilot"
          target="all" inheritall="false" inheritrefs="true"/>
-    <ant antfile="${online_review_home}/scripts/auto_screening/build.xml" dir="${online_review_home}/scripts/auto_screening"
+    <ant antfile="${online_review_home}/scripts/late_deliverables_tracker/build.xml" dir="${online_review_home}/scripts/late_deliverables_tracker"
          target="all" inheritall="false" inheritrefs="true"/>
   </target>
 
@@ -547,6 +547,11 @@
     <echo>The execution of reports is complete.  Reports are available in /${reports}</echo>
   </target>
 
+
+  <target name="update_properties" >
+    <ant antfile="build-configuration.xml" target="update_properties" /> 
+  </target>
+  
   <!-- - - - - - - - - - - - - - - - - -
       target: prod-init
     - - - - - - - - - - - - - - - - - -->
