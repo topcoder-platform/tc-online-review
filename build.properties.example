@@ -75,4 +75,4 @@ selenium_port=5555
 # Deployment location of auto tools #
 #####################################
 auto_pilot_deploy_dir=<<path to auto pilot deployment directory>>
-auto_screening_deploy_dir=<<path to auto screening deployment directory>>
+ldt_deploy_dir=<<path to late deliverable tracker deployment directory >>
