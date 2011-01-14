@@ -470,9 +470,8 @@ public class AutoPaymentUtil {
         logger.log(Level.INFO, "Setting submitter payment for the project : " + projectId);
 
         // Select submitter resources that have not been paid yet. The ones that already have been paid shouldn't change.
-        String SELECT_SQL  = "select resource_id from resource_info where " +
-                             " resource_info_type_id = 8 and value != 'Yes' and " +
-                             " resource_id in (select resource_id from resource where resource_role_id = 1 and project_id = ?)";
+        String SELECT_SQL  = "select resource_id from resource where resource_role_id = 1 and project_id = ? and " +
+                             " resource_id not in (select resource_id from resource_info where resource_info_type_id = 8 and value == 'Yes')";
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;
