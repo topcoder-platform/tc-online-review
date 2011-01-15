@@ -342,58 +342,6 @@ public class PRHelper {
      * @throws SQLException
      *             if error occurs
      */
-    public static void resetProjectResultWithChangedScores(long projectId, Object userID, Connection conn)
-            throws SQLException {
-        logger.log(Level.INFO,
-                new LoggerMessage("project", new Long(projectId), null, "reset update_result and user_reliability."));
-        // reset old_reliability, new_reliability, current_reliability_ind, reliable_submission_ind,
-        // reliability_ind
-        String sqlStr = "update project_result set old_reliability = null, new_reliability = null, current_reliability_ind = null,"
-                + "reliable_submission_ind = null, reliability_ind = null where project_id = ? and user_id = ?";
-
-        PreparedStatement pstmt = null;
-        try {
-            pstmt = conn.prepareStatement(sqlStr);
-            pstmt.setLong(1, projectId);
-            pstmt.setString(2, userID.toString());
-            pstmt.executeUpdate();
-        } finally {
-            close(pstmt);
-        }
-
-        long categoryId = AutoPaymentUtil.getProjectCategoryId(projectId, conn);
-        long phaseId = 111 + categoryId;
-
-        // Reset user_reliability rating by phase_id, user_id
-        // without any reliable_submission_ind is 1 for this category, rating should be set to null
-        sqlStr = "update user_reliability set rating = null where user_id = ? " + " and phase_id = ? "
-                + " and not exists (select * from project_result where user_id = ? and reliable_submission_ind = 1"
-                + " and project_id in (select project_id from project where project_category_id = ?))";
-        try {
-            pstmt = conn.prepareStatement(sqlStr);
-            pstmt.setString(1, userID.toString());
-            pstmt.setLong(2, phaseId);
-            pstmt.setString(3, userID.toString());
-            pstmt.setLong(4, categoryId);
-            pstmt.executeUpdate();
-        } finally {
-            close(pstmt);
-        }
-
-        // maybe others placement will be changed
-        populateProjectResult(projectId, conn);
-    }
-
-    /**
-     * Populate final_score, placed and passed_review_ind.
-     *
-     * @param projectId
-     *            project id
-     * @param conn
-     *            connection
-     * @throws SQLException
-     *             if error occurs
-     */
     public static void populateProjectResult(long projectId, Connection conn) throws SQLException {
         // Payment should be set before populate to project_result table
         AutoPaymentUtil.populateSubmitterPayments(projectId, conn);
