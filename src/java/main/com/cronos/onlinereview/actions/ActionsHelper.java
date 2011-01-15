@@ -3509,7 +3509,6 @@ public class ActionsHelper {
         PreparedStatement existStmt = null;
         PreparedStatement existCIStmt = null;
         PreparedStatement ratingStmt = null;
-        PreparedStatement reliabilityStmt = null;
         PreparedStatement componentInquiryStmt = null;
         long categoryId = project.getProjectCategory().getId();
 
@@ -3531,10 +3530,10 @@ public class ActionsHelper {
             log.log(Level.DEBUG, "calculated phaseId for Project: " + projectId + " phaseId: " + phaseId);
             long version = getProjectLongValue(project, "Version ID");
 
-            // add reliability_ind and old_reliability
+            // old_reliability has been removed, because introduction of new reliability calculator
             ps = conn.prepareStatement("INSERT INTO project_result " +
-                    "(project_id, user_id, rating_ind, valid_submission_ind, old_rating, old_reliability) " +
-                    "values (?, ?, ?, ?, ?, ?)");
+                    "(project_id, user_id, rating_ind, valid_submission_ind, old_rating) " +
+                    "values (?, ?, ?, ?, ?)");
 
             componentInquiryStmt = conn.prepareStatement("INSERT INTO component_inquiry " +
                     "(component_inquiry_id, component_id, user_id, project_id, phase, tc_user_id, agreed_to_terms, rating, version, create_time) " +
@@ -3545,9 +3544,6 @@ public class ActionsHelper {
             existCIStmt = conn.prepareStatement("SELECT 1 FROM component_inquiry WHERE user_id = ? and project_id = ?");
 
             ratingStmt = conn.prepareStatement("SELECT rating, phase_id, (select project_category_id from project where project_id = ?) as project_category_id from user_rating where user_id = ? ");
-
-            reliabilityStmt = conn.prepareStatement("SELECT rating from user_reliability where user_id = ? and phase_id = " +
-                    "(select 111+project_category_id from project where project_id = ?)");
 
             for (Long userId : newSubmitters) {
                 // Check if projectResult exist
@@ -3586,19 +3582,7 @@ public class ActionsHelper {
                 }
 
 
-                double oldReliability = 0;
                 if (!existPR) {
-                    //Retrieve Reliability
-                    reliabilityStmt.clearParameters();
-                    reliabilityStmt.setLong(1, userId);
-                    reliabilityStmt.setLong(2, projectId);
-                    rs = reliabilityStmt.executeQuery();
-
-                    if (rs.next()) {
-                        oldReliability = rs.getDouble(1);
-                    }
-                    close(rs);
-
                     //add project_result
                     ps.setLong(1, projectId);
                     ps.setLong(2, userId);
@@ -3609,12 +3593,6 @@ public class ActionsHelper {
                         ps.setNull(5, Types.DOUBLE);
                     } else {
                         ps.setDouble(5, oldRating);
-                    }
-
-                    if (oldReliability == 0) {
-                        ps.setNull(6, Types.DOUBLE);
-                    } else {
-                        ps.setDouble(6, oldReliability);
                     }
                     ps.addBatch();
                 }
@@ -3654,7 +3632,6 @@ public class ActionsHelper {
             close(existStmt);
             close(existCIStmt);
             close(ratingStmt);
-            close(reliabilityStmt);
             close(conn);
         }
     }
@@ -4220,7 +4197,7 @@ public class ActionsHelper {
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
                     + DB_CONNECTION_NAMESPACE);
-            PRHelper.resetProjectResultWithChangedScores(projectId, userId, conn);
+            PRHelper.populateProjectResult(projectId, conn);
         } catch (DBConnectionException e) {
             throw new BaseException("Failed to return DBConnection", e);
         } catch (SQLException e) {
