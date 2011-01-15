@@ -239,9 +239,16 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *     <li>Added {@link #getDeliverableIdToNameMap()} method.</li>
  *   </ol>
  * </p>
+ *
+ * <p>
+ * Version 1.11 (Content Creation Contest Online Review & TC Site Integration Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #isProjectResultCategory(long)} method.</li>
+ *   </ol>
+ * </p>
 
  * @author George1, real_vg, pulky, isv, FireIce
- * @version 1.10
+ * @version 1.11
  * @since 1.0
  */
 public class ActionsHelper {
@@ -276,12 +283,12 @@ public class ActionsHelper {
     private static final ManagerCreationHelper managerCreationHelper = new ManagerCreationHelper();
 
     /**
-     * constant for software user fourm role prefix 
+     * constant for software user fourm role prefix
      */
     private static final String SOFTWARE_USER_FORUM_ROLE_PREFIX = "Software_Users_";
 
     /**
-     * constant for software moderator fourm role prefix 
+     * constant for software moderator fourm role prefix
      */
     private static final String SOFTWARE_MODERATOR_FORUM_ROLE_PREFIX = "Software_Moderators_";
 
@@ -321,7 +328,9 @@ public class ActionsHelper {
                 || categoryId == 19   // UI Prototype
                 || categoryId == 24   // RIA Build
                 || categoryId == 25   // RIA Component
-                || categoryId == 29);
+                || categoryId == 29   // Copilot Posting
+                || categoryId == 35   // Content Creation
+        );
     }
 
     /**
@@ -357,10 +366,10 @@ public class ActionsHelper {
 
     /**
      * The query string used to select projects.
-     * 
+     *
      * Updated for Cockpit Release Assembly for Receipts
      *     - now fetching client name too.
-     *     
+     *
      * Updated for Version 1.1.1 - added fetch for is_manual_prize_setting property too.
      */
     private static final String SELECT_PROJECT     = "select p.project_id, p.name "
@@ -2940,7 +2949,7 @@ public class ActionsHelper {
 
             // Some checkers are used more than once
             DeliverableChecker committedChecker = new CommittedReviewDeliverableChecker(dbconn);
-            DeliverableChecker submissionIndependentReviewChecker 
+            DeliverableChecker submissionIndependentReviewChecker
                 = new CommittedReviewDeliverableChecker(dbconn, false);
             DeliverableChecker testCasesChecker = new TestCasesDeliverableChecker(dbconn);
 
@@ -3207,7 +3216,7 @@ public class ActionsHelper {
 
                 selectStmt = conn.createStatement();
                 resultSet = selectStmt.executeQuery(queryString);
-                
+
                 while (resultSet.next()) {
                     long projectID = resultSet.getLong(1);
                     String projectName = resultSet.getString(2);
@@ -3288,7 +3297,7 @@ public class ActionsHelper {
      */
     static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format)
             throws BaseException {
-        
+
         String name = newProjectStatus.getName();
         if ("Completed".equals(name)
                 || "Cancelled - Failed Review".equals(name)
@@ -3298,11 +3307,11 @@ public class ActionsHelper {
                 || "Cancelled - Winner Unresponsive".equals(name)
                 || "Cancelled - Client Request".equals(name)
                 || "Cancelled - Requirements Infeasible".equals(name)) {
-            
+
             if (format == null) {
                 format = new SimpleDateFormat(ConfigHelper.getDateFormat());
             }
-            
+
             project.setProperty("Completion Timestamp", format.format(new Date()));
 
             if (!"Deleted".equals(name) && !ActionsHelper.isStudioProject(project)) {
@@ -3457,7 +3466,7 @@ public class ActionsHelper {
 
                 // if the user is logged in and is a resource of this project or a global manager, continue
                 Resource[] myResources = (Resource[]) request.getAttribute("myResources");
-                if ((myResources == null || myResources.length == 0) && 
+                if ((myResources == null || myResources.length == 0) &&
                                !AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) &&
                                !AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
                     // if he's not a resource, check if the project has eligibility constraints
@@ -3500,6 +3509,7 @@ public class ActionsHelper {
         PreparedStatement existStmt = null;
         PreparedStatement existCIStmt = null;
         PreparedStatement ratingStmt = null;
+        PreparedStatement reliabilityStmt = null;
         PreparedStatement componentInquiryStmt = null;
         long categoryId = project.getProjectCategory().getId();
 
@@ -3521,10 +3531,10 @@ public class ActionsHelper {
             log.log(Level.DEBUG, "calculated phaseId for Project: " + projectId + " phaseId: " + phaseId);
             long version = getProjectLongValue(project, "Version ID");
 
-            // old_reliability has been removed, because introduction of new reliability calculator
+            // add reliability_ind and old_reliability
             ps = conn.prepareStatement("INSERT INTO project_result " +
-                    "(project_id, user_id, rating_ind, valid_submission_ind, old_rating) " +
-                    "values (?, ?, ?, ?, ?)");
+                    "(project_id, user_id, rating_ind, valid_submission_ind, old_rating, old_reliability) " +
+                    "values (?, ?, ?, ?, ?, ?)");
 
             componentInquiryStmt = conn.prepareStatement("INSERT INTO component_inquiry " +
                     "(component_inquiry_id, component_id, user_id, project_id, phase, tc_user_id, agreed_to_terms, rating, version, create_time) " +
@@ -3535,6 +3545,9 @@ public class ActionsHelper {
             existCIStmt = conn.prepareStatement("SELECT 1 FROM component_inquiry WHERE user_id = ? and project_id = ?");
 
             ratingStmt = conn.prepareStatement("SELECT rating, phase_id, (select project_category_id from project where project_id = ?) as project_category_id from user_rating where user_id = ? ");
+
+            reliabilityStmt = conn.prepareStatement("SELECT rating from user_reliability where user_id = ? and phase_id = " +
+                    "(select 111+project_category_id from project where project_id = ?)");
 
             for (Long userId : newSubmitters) {
                 // Check if projectResult exist
@@ -3573,7 +3586,19 @@ public class ActionsHelper {
                 }
 
 
+                double oldReliability = 0;
                 if (!existPR) {
+                    //Retrieve Reliability
+                    reliabilityStmt.clearParameters();
+                    reliabilityStmt.setLong(1, userId);
+                    reliabilityStmt.setLong(2, projectId);
+                    rs = reliabilityStmt.executeQuery();
+
+                    if (rs.next()) {
+                        oldReliability = rs.getDouble(1);
+                    }
+                    close(rs);
+
                     //add project_result
                     ps.setLong(1, projectId);
                     ps.setLong(2, userId);
@@ -3584,6 +3609,12 @@ public class ActionsHelper {
                         ps.setNull(5, Types.DOUBLE);
                     } else {
                         ps.setDouble(5, oldRating);
+                    }
+
+                    if (oldReliability == 0) {
+                        ps.setNull(6, Types.DOUBLE);
+                    } else {
+                        ps.setDouble(6, oldReliability);
                     }
                     ps.addBatch();
                 }
@@ -3623,6 +3654,7 @@ public class ActionsHelper {
             close(existStmt);
             close(existCIStmt);
             close(ratingStmt);
+            close(reliabilityStmt);
             close(conn);
         }
     }
@@ -4188,7 +4220,7 @@ public class ActionsHelper {
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
                     + DB_CONNECTION_NAMESPACE);
-            PRHelper.populateProjectResult(projectId, conn);
+            PRHelper.resetProjectResultWithChangedScores(projectId, userId, conn);
         } catch (DBConnectionException e) {
             throw new BaseException("Failed to return DBConnection", e);
         } catch (SQLException e) {
@@ -4457,14 +4489,14 @@ public class ActionsHelper {
     public static boolean isStudioProject(Project project) {
         return "Studio".equals(project.getProjectCategory().getProjectType().getName());
     }
-    
+
     private static Forums getForumBean() throws RemoteException, CreateException, NamingException {
         Context context = TCContext.getInitial(ApplicationServer.FORUMS_HOST_URL);
         ForumsHome forumsHome = (ForumsHome) context.lookup(ForumsHome.EJB_REF_NAME);
         return forumsHome.create();
 //        return EJBLibraryServicesLocator.getForumsService();
     }
-    
+
     public static void addForumPermissions(Project project, Collection<Long> users) throws BaseException {
         addForumPermissions(project, users, false);
     }
@@ -4474,7 +4506,7 @@ public class ActionsHelper {
         try {
             Forums forumBean = getForumBean();
 
-            
+
             String roleId = SOFTWARE_USER_FORUM_ROLE_PREFIX + getProjectLongValue(project, "Developer Forum ID");
 
             if (moderator)
@@ -4489,15 +4521,15 @@ public class ActionsHelper {
             throw new BaseException("Error adding forum permissions for project id " + project.getId(), e);
         }
     }
-    
+
     public static void addForumPermissions(Project project, Long user) throws BaseException {
         addForumPermissions(project, userToUsers(user));
     }
-    
+
     public static void removeForumPermissions(Project project, Collection<Long> users) throws BaseException {
         try {
             Forums forumBean = getForumBean();
-            
+
             // just be safe, remove both roles, since we start assigning two roles.
             String userroleId = SOFTWARE_USER_FORUM_ROLE_PREFIX + getProjectLongValue(project, "Developer Forum ID");
             String moderatorroleId = SOFTWARE_MODERATOR_FORUM_ROLE_PREFIX + getProjectLongValue(project, "Developer Forum ID");
@@ -4511,7 +4543,7 @@ public class ActionsHelper {
             throw new BaseException("Error removing forum permissions for project id " + project.getId(), e);
         }
     }
-    
+
     public static void removeForumPermissions(Project project, Long user) throws BaseException {
         removeForumPermissions(project, userToUsers(user));
     }
@@ -4519,7 +4551,7 @@ public class ActionsHelper {
     public static void addForumWatch(Project project, Collection<Long> users, long forumId) throws BaseException {
         try {
             Forums forumBean = getForumBean();
-            
+
             if (forumId != 0) {
                 for (Long userId : users) {
                       forumBean.createCategoryWatch(userId, forumId);
@@ -4615,7 +4647,7 @@ public class ActionsHelper {
      * <p>Updates the payments for existing submitters.</p>
      *
      * @param projectId a <code>long</code> providing the ID for the project.
-     * @param submitterPayments a <code>Map</code> mapping submitter IDs to submitter payments. 
+     * @param submitterPayments a <code>Map</code> mapping submitter IDs to submitter payments.
      * @throws BaseException if an unexpected error occurs.
      * @since BUGR-2807
      */
@@ -4681,7 +4713,7 @@ public class ActionsHelper {
             PhaseType phaseType = phase.getPhaseType();
 
             if ((phaseType != null)
-                && (phaseType.getName().equalsIgnoreCase("Final Review") 
+                && (phaseType.getName().equalsIgnoreCase("Final Review")
                     || phaseType.getName().equalsIgnoreCase("Approval"))) {
                 lastPhase = phase;
             }
@@ -4864,7 +4896,7 @@ public class ActionsHelper {
     /**
      * <p>Checks if <code>Specification Submission</code> is already delivered by another resource for same phase mapped
      * to specified deliverable.</p>
-     *  
+     *
      * @param deliverable a <code>Deliverable</code> to be added to collected list of deliverables.
      * @param allDeliverables an <code>Deliverable</code> array listing all deliverables for project.
      * @return <code>true</code> if <code>Specification Submission</code> is already delivered; <code>false</code>

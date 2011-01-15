@@ -5209,6 +5209,16 @@
                     <Value>iconCopilotPosting.png</Value>
                 </Property>
             </Property>
+            
+            <!-- Icons added for content creation project type -->
+            <Property name="Content Creation">
+                <Property name="IconSmall">
+                    <Value>iconContentCreationSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconContentCreation.gif</Value>
+                </Property>
+            </Property>
         </Property>
 
         <Property name="ProjectTypeViewContestLinks">
