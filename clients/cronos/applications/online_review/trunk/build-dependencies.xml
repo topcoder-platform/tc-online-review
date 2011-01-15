@@ -292,7 +292,7 @@
     <property name="online_review_phases.jar"
               value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}"/>
 
-    <property name="online_review_upload_services.version" value="1.0"/>
+    <property name="online_review_upload_services.version" value="1.1.1"/>
     <property name="online_review_upload_services.jar.name" value="online_review_upload_services.jar"/>
     <property name="online_review_upload_services.path"
               value="online_review_upload_services/${online_review_upload_services.version}"/>
