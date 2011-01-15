@@ -33,12 +33,15 @@ import java.util.HashSet;
  *
  * <p>Version 1.3 (Appeals Early Completion Release Assembly 1.0) Change notes:
  *  Updated Reviewer payments to pay final review and aggregation just once.</p>
- * 
+ *
  * <p>Version 1.4 (Copilot Selection Contest Online Review and TC Site Integration Assembly 1.0) Change notes:
  *  Updated to support copilot posting project type.</p>
  *
- * @author George1, brain_cn, pulky, Blues
- * @version 1.4
+ * <p>Version 1.5 (Content Creation Contest Online Review and TC Site Integration Assembly 1.0) Change notes:
+ *  Updated to support content creation project type.</p>
+ *
+ * @author George1, brain_cn, pulky, Blues, FireIce
+ * @version 1.5
  */
 public class AutoPaymentUtil {
         /**
@@ -151,7 +154,9 @@ public class AutoPaymentUtil {
         && projectCategoryId != 24    // RIA Build
         && projectCategoryId != 27    // Spec Review
         && projectCategoryId != 25    // RIA Component
-        && projectCategoryId != 29) { // Copilot Posting
+        && projectCategoryId != 29    // Copilot Posting
+        && projectCategoryId != 35    // Content Creation
+        ) {
                 return;
         }
 
@@ -182,7 +187,7 @@ public class AutoPaymentUtil {
         // this is added to pay final review, aggregator and spec reviewer only once.
         boolean alreadyPaidAggregator = false;
         boolean alreadyPaidFinalReviewer = false;
-        boolean alreadyPaidSpecReviewer = false;        
+        boolean alreadyPaidSpecReviewer = false;
         for (Iterator<Reviewer> iter = reviewers.iterator(); iter.hasNext();) {
             Reviewer reviewer = iter.next();
 
@@ -617,7 +622,7 @@ public class AutoPaymentUtil {
      * @param projectInfoTypeId the project info type id
      * @param conn the db connection
      */
-    private static String getProjectInfo(long projectId, long projectInfoTypeId, Connection conn) 
+    private static String getProjectInfo(long projectId, long projectInfoTypeId, Connection conn)
         throws SQLException {
             PreparedStatement pstmt = null;
             ResultSet rs = null;
