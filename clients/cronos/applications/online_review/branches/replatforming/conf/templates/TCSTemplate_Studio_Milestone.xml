@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<Template name="Studio With Milestone">
+    <PhaseTypes>
+        <PhaseType id="registration" typeId="1" typeName="Registration"/>
+        <PhaseType id="submission" typeId="2" typeName="Submission"/>
+        <PhaseType id="screening" typeId="3" typeName="Screening"/>
+        <PhaseType id="review" typeId="2" typeName="Review"/>
+        <PhaseType id="final_fixes" typeId="7" typeName="Final Fix"/>
+        <PhaseType id="final_review" typeId="8" typeName="Final Review"/>
+        <PhaseType id="milestone_submission" typeId="15" typeName="Milestone Submission"/>
+        <PhaseType id="milestone_screening" typeId="16" typeName="Milestone Screening"/>
+        <PhaseType id="milestone_review" typeId="17" typeName="Milestone Review"/>
+    </PhaseTypes>
+
+    <Phases>
+        <Phase id="registrationPhase" length="302400000" type="registration" phaseId="1"/>
+        
+        <Phase id="submissionPhase" length="604800000" type="submission" phaseId="2">
+            <Dependency id="registrationPhase" isDependencyStart="true" isDependentStart="true" lagTime="0"/>
+        </Phase>
+
+        <Phase id="milestoneSubmissionPhase" length="259200000" type="milestone_submission" phaseId="3">
+            <Dependency id="registrationPhase" isDependencyStart="true" isDependentStart="true" lagTime="300000"/>
+        </Phase>
+
+        <Phase id="milestoneScreeningPhase" length="43200000" type="milestone_screening" phaseId="4">
+            <Dependency id="milestoneSubmissionPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
+        </Phase>
+
+        <Phase id="milestoneReviewPhase" length="86400000" type="milestone_review" phaseId="5">
+            <Dependency id="milestoneScreeningPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
+        </Phase>
+
+        <Phase id="screeningPhase" length="43200000" type="screening" phaseId="6">
+            <Dependency id="submissionPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
+        </Phase>
+
+        <Phase id="reviewPhase" length="345600000" type="review" phaseId="7">
+            <Dependency id="screeningPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
+        </Phase>
+
+        <Phase id="finalFixesPhase" length="259200000" type="final_fixes" phaseId="8">
+            <Dependency id="reviewPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
+        </Phase>
+
+        <Phase id="finalReviewPhase" length="86400000" type="final_review" phaseId="9">
+            <Dependency id="finalFixesPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
+        </Phase>
+    </Phases>
+</Template>
