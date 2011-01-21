@@ -11,11 +11,14 @@ import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManagerFactory;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
 import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
+import com.cronos.onlinereview.phases.MilestoneReviewPhaseHandler;
+import com.cronos.onlinereview.phases.MilestoneSubmissionPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
 import com.cronos.onlinereview.phases.PRFinalFixPhaseHandler;
 import com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler;
+import com.cronos.onlinereview.phases.PRMilestoneScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
 import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
@@ -80,8 +83,15 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  *   </ol>
  * </p>
  *
- * @author evilisneo, BeBetter, isv
- * @version 1.3
+ * <p>
+ * Version 1.3.1 (Milestone Support Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added support for <code>Milestone</code> phases.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author evilisneo, BeBetter, isv, TCSDEVELOPER
+ * @version 1.3.1
  * @since 1.0
  */
 public class ManagerCreationHelper implements ManagersProvider {
@@ -165,6 +175,12 @@ public class ManagerCreationHelper implements ManagersProvider {
                     Constants.SPECIFICATION_SUBMISSION_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new SpecificationReviewPhaseHandler(),
                     Constants.SPECIFICATION_REVIEW_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new MilestoneSubmissionPhaseHandler(),
+                    Constants.MILESTONE_SUBMISSION_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRMilestoneScreeningPhaseHandler(),
+                    Constants.MILESTONE_SCREENING_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new MilestoneReviewPhaseHandler(),
+                    Constants.MILESTONE_REVIEW_PHASE_NAME);
             return phaseManager;
         } catch (Exception e) {
             throw new ManagerCreationException("Exception occurred while creating the PhaseManager.", e);

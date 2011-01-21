@@ -28,11 +28,18 @@ import com.topcoder.project.phases.PhaseStatus;
  *     <li>Added {@link SpecificationComparer} class.</li>
  *   </ol>
  * </p>
+ *
+ * <p>
+ * Version 1.1.1 (Milestone Support Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added comparison logic for <code>Milestone</code> phases.</li>
+ *   </ol>
+ * </p>
 
  *
  * @author George1
  * @author real_vg, isv
- * @version 1.1
+ * @version 1.1.1
  */
 final class Comparators {
 
@@ -59,7 +66,9 @@ final class Comparators {
          */
         final private static String[] phaseOrder = new String[] {
             Constants.SPECIFICATION_SUBMISSION_PHASE_NAME, Constants.SPECIFICATION_REVIEW_PHASE_NAME,
-            Constants.REGISTRATION_PHASE_NAME, Constants.SUBMISSION_PHASE_NAME, Constants.SCREENING_PHASE_NAME,
+            Constants.REGISTRATION_PHASE_NAME, Constants.MILESTONE_SUBMISSION_PHASE_NAME, 
+            Constants.MILESTONE_SCREENING_PHASE_NAME, Constants.MILESTONE_REVIEW_PHASE_NAME, 
+            Constants.SUBMISSION_PHASE_NAME, Constants.SCREENING_PHASE_NAME,
             Constants.REVIEW_PHASE_NAME, Constants.APPEALS_PHASE_NAME, Constants.APPEALS_RESPONSE_PHASE_NAME,
             Constants.AGGREGATION_PHASE_NAME, Constants.AGGREGATION_REVIEW_PHASE_NAME, Constants.FINAL_FIX_PHASE_NAME,
             Constants.FINAL_REVIEW_PHASE_NAME, Constants.APPROVAL_PHASE_NAME
@@ -107,6 +116,14 @@ final class Comparators {
                         return -1;
                     }
                 }
+            }
+            
+            boolean isPhase1Milestone = phase1.getPhaseType().getName().startsWith("Milestone");
+            boolean isPhase2Milestone = phase2.getPhaseType().getName().startsWith("Milestone");
+            if ((isPhase1Milestone || isPhase2Milestone) && !(isPhase1Milestone && isPhase2Milestone)) {
+                final int ranking1 = getPhaseRanking((Phase) o1);
+                final int ranking2 = getPhaseRanking((Phase) o2);
+                return ranking1 - ranking2;
             }
 
             int comparison = super.compare(o1, o2);
@@ -287,8 +304,8 @@ final class Comparators {
             // or by their upload times, which are the creation times of their respective uploads
             return ((finalScore1 != finalScore2)
             		? finalScore2.compareTo(finalScore1)
-            		: submission2.getUpload().getCreationTimestamp().compareTo(
-            				submission1.getUpload().getCreationTimestamp()));
+            		: submission2.getUploads().get(0).getCreationTimestamp().compareTo(
+            				submission1.getUploads().get(0).getCreationTimestamp()));
         }
 
         /**
@@ -402,6 +419,94 @@ final class Comparators {
          */
         public int compare(Submission submission1, Submission submission2) {
             return submission1.getCreationTimestamp().compareTo(submission2.getCreationTimestamp());
+        }
+    }
+
+    /**
+     * This class implements <code>Comparator</code> interface and is used to sort Milestone Submissions in
+     * array. It sorts Submissions either by the time they were submitted (starting from the most
+     * recent ones), or by the place submission took up.
+     * 
+     * @author isv
+     * @since 1.1.1
+     */
+    static class MilestoneSubmissionComparator implements Comparator<Submission> {
+
+        /**
+         * This member variable contains resources (submitters) assigned to this comprator class.
+         * They are stored in the map data structure, where each submitter's ID is matched to that
+         * submitter's record, to speed up the access operation.
+         */
+        private Map<Long, Resource> submitters = null;
+
+        /**
+         * This method compares its two arguments for order. This method expects that type of
+         * the objects passed as arguments is <code>Submission</code>.
+         * <p>
+         * This method implements the <code>compare</code> method from the
+         * <code>Comparator</code> interface.
+         * </p>
+         *
+         * @return a negative integer, zero, or a positive integer as the first argument is less
+         *         than, equal to, or greater than the second respectively.
+         * @param submission1 the first object to be compared.
+         * @param submission2 the second object to be compared.
+         */
+        public int compare(Submission submission1, Submission submission2) {
+            if (submitters == null) {
+                throw new IllegalStateException("Submitters must be assigned before sorting operation.");
+            }
+
+            Double finalScore1 = submission1.getInitialScore() == null ? 0 : submission1.getInitialScore(); 
+            Double finalScore2 = submission2.getInitialScore() == null ? 0 : submission2.getInitialScore();
+            
+            if (submission1.getInitialScore() != null || submission2.getInitialScore() != null) {
+                return finalScore2.compareTo(finalScore1);
+            }
+
+            Double screeningScore1 = submission1.getScreeningScore() == null ? 0 : submission1.getScreeningScore(); 
+            Double screeningScore2 = submission2.getScreeningScore() == null ? 0 : submission2.getScreeningScore();
+            
+            if (submission1.getScreeningScore() != null || submission2.getScreeningScore() != null) {
+                return screeningScore2.compareTo(screeningScore1);
+            }
+
+            return submission2.getUploads().get(0).getCreationTimestamp().compareTo(
+                submission1.getUploads().get(0).getCreationTimestamp());
+        }
+
+        /**
+         * This method assigns submitters to this comparator class for their use in later comparison
+         * operation.
+         *
+         * @param submitters
+         *            an array of resources, each element of which has Submitter role. This
+         *            parameter can be <code>null</code>, but if it is not <code>null</code>,
+         *            it must not contain <code>null</code> elements or contain resources that are
+         *            not Submitters.
+         * @throws IllegalArgumentException
+         *             if parameter <code>submitters</code> is not <code>null</code> and
+         *             contains <code>null</code> elements or any of the resources stored in it do
+         *             not have a Submitter role.
+         */
+        public void assignSubmitters(Resource[] submitters) {
+            this.submitters = new HashMap<Long, Resource>();
+
+            if (submitters == null) {
+                return;
+            }
+
+            for (int i = 0; i < submitters.length; ++i) {
+                Resource submitter = submitters[i];
+
+                if (submitter == null) {
+                    throw new IllegalArgumentException("Parameter 'submitters' must not contain null elements.");
+                }
+                if (!submitter.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
+                    throw new IllegalArgumentException("Parameter 'submitters' must contain Submitters only.");
+                }
+                this.submitters.put(submitter.getId(), submitter);
+            }
         }
     }
 }

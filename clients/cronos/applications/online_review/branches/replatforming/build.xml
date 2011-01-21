@@ -662,4 +662,93 @@
          src="http://${bind_addr}:${selenium_port}/selenium-server/driver/?cmd=shutDownSeleniumServer"
          dest="${testlogdir}/result.txt" ignoreerrors="true" />
   </target>
+
+    <!--
+        ++ =======================================================================
+        ++ Macro: compile_component
+        ++ Compiles specified component
+        ++ =======================================================================
+    -->
+    <macrodef name="compile_component" description="Compiles the component">
+        <attribute name="component"/>
+        <attribute name="version"/>
+        <attribute name="path"/>
+
+        <sequential>
+            <property name="component_base_dir" value="@{path}"/>
+            <property name="component_src_dir" value="${component_base_dir}/src/java/main"/>
+            <property name="component_build_dir" value="${component_base_dir}/build"/>
+            <property name="component_build_classes_dir" value="${component_build_dir}/classes"/>
+            <property name="component_jar_file" value="${component_build_dir}/@{component}.jar"/>
+            <property name="component_dist_dir" value="${tcs_libdir}/@{component}/@{version}"/>
+
+            <delete dir="${component_build_dir}"/>
+            <mkdir dir="${component_build_dir}"/>
+            <mkdir dir="${component_build_classes_dir}"/>
+
+            <echo message="Base: ${component_base_dir}"/>
+            <echo message="Build: ${component_build_dir}"/>
+            <echo message="Src: ${component_src_dir}"/>
+            <echo message="Dist: ${component_dist_dir}"/>
+            <echo message="Jar: ${component_jar_file}"/>
+
+            <javac srcdir="${component_src_dir}"
+                   destdir="${component_build_classes_dir}"
+                   deprecation="on"
+                   debug="on"
+                   source="1.5" target="1.5" memoryMaximumSize="512M" memoryInitialSize="64M" fork="true">
+                <classpath refid="buildlibs"/>
+                <include name="**/*"/>
+            </javac>
+            <jar basedir="${component_build_classes_dir}" jarfile="${component_jar_file}" includes="**"/>
+            <mkdir dir="${component_dist_dir}"/>
+            <copy file="${component_jar_file}" todir="${component_dist_dir}"/>
+        </sequential>
+    </macrodef>
+
+    <target name="compile_component_1">
+        <compile_component component="project_management" version="1.2.0"
+                           path="${replatforming_components_path}/project_management"/>
+    </target>
+
+    <target name="compile_component_2">
+        <compile_component component="project_management_persistence" version="1.2.0"
+                           path="${replatforming_components_path}/project_management_persistence"/>
+    </target>
+
+    <target name="compile_component_3">
+        <compile_component component="deliverable_management" version="1.2.0"
+                           path="${replatforming_components_path}/deliverable_management"/>
+    </target>
+
+    <target name="compile_component_4">
+        <compile_component component="deliverable_management_persistence" version="1.2.0"
+                           path="${replatforming_components_path}/deliverable_management_persistence"/>
+    </target>
+    
+    <target name="compile_component_5">
+        <compile_component component="online_review_phases" version="1.6.0"
+                           path="${replatforming_components_path}/online_review_phases"/>
+    </target>
+    
+    <target name="compile_component_6">
+        <compile_component component="online_review_deliverables" version="1.0.2"
+                           path="${replatforming_components_path}/online_review_deliverables"/>
+    </target>
+
+    <target name="compile_component_7">
+        <compile_component component="online_review_ajax_support" version="1.0.2"
+                           path="${replatforming_components_path}/online_review_ajax_support"/>
+    </target>
+
+    <target name="compile_components_all" >
+      <antcall target="compile_component_1" />
+      <antcall target="compile_component_2" />
+      <antcall target="compile_component_3" />
+      <antcall target="compile_component_4" />
+      <antcall target="compile_component_5" />
+      <antcall target="compile_component_6" />
+      <antcall target="compile_component_7" />
+    </target>
+
 </project>

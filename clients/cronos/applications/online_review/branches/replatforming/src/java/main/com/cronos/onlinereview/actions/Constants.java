@@ -61,8 +61,20 @@ package com.cronos.onlinereview.actions;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.6
+ * <p>
+ * Version 1.6.1 (Milestone Support Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #MILESTONE_SCREENER_ROLE_NAME} constant.</li>
+ *     <li>Added {@link #MILESTONE_REVIEWER_ROLE_NAME} constant.</li>
+ *     <li>Added {@link #MILESTONE_SUBMISSION_PHASE_NAME} constant.</li>
+ *     <li>Added {@link #MILESTONE_SCREENING_PHASE_NAME} constant.</li>
+ *     <li>Added {@link #MILESTONE_REVIEW_PHASE_NAME} constant.</li>
+ *     <li>Added {@link #VIEW_SCREENER_MILESTONE_SUBMISSION_PERM_NAME} constant and other constants for Milestone.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @version 1.6.1
  */
 public class Constants {
 
@@ -208,7 +220,7 @@ public class Constants {
      * from the Public view.  The purpose is for the designer to view private projects and to
      * receive payments.
      */
-    public static final String DESIGNER_ROLE_NAME = "Designer";
+//    public static final String DESIGNER_ROLE_NAME = "Designer";
 
     /**
      * This member variable is a string constant that defines the name of the Observer role.
@@ -284,6 +296,28 @@ public class Constants {
     public static final String COPILOT_ROLE_NAME = "Copilot";
 
     /**
+     * <p>A <code>String</code> providing the name for the <code>Milestone Submitter</code> resource role.</p>
+     *
+     * @since 1.6.1
+     */
+//    public static final String MILESTONE_SUBMITTER_ROLE_NAME = "Milestone Submitter";
+
+    /**
+     * <p>A <code>String</code> providing the name for the <code>Milestone Screener</code> resource role.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String MILESTONE_SCREENER_ROLE_NAME = "Milestone Screener";
+
+    /**
+     * <p>A <code>String</code> providing the name for the <code>Milestone Reviewer</code> resource role.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String MILESTONE_REVIEWER_ROLE_NAME = "Milestone Reviewer";
+
+
+    /**
      * <p>This member variable is a constant array that holds names of different roles which are granted access to
      * <code>Project Management Console</code> functionalities.</p>
      *
@@ -292,8 +326,8 @@ public class Constants {
      * @see #COPILOT_ROLE_NAME
      * @since 1.2
      */
-    public static final String[] PROJECT_MANAGEMENT_CONSOLE_ROLE_NAMES
-        = new String[] {MANAGER_ROLE_NAME, CLIENT_MANAGER_ROLE_NAME, COPILOT_ROLE_NAME};
+//    public static final String[] PROJECT_MANAGEMENT_CONSOLE_ROLE_NAMES
+//        = new String[] {MANAGER_ROLE_NAME, CLIENT_MANAGER_ROLE_NAME, COPILOT_ROLE_NAME};
 
     // --------------------------------------------------------------------- Permission names -----
 
@@ -395,6 +429,13 @@ public class Constants {
     public static final String PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME = "Perform Specification Submission";
 
     /**
+     * <p>A <code>String</code> providing the name for <code>Perform Milestone Submission</code> permission.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String PERFORM_MILESTONE_SUBMISSION_PERM_NAME = "Perform Milestone Submission";
+
+    /**
      * <p>A <code>String</code> providing the name for <code>Perform Specification Review</code> permission.</p>
      *
      * @since 1.6
@@ -415,6 +456,13 @@ public class Constants {
     public static final String VIEW_ALL_SPECIFICATION_SUBMISSIONS_PERM_NAME = "View All Specification Submissions";
 
     /**
+     * <p>A <code>String</code> providing the name for <code>View All Milestone Submissions</code> permission.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String VIEW_ALL_MILESTONE_SUBMISSIONS_PERM_NAME = "View All Milestone Submissions";
+
+    /**
      * This member variable is a string constant that defines the name of the View My Submissions
      * permission.
      */
@@ -428,10 +476,24 @@ public class Constants {
     public static final String VIEW_MY_SPECIFICATION_SUBMISSIONS_PERM_NAME = "View My Specification Submissions";
 
     /**
+     * <p>A <code>String</code> providing the name for <code>View My Milestone Submissions</code> permission.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String VIEW_MY_MILESTONE_SUBMISSIONS_PERM_NAME = "View My Milestone Submissions";
+
+    /**
      * This member variable is a string constant that defines the name of the
      * View Screener Submission permission.
      */
     public static final String VIEW_SCREENER_SUBM_PERM_NAME = "View Screener Submission";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>View Screener Milestone Submission</code> permission.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String VIEW_SCREENER_MILESTONE_SUBMISSION_PERM_NAME = "View Screener Milestone Submission";
 
     /**
      * This member variable is a string constant that defines the name of the
@@ -449,16 +511,48 @@ public class Constants {
         = "View Most Recent Specification Submissions";
 
     /**
+     * <p>A <code>String</code> providing the name for <code>View Most Recent Milestone Submissions</code> permission.
+     * </p>
+     *
+     * @since 1.6.1
+     */
+    public static final String VIEW_RECENT_MILESTONE_SUBMISSIONS_PERM_NAME
+        = "View Most Recent Milestone Submissions";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>View Most Recent Milestone Submissions After Review</code>
+     * permission.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String VIEW_RECENT_MILESTONE_SUBMISSIONS_AFTER_REVIEW_PERM_NAME
+        = "View Most Recent Milestone Submissions After Review";
+
+    /**
      * This member variable is a string constant that defines the name of the
      * View Winning Submission permission.
      */
     public static final String VIEW_WINNING_SUBM_PERM_NAME = "View Winning Submission";
+    
+    /**
+     * <p>A <code>String</code> providing the name for <code>View Winning Milestone Submission</code> permission.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String VIEW_WINNING_MILESTONE_SUBMISSION_PERM_NAME = "View Winning Milestone Submission";
 
     /**
      * This member variable is a string constant that defines the name of the
      * Download Custom Submission permission.
      */
     public static final String DOWNLOAD_CUSTOM_SUBM_PERM_NAME = "Download Custom Submission";
+    
+    /**
+     * <p>A <code>String</code> providing the name for <code>Download Custom Milestone Submission</code> permission.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String DOWNLOAD_CUSTOM_MILESTONE_SUBMISSION_PERM_NAME = "Download Custom Milestone Submission";
 
     /**
      * This member variable is a string constant that defines the name of the
@@ -477,18 +571,46 @@ public class Constants {
      * permission.
      */
     public static final String PERFORM_SCREENING_PERM_NAME = "Perform Screening";
+    
+    /**
+     * <p>A <code>String</code> providing the name for <code>Perform Milestone Screening</code> permission.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String PERFORM_MILESTONE_SCREENING_PERM_NAME = "Perform Milestone Screening";
 
     /**
      * This member variable is a string constant that defines the name of the View Screening
      * permission.
      */
     public static final String VIEW_SCREENING_PERM_NAME = "View Screening";
+    
+    /**
+     * <p>A <code>String</code> providing the name for <code>View Milestone Screening</code> permission.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String VIEW_MILESTONE_SCREENING_PERM_NAME = "View Milestone Screening";
+    
+    /**
+     * <p>A <code>String</code> providing the name for <code>View Milestone Review</code> permission.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String VIEW_MILESTONE_REVIEW_PERM_NAME = "View Milestone Review";
 
     /**
      * This member variable is a string constant that defines the name of the Perform Review
      * permission.
      */
     public static final String PERFORM_REVIEW_PERM_NAME = "Perform Review";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>View Milestone Review</code> permission.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String PERFORM_MILESTONE_REVIEW_PERM_NAME = "Perform Milestone Review";
 
     /**
      * This member variable is a string constant that defines the name of the Upload Test Cases
@@ -775,6 +897,27 @@ public class Constants {
      */
     public static final String SPECIFICATION_REVIEW_PHASE_NAME = "Specification Review";
 
+    /**
+     * <p>A <code>String</code> providing the name for <code>Milestone Submission</code> phase.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String MILESTONE_SUBMISSION_PHASE_NAME = "Milestone Submission";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Milestone Screening</code> phase.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String MILESTONE_SCREENING_PHASE_NAME = "Milestone Screening";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Milestone Review</code> phase.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String MILESTONE_REVIEW_PHASE_NAME = "Milestone Review";
+
 
     // ------------------------------------------------------------------- Phase Status names -----
 
@@ -839,6 +982,13 @@ public class Constants {
      * @since 1.6
      */
     public static final String SPEC_REVIEW_APP_FUNC = "SPEC_REVIEW";
+    
+    /**
+     * <p>A <code>String</code> providing the logical name for phase group for <code>Milestone</code> phases.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String MILESTONE_APP_FUNC = "MILESTONE";
 
     // -------------------------------------------------------------------- Deliverable names -----
 
@@ -854,6 +1004,27 @@ public class Constants {
      * @since 1.6
      */
     public static final String SPECIFICATION_SUBMISSION_DELIVERABLE_NAME = "Specification Submission";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Milestone Submission</code> deliverable.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String MILESTONE_SUBMISSION_DELIVERABLE_NAME = "Milestone Submission";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Milestone Screening Scorecard</code> deliverable.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String MILESTONE_SCREENING_DELIVERABLE_NAME = "Milestone Screening Scorecard";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Milestone Review Scorecard</code> deliverable.</p>
+     *
+     * @since 1.6.1
+     */
+    public static final String MILESTONE_REVIEW_DELIVERABLE_NAME = "Milestone Review Scorecard";
 
     /**
      * <p>A <code>String</code> providing the name for <code>Specification Review</code> deliverable.</p>
@@ -1035,6 +1206,12 @@ public class Constants {
      */
     static final String APPEALS_COMPLETED_EARLY_PROPERTY_KEY = "Appeals Completed Early";
 
+    /**
+     * <p>A <code>long</code> providing the ID for project type for <code>Studio</code> projects.</p>
+     * 
+     * @since 1.6.1
+     */
+    public static final long STUDIO_PROJECT_ID = 3;
     // Hidden constructor
 
     /**

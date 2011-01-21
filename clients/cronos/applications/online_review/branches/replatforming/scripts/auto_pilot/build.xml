@@ -39,12 +39,27 @@
     <property name="phase_handler_extend.path" value="${build_components}/phase_handler_extend" />
     <property name="phase_handler_extend.jar" value="${phase_handler_extend.path}/phase_handler_extend.jar" />
 
-    <target name="compile">
+    <property name="ejb_library.path" value="${build_components}/ejb_library" />
+    <property name="ejb_library.jar" value="${ejb_library.path}/ejb_library.jar" />
+
+    <target name="compile_phase_handler">
         <mkdir dir="${build_classdir}"/>
         <delete failonerror="false">
             <fileset dir="${build_classdir}" includes="**/*.class"/>
         </delete>
         <javac srcdir="${javamain}" destdir="${build_classdir}" includes="com/cronos/onlinereview/phases/**/*.java"
+               debug="${debug}" verbose="${verbose}"
+               source="1.5" target="1.5">
+            <classpath refid="buildlibs"/>
+        </javac>
+    </target>
+  
+    <target name="compile_ejb_library">
+        <mkdir dir="${build_classdir}"/>
+        <delete failonerror="false">
+            <fileset dir="${build_classdir}" includes="**/*.class"/>
+        </delete>
+        <javac srcdir="${javamain}" destdir="${build_classdir}" includes="com/cronos/onlinereview/ejblibrary/**/*.java"
                debug="${debug}" verbose="${verbose}"
                source="1.5" target="1.5">
             <classpath refid="buildlibs"/>
@@ -72,14 +87,21 @@
         </replace>
     </target>
 
-    <target name="dist_phase_handler" depends="compile"
+    <target name="dist_phase_handler" depends="compile_phase_handler"
             description="Compiles and builds the distribution for Phase Handler Extend component">
       <mkdir dir="${phase_handler_extend.path}" />
         <jar destfile="${phase_handler_extend.jar}" basedir="${build_classdir}"
              includes="com/cronos/onlinereview/phases/**"/>
     </target>
 
-    <target name="dist" depends="dist_phase_handler, tokenize"
+    <target name="dist_ejb_library" depends="compile_ejb_library"
+              description="Compiles and builds the distribution for EJB Library component">
+      <mkdir dir="${ejb_library.path}" />
+      <jar destfile="${ejb_library.jar}" basedir="${build_classdir}"
+           includes="com/cronos/onlinereview/ejblibrary/**"/>
+    </target>
+
+    <target name="dist" depends="dist_phase_handler, dist_ejb_library, tokenize"
             description="Builds the JAR file with binary distribution of Auto Pilot">
         <delete file="${build_distdir}/auto_pilot_app.jar" failonerror="no"/>
         <jar destfile="${build_distdir}/auto_pilot_app.jar" filesonly="true">
@@ -144,6 +166,7 @@
             <fileset file="${shared.jar}"/>
             <fileset file="${jbossall-client.jar}"/>
             <fileset file="${svnkit.jar}"/>
+            <fileset file="${ejb_library.jar}"/>
             <fileset dir=".">
                 <include name="build.xml"/>
             </fileset>

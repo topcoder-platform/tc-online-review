@@ -42,8 +42,15 @@ import com.topcoder.project.phases.Phase;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.4.1 (Milestone Support Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added support for <code>Milestone</code> phases.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, isv
- * @version 1.3
+ * @version 1.4.1
  */
 public class PhaseGroup {
 
@@ -385,6 +392,56 @@ public class PhaseGroup {
      * @since 1.3
      */
     private Resource specificationSubmitter;
+
+    /**
+     * <p>A <code>Submission[]</code> providing the list of milestone submissions.</p>
+     * 
+     * @since 1.4
+     */
+    private Submission[] milestoneSubmissions;
+
+    /**
+     * <p>A <code>Resource</code> providing the details on milestone screener.</p>
+     * 
+     * @since 1.4
+     */
+    private Resource milestoneScreener;
+
+    /**
+     * <p>A <code>Resource</code> providing the details on milestone reveiwer.</p>
+     * 
+     * @since 1.4
+     */
+    private Resource milestoneReviewer;
+
+    /**
+     * <p>A <code>Review[]</code> providing the list of milestone screening reviews.</p>
+     * 
+     * @since 1.4
+     */
+    private Review[] milestoneScreeningReviews;
+
+    /**
+     * <p>A <code>Review[]</code> providing the list of milestone reviews.</p>
+     * 
+     * @since 1.4
+     */
+    private Review[] milestoneReviews;
+
+    /**
+     * <p>A <code>Upload[][]</code> providing the list of past milestone submissions.</p>
+     * 
+     * @since 1.4
+     */
+    private Upload[][] pastMilestoneSubmissions;
+
+    /**
+     * <p>A <code>boolean</code> providing the flag indicating if milestone review phase for project has finished or
+     * not.</p>
+     * 
+     * @since 1.4
+     */
+    private boolean milestoneReviewFinished;
 
     /**
      * Constructs a new instance of the <code>PhaseGroup</code> class setting all fields to their
@@ -1191,5 +1248,147 @@ public class PhaseGroup {
      */
     public void setSpecificationSubmitter(Resource specificationSubmitter) {
         this.specificationSubmitter = specificationSubmitter;
+    }
+    
+    /**
+     * <p>Gets the list of milestone reviews..</p>
+     *
+     * @return a <code>Review[]</code> providing the list of milestone reviews..
+     * @since 1.4
+     */
+    public Review[] getMilestoneReviews() {
+        return this.milestoneReviews;
+    }
+
+    /**
+     * <p>Sets the list of milestone reviews..</p>
+     *
+     * @param milestoneReviews a <code>Review[]</code> providing the list of milestone reviews..
+     * @since 1.4
+     */
+    public void setMilestoneReviews(Review[] milestoneReviews) {
+        this.milestoneReviews = milestoneReviews;
+    }
+
+    /**
+     * <p>Gets the list of milestone screening reviews.</p>
+     *
+     * @return a <code>Review[]</code> providing the list of milestone screening reviews.
+     * @since 1.4
+     */
+    public Review[] getMilestoneScreeningReviews() {
+        return this.milestoneScreeningReviews;
+    }
+
+    /**
+     * <p>Sets the list of milestone screening reviews.</p>
+     *
+     * @param milestoneScreeningReviews a <code>Review[]</code> providing the list of milestone screening reviews.
+     * @since 1.4
+     */
+    public void setMilestoneScreeningReviews(Review[] milestoneScreeningReviews) {
+        this.milestoneScreeningReviews = milestoneScreeningReviews;
+    }
+
+    /**
+     * <p>Gets the details on milestone reveiwer.</p>
+     *
+     * @return a <code>Resource</code> providing the details on milestone reveiwer.
+     * @since 1.4
+     */
+    public Resource getMilestoneReviewer() {
+        return this.milestoneReviewer;
+    }
+
+    /**
+     * <p>Sets the details on milestone reveiwer.</p>
+     *
+     * @param milestoneReviewer a <code>Resource</code> providing the details on milestone reveiwer.
+     * @since 1.4
+     */
+    public void setMilestoneReviewer(Resource milestoneReviewer) {
+        this.milestoneReviewer = milestoneReviewer;
+    }
+
+    /**
+     * <p>Gets the details on milestone screener.</p>
+     *
+     * @return a <code>Resource</code> providing the details on milestone screener.
+     * @since 1.4
+     */
+    public Resource getMilestoneScreener() {
+        return this.milestoneScreener;
+    }
+
+    /**
+     * <p>Sets the details on milestone screener.</p>
+     *
+     * @param milestoneScreener a <code>Resource</code> providing the details on milestone screener.
+     * @since 1.4
+     */
+    public void setMilestoneScreener(Resource milestoneScreener) {
+        this.milestoneScreener = milestoneScreener;
+    }
+
+    /**
+     * <p>Gets the list of milestone submissions.</p>
+     *
+     * @return a <code>Submission[]</code> providing the list of milestone submissions.
+     * @since 1.4
+     */
+    public Submission[] getMilestoneSubmissions() {
+        return this.milestoneSubmissions;
+    }
+
+    /**
+     * <p>Sets the list of milestone submissions.</p>
+     *
+     * @param milestoneSubmissions a <code>Submission[]</code> providing the list of milestone submissions.
+     * @since 1.4
+     */
+    public void setMilestoneSubmissions(Submission[] milestoneSubmissions) {
+        this.milestoneSubmissions = milestoneSubmissions;
+    }
+
+    /**
+     * <p>Gets the list of past milestone submissions.</p>
+     *
+     * @return a <code>Upload[][]</code> providing the list of past milestone submissions.
+     * @since 1.4
+     */
+    public Upload[][] getPastMilestoneSubmissions() {
+        return this.pastMilestoneSubmissions;
+    }
+
+    /**
+     * <p>Sets the list of past milestone submissions.</p>
+     *
+     * @param pastMilestoneSubmissions a <code>Upload[][]</code> providing the list of past milestone submissions.
+     * @since 1.4
+     */
+    public void setPastMilestoneSubmissions(Upload[][] pastMilestoneSubmissions) {
+        this.pastMilestoneSubmissions = pastMilestoneSubmissions;
+    }
+
+    /**
+     * <p>Gets the flag indicating if milestone review phase for project has finished or not.</p>
+     *
+     * @return a <code>boolean</code> providing the flag indicating if milestone review phase for project has finished
+     *         or not.
+     * @since 1.4
+     */
+    public boolean getMilestoneReviewFinished() {
+        return this.milestoneReviewFinished;
+    }
+
+    /**
+     * <p>Sets the flag indicating if milestone review phase for project has finished or not.</p>
+     *
+     * @param milestoneReviewFinished a <code>boolean</code> providing the flag indicating if milestone review phase for
+     *                                project has finished or not.
+     * @since 1.4
+     */
+    public void setMilestoneReviewFinished(boolean milestoneReviewFinished) {
+        this.milestoneReviewFinished = milestoneReviewFinished;
     }
 }

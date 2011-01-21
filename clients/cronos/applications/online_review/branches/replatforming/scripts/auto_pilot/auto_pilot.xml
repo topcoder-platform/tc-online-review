@@ -197,6 +197,15 @@
             <Value>handler_specification_review_start</Value>
             <Value>handler_specification_review_end</Value>
             <Value>handler_specification_review_cancel</Value>
+            <Value>handler_milestone_submission_start</Value>
+            <Value>handler_milestone_submission_end</Value>
+            <Value>handler_milestone_submission_cancel</Value>
+            <Value>handler_milestone_screening_start</Value>
+            <Value>handler_milestone_screening_end</Value>
+            <Value>handler_milestone_screening_cancel</Value>
+            <Value>handler_milestone_review_start</Value>
+            <Value>handler_milestone_review_end</Value>
+            <Value>handler_milestone_review_cancel</Value>
         </Property>
         <!-- The details about each handler -->
         <Property name="handler_final_review_start">
@@ -661,6 +670,105 @@
                 <Value>handler_specification_review_def</Value>
             </Property>
         </Property>
+        <Property name="handler_milestone_submission_start">
+            <Property name="phaseType">
+                <Value>milestone_submission</Value>
+            </Property>
+            <Property name="operation">
+                <Value>start</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_milestone_submission_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_milestone_submission_end">
+            <Property name="phaseType">
+                <Value>milestone_submission</Value>
+            </Property>
+            <Property name="operation">
+                <Value>end</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_milestone_submission_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_milestone_submission_cancel">
+            <Property name="phaseType">
+                <Value>milestone_submission</Value>
+            </Property>
+            <Property name="operation">
+                <Value>cancel</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_milestone_submission_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_milestone_screening_start">
+            <Property name="phaseType">
+                <Value>milestone_screening</Value>
+            </Property>
+            <Property name="operation">
+                <Value>start</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_milestone_screening_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_milestone_screening_end">
+            <Property name="phaseType">
+                <Value>milestone_screening</Value>
+            </Property>
+            <Property name="operation">
+                <Value>end</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_milestone_screening_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_milestone_screening_cancel">
+            <Property name="phaseType">
+                <Value>milestone_screening</Value>
+            </Property>
+            <Property name="operation">
+                <Value>cancel</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_milestone_screening_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_milestone_review_start">
+            <Property name="phaseType">
+                <Value>milestone_review</Value>
+            </Property>
+            <Property name="operation">
+                <Value>start</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_milestone_review_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_milestone_review_end">
+            <Property name="phaseType">
+                <Value>milestone_review</Value>
+            </Property>
+            <Property name="operation">
+                <Value>end</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_milestone_review_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_milestone_review_cancel">
+            <Property name="phaseType">
+                <Value>milestone_review</Value>
+            </Property>
+            <Property name="operation">
+                <Value>cancel</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_milestone_review_def</Value>
+            </Property>
+        </Property>
         <!-- The object factory configurations -->
         <Property name="ObjectFactoryNamespace">
             <Value>com.topcoder.management.phase.ObjectFactory</Value>
@@ -990,6 +1098,75 @@
                 </Property>
             </Property>
         </Property>
+        <Property name="milestone_submission">
+            <Property name="type">
+                <Value>com.topcoder.project.phases.PhaseType</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>long</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>15</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>Milestone Submission</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="milestone_screening">
+            <Property name="type">
+                <Value>com.topcoder.project.phases.PhaseType</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>long</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>16</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>Milestone Screening</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="milestone_review">
+            <Property name="type">
+                <Value>com.topcoder.project.phases.PhaseType</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>long</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>17</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>Milestone Review</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
         <!-- The defination for handler -->
         <Property name="handler_registration_def">
             <Property name="type">
@@ -1059,6 +1236,21 @@
         <Property name="handler_specification_review_def">
             <Property name="type">
                 <Value>com.cronos.onlinereview.phases.SpecificationReviewPhaseHandler</Value>
+            </Property>
+        </Property>
+        <Property name="handler_milestone_submission_def">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.phases.MilestoneSubmissionPhaseHandler</Value>
+            </Property>
+        </Property>
+        <Property name="handler_milestone_screening_def">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.phases.PRMilestoneScreeningPhaseHandler</Value>
+            </Property>
+        </Property>
+        <Property name="handler_milestone_review_def">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.phases.MilestoneReviewPhaseHandler</Value>
             </Property>
         </Property>
     </Config>

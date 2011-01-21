@@ -156,8 +156,15 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.6
+ * <p>
+ * Version 1.6.1 (Milestone Support Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added logic fo downloading, uploading Milestone submissions.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @version 1.6.1
  */
 public class ProjectDetailsActions extends DispatchAction {
 
@@ -621,8 +628,18 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformScreening",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SCREENING_PERM_NAME) &&
                         ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME) != null));
+        request.setAttribute("isAllowedToPerformMilestoneScreening",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_MILESTONE_SCREENING_PERM_NAME) &&
+                        ActionsHelper.getPhase(phases, true, Constants.MILESTONE_SCREENING_PHASE_NAME) != null));
+        request.setAttribute("isAllowedToPerformMilestoneReview",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_MILESTONE_REVIEW_PERM_NAME) &&
+                        ActionsHelper.getPhase(phases, true, Constants.MILESTONE_REVIEW_PHASE_NAME) != null));
         request.setAttribute("isAllowedToViewScreening",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENING_PERM_NAME)));
+        request.setAttribute("isAllowedToViewMilestoneScreening",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MILESTONE_SCREENING_PERM_NAME)));
+        request.setAttribute("isAllowedToViewMilestoneReview",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MILESTONE_REVIEW_PERM_NAME)));
         request.setAttribute("isAllowedToEditHisReviews",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(
                         request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
@@ -916,121 +933,35 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadContestSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        LoggingHelper.logAction(request);
+        return handleUploadSubmission(mapping, form, request, "Contest Submission",
+                                      Constants.PERFORM_SUBM_PERM_NAME, Constants.SUBMISSION_PHASE_NAME);
+    }
 
-        // Determine if this request is a post back
-        final boolean postBack = (request.getParameter("postBack") != null);
-
-        // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
-                mapping, getResources(request), request, Constants.PERFORM_SUBM_PERM_NAME, postBack);
-        // If any error has occured, return action forward contained in the result bean
-        if (!verification.isSuccessful()) {
-            return verification.getForward();
-        }
-
-        // Retrieve current project
-        Project project = verification.getProject();
-        // Get all phases for the current project
-        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
-
-        if (ActionsHelper.getPhase(phases, true, Constants.SUBMISSION_PHASE_NAME) == null) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_SUBM_PERM_NAME, "Error.IncorrectPhase", null);
-        }
-
-        if (!postBack) {
-            // Retrieve some basic project info (such as icons' names) and place it into request
-            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
-            return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
-        }
-
-        DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
-        FormFile file = (FormFile) uploadSubmissionForm.get("file");
-
-        // Disallow uploading of empty files
-        if (file.getFileSize() == 0) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_SUBM_PERM_NAME, "Error.EmptyFileUploaded", null);
-        }
-
-        StrutsRequestParser parser = new StrutsRequestParser();
-        parser.AddFile(file);
-
-        // Obtain an instance of File Upload Manager
-        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
-
-        FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
-        UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
-
-        // Get my resource
-        Resource resource = ActionsHelper.getMyResourceForRole(request, "Submitter");
-
-        // Obtain an instance of Upload Manager
-        UploadManager upMgr = ActionsHelper.createUploadManager(request);
-        SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
-        SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
-
-        Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
-        Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(resource.getId());
-        Filter filterStatus = SubmissionFilterBuilder.createSubmissionStatusIdFilter(
-                ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active").getId());
-
-        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterProject, filterResource, filterStatus}));
-
-        Submission[] oldSubmissions = upMgr.searchSubmissions(filter);
-
-        // Modification for the new requirement - uploading new submission/upload every time.
-
-        // Begins - OrChange - Modified to create upload/submission pair always
-        // Always create a new submission/ upload
-        Submission submission = new Submission();
-        Upload upload = new Upload();
-
-        UploadStatus[] uploadStatuses = upMgr.getAllUploadStatuses();
-        UploadType[] uploadTypes = upMgr.getAllUploadTypes();
-
-        upload.setProject(project.getId());
-        upload.setOwner(resource.getId());
-        upload.setUploadStatus(ActionsHelper.findUploadStatusByName(uploadStatuses, "Active"));
-        upload.setUploadType(ActionsHelper.findUploadTypeByName(uploadTypes, "Submission"));
-        upload.setParameter(uploadedFile.getFileId());
-
-        submission.setUpload(upload);
-        submission.setSubmissionStatus(ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active"));
-        submission.setSubmissionType(ActionsHelper.findSubmissionTypeByName(submissionTypes, "Contest Submission"));
-
-        // Get the name (id) of the user performing the operations
-        String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
-
-        // If the project DOESN'T allow multiple submissions hence its property "Allow
-        // multiple submissions" will be false
-        Boolean allowOldSubmissions = Boolean.parseBoolean((String) project.getProperty("Allow multiple submissions"));
-
-        upMgr.createUpload(upload, operator);
-        upMgr.createSubmission(submission, operator);
-        resource.addSubmission(submission.getId());
-        ActionsHelper.createResourceManager(request).updateResource(resource, operator);
-        log.debug("Allow Multiple Submissions : " + allowOldSubmissions);
-        // Now depending on whether the project allows multiple submissions or not mark the old submission
-        // and the upload as deleted.
-        if (oldSubmissions.length != 0 && !allowOldSubmissions) {
-            SubmissionStatus deleteSubmissionStatus = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Deleted");
-            UploadStatus deleteUploadStatus = ActionsHelper.findUploadStatusByName(uploadStatuses, "Deleted");
-            for (Submission oldSubmission : oldSubmissions) {
-                oldSubmission.getUpload().setUploadStatus(deleteUploadStatus);
-                oldSubmission.setSubmissionStatus(deleteSubmissionStatus);
-                upMgr.updateUpload(oldSubmission.getUpload(), operator);
-                upMgr.updateSubmission(oldSubmission, operator);
-            }
-        }
-
-        // Obtain an instance of Screening Manager
-        ScreeningManager scrMgr = ActionsHelper.createScreeningManager(request);
-        scrMgr.initiateScreening(upload.getId(), operator);
-
-        return ActionsHelper.cloneForwardAndAppendToPath(
-                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
+    /**
+     * <p>This method is an implementation of &quot;Upload Milestone Submission&quot; Struts Action defined for
+     * this assembly, which is supposed to let the user upload his milestone submission to the server. This
+     * action gets executed twice &#x96; once to display the page with the form, and once to process
+     * the uploaded file.</p>
+     *
+     * @param mapping an <code>ActionMapping</code> used to map the request to this action.
+     * @param form an <code>ActionForm</code> providing the form submitted by user.
+     * @param request an <code>HttpServletRequest</code> providing the details for incoming request.
+     * @param response an <code>HttpServletResponse</code> providing the details for outgoing response.
+     * @return an <code>ActionForward</code> to the appropriate page. If no error has occured and this action was called
+     *         the first time, the forward will be to uploadMilestoneSubmission.jsp page, which displays the form where
+     *         user can specify the file he/she wants to upload. If this action was called during the post back (the
+     *         second time), then the request should contain the file uploaded by user. In this case, this method
+     *         verifies if everything is correct, stores the file on file server and returns a forward to the View
+     *         Project Details page.
+     * @throws BaseException if an unexpected error occurs.
+     * @since 1.6.1
+     */
+    public ActionForward uploadMilestoneSubmission(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        return handleUploadSubmission(mapping, form, request, "Milestone Submission",
+                                      Constants.PERFORM_MILESTONE_SUBMISSION_PERM_NAME,
+                                      Constants.MILESTONE_SUBMISSION_PHASE_NAME);
     }
 
     /**
@@ -1140,7 +1071,7 @@ public class ProjectDetailsActions extends DispatchAction {
         upload.setParameter(uploadedFile.getFileId());
 
         Submission submission = new Submission();
-        submission.setUpload(upload);
+        submission.setUploads(new ArrayList<Upload>(Arrays.asList(upload)));
 
         SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
         SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
@@ -1181,137 +1112,47 @@ public class ProjectDetailsActions extends DispatchAction {
      *             if some error occurs during disk input/output operation.
      */
     public ActionForward downloadContestSubmission(ActionMapping mapping, ActionForm form,
+                                                   HttpServletRequest request, HttpServletResponse response) 
+        throws BaseException, IOException {
+        return handleDownloadSubmission(mapping, request, response, "ViewSubmission", 
+                                        Constants.VIEW_ALL_SUBM_PERM_NAME, Constants.VIEW_MY_SUBM_PERM_NAME, 
+                                        Constants.VIEW_SCREENER_SUBM_PERM_NAME, Constants.VIEW_RECENT_SUBM_PERM_NAME,
+                                        Constants.DOWNLOAD_CUSTOM_SUBM_PERM_NAME, 
+                                        Constants.VIEW_WINNING_SUBM_PERM_NAME,
+                                        Constants.SCREENING_PHASE_NAME, Constants.REVIEW_PHASE_NAME, 
+                                        Constants.SCREENER_ROLE_NAMES, Constants.REVIEWER_ROLE_NAMES, 
+                                        true, 1);
+    }
+
+    /**
+     * This method is an implementation of &quot;Download Milestone Submission&quot; Struts Action defined for
+     * this assembly, which is supposed to let the user download a milestone submission from the server.
+     *
+     * @return a <code>null</code> code if everything went fine, or an action forward to
+     *         /jsp/userError.jsp page which will display the information about the cause of error.
+     * @param mapping action mapping.
+     * @param form action form.
+     * @param request the http request.
+     * @param response the http response.
+     * @throws BaseException if any error occurs.
+     * @throws IOException if some error occurs during disk input/output operation.
+     * @since 1.6.1
+     */
+    public ActionForward downloadMilestoneSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
-        LoggingHelper.logAction(request);
-        // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification =
-            checkForCorrectUploadId(mapping, request, "ViewSubmission");
-        // If any error has occured, return action forward contained in the result bean
-        if (!verification.isSuccessful()) {
-            return verification.getForward();
-        }
-
-        // Get an upload the user wants to download
-        Upload upload = verification.getUpload();
-
-        // Verify that upload is a submission
-        if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
-            return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, "ViewSubmission", "Error.NotASubmission", null);
-        }
-
-        // Verify the status of upload and check whether the user has permission to download old uploads
-        if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted") &&
-                !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
-            return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, "ViewSubmission", "Error.UploadDeleted", null);
-        }
-
-        // Get all phases for the current project (needed to do permission checks)
-        Phase[] phases = ActionsHelper.getPhasesForProject(
-                ActionsHelper.createPhaseManager(request, false), verification.getProject());
-
-        boolean noRights = true;
-
-        if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
-            noRights = false;
-        }
-
-        if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
-            long owningResourceId = upload.getOwner();
-            Resource[] myResources = (Resource[]) request.getAttribute("myResources");
-            for (int i = 0; i < myResources.length; ++i) {
-                if (myResources[i].getId() == owningResourceId) {
-                    noRights = false;
-                    break;
-                }
-            }
-        }
-
-        if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME)) {
-            // Determine whether Screening phase has already been opened (does not have Scheduled status)
-            final boolean isScreeningOpen = ActionsHelper.isInOrAfterPhase(phases, 0, Constants.SCREENING_PHASE_NAME);
-            // If screener tries to download submission before Screening phase opens,
-            // notify him about this wrong-doing and do not let perform the action
-            if (AuthorizationHelper.hasUserRole(request, Constants.SCREENER_ROLE_NAMES) && !isScreeningOpen) {
-                return ActionsHelper.produceErrorReport(
-                        mapping, getResources(request), request, "ViewSubmission", "Error.IncorrectPhase", null);
-            }
-            noRights = false; // TODO: Check if screener can download this submission
-        }
-
-        if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME)) {
-            // Determine whether Review phase has already been opened (does not have Scheduled status)
-            final boolean isReviewOpen = ActionsHelper.isInOrAfterPhase(phases, 0, Constants.REVIEW_PHASE_NAME);
-            // If reviewer tries to download submission before Review phase opens,
-            // notify him about this wrong-doing and do not let perform the action
-            if (AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES) && !isReviewOpen) {
-                return ActionsHelper.produceErrorReport(
-                        mapping, getResources(request), request, "ViewSubmission", "Error.IncorrectPhase", null);
-            }
-            noRights = false;
-        }
-
-        // the download validation for custom components is different
-        String rootCatalogId = (String)((verification.getProject()).getProperty("Root Catalog ID"));
-        boolean custom = ConfigHelper.isCustomRootCatalog(rootCatalogId);
-
-        boolean mayDownload = (custom ?
-            AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_CUSTOM_SUBM_PERM_NAME) :
-            AuthorizationHelper.hasUserPermission(request, Constants.VIEW_WINNING_SUBM_PERM_NAME));
-
-        if (noRights && mayDownload) {
-            // Obtain an instance of Resource Manager
-            ResourceManager resMgr = ActionsHelper.createResourceManager(request);
-            Resource submitter = resMgr.getResource(upload.getOwner());
-            UploadManager upMgr = ActionsHelper.createUploadManager(request);
-            Long[] subIds = submitter.getSubmissions();
-            Submission submission = null;
-            for (int i = 0; i < subIds.length; i++) {
-                submission = upMgr.getSubmission(subIds[i]);
-                if(submission.getUpload().getId() == upload.getId()) {
-                    break;
-                }
-            }
-
-            // OrChange - Placement is retrieved from submission instead of resource
-            if (submission.getPlacement() != null && submission.getPlacement() == 1) {
-                noRights = false;
-            }
-        }
-
-        mayDownload = (custom ?
-                AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_CUSTOM_SUBM_PERM_NAME) :
-                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME));
-
-        if (noRights && mayDownload) {
-            // Obtain an instance of Resource Manager
-            ResourceManager resMgr = ActionsHelper.createResourceManager(request);
-            Resource submitter = resMgr.getResource(upload.getOwner());
-            UploadManager upMgr = ActionsHelper.createUploadManager(request);
-            Long[] subIds = submitter.getSubmissions();
-            Submission submission = null;
-            for (int i = 0; i < subIds.length; i++) {
-                submission = upMgr.getSubmission(subIds[i]);
-                if(submission.getUpload().getId() == upload.getId()) {
-                    break;
-                }
-            }
-//          OrChange - Placement is retrieved from submission instead of resource
-            if (submission.getPlacement() != null && submission.getPlacement() > 0) {
-                noRights = false;
-            }
-        }
-
-        if (noRights) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    "ViewSubmission", "Error.NoPermission", Boolean.TRUE);
-        }
-
-        processSubmissionDownload(upload, request, response);
-
-        return null;
+        return handleDownloadSubmission(mapping, request, response, "ViewMilestoneSubmission", 
+                                        Constants.VIEW_ALL_MILESTONE_SUBMISSIONS_PERM_NAME, 
+                                        Constants.VIEW_MY_MILESTONE_SUBMISSIONS_PERM_NAME, 
+                                        Constants.VIEW_SCREENER_MILESTONE_SUBMISSION_PERM_NAME, 
+                                        Constants.VIEW_RECENT_MILESTONE_SUBMISSIONS_PERM_NAME,
+                                        Constants.DOWNLOAD_CUSTOM_MILESTONE_SUBMISSION_PERM_NAME,
+                                        Constants.VIEW_WINNING_MILESTONE_SUBMISSION_PERM_NAME,
+                                        Constants.MILESTONE_SCREENING_PHASE_NAME, 
+                                        Constants.MILESTONE_REVIEW_PHASE_NAME, 
+                                        new String[] {Constants.MILESTONE_SCREENER_ROLE_NAME}, 
+                                        new String[] {Constants.MILESTONE_REVIEWER_ROLE_NAME}, 
+                                        false, 3);
     }
 
     /**
@@ -2536,6 +2377,8 @@ public class ProjectDetailsActions extends DispatchAction {
             String delivName = deliverable.getName();
             if (delivName.equalsIgnoreCase(Constants.SUBMISSION_DELIVERABLE_NAME)) {
                 links[i] = "UploadContestSubmission.do?method=uploadContestSubmission&pid=" + deliverable.getProject();
+            } else if (delivName.equalsIgnoreCase(Constants.MILESTONE_SUBMISSION_DELIVERABLE_NAME)) {
+                links[i] = "UploadMilestoneSubmission.do?method=uploadMilestoneSubmission&pid=" + deliverable.getProject();
             } else if (delivName.equalsIgnoreCase(Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME)) {
                 if (!deliverable.isComplete()) {
                     links[i] = "UploadSpecificationSubmission.do?method=uploadSpecificationSubmission&pid="
@@ -2585,6 +2428,26 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else {
                     links[i] = "ViewScreening.do?method=viewScreening&rid=" + review.getId();
                 }
+            } else if (delivName.equalsIgnoreCase(Constants.MILESTONE_SCREENING_DELIVERABLE_NAME)) {
+                if (deliverable.getSubmission() == null) {
+                    continue;
+                }
+                if (allScorecardTypes == null) {
+                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                }
+
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Milestone Screening"),
+                        deliverable.getSubmission(), deliverable.getResource(), false);
+
+                if (review == null) {
+                    links[i] = "CreateMilestoneScreening.do?method=createMilestoneScreening&sid=" +
+                            deliverable.getSubmission().longValue();
+                } else if (!review.isCommitted()) {
+                    links[i] = "EditMilestoneScreening.do?method=editMilestoneScreening&rid=" + review.getId();
+                } else {
+                    links[i] = "ViewMilestoneScreening.do?method=viewMilestoneScreening&rid=" + review.getId();
+                }
             } else if (delivName.equalsIgnoreCase(Constants.REVIEW_DELIVERABLE_NAME)) {
                 // Skip deliverables with empty Submission ID field,
                 // as no links can be generated for such deliverables
@@ -2608,6 +2471,27 @@ public class ProjectDetailsActions extends DispatchAction {
                     links[i] = "EditReview.do?method=editReview&rid=" + review.getId();
                 } else {
                     links[i] = "ViewReview.do?method=viewReview&rid=" + review.getId();
+                }
+            } else if (delivName.equalsIgnoreCase(Constants.MILESTONE_REVIEW_DELIVERABLE_NAME)) {
+                if (deliverable.getSubmission() == null) {
+                    continue;
+                }
+
+                if (allScorecardTypes == null) {
+                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                }
+
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Milestone Review"),
+                        deliverable.getSubmission(), deliverable.getResource(), false);
+
+                if (review == null) {
+                    links[i] = "CreateMilestoneReview.do?method=createMilestoneReview&sid=" +
+                            deliverable.getSubmission().longValue();
+                } else if (!review.isCommitted()) {
+                    links[i] = "EditMilestoneReview.do?method=editMilestoneReview&rid=" + review.getId();
+                } else {
+                    links[i] = "ViewMilestoneReview.do?method=viewMilestoneReview&rid=" + review.getId();
                 }
             } else if (delivName.equalsIgnoreCase(Constants.ACC_TEST_CASES_DELIVERABLE_NAME) ||
                     delivName.equalsIgnoreCase(Constants.FAIL_TEST_CASES_DELIVERABLE_NAME) ||
@@ -2830,7 +2714,7 @@ public class ProjectDetailsActions extends DispatchAction {
         List<Long> resourceIds = new ArrayList<Long>();
 
         for (int i = 0; i < submissions.length; ++i) {
-            resourceIds.add(submissions[i].getUpload().getOwner());
+            resourceIds.add(submissions[i].getUploads().get(0).getOwner());
         }
 
         Filter filterResources = new InFilter("resource.resource_id", resourceIds);
@@ -2850,7 +2734,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 if (submissions[j].getId() != deliverableId) {
                     continue;
                 }
-                long submissionOwnerId = submissions[j].getUpload().getOwner();
+                long submissionOwnerId = submissions[j].getUploads().get(0).getOwner();
                 for (int k = 0; k < resources.length; ++k) {
                     if (resources[k].getId() == submissionOwnerId) {
                         ids[i] = (String) resources[k].getProperty("External Reference ID");
@@ -3053,6 +2937,335 @@ public class ProjectDetailsActions extends DispatchAction {
                 out.close();
             }
         }
+    }
+
+    /**
+     * <p>Handles the request for downloading the submission of desired type.</p>
+     *  
+     *
+     * @param mapping an <code>ActionMapping</code> used to map the request to this action.
+     * @param request an <code>HttpServletRequest</code> providing the details for incoming request.
+     * @param response an <code>HttpServletResponse</code> providing the details for outgoing response.
+     * @param errorMessageKey a <code>String</code> providing the key in message bundle for the error to be displayed 
+     *        to user.  
+     * @param viewAllSubmissionsPermName a <code>String</code> providing the name for permission for viewing all 
+     *        submissions. 
+     * @param viewMySubmissionsPermissionName a <code>String</code> providing the name for permission for viewing own
+     *        submissions 
+     * @param viewSubmissionByScreenerPermissionName a <code>String</code> providing the name for permission for viewing
+     *        submissions by screener. 
+     * @param viewMostRecentSubmissionsPermissionName a <code>String</code> providing the name for permission for 
+     *        viewing most recent submissions. 
+     * @param downloadCustomSubmissionPermissionName a <code>String</code> providing the name for permission for 
+     *        downloading submission for custom catalog. 
+     * @param viewWinningSubmissionPermissionName a <code>String</code> providing the name for permission for viewing
+     *        winning submissions. 
+     * @param screeningPhaseName a <code>String</code> providing the name for screening phase type.  
+     * @param reviewPhaseName a <code>String</code> providing the name for review phase type.
+     * @param screenerRoleNames a <code>String</code> array listing the names for screener roles. 
+     * @param reviewerRoleNames a <code>String</code> array listing the names for reviewer roles.
+     * @param isAppealSupported <code>true</code> if submission type assumes the appeals to reviews to be allowed;
+     *        <code>false</code> otherwise.
+     * @param submissionType a <code>long</code> referencing the type of the submission being downloaded.
+     * @return an <code>ActionForward</code> referencing the next view to be displayed to user in case of errors or
+     *         <code>null</code> if submission is downloaded successfully.   
+     * @throws BaseException if an unexpected error occurs.
+     * @throws IOException if an I/O error occurs.
+     * @since 1.6.1
+     */
+    private ActionForward handleDownloadSubmission(ActionMapping mapping, HttpServletRequest request,
+                                                   HttpServletResponse response, String errorMessageKey,
+                                                   String viewAllSubmissionsPermName,
+                                                   String viewMySubmissionsPermissionName,
+                                                   String viewSubmissionByScreenerPermissionName,
+                                                   String viewMostRecentSubmissionsPermissionName,
+                                                   String downloadCustomSubmissionPermissionName,
+                                                   String viewWinningSubmissionPermissionName,
+                                                   String screeningPhaseName,
+                                                   String reviewPhaseName,
+                                                   String[] screenerRoleNames,
+                                                   String[] reviewerRoleNames, boolean isAppealSupported,
+                                                   long submissionType) 
+        throws BaseException, IOException {
+        LoggingHelper.logAction(request);
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification = checkForCorrectUploadId(mapping, request, errorMessageKey);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Get an upload the user wants to download
+        Upload upload = verification.getUpload();
+
+        // Verify that upload is a submission
+        if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, errorMessageKey, "Error.NotASubmission", null);
+        }
+
+        // Verify the status of upload and check whether the user has permission to download old uploads
+        if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted") 
+            && !AuthorizationHelper.hasUserPermission(request, viewAllSubmissionsPermName)) {
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, errorMessageKey, "Error.UploadDeleted", null);
+        }
+
+        // Get all phases for the current project (needed to do permission checks)
+        Phase[] phases = ActionsHelper.getPhasesForProject(
+                ActionsHelper.createPhaseManager(request, false), verification.getProject());
+
+        boolean noRights = true;
+
+        if (AuthorizationHelper.hasUserPermission(request, viewAllSubmissionsPermName)) {
+            noRights = false;
+        }
+
+        if (AuthorizationHelper.hasUserPermission(request, viewMySubmissionsPermissionName)) {
+            long owningResourceId = upload.getOwner();
+            Resource[] myResources = (Resource[]) request.getAttribute("myResources");
+            for (int i = 0; i < myResources.length; ++i) {
+                if (myResources[i].getId() == owningResourceId) {
+                    noRights = false;
+                    break;
+                }
+            }
+        }
+
+        if (noRights && AuthorizationHelper.hasUserPermission(request, viewSubmissionByScreenerPermissionName)) {
+            // Determine whether Screening phase has already been opened (does not have Scheduled status)
+            final boolean isScreeningOpen = ActionsHelper.isInOrAfterPhase(phases, 0, screeningPhaseName);
+            // If screener tries to download submission before Screening phase opens,
+            // notify him about this wrong-doing and do not let perform the action
+            if (AuthorizationHelper.hasUserRole(request, screenerRoleNames) && !isScreeningOpen) {
+                return ActionsHelper.produceErrorReport(
+                        mapping, getResources(request), request, errorMessageKey, "Error.IncorrectPhase", null);
+            }
+            noRights = false; // TODO: Check if screener can download this submission
+        }
+
+        if (noRights && AuthorizationHelper.hasUserPermission(request, viewMostRecentSubmissionsPermissionName)) {
+            // Determine whether Review phase has already been opened (does not have Scheduled status)
+            final boolean isReviewOpen = ActionsHelper.isInOrAfterPhase(phases, 0, reviewPhaseName);
+            // If reviewer tries to download submission before Review phase opens,
+            // notify him about this wrong-doing and do not let perform the action
+            if (AuthorizationHelper.hasUserRole(request, reviewerRoleNames) && !isReviewOpen) {
+                return ActionsHelper.produceErrorReport(
+                        mapping, getResources(request), request, errorMessageKey, "Error.IncorrectPhase", null);
+            }
+            noRights = false;
+        }
+
+        // the download validation for custom components is different
+        String rootCatalogId = (String)((verification.getProject()).getProperty("Root Catalog ID"));
+        boolean custom = ConfigHelper.isCustomRootCatalog(rootCatalogId);
+
+        boolean mayDownload = (custom ?
+            AuthorizationHelper.hasUserPermission(request, downloadCustomSubmissionPermissionName) :
+            AuthorizationHelper.hasUserPermission(request, viewWinningSubmissionPermissionName));
+
+        if (noRights && mayDownload) {
+            // Obtain an instance of Resource Manager
+            ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+            Resource submitter = resMgr.getResource(upload.getOwner());
+            UploadManager upMgr = ActionsHelper.createUploadManager(request);
+            Long[] subIds = submitter.getSubmissions();
+            Submission submission = null;
+            for (int i = 0; i < subIds.length; i++) {
+                submission = upMgr.getSubmission(subIds[i]);
+                if(submission.getUploads().get(0).getId() == upload.getId()) {
+                    break;
+                }
+            }
+
+            // OrChange - Placement is retrieved from submission instead of resource
+            if (submission.getPlacement() != null && submission.getPlacement() == 1) {
+                noRights = false;
+            }
+        }
+
+        mayDownload = (custom ? AuthorizationHelper.hasUserPermission(request, downloadCustomSubmissionPermissionName) 
+                              : (submissionType == 1 
+                                 && AuthorizationHelper.hasUserPermission(request, 
+                                                                          Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME)
+                                 || 
+                                 submissionType == 3 
+                                 && AuthorizationHelper.hasUserPermission(request, 
+                                                                          Constants.VIEW_RECENT_MILESTONE_SUBMISSIONS_AFTER_REVIEW_PERM_NAME)));
+        
+        if (noRights && mayDownload) {
+            // Obtain an instance of Resource Manager
+            ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+            Resource submitter = resMgr.getResource(upload.getOwner());
+            UploadManager upMgr = ActionsHelper.createUploadManager(request);
+            Long[] subIds = submitter.getSubmissions();
+            Submission submission = null;
+            for (int i = 0; i < subIds.length; i++) {
+                submission = upMgr.getSubmission(subIds[i]);
+                if (submission.getUploads().get(0).getId() == upload.getId()) {
+                    break;
+                }
+            }
+            //          OrChange - Placement is retrieved from submission instead of resource
+            if (submission.getPlacement() != null && submission.getPlacement() > 0) {
+                if (submissionType == 3) {
+                    Phase reviewPhase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
+                    boolean isReviewFinished = (reviewPhase != null) && (reviewPhase.getPhaseStatus().getId() == 3);
+                    if (isReviewFinished) {
+                        noRights = false;
+                    }
+                } else {
+                    noRights = false;
+                }
+            }
+        }
+
+        if (noRights) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    errorMessageKey, "Error.NoPermission", Boolean.TRUE);
+        }
+
+        processSubmissionDownload(upload, request, response);
+
+        return null;
+    }
+
+    /**
+     * <p>Handles the request for uploading a submission to project.</p>
+     *
+     * @param mapping an <code>ActionMapping</code> used to map the request to this action.
+     * @param form an <code>ActionForm</code> providing the form submitted by user.
+     * @param request an <code>HttpServletRequest</code> providing the details for incoming request.
+     * @param submissionTypeName a <code>String</code> providing the name of submission type.
+     * @param submitPermissionName a <code>String</code> providing the permission to be used for authorizing users to
+     *        perform submission upload.
+     * @param phaseName a <code>String</code> providing the name of the type of project phase which submission maps to.
+     * @return an <code>ActionForward</code> referencing the next view to be displayed to user.
+     * @throws BaseException if an unexpected error occurs.
+     * @since 1.6.1
+     */
+    private ActionForward handleUploadSubmission(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                                 String submissionTypeName, String submitPermissionName,
+                                                 String phaseName)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+
+        // Determine if this request is a post back
+        final boolean postBack = (request.getParameter("postBack") != null);
+
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+                mapping, getResources(request), request, submitPermissionName, postBack);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Retrieve current project
+        Project project = verification.getProject();
+        // Get all phases for the current project
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
+
+        if (ActionsHelper.getPhase(phases, true, phaseName) == null) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    submitPermissionName, "Error.IncorrectPhase", null);
+        }
+
+        if (!postBack) {
+            // Retrieve some basic project info (such as icons' names) and place it into request
+            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+            return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
+        }
+
+        DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
+        FormFile file = (FormFile) uploadSubmissionForm.get("file");
+
+        // Disallow uploading of empty files
+        if (file.getFileSize() == 0) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                                                    submitPermissionName, "Error.EmptyFileUploaded", null);
+        }
+
+        StrutsRequestParser parser = new StrutsRequestParser();
+        parser.AddFile(file);
+
+        // Obtain an instance of File Upload Manager
+        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
+
+        FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
+        UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
+
+        // Get my resource
+        Resource resource = ActionsHelper.getMyResourceForRole(request, "Submitter");
+
+        // Obtain an instance of Upload Manager
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
+        SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
+
+        Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
+        Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(resource.getId());
+        Filter filterStatus = SubmissionFilterBuilder.createSubmissionStatusIdFilter(
+                ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active").getId());
+        Filter filterType = SubmissionFilterBuilder.createSubmissionTypeIdFilter(
+                ActionsHelper.findSubmissionTypeByName(submissionTypes, submissionTypeName).getId());
+
+        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterProject, filterResource, filterStatus, 
+                                                                  filterType}));
+
+        Submission[] oldSubmissions = upMgr.searchSubmissions(filter);
+
+        // Modification for the new requirement - uploading new submission/upload every time.
+
+        // Begins - OrChange - Modified to create upload/submission pair always
+        // Always create a new submission/ upload
+        Submission submission = new Submission();
+        Upload upload = new Upload();
+
+        UploadStatus[] uploadStatuses = upMgr.getAllUploadStatuses();
+        UploadType[] uploadTypes = upMgr.getAllUploadTypes();
+
+        upload.setProject(project.getId());
+        upload.setOwner(resource.getId());
+        upload.setUploadStatus(ActionsHelper.findUploadStatusByName(uploadStatuses, "Active"));
+        upload.setUploadType(ActionsHelper.findUploadTypeByName(uploadTypes, "Submission"));
+        upload.setParameter(uploadedFile.getFileId());
+
+        submission.setUploads(new ArrayList<Upload>(Arrays.asList(upload)));
+        submission.setSubmissionStatus(ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active"));
+        submission.setSubmissionType(ActionsHelper.findSubmissionTypeByName(submissionTypes, submissionTypeName));
+
+        // Get the name (id) of the user performing the operations
+        String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
+
+        // If the project DOESN'T allow multiple submissions hence its property "Allow
+        // multiple submissions" will be false
+        Boolean allowOldSubmissions = Boolean.parseBoolean((String) project.getProperty("Allow multiple submissions"));
+
+        upMgr.createUpload(upload, operator);
+        upMgr.createSubmission(submission, operator);
+        resource.addSubmission(submission.getId());
+        ActionsHelper.createResourceManager(request).updateResource(resource, operator);
+        log.debug("Allow Multiple Submissions : " + allowOldSubmissions);
+        // Now depending on whether the project allows multiple submissions or not mark the old submission
+        // and the upload as deleted.
+        if (oldSubmissions.length != 0 && !allowOldSubmissions) {
+            SubmissionStatus deleteSubmissionStatus = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Deleted");
+            UploadStatus deleteUploadStatus = ActionsHelper.findUploadStatusByName(uploadStatuses, "Deleted");
+            for (Submission oldSubmission : oldSubmissions) {
+                oldSubmission.getUploads().get(0).setUploadStatus(deleteUploadStatus);
+                oldSubmission.setSubmissionStatus(deleteSubmissionStatus);
+                upMgr.updateUpload(oldSubmission.getUploads().get(0), operator);
+                upMgr.updateSubmission(oldSubmission, operator);
+            }
+        }
+
+        // Obtain an instance of Screening Manager
+        ScreeningManager scrMgr = ActionsHelper.createScreeningManager(request);
+        scrMgr.initiateScreening(upload.getId(), operator);
+
+        return ActionsHelper.cloneForwardAndAppendToPath(
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
     }
 }
 

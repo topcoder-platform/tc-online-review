@@ -6,10 +6,11 @@
        <!ENTITY distributionScriptsBase "@distributionScriptsBase@">
        <!ENTITY phasesEmailTemplate "@exttemplatesdir@/email_template.txt">
        <!ENTITY winnersEmailTemplate "@exttemplatesdir@/winners_email_template.txt">
+        <!ENTITY milestoneScreeningResultsEmailTemplate "@exttemplatesdir@/milestone_screening_results_email_template.txt">
        <!ENTITY timelineTemplateDir "@exttemplatesdir@">
        <!ENTITY contactManagersTemplate "@exttemplatesdir@/contact_manager_template.txt">
        <!ENTITY managerNotificationEmailTemplatesBase "@exttemplatesdir@">
-       <!ENTITY notificationEmailFromAddress "service@topcodersoftware.com">
+       <!ENTITY notificationEmailFromAddress "@notificationEmailFromAddress@">
        <!ENTITY smtpServerAuthAddress "@emailengine_smtp_user@">
        <!ENTITY pactJNDIAddress "@pactJNDIAddress@">
 ]>
@@ -675,6 +676,25 @@
         <Property name="ProjectDetailsURL">
             <Value>https://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
         </Property>
+        <Property name="StudioProjectDetailsURL">
+            <Value>http://studio.topcoder.com/?module=ViewContestDetails&amp;ct=</Value>
+        </Property>
+        <Property name="ProjectRoleTermsOfUse">
+            <Property name="ClassName">
+                <Value>com.cronos.onlinereview.ejblibrary.ProjectRoleTermsOfUseLibrary</Value>
+            </Property>
+            <Property name="Namespace">
+                <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+            </Property>
+        </Property>
+        <Property name="UserTermsOfUse">
+            <Property name="ClassName">
+                <Value>com.cronos.onlinereview.ejblibrary.UserTermsOfUseLibrary</Value>
+            </Property>
+            <Property name="Namespace">
+                <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+            </Property>
+        </Property>
         <Property name="ProjectManager">
             <Property name="ClassName">
                 <Value>com.topcoder.management.project.ProjectManagerImpl</Value>
@@ -827,6 +847,344 @@
         ===== Configuration for Phase Handlers from Online Review Phases component =====
     -->
     <!-- Default namespace for Specification Submission handler -->
+    <Config name="com.cronos.onlinereview.phases.MilestoneSubmissionPhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/milestone_submission/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/milestone_submission/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+    
+    <Config name="com.cronos.onlinereview.phases.MilestoneScreeningPhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/milestone_screening/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/milestone_screening/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="SubmittersEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&milestoneScreeningResultsEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>[{0}] {1} place </Value>
+            </Property>
+            <Property name="ProjectLink">
+                <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
+                <Value>http://www.topcoder.com/PactsMemberServlet?module=AssignmentDocumentDetails&amp;amp;assignment_document_id={0}</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+        </Property>
+    </Config>
+    
+    <Config name="com.cronos.onlinereview.phases.MilestoneReviewPhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/milestone_review/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/milestone_review/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
     <Config name="com.cronos.onlinereview.phases.SpecificationSubmissionPhaseHandler">
         <Property name="ConnectionFactoryNS">
             <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
@@ -2683,6 +3041,7 @@
             <Value>&timelineTemplateDir;/TCSTemplate_Application.xml</Value>
             <Value>&timelineTemplateDir;/TCSTemplate_Studio.xml</Value>
             <Value>&timelineTemplateDir;/TCSTemplate_Security.xml</Value>
+            <Value>&timelineTemplateDir;/TCSTemplate_Studio_Milestone.xml</Value>
         </Property>
     </Config>
 
@@ -3184,8 +3543,8 @@
                         CROSS JOIN submission
                         INNER JOIN submission_status_lu
                                 ON submission.submission_status_id = submission_status_lu.submission_status_id
-                        INNER JOIN upload
-                                ON submission.upload_id = upload.upload_id
+                        INNER JOIN upload_submission ON submission.submission_id = upload_submission.submission_id
+                        INNER JOIN upload ON upload_submission.upload_id = upload.upload_id
                              WHERE submission_status_lu.name = 'Active'
                                AND NOT deliverable_lu.submission_type_id IS NULL
                                AND upload.project_id = resource.project_id
@@ -3283,6 +3642,19 @@
                                submission.initial_score,
                                submission.final_score,
                                submission.placement,
+                               submission.feedback_thumb,
+                               submission.user_rank,
+                               submission.mark_for_purchase,
+                               prize.prize_id,
+                               prize.place,
+                               prize.prize_amount,
+                               prize.number_of_submissions,
+                               prize.create_user AS prize_create_user,
+                               prize.create_date AS prize_create_date,
+                               prize.modify_user AS prize_modify_user,
+                               prize.modify_date AS prize_modify_date,
+                               prize_type_lu.prize_type_id,
+                               prize_type_lu.prize_type_desc,
                                submission_type_lu.submission_type_id AS submission_type_id,
                                submission_type_lu.create_user AS submission_type_create_user,
                                submission_type_lu.create_date AS submission_type_create_date,
@@ -3290,18 +3662,17 @@
                                submission_type_lu.modify_date AS submission_type_modify_date,
                                submission_type_lu.name AS submission_type_name,
                                submission_type_lu.description AS submission_type_description
-                          FROM submission,
-                               upload,
-                               submission_status_lu,
-                               submission_type_lu,
-                               upload_type_lu,
-                               upload_status_lu
-                         WHERE submission.upload_id = upload.upload_id
-                           AND submission.submission_status_id = submission_status_lu.submission_status_id
-                           AND submission.submission_type_id = submission_type_lu.submission_type_id
-                           AND upload.upload_type_id = upload_type_lu.upload_type_id
-                           AND upload.upload_status_id = upload_status_lu.upload_status_id
-                           AND
+                        FROM submission
+                        INNER JOIN upload_submission ON submission.submission_id = upload_submission.submission_id
+                        INNER JOIN upload ON upload_submission.upload_id = upload.upload_id
+                        INNER JOIN submission_status_lu ON submission.submission_status_id = submission_status_lu.submission_status_id
+                        INNER JOIN submission_type_lu ON submission.submission_type_id = submission_type_lu.submission_type_id
+                        INNER JOIN upload_type_lu ON upload.upload_type_id = upload_type_lu.upload_type_id
+                        INNER JOIN upload_status_lu ON upload.upload_status_id = upload_status_lu.upload_status_id
+                        LEFT JOIN prize ON submission.prize_id = prize.prize_id
+                        LEFT JOIN prize_type_lu ON prize.prize_type_id = prize_type_lu.prize_type_id
+                       WHERE 1=1 
+                         AND 
                     </Value>
                 </Property>
                 <Property name="alias">
@@ -3309,7 +3680,7 @@
                         <Value>submission.submission_id</Value>
                     </Property>
                     <Property name="upload_id">
-                        <Value>submission.upload_id</Value>
+                        <Value>upload_submission.upload_id</Value>
                     </Property>
                     <Property name="submission_status_id">
                         <Value>submission.submission_status_id</Value>
@@ -4814,6 +5185,8 @@
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
+                <Value>Milestone Screener</Value>
+                <Value>Milestone Reviewer</Value>
             </Property>
             <Property name="View Projects">
                 <Value>Global Manager</Value>
@@ -4841,6 +5214,8 @@
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
+                <Value>Milestone Screener</Value>
+                <Value>Milestone Reviewer</Value>
             </Property>
             <Property name="View Cockpit Project Name">
                 <Value>Global Manager</Value>
@@ -4871,6 +5246,8 @@
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
+                <Value>Milestone Screener</Value>
+                <Value>Milestone Reviewer</Value>
             </Property>
             <Property name="View Project Resources">
                 <Value>Global Manager</Value>
@@ -4920,6 +5297,8 @@
                 <Value>Approver</Value>
                 <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
+                <Value>Milestone Screener</Value>
+                <Value>Milestone Reviewer</Value>
             </Property>
             <Property name="Contact Project Managers">
                 <Value>Global Manager</Value>
@@ -4942,6 +5321,8 @@
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
+                <Value>Milestone Screener</Value>
+                <Value>Milestone Reviewer</Value>
             </Property>
             <Property name="View Registrations">
                 <Value>Global Manager</Value>
@@ -4957,8 +5338,14 @@
             <Property name="Perform Specification Submission">
                 <Value>Specification Submitter</Value>
             </Property>
+            <Property name="Perform Milestone Submission">
+                <Value>Submitter</Value>
+            </Property>
             <Property name="Perform Specification Review">
                 <Value>Specification Reviewer</Value>
+            </Property>
+            <Property name="Perform Milestone Review">
+                <Value>Milestone Reviewer</Value>
             </Property>
             <Property name="View All Submissions">
                 <Value>Global Manager</Value>
@@ -4982,15 +5369,31 @@
                 <Value>Specification Submitter</Value>
                 <Value>Specification Reviewer</Value>
             </Property>
+            <Property name="View All Milestone Submissions">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
+                <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+                <Value>Observer</Value>
+            </Property>
             <Property name="View My Submissions">
                 <Value>Submitter</Value>
             </Property>
             <Property name="View My Specification Submissions">
                 <Value>Specification Submitter</Value>
             </Property>
+            <Property name="View My Milestone Submissions">
+                <Value>Submitter</Value>
+            </Property>
             <Property name="View Screener Submission">
                 <Value>Screener</Value>
                 <Value>Primary Screener</Value>
+            </Property>
+            <Property name="View Screener Milestone Submission">
+                <Value>Milestone Screener</Value>
             </Property>
             <Property name="View Most Recent Submissions">
                 <Value>Observer</Value>
@@ -5011,6 +5414,18 @@
                 <Value>Manager</Value>
                 <Value>Cockpit Project User</Value>
             </Property>
+            <Property name="View Most Recent Milestone Submissions">
+                <Value>Observer</Value>
+                <Value>Milestone Reviewer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
+            </Property>
+            <Property name="View Most Recent Milestone Submissions After Review">
+                <Value>Submitter</Value>
+            </Property>
             <Property name="View Winning Submission">
                 <Value>Submitter</Value>
                 <Value>Aggregator</Value>
@@ -5020,11 +5435,20 @@
                 <Value>Client Manager</Value>
                 <Value>Observer</Value>			
             </Property>
+            <Property name="View Winning Milestone Submission">
+                <Value>Submitter</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+                <Value>Observer</Value>			
+            </Property>
             <Property name="View Most Recent after Appeals Response">
                 <Value>Submitter</Value>
                 <Value>Designer</Value>
             </Property>
             <Property name="Download Custom Submission">
+                <Value>Submitter</Value>
+            </Property>
+            <Property name="Download Custom Milestone Submission">
                 <Value>Submitter</Value>
             </Property>
             <Property name="Remove Submission">
@@ -5046,6 +5470,55 @@
                 <Value>Primary Screener</Value>
                 <!-- Note: Reviewers weren't originally allowed to see screenings, but
                     after this issue was raised on forum, they were granted a permission to do so -->
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Aggregator</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
+                <Value>Designer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+            </Property>
+            <Property name="Perform Milestone Screening">
+                <Value>Milestone Screener</Value>
+            </Property>
+            <Property name="View Milestone Screening">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Screener</Value>
+                <Value>Primary Screener</Value>
+                <Value>Milestone Screener</Value>
+                <Value>Milestone Reviewer</Value>
+                <!-- Note: Reviewers weren't originally allowed to see screenings, but
+                    after this issue was raised on forum, they were granted a permission to do so -->
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Aggregator</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
+                <Value>Designer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+            </Property>
+            <Property name="View Milestone Review">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Screener</Value>
+                <Value>Primary Screener</Value>
+                <Value>Milestone Screener</Value>
+                <Value>Milestone Reviewer</Value>
                 <Value>Reviewer</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
@@ -5115,6 +5588,7 @@
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Post-Mortem Reviewer</Value>
+                <Value>Milestone Reviewer</Value>
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
@@ -5158,7 +5632,9 @@
             <Property name="Edit My Review during Review">
                 <Value>Screener</Value>
                 <Value>Primary Screener</Value>
+                <Value>Milestone Screener</Value>
                 <Value>Reviewer</Value>
+                <Value>Milestone Reviewer</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
@@ -5351,6 +5827,8 @@
                 <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
+                <Value>Milestone Screener</Value>
+                <Value>Milestone Reviewer</Value>
                 <Value>Specification Reviewer</Value>
                 <Value>Specification Submitter</Value>
                 <Value>Reviewer</Value>
@@ -5444,6 +5922,22 @@
                 </Property>
                 <Property name="AppFunction">
                     <Value>VIEW_REGISTRANTS</Value>
+                </Property>
+            </Property>
+            <Property name="Milestone">
+                <Property name="NameKey">
+                    <Value>ProjectPhaseGroup.Milestone</Value>
+                </Property>
+                <Property name="TableNameKey">
+                    <Value>ProjectPhaseGroup.Milestone.table</Value>
+                </Property>
+                <Property name="Phases">
+                    <Value>Milestone Submission</Value>
+                    <Value>Milestone Screening</Value>
+                    <Value>Milestone Review</Value>
+                </Property>
+                <Property name="AppFunction">
+                    <Value>MILESTONE</Value>
                 </Property>
             </Property>
             <Property name="Submission_Screening">

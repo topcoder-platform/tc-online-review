@@ -75,7 +75,7 @@
     <property name="configuration_api.jar"
               value="${tcs_libdir}/${configuration_api.path}/${configuration_api.jar.name}"/>
 
-    <property name="deliverable_management_persistence.version" value="1.1.2"/>
+    <property name="deliverable_management_persistence.version" value="1.2.0"/>
     <property name="deliverable_management_persistence.jar.name" value="deliverable_management_persistence.jar"/>
     <property name="deliverable_management_persistence.path"
               value="deliverable_management_persistence/${deliverable_management_persistence.version}"/>
@@ -131,7 +131,7 @@
     <property name="db_connection_factory.jar"
               value="${tcs_libdir}/${db_connection_factory.path}/${db_connection_factory.jar.name}"/>
 
-    <property name="deliverable_management.version" value="1.1.1"/>
+    <property name="deliverable_management.version" value="1.2.0"/>
     <property name="deliverable_management.jar.name" value="deliverable_management.jar"/>
     <property name="deliverable_management.path" value="deliverable_management/${deliverable_management.version}"/>
     <property name="deliverable_management.jar"
@@ -213,7 +213,7 @@
     <property name="magic_numbers.path" value="magic_numbers/${magic_numbers.version}" />
     <property name="magic_numbers.jar" value="${tcs_libdir}/${magic_numbers.path}/${magic_numbers.jar.name}" />
 
-    <property name="online_review_phases.version" value="1.4.4"/>
+    <property name="online_review_phases.version" value="1.6.0"/>
     <property name="online_review_phases.jar.name" value="online_review_phases.jar"/>
     <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}"/>
     <property name="online_review_phases.jar"
@@ -306,13 +306,13 @@
     <property name="phase_management_persistence.jar"
               value="${tcs_libdir}/${phase_management_persistence.path}/${phase_management_persistence.jar.name}"/>
 
-    <property name="project_management.version" value="1.0.1"/>
+    <property name="project_management.version" value="1.2.0"/>
     <property name="project_management.jar.name" value="project_management.jar"/>
     <property name="project_management.path" value="project_management/${project_management.version}"/>
     <property name="project_management.jar"
               value="${tcs_libdir}/${project_management.path}/${project_management.jar.name}"/>
 
-    <property name="project_management_persistence.version" value="1.1.2"/>
+    <property name="project_management_persistence.version" value="1.2.0"/>
     <property name="project_management_persistence.jar.name" value="project_management_persistence.jar"/>
     <property name="project_management_persistence.path"
               value="project_management_persistence/${project_management_persistence.version}"/>
@@ -541,6 +541,7 @@
         <pathelement location="${configuration_api.jar}"/>
         <pathelement location="${configuration_persistence.jar}"/>
         <pathelement location="${data_validation.jar}"/>
+        <pathelement location="${database_abstraction.jar}"/>
         <pathelement location="${db_connection_factory.jar}"/>
         <pathelement location="${deliverable_management.jar}"/>
         <pathelement location="${deliverable_management_persistence.jar}"/>

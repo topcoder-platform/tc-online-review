@@ -54,6 +54,7 @@
 @emailengine_smtp_port@=25
 @emailengine_smtp_user@=
 @emailengine_smtp_password@=
+@notificationEmailFromAddress@=service@topcodersoftware.com
 
 ####################################################
 ## Parameters Used by ApplicationServer.properties #

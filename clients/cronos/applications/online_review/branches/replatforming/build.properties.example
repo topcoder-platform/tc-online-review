@@ -76,3 +76,8 @@ selenium_port=5555
 #####################################
 auto_pilot_deploy_dir=<<path to auto pilot deployment directory>>
 auto_screening_deploy_dir=<<path to auto screening deployment directory>>
+
+############################
+# Replatforming properties #
+############################
+replatforming_components_path
