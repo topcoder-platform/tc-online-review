@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -40,7 +40,7 @@ import java.util.HashSet;
  * <p>Version 1.5 (Content Creation Contest Online Review and TC Site Integration Assembly 1.0) Change notes:
  *  Updated to support content creation project type.</p>
  *
- * @author George1, brain_cn, pulky, Blues, FireIce
+ * @author George1, brain_cn, pulky, Blues, FireIce, VolodymyrK
  * @version 1.5
  */
 public class AutoPaymentUtil {
@@ -221,6 +221,47 @@ public class AutoPaymentUtil {
                     alreadyPaidSpecReviewer ? 0 : fpc.getSpecReviewCost(), conn);
                 alreadyPaidSpecReviewer = true;
             }
+        }
+    }
+
+    /**
+     * Clears payment for all Copilot resources that have not been paid yet.
+     *
+     * @param projectId project id
+     * @param conn the connection
+     *
+     * @throws SQLException if an error occurs in the persistence layer
+     */
+    public static void clearCopilotPayments(long projectId, Connection conn) throws SQLException {
+
+        String SELECT_SQL =
+            " select r.resource_id " +
+            " from resource r " +
+            " where r.resource_role_id = 14 and r.project_id = ? " +
+            " and not exists (select ri.resource_id from resource_info ri " +
+            "   where r.resource_id = ri.resource_id " +
+            "   and ri.resource_info_type_id = 8 and ri.value = 'Yes')";
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            pstmt = conn.prepareStatement(SELECT_SQL);
+            pstmt.setLong(1, projectId);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                long resourceId = rs.getLong(1);
+
+                // Clear payment value.
+                deleteResourceInfo(resourceId, 7, conn);
+
+                // Set payment status to "N/A".
+                updateResourceInfo(resourceId, 8, "N/A", conn);
+            }
+        } finally {
+            PRHelper.close(rs);
+            PRHelper.close(pstmt);
         }
     }
 
@@ -476,7 +517,7 @@ public class AutoPaymentUtil {
 
         // Select submitter resources that have not been paid yet. The ones that already have been paid shouldn't change.
         String SELECT_SQL  = "select resource_id from resource where resource_role_id = 1 and project_id = ? and " +
-                             " resource_id not in (select resource_id from resource_info where resource_info_type_id = 8 and value == 'Yes')";
+                             " resource_id not in (select resource_id from resource_info where resource_info_type_id = 8 and value = 'Yes')";
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;

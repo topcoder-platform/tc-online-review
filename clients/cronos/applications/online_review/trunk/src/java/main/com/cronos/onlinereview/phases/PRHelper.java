@@ -313,7 +313,7 @@ public class PRHelper {
     }
 
     /**
-     * Pull data to project_result.
+     * Pull data to project_result, populate reviewer payments and clear copilot payments.
      *
      * @param projectId
      *            the projectId
@@ -330,6 +330,9 @@ public class PRHelper {
                     new LoggerMessage("project", new Long(projectId), null, "start post mortem phase."));
         }
         AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.POST_MORTEM_PHASE);
+		
+		// Copilots aren't getting paid for failed projects.
+        AutoPaymentUtil.clearCopilotPayments(projectId, conn);
     }
 
     /**
