@@ -67,23 +67,6 @@
             </Property>
         </Property>
     </Config>
-        <!--[OR-584] we only do assignment v2 now, so we don't need this
-    <Config name="com.cronos.onlinereview.phases.OnlineReviewProjectPilot">
-    	<Property name="CheckAssignmentDocumentsStatus">
-    		<Value>false</Value>
-    	</Property>
-        <Property name="AssigmentDocumentEmail">
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>ad_email_template.txt</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
-            </Property>
-        </Property>
-    </Config>-->
     <Config name="com.topcoder.management.phase.autopilot.impl.ActiveAutoPilotSource">
         <Property name="com/topcoder/management/project/ProjectManager">
             <Property name="type">

@@ -97,7 +97,6 @@
             <fileset file="${xerces.jar}"/>
             <fileset dir=".">
                 <include name="build.xml"/>
-                <include name="warn_email_template.html"/>
             </fileset>
             <fileset dir="${build_distdir}">
                 <include name="conf/**/*"/>

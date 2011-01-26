@@ -165,8 +165,6 @@
 @auto_pilot_running_file@=<<path to running file>>
 # A path to log file for Auto Pilot
 @auto_pilot_log_file@=<<path_to_log_file>>
-# A path to directory with email templates for Auto Pilot
-@auto_pilot_templates_dir@=<<path_to_directory_with_email_templates>>
 # An interval (in minutes) between Auto Pilot job executions
 @auto_pilot_poll_interval@=<<interval between job executions>>
 
