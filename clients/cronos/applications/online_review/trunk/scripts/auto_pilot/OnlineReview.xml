@@ -4,8 +4,8 @@
        <!ENTITY catalogOutputDir "@catalogOutputDir@">
        <!ENTITY distributionToolOutputDir "@distributionToolOutputDir@">
        <!ENTITY distributionScriptsBase "@distributionScriptsBase@">
-       <!ENTITY phasesEmailTemplate "@auto_pilot_templates_dir@/email_template.txt">
-       <!ENTITY winnersEmailTemplate "@auto_pilot_templates_dir@/winners_email_template.txt">
+       <!ENTITY phasesEmailTemplate "@exttemplatesdir@/email_template.txt">
+       <!ENTITY winnersEmailTemplate "@exttemplatesdir@/winners_email_template.txt">
        <!ENTITY timelineTemplateDir "@exttemplatesdir@">
        <!ENTITY contactManagersTemplate "@exttemplatesdir@/contact_manager_template.txt">
        <!ENTITY managerNotificationEmailTemplatesBase "@exttemplatesdir@">
