@@ -12,7 +12,7 @@
 
   <!-- Load build properties -->
   <property file="build.properties"/>
-  <property file="${db_scripts_path}/build.properties" classpath="${svnant.jar}"/>
+  <property file="${db_scripts_path}/build.properties" />
 
   <!-- COMPONENT PARAMETERS -->
   <property name="component" value="online_review"/>
@@ -83,7 +83,7 @@
   </target>
 
   <!-- updates Online Review files from SVN -->
-  <typedef resource="org/tigris/subversion/svnant/svnantlib.xml"/>
+  <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="${svnant.jar}" />
   <target name="svn_update" if="svn.update">
     <svn username="${svn.username}" password="${svn.password}">
       <info target="${basedir}" verbose="true"/>
