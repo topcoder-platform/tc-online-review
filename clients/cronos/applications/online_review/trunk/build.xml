@@ -12,7 +12,7 @@
 
   <!-- Load build properties -->
   <property file="build.properties"/>
-  <property file="${db_scripts_path}/build.properties"/>
+  <property file="${db_scripts_path}/build.properties" classpath="${svnant.jar}"/>
 
   <!-- COMPONENT PARAMETERS -->
   <property name="component" value="online_review"/>
