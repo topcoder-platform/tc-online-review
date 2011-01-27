@@ -85,14 +85,18 @@
           </svnex>
         </else>
       </if>
-      <copy todir="${basedir}">
-        <fileset dir="${prop_dir}">
-          <include name="**/*.properties" />
-          <include name="**/*.xml" />
-        </fileset>
-      </copy>
+      <antcall target="move_files" />
     </sequential>
   </macrodef>
+
+  <target name="move_files" >
+    <copy todir="${basedir}">
+      <fileset dir="${prop_dir}">
+        <include name="**/*.properties" />
+        <include name="**/*.xml" />
+      </fileset>
+    </copy>
+  </target>
 
   <!--  This tasks execute svn operations against cached credentials,
           or prompt for password if svn.username property is set. -->
