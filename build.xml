@@ -83,7 +83,7 @@
   </target>
 
   <!-- updates Online Review files from SVN -->
-  <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="${svnant.jar}" />
+  <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.lib" />
   <target name="svn_update" if="svn.update">
     <svn username="${svn.username}" password="${svn.password}">
       <info target="${basedir}" verbose="true"/>
