@@ -42,7 +42,7 @@
             <fail>Unsupported environment</fail>
           </then>
           <else>
-            <move_properties url="${base_url}/${env}" />
+            <checkout_properties url="${base_url}/${env}" />
           </else>
         </if>        
       </else>
@@ -50,7 +50,7 @@
   </target>
 
   <!-- this macro synchronizes properties directory with svn repository and copies *.properties to proper locations. -->
-  <macrodef name="move_properties" >
+  <macrodef name="checkout_properties" >
     <attribute name="url" />
     <sequential>
       <if>
