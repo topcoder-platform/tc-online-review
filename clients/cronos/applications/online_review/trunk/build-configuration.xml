@@ -43,6 +43,7 @@
           </then>
           <else>
             <checkout_properties url="${base_url}/${env}" />
+            <antcall target="move_properties" />
           </else>
         </if>        
       </else>
@@ -85,7 +86,6 @@
           </svnex>
         </else>
       </if>
-      <antcall target="move_properties" />
     </sequential>
   </macrodef>
 
