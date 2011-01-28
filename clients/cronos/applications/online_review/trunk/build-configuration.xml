@@ -85,11 +85,11 @@
           </svnex>
         </else>
       </if>
-      <antcall target="move_files" />
+      <antcall target="move_properties" />
     </sequential>
   </macrodef>
 
-  <target name="move_files" >
+  <target name="move_properties" >
     <copy todir="${basedir}">
       <fileset dir="${prop_dir}">
         <include name="**/*.properties" />
