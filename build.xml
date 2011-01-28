@@ -553,8 +553,8 @@
     <ant antfile="build-configuration.xml" target="update_properties" /> 
   </target>
 
-  <target name="move_files" >
-    <ant antfile="build-configuration.xml" target="move_files" /> 
+  <target name="move_properties" >
+    <ant antfile="build-configuration.xml" target="properties" /> 
   </target>
   
   <!-- - - - - - - - - - - - - - - - - -
