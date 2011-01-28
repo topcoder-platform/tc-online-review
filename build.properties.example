@@ -35,9 +35,9 @@ scp_remotejboss=<<remove jboss path>>
 ###################
 # SVN credentials #
 ###################
-or.svn.username=<<svn username>>
-or.svn.password=<<svn password>>
-# or.svn.update=uncomment this line to allow update through ant on each compile
+build.svn.username=<<svn username>>
+build.svn.password=<<svn password>>
+# build.svn.update=uncomment this line to allow update through ant on each compile
 
 
 ##################################################################################

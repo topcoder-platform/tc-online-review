@@ -99,7 +99,7 @@
   </target>
 
   <!--  This tasks execute svn operations against cached credentials,
-          or prompt for password if svn.username property is set. -->
+          or prompt for password if build.svn.username property is set. -->
   <macrodef name="svnex">
 
     <!-- the operations to be performed via subversion -->
@@ -107,26 +107,25 @@
 
     <sequential>
       <if>
-        <isset property="svn.username"/>
+        <isset property="build.svn.username"/>
         <then>
           <if>
             <not>
-              <isset property="svn.password"/>
+              <isset property="build.svn.password"/>
             </not>
             <then>
-              <input addproperty="svn.password" message="Please enter svn password: "/>
+              <input addproperty="build.svn.password" message="Please enter svn password: "/>
             </then>
           </if>
-          <svn javahl="false" username="${svn.username}" password="${svn.password}">
-            <operation />
-          </svn>
         </then>
         <else>
-          <svn javahl="false">
-            <operation />
-          </svn>
+          <input addproperty="build.svn.username" message="Please enter svn username: "/>
+          <input addproperty="build.svn.password" message="Please enter svn password: "/>
         </else>
       </if>
+      <svn javahl="false" username="${build.svn.username}" password="${build.svn.password}">
+        <operation />
+      </svn>
     </sequential>
   </macrodef>
 </project>
