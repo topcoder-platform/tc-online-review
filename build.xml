@@ -554,7 +554,7 @@
   </target>
 
   <target name="move_properties" >
-    <ant antfile="build-configuration.xml" target="properties" /> 
+    <ant antfile="build-configuration.xml" target="move_properties" /> 
   </target>
   
   <!-- - - - - - - - - - - - - - - - - -
