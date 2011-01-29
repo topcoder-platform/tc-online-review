@@ -175,8 +175,6 @@
 #@auto_pilot_running_file@=/home/tcs/temp_files/auto_pilot_running.txt
 # A path to log file for Auto Pilot
 #@auto_pilot_log_file@=/home/tcs/temp_files/auto_pilot_log.txt
-# A path to directory with email templates for Auto Pilot
-#@auto_pilot_templates_dir@=<<path_to_directory_with_email_templates>>
 
 ##############################################
 # Parameters specific to Auto Screening Tool #
