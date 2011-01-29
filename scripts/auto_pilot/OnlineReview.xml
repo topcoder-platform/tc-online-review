@@ -12,6 +12,8 @@
        <!ENTITY notificationEmailFromAddress "service@topcodersoftware.com">
        <!ENTITY smtpServerAuthAddress "@emailengine_smtp_user@">
        <!ENTITY pactJNDIAddress "@pactJNDIAddress@">
+       <!ENTITY lateDeliverableUpdatedByManagerTemplate "@exttemplatesdir@/late_deliverable_updated_by_manager_template.txt">
+       <!ENTITY lateDeliverableUpdatedByMemberTemplate "@exttemplatesdir@/late_deliverable_updated_by_member_template.txt">
 ]>
 <CMConfig>
 <!-- [OR-584] don't need this anymore
@@ -4724,6 +4726,21 @@
             Resource Roles that have that permission granted. -->
         <!--  NOTE!  All names (either for permissions or for resource roles) are case sensitive!  -->
         <Property name="Permissions Matrix">
+            <Property name="View Late Deliverable">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Client Manager</Value>
+                <Value>Copilot</Value>
+                <Value>Cockpit Project User</Value>
+                <Value>Observer</Value>
+            </Property>
+            <Property name="Edit Late Deliverable">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Client Manager</Value>
+                <Value>Copilot</Value>
+                <Value>Cockpit Project User</Value>
+            </Property>
             <Property name="Create Scorecard">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
@@ -5506,6 +5523,45 @@
                 <Value>&notificationEmailFromAddress;</Value>
             </Property>
         </Property>
+        
+
+        <Property name="LateDeliverableUpdateNotificationEmail">
+            <Property name="EditLateDeliverablePageBaseURL">
+                <Value>https://software.topcoder.com/review/actions/EditLateDeliverable.do?method=editLateDeliverable&amp;late_deliverable_id=</Value>
+            </Property>
+            <Property name="ByManager">
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&lateDeliverableUpdatedByManagerTemplate;</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Late Deliverable Updated: {0} {1}</Value>
+                </Property>
+            </Property>
+            <Property name="ByMember">
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&lateDeliverableUpdatedByMemberTemplate;</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Late Deliverable Updated: {0} {1}</Value>
+                </Property>
+                <Property name="Roles">
+                    <Value></Value>
+                </Property>
+            </Property>
+        </Property>
+        
     </Config>
 
     <!--

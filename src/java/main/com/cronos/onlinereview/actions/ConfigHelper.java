@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -89,8 +89,15 @@ import com.topcoder.util.config.UnknownNamespaceException;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.7.1 (Online Review Late Deliverables Edit Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added configuration for email messages to be sent on late deliverables update.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, romanoTC, isv, FireIce
- * @version 1.7
+ * @version 1.7.1
  */
 public class ConfigHelper {
 
@@ -997,6 +1004,29 @@ public class ConfigHelper {
      * @since 1.6.1
      */
     private static String[] svnConfig;
+    
+    /**
+     * <p>A <code>String</code> array providing the configuration for email message to be sent when late deliverables
+     * are updated by managers.</p>
+     *
+     * @since 1.7.1
+     */
+    private static String[] lateDeliverablesUpdatedByManagerNotificationConfig;
+    
+    /**
+     * <p>A <code>String</code> array providing the configuration for email message to be sent when late deliverables
+     * are updated by late members.</p>
+     *
+     * @since 1.7.1
+     */
+    private static String[] lateDeliverablesUpdatedByMemberNotificationConfig;
+
+    /**
+     * <p>A <code>String</code> providing the base URL for <code>Edit Late Deliverable</code> page.</p>
+     *  
+     * @since 1.7.1
+     */
+    private static String lateDeliverableBaseURL;
 
     static {
         // Obtaining the instance of Configuration Manager
@@ -1554,6 +1584,24 @@ public class ConfigHelper {
                                       svnRepoConfig.getValue("MkDirCommitMessage"),
                                       svnRepoConfig.getValue("TempFilesBaseDir"),
                                       svnRepoConfig.getValue("PathBasedPermissionsFileURL")};
+            
+            Property lateDeliverableEmailConfig 
+                = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "LateDeliverableUpdateNotificationEmail");
+            
+            lateDeliverablesUpdatedByManagerNotificationConfig = new String[] {
+                lateDeliverableEmailConfig.getValue("ByManager.EmailTemplateSource"),
+                lateDeliverableEmailConfig.getValue("ByManager.EmailTemplateName"),
+                lateDeliverableEmailConfig.getValue("ByManager.EmailFromAddress"),
+                lateDeliverableEmailConfig.getValue("ByManager.EmailSubject")};
+            
+            lateDeliverablesUpdatedByMemberNotificationConfig = new String[] {
+                lateDeliverableEmailConfig.getValue("ByMember.EmailTemplateSource"),
+                lateDeliverableEmailConfig.getValue("ByMember.EmailTemplateName"),
+                lateDeliverableEmailConfig.getValue("ByMember.EmailFromAddress"),
+                lateDeliverableEmailConfig.getValue("ByMember.EmailSubject"),
+                lateDeliverableEmailConfig.getValue("ByMember.Roles")};
+            
+            lateDeliverableBaseURL = lateDeliverableEmailConfig.getValue("EditLateDeliverablePageBaseURL");
         } catch (UnknownNamespaceException une) {
             // TODO: Add proper logging here
             System.out.println(une.getMessage());
@@ -2245,5 +2293,119 @@ public class ConfigHelper {
      */
     public static Map<String, String> getDeliverableTypes() {
         return deliverableTypes;
+    }
+
+    /**
+     * <p>Gets the source for template for email to be sent to intended recipients when late deliverable is updated by 
+     * manager.</p>
+     * 
+     * @return a <code>String</code> referencing the source for email template.
+     * @since 1.7.1
+     */
+    public static String getLateDeliverableUpdateByManagerEmailTemplateSource() {
+        return lateDeliverablesUpdatedByManagerNotificationConfig[0];
+    }
+
+    /**
+     * <p>Gets the name for template for email to be sent to intended recipients when late deliverable is updated by 
+     * manager.</p>
+     * 
+     * @return a <code>String</code> referencing the email template.
+     * @since 1.7.1
+     */
+    public static String getLateDeliverableUpdateByManagerEmailTemplateName() {
+        return lateDeliverablesUpdatedByManagerNotificationConfig[1];
+    }
+
+    /**
+     * <p>Gets the FROM address for email message to be sent to intended recipients when late deliverable is updated by 
+     * manager.</p>
+     * 
+     * @return a <code>String</code> providing the FROM address for email message.
+     * @since 1.7.1
+     */
+    public static String getLateDeliverableUpdateByManagerEmailFromAddress() {
+        return lateDeliverablesUpdatedByManagerNotificationConfig[2];
+    }
+
+    /**
+     * <p>Gets the subject for email message to be sent to intended recipients when late deliverable is updated by 
+     * manager.</p>
+     * 
+     * @return a <code>String</code> providing the subject for email message.
+     * @since 1.7.1
+     */
+    public static String getLateDeliverableUpdateByManagerEmailTemplateSubject() {
+        return lateDeliverablesUpdatedByManagerNotificationConfig[3];
+    }
+
+    /**
+     * <p>Gets the base URL for <code>Edit Late Deliverable</code> page.</p>
+     * 
+     * @return a <code>String</code> providing the base URL for <code>Edit Late Deliverable</code> page.
+     * @since 1.7.1
+     */
+    public static String getLateDeliverableBaseURL() {
+        return lateDeliverableBaseURL;
+    }
+
+    /**
+     * <p>Gets the source for template for email to be sent to intended recipients when late deliverable is updated by 
+     * member.</p>
+     * 
+     * @return a <code>String</code> referencing the source for email template.
+     * @since 1.7.1
+     */
+    public static String getLateDeliverableUpdateByMemberEmailTemplateSource() {
+        return lateDeliverablesUpdatedByMemberNotificationConfig[0];
+    }
+
+    /**
+     * <p>Gets the name for template for email to be sent to intended recipients when late deliverable is updated by 
+     * member.</p>
+     * 
+     * @return a <code>String</code> referencing the email template.
+     * @since 1.7.1
+     */
+    public static String getLateDeliverableUpdateByMemberEmailTemplateName() {
+        return lateDeliverablesUpdatedByMemberNotificationConfig[1];
+    }
+
+    /**
+     * <p>Gets the FROM address for email message to be sent to intended recipients when late deliverable is updated by 
+     * member.</p>
+     * 
+     * @return a <code>String</code> providing the FROM address for email message.
+     * @since 1.7.1
+     */
+    public static String getLateDeliverableUpdateByMemberEmailFromAddress() {
+        return lateDeliverablesUpdatedByMemberNotificationConfig[2];
+    }
+
+    /**
+     * <p>Gets the subject for email message to be sent to intended recipients when late deliverable is updated by 
+     * member.</p>
+     * 
+     * @return a <code>String</code> providing the subject for email message.
+     * @since 1.7.1
+     */
+    public static String getLateDeliverableUpdateByMemberEmailTemplateSubject() {
+        return lateDeliverablesUpdatedByMemberNotificationConfig[3];
+    }
+
+    /**
+     * <p>Gets the list of names for resource roles to be notified when late deliverable is updated by member.</p>
+     * 
+     * @return a <code>String</code> providing the list of names for resource roles to be notified when late deliverable 
+     *         is updated by member or <code>null</code> if such a list is not set.
+     * @since 1.7.1
+     */
+    public static String[] getLateDeliverableUpdateByMemberRecipientRoleNames() {
+        if ((lateDeliverablesUpdatedByMemberNotificationConfig[4] != null) 
+            && (lateDeliverablesUpdatedByMemberNotificationConfig[4].trim().length() > 0)) {
+            return lateDeliverablesUpdatedByMemberNotificationConfig[4].split(",");
+        } else {
+            return null;
+        }
     }
 }

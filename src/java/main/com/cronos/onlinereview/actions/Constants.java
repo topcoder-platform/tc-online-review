@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -61,8 +61,15 @@ package com.cronos.onlinereview.actions;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.7 (Online Review Late Deliverables Edit Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #VIEW_LATE_DELIVERABLE_PERM_NAME} and {@link #EDIT_LATE_DELIVERABLE_PERM_NAME} constants.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv
- * @version 1.6
+ * @version 1.7
  */
 public class Constants {
 
@@ -694,6 +701,20 @@ public class Constants {
      * @since 1.2
      */
     public static final String PROJECT_MANAGEMENT_PERM_NAME = "Manage Project";
+
+    /**
+     * <p>A <code>String</code> providing the <code>View Late Deliverable</code> permission.</p>
+     * 
+     * @since 1.7
+     */
+    public static final String VIEW_LATE_DELIVERABLE_PERM_NAME = "View Late Deliverable";
+
+    /**
+     * <p>A <code>String</code> providing the <code>Edit Late Deliverable</code> permission.</p>
+     * 
+     * @since 1.7
+     */
+    public static final String EDIT_LATE_DELIVERABLE_PERM_NAME = "Edit Late Deliverable";
 
     // -------------------------------------------------------------------------- Phase names -----
 

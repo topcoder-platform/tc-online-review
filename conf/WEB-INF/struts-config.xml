@@ -215,11 +215,24 @@
         <!-- Late Deliverable Search form -->
         <form-bean name="lateDeliverableSearchForm" dynamic="true" type="org.apache.struts.validator.LazyValidatorForm">
             <form-property name="project_id" type="java.lang.String" />
+            <form-property name="tcd_project_id" type="java.lang.String" />
+            <form-property name="explanation_status" type="java.lang.String" />
+            <form-property name="response_status" type="java.lang.String" />
+            <form-property name="min_deadline" type="java.lang.String" />
+            <form-property name="max_deadline" type="java.lang.String" />
             <form-property name="project_categories" type="java.lang.Long[]" />
             <form-property name="project_statuses" type="java.lang.Long[]" />
             <form-property name="deliverable_types" type="java.lang.String[]" />
             <form-property name="forgiven" type="java.lang.String" />
             <form-property name="handle" type="java.lang.String" />
+        </form-bean>
+
+        <!-- Late Deliverable Edit form -->
+        <form-bean name="lateDeliverableEditForm" dynamic="true" type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="late_deliverable_id" type="java.lang.Long" />
+            <form-property name="forgiven" type="java.lang.Boolean" />
+            <form-property name="explanation" type="java.lang.String" />
+            <form-property name="response" type="java.lang.String" />
         </form-bean>
 
     </form-beans>
@@ -806,6 +819,24 @@
             name="lateDeliverableSearchForm"
             input="/jsp/viewLateDeliverables.jsp">
             <forward name="success" path="/jsp/viewLateDeliverables.jsp" redirect="false" />
+        </action>
+
+        <!-- "Edit Late Deliverbale" action -->
+        <action path="/actions/EditLateDeliverable" unknown="false"
+            type="com.cronos.onlinereview.actions.LateDeliverablesActions"
+            parameter="method" scope="request"
+            name="lateDeliverableEditForm"
+            input="/jsp/viewLateDeliverables.jsp">
+            <forward name="success" path="/jsp/editLateDeliverable.jsp" redirect="false" />
+        </action>
+
+        <!-- "Save Late Deliverbale" action -->
+        <action path="/actions/SaveLateDeliverable" unknown="false"
+            type="com.cronos.onlinereview.actions.LateDeliverablesActions"
+            parameter="method" scope="request"
+            name="lateDeliverableEditForm"
+            input="/jsp/editLateDeliverable.jsp">
+            <forward name="success" path="/actions/EditLateDeliverable.do?method=editLateDeliverable" redirect="true"/>
         </action>
 
         <!--
