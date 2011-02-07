@@ -157,6 +157,7 @@
 @tests.competitorusername@=user
 @tests.competitoruserpassword@=password
 @tests.competitoruserid@=132458
+@tests.timeout@=5000
 
 #####################################
 # Parameters specific to Auto Pilot #
