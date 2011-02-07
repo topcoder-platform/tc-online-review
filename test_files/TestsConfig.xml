@@ -17,7 +17,7 @@
             <Value>@tests.projectlink@</Value>
         </Property>
         <Property name="timeout"><!-- the timeout for the page loading -->
-            <Value>30000</Value>
+            <Value>5000</Value>
         </Property>
         <Property name="browser_speed"><!-- browser speed when running tests -->
             <Value>@tests.browserspeed@</Value>
@@ -29,8 +29,29 @@
             <Value>@tests.password@</Value>
         </Property>
         <Property name="distribution_location"> <!-- The development distribution for upload features -->
-            <Value>@tests.distributionurl@</Value>
+            <Value>file:///@tests.filespath@/Test_Distribution.jar</Value>
         </Property>
+        <Property name="rs">
+            <Value>file:///@tests.filespath@/RS.doc</Value>
+        </Property>
+        <Property name="doc1">
+          <Value>file:///@tests.filespath@/doc1.doc</Value>
+        </Property>
+        <Property name="doc2">
+          <Value>file:///@tests.filespath@/doc2.doc</Value>
+        </Property>
+        <Property name="doc3">
+          <Value>file:///@tests.filespath@/doc3.doc</Value>
+        </Property>
+        <Property name="competitor_username">
+          <Value>@tests.competitorusername@</Value>
+        </Property>
+        <Property name="competitor_password">
+          <Value>@tests.competitoruserpassword@</Value>
+        </Property>
+      <Property name="competitor_user_id">
+        <Value>@tests.competitoruserid@</Value>
+      </Property>
     </Config>
     <!-- Namespace for DBConnectionFactory component -->
     <Config name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">

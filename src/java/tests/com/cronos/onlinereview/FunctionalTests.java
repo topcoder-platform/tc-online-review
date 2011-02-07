@@ -12,7 +12,8 @@ import junit.framework.TestSuite;
  * <p>This test case aggregates all functional test cases.</p>
  *
  * @author TopCoder
- * @version 1.0
+ * @version 1.1
+ * @since 1.0
  */
 public class FunctionalTests extends TestCase {
 
@@ -22,7 +23,10 @@ public class FunctionalTests extends TestCase {
         suite.addTestSuite(ManageProjectTests.class);
         suite.addTestSuite(LinkProjectsTests.class);
         suite.addTestSuite(OpenPhaseTests.class);
-        //suite.addTestSuite(EditProjectTests.class);
+        suite.addTestSuite(EditProjectTests.class);
+        suite.addTestSuite(ClosePhaseTests.class);
+        suite.addTestSuite(ManageProjectWithNoPermissionTests.class);
+        suite.addTestSuite(SettingPhaseEndDateTests.class);
         return suite;
     }
 }

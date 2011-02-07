@@ -148,12 +148,15 @@
 @tests.username@=heffan
 @tests.password@=password
 @tests.projectlink@=/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=
-@tests.baseurl@=http://localhost:8080/review
+@tests.baseurl@=http://localhost:8081/review
 @tests.seleniumport@=5555
 @tests.seleniumbrowser@=*chrome
 @tests.seleniumdomain@=http://localhost:8080
-@tests.distributionurl@=<<online_review_trunk>>/test_files/Test_Distribution.jar
+@tests.filespath@=<<online_review_trunk>>/test_files
 @tests.browserspeed@=0
+@tests.competitorusername@=user
+@tests.competitoruserpassword@=password
+@tests.competitoruserid@=132458
 
 #####################################
 # Parameters specific to Auto Pilot #

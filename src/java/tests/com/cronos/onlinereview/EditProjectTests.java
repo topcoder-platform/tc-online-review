@@ -12,16 +12,6 @@ package com.cronos.onlinereview;
 public class EditProjectTests extends ProjectTests {
 
     /**
-     * Sets up the testing environment.
-     *
-     * @throws Exception if any error occurs.
-     */
-    public void setUp() throws Exception {
-        super.setUp();
-    	TestHelper.createProject(projectId, -1, true, true);
-    }
-
-    /**
      * Test Case Number: FTC69 RS5.5 Verify Manager can add Designer Role to a project
      *
      * @throws Exception if any error occurs
