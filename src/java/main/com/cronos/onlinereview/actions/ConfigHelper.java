@@ -1592,7 +1592,8 @@ public class ConfigHelper {
                 lateDeliverableEmailConfig.getValue("ByManager.EmailTemplateSource"),
                 lateDeliverableEmailConfig.getValue("ByManager.EmailTemplateName"),
                 lateDeliverableEmailConfig.getValue("ByManager.EmailFromAddress"),
-                lateDeliverableEmailConfig.getValue("ByManager.EmailSubject")};
+                lateDeliverableEmailConfig.getValue("ByManager.EmailSubject"),
+                lateDeliverableEmailConfig.getValue("ByManager.Roles")};				
             
             lateDeliverablesUpdatedByMemberNotificationConfig = new String[] {
                 lateDeliverableEmailConfig.getValue("ByMember.EmailTemplateSource"),
@@ -2337,6 +2338,22 @@ public class ConfigHelper {
      */
     public static String getLateDeliverableUpdateByManagerEmailTemplateSubject() {
         return lateDeliverablesUpdatedByManagerNotificationConfig[3];
+    }
+
+    /**
+     * <p>Gets the list of names for resource roles to be notified when late deliverable is updated by manager.</p>
+     * 
+     * @return a <code>String</code> providing the list of names for resource roles to be notified when late deliverable 
+     *         is updated by manager or <code>null</code> if such a list is not set.
+     * @since 1.7.1
+     */
+    public static String[] getLateDeliverableUpdateByManagerRecipientRoleNames() {
+        if ((lateDeliverablesUpdatedByManagerNotificationConfig[4] != null) 
+            && (lateDeliverablesUpdatedByManagerNotificationConfig[4].trim().length() > 0)) {
+            return lateDeliverablesUpdatedByManagerNotificationConfig[4].split(",");
+        } else {
+            return null;
+        }
     }
 
     /**

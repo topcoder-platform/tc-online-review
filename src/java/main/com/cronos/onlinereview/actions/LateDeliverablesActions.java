@@ -20,6 +20,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cronos.onlinereview.actions.AuthorizationHelper;
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.functions.Functions;
 import com.topcoder.management.project.PersistenceException;
@@ -1050,11 +1051,15 @@ public class LateDeliverablesActions extends DispatchAction {
                     field.setValue(Functions.displayDate(request, lateDeliverable.getDeadline()));
                 } else if ("DELIVERABLE_TYPE".equals(field.getName())) {
                     field.setValue(Functions.getDeliverableName(request, lateDeliverable.getDeliverableId()));
-                } else if ("USER_HANDLE".equals(field.getName())) {
+                } else if ("LATE_MEMBER_HANDLE".equals(field.getName())) {
                     UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
                     ExternalUser lateMember 
                         = userRetrieval.retrieveUser(getLateDeliverableUserId(request, lateDeliverable));
                     field.setValue(lateMember.getHandle());
+                } else if ("CURRENT_USER_HANDLE".equals(field.getName())) {
+                    UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
+                    ExternalUser currentUser = userRetrieval.retrieveUser(AuthorizationHelper.getLoggedInUserId(request));
+                    field.setValue(currentUser.getHandle());
                 }
             }
         }
@@ -1066,7 +1071,8 @@ public class LateDeliverablesActions extends DispatchAction {
      * <p>Sends email to specified recipients on update of specified late deliverable.</p>
      * 
      * @param project a <code>Project</code> providing details for project. 
-     * @param recipients a <code>String</code> array providing the list of email addresses to send email message to. 
+     * @param recipients a <code>String</code> list providing the list of email addresses to send email message to. 
+     * @param ccRecipients a <code>String</code> list providing the list of email addresses to be CCed on the email message. 
      * @param lateDeliverable a <code>LateDeliverable</code> which has been updated.
      * @param emailTemplateSource a <code>String</code> referencing the source for email template.
      * @param emailTemplateName a <code>String</code> referencing the template for generating the email message body.
@@ -1075,10 +1081,10 @@ public class LateDeliverablesActions extends DispatchAction {
      * @param request an <code>HttpServletRequest</code> representing incoming request. 
      * @throws Exception if an unexpected error occurs.
      */
-    private void sendEmailForUsers(Project project, String[] recipients, LateDeliverable lateDeliverable, 
+    private void sendEmailForUsers(Project project, List<String> recipients, List<String> ccRecipients, LateDeliverable lateDeliverable, 
                                    String emailTemplateSource, String emailTemplateName, String emailSubjectTemplate, 
                                    String fromAddress, HttpServletRequest request) throws Exception {
-        if (recipients.length == 0) {
+        if (recipients.size() + ccRecipients.size() == 0) {
             return;
         }
 
@@ -1096,13 +1102,77 @@ public class LateDeliverablesActions extends DispatchAction {
         for (String recipient : recipients) {
             message.addToAddress(recipient, TCSEmailMessage.TO);
         }
+        for (String ccRecipient : ccRecipients) {
+            message.addToAddress(ccRecipient, TCSEmailMessage.CC);
+        }		
         message.setContentType("text/html");
         EmailEngine.send(message);
     }
 
     /**
-     * <p>Sends an email to late member associated with the specified late deliverable to notify on updates of the late
-     * deliverable by one of the managers.</p>
+     * <p>Returns list of user IDs who have specified resource roles for the specified project.</p>
+     * 
+     * @param resMgr a <code>ResourceManager</code> to be used for retrieving project resources. 
+     * @param roleNames a <code>String</code> array representing the resource role names. 
+	 * @param projectID ID of the project.
+     * @throws Exception if an unexpected error occurs.
+     */
+    private List<Long> getUserIDsByRoleNames(ResourceManager resMgr, String[] roleNames, long projectID) throws Exception {
+        ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
+        List<Long> extUsrIds = new ArrayList<Long>();
+
+        if ((roleNames != null) && (roleNames.length > 0)) {
+            // Build filters
+            List<Filter> roleFilters = new ArrayList<Filter>();
+            for (String roleName : roleNames) {
+                ResourceRole role = ActionsHelper.findResourceRoleByName(allResourceRoles, roleName);
+                if (role != null) {
+                    roleFilters.add(ResourceFilterBuilder.createResourceRoleIdFilter(role.getId()));
+                }
+            }
+            Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(projectID);
+            Filter filterRole = new OrFilter(roleFilters);
+            Filter filter = new AndFilter(filterProject, filterRole);
+
+            Resource[] resources = resMgr.searchResources(filter);
+
+            // Collect unique external user IDs first as there may exist multiple resources for the same user
+            Set<String> userIDs = new HashSet<String>();			
+            for (int i = 0; i < resources.length; ++i) {
+                String extUserId = ((String) resources[i].getProperty("External Reference ID")).trim();
+                userIDs.add(extUserId);
+            }
+
+            userIDs.remove("22719217"); // "Components" dummy user
+            userIDs.remove("22770213"); // "Applications" dummy user
+            userIDs.remove("22873364"); // "LCSUPPORT" dummy user
+
+            for (String userID : userIDs) {
+                extUsrIds.add(Long.parseLong(userID));
+            }
+        }
+
+        return extUsrIds;
+    }
+
+    /**
+     * <p>Returns list of the email addresses for the specified user IDs.</p>
+     * 
+     * @param userRetrieval a <code>UserRetrieval</code> to be used for retrieving email addresses. 
+     * @param userIDs list of user IDs.
+     * @throws Exception if an unexpected error occurs.
+     */
+    private List<String> getEmailsByUserIDs(UserRetrieval userRetrieval, List<Long> userIDs) throws Exception {
+        List<String> emails = new ArrayList<String>();
+        for (Long userID : userIDs) {
+            emails.add(userRetrieval.retrieveUser(userID).getEmail());
+        }
+        return emails;	
+    }
+
+    /**
+     * <p>Sends an email to late member associated with the specified late deliverable to notify on updates of
+	 * the late deliverable by one of the managers. The other managers are CCed on the email.</p>
      * 
      * @param lateDeliverable a <code>LateDeliverable</code> which has been updated. 
      * @param request an <code>HttpServletRequest</code> representing incoming request. 
@@ -1112,9 +1182,24 @@ public class LateDeliverablesActions extends DispatchAction {
         throws Exception {
         Project project = ActionsHelper.createProjectManager(request).getProject(lateDeliverable.getProjectId());
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
-        ExternalUser user = userRetrieval.retrieveUser(getLateDeliverableUserId(request, lateDeliverable));
+		
+        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+        ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
+        String[] recipientRoleNames = ConfigHelper.getLateDeliverableUpdateByManagerRecipientRoleNames();		
+		
+        List<Long> extManagerUsrIds = getUserIDsByRoleNames(ActionsHelper.createResourceManager(request),
+                                                            recipientRoleNames, project.getId());
+		
+        // Don't send email to the user who edits the late deliverable.
+        extManagerUsrIds.remove(AuthorizationHelper.getLoggedInUserId(request));
+		
+        List<String> managerEmails = getEmailsByUserIDs(userRetrieval, extManagerUsrIds);
+		
+        // Get the late member's email.
+        List<String> lateMemberEmails = new ArrayList<String>();
+        lateMemberEmails.add( userRetrieval.retrieveUser(getLateDeliverableUserId(request, lateDeliverable)).getEmail() );
         
-        sendEmailForUsers(project, new String[] {user.getEmail()}, lateDeliverable,
+        sendEmailForUsers(project, lateMemberEmails, managerEmails, lateDeliverable,
                           ConfigHelper.getLateDeliverableUpdateByManagerEmailTemplateSource(),
                           ConfigHelper.getLateDeliverableUpdateByManagerEmailTemplateName(),
                           ConfigHelper.getLateDeliverableUpdateByManagerEmailTemplateSubject(),
@@ -1124,7 +1209,7 @@ public class LateDeliverablesActions extends DispatchAction {
 
     /**
      * <p>Sends an email to managers associated with the specified late deliverable to notify on updates of the late
-     * deliverable by the late member.</p>
+     * deliverable by the late member. The late member is CCed on the email.</p>
      * 
      * @param lateDeliverable a <code>LateDeliverable</code> which has been updated. 
      * @param request an <code>HttpServletRequest</code> representing incoming request. 
@@ -1132,61 +1217,27 @@ public class LateDeliverablesActions extends DispatchAction {
      */
     private void sendEmailToManagers(LateDeliverable lateDeliverable, HttpServletRequest request) throws Exception {
         Project project = ActionsHelper.createProjectManager(request).getProject(lateDeliverable.getProjectId());
+        UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
         
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
         String[] recipientRoleNames = ConfigHelper.getLateDeliverableUpdateByMemberRecipientRoleNames();
 
-        if ((recipientRoleNames != null) && (recipientRoleNames.length > 0)) {
-            // Build filters
-            List<Filter> recipientRoleFilters = new ArrayList<Filter>();
-            for (String recipientRoleName : recipientRoleNames) {
-                ResourceRole recipientRole = ActionsHelper.findResourceRoleByName(allResourceRoles, recipientRoleName);
-                if (recipientRole != null) {
-                    recipientRoleFilters.add(ResourceFilterBuilder.createResourceRoleIdFilter(recipientRole.getId()));
-                }
-            }
-            Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
-            Filter filterRole = new OrFilter(recipientRoleFilters);
-            Filter filter = new AndFilter(filterProject, filterRole);
+        List<Long> extManagerUsrIds = getUserIDsByRoleNames(ActionsHelper.createResourceManager(request),
+                                                            recipientRoleNames, project.getId());
 
-            // Search for managers who are to be notified on late deliverable update by late member
-            Resource[] managers = resMgr.searchResources(filter);
+        List<String> managerEmails = getEmailsByUserIDs(userRetrieval, extManagerUsrIds);
 
-            // Collect unique external user IDs first as there may exist multiple manager resources for the same user
-            Set<String> existingManagers = new HashSet<String>();
-            for (int i = 0; i < managers.length; ++i) {
-                String extUserId = ((String) managers[i].getProperty("External Reference ID")).trim();
-                if (!existingManagers.contains(extUserId)) {
-                    existingManagers.add(extUserId);
-                }
-            }
+        // Get the late member's email.
+        List<String> lateMemberEmails = new ArrayList<String>();
+        lateMemberEmails.add( userRetrieval.retrieveUser(getLateDeliverableUserId(request, lateDeliverable)).getEmail() );
 
-            existingManagers.remove("22719217"); // "Components" dummy user
-            existingManagers.remove("22770213"); // "Applications" dummy user
-            existingManagers.remove("22873364"); // "LCSUPPORT" dummy user
+        sendEmailForUsers(project, managerEmails, lateMemberEmails, lateDeliverable,
+                          ConfigHelper.getLateDeliverableUpdateByMemberEmailTemplateSource(),
+                          ConfigHelper.getLateDeliverableUpdateByMemberEmailTemplateName(),
+                          ConfigHelper.getLateDeliverableUpdateByMemberEmailTemplateSubject(),
+                          ConfigHelper.getLateDeliverableUpdateByMemberEmailFromAddress(), 
+                          request);
 
-            // Retrieve all external resources for managers in a single batch operation
-            // This inefficient operation, but going over all resources' properties is even more inefficient
-            long[] extUsrManagerIds = new long[existingManagers.size()];
-            int managerIdx = 0;
-
-            for (String mgr : existingManagers) {
-                extUsrManagerIds[managerIdx++] = Long.parseLong(mgr);
-            }
-            UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
-            ExternalUser[] extUsrManagers = userRetrieval.retrieveUsers(extUsrManagerIds);
-            String[] managerEmails = new String[extUsrManagers.length];
-            for (int i = 0; i < extUsrManagers.length; i++) {
-                managerEmails[i] = extUsrManagers[i].getEmail();
-            }
-
-            sendEmailForUsers(project, managerEmails, lateDeliverable,
-                              ConfigHelper.getLateDeliverableUpdateByMemberEmailTemplateSource(),
-                              ConfigHelper.getLateDeliverableUpdateByMemberEmailTemplateName(),
-                              ConfigHelper.getLateDeliverableUpdateByMemberEmailTemplateSubject(),
-                              ConfigHelper.getLateDeliverableUpdateByMemberEmailFromAddress(), 
-                              request);
-        }
     }
 }

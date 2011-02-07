@@ -5390,9 +5390,7 @@
             <Property name="Edit Late Deliverable">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
-                <Value>Client Manager</Value>
                 <Value>Copilot</Value>
-                <Value>Cockpit Project User</Value>
             </Property>
             <Property name="Create Scorecard">
                 <Value>Global Manager</Value>
@@ -6193,7 +6191,12 @@
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
                 <Property name="EmailSubject">
-                    <Value>Late Deliverable Updated: {0} {1}</Value>
+                    <Value>Late Deliverable Resolved: {0} {1}</Value>
+                </Property>
+
+                <!--List of resource roles to be CCed on the notification email to the late member.-->
+                <Property name="Roles">
+                    <Value>Manager,Copilot,Client Manager,Observer</Value>
                 </Property>
             </Property>
             <Property name="ByMember">
@@ -6207,10 +6210,12 @@
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
                 <Property name="EmailSubject">
-                    <Value>Late Deliverable Updated: {0} {1}</Value>
+                    <Value>Late Deliverable Explained: {0} {1}</Value>
                 </Property>
+
+                <!--List of resource roles to send email to.-->
                 <Property name="Roles">
-                    <Value></Value>
+                    <Value>Manager,Copilot,Client Manager,Observer</Value>
                 </Property>
             </Property>
         </Property>
