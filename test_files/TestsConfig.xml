@@ -17,7 +17,7 @@
             <Value>@tests.projectlink@</Value>
         </Property>
         <Property name="timeout"><!-- the timeout for the page loading -->
-            <Value>5000</Value>
+            <Value>@tests.timeout@</Value>
         </Property>
         <Property name="browser_speed"><!-- browser speed when running tests -->
             <Value>@tests.browserspeed@</Value>
