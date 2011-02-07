@@ -2510,10 +2510,11 @@
         <Property name="RIA Builds">
             <Value>135</Value>
         </Property>
-        
-        <!-- rating type added for copilot posting -->
         <Property name="Copilot Posting">
             <Value>140</Value>
+        </Property>
+        <Property name="Content Creation">
+            <Value>146</Value>
         </Property>
     </Config>
 
