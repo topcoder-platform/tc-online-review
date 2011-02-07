@@ -479,7 +479,7 @@
                     <Value>@notification_deliverable_ids@</Value>
                 </Property>
                 <Property name="defaultEmailSubjectTemplateText">
-                    <Value>WARNING\: Your %DELIVERABLE_NAME% is late for %PROJECT_NAME%</Value>
+                    <Value>WARNING\: Your %DELIVERABLE_NAME% is late for %PROJECT_NAME% %PROJECT_VERSION%</Value>
                 </Property>
                 <Property name="defaultEmailBodyTemplatePath">
                     <Value>@exttemplatesdir@/warn_email_template.html</Value>
