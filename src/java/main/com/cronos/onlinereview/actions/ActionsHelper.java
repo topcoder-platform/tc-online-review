@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2006-2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -2130,9 +2130,6 @@ public class ActionsHelper {
      *            an array of phases to search deliverables for.
      * @param resources
      *            an array of all resources for the current project.
-     * @param winnerExtUserId
-     *            an External User ID of the user who is the winner for the project. If there is no
-     *            winner for the project, this parameter must be negative.
      * @throws IllegalArgumentException
      *             if any of the <code>manager</code>, <code>phases</code> or
      *             <code>resources</code> parameters are <code>null</code>.
@@ -2145,7 +2142,7 @@ public class ActionsHelper {
      *             not.
      */
     public static Deliverable[] getAllDeliverablesForPhases(
-            DeliverableManager manager, Phase[] phases, Resource[] resources, long winnerExtUserId)
+            DeliverableManager manager, Phase[] phases, Resource[] resources)
             throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
 
         // Validate parameters
@@ -2180,17 +2177,14 @@ public class ActionsHelper {
 
         List<Deliverable> deliverables = new ArrayList<Deliverable>();
 
-        // Additionally filter deliverables because sometimes deliverables
-        // for another phases get though the above filter
         for (int i = 0; i < allDeliverables.length; ++i) {
             // Get a deliverable for the current iteration
             final Deliverable deliverable = allDeliverables[i];
             // Get an ID of resource this deliverable is for
             final long deliverableResourceId = deliverable.getResource();
             Resource forResource = null;
-            int j;
             // Find a resource this deliverable is for
-            for (j = 0; j < resources.length; ++j) {
+            for (int j = 0; j < resources.length; ++j) {
                 if (resources[j].getId() == deliverableResourceId) {
                     forResource = resources[j];
                     break;
@@ -2200,75 +2194,6 @@ public class ActionsHelper {
             // in case there isn't skip this deliverable for safety
             if (forResource == null) {
                 continue;
-            }
-
-            // Make sure this is the correct resource first. Some deliverables are
-            // assigned to resources not in their phase, and that's still considered correct
-            final String resourceRole = forResource.getResourceRole().getName();
-            // If found resource is associated with a phase,
-            // make sure this phase is among ones the deliverables needed for
-            if (forResource.getPhase() != null &&
-                    (resourceRole.equalsIgnoreCase(Constants.FINAL_REVIEWER_ROLE_NAME) ||
-                    resourceRole.equalsIgnoreCase(Constants.AGGREGATOR_ROLE_NAME) ||
-                    resourceRole.equalsIgnoreCase(Constants.SPECIFICATION_REVIEWER_ROLE_NAME) ||
-                    resourceRole.equalsIgnoreCase(Constants.APPROVER_ROLE_NAME))) {
-                final long resourcePhaseId = forResource.getPhase().longValue();
-                for (j = 0; j < phases.length; ++j) {
-                    if (phases[j].getId() == resourcePhaseId) {
-                        break;
-                    }
-                }
-                // No phases for this resource, wrong deliverable, skip it
-                if (j == phases.length) {
-                    continue;
-                }
-            }
-
-            // If current deliverable is Aggregation Review, and it is assigned to one of the reviewers,
-            // check to make sure this reviewer is not also an aggregator
-            if (deliverable.getName().equalsIgnoreCase(Constants.AGGREGATION_REV_DELIVERABLE_NAME) &&
-                    (resourceRole.equalsIgnoreCase(Constants.REVIEWER_ROLE_NAME) ||
-                    resourceRole.equalsIgnoreCase(Constants.ACCURACY_REVIEWER_ROLE_NAME) ||
-                    resourceRole.equalsIgnoreCase(Constants.FAILURE_REVIEWER_ROLE_NAME) ||
-                    resourceRole.equalsIgnoreCase(Constants.STRESS_REVIEWER_ROLE_NAME))) {
-                final String originalExtId = (String) forResource.getProperty("External Reference ID");
-
-                for (j = 0; j < resources.length; ++j) {
-                    // Skip resource that is being checked
-                    if (forResource == resources[j]) {
-                        continue;
-                    }
-
-                    // Get a resource for the current iteration
-                    final Resource otherResource = resources[j];
-                    // Verify whether this resource is an Aggregator, and skip it if it isn't
-                    if (!otherResource.getResourceRole().getName().equalsIgnoreCase(Constants.AGGREGATOR_ROLE_NAME)) {
-                        continue;
-                    }
-
-                    String otherExtId = (String) resources[j].getProperty("External Reference ID");
-                    // If appropriate aggregator's resource has been found, stop the search
-                    if (originalExtId.equals(otherExtId)) {
-                        break;
-                    }
-                }
-                // Skip this deliverable if it is assigned to aggregator
-                if (j != resources.length) {
-                    continue;
-                }
-            }
-
-            // If there is a winner for the project,
-            // verify that the current deliverable is not for non-winning submitter
-            if (winnerExtUserId > 0) {
-                // Check that found resource is submitter and non-winner. The deliverable will
-                // be skipped in this case. In all other cases it will be added to the list
-                if (resourceRole.equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
-                    if (winnerExtUserId !=
-                            Long.parseLong((String) forResource.getProperty("External Reference ID"), 10)) {
-                        continue;
-                    }
-                }
             }
 
             // Add current deliverable to the list of deliverables
