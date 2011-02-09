@@ -3113,16 +3113,33 @@
                 </Property>
                 <Property name="context">
                     <Value>
-                        SELECT UNIQUE deliverable_id,
-                               resource_id,
-                               project_phase.project_phase_id
-                          FROM deliverable_lu,
-                               resource,
-                               project_phase
-                         WHERE deliverable_lu.resource_role_id = resource.resource_role_id
-                           AND deliverable_lu.phase_type_id = project_phase.phase_type_id
-                           AND resource.project_id = project_phase.project_id
-                           AND
+                        SELECT UNIQUE
+                          deliverable_lu.deliverable_id,
+                          resource.resource_id,
+                          project_phase.project_phase_id
+                        FROM
+                          deliverable_lu
+                          INNER JOIN resource ON deliverable_lu.resource_role_id = resource.resource_role_id
+                          INNER JOIN project_phase ON deliverable_lu.phase_type_id = project_phase.phase_type_id
+                          LEFT OUTER JOIN project_info ON project_info.project_id = project_phase.project_id AND
+                                                          project_info.project_info_type_id = 23
+                          INNER JOIN resource_info ON resource_info.resource_id = resource.resource_id AND
+                                                      resource_info.resource_info_type_id = 1
+                        WHERE
+                          ((resource.project_id = project_phase.project_id AND deliverable_lu.deliverable_id NOT IN (15,22,23,26))
+                           OR (resource.project_phase_id = project_phase.project_phase_id AND deliverable_lu.deliverable_id IN (15,22,23,26))) AND
+                          (project_info.value is null OR resource.resource_role_id != 1 OR resource_info.value = project_info.value) AND
+                          (deliverable_id NOT IN (16,17,18,19) OR NOT EXISTS(
+                            SELECT r.resource_id
+                            FROM
+                              resource r
+                              INNER JOIN resource_info ri ON ri.resource_id = r.resource_id AND
+                                                             ri.resource_info_type_id = 1 AND
+                                                             ri.value = resource_info.value
+                            WHERE
+                              r.project_id = project_phase.project_id AND
+                              r.resource_role_id = 8
+                          )) AND 
                     </Value>
                 </Property>
                 <Property name="alias">
@@ -3173,52 +3190,11 @@
                 </Property>
                 <Property name="context">
                     <Value>
-                        SELECT     deliverable_id,
-                                   resource.resource_id,
-                                   project_phase.project_phase_id
-                                   submission.submission_id,
-                                   submission.screening_score,
-                                   submission.initial_score,
-                                   submission.final_score,
-                                   submission.placement
-                              FROM deliverable_lu,
-                                   resource,
-                                   project_phase
-                        CROSS JOIN submission
-                        INNER JOIN submission_status_lu
-                                ON submission.submission_status_id = submission_status_lu.submission_status_id
-                        INNER JOIN upload
-                                ON submission.upload_id = upload.upload_id
-                             WHERE submission_status_lu.name = 'Active'
-                               AND NOT deliverable_lu.submission_type_id IS NULL
-                               AND upload.project_id = resource.project_id
-                               AND deliverable_lu.resource_role_id = resource.resource_role_id
-                               AND deliverable_lu.phase_type_id = project_phase.phase_type_id
-                               AND
+                        This is not used but is still needed for the Deliverable Management
+			component to initialize. It will error out in runtime if used by mistake.
                     </Value>
                 </Property>
                 <Property name="alias">
-                    <Property name="deliverable_id">
-                        <Value>deliverable_lu.deliverable_id</Value>
-                    </Property>
-                    <Property name="name">
-                        <Value>deliverable_lu.name</Value>
-                    </Property>
-                    <Property name="project_id">
-                        <Value>resource.project_id</Value>
-                    </Property>
-                    <Property name="phase_id">
-                        <Value>project_phase.project_phase_id</Value>
-                    </Property>
-                    <Property name="resource_id">
-                        <Value>resource.resource_id</Value>
-                    </Property>
-                    <Property name="required">
-                        <Value>deliverable_lu.required</Value>
-                    </Property>
-                    <Property name="submission_id">
-                        <Value>submission.submission_id</Value>
-                    </Property>
                 </Property>
             </Property>
 

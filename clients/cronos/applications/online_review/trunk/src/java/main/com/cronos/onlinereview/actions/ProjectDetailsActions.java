@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -375,15 +375,8 @@ public class ProjectDetailsActions extends DispatchAction {
         // Place all phases of the project into the request
         request.setAttribute("phases", phases);
 
-        long winnerExtUserId = Long.MIN_VALUE;
-        String winnerExtRefId = (String) project.getProperty("Winner External Reference ID");
-
-        if (winnerExtRefId != null && winnerExtRefId.trim().length() != 0) {
-            winnerExtUserId = Long.parseLong(winnerExtRefId, 10);
-        }
-
         Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForPhases(
-                ActionsHelper.createDeliverableManager(request), activePhases, allProjectResources, winnerExtUserId);
+                ActionsHelper.createDeliverableManager(request), activePhases, allProjectResources);
 
         // For approval phase
         Phase approvalPhase = ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME);
@@ -604,6 +597,13 @@ public class ProjectDetailsActions extends DispatchAction {
             if (value != null && value.equals(Constants.YES_VALUE)) {
                 appealsCompletedFlag = true;
             }
+        }
+
+        long winnerExtUserId = Long.MIN_VALUE;
+        String winnerExtRefId = (String) project.getProperty("Winner External Reference ID");
+
+        if (winnerExtRefId != null && winnerExtRefId.trim().length() != 0) {
+            winnerExtUserId = Long.parseLong(winnerExtRefId, 10);
         }
 
         // check if the user can mark appeals as completed
