@@ -21,6 +21,8 @@ import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
 import com.cronos.onlinereview.phases.PRPostMortemPhaseHandler;
+import com.cronos.onlinereview.phases.PrimaryReviewEvaluationPhaseHandler;
+import com.cronos.onlinereview.phases.SecondaryReviewerReviewPhaseHandler;
 import com.cronos.onlinereview.phases.SpecificationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.SpecificationSubmissionPhaseHandler;
 import com.cronos.onlinereview.services.uploads.ManagersProvider;
@@ -80,8 +82,15 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.4 (Online Review Update Review Management Process assembly 1 version 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #getPhaseManager()} method to set handler for <code>Secondary Reviewer Review</code> and
+ *     <code>Primary Review Evaluation</code>  phases.</li>
+ *   </ol>
+ * </p>
  * @author evilisneo, BeBetter, isv
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public class ManagerCreationHelper implements ManagersProvider {
@@ -145,6 +154,10 @@ public class ManagerCreationHelper implements ManagersProvider {
                     Constants.SCREENING_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRReviewPhaseHandler(),
                     Constants.REVIEW_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new SecondaryReviewerReviewPhaseHandler(),
+                    Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PrimaryReviewEvaluationPhaseHandler(),
+                    Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new AppealsPhaseHandler(),
                     Constants.APPEALS_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAppealResponsePhaseHandler(),

@@ -462,13 +462,15 @@
             var criterionRow = null;
             // TODO: Should be done in locale-independent way
             // Check if the phase should have a criterion row and at it if it is needed
-            if (phaseName == "Screening" || phaseName == "Review" || phaseName == "Approval" ||
+            if (phaseName == "Screening" || phaseName == "Specification Review" || phaseName == "Review" || phaseName == "Secondary Reviewer Review" || phaseName == "Approval" ||
                     phaseName == "Registration" || phaseName == "Submission" || phaseName == "Appeals"
                     || phaseName == "Post-Mortem") {
                 var templateRow;
                 if (phaseName == "Screening") {
                       templateRow = document.getElementById("screening_scorecard_row_template");
                 } else if (phaseName == "Review") {
+                      templateRow = document.getElementById("review_scorecard_row_template");
+                } else if (phaseName == "Secondary Reviewer Review") {
                       templateRow = document.getElementById("review_scorecard_row_template");
                 } else if (phaseName == "Approval") {
                       templateRow = document.getElementById("approval_scorecard_row_template");
@@ -500,6 +502,8 @@
                  if (phaseName == "Screening") {
                     screeningScorecardNodes[screeningScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
                 } else if (phaseName == "Review") {
+                    reviewScorecardNodes[reviewScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
+                } else if (phaseName == "Secondary Reviewer Review") {
                     reviewScorecardNodes[reviewScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
                 } else if (phaseName == "Approval") {
                     approvalScorecardNodes[approvalScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];

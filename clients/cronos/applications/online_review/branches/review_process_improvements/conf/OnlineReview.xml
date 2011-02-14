@@ -1473,6 +1473,228 @@
             </Property>
         </Property>
     </Config>
+    
+    <!-- Default namespace for Secondary Review Phase handler -->
+    <Config name="com.cronos.onlinereview.phases.SecondaryReviewerReviewPhaseHandler">
+    	<Property name="secondaryReviewerRoleName">
+    		<Value>Secondary Reviewer</Value>
+    	</Property>
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/review/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/review/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+    
+    <!-- Default namespace for Primary Evaluation Review Phase handler -->
+    <Config name="com.cronos.onlinereview.phases.PrimaryReviewEvaluationPhaseHandler">
+    	<Property name="primaryReviewerRoleName">
+    		<Value>Primary Review Evaluator</Value>
+    	</Property>
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/primary_evaluation/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/primary_evaluation/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
 
     <!-- Default namespace for Appeals handler -->
     <Config name="com.cronos.onlinereview.phases.AppealsPhaseHandler">
@@ -3774,6 +3996,9 @@
                     <Property name="project">
                         <Value>resource.project_id</Value>
                     </Property>
+                    <Property name="review">
+                        <Value>review.review_id</Value>
+                    </Property>
                 </Property>
 
                 <Property name="searchableFields">
@@ -3814,6 +4039,12 @@
                         </Property>
                     </Property>
                     <Property name="creation_date">
+                        <Property name="validator">
+                            <Property name="class"><Value>validator</Value></Property>
+                            <Property name="identifier"><Value>default</Value></Property>
+                        </Property>
+                    </Property>
+                    <Property name="review">
                         <Property name="validator">
                             <Property name="class"><Value>validator</Value></Property>
                             <Property name="identifier"><Value>default</Value></Property>
@@ -4829,8 +5060,6 @@
                 <Value>Manager</Value>
             </Property>
             <Property name="Perform Primary Review Evaluation">
-                <Value>Global Manager</Value>
-                <Value>Manager</Value>
                 <Value>Primary Review Evaluator</Value>
             </Property>
             <Property name="Create Scorecard">
@@ -5145,7 +5374,6 @@
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
                 <Value>Secondary Reviewer</Value>
-                <Value>Primary Review Evaluator</Value>
             </Property>
             <Property name="Upload Test Cases">
                 <Value>Accuracy Reviewer</Value>
@@ -5236,7 +5464,6 @@
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
                 <Value>Secondary Reviewer</Value>
-                <Value>Primary Review Evaluator</Value>
             </Property>
             <Property name="View Composite Scorecard">
                 <Value>Global Manager</Value>
@@ -5355,6 +5582,24 @@
                 <Value>Secondary Reviewer</Value>
                 <Value>Primary Review Evaluator</Value>
             </Property>
+            <Property name="View Review Evaluation">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
+                <Value>Designer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+                <Value>Secondary Reviewer</Value>
+                <Value>Primary Review Evaluator</Value>
+            </Property>
             <Property name="View Aggregation Review">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
@@ -5424,6 +5669,23 @@
                 <Value>Approver</Value>
             </Property>
             <Property name="View Approval">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Approver</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Secondary Reviewer</Value>
+                <Value>Primary Review Evaluator</Value>
+            </Property>
+            <Property name="View Evaluation">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Cockpit Project User</Value>
@@ -5579,25 +5841,38 @@
                     <Value>VIEW_SUBMISSIONS</Value>
                 </Property>
             </Property>
-            <Property name="Review_Appeals">
+                        <Property name="Review_Evaluation">
                 <Property name="NameKey">
-                    <Value>ProjectPhaseGroup.Review_Appeals</Value>
+                    <Value>ProjectPhaseGroup.Review_Evaluation</Value>
                 </Property>
                 <Property name="TableNameKey">
-                    <Value>ProjectPhaseGroup.Review_Appeals.table</Value>
+                    <Value>ProjectPhaseGroup.Review_Evaluation.table</Value>
                 </Property>
                 <Property name="Phases">
                     <Value>Review</Value>
-                    <Value>Appeals</Value>
-                    <Value>Appeals Response</Value>
                     <Value>Secondary Reviewer Review</Value>
                     <Value>Primary Review Evaluation</Value>
+                </Property>
+                <Property name="AppFunction">
+                    <Value>VIEW_REVIEWS</Value>
+                </Property>
+            </Property>
+            <Property name="Appeals_Response">
+                <Property name="NameKey">
+                    <Value>ProjectPhaseGroup.Appeals_Response</Value>
+                </Property>
+                <Property name="TableNameKey">
+                    <Value>ProjectPhaseGroup.Appeals_Response.table</Value>
+                </Property>
+                <Property name="Phases">
+                    <Value>Appeals</Value>
+                    <Value>Appeals Response</Value>
                     <Value>First Appeals</Value>
                     <Value>Second Appeals</Value>
                     <Value>Primary Review Appeals Response</Value>
                 </Property>
                 <Property name="AppFunction">
-                    <Value>VIEW_REVIEWS</Value>
+                    <Value>VIEW_APPEALS</Value>
                 </Property>
             </Property>
             <Property name="Aggregation_Review">

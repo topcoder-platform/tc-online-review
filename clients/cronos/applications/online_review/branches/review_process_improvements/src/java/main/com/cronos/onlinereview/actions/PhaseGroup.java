@@ -41,9 +41,16 @@ import com.topcoder.project.phases.Phase;
  *     <code>specificationSubmission</code> and <code>specificationSubmitter</code> properties.</li>
  *   </ol>
  * </p>
- *
+ * 
+ * <p>
+ * Version 1.4 (Online Review Update Review Management Process assembly 1 version 1.0) Change notes:
+ *   <ol>
+ *     <li>Expanded the bean with new <code>evaluations</code>, <code>displayEvaluationReviewLinks</code>,
+ *     <code>evaluationReviewCommitted</code> and <code>evaluationPhaseStatus</code> properties.</li>
+ *   </ol>
+ * </p>
  * @author George1, real_vg, isv
- * @version 1.3
+ * @version 1.4
  */
 public class PhaseGroup {
 
@@ -229,6 +236,40 @@ public class PhaseGroup {
      * every particular review.
      */
     private int unresolvedAppealsCounts[][] = null;
+    
+    /**
+     * This member variable holds an evaluation scorecards that might have been assigned to
+     * this phase group, or <code>null</code> value if no such scorecard has been assigned to the
+     * phase group.
+     *
+     * @see #getEvaluations()
+     * @see #setEvaluations(Review[])
+     */
+    private Review[] evaluations= null;
+
+    /**
+     * This member variable holds a value that determines whether a link to display evaluation review links
+     * for the current phase group.
+     *
+     * @see #isDisplayEvaluationReviewLinks()
+     * @see #setDisplayEvaluationReviewLinks(boolean)
+     */
+    private boolean displayEvaluationReviewLinks = false;
+
+    /**
+     * This member variable holds a value that determines whether Evaluations scorecard has been
+     * committed.
+     *
+     * @see #isEvaluationReviewsCommitted()
+     * @see #setEvaluationReviewsCommitted(boolean)
+     */
+    private boolean evaluationReviewCommitted = false;
+   /**
+     * <p>A <code>long</code> referencing the current status of the <code>Primary Review Evaluation</code> phase.</p>
+     *
+     * @since 
+     */
+    private long evaluationPhaseStatus;
 
     /**
      * This member variable holds an aggregation scorecard that might have been assigned assigned to
@@ -1192,4 +1233,36 @@ public class PhaseGroup {
     public void setSpecificationSubmitter(Resource specificationSubmitter) {
         this.specificationSubmitter = specificationSubmitter;
     }
+
+	public Review[] getEvaluations() {
+		return evaluations;
+	}
+
+	public void setEvaluations(Review[] evaluations) {
+		this.evaluations = evaluations;
+	}
+
+	public boolean isDisplayEvaluationReviewLinks() {
+		return displayEvaluationReviewLinks;
+	}
+
+	public void setDisplayEvaluationReviewLinks(boolean displayEvaluationReviewLinks) {
+		this.displayEvaluationReviewLinks = displayEvaluationReviewLinks;
+	}
+
+	public boolean isEvaluationReviewCommitted() {
+		return evaluationReviewCommitted;
+	}
+
+	public void setEvaluationReviewCommitted(boolean evaluationReviewCommitted) {
+		this.evaluationReviewCommitted = evaluationReviewCommitted;
+	}
+
+	public long getEvaluationPhaseStatus() {
+		return evaluationPhaseStatus;
+	}
+
+	public void setEvaluationPhaseStatus(long evaluationPhaseStatus) {
+		this.evaluationPhaseStatus = evaluationPhaseStatus;
+	}
 }

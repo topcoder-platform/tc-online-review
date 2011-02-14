@@ -64,15 +64,27 @@ package com.cronos.onlinereview.actions;
   * <p>
   * Version 1.6.1 (Review Process Backend Integration Assembly 1.0) Change notes:
   *   <ol>
-  *     <li>Added {@link #PRIMARY_REVIEW_EVALUATION_PHASE_NAME} constant.</li>
-  *     <li>Added {@link #SECONDARY_REVIEWER_REVIEW_PHASE_NAME} constant.</li>
-  *     <li>Added {@link #REVIEW_REGISTRATION_PHASE_NAME} constant.</li>
+  *    <li>Added {@link #PRIMARY_REVIEW_EVALUATION_PHASE_NAME} constant.</li>
+  *    <li>Added {@link #SECONDARY_REVIEWER_REVIEW_PHASE_NAME} constant.</li>
+  *    <li>Added {@link #REVIEW_REGISTRATION_PHASE_NAME} constant.</li>
   *     <li>Added {@link #PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME} constant.</li>
   *   </ol>
   * </p>
   *
+ * <p>
+ * Version 1.7 (Online Review Update Review Management Process assembly 1 version 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #PERFORM_PRIMARY_REVIEW_EVALUATION_PERM_NAME} constant.</li>
+ *     <li>Added {@link #VIEW_REVIEW_EVALUATION_PERM_NAME} constant.</li>
+ *     <li>Added {@link #FIRST_APPEALS_PHASE_NAME} constant.</li>
+ *     <li>Added {@link #VIEW_APPEALS_APP_FUNC} constant.</li>
+ *     <li>Added {@link #NEW_REVIEW_DELIVERABLE_NAME} constant.</li>
+ *     <li>Added {@link #REVIEW_EVALUATION} constant.</li>
+ *     <li>Changed value of {@link #REVIEWER_ROLE_NAMES } Constant.</li>   
+ *   </ol>
+ * </p>
  * @author George1, real_vg, pulky, isv
- * @version 1.6.1
+ * @version 1.7
  */
 public class Constants {
 
@@ -166,6 +178,9 @@ public class Constants {
      */
     public static final String SPECIFICATION_REVIEWER_ROLE_NAME = "Specification Reviewer";
 
+    public static final String SECONDARY_REVIEWER_ROLE_NAME = "Secondary Reviewer";
+    
+    public static final String PRIMARY_REVIEW_EVALUATOR_ROLE_NAME = "Primary Review Evaluator";
     /**
      * This member variable is a constant array that holds names of different reviewer roles.
      *
@@ -175,7 +190,7 @@ public class Constants {
      * @see #STRESS_REVIEWER_ROLE_NAME
      */
     public static final String[] REVIEWER_ROLE_NAMES = new String[] {
-        REVIEWER_ROLE_NAME, ACCURACY_REVIEWER_ROLE_NAME, FAILURE_REVIEWER_ROLE_NAME, STRESS_REVIEWER_ROLE_NAME};
+        REVIEWER_ROLE_NAME, SECONDARY_REVIEWER_ROLE_NAME, ACCURACY_REVIEWER_ROLE_NAME, FAILURE_REVIEWER_ROLE_NAME, STRESS_REVIEWER_ROLE_NAME};
 
     /**
      * This member variable is a string constant that defines the name of the Aggregator role.
@@ -499,6 +514,9 @@ public class Constants {
      * permission.
      */
     public static final String PERFORM_REVIEW_PERM_NAME = "Perform Review";
+    
+    
+    public static final String PERFORM_PRIMARY_REVIEW_EVALUATION_PERM_NAME = "Perform Primary Review Evaluation";
 
     /**
      * This member variable is a string constant that defines the name of the Upload Test Cases
@@ -638,6 +656,12 @@ public class Constants {
      * permission.
      */
     public static final String VIEW_APPROVAL_PERM_NAME = "View Approval";
+    
+    /**
+     * This member variable is a string constant that defines the name of the View Review Evaluation
+     * permission.
+     */
+    public static final String VIEW_REVIEW_EVALUATION_PERM_NAME = "View Review Evaluation";
 
     /**
      * <p>A <code>String</code> providing the name for <code>View Specification Review</code> permission.</p>
@@ -731,6 +755,11 @@ public class Constants {
      * This member variable is a string constant that defines the name of the Appeals phase.
      */
     public static final String APPEALS_PHASE_NAME = "Appeals";
+    
+    /**
+     * This member variable is a string constant that defines the name of the Appeals phase.
+     */
+    public static final String FIRST_APPEALS_PHASE_NAME = "First Appeals";
 
     /**
      * This member variable is a string constant that defines the name of the Appeals Response
@@ -848,6 +877,11 @@ public class Constants {
      * TODO: Add reasonable description here
      */
     public static final String VIEW_REVIEWS_APP_FUNC = "VIEW_REVIEWS";
+    
+    /**
+     * TODO: Add reasonable description here
+     */
+    public static final String VIEW_APPEALS_APP_FUNC = "VIEW_APPEALS";
 
     /**
      * TODO: Add reasonable description here
@@ -917,7 +951,18 @@ public class Constants {
      * deliverable.
      */
     public static final String REVIEW_DELIVERABLE_NAME = "Review Scorecard";
+    
+    /**
+     * This member variable is a string constant that defines the name of the Review Scorecard
+     * deliverable.
+     */
+    public static final String NEW_REVIEW_DELIVERABLE_NAME = "New Review Scorecard";
 
+    /**
+     * This member variable is a string constant that defines the name of the Review Evaluation
+     * deliverable.
+     */
+    public static final String REVIEW_EVALUATION = "Review Evaluation";
     /**
      * This member variable is a string constant that defines the name of the Accuracy Test Cases
      * deliverable.

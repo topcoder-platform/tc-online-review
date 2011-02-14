@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!-- A template which defines a set of project phases -->
-<Template name="Component Testing (New Review System)">
+<Template name="Updated Component Testing">
     <!-- An enumeration of project phase types defined in this template -->
     <PhaseTypes>
         <PhaseType id="registration" typeId="1" typeName="Registration"/>
@@ -23,8 +23,6 @@
     <Phases>
         <!-- A definition of a single phase. -->
         <Phase id="registrationPhase" length="86400000" type="registration" phaseId="1"/>
-
-        <Phase id="reviewRegistrationPhase" length="172800000" type="review_registration" phaseId="2"/>
 
         <Phase id="submissionPhase" length="259200000" type="submission" phaseId="3">
             <Dependency id="registrationPhase" isDependencyStart="true" isDependentStart="true" lagTime="300000"/>

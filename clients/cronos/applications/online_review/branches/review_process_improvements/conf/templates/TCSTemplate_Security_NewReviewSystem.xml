@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!-- A template which defines a set of project phases -->
-<Template name="Security (New Review System)">
+<Template name="Updated Security">
     <!-- An enumeration of project phase types defined in this template -->
     <PhaseTypes>
         <PhaseType id="registration" typeId="1" typeName="Registration"/>
@@ -14,8 +14,7 @@
     </PhaseTypes>
     <!-- A set of project phases defined in this template. -->
     <Phases>
-        <Phase id="reviewRegistrationPhase" length="172800000" type="review_registration" phaseId="1"/>
-
+        
         <Phase id="submissionPhase" length="3600000" type="submission" phaseId="2"/>
 
         <Phase id="reviewPhase" length="172800000" type="secondary_reviewer_review" phaseId="3">

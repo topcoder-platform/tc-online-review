@@ -104,6 +104,8 @@ import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
 import com.topcoder.management.review.data.CommentType;
+import com.topcoder.management.review.data.EvaluationType;
+import com.topcoder.management.review.data.Item;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregator;
 import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregatorConfigException;
@@ -224,6 +226,17 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *     <li>Added {@link #findSubmissionTypeByName(SubmissionType[], String)} method.</li>
  *     <li>Added {@link #getSpecificationSubmissions(long, UploadManager)} method.</li>
  *     <li>Added {@link #getActiveSpecificationSubmission(long, long, UploadManager)} method.</li>
+ *   </ol>
+ * </p>
+ * 
+ * <p>
+ * Version 2.0 (Online Review Update Review Management Process assembly 1 version 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #findEvaluationTypeByName(EvaluationType[] evaluationTypes, String typeName)} method.</li>
+ *     <li>Added {@link #findEvaluationTypeById(EvaluationType[] evaluationTypes, Long id)} method.</li>
+ *     <li>Added {@link #isEvaluatorComment(Comment comment)} method.</li>
+ *     <li>Added {@link #copyComments(Review fromReview, Review toReview, String[] typesToCopy,String extraInfoToCheck)} method.</li>
+ *     <li>Added {@link #copyReviewItems(Review fromReview, Review toReview, String[] typesToCopy)} method.</li>
  *   </ol>
  * </p>
 
@@ -550,6 +563,58 @@ public class ActionsHelper {
         for (int i = 0; i < commentTypes.length; ++i) {
             if (commentTypes[i].getName().equalsIgnoreCase(typeName)) {
                 return commentTypes[i];
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * This static method searches for the comment type with the specified name in a provided array
+     * of comment types. The search is case-insensitive.
+     *
+     * @return found evaluation type, or <code>null</code> if a type with the specified name has not
+     *         been found in the provided array of evaluation types.
+     * @param evaluationTypes
+     *            an array of evaluation types to search for wanted evaluation type among.
+     * @param typeName
+     *            the name of the needed comment type.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or <code>typeName</code>
+     *             parameter is empty string.
+     */
+    public static EvaluationType findEvaluationTypeByName(EvaluationType[] evaluationTypes, String typeName ) {
+        // Validate parameters
+        validateParameterNotNull(evaluationTypes, "evaluationTypes");
+
+        for (int i = 0; i < evaluationTypes.length; ++i) {
+            if ( evaluationTypes[i].getName().equalsIgnoreCase(typeName)) {
+                return evaluationTypes[i];
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * This static method searches for the comment type with the specified name in a provided array
+     * of comment types. The search is case-insensitive.
+     *
+     * @return found evaluation type, or <code>null</code> if a type with the specified name has not
+     *         been found in the provided array of evaluation types.
+     * @param evaluationTypes
+     *            an array of evaluation types to search for wanted evaluation type among.
+     * @param typeName
+     *            the name of the needed comment type.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or <code>typeName</code>
+     *             parameter is empty string.
+     */
+    public static EvaluationType findEvaluationTypeById(EvaluationType[] evaluationTypes,Long id ) {
+        // Validate parameters
+        validateParameterNotNull(evaluationTypes, "evaluationTypes");
+
+        for (int i = 0; i < evaluationTypes.length; ++i) {
+            if ( evaluationTypes[i].getId() == id ) {
+                return evaluationTypes[i];
             }
         }
         return null;
@@ -1287,6 +1352,25 @@ public class ActionsHelper {
         String commentType = comment.getCommentType().getName();
 
         return (commentType != null && commentType.equalsIgnoreCase("Manager Comment"));
+    }
+    
+    /**
+     * This static method determines if the specified comment is evaluator's comment.
+     *
+     * @return <code>true</code> if the specifed comment is evaluator's comment, <code>false</code>
+     *         if it is not.
+     * @param comment
+     *            a comment to determine type of.
+     * @throws IllegalArgumentException
+     *             if <code>comment</code> parameter is <code>null</code>.
+     */
+    public static boolean isEvaluatorComment(Comment comment) {
+        // Validate parameter
+        validateParameterNotNull(comment, "comment");
+
+        String commentType = comment.getCommentType().getName();
+
+        return (commentType != null && commentType.equalsIgnoreCase("Primary Review Evaluation Comment"));
     }
 
     /**
@@ -2043,6 +2127,33 @@ public class ActionsHelper {
         // Return the resources using another helper-method
         return getResourcesForPhase(myResources, phase);
     }
+    
+    /**
+     * This static method returns the array of resources for all the users in the project associated
+     * with the specified phase. The list of all resources for the project is
+     * retrieved from the <code>HttpServletRequest</code> object specified by <code>request</code>
+     * parameter.
+     *
+     * @return an array of found resources, or emtpy array if no resources for currently logged in user
+     *         found such that those resources would be associated with the specified phase.
+     * @param request
+     *            an <code>HttpServletRequest</code> object containing additional information.
+     * @param phase
+     *            a phase to search the resouces for. This parameter can be <code>null</code>, in
+     *            which case the search is made for resources with no phase assigned.
+     * @throws IllegalArgumentException
+     *             if <code>request</code> parameter is <code>null</code>.
+     */
+    public static Resource[] getResourcesForPhase(HttpServletRequest request, Phase phase) {
+        // Validate parameters
+        validateParameterNotNull(request, "request");
+        validateParameterNotNull(phase, "phase");
+        // Retrieve the list of resources from the request's attribute
+        Resource[] resources = (Resource[]) validateAttributeNotNull(request, "resources");
+
+        // Return the resources using another helper-method
+        return getResourcesForPhase(resources, phase);
+    }
 
     /**
      * This static method returns the resource for role for the currently logged in user.
@@ -2521,7 +2632,8 @@ public class ActionsHelper {
                 continue;
             }
             prevPhase = true;
-            if (phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME) ||
+            if (phaseName.equalsIgnoreCase(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME) ||
+            		phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME) ||
                     phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) ||
                     phaseName.equalsIgnoreCase(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
                 if (!phase.getPhaseStatus().getName().equals(PhaseStatus.CLOSED.getName())) {
@@ -2590,6 +2702,7 @@ public class ActionsHelper {
             // regard this as after Appeals Response (if Appeals Response is actually absent)
             if (anyOtherPhaseFound &&
                     (phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) ||
+                            phaseName.equalsIgnoreCase(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME) || 
                             phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME))) {
                 return true;
             }
@@ -2871,6 +2984,7 @@ public class ActionsHelper {
             checkers.put(Constants.SCREENING_DELIVERABLE_NAME, new IndividualReviewDeliverableChecker(dbconn));
             checkers.put(Constants.PRIMARY_SCREENING_DELIVERABLE_NAME, committedChecker);
             checkers.put(Constants.REVIEW_DELIVERABLE_NAME, committedChecker);
+            checkers.put(Constants.NEW_REVIEW_DELIVERABLE_NAME, committedChecker);
             checkers.put(Constants.ACC_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);
             checkers.put(Constants.FAIL_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);
             checkers.put(Constants.STRS_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);
@@ -4824,6 +4938,120 @@ public class ActionsHelper {
                 return true;
             }
         }
+        return false;
+    }
+    
+	/**
+     * copies the comments from one Review to another. Which comments are copied are
+     * determined by the typesToCopy and extraInfoToCheck parameters.
+     *
+     * @param fromReview
+     *            source review for the comments.
+     * @param toReview
+     *            destination review.
+     * @param typesToCopy
+     *            types of comments to copy.
+     * @param extraInfoToCheck
+     *            extra info to check the comment against.
+     */
+    public static void copyComments(Review fromReview, Review toReview, String[] typesToCopy,
+        String extraInfoToCheck) {
+        Comment[] comments = fromReview.getAllComments();
+
+        // copy all comments with given type and extra info.
+        for (int c = 0; c < comments.length; c++) {
+            Comment comment = comments[c];
+
+            if (isCommentToBeCopied(comment, typesToCopy, extraInfoToCheck)) {
+                toReview.addComment(copyComment(comment));
+            }
+        }
+    }
+    
+    /**
+     * This helper method copies the review items from one review to another. It will
+     * also copy the comments for each review item from one review to another. Which
+     * comments are copied are determined by the typesToCopy.
+     *
+     * @param fromReview
+     *            source review for the comments.
+     * @param toReview
+     *            destination review.
+     * @param typesToCopy
+     *            types of comments to copy.
+     */
+    public static void copyReviewItems(Review fromReview, Review toReview, String[] typesToCopy) {
+        Item[] reviewItems = fromReview.getAllItems();
+
+        for (int r = 0; r < reviewItems.length; r++) {
+            Item item = reviewItems[r];
+
+            // create a new review item and copy all properties
+            Item newItem = new Item(item.getId());
+            newItem.setDocument(item.getDocument());
+            newItem.setQuestion(item.getQuestion());
+            newItem.setAnswer(item.getAnswer());
+
+            // copy all comments with given type and extra info.
+            Comment[] comments = item.getAllComments();
+
+            for (int c = 0; c < comments.length; c++) {
+                Comment comment = comments[c];
+
+                if (isCommentToBeCopied(comment, typesToCopy, null)) {
+                    newItem.addComment(copyComment(comment));
+                }
+            }
+
+            // add the item to the destination review
+            toReview.addItem(newItem);
+        }
+    }
+    
+    /**
+     * Returns a new comment which is a copy of the given comment, only with no extra info
+     * set.
+     *
+     * @param comment
+     *            comment to be copied.
+     * @return a new comment which is a copy of the given comment.
+     */
+    private static Comment copyComment(Comment comment) {
+        Comment newComment = new Comment(comment.getId());
+        newComment.setAuthor(comment.getAuthor());
+        newComment.setComment(comment.getComment());
+        newComment.setCommentType(comment.getCommentType());
+
+        return newComment;
+    }
+
+    /**
+     * checks if the comment is to be copied i.e. is one of the comment types that have to
+     * be copied to the review worksheet.
+     *
+     * @param comment
+     *            comment to check.
+     * @param typesToCopy
+     *            types of comments to copy.
+     * @param extraInfoToCheck
+     *            extra info to check the comment against.
+     * @return true if it is to be copied, false otherwise.
+     */
+    private static boolean isCommentToBeCopied(Comment comment, String[] typesToCopy, String extraInfoToCheck) {
+        String commentType = comment.getCommentType().getName();
+
+        for (int i = 0; i < typesToCopy.length; i++) {
+            if (commentType.equals(typesToCopy[i])) {
+                if (extraInfoToCheck != null) {
+                    if (extraInfoToCheck.equals(comment.getExtraInfo())) {
+                        return true;
+                    }
+                } else {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 }

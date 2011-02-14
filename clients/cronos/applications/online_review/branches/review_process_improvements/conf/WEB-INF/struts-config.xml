@@ -111,6 +111,7 @@
             <form-property name="answer" type="java.lang.String[]" />
             <form-property name="comment_count" type="java.lang.Integer[]" />
             <form-property name="comment_type" type="java.util.HashMap" />
+            <form-property name="comment_eval_type" type="java.util.HashMap" />
             <form-property name="comment" type="java.util.HashMap" />
             <form-property name="file" type="org.apache.struts.upload.FormFile[]" />
         </form-bean>
@@ -563,7 +564,45 @@
             input="/jsp/listProjects.jsp">
             <forward name="success" path="/jsp/viewScorecard.jsp" redirect="false"/>
         </action>
+		
+		 <!-- "Create Primary Review Evaluation action -->
+        <action path="/actions/CreateReviewEvaluation" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/actions/EditReviewEvaluation.do?method=editReviewEvaluation" redirect="true"/>
+            <!-- <forward name="edit" path="/actions/EditReview.do?method=editReviewEvaluation" redirect="true"/>  -->
+        </action>
 
+        <!-- "Edit Primary Review Evaluation" action -->
+        <action path="/actions/EditReviewEvaluation" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editReviewEvaluation.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Save Primary Review Evaluation" action -->
+        <action path="/actions/SaveReviewEvaluation" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/editReview.jsp">
+            <forward name="preview" path="/jsp/viewReviewEvaluation.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+
+        <!-- "View Primary Review Evaluation" action -->
+        <action path="/actions/ViewReviewEvaluation" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/viewReviewEvaluation.jsp" redirect="false"/>
+        </action>
+        
         <!-- "Create Aggregation" action -->
         <action path="/actions/CreateAggregation" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"

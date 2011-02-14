@@ -18,16 +18,6 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
-import com.topcoder.management.deliverable.SubmissionType;
-import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
-import com.topcoder.search.builder.SearchBuilderException;
-import com.topcoder.search.builder.filter.*;
-import com.topcoder.servlet.request.ConfigurationException;
-import com.topcoder.servlet.request.DisallowedDirectoryException;
-import com.topcoder.servlet.request.FileDoesNotExistException;
-import com.topcoder.servlet.request.PersistenceException;
-import com.topcoder.servlet.request.RequestParser;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -40,16 +30,19 @@ import com.cronos.onlinereview.autoscreening.management.ResponseSeverity;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.autoscreening.management.ScreeningResult;
 import com.cronos.onlinereview.autoscreening.management.ScreeningTask;
+import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.model.ClientProject;
 import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.SubmissionStatus;
+import com.topcoder.management.deliverable.SubmissionType;
 import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.UploadStatus;
 import com.topcoder.management.deliverable.UploadType;
+import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
 import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
 import com.topcoder.management.deliverable.search.UploadFilterBuilder;
 import com.topcoder.management.phase.PhaseManager;
@@ -66,13 +59,25 @@ import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
 import com.topcoder.management.review.data.Review;
+import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.data.Scorecard;
 import com.topcoder.management.scorecard.data.ScorecardType;
 import com.topcoder.message.email.EmailEngine;
 import com.topcoder.message.email.TCSEmailMessage;
 import com.topcoder.project.phases.Phase;
+import com.topcoder.search.builder.SearchBuilderException;
+import com.topcoder.search.builder.filter.AndFilter;
+import com.topcoder.search.builder.filter.EqualToFilter;
+import com.topcoder.search.builder.filter.Filter;
+import com.topcoder.search.builder.filter.InFilter;
+import com.topcoder.search.builder.filter.OrFilter;
+import com.topcoder.servlet.request.ConfigurationException;
+import com.topcoder.servlet.request.DisallowedDirectoryException;
+import com.topcoder.servlet.request.FileDoesNotExistException;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.FileUploadResult;
+import com.topcoder.servlet.request.PersistenceException;
+import com.topcoder.servlet.request.RequestParser;
 import com.topcoder.servlet.request.UploadedFile;
 import com.topcoder.util.config.ConfigManagerException;
 import com.topcoder.util.errorhandling.BaseException;
@@ -155,10 +160,22 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *        HttpServletResponse)} method.</li>
  *   </ol>
  * </p>
+ * 
+ *  <p>
+ * Version 1.7 (Online Review Update Review Management Process assembly 1 version 1.0) Change notes:
+ *   <ol>
+ *    <li>Modified {@link #viewProjectDetails(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method to include deliverables for Review Evaluation.</li>
+ *    <li>Added {@link #uploadSpecificationSubmission(ActionMapping, ActionForm, HttpServletRequest,
+ *        HttpServletResponse)} method.</li>
+ *    <li>Updated {@link #uploadContestSubmission(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
+ *        method to set type for uploaded submission.</li>
+ *    <li>Added {@link #downloadSpecificationSubmission(ActionMapping, ActionForm, HttpServletRequest,
+ *        HttpServletResponse)} method.</li>
+ *   </ol>
+ * </p>
  *
  * @author George1, real_vg, pulky, isv
- * @version 1.6
- */
+ * @version 1.7 */
 public class ProjectDetailsActions extends DispatchAction {
 
     /**
@@ -368,7 +385,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForPhases(
                 ActionsHelper.createDeliverableManager(request), activePhases, allProjectResources, winnerExtUserId);
-
+        
         // For approval phase
         Phase approvalPhase = ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME);
         if (approvalPhase != null) {
@@ -402,6 +419,72 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
 
+        // For Primary Review Evaluation Phase 
+        Phase primaryReviewEvaluationPhase = ActionsHelper.getPhase(phases, true, Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME);
+        if ( primaryReviewEvaluationPhase != null ) {
+        	List<Deliverable> newDeliverables = new ArrayList<Deliverable>();
+        	ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
+        	// Get the scorecard type for Review scorecards
+            ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+            ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
+            ScorecardType scoreCardType = ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review");
+        	for (int i = 0; i < deliverables.length; i++) {
+        		Deliverable deliverable = deliverables[i];
+        		if (deliverable.getName().equals(Constants.REVIEW_EVALUATION)) {
+        			
+        			// Get "My" resource for the appropriate phase
+        	        Resource[] evaluators = ActionsHelper.getResourcesForPhase(allProjectResources, primaryReviewEvaluationPhase);
+        			// Prepare filters
+        	        Filter filterResource = new EqualToFilter("reviewer", new Long(evaluators[0].getId()));
+        	        Filter filterSubmission = new EqualToFilter("submission", new Long(deliverable.getSubmission()));
+        	        // Prepare final combined filter
+        	        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterSubmission}));
+        	        Review[] evaluationReviews = reviewManager.searchReviews(filter, true);
+        	        
+        	        //	Prepare filters
+        	        Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
+        	        filterSubmission = new EqualToFilter("submission", new Long(deliverable.getSubmission()));
+        	        Filter scoreCardTypeFilter = new EqualToFilter("scorecardType", new Long(scoreCardType.getId()));
+        	        //	Prepare final combined filter
+        	        filter = new AndFilter(Arrays.asList(new Filter[] {filterProject, filterSubmission,scoreCardTypeFilter}));
+        	        Review[] submissionReviews = reviewManager.searchReviews(filter, true);
+        	        Review currentEvaluationReview = null;
+        	        for (int reviewIndex = 0; reviewIndex < submissionReviews.length; reviewIndex++ ){
+        	        	currentEvaluationReview = null;
+        	        	for (int j=0;j < evaluationReviews.length;j++){
+        	        		if ( evaluationReviews[j].getSubmission() == submissionReviews[reviewIndex].getSubmission() ) {
+        	        			currentEvaluationReview = evaluationReviews[j];
+        	        			break;
+        	        		}
+        	        	}
+        	        	if (submissionReviews[reviewIndex].getAuthor() == deliverable.getResource() ) {
+        	        		continue;
+        	        	}
+        	        	//Use ReviewId for Submission id
+        	        	Deliverable newDeliverable = new Deliverable(deliverable.getProject(), deliverable.getPhase(),
+                                deliverable.getResource(),submissionReviews[reviewIndex].getId() ,
+                                deliverable.isRequired());
+        	        	newDeliverable.setId(deliverable.getId());
+                        newDeliverable.setName(deliverable.getName());
+                        newDeliverable.setCreationTimestamp(deliverable.getCreationTimestamp());
+                        newDeliverable.setCreationUser(deliverable.getCreationUser());
+                        newDeliverable.setDescription(deliverable.getDescription());
+                        newDeliverable.setModificationTimestamp(deliverable.getModificationTimestamp());
+                        newDeliverable.setModificationUser(deliverable.getModificationUser());
+        	        	// Check if the Evaluation review is created for this submission and the review for it is committed
+        	        	if ( currentEvaluationReview != null && submissionReviews[reviewIndex].isCommitted() ) {
+        	        		newDeliverable.setCompletionDate(submissionReviews[reviewIndex].getModificationTimestamp());
+        	        	}
+        	        	newDeliverables.add(newDeliverable);
+        	        }
+        		} else {
+        			newDeliverables.add(deliverable);
+        		}
+        		
+        	}
+        	deliverables = newDeliverables.toArray(new Deliverable[newDeliverables.size()]);
+        }
+        
         Deliverable[] myDeliverables = ActionsHelper.getMyDeliverables(deliverables, myResources);
         Deliverable[] outstandingDeliverables = ActionsHelper.getOutstandingDeliverables(deliverables);
 
@@ -627,6 +710,8 @@ public class ProjectDetailsActions extends DispatchAction {
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(
                         request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
                         (ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME) != null ||
+                        		ActionsHelper.getPhase(phases, true, Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME) != null ||
+                        		ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME) != null ||
                                 ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null ||
                                 ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null ||
                                 ActionsHelper.getPhase(phases, true, Constants.APPEALS_PHASE_NAME) != null ||
@@ -653,6 +738,9 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformPortMortemReview",
                 Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformPrimaryEvaluation", 
+        		Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME) != null &&
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_PRIMARY_REVIEW_EVALUATION_PERM_NAME)));
 
         String status = project.getProjectStatus().getName();
         request.setAttribute("isAllowedToPay",
@@ -1243,7 +1331,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME)) {
             // Determine whether Review phase has already been opened (does not have Scheduled status)
-            final boolean isReviewOpen = ActionsHelper.isInOrAfterPhase(phases, 0, Constants.REVIEW_PHASE_NAME);
+            final boolean isReviewOpen = ActionsHelper.isInOrAfterPhase(phases, 0, Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME);
             // If reviewer tries to download submission before Review phase opens,
             // notify him about this wrong-doing and do not let perform the action
             if (AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES) && !isReviewOpen) {
@@ -1641,8 +1729,10 @@ public class ProjectDetailsActions extends DispatchAction {
         // Get all phases for the current project
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
         // Retrieve the current phase for the project
-        Phase currentPhase = ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME);
-
+        Phase currentPhase = ActionsHelper.getPhase(phases, true, Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME);
+        if (currentPhase == null ) {
+        	currentPhase = ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME);
+        }
         if (currentPhase == null) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.UPLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase", null);
@@ -1672,7 +1762,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Get my resource
         Resource resource = ActionsHelper.getMyResourceForPhase(
-                request, ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME));
+                request, ActionsHelper.getPhase(phases, false, Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME));
 
         Filter filterProject = UploadFilterBuilder.createProjectIdFilter(project.getId());
         Filter filterResource = UploadFilterBuilder.createResourceIdFilter(resource.getId());
@@ -1751,7 +1841,7 @@ public class ProjectDetailsActions extends DispatchAction {
             // Get phase's type name for the current iteration
             String phaseName = phases[i].getPhaseType().getName();
             // Skip the phase if it is not a Review phase
-            if (!phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME)) {
+            if (!phaseName.equalsIgnoreCase(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME)) {
                 continue;
             }
             // Check if this phase is closed
@@ -2585,7 +2675,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else {
                     links[i] = "ViewScreening.do?method=viewScreening&rid=" + review.getId();
                 }
-            } else if (delivName.equalsIgnoreCase(Constants.REVIEW_DELIVERABLE_NAME)) {
+            } else if (delivName.equalsIgnoreCase(Constants.REVIEW_DELIVERABLE_NAME) || delivName.equalsIgnoreCase(Constants.NEW_REVIEW_DELIVERABLE_NAME)) {
                 // Skip deliverables with empty Submission ID field,
                 // as no links can be generated for such deliverables
                 if (deliverable.getSubmission() == null) {
@@ -2608,6 +2698,31 @@ public class ProjectDetailsActions extends DispatchAction {
                     links[i] = "EditReview.do?method=editReview&rid=" + review.getId();
                 } else {
                     links[i] = "ViewReview.do?method=viewReview&rid=" + review.getId();
+                }
+            } else if (delivName.equalsIgnoreCase(Constants.REVIEW_EVALUATION)) {
+                // Skip deliverables with empty Submission ID field,
+                // as no links can be generated for such deliverables
+                if (deliverable.getSubmission() == null) {
+                    continue;
+                }
+                Phase primaryReviewEvaluationPhase = ActionsHelper.getPhase(phases, true, Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME);
+                if ( primaryReviewEvaluationPhase == null ) {
+                	continue;
+                }
+                ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
+                Review review = reviewManager.getReview(deliverable.getSubmission().longValue());
+                Filter filterResource = new EqualToFilter("reviewer", new Long(deliverable.getResource()));
+    	        Filter filterSubmission = new EqualToFilter("submission", new Long(review.getSubmission()));
+    	        // Prepare final combined filter
+    	        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterSubmission}));
+    	        Review[] evaluationReviews = reviewManager.searchReviews(filter, true);
+    	        if ( evaluationReviews.length == 0 ) {
+    	        	links[i] = "CreateReviewEvaluation.do?method=createReviewEvaluation&rid=" +
+                    deliverable.getSubmission().longValue();
+    	        } else if (!review.isCommitted()){
+    	        	links[i] = "EditReviewEvaluation.do?method=editReviewEvaluation&rid=" + review.getId();
+                } else {
+                    links[i] = "ViewReviewEvaluation.do?method=viewReviewEvaluation&rid=" + review.getId();
                 }
             } else if (delivName.equalsIgnoreCase(Constants.ACC_TEST_CASES_DELIVERABLE_NAME) ||
                     delivName.equalsIgnoreCase(Constants.FAIL_TEST_CASES_DELIVERABLE_NAME) ||
@@ -2810,27 +2925,43 @@ public class ProjectDetailsActions extends DispatchAction {
             throws BaseException {
 
         List<Long> submissionIds = new ArrayList<Long>();
-
+        List<Long> reviewIds = new ArrayList<Long>();
+        
         for (int i = 0; i < deliverables.length; ++i) {
             if (deliverables[i].getSubmission() != null) {
-                submissionIds.add(deliverables[i].getSubmission());
+            	if (deliverables[i].getName().equals(Constants.REVIEW_EVALUATION)){
+            		reviewIds.add(deliverables[i].getSubmission());
+            	} else {
+            		submissionIds.add(deliverables[i].getSubmission());
+            	}
             }
         }
 
-        if (submissionIds.isEmpty()) {
+        if (submissionIds.isEmpty() && reviewIds.isEmpty()) {
             return new String[0];
         }
-
-        Filter filterSubmissions = new InFilter("submission_id", submissionIds);
-
-        // Obtain an instance of Upload Manager
-        UploadManager upMgr = ActionsHelper.createUploadManager(request);
-        Submission[] submissions = upMgr.searchSubmissions(filterSubmissions);
-
         List<Long> resourceIds = new ArrayList<Long>();
+        Review[] reviews = new Review[]{};
+        Submission[] submissions = new Submission[]{};
+        if (!submissionIds.isEmpty()) {
+        	Filter filterSubmissions = new InFilter("submission_id", submissionIds);
 
-        for (int i = 0; i < submissions.length; ++i) {
-            resourceIds.add(submissions[i].getUpload().getOwner());
+        	//Obtain an instance of Upload Manager
+	        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+	        submissions = upMgr.searchSubmissions(filterSubmissions);
+	        for (int i = 0; i < submissions.length; ++i) {
+	            resourceIds.add(submissions[i].getUpload().getOwner());
+	        }
+        }
+        if (reviewIds.size() != 0 ){
+        	ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
+        	Filter filterReviews = new InFilter("review", reviewIds);
+        	reviews = reviewManager.searchReviews(filterReviews, false);
+        	if (reviews != null && reviews.length !=0 ){
+        		for(int reviewIdx=0; reviewIdx < reviews.length; reviewIdx++){
+        			resourceIds.add(reviews[reviewIdx].getAuthor());
+        		}
+        	}
         }
 
         Filter filterResources = new InFilter("resource.resource_id", resourceIds);
@@ -2845,19 +2976,36 @@ public class ProjectDetailsActions extends DispatchAction {
             if (deliverables[i].getSubmission() == null) {
                 continue;
             }
-            long deliverableId = deliverables[i].getSubmission().longValue();
-            for (int j = 0; j < submissions.length; ++j) {
-                if (submissions[j].getId() != deliverableId) {
-                    continue;
-                }
-                long submissionOwnerId = submissions[j].getUpload().getOwner();
-                for (int k = 0; k < resources.length; ++k) {
-                    if (resources[k].getId() == submissionOwnerId) {
-                        ids[i] = (String) resources[k].getProperty("External Reference ID");
-                        break;
-                    }
-                }
-                break;
+            if (deliverables[i].getName().equals(Constants.REVIEW_EVALUATION)){
+            	long reviewId = deliverables[i].getSubmission().longValue();
+	            for (int j = 0; j < reviews.length; ++j) {
+	                if (reviews[j].getId() != reviewId) {
+	                    continue;
+	                }
+	                long reviewOwnerId = reviews[j].getAuthor();
+	                for (int k = 0; k < resources.length; ++k) {
+	                    if (resources[k].getId() == reviewOwnerId) {
+	                        ids[i] = (String) resources[k].getProperty("External Reference ID");
+	                        break;
+	                    }
+	                }
+	                break;
+	            }
+            } else {
+            	long deliverableId = deliverables[i].getSubmission().longValue();
+	            for (int j = 0; j < submissions.length; ++j) {
+	                if (submissions[j].getId() != deliverableId) {
+	                    continue;
+	                }
+	                long submissionOwnerId = submissions[j].getUpload().getOwner();
+	                for (int k = 0; k < resources.length; ++k) {
+	                    if (resources[k].getId() == submissionOwnerId) {
+	                        ids[i] = (String) resources[k].getProperty("External Reference ID");
+	                        break;
+	                    }
+	                }
+	                break;
+	            }
             }
         }
 

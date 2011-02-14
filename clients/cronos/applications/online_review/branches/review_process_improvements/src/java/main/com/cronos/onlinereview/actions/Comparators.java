@@ -60,7 +60,7 @@ final class Comparators {
         final private static String[] phaseOrder = new String[] {
             Constants.SPECIFICATION_SUBMISSION_PHASE_NAME, Constants.SPECIFICATION_REVIEW_PHASE_NAME,
             Constants.REGISTRATION_PHASE_NAME, Constants.SUBMISSION_PHASE_NAME, Constants.SCREENING_PHASE_NAME,
-            Constants.REVIEW_PHASE_NAME, Constants.APPEALS_PHASE_NAME, Constants.APPEALS_RESPONSE_PHASE_NAME,
+            Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME,Constants.REVIEW_PHASE_NAME, Constants.APPEALS_PHASE_NAME, Constants.APPEALS_RESPONSE_PHASE_NAME,
             Constants.AGGREGATION_PHASE_NAME, Constants.AGGREGATION_REVIEW_PHASE_NAME, Constants.FINAL_FIX_PHASE_NAME,
             Constants.FINAL_REVIEW_PHASE_NAME, Constants.APPROVAL_PHASE_NAME
         };

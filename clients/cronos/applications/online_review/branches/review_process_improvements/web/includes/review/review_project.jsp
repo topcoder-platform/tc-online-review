@@ -48,10 +48,19 @@
 	<c:if test="${reviewType eq 'Aggregation' or reviewType eq 'AggregationReview' or reviewType eq 'FinalReview'}">
 		&#160;<b><bean:message key="editReview.Aggregator" /></b>
 	</c:if>
+	<c:if test="${reviewType eq 'ReviewEvaluation'}">
+		&#160;<b><bean:message key="editReview.Evaluator" /></b>
+	</c:if>
 	<c:if test="${not empty authorId}">
 		<tc-webtag:handle coderId="${authorId}" context="${orfn:getHandlerContext(pageContext.request)}" />
 	</c:if>
 	<br />
+</c:if>
+<c:if test="${reviewType eq 'ReviewEvaluation'}">
+	&#160;<b><bean:message key="editReview.Reviewer" /></b>
+	<c:if test="${not empty reviewerId}">
+		<tc-webtag:handle coderId="${reviewerId}" context="${orfn:getHandlerContext(pageContext.request)}" />
+	</c:if>
 </c:if>
 &#160;<b><bean:message key="editReview.Submission" /></b> ${sid}
 <c:if test="${not empty submitterId and reviewType ne 'Screening' and reviewType ne 'Review'}">

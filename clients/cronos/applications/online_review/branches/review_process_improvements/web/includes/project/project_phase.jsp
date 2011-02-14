@@ -325,9 +325,205 @@
 	}
 </script>
 							</c:if>
+							
 							<c:set var="submBoxIdx" value="${submBoxIdx + 1}" />
 						</c:when>
 						<c:when test='${group.appFunc == "VIEW_REVIEWS"}'>
+							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+								<c:set var="colSpan" value="${(fn:length(group.reviewers) * 2) + 2}" />
+								<c:if test="${not isAllowedToEditHisReviews}">
+									<c:set var="colSpan" value="${colSpan + 1}" />
+								</c:if>
+								<tr>
+									<td class="title" colspan="${colSpan}">${group.tableName}</td>
+								</tr>
+								<tr>
+									<td class="value" colspan="${(isAllowedToEditHisReviews) ? 2 : 3}"><!-- @ --></td>
+									<c:forEach items="${group.reviewers}" var="reviewer">
+										<td class="valueC" colspan="2" nowrap="nowrap">
+											<b><bean:message key='ResourceRole.${fn:replace(reviewer.resourceRole.name, " ", "")}' />:</b>
+											<tc-webtag:handle coderId='${reviewer.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />
+											<c:set var="testCase" value="" />
+											<c:forEach items="${group.testCases}" var="curTestCase">
+												<c:if test="${curTestCase.owner == reviewer.id}">
+													<c:set var="testCase" value="${curTestCase}" />
+												</c:if>
+											</c:forEach>
+											<c:if test="${not empty testCase}">
+												<html:link page="/actions/DownloadTestCase.do?method=downloadTestCase&uid=${testCase.id}"
+													titleKey="viewProjectDetails.box.Review.TestCase.hint"><bean:message
+														key="viewProjectDetails.box.Review.TestCase" /></html:link>
+												<c:if test="${isAllowedToUploadTC and group.uploadingTestcasesAllowed}">
+													[
+													<html:link page="/actions/UploadTestCase.do?method=uploadTestCase&pid=${project.id}"
+														titleKey="viewProjectDetails.box.Review.TestCase.Update.hint"><bean:message
+															key="viewProjectDetails.box.Review.TestCase.Update" /></html:link>
+													]
+												</c:if>
+											</c:if>
+											<c:if test="${(empty testCase) and isAllowedToUploadTC and group.uploadingTestcasesAllowed}"><%-- and group.uploadingTestcasesAllowed --%>
+												<html:link page="/actions/UploadTestCase.do?method=uploadTestCase&pid=${project.id}"
+													titleKey="viewProjectDetails.box.Review.TestCase.Upload.hint"><bean:message
+														key="viewProjectDetails.box.Review.TestCase.Upload" /></html:link>
+											</c:if>
+										</td>
+									</c:forEach>
+								</tr>
+								<tr>
+									<td class="header" nowrap="nowrap" colspan="1"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
+									<td class="headerC" colspan="1"><bean:message key="viewProjectDetails.box.Review.Date" arg0="${group.groupIndex}" /></td>
+									<c:if test="${isAllowedToEditHisReviews != true}">
+										<td class="headerC" colspan="1"><bean:message key="viewProjectDetails.box.Review.Score" arg0="${group.groupIndex}" /></td>
+									</c:if>
+									<c:forEach items="${group.reviewers}" var="reviewer">
+										<td class="headerC" colspan="2"><bean:message key="viewProjectDetails.box.Review.Score.short" /></td>
+									</c:forEach>
+								</tr>
+								<c:set var="submissionIdx" value="0" />
+								<c:forEach items="${group.submissions}" var="submission" varStatus="submissionStatus">
+									<c:set var="submissionStatusName" value="${submission.submissionStatus.name}" />
+									<c:if test='${(submissionStatusName != "Failed Screening") && (submissionStatusName != "Deleted")}'>
+										<tr class='${(submissionIdx % 2 == 0) ? "light" : "dark"}'>
+											<c:set var="submitter" value="" />
+											<c:forEach items="${group.submitters}" var="curSubmitter">
+												<c:if test="${curSubmitter.id == submission.upload.owner}">
+													<c:set var="submitter" value="${curSubmitter}" />
+												</c:if>
+											</c:forEach>
+											<td class="value" nowrap="nowrap">
+												<c:set var="placement" value="" />
+												<c:if test="${not empty submission}">
+													<c:set var="placement" value='${submission.placement}' />
+												</c:if>
+												<c:set var="failedReview" value="${(submissionStatusName == 'Failed Screening') or (submissionStatusName == 'Failed Review')}" />
+												<c:if test="${(not empty placement) and (not failedReview)}">
+													<c:choose>
+														<c:when test="${placement == 1}">
+															<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" styleClass="Outline" border="0" />
+														</c:when>
+														<c:when test="${placement == 2}">
+															<html:img srcKey="viewProjectDetails.Submitter.icoRunnerUp.img" altKey="viewProjectDetails.Submitter.icoRunnerUp.alt" styleClass="Outline" border="0" />
+														</c:when>
+														<c:otherwise>
+															<html:img srcKey="viewProjectDetails.Submitter.icoOther.img" alt="${placement} Place" styleClass="Outline" border="0" />
+														</c:otherwise>
+													</c:choose>
+												</c:if>
+												<c:if test="${failedReview}">
+													<c:set var="failureKeyName" value='SubmissionStatus.${fn:replace(submissionStatusName, " ", "")}' />
+													<c:if test="${empty placement}">
+														<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" altKey="${failureKeyName}" border="0" />
+													</c:if>
+													<c:if test="${not empty placement}">
+														<c:set var="placeStr" value="${orfn:getMessage(pageContext, failureKeyName)} (Place ${placement})" />
+														<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" alt="${placeStr}" border="0" />
+													</c:if>
+												</c:if>
+												<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${submission.upload.id}"
+													titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
+												<c:if test="${not empty submitter}">
+													(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
+												</c:if>
+											</td>
+											<td class="valueC" colspan="1">${orfn:displayDateBr(pageContext.request, group.reviewDates[submissionStatus.index])}</td>
+											<c:if test="${not isAllowedToEditHisReviews}">
+												<c:if test="${not empty submission}">
+													<c:set var="finalScore" value='${submission.finalScore}' />
+												</c:if>
+												<c:if test="${not empty finalScore}">
+													<td class="valueC" colspan="1"><html:link page="/actions/ViewCompositeScorecard.do?method=viewCompositeScorecard&sid=${submission.id}">${orfn:displayScore(pageContext.request, finalScore)}</html:link></td>
+												</c:if>
+												<c:if test="${empty finalScore}">
+													<td class="valueC" colspan="1"><bean:message key="Incomplete" /></td>
+												</c:if>
+											</c:if>
+											<c:set var="evaluation" value="${null}"/>
+                                        	<c:forEach items="${group.evaluations}" var="eval">
+                                            	<c:if test="${eval.submission == submission.id}">
+                                                	<c:set var="evaluation" value="${eval}"/>
+                                            	</c:if>
+                                        	</c:forEach>
+											<c:forEach items="${group.reviews[submissionStatus.index]}" var="review" varStatus="reviewStatus">
+												<c:if test="${(empty review) or (not group.displayReviewLinks)}">
+													<c:if test="${isAllowedToEditHisReviews && group.displayReviewLinks}">
+														<td class="valueC" colspan="2" nowrap="nowrap"><html:link
+															page="/actions/CreateReview.do?method=createReview&sid=${submission.id}"><b><bean:message
+															key="viewProjectDetails.box.Review.Submit" /></b></html:link></td>
+													</c:if>
+													<c:if test="${(not isAllowedToEditHisReviews) || (not group.displayReviewLinks)}">
+														<td class="valueC" colspan="2"><bean:message key="NotAvailable" /></td>
+													</c:if>
+												</c:if>
+												<c:if test="${(not empty review) && group.displayReviewLinks}">
+													<c:choose>
+														<c:when test="${group.evaluationPhaseStatus == 2}">
+															<c:choose>
+																<c:when test="${isAllowedToPerformPrimaryEvaluation}">
+																	<c:if test="${evaluation eq null}">
+																		<td class="valueC" colspan="2"><html:link
+																		page="/actions/CreateReviewEvaluation.do?method=createReviewEvaluation&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
+																	</c:if>
+																	<c:if test="${evaluation ne null}">
+																		<c:choose>
+																			<c:when test="${evaluation.committed}">
+																				<td class="valueC" colspan="2"><html:link
+																				page="/actions/ViewReviewEvaluation.do?method=viewReviewEvaluation&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
+																			</c:when>
+																			<c:when test="${review.committed}">
+																				<td class="valueC" colspan="2"><html:link
+																				page="/actions/ViewReviewEvaluation.do?method=viewReviewEvaluation&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
+																			</c:when>
+																			<c:otherwise>
+																				<td class="valueC" colspan="2"><html:link
+																				page="/actions/EditReviewEvaluation.do?method=editReviewEvaluation&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
+																			</c:otherwise>
+																		</c:choose>
+																	</c:if>
+																</c:when>
+																<c:when test="${group.displayEvaluationReviewLinks}">
+																	<c:if test="${evaluation eq null}">
+																		<td class="valueC" colspan="2"><html:link
+																		page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>																		
+																	</c:if>
+																	<c:if test="${evaluation ne null}">
+																		<td class="valueC" colspan="2"><html:link
+																		page="/actions/ViewReviewEvaluation.do?method=viewReviewEvaluation&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
+																	</c:if>
+																</c:when>
+																<c:otherwise>
+																	<td class="valueC" colspan="2"><bean:message key="Pending Evaluation" /></td>
+																</c:otherwise>
+															</c:choose>
+														</c:when>
+														<c:otherwise>
+															<c:if test="${review.committed}">
+																<td class="valueC" colspan="2"><html:link
+																page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
+															</c:if>
+															<c:if test="${not review.committed}">
+																<c:if test="${isAllowedToEditHisReviews}">
+																	<td class="valueC" colspan="2"><html:link
+																	page="/actions/EditReview.do?method=editReview&rid=${review.id}"><b><bean:message
+																	key="viewProjectDetails.box.Review.Submit" /></b></html:link></td>
+																</c:if>
+																<c:if test="${not isAllowedToEditHisReviews}">
+																	<td class="valueC" colspan="2"><bean:message key="Pending" /></td>
+																</c:if>
+															</c:if>
+														</c:otherwise>
+													</c:choose>
+												</c:if>
+											</c:forEach>
+										</tr>
+										<c:set var="submissionIdx" value="${submissionIdx + 1}" />
+									</c:if>
+								</c:forEach>
+								<tr>
+									<td class="lastRowTD" colspan="${colSpan}"><!-- @ --></td>
+								</tr>
+							</table>
+						</c:when>
+						<c:when test='${group.appFunc == "VIEW_APPEALS"}'>
 							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
 								<c:set var="colSpan" value="${(fn:length(group.reviewers) * 2) + 2}" />
 								<c:if test="${not isAllowedToEditHisReviews}">
