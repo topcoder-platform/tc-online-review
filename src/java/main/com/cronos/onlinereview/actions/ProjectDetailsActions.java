@@ -92,6 +92,8 @@ import com.topcoder.management.deliverable.late.LateDeliverableManagementExcepti
 import com.topcoder.management.deliverable.late.LateDeliverableManager;
 import com.topcoder.management.deliverable.late.search.LateDeliverableFilterBuilder;
 
+import com.cronos.onlinereview.functions.Functions;
+
 /**
  * This class contains Struts Actions that are meant to deal with Project's details. There are
  * following Actions defined in this class:
@@ -793,6 +795,16 @@ public class ProjectDetailsActions extends DispatchAction {
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
             return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
         }
+        // Get the ID of the sender
+        long senderId = AuthorizationHelper.getLoggedInUserId(request);
+
+        // Obtain an instance of User Retrieval
+        UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
+        // Retrieve information about an external user by its ID
+        ExternalUser sender = userRetrieval.retrieveUser(senderId);
+
+        // Get current project from the verification result bean
+        Project project = verification.getProject();
 
         // Obtain an instance of Document Generator
         DocumentGenerator docGenerator = DocumentGenerator.getInstance();
@@ -800,68 +812,6 @@ public class ProjectDetailsActions extends DispatchAction {
         // Get the template of email
         Template docTemplate = docGenerator.getTemplate(
                 ConfigHelper.getContactManagerEmailSrcType(), ConfigHelper.getContactManagerEmailTemplate());
-
-        // Get the ID of the sender
-        long senderId = AuthorizationHelper.getLoggedInUserId(request);
-        // Obtain an instance of User Retrieval
-        UserRetrieval userMgr = ActionsHelper.createUserRetrieval(request);
-        // Retrieve information about an external user by its ID
-        ExternalUser sender = userMgr.retrieveUser(senderId);
-
-        // Obtain an instance of Resource Manager
-        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
-        // Get all Resource Roles
-        ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
-
-        // Get current project from the verification result bean
-        Project project = verification.getProject();
-
-        // Build filters
-        Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
-
-        Filter filterRole = new OrFilter(
-                new OrFilter(
-                        ResourceFilterBuilder.createResourceRoleIdFilter(
-                            ActionsHelper.findResourceRoleByName(allResourceRoles, "Manager").getId()),
-                        ResourceFilterBuilder.createResourceRoleIdFilter(
-                            ActionsHelper.findResourceRoleByName(allResourceRoles, "Client Manager").getId())),
-                ResourceFilterBuilder.createResourceRoleIdFilter(
-                        ActionsHelper.findResourceRoleByName(allResourceRoles, "Copilot").getId()));
-
-        // Build final filter
-        Filter filter = new AndFilter(filterProject, filterRole);
-        // Search for the managers of this project
-        Resource[] managers = resMgr.searchResources(filter);
-
-        Set<String> existingManagers = new HashSet<String>();
-
-        // Collect unique external user IDs first,
-        // as there may exist multiple manager resources for the same user
-        for (int i = 0; i < managers.length; ++i) {
-            String extUserId = ((String) managers[i].getProperty("External Reference ID")).trim();
-            if (!existingManagers.contains(extUserId)) {
-                existingManagers.add(extUserId);
-            }
-        }
-
-        long[] extUsrManagerIds = new long[existingManagers.size() + 1];
-        int managerIdx = 0;
-
-        // This inefficient operation, but going over all resources' properties is even more inefficient
-        for (String mgr : existingManagers) {
-            extUsrManagerIds[managerIdx++] = Long.parseLong(mgr);
-        }
-
-        //send a copy to the sender
-        extUsrManagerIds[managerIdx++] = senderId;
-
-        // Retrieve all external resources for managers in a single batch operation
-        ExternalUser[] extUsrManagers = userMgr.retrieveUsers(extUsrManagerIds);
-
-        // Get the category of the question
-        String questionType = request.getParameter("cat");
-        // Get question's text
-        String text = "<![CDATA[" + request.getParameter("msg") +"]]>";
 
         TemplateFields fields = docGenerator.getFields(docTemplate);
         Node[] nodes = fields.getNodes();
@@ -878,14 +828,13 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else if ("USER_HANDLE".equals(field.getName())) {
                     field.setValue(sender.getHandle());
                 } else if ("PROJECT_NAME".equals(field.getName())) {
-                    field.setValue("<![CDATA[" + project.getProjectCategory().getDescription() + " - " +
-                            project.getProperty("Project Name") + "]]>");
+                    field.setValue("<![CDATA[" + project.getProperty("Project Name") + "]]>");
                 } else if ("PROJECT_VERSION".equals(field.getName())) {
                     field.setValue("" + project.getProperty("Project Version"));
                 } else if ("QUESTION_TYPE".equals(field.getName())) {
-                    field.setValue(questionType);
+                    field.setValue(request.getParameter("cat"));
                 } else if ("TEXT".equals(field.getName())) {
-                    field.setValue(text);
+                    field.setValue("<![CDATA[" + Functions.htmlEncode(request.getParameter("msg")) +"]]>");
                 } else if ("OR_LINK".equals(field.getName())) {
                     field.setValue("<![CDATA[" + ConfigHelper.getProjectDetailsBaseURL() + project.getId() + "]]>");
                 } else if ("LIST_OF_ROLES".equals(field.getName())) {
@@ -906,18 +855,34 @@ public class ProjectDetailsActions extends DispatchAction {
         // Compose a message to send
         TCSEmailMessage message = new TCSEmailMessage();
 
-        // Add 'To' addresses to message
-        for (int i = 0; i < extUsrManagers.length - 1; ++i) {
-            message.addToAddress(extUsrManagers[i].getEmail(), TCSEmailMessage.TO);
+        // Add 'TO' addresses to message
+        List<Long> managerUsrIds = ActionsHelper.getUserIDsByRoleNames(request, new String[]{"Manager", "Copilot"}, project.getId());
+        List<String> managerEmails = ActionsHelper.getEmailsByUserIDs(request, managerUsrIds);
+        for (int i = 0; i < managerEmails.size(); ++i) {
+            message.addToAddress(managerEmails.get(i), TCSEmailMessage.TO);
         }
-        //The last one is the sender that is CC'd in the mail
-        message.addToAddress(extUsrManagers[extUsrManagers.length - 1].getEmail(), TCSEmailMessage.CC);
+		
+        // Add 'BCC' addresses to message (Client Managers wish to keep their email addresses private)
+        List<Long> clientManagerUsrIds = ActionsHelper.getUserIDsByRoleNames(request, new String[]{"Client Manager"}, project.getId());
+        List<String> clientManagerEmails = ActionsHelper.getEmailsByUserIDs(request, clientManagerUsrIds);		
+        for (int i = 0; i < clientManagerEmails.size(); ++i) {
+            // Don't duplicate addressee.
+            if (managerEmails.contains(clientManagerEmails.get(i)) == false) {
+                message.addToAddress(clientManagerEmails.get(i), TCSEmailMessage.BCC);
+            }
+        }
+
+        //The sender is CC'd in the mail
+        message.addToAddress(sender.getEmail(), TCSEmailMessage.CC);
+
         // Add 'From' address
         message.setFromAddress(sender.getEmail());
         // Set message's subject
         message.setSubject((String) project.getProperty("Project Name") + " - " + sender.getHandle());
         // Insert a body into the message
         message.setBody(docGenerator.applyTemplate(fields));
+
+        message.setContentType("text/html");
 
         // Send an email
         EmailEngine.send(message);

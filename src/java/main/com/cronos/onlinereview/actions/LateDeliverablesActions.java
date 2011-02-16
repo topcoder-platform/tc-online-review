@@ -1110,67 +1110,6 @@ public class LateDeliverablesActions extends DispatchAction {
     }
 
     /**
-     * <p>Returns list of user IDs who have specified resource roles for the specified project.</p>
-     * 
-     * @param resMgr a <code>ResourceManager</code> to be used for retrieving project resources. 
-     * @param roleNames a <code>String</code> array representing the resource role names. 
-	 * @param projectID ID of the project.
-     * @throws Exception if an unexpected error occurs.
-     */
-    private List<Long> getUserIDsByRoleNames(ResourceManager resMgr, String[] roleNames, long projectID) throws Exception {
-        ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
-        List<Long> extUsrIds = new ArrayList<Long>();
-
-        if ((roleNames != null) && (roleNames.length > 0)) {
-            // Build filters
-            List<Filter> roleFilters = new ArrayList<Filter>();
-            for (String roleName : roleNames) {
-                ResourceRole role = ActionsHelper.findResourceRoleByName(allResourceRoles, roleName);
-                if (role != null) {
-                    roleFilters.add(ResourceFilterBuilder.createResourceRoleIdFilter(role.getId()));
-                }
-            }
-            Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(projectID);
-            Filter filterRole = new OrFilter(roleFilters);
-            Filter filter = new AndFilter(filterProject, filterRole);
-
-            Resource[] resources = resMgr.searchResources(filter);
-
-            // Collect unique external user IDs first as there may exist multiple resources for the same user
-            Set<String> userIDs = new HashSet<String>();			
-            for (int i = 0; i < resources.length; ++i) {
-                String extUserId = ((String) resources[i].getProperty("External Reference ID")).trim();
-                userIDs.add(extUserId);
-            }
-
-            userIDs.remove("22719217"); // "Components" dummy user
-            userIDs.remove("22770213"); // "Applications" dummy user
-            userIDs.remove("22873364"); // "LCSUPPORT" dummy user
-
-            for (String userID : userIDs) {
-                extUsrIds.add(Long.parseLong(userID));
-            }
-        }
-
-        return extUsrIds;
-    }
-
-    /**
-     * <p>Returns list of the email addresses for the specified user IDs.</p>
-     * 
-     * @param userRetrieval a <code>UserRetrieval</code> to be used for retrieving email addresses. 
-     * @param userIDs list of user IDs.
-     * @throws Exception if an unexpected error occurs.
-     */
-    private List<String> getEmailsByUserIDs(UserRetrieval userRetrieval, List<Long> userIDs) throws Exception {
-        List<String> emails = new ArrayList<String>();
-        for (Long userID : userIDs) {
-            emails.add(userRetrieval.retrieveUser(userID).getEmail());
-        }
-        return emails;	
-    }
-
-    /**
      * <p>Sends an email to late member associated with the specified late deliverable to notify on updates of
 	 * the late deliverable by one of the managers. The other managers are CCed on the email.</p>
      * 
@@ -1178,25 +1117,25 @@ public class LateDeliverablesActions extends DispatchAction {
      * @param request an <code>HttpServletRequest</code> representing incoming request. 
      * @throws Exception if an unexpected error occurs.
      */
-    private void sendEmailToLateMember(LateDeliverable lateDeliverable, HttpServletRequest request)
-        throws Exception {
+    private void sendEmailToLateMember(LateDeliverable lateDeliverable, HttpServletRequest request) throws Exception {
         Project project = ActionsHelper.createProjectManager(request).getProject(lateDeliverable.getProjectId());
-        UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
-		
-        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
-        ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
+
         String[] recipientRoleNames = ConfigHelper.getLateDeliverableUpdateByManagerRecipientRoleNames();		
 		
-        List<Long> extManagerUsrIds = getUserIDsByRoleNames(ActionsHelper.createResourceManager(request),
-                                                            recipientRoleNames, project.getId());
+        List<Long> managerUserIds = ActionsHelper.getUserIDsByRoleNames(request, recipientRoleNames, project.getId());
+
+        managerUserIds.remove("22719217"); // "Components" dummy user
+        managerUserIds.remove("22770213"); // "Applications" dummy user
+        managerUserIds.remove("22873364"); // "LCSUPPORT" dummy user
+
+        // Don't send email to the user who is editing the late deliverable.
+        managerUserIds.remove(AuthorizationHelper.getLoggedInUserId(request));
 		
-        // Don't send email to the user who edits the late deliverable.
-        extManagerUsrIds.remove(AuthorizationHelper.getLoggedInUserId(request));
-		
-        List<String> managerEmails = getEmailsByUserIDs(userRetrieval, extManagerUsrIds);
+        List<String> managerEmails = ActionsHelper.getEmailsByUserIDs(request, managerUserIds);
 		
         // Get the late member's email.
         List<String> lateMemberEmails = new ArrayList<String>();
+        UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
         lateMemberEmails.add( userRetrieval.retrieveUser(getLateDeliverableUserId(request, lateDeliverable)).getEmail() );
         
         sendEmailForUsers(project, lateMemberEmails, managerEmails, lateDeliverable,
@@ -1209,7 +1148,7 @@ public class LateDeliverablesActions extends DispatchAction {
 
     /**
      * <p>Sends an email to managers associated with the specified late deliverable to notify on updates of the late
-     * deliverable by the late member. The late member is CCed on the email.</p>
+     * deliverable by the late member.</p>
      * 
      * @param lateDeliverable a <code>LateDeliverable</code> which has been updated. 
      * @param request an <code>HttpServletRequest</code> representing incoming request. 
@@ -1217,27 +1156,21 @@ public class LateDeliverablesActions extends DispatchAction {
      */
     private void sendEmailToManagers(LateDeliverable lateDeliverable, HttpServletRequest request) throws Exception {
         Project project = ActionsHelper.createProjectManager(request).getProject(lateDeliverable.getProjectId());
-        UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
-        
-        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
-        ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
+
         String[] recipientRoleNames = ConfigHelper.getLateDeliverableUpdateByMemberRecipientRoleNames();
 
-        List<Long> extManagerUsrIds = getUserIDsByRoleNames(ActionsHelper.createResourceManager(request),
-                                                            recipientRoleNames, project.getId());
+        List<Long> managerUserIds = ActionsHelper.getUserIDsByRoleNames(request, recipientRoleNames, project.getId());
 
-        List<String> managerEmails = getEmailsByUserIDs(userRetrieval, extManagerUsrIds);
+        managerUserIds.remove("22719217"); // "Components" dummy user
+        managerUserIds.remove("22770213"); // "Applications" dummy user
+        managerUserIds.remove("22873364"); // "LCSUPPORT" dummy user
 
-        // Get the late member's email.
-        List<String> lateMemberEmails = new ArrayList<String>();
-        lateMemberEmails.add( userRetrieval.retrieveUser(getLateDeliverableUserId(request, lateDeliverable)).getEmail() );
-
-        sendEmailForUsers(project, managerEmails, lateMemberEmails, lateDeliverable,
+        List<String> managerEmails = ActionsHelper.getEmailsByUserIDs(request, managerUserIds);
+        sendEmailForUsers(project, managerEmails, new ArrayList<String>(), lateDeliverable,
                           ConfigHelper.getLateDeliverableUpdateByMemberEmailTemplateSource(),
                           ConfigHelper.getLateDeliverableUpdateByMemberEmailTemplateName(),
                           ConfigHelper.getLateDeliverableUpdateByMemberEmailTemplateSubject(),
                           ConfigHelper.getLateDeliverableUpdateByMemberEmailFromAddress(), 
                           request);
-
     }
 }

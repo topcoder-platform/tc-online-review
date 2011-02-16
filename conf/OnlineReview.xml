@@ -6173,7 +6173,7 @@
 
                 <!--List of resource roles to be CCed on the notification email to the late member.-->
                 <Property name="Roles">
-                    <Value>Manager,Copilot,Client Manager,Observer</Value>
+                    <Value>Manager,Copilot</Value>
                 </Property>
             </Property>
             <Property name="ByMember">
@@ -6192,7 +6192,7 @@
 
                 <!--List of resource roles to send email to.-->
                 <Property name="Roles">
-                    <Value>Manager,Copilot,Client Manager,Observer</Value>
+                    <Value>Manager,Copilot</Value>
                 </Property>
             </Property>
         </Property>
