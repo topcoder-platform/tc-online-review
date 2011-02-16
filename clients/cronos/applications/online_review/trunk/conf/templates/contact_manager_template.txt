@@ -1,8 +1,9 @@
-I am %USER_FIRST_NAME{User first name}% %USER_LAST_NAME{User last name}%,
-TopCoder Handle\: %USER_HANDLE{User handle}%
-This is the question for project\: %PROJECT_NAME{Project name}%
-OR link\: %OR_LINK% 
-My role\: %LIST_OF_ROLES% 
-Version\: %PROJECT_VERSION{Project version}%
-Question Type\: %QUESTION_TYPE%
-TEXT\: %TEXT%
+<p>
+I am %USER_FIRST_NAME{User first name}% %USER_LAST_NAME{User last name}%<br/>
+TopCoder Handle\: %USER_HANDLE{User handle}%<br/>
+Contest\: <a href\="%OR_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
+My role\: %LIST_OF_ROLES%<br/>
+Question Type\: %QUESTION_TYPE%<br/>
+TEXT\:<br/>
+%TEXT%
+</p>

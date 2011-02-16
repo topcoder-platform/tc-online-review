@@ -247,7 +247,7 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
 
- * @author George1, real_vg, pulky, isv, FireIce
+ * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK
  * @version 1.11
  * @since 1.0
  */
@@ -4859,5 +4859,65 @@ public class ActionsHelper {
         }
 
         return idToNameMap;
+    }
+
+    /**
+     * <p>Returns list of user IDs who have specified resource roles for the specified project.</p>
+     * 
+     * @param request the http request. 
+     * @param roleNames a <code>String</code> array representing the resource role names. 
+	 * @param projectID ID of the project.
+     * @throws BaseException if an unexpected error occurs.
+     */
+    static List<Long> getUserIDsByRoleNames(HttpServletRequest request, String[] roleNames, long projectID) throws BaseException {
+        ResourceManager resMgr = createResourceManager(request);
+        ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
+        List<Long> userIds = new ArrayList<Long>();
+
+        if ((roleNames != null) && (roleNames.length > 0)) {
+            // Build filters
+            List<Filter> roleFilters = new ArrayList<Filter>();
+            for (String roleName : roleNames) {
+                ResourceRole role = ActionsHelper.findResourceRoleByName(allResourceRoles, roleName);
+                if (role != null) {
+                    roleFilters.add(ResourceFilterBuilder.createResourceRoleIdFilter(role.getId()));
+                }
+            }
+            Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(projectID);
+            Filter filterRole = new OrFilter(roleFilters);
+            Filter filter = new AndFilter(filterProject, filterRole);
+
+            Resource[] resources = resMgr.searchResources(filter);
+
+            // Collect unique external user IDs first as there may exist multiple resources for the same user
+            Set<String> stringUserIDs = new HashSet<String>();			
+            for (int i = 0; i < resources.length; ++i) {
+                String stringUserID = ((String) resources[i].getProperty("External Reference ID")).trim();
+                stringUserIDs.add(stringUserID);
+            }
+
+            for (String stringUserID : stringUserIDs) {
+                userIds.add(Long.parseLong(stringUserID));
+            }
+        }
+
+        return userIds;
+    }
+
+    /**
+     * <p>Returns list of the email addresses for the specified user IDs.</p>
+     * 
+     * @param request the http request.
+     * @param userIDs list of user IDs.
+     * @throws BaseException if an unexpected error occurs.
+     */
+    static List<String> getEmailsByUserIDs(HttpServletRequest request, List<Long> userIDs) throws BaseException {
+        UserRetrieval userRetrieval = createUserRetrieval(request);
+
+        List<String> emails = new ArrayList<String>();
+        for (Long userID : userIDs) {
+            emails.add(userRetrieval.retrieveUser(userID).getEmail());
+        }
+        return emails;	
     }
 }
