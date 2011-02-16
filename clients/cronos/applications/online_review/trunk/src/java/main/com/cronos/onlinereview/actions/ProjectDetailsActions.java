@@ -87,6 +87,11 @@ import com.topcoder.util.file.fieldconfig.Field;
 import com.topcoder.util.file.fieldconfig.Node;
 import com.topcoder.util.file.fieldconfig.TemplateFields;
 
+import com.topcoder.management.deliverable.late.LateDeliverable;
+import com.topcoder.management.deliverable.late.LateDeliverableManagementException;
+import com.topcoder.management.deliverable.late.LateDeliverableManager;
+import com.topcoder.management.deliverable.late.search.LateDeliverableFilterBuilder;
+
 /**
  * This class contains Struts Actions that are meant to deal with Project's details. There are
  * following Actions defined in this class:
@@ -416,6 +421,25 @@ public class ProjectDetailsActions extends DispatchAction {
 
         request.setAttribute("myDeliverables", myDeliverables);
         request.setAttribute("outstandingDeliverables", outstandingDeliverables);
+
+        request.setAttribute("unrespondedLateDeliverables", (Boolean)false);
+        if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_LATE_DELIVERABLE_PERM_NAME)) {
+            List<Filter> filters = new ArrayList<Filter>();
+
+            filters.add(LateDeliverableFilterBuilder.createProjectIdFilter(projectId));
+            filters.add(LateDeliverableFilterBuilder.createHasExplanationFilter(true));
+            filters.add(LateDeliverableFilterBuilder.createHasResponseFilter(false));
+            filters.add(LateDeliverableFilterBuilder.createForgivenFilter(false));
+
+            LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager(request);
+            List<LateDeliverable> lateDeliverables = lateDeliverableManager.searchAllLateDeliverables(new AndFilter(filters));
+            if (lateDeliverables.size() > 0) {
+                request.setAttribute("unrespondedLateDeliverables", (Boolean)true);
+
+                request.setAttribute("unrespondedLateDeliverablesLink", "ViewLateDeliverables.do?method=viewLateDeliverables&project_id=" +
+				                     projectId + "&forgiven=Not+forgiven&explanation_status=true&response_status=false");
+            }
+        }
 
         long currentTime = (new Date()).getTime();
 
