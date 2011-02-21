@@ -663,6 +663,13 @@
          dest="${testlogdir}/result.txt" ignoreerrors="true" />
   </target>
 
+    <target name="build_ejb_library" depends="compile">
+        <mkdir dir="${builddir}/ant/components"/>
+        <mkdir dir="${builddir}/ant/components/ejblibrary" />
+        <jar destfile="${builddir}/components/ejblibrary/ejblibrary.jar" basedir="${build_classdir}" 
+             includes="com/cronos/onlinereview/ejblibrary/**"/>
+    </target>
+
     <!--
         ++ =======================================================================
         ++ Macro: compile_component
