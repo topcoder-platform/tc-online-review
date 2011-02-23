@@ -356,6 +356,14 @@ public class ConfigHelper {
      * @see #DEFAULT_VALUES_PROP
      */
     private static final String REQ_REVIEWERS_PROP = "RequiredReviewers";
+    
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * defines the default minimum amount of registered secondary reviewers before Review phase can end.
+     *
+     * @see #DEFAULT_VALUES_PROP
+     */
+    private static final String REQ_SEC_REVIEWERS_PROP = "RequiredSecondaryReviewers";
 
     /**
      * This member variable is a string constant that specifies the name of the property which
@@ -799,6 +807,12 @@ public class ConfigHelper {
      * ending Review phase.
      */
     private static int reqReviewers = -1;
+    
+    /**
+     * This member variable holds the default minimum number of registered secondary reviewers required for
+     * ending Review phase.
+     */
+    private static int reqSecondaryReviewers = -1;
 
     /**
      * <p>An <code>int</code> providing the default number of required approvers for Approval phase.</p>
@@ -1266,6 +1280,8 @@ public class ConfigHelper {
             String reqSubmissionsStr = propDefaults.getValue(REQ_SUBMISSIONS_PROP);
             // Get the default minimum submissions amount
             String reqReviewersStr = propDefaults.getValue(REQ_REVIEWERS_PROP);
+            // Get the default minimum submissions amount
+            String reqSecondaryReviewersStr = propDefaults.getValue(REQ_SEC_REVIEWERS_PROP);
             // Get the duration of "Deadline Near" status
             String deadlineNearDurationStr = propDefaults.getValue(DEADLINE_NEAR_DURATION_PROP);
 
@@ -1309,6 +1325,13 @@ public class ConfigHelper {
                 int minimum = Integer.parseInt(reqReviewersStr, 10);
                 if (minimum >= 0) {
                     reqReviewers = minimum;
+                }
+            }
+            // Verify that default minimum secondary reviewers is specified, and assign it
+            if (reqSecondaryReviewersStr != null && reqSecondaryReviewersStr.trim().length() != 0) {
+                int minimum = Integer.parseInt(reqSecondaryReviewersStr, 10);
+                if (minimum >= 0) {
+                    reqSecondaryReviewers = minimum;
                 }
             }
             // Parse the number of required reviewers for Post-Mortem phase
@@ -1828,6 +1851,17 @@ public class ConfigHelper {
      */
     public static int getDefaultRequiredReviewers() {
         return reqReviewers;
+    }
+    
+    
+    /**
+     * This static method returns default minimum of registered secondary reviewers required before Review
+     * phase can be closed.
+     *
+     * @return default minimum amount, or -1 if there is no default minimum value.
+     */
+    public static int getDefaultRequiredSecondaryReviewers() {
+        return reqSecondaryReviewers;
     }
 
     /**

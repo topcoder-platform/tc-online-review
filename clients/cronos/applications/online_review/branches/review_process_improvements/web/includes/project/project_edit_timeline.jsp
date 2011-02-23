@@ -65,7 +65,6 @@
     <c:set var="approvalPhaseMet" value="${false}"/>
     <c:set var="disableApprovalReviewerNumberInput" value="${false}"/>
     <c:forEach var="phaseIdx" begin="0" end="${fn:length(projectForm.map['phase_id']) - 1}">
-    	
         <c:set var="isPhaseClosed" value="${not (projectForm.map['phase_can_open'][phaseIdx] || projectForm.map['phase_can_close'][phaseIdx])}"/>
         <c:set var="isFixedStartTimeSet" value="${projectForm.map['phase_start_by_fixed_time'][phaseIdx]}"/>
         <c:set var="isPhaseDependencySet" value="${projectForm.map['phase_start_by_phase'][phaseIdx]}"/>
@@ -247,14 +246,41 @@
                 </td>
             </tr>
         </c:if>
-       	
-        <c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_scorecard'][phaseIdx] and ((projectForm.map['phase_name'][phaseIdx] eq 'Review') or (projectForm.map['phase_name'][phaseIdx] eq 'Secondary Reviewer Review')))}">
+        <c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_scorecard'][phaseIdx] and projectForm.map['phase_name'][phaseIdx] eq 'Review')}">
             <tr class="highlighted" ${(phaseIdx eq 0) ? 'id="review_scorecard_row_template" style="display:none;"' : ''}>
                 <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
                 <td class="value" colspan="4">
                     <bean:message key="editProject.Phases.Criteria.ReviewNumber.beforeInput" />
                     <html:text style="width:30px;text-align:right;" styleClass="inputBox" disabled="${isPhaseClosed}"
                         size="30" property="phase_required_reviewers[${phaseIdx}]" />
+                    &#160;<bean:message key="editProject.Phases.Criteria.ReviewNumber.afterInput" /><br />
+                    <bean:message key="editProject.Phases.Criteria.Scorecard" />
+                    <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" disabled="${isPhaseClosed}">
+
+                        <c:forEach items="${reviewScorecards}" var="scorecard">
+                            <c:if test="${(newProject && scorecard.category == 1)
+                                          or (not newProject && project.projectCategory.id == scorecard.category)
+                                          or projectCategoriesMap[scorecard.category].projectType.generic}">
+                            <html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>
+                            </c:if>
+                        </c:forEach>
+                    </html:select>
+                    <script type="text/javascript">
+                        <!--
+                         reviewScorecardNodes[reviewScorecardNodes.length]
+                             = document.getElementsByName("phase_scorecard[${phaseIdx}]")[0];
+                        -->
+                    </script>
+                </td>
+            </tr>
+        </c:if>
+        <c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_scorecard'][phaseIdx] and projectForm.map['phase_name'][phaseIdx] eq 'Secondary Reviewer Review')}">
+            <tr class="highlighted" ${(phaseIdx eq 0) ? 'id="review_scorecard_row_template" style="display:none;"' : ''}>
+                <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
+                <td class="value" colspan="4">
+                    <bean:message key="editProject.Phases.Criteria.ReviewNumber.beforeInput" />
+                    <html:text style="width:30px;text-align:right;" styleClass="inputBox" disabled="${isPhaseClosed}"
+                        size="30" property="phase_required_reviewers[${phaseIdx}]" value="${requestScope.phase_required_secondary_reviewers}"/>
                     &#160;<bean:message key="editProject.Phases.Criteria.ReviewNumber.afterInput" /><br />
                     <bean:message key="editProject.Phases.Criteria.Scorecard" />
                     <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" disabled="${isPhaseClosed}">

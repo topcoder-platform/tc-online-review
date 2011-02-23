@@ -447,7 +447,7 @@
 												<c:if test="${(empty review) or (not group.displayReviewLinks)}">
 													<c:if test="${isAllowedToEditHisReviews && group.displayReviewLinks}">
 														<td class="valueC" colspan="2" nowrap="nowrap"><html:link
-															page="/actions/CreateReview.do?method=createReview&sid=${submission.id}"><b><bean:message
+															page="/actions/Create${group.reviewType}.do?method=create${group.reviewType}&sid=${submission.id}"><b><bean:message
 															key="viewProjectDetails.box.Review.Submit" /></b></html:link></td>
 													</c:if>
 													<c:if test="${(not isAllowedToEditHisReviews) || (not group.displayReviewLinks)}">
@@ -483,7 +483,7 @@
 																<c:when test="${group.displayEvaluationReviewLinks}">
 																	<c:if test="${evaluation eq null}">
 																		<td class="valueC" colspan="2"><html:link
-																		page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>																		
+																		page="/actions/ViewSecondaryReview.do?method=viewSecondaryReview&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>																		
 																	</c:if>
 																	<c:if test="${evaluation ne null}">
 																		<td class="valueC" colspan="2"><html:link
@@ -498,12 +498,12 @@
 														<c:otherwise>
 															<c:if test="${review.committed}">
 																<td class="valueC" colspan="2"><html:link
-																page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
+																page="/actions/View${group.reviewType}.do?method=view${group.reviewType}&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
 															</c:if>
 															<c:if test="${not review.committed}">
 																<c:if test="${isAllowedToEditHisReviews}">
 																	<td class="valueC" colspan="2"><html:link
-																	page="/actions/EditReview.do?method=editReview&rid=${review.id}"><b><bean:message
+																	page="/actions/Edit${group.reviewType}.do?method=edit${group.reviewType}&rid=${review.id}"><b><bean:message
 																	key="viewProjectDetails.box.Review.Submit" /></b></html:link></td>
 																</c:if>
 																<c:if test="${not isAllowedToEditHisReviews}">
@@ -644,38 +644,14 @@
 												</c:otherwise>
 											</c:choose>
 											<c:forEach items="${group.reviews[submissionStatus.index]}" var="review" varStatus="reviewStatus">
-												<c:if test="${(empty review) or (not group.displayReviewLinks)}">
-													<c:if test="${isAllowedToEditHisReviews && group.displayReviewLinks}">
-														<td class="valueC" width="8%" nowrap="nowrap"><html:link
-															page="/actions/CreateReview.do?method=createReview&sid=${submission.id}"><b><bean:message
-															key="viewProjectDetails.box.Review.Submit" /></b></html:link></td>
-														<td class="valueC"><bean:message key="NotAvailable" /></td>
-													</c:if>
-													<c:if test="${(not isAllowedToEditHisReviews) || (not group.displayReviewLinks)}">
-														<td class="valueC" width="8%"><bean:message key="NotAvailable" /></td>
-														<td class="valueC"><bean:message key="NotAvailable" /></td>
-													</c:if>
-												</c:if>
 												<c:if test="${(not empty review) && group.displayReviewLinks}">
-													<c:if test="${review.committed}">
-														<td class="valueC" width="8%"><html:link
-															page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
-													</c:if>
-													<c:if test="${not review.committed}">
-														<c:if test="${isAllowedToEditHisReviews}">
-															<td class="valueC" width="8%"><html:link
-																page="/actions/EditReview.do?method=editReview&rid=${review.id}"><b><bean:message
-																key="viewProjectDetails.box.Review.Submit" /></b></html:link></td>
-														</c:if>
-														<c:if test="${not isAllowedToEditHisReviews}">
-															<td class="valueC" width="8%"><bean:message key="Pending" /></td>
-														</c:if>
-													</c:if>
+													<td class="valueC" width="8%"><html:link
+															page="/actions/View${group.reviewType}.do?method=view${group.reviewType}&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
 													<c:if test="${group.appealsPhaseOpened}">
 														<td class="valueC" nowrap="nowrap">[
-															<html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}"
+															<html:link page="/actions/View${group.reviewType}.do?method=view${group.reviewType}&rid=${review.id}"
 																titleKey="viewProjectDetails.box.Review.Appeals.Unresolved">${unresolvedAppeals[reviewStatus.index]}</html:link> /
-															<html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}"
+															<html:link page="/actions/View${group.reviewType}.do?method=view${group.reviewType}&rid=${review.id}"
 																titleKey="viewProjectDetails.box.Review.Appeals.Total">${totalAppeals[reviewStatus.index]}</html:link>
 														]</td>
 													</c:if>

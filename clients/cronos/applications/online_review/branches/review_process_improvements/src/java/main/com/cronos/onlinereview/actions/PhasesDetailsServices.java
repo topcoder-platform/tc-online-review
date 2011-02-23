@@ -257,7 +257,7 @@ final class PhasesDetailsServices {
                 serviceReviewsAppFunc(request, phaseGroup, project, phase, nextPhase,
                         allProjectResources, submitters, isAfterAppealsResponse);
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.VIEW_APPEALS_APP_FUNC)) {
-                serviceAppealsAppFunc(request, phaseGroup, project, phase, nextPhase,
+                serviceAppealsAppFunc(request, phaseGroup, project, phase, phases,
                         allProjectResources, submitters, isAfterAppealsResponse);
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.AGGREGATION_APP_FUNC)) {
                 serviceAggregationAppFunc(request, phaseGroup, project, phase,
@@ -402,7 +402,7 @@ final class PhasesDetailsServices {
             if (submissions == null &&
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) &&
                     AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES) && (
-                    ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME) || 
+                    ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.REVIEW_PHASE_NAME) || 
                     ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME))) {
                 submissions =
                     ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
@@ -432,7 +432,6 @@ final class PhasesDetailsServices {
                         break;
                     }
                 }
-
                 Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
                 Filter filterStatus = ActionsHelper.createSubmissionStatusFilter(allSubmissionStatuses);
                 Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
@@ -756,6 +755,11 @@ final class PhasesDetailsServices {
             }
             phaseGroup.setReviews(reviews);
             phaseGroup.setReviewDates(reviewDates);
+            if (phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME)){
+            	phaseGroup.setReviewType("Review");
+            } else {
+            	phaseGroup.setReviewType("SecondaryReview");
+            }
         }
         
         if (phaseName.equalsIgnoreCase(Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME) && phaseGroup.getReviews() != null) {
@@ -789,41 +793,19 @@ final class PhasesDetailsServices {
                 phaseGroup.setEvaluations(reviews);
             }
             phaseGroup.setEvaluationPhaseStatus(phase.getPhaseStatus().getId());
-
+            phaseGroup.setReviewType("SecondaryReview");
             
-//            Review[][] reviews = phaseGroup.getReviews();
-//            
-//            for (int i = 0; i < reviews.length; ++i) {
-//                Review[] innerReviews = reviews[i];
-//                for (int j = 0; j < innerReviews.length; ++j) {
-//                    Review review = innerReviews[j];
-//
-//                    if (review == null) {
-//                        continue;
-//                    }
-//
-//                    for (int itemIdx = 0; itemIdx < review.getNumberOfItems(); ++itemIdx) {
-//                        Item item = review.getItem(itemIdx);
-//                        for (int commentIdx = 0; commentIdx < item.getNumberOfComments(); ++commentIdx) {
-//                            Comment comment = item.getComment(commentIdx);
-//                            if ( ActionsHelper.isReviewerComment(comment)  ){
-//                            	
-//                            }
-//                        }
-//                    }
-//                }
-//            }       	
         }
     }
     
     
     private static void serviceAppealsAppFunc(HttpServletRequest request,
-            PhaseGroup phaseGroup, Project project, Phase phase, Phase nextPhase,
+            PhaseGroup phaseGroup, Project project, Phase phase, Phase[] phases,
             Resource[] allProjectResources, Resource[] submitters, boolean isAfterAppealsResponse)
         throws BaseException {
         String phaseName = phase.getPhaseType().getName();
 
-        if (phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME) || phaseName.equalsIgnoreCase(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME)) {
+        if (phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) || phaseName.equalsIgnoreCase(Constants.FIRST_APPEALS_PHASE_NAME)) {
             // If the project is not in the after appeals response state, allow uploading of testcases
             phaseGroup.setUploadingTestcasesAllowed(!isAfterAppealsResponse);
 
@@ -897,18 +879,12 @@ final class PhasesDetailsServices {
                     Constants.FAILURE_REVIEWER_ROLE_NAME, Constants.STRESS_REVIEWER_ROLE_NAME,
                     Constants.CLIENT_MANAGER_ROLE_NAME, Constants.COPILOT_ROLE_NAME,
                     Constants.OBSERVER_ROLE_NAME});
-            // Determine if the Review phase is closed
-            boolean isReviewClosed =
-                phase.getPhaseStatus().getName().equalsIgnoreCase(Constants.CLOSED_PH_STATUS_NAME);
             // Determine if the Appeals phase is open
-            boolean isAppealsOpen = (nextPhase != null &&
-                    nextPhase.getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) &&
-                    nextPhase.getPhaseStatus().getName().equalsIgnoreCase(Constants.OPEN_PH_STATUS_NAME));
+            boolean isAppealsOpen =  phase.getPhaseStatus().getName().equalsIgnoreCase(Constants.OPEN_PH_STATUS_NAME);
 
             if (!allowedToSeeReviewLink) {
-                // Determine if the user is allowed to place appeals and Appeals phase is open
-                if (isReviewClosed || (isAppealsOpen &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME))) {
+                if ( isAppealsOpen &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME)) {
                     allowedToSeeReviewLink = true;
                 }
             }
@@ -916,16 +892,25 @@ final class PhasesDetailsServices {
             phaseGroup.setDisplayReviewLinks(allowedToSeeReviewLink);
 
             Resource[] reviewers = null;
+            
+            Phase reviewPhase = null;
+            if (phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME)) {
+            	reviewPhase = ActionsHelper.getPhase( phases, false, Constants.REVIEW_PHASE_NAME );
+            }
+            
+            if (phaseName.equalsIgnoreCase(Constants.FIRST_APPEALS_PHASE_NAME)) {
+            	reviewPhase = ActionsHelper.getPhase( phases, false, Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME );
+            }
+            
 
-            if (!isAfterAppealsResponse &&
-                    AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
+            if ( AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
                     AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES)) {
                 // Get "my" (reviewer's) resource
-                reviewers = ActionsHelper.getMyResourcesForPhase(request, phase);
+                reviewers = ActionsHelper.getMyResourcesForPhase(request, reviewPhase);
             }
 
             if (reviewers == null) {
-                reviewers = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
+                reviewers = ActionsHelper.getResourcesForPhase(allProjectResources, reviewPhase);
             }
 
             // Put collected reviewers into the phase group
@@ -967,35 +952,18 @@ final class PhasesDetailsServices {
                 // Create final filter
                 Filter filterForReviews = new AndFilter(reviewFilters);
 
-                boolean needFullReviews = false;
-
-                // If next phase is Appeals and that phase is not scheduled, ...
-                if (nextPhase != null &&
-                        nextPhase.getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME)) {
-                    // ... indicate that full review (with all comments) must be retrieved
-                    if (!nextPhase.getPhaseStatus().getName().equalsIgnoreCase("Scheduled")) {
-                        needFullReviews = true;
-                    }
-                }
-
                 // Obtain an instance of Review Manager
                 ReviewManager revMgr = ActionsHelper.createReviewManager(request);
                 // Get the reviews from every individual reviewer
-                ungroupedReviews = revMgr.searchReviews(filterForReviews, needFullReviews);
+                ungroupedReviews = revMgr.searchReviews(filterForReviews, true);
             }
             if (ungroupedReviews == null) {
                 ungroupedReviews = new Review[0];
             }
 
             boolean canDownloadTestCases =
-                (isReviewClosed &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME)) ||
-                (!isReviewClosed &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TC_DUR_REVIEW_PERM_NAME)) ||
-                (!isReviewClosed && isAppealsOpen &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME) &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME));
-
+                 AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME);
+                
             if (!reviewerIds.isEmpty() && canDownloadTestCases) {
                 // Obtain an instance of Upload Manager
                 UploadManager upMgr = ActionsHelper.createUploadManager(request);
@@ -1044,9 +1012,11 @@ final class PhasesDetailsServices {
             }
             phaseGroup.setReviews(reviews);
             phaseGroup.setReviewDates(reviewDates);
-        }
-
-        if (phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) && phaseGroup.getReviews() != null) {
+            if (phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME)){
+            	phaseGroup.setReviewType("Review");
+            } else {
+            	phaseGroup.setReviewType("SecondaryReview");
+            }
             // set the Appeals phase status to indicate
             // if the appeals information should be available
             if (phase.getPhaseStatus().getName().equalsIgnoreCase("Scheduled")) {
@@ -1054,8 +1024,6 @@ final class PhasesDetailsServices {
             }
 
             phaseGroup.setAppealsPhaseOpened(true);
-
-            Review[][] reviews = phaseGroup.getReviews();
             int[][] totalAppeals = new int[reviews.length][];
             int[][] unresolvedAppeals = new int[reviews.length][];
 

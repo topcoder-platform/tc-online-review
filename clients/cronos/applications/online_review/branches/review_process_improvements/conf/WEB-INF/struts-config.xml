@@ -80,6 +80,7 @@
             <form-property name="phase_required_registrations" type="java.lang.Integer[]" />
             <form-property name="phase_required_submissions" type="java.lang.Integer[]" />
             <form-property name="phase_required_reviewers" type="java.lang.Integer[]" />
+            <form-property name="phase_required_secondary_reviewers" type="java.lang.Integer[]" />
             <form-property name="phase_manual_screening" type="java.lang.Boolean[]" />
             <form-property name="phase_view_appeal_responses" type="java.lang.Boolean[]" />
             <form-property name="phase_scorecard" type="java.lang.Long[]" />
@@ -550,6 +551,44 @@
 
         <!-- "View Review" action -->
         <action path="/actions/ViewReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/viewReview.jsp" redirect="false"/>
+        </action>
+        
+        <!-- "Create Secondary Review" action -->
+        <action path="/actions/CreateSecondaryReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
+            <forward name="edit" path="/actions/EditSecondaryReview.do?method=editSecondaryReview" redirect="true"/>
+        </action>
+
+        <!-- "Edit Secondary Review" action -->
+        <action path="/actions/EditSecondaryReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Save Secondary Review" action -->
+        <action path="/actions/SaveSecondaryReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/editReview.jsp">
+            <forward name="preview" path="/jsp/viewReview.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+
+        <!-- "View Review" action -->
+        <action path="/actions/ViewSecondaryReview" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
             name="reviewForm"

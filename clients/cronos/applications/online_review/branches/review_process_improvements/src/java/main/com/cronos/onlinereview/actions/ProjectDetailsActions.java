@@ -2675,7 +2675,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else {
                     links[i] = "ViewScreening.do?method=viewScreening&rid=" + review.getId();
                 }
-            } else if (delivName.equalsIgnoreCase(Constants.REVIEW_DELIVERABLE_NAME) || delivName.equalsIgnoreCase(Constants.NEW_REVIEW_DELIVERABLE_NAME)) {
+            } else if (delivName.equalsIgnoreCase(Constants.REVIEW_DELIVERABLE_NAME)) {
                 // Skip deliverables with empty Submission ID field,
                 // as no links can be generated for such deliverables
                 if (deliverable.getSubmission() == null) {
@@ -2699,7 +2699,31 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else {
                     links[i] = "ViewReview.do?method=viewReview&rid=" + review.getId();
                 }
-            } else if (delivName.equalsIgnoreCase(Constants.REVIEW_EVALUATION)) {
+            } else if (delivName.equalsIgnoreCase(Constants.NEW_REVIEW_DELIVERABLE_NAME)) {
+                // Skip deliverables with empty Submission ID field,
+                // as no links can be generated for such deliverables
+                if (deliverable.getSubmission() == null) {
+                    continue;
+                }
+
+                if (allScorecardTypes == null) {
+                    // Get all scorecard types
+                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                }
+
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
+                        deliverable.getSubmission(), deliverable.getResource(), false);
+
+                if (review == null) {
+                    links[i] = "CreateSecondaryReview.do?method=createSecondaryReview&sid=" +
+                            deliverable.getSubmission().longValue();
+                } else if (!review.isCommitted()) {
+                    links[i] = "EditSecondaryReview.do?method=editSecondaryReview&rid=" + review.getId();
+                } else {
+                    links[i] = "ViewSecondaryReview.do?method=viewSecondaryReview&rid=" + review.getId();
+                }
+            }else if (delivName.equalsIgnoreCase(Constants.REVIEW_EVALUATION)) {
                 // Skip deliverables with empty Submission ID field,
                 // as no links can be generated for such deliverables
                 if (deliverable.getSubmission() == null) {

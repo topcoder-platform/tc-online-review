@@ -42,6 +42,9 @@
 	<c:if test="${reviewType eq 'Review'}">
 		&#160;<b><bean:message key="editReview.Reviewer" /></b>
 	</c:if>
+	<c:if test="${reviewType eq 'SecondaryReview'}">
+		&#160;<b><bean:message key="editReview.Reviewer" /></b>
+	</c:if>
 	<c:if test="${reviewType eq 'Approval'}">
 		&#160;<b><bean:message key="editReview.Approver" /></b>
 	</c:if>
@@ -63,7 +66,7 @@
 	</c:if>
 </c:if>
 &#160;<b><bean:message key="editReview.Submission" /></b> ${sid}
-<c:if test="${not empty submitterId and reviewType ne 'Screening' and reviewType ne 'Review'}">
+<c:if test="${not empty submitterId and reviewType ne 'Screening' and reviewType ne 'Review' and reviewType ne 'SecondaryReview'}">
 	(<tc-webtag:handle coderId="${submitterId}" context="${orfn:getHandlerContext(pageContext.request)}" />)
 </c:if>
 <br />

@@ -5,6 +5,8 @@ package com.cronos.onlinereview.actions;
 
 import static com.cronos.onlinereview.actions.Constants.AGGREGATION_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.AGGREGATION_REVIEW_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.APPEALS_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.APPEALS_RESPONSE_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.APPROVAL_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.FINAL_FIX_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.FINAL_REVIEW_PHASE_NAME;
@@ -13,6 +15,7 @@ import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.REGISTRATION_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.REVIEW_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.REVIEW_REGISTRATION_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.SCREENING_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME;
@@ -102,7 +105,7 @@ import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
 import com.topcoder.web.ejb.termsofuse.TermsOfUse;
 import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
 import com.topcoder.web.ejb.user.UserTermsOfUse;
-
+ 
 /**
  * This class contains Struts Actions that are meant to deal with Projects. There are following
  * Actions defined in this class:
@@ -258,7 +261,7 @@ public class ProjectActions extends DispatchAction {
      */
     private static final Set<String> REVIEWER_ROLE_NAMES = new HashSet<String>(Arrays.asList("Reviewer",
         "Accuracy Reviewer", "Failure Reviewer", "Stress Reviewer", "Screener", "Primary Screener", "Aggregator",
-        "Final Reviewer", "Approver", "Post-Mortem Reviewer", "Specification Reviewer", "Secondary Reviewer"));
+        "Final Reviewer", "Approver", "Post-Mortem Reviewer", "Specification Reviewer", "Secondary Reviewer","Primary Review Evaluator"));
 
     /**
      * <p>A <code>Set</code> holding the IDs for reviewer roles which do not allow duplicate users to be assigned to.
@@ -373,6 +376,9 @@ public class ProjectActions extends DispatchAction {
         }
         if (ConfigHelper.getDefaultRequiredReviewers() >= 0) {
             lazyForm.set("phase_required_reviewers", 0, new Integer(ConfigHelper.getDefaultRequiredReviewers()));
+        }
+        if (ConfigHelper.getDefaultRequiredSecondaryReviewers() >= 0) {
+            request.setAttribute("phase_required_secondary_reviewers", new Integer(ConfigHelper.getDefaultRequiredSecondaryReviewers()));
         }
         if (ConfigHelper.getDefaultRequiredApprovers() >= 0) {
             request.setAttribute("phase_required_reviewers_approval",
@@ -1735,13 +1741,37 @@ public class ProjectActions extends DispatchAction {
                                 "error.com.cronos.onlinereview.actions.editProject.SpecReviewMustBeFollowed");
                         arePhasesValid = false;
                     }
-                } else if (currentPhaseName.equals(SECONDARY_REVIEWER_REVIEW_PHASE_NAME)) {
+                } else if (currentPhaseName.equals(SECONDARY_REVIEWER_REVIEW_PHASE_NAME) || currentPhaseName.equals(REVIEW_PHASE_NAME)) {
                     // Review should follow submission or screening or post-mortem
                     if (i == 0 || (!previousPhaseName.equals(SUBMISSION_PHASE_NAME)
                                    && !previousPhaseName.equals(SCREENING_PHASE_NAME)
                                    && !postMortemPhaseExists)) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.ReviewMustFollow");
+                        arePhasesValid = false;
+                    }
+                } else if (currentPhaseName.equals(PRIMARY_REVIEW_EVALUATION_PHASE_NAME )) {
+                    // Review Evaluation should follow secondary review or post-mortem
+                    if (i == 0 || (!previousPhaseName.equals(SECONDARY_REVIEWER_REVIEW_PHASE_NAME)
+                                   && !postMortemPhaseExists)) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.ReviewEvaluationMustFollow");
+                        arePhasesValid = false;
+                    }
+                } else if (currentPhaseName.equals(APPEALS_PHASE_NAME)) {
+                    // Appeals should follow review
+                    if (i == 0 || !previousPhaseName.equals(REVIEW_PHASE_NAME) &&
+                                  !postMortemPhaseExists) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.AppealsMustFollow");
+                        arePhasesValid = false;
+                    }
+                    // Appeals should be followed by the appeals response
+                    if (i == projectPhases.length - 1 ||
+                            !nextPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME) &&
+                            !postMortemPhaseExists) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.AppealsMustBeFollowed");
                         arePhasesValid = false;
                     }
                 } else if (currentPhaseName.equals(FIRST_APPEALS_PHASE_NAME)) {
@@ -1760,6 +1790,14 @@ public class ProjectActions extends DispatchAction {
                                 "error.com.cronos.onlinereview.actions.editProject.AppealsMustBeFollowed");
                         arePhasesValid = false;
                     }
+                } else if (currentPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME)) {
+                    // Appeal response should follow appeals
+                    if (i == 0 || !previousPhaseName.equals(APPEALS_PHASE_NAME) &&
+                                  !postMortemPhaseExists) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.AppealsResponseMustFollow");
+                        arePhasesValid = false;
+                    }
                 } else if (currentPhaseName.equals(PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME)) {
                     // Appeal response should follow appeals
                     if (i == 0 || !previousPhaseName.equals(FIRST_APPEALS_PHASE_NAME) &&
@@ -1772,7 +1810,8 @@ public class ProjectActions extends DispatchAction {
                     // Aggregation should follow appeals response or review, or aggregation review or post-mortem
                     if (i == 0 ||
                             (!previousPhaseName.equals(PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME) &&
-                            !previousPhaseName.equals(PRIMARY_REVIEW_EVALUATION_PHASE_NAME) &&
+                            !previousPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME) &&
+                            !previousPhaseName.equals(REVIEW_PHASE_NAME) &&
                             !previousPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME) &&
                             !postMortemPhaseExists)) {
                         ActionsHelper.addErrorToRequest(request,

@@ -383,6 +383,36 @@ public class ProjectReviewActions extends DispatchAction {
         LoggingHelper.logAction(request);
         return createGenericReview(mapping, form, request, "Review");
     }
+    
+    /**
+     * This method is an implementation of &quot;Create Secondary Review&quot; Struts Action defined for this
+     * assembly, which is supposed to gather needed information (scorecard template) and present it
+     * to editReview.jsp page, which will fill the required fields and post them to the &quot;Save
+     * Review&quot; Action. The action implemented by this method is executed to edit review that
+     * does not exist yet, and hence is supposed to be created.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent submission id, or the lack of
+     *         permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward createSecondaryReview(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return createGenericReview(mapping, form, request, "Secondary Review");
+    }
 
     /**
      * This method is an implementation of &quot;Edit Review&quot; Struts Action defined for this
@@ -414,6 +444,37 @@ public class ProjectReviewActions extends DispatchAction {
         LoggingHelper.logAction(request);
         return editGenericReview(mapping, form, request, "Review");
     }
+    
+    /**
+     * This method is an implementation of &quot;Edit Secondary Review&quot; Struts Action defined for this
+     * assembly, which is supposed to gather needed information (review and scorecard template) and
+     * present it to editReview.jsp page, which will fill the required fields and post them to the
+     * &quot;Save Review&quot; action. The action implemented by this method is executed to edit
+     * review that has already been created, but has not been submitted yet, and hence is supposed
+     * to be edited.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward editSecondaryReview(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return editGenericReview(mapping, form, request, "Secondary Review");
+    }
 
     /**
      * This method is an implementation of &quot;Save Review&quot; Struts Action defined for this
@@ -441,6 +502,34 @@ public class ProjectReviewActions extends DispatchAction {
         throws BaseException {
         LoggingHelper.logAction(request);
         return saveGenericReview(mapping, form, request, "Review");
+    }
+    
+    /**
+     * This method is an implementation of &quot;Save Secondary Review&quot; Struts Action defined for this
+     * assembly, which is supposed to save information posted from /jsp/editReview.jsp page. This
+     * method will either create new review or update (edit) an existing one depending on which
+     * action was called to display /jsp/editReview.jsp page.
+     *
+     * @return &quot;success&quot; forward, which forwards to the &quot;View Project Details&quot;
+     *         action, or &quot;userError&quot; forward, which forwards to the /jsp/userError.jsp
+     *         page, which displays information about an error that is usually caused by incorrect
+     *         user input (such as absent submission id, or the lack of permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward saveSecondaryReview(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return saveGenericReview(mapping, form, request, "Secondary Review");
     }
 
     /**
@@ -471,6 +560,33 @@ public class ProjectReviewActions extends DispatchAction {
         return viewGenericReview(mapping, form, request, "Review");
     }
 
+    /**
+     * This method is an implementation of &quot;View Secondary Review&quot; Struts Action defined for this
+     * assembly, which is supposed to view completed review.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/viewReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/use
+     *         rError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward viewSecondaryReview(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return viewGenericReview(mapping, form, request, "Secondary Review");
+    }
     /**
      * This method is an implementation of &quot;Create Review Evaluation&quot; Struts Action defined for this
      * assembly, which is supposed to gather needed information (scorecard template) and present it
@@ -911,7 +1027,7 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, messages, request,
                     Constants.VIEW_REVIEW_EVALUATION_PERM_NAME, "Error.NoReviewEvaluations", null);
         }
-
+        
         List<Long> resourceIds = new ArrayList<Long>();
 
         for (int i = 0; i < reviewEvaluators.length; ++i) {
@@ -948,13 +1064,29 @@ public class ProjectReviewActions extends DispatchAction {
         ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
         ScorecardType scoreCardType = ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review");
         
+        // Create filters to select Secondary Reviewers for the project
+        filterProject = ResourceFilterBuilder.createProjectIdFilter(verification.getProject().getId());
+        // Create filters to select Secondary Reviwers for the project
+        filterRole = ResourceFilterBuilder.createResourceRoleIdFilter(
+                ActionsHelper.findResourceRoleByName(allResourceRoles, Constants.SECONDARY_REVIEWER_ROLE_NAME).getId());
+        // Combine the upper two filter
+        Filter filterSecondaryReviwers = new AndFilter(filterProject, filterRole);
+        // Fetch all Review Evaluators for the project
+        Resource[] secondaryReviewers = resMgr.searchResources(filterSecondaryReviwers);
+        List<Long> secondaryReviewersResourceIds = new ArrayList<Long>();
+
+        for (int i = 0; i < secondaryReviewers.length; ++i) {
+        	secondaryReviewersResourceIds.add(secondaryReviewers[i].getId());
+        }
+        
         //	Prepare filters
+        filterResource = new InFilter("reviewer", secondaryReviewersResourceIds);
         filterProject = new EqualToFilter("project", new Long(verification.getProject().getId()));
         filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
         Filter filterScoreCardType = new EqualToFilter("scorecardType", new Long(scoreCardType.getId()));
         
         //	Prepare final combined filter
-        filter = new AndFilter(Arrays.asList(new Filter[] {filterProject, filterSubmission,filterScoreCardType}));
+        filter = new AndFilter(Arrays.asList(new Filter[] {filterResource,filterProject, filterSubmission,filterScoreCardType}));
         Review[] submissionReviews = revMgr.searchReviews(filter, true);
         
         // Get "My" resource for the appropriate phase
@@ -1113,16 +1245,18 @@ public class ProjectReviewActions extends DispatchAction {
             return mapping.getInputForward();
         }
         if(commitRequested) {
-        	boolean allreviewscommittted = true;
+        	boolean allreviewscommitted = true;
+        	log.log(Level.DEBUG, "Checking whether all submission reviews are committed");
         	for ( int i=0;i < submissionReviews.length;i++ ){
         		if (submissionReviews[i].getId() != review.getId() && !submissionReviews[i].isCommitted()) {
-        			allreviewscommittted = false;
+        			log.log(Level.DEBUG, submissionReviews[i].getId() + "Still not committed");
+        			allreviewscommitted = false;
         		}
         	}
-        	if (allreviewscommittted){
-        		//currentEvaluationReview.setCommitted(true);
+        	if (allreviewscommitted){
         		 // commit the Evaluation Review for the submission
         		currentEvaluationReview.setCommitted(true);
+        		log.log(Level.DEBUG, currentEvaluationReview + "is committed");
                 revMgr.updateReview(currentEvaluationReview, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         	}
         }
@@ -3631,6 +3765,8 @@ public class ProjectReviewActions extends DispatchAction {
             request.setAttribute("reviewType", "SpecificationReview");
         } else if (reviewType.equals("Review Evaluation")){
         	request.setAttribute("reviewType", "ReviewEvaluation");
+        } else if (reviewType.equals("Secondary Review")){
+        	request.setAttribute("reviewType", "SecondaryReview");
         } else {
             request.setAttribute("reviewType", reviewType);
         }
@@ -3657,10 +3793,10 @@ public class ProjectReviewActions extends DispatchAction {
             phaseName = Constants.SCREENING_PHASE_NAME;
         } else if ("Review".equals(reviewType)) {
             permName = Constants.PERFORM_REVIEW_PERM_NAME;
+            phaseName = Constants.REVIEW_PHASE_NAME;
+        } else if ("Secondary Review".equals(reviewType)) {
+            permName = Constants.PERFORM_REVIEW_PERM_NAME;
             phaseName = Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME;
-        } else if (reviewType.equals("Primary Review Evaluation")){
-        	permName = Constants.PERFORM_PRIMARY_REVIEW_EVALUATION_PERM_NAME;
-        	phaseName = Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME;
         } else if ("Approval".equals(reviewType)) {
             permName = Constants.PERFORM_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
@@ -3816,7 +3952,7 @@ public class ProjectReviewActions extends DispatchAction {
             scorecardTypeName = "Screening";
         } else if ("Review".equals(reviewType)) {
             scorecardTypeName = "Review";
-        } else if ("Primary Review Evaluation".equals(reviewType)){
+        } else if ("Secondary Review".equals(reviewType)) {
         	scorecardTypeName = "Review";
         } else if ("Approval".equals(reviewType)) {
             scorecardTypeName = "Approval";
@@ -4016,6 +4152,10 @@ public class ProjectReviewActions extends DispatchAction {
             scorecardTypeName = "Screening";
         } else if ("Review".equals(reviewType)) {
             permName = Constants.PERFORM_REVIEW_PERM_NAME;
+            phaseName = Constants.REVIEW_PHASE_NAME;
+            scorecardTypeName = "Review";
+        } else if ("Secondary Review".equals(reviewType)) {
+            permName = Constants.PERFORM_REVIEW_PERM_NAME;
             phaseName = Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME;
             scorecardTypeName = "Review";
         } else if ("Approval".equals(reviewType)) {
@@ -4023,7 +4163,7 @@ public class ProjectReviewActions extends DispatchAction {
             permName = Constants.PERFORM_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
             scorecardTypeName = "Approval";
-	 } else if ("Specification Review".equals(reviewType)) {
+        } else if ("Specification Review".equals(reviewType)) {
             isSpecReviewPhase = true;
             permName = Constants.PERFORM_SPECIFICATION_REVIEW_PERM_NAME;
             phaseName = Constants.SPECIFICATION_REVIEW_PHASE_NAME;
@@ -5135,6 +5275,10 @@ public class ProjectReviewActions extends DispatchAction {
             phaseName = Constants.SCREENING_PHASE_NAME;
             scorecardTypeName = "Screening";
         } else if (reviewType.equals("Review")) {
+            permName = Constants.VIEW_ALL_REVIEWS_PERM_NAME;
+            phaseName = Constants.REVIEW_PHASE_NAME;
+            scorecardTypeName = "Review";
+        } else if (reviewType.equals("Secondary Review")) {
             permName = Constants.VIEW_ALL_REVIEWS_PERM_NAME;
             phaseName = Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME;
             scorecardTypeName = "Review";
