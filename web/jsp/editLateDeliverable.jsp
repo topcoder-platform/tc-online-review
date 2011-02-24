@@ -175,7 +175,7 @@
                             <td nowrap="nowrap" class="valueB">
                                 <bean:message key="editLateDeliverable.Response.label"/>
                             </td>
-                            <td nowrap="nowrap" class="value">
+                            <td class="value">
                                 <c:choose>
                                     <c:when test="${requestScope.isResponseEditable}">
                                         <html:textarea rows="5" styleClass="inputTextBox" property="response"/>
