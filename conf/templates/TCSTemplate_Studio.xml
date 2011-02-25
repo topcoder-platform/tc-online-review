@@ -8,7 +8,9 @@
 		<PhaseType id="appeals" typeId="3" typeName="Appeals"/>
 		<PhaseType id="appeals_response" typeId="4" typeName="Appeals Response"/>
 		<PhaseType id="aggregation" typeId="5" typeName="Aggregation"/>
+		<!--
 		<PhaseType id="aggregation_review" typeId="6" typeName="Aggregation Review"/>
+	-->
 		<PhaseType id="final_fixes" typeId="7" typeName="Final Fix"/>
 		<PhaseType id="final_review" typeId="8" typeName="Final Review"/>
 	</PhaseTypes>
@@ -36,13 +38,13 @@
 			<!-- all attributes except "id" are omitted -->
 			<Dependency id="appealsReponsePhase"/>
 		</Phase>
-
+<!--
 		<Phase id="aggregationReviewPhase" length="43200000" type="aggregation_review" phaseId="6">
 			<Dependency id="aggregationPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
 		</Phase>
-
+-->
 		<Phase id="finalFixesPhase" length="259200000" type="final_fixes" phaseId="7">
-			<Dependency id="aggregationReviewPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
+			<Dependency id="aggregationPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
 		</Phase>
 
 		<Phase id="finalReviewPhase" length="86400000" type="final_review" phaseId="8">
