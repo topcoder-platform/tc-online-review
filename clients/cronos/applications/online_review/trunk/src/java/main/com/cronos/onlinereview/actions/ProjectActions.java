@@ -4,6 +4,7 @@
 package com.cronos.onlinereview.actions;
 
 import static com.cronos.onlinereview.actions.Constants.AGGREGATION_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.AGGREGATION_REVIEW_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.APPEALS_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.APPEALS_RESPONSE_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.APPROVAL_PHASE_NAME;
@@ -228,16 +229,9 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  *     updated to support reset to resource related to project phase properly.</li>
  *   </ol>
  * </p>
- *
- * <p>
- * Version 1.13 (Remove Aggregation Review Phase) Change notes:
- *   <ol>
- *     <li>Updated {@link #validateProjectPhases method to remove everything about aggregation review.</li>
- *   </ol>
- * </p>
 
- * @author George1, real_vg, pulky, isv, FireIce, ywu
- * @version 1.13
+ * @author George1, real_vg, pulky, isv, FireIce
+ * @version 1.12
  */
 public class ProjectActions extends DispatchAction {
 
@@ -1760,27 +1754,39 @@ public class ProjectActions extends DispatchAction {
                         arePhasesValid = false;
                     }
                 } else if (currentPhaseName.equals(AGGREGATION_PHASE_NAME)) {
-                    // Aggregation should follow appeals response or review, or final fix or post-mortem
+                    // Aggregation should follow appeals response or review, or aggregation review or post-mortem
                     if (i == 0 ||
                             (!previousPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME) &&
                             !previousPhaseName.equals(REVIEW_PHASE_NAME) &&
+                            !previousPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME) &&
                             !postMortemPhaseExists)) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.AggregationMustFollow");
                         arePhasesValid = false;
                     }
-                    // Aggregation should be followed by the final fix
+                    // Aggregation should be followed by the aggregation review
                     if (i == projectPhases.length - 1 ||
-                            !nextPhaseName.equals(FINAL_FIX_PHASE_NAME) &&
+                            !nextPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME) &&
+                            !previousPhaseName.equals(FINAL_FIX_PHASE_NAME) &&
                             !postMortemPhaseExists) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.AggregationMustBeFollowed");
                         arePhasesValid = false;
                     }
+                } else if (currentPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME)) {
+                    // Aggregation review should follow aggregation
+                    if (i == 0 ||
+                            !previousPhaseName.equals(AGGREGATION_PHASE_NAME) &&
+                            !postMortemPhaseExists) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.AggregationReviewMustFollow");
+                        arePhasesValid = false;
+                    }
                 } else if (currentPhaseName.equals(FINAL_FIX_PHASE_NAME)) {
-                    // Final fix should follow either appeals response or aggregation, or final review
+                    // Final fix should follow either appeals response or aggregation review, or final review
                     if (i == 0 ||
                             (!previousPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME) &&
+                            !previousPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME) &&
                             !previousPhaseName.equals(AGGREGATION_PHASE_NAME) &&
                             !previousPhaseName.equals(APPROVAL_PHASE_NAME) &&
                             !postMortemPhaseExists &&

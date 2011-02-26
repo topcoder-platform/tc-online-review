@@ -508,12 +508,10 @@ public class TestHelper {
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("aggregation") + ", " + projectId +
             ", '7', '1', NULL, CURRENT+16 UNITS day, CURRENT+17 UNITS day, NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
-/*
         executeStatement(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("aggregation_review") + ", " + projectId +
             ", '8', '1', NULL, CURRENT+17 UNITS day, CURRENT+18 UNITS day, NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
-*/
         executeStatement(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("final_fix") + ", " + projectId +
@@ -565,12 +563,10 @@ public class TestHelper {
                 phaseIds.get("appeals_response") + ", " + phaseIds.get("aggregation") + ", '0', '1', '0', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");   
         executeStatement(con,
                 "INSERT INTO phase_dependency (dependency_phase_id, dependent_phase_id, dependency_start, dependent_start, lag_time, create_user, create_date, modify_user, modify_date) VALUES (" +
-                phaseIds.get("aggregation") + ", " + phaseIds.get("final_fix") + ", '0', '1', '0', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");   
-/*
+                phaseIds.get("aggregation") + ", " + phaseIds.get("aggregation_review") + ", '0', '1', '0', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");   
         executeStatement(con,
                 "INSERT INTO phase_dependency (dependency_phase_id, dependent_phase_id, dependency_start, dependent_start, lag_time, create_user, create_date, modify_user, modify_date) VALUES (" +
                 phaseIds.get("aggregation_review") + ", " + phaseIds.get("final_fix") + ", '0', '1', '0', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");   
-*/
         executeStatement(con,
                 "INSERT INTO phase_dependency (dependency_phase_id, dependent_phase_id, dependency_start, dependent_start, lag_time, create_user, create_date, modify_user, modify_date) VALUES (" +
                 phaseIds.get("final_fix") + ", " + phaseIds.get("final_review") + ", '0', '1', '0', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");   
