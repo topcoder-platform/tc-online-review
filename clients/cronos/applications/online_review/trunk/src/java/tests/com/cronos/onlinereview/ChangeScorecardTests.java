@@ -62,12 +62,14 @@ public class ChangeScorecardTests extends ProjectTests {
         // login the user first
     	TestHelper.loginUser(browser);
     	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+    	
+    	// Check the created scorecard is used
+    	String scorecard = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[9]/td[2]/a");
+        assertEquals("New Created Scorecard should be used", "Default Spec Review Scorecard v2.0", scorecard);
+        
         // Click the 'Edit Project' Link
         browser.click("//img[@alt='Edit Project']");
         browser.waitForPageToLoad(TIMEOUT);
-        // Check the created scorecard is used
-        String scorecard = browser.getText("//select[@name='phase_scorecard[2]']/option[1]");
-        assertEquals("New Created Scorecard should be used", "Default Spec Review Scorecard 2.0", scorecard);
         
         // select 'Default Spec Review Scorecard 1.0' as scorecard, no error expected
         browser.select("//select[@name='phase_scorecard[2]']", "label=Default Spec Review Scorecard 1.0");
