@@ -748,6 +748,7 @@ public class TestHelper {
      */
     static void executeStatement(Connection con, String sql)
         throws SQLException {
+    	System.out.println(sql);
         PreparedStatement ps = con.prepareStatement(sql);
         ps.executeUpdate();
     }
@@ -1114,7 +1115,7 @@ public class TestHelper {
     static long addSpecReviewScoreCard(Connection con) throws Exception{
         long scorecardId = getNextId("scorecard_id_seq");
     	executeStatement(con,
-    			"INSERT INTO scorecard (scorecard_id, scorecard_status_id, scorecard_type_id, project_category_id, name, version, min_score, max_score, create_user, create_date, modify_user, modify_date) VALUES (" +
+    			"INSERT INTO scorecard (scorecard_id, scorecard_status_id, scorecard_type_id, project_category_id, name, version, min_score, max_score, create_user, create_date, modify_user, modify_date) VALUES ("  +
     			scorecardId + ",1, 5, 28, 'Default Spec Review Scorecard', '2.0', 75.0, 100.0, '"+TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
         return scorecardId;
     }
@@ -1130,6 +1131,23 @@ public class TestHelper {
     	    executeStatement(con,
     			"DELETE FROM scorecard where scorecard_id=" + scorecardId);
         }
+    }
+  
+    /**
+     * Sets scorecard for specified phase. 
+     * 
+     * @param con connection to use. 
+     * 
+     * @param phaseId phase to set scorecard.
+     * 
+     * @param scorecardId scorecard id to use.
+     * 
+     * @throws Exception if any error occurred.
+     */
+    static void setPhaseScorecard(Connection con, long phaseId, long scorecardId ) throws Exception {
+    	executeStatement(con, 
+    			"INSERT INTO phase_criteria (project_phase_id, phase_criteria_type_id, parameter, create_user, create_date, modify_user, modify_date)VALUES ("+
+    			phaseId+", "+ 1 +", '" + scorecardId+ "', '"+TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
     }
 
     /**
