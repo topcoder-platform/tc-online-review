@@ -29,6 +29,7 @@ public class ChangeScorecardTests extends ProjectTests {
         try {
             // add new spec review scorecard for FTC98 testing  
             scorecardId = TestHelper.addSpecReviewScoreCard(con);
+            TestHelper.setPhaseScorecard(con, phaseIds.get("spec_review"), scorecardId);
         } finally {
             con.close();
         }
