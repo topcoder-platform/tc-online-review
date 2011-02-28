@@ -1316,7 +1316,7 @@ public class ProjectReviewActions extends DispatchAction {
                     Constants.VIEW_REVIEW_EVALUATION_PERM_NAME, "Error.ReviewTypeIncorrect", null);
         }
         // Make sure that the user is not trying to view unfinished review
-        if (evaluationReview.isCommitted()) {
+        if (!evaluationReview.isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
             		Constants.VIEW_REVIEW_EVALUATION_PERM_NAME, "Error.ReviewNotCommitted", null);
         } else {
