@@ -748,7 +748,6 @@ public class TestHelper {
      */
     static void executeStatement(Connection con, String sql)
         throws SQLException {
-    	System.out.println(sql);
         PreparedStatement ps = con.prepareStatement(sql);
         ps.executeUpdate();
     }
