@@ -437,13 +437,13 @@
 													<td class="valueC" colspan="1"><bean:message key="Incomplete" /></td>
 												</c:if>
 											</c:if>
-											<c:set var="evaluation" value="${null}"/>
-                                        	<c:forEach items="${group.evaluations}" var="eval">
-                                            	<c:if test="${eval.submission == submission.id}">
-                                                	<c:set var="evaluation" value="${eval}"/>
-                                            	</c:if>
-                                        	</c:forEach>
 											<c:forEach items="${group.reviews[submissionStatus.index]}" var="review" varStatus="reviewStatus">
+												<c:set var="evaluation" value="${null}"/>
+	                                        	<c:forEach items="${group.evaluations}" var="eval">
+	                                            	<c:if test="${eval.id == review.reviewEvaluation}">
+	                                                	<c:set var="evaluation" value="${eval}"/>
+	                                            	</c:if>
+	                                        	</c:forEach>
 												<c:if test="${(empty review) or (not group.displayReviewLinks)}">
 													<c:if test="${isAllowedToEditHisReviews && group.displayReviewLinks}">
 														<td class="valueC" colspan="2" nowrap="nowrap"><html:link
@@ -466,10 +466,6 @@
 																	<c:if test="${evaluation ne null}">
 																		<c:choose>
 																			<c:when test="${evaluation.committed}">
-																				<td class="valueC" colspan="2"><html:link
-																				page="/actions/ViewReviewEvaluation.do?method=viewReviewEvaluation&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
-																			</c:when>
-																			<c:when test="${review.committed}">
 																				<td class="valueC" colspan="2"><html:link
 																				page="/actions/ViewReviewEvaluation.do?method=viewReviewEvaluation&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
 																			</c:when>

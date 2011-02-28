@@ -3967,7 +3967,8 @@
                                review.create_user AS create_user,
                                review.create_date AS create_date,
                                review.modify_user AS modify_user,
-                               review.modify_date AS modify_date
+                               review.modify_date AS modify_date,
+                               review.review_evaluation_id as review_evaluation_id
                           FROM review,
                                scorecard,
                                resource
@@ -3995,6 +3996,9 @@
                     </Property>
                     <Property name="review">
                         <Value>review.review_id</Value>
+                    </Property>
+                    <Property name="reviewevaluation">
+                        <Value>review.review_evaluation_id</Value>
                     </Property>
                 </Property>
 
@@ -4042,6 +4046,12 @@
                         </Property>
                     </Property>
                     <Property name="review">
+                        <Property name="validator">
+                            <Property name="class"><Value>validator</Value></Property>
+                            <Property name="identifier"><Value>default</Value></Property>
+                        </Property>
+                    </Property>
+                    <Property name="reviewevaluation">
                         <Property name="validator">
                             <Property name="class"><Value>validator</Value></Property>
                             <Property name="identifier"><Value>default</Value></Property>

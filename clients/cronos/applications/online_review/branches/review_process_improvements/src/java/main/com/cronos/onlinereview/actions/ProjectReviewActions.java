@@ -26,7 +26,6 @@ import org.apache.struts.upload.FormFile;
 import org.apache.struts.util.MessageResources;
 import org.apache.struts.validator.LazyValidatorForm;
 
-
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.SubmissionStatus;
 import com.topcoder.management.deliverable.Upload;
@@ -41,6 +40,7 @@ import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.review.ReviewEntityNotFoundException;
+import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
 import com.topcoder.management.review.data.CommentType;
@@ -648,66 +648,45 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(
                         mapping, getResources(request), request, Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME, "Error.IncorrectPhase", null);
         }
-    	// Get the scorecard type for Review scorecards
-        ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
-        ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
-        ScorecardType scoreCardType = ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review");
-        
         // Obtain an instance of Review Manager
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-        //Get all the reviews of this submission 
-        Filter filter;
-        // Prepare filters
-        Filter filterProject = new EqualToFilter("project", new Long(verification.getProject().getId()));
-        Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
-        Filter scoreCardTypeFilter = new EqualToFilter("scorecardType", new Long(scoreCardType.getId()));
-        //	Prepare final combined filter
-        filter = new AndFilter(Arrays.asList(new Filter[] {filterProject, filterSubmission,scoreCardTypeFilter}));
-        Review[] submissionReviews = revMgr.searchReviews(filter, true);
         // Get "My" resource for the appropriate phase
         Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
         /*
          * Verify that the user is not trying to create an evaluation review that already exists
          */
-        // Prepare filters
-        Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
-        filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
-
-        // Prepare final combined filter
-        filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterSubmission}));
-        // Retrieve an array of evaluation reviews
-        Review currentEvaluationReview = null;
-        Review[] evaluationReviews = revMgr.searchReviews(filter, true);
-        if (evaluationReviews != null ){
-        	for (int i=0;i < evaluationReviews.length;i++){
-        		if ( evaluationReviews[i].getSubmission() == reviewerReview.getSubmission() ) {
-        			currentEvaluationReview = evaluationReviews[i];
-        		}
-        	}
+        Long evaluationReviewId = reviewerReview.getReviewEvaluation();
+        Review evaluationReview = null;
+        if (evaluationReviewId >= 0 ) {
+	        try{
+	        	evaluationReview = revMgr.getReview(evaluationReviewId);
+	        } catch (ReviewManagementException e){
+	        	
+	        }
         }
-        boolean newEvaluationReview = false;
-        // If there are no evaluation review created for this submission
-        if ( currentEvaluationReview == null ) {
-        	newEvaluationReview = true;
-        	currentEvaluationReview = new Review();
+        // If there are no evaluation review created for this review
+        if ( evaluationReview == null ) {
+        	evaluationReview = new Review();
         	ReviewEditor reviewEvaluationEditor =
-                new ReviewEditor(currentEvaluationReview,Long.toString(AuthorizationHelper.getLoggedInUserId(request))); 
+                new ReviewEditor(evaluationReview,Long.toString(AuthorizationHelper.getLoggedInUserId(request))); 
         	reviewEvaluationEditor.setScorecard(reviewerReview.getScorecard());
         	reviewEvaluationEditor.setSubmission(reviewerReview.getSubmission());
-        	for (int i=0;i<submissionReviews.length;i++){
-        		ActionsHelper.copyComments(submissionReviews[i], currentEvaluationReview,
-                        COMMENT_TYPES_TO_COPY, null);
-        		ActionsHelper.copyReviewItems(submissionReviews[i], currentEvaluationReview,
+        	
+    		ActionsHelper.copyComments(reviewerReview, evaluationReview,
+                    COMMENT_TYPES_TO_COPY, null);
+    		ActionsHelper.copyReviewItems(reviewerReview, evaluationReview,
                         COMMENT_TYPES_TO_COPY);
-            }
+            
         	reviewEvaluationEditor.setAuthor(myResource.getId());
-        	revMgr.createReview(currentEvaluationReview, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-        	// Change the Reviewer Review committed status to false to enable the evaluator to complete
-            // the evaluation of reviews of this submission
-            for (int i=0;i<submissionReviews.length;i++){
-            	submissionReviews[i].setCommitted(false);
-            	revMgr.updateReview(submissionReviews[i], Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-            }
+        	revMgr.createReview(evaluationReview, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        	// Update the reviewEvaluation column for the secondary review with this evaluation review 
+            reviewerReview.setReviewEvaluation(evaluationReview.getId());
+            revMgr.updateReview(reviewerReview, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        } else {
+        	if ( evaluationReview.isCommitted()){
+        		return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.PERFORM_PRIMARY_REVIEW_EVALUATION_PERM_NAME, "Error.ReviewCommitted", null);
+        	}
         }
         
         return ActionsHelper.cloneForwardAndAppendToPath(
@@ -767,9 +746,26 @@ public class ProjectReviewActions extends DispatchAction {
                         mapping, getResources(request), request, Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME, "Error.IncorrectPhase", null);
         }
 
+        //Obtain an instance of Review Manager
+        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        Long evaluationReviewId = review.getReviewEvaluation();
+        Review evaluationReview = null;
+        if (evaluationReviewId >= 0 ) {
+	        try{
+	        	evaluationReview = revMgr.getReview(evaluationReviewId);
+	        } catch (ReviewManagementException e){
+	        	
+	        }
+        }
+        
+        if (evaluationReview == null ){
+        	return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    null, "Error.EvaluationNotCreated", null);
+        }
+        
         boolean managerEdit = false;
-        // Check if review has been committed
-        if (review.isCommitted()) {
+        // Check if evaluation review has been committed
+        if (evaluationReview.isCommitted()) {
             // If user has a Manager or Global Manager role, put special flag to the request
             // indicating that we need "Manager Edit"
             if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
@@ -803,38 +799,6 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, messages, request,
                     Constants.VIEW_REVIEW_EVALUATION_PERM_NAME, "Error.NoReviewEvaluations", null);
         }
-
-        List<Long> resourceIds = new ArrayList<Long>();
-
-        for (int i = 0; i < reviewEvaluators.length; ++i) {
-            resourceIds.add(reviewEvaluators[i].getId());
-        }
- 
-        
-        Filter filterResource = new InFilter("reviewer", resourceIds);
-        Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
-
-        // Prepare final combined filter
-        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterSubmission}));
-        // Retrieve an array of evaluation reviews
-        Review currentEvaluationReview = null;
-        // Obtain an instance of Review Manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-
-        Review[] evaluationReviews = revMgr.searchReviews(filter, true);
-        if (evaluationReviews != null ){
-        	for (int i=0;i < evaluationReviews.length;i++){
-        		if ( evaluationReviews[i].getSubmission() == verification.getSubmission().getId() ) {
-        			currentEvaluationReview = evaluationReviews[i];
-        		}
-        	}
-        }
-        
-        if ( currentEvaluationReview == null ) {
-        	return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    null, "Error.EvaluationNotCreated", null);
-        }
-
         
         // Obtain an instance of Scorecard Manager
         ScorecardManager scorMgr = ActionsHelper.createScorecardManager(request);
@@ -844,7 +808,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve some basic review info and store it in the request
         retrieveAndStoreBasicReviewInfo(request, verification, "Review Evaluation", scorecardTemplate);
         
-        retrieveAndStoreReviewAuthorInfo(request,currentEvaluationReview);
+        retrieveAndStoreReviewAuthorInfo(request,evaluationReview);
         
         retrieveAndStoreReviewerIdInfo(request, verification.getReview());
                 
@@ -852,7 +816,7 @@ public class ProjectReviewActions extends DispatchAction {
         AuthorizationHelper.removeLoginRedirect(request);
 
         // Retrive some look-up data and store it into the request
-        CommentType[] commentTypes = revMgr.getAllCommentTypes();//retreiveAndStoreReviewLookUpData(request);
+        CommentType[] commentTypes = revMgr.getAllCommentTypes();
         request.setAttribute("allCommentTypes", commentTypes);
 
         // Retrieve Evaluation Types
@@ -991,9 +955,26 @@ public class ProjectReviewActions extends DispatchAction {
         
         Review review = verification.getReview();
         
+        //Obtain an instance of Review Manager
+        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        Long evaluationReviewId = review.getReviewEvaluation();
+        Review evaluationReview = null;
+        if (evaluationReviewId >= 0 ) {
+	        try{
+	        	evaluationReview = revMgr.getReview(evaluationReviewId);
+	        } catch (ReviewManagementException e){
+	        	
+	        }
+        }
+        
+        if (evaluationReview == null ){
+        	return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    null, "Error.EvaluationNotCreated", null);
+        }
+
         boolean managerEdit = false;
         // Check if review has been committed
-        if (review.isCommitted()) {
+        if (evaluationReview.isCommitted()) {
             // If user has a Manager or Global Manager role, put special flag to the request
             // indicating that we need "Manager Edit"
             if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
@@ -1009,9 +990,9 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_PRIMARY_REVIEW_EVALUATION_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
         }
-//     	Obtain an instance of Resource Manager
+        //	Obtain an instance of Resource Manager
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
-        // Get the list of all possible resource roles
+        // 	Get the list of all possible resource roles
         ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
 
         // Create filters to select Review Evaluators for the project
@@ -1027,67 +1008,6 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, messages, request,
                     Constants.VIEW_REVIEW_EVALUATION_PERM_NAME, "Error.NoReviewEvaluations", null);
         }
-        
-        List<Long> resourceIds = new ArrayList<Long>();
-
-        for (int i = 0; i < reviewEvaluators.length; ++i) {
-            resourceIds.add(reviewEvaluators[i].getId());
-        }
- 
-        
-        Filter filterResource = new InFilter("reviewer", resourceIds);
-        Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
-
-        // Prepare final combined filter
-        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterSubmission}));
-        // Retrieve an array of evaluation reviews
-        Review currentEvaluationReview = null;
-        // Obtain an instance of Review Manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-
-        Review[] evaluationReviews = revMgr.searchReviews(filter, true);
-        if (evaluationReviews != null ){
-        	for (int i=0;i < evaluationReviews.length;i++){
-        		if ( evaluationReviews[i].getSubmission() == verification.getSubmission().getId() ) {
-        			currentEvaluationReview = evaluationReviews[i];
-        		}
-        	}
-        }
-        
-        if ( currentEvaluationReview == null ) {
-        	return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    null, "Error.EvaluationNotCreated", null);
-        }
-        
-        // Get the scorecard type for Review scorecards
-        ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
-        ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
-        ScorecardType scoreCardType = ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review");
-        
-        // Create filters to select Secondary Reviewers for the project
-        filterProject = ResourceFilterBuilder.createProjectIdFilter(verification.getProject().getId());
-        // Create filters to select Secondary Reviwers for the project
-        filterRole = ResourceFilterBuilder.createResourceRoleIdFilter(
-                ActionsHelper.findResourceRoleByName(allResourceRoles, Constants.SECONDARY_REVIEWER_ROLE_NAME).getId());
-        // Combine the upper two filter
-        Filter filterSecondaryReviwers = new AndFilter(filterProject, filterRole);
-        // Fetch all Review Evaluators for the project
-        Resource[] secondaryReviewers = resMgr.searchResources(filterSecondaryReviwers);
-        List<Long> secondaryReviewersResourceIds = new ArrayList<Long>();
-
-        for (int i = 0; i < secondaryReviewers.length; ++i) {
-        	secondaryReviewersResourceIds.add(secondaryReviewers[i].getId());
-        }
-        
-        //	Prepare filters
-        filterResource = new InFilter("reviewer", secondaryReviewersResourceIds);
-        filterProject = new EqualToFilter("project", new Long(verification.getProject().getId()));
-        filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
-        Filter filterScoreCardType = new EqualToFilter("scorecardType", new Long(scoreCardType.getId()));
-        
-        //	Prepare final combined filter
-        filter = new AndFilter(Arrays.asList(new Filter[] {filterResource,filterProject, filterSubmission,filterScoreCardType}));
-        Review[] submissionReviews = revMgr.searchReviews(filter, true);
         
         // Get "My" resource for the appropriate phase
         Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
@@ -1202,16 +1122,17 @@ public class ProjectReviewActions extends DispatchAction {
             (commitRequested || managerEdit ) ? validateEvaluationScorecard(request, scorecardTemplate, review, false) : true;
 
         // If the user has requested to complete the review
-        if (validationSucceeded && commitRequested) {
+        if (validationSucceeded && (commitRequested || managerEdit)) {
         	 // Obtain an instance of CalculationManager
             CalculationManager scoreCalculator = new CalculationManager();
             // Compute scorecard's score
             float newScore = scoreCalculator.getScore(scorecardTemplate, review);
             reviewLevelComment.setExtraInfo("Evaluated");
             review.setScore(new Float(newScore));
-            
-            // Set the completed status of the review
-            review.setCommitted(true);
+            evaluationReview.setScore(review.getScore());
+            evaluationReview.setInitialScore(review.getInitialScore());
+            if (commitRequested)
+            	evaluationReview.setCommitted(true);
         } else if (previewRequested) {
             // Put the review object into the request
             request.setAttribute("review", review);
@@ -1220,16 +1141,13 @@ public class ProjectReviewActions extends DispatchAction {
             // Retrieve some basic review info and store it in the request
             retrieveAndStoreBasicReviewInfo(request, verification, "Review Evaluation", scorecardTemplate);
             
-            retrieveAndStoreReviewAuthorInfo(request,currentEvaluationReview);
+            retrieveAndStoreReviewAuthorInfo(request,evaluationReview);
             
             retrieveAndStoreReviewerIdInfo(request, verification.getReview());
 
             // Forward to preview page
             return mapping.findForward(Constants.PREVIEW_FORWARD_NAME);
         }
-
-        // Update (save) edited Aggregation
-        revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
         if (!validationSucceeded) {
             // Put the review object into the request
@@ -1238,29 +1156,14 @@ public class ProjectReviewActions extends DispatchAction {
             // Retrieve some basic review info and store it in the request
             retrieveAndStoreBasicReviewInfo(request, verification, "Review Evaluation", scorecardTemplate);
             // Retrieve some look-up data and store it into the request
-            retrieveAndStoreReviewAuthorInfo(request,currentEvaluationReview);
+            retrieveAndStoreReviewAuthorInfo(request,evaluationReview);
             
             retrieveAndStoreReviewerIdInfo(request, verification.getReview());
 
             return mapping.getInputForward();
         }
-        if(commitRequested) {
-        	boolean allreviewscommitted = true;
-        	log.log(Level.DEBUG, "Checking whether all submission reviews are committed");
-        	for ( int i=0;i < submissionReviews.length;i++ ){
-        		if (submissionReviews[i].getId() != review.getId() && !submissionReviews[i].isCommitted()) {
-        			log.log(Level.DEBUG, submissionReviews[i].getId() + "Still not committed");
-        			allreviewscommitted = false;
-        		}
-        	}
-        	if (allreviewscommitted){
-        		 // commit the Evaluation Review for the submission
-        		currentEvaluationReview.setCommitted(true);
-        		log.log(Level.DEBUG, currentEvaluationReview + "is committed");
-                revMgr.updateReview(currentEvaluationReview, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-        	}
-        }
-
+        revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        revMgr.updateReview(evaluationReview, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         // Forward to project details page
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
@@ -1312,6 +1215,7 @@ public class ProjectReviewActions extends DispatchAction {
             }
         }
 
+        Review review = verification.getReview();
         // Get a phase with the specified name
         Phase phase = ActionsHelper.getPhase(phases, false, Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME);
 
@@ -1321,50 +1225,23 @@ public class ProjectReviewActions extends DispatchAction {
         // Get the list of all possible resource roles
         ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
 
-        // Create filters to select Review Evaluators for the project
-        Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(verification.getProject().getId());
-        Filter filterRole = ResourceFilterBuilder.createResourceRoleIdFilter(
-                ActionsHelper.findResourceRoleByName(allResourceRoles, Constants.PRIMARY_REVIEW_EVALUATOR_ROLE_NAME).getId());
-        // Combine the upper two filter
-        Filter filterReviewEvaluators = new AndFilter(filterProject, filterRole);
-        // Fetch all Review Evaluators for the project
-        Resource[] reviewEvaluators = resMgr.searchResources(filterReviewEvaluators);
-        // there cannot be any Review Evaluation. Signal about the error to the user
-        if (reviewEvaluators.length == 0) {
-            return ActionsHelper.produceErrorReport(mapping, messages, request,
-                    Constants.VIEW_REVIEW_EVALUATION_PERM_NAME, "Error.NoReviewEvaluations", null);
-        }
 
-        List<Long> resourceIds = new ArrayList<Long>();
-
-        for (int i = 0; i < reviewEvaluators.length; ++i) {
-            resourceIds.add(reviewEvaluators[i].getId());
-        }
- 
-        
-        Filter filterResource = new InFilter("reviewer", resourceIds);
-        Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
-
-        // Prepare final combined filter
-        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterSubmission}));
-        // Retrieve an array of evaluation reviews
-        Review currentEvaluationReview = null;
-        // Obtain an instance of Review Manager
+        //Obtain an instance of Review Manager
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-
-        Review[] evaluationReviews = revMgr.searchReviews(filter, true);
-        if (evaluationReviews != null ){
-        	for (int i=0;i < evaluationReviews.length;i++){
-        		if ( evaluationReviews[i].getSubmission() == verification.getSubmission().getId() ) {
-        			currentEvaluationReview = evaluationReviews[i];
-        		}
-        	}
+        Long evaluationReviewId = review.getReviewEvaluation();
+        Review evaluationReview = null;
+        if (evaluationReviewId >= 0 ) {
+	        try{
+	        	evaluationReview = revMgr.getReview(evaluationReviewId);
+	        } catch (ReviewManagementException e){
+	        	
+	        }
         }
         
-        if ( currentEvaluationReview == null ) {
+        if (evaluationReview == null ){
         	return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     null, "Error.EvaluationNotCreated", null);
-        }        
+        }
         
         // Get "My" resource for the appropriate phase (for reviewers evaluators actually)
         Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
@@ -1410,7 +1287,7 @@ public class ProjectReviewActions extends DispatchAction {
                     activePhases.contains(Constants.FIRST_APPEALS_PHASE_NAME)) {
                 isAllowed = true;
             }
-        } else if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEW_EVALUATION_PERM_NAME) && (currentEvaluationReview !=null && (currentEvaluationReview.getAuthor() == myResource.getId()))) {
+        } else if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEW_EVALUATION_PERM_NAME) && (evaluationReview !=null && (evaluationReview.getAuthor() == myResource.getId()))) {
         	isAllowed = true;
         }
         
@@ -1439,7 +1316,7 @@ public class ProjectReviewActions extends DispatchAction {
                     Constants.VIEW_REVIEW_EVALUATION_PERM_NAME, "Error.ReviewTypeIncorrect", null);
         }
         // Make sure that the user is not trying to view unfinished review
-        if (!verification.getReview().isCommitted()) {
+        if (evaluationReview.isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
             		Constants.VIEW_REVIEW_EVALUATION_PERM_NAME, "Error.ReviewNotCommitted", null);
         } else {
@@ -1453,7 +1330,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve some basic review info and store it in the request
         retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
         
-        retrieveAndStoreReviewAuthorInfo(request, currentEvaluationReview);
+        retrieveAndStoreReviewAuthorInfo(request, evaluationReview);
         request.setAttribute("viewEvaluation", Boolean.TRUE);
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
@@ -4609,7 +4486,7 @@ public class ProjectReviewActions extends DispatchAction {
             // Compute scorecard's score
             float newScore = scoreCalculator.getScore(scorecardTemplate, review);
             // If score has been updated during Manager Edit, additional actions may need to be taken
-            if ("Review".equals(reviewType) && managerEdit &&
+            if ( ("Review".equals(reviewType)) || ("Secondary Review".equals(reviewType)) && managerEdit &&
                     (review.getScore() == null || review.getScore().floatValue() != newScore)) {
                 possibleFinalScoreUpdate = true;
             }

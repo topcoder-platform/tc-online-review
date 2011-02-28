@@ -452,7 +452,7 @@ public class ProjectDetailsActions extends DispatchAction {
         	        for (int reviewIndex = 0; reviewIndex < submissionReviews.length; reviewIndex++ ){
         	        	currentEvaluationReview = null;
         	        	for (int j=0;j < evaluationReviews.length;j++){
-        	        		if ( evaluationReviews[j].getSubmission() == submissionReviews[reviewIndex].getSubmission() ) {
+        	        		if ( evaluationReviews[j].getId() == submissionReviews[reviewIndex].getReviewEvaluation() ) {
         	        			currentEvaluationReview = evaluationReviews[j];
         	        			break;
         	        		}
@@ -471,9 +471,8 @@ public class ProjectDetailsActions extends DispatchAction {
                         newDeliverable.setDescription(deliverable.getDescription());
                         newDeliverable.setModificationTimestamp(deliverable.getModificationTimestamp());
                         newDeliverable.setModificationUser(deliverable.getModificationUser());
-        	        	// Check if the Evaluation review is created for this submission and the review for it is committed
-        	        	if ( currentEvaluationReview != null && submissionReviews[reviewIndex].isCommitted() ) {
-        	        		newDeliverable.setCompletionDate(submissionReviews[reviewIndex].getModificationTimestamp());
+        	        	if ( currentEvaluationReview != null && currentEvaluationReview.isCommitted() ) {
+        	        		newDeliverable.setCompletionDate(currentEvaluationReview.getModificationTimestamp());
         	        	}
         	        	newDeliverables.add(newDeliverable);
         	        }
@@ -2740,10 +2739,16 @@ public class ProjectDetailsActions extends DispatchAction {
     	        // Prepare final combined filter
     	        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterSubmission}));
     	        Review[] evaluationReviews = reviewManager.searchReviews(filter, true);
-    	        if ( evaluationReviews.length == 0 ) {
+    	        Review currentReviewEvaluation = null;
+    	        for(int index=0;index<evaluationReviews.length;index++){
+    	        	if (evaluationReviews[index].getId() == review.getReviewEvaluation()){
+    	        		currentReviewEvaluation = evaluationReviews[index];
+    	        	}
+    	        }
+    	        if ( currentReviewEvaluation == null ) {
     	        	links[i] = "CreateReviewEvaluation.do?method=createReviewEvaluation&rid=" +
                     deliverable.getSubmission().longValue();
-    	        } else if (!review.isCommitted()){
+    	        } else if (!currentReviewEvaluation.isCommitted()){
     	        	links[i] = "EditReviewEvaluation.do?method=editReviewEvaluation&rid=" + review.getId();
                 } else {
                     links[i] = "ViewReviewEvaluation.do?method=viewReviewEvaluation&rid=" + review.getId();
