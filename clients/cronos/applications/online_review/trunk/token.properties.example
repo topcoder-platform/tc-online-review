@@ -147,7 +147,6 @@
 ############################################
 @tests.username@=heffan
 @tests.password@=password
-@tests.projectlink@=/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=
 @tests.baseurl@=http://localhost:8081/review
 @tests.seleniumport@=5555
 @tests.seleniumbrowser@=*chrome

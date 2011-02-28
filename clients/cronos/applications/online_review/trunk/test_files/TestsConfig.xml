@@ -1,21 +1,24 @@
 <?xml version="1.0" ?>
 <CMConfig>
     <Config name="com.cronos.onlinereview">
-	    <Property name="domain">
-	    	<Value>@tests.seleniumdomain@</Value>
-	    </Property>
-	    <Property name="browser">
-	    	<Value>@tests.seleniumbrowser@</Value><!-- you can use *iexplore here for testing using IE-->
-	    </Property>
+        <Property name="domain">
+    	    <Value>@tests.seleniumdomain@</Value>
+        </Property>
+	      <Property name="browser">
+	    	  <Value>@tests.seleniumbrowser@</Value><!-- you can use *iexplore here for testing using IE-->
+	      </Property>
         <Property name="port"><!-- The selenium listening port. -->
             <Value>@tests.seleniumport@</Value>
         </Property>
+        <Property name="project_link">
+          <Value>/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
+        </Property>
+        <Property name="review_link">
+          <Value>/actions/ViewReview.do?method=viewReview&amp;rid=</Value>
+        </Property>
         <Property name="base_url">
             <Value>@tests.baseurl@</Value>
-        </Property>
-        <Property name="project_link">
-            <Value>@tests.projectlink@</Value>
-        </Property>
+        </Property>        
         <Property name="timeout"><!-- the timeout for the page loading -->
             <Value>@tests.timeout@</Value>
         </Property>
@@ -27,6 +30,9 @@
         </Property>
         <Property name="password">
             <Value>@tests.password@</Value>
+        </Property>
+        <Property name="upload_file_path"> <!-- Tupload file path for testing -->
+            <Value>file:///@tests.filespath@/upload_file.txt</Value>
         </Property>
         <Property name="distribution_location"> <!-- The development distribution for upload features -->
             <Value>file:///@tests.filespath@/Test_Distribution.jar</Value>
