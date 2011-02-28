@@ -269,7 +269,7 @@ public class ProjectActions extends DispatchAction {
      *
      * @since 1.8
      */
-    private static final Set<Long> NODUPLICATE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(4L, 5L, 6L, 7L));
+    private static final Set<Long> NODUPLICATE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(4L, 5L, 6L, 7L, 19L));
 
     /**
      * <p>A <code>Set</code> holding the IDs for reviewer roles which do not allow more than one user to be assigned to.
@@ -277,7 +277,7 @@ public class ProjectActions extends DispatchAction {
      *
      * @since 1.8
      */
-    private static final Set<Long> SINGLE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(2L, 8L, 9L, 18L));
+    private static final Set<Long> SINGLE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(2L, 8L, 9L, 18L, 20L));
 
     /**
      * Creates a new instance of the <code>ProjectActions</code> class.
