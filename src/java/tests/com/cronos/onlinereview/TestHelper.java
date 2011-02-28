@@ -60,6 +60,11 @@ public class TestHelper {
     private static final String PROJECT_URL = "project_link";
 
     /**
+     * <p>Represents the review link.</p>
+     */
+    private static final String REVIEW_URL = "review_link";
+
+    /**
      * <p>Represents the selenium port.</p>
      */
     private static final String PORT = "port";
@@ -83,6 +88,11 @@ public class TestHelper {
      * <p>Represents the distribution location.</p>
      */
     private static final String DISTRIBUTION = "distribution_location";
+
+    /**
+     * <p>Represents the upload file path.</p>
+     */
+    private static final String UPLOAD_FILE_PATH = "upload_file_path";
 
     /**
      * <p>Represents the RS location.</p>
@@ -133,6 +143,16 @@ public class TestHelper {
      * <p>Represents user id used when writing data into database.</p>
      */
     public static final String TESTS_USER_ID = "132456";
+
+    /**
+     * <p>Represents default design review scorecard id used when writing data into database.</p>
+     */
+    public static final long DESIGN_REVIEW_SCORECARD_ID = 30000411;
+
+     /**
+     * <p>Represents review scorecard question id used when writing data into database.</p>
+     */
+    public static final long SCORECARD_QUESTION_ID = 30001001;
     
     /**
      * <p>Represents date format to use in project name.</p>
@@ -210,6 +230,19 @@ public class TestHelper {
         ConfigManager cm = ConfigManager.getInstance();
 
         return cm.getProperty(TEST_NAMESPACE, PROJECT_URL).toString();
+    }
+
+    /**
+     * To get the review URL.
+     *
+     * @return the reivew url
+     *
+     * @throws Exception if any error occurred
+     */
+    static String getReviewURL() throws Exception {
+        ConfigManager cm = ConfigManager.getInstance();
+
+        return cm.getProperty(TEST_NAMESPACE, REVIEW_URL).toString();
     }
 
     /**
@@ -591,6 +624,20 @@ public class TestHelper {
     }
 
     /**
+     * This method set status to close of specified phase.
+     *
+     * @param phaseId phase id to update.
+     *
+     * @param con connection to use.
+     *
+     * @throws Exception if any error occurred.
+     */
+    static void ClosePhase(long phaseId, Connection con) throws Exception {
+    	executeStatement(con,
+    			"UPDATE project_phase SET phase_status_id = 3 WHERE project_phase_id = " + phaseId);
+    }
+
+    /**
      * Adds resource to the specified project. 
      * 
      * @param projectId project to add resource.
@@ -637,11 +684,13 @@ public class TestHelper {
      * 
      * @param submissionTypeId submission type (spec submission of contest submission)
      * 
-     * @param con connection to use. 
+     * @param con connection to use.
+     *
+     * @return id of submission. 
      * 
      * @throws Exception if any error occurred. 
      */
-    static void AddSubmission (long projectId, long resourceId, long submissionTypeId, Connection con) throws Exception {
+    static long AddSubmission (long projectId, long resourceId, long submissionTypeId, Connection con) throws Exception {
     	long uploadId = getNextUploadId();
     	executeStatement(con, 
     			"INSERT INTO upload (upload_id, project_id, resource_id, upload_type_id, upload_status_id, parameter, create_user, create_date, modify_user, modify_date) VALUES (" +
@@ -655,6 +704,38 @@ public class TestHelper {
     	executeStatement(con,
     			"INSERT INTO resource_submission (resource_id, submission_id, create_user, create_date, modify_user, modify_date) VALUES (" +
     			resourceId + ", " + submissionId + ", '" +TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
+        return submissionId;
+    }
+
+
+    /**
+     * Adds review to the specified project.
+     *
+     * @param resourceId submitter's id.
+     *
+     * @param submissionId submission id
+     *
+     * @param con connection to use.
+     *
+     * @return id of submission.
+     *
+     * @throws Exception if any error occurred.
+     */
+    static long AddReview ( long resourceId, long submissionId, Connection con) throws Exception {
+    	long reviewId = getNextId("review_id_seq");
+    	executeStatement(con,
+    			"INSERT INTO review (review_id, resource_id, submission_id, scorecard_id, committed, score, initial_score, create_user, create_date, modify_user, modify_date) VALUES (" +
+    			reviewId + ", " + resourceId + ", " + submissionId +","+ DESIGN_REVIEW_SCORECARD_ID +", 1 , 100.00 , 100.00 ,'"+TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
+
+    	long reviewItemId = getNextId("review_item_id_seq");
+    	executeStatement(con,
+    			"INSERT INTO review_item (review_item_id, review_id, scorecard_question_id, upload_id, answer, sort, create_user, create_date, modify_user, modify_date) VALUES (" +
+    			reviewItemId + ", " + reviewId + "," + SCORECARD_QUESTION_ID + ", NULL, '4/4', 0 ,'" +TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
+        long reviewItemCommentId = getNextId("review_item_comment_id_seq");
+    	executeStatement(con,
+    			"INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, extra_info, sort, create_user, create_date, modify_user, modify_date) VALUES (" +
+    			reviewItemCommentId + ", " + resourceId + ","+ reviewItemId +",1, 'OK', NULL, 0, '" +TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
+        return reviewId;
     }
     
     /**
@@ -681,6 +762,18 @@ public class TestHelper {
     static String getDistributionLocation() throws Exception {
         ConfigManager cm = ConfigManager.getInstance();
         return cm.getProperty(TEST_NAMESPACE, DISTRIBUTION).toString();
+    }
+
+    /**
+     * To get the upload file path.
+     *
+     * @return the upload file path.
+     *
+     * @throws Exception if any error occurred
+     */
+    static String getUploadFilePath() throws Exception {
+        ConfigManager cm = ConfigManager.getInstance();
+        return cm.getProperty(TEST_NAMESPACE, UPLOAD_FILE_PATH).toString();
     }
 
     /**
@@ -934,6 +1027,19 @@ public class TestHelper {
 
         return generator.getNextID();
     }
+
+    /**
+     * Get the id of the specific type.
+     * @param type represent type of the id.
+     * @return id of the type
+     *
+     * @throws Exception if any error
+     */
+    static long getNextId(String type) throws Exception {
+    	IDGenerator generator = IDGeneratorFactory.getIDGenerator(type);
+
+        return generator.getNextID();
+    }
     
     /**
      * Get the browser speed from configuration
@@ -969,4 +1075,78 @@ public class TestHelper {
     	phaseIds.put("final_review", getNextProjectPhaseId());
     	phaseIds.put("approval", getNextProjectPhaseId());
     }
+
+
+
+    /**
+     * Let the competitor to unregister in the project.
+     * @param browser the selenium browser
+     * @param ProjectId represent the project which will be registered by the competitor.
+     *
+     * @throws Exception if any error occurred.
+     */
+    static void unregisterProject(Selenium browser, long ProjectId) throws Exception{
+        //login as competitor
+        loginAsCompetitor(browser);
+        // open the project details page
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + ProjectId);
+
+         // Click the 'Unregister' Link
+        browser.click("//table[@id='table12']/tbody/tr[1]/td[4]/a[1]");
+        browser.waitForPageToLoad(getTimeout());
+        // confirm unregister
+        browser.click("//img[@alt='Confirm']");
+        browser.waitForPageToLoad(getTimeout());
+
+        // logout the user
+        browser.click("link=Logout");
+        browser.waitForPageToLoad(getTimeout());
+
+
+    }
+
+    /**
+     * Add a new spec review score card.
+     *
+     * @throws Exception if any error occurred.
+     */
+
+    static long addSpecReviewScoreCard(Connection con) throws Exception{
+        long scorecardId = getNextId("scorecard_id_seq");
+    	executeStatement(con,
+    			"INSERT INTO scorecard (scorecard_id, scorecard_status_id, scorecard_type_id, project_category_id, name, version, min_score, max_score, create_user, create_date, modify_user, modify_date) VALUES (" +
+    			scorecardId + ",1, 5, 28, 'Default Spec Review Scorecard', '2.0', 75.0, 100.0, '"+TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
+        return scorecardId;
+    }
+
+    /**
+     * Delete a  spec review score card.
+     *
+     * @throws Exception if any error occurred.
+     */
+
+    static void deleteSpecReviewScoreCard(Connection con, long scorecardId) throws Exception{
+        if(scorecardId != -1) {
+    	    executeStatement(con,
+    			"DELETE FROM scorecard where scorecard_id=" + scorecardId);
+        }
+    }
+
+    /**
+     * relogin as manager to delete the project.
+     * @param browser the selenium browser
+     * @param projectId represent the project which will be registered by the competitor.
+     *
+     * @throws Exception if any error occurred.
+     */
+    static void reloginAndDeleteProject(Selenium browser, long projectId) throws Exception{
+        if (projectId != -1) {
+    		browser.click("link=Logout");
+            browser.waitForPageToLoad(TestHelper.getTimeout());
+    		// login as manager to delete the project
+    		TestHelper.loginUser(browser);
+    		TestHelper.deleteProject(browser, projectId);
+    	}
+    }
+
  }
