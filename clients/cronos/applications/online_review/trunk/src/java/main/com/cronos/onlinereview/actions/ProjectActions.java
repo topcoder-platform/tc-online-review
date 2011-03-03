@@ -1767,7 +1767,7 @@ public class ProjectActions extends DispatchAction {
                     // Aggregation should be followed by the aggregation review
                     if (i == projectPhases.length - 1 ||
                             !nextPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME) &&
-                            !previousPhaseName.equals(FINAL_FIX_PHASE_NAME) &&
+                            !nextPhaseName.equals(FINAL_FIX_PHASE_NAME) &&
                             !postMortemPhaseExists) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.AggregationMustBeFollowed");
