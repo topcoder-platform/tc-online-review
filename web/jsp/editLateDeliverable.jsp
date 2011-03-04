@@ -164,6 +164,14 @@
                                         <div id="explanation_validation_msg" style="display:none;" class="error"></div>
                                     </c:when>
                                     <c:when test="${lateDeliverable.explanation ne null}">
+                                        <c:choose>
+                                            <c:when test="${lateDeliverable.explanationDate ne null}">
+                                                By <tc-webtag:handle coderId="${orfn:getUserId(pageContext.request, lateDeliverable.resourceId)}" 
+                                                    context="${orfn:getHandlerContextByCategoryId(project.projectCategory.id)}" />
+                                                at <c:out value="${orfn:displayDate(pageContext.request, lateDeliverable.explanationDate)}"/>
+                                                <br/><br/>
+                                            </c:when>
+                                        </c:choose>
                                         ${orfn:htmlEncode(lateDeliverable.explanation)}
                                     </c:when>
                                     <c:otherwise><bean:message key="NotAvailable"/></c:otherwise>
@@ -185,6 +193,14 @@
                                         <div id="response_validation_msg" style="display:none;" class="error"></div>
                                     </c:when>
                                     <c:when test="${lateDeliverable.response ne null}">
+                                        <c:choose>
+                                            <c:when test="${(lateDeliverable.responseUser ne null) and (lateDeliverable.responseDate ne null)}">
+                                                By <tc-webtag:handle coderId="${lateDeliverable.responseUser}"
+                                                    context="${orfn:getHandlerContextByCategoryId(project.projectCategory.id)}" />
+                                                at <c:out value="${orfn:displayDate(pageContext.request, lateDeliverable.responseDate)}"/>
+                                                <br/><br/>
+                                            </c:when>
+                                        </c:choose>
                                         ${orfn:htmlEncode(lateDeliverable.response)}
                                     </c:when>
                                     <c:otherwise><bean:message key="NotAvailable"/></c:otherwise>
