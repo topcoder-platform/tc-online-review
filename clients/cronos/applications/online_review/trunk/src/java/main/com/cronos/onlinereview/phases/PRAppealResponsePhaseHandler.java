@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2005 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -27,6 +27,7 @@ import com.topcoder.util.file.Template;
 import com.topcoder.util.file.fieldconfig.Field;
 import com.topcoder.util.file.fieldconfig.Node;
 import com.topcoder.util.file.fieldconfig.TemplateFields;
+import com.topcoder.util.file.templatesource.FileTemplateSource;
 import com.topcoder.util.log.Level;
 
 /**
@@ -215,7 +216,7 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 	}
 
 	private void sendWinnersEmailForUser(Project project, ExternalUser user, String position) throws Exception {
-		DocumentGenerator docGenerator = DocumentGenerator.getInstance();
+		DocumentGenerator docGenerator = new DocumentGenerator();
 		Template template = getEmailTemplate();
 		log.log(Level.DEBUG, "sending winner email for projectId: " + project.getId() + " handle: " + user.getHandle() + " position: " + position);
 		TemplateFields root = setTemplateFieldValues(docGenerator.getFields(template), project, user, position);
@@ -303,7 +304,9 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 	}
 
 	private Template getEmailTemplate() throws Exception {
-		return DocumentGenerator.getInstance().getTemplate(winnersEmailTemplateSource, winnersEmailTemplateName);
+            DocumentGenerator generator = new DocumentGenerator();
+            generator.setTemplateSource(winnersEmailTemplateSource, new FileTemplateSource());
+            return generator.getTemplate(winnersEmailTemplateSource, winnersEmailTemplateName);
 	}
 
 	/**

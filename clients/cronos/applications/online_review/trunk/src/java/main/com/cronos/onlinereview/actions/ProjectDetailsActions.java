@@ -86,6 +86,7 @@ import com.topcoder.util.file.Template;
 import com.topcoder.util.file.fieldconfig.Field;
 import com.topcoder.util.file.fieldconfig.Node;
 import com.topcoder.util.file.fieldconfig.TemplateFields;
+import com.topcoder.util.file.templatesource.FileTemplateSource;
 
 import com.topcoder.management.deliverable.late.LateDeliverable;
 import com.topcoder.management.deliverable.late.LateDeliverableManagementException;
@@ -807,7 +808,8 @@ public class ProjectDetailsActions extends DispatchAction {
         Project project = verification.getProject();
 
         // Obtain an instance of Document Generator
-        DocumentGenerator docGenerator = DocumentGenerator.getInstance();
+        DocumentGenerator docGenerator = new DocumentGenerator();
+        docGenerator.setTemplateSource(ConfigHelper.getContactManagerEmailSrcType(), new FileTemplateSource());
 
         // Get the template of email
         Template docTemplate = docGenerator.getTemplate(

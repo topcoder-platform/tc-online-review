@@ -36,6 +36,7 @@ import com.topcoder.util.file.Template;
 import com.topcoder.util.file.fieldconfig.Field;
 import com.topcoder.util.file.fieldconfig.Node;
 import com.topcoder.util.file.fieldconfig.TemplateFields;
+import com.topcoder.util.file.templatesource.FileTemplateSource;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -1091,7 +1092,8 @@ public class LateDeliverablesActions extends DispatchAction {
             return;
         }
 
-        DocumentGenerator docGenerator = DocumentGenerator.getInstance();
+        DocumentGenerator docGenerator = new DocumentGenerator();
+        docGenerator.setTemplateSource(emailTemplateSource, new FileTemplateSource());
         Template template = docGenerator.getTemplate(emailTemplateSource, emailTemplateName);
         TemplateFields root = setTemplateFieldValues(docGenerator.getFields(template), project, lateDeliverable, 
                                                      request);
