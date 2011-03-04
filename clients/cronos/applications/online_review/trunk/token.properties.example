@@ -221,8 +221,6 @@
 @notification_deliverable_ids@=<<deliverable_ids>>
 # An interval (in seconds) for sending notification emails on late deliverables
 @late_deliverables_notification_interval@=<<number_of_seconds>>
-# A mailbox to send notification emails on late deliverables from
-@late_deliverables_notification_mailbox@=<<mailbox>>
 # A path to file to signal to Late Deliverables Tracker to stop the job
 @late_deliverables_tracker_guard_file@=<<path_to_guard_file>>
 # A path to file to signal to Late Deliverables Tracker that there is another tool instance already running

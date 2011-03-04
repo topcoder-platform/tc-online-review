@@ -412,6 +412,7 @@ public class LateDeliverablesActions extends DispatchAction {
                 if (isLateDeliverableOwner) {
                     if (lateDeliverable.getExplanation() == null) {
                         lateDeliverable.setExplanation(newExplanation);
+                        lateDeliverable.setExplanationDate(new Date());
                     } else {
                         alreadySet = true;
                     }
@@ -424,6 +425,8 @@ public class LateDeliverablesActions extends DispatchAction {
                     if (newResponseSubmitted) {
                         if (lateDeliverable.getResponse() == null) {
                             lateDeliverable.setResponse(newResponse);
+                            lateDeliverable.setResponseUser("" + currentUserId);
+                            lateDeliverable.setResponseDate(new Date());
                         } else {
                             alreadySet = true;
                         }

@@ -485,7 +485,7 @@
                     <Value>@exttemplatesdir@/warn_email_template.html</Value>
                 </Property>
                 <Property name="emailSender">
-                    <Value>@late_deliverables_notification_mailbox@</Value>
+                    <Value>do_not_reply@topcoder.com</Value>
                 </Property>
                 <Property name="resourceManagerKey">
                     <Value>resourceManager</Value>
