@@ -69,7 +69,7 @@
             <fileset file="${db_connection_factory.jar}"/>
             <fileset file="${deliverable_management.jar}"/>
             <fileset file="${deliverable_management_persistence.jar}"/>
-            <fileset file="${document_generator_3_1_0.jar}"/>
+            <fileset file="${document_generator.jar}"/>
             <fileset file="${email_engine.jar}"/>
             <fileset file="${executable_wrapper.jar}"/>
             <fileset file="${id_generator.jar}"/>

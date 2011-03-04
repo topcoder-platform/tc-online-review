@@ -150,17 +150,11 @@
     <property name="distribution_tool.jar"
               value="${tcs_libdir}/${distribution_tool.path}/${distribution_tool.jar.name}"/>
 
-    <property name="document_generator.version" value="2.1"/>
+    <property name="document_generator.version" value="3.1.0"/>
     <property name="document_generator.jar.name" value="document_generator.jar"/>
     <property name="document_generator.path" value="document_generator/${document_generator.version}"/>
     <property name="document_generator.jar"
               value="${tcs_libdir}/${document_generator.path}/${document_generator.jar.name}"/>
-
-    <!-- Document Generator 3.1.0 is used by the Late Deliverables Tracker component -->
-    <property name="document_generator_3_1_0.version" value="3.1.0"/>
-    <property name="document_generator_3_1_0.jar.name" value="document_generator.jar"/>
-    <property name="document_generator_3_1_0.path" value="document_generator/${document_generator_3_1_0.version}"/>
-    <property name="document_generator_3_1_0.jar" value="${tcs_libdir}/${document_generator_3_1_0.path}/${document_generator_3_1_0.jar.name}"/>
 
     <property name="email_engine.version" value="3.2.0"/>
     <property name="email_engine.jar.name" value="email_engine.jar"/>
@@ -213,7 +207,7 @@
     <property name="magic_numbers.path" value="magic_numbers/${magic_numbers.version}" />
     <property name="magic_numbers.jar" value="${tcs_libdir}/${magic_numbers.path}/${magic_numbers.jar.name}" />
 
-    <property name="online_review_phases.version" value="1.4.5"/>
+    <property name="online_review_phases.version" value="1.4.6"/>
     <property name="online_review_phases.jar.name" value="online_review_phases.jar"/>
     <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}"/>
     <property name="online_review_phases.jar"
