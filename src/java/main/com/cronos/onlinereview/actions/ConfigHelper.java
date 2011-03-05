@@ -527,7 +527,6 @@ public class ConfigHelper {
      * contains definitions of other proerties that describe how mails sent to managers will be
      * gererated.
      *
-     * @see #EMAIL_TEMPLATE_SOURCE_TYPE_PROP
      * @see #EMAIL_TEMPLATE_NAME_PROP
      * @see #EMAIL_SUBJECT_PROP
      */
@@ -535,22 +534,9 @@ public class ConfigHelper {
 
     /**
      * This member variable is a string constant that specifies the name of the property which
-     * specifies the type of source where email template can be loaded from.
+     * specifies the name of the file where email teplate can be loaded.
      *
      * @see #CONTACT_MANAGER_EMAIL_PROP
-     * @see #EMAIL_TEMPLATE_NAME_PROP
-     * @see #EMAIL_SUBJECT_PROP
-     */
-    private static final String EMAIL_TEMPLATE_SOURCE_TYPE_PROP = "EmailTemplateSource";
-
-    /**
-     * This member variable is a string constant that specifies the name of the property which
-     * specifies the name of file (or any other type of source) where email teplate can be loaded
-     * from using the type of source specified in the propety which name is defined by
-     * {@link #EMAIL_TEMPLATE_SOURCE_TYPE_PROP} constant.
-     *
-     * @see #CONTACT_MANAGER_EMAIL_PROP
-     * @see #EMAIL_TEMPLATE_SOURCE_TYPE_PROP
      * @see #EMAIL_SUBJECT_PROP
      */
     private static final String EMAIL_TEMPLATE_NAME_PROP = "EmailTemplateName";
@@ -922,12 +908,6 @@ public class ConfigHelper {
      * should be of type <code>String</code> and cannot be <code>null</code>.
      */
     private static final List<String> phaseGroupFunctions = new ArrayList<String>();
-
-    /**
-     * This member variable holds the type of the source that will be used to load email template to
-     * send message to project's manager.
-     */
-    private static String contactManagerEmailSrcType = "";
 
     /**
      * This member variable holds the path where email template can be loaded from to send message
@@ -1508,7 +1488,6 @@ public class ConfigHelper {
                 cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, CONTACT_MANAGER_EMAIL_PROP);
 
             if (propContactManagerEmail != null) {
-                contactManagerEmailSrcType = propContactManagerEmail.getValue(EMAIL_TEMPLATE_SOURCE_TYPE_PROP);
                 contactManagerEmailTemplate = propContactManagerEmail.getValue(EMAIL_TEMPLATE_NAME_PROP);
             }
 
@@ -1589,14 +1568,12 @@ public class ConfigHelper {
                 = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "LateDeliverableUpdateNotificationEmail");
             
             lateDeliverablesUpdatedByManagerNotificationConfig = new String[] {
-                lateDeliverableEmailConfig.getValue("ByManager.EmailTemplateSource"),
                 lateDeliverableEmailConfig.getValue("ByManager.EmailTemplateName"),
                 lateDeliverableEmailConfig.getValue("ByManager.EmailFromAddress"),
                 lateDeliverableEmailConfig.getValue("ByManager.EmailSubject"),
                 lateDeliverableEmailConfig.getValue("ByManager.Roles")};				
             
             lateDeliverablesUpdatedByMemberNotificationConfig = new String[] {
-                lateDeliverableEmailConfig.getValue("ByMember.EmailTemplateSource"),
                 lateDeliverableEmailConfig.getValue("ByMember.EmailTemplateName"),
                 lateDeliverableEmailConfig.getValue("ByMember.EmailFromAddress"),
                 lateDeliverableEmailConfig.getValue("ByMember.EmailSubject"),
@@ -2102,16 +2079,6 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns the type of the source where email template to send to project's
-     * manager can be loaded from.
-     *
-     * @return a string representing the type of source.
-     */
-    public static String getContactManagerEmailSrcType() {
-        return contactManagerEmailSrcType;
-    }
-
-    /**
      * This static method returns the path where email template to send to project's manager can be
      * loaded from.
      *
@@ -2297,17 +2264,6 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the source for template for email to be sent to intended recipients when late deliverable is updated by 
-     * manager.</p>
-     * 
-     * @return a <code>String</code> referencing the source for email template.
-     * @since 1.7.1
-     */
-    public static String getLateDeliverableUpdateByManagerEmailTemplateSource() {
-        return lateDeliverablesUpdatedByManagerNotificationConfig[0];
-    }
-
-    /**
      * <p>Gets the name for template for email to be sent to intended recipients when late deliverable is updated by 
      * manager.</p>
      * 
@@ -2315,7 +2271,7 @@ public class ConfigHelper {
      * @since 1.7.1
      */
     public static String getLateDeliverableUpdateByManagerEmailTemplateName() {
-        return lateDeliverablesUpdatedByManagerNotificationConfig[1];
+        return lateDeliverablesUpdatedByManagerNotificationConfig[0];
     }
 
     /**
@@ -2326,7 +2282,7 @@ public class ConfigHelper {
      * @since 1.7.1
      */
     public static String getLateDeliverableUpdateByManagerEmailFromAddress() {
-        return lateDeliverablesUpdatedByManagerNotificationConfig[2];
+        return lateDeliverablesUpdatedByManagerNotificationConfig[1];
     }
 
     /**
@@ -2337,7 +2293,7 @@ public class ConfigHelper {
      * @since 1.7.1
      */
     public static String getLateDeliverableUpdateByManagerEmailTemplateSubject() {
-        return lateDeliverablesUpdatedByManagerNotificationConfig[3];
+        return lateDeliverablesUpdatedByManagerNotificationConfig[2];
     }
 
     /**
@@ -2348,9 +2304,9 @@ public class ConfigHelper {
      * @since 1.7.1
      */
     public static String[] getLateDeliverableUpdateByManagerRecipientRoleNames() {
-        if ((lateDeliverablesUpdatedByManagerNotificationConfig[4] != null) 
-            && (lateDeliverablesUpdatedByManagerNotificationConfig[4].trim().length() > 0)) {
-            return lateDeliverablesUpdatedByManagerNotificationConfig[4].split(",");
+        if ((lateDeliverablesUpdatedByManagerNotificationConfig[3] != null) 
+            && (lateDeliverablesUpdatedByManagerNotificationConfig[3].trim().length() > 0)) {
+            return lateDeliverablesUpdatedByManagerNotificationConfig[3].split(",");
         } else {
             return null;
         }
@@ -2367,17 +2323,6 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the source for template for email to be sent to intended recipients when late deliverable is updated by 
-     * member.</p>
-     * 
-     * @return a <code>String</code> referencing the source for email template.
-     * @since 1.7.1
-     */
-    public static String getLateDeliverableUpdateByMemberEmailTemplateSource() {
-        return lateDeliverablesUpdatedByMemberNotificationConfig[0];
-    }
-
-    /**
      * <p>Gets the name for template for email to be sent to intended recipients when late deliverable is updated by 
      * member.</p>
      * 
@@ -2385,7 +2330,7 @@ public class ConfigHelper {
      * @since 1.7.1
      */
     public static String getLateDeliverableUpdateByMemberEmailTemplateName() {
-        return lateDeliverablesUpdatedByMemberNotificationConfig[1];
+        return lateDeliverablesUpdatedByMemberNotificationConfig[0];
     }
 
     /**
@@ -2396,7 +2341,7 @@ public class ConfigHelper {
      * @since 1.7.1
      */
     public static String getLateDeliverableUpdateByMemberEmailFromAddress() {
-        return lateDeliverablesUpdatedByMemberNotificationConfig[2];
+        return lateDeliverablesUpdatedByMemberNotificationConfig[1];
     }
 
     /**
@@ -2407,7 +2352,7 @@ public class ConfigHelper {
      * @since 1.7.1
      */
     public static String getLateDeliverableUpdateByMemberEmailTemplateSubject() {
-        return lateDeliverablesUpdatedByMemberNotificationConfig[3];
+        return lateDeliverablesUpdatedByMemberNotificationConfig[2];
     }
 
     /**
@@ -2418,9 +2363,9 @@ public class ConfigHelper {
      * @since 1.7.1
      */
     public static String[] getLateDeliverableUpdateByMemberRecipientRoleNames() {
-        if ((lateDeliverablesUpdatedByMemberNotificationConfig[4] != null) 
-            && (lateDeliverablesUpdatedByMemberNotificationConfig[4].trim().length() > 0)) {
-            return lateDeliverablesUpdatedByMemberNotificationConfig[4].split(",");
+        if ((lateDeliverablesUpdatedByMemberNotificationConfig[3] != null) 
+            && (lateDeliverablesUpdatedByMemberNotificationConfig[3].trim().length() > 0)) {
+            return lateDeliverablesUpdatedByMemberNotificationConfig[3].split(",");
         } else {
             return null;
         }

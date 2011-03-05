@@ -1023,14 +1023,13 @@ public class LateDeliverablesActions extends DispatchAction {
             if (nodes[i] instanceof Field) {
                 Field field = (Field) nodes[i];
                 if ("PROJECT_NAME".equals(field.getName())) {
-                    field.setValue("<![CDATA[" + project.getProperty("Project Name") + "]]>");
+                    field.setValue("" + project.getProperty("Project Name"));
                 } else if ("PROJECT_VERSION".equals(field.getName())) {
                     field.setValue("" + project.getProperty("Project Version"));
                 } else if ("LATE_DELIVERABLE_LINK".equals(field.getName())) {
-                    field.setValue("<![CDATA[" + ConfigHelper.getLateDeliverableBaseURL() + lateDeliverable.getId() 
-                                   + "]]>");
+                    field.setValue(ConfigHelper.getLateDeliverableBaseURL() + lateDeliverable.getId());
                 } else if ("OR_LINK".equals(field.getName())) {
-                    field.setValue("<![CDATA[" + ConfigHelper.getProjectDetailsBaseURL() + project.getId() + "]]>");
+                    field.setValue(ConfigHelper.getProjectDetailsBaseURL() + project.getId());
                 } else if ("FORGIVEN".equals(field.getName())) {
                     if (lateDeliverable.isForgiven()) {
                         field.setValue("Yes");
@@ -1042,14 +1041,14 @@ public class LateDeliverablesActions extends DispatchAction {
                     if (explanation == null) {
                         field.setValue("N/A");
                     } else {
-                        field.setValue("<![CDATA[" + Functions.htmlEncode(explanation) + "]]>");
+                        field.setValue(Functions.htmlEncode(explanation));
                     }
                 } else if ("RESPONSE".equals(field.getName())) {
                     String response = lateDeliverable.getResponse();
                     if (response == null) {
                         field.setValue("N/A");
                     } else {
-                        field.setValue("<![CDATA[" + Functions.htmlEncode(response) + "]]>");
+                        field.setValue(Functions.htmlEncode(response));
                     }
                 } else if ("DEADLINE".equals(field.getName())) {
                     field.setValue(Functions.displayDate(request, lateDeliverable.getDeadline()));
@@ -1078,7 +1077,6 @@ public class LateDeliverablesActions extends DispatchAction {
      * @param recipients a <code>String</code> list providing the list of email addresses to send email message to. 
      * @param ccRecipients a <code>String</code> list providing the list of email addresses to be CCed on the email message. 
      * @param lateDeliverable a <code>LateDeliverable</code> which has been updated.
-     * @param emailTemplateSource a <code>String</code> referencing the source for email template.
      * @param emailTemplateName a <code>String</code> referencing the template for generating the email message body.
      * @param emailSubjectTemplate a <code>String</code> providing the template for subject for the email message.
      * @param fromAddress a <code>String</code> providing the email address to send email from.
@@ -1086,15 +1084,15 @@ public class LateDeliverablesActions extends DispatchAction {
      * @throws Exception if an unexpected error occurs.
      */
     private void sendEmailForUsers(Project project, List<String> recipients, List<String> ccRecipients, LateDeliverable lateDeliverable, 
-                                   String emailTemplateSource, String emailTemplateName, String emailSubjectTemplate, 
+                                   String emailTemplateName, String emailSubjectTemplate, 
                                    String fromAddress, HttpServletRequest request) throws Exception {
         if (recipients.size() + ccRecipients.size() == 0) {
             return;
         }
 
         DocumentGenerator docGenerator = new DocumentGenerator();
-        docGenerator.setTemplateSource(emailTemplateSource, new FileTemplateSource());
-        Template template = docGenerator.getTemplate(emailTemplateSource, emailTemplateName);
+        docGenerator.setDefaultTemplateSource(new FileTemplateSource());
+        Template template = docGenerator.getTemplate(emailTemplateName);
         TemplateFields root = setTemplateFieldValues(docGenerator.getFields(template), project, lateDeliverable, 
                                                      request);
 
@@ -1144,7 +1142,6 @@ public class LateDeliverablesActions extends DispatchAction {
         lateMemberEmails.add( userRetrieval.retrieveUser(getLateDeliverableUserId(request, lateDeliverable)).getEmail() );
         
         sendEmailForUsers(project, lateMemberEmails, managerEmails, lateDeliverable,
-                          ConfigHelper.getLateDeliverableUpdateByManagerEmailTemplateSource(),
                           ConfigHelper.getLateDeliverableUpdateByManagerEmailTemplateName(),
                           ConfigHelper.getLateDeliverableUpdateByManagerEmailTemplateSubject(),
                           ConfigHelper.getLateDeliverableUpdateByManagerEmailFromAddress(), 
@@ -1172,7 +1169,6 @@ public class LateDeliverablesActions extends DispatchAction {
 
         List<String> managerEmails = ActionsHelper.getEmailsByUserIDs(request, managerUserIds);
         sendEmailForUsers(project, managerEmails, new ArrayList<String>(), lateDeliverable,
-                          ConfigHelper.getLateDeliverableUpdateByMemberEmailTemplateSource(),
                           ConfigHelper.getLateDeliverableUpdateByMemberEmailTemplateName(),
                           ConfigHelper.getLateDeliverableUpdateByMemberEmailTemplateSubject(),
                           ConfigHelper.getLateDeliverableUpdateByMemberEmailFromAddress(), 
