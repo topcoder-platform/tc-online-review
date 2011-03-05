@@ -452,22 +452,6 @@
         </Property>
     </Config>
 
-
-    <!--
-        ========== Configuration for Document Generator component ==========
-    -->
-    <Config name="com.topcoder.util.file">
-        <Property name="sources">
-            <Value>file</Value>
-        </Property>
-
-        <!-- file template source properties -->
-        <Property name="file_class">
-            <Value>com.topcoder.util.file.templatesource.FileTemplateSource</Value>
-        </Property>
-    </Config>
-
-
     <!--
         =============== Configuration for Email Engine component ===============
     -->
@@ -827,9 +811,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -846,9 +827,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -869,9 +847,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/specification_submission/start.txt</Value>
                 </Property>
@@ -888,9 +863,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/specification_submission/end.txt</Value>
@@ -935,9 +907,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -954,9 +923,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -977,9 +943,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/specification_review/start.txt</Value>
                 </Property>
@@ -996,9 +959,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/specification_review/end.txt</Value>
@@ -1043,9 +1003,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -1062,9 +1019,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1085,9 +1039,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/registration/start.txt</Value>
                 </Property>
@@ -1104,9 +1055,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/registration/end.txt</Value>
@@ -1151,9 +1099,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -1170,9 +1115,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1193,9 +1135,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/submission/start.txt</Value>
                 </Property>
@@ -1212,9 +1151,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/submission/end.txt</Value>
@@ -1259,9 +1195,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -1278,9 +1211,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1301,9 +1231,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/screening/start.txt</Value>
                 </Property>
@@ -1320,9 +1247,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/screening/end.txt</Value>
@@ -1367,9 +1291,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -1386,9 +1307,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1409,9 +1327,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/review/start.txt</Value>
                 </Property>
@@ -1428,9 +1343,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/review/end.txt</Value>
@@ -1475,9 +1387,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -1494,9 +1403,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1517,9 +1423,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/appeals/start.txt</Value>
                 </Property>
@@ -1536,9 +1439,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/appeals/end.txt</Value>
@@ -1583,9 +1483,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -1602,9 +1499,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1625,9 +1519,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/appeals_response/start.txt</Value>
                 </Property>
@@ -1645,9 +1536,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/appeals_response/end.txt</Value>
                 </Property>
@@ -1664,9 +1552,6 @@
         </Property>
 
         <Property name="WinnersEmail">
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
             <Property name="EmailTemplateName">
                 <Value>&winnersEmailTemplate;</Value>
             </Property>
@@ -1710,9 +1595,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -1729,9 +1611,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1752,9 +1631,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/aggregation/start.txt</Value>
                 </Property>
@@ -1771,9 +1647,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/aggregation/end.txt</Value>
@@ -1818,9 +1691,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -1837,9 +1707,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1860,9 +1727,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/aggregation_review/start.txt</Value>
                 </Property>
@@ -1879,9 +1743,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/aggregation_review/end.txt</Value>
@@ -1926,9 +1787,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -1945,9 +1803,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1968,9 +1823,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/final_fix/start.txt</Value>
                 </Property>
@@ -1987,9 +1839,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/final_fix/end.txt</Value>
@@ -2034,9 +1883,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -2053,9 +1899,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -2076,9 +1919,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/final_review/start.txt</Value>
                 </Property>
@@ -2095,9 +1935,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/final_review/end.txt</Value>
@@ -2151,9 +1988,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -2170,9 +2004,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -2193,9 +2024,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/approval/start.txt</Value>
                 </Property>
@@ -2212,9 +2040,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/approval/end.txt</Value>
@@ -2268,9 +2093,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -2287,9 +2109,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -2310,9 +2129,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/post_mortem/start.txt</Value>
                 </Property>
@@ -2329,9 +2145,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/post_mortem/end.txt</Value>
@@ -3085,16 +2898,33 @@
                 </Property>
                 <Property name="context">
                     <Value>
-                        SELECT UNIQUE deliverable_id,
-                               resource_id,
-                               project_phase.project_phase_id
-                          FROM deliverable_lu,
-                               resource,
-                               project_phase
-                         WHERE deliverable_lu.resource_role_id = resource.resource_role_id
-                           AND deliverable_lu.phase_type_id = project_phase.phase_type_id
-                           AND resource.project_id = project_phase.project_id
-                           AND
+                        SELECT UNIQUE
+                          deliverable_lu.deliverable_id,
+                          resource.resource_id,
+                          project_phase.project_phase_id
+                        FROM
+                          deliverable_lu
+                          INNER JOIN resource ON deliverable_lu.resource_role_id = resource.resource_role_id
+                          INNER JOIN project_phase ON deliverable_lu.phase_type_id = project_phase.phase_type_id
+                          LEFT OUTER JOIN project_info ON project_info.project_id = project_phase.project_id AND
+                                                          project_info.project_info_type_id = 23
+                          INNER JOIN resource_info ON resource_info.resource_id = resource.resource_id AND
+                                                      resource_info.resource_info_type_id = 1
+                        WHERE
+                          ((resource.project_id = project_phase.project_id AND deliverable_lu.deliverable_id NOT IN (15,22,23,26))
+                           OR (resource.project_phase_id = project_phase.project_phase_id AND deliverable_lu.deliverable_id IN (15,22,23,26))) AND
+                          (project_info.value is null OR resource.resource_role_id != 1 OR resource_info.value = project_info.value) AND
+                          (deliverable_id NOT IN (16,17,18,19) OR NOT EXISTS(
+                            SELECT r.resource_id
+                            FROM
+                              resource r
+                              INNER JOIN resource_info ri ON ri.resource_id = r.resource_id AND
+                                                             ri.resource_info_type_id = 1 AND
+                                                             ri.value = resource_info.value
+                            WHERE
+                              r.project_id = project_phase.project_id AND
+                              r.resource_role_id = 8
+                          )) AND 
                     </Value>
                 </Property>
                 <Property name="alias">
@@ -3145,52 +2975,11 @@
                 </Property>
                 <Property name="context">
                     <Value>
-                        SELECT     deliverable_id,
-                                   resource.resource_id,
-                                   project_phase.project_phase_id
-                                   submission.submission_id,
-                                   submission.screening_score,
-                                   submission.initial_score,
-                                   submission.final_score,
-                                   submission.placement
-                              FROM deliverable_lu,
-                                   resource,
-                                   project_phase
-                        CROSS JOIN submission
-                        INNER JOIN submission_status_lu
-                                ON submission.submission_status_id = submission_status_lu.submission_status_id
-                        INNER JOIN upload
-                                ON submission.upload_id = upload.upload_id
-                             WHERE submission_status_lu.name = 'Active'
-                               AND NOT deliverable_lu.submission_type_id IS NULL
-                               AND upload.project_id = resource.project_id
-                               AND deliverable_lu.resource_role_id = resource.resource_role_id
-                               AND deliverable_lu.phase_type_id = project_phase.phase_type_id
-                               AND
+                        This is not used but is still needed for the Deliverable Management
+			component to initialize. It will error out in runtime if used by mistake.
                     </Value>
                 </Property>
                 <Property name="alias">
-                    <Property name="deliverable_id">
-                        <Value>deliverable_lu.deliverable_id</Value>
-                    </Property>
-                    <Property name="name">
-                        <Value>deliverable_lu.name</Value>
-                    </Property>
-                    <Property name="project_id">
-                        <Value>resource.project_id</Value>
-                    </Property>
-                    <Property name="phase_id">
-                        <Value>project_phase.project_phase_id</Value>
-                    </Property>
-                    <Property name="resource_id">
-                        <Value>resource.resource_id</Value>
-                    </Property>
-                    <Property name="required">
-                        <Value>deliverable_lu.required</Value>
-                    </Property>
-                    <Property name="submission_id">
-                        <Value>submission.submission_id</Value>
-                    </Property>
                 </Property>
             </Property>
 
@@ -4380,7 +4169,7 @@
                     <Value>27355736</Value>
                 </Property>
                 <Property name="IconSmall">
-                    <Value>transparentSm.gif</Value>
+                    <Value>pythonSm.gif</Value>
                 </Property>
                 <Property name="AltTextKey">
                     <Value>RootCatalog.Python</Value>
@@ -4394,7 +4183,7 @@
                     <Value>27355738</Value>
                 </Property>
                 <Property name="IconSmall">
-                    <Value>transparentSm.gif</Value>
+                    <Value>pythonCustomSm.gif</Value>
                 </Property>
                 <Property name="AltTextKey">
                     <Value>RootCatalog.CustomPython</Value>
@@ -4408,7 +4197,7 @@
                     <Value>27355740</Value>
                 </Property>
                 <Property name="IconSmall">
-                    <Value>transparentSm.gif</Value>
+                    <Value>otherCustomSm.gif</Value>
                 </Property>
                 <Property name="AltTextKey">
                     <Value>RootCatalog.CustomOther</Value>
@@ -4428,7 +4217,23 @@
                     <Value>icon_design.gif</Value>
                 </Property>
             </Property>
+             <Property name="Component Design">
+                <Property name="IconSmall">
+                    <Value>iconStatusSpecSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>icon_design.gif</Value>
+                </Property>
+            </Property>
             <Property name="Development">
+                <Property name="IconSmall">
+                    <Value>iconStatusDevSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>icon_development.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Component Development">
                 <Property name="IconSmall">
                     <Value>iconStatusDevSm.gif</Value>
                 </Property>
@@ -4478,10 +4283,10 @@
             </Property>
             <Property name="Specification">
                 <Property name="IconSmall">
-                    <Value>specificationSm.gif</Value>
+                    <Value>IconSpecSm.gif</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>specification.gif</Value>
+                    <Value>IconSpec.gif</Value>
                 </Property>
             </Property>
             <Property name="Architecture">
@@ -4558,10 +4363,18 @@
             </Property>
             <Property name="UI Prototype Competition">
                 <Property name="IconSmall">
-                    <Value>iconUIPrototypeCompetitionSm.png</Value>
+                    <Value>IconProtoSm.gif</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>iconUIPrototypeCompetition.png</Value>
+                    <Value>IconProto.gif</Value>
+                </Property>
+            </Property>
+            <Property name="UI Prototype">
+                <Property name="IconSmall">
+                    <Value>IconProtoSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconProto.gif</Value>
                 </Property>
             </Property>
             <Property name="Logos">
@@ -4582,18 +4395,26 @@
             </Property>
             <Property name="Conceptualization">
                 <Property name="IconSmall">
-                    <Value>conceptSm.gif</Value>
+                    <Value>IconConceptSm.gif</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>concept.gif</Value>
+                    <Value>IconConcept.gif</Value>
                 </Property>
             </Property>
             <Property name="RIA Build Competition">
                 <Property name="IconSmall">
-                    <Value>iconRIABuildCompetitionSm.png</Value>
+                    <Value>IconRIASm.gif</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>iconRIABuildCompetition.png</Value>
+                    <Value>IconRIA.gif</Value>
+                </Property>
+            </Property>
+            <Property name="RIA Build">
+                <Property name="IconSmall">
+                    <Value>IconRIASm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconRIA.gif</Value>
                 </Property>
             </Property>
             <Property name="RIA Component Competition">
@@ -4602,6 +4423,33 @@
                 </Property>
                 <Property name="Icon">
                     <Value>iconRIAComponentCompetition.png</Value>
+                </Property>
+            </Property>
+            <Property name="RIA Component">
+                <Property name="IconSmall">
+                    <Value>iconRIAComponentCompetitionSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconRIAComponentCompetition.png</Value>
+                </Property>
+            </Property>
+            <!-- Icons added for copilot posting -->
+            <Property name="Copilot Posting">
+                <Property name="IconSmall">
+                    <Value>iconCopilotPostingSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconCopilotPosting.png</Value>
+                </Property>
+            </Property>
+            
+            <!-- Icons added for content creation project type -->
+            <Property name="Content Creation">
+                <Property name="IconSmall">
+                    <Value>iconContentCreationSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconContentCreation.gif</Value>
                 </Property>
             </Property>
         </Property>
@@ -4639,6 +4487,36 @@
             </Property>
             <Property name="Studio">
                 <Value>https://software.topcoder.com/review/actions/ViewScorecard.do?method=viewScorecard&amp;scid=&lt;SCORECARD_ID&gt;</Value>
+            </Property>
+        </Property>
+
+        <Property name="DeliverableTypes">
+        	  <Property name="Any">
+                <Value>0</Value>
+            </Property>
+            <Property name="Screening Scorecard">
+                <Value>2</Value>
+            </Property>
+            <Property name="Review Scorecard">
+                <Value>4,5,6,7</Value>
+            </Property>
+            <Property name="Test Cases">
+                <Value>8,9,10</Value>
+            </Property>
+            <Property name="Appeal Responses">
+                <Value>11,12,13,14</Value>
+            </Property>
+            <Property name="Aggregation">
+                <Value>15</Value>
+            </Property>
+            <Property name="Final Fix">
+                <Value>20</Value>
+            </Property>
+            <Property name="Final Review">
+                <Value>22</Value>
+            </Property>
+            <Property name="Specification Review">
+                <Value>26</Value>
             </Property>
         </Property>
 
@@ -4743,9 +4621,7 @@
             <Property name="Edit Late Deliverable">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
-                <Value>Client Manager</Value>
                 <Value>Copilot</Value>
-                <Value>Cockpit Project User</Value>
             </Property>
             <Property name="Create Scorecard">
                 <Value>Global Manager</Value>
@@ -5519,9 +5395,6 @@
         </Property>
 
         <Property name="ContactManagerEmail">
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
             <Property name="EmailTemplateName">
                 <Value>&contactManagersTemplate;</Value>
             </Property>
@@ -5536,9 +5409,6 @@
                 <Value>https://software.topcoder.com/review/actions/EditLateDeliverable.do?method=editLateDeliverable&amp;late_deliverable_id=</Value>
             </Property>
             <Property name="ByManager">
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&lateDeliverableUpdatedByManagerTemplate;</Value>
                 </Property>
@@ -5546,13 +5416,15 @@
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
                 <Property name="EmailSubject">
-                    <Value>Late Deliverable Updated: {0} {1}</Value>
+                    <Value>Late Deliverable Resolved: {0} {1}</Value>
+                </Property>
+
+                <!--List of resource roles to be CCed on the notification email to the late member.-->
+                <Property name="Roles">
+                    <Value>Manager,Copilot</Value>
                 </Property>
             </Property>
             <Property name="ByMember">
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&lateDeliverableUpdatedByMemberTemplate;</Value>
                 </Property>
@@ -5560,10 +5432,12 @@
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
                 <Property name="EmailSubject">
-                    <Value>Late Deliverable Updated: {0} {1}</Value>
+                    <Value>Late Deliverable Explained: {0} {1}</Value>
                 </Property>
+
+                <!--List of resource roles to send email to.-->
                 <Property name="Roles">
-                    <Value></Value>
+                    <Value>Manager,Copilot</Value>
                 </Property>
             </Property>
         </Property>

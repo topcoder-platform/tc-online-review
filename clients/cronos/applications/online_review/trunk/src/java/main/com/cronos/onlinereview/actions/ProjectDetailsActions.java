@@ -809,11 +809,10 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Obtain an instance of Document Generator
         DocumentGenerator docGenerator = new DocumentGenerator();
-        docGenerator.setTemplateSource(ConfigHelper.getContactManagerEmailSrcType(), new FileTemplateSource());
+        docGenerator.setDefaultTemplateSource(new FileTemplateSource());
 
         // Get the template of email
-        Template docTemplate = docGenerator.getTemplate(
-                ConfigHelper.getContactManagerEmailSrcType(), ConfigHelper.getContactManagerEmailTemplate());
+        Template docTemplate = docGenerator.getTemplate(ConfigHelper.getContactManagerEmailTemplate());
 
         TemplateFields fields = docGenerator.getFields(docTemplate);
         Node[] nodes = fields.getNodes();
@@ -830,15 +829,15 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else if ("USER_HANDLE".equals(field.getName())) {
                     field.setValue(sender.getHandle());
                 } else if ("PROJECT_NAME".equals(field.getName())) {
-                    field.setValue("<![CDATA[" + project.getProperty("Project Name") + "]]>");
+                    field.setValue("" + project.getProperty("Project Name"));
                 } else if ("PROJECT_VERSION".equals(field.getName())) {
                     field.setValue("" + project.getProperty("Project Version"));
                 } else if ("QUESTION_TYPE".equals(field.getName())) {
                     field.setValue(request.getParameter("cat"));
                 } else if ("TEXT".equals(field.getName())) {
-                    field.setValue("<![CDATA[" + Functions.htmlEncode(request.getParameter("msg")) +"]]>");
+                    field.setValue(Functions.htmlEncode(request.getParameter("msg")));
                 } else if ("OR_LINK".equals(field.getName())) {
-                    field.setValue("<![CDATA[" + ConfigHelper.getProjectDetailsBaseURL() + project.getId() + "]]>");
+                    field.setValue(ConfigHelper.getProjectDetailsBaseURL() + project.getId());
                 } else if ("LIST_OF_ROLES".equals(field.getName())) {
                     StringBuilder roleList = new StringBuilder();
                     Resource[] myResources = (Resource[]) request.getAttribute("myResources");
