@@ -58,4 +58,10 @@
 	(<tc-webtag:handle coderId="${submitterId}" context="${orfn:getHandlerContext(pageContext.request)}" />)
 </c:if>
 <br />
+
+<c:if test="${not empty modificationDate}">
+	&#160;<b><bean:message key="editReview.ModificationDate" /></b>
+	<c:out value="${orfn:displayDate(pageContext.request, modificationDate)}"/><br />
+</c:if>
+
 &#160;<b><bean:message key="editReview.MyRole" /></b> ${myRole}<br />
