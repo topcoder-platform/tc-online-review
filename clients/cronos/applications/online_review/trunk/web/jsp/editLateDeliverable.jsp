@@ -115,7 +115,15 @@
                                 <bean:message key="editLateDeliverable.Deadline.label"/>
                             </td>
                             <td nowrap="nowrap" class="value">
-                                <c:out value="${orfn:displayDate(pageContext.request, lateDeliverable.deadline)}"/>
+                                <c:choose>
+                                    <c:when test="${lateDeliverable.compensatedDeadline ne null}">
+                                        <c:out value="${orfn:displayDate(pageContext.request, lateDeliverable.compensatedDeadline)}"/>
+                                        (compensated due to the premature end of the previous phase)
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:out value="${orfn:displayDate(pageContext.request, lateDeliverable.deadline)}"/>
+                                    </c:otherwise>
+                                </c:choose>
                             </td>
                         </tr>
                         <tr class="dark">
