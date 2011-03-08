@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2011 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -2700,9 +2700,12 @@ public class ProjectReviewActions extends DispatchAction {
         if (isSubmissionDependentPhase) {
             ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());
         }
-        if (verification.getReview() != null) {
+        
+        Review review = verification.getReview();
+        if (review != null) {
             // Retrieve the information about the review author and place it into the request
-            retrieveAndStoreReviewAuthorInfo(request, verification.getReview());
+            retrieveAndStoreReviewAuthorInfo(request, review);
+            request.setAttribute("modificationDate", review.getModificationTimestamp());
         }
         // Place Scorecard template in the request
         request.setAttribute("scorecardTemplate", scorecardTemplate);
