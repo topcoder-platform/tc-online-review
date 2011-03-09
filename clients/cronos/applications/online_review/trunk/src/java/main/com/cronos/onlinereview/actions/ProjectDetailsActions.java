@@ -355,6 +355,24 @@ public class ProjectDetailsActions extends DispatchAction {
         // Place an information about my payment status into the request
         request.setAttribute("wasPaid", ActionsHelper.getMyPaymentStatuses(myResources));
 
+        // Retrieve late records for the current user.
+        LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager(request);
+        if (myResources.length > 0) {
+            List<Filter> filters = new ArrayList<Filter>();
+
+            filters.add(LateDeliverableFilterBuilder.createProjectIdFilter(projectId));
+            filters.add(LateDeliverableFilterBuilder.createForgivenFilter(false));
+            filters.add(LateDeliverableFilterBuilder.createUserHandleFilter((String) myResources[0].getProperty("Handle")));
+
+            List<LateDeliverable> lateDeliverables = lateDeliverableManager.searchAllLateDeliverables(new AndFilter(filters));
+            long delay = 0;
+            for(LateDeliverable lateDeliverable : lateDeliverables) {
+                delay += lateDeliverable.getDelay() != null ? lateDeliverable.getDelay() : 0;
+            }
+            request.setAttribute("myDelay", delay);
+        }
+
+
         // Obtain an instance of Resource Manager
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Get an array of all resources for the project
@@ -434,7 +452,6 @@ public class ProjectDetailsActions extends DispatchAction {
             filters.add(LateDeliverableFilterBuilder.createHasResponseFilter(false));
             filters.add(LateDeliverableFilterBuilder.createForgivenFilter(false));
 
-            LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager(request);
             List<LateDeliverable> lateDeliverables = lateDeliverableManager.searchAllLateDeliverables(new AndFilter(filters));
             if (lateDeliverables.size() > 0) {
                 request.setAttribute("unrespondedLateDeliverables", (Boolean)true);
