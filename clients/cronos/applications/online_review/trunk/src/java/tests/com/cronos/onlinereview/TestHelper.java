@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Calendar;
 
 /**
  * The Helper class for test.
@@ -158,6 +159,11 @@ public class TestHelper {
      * <p>Represents date format to use in project name.</p>
      */
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(" MMM-dd-yyyy 'at' HH'h' mm'm' ss's'");
+    
+    /**
+     * <p>Represents date format to use when performing database manipulations.
+     */
+    private static final SimpleDateFormat DB_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     
     /**
      * <p>
@@ -504,6 +510,8 @@ public class TestHelper {
      * @throws Exception if any error occurred. 
      */
     static void createProjectPhases (long projectId, Map<String, Long> phaseIds, Connection con) throws Exception {
+    	Calendar submissionEndTime = Calendar.getInstance();
+    	submissionEndTime.add(Calendar.HOUR, 168);
     	// insert project phases.
         executeStatement(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
@@ -520,7 +528,7 @@ public class TestHelper {
         executeStatement(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("submission") + ", " + projectId +
-            ", '2', '1', NULL, CURRENT, CURRENT+7 UNITS day, NULL, NULL, '604800000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+            ", '2', '1', NULL, '"+ DB_DATE_FORMAT.format(new Date())+"', '" + DB_DATE_FORMAT.format(submissionEndTime.getTime())+"' , NULL, NULL, '604800000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
         executeStatement(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("screening") + ", " + projectId +
