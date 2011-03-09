@@ -5439,13 +5439,11 @@
                 <Value>Primary Screener</Value>
                 <Value>Reviewer</Value>
                 <Value>Specification Reviewer</Value>
-                <Value>Specification Submitter</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
-                <Value>Approver</Value>
                 <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
             </Property>
