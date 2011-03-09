@@ -73,7 +73,9 @@
                             </c:if>
                         </tr>
                     </c:forEach>
-                    <tr><td class="value" colspan=3><hr/></td></tr>
+                    <c:if test="${isAllowedToViewPayment or ((myDelay ne null) and (myDelay>0))}">
+                        <tr><td class="value" colspan=3><hr/></td></tr>
+                    </c:if>
                     <c:if test="${isAllowedToViewPayment}">
                         <tr>
                             <th class="value roleHeader"><bean:message key="viewProjectDetails.TotalPayment"/></th>
