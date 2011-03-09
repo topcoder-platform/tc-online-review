@@ -19,7 +19,7 @@
 	<table class="stat" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;"
            id="myRolesTable">
 		<tr>
-			<td class="title"><bean:message key="viewProjectDetails.box.MyRoleAndPayments" /></td>
+			<td class="title"><bean:message key="viewProjectDetails.box.MyInfo" /></td>
 			<c:if test="${empty myDeliverables}">
 				<td class="title"><!-- @ --></td>
 			</c:if>
@@ -73,11 +73,19 @@
                             </c:if>
                         </tr>
                     </c:forEach>
+                    <tr><td class="value" colspan=3><hr/></td></tr>
                     <c:if test="${isAllowedToViewPayment}">
                         <tr>
-                            <th class="value"><bean:message key="viewProjectDetails.TotalPayment"/></th>
-                            <td class="value">${"$"}${orfn:displayPaymentAmt(pageContext.request, requestScope.totalPayment)}</td>
-                            <td class="value">&nbsp;</td>
+                            <th class="value roleHeader"><bean:message key="viewProjectDetails.TotalPayment"/></th>
+                            <td class="value" colspan=2>
+                                ${"$"}${orfn:displayPaymentAmt(pageContext.request, requestScope.totalPayment)}
+                            </td>
+                        </tr>
+                    </c:if>
+                    <c:if test="${(myDelay ne null) and (myDelay>0)}">
+                        <tr>
+                            <th class="value roleHeader"><bean:message key="viewProjectDetails.TotalDelay"/></th>
+                            <td class="value" colspan=2><c:out value="${orfn:displayDelay(myDelay)}"/></td>
                         </tr>
                     </c:if>
                 </table>
