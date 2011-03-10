@@ -510,61 +510,100 @@ public class TestHelper {
      * @throws Exception if any error occurred. 
      */
     static void createProjectPhases (long projectId, Map<String, Long> phaseIds, Connection con) throws Exception {
-    	Calendar submissionEndTime = Calendar.getInstance();
-    	submissionEndTime.add(Calendar.HOUR, 168);
+    	Calendar specSubmissionStartTime = Calendar.getInstance();
+    	specSubmissionStartTime.add(Calendar.HOUR, -48);
+    	
+    	Calendar specReviewStartTime = Calendar.getInstance();
+    	specReviewStartTime.add(Calendar.HOUR, -24);
+    	
+    	Calendar registrationStartTime = Calendar.getInstance();
+    	
+    	Calendar registrationEndTime = Calendar.getInstance();
+    	registrationEndTime.add(Calendar.HOUR, 48);
+    	
+    	Calendar screeningStartTime = Calendar.getInstance();
+    	screeningStartTime.add(Calendar.HOUR, 168);
+    	
+    	Calendar reviewStartTime = Calendar.getInstance();
+    	reviewStartTime.add(Calendar.HOUR, 192);
+    	
+    	Calendar appealsStartTime = Calendar.getInstance();
+    	appealsStartTime.add(Calendar.HOUR, 336);
+    	
+    	Calendar appealsResponseStartTime = Calendar.getInstance();
+    	appealsResponseStartTime.add(Calendar.HOUR, 360);
+    	
+    	Calendar aggregationStartTime = Calendar.getInstance();
+    	aggregationStartTime.add(Calendar.HOUR, 384);
+    	
+    	Calendar aggregationReviewStartTime = Calendar.getInstance();
+    	aggregationReviewStartTime.add(Calendar.HOUR, 408);
+    	
+    	Calendar finalFixesStartTime = Calendar.getInstance();
+    	finalFixesStartTime.add(Calendar.HOUR, 432);
+    	
+    	Calendar finalReviewStartTime = Calendar.getInstance();
+    	finalReviewStartTime.add(Calendar.HOUR, 528);
+    	
+    	Calendar approvalStartTime = Calendar.getInstance();
+    	approvalStartTime.add(Calendar.HOUR, 552);
+    	
+    	Calendar approvalEndTime = Calendar.getInstance();
+    	approvalEndTime.add(Calendar.HOUR, 576);
+    	
     	// insert project phases.
         executeStatement(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("spec_submission") + ", " + projectId +
-            ", '13', '1', CURRENT-2 UNITS day, CURRENT-2 UNITS day, CURRENT-1 UNITS day, NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+            ", '13', '1', '"+ DB_DATE_FORMAT.format(specSubmissionStartTime.getTime()) + "', '" + DB_DATE_FORMAT.format(specSubmissionStartTime.getTime())+"', '" + DB_DATE_FORMAT.format(specReviewStartTime.getTime())+"',  NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
         executeStatement(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("spec_review") + ", " + projectId +
-            ", '14', '1', NULL, CURRENT-1 UNITS day, CURRENT, NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+            ", '14', '1', NULL, '"+ DB_DATE_FORMAT.format(specReviewStartTime.getTime())+"', '" + DB_DATE_FORMAT.format(registrationStartTime.getTime())+"', NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
         executeStatement(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("registration")+ ", " + projectId +
-            ", '1', '1', NULL, CURRENT, CURRENT+2 UNITS day, NULL, NULL, '172800000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+            ", '1', '1', NULL, '"+ DB_DATE_FORMAT.format(registrationStartTime.getTime())+"', '" + DB_DATE_FORMAT.format(registrationEndTime.getTime())+"', NULL, NULL, '172800000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
         executeStatement(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("submission") + ", " + projectId +
-            ", '2', '1', NULL, '"+ DB_DATE_FORMAT.format(new Date())+"', '" + DB_DATE_FORMAT.format(submissionEndTime.getTime())+"' , NULL, NULL, '604800000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+            ", '2', '1', NULL, '"+ DB_DATE_FORMAT.format(registrationStartTime.getTime())+"', '" + DB_DATE_FORMAT.format(screeningStartTime.getTime())+"' , NULL, NULL, '604800000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
         executeStatement(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("screening") + ", " + projectId +
-            ", '3', '1', NULL, CURRENT+7 UNITS day, CURRENT+8 UNITS day, NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+            ", '3', '1', NULL, '"+ DB_DATE_FORMAT.format(screeningStartTime.getTime())+"', '" + DB_DATE_FORMAT.format(reviewStartTime.getTime())+"', NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
         executeStatement(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("review") + ", " + projectId +
-            ", '4', '1', NULL, CURRENT+8 UNITS day, CURRENT+14 UNITS day, NULL, NULL, '518400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+            ", '4', '1', NULL, '"+ DB_DATE_FORMAT.format(reviewStartTime.getTime())+"', '" + DB_DATE_FORMAT.format(appealsStartTime.getTime())+"', NULL, NULL, '518400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
         executeStatement(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("appeals") + ", " + projectId +
-            ", '5', '1', NULL, CURRENT+14 UNITS day, CURRENT+15 UNITS day, NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+            ", '5', '1', NULL, '"+ DB_DATE_FORMAT.format(appealsStartTime.getTime())+"', '" + DB_DATE_FORMAT.format(appealsResponseStartTime.getTime())+"', NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
         executeStatement(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("appeals_response") + ", " + projectId +
-            ", '6', '1', NULL, CURRENT+15 UNITS day, CURRENT+16 UNITS day, NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+            ", '6', '1', NULL, '"+ DB_DATE_FORMAT.format(appealsResponseStartTime.getTime())+"', '" + DB_DATE_FORMAT.format(aggregationStartTime.getTime())+"', NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
         executeStatement(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("aggregation") + ", " + projectId +
-            ", '7', '1', NULL, CURRENT+16 UNITS day, CURRENT+17 UNITS day, NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+            ", '7', '1', NULL, '"+ DB_DATE_FORMAT.format(aggregationStartTime.getTime())+"', '" + DB_DATE_FORMAT.format(aggregationReviewStartTime.getTime())+"', NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
         executeStatement(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("aggregation_review") + ", " + projectId +
-            ", '8', '1', NULL, CURRENT+17 UNITS day, CURRENT+18 UNITS day, NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+            ", '8', '1', NULL, '"+ DB_DATE_FORMAT.format(aggregationReviewStartTime.getTime())+"', '" + DB_DATE_FORMAT.format(finalFixesStartTime.getTime())+"', NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
         executeStatement(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("final_fix") + ", " + projectId +
-            ", '9', '1', NULL, CURRENT+18 UNITS day, CURRENT+22 UNITS day, NULL, NULL, '345600000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+            ", '9', '1', NULL, '"+ DB_DATE_FORMAT.format(finalFixesStartTime.getTime())+"', '" + DB_DATE_FORMAT.format(finalReviewStartTime.getTime())+"', NULL, NULL, '345600000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
         executeStatement(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("final_review") + ", " + projectId +
-            ", '10', '1', NULL, CURRENT+22 UNITS day, CURRENT+23 UNITS day, NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+            ", '10', '1', NULL, '"+ DB_DATE_FORMAT.format(finalReviewStartTime.getTime())+"', '" + DB_DATE_FORMAT.format(approvalStartTime.getTime())+"', NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
         executeStatement(con,
 	        "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
 	        phaseIds.get("approval") + ", " + projectId +
-	        ", '11', '1', NULL, CURRENT+23 UNITS day, CURRENT+24 UNITS day, NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+	        ", '11', '1', NULL, '"+ DB_DATE_FORMAT.format(approvalStartTime.getTime())+"', '" + DB_DATE_FORMAT.format(approvalEndTime.getTime())+"', NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
     }
     
     /**
