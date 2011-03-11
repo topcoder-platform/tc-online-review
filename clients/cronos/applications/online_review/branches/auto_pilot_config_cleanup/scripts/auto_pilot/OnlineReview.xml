@@ -8,6 +8,7 @@
        <!ENTITY pactJNDIAddress "@pactJNDIAddress@">
 ]>
 <CMConfig>
+   <!-- REQUIRED -->
    <Config name="com.topcoder.util.log">
         <Property name="logClass">
             <Value>com.topcoder.util.log.log4j.Log4jLog</Value>
@@ -19,6 +20,7 @@
     <!--
         ==========  Configuration for DB Connection Factory component ==========
     -->
+    <!-- REQUIRED -->
     <Config name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
         <Property name="connections">
             <Property name="default">
@@ -49,6 +51,7 @@
     <!--
         =============== Configuration for Email Engine component ===============
     -->
+    <!-- REQUIED -->
     <Config name="com.topcoder.message.email.EmailEngine">
         <Property name="smtp_host_addr">
             <Value>@emailengine_smtp_host@</Value>
@@ -68,6 +71,7 @@
     <!--
         ========== Configuration for Review Score Calculator component ==========
     -->
+    <!-- REQUIRED-->
     <Config name="com.topcoder.management.review.scorecalculator.CalculationManager">
         <Property name="use_caching">
             <Value>false</Value>
@@ -169,6 +173,7 @@
     </Config>
 
     <!-- Configuration for binary calculator -->
+    <!-- REQUIRED-->
     <Config name="com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator">
         <Property name="positive_answer">
             <Value>1</Value>
@@ -178,38 +183,45 @@
         </Property>
     </Config>
 
+    <!-- REQUIRED-->
     <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale4">
         <Property name="default_scale">
             <Value>4</Value>
         </Property>
     </Config>
-
+  
+    <!-- REQUIRED-->
     <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale10">
         <Property name="default_scale">
             <Value>10</Value>
         </Property>
     </Config>
 
+    <!-- REQUIRED-->
     <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale3">
         <Property name="default_scale">
             <Value>3</Value>
         </Property>
     </Config>
-
+  
+    <!-- REQUIRED-->
     <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale9">
         <Property name="default_scale">
             <Value>9</Value>
         </Property>
     </Config>
 
+    <!-- REQUIRED-->
     <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale0_4">
         <Property name="default_scale">
             <Value>4</Value>
         </Property>
     </Config>
+  
     <!--
         =============== Configuration for Workdays component ===============
     -->
+    <!-- TODO -->
     <Config name="com.topcoder.date.workdays">
         <Property name="file_name">
             <Value>com/topcoder/date/workdays/defaultWorkdaysFactory.properties</Value>
@@ -223,6 +235,7 @@
     <!--
         ========== Configuration for Online Review Phases component ==========
     -->
+    <!-- REUIQRED -->
     <Config name="com.cronos.onlinereview.phases.ManagerHelper">
         <Property name="ProjectDetailsURL">
             <Value>https://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
@@ -1901,6 +1914,7 @@
     <!--
         ==========  Configuration for Project Management component  ==========
     -->
+    <!-- REQUIRED -->
     <Config name="com.topcoder.management.project">
         <Property name="SearchBuilderNamespace">
             <Value>com.topcoder.searchbuilder.common</Value>
@@ -3247,5 +3261,47 @@
             <Value>&pactJNDIAddress;</Value>
         </Property>
     </Config>
-    
+
+  <!--
+        =====  Configuration for the Online Review Application itself  =====
+    -->
+  <Config name="com.cronos.OnlineReview">
+    <Property name="SVNPermissionGrantResourceRoles">
+      <Value>1</Value>
+      <!-- Submitter -->
+      <Value>4</Value>
+      <!-- Reviewer -->
+      <Value>5</Value>
+      <!-- Accuracy Reviewer -->
+      <Value>6</Value>
+      <!-- Failure Reviewer -->
+      <Value>7</Value>
+      <!-- Stress Reviewer -->
+      <Value>9</Value>
+      <!-- Final Reviewer -->
+    </Property>
+
+    <Property name="SVNConfig">
+      <Property name="Root">
+        <Value>@svn.root@</Value>
+      </Property>
+      <Property name="AuthUsername">
+        <Value>@svn.username@</Value>
+      </Property>
+      <Property name="AuthPassword">
+        <Value>@svn.password@</Value>
+      </Property>
+      <Property name="MkDirCommitMessage">
+        <Value>@svn.mkdir.commit.message@</Value>
+      </Property>
+      <Property name="TempFilesBaseDir">
+        <Value>@svn.temp.files.basedir@</Value>
+      </Property>
+      <Property name="PathBasedPermissionsFileURL">
+        <Value>@svn.authz.file.url@</Value>
+      </Property>
+    </Property>
+  </Config>
+
+
 </CMConfig>

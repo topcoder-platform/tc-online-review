@@ -298,7 +298,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/tcs/online_review_upload_services/1.0/online_review_upload_services.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/activation.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/axis_dok.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/commons-discovery-0.2.jar"/>
@@ -314,7 +313,6 @@
 	<classpathentry kind="lib" path="lib/third_party/jivebase.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/jiveforums.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/base_exception/2.0.0/base_exception.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/document_generator/2.1/document_generator.jar"/>
 	<classpathentry kind="lib" path="lib/shared/tcwebcommon.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/distribution_tool/1.0.1/distribution_tool.jar"/>
 	<classpathentry kind="lib" path="lib/shared/forums.jar"/>
@@ -354,12 +352,14 @@
 	<classpathentry kind="lib" path="lib/tcs/contest_eligibility_validation/1.0.1/contest_eligibility_validation.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/db_connection_factory/1.1.0/db_connection_factory.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/auto_pilot/1.1/auto_pilot.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.4.5/online_review_phases.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/workdays/1.1.0/workdays.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/late_deliverables_management/1.0.1/late_deliverables_management.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/tcs/email_engine/3.2.0/email_engine.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/online_review_login/1.1.4/online_review_login.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/svnkit/svnkit.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/document_generator/3.1.1/document_generator.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/late_deliverables_management/1.0.4/late_deliverables_management.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.4.6/online_review_phases.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/online_review_upload_services/1.1.1/online_review_upload_services.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
