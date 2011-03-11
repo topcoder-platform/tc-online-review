@@ -1,19 +1,11 @@
 <?xml version="1.0" ?>
 <!DOCTYPE CMConfig [
-       <!ENTITY localFileUploadDir "@localFileUploadDir@">
-       <!ENTITY catalogOutputDir "@catalogOutputDir@">
-       <!ENTITY distributionToolOutputDir "@distributionToolOutputDir@">
-       <!ENTITY distributionScriptsBase "@distributionScriptsBase@">
        <!ENTITY phasesEmailTemplate "@exttemplatesdir@/email_template.txt">
        <!ENTITY winnersEmailTemplate "@exttemplatesdir@/winners_email_template.txt">
-       <!ENTITY timelineTemplateDir "@exttemplatesdir@">
-       <!ENTITY contactManagersTemplate "@exttemplatesdir@/contact_manager_template.txt">
        <!ENTITY managerNotificationEmailTemplatesBase "@exttemplatesdir@">
        <!ENTITY notificationEmailFromAddress "do_not_reply@topcoder.com">
        <!ENTITY smtpServerAuthAddress "@emailengine_smtp_user@">
        <!ENTITY pactJNDIAddress "@pactJNDIAddress@">
-       <!ENTITY lateDeliverableUpdatedByManagerTemplate "@exttemplatesdir@/late_deliverable_updated_by_manager_template.txt">
-       <!ENTITY lateDeliverableUpdatedByMemberTemplate "@exttemplatesdir@/late_deliverable_updated_by_member_template.txt">
 ]>
 <CMConfig>
    <Config name="com.topcoder.util.log">
@@ -3255,101 +3247,5 @@
             <Value>&pactJNDIAddress;</Value>
         </Property>
     </Config>
-
-    <!--
-        Configuration for the Online Web services component.
-     -->
-    <Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices">
-        <Property name="objectFactoryNamespace">
-            <Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices.ObjectFactory</Value>
-        </Property>
-        <Property name="managersProviderIdentifier">
-            <Value>managersProvider</Value>
-        </Property>
-    </Config>
-
-    <Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadExternalServices">
-        <Property name="objectFactoryNamespace">
-            <Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices.ObjectFactory</Value>
-        </Property>
-        <Property name="uploadServicesIdentifier">
-            <Value>uploadServices</Value>
-        </Property>
-        <!-- file name should have "_" in it. -->
-        <Property name="filenamePattern">
-            <Value>submission_{0}_{1}</Value>
-        </Property>
-        <!-- Needs to be updated correctly -->
-        <Property name="fileStorageLocation">
-            <Value>&localFileUploadDir;</Value>
-        </Property>
-    </Config>
-
-    <Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices.ObjectFactory">
-        <Property name="managersProvider">
-            <Property name="type">
-                <Value>com.cronos.onlinereview.actions.ManagerCreationHelper</Value>
-            </Property>
-        </Property>
-        <Property name="uploadServices">
-            <Property name="type">
-                <Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices</Value>
-            </Property>
-            <Property name="params">
-                <Property name="param1">
-                    <Property name="type">
-                        <Value>String</Value>
-                    </Property>
-                    <Property name="value">
-                        <Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices</Value>
-                    </Property>
-                </Property>
-            </Property>
-        </Property>
-    </Config>
     
-    <!-- Configuration for Distribution Tool -->
-    <Config name="com.topcoder.util.distribution.DistributionTool">
-        <!-- Distribution tool depends on Logging Wrapper 2.0, so disable logging -->
-        <!-- 
-        <Property name="logger_name">
-            <Value>com.topcoder.util.distribution.DistributionTool</Value>
-        </Property>
-         -->
-        <Property name="object_factory_config">
-            <!-- Put Object Factory configuration here -->
-            <Property name="type">
-                <Value>com.topcoder.util.distribution.parsers.DistributionScriptParserImpl</Value>
-            </Property>
-        </Property>
-        <Property name="script_parser_key">
-            <Value>com.topcoder.util.distribution.parsers.DistributionScriptParserImpl</Value>
-        </Property>
-        <Property name="scripts">
-            <Property name="script_java">
-                <Property name="distribution_type">
-                    <Value>java</Value>
-                </Property>
-                <Property name="script_path">
-                    <Value>&distributionScriptsBase;/java/script.txt</Value>
-                </Property>
-            </Property>
-            <Property name="script_dotnet">
-                <Property name="distribution_type">
-                    <Value>dotnet</Value>
-                </Property>
-                <Property name="script_path">
-                    <Value>&distributionScriptsBase;/dotnet/script.txt</Value>
-                </Property>
-            </Property>
-            <Property name="script_other">
-                <Property name="distribution_type">
-                    <Value>other</Value>
-                </Property>
-                <Property name="script_path">
-                    <Value>&distributionScriptsBase;/other/script.txt</Value>
-                </Property>
-            </Property>
-        </Property>
-    </Config>
 </CMConfig>
