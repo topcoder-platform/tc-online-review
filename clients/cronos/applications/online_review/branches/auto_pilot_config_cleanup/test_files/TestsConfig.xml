@@ -1,0 +1,89 @@
+<?xml version="1.0" ?>
+<CMConfig>
+    <Config name="com.cronos.onlinereview">
+        <Property name="domain">
+    	    <Value>@tests.seleniumdomain@</Value>
+        </Property>
+	      <Property name="browser">
+	    	  <Value>@tests.seleniumbrowser@</Value><!-- you can use *iexplore here for testing using IE-->
+	      </Property>
+        <Property name="port"><!-- The selenium listening port. -->
+            <Value>@tests.seleniumport@</Value>
+        </Property>
+        <Property name="project_link">
+          <Value>/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
+        </Property>
+        <Property name="review_link">
+          <Value>/actions/ViewReview.do?method=viewReview&amp;rid=</Value>
+        </Property>
+        <Property name="base_url">
+            <Value>@tests.baseurl@</Value>
+        </Property>        
+        <Property name="timeout"><!-- the timeout for the page loading -->
+            <Value>@tests.timeout@</Value>
+        </Property>
+        <Property name="browser_speed"><!-- browser speed when running tests -->
+            <Value>@tests.browserspeed@</Value>
+        </Property> 
+       <Property name="username">
+            <Value>@tests.username@</Value>
+        </Property>
+        <Property name="password">
+            <Value>@tests.password@</Value>
+        </Property>
+        <Property name="upload_file_path"> <!-- Tupload file path for testing -->
+            <Value>file:///@tests.filespath@/upload_file.txt</Value>
+        </Property>
+        <Property name="distribution_location"> <!-- The development distribution for upload features -->
+            <Value>file:///@tests.filespath@/Test_Distribution.jar</Value>
+        </Property>
+        <Property name="rs">
+            <Value>file:///@tests.filespath@/RS.doc</Value>
+        </Property>
+        <Property name="doc1">
+          <Value>file:///@tests.filespath@/doc1.doc</Value>
+        </Property>
+        <Property name="doc2">
+          <Value>file:///@tests.filespath@/doc2.doc</Value>
+        </Property>
+        <Property name="doc3">
+          <Value>file:///@tests.filespath@/doc3.doc</Value>
+        </Property>
+        <Property name="competitor_username">
+          <Value>@tests.competitorusername@</Value>
+        </Property>
+        <Property name="competitor_password">
+          <Value>@tests.competitoruserpassword@</Value>
+        </Property>
+      <Property name="competitor_user_id">
+        <Value>@tests.competitoruserid@</Value>
+      </Property>
+    </Config>
+    <!-- Namespace for DBConnectionFactory component -->
+    <Config name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+        <Property name="connections">
+            <Property name="default">
+                <Value>informix_connection</Value>
+            </Property>
+            <Property name="informix_connection">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>@database.username@</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>@database.password@</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+</CMConfig>

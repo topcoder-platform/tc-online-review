@@ -1,0 +1,505 @@
+<?xml version="1.0"?>
+<CMConfig>
+    <Config name="com.topcoder.management.deliverable.latetracker.utility.LateDeliverablesTrackingUtility">
+        <Property name="loggerName">
+            <Value>LDTLogger</Value>
+        </Property>
+        <Property name="schedulerConfig">
+            <Property name="lateDeliverablesTrackingJob">
+                <Property name="StartDate">
+                    <Value>Sep 13, 2010 05:00:00 AM</Value>
+                </Property>
+                <Property name="StartTime">
+                    <Value>1000</Value>
+                </Property>
+                <Property name="EndDate">
+                    <Value>Sep 25, 2020 05:00:00 AM</Value>
+                </Property>
+                <Property name="JobType">
+                    <Value>JOB_TYPE_JAVA_CLASS</Value>
+                </Property>
+                <Property name="JobCommand">
+                    <Value>com.topcoder.management.deliverable.latetracker.LateDeliverablesTrackingJobRunner</Value>
+                </Property>
+                <Property name="Active">
+                    <Value>True</Value>
+                </Property>
+                <Property name="ModificationDate">
+                    <Value>Sep 20, 2010 05:00:00 AM</Value>
+                </Property>
+                <Property name="Recurrence">
+                    <Value>10000000</Value>
+                </Property>
+                <Property name="Interval">
+                    <Property name="Value">
+                        <Value>20</Value>
+                    </Property>
+                    <Property name="Unit">
+                        <Property name="Type">
+                            <Value>com.topcoder.util.scheduler.scheduling.Second</Value>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="jobName">
+            <Value>lateDeliverablesTrackingJob</Value>
+        </Property>
+
+        <Property name="jobConfig">
+            <Property name="loggerName">
+                <Value>LDTLogger</Value>
+            </Property>
+
+            <Property name="objectFactoryConfig">
+                <property name="lateDeliverablesRetriever">
+                    <property name="type">
+                        <value>com.topcoder.management.deliverable.latetracker.retrievers.LateDeliverablesRetrieverImpl</value>
+                    </property>
+                </property>
+                <property name="lateDeliverableProcessor">
+                    <property name="type">
+                        <value>com.topcoder.management.deliverable.latetracker.processors.LateDeliverableProcessorImpl</value>
+                    </property>
+                </property>
+            </Property>
+            <Property name="lateDeliverableProcessorKey">
+                <Value>lateDeliverableProcessor</Value>
+            </Property>
+
+            <Property name="lateDeliverablesRetrieverKey">
+                <Value>lateDeliverablesRetriever</Value>
+            </Property>
+
+            <Property name="lateDeliverablesRetrieverConfig">
+                <Property name="loggerName">
+                    <Value>LDTLogger</Value>
+                </Property>
+                <Property name="resourceManagerKey">
+                    <Value>resourceManager</Value>
+                </Property>
+                <Property name="trackingDeliverableIds">
+                    <Value>@tracked_deliverable_ids@</Value>
+                </Property>
+                <Property name="objectFactoryConfig">
+                    <property name="resourceManager">
+                        <property name="type">
+                            <value>com.topcoder.management.resource.persistence.PersistenceResourceManager</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="name">
+                                    <Value>ResourcePersistence</Value>
+                                </Property>
+                            </Property>
+                            <Property name="param2">
+                                <Property name="name">
+                                    <Value>SearchBundleManager</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="ResourcePersistence">
+                        <property name="type">
+                            <value>com.topcoder.management.resource.persistence.sql.SqlResourcePersistence</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="name">
+                                    <Value>DBConnectionFactory</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="SearchBundleManager">
+                        <property name="type">
+                            <value>com.topcoder.search.builder.SearchBundleManager</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="type">
+                                    <Value>String</Value>
+                                </Property>
+                                <Property name="value">
+                                    <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="projectManager">
+                        <property name="type">
+                            <value>com.topcoder.management.project.ProjectManagerImpl</value>
+                        </property>
+                    </property>
+                    <property name="phaseManager">
+                        <property name="type">
+                            <value>com.topcoder.management.phase.DefaultPhaseManager</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="type">
+                                    <Value>String</Value>
+                                </Property>
+                                <Property name="value">
+                                    <Value>com.topcoder.management.phase.DefaultPhaseManager</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="deliverablePersistence">
+                        <property name="type">
+                            <value>com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersistence</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="name">
+                                    <Value>DBConnectionFactory</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="DBConnectionFactory">
+                        <property name="type">
+                            <value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="type">
+                                    <Value>String</Value>
+                                </Property>
+                                <Property name="value">
+                                    <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="screeningDeliverableChecker">
+                        <property name="type">
+                            <value>com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="name">
+                                    <Value>DBConnectionFactory</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="reviewDeliverableChecker">
+                        <property name="type">
+                            <value>com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="name">
+                                    <Value>DBConnectionFactory</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="specReviewDeliverableChecker">
+                        <property name="type">
+                            <value>com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="name">
+                                    <Value>DBConnectionFactory</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="testCaseDeliverableChecker">
+                        <property name="type">
+                            <value>com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="name">
+                                    <Value>DBConnectionFactory</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="aggregationDeliverableChecker">
+                        <property name="type">
+                            <value>com.cronos.onlinereview.deliverables.AggregationDeliverableChecker</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="name">
+                                    <Value>DBConnectionFactory</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="appealResponsesDeliverableChecker">
+                        <property name="type">
+                            <value>com.cronos.onlinereview.deliverables.AppealResponsesDeliverableChecker</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="name">
+                                    <Value>DBConnectionFactory</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="finalFixDeliverableChecker">
+                        <property name="type">
+                            <value>com.cronos.onlinereview.deliverables.FinalFixesDeliverableChecker</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="name">
+                                    <Value>DBConnectionFactory</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="finalReviewDeliverableChecker">
+                        <property name="type">
+                            <value>com.cronos.onlinereview.deliverables.FinalReviewDeliverableChecker</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="name">
+                                    <Value>DBConnectionFactory</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                </Property>
+                <Property name="projectManagerKey">
+                    <Value>projectManager</Value>
+                </Property>
+                <Property name="phaseManagerKey">
+                    <Value>phaseManager</Value>
+                </Property>
+                <Property name="deliverablePersistenceKey">
+                    <Value>deliverablePersistence</Value>
+                </Property>
+                <Property name="deliverableChecker1">
+                    <Property name="deliverableName">
+                        <Value>Primary Screening Scorecard</Value>
+                    </Property>
+                    <Property name="deliverableCheckerKey">
+                        <Value>screeningDeliverableChecker</Value>
+                    </Property>
+                </Property>
+                <Property name="deliverableChecker2">
+                    <Property name="deliverableName">
+                        <Value>Review Scorecard</Value>
+                    </Property>
+                    <Property name="deliverableCheckerKey">
+                        <Value>reviewDeliverableChecker</Value>
+                    </Property>
+                </Property>
+                <Property name="deliverableChecker3">
+                    <Property name="deliverableName">
+                        <Value>Accuracy Test Cases</Value>
+                    </Property>
+                    <Property name="deliverableCheckerKey">
+                        <Value>testCaseDeliverableChecker</Value>
+                    </Property>
+                </Property>
+                <Property name="deliverableChecker4">
+                    <Property name="deliverableName">
+                        <Value>Aggregation</Value>
+                    </Property>
+                    <Property name="deliverableCheckerKey">
+                        <Value>aggregationDeliverableChecker</Value>
+                    </Property>
+                </Property>
+                <Property name="deliverableChecker5">
+                    <Property name="deliverableName">
+                        <Value>Appeal Responses</Value>
+                    </Property>
+                    <Property name="deliverableCheckerKey">
+                        <Value>appealResponsesDeliverableChecker</Value>
+                    </Property>
+                </Property>
+                <Property name="deliverableChecker6">
+                    <Property name="deliverableName">
+                        <Value>Failure Test Cases</Value>
+                    </Property>
+                    <Property name="deliverableCheckerKey">
+                        <Value>testCaseDeliverableChecker</Value>
+                    </Property>
+                </Property>
+                <Property name="deliverableChecker7">
+                    <Property name="deliverableName">
+                        <Value>Final Fix</Value>
+                    </Property>
+                    <Property name="deliverableCheckerKey">
+                        <Value>finalFixDeliverableChecker</Value>
+                    </Property>
+                </Property>
+                <Property name="deliverableChecker8">
+                    <Property name="deliverableName">
+                        <Value>Final Review</Value>
+                    </Property>
+                    <Property name="deliverableCheckerKey">
+                        <Value>finalReviewDeliverableChecker</Value>
+                    </Property>
+                </Property>
+                <Property name="deliverableChecker9">
+                    <Property name="deliverableName">
+                        <Value>Specification Review</Value>
+                    </Property>
+                    <Property name="deliverableCheckerKey">
+                        <Value>specReviewDeliverableChecker</Value>
+                    </Property>
+                </Property>
+                <Property name="deliverableChecker10">
+                    <Property name="deliverableName">
+                        <Value>Stress Test Cases</Value>
+                    </Property>
+                    <Property name="deliverableCheckerKey">
+                        <Value>testCaseDeliverableChecker</Value>
+                    </Property>
+                </Property>
+                <Property name="searchBundleManagerNamespace">
+                    <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+                </Property>
+                <Property name="maxDurationOfPhaseWithCompensatedDeadline">
+                    <Value>86400000</Value>
+                </Property>
+            </Property>
+
+            <Property name="lateDeliverableProcessorConfig">
+                <Property name="loggerName">
+                    <Value>LDTLogger</Value>
+                </Property>
+                <Property name="connectionName">
+                    <Value>informix_connection</Value>
+                </Property>
+                <Property name="objectFactoryConfig">
+                    <property name="resourceManager">
+                        <property name="type">
+                            <value>com.topcoder.management.resource.persistence.PersistenceResourceManager</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="name">
+                                    <Value>ResourcePersistence</Value>
+                                </Property>
+                            </Property>
+                            <Property name="param2">
+                                <Property name="name">
+                                    <Value>SearchBundleManager</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="ResourcePersistence">
+                        <property name="type">
+                            <value>com.topcoder.management.resource.persistence.sql.SqlResourcePersistence</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="name">
+                                    <Value>DBConnectionFactory</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="DBConnectionFactory">
+                        <property name="type">
+                            <value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="type">
+                                    <Value>String</Value>
+                                </Property>
+                                <Property name="value">
+                                    <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="SearchBundleManager">
+                        <property name="type">
+                            <value>com.topcoder.search.builder.SearchBundleManager</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="type">
+                                    <Value>String</Value>
+                                </Property>
+                                <Property name="value">
+                                    <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                    <property name="userRetrieval">
+                        <property name="type">
+                            <value>com.cronos.onlinereview.external.impl.DBUserRetrieval</value>
+                        </property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="type">
+                                    <Value>String</Value>
+                                </Property>
+                                <Property name="value">
+                                    <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </property>
+                </Property>
+                <Property name="dbConnectionFactoryConfig">
+                    <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+                        <Property name="connections">
+                            <Property name="informix_connection">
+                                <Property name="producer">
+                                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                                </Property>
+                                <Property name="parameters">
+                                    <Property name="jdbc_driver">
+                                        <Value>com.informix.jdbc.IfxDriver</Value>
+                                    </Property>
+                                    <Property name="jdbc_url">
+                                        <Value>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@</Value>
+                                    </Property>
+                                    <Property name="user">
+                                        <Value>@database.username@</Value>
+                                    </Property>
+                                    <Property name="password">
+                                        <Value>@database.password@</Value>
+                                    </Property>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+                <Property name="notificationDeliverableIds">
+                    <Value>@notification_deliverable_ids@</Value>
+                </Property>
+                <Property name="defaultEmailSubjectTemplateText">
+                    <Value>WARNING\: Your %DELIVERABLE_NAME% is late for %PROJECT_NAME% %PROJECT_VERSION%</Value>
+                </Property>
+                <Property name="defaultEmailBodyTemplatePath">
+                    <Value>@exttemplatesdir@/warn_email_template.html</Value>
+                </Property>
+                <Property name="emailSender">
+                    <Value>do_not_reply@topcoder.com</Value>
+                </Property>
+                <Property name="resourceManagerKey">
+                    <Value>resourceManager</Value>
+                </Property>
+                <Property name="userRetrievalKey">
+                    <Value>userRetrieval</Value>
+                </Property>
+                <Property name="timestampFormat">
+                    <Value>yyyy-MM-dd HH:mm:ss</Value>
+                </Property>
+                <Property name="notificationInterval">
+                    <Value>@late_deliverables_notification_interval@</Value>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+</CMConfig>

@@ -1,0 +1,35 @@
+#######################################################
+# Build parameters for Late Deliverables Tracker tool #
+#######################################################
+
+# The online_review_home is the directory where the development distribution for
+# Online Review application is checked to
+online_review_home=<<Path to local dev distribution of Online Review application>>
+
+
+# The tcs_libdir is the location of all TopCoder Software component jars.
+tcs_libdir=${online_review_home}/lib/tcs
+
+
+# The ext_libdir is the location of 3rd party jars.
+ext_libdir=${online_review_home}/lib/third_party
+
+
+# The shared_libdir is the location of all TopCoder shared component jars.
+shared_libdir=${online_review_home}/lib/shared
+
+
+# A deployment directory for Late Deliverables Tracker tool
+deploy-dir=<<path_to_directory_where_to_deploy_the_LDT_to>>
+
+
+# A path to file to signal to Late Deliverables Tracker to stop the job
+guard_file=@late_deliverables_tracker_guard_file@
+
+
+# A path to file to signal to Late Deliverables Tracker that there is another tool instance already running
+running_file=@late_deliverables_tracker_running_file@
+
+
+# An interval (in milliseconds) between Late Deliverables Tracker job executions
+poll_interval=@late_deliverables_tracker_poll_interval@
