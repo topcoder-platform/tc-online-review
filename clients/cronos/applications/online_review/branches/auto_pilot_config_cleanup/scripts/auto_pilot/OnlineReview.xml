@@ -3244,7 +3244,9 @@
         </Property>
     </Config>
 
-    
+    <Config name="com.topcoder.search.builder.database.factory">
+    </Config>
+
     <!--
         ===== Configuration for Pacts Services =====
     -->
@@ -3253,7 +3255,7 @@
             <Value>&pactJNDIAddress;</Value>
         </Property>
     </Config>
-  
+
     <!--
         Configuration for the Online Web services component.
      -->
