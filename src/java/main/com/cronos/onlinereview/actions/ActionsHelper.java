@@ -78,7 +78,6 @@ import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.UploadStatus;
 import com.topcoder.management.deliverable.UploadType;
 import com.topcoder.management.deliverable.late.LateDeliverableManager;
-import com.topcoder.management.deliverable.late.impl.LateDeliverableManagerImpl;
 import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistence;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
@@ -1479,29 +1478,48 @@ public class ActionsHelper {
      * Populate resource email resource info to resource.
      *
      * @param request the request to retrieve manager instance
-     * @param resource resource instance
+     * @param resource Resource instance
      * @throws BaseException if error occurs
      */
     static void populateEmailProperty(HttpServletRequest request, Resource resource) throws BaseException {
-        UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
-        ExternalUser user = null;
-        String externalUserID = (String) resource.getProperty("External Reference ID");
-        if (externalUserID != null) {
-            user = userRetrieval.retrieveUser(Long.parseLong(externalUserID));
-        }
-        if (user == null) {
-            log.log(Level.DEBUG, "using 'Handle' for retrieving the user for resource: " + resource.getId());
-            String handle = (String) resource.getProperty("Handle");
-            if (handle != null) {
-                user = userRetrieval.retrieveUser(handle);
+        populateEmailProperty(request, new Resource[] {resource});
+    }
+
+    /**
+     * Populate resource email resource info to resources.
+     *
+     * @param request the request to retrieve manager instance
+     * @param resources array of Resource instance
+     * @throws BaseException if error occurs
+     */
+    static void populateEmailProperty(HttpServletRequest request, Resource[] resources) throws BaseException {
+        long[] userIDs = new long[resources.length];
+        for (int i=0;i<resources.length;i++) {
+            String userID = (String) resources[i].getProperty("External Reference ID");
+            if (userID == null || userID.trim().length() == 0) {
+                throw new BaseException("the resourceId: " + resources[i].getId() + " doesn't refer a valid user");
             }
-        } else {
-            log.log(Level.DEBUG, "using 'External Reference ID' for retrieving the user for resource: " + resource.getId());
+            userIDs[i] = Long.parseLong(userID);
         }
-        if (user == null) {
-            throw new BaseException("the resourceId: " + resource.getId() + " doesn't refer a valid user");
+
+        UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
+        ExternalUser[] users = userRetrieval.retrieveUsers(userIDs);
+
+        if (users == null) {
+            throw new BaseException("Error during user retrieval in populateEmailProperty() method.");
         }
-        resource.setProperty("Email", user.getEmail());
+        Map<Long,String> emailsMap = new HashMap<Long,String>();
+        for (int i=0;i<users.length;i++) {
+            emailsMap.put(users[i].getId(), users[i].getEmail());
+        }
+
+        for (int i=0;i<resources.length;i++) {
+            String email = emailsMap.get(userIDs[i]);
+            if (email == null) {
+                throw new BaseException("Can't retrieve email property for the resourceId: " + resources[i].getId());
+            }
+            resources[i].setProperty("Email", email);
+        }
     }
 
     /**
@@ -2752,8 +2770,7 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            manager = new LateDeliverableManagerImpl("com/topcoder/util/config/ConfigManager.properties",
-                    LateDeliverableManagerImpl.DEFAULT_CONFIG_NAMESPACE);
+            manager = managerCreationHelper.getLateDeliverableManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("lateDeliverableManager", manager);
         }
@@ -2820,7 +2837,7 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            manager = new ScorecardManagerImpl();
+            manager = managerCreationHelper.getScorecardManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("scorecardManager", manager);
         }
