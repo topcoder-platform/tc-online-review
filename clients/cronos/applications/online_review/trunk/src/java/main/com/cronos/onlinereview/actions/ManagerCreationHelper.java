@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007-2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -46,6 +46,10 @@ import com.topcoder.management.resource.search.NotificationFilterBuilder;
 import com.topcoder.management.resource.search.NotificationTypeFilterBuilder;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.resource.search.ResourceRoleFilterBuilder;
+import com.topcoder.management.deliverable.late.LateDeliverableManager;
+import com.topcoder.management.deliverable.late.impl.LateDeliverableManagerImpl;
+import com.topcoder.management.scorecard.ScorecardManager;
+import com.topcoder.management.scorecard.ScorecardManagerImpl;
 import com.topcoder.project.phases.PhaseType;
 import com.topcoder.search.builder.SearchBundle;
 import com.topcoder.search.builder.SearchBundleManager;
@@ -87,8 +91,15 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  *   </ol>
  * </p>
  *
- * @author evilisneo, BeBetter, isv, FireIce
- * @version 1.4
+ * <p>
+ * Version 1.5 Change notes:
+ *   <ol>
+ *     <li>Added LateDeliverableManager and ScorecardManager.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author evilisneo, BeBetter, isv, FireIce, VolodymyrK
+ * @version 1.5
  * @since 1.0
  */
 public class ManagerCreationHelper implements ManagersProvider {
@@ -126,6 +137,20 @@ public class ManagerCreationHelper implements ManagersProvider {
      * @since 1.1
      */
     private ProjectLinkManager projectLinkManager = null;
+	
+    /**
+     * Used for caching the created the manager.
+     *
+     * @since 1.5
+     */
+    private LateDeliverableManager lateDeliverableManager = null;
+	
+    /**
+     * Used for caching the created the manager.
+     *
+     * @since 1.5
+     */
+    private ScorecardManager scorecardManager = null;
 
     /**
      * <p>
@@ -335,6 +360,39 @@ public class ManagerCreationHelper implements ManagersProvider {
         } catch (Exception e) {
             throw new ManagerCreationException("Exception occurred while creating the upload manager.", e);
         }
+    }
+
+    /**
+     * <p>
+     * Returns a <code>LateDeliverableManager</code> instance.
+     * </p>
+     *
+     * @return a <code>LateDeliverableManager</code> instance
+     */
+    public LateDeliverableManager getLateDeliverableManager() {
+        if(lateDeliverableManager == null) {
+            lateDeliverableManager = new LateDeliverableManagerImpl("com/topcoder/util/config/ConfigManager.properties",
+                LateDeliverableManagerImpl.DEFAULT_CONFIG_NAMESPACE);
+        }
+        return lateDeliverableManager;
+    }
+
+    /**
+     * <p>
+     * Returns a <code>ScorecardManager</code> instance.
+     * </p>
+     *
+     * @return a <code>ScorecardManager</code> instance
+     */
+    public ScorecardManager getScorecardManager() {
+        if(scorecardManager == null) {
+            try {
+                scorecardManager = new ScorecardManagerImpl();
+            } catch (com.topcoder.management.scorecard.ConfigurationException e) {
+                throw new ManagerCreationException("Exception occurred while creating the scorecard manager.", e);
+            }
+        }
+        return scorecardManager;
     }
 
     /**
