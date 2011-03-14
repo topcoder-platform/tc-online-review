@@ -2,24 +2,12 @@
 # TopCoder Software Online Review Application Development Environment #
 #######################################################################
 
-#############################################################################################################
-# Properties to automatically start/stop Jboss. Supposed to be used mostly for Continuos Integration server #
-#############################################################################################################
-# update_db=uncomment to reinstall db on each redeploy
-jdk_home=<<path to jdk>>
-bind_addr=127.0.0.1
-jnp_port=1099
-jboss_heap_size=512m
-db_scripts_path=<<path to db scripts>>
-sleep_before_stopping=10
-
 ##############################################################################
 # The location of the deployment directory for JBoss server. If you ever     #
 # execute ant with "deploy" target, set this property to the correct value.  #
 # Otherwise you may ignore it (say, if you copy the WAR file by hand).       #
 ##############################################################################
 JBOSS_HOME=<<path_to_jboss>>
-
 
 #############################
 # remote deploy information #
@@ -69,10 +57,3 @@ shared_libdir=${online_review_home}/lib/shared
 # Properties to run tests #
 ###########################
 selenium_port=5555
-
-
-#####################################
-# Deployment location of auto tools #
-#####################################
-auto_pilot_deploy_dir=<<path to auto pilot deployment directory>>
-ldt_deploy_dir=<<path to late deliverable tracker deployment directory >>
