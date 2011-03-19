@@ -1638,7 +1638,7 @@
     <!--
         ===== Configuration for Auto Screening Management component =====
     -->
-    <!-- SUGGEST TO REMOVE -->
+    <!-- REQUIRED-->
     <Config name="com.cronos.onlinereview.autoscreening.management">
         <!-- Construct the DefaultDbScreeningManager with two arguments -->
         <Property name="com/cronos/onlinereview/autoscreening/management/ScreeningManager">
@@ -1722,21 +1722,6 @@
         </Property>
     </Config>
 
-
-    <!--
-        =====  Configuration for User Project Data Store component  =====
-    -->
-    <!-- TODO -->
-    <Config name="com.cronos.onlinereview.external">
-        <Property name="connName">
-            <Value>tcs</Value>
-        </Property>
-
-        <!-- the forum type to match in the comp_forum_xref table -->
-        <Property name="forumType">
-            <Value>5</Value>
-        </Property>
-    </Config>
 
     <!-- Definition of the values for RatingType enum -->
     <!-- REQUIRED -->
@@ -3135,56 +3120,46 @@
     </Config>
 
     <!--
-        ===== Configuration for Pacts Services =====
-    -->
-    <!-- TODO -->
-    <Config name="com.cronos.onlinereview.phases.pacts.services">
-        <Property name="pacts_jndi_address">
-            <Value>&pactJNDIAddress;</Value>
+          =====  Configuration for the Online Review Application itself  =====
+      -->
+    <!-- REQUIRED -->
+    <Config name="com.cronos.OnlineReview">
+      <Property name="SVNPermissionGrantResourceRoles">
+        <Value>1</Value>
+        <!-- Submitter -->
+        <Value>4</Value>
+        <!-- Reviewer -->
+        <Value>5</Value>
+        <!-- Accuracy Reviewer -->
+        <Value>6</Value>
+        <!-- Failure Reviewer -->
+        <Value>7</Value>
+        <!-- Stress Reviewer -->
+        <Value>9</Value>
+        <!-- Final Reviewer -->
+      </Property>
+
+      <Property name="SVNConfig">
+        <Property name="Root">
+          <Value>@svn.root@</Value>
         </Property>
+        <Property name="AuthUsername">
+          <Value>@svn.username@</Value>
+        </Property>
+        <Property name="AuthPassword">
+          <Value>@svn.password@</Value>
+        </Property>
+        <Property name="MkDirCommitMessage">
+          <Value>@svn.mkdir.commit.message@</Value>
+        </Property>
+        <Property name="TempFilesBaseDir">
+          <Value>@svn.temp.files.basedir@</Value>
+        </Property>
+        <Property name="PathBasedPermissionsFileURL">
+          <Value>@svn.authz.file.url@</Value>
+        </Property>
+      </Property>
     </Config>
-
-  <!--
-        =====  Configuration for the Online Review Application itself  =====
-    -->
-  <!-- REQUIRED -->
-  <Config name="com.cronos.OnlineReview">
-    <Property name="SVNPermissionGrantResourceRoles">
-      <Value>1</Value>
-      <!-- Submitter -->
-      <Value>4</Value>
-      <!-- Reviewer -->
-      <Value>5</Value>
-      <!-- Accuracy Reviewer -->
-      <Value>6</Value>
-      <!-- Failure Reviewer -->
-      <Value>7</Value>
-      <!-- Stress Reviewer -->
-      <Value>9</Value>
-      <!-- Final Reviewer -->
-    </Property>
-
-    <Property name="SVNConfig">
-      <Property name="Root">
-        <Value>@svn.root@</Value>
-      </Property>
-      <Property name="AuthUsername">
-        <Value>@svn.username@</Value>
-      </Property>
-      <Property name="AuthPassword">
-        <Value>@svn.password@</Value>
-      </Property>
-      <Property name="MkDirCommitMessage">
-        <Value>@svn.mkdir.commit.message@</Value>
-      </Property>
-      <Property name="TempFilesBaseDir">
-        <Value>@svn.temp.files.basedir@</Value>
-      </Property>
-      <Property name="PathBasedPermissionsFileURL">
-        <Value>@svn.authz.file.url@</Value>
-      </Property>
-    </Property>
-  </Config>
 
 
 </CMConfig>
