@@ -2230,84 +2230,7 @@
                 </Property>
             </Property>
 
-            <!-- Deliverable-searching logic -->
-            <Property name="Deliverable Search Bundle">
-                <Property name="type">
-                    <Value>Database</Value>
-                </Property>
-                <Property name="name">
-                    <Value>Deliverable Search Bundle</Value>
-                </Property>
-                <Property name="searchStrategy">
-                    <Property name="class">
-                        <Value>dbStrategy</Value>
-                    </Property>
-                </Property>
-                <Property name="searchableFields">
-                    <Property name="dummy">
-                        <Property name="validator">
-                            <Property name="class">
-                                <Value>validator</Value>
-                            </Property>
-                            <Property name="identifier">
-                                <Value>default</Value>
-                            </Property>
-                        </Property>
-                    </Property>
-                </Property>
-                <Property name="context">
-                    <Value>
-                        SELECT UNIQUE
-                          deliverable_lu.deliverable_id,
-                          resource.resource_id,
-                          project_phase.project_phase_id
-                        FROM
-                          deliverable_lu
-                          INNER JOIN project_phase ON deliverable_lu.phase_type_id = project_phase.phase_type_id
-                          INNER JOIN resource ON deliverable_lu.resource_role_id = resource.resource_role_id AND
-                                                 resource.project_id = project_phase.project_id
-                          LEFT OUTER JOIN project_info ON project_info.project_id = project_phase.project_id AND
-                                                          project_info.project_info_type_id = 23
-                          INNER JOIN resource_info ON resource_info.resource_id = resource.resource_id AND
-                                                      resource_info.resource_info_type_id = 1
-                        WHERE
-                          (deliverable_lu.deliverable_id NOT IN (15,22,23,26) OR resource.project_phase_id = project_phase.project_phase_id) AND
-                          (project_info.value is null OR resource.resource_role_id != 1 OR resource_info.value = project_info.value) AND
-                          (deliverable_id NOT IN (16,17,18,19) OR NOT EXISTS(
-                            SELECT r.resource_id
-                            FROM
-                              resource r
-                              INNER JOIN resource_info ri ON ri.resource_id = r.resource_id AND
-                                                             ri.resource_info_type_id = 1 AND
-                                                             ri.value = resource_info.value
-                            WHERE
-                              r.project_id = project_phase.project_id AND
-                              r.resource_role_id = 8
-                          )) AND 
-                    </Value>
-                </Property>
-                <Property name="alias">
-                    <Property name="deliverable_id">
-                        <Value>deliverable_lu.deliverable_id</Value>
-                    </Property>
-                    <Property name="name">
-                        <Value>deliverable_lu.name</Value>
-                    </Property>
-                    <Property name="project_id">
-                        <Value>resource.project_id</Value>
-                    </Property>
-                    <Property name="phase_id">
-                        <Value>project_phase.project_phase_id</Value>
-                    </Property>
-                    <Property name="resource_id">
-                        <Value>resource.resource_id</Value>
-                    </Property>
-                    <Property name="required">
-                        <Value>deliverable_lu.required</Value>
-                    </Property>
-                </Property>
-            </Property>
-
+            <!-- REQUIRED -->
             <Property name="Deliverable With Submission Search Bundle">
                 <Property name="type">
                     <Value>Database</Value>
@@ -2342,6 +2265,7 @@
                 </Property>
             </Property>
 
+            <!-- REQUIRED -->
             <Property name="Submission Search Bundle">
                 <Property name="type">
                     <Value>Database</Value>
@@ -2449,6 +2373,7 @@
                 </Property>
             </Property>
 
+            <!-- REQUIRED -->
             <Property name="Upload Search Bundle">
                 <Property name="type">
                     <Value>Database</Value>
@@ -2525,6 +2450,7 @@
             </Property>
 
             <!-- Resource-searching logic -->
+            <!-- REQUIRED -->
             <Property name="Resource Search Bundle">
                 <Property name="searchStrategy">
                     <Property name="class">
@@ -2640,6 +2566,7 @@
                 </Property>
             </Property>
 
+            <!-- REQUIRED -->
             <Property name="Resource Role Search Bundle">
                 <Property name="searchStrategy">
                     <Property name="class">
@@ -2709,6 +2636,7 @@
                 </Property>
             </Property>
 
+            <!-- REQUIRED -->
             <Property name="Notification Search Bundle">
                 <Property name="searchStrategy">
                     <Property name="class">
@@ -2777,6 +2705,7 @@
                 </Property>
             </Property>
 
+            <!-- REQIURED -->
             <Property name="Notification Type Search Bundle">
                 <Property name="searchStrategy">
                     <Property name="class">
@@ -2836,6 +2765,7 @@
             </Property>
 
             <!-- Review-searching logic -->
+            <!-- REUIQRED -->
             <Property name="Review Search Bundle">
                 <Property name="searchStrategy">
                     <Property name="class">
