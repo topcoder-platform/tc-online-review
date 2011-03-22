@@ -170,9 +170,15 @@
             <Value>handler_appeals_start</Value>
             <Value>handler_appeals_end</Value>
             <Value>handler_appeals_cancel</Value>
+            <Value>handler_new_appeals_start</Value>
+            <Value>handler_new_appeals_end</Value>
+            <Value>handler_new_appeals_cancel</Value>
             <Value>handler_appeals_response_start</Value>
             <Value>handler_appeals_response_end</Value>
             <Value>handler_appeals_response_cancel</Value>
+            <Value>handler_primary_appeals_response_start</Value>
+            <Value>handler_primary_appeals_response_end</Value>
+            <Value>handler_primary_appeals_response_cancel</Value>
             <Value>handler_aggregation_start</Value>
             <Value>handler_aggregation_end</Value>
             <Value>handler_aggregation_cancel</Value>
@@ -364,6 +370,39 @@
                 <Value>handler_appeals_response_def</Value>
             </Property>
         </Property>
+        <Property name="handler_primary_appeals_response_start">
+            <Property name="phaseType">
+                <Value>primary_appeals_response</Value>
+            </Property>
+            <Property name="operation">
+                <Value>start</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_primary_appeals_response_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_primary_appeals_response_end">
+            <Property name="phaseType">
+                <Value>primary_appeals_response</Value>
+            </Property>
+            <Property name="operation">
+                <Value>end</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_primary_appeals_response_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_primary_appeals_response_cancel">
+            <Property name="phaseType">
+                <Value>primary_appeals_response</Value>
+            </Property>
+            <Property name="operation">
+                <Value>cancel</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_primary_appeals_response_def</Value>
+            </Property>
+        </Property>
         <Property name="handler_appeals_start">
             <Property name="phaseType">
                 <Value>appeals</Value>
@@ -395,6 +434,39 @@
             </Property>
             <Property name="handler">
                 <Value>handler_appeals_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_new_appeals_start">
+            <Property name="phaseType">
+                <Value>new_appeals</Value>
+            </Property>
+            <Property name="operation">
+                <Value>start</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_new_appeals_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_new_appeals_end">
+            <Property name="phaseType">
+                <Value>new_appeals</Value>
+            </Property>
+            <Property name="operation">
+                <Value>end</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_new_appeals_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_new_appeals_cancel">
+            <Property name="phaseType">
+                <Value>new_appeals</Value>
+            </Property>
+            <Property name="operation">
+                <Value>cancel</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_new_appeals_def</Value>
             </Property>
         </Property>
         <Property name="handler_review_start">
@@ -783,6 +855,29 @@
                 </Property>
             </Property>
         </Property>
+        <Property name="new_appeals">
+            <Property name="type">
+                <Value>com.topcoder.project.phases.PhaseType</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>long</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>17</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>New Appeals</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
         <Property name="appeals_response">
             <Property name="type">
                 <Value>com.topcoder.project.phases.PhaseType</Value>
@@ -802,6 +897,29 @@
                     </Property>
                     <Property name="value">
                         <Value>Appeals Response</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="primary_appeals_response">
+            <Property name="type">
+                <Value>com.topcoder.project.phases.PhaseType</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>long</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>19</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>Primary Review Appeals Response</Value>
                     </Property>
                 </Property>
             </Property>
@@ -1016,7 +1134,17 @@
                 <Value>com.cronos.onlinereview.phases.AppealsPhaseHandler</Value>
             </Property>
         </Property>
+        <Property name="handler_new_appeals_def">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.phases.GenericAppealPhaseHandler</Value>
+            </Property>
+        </Property>
         <Property name="handler_appeals_response_def">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler</Value>
+            </Property>
+        </Property>
+        <Property name="handler_primary_appeals_response_def">
             <Property name="type">
                 <Value>com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler</Value>
             </Property>

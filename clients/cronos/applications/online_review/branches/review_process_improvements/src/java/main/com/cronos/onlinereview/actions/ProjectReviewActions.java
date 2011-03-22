@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2011 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -60,7 +60,6 @@ import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.data.Group;
 import com.topcoder.management.scorecard.data.Question;
 import com.topcoder.management.scorecard.data.Scorecard;
-import com.topcoder.management.scorecard.data.ScorecardType;
 import com.topcoder.management.scorecard.data.Section;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
@@ -168,8 +167,19 @@ import com.topcoder.util.weightedcalculator.LineItem;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, isv
- * @version 1.3
+ * <p>
+ * Version 1.4 (Online Review Update Review Management Process assembly 2) Change notes:
+ *   <ol>
+ *     <li>Change <code>FIRST_APPEALS_PHASE_NAME</code> to <code>NEW_APPEALS_PHASE_NAME</code>.</li>
+ *     <li>Update {@link #viewGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} method to work for the
+ *     new <code>Secondary Reviewer Review</code> review.</li>
+ *     <li>Update {@link #getCommentAppeal(Comment[])} and {@link #getCommentAppealResponse(Comment[])} method to return
+ *     a list of comments.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, isv, TCSASSEMBER
+ * @version 1.4
  */
 public class ProjectReviewActions extends DispatchAction {
     private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory
@@ -1248,7 +1258,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // If no resource found and Appeals phase is opened then try to find Submitter role
         if (myResource == null) {
-        	if (activePhases.contains(Constants.FIRST_APPEALS_PHASE_NAME)) {
+        	if (activePhases.contains(Constants.NEW_APPEALS_PHASE_NAME)) {
                 Resource[] myResources = ActionsHelper.getMyResourcesForPhase(request, null);
                 for (int i = 0; i < myResources.length; i++) {
                     Resource resource = myResources[i];
@@ -1284,7 +1294,7 @@ public class ProjectReviewActions extends DispatchAction {
                    && (verification.getSubmission().getUpload().getOwner() == myResource.getId())) {
             // User is authorized to view review for his submission (when not in Review or in Appeals)
             if ( !activePhases.contains(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME) ||
-                    activePhases.contains(Constants.FIRST_APPEALS_PHASE_NAME)) {
+                    activePhases.contains(Constants.NEW_APPEALS_PHASE_NAME)) {
                 isAllowed = true;
             }
         } else if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEW_EVALUATION_PERM_NAME) && (evaluationReview !=null && (evaluationReview.getAuthor() == myResource.getId()))) {
@@ -5202,13 +5212,14 @@ public class ProjectReviewActions extends DispatchAction {
         // Get "My" resource for the appropriate phase (for reviewers actually)
         Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
 
-        // If no resource found and Appeals phase is opened then try to find Submitter role
+        // If no resource found and Appeals/New Appeals phase is opened then try to find Submitter/Secondary Reviewer role
         if (myResource == null) {
-            if (activePhases.contains(Constants.APPEALS_PHASE_NAME)) {
+            if (activePhases.contains(Constants.APPEALS_PHASE_NAME) || activePhases.contains(Constants.NEW_APPEALS_PHASE_NAME)) {
                 Resource[] myResources = ActionsHelper.getMyResourcesForPhase(request, null);
                 for (int i = 0; i < myResources.length; i++) {
                     Resource resource = myResources[i];
-                    if (resource.getResourceRole().getName().equals("Submitter")) {
+                    if (resource.getResourceRole().getName().equals("Submitter")
+                            || resource.getResourceRole().getName().equals("Secondary Reviewer")) {
                         myResource = resource;
                         break;
                     }
@@ -5236,25 +5247,32 @@ public class ProjectReviewActions extends DispatchAction {
                     myResource != null && verification.getReview().getAuthor() == myResource.getId()) {
             // User is authorized to view review authored by him
             isAllowed = true;
-        } else if (isSubmissionDependentPhase && (myResource != null)
+        } else if (isSubmissionDependentPhase && (myResource != null && myResource.getResourceRole().getName().equals("Submitter"))
                    && (verification.getSubmission().getUpload().getOwner() == myResource.getId())) {
             // User is authorized to view review for his submission (when not in Review or in Appeals)
-            if (reviewType != "Review" || !activePhases.contains(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME) ||
-                    activePhases.contains(Constants.APPEALS_PHASE_NAME)) {
+            if (reviewType != "Review" || 
+                    (!activePhases.contains(Constants.REVIEW_PHASE_NAME) && !activePhases.contains(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME)) || 
+                    (activePhases.contains(Constants.APPEALS_PHASE_NAME) || activePhases.contains(Constants.NEW_APPEALS_PHASE_NAME))) {
                 isAllowed = true;
             }
         } else if (AuthorizationHelper.hasUserPermission(request, permName)) {
             if (reviewType == "Review") {
                 // User is authorized to view all reviews (when not in Review, Appeals or Appeals Response)
-                if (!activePhases.contains(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME) &&
+                if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
                         !activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
-                        !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
+                        !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME) &&
+                        !activePhases.contains(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME) &&
+                        !activePhases.contains(Constants.NEW_APPEALS_PHASE_NAME) &&
+                        !activePhases.contains(Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME)) {
                     isAllowed = true;
                 }
             } else if (reviewType == "Screening") {
-                if (!activePhases.contains(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME) &&
+                if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
                         !activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
-                        !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
+                        !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME) &&
+                        !activePhases.contains(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME) &&
+                        !activePhases.contains(Constants.NEW_APPEALS_PHASE_NAME) &&
+                        !activePhases.contains(Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME)) {
                     isAllowed = true;
                 } else {
                     //if any of those phases are open only, a user can see the screening if he is not a submitter 
@@ -5301,7 +5319,7 @@ public class ProjectReviewActions extends DispatchAction {
             boolean canPlaceAppealResponse = false;
 
             // Check if user can place appeals or appeal responses
-            if ( ( activePhases.contains(Constants.APPEALS_PHASE_NAME) || activePhases.contains(Constants.FIRST_APPEALS_PHASE_NAME)) &&
+            if ( ( activePhases.contains(Constants.APPEALS_PHASE_NAME) || activePhases.contains(Constants.NEW_APPEALS_PHASE_NAME)) &&
                     AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME)) {
                 // Can place appeal, put an appropriate flag to request
                 request.setAttribute("canPlaceAppeal", Boolean.TRUE);
@@ -5313,6 +5331,10 @@ public class ProjectReviewActions extends DispatchAction {
                 canPlaceAppealResponse = true;
             }
 
+            if (!ActionsHelper.isAfterAppealsResponse(phases) && !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_APPEALS_PERM_NAME)) {
+                ActionsHelper.filterOwnAppeals(verification.getReview(), new Resource[] {myResource});
+            }
+
             if (canPlaceAppeal || canPlaceAppealResponse) {
                 // Gather the appeal statuses and item answers
                 String[] appealStatuses = new String[verification.getReview().getNumberOfItems()];
@@ -5320,12 +5342,12 @@ public class ProjectReviewActions extends DispatchAction {
                 // Message Resources to be used for the Action
                 MessageResources messages = getResources(request);
                 for (int i = 0; i < appealStatuses.length; i++) {
-                    Comment appeal = getCommentAppeal(verification.getReview().getItem(i).getAllComments());
-                    Comment response = getCommentAppealResponse(verification.getReview().getItem(i).getAllComments());
-                    if (appeal != null && response == null) {
+                    List<Comment> appeal = getCommentAppeal(verification.getReview().getItem(i).getAllComments());
+                    List<Comment> response = getCommentAppealResponse(verification.getReview().getItem(i).getAllComments());
+                    if (appeal.size() > 0 && response.size() != appeal.size()) {
                         appealStatuses[i] = messages.getMessage("editReview.Appeal.Unresolved");
-                    } else if (appeal != null) {
-                        appealStatuses[i] = messages.getMessage("editReview.Appeal.Resolved." + appeal.getExtraInfo());
+                    } else if (appeal.size() > 0) {
+                        appealStatuses[i] = messages.getMessage("editReview.Appeal.Resolved." + appeal.get(0).getExtraInfo());
                     } else {
                         appealStatuses[i] = "";
                     }
@@ -5339,6 +5361,14 @@ public class ProjectReviewActions extends DispatchAction {
 
                 // Retrieve some look-up data and store it into the request
                 retreiveAndStoreReviewLookUpData(request);
+            }
+            
+            retreiveAndStoreEvaluationTypeData(request);
+            if (canPlaceAppealResponse && activePhases.contains(Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME)) {
+                // can edit evaluation
+                request.setAttribute("editEvaluation", true);
+            } else {
+                request.setAttribute("editEvaluation", false);
             }
         }
 
@@ -6007,33 +6037,35 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * 
+     * Gets all the appeals in the specific comments.
      *
-     * @return
-     * @param allComments
+     * @param allComments the specific comments
+     * @return the appeals in the comments
      */
-    private static Comment getCommentAppeal(Comment[] allComments) {
+    private static List<Comment> getCommentAppeal(Comment[] allComments) {
+        List<Comment> comments = new ArrayList<Comment>();
         for (int i = 0; i < allComments.length; i++) {
             if (allComments[i].getCommentType().getName().equals("Appeal")) {
-                return allComments[i];
+                comments.add(allComments[i]);
             }
         }
-        return null;
+        return comments;
     }
 
     /**
-     * 
+     * Gets all the appeals response in the specific comments.
      *
-     * @return
-     * @param allComments
+     * @param allComments the specific comments
+     * @return the appeals response in the comments
      */
-    private static Comment getCommentAppealResponse(Comment[] allComments) {
+    private static List<Comment> getCommentAppealResponse(Comment[] allComments) {
+        List<Comment> comments = new ArrayList<Comment>();
         for (int i = 0; i < allComments.length; i++) {
             if (allComments[i].getCommentType().getName().equals("Appeal Response")) {
-                return allComments[i];
+                comments.add(allComments[i]);
             }
         }
-        return null;
+        return comments;
     }
     
     /**

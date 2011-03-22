@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2005 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2005 - 2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -8,23 +8,61 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.MessageFormat;
 
+import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.phases.logging.LoggerMessage;
+import com.topcoder.management.deliverable.Submission;
+import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.phase.PhaseHandlingException;
+import com.topcoder.management.phase.PhaseManagementException;
+import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.ProjectManagerImpl;
+import com.topcoder.management.resource.Resource;
+import com.topcoder.management.resource.ResourceRole;
+import com.topcoder.management.resource.search.ResourceFilterBuilder;
+import com.topcoder.message.email.EmailEngine;
+import com.topcoder.message.email.TCSEmailMessage;
+import com.topcoder.search.builder.filter.AndFilter;
+import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.util.file.DocumentGenerator;
+import com.topcoder.util.file.Template;
+import com.topcoder.util.file.fieldconfig.Field;
+import com.topcoder.util.file.fieldconfig.Node;
+import com.topcoder.util.file.fieldconfig.TemplateFields;
 import com.topcoder.util.log.Level;
 
 /**
  * The PRHelper which is used to provide helper method for Phase Handler.
  * 
- * @author brain_cn
- * @version 1.0
+ * <p>
+ * Version 1.1 (Online Review Update Review Management Process assembly 2) Change notes:
+ *   <ol>
+ *     <li>Added {@link #PROJECT_NAME} constant.</li>
+ *     <li>Added {@link #sendMailForWinners(ManagerHelper, Project, String, String, String, String)} and
+ *     {@link #sendWinnersEmailForUser(ManagerHelper, Project, ExternalUser, String, String, String, String, String)} and
+ *     {@link #getResourceForProjectAndUser(ManagerHelper, Project, String)} and
+ *     {@link #setTemplateFieldValues(ManagerHelper, TemplateFields, Project, ExternalUser, String)} and
+ *     {@link #getEmailTemplate(String, String)} to send email to the winners.</li>
+ *   </ol>
+ * </p>
+ * 
+ * @author brain_cn, TCSASSEMBER
+ * @version 1.1
  */
 public class PRHelper {
     private static final com.topcoder.util.log.Log logger = com.topcoder.util.log.LogFactory.getLog(PRHelper.class
             .getName());
+    
+    /**
+     * Constant for "Project Name" project info.
+     * 
+     * @since 1.1
+     */
+    private static final String PROJECT_NAME = "Project Name";
+    
     // OrChange : Modified the statement to take the placed and final score from submission table
     private static final String APPEAL_RESPONSE_SELECT_STMT = "select s.final_score as final_score, "
             + " ri_u.value as user_id, " + "    s.placement as placed, " + "    ri1.value payment, " + "    r.project_id, "
@@ -480,5 +518,180 @@ public class PRHelper {
         } catch (BaseException e) {
             return false;
         }
+    }
+
+    /**
+     * Send notification email for the winners.
+     * 
+     * @param project
+     *            the project
+     * @throws Exception
+     *             if any error occurs when sending the email
+     * @since 1.1
+     */
+    public static void sendMailForWinners(ManagerHelper managerHelper, Project project, String winnersEmailSubject, String winnersEmailFromAddress,
+            String winnersEmailTemplateSource, String winnersEmailTemplateName) throws Exception {
+        logger.log(Level.DEBUG, "we're in the send email method");
+
+        String winnerId = (String) project.getProperty("Winner External Reference ID");
+        String runnerUpId = (String) project.getProperty("Runner-up External Reference ID");
+
+        String sendWinnerEmail = (String) project.getProperty("Send Winner Emails");
+
+        if (sendWinnerEmail == null || !sendWinnerEmail.equalsIgnoreCase("true")) {
+            return;
+        }
+
+        if (winnerId != null) {
+            sendWinnersEmailForUser(managerHelper, project, managerHelper.getUserRetrieval().retrieveUser(Long.parseLong(winnerId)),
+                    "1st", winnersEmailSubject, winnersEmailFromAddress, winnersEmailTemplateSource, winnersEmailTemplateName);
+        }
+        if (runnerUpId != null) {
+            sendWinnersEmailForUser(managerHelper, project, managerHelper.getUserRetrieval().retrieveUser(Long.parseLong(runnerUpId)),
+                    "2nd", winnersEmailSubject, winnersEmailFromAddress, winnersEmailTemplateSource, winnersEmailTemplateName);
+        }
+    }
+
+    /**
+     * Send notification email to a specific user.
+     * 
+     * @param project
+     *            the project
+     * @param user
+     *            the user to send email to
+     * @param position
+     *            the placement
+     * @throws Exception
+     *             if any error occurs when sending the email
+     * @since 1.1
+     */
+    private static void sendWinnersEmailForUser(ManagerHelper managerHelper, Project project, ExternalUser user, String position, String winnersEmailSubject, String winnersEmailFromAddress,
+            String winnersEmailTemplateSource, String winnersEmailTemplateName) throws Exception {
+        DocumentGenerator docGenerator = DocumentGenerator.getInstance();
+        Template template = getEmailTemplate(winnersEmailTemplateSource, winnersEmailTemplateName);
+        logger.log(Level.DEBUG, "sending winner email for projectId: " + project.getId() + " handle: " + user.getHandle()
+                + " position: " + position);
+        TemplateFields root = setTemplateFieldValues(managerHelper, docGenerator.getFields(template), project, user, position);
+
+        String emailContent = docGenerator.applyTemplate(root);
+        TCSEmailMessage message = new TCSEmailMessage();
+        message.setSubject(MessageFormat.format(winnersEmailSubject,
+                new Object[] { "Online Review", project.getProperty(PROJECT_NAME) }));
+        message.setBody(emailContent);
+        message.setFromAddress(winnersEmailFromAddress);
+        message.setToAddress(user.getEmail(), TCSEmailMessage.TO);
+        EmailEngine.send(message);
+    }
+
+    /**
+     * Gets the submitter resource for a project.
+     * 
+     * @param project
+     *            the projcet
+     * @param userId
+     *            the user id of the resource
+     * @return the submitter resource
+     * @throws PhaseManagementException
+     *             if any error when getting the resource
+     * @since 1.1
+     */
+    private static Resource getResourceForProjectAndUser(ManagerHelper managerHelper, Project project, String userId) throws PhaseManagementException {
+        try {
+            ResourceRole submitterRole = null;
+            ResourceRole[] roles = managerHelper.getResourceManager().getAllResourceRoles();
+            logger.log(Level.DEBUG, "roles size: " + roles.length);
+            for (int i = 0; i < roles.length; i++) {
+                ResourceRole role = roles[i];
+                logger.log(Level.DEBUG, "roles id: " + roles[i].getId() + ", name: " + roles[i].getName());
+                if ("Submitter".equals(role.getName())) {
+                    submitterRole = role;
+                    break;
+                }
+            }
+            if (submitterRole == null) {
+                throw new PhaseHandlingException("can't find submitter role id");
+            }
+            // Create filter to filter only the resources for the project in question
+            Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
+            Filter filterManager = ResourceFilterBuilder.createResourceRoleIdFilter(submitterRole.getId());
+            // Create combined final filter
+            Filter filter = new AndFilter(filterProject, filterManager);
+
+            // Perform search for resources
+            Resource[] submitters = managerHelper.getResourceManager().searchResources(filter);
+            for (int i = 0; i < submitters.length; i++) {
+                Resource resource = submitters[i];
+                if (userId.equals(resource.getProperty("External Reference ID"))) {
+                    return resource;
+                }
+            }
+        } catch (Exception e) {
+            throw new PhaseManagementException(e.getMessage(), e);
+        }
+        throw new PhaseHandlingException("couldn't found the resource for userId: " + userId + " projectId: "
+                + project.getId());
+    }
+
+    /**
+     * Set values for template field.
+     * 
+     * @param root
+     *            the root of the template fields.
+     * @param project
+     *            the project
+     * @param user
+     *            the user to send email to
+     * @param position
+     *            the placement
+     * @return the <code>TempalteFields</code> instance.
+     * @throws BaseException
+     *             if any error occurs when set the values for tempalte field
+     * @since 1.1
+     */
+    private static TemplateFields setTemplateFieldValues(ManagerHelper managerHelper, TemplateFields root, Project project, ExternalUser user,
+            String position) throws BaseException {
+        Node[] nodes = root.getNodes();
+
+        for (int i = 0; i < nodes.length; i++) {
+            if (nodes[i] instanceof Field) {
+                Field field = (Field) nodes[i];
+
+                if ("PROJECT_TYPE".equals(field.getName())) {
+                    field.setValue(project.getProjectCategory().getDescription());
+                } else if ("PROJECT_NAME".equals(field.getName())) {
+                    field.setValue((String) project.getProperty(PROJECT_NAME));
+                } else if ("SCORE".equals(field.getName())) {
+                    // get all the submissions for the user in the project
+                    Long[] submissions = getResourceForProjectAndUser(managerHelper, project, String.valueOf(user.getId()))
+                            .getSubmissions();
+                    int placement = position.equals("1st") ? 1 : 2;
+                    UploadManager uploadManager = managerHelper.getUploadManager();
+                    for (Long submissionId : submissions) {
+                        // get the score for the placement depending on the position
+                        Submission submission = uploadManager.getSubmission(submissionId);
+                        if (submission.getPlacement() != null && submission.getPlacement() == placement) {
+                            field.setValue(submission.getFinalScore() + "");
+                            break;
+                        }
+                    }
+                } else if ("PLACE".equals(field.getName())) {
+                    field.setValue(position);
+                }
+            }
+        }
+
+        return root;
+    }
+
+    /**
+     * Gets email template for winner email.
+     * 
+     * @return the template for winer email
+     * @throws Exception
+     *             if any error occurs when getting the email template
+     * @since 1.1
+     */
+    private static Template getEmailTemplate(String winnersEmailTemplateSource, String winnersEmailTemplateName) throws Exception {
+        return DocumentGenerator.getInstance().getTemplate(winnersEmailTemplateSource, winnersEmailTemplateName);
     }
 }

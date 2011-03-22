@@ -1,12 +1,17 @@
 <%--
-  - Author: George1, real_vg, isv
-  - Version: 1.1
-  - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
+  - Author: George1, real_vg, isv, TCSASSEMBER
+  - Version: 1.2
+  - Copyright (C) 2005 - 2011 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page renders the Review scorecard.
   -
   - Version 1.1 (Impersonation Login Release assembly) changes: Updated link for "Back" button to refer to
   - "View Project Details" screen.
+  -
+  - Version 1.2 (Online Review Update Review Management Process assembly 2) changes:
+  - - Update javascript code because we need to send multiply appeals response and evaluation types using AJAX call.
+  - - A review item can have multiply appeals, every appeals have a appeals response text box. And the evaluation type
+  - - are displayed.  
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -94,9 +99,7 @@
          */
         function placeAppealResponse(itemIdx, itemId, reviewId) {
             // Find appeal response text input node
-            responseTextNode = document.getElementsByName("appeal_response_text[" + itemIdx + "]")[0];
-            // Get appeal response text
-            var responseText = responseTextNode.value;
+            responseTextNodes = document.getElementsByName("appeal_response_text[" + itemIdx + "]");
 
             // Find appeal response modified answer node
             answerNode = document.getElementsByName("answer[" + itemIdx + "]")[0];
@@ -104,7 +107,7 @@
             modifiedAnswer = answerNode.value;
 
             // Find the appeal success status node
-            appealSuccessNode = document.getElementsByName("appeal_response_success[" + itemIdx + "]")[0];
+            appealSuccessNodes = document.getElementsByName("appeal_response_success[" + itemIdx + "]");
 
             // assemble the request XML
             var content =
@@ -117,17 +120,22 @@
                 '<parameter name="ItemId">' +
                 itemId +
                 '</parameter>' +
-                '<parameter name="Text"><![CDATA[' +
-                responseText +
-                ']]></parameter>' +
                 '<parameter name="Answer">' +
                 modifiedAnswer +
-                '</parameter>' +
-                '<parameter name="Status">' +
-                (appealSuccessNode.checked ? "Succeeded" : "Failed") +
                 '</parameter>';
 
+            for (var i = 0; i < responseTextNodes.length; i++) {
+                content = content + '<parameter name="Text' + i + '"><![CDATA[' +
+                responseTextNodes[i].value + ']]></parameter>';
+            }
+            for (var i = 0; i < appealSuccessNodes.length; i++) {
+                content = content + '<parameter name="Status' + i + '">' +
+                (appealSuccessNodes[i].checked ? "Succeeded" : "Failed") +
+                '</parameter>';
+            }
+
             commentTypeNodes = document.getElementsByName("comment_type[" + itemIdx + "]");
+			evaluationTypeNodes = document.getElementsByName("evaluation_type[" + itemIdx + "]");
             commentIdNodes = document.getElementsByName("comment_id[" + itemIdx + "]");
 
             for (var i = 0; i < commentTypeNodes.length; i++) {
@@ -135,6 +143,11 @@
                     commentIdNodes[i].value + '">' +
                     commentTypeNodes[i].value + '</parameter>';
             }
+			for (var i = 0; i < evaluationTypeNodes.length; i++) {
+				content = content + '<parameter name="EvaluationType' +
+                    commentIdNodes[i].value + '">' +
+                    evaluationTypeNodes[i].value + '</parameter>';
+			}
 
             content = content + "</parameters>" + "</request>";
 
@@ -158,9 +171,11 @@
          * TODO: Document it
          */
         function hideRow(rowId) {
-            if (document != null && document.getElementById != null) {
-                var row = document.getElementById(rowId);
-                if (row != null) row.style.display = "none";
+            if (document != null && document.getElementsByName != null) {
+                var rows = document.getElementsByName(rowId);
+                for (var i = 0; i < rows.length; i++) {
+                    rows[i].style.display = "none";
+                }
             }
         }
 
@@ -168,17 +183,22 @@
          * TODO: Document it
          */
         function alterComment(itemIdx) {
-            var commentCombo = document.getElementById("cmtType_" + itemIdx);
-            var commentText = document.getElementById("cmtTypeStatic_" + itemIdx);
-            if (commentCombo == null || commentText == null) {
-                return;
+            var commentCombos = document.getElementsByName("comment_type[" + itemIdx + "]");
+            var commentTexts = document.getElementsByName("cmtTypeStatic_" + itemIdx);
+            for (var i = 0; i < commentCombos.length; i++) {
+				var text = commentCombos[i].options[commentCombos[i].selectedIndex].value;
+				commentTexts[i].innerHTML = text;
+				commentCombos[i].style.display = "none";
+	            commentTexts[i].style.display = "inline";
             }
-
-            var text = commentCombo.options[commentCombo.selectedIndex].value;
-
-            commentText.innerHTML = text;
-            commentCombo.style.display = "none";
-            commentText.style.display = "inline";
+			var evaTypeCombos = document.getElementsByName("evaluation_type[" + itemIdx + "]");
+			var evaTypeTexts = document.getElementsByName("cmtEvaTypeStatic_" + itemIdx);
+			for (var i = 0; i < evaTypeCombos.length; i++) {
+				var text = evaTypeCombos[i].options[evaTypeCombos[i].selectedIndex].text;
+				evaTypeTexts[i].innerHTML = text;
+				evaTypeCombos[i].style.display = "none";
+	            evaTypeTexts[i].style.display = "inline";
+            }
         }
 
         /**
@@ -310,7 +330,8 @@
                                         </tr>
                                     </c:if>
                                     <c:if test="${canPlaceAppealResponse and (appealStatuses[itemIdx] == 'Unresolved')}">
-                                        <tr id="placeAppealResponse_${itemIdx}" class="highlighted">
+                                        <c:if test="${appealsNum == 1}">
+                                        <tr name="placeAppealResponse_${itemIdx}" class="highlighted">
                                             <td class="value" colspan="3">
                                                 <b><bean:message key="editReview.Question.AppealResponseText.title"/>:</b><br />
                                                 <textarea rows="2" name="appeal_response_text[${itemIdx}]" cols="20" style="font-size:10px;font-family:sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea><br />
@@ -325,6 +346,30 @@
                                                     altKey="editReview.Button.SubmitAppealResponse.alt" border="0"/></a>
                                             </td>
                                         </tr>
+                                        </c:if>
+                                        <c:if test="${appealsNum > 1}">
+                                            <c:forEach items="${item.allComments}" var="comment" varStatus="commentStatus">
+                                            <c:if test="${comment.commentType.name eq 'Appeal'}">
+                                                <tr name="placeAppealResponse_${itemIdx}" class="highlighted">
+                                                    <td class="value" colspan="4">
+                                                        <b><bean:message key="editReview.Question.AppealResponseText.title"/>:</b><br />
+                                                        <textarea rows="2" name="appeal_response_text[${itemIdx}]" cols="20" style="font-size:10px;font-family:sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea><br />
+                                                        <input type="checkbox" name="appeal_response_success[${itemIdx}]" />
+                                                        <bean:message key="editReview.Question.AppealSucceeded.title" />
+                                                    </td>
+                                                </tr>
+                                            </c:if>
+                                            </c:forEach>
+                                            <tr name="placeAppealResponse_${itemIdx}" class="highlighted">
+                                                <td class="value" colspan="3">
+                                                    <bean:message key="editReview.Question.ModifiedResponse.title"/>:
+                                                    <%@ include file="../includes/review/review_answer.jsp" %></td><td>
+                                                    <a href="javascript:placeAppealResponse(${itemIdx}, ${item.id}, ${review.id});"><html:img
+                                                        srcKey="editReview.Button.SubmitAppealResponse.img"
+                                                        altKey="editReview.Button.SubmitAppealResponse.alt" border="0"/></a>
+                                                </td>
+                                            </tr>
+                                        </c:if>
                                     </c:if>
 
                                     <c:set var="itemIdx" value="${itemIdx + 1}" />

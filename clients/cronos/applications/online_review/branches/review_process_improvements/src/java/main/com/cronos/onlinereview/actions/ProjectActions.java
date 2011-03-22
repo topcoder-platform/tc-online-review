@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -10,7 +10,7 @@ import static com.cronos.onlinereview.actions.Constants.APPEALS_RESPONSE_PHASE_N
 import static com.cronos.onlinereview.actions.Constants.APPROVAL_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.FINAL_FIX_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.FINAL_REVIEW_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.FIRST_APPEALS_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.NEW_APPEALS_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME;
@@ -232,9 +232,16 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  *     take care of <code>SECONDARY_REVIEWER_REVIEW_PHASE_NAME</code>.</li>
  *   </ol>
  * </p>
-
- * @author George1, real_vg, pulky, isv
- * @version 1.12
+ *
+ * <p>
+ * Version 1.13 (Online Review Update Review Management Process assembly 2) Change notes:
+ *   <ol>
+ *     <li>Change <code>FIRST_APPEALS_PHASE_NAME</code> to <code>NEW_APPEALS_PHASE_NAME</code>.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSASSEMBER
+ * @version 1.13
  */
 public class ProjectActions extends DispatchAction {
 
@@ -1774,7 +1781,7 @@ public class ProjectActions extends DispatchAction {
                                 "error.com.cronos.onlinereview.actions.editProject.AppealsMustBeFollowed");
                         arePhasesValid = false;
                     }
-                } else if (currentPhaseName.equals(FIRST_APPEALS_PHASE_NAME)) {
+                } else if (currentPhaseName.equals(NEW_APPEALS_PHASE_NAME)) {
                     // Appeals should follow review
                     if (i == 0 || !previousPhaseName.equals(PRIMARY_REVIEW_EVALUATION_PHASE_NAME) &&
                                   !postMortemPhaseExists) {
@@ -1800,7 +1807,7 @@ public class ProjectActions extends DispatchAction {
                     }
                 } else if (currentPhaseName.equals(PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME)) {
                     // Appeal response should follow appeals
-                    if (i == 0 || !previousPhaseName.equals(FIRST_APPEALS_PHASE_NAME) &&
+                    if (i == 0 || !previousPhaseName.equals(NEW_APPEALS_PHASE_NAME) &&
                                   !postMortemPhaseExists) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.AppealsResponseMustFollow");

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2011 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -100,8 +100,17 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
- * @author George1, isv
- * @version 1.5
+ * <p>
+ * Version 1.6 (Online Review Update Review Management Process assembly 2) Change notes:
+ *   <ol>
+ *     <li>Update {@link #serviceAppealsAppFunc(HttpServletRequest, PhaseGroup, Project, Phase, Phase[], Resource[], Resource[], boolean)}
+ *     method to work for the new <code>New Appeals</code> and <code>Primary Review Appeals Response</code> phases.</li>
+ *     <li>Update {@link #countAppeals(Review[][], int[][], int[][])} method, because a item may have multiply appeals now.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, isv, TCSASSEMBER
+ * @version 1.6
  */
 final class PhasesDetailsServices {
 
@@ -798,14 +807,27 @@ final class PhasesDetailsServices {
         }
     }
     
-    
+    /**
+     * <p>Sets the specified phase group with details for Appeals/Appeals Response group.</p>
+     *
+     * @param request an <code>HttpServletRequest</code> providing incoming request from the client.
+     * @param phaseGroup a <code>PhaseGroup</code> providing the details for group of phase the current phase belongs
+     *        to.
+     * @param project a <code>Project</code> providing the details for current project.
+     * @param phase a <code>Phase</code> providing the details for <code>Post-Mortem</code> phase.
+     * @param phases a <code>Phase</code> array listing all existing phase for specified project.
+     * @param allProjectResources a <code>Resource</code> array listing all existing resources for specified project.
+     * @param submitters a <code>Resource</code> array listing all existing submitters for specified project.
+     * @param isAfterAppealsResponse whether this phase is after a closed appeals response phase.
+     * @throws BaseException if an unexpected error occurs.
+     */
     private static void serviceAppealsAppFunc(HttpServletRequest request,
             PhaseGroup phaseGroup, Project project, Phase phase, Phase[] phases,
             Resource[] allProjectResources, Resource[] submitters, boolean isAfterAppealsResponse)
         throws BaseException {
         String phaseName = phase.getPhaseType().getName();
 
-        if (phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) || phaseName.equalsIgnoreCase(Constants.FIRST_APPEALS_PHASE_NAME)) {
+        if (phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) || phaseName.equalsIgnoreCase(Constants.NEW_APPEALS_PHASE_NAME)) {
             // If the project is not in the after appeals response state, allow uploading of testcases
             phaseGroup.setUploadingTestcasesAllowed(!isAfterAppealsResponse);
 
@@ -878,13 +900,25 @@ final class PhasesDetailsServices {
                     Constants.REVIEWER_ROLE_NAME, Constants.ACCURACY_REVIEWER_ROLE_NAME,
                     Constants.FAILURE_REVIEWER_ROLE_NAME, Constants.STRESS_REVIEWER_ROLE_NAME,
                     Constants.CLIENT_MANAGER_ROLE_NAME, Constants.COPILOT_ROLE_NAME,
-                    Constants.OBSERVER_ROLE_NAME});
+                    Constants.OBSERVER_ROLE_NAME, Constants.SECONDARY_REVIEWER_ROLE_NAME,
+                    Constants.PRIMARY_REVIEW_EVALUATOR_ROLE_NAME});
+            // Determine if the Review phase is closed
+            boolean isReviewClosed = false;
+            for (Phase ph : phases) {
+                if ( (ph.getPhaseType().getName().equalsIgnoreCase(Constants.REVIEW_PHASE_NAME)
+                        || ph.getPhaseType().getName().equalsIgnoreCase(Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME))
+                        && ph.getPhaseStatus().getName().equalsIgnoreCase(Constants.CLOSED_PH_STATUS_NAME)) {
+                    isReviewClosed = true;
+                    break;
+                }
+            }
             // Determine if the Appeals phase is open
             boolean isAppealsOpen =  phase.getPhaseStatus().getName().equalsIgnoreCase(Constants.OPEN_PH_STATUS_NAME);
 
             if (!allowedToSeeReviewLink) {
-                if ( isAppealsOpen &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME)) {
+                // Determine if the user is allowed to place appeals and Appeals phase is open
+                if ( isReviewClosed || (isAppealsOpen &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME))) {
                     allowedToSeeReviewLink = true;
                 }
             }
@@ -898,12 +932,13 @@ final class PhasesDetailsServices {
             	reviewPhase = ActionsHelper.getPhase( phases, false, Constants.REVIEW_PHASE_NAME );
             }
             
-            if (phaseName.equalsIgnoreCase(Constants.FIRST_APPEALS_PHASE_NAME)) {
+            if (phaseName.equalsIgnoreCase(Constants.NEW_APPEALS_PHASE_NAME)) {
             	reviewPhase = ActionsHelper.getPhase( phases, false, Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME );
             }
             
 
-            if ( AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
+            if ( !isAfterAppealsResponse &&
+                    AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
                     AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES)) {
                 // Get "my" (reviewer's) resource
                 reviewers = ActionsHelper.getMyResourcesForPhase(request, reviewPhase);
@@ -1027,6 +1062,16 @@ final class PhasesDetailsServices {
             int[][] totalAppeals = new int[reviews.length][];
             int[][] unresolvedAppeals = new int[reviews.length][];
 
+            if (!isAfterAppealsResponse && !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_APPEALS_PERM_NAME)) {
+                // user has no permission to view all the appeals/appeals response
+                Resource[] myResources =  (Resource[]) request.getAttribute("myResources");
+                for (int i = 0; i < reviews.length; i++) {
+                    for (int j = 0; j < reviews[i].length; j++) {
+                        ActionsHelper.filterOwnAppeals(reviews[i][j], myResources);
+                    }
+                }
+            }
+            
             countAppeals(reviews, totalAppeals, unresolvedAppeals);
 
             phaseGroup.setTotalAppealsCounts(totalAppeals);
@@ -1490,27 +1535,12 @@ final class PhasesDetailsServices {
 
                 for (int itemIdx = 0; itemIdx < review.getNumberOfItems(); ++itemIdx) {
                     Item item = review.getItem(itemIdx);
-                    boolean appealFound = false;
-                    boolean appealResolved = false;
-
-                    for (int commentIdx = 0;
-                            commentIdx < item.getNumberOfComments() && !(appealFound && appealResolved);
-                            ++commentIdx) {
+                    for (int commentIdx = 0; commentIdx < item.getNumberOfComments(); ++commentIdx) {
                         String commentType = item.getComment(commentIdx).getCommentType().getName();
-
-                        if (!appealFound && commentType.equalsIgnoreCase("Appeal")) {
-                            appealFound = true;
-                            continue;
+                        if (commentType.equalsIgnoreCase("Appeal")) {
+                            ++innerTotalAppeals[j];
                         }
-                        if (!appealResolved && commentType.equalsIgnoreCase("Appeal Response")) {
-                            appealResolved = true;
-                            continue;
-                        }
-                    }
-
-                    if (appealFound) {
-                        ++innerTotalAppeals[j];
-                        if (!appealResolved) {
+                        if (commentType.equalsIgnoreCase("Appeal Response")) {
                             ++innerUnresolvedAppeals[j];
                         }
                     }

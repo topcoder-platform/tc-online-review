@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -83,8 +83,18 @@ package com.cronos.onlinereview.actions;
  *     <li>Changed value of {@link #REVIEWER_ROLE_NAMES } Constant.</li>   
  *   </ol>
  * </p>
- * @author George1, real_vg, pulky, isv
- * @version 1.7
+ * 
+ * <p>
+ * Version 1.8 (Online Review Update Review Management Process assembly 2) Change notes:
+ *   <ol>
+ *     <li>Added {@link #VIEW_ALL_APPEALS_PERM_NAME} constant to represent the permission whether the user can
+ *     view all the appeals/appeals resposne.</li>
+ *     <li>Changed FIRST_APPEALS_PHASE_NAME constant to {@link #NEW_APPEALS_PHASE_NAME} constant.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSASSEMBER
+ * @version 1.8
  */
 public class Constants {
 
@@ -728,6 +738,13 @@ public class Constants {
      * @since 1.2
      */
     public static final String PROJECT_MANAGEMENT_PERM_NAME = "Manage Project";
+    
+    /**
+     * <p>A <code>String</code> providing the name for permission for viewing all the appeals.</p>
+     * 
+     * @since 1.8
+     */
+    public static final String VIEW_ALL_APPEALS_PERM_NAME = "View All Appeals";
 
     // -------------------------------------------------------------------------- Phase names -----
 
@@ -758,8 +775,10 @@ public class Constants {
     
     /**
      * This member variable is a string constant that defines the name of the Appeals phase.
+     * 
+     * @since 1.8
      */
-    public static final String FIRST_APPEALS_PHASE_NAME = "First Appeals";
+    public static final String NEW_APPEALS_PHASE_NAME = "New Appeals";
 
     /**
      * This member variable is a string constant that defines the name of the Appeals Response

@@ -11,8 +11,13 @@ import junit.framework.TestSuite;
 /**
  * <p>This test case aggregates all functional test cases.</p>
  *
- * @author TopCoder
- * @version 1.0
+ * <p>
+ * Version 1.1 (Online Review Update Review Management Process assembly 2) change notes:
+ * - Add <code>NewAppealsTests</code> and <code>PrimaryAppealsResponseTests</code> test suites.
+ * </p>
+ *
+ * @author TopCoder, TCSASSEMBER
+ * @version 1.1
  */
 public class FunctionalTests extends TestCase {
 
@@ -23,6 +28,8 @@ public class FunctionalTests extends TestCase {
         suite.addTestSuite(LinkProjectsTests.class);
         suite.addTestSuite(OpenPhaseTests.class);
         //suite.addTestSuite(EditProjectTests.class);
+        suite.addTestSuite(NewAppealsTests.class);
+        suite.addTestSuite(PrimaryAppealsResponseTests.class);
         return suite;
     }
 }

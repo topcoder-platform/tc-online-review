@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2006-2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -239,9 +239,18 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *     <li>Added {@link #copyReviewItems(Review fromReview, Review toReview, String[] typesToCopy)} method.</li>
  *   </ol>
  * </p>
-
+ *
+ * <p>
+ * Version 2.1 (Online Review Update Review Management Process assembly 2) Change notes:
+ *   <ol>
+ *     <li>Added {@link #filterOwnAppeals(Review, Resource[])} method to filter appeals/appeals response in a review.</li>
+ *     <li>Updated {@link #isAfterAppealsResponse(Phase[])} method to work for the new updated review system.</li>
+ *     <li>Updated {@link #isAfterAppealsResponse(Phase[], int) method to work for the new updated review system.</li>
+ *   </ol>
+ * </p>
+ * 
  * @author George1, real_vg, pulky, isv, TCSDEVELOPER
- * @version 1.9
+ * @version 2.1
  * @since 1.0
  */
 public class ActionsHelper {
@@ -2632,7 +2641,13 @@ public class ActionsHelper {
                 continue;
             }
             prevPhase = true;
-            if (phaseName.equalsIgnoreCase(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME) ||
+            if (
+                    // new review process
+                    phaseName.equalsIgnoreCase(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME) ||
+                    phaseName.equalsIgnoreCase(Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME) ||
+                    phaseName.equalsIgnoreCase(Constants.NEW_APPEALS_PHASE_NAME) ||
+                    phaseName.equalsIgnoreCase(Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME) ||
+                    // old review process
             		phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME) ||
                     phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) ||
                     phaseName.equalsIgnoreCase(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
@@ -2695,18 +2710,25 @@ public class ActionsHelper {
             }
             // If Appeals response is the closed phase,
             // then definetely the project is at after Appeals Response stage
-            if (phaseName.equalsIgnoreCase(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
+            if (phaseName.equalsIgnoreCase(Constants.APPEALS_RESPONSE_PHASE_NAME) ||
+                    phaseName.equalsIgnoreCase(Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME)) {
                 return true;
             }
             // If the phase Review or Appeals is found, but there were other closed phases after them,
             // regard this as after Appeals Response (if Appeals Response is actually absent)
             if (anyOtherPhaseFound &&
                     (phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) ||
-                            phaseName.equalsIgnoreCase(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME) || 
+                            phaseName.equalsIgnoreCase(Constants.NEW_APPEALS_PHASE_NAME) ||
+                            phaseName.equalsIgnoreCase(Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME) ||
                             phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME))) {
                 return true;
             }
-            anyOtherPhaseFound = true;
+            if (!(phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) ||
+                            phaseName.equalsIgnoreCase(Constants.NEW_APPEALS_PHASE_NAME) ||
+                            phaseName.equalsIgnoreCase(Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME) ||
+                            phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME))) {
+                anyOtherPhaseFound = true;
+            }
         }
 
         // If i is negative, the needed phase has not been found
@@ -5053,5 +5075,41 @@ public class ActionsHelper {
         }
 
         return false;
+    }
+    
+    /**
+     * Filter the comments in review board to contain only the appeals submitted by the specific resoruces. The
+     * appeal responses are also filtered. The reason to filter appeals/appeals response is that in new updated review system,
+     * both submitter and secondary reviewer can submit appeals to a review, but they can only see their own appeals/appeals response
+     * if appeal response phase is not closed.
+     *
+     * @param review the <code>Review</code> to filter
+     * @param myResource the specific resources
+     * @since 2.1
+     */
+    public static void filterOwnAppeals(Review review, Resource[] myResource) {
+        // if the contest is not after appeal response phase, and the user has no permission to view all the appeals
+        // then he can only view his own appeals
+        Set<Long> myResourceIds = new HashSet<Long>();
+        for (Resource res : myResource) {
+            myResourceIds.add(res.getId());
+        }
+        for (Item item : review.getAllItems()) {
+            Map<Long, Comment> comments = new HashMap<Long, Comment>();
+            for (Comment comment : item.getAllComments()) {
+                comments.put(comment.getId(), comment);
+            }
+            for (Comment comment : item.getAllComments()) {
+                if (comment.getCommentType().getName().equals("Appeal") && !myResourceIds.contains(comment.getAuthor())) {
+                    item.removeComment(comment);
+                }
+                if (comment.getCommentType().getName().equals("Appeal Response") && comment.getExtraInfo() != null) {
+                    Long appealsCommentId = Long.parseLong(comment.getExtraInfo().toString());
+                    if (!myResourceIds.contains(comments.get(appealsCommentId).getAuthor())) {
+                        item.removeComment(comment);
+                    }
+                }
+            }
+        }
     }
 }

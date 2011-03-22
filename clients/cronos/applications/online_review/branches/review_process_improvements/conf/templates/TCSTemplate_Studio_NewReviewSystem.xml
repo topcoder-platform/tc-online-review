@@ -10,8 +10,7 @@
         <PhaseType id="final_review" typeId="8" typeName="Final Review"/>
         <PhaseType id="secondary_reviewer_review" typeId="15" typeName="Secondary Reviewer Review"/>
         <PhaseType id="primary_review_evaluation" typeId="16" typeName="Primary Review Evaluation"/>
-        <PhaseType id="first_appeals" typeId="17" typeName="First Appeals"/>
-        <PhaseType id="second_appeals" typeId="18" typeName="Second Appeals"/>
+        <PhaseType id="new_appeals" typeId="17" typeName="New Appeals"/>
         <PhaseType id="primary_review_appeals_response" typeId="19" typeName="Primary Review Appeals Response"/>
         <PhaseType id="review_registration" typeId="20" typeName="Review Registration"/>
     </PhaseTypes>
@@ -31,14 +30,14 @@
             <Dependency id="reviewPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
         </Phase>
 
-        <Phase id="firstAppeals" length="86400000" type="first_appeals" phaseId="5">
+        <Phase id="newAppeals" length="86400000" type="new_appeals" phaseId="5">
             <!-- "isDependentStart" is optional attribute(default to "true"), here it is omitted -->
             <Dependency id="primaryReviewEvaluation" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
         </Phase>
 
         <Phase id="primaryReviewAppealsResponse" length="43200000" type="primary_review_appeals_response" phaseId="6">
             <!-- "lagTime" is optional attribute(default to "0"), here it is omitted -->
-            <Dependency id="firstAppeals" isDependencyStart="false" isDependentStart="true"/>
+            <Dependency id="newAppeals" isDependencyStart="false" isDependentStart="true"/>
         </Phase>
 
         <Phase id="aggregationPhase" length="43200000" type="aggregation" phaseId="7">

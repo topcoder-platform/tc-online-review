@@ -51,8 +51,6 @@
 					</c:choose>
 				</c:if>
 				<td class="valueC" nowrap="nowrap">
-					<fmt:parseDate pattern="MM.dd.yyyy hh:mm a" value="${resource.allProperties['Registration Date']}"
-					var="registrationDate"/>
 					<fmt:formatDate pattern="MM.dd.yyyy HH:mm z" value="${registrationDate}"/>
 				</td>
 			</tr>

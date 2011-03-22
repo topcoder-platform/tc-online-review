@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007-2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -11,16 +11,18 @@ import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManagerFactory;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
 import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
+import com.cronos.onlinereview.phases.GenericAppealPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
 import com.cronos.onlinereview.phases.PRFinalFixPhaseHandler;
 import com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler;
+import com.cronos.onlinereview.phases.PRPostMortemPhaseHandler;
+import com.cronos.onlinereview.phases.PRPrimaryReviewAppealResponsePhaseHandler;
 import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
 import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
-import com.cronos.onlinereview.phases.PRPostMortemPhaseHandler;
 import com.cronos.onlinereview.phases.PrimaryReviewEvaluationPhaseHandler;
 import com.cronos.onlinereview.phases.SecondaryReviewerReviewPhaseHandler;
 import com.cronos.onlinereview.phases.SpecificationReviewPhaseHandler;
@@ -89,8 +91,17 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  *     <code>Primary Review Evaluation</code>  phases.</li>
  *   </ol>
  * </p>
- * @author evilisneo, BeBetter, isv
- * @version 1.4
+ * 
+ * <p>
+ * Version 1.5 (Online Review Update Review Management Process assembly 2) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #getPhaseManager()} method to set handler for <code>New Appeals</code> and
+ *     <code>Primary Review Appeals Response</code> phases.</li>
+ *   </ol>
+ * </p>
+ * 
+ * @author evilisneo, BeBetter, isv, TCSASSEMBER
+ * @version 1.5
  * @since 1.0
  */
 public class ManagerCreationHelper implements ManagersProvider {
@@ -160,8 +171,12 @@ public class ManagerCreationHelper implements ManagersProvider {
                     Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new AppealsPhaseHandler(),
                     Constants.APPEALS_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new GenericAppealPhaseHandler(),
+                    Constants.NEW_APPEALS_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAppealResponsePhaseHandler(),
                     Constants.APPEALS_RESPONSE_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRPrimaryReviewAppealResponsePhaseHandler(),
+                    Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAggregationPhaseHandler(),
                     Constants.AGGREGATION_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAggregationReviewPhaseHandler(),

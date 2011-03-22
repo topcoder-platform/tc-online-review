@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -174,8 +174,19 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.7 */
+ * <p>
+ * Version 1.8 (Online Review Update Review Management Process assembly 2) Change noets:
+ *   <ol>
+ *     <li>Update {@link #viewProjectDetails(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method
+ *     to work for the new <code>New Appeals</code> and <code>Primary Review Appeals Response</code> phases.</li>
+ *     <li>Update {@link #earlyAppeals(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method to work
+ *     for the new <code>New Appeals</code> phase. Because secondary reviewer can also appeals in <code>New Appeals</code> phase.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSASSEMBER
+ * @version 1.8
+ */
 public class ProjectDetailsActions extends DispatchAction {
 
     /**
@@ -648,8 +659,10 @@ public class ProjectDetailsActions extends DispatchAction {
         // check if appeals phase is open
         boolean appealsOpen = false;
         for (int i = 0; i < activePhases.length && !appealsOpen; i++) {
-            if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME)) {
+            if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME)
+                    || activePhases[i].getPhaseType().getName().equals(Constants.NEW_APPEALS_PHASE_NAME)) {
                 appealsOpen = true;
+                break;
             }
         }
 
@@ -669,16 +682,21 @@ public class ProjectDetailsActions extends DispatchAction {
                 appealsCompletedFlag = true;
             }
         }
+        Resource secondaryReviewer = ActionsHelper.getMyResourceForRole(request, "Secondary Reviewer");
+        if (appealsCompletedFlag == false && secondaryReviewer != null) {
+            String value = (String) secondaryReviewer.getProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY);
+            if (value != null && value.equals(Constants.YES_VALUE)) {
+                appealsCompletedFlag = true;
+            }
+        }
+
+        boolean canAppeal = AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME);
 
         // check if the user can mark appeals as completed
-        request.setAttribute("isAllowedToCompleteAppeals",
-            Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) &&
-            appealsOpen && !appealsCompletedFlag);
+        request.setAttribute("isAllowedToCompleteAppeals", canAppeal && appealsOpen && !appealsCompletedFlag);
 
         // check if the user can resume appeals
-        request.setAttribute("isAllowedToResumeAppeals",
-            Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) &&
-            appealsOpen && appealsCompletedFlag);
+        request.setAttribute("isAllowedToResumeAppeals", canAppeal && appealsOpen && appealsCompletedFlag);
 
         // Check permissions
         request.setAttribute("isAllowedToManageProjects",
@@ -2160,11 +2178,10 @@ public class ProjectDetailsActions extends DispatchAction {
             return verification.getForward();
         }
 
-        // Check the user has submitter role and appeals phase is open
-        boolean isSubmitter = Boolean.valueOf(AuthorizationHelper.hasUserRole(request,
-                Constants.SUBMITTER_ROLE_NAME));
+        // Check the user has permission to appeal and appeals phase is open
+        boolean canAppeal = AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME);
 
-        if (!isSubmitter) {
+        if (!canAppeal) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, "Early Appeals", "Error.NoPermission", Boolean.TRUE);
         }
@@ -2179,8 +2196,10 @@ public class ProjectDetailsActions extends DispatchAction {
         // check if appeals phase is open
         boolean appealsOpen = false;
         for (int i = 0; i < activePhases.length && !appealsOpen; i++) {
-            if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME)) {
+            if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME)
+                    || activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.NEW_APPEALS_PHASE_NAME)) {
                 appealsOpen = true;
+                break;
             }
         }
 
@@ -2193,6 +2212,9 @@ public class ProjectDetailsActions extends DispatchAction {
         AuthorizationHelper.removeLoginRedirect(request);
 
         Resource submitter = ActionsHelper.getMyResourceForRole(request, "Submitter");
+        if (submitter == null) {
+            submitter = ActionsHelper.getMyResourceForRole(request, "Secondary Reviewer");
+        }
 
         // get appeals completed early property value
         boolean appealsCompletedFlag = false;
