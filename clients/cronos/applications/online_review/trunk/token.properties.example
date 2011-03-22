@@ -213,14 +213,6 @@
 ####################################################
 # Parameters specific to Late Deliverables Tracker #
 ####################################################
-# Comma separated list of ID for types of deliverables to track
-# (maps to deliverable_lu.deliverable_id column values)
-@tracked_deliverable_ids@=<<deliverable_ids>>
-# Comma separated list of ID for types of deliverables to email about
-# (maps to deliverable_lu.deliverable_id column values)
-@notification_deliverable_ids@=<<deliverable_ids>>
-# An interval (in seconds) for sending notification emails on late deliverables
-@late_deliverables_notification_interval@=<<number_of_seconds>>
 # A path to file to signal to Late Deliverables Tracker to stop the job
 @late_deliverables_tracker_guard_file@=<<path_to_guard_file>>
 # A path to file to signal to Late Deliverables Tracker that there is another tool instance already running
