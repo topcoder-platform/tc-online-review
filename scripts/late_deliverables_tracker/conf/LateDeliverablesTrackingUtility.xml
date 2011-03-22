@@ -52,16 +52,16 @@
             </Property>
 
             <Property name="objectFactoryConfig">
-                <property name="lateDeliverablesRetriever">
-                    <property name="type">
-                        <value>com.topcoder.management.deliverable.latetracker.retrievers.LateDeliverablesRetrieverImpl</value>
-                    </property>
-                </property>
-                <property name="lateDeliverableProcessor">
-                    <property name="type">
-                        <value>com.topcoder.management.deliverable.latetracker.processors.LateDeliverableProcessorImpl</value>
-                    </property>
-                </property>
+                <Property name="lateDeliverablesRetriever">
+                    <Property name="type">
+                        <Value>com.topcoder.management.deliverable.latetracker.retrievers.LateDeliverablesRetrieverImpl</Value>
+                    </Property>
+                </Property>
+                <Property name="lateDeliverableProcessor">
+                    <Property name="type">
+                        <Value>com.topcoder.management.deliverable.latetracker.processors.LateDeliverableProcessorImpl</Value>
+                    </Property>
+                </Property>
             </Property>
             <Property name="lateDeliverableProcessorKey">
                 <Value>lateDeliverableProcessor</Value>
@@ -79,13 +79,13 @@
                     <Value>resourceManager</Value>
                 </Property>
                 <Property name="trackingDeliverableIds">
-                    <Value>@tracked_deliverable_ids@</Value>
+                    <Value>2,4,5,6,7,8,9,10,11,12,13,14,15,20,22,26</Value>
                 </Property>
                 <Property name="objectFactoryConfig">
-                    <property name="resourceManager">
-                        <property name="type">
-                            <value>com.topcoder.management.resource.persistence.PersistenceResourceManager</value>
-                        </property>
+                    <Property name="resourceManager">
+                        <Property name="type">
+                            <Value>com.topcoder.management.resource.persistence.PersistenceResourceManager</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="name">
@@ -98,11 +98,11 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
-                    <property name="ResourcePersistence">
-                        <property name="type">
-                            <value>com.topcoder.management.resource.persistence.sql.SqlResourcePersistence</value>
-                        </property>
+                    </Property>
+                    <Property name="ResourcePersistence">
+                        <Property name="type">
+                            <Value>com.topcoder.management.resource.persistence.sql.SqlResourcePersistence</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="name">
@@ -110,11 +110,11 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
-                    <property name="SearchBundleManager">
-                        <property name="type">
-                            <value>com.topcoder.search.builder.SearchBundleManager</value>
-                        </property>
+                    </Property>
+                    <Property name="SearchBundleManager">
+                        <Property name="type">
+                            <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="type">
@@ -125,16 +125,16 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
-                    <property name="projectManager">
-                        <property name="type">
-                            <value>com.topcoder.management.project.ProjectManagerImpl</value>
-                        </property>
-                    </property>
-                    <property name="phaseManager">
-                        <property name="type">
-                            <value>com.topcoder.management.phase.DefaultPhaseManager</value>
-                        </property>
+                    </Property>
+                    <Property name="projectManager">
+                        <Property name="type">
+                            <Value>com.topcoder.management.project.ProjectManagerImpl</Value>
+                        </Property>
+                    </Property>
+                    <Property name="phaseManager">
+                        <Property name="type">
+                            <Value>com.topcoder.management.phase.DefaultPhaseManager</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="type">
@@ -145,11 +145,11 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
-                    <property name="deliverablePersistence">
-                        <property name="type">
-                            <value>com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersistence</value>
-                        </property>
+                    </Property>
+                    <Property name="deliverablePersistence">
+                        <Property name="type">
+                            <Value>com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersistence</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="name">
@@ -157,11 +157,11 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
-                    <property name="DBConnectionFactory">
-                        <property name="type">
-                            <value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</value>
-                        </property>
+                    </Property>
+                    <Property name="DBConnectionFactory">
+                        <Property name="type">
+                            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="type">
@@ -172,11 +172,11 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
-                    <property name="screeningDeliverableChecker">
-                        <property name="type">
-                            <value>com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker</value>
-                        </property>
+                    </Property>
+                    <Property name="screeningDeliverableChecker">
+                        <Property name="type">
+                            <Value>com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="name">
@@ -184,11 +184,11 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
-                    <property name="reviewDeliverableChecker">
-                        <property name="type">
-                            <value>com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker</value>
-                        </property>
+                    </Property>
+                    <Property name="reviewDeliverableChecker">
+                        <Property name="type">
+                            <Value>com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="name">
@@ -196,11 +196,11 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
-                    <property name="specReviewDeliverableChecker">
-                        <property name="type">
-                            <value>com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker</value>
-                        </property>
+                    </Property>
+                    <Property name="specReviewDeliverableChecker">
+                        <Property name="type">
+                            <Value>com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="name">
@@ -208,11 +208,11 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
-                    <property name="testCaseDeliverableChecker">
-                        <property name="type">
-                            <value>com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker</value>
-                        </property>
+                    </Property>
+                    <Property name="testCaseDeliverableChecker">
+                        <Property name="type">
+                            <Value>com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="name">
@@ -220,11 +220,11 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
-                    <property name="aggregationDeliverableChecker">
-                        <property name="type">
-                            <value>com.cronos.onlinereview.deliverables.AggregationDeliverableChecker</value>
-                        </property>
+                    </Property>
+                    <Property name="aggregationDeliverableChecker">
+                        <Property name="type">
+                            <Value>com.cronos.onlinereview.deliverables.AggregationDeliverableChecker</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="name">
@@ -232,11 +232,11 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
-                    <property name="appealResponsesDeliverableChecker">
-                        <property name="type">
-                            <value>com.cronos.onlinereview.deliverables.AppealResponsesDeliverableChecker</value>
-                        </property>
+                    </Property>
+                    <Property name="appealResponsesDeliverableChecker">
+                        <Property name="type">
+                            <Value>com.cronos.onlinereview.deliverables.AppealResponsesDeliverableChecker</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="name">
@@ -244,11 +244,11 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
-                    <property name="finalFixDeliverableChecker">
-                        <property name="type">
-                            <value>com.cronos.onlinereview.deliverables.FinalFixesDeliverableChecker</value>
-                        </property>
+                    </Property>
+                    <Property name="finalFixDeliverableChecker">
+                        <Property name="type">
+                            <Value>com.cronos.onlinereview.deliverables.FinalFixesDeliverableChecker</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="name">
@@ -256,11 +256,11 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
-                    <property name="finalReviewDeliverableChecker">
-                        <property name="type">
-                            <value>com.cronos.onlinereview.deliverables.FinalReviewDeliverableChecker</value>
-                        </property>
+                    </Property>
+                    <Property name="finalReviewDeliverableChecker">
+                        <Property name="type">
+                            <Value>com.cronos.onlinereview.deliverables.FinalReviewDeliverableChecker</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="name">
@@ -268,7 +268,7 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
+                    </Property>
                 </Property>
                 <Property name="projectManagerKey">
                     <Value>projectManager</Value>
@@ -375,10 +375,10 @@
                     <Value>informix_connection</Value>
                 </Property>
                 <Property name="objectFactoryConfig">
-                    <property name="resourceManager">
-                        <property name="type">
-                            <value>com.topcoder.management.resource.persistence.PersistenceResourceManager</value>
-                        </property>
+                    <Property name="resourceManager">
+                        <Property name="type">
+                            <Value>com.topcoder.management.resource.persistence.PersistenceResourceManager</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="name">
@@ -391,11 +391,11 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
-                    <property name="ResourcePersistence">
-                        <property name="type">
-                            <value>com.topcoder.management.resource.persistence.sql.SqlResourcePersistence</value>
-                        </property>
+                    </Property>
+                    <Property name="ResourcePersistence">
+                        <Property name="type">
+                            <Value>com.topcoder.management.resource.persistence.sql.SqlResourcePersistence</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="name">
@@ -403,11 +403,11 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
-                    <property name="DBConnectionFactory">
-                        <property name="type">
-                            <value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</value>
-                        </property>
+                    </Property>
+                    <Property name="DBConnectionFactory">
+                        <Property name="type">
+                            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="type">
@@ -418,11 +418,11 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
-                    <property name="SearchBundleManager">
-                        <property name="type">
-                            <value>com.topcoder.search.builder.SearchBundleManager</value>
-                        </property>
+                    </Property>
+                    <Property name="SearchBundleManager">
+                        <Property name="type">
+                            <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="type">
@@ -433,11 +433,11 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
-                    <property name="userRetrieval">
-                        <property name="type">
-                            <value>com.cronos.onlinereview.external.impl.DBUserRetrieval</value>
-                        </property>
+                    </Property>
+                    <Property name="userRetrieval">
+                        <Property name="type">
+                            <Value>com.cronos.onlinereview.external.impl.DBUserRetrieval</Value>
+                        </Property>
                         <Property name="params">
                             <Property name="param1">
                                 <Property name="type">
@@ -448,7 +448,7 @@
                                 </Property>
                             </Property>
                         </Property>
-                    </property>
+                    </Property>
                 </Property>
                 <Property name="dbConnectionFactoryConfig">
                     <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
@@ -476,7 +476,7 @@
                     </Property>
                 </Property>
                 <Property name="notificationDeliverableIds">
-                    <Value>@notification_deliverable_ids@</Value>
+                    <Value>2,4,5,6,7,8,9,10,11,12,13,14,15,20,22,26</Value>
                 </Property>
                 <Property name="defaultEmailSubjectTemplateText">
                     <Value>WARNING\: Your %DELIVERABLE_NAME% is late for %PROJECT_NAME% %PROJECT_VERSION%</Value>
@@ -497,7 +497,7 @@
                     <Value>yyyy-MM-dd HH:mm:ss</Value>
                 </Property>
                 <Property name="notificationInterval">
-                    <Value>@late_deliverables_notification_interval@</Value>
+                    <Value>43200</Value>
                 </Property>
             </Property>
         </Property>
