@@ -217,8 +217,10 @@
 @late_deliverables_tracker_guard_file@=<<path_to_guard_file>>
 # A path to file to signal to Late Deliverables Tracker that there is another tool instance already running
 @late_deliverables_tracker_running_file@=<<path_to_file_indicating_on_running_job>>
-# An interval (in milliseconds) between Late Deliverables Tracker job executions
-@late_deliverables_tracker_poll_interval@=<<poll_interval>>
+# An interval (in seconds) between Late Deliverables Tracker job executions
+@late_deliverables_tracking_interval@=<<tracking_interval>>
+# An interval (in seconds) between sending PM emails about unresolved late deliverables
+@late_deliverables_pm_notification_interval@=<<pm_notification_interval>>
 # A path to log file for Late Deliverables Tracker
 @late_deliverables_tracker_log_file@=<<path_to_log_file>>
 

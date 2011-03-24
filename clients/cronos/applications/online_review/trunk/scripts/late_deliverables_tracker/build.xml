@@ -69,6 +69,7 @@
             <fileset file="${db_connection_factory.jar}"/>
             <fileset file="${deliverable_management.jar}"/>
             <fileset file="${deliverable_management_persistence.jar}"/>
+            <fileset file="${late_deliverables_management.jar}" />
             <fileset file="${document_generator.jar}"/>
             <fileset file="${email_engine.jar}"/>
             <fileset file="${executable_wrapper.jar}"/>
@@ -165,7 +166,8 @@
                 <format property="touch.time" pattern="MM/dd/yyyy hh:mm aa" />
             </tstamp>
             <echo message="Launching Late Deliverables Tracker job with following parameters:"/>
-            <echo message="    pollInterval: ${poll_interval}"/>
+            <echo message="    trackingInterval: ${tracking_interval}"/>
+            <echo message="    notificationInterval: ${pm_notification_interval}"/>
             <echo message="    startTime   : ${touch.time}"/>
             <echo message="    guardFile   : ${guard_file}"/>
             <echo message="    runningFile : ${running_file}"/>
@@ -173,8 +175,10 @@
 
             <java classname="com.topcoder.management.deliverable.latetracker.utility.LateDeliverablesTrackingUtility"
                   fork="true" spawn="@{background}">
-                <arg value="-interval"/>
-                <arg value="${poll_interval}"/>
+                <arg value="-trackingInterval"/>
+                <arg value="${tracking_interval}"/>
+                <arg value="-notificationInterval"/>
+                <arg value="${pm_notification_interval}"/>
                 <arg value="-background"/>
                 <arg value="@{background}"/>
                 <arg value="-guardFile"/>
