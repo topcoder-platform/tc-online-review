@@ -408,14 +408,17 @@ public class LateDeliverablesActions extends DispatchAction {
 
                 // Re-read the late deliverable from DB again to get most recent data for late deliverable before 
                 // updating
-                boolean alreadySet = false;
                 lateDeliverable = getLateDeliverable(request, lateDeliverableId);
+                boolean alreadySet = false;
+                boolean lateForExplanation = ActionsHelper.explanationDeadline(lateDeliverable).compareTo(new Date()) < 0;
                 if (isLateDeliverableOwner) {
-                    if (lateDeliverable.getExplanation() == null) {
-                        lateDeliverable.setExplanation(newExplanation);
-                        lateDeliverable.setExplanationDate(new Date());
-                    } else {
-                        alreadySet = true;
+                    if (lateForExplanation == false) {
+                        if (lateDeliverable.getExplanation() == null) {
+                            lateDeliverable.setExplanation(newExplanation);
+                            lateDeliverable.setExplanationDate(new Date());
+                        } else {
+                            alreadySet = true;
+                        }
                     }
                 } else if (canEditLateDeliverable) {
                     if (lateDeliverable.isForgiven() != newForgiven) {
@@ -439,7 +442,13 @@ public class LateDeliverablesActions extends DispatchAction {
                     return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                             Constants.EDIT_LATE_DELIVERABLE_PERM_NAME, "Error.LateDeliverableAlreadyUpdated", 
                             Boolean.FALSE);
+                } else if (isLateDeliverableOwner && lateForExplanation) {
+                    // Raise an error since time given for the explanation has ended
+                    return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                            Constants.EDIT_LATE_DELIVERABLE_PERM_NAME, "Error.LateDeliverableExplanationLate", 
+                            Boolean.FALSE);
                 } else {
+
                     // Update the affected properties of the deliverable
                     LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager(request);
                     lateDeliverableManager.update(lateDeliverable);
@@ -992,16 +1001,18 @@ public class LateDeliverablesActions extends DispatchAction {
         request.setAttribute("project",
                              ActionsHelper.createProjectManager(request).getProject(
                                  lateDeliverable.getProjectId()));
-        request.setAttribute("isExplanationEditable", 
-                             lateDeliverableOwner && (lateDeliverable.getExplanation() == null));
+
+        boolean explanationEditable = lateDeliverableOwner && lateDeliverable.getExplanation() == null && 
+            ActionsHelper.explanationDeadline(lateDeliverable).compareTo(new Date()) > 0;
+        request.setAttribute("isExplanationEditable", explanationEditable);
+
         request.setAttribute("isResponseEditable", 
                              canEditLateDeliverables && !lateDeliverableOwner 
                              && (lateDeliverable.getResponse() == null) 
                              && (lateDeliverable.getExplanation() != null));
         request.setAttribute("isForgivenEditable", canEditLateDeliverables && !lateDeliverableOwner);
         request.setAttribute("isFormSubmittable", 
-                             canEditLateDeliverables && !lateDeliverableOwner 
-                             || lateDeliverableOwner && (lateDeliverable.getExplanation() == null));
+                             (canEditLateDeliverables && !lateDeliverableOwner) || explanationEditable);
     }
 
     /**
@@ -1127,9 +1138,9 @@ public class LateDeliverablesActions extends DispatchAction {
 		
         List<Long> managerUserIds = ActionsHelper.getUserIDsByRoleNames(request, recipientRoleNames, project.getId());
 
-        managerUserIds.remove("22719217"); // "Components" dummy user
-        managerUserIds.remove("22770213"); // "Applications" dummy user
-        managerUserIds.remove("22873364"); // "LCSUPPORT" dummy user
+        managerUserIds.remove(22719217); // "Components" dummy user
+        managerUserIds.remove(22770213); // "Applications" dummy user
+        managerUserIds.remove(22873364); // "LCSUPPORT" dummy user
 
         // Don't send email to the user who is editing the late deliverable.
         managerUserIds.remove(AuthorizationHelper.getLoggedInUserId(request));
@@ -1163,9 +1174,9 @@ public class LateDeliverablesActions extends DispatchAction {
 
         List<Long> managerUserIds = ActionsHelper.getUserIDsByRoleNames(request, recipientRoleNames, project.getId());
 
-        managerUserIds.remove("22719217"); // "Components" dummy user
-        managerUserIds.remove("22770213"); // "Applications" dummy user
-        managerUserIds.remove("22873364"); // "LCSUPPORT" dummy user
+        managerUserIds.remove(22719217); // "Components" dummy user
+        managerUserIds.remove(22770213); // "Applications" dummy user
+        managerUserIds.remove(22873364); // "LCSUPPORT" dummy user
 
         List<String> managerEmails = ActionsHelper.getEmailsByUserIDs(request, managerUserIds);
         sendEmailForUsers(project, managerEmails, new ArrayList<String>(), lateDeliverable,

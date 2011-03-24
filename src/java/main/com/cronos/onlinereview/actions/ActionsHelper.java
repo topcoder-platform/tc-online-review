@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Calendar;
 
 import javax.ejb.CreateException;
 import javax.naming.Context;
@@ -77,6 +78,7 @@ import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.UploadStatus;
 import com.topcoder.management.deliverable.UploadType;
+import com.topcoder.management.deliverable.late.LateDeliverable;
 import com.topcoder.management.deliverable.late.LateDeliverableManager;
 import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistence;
@@ -3255,28 +3257,6 @@ public class ActionsHelper {
             }
 
             project.setProperty("Completion Timestamp", format.format(new Date()));
-
-            if (!"Deleted".equals(name) && !ActionsHelper.isStudioProject(project)) {
-                Connection conn = null;
-                PreparedStatement ps = null;
-                try {
-                    DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-                    conn = dbconn.createConnection();
-                    ps = conn.prepareStatement(
-                            "update project_result set rating_ind = 1 where project_id = ? and valid_submission_ind = 1");
-                    ps.setLong(1, project.getId());
-                    ps.execute();
-                } catch(SQLException e) {
-                    throw new BaseException("Failed to update project result for rating_ind", e);
-                } catch (UnknownConnectionException e) {
-                    throw new BaseException("Failed to return DBConnection", e);
-                } catch (ConfigurationException e) {
-                    throw new BaseException("Failed to return DBConnection", e);
-                } finally {
-                    close(ps);
-                    close(conn);
-                }
-            }
         }
     }
 
@@ -4937,4 +4917,18 @@ public class ActionsHelper {
         }
         return emails;	
     }
+
+    /**
+     * <p>Returns the deadline date for submitting the explanation for the late deliverable.</p>
+     * 
+     * @param lateDeliverable late deliverable.
+     * @return explanation deadline date.
+     */
+    static Date explanationDeadline(LateDeliverable lateDeliverable) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(lateDeliverable.getCreateDate());
+        cal.add(Calendar.HOUR, 24);
+        return cal.getTime();
+    }
+
 }
