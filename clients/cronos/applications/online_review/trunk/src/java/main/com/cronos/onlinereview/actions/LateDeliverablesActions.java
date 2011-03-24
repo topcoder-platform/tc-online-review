@@ -1138,9 +1138,9 @@ public class LateDeliverablesActions extends DispatchAction {
 		
         List<Long> managerUserIds = ActionsHelper.getUserIDsByRoleNames(request, recipientRoleNames, project.getId());
 
-        managerUserIds.remove(22719217); // "Components" dummy user
-        managerUserIds.remove(22770213); // "Applications" dummy user
-        managerUserIds.remove(22873364); // "LCSUPPORT" dummy user
+        managerUserIds.remove(new Long(22719217)); // "Components" dummy user
+        managerUserIds.remove(new Long(22770213)); // "Applications" dummy user
+        managerUserIds.remove(new Long(22873364)); // "LCSUPPORT" dummy user
 
         // Don't send email to the user who is editing the late deliverable.
         managerUserIds.remove(AuthorizationHelper.getLoggedInUserId(request));
@@ -1174,9 +1174,9 @@ public class LateDeliverablesActions extends DispatchAction {
 
         List<Long> managerUserIds = ActionsHelper.getUserIDsByRoleNames(request, recipientRoleNames, project.getId());
 
-        managerUserIds.remove(22719217); // "Components" dummy user
-        managerUserIds.remove(22770213); // "Applications" dummy user
-        managerUserIds.remove(22873364); // "LCSUPPORT" dummy user
+        managerUserIds.remove(new Long(22719217)); // "Components" dummy user
+        managerUserIds.remove(new Long(22770213)); // "Applications" dummy user
+        managerUserIds.remove(new Long(22873364)); // "LCSUPPORT" dummy user
 
         List<String> managerEmails = ActionsHelper.getEmailsByUserIDs(request, managerUserIds);
         sendEmailForUsers(project, managerEmails, new ArrayList<String>(), lateDeliverable,
