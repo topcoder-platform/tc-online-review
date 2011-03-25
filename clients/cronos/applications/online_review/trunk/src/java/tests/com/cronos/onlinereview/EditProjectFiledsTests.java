@@ -31,7 +31,7 @@ public class EditProjectFiledsTests extends ProjectTests {
         // Turn on AutoPilot, no error expected
         browser.check("//input[@id='autopilotOnRadioBox']");
         browser.type("explanation", "auto pilot turn on");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
         autoPilotStat = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[8]/td[2]");
@@ -59,7 +59,7 @@ public class EditProjectFiledsTests extends ProjectTests {
         // edit the project name
         browser.type("project_name", "testEditNameField update name");
         browser.type("explanation", "Name field edition");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
         projectName = browser.getText("//table[@id='table12']/tbody/tr[1]/td[3]/span");
@@ -88,7 +88,7 @@ public class EditProjectFiledsTests extends ProjectTests {
         // select the "studio" type, no error expected
         browser.select("project_type", "label=Studio");
         browser.type("explanation", "type field edition");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
         projectType = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[3]/td[2]");
@@ -117,7 +117,7 @@ public class EditProjectFiledsTests extends ProjectTests {
         // select the "Testing Competition" category, no error expected
         browser.select("project_category", "label=Testing Competition");
         browser.type("explanation", "Category field edition");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
         projectCategory = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[4]/td[2]");
@@ -147,7 +147,7 @@ public class EditProjectFiledsTests extends ProjectTests {
         // input 100$ as payments, no error expected
         browser.type("payments", "100");
         browser.type("explanation", "Price field edition");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
         price = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[5]/td[2]");
@@ -177,7 +177,7 @@ public class EditProjectFiledsTests extends ProjectTests {
         // input 100 as point, no error expected
         browser.type("dr_points", "100");
         browser.type("explanation", "DR Points field edition");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
         point = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[7]/td[2]");
@@ -207,7 +207,7 @@ public class EditProjectFiledsTests extends ProjectTests {
         // input notes, no error expected
         browser.type("notes", "testEditNotesField update note");
         browser.type("explanation", "Notes field edition");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
         notes = browser.getText("//div[@id='mainMiddleContent']/div/table[2]/tbody/tr[2]/td[1]");
@@ -237,7 +237,7 @@ public class EditProjectFiledsTests extends ProjectTests {
         browser.select("//select[@name='status']", "label=Completed");
         browser.type("explanation", "Contest Status field edition");
         browser.type("status_explanation", "Contest Status changed to Completed");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
         status = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[12]/td[2]");

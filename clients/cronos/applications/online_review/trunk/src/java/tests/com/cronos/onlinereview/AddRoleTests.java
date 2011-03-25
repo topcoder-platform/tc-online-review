@@ -31,7 +31,7 @@ public class AddRoleTests extends ProjectTests {
         browser.click("//img[@alt='Add']");
         // add explanation
         browser.type("explanation", "add primary screener role");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
         String role = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[1]");
@@ -62,7 +62,7 @@ public class AddRoleTests extends ProjectTests {
         browser.click("//img[@alt='Add']");
         // add explanation
         browser.type("explanation", "add manager role");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
         String role = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[1]");

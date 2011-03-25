@@ -33,7 +33,7 @@ public class SettingPhaseEndDateTests extends ProjectTests {
 		String endDate = format.format(new Date());
 		browser.type("phase_end_date[1]", endDate);
 		browser.type("explanation", "explain");
-		browser.click("//input[@name='']");
+		browser.click("//input[@name='saveProjectChangesBtn']");
 		browser.waitForPageToLoad(TIMEOUT);
         status = browser.getText("//div[@id='mainMiddleContent']/div/table[3]/tbody/tr[2]/td[2]/div/table/tbody");
         assertTrue("Specification Submission period is changed", status.contains("Specification Submission 48 hrs"));

@@ -58,7 +58,7 @@ public class DeleteReviewerTests extends ProjectTests {
         browser.click("//table[@id='resources_tbl']/tbody/tr[4]/td[5]/img[1]");
         // add explanation
         browser.type("explanation", "delete reviewer role");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
         // logout the user

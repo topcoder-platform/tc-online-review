@@ -60,7 +60,7 @@ public class ManageProjectTests extends ProjectTests {
         browser.click("//img[@alt='Manage Project']");
         browser.waitForPageToLoad(TIMEOUT);
         browser.type("registration_phase_extension", "2");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='savePMCChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
         status = browser.getText("//div[@id='mainMiddleContent']/div/table[3]/tbody/tr[2]/td[2]/div/table/tbody");
         assertTrue("registration period is 96 hrs after extending", status.contains("Registration 96 h"));
@@ -82,7 +82,7 @@ public class ManageProjectTests extends ProjectTests {
         browser.click("//img[@alt='Manage Project']");
         browser.waitForPageToLoad(TIMEOUT);
         browser.type("submission_phase_extension", "2");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='savePMCChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
         status = browser.getText("//div[@id='mainMiddleContent']/div/table[3]/tbody/tr[2]/td[2]/div/table/tbody");
         assertTrue("submission period is 216 hrs after extending", status.contains("Submission 216 hrs"));
@@ -99,7 +99,7 @@ public class ManageProjectTests extends ProjectTests {
     public void testManagementConsoleAddDesigner() throws Exception {
     	openManagePage();
         browser.type("resource_handles[0]", "super");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='savePMCChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
         assertTrue("Resources should be shown", browser.isTextPresent("Resources"));
         String role = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[1]");
@@ -118,7 +118,7 @@ public class ManageProjectTests extends ProjectTests {
     public void testManagementConsoleAddObserver() throws Exception {
     	openManagePage();
         browser.type("resource_handles[1]", "super");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='savePMCChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
         assertTrue("Resources should be shown", browser.isTextPresent("Resources"));
         String role = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[1]");
@@ -137,7 +137,7 @@ public class ManageProjectTests extends ProjectTests {
     public void testManagementConsoleAddCopilot() throws Exception {
     	openManagePage();
         browser.type("resource_handles[2]", "super");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='savePMCChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
         assertTrue("Resources should be shown", browser.isTextPresent("Resources"));
         String role = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[1]");
@@ -156,7 +156,7 @@ public class ManageProjectTests extends ProjectTests {
     public void testManagementConsoleAddClientManager() throws Exception {
     	openManagePage();
         browser.type("resource_handles[3]", "super");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='savePMCChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
         assertTrue("Resources should be shown", browser.isTextPresent("Resources"));
         String role = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[1]");
