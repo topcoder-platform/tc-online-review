@@ -2854,7 +2854,7 @@
                                scorecard.scorecard_type_id AS type_id,
                                scorecard.project_category_id AS project_category_id,
                                scorecard.name AS scorecard_name,
-                               version,
+                               scorecard.version,
                                min_score,
                                max_score,
                                scorecard.create_user AS create_user,
