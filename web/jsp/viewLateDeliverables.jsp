@@ -226,9 +226,9 @@
                     </table>
                     <br/>
                     <div align="center">
-                        <html:image srcKey="btnSearch.img" altKey="btnSearch.alt" border="0" onclick="submitForm=true;"/>
+                        <html:image property="searchLDBtn" srcKey="btnSearch.img" altKey="btnSearch.alt" border="0" onclick="submitForm=true;"/>
                         &nbsp;&nbsp;
-                        <html:image srcKey="btnClear.img" altKey="btnClear.alt" border="0" onclick="submitForm=false;"/>
+                        <html:image property="clearSearchLDBtn" srcKey="btnClear.img" altKey="btnClear.alt" border="0" onclick="submitForm=false;"/>
                     </div>
                 </html:form>
 

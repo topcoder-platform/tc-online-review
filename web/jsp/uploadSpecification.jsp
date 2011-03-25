@@ -75,7 +75,7 @@
                                 <td class="value">
                                     <bean:message key="uploadSpecification.UploadSubmission" />
                                     <html:file property="file" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
-                                    <html:image srcKey="btnUpload.img" altKey="btnUpload.alt" border="0" style="vertical-align:bottom;" /><br /><br />
+                                    <html:image property="uploadSpecBtn" srcKey="btnUpload.img" altKey="btnUpload.alt" border="0" style="vertical-align:bottom;" /><br /><br />
                                 </td>
                             </tr>
                             <tr>
@@ -99,7 +99,7 @@
                                 <td class="value">
                                     <html:textarea property="specificationText" rows="5" cols="20" styleClass="inputTextBox"/>
                                     <br/>
-                                    <html:image srcKey="btnSubmit.img" altKey="btnSubmit.alt" border="0"
+                                    <html:image property="submitSpecBtn" srcKey="btnSubmit.img" altKey="btnSubmit.alt" border="0"
                                                 style="vertical-align:bottom;" />
                                     <br/><br/>
                                 </td>
