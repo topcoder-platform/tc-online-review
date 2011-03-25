@@ -74,7 +74,7 @@ public class ChangeScorecardTests extends ProjectTests {
         // select 'Default Spec Review Scorecard 1.0' as scorecard, no error expected
         browser.select("//select[@name='phase_scorecard[2]']", "label=Default Spec Review Scorecard 1.0");
         browser.type("explanation", "Scorecard add");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
         scorecard = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[9]/td[2]/a");

@@ -26,7 +26,7 @@ public class EditProjectTests extends ProjectTests {
 		browser.type("resources_name[0]", "super");
 		browser.click("//img[@alt='Add']");
 		browser.type("explanation", "Add designer");
-		browser.click("//input[@name='']");
+		browser.click("//input[@name='saveProjectChangesBtn']");
 		browser.waitForPageToLoad(TIMEOUT);
         assertTrue("Resources should be shown", browser.isTextPresent("Resources"));
         assertTrue("designer should be added", browser.isTextPresent("super"));   

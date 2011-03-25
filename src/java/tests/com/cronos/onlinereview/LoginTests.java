@@ -21,7 +21,7 @@ public class LoginTests extends BaseTests {
         browser.type("userName", TestHelper.getUsername());
         browser.type("password", TestHelper.getPassword());
         browser.click("rememberMe");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='loginBtn']");
         browser.waitForPageToLoad(TIMEOUT);
         assertTrue("user should be logged in", browser.isTextPresent("Hello, "+TestHelper.getUsername()));
         // reopen the browser
@@ -44,7 +44,7 @@ public class LoginTests extends BaseTests {
         // login with invalid password
         browser.type("userName", "twight");
         browser.type("password", "invalidPassword");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='loginBtn']");
         browser.waitForPageToLoad(TIMEOUT);
         assertTrue("login should be rejected, error message must be correct",
             browser.isTextPresent("The following errors have occurred:"));
@@ -60,7 +60,7 @@ public class LoginTests extends BaseTests {
         // login with invalid username
         browser.type("userName", "invalidUser");
         browser.type("password", "password");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='loginBtn']");
         browser.waitForPageToLoad(TIMEOUT);
         assertTrue("login should be rejected, error message must be correct",
             browser.isTextPresent("The following errors have occurred:"));
@@ -77,7 +77,7 @@ public class LoginTests extends BaseTests {
         // login with invalid username
         browser.type("userName", "'; DROP TABLE project;");
         browser.type("password", "'; DROP TABLE project_info;");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='loginBtn']");
         browser.waitForPageToLoad(TIMEOUT);
         assertTrue("login should be rejected, error message must be correct",
             browser.isTextPresent("The following errors have occurred:"));
@@ -94,7 +94,7 @@ public class LoginTests extends BaseTests {
         // login with invalid username
         browser.type("userName", ";  INSERT INTO security_user (user_id, password) values('user1', 'password1');");
         browser.type("password", ";  INSERT INTO security_user (user_id, password) values('user1', 'password1');");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='loginBtn']");
         browser.waitForPageToLoad(TIMEOUT);
         assertTrue("login should be rejected, error message must be correct",
             browser.isTextPresent("The following errors have occurred:"));
@@ -111,7 +111,7 @@ public class LoginTests extends BaseTests {
         // login with invalid username
         browser.type("userName", "' or a=a");
         browser.type("password", "' or a=a");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='loginBtn']");
         browser.waitForPageToLoad(TIMEOUT);
         assertTrue("login should be rejected, error message must be correct",
             browser.isTextPresent("The following errors have occurred:"));

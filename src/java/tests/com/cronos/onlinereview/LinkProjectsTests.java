@@ -59,7 +59,7 @@ public class LinkProjectsTests extends ProjectTests {
         browser.select("link_type_id[0]", "label=Depends On");
 		browser.select("link_dest_id[0]", "value=" + (project2Id));
 		browser.click("//img[@alt='add']");
-		browser.click("//input[@name='']");
+		browser.click("//input[@name='saveProjectLinksBtn']");
 		browser.waitForPageToLoad(TIMEOUT);
         String type = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[1]");
         String linkName = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[2]");
@@ -82,7 +82,7 @@ public class LinkProjectsTests extends ProjectTests {
         browser.select("link_type_id[0]", "label=Is Related To");
 		browser.select("link_dest_id[0]", "value=" + (project2Id));
 		browser.click("//img[@alt='add']");
-		browser.click("//input[@name='']");
+		browser.click("//input[@name='saveProjectLinksBtn']");
 		browser.waitForPageToLoad(TIMEOUT);
 		String type = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[1]");
         String linkName = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[2]");
@@ -112,7 +112,7 @@ public class LinkProjectsTests extends ProjectTests {
 	        browser.select("link_type_id[0]", "label=Repost For");
 			browser.select("link_dest_id[0]", "value=" + project3Id);
 			browser.click("//img[@alt='add']");
-			browser.click("//input[@name='']");
+			browser.click("//input[@name='saveProjectLinksBtn']");
 			browser.waitForPageToLoad(TIMEOUT);
 	        String type1 = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[1]");
 	        String linkName1 = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[2]");

@@ -71,7 +71,7 @@ public class FinalFixSubmissionUploadTests extends ProjectTests {
         browser.click("//table[@id='myRolesTable']/tbody/tr[2]/td[2]/a");
         browser.waitForPageToLoad(TIMEOUT);
         browser.type("file", TestHelper.getUploadFilePath());
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='saveProjectChangesBtn']");
         Thread.sleep(2*(new Long(TIMEOUT)));
         assertNoErrorsOccurred();
 

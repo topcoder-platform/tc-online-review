@@ -881,7 +881,7 @@ public class TestHelper {
     static void loginUser(Selenium browser) throws Exception {
         browser.type("userName", TestHelper.getUsername());
         browser.type("password", TestHelper.getPassword());
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='loginBtn']");
         browser.waitForPageToLoad(getTimeout());
     }
 
@@ -896,7 +896,7 @@ public class TestHelper {
         // login with normal username
         browser.type("userName", getCompetitorUsername());
         browser.type("password", getCompetitorPassword());
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='loginBtn']");
         browser.waitForPageToLoad(getTimeout());
 	}
 
@@ -954,7 +954,7 @@ public class TestHelper {
         browser.waitForPageToLoad(getTimeout());
         browser.select("//select[@name='status']", "label=Deleted");
         browser.type("explanation", "Removing project used for testing");
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(getTimeout());
     }
 
