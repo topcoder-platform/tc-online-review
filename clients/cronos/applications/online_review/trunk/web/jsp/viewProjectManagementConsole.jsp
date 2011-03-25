@@ -234,7 +234,7 @@
 		                        </div>
 		
 		                        <div class="bottomButtonBar">
-		                            <html:image srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
+		                            <html:image property="savePMCChangesBtn" srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
 		                            <html:link
 		                                    page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
 		                                    srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
@@ -421,7 +421,7 @@
 	                                </tr>
 	                                <tr class="dark">
 	                                    <td class="value" colspan="2">
-	                                        <html:image srcKey="btnGenerate.img" altKey="btnGenerate.alt" border="0"/>&#160;
+	                                        <html:image property="generateBtn" srcKey="btnGenerate.img" altKey="btnGenerate.alt" border="0"/>&#160;
 	                                    </td>
 	                                </tr>
 	                                <tr>
@@ -459,7 +459,7 @@
 	                                            <html:errors property="distribution_file" prefix=""
 	                                                         suffix=""/>
 	                                        </div>
-	                                        <html:image srcKey="btnUpload.img" altKey="btnUpload.alt" border="0"/>&#160;
+	                                        <html:image property="uploadDistBtn" srcKey="btnUpload.img" altKey="btnUpload.alt" border="0"/>&#160;
 	                                    </td>
 	                                </tr>
 	                                <tr>

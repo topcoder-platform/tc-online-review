@@ -66,7 +66,7 @@
                                     <br />
                                     <bean:message key="uploadTestCase.UploadTestCase" />
                                     <html:file property="file" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
-                                    <html:image srcKey="btnUpload.img" altKey="btnUpload.alt" border="0" style="vertical-align:bottom;" /><br /><br />
+                                    <html:image property="uploadBtn" srcKey="btnUpload.img" altKey="btnUpload.alt" border="0" style="vertical-align:bottom;" /><br /><br />
                                 </td>
                             </tr>
                             <tr>

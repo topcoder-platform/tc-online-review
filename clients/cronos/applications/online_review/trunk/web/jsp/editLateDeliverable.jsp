@@ -223,7 +223,7 @@
                     <br/>
                     <c:if test="${requestScope.isFormSubmittable}">
                         <div align="right">
-                            <html:image srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>
+                            <html:image property="saveLateDeliverableBtn" srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>
                         </div>
                     </c:if>
                 </html:form>
