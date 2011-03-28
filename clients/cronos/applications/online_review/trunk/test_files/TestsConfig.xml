@@ -16,6 +16,9 @@
         <Property name="review_link">
           <Value>/actions/ViewReview.do?method=viewReview&amp;rid=</Value>
         </Property>
+        <Property name="unregister_link">
+          <Value>/actions/Unregister.do?method=unregister&amp;pid=</Value>
+        </Property>
         <Property name="base_url">
             <Value>@tests.baseurl@</Value>
         </Property>        
