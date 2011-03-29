@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -230,8 +230,15 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.12.1 (Online Review Replatforming Release 2) Change notes:
+ *   <ol>
+ *     <li>Change submission.getUplaods.get(0) to submission.getUpload().</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, TCSDEVELOPER
- * @version 1.12
+ * @version 1.12.1
  */
 public class ProjectActions extends DispatchAction {
 
@@ -3137,7 +3144,7 @@ public class ProjectActions extends DispatchAction {
                 Submission submission
                     = ActionsHelper.getActiveSpecificationSubmission(phases[0].getProject().getId(),
                                                                      ActionsHelper.createUploadManager(request));
-                if ((submission != null) && (submission.getUploads().get(0).getOwner() != deliverable.getResource())) {
+                if ((submission != null) && (submission.getUpload().getOwner() != deliverable.getResource())) {
                     continue;
                 }
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2011 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -159,8 +159,15 @@ import com.topcoder.util.weightedcalculator.LineItem;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.2.2 (Online Review Replatforming Release 2) Change notes:
+ *   <ol>
+ *     <li>Change submission.getUplaods.get(0) to submission.getUpload().</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, isv, TCSDEVELOPER
- * @version 1.2.1
+ * @version 1.2.2
  */
 public class ProjectReviewActions extends DispatchAction {
     private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory
@@ -2696,7 +2703,7 @@ public class ProjectReviewActions extends DispatchAction {
         ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
         // Retrieve the information about the submitter and place it into the request
         if (isSubmissionDependentPhase) {
-            ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUploads().get(0));
+            ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());
         }
         if (verification.getReview() != null) {
             // Retrieve the information about the review author and place it into the request
@@ -3661,7 +3668,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Obtain an instance of Resource Manager
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Get a resource identificating the submitter for this review
-        Resource submitter = resMgr.getResource(sub.getUploads().get(0).getOwner());
+        Resource submitter = resMgr.getResource(sub.getUpload().getOwner());
 
         // OrChange - Get the final score from the submission instead of the Resource
         // Get final aggregated score for this submitter, if any
@@ -3863,9 +3870,9 @@ public class ProjectReviewActions extends DispatchAction {
 
             //cache winning and runner up submitter.
             if (placement == 1 && aggScore >= minScore) {
-                winningSubmitter = resMgr.getResource( submission.getUploads().get(0).getOwner() );
+                winningSubmitter = resMgr.getResource( submission.getUpload().getOwner() );
             } else if (placement == 2 && aggScore >= minScore) {
-                runnerUpSubmitter = resMgr.getResource( submission.getUploads().get(0).getOwner() );
+                runnerUpSubmitter = resMgr.getResource( submission.getUpload().getOwner() );
             }
 
             //persist the change
@@ -3929,11 +3936,11 @@ public class ProjectReviewActions extends DispatchAction {
             Submission[] submissions, RankedSubmission[] placements) throws BaseException {
         int rank = submission.getRank();
         Date timestamp = getSubmissionById(submissions, submission.getId())
-                .getUploads().get(0).getCreationTimestamp();
+                .getUpload().getCreationTimestamp();
         for (int i = 0; i < placements.length; ++i) {
             if (placements[i].getRank() == submission.getRank()) {
                 Submission tie = getSubmissionById(submissions, placements[i].getId());
-                if (tie.getUploads().get(0).getCreationTimestamp().before(timestamp)) {
+                if (tie.getUpload().getCreationTimestamp().before(timestamp)) {
                     ++rank;
                 }
             }
@@ -4296,7 +4303,7 @@ public class ProjectReviewActions extends DispatchAction {
             // User is authorized to view review authored by him
             isAllowed = true;
         } else if (isSubmissionDependentPhase && (myResource != null)
-                   && (verification.getSubmission().getUploads().get(0).getOwner() == myResource.getId())) {
+                   && (verification.getSubmission().getUpload().getOwner() == myResource.getId())) {
             // User is authorized to view review for his submission (when not in Review or in Appeals)
             if (reviewType != "Review" || !activePhases.contains(Constants.REVIEW_PHASE_NAME) ||
                     activePhases.contains(Constants.APPEALS_PHASE_NAME)) {

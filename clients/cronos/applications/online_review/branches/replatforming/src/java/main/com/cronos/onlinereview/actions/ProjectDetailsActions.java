@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -163,8 +163,19 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.6.2 (Online Review Replatforming Release 2) Change notes:
+ *   <ol>
+ *     <li>Change submission.getUplaods.get(0) to submission.getUpload().</li>
+ *     <li>Update {@link #generateDeliverableLinks(HttpServletRequest, Deliverable[], Phase[])} so that we don't generate
+ *     the submission link for studio contest.</li>
+ *     <li>Update {@link #handleUploadSubmission(ActionMapping, ActionForm, HttpServletRequest, String, String, String)} method
+ *     to disable uploading for studio contest.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, TCSDEVELOPER
- * @version 1.6.1
+ * @version 1.6.2
  */
 public class ProjectDetailsActions extends DispatchAction {
 
@@ -1071,7 +1082,7 @@ public class ProjectDetailsActions extends DispatchAction {
         upload.setParameter(uploadedFile.getFileId());
 
         Submission submission = new Submission();
-        submission.setUploads(new ArrayList<Upload>(Arrays.asList(upload)));
+        submission.setUpload(upload);
 
         SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
         SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
@@ -2371,14 +2382,20 @@ public class ProjectDetailsActions extends DispatchAction {
 
         ScorecardType[] allScorecardTypes = null;
 
+        boolean isStudio = "Studio".equalsIgnoreCase((String) request.getAttribute("projectType"));
+
         for (int i = 0; i < deliverables.length; ++i) {
             // Get a Deliverable for the current iteration
             Deliverable deliverable = deliverables[i];
             String delivName = deliverable.getName();
             if (delivName.equalsIgnoreCase(Constants.SUBMISSION_DELIVERABLE_NAME)) {
-                links[i] = "UploadContestSubmission.do?method=uploadContestSubmission&pid=" + deliverable.getProject();
+                if (!isStudio) {
+                    links[i] = "UploadContestSubmission.do?method=uploadContestSubmission&pid=" + deliverable.getProject();
+                }
             } else if (delivName.equalsIgnoreCase(Constants.MILESTONE_SUBMISSION_DELIVERABLE_NAME)) {
-                links[i] = "UploadMilestoneSubmission.do?method=uploadMilestoneSubmission&pid=" + deliverable.getProject();
+                if (!isStudio) {
+                    links[i] = "UploadMilestoneSubmission.do?method=uploadMilestoneSubmission&pid=" + deliverable.getProject();
+                }
             } else if (delivName.equalsIgnoreCase(Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME)) {
                 if (!deliverable.isComplete()) {
                     links[i] = "UploadSpecificationSubmission.do?method=uploadSpecificationSubmission&pid="
@@ -2714,7 +2731,7 @@ public class ProjectDetailsActions extends DispatchAction {
         List<Long> resourceIds = new ArrayList<Long>();
 
         for (int i = 0; i < submissions.length; ++i) {
-            resourceIds.add(submissions[i].getUploads().get(0).getOwner());
+            resourceIds.add(submissions[i].getUpload().getOwner());
         }
 
         Filter filterResources = new InFilter("resource.resource_id", resourceIds);
@@ -2734,7 +2751,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 if (submissions[j].getId() != deliverableId) {
                     continue;
                 }
-                long submissionOwnerId = submissions[j].getUploads().get(0).getOwner();
+                long submissionOwnerId = submissions[j].getUpload().getOwner();
                 for (int k = 0; k < resources.length; ++k) {
                     if (resources[k].getId() == submissionOwnerId) {
                         ids[i] = (String) resources[k].getProperty("External Reference ID");
@@ -3073,7 +3090,7 @@ public class ProjectDetailsActions extends DispatchAction {
             Submission submission = null;
             for (int i = 0; i < subIds.length; i++) {
                 submission = upMgr.getSubmission(subIds[i]);
-                if(submission.getUploads().get(0).getId() == upload.getId()) {
+                if(submission.getUpload().getId() == upload.getId()) {
                     break;
                 }
             }
@@ -3102,7 +3119,7 @@ public class ProjectDetailsActions extends DispatchAction {
             Submission submission = null;
             for (int i = 0; i < subIds.length; i++) {
                 submission = upMgr.getSubmission(subIds[i]);
-                if (submission.getUploads().get(0).getId() == upload.getId()) {
+                if (submission.getUpload().getId() == upload.getId()) {
                     break;
                 }
             }
@@ -3171,6 +3188,13 @@ public class ProjectDetailsActions extends DispatchAction {
                     submitPermissionName, "Error.IncorrectPhase", null);
         }
 
+        // We don't allow user to upload contest submissions/milestone submissions for studio contest
+        if ("Studio".equalsIgnoreCase(project.getProjectCategory().getProjectType().getName())
+                && ("Contest Submission".equals(submissionTypeName) || "Milestone Submission".equals(submissionTypeName))) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    submitPermissionName, "Error.UploadForStudio", null);
+        }
+
         if (!postBack) {
             // Retrieve some basic project info (such as icons' names) and place it into request
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
@@ -3231,7 +3255,7 @@ public class ProjectDetailsActions extends DispatchAction {
         upload.setUploadType(ActionsHelper.findUploadTypeByName(uploadTypes, "Submission"));
         upload.setParameter(uploadedFile.getFileId());
 
-        submission.setUploads(new ArrayList<Upload>(Arrays.asList(upload)));
+        submission.setUpload(upload);
         submission.setSubmissionStatus(ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active"));
         submission.setSubmissionType(ActionsHelper.findSubmissionTypeByName(submissionTypes, submissionTypeName));
 
@@ -3253,9 +3277,9 @@ public class ProjectDetailsActions extends DispatchAction {
             SubmissionStatus deleteSubmissionStatus = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Deleted");
             UploadStatus deleteUploadStatus = ActionsHelper.findUploadStatusByName(uploadStatuses, "Deleted");
             for (Submission oldSubmission : oldSubmissions) {
-                oldSubmission.getUploads().get(0).setUploadStatus(deleteUploadStatus);
+                oldSubmission.getUpload().setUploadStatus(deleteUploadStatus);
                 oldSubmission.setSubmissionStatus(deleteSubmissionStatus);
-                upMgr.updateUpload(oldSubmission.getUploads().get(0), operator);
+                upMgr.updateUpload(oldSubmission.getUpload(), operator);
                 upMgr.updateSubmission(oldSubmission, operator);
             }
         }

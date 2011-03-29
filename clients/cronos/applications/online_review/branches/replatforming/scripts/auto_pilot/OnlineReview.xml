@@ -7,6 +7,7 @@
        <!ENTITY phasesEmailTemplate "@auto_pilot_templates_dir@/email_template.txt">
        <!ENTITY winnersEmailTemplate "@auto_pilot_templates_dir@/winners_email_template.txt">
        <!ENTITY milestoneScreeningResultsEmailTemplate "@auto_pilot_templates_dir@/milestone_screening_results_email_template.txt">
+       <!ENTITY screeningResultsEmailTemplate "@auto_pilot_templates_dir@/screening_results_email_template.txt">
        <!ENTITY timelineTemplateDir "@exttemplatesdir@">
        <!ENTITY contactManagersTemplate "@exttemplatesdir@/contact_manager_template.txt">
        <!ENTITY managerNotificationEmailTemplatesBase "@exttemplatesdir@">
@@ -1049,7 +1050,7 @@
             </Property>
             <Property name="ProjectLink">
                 <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
-                <Value>http://www.topcoder.com/PactsMemberServlet?module=AssignmentDocumentDetails&amp;amp;assignment_document_id={0}</Value>
+                <Value>http://www.topcoder.com/PactsMemberServlet?module=AssignmentDocumentDetails&amp;amp;assignment_document_id={0,number,#}</Value>
             </Property>
             <Property name="EmailFromAddress">
                 <Value>&notificationEmailFromAddress;</Value>
@@ -1701,6 +1702,24 @@
                 </Property>		
             </Property>
         </Property>
+        <Property name="SubmittersEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&screeningResultsEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>[{0}] {1} place </Value>
+            </Property>
+            <Property name="ProjectLink">
+                <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
+                <Value>http://www.topcoder.com/PactsMemberServlet?module=AssignmentDocumentDetails&amp;amp;assignment_document_id={0,number,#}</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+        </Property>
     </Config>
 
     <!-- Default namespace for Review handler -->
@@ -2038,7 +2057,7 @@
             </Property>
             <Property name="AssignmentDocumentLink">
                 <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
-                <Value>http://www.topcoder.com/PactsMemberServlet?module=AssignmentDocumentDetails&amp;amp;assignment_document_id={0}</Value>
+                <Value>http://www.topcoder.com/PactsMemberServlet?module=AssignmentDocumentDetails&amp;amp;assignment_document_id={0,number,#}</Value>
             </Property>
             <Property name="EmailFromAddress">
                 <Value>&notificationEmailFromAddress;</Value>
@@ -3504,7 +3523,7 @@
                     <Value>
                         SELECT     deliverable_id,
                                    resource.resource_id,
-                                   project_phase.project_phase_id
+                                   project_phase.project_phase_id,
                                    submission.submission_id,
                                    submission.screening_score,
                                    submission.initial_score,
@@ -3516,14 +3535,13 @@
                         CROSS JOIN submission
                         INNER JOIN submission_status_lu
                                 ON submission.submission_status_id = submission_status_lu.submission_status_id
-                        INNER JOIN upload_submission ON submission.submission_id = upload_submission.submission_id
-                        INNER JOIN upload ON upload_submission.upload_id = upload.upload_id
+                        INNER JOIN upload ON upload.upload_id = submission.upload_id
                              WHERE submission_status_lu.name = 'Active'
                                AND NOT deliverable_lu.submission_type_id IS NULL
                                AND upload.project_id = resource.project_id
                                AND deliverable_lu.resource_role_id = resource.resource_role_id
                                AND deliverable_lu.phase_type_id = project_phase.phase_type_id
-                               AND
+                               AND 
                     </Value>
                 </Property>
                 <Property name="alias">
@@ -3597,6 +3615,7 @@
                                upload.project_id AS project_id,
                                upload.resource_id AS resource_id,
                                upload.parameter AS upload_parameter,
+                               upload.upload_desc AS upload_desc,
                                upload_type_lu.upload_type_id AS upload_type_id,
                                upload_type_lu.create_user AS upload_type_create_user,
                                upload_type_lu.create_date AS upload_type_create_date,
@@ -3635,17 +3654,16 @@
                                submission_type_lu.modify_date AS submission_type_modify_date,
                                submission_type_lu.name AS submission_type_name,
                                submission_type_lu.description AS submission_type_description
-                          FROM submission
-                          INNER JOIN upload_submission ON submission.submission_id = upload_submission.submission_id
-                          INNER JOIN upload ON upload_submission.upload_id = upload.upload_id
-                          INNER JOIN submission_status_lu ON submission.submission_status_id = submission_status_lu.submission_status_id
-                          INNER JOIN submission_type_lu ON submission.submission_type_id = submission_type_lu.submission_type_id
-                          INNER JOIN upload_type_lu ON upload.upload_type_id = upload_type_lu.upload_type_id
-                          INNER JOIN upload_status_lu ON upload.upload_status_id = upload_status_lu.upload_status_id
-                          LEFT JOIN prize ON submission.prize_id = prize.prize_id
-                          LEFT JOIN prize_type_lu ON prize.prize_type_id = prize_type_lu.prize_type_id
-                         WHERE 1=1 
-                           AND 
+                        FROM submission
+                        INNER JOIN upload ON upload.upload_id = submission.upload_id
+                        INNER JOIN submission_status_lu ON submission.submission_status_id = submission_status_lu.submission_status_id
+                        INNER JOIN submission_type_lu ON submission.submission_type_id = submission_type_lu.submission_type_id
+                        INNER JOIN upload_type_lu ON upload.upload_type_id = upload_type_lu.upload_type_id
+                        INNER JOIN upload_status_lu ON upload.upload_status_id = upload_status_lu.upload_status_id
+                        LEFT JOIN prize ON submission.prize_id = prize.prize_id
+                        LEFT JOIN prize_type_lu ON prize.prize_type_id = prize_type_lu.prize_type_id
+                       WHERE 1=1 
+                         AND 
                     </Value>
                 </Property>
                 <Property name="alias">
@@ -3653,7 +3671,7 @@
                         <Value>submission.submission_id</Value>
                     </Property>
                     <Property name="upload_id">
-                        <Value>upload_submission.upload_id</Value>
+                        <Value>upload.upload_id</Value>
                     </Property>
                     <Property name="submission_status_id">
                         <Value>submission.submission_status_id</Value>
@@ -3704,6 +3722,7 @@
                                upload.project_id AS project_id,
                                upload.resource_id AS resource_id,
                                upload.parameter AS upload_parameter,
+                               upload.upload_desc AS upload_desc,
                                upload_type_lu.upload_type_id AS upload_type_id,
                                upload_type_lu.create_user AS upload_type_create_user,
                                upload_type_lu.create_date AS upload_type_create_date,

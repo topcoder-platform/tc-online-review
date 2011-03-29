@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2006-2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -235,8 +235,16 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.9.1
+ * <p>
+ * Version 1.9.2 (Online Review Replatforming Release 2) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #isProjectResultCategory(long)} method to include the studio contest.</li>
+ *     <li>Change submission.getUplaods.get(0) to submission.getUpload().</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSASSEMBER
+ * @version 1.9.2
  * @since 1.0
  */
 public class ActionsHelper {
@@ -329,7 +337,18 @@ public class ActionsHelper {
                 || categoryId == 19   // UI Prototype
                 || categoryId == 24   // RIA Build
                 || categoryId == 25   // RIA Component
-                || categoryId == 29);
+                || categoryId == 29
+                || categoryId == 16   // Icon Sets
+                || categoryId == 17   // Storyboards
+                || categoryId == 18   // Wireframes
+                || categoryId == 20   // Logos
+                || categoryId == 21   // Print
+                || categoryId == 22   // Specification
+                || categoryId == 30   // Windget or Mobile Screen Design
+                || categoryId == 31   // Front-End Flash
+                || categoryId == 32   // Application Front-End Design
+                || categoryId == 34   // Other
+        );
     }
 
     /**
@@ -2473,7 +2492,7 @@ public class ActionsHelper {
         ActionsHelper.validateParameterNotNull(submission, "submission");
 
         // Get an upload for this submission
-        Upload upload = submission.getUploads().get(0);
+        Upload upload = submission.getUpload();
         // Get Project by its id
         Project project = manager.getProject(upload.getProject());
         // Return the project

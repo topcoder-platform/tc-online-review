@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2011 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -94,8 +94,15 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.4.2 (Online Review Replatforming Release 2) Change notes:
+ *   <ol>
+ *     <li>Change submission.getUplaods.get(0) to submission.getUpload().</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, isv, TCSDEVELOPER
- * @version 1.4.1
+ * @version 1.4.2
  */
 final class PhasesDetailsServices {
 
@@ -537,21 +544,16 @@ final class PhasesDetailsServices {
 
             for (int j = 0; j < pastSubmissions.length; ++j) {
                 List<Upload> temp = new ArrayList<Upload>();
-                long currentUploadOwnerId = submissions[j].getUploads().get(0).getOwner();
+                long currentUploadOwnerId = submissions[j].getUpload().getOwner();
 
                 for (int k = 0; k < ungroupedUploads.length; k++) {
                     if (currentUploadOwnerId == ungroupedUploads[k].getOwner()) {
                         for (Submission deletedSubmission : allDeletedSubmissions) {
-                            List<Upload> deletedSubmissionUploads = deletedSubmission.getUploads();
-                            if (deletedSubmissionUploads != null) {
-                                for (Upload deletedSubmissionUpload : deletedSubmissionUploads) {
-                                    if (deletedSubmissionUpload.getId() == ungroupedUploads[k].getId()) {
-                                        if (deletedSubmission.getSubmissionType().getId() 
-                                            == submissions[j].getSubmissionType().getId()) {
-                                            temp.add(ungroupedUploads[k]);
-                                            break;
-                                        }
-                                    }
+                            Upload deletedSubmissionUpload = deletedSubmission.getUpload();
+                            if (deletedSubmissionUpload.getId() == ungroupedUploads[k].getId()) {
+                                if (deletedSubmission.getSubmissionType().getId() 
+                                    == submissions[j].getSubmissionType().getId()) {
+                                    temp.add(ungroupedUploads[k]);
                                 }
                             }
                         }
@@ -673,7 +675,7 @@ final class PhasesDetailsServices {
                 long[] uploadIds = new long[submissions.length];
 
                 for (int j = 0; j < submissions.length; ++j) {
-                    uploadIds[j] = submissions[j].getUploads().get(0).getId();
+                    uploadIds[j] = submissions[j].getUpload().getId();
                 }
 
                 ScreeningManager scrMgr = ActionsHelper.createScreeningManager(request);
@@ -1201,7 +1203,7 @@ final class PhasesDetailsServices {
                     ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
                     phaseGroup.setSpecificationSubmitter(
                         resourceManager.getResource(
-                            phaseGroup.getSpecificationSubmission().getUploads().get(0).getOwner()));
+                            phaseGroup.getSpecificationSubmission().getUpload().getOwner()));
                 }
             }
         }

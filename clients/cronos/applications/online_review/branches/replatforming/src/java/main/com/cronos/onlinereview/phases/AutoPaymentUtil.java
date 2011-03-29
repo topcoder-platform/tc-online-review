@@ -1,23 +1,23 @@
 /*
- * Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
 import com.topcoder.util.log.LogFactory;
 import com.topcoder.web.common.model.FixedPriceComponent;
 import com.topcoder.web.common.model.SoftwareComponent;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 
 /**
  * <p>The AutoPaymentUtil is used to auto-fill for payments of reviewers and submitters.</p>
@@ -34,9 +34,19 @@ import java.util.List;
  * 
  * <p>Version 1.4 (Copilot Selection Contest Online Review and TC Site Integration Assembly 1.0) Change notes:
  *  Updated to support copilot posting project type.</p>
+ *  
+ * <p>Version 1.5 (Online Review Replatforming Release 2) Change notes:
+ *   <ol>
+ *     <li>Update {@link #populateReviewerPayments(long, Connection, int)} method populate reviewer payments for
+ *     studio contest and for the new milestone screening phase.</li>
+ *     <li>Update {@link #getReviewers(long, Connection)} method to add support for Milestone Screener.</li>
+ *     <li>Update {@link #populateSubmitterPayments(long, Connection)} method to add support to populate submitter payments
+ *     from prize table.</li>
+ *   </ol> 
+ * </p>
  *
- * @author George1, brain_cn, pulky, Blues
- * @version 1.4
+ * @author George1, brain_cn, pulky, Blues, TCSASSEMBER
+ * @version 1.5
  */
 public class AutoPaymentUtil {
         /**
@@ -101,6 +111,28 @@ public class AutoPaymentUtil {
         "   AND submission.placement = ? ";
 
     /**
+     * The SQL statement to calculate the submitter's payment for a specified contest. The submiiter's payment
+     * including the contest submission payment and milestone contest submission payment.
+     * 
+     * @since 1.5
+     */
+    private static final String SELECT_SUBMITTERS_PAYMENT = 
+        "select resource.resource_id, sum(prize.prize_amount) " +
+        "  from submission, " +
+        "       upload, " + 
+        "       submission_status_lu, " +
+        "       resource, " + 
+        "       prize " +
+        "  where upload.upload_id = submission.upload_id " +
+        "    and submission.submission_type_id in (1,3) " +
+        "    and submission.submission_status_id = submission_status_lu.submission_status_id " +
+        "    and submission_status_lu.name in ('Active', 'Completed Without Win') " +
+        "    and resource.project_id = ? " + 
+        "    and upload.resource_id = resource.resource_id " +
+        "    and submission.prize_id = prize.prize_id " + 
+        "  group by resource.resource_id";
+
+    /**
      * The SQL statement to retrieve a project info value.
      */
     private static final String SELECT_PROJECT_INFO_VALUE =
@@ -113,6 +145,13 @@ public class AutoPaymentUtil {
     public static final int AGGREGATION_PHASE = 7;
     public static final int FINAL_REVIEW_PHASE = 10;
     public static final int POST_MORTEM_PHASE = 12;
+
+    /**
+     * Represents the milestone screening phase id.
+     * 
+     * @since 1.5
+     */
+    public static final int MILESTONE_SCREENING_PHASE = 16;
 
     /**
      * Prevent to be created.
@@ -135,6 +174,7 @@ public class AutoPaymentUtil {
         }
 
         long projectCategoryId = getProjectCategoryId(projectId, conn);
+        boolean isStudio = isStudioProjectCategory(projectCategoryId);
 
         if (projectCategoryId != 1    // Component Design
         && projectCategoryId != 2     // Component Development
@@ -149,7 +189,9 @@ public class AutoPaymentUtil {
         && projectCategoryId != 24    // RIA Build
         && projectCategoryId != 27    // Spec Review
         && projectCategoryId != 25    // RIA Component
-        && projectCategoryId != 29) { // Copilot Posting
+        && projectCategoryId != 29   // Copilot Posting
+        && !isStudio
+        ) {
                 return;
         }
 
@@ -157,6 +199,7 @@ public class AutoPaymentUtil {
                    "Populate reviewer payments for the projectId:" + projectId + " in the phase:" + phaseId);
         int levelId = SoftwareComponent.LEVEL1;
         int count = getCount(projectId, conn);
+        int milestoneCount = getMilestoneCount(projectId, conn);
         int passedCount = getScreenPassedCount(projectId, conn);
         float[] payments = getPayments(projectId, projectCategoryId, conn);
 
@@ -173,6 +216,11 @@ public class AutoPaymentUtil {
                                                           (int) (projectCategoryId + 111),
                                                           payments[0], payments[1], payments[2],
                                                           prize, drPoints);
+        // the calculator to calculate the payments related with milestone submissions
+        FixedPriceComponent milestoneFPC = new FixedPriceComponent(levelId, milestoneCount, milestoneCount,
+                                                        (int) (projectCategoryId + 111),
+                                                        payments[0], payments[1], payments[2],
+                                                        prize, drPoints);
         List<Reviewer> reviewers = getReviewers(projectId, conn);
 
         boolean passedReview = projectPassedReview(projectId, conn);
@@ -188,20 +236,22 @@ public class AutoPaymentUtil {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getScreeningCost(), conn);
             } else if (reviewer.isScreener() && phaseId == SCREENING_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getScreeningCost(), conn);
-            } else if (reviewer.isAggregator() && phaseId == AGGREGATION_PHASE) {
+            } else if (!isStudio && reviewer.isAggregator() && phaseId == AGGREGATION_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(),
                     alreadyPaidAggregator ? 0 : fpc.getAggregationCost(), conn);
                 alreadyPaidAggregator = true;
-            } else if (reviewer.isFinalReviewer() && phaseId == FINAL_REVIEW_PHASE) {
+            } else if (!isStudio && reviewer.isFinalReviewer() && phaseId == FINAL_REVIEW_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(),
                     alreadyPaidFinalReviewer ? 0 : fpc.getFinalReviewCost(), conn);
                 alreadyPaidFinalReviewer = true;
-            } else if (reviewer.isPrimaryReviewer() && phaseId == REVIEW_PHASE) {
+            } else if (!isStudio && reviewer.isPrimaryReviewer() && phaseId == REVIEW_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getCoreReviewCost(), conn);
-            } else if (reviewer.isReviewer() && phaseId == REVIEW_PHASE) {
+            } else if (!isStudio && reviewer.isReviewer() && phaseId == REVIEW_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getReviewCost(), conn);
-            } else if (reviewer.isPostMortemReviewer() && phaseId == POST_MORTEM_PHASE) {
+            } else if (!isStudio && reviewer.isPostMortemReviewer() && phaseId == POST_MORTEM_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getPostMortemCost(), conn);
+            } else if (reviewer.isMilestoneScreener() && phaseId == MILESTONE_SCREENING_PHASE) {
+                updateResourcePayment(reviewer.getResourceId(), milestoneFPC.getMilestoneScreeningCost(), conn);
             }
 
             // Unlike other reviewer payments specification reviewer is paid only after
@@ -229,6 +279,40 @@ public class AutoPaymentUtil {
                 "       from submission s, upload u " +
                 "       where u.upload_id = s.upload_id " +
                 "       and s.submission_type_id = 1 " +
+                "       and s.submission_status_id <> 5 " +
+                "       and upload_type_id = 1 " +
+                "       and u.project_id = ?";
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            pstmt = conn.prepareStatement(SELECT_SQL);
+            pstmt.setLong(1, projectId);
+            rs = pstmt.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        } finally {
+            PRHelper.close(rs);
+            PRHelper.close(pstmt);
+        }
+    }
+
+    /**
+     * Return milestone submission count for given project.
+     *
+     * @param projectId project id
+     * @param conn the connection
+     * @return the number of milestone submissions
+     * @throws SQLException if error occurs
+     * @since 1.5
+     */
+    private static int getMilestoneCount(long projectId, Connection conn)
+        throws SQLException {
+        String SELECT_SQL =
+                "select count(s.submission_id) " +
+                "       from submission s, upload u " +
+                "       where u.upload_id = s.upload_id " +
+                "       and s.submission_type_id = 3 " +
                 "       and s.submission_status_id <> 5 " +
                 "       and upload_type_id = 1 " +
                 "       and u.project_id = ?";
@@ -300,7 +384,7 @@ public class AutoPaymentUtil {
             "   resource_info ri" +
             "   where r.resource_id = ri.resource_id" +
             "   and ri.resource_info_type_id = 1" +
-            "   and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9, 16, 18)" +
+            "   and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9, 16, 18, 19)" +
             "   and r.project_id = ? " +
             "   and not exists (select ri1.resource_id from resource_info ri1 " +
             "           where r.resource_id = ri1.resource_id" +
@@ -457,7 +541,10 @@ public class AutoPaymentUtil {
         // Retrieve the price
         double price = getPriceByProjectId(projectId, conn);
 
-        if (price == 0) {
+        // gets the number of prize records in prize table associated with this project
+        int prizesCount = getProjectPrizesCount(projectId, conn);
+        
+        if (price == 0 && prizesCount == 0) {
             // No price is defined
             return;
         }
@@ -473,17 +560,26 @@ public class AutoPaymentUtil {
 
         logger.log(Level.INFO, "Clear submitter payment for the project :" + projectId);
 
-        // Prepare prices for differnt places
-        double[] prices = new double[] { price, Math.round(price * 0.5) };
-        long[] places = new long[] { 1, 2 };
-
-        // Update the payment resource_info and paid resource_info
-        for (int i = 0; i < places.length; ++i) {
-            long submitterId = getPassingSubmitterIdByPlace(projectId, places[i], conn);
-
-            if (submitterId != 0) {
-                // Update the payment for given submitter which has placed
-                updateResourcePayment(submitterId, prices[i], conn);
+        if (prizesCount == 0) {
+            // Prepare prices for different places
+            double[] prices = new double[] { price, Math.round(price * 0.5) };
+            long[] places = new long[] { 1, 2 };
+    
+            // Update the payment resource_info and paid resource_info
+            for (int i = 0; i < places.length; ++i) {
+                long submitterId = getPassingSubmitterIdByPlace(projectId, places[i], conn);
+    
+                if (submitterId != 0) {
+                    // Update the payment for given submitter which has placed
+                    updateResourcePayment(submitterId, prices[i], conn);
+                }
+            }
+        } else {
+            // get the payments from the prize table
+            Map<Long, Float> submittersPayment = getSubmittersPayment(projectId, conn);
+            for (Map.Entry<Long, Float> entry : submittersPayment.entrySet()) {
+             // Update the payment for given submitter
+                updateResourcePayment(entry.getKey(), entry.getValue(), conn);
             }
         }
     }
@@ -706,6 +802,7 @@ public class AutoPaymentUtil {
      *            SQL connection to use for information retrieving.
      * @throws SQLException
      *             if any error occurs accessing the data store or reading the result set.
+     * @since 1.5
      */
     private static long getPassingSubmitterIdByPlace(long projectId, long place, Connection connection)
         throws SQLException {
@@ -722,6 +819,89 @@ public class AutoPaymentUtil {
         } finally {
             PRHelper.close(rs);
             PRHelper.close(statement);
+        }
+    }
+
+    /**
+     * Gets the submitter's payment from the prize table for a specified contest. The submitter's payment
+     * includes the conetst submission prize and milestone submission prize.
+     *
+     * @param projectId the project id of the specified conetst
+     * @param connection SQL connection to use for information retrieving.
+     * @return a <code>Map</code> providing the submitter's payment. The key is the resource id
+     * of the submitter, the value is the submitter's payment.
+     * @throws SQLException if any error occurs accessing the data store or reading the result set.
+     * @since 1.5
+     */
+    private static Map<Long, Float> getSubmittersPayment(long projectId, Connection connection)
+        throws SQLException {
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        
+        Map<Long, Float> submittersPayment = new HashMap<Long, Float>();
+        
+        try {
+            statement = connection.prepareStatement(SELECT_SUBMITTERS_PAYMENT);
+            statement.setLong(1, projectId);
+            rs = statement.executeQuery();
+            
+            while (rs.next()) {
+                submittersPayment.put(rs.getLong(1), rs.getFloat(2));
+            }
+            return submittersPayment;
+        } finally {
+            PRHelper.close(rs);
+            PRHelper.close(statement);
+        }
+    }
+
+    /**
+     * Checks whether the specified project category belongs to Studio project categories.
+     *
+     * @param projectCategoryId the specified project category id
+     * @return true if specified project category belongs to Studio project categories, false otherwise.
+     * @since 1.5
+     */
+    private static boolean isStudioProjectCategory(long projectCategoryId) {
+        return projectCategoryId == 16   // Icon Sets
+            || projectCategoryId == 17   // Storyboards
+            || projectCategoryId == 18   // Wireframes
+            || projectCategoryId == 20   // Logos
+            || projectCategoryId == 21   // Print
+            || projectCategoryId == 22   // Specification
+            || projectCategoryId == 30   // Windget or Mobile Screen Design
+            || projectCategoryId == 31   // Front-End Flash
+            || projectCategoryId == 32   // Application Front-End Design
+            || projectCategoryId == 34   // Other
+        ;
+    }
+    
+    /**
+     * Gets the number of prize records in prize table associated with the specified project.
+     *
+     * @param projectId the project id of the specified project.
+     * @param conn SQL connection to use for information retrieving.
+     * @return the number of prize records in prize table associated with the specified project.
+     * @throws SQLException if any error occurs accessing the data store or reading the result set.
+     * @since 1.5
+     */
+    private static int getProjectPrizesCount(long projectId, Connection conn) throws SQLException {
+        String SELECT_SQL =
+            "select count(prize_amount) from prize " +
+            "inner join project_prize_xref on project_prize_xref.prize_id = prize.prize_id " +
+            "and project_prize_xref.project_id = ?";
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            pstmt = conn.prepareStatement(SELECT_SQL);
+            pstmt.setLong(1, projectId);
+            rs = pstmt.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        } finally {
+            PRHelper.close(rs);
+            PRHelper.close(pstmt);
         }
     }
 }
@@ -872,5 +1052,14 @@ class Reviewer {
      */
     public boolean isScreener() {
         return this.resourceRoleId == 3;
+    }
+    
+    /**
+     * Checks whether the reviewer is milestone screener.
+     * 
+     * @return true if the reviewer is milestone screener, false otherwise.
+     */
+    public boolean isMilestoneScreener() {
+        return this.resourceRoleId == 19;
     }
 }

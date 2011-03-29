@@ -1,6 +1,6 @@
 <%--
   - Author: isv, TCSDEVELOEPR
-  - Version: 1.3.1
+  - Version: 1.3.2
   - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment displays the content of tab for single project phase on Project Details screen.
@@ -12,6 +12,8 @@
   - phases.
   -
   - Version 1.3.1 (Milestone Support assembly) changes: Added support for Milestone phases.
+  -
+  - Version 1.3.2 (Online Review Replatforming Release 2) changes: Change submission.uploads[0] to submission.upload.
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -120,7 +122,7 @@
 									<c:set var="submitter" value="" />
 									<c:set var="submissionStatusName" value="${submission.submissionStatus.name}" />
 									<c:forEach items="${group.submitters}" var="curSubmitter">
-										<c:if test="${curSubmitter.id == submission.uploads[0].owner}">
+										<c:if test="${curSubmitter.id == submission.upload.owner}">
 											<c:set var="submitter" value="${curSubmitter}" />
 										</c:if>
 									</c:forEach>
@@ -166,18 +168,18 @@
 													<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" alt="${placeStr}" border="0" />
 												</c:if>
 											</c:if>
-											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${submission.uploads[0].id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
+											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
 											<c:if test="${not empty submitter}">
 												(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 											</c:if>
 										</td>
 										<c:if test="${isManager}">
-											<td class="value" width="5%"><html:link page="/actions/DeleteSubmission.do?method=deleteSubmission&uid=${submission.uploads[0].id}"><html:img srcKey="viewProjectDetails.box.Submission.icoTrash.img" altKey="viewProjectDetails.box.Submission.icoTrash.alt" border="0" styleClass="Outline" /></html:link></td>
+											<td class="value" width="5%"><html:link page="/actions/DeleteSubmission.do?method=deleteSubmission&uid=${submission.upload.id}"><html:img srcKey="viewProjectDetails.box.Submission.icoTrash.img" altKey="viewProjectDetails.box.Submission.icoTrash.alt" border="0" styleClass="Outline" /></html:link></td>
 										</c:if>
 										<c:if test="${not isManager}">
 											<td class="value"><!-- @ --></td>
 										</c:if>
-										<td class="value" width="22%">${orfn:displayDate(pageContext.request, submission.uploads[0].creationTimestamp)}</td>
+										<td class="value" width="22%">${orfn:displayDate(pageContext.request, submission.upload.creationTimestamp)}</td>
 										<c:set var="scrTask" value="${group.screeningTasks[submissionStatus.index]}" />
 										<c:if test="${empty scrTask}">
 											<td class="valueC" width="14%"><html:img src="/i/clear.gif" width="8" height="10" /></td>
@@ -193,13 +195,13 @@
 												</c:when>
 												<c:when test='${scrTaskStatus == "Passed with Warning"}'>
 													<td class="valueC" width="14%">
-														<html:link page="/actions/ViewAutoScreening.do?method=viewAutoScreening&uid=${submission.uploads[0].id}"><html:img
+														<html:link page="/actions/ViewAutoScreening.do?method=viewAutoScreening&uid=${submission.upload.id}"><html:img
 															srcKey="viewProjectDetails.box.Submission.icoPassedWW.img"
 															altKey="viewProjectDetails.box.Submission.icoPassedWW.alt" /></html:link></td>
 												</c:when>
 												<c:when test='${scrTaskStatus == "Failed"}'>
 													<td class="valueC" width="14%">
-														<html:link page="/actions/ViewAutoScreening.do?method=viewAutoScreening&uid=${submission.uploads[0].id}"><html:img
+														<html:link page="/actions/ViewAutoScreening.do?method=viewAutoScreening&uid=${submission.upload.id}"><html:img
 															srcKey="viewProjectDetails.box.Submission.icoFailed.img"
 															altKey="viewProjectDetails.box.Submission.icoFailed.alt" /></html:link></td>
 												</c:when>
@@ -388,7 +390,7 @@
 										<tr class='${(submissionIdx % 2 == 0) ? "light" : "dark"}'>
 											<c:set var="submitter" value="" />
 											<c:forEach items="${group.submitters}" var="curSubmitter">
-												<c:if test="${curSubmitter.id == submission.uploads[0].owner}">
+												<c:if test="${curSubmitter.id == submission.upload.owner}">
 													<c:set var="submitter" value="${curSubmitter}" />
 												</c:if>
 											</c:forEach>
@@ -421,7 +423,7 @@
 														<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" alt="${placeStr}" border="0" />
 													</c:if>
 												</c:if>
-												<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${submission.uploads[0].id}"
+												<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${submission.upload.id}"
 													titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
 												<c:if test="${not empty submitter}">
 													(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
@@ -513,7 +515,7 @@
 								</tr>
 								<c:set var="winningSubmission" value="" />
 								<c:forEach items="${group.submissions}" var="submission">
-									<c:if test="${(not empty group.winner) and (group.winner.id == submission.uploads[0].owner)}">
+									<c:if test="${(not empty group.winner) and (group.winner.id == submission.upload.owner)}">
 										<c:set var="winningSubmission" value="${submission}" />
 									</c:if>
 								</c:forEach>
@@ -521,7 +523,7 @@
 									<tr class="light">
 										<td class="value" nowrap="nowrap">
 											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
-											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningsubmission.uploads[0].id}"
+											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningsubmission.upload.id}"
 												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
 											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 										</td>
@@ -600,7 +602,7 @@
 								</tr>
 								<c:set var="winningSubmission" value="" />
 								<c:forEach items="${group.submissions}" var="submission">
-									<c:if test="${(not empty group.winner) && (group.winner.id == submission.uploads[0].owner)}">
+									<c:if test="${(not empty group.winner) && (group.winner.id == submission.upload.owner)}">
 										<c:set var="winningSubmission" value="${submission}" />
 									</c:if>
 								</c:forEach>
@@ -608,7 +610,7 @@
 									<tr class="light">
 										<td class="value" nowrap="nowrap">
 											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
-											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningsubmission.uploads[0].id}"
+											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningsubmission.upload.id}"
 												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
 											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 										</td>
@@ -676,7 +678,7 @@
 								</tr>
 								<c:set var="winningSubmission" value="" />
 								<c:forEach items="${group.submissions}" var="submission">
-									<c:if test="${(not empty group.winner) and (group.winner.id == submission.uploads[0].owner)}">
+									<c:if test="${(not empty group.winner) and (group.winner.id == submission.upload.owner)}">
 										<c:set var="winningSubmission" value="${submission}" />
 									</c:if>
 								</c:forEach>
@@ -696,7 +698,7 @@
                                                           altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0"
                                                           styleClass="Outline"/>
                                                 <html:link
-                                                        page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningsubmission.uploads[0].id}"
+                                                        page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningsubmission.upload.id}"
                                                         titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
                                                 (<tc-webtag:handle
                                                     coderId='${group.winner.allProperties["External Reference ID"]}'
@@ -866,13 +868,13 @@
                                 <c:if test="${not empty group.specificationSubmission}">
                                     <tr class="light">
                                         <td class="value" nowrap="nowrap">
-                                            <html:link page="/actions/DownloadSpecificationSubmission.do?method=downloadSpecificationSubmission&uid=${group.specificationSubmission.uploads[0].id}"
+                                            <html:link page="/actions/DownloadSpecificationSubmission.do?method=downloadSpecificationSubmission&uid=${group.specificationSubmission.upload.id}"
                                                 titleKey="viewProjectDetails.box.Specification.Download">${group.specificationSubmission.id}</html:link>
                                             (<tc-webtag:handle coderId='${group.specificationSubmitter.allProperties["External Reference ID"]}'
                                                                context="${orfn:getHandlerContext(pageContext.request)}" />)
                                         </td>
                                         <td class="valueC"
-                                            nowrap="nowrap">${orfn:displayDate(pageContext.request, group.specificationSubmission.uploads[0].creationTimestamp)}</td>
+                                            nowrap="nowrap">${orfn:displayDate(pageContext.request, group.specificationSubmission.upload.creationTimestamp)}</td>
                                         <c:choose>
                                             <c:when test="${not empty group.specificationReview}">
                                                 <c:choose>
@@ -944,7 +946,7 @@
                                     <c:set var="submitter" value="" />
                                     <c:set var="submissionStatusName" value="${submission.submissionStatus.name}" />
                                     <c:forEach items="${group.submitters}" var="curSubmitter">
-                                        <c:if test="${curSubmitter.id == submission.uploads[0].owner}">
+                                        <c:if test="${curSubmitter.id == submission.upload.owner}">
                                             <c:set var="submitter" value="${curSubmitter}" />
                                         </c:if>
                                     </c:forEach>
@@ -992,7 +994,7 @@
                                                     <html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" alt="${placeStr}" border="0" />
                                                 </c:if>
                                             </c:if>
-                                            <html:link page="/actions/DownloadMilestoneSubmission.do?method=downloadMilestoneSubmission&uid=${submission.uploads[0].id}" 
+                                            <html:link page="/actions/DownloadMilestoneSubmission.do?method=downloadMilestoneSubmission&uid=${submission.upload.id}" 
                                                        titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
                                             <c:if test="${not empty submitter}">
                                                 (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' 
@@ -1004,7 +1006,7 @@
                                         <td class="value" <c:if test="${isManager and not group.milestoneReviewFinished}">width="5%"</c:if>>
                                             <c:choose>
                                                <c:when test="${isManager and not group.milestoneReviewFinished}">
-                                                   <html:link page="/actions/DeleteSubmission.do?method=deleteSubmission&uid=${submission.uploads[0].id}">
+                                                   <html:link page="/actions/DeleteSubmission.do?method=deleteSubmission&uid=${submission.upload.id}">
                                                        <html:img srcKey="viewProjectDetails.box.Submission.icoTrash.img" 
                                                                  altKey="viewProjectDetails.box.Submission.icoTrash.alt" 
                                                                  border="0" styleClass="Outline" />
@@ -1016,7 +1018,7 @@
                                         
                                         <%-- Submission Date --%>    
                                         <td class="value" width="12%">
-                                            ${orfn:displayDate(pageContext.request, submission.uploads[0].creationTimestamp)}
+                                            ${orfn:displayDate(pageContext.request, submission.upload.creationTimestamp)}
                                         </td>
                                             
                                         <%-- Milestone Screener --%>

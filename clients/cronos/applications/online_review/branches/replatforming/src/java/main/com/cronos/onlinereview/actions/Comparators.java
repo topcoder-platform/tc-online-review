@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2007 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2011 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -35,11 +35,17 @@ import com.topcoder.project.phases.PhaseStatus;
  *     <li>Added comparison logic for <code>Milestone</code> phases.</li>
  *   </ol>
  * </p>
-
+ *
+ * <p>
+ * Version 1.1.2 (Online Review Replatforming Release 2) Change notes:
+ *   <ol>
+ *     <li>Change submission.getUplaods.get(0) to submission.getUpload().</li>
+ *   </ol>
+ * </p>
  *
  * @author George1
- * @author real_vg, isv
- * @version 1.1.1
+ * @author real_vg, isv, TCSASSEMBER
+ * @version 1.1.2
  */
 final class Comparators {
 
@@ -304,8 +310,8 @@ final class Comparators {
             // or by their upload times, which are the creation times of their respective uploads
             return ((finalScore1 != finalScore2)
             		? finalScore2.compareTo(finalScore1)
-            		: submission2.getUploads().get(0).getCreationTimestamp().compareTo(
-            				submission1.getUploads().get(0).getCreationTimestamp()));
+            		: submission2.getUpload().getCreationTimestamp().compareTo(
+            				submission1.getUpload().getCreationTimestamp()));
         }
 
         /**
@@ -471,8 +477,8 @@ final class Comparators {
                 return screeningScore2.compareTo(screeningScore1);
             }
 
-            return submission2.getUploads().get(0).getCreationTimestamp().compareTo(
-                submission1.getUploads().get(0).getCreationTimestamp());
+            return submission2.getUpload().getCreationTimestamp().compareTo(
+                submission1.getUpload().getCreationTimestamp());
         }
 
         /**
