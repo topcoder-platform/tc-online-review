@@ -1519,7 +1519,8 @@ public class ProjectReviewActions extends DispatchAction {
         Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
 
         // Verify that the scorecard template for this review is of correct type
-        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
+        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review") && 
+            !scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Approval")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect", null);
         }
@@ -1531,6 +1532,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic aggregation info and store it into the request
         retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "FinalReview");
+        request.setAttribute("approvalBased", scorecardTemplate.getScorecardType().getName().equals("Approval"));
 
         int reviewerCommentsNum = 0;
         int[] lastCommentIdxs = new int[review.getNumberOfItems()];
@@ -1682,7 +1684,8 @@ public class ProjectReviewActions extends DispatchAction {
         Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
 
         // Verify that the scorecard template for this review is of correct type
-        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
+        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review") && 
+            !scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Approval")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect", null);
         }
@@ -1796,6 +1799,8 @@ public class ProjectReviewActions extends DispatchAction {
         boolean validationSucceeded =
             (commitRequested) ? validateFinalReviewScorecard(request, scorecardTemplate, review) : true;
 
+        request.setAttribute("approvalBased", scorecardTemplate.getScorecardType().getName().equals("Approval"));
+
         // If the user has requested to complete the review
         if (validationSucceeded && commitRequested) {
             reviewLevelComment.setExtraInfo((approveFixes == true) ? "Approved" : "Rejected");
@@ -1884,7 +1889,8 @@ public class ProjectReviewActions extends DispatchAction {
         Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
 
         // Verify that the scorecard template for this review is of correct type
-        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
+        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review") && 
+            !scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Approval")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.VIEW_FINAL_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect", null);
         }
@@ -1896,6 +1902,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic aggregation info and store it into the request
         retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "FinalReview");
+        request.setAttribute("approvalBased", scorecardTemplate.getScorecardType().getName().equals("Approval"));
 
         int[] lastCommentIdxs = new int[review.getNumberOfItems()];
 

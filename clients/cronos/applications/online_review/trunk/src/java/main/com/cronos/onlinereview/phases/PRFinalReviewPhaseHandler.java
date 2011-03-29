@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2005-2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2005-2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -356,7 +356,7 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
     private boolean checkFinalReview(Connection conn, Phase phase, String operator) throws PhaseHandlingException {
         try {
             ManagerHelper managerHelper = getManagerHelper();
-            Review finalWorksheet = PhasesHelper.getFinalReviewWorksheet(conn, managerHelper, phase.getId());
+            Review finalWorksheet = PhasesHelper.getWorksheet(conn, managerHelper, "Final Reviewer", phase.getId());
 
             // check for approved/rejected comments.
             Comment[] comments = finalWorksheet.getAllComments();
@@ -379,8 +379,6 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
             }
 
             return rejected;
-        } catch (SQLException e) {
-            throw new PhaseHandlingException("Problem when connecting to database", e);
         } catch (PhaseManagementException e) {
             throw new PhaseHandlingException("Problem when persisting phases", e);
         }

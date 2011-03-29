@@ -2729,8 +2729,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 }
 
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
-                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
-                        deliverable.getSubmission(), deliverable.getResource(), false);
+                        null, deliverable.getSubmission(), deliverable.getResource(), false);
 
                 if (review != null) {
                     if (!review.isCommitted()) {
@@ -2891,7 +2890,7 @@ public class ProjectDetailsActions extends DispatchAction {
      *            an instance of <code>ReviewManager</code> class that retrieves a review from the
      *            database.
      * @param scorecardType
-     *            a scorecard template type that found review should have.
+     *            a scorecard template type that found review should have (null for any)
      * @param submissionId
      *            an ID of the submission which the review was made for.
      * @param resourceId
@@ -2900,7 +2899,7 @@ public class ProjectDetailsActions extends DispatchAction {
      *            specifies whether retrieved review should have all infomration (like all items and
      *            their comments).
      * @throws IllegalArgumentException
-     *             if <code>scorecardType</code> or <code>submissionId</code> parameters are
+     *             if <code>submissionId</code> parameter is
      *             <code>null</code>, or if <code>submissionId</code> or
      *             <code>resourceId</code> parameters contain negative value or zero.
      * @throws ReviewManagementException
@@ -2911,17 +2910,21 @@ public class ProjectDetailsActions extends DispatchAction {
         throws ReviewManagementException {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(manager, "manager");
-        ActionsHelper.validateParameterNotNull(scorecardType, "scorecardType");
+
         ActionsHelper.validateParameterNotNull(submissionId, "submissionId");
         ActionsHelper.validateParameterPositive(submissionId.longValue(), "submissionId");
         ActionsHelper.validateParameterPositive(resourceId, "resourceId");
 
         Filter filterSubmission = new EqualToFilter("submission", submissionId);
-        Filter filterScorecard = new EqualToFilter("scorecardType", new Long(scorecardType.getId()));
         Filter filterReviewer = new EqualToFilter("reviewer", new Long (resourceId));
-
-        Filter filter = new AndFilter(Arrays.asList(
-                new Filter[] {filterSubmission, filterScorecard, filterReviewer}));
+		
+        Filter filter = null;
+        if (scorecardType != null) {        
+            Filter filterScorecard = new EqualToFilter("scorecardType", new Long(scorecardType.getId()));
+            filter = new AndFilter(Arrays.asList(new Filter[] {filterSubmission, filterScorecard, filterReviewer}));
+        } else {
+            filter = new AndFilter(Arrays.asList(new Filter[] {filterSubmission, filterReviewer}));
+        }		
 
         // Get a review(s) that pass filter
         Review[] reviews = manager.searchReviews(filter, complete);
