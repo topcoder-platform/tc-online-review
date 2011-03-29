@@ -97,7 +97,9 @@ function OnCompleteScorecardClick() {
                                             <c:set var="itemIdx" value="${itemIdx + 1}" />
                                         </tr>
                                         <tr>
-                                            <td class="header"><bean:message key="editReview.EditAggregation.Reviewer" /></td>
+                                            <c:if test="${not approvalBased}">
+                                                <td class="header"><bean:message key="editReview.EditAggregation.Reviewer" /></td>
+                                            </c:if>
                                             <td class="headerC"><bean:message key="editReview.EditAggregation.CommentNumber" /></td>
                                             <td class="header"><bean:message key="editReview.EditAggregation.Response" /></td>
                                             <td class="header"><bean:message key="editReview.EditAggregation.Type" /></td>
@@ -127,7 +129,7 @@ function OnCompleteScorecardClick() {
                                                         <c:set var="isLastCommentForItem" value="${commentStatus.index == lastCommentIdx - 1}" />
                                                         <c:set var="rowClass" value='${(isLastCommentForItem == true) ? "value" : "valueNotLast"}'/>
                                                         <tr class="dark">
-                                                            <c:if test="${firstTime == true}">
+                                                            <c:if test="${firstTime == true and not approvalBased}">
                                                                 <td class="value" rowspan="${lastCommentIdx}">
                                                                     <c:forEach items="${reviewResources}" var="resource">
                                                                         <c:if test="${resource.id == comment.author}">

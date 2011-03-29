@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010-2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -126,8 +126,6 @@ public class PRApprovalPhaseHandler extends ApprovalPhaseHandler {
 
             return rejected;
 
-        } catch (SQLException e) {
-            throw new PhaseHandlingException("Problem when connecting to database", e);
         } catch (PhaseManagementException e) {
             throw new PhaseHandlingException("Problem when persisting phases", e);
         } finally {
