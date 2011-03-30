@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Calendar;
 
 import javax.ejb.CreateException;
 import javax.naming.Context;
@@ -77,6 +78,8 @@ import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.UploadStatus;
 import com.topcoder.management.deliverable.UploadType;
+import com.topcoder.management.deliverable.late.LateDeliverable;
+import com.topcoder.management.deliverable.late.LateDeliverableManager;
 import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistence;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
@@ -88,6 +91,8 @@ import com.topcoder.management.phase.DefaultPhaseManager;
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.phase.PhaseManager;
+import com.topcoder.management.phase.PhasePersistence;
+import com.topcoder.management.phase.db.InformixPhasePersistence;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
@@ -243,8 +248,24 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, TCSASSEMBER
- * @version 1.9.2
+ * <p>
+ * Version 1.10 (Online Review Late Deliverables Search Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #createPhasePersistence(HttpServletRequest)} method.</li>
+ *     <li>Added {@link #createLateDeliverableManager(HttpServletRequest)} method.</li>
+ *     <li>Added {@link #getDeliverableIdToNameMap()} method.</li>
+ *   </ol>
+ * </p>
+ *
+ * <p>
+ * Version 1.11 (Content Creation Contest Online Review & TC Site Integration Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #isProjectResultCategory(long)} method.</li>
+ *   </ol>
+ * </p>
+
+ * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK
+ * @version 1.11
  * @since 1.0
  */
 public class ActionsHelper {
@@ -279,12 +300,12 @@ public class ActionsHelper {
     private static final ManagerCreationHelper managerCreationHelper = new ManagerCreationHelper();
 
     /**
-     * constant for software user fourm role prefix 
+     * constant for software user fourm role prefix
      */
     private static final String SOFTWARE_USER_FORUM_ROLE_PREFIX = "Software_Users_";
 
     /**
-     * constant for software moderator fourm role prefix 
+     * constant for software moderator fourm role prefix
      */
     private static final String SOFTWARE_MODERATOR_FORUM_ROLE_PREFIX = "Software_Moderators_";
 
@@ -337,7 +358,8 @@ public class ActionsHelper {
                 || categoryId == 19   // UI Prototype
                 || categoryId == 24   // RIA Build
                 || categoryId == 25   // RIA Component
-                || categoryId == 29
+                || categoryId == 29   // Copilot Posting
+                || categoryId == 35   // Content Creation
                 || categoryId == 16   // Icon Sets
                 || categoryId == 17   // Storyboards
                 || categoryId == 18   // Wireframes
@@ -384,10 +406,10 @@ public class ActionsHelper {
 
     /**
      * The query string used to select projects.
-     * 
+     *
      * Updated for Cockpit Release Assembly for Receipts
      *     - now fetching client name too.
-     *     
+     *
      * Updated for Version 1.1.1 - added fetch for is_manual_prize_setting property too.
      */
     private static final String SELECT_PROJECT     = "select p.project_id, p.name "
@@ -1497,29 +1519,48 @@ public class ActionsHelper {
      * Populate resource email resource info to resource.
      *
      * @param request the request to retrieve manager instance
-     * @param resource resource instance
+     * @param resource Resource instance
      * @throws BaseException if error occurs
      */
     static void populateEmailProperty(HttpServletRequest request, Resource resource) throws BaseException {
-        UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
-        ExternalUser user = null;
-        String externalUserID = (String) resource.getProperty("External Reference ID");
-        if (externalUserID != null) {
-            user = userRetrieval.retrieveUser(Long.parseLong(externalUserID));
-        }
-        if (user == null) {
-            log.log(Level.DEBUG, "using 'Handle' for retrieving the user for resource: " + resource.getId());
-            String handle = (String) resource.getProperty("Handle");
-            if (handle != null) {
-                user = userRetrieval.retrieveUser(handle);
+        populateEmailProperty(request, new Resource[] {resource});
+    }
+
+    /**
+     * Populate resource email resource info to resources.
+     *
+     * @param request the request to retrieve manager instance
+     * @param resources array of Resource instance
+     * @throws BaseException if error occurs
+     */
+    static void populateEmailProperty(HttpServletRequest request, Resource[] resources) throws BaseException {
+        long[] userIDs = new long[resources.length];
+        for (int i=0;i<resources.length;i++) {
+            String userID = (String) resources[i].getProperty("External Reference ID");
+            if (userID == null || userID.trim().length() == 0) {
+                throw new BaseException("the resourceId: " + resources[i].getId() + " doesn't refer a valid user");
             }
-        } else {
-            log.log(Level.DEBUG, "using 'External Reference ID' for retrieving the user for resource: " + resource.getId());
+            userIDs[i] = Long.parseLong(userID);
         }
-        if (user == null) {
-            throw new BaseException("the resourceId: " + resource.getId() + " doesn't refer a valid user");
+
+        UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
+        ExternalUser[] users = userRetrieval.retrieveUsers(userIDs);
+
+        if (users == null) {
+            throw new BaseException("Error during user retrieval in populateEmailProperty() method.");
         }
-        resource.setProperty("Email", user.getEmail());
+        Map<Long,String> emailsMap = new HashMap<Long,String>();
+        for (int i=0;i<users.length;i++) {
+            emailsMap.put(users[i].getId(), users[i].getEmail());
+        }
+
+        for (int i=0;i<resources.length;i++) {
+            String email = emailsMap.get(userIDs[i]);
+            if (email == null) {
+                throw new BaseException("Can't retrieve email property for the resourceId: " + resources[i].getId());
+            }
+            resources[i].setProperty("Email", email);
+        }
     }
 
     /**
@@ -2148,9 +2189,6 @@ public class ActionsHelper {
      *            an array of phases to search deliverables for.
      * @param resources
      *            an array of all resources for the current project.
-     * @param winnerExtUserId
-     *            an External User ID of the user who is the winner for the project. If there is no
-     *            winner for the project, this parameter must be negative.
      * @throws IllegalArgumentException
      *             if any of the <code>manager</code>, <code>phases</code> or
      *             <code>resources</code> parameters are <code>null</code>.
@@ -2163,7 +2201,7 @@ public class ActionsHelper {
      *             not.
      */
     public static Deliverable[] getAllDeliverablesForPhases(
-            DeliverableManager manager, Phase[] phases, Resource[] resources, long winnerExtUserId)
+            DeliverableManager manager, Phase[] phases, Resource[] resources)
             throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
 
         // Validate parameters
@@ -2198,17 +2236,14 @@ public class ActionsHelper {
 
         List<Deliverable> deliverables = new ArrayList<Deliverable>();
 
-        // Additionally filter deliverables because sometimes deliverables
-        // for another phases get though the above filter
         for (int i = 0; i < allDeliverables.length; ++i) {
             // Get a deliverable for the current iteration
             final Deliverable deliverable = allDeliverables[i];
             // Get an ID of resource this deliverable is for
             final long deliverableResourceId = deliverable.getResource();
             Resource forResource = null;
-            int j;
             // Find a resource this deliverable is for
-            for (j = 0; j < resources.length; ++j) {
+            for (int j = 0; j < resources.length; ++j) {
                 if (resources[j].getId() == deliverableResourceId) {
                     forResource = resources[j];
                     break;
@@ -2218,75 +2253,6 @@ public class ActionsHelper {
             // in case there isn't skip this deliverable for safety
             if (forResource == null) {
                 continue;
-            }
-
-            // Make sure this is the correct resource first. Some deliverables are
-            // assigned to resources not in their phase, and that's still considered correct
-            final String resourceRole = forResource.getResourceRole().getName();
-            // If found resource is associated with a phase,
-            // make sure this phase is among ones the deliverables needed for
-            if (forResource.getPhase() != null &&
-                    (resourceRole.equalsIgnoreCase(Constants.FINAL_REVIEWER_ROLE_NAME) ||
-                    resourceRole.equalsIgnoreCase(Constants.AGGREGATOR_ROLE_NAME) ||
-                    resourceRole.equalsIgnoreCase(Constants.SPECIFICATION_REVIEWER_ROLE_NAME) ||
-                    resourceRole.equalsIgnoreCase(Constants.APPROVER_ROLE_NAME))) {
-                final long resourcePhaseId = forResource.getPhase().longValue();
-                for (j = 0; j < phases.length; ++j) {
-                    if (phases[j].getId() == resourcePhaseId) {
-                        break;
-                    }
-                }
-                // No phases for this resource, wrong deliverable, skip it
-                if (j == phases.length) {
-                    continue;
-                }
-            }
-
-            // If current deliverable is Aggregation Review, and it is assigned to one of the reviewers,
-            // check to make sure this reviewer is not also an aggregator
-            if (deliverable.getName().equalsIgnoreCase(Constants.AGGREGATION_REV_DELIVERABLE_NAME) &&
-                    (resourceRole.equalsIgnoreCase(Constants.REVIEWER_ROLE_NAME) ||
-                    resourceRole.equalsIgnoreCase(Constants.ACCURACY_REVIEWER_ROLE_NAME) ||
-                    resourceRole.equalsIgnoreCase(Constants.FAILURE_REVIEWER_ROLE_NAME) ||
-                    resourceRole.equalsIgnoreCase(Constants.STRESS_REVIEWER_ROLE_NAME))) {
-                final String originalExtId = (String) forResource.getProperty("External Reference ID");
-
-                for (j = 0; j < resources.length; ++j) {
-                    // Skip resource that is being checked
-                    if (forResource == resources[j]) {
-                        continue;
-                    }
-
-                    // Get a resource for the current iteration
-                    final Resource otherResource = resources[j];
-                    // Verify whether this resource is an Aggregator, and skip it if it isn't
-                    if (!otherResource.getResourceRole().getName().equalsIgnoreCase(Constants.AGGREGATOR_ROLE_NAME)) {
-                        continue;
-                    }
-
-                    String otherExtId = (String) resources[j].getProperty("External Reference ID");
-                    // If appropriate aggregator's resource has been found, stop the search
-                    if (originalExtId.equals(otherExtId)) {
-                        break;
-                    }
-                }
-                // Skip this deliverable if it is assigned to aggregator
-                if (j != resources.length) {
-                    continue;
-                }
-            }
-
-            // If there is a winner for the project,
-            // verify that the current deliverable is not for non-winning submitter
-            if (winnerExtUserId > 0) {
-                // Check that found resource is submitter and non-winner. The deliverable will
-                // be skipped in this case. In all other cases it will be added to the list
-                if (resourceRole.equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
-                    if (winnerExtUserId !=
-                            Long.parseLong((String) forResource.getProperty("External Reference ID"), 10)) {
-                        continue;
-                    }
-                }
             }
 
             // Add current deliverable to the list of deliverables
@@ -2697,6 +2663,40 @@ public class ActionsHelper {
     }
 
     /**
+     * This static method helps to create an object of the <code>PhasePersistence</code> class.
+     *
+     * @return a newly created instance of the class.
+     * @param request
+     *            an <code>HttpServletRequest</code> object, where created
+     *            <code>PhaseManager</code> object can be stored to let reusing it later for the
+     *            same request.
+     * @throws IllegalArgumentException
+     *             if <code>request</code> parameter is <code>null</code>.
+     * @throws BaseException
+     *             if any error happens during object creation.
+     * @since 1.10
+     */
+    public static PhasePersistence createPhasePersistence(HttpServletRequest request)
+        throws BaseException {
+        // Validate parameter
+        validateParameterNotNull(request, "request");
+
+        // Try retrieving Phase Persistence from the request's attribute first
+        PhasePersistence persistence = (PhasePersistence) request.getAttribute("phasePersistence");
+
+        // If this is the first time this method is called for the request,
+        if (persistence == null) {
+            persistence = new InformixPhasePersistence("com.topcoder.management.phase");
+
+            // Place newly-created object into the request as attribute
+            request.setAttribute("phasePersistence", persistence);
+        }
+
+        // Return the Phase Persistence object
+        return persistence;
+    }
+
+    /**
      * This static method helps to create an object of the <code>ProjectManager</code> class.
      *
      * @return a newly created instance of the class.
@@ -2790,6 +2790,38 @@ public class ActionsHelper {
     }
 
     /**
+     * This static method helps to create an object of the <code>LateDeliverableManager</code> class.
+     *
+     * @return a newly created instance of the class.
+     * @param request
+     *            an <code>HttpServletRequest</code> object, where created
+     *            <code>LateDeliverableManager</code> object can be stored to let reusing it later for the
+     *            same request.
+     * @throws IllegalArgumentException
+     *             if <code>request</code> parameter is <code>null</code>.
+     * @throws LateDeliverableManagementConfigurationException
+     *             if fail to initialize the <code>LateDeliverableManagerImpl</code> instance.
+     * @since 1.10
+     */
+    public static LateDeliverableManager createLateDeliverableManager(HttpServletRequest request) {
+        // Validate parameter
+        validateParameterNotNull(request, "request");
+
+        // Try retrieving Review Manager from the request's attribute first
+        LateDeliverableManager manager = (LateDeliverableManager) request.getAttribute("lateDeliverableManager");
+        // If this is the first time this method is called for the request,
+        // create a new instance of the object
+        if (manager == null) {
+            manager = managerCreationHelper.getLateDeliverableManager();
+            // Place newly-created object into the request as attribute
+            request.setAttribute("lateDeliverableManager", manager);
+        }
+
+        // Return the Late Deliverable Manager object
+        return manager;
+    }
+
+    /**
      * This static method helps to create an object of the <code>ReviewScoreAggregator</code>
      * class.
      *
@@ -2847,7 +2879,7 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            manager = new ScorecardManagerImpl();
+            manager = managerCreationHelper.getScorecardManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("scorecardManager", manager);
         }
@@ -2901,7 +2933,7 @@ public class ActionsHelper {
 
             // Some checkers are used more than once
             DeliverableChecker committedChecker = new CommittedReviewDeliverableChecker(dbconn);
-            DeliverableChecker submissionIndependentReviewChecker 
+            DeliverableChecker submissionIndependentReviewChecker
                 = new CommittedReviewDeliverableChecker(dbconn, false);
             DeliverableChecker testCasesChecker = new TestCasesDeliverableChecker(dbconn);
 
@@ -3173,7 +3205,7 @@ public class ActionsHelper {
 
                 selectStmt = conn.createStatement();
                 resultSet = selectStmt.executeQuery(queryString);
-                
+
                 while (resultSet.next()) {
                     long projectID = resultSet.getLong(1);
                     String projectName = resultSet.getString(2);
@@ -3254,7 +3286,7 @@ public class ActionsHelper {
      */
     static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format)
             throws BaseException {
-        
+
         String name = newProjectStatus.getName();
         if ("Completed".equals(name)
                 || "Cancelled - Failed Review".equals(name)
@@ -3264,34 +3296,12 @@ public class ActionsHelper {
                 || "Cancelled - Winner Unresponsive".equals(name)
                 || "Cancelled - Client Request".equals(name)
                 || "Cancelled - Requirements Infeasible".equals(name)) {
-            
+
             if (format == null) {
                 format = new SimpleDateFormat(ConfigHelper.getDateFormat());
             }
-            
-            project.setProperty("Completion Timestamp", format.format(new Date()));
 
-            if (!"Deleted".equals(name) && !ActionsHelper.isStudioProject(project)) {
-                Connection conn = null;
-                PreparedStatement ps = null;
-                try {
-                    DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-                    conn = dbconn.createConnection();
-                    ps = conn.prepareStatement(
-                            "update project_result set rating_ind = 1 where project_id = ? and valid_submission_ind = 1");
-                    ps.setLong(1, project.getId());
-                    ps.execute();
-                } catch(SQLException e) {
-                    throw new BaseException("Failed to update project result for rating_ind", e);
-                } catch (UnknownConnectionException e) {
-                    throw new BaseException("Failed to return DBConnection", e);
-                } catch (ConfigurationException e) {
-                    throw new BaseException("Failed to return DBConnection", e);
-                } finally {
-                    close(ps);
-                    close(conn);
-                }
-            }
+            project.setProperty("Completion Timestamp", format.format(new Date()));
         }
     }
 
@@ -3423,7 +3433,7 @@ public class ActionsHelper {
 
                 // if the user is logged in and is a resource of this project or a global manager, continue
                 Resource[] myResources = (Resource[]) request.getAttribute("myResources");
-                if ((myResources == null || myResources.length == 0) && 
+                if ((myResources == null || myResources.length == 0) &&
                                !AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) &&
                                !AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
                     // if he's not a resource, check if the project has eligibility constraints
@@ -3466,7 +3476,6 @@ public class ActionsHelper {
         PreparedStatement existStmt = null;
         PreparedStatement existCIStmt = null;
         PreparedStatement ratingStmt = null;
-        PreparedStatement reliabilityStmt = null;
         PreparedStatement componentInquiryStmt = null;
         long categoryId = project.getProjectCategory().getId();
 
@@ -3488,10 +3497,10 @@ public class ActionsHelper {
             log.log(Level.DEBUG, "calculated phaseId for Project: " + projectId + " phaseId: " + phaseId);
             long version = getProjectLongValue(project, "Version ID");
 
-            // add reliability_ind and old_reliability
+            // old_reliability has been removed, because introduction of new reliability calculator
             ps = conn.prepareStatement("INSERT INTO project_result " +
-                    "(project_id, user_id, rating_ind, valid_submission_ind, old_rating, old_reliability) " +
-                    "values (?, ?, ?, ?, ?, ?)");
+                    "(project_id, user_id, rating_ind, valid_submission_ind, old_rating) " +
+                    "values (?, ?, ?, ?, ?)");
 
             componentInquiryStmt = conn.prepareStatement("INSERT INTO component_inquiry " +
                     "(component_inquiry_id, component_id, user_id, project_id, phase, tc_user_id, agreed_to_terms, rating, version, create_time) " +
@@ -3502,9 +3511,6 @@ public class ActionsHelper {
             existCIStmt = conn.prepareStatement("SELECT 1 FROM component_inquiry WHERE user_id = ? and project_id = ?");
 
             ratingStmt = conn.prepareStatement("SELECT rating, phase_id, (select project_category_id from project where project_id = ?) as project_category_id from user_rating where user_id = ? ");
-
-            reliabilityStmt = conn.prepareStatement("SELECT rating from user_reliability where user_id = ? and phase_id = " +
-                    "(select 111+project_category_id from project where project_id = ?)");
 
             for (Long userId : newSubmitters) {
                 // Check if projectResult exist
@@ -3543,19 +3549,7 @@ public class ActionsHelper {
                 }
 
 
-                double oldReliability = 0;
                 if (!existPR) {
-                    //Retrieve Reliability
-                    reliabilityStmt.clearParameters();
-                    reliabilityStmt.setLong(1, userId);
-                    reliabilityStmt.setLong(2, projectId);
-                    rs = reliabilityStmt.executeQuery();
-
-                    if (rs.next()) {
-                        oldReliability = rs.getDouble(1);
-                    }
-                    close(rs);
-
                     //add project_result
                     ps.setLong(1, projectId);
                     ps.setLong(2, userId);
@@ -3566,12 +3560,6 @@ public class ActionsHelper {
                         ps.setNull(5, Types.DOUBLE);
                     } else {
                         ps.setDouble(5, oldRating);
-                    }
-
-                    if (oldReliability == 0) {
-                        ps.setNull(6, Types.DOUBLE);
-                    } else {
-                        ps.setDouble(6, oldReliability);
                     }
                     ps.addBatch();
                 }
@@ -3611,7 +3599,6 @@ public class ActionsHelper {
             close(existStmt);
             close(existCIStmt);
             close(ratingStmt);
-            close(reliabilityStmt);
             close(conn);
         }
     }
@@ -4177,7 +4164,7 @@ public class ActionsHelper {
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
                     + DB_CONNECTION_NAMESPACE);
-            PRHelper.resetProjectResultWithChangedScores(projectId, userId, conn);
+            PRHelper.populateProjectResult(projectId, conn);
         } catch (DBConnectionException e) {
             throw new BaseException("Failed to return DBConnection", e);
         } catch (SQLException e) {
@@ -4446,14 +4433,14 @@ public class ActionsHelper {
     public static boolean isStudioProject(Project project) {
         return "Studio".equals(project.getProjectCategory().getProjectType().getName());
     }
-    
+
     private static Forums getForumBean() throws RemoteException, CreateException, NamingException {
         Context context = TCContext.getInitial(ApplicationServer.FORUMS_HOST_URL);
         ForumsHome forumsHome = (ForumsHome) context.lookup(ForumsHome.EJB_REF_NAME);
         return forumsHome.create();
 //        return EJBLibraryServicesLocator.getForumsService();
     }
-    
+
     public static void addForumPermissions(Project project, Collection<Long> users) throws BaseException {
         addForumPermissions(project, users, false);
     }
@@ -4463,7 +4450,7 @@ public class ActionsHelper {
         try {
             Forums forumBean = getForumBean();
 
-            
+
             String roleId = SOFTWARE_USER_FORUM_ROLE_PREFIX + getProjectLongValue(project, "Developer Forum ID");
 
             if (moderator)
@@ -4478,15 +4465,15 @@ public class ActionsHelper {
             throw new BaseException("Error adding forum permissions for project id " + project.getId(), e);
         }
     }
-    
+
     public static void addForumPermissions(Project project, Long user) throws BaseException {
         addForumPermissions(project, userToUsers(user));
     }
-    
+
     public static void removeForumPermissions(Project project, Collection<Long> users) throws BaseException {
         try {
             Forums forumBean = getForumBean();
-            
+
             // just be safe, remove both roles, since we start assigning two roles.
             String userroleId = SOFTWARE_USER_FORUM_ROLE_PREFIX + getProjectLongValue(project, "Developer Forum ID");
             String moderatorroleId = SOFTWARE_MODERATOR_FORUM_ROLE_PREFIX + getProjectLongValue(project, "Developer Forum ID");
@@ -4500,7 +4487,7 @@ public class ActionsHelper {
             throw new BaseException("Error removing forum permissions for project id " + project.getId(), e);
         }
     }
-    
+
     public static void removeForumPermissions(Project project, Long user) throws BaseException {
         removeForumPermissions(project, userToUsers(user));
     }
@@ -4508,7 +4495,7 @@ public class ActionsHelper {
     public static void addForumWatch(Project project, Collection<Long> users, long forumId) throws BaseException {
         try {
             Forums forumBean = getForumBean();
-            
+
             if (forumId != 0) {
                 for (Long userId : users) {
                       forumBean.createCategoryWatch(userId, forumId);
@@ -4604,7 +4591,7 @@ public class ActionsHelper {
      * <p>Updates the payments for existing submitters.</p>
      *
      * @param projectId a <code>long</code> providing the ID for the project.
-     * @param submitterPayments a <code>Map</code> mapping submitter IDs to submitter payments. 
+     * @param submitterPayments a <code>Map</code> mapping submitter IDs to submitter payments.
      * @throws BaseException if an unexpected error occurs.
      * @since BUGR-2807
      */
@@ -4670,7 +4657,7 @@ public class ActionsHelper {
             PhaseType phaseType = phase.getPhaseType();
 
             if ((phaseType != null)
-                && (phaseType.getName().equalsIgnoreCase("Final Review") 
+                && (phaseType.getName().equalsIgnoreCase("Final Review")
                     || phaseType.getName().equalsIgnoreCase("Approval"))) {
                 lastPhase = phase;
             }
@@ -4853,7 +4840,7 @@ public class ActionsHelper {
     /**
      * <p>Checks if <code>Specification Submission</code> is already delivered by another resource for same phase mapped
      * to specified deliverable.</p>
-     *  
+     *
      * @param deliverable a <code>Deliverable</code> to be added to collected list of deliverables.
      * @param allDeliverables an <code>Deliverable</code> array listing all deliverables for project.
      * @return <code>true</code> if <code>Specification Submission</code> is already delivered; <code>false</code>
@@ -4872,4 +4859,121 @@ public class ActionsHelper {
         }
         return false;
     }
+
+    /**
+     * Retrieves the mapping from deliverable id to deliverable name.
+     *
+     * @param request the http request
+     * @return the mapping from deliverable id to deliverable name.
+     * @throws BaseException
+     *             if error occurs
+     * @since 1.10
+     */
+    public static Map<Long, String> getDeliverableIdToNameMap(HttpServletRequest request) throws BaseException {
+        Map<Long, String> idToNameMap = (Map<Long, String>) request.getAttribute("deliverableIdToNameMap");
+
+        if (idToNameMap == null) {
+            Connection conn = null;
+            Statement stmt = null;
+            ResultSet rs = null;
+            try {
+                idToNameMap = new HashMap<Long, String>();
+
+                DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+                conn = dbconn.createConnection();
+
+                stmt = conn.createStatement();
+                rs = stmt.executeQuery("SELECT deliverable_id, name FROM deliverable_lu");
+
+                while (rs.next()) {
+                    idToNameMap.put(rs.getLong("deliverable_id"), rs.getString("name"));
+                }
+
+                request.setAttribute("deliverableIdToNameMap", idToNameMap);
+            } catch (SQLException e) {
+                throw new BaseException("Failed to retrieve map for deliverable id to deliverable name", e);
+            } finally {
+                close(rs);
+                close(stmt);
+                close(conn);
+            }
+
+        }
+
+        return idToNameMap;
+    }
+
+    /**
+     * <p>Returns list of user IDs who have specified resource roles for the specified project.</p>
+     * 
+     * @param request the http request. 
+     * @param roleNames a <code>String</code> array representing the resource role names. 
+	 * @param projectID ID of the project.
+     * @throws BaseException if an unexpected error occurs.
+     */
+    static List<Long> getUserIDsByRoleNames(HttpServletRequest request, String[] roleNames, long projectID) throws BaseException {
+        ResourceManager resMgr = createResourceManager(request);
+        ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
+        List<Long> userIds = new ArrayList<Long>();
+
+        if ((roleNames != null) && (roleNames.length > 0)) {
+            // Build filters
+            List<Filter> roleFilters = new ArrayList<Filter>();
+            for (String roleName : roleNames) {
+                ResourceRole role = ActionsHelper.findResourceRoleByName(allResourceRoles, roleName);
+                if (role != null) {
+                    roleFilters.add(ResourceFilterBuilder.createResourceRoleIdFilter(role.getId()));
+                }
+            }
+            Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(projectID);
+            Filter filterRole = new OrFilter(roleFilters);
+            Filter filter = new AndFilter(filterProject, filterRole);
+
+            Resource[] resources = resMgr.searchResources(filter);
+
+            // Collect unique external user IDs first as there may exist multiple resources for the same user
+            Set<String> stringUserIDs = new HashSet<String>();			
+            for (int i = 0; i < resources.length; ++i) {
+                String stringUserID = ((String) resources[i].getProperty("External Reference ID")).trim();
+                stringUserIDs.add(stringUserID);
+            }
+
+            for (String stringUserID : stringUserIDs) {
+                userIds.add(Long.parseLong(stringUserID));
+            }
+        }
+
+        return userIds;
+    }
+
+    /**
+     * <p>Returns list of the email addresses for the specified user IDs.</p>
+     * 
+     * @param request the http request.
+     * @param userIDs list of user IDs.
+     * @throws BaseException if an unexpected error occurs.
+     */
+    static List<String> getEmailsByUserIDs(HttpServletRequest request, List<Long> userIDs) throws BaseException {
+        UserRetrieval userRetrieval = createUserRetrieval(request);
+
+        List<String> emails = new ArrayList<String>();
+        for (Long userID : userIDs) {
+            emails.add(userRetrieval.retrieveUser(userID).getEmail());
+        }
+        return emails;	
+    }
+
+    /**
+     * <p>Returns the deadline date for submitting the explanation for the late deliverable.</p>
+     * 
+     * @param lateDeliverable late deliverable.
+     * @return explanation deadline date.
+     */
+    static Date explanationDeadline(LateDeliverable lateDeliverable) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(lateDeliverable.getCreateDate());
+        cal.add(Calendar.HOUR, 24);
+        return cal.getTime();
+    }
+
 }

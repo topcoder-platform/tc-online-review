@@ -8,11 +8,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import com.cronos.onlinereview.phases.logging.LoggerMessage;
 import com.topcoder.management.phase.PhaseHandlingException;
+import com.topcoder.management.project.PersistenceException;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.ProjectManagerImpl;
+import com.topcoder.management.project.ProjectStatus;
+import com.topcoder.management.project.ValidationException;
+import com.topcoder.project.phases.Phase;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.util.log.Level;
 
@@ -27,10 +34,22 @@ import com.topcoder.util.log.Level;
  *   </ol>
  * </p>
  *
- * @author brain_cn, TCSASSEMBER
+ * <p>
+ * Version 1.1 (Online Review Payments and Status Automation Assembly 1.0) Change notes:
+ * <ol>
+ *     <li>Added {@link #findProjectStatusByName(ProjectManager, String)} method.</li>
+ *     <li>Added {@link #completeProject(ManagerHelper, Phase, String)} method.</li>
+ *   </ol>
+ * <p>
+ * @author brain_cn, FireIce
  * @version 1.1
  */
 public class PRHelper {
+    /**
+     * This member variable holds the formatting string used to format dates.
+     */
+    private static String dateFormat = "MM.dd.yyyy HH:mm z";
+
     private static final com.topcoder.util.log.Log logger = com.topcoder.util.log.LogFactory.getLog(PRHelper.class
             .getName());
     // OrChange : Modified the statement to take the placed and final score from submission table
@@ -98,7 +117,7 @@ public class PRHelper {
 
     /**
      * Pull data to project_result.
-     * 
+     *
      * @param phaseId
      *            the phase id
      * @throws PhaseHandlingException
@@ -118,7 +137,7 @@ public class PRHelper {
 
     /**
      * Pull data to project_result.
-     * 
+     *
      * @param projectId
      *            the projectId
      * @throws PhaseHandlingException
@@ -130,7 +149,7 @@ public class PRHelper {
             if (!toStart) {
                 logger.log(Level.INFO,
                     new LoggerMessage("project", new Long(projectId), null, "process submission phase."));
-            
+
                 // Update all users who submit submission
                 pstmt = conn.prepareStatement(UPDATE_PROJECT_RESULT_STMT);
                 pstmt.setLong(1, projectId);
@@ -143,7 +162,7 @@ public class PRHelper {
 
     /**
      * Pull data to project_result.
-     * 
+     *
      * @param projectId
      *            the projectId
      * @throws PhaseHandlingException
@@ -175,7 +194,7 @@ public class PRHelper {
 
     /**
      * Pull data to project_result.
-     * 
+     *
      * @param projectId
      *            the projectId
      * @param phaseId
@@ -223,7 +242,7 @@ public class PRHelper {
 
     /**
      * Pull data to project_result for while appeal response phase closed.
-     * 
+     *
      * @param projectId
      *            the projectId
      * @throws PhaseHandlingException
@@ -239,7 +258,7 @@ public class PRHelper {
 
     /**
      * Pull data to project_result.
-     * 
+     *
      * @param projectId
      *            the projectId
      * @throws PhaseHandlingException
@@ -256,7 +275,7 @@ public class PRHelper {
 
     /**
      * Pull data to project_result.
-     * 
+     *
      * @param projectId
      *            the projectId
      * @throws PhaseHandlingException
@@ -272,7 +291,7 @@ public class PRHelper {
 
     /**
      * Pull data to project_result.
-     * 
+     *
      * @param projectId
      *            the projectId
      * @throws PhaseHandlingException
@@ -288,7 +307,7 @@ public class PRHelper {
 
     /**
      * Pull data to project_result.
-     * 
+     *
      * @param projectId
      *            the projectId
      * @throws PhaseHandlingException
@@ -307,8 +326,8 @@ public class PRHelper {
     }
 
     /**
-     * Pull data to project_result.
-     * 
+     * Pull data to project_result, populate reviewer payments and clear copilot payments.
+     *
      * @param projectId
      *            the projectId
      * @throws PhaseHandlingException
@@ -324,63 +343,14 @@ public class PRHelper {
                     new LoggerMessage("project", new Long(projectId), null, "start post mortem phase."));
         }
         AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.POST_MORTEM_PHASE);
+		
+		// Copilots aren't getting paid for failed projects.
+        AutoPaymentUtil.clearCopilotPayments(projectId, conn);
     }
 
     /**
      * Populate final_score, placed and passed_review_ind.
-     * 
-     * @param projectId
-     *            project id
-     * @param conn
-     *            connection
-     * @throws SQLException
-     *             if error occurs
-     */
-    public static void resetProjectResultWithChangedScores(long projectId, Object userID, Connection conn)
-            throws SQLException {
-        logger.log(Level.INFO,
-                new LoggerMessage("project", new Long(projectId), null, "reset update_result and user_reliability."));
-        // reset old_reliability, new_reliability, current_reliability_ind, reliable_submission_ind,
-        // reliability_ind
-        String sqlStr = "update project_result set old_reliability = null, new_reliability = null, current_reliability_ind = null,"
-                + "reliable_submission_ind = null, reliability_ind = null where project_id = ? and user_id = ?";
-
-        PreparedStatement pstmt = null;
-        try {
-            pstmt = conn.prepareStatement(sqlStr);
-            pstmt.setLong(1, projectId);
-            pstmt.setString(2, userID.toString());
-            pstmt.executeUpdate();
-        } finally {
-            close(pstmt);
-        }
-
-        long categoryId = AutoPaymentUtil.getProjectCategoryId(projectId, conn);
-        long phaseId = 111 + categoryId;
-
-        // Reset user_reliability rating by phase_id, user_id
-        // without any reliable_submission_ind is 1 for this category, rating should be set to null
-        sqlStr = "update user_reliability set rating = null where user_id = ? " + " and phase_id = ? "
-                + " and not exists (select * from project_result where user_id = ? and reliable_submission_ind = 1"
-                + " and project_id in (select project_id from project where project_category_id = ?))";
-        try {
-            pstmt = conn.prepareStatement(sqlStr);
-            pstmt.setString(1, userID.toString());
-            pstmt.setLong(2, phaseId);
-            pstmt.setString(3, userID.toString());
-            pstmt.setLong(4, categoryId);
-            pstmt.executeUpdate();
-        } finally {
-            close(pstmt);
-        }
-
-        // maybe others placement will be changed
-        populateProjectResult(projectId, conn);
-    }
-
-    /**
-     * Populate final_score, placed and passed_review_ind.
-     * 
+     *
      * @param projectId
      *            project id
      * @param conn
@@ -458,7 +428,7 @@ public class PRHelper {
 
     /**
      * Close the jdbc resource.
-     * 
+     *
      * @param obj
      *            the jdbc resource object
      */
@@ -481,7 +451,7 @@ public class PRHelper {
 
     /**
      * Finds whether the project id belongs to a studio project or not.
-     * 
+     *
      * @param projectId
      *            the project d.
      * @return true if it is a studio project.
@@ -492,6 +462,73 @@ public class PRHelper {
             return "Studio".equals(projectManager.getProject(projectId).getProjectCategory().getProjectType().getName());
         } catch (BaseException e) {
             return false;
+        }
+    }
+
+    /**
+     * Finds the project status with the given name.
+     *
+     * @param projectManager
+     *            The ProjectManager instance
+     * @param statusName
+     *            the status name
+     * @return the matched project status
+     * @throws PhaseHandlingException
+     *             If any problem to find the project status
+     * @since Online Review Payments and Status Automation Assembly 1.0
+     */
+    static ProjectStatus findProjectStatusByName(ProjectManager projectManager, String statusName)
+        throws PhaseHandlingException {
+        try {
+            ProjectStatus[] statuses = projectManager.getAllProjectStatuses();
+
+            ProjectStatus result = null;
+            for (ProjectStatus status : statuses) {
+                if (statusName.equals(status.getName())) {
+                    result = status;
+                }
+            }
+
+            if (result == null) {
+                throw new PhaseHandlingException(
+                        "There is no corresponding record in persistence for status with name - " + statusName);
+            }
+
+            return result;
+        } catch (PersistenceException e) {
+            throw new PhaseHandlingException("Fail to retrieve all project statuses", e);
+        }
+    }
+
+    /**
+     * Updates the project status to "Completed".
+     *
+     * @param managerHelper
+     *            the ManagerHelper instance.
+     * @param phase
+     *            the phase
+     * @param operator
+     *            the operator
+     * @throws PhaseHandlingException
+     *             If any error occurs while updating the project status.
+     * @since Online Review Payments and Status Automation Assembly 1.0
+     */
+    static void completeProject(ManagerHelper managerHelper, Phase phase, String operator)
+        throws PhaseHandlingException {
+        try {
+            ProjectManager projectManager = managerHelper.getProjectManager();
+            com.topcoder.management.project.Project project = projectManager.getProject(phase.getProject().getId());
+
+            Format format = new SimpleDateFormat(dateFormat);
+            project.setProperty("Completion Timestamp", format.format(new Date()));
+
+            ProjectStatus completedStatus = PRHelper.findProjectStatusByName(projectManager, "Completed");
+            project.setProjectStatus(completedStatus);
+            projectManager.updateProject(project, "Setting the project status to Completed automatically", operator);
+        } catch (PersistenceException e) {
+            throw new PhaseHandlingException("Problem when updating project", e);
+        } catch (ValidationException e) {
+            throw new PhaseHandlingException("Problem when updating project", e);
         }
     }
 }

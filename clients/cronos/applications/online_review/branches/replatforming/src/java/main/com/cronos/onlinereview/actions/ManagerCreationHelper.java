@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007-2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -10,20 +10,20 @@ import com.cronos.onlinereview.autoscreening.management.ConfigurationException;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManagerFactory;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
-import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
 import com.cronos.onlinereview.phases.MilestoneReviewPhaseHandler;
 import com.cronos.onlinereview.phases.MilestoneSubmissionPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
+import com.cronos.onlinereview.phases.PRApprovalPhaseHandler;
 import com.cronos.onlinereview.phases.PRFinalFixPhaseHandler;
 import com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRMilestoneScreeningPhaseHandler;
+import com.cronos.onlinereview.phases.PRPostMortemPhaseHandler;
 import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
 import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
-import com.cronos.onlinereview.phases.PRPostMortemPhaseHandler;
 import com.cronos.onlinereview.phases.SpecificationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.SpecificationSubmissionPhaseHandler;
 import com.cronos.onlinereview.services.uploads.ManagersProvider;
@@ -49,6 +49,10 @@ import com.topcoder.management.resource.search.NotificationFilterBuilder;
 import com.topcoder.management.resource.search.NotificationTypeFilterBuilder;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.resource.search.ResourceRoleFilterBuilder;
+import com.topcoder.management.deliverable.late.LateDeliverableManager;
+import com.topcoder.management.deliverable.late.impl.LateDeliverableManagerImpl;
+import com.topcoder.management.scorecard.ScorecardManager;
+import com.topcoder.management.scorecard.ScorecardManagerImpl;
 import com.topcoder.project.phases.PhaseType;
 import com.topcoder.search.builder.SearchBundle;
 import com.topcoder.search.builder.SearchBundleManager;
@@ -89,9 +93,22 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  *     <li>Added support for <code>Milestone</code> phases.</li>
  *   </ol>
  * </p>
+ * <p>
+ * Version 1.4 (Online Review Payments and Status Automation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #getPhaseManager()} method to use the new PRApprovalPhaseHandler for <code>Approval</code> phase.</li>
+ *   </ol>
+ * </p>
  *
- * @author evilisneo, BeBetter, isv, TCSDEVELOPER
- * @version 1.3.1
+ * <p>
+ * Version 1.5 Change notes:
+ *   <ol>
+ *     <li>Added LateDeliverableManager and ScorecardManager.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author evilisneo, BeBetter, isv, FireIce, VolodymyrK
+ * @version 1.5
  * @since 1.0
  */
 public class ManagerCreationHelper implements ManagersProvider {
@@ -129,13 +146,27 @@ public class ManagerCreationHelper implements ManagersProvider {
      * @since 1.1
      */
     private ProjectLinkManager projectLinkManager = null;
+	
+    /**
+     * Used for caching the created the manager.
+     *
+     * @since 1.5
+     */
+    private LateDeliverableManager lateDeliverableManager = null;
+	
+    /**
+     * Used for caching the created the manager.
+     *
+     * @since 1.5
+     */
+    private ScorecardManager scorecardManager = null;
 
     /**
      * <p>
      * Returns a <code>PhaseManager</code> instance. This is used in <code>UploadServices</code> to retrieve
      * this manager and perform all its operations.
      * </p>
-     * 
+     *
      * @return a <code>PhaseManager</code> instance
      * @see ManagersProvider#getPhaseManager()
      */
@@ -167,7 +198,7 @@ public class ManagerCreationHelper implements ManagersProvider {
                     Constants.FINAL_FIX_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRFinalReviewPhaseHandler(),
                     Constants.FINAL_REVIEW_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new ApprovalPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRApprovalPhaseHandler(),
                     Constants.APPROVAL_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRPostMortemPhaseHandler(),
                     Constants.POST_MORTEM_PHASE_NAME);
@@ -192,7 +223,7 @@ public class ManagerCreationHelper implements ManagersProvider {
      * Returns a <code>ProjectManager</code> instance. This is used in <code>UploadServices</code> to retrieve
      * this manager and perform all its operations.
      * </p>
-     * 
+     *
      * @return a <code>ProjectManager</code> instance
      * @see ManagersProvider#getProjectManager()
      */
@@ -231,7 +262,7 @@ public class ManagerCreationHelper implements ManagersProvider {
      * Returns a <code>ResourceManager</code> instance. This is used in <code>UploadServices</code> to retrieve this
      * manager and perform all its operations.
      * </p>
-     * 
+     *
      * @return a <code>ResourceManager</code> instance
      * @see ManagersProvider#getResourceManager
      */
@@ -284,7 +315,7 @@ public class ManagerCreationHelper implements ManagersProvider {
      * Returns a <code>ScreeningManager</code> instance. This is used in <code>UploadServices</code> to
      * retrieve this manager and perform all its operations.
      * </p>
-     * 
+     *
      * @return a <code>ScreeningManager</code> instance
      * @see ManagersProvider#getScreeningManager()
      */
@@ -304,7 +335,7 @@ public class ManagerCreationHelper implements ManagersProvider {
      * Returns a <code>UploadManager</code> instance. This is used in <code>UploadServices</code> to retrieve
      * this manager and perform all its operations.
      * </p>
-     * 
+     *
      * @return a <code>UploadManager</code> instance
      * @see ManagersProvider#getUploadManager()
      */
@@ -347,8 +378,41 @@ public class ManagerCreationHelper implements ManagersProvider {
     }
 
     /**
+     * <p>
+     * Returns a <code>LateDeliverableManager</code> instance.
+     * </p>
+     *
+     * @return a <code>LateDeliverableManager</code> instance
+     */
+    public LateDeliverableManager getLateDeliverableManager() {
+        if(lateDeliverableManager == null) {
+            lateDeliverableManager = new LateDeliverableManagerImpl("com/topcoder/util/config/ConfigManager.properties",
+                LateDeliverableManagerImpl.DEFAULT_CONFIG_NAMESPACE);
+        }
+        return lateDeliverableManager;
+    }
+
+    /**
+     * <p>
+     * Returns a <code>ScorecardManager</code> instance.
+     * </p>
+     *
+     * @return a <code>ScorecardManager</code> instance
+     */
+    public ScorecardManager getScorecardManager() {
+        if(scorecardManager == null) {
+            try {
+                scorecardManager = new ScorecardManagerImpl();
+            } catch (com.topcoder.management.scorecard.ConfigurationException e) {
+                throw new ManagerCreationException("Exception occurred while creating the scorecard manager.", e);
+            }
+        }
+        return scorecardManager;
+    }
+
+    /**
      * Sets the searchable fields to the search bundle.
-     * 
+     *
      * @param searchBundle
      *            the search bundle to set.
      */
@@ -383,7 +447,7 @@ public class ManagerCreationHelper implements ManagersProvider {
 
     /**
      * Sets the phase operation with the handler to the given phase manager.
-     * 
+     *
      * @param manager
      *            the phase manager
      * @param phaseTypes

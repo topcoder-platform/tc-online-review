@@ -1351,11 +1351,11 @@
 
                         <div align="right">
                             <c:if test="${newProject}">
-                                <html:image srcKey="btnSave.img" altKey="btnSave.alt" border="0"/>&#160;
+                                <html:image property="saveProjectBtn" srcKey="btnSave.img" altKey="btnSave.alt" border="0"/>&#160;
                                 <html:link page="/actions/ListProjects.do?method=listProjects"><html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
                             </c:if>
                             <c:if test="${not newProject}">
-                                <html:image srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
+                                <html:image property="saveProjectChangesBtn" srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
                                 <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
                             </c:if>
                         </div>

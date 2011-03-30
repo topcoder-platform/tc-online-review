@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2005 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -27,6 +27,7 @@ import com.topcoder.util.file.Template;
 import com.topcoder.util.file.fieldconfig.Field;
 import com.topcoder.util.file.fieldconfig.Node;
 import com.topcoder.util.file.fieldconfig.TemplateFields;
+import com.topcoder.util.file.templatesource.FileTemplateSource;
 import com.topcoder.util.log.Level;
 
 /**
@@ -40,12 +41,6 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 			.getLog(PRAppealResponsePhaseHandler.class.getName());
 	/** constant for "Project Name" project info. */
 	private static final String PROJECT_NAME = "Project Name";
-
-    /** constant for spec reivew project category. */
-	private static final long PROJECT_CATEGORY_SPEC_REVIEW = 27;
-	
-	/** winners email template source type */
-	private String winnersEmailTemplateSource;
 	
 	/** winners email template name */
 	private String winnersEmailTemplateName;
@@ -56,23 +51,8 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 	/** sender address of the winners email */
 	private String winnersEmailFromAddress;
 	
-	/** link to the accept the Assignment Document */
-/*[OR-584] we're not doing assignment like this anymore, v2 only now
-	private String winnersEmailAssignmentDocumentLink;
-*/
-
 	/** helper class for obtaining several managers */
 	private ManagerHelper managerHelper;
-
-    /** start date to check or create assigments documents*/
-/*[OR-584] we're not doing assignment like this anymore, v2 only now
-	private Date assignmentDocumentsStartDate;
-*/
-
-    /** switch that indicates if OR have to create Assignment Documents in PACTs*/
-/*[OR-584] we're not doing assignment like this anymore, v2 only now
-    private boolean createAssignmentDocuments = false;
-*/
 
     /**
      * Create a new instance of AppealsResponsePhaseHandler using the default namespace for loading configuration settings.
@@ -98,31 +78,9 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 	}
 	
     private void obtainWinnnersEmailConfigProperties(String namespace) throws ConfigurationException {
-/* [OR-584] we're not doing assignment like this anymore, v2 only now
-    	this.createAssignmentDocuments = "true".equals(PhasesHelper.getPropertyValue(namespace, "CreateAssignmentDocuments", "false").trim());
-    	if (createAssignmentDocuments) {
-*/
-/*
-    		try {
-    			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-    			sdf.setLenient(false);
-    			this.assignmentDocumentsStartDate = sdf.parse(PhasesHelper.getPropertyValue(namespace, "AssignmentDocumentsStartDate", "06/18/2007"));
-    		} catch (ParseException e) {
-    			throw new ConfigurationException("can not read AssignmentDocumentsStartDate from configuration", e);
-    		}
-*/
-    		this.winnersEmailTemplateSource = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailTemplateSource", true);
     		this.winnersEmailTemplateName = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailTemplateName",  true);
     		this.winnersEmailSubject = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailSubject", true);
-/*
-    		this.winnersEmailAssignmentDocumentLink = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.AssignmentDocumentLink", true);
-*/
     		this.winnersEmailFromAddress = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailFromAddress", true);
-/*
-    	} else {
-    		log.log(Level.INFO, "Creation of Assignment Documents is disabled"); 
-    	}
-*/
 	}
 
 	/**
@@ -148,49 +106,12 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
             if (!toStart) {
                 sendMailForWinners(getManagerHelper().getProjectManager().getProject(projectId));
             }
-/* [OR-584] don't need to do this anymore, we only accept v2 documents now
-            if (!toStart && isCreateAssignmentDocuments()) {
-                createAssignmentDocuments(projectId);
-            }
-*/
     	} catch (Throwable e) {
 			throw new PhaseHandlingException(e.getMessage(), e);
 		} finally {
     		PRHelper.close(conn);
     	}
     }
-
-    /**
-     * Verifies if assignment documents need to be created for a project.
-     * 
-     * @param project the project
-     * @return true if assignment documents must to be created.
-     */
-/* [OR-584] don't nee this anymore, we're only doing v2 assignment now
-    private boolean verifyCreateAssignmentDocument(Project project) {
-    	ProjectCategory category = project.getProjectCategory();
-    
-        return project.getCreationTimestamp().after(assignmentDocumentsStartDate)
-        		&& (category.getId() == 1 || category.getId() == 2);
-    }
-*/
-
-    /**
-     * Creates the Assigment Documents for the winners of the project if there are any.
-     * 
-     * @throws Exception
-     */
-/* [OR-584] don't need this anymore, we're only doing v2 assignment
-    private void createAssignmentDocuments(long projectId) throws Exception {
-    	Project project = getManagerHelper().getProjectManager().getProject(projectId);
-    	if (verifyCreateAssignmentDocument(project)) {
-    		AssignmentDocumentResult adResult = new PactsServicesDelegate().createAssignmentDocuments(project); 	
-    		sendMailForWinners(project, adResult);
-    	} else {
-    		log.log(Level.INFO, "Don't creating AD for project: " + projectId + " because it's creation date is: " + project.getCreationTimestamp());
-    	}
-	}
-*/
 
     private void sendMailForWinners(Project project) throws Exception {
        log.log(Level.DEBUG, "we're in the send email method");
@@ -215,7 +136,7 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 	}
 
 	private void sendWinnersEmailForUser(Project project, ExternalUser user, String position) throws Exception {
-		DocumentGenerator docGenerator = DocumentGenerator.getInstance();
+		DocumentGenerator docGenerator = new DocumentGenerator();
 		Template template = getEmailTemplate();
 		log.log(Level.DEBUG, "sending winner email for projectId: " + project.getId() + " handle: " + user.getHandle() + " position: " + position);
 		TemplateFields root = setTemplateFieldValues(docGenerator.getFields(template), project, user, position);
@@ -292,10 +213,7 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
                     }
 				} else if ("PLACE".equals(field.getName())) {
 					field.setValue(position);
-				} /* [OR-584] don't need this link anymore
-				else if ("ASSIGNMET_DOCUMENT_LINK".equals(field.getName())) {
-					field.setValue(MessageFormat.format(winnersEmailAssignmentDocumentLink, new Object[] {ad.getId().toString()}));
-				} */
+				}
 			}
 		}
 
@@ -303,7 +221,9 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 	}
 
 	private Template getEmailTemplate() throws Exception {
-		return DocumentGenerator.getInstance().getTemplate(winnersEmailTemplateSource, winnersEmailTemplateName);
+            DocumentGenerator generator = new DocumentGenerator();
+            generator.setDefaultTemplateSource(new FileTemplateSource());
+            return generator.getTemplate(winnersEmailTemplateName);
 	}
 
 	/**
@@ -320,9 +240,4 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
     	}
     }
 
-/* [OR-584] we're not doing assignment like this anymore, v2 only now
-	public boolean isCreateAssignmentDocuments() {
-		return createAssignmentDocuments;
-	}
-*/
 }

@@ -67,7 +67,7 @@
                                     <bean:message key="uploadFinalFix.HelpLine1" /><br /><br />
                                     <bean:message key="uploadFinalFix.UploadFinalFix" />
                                     <html:file property="file" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
-                                    <html:image srcKey="btnUpload.img" altKey="btnUpload.alt" border="0" style="vertical-align:bottom;" /><br /><br />
+                                    <html:image property="uploadBtn" srcKey="btnUpload.img" altKey="btnUpload.alt" border="0" style="vertical-align:bottom;" /><br /><br />
                                     <bean:message key="uploadFinalFix.HelpLine2" />
                                     <bean:message key="uploadFinalFix.HelpLine3" />
                                     <a href="http://<%=ApplicationServer.SERVER_NAME%>/wiki/display/tc/Documentation+and+Submission+Guidelines"><bean:message key="uploadFinalFix.SampleSubmissionAndDocs" /></a>

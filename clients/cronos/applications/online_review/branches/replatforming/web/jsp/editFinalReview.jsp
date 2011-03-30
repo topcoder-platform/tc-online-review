@@ -97,7 +97,9 @@ function OnCompleteScorecardClick() {
                                             <c:set var="itemIdx" value="${itemIdx + 1}" />
                                         </tr>
                                         <tr>
-                                            <td class="header"><bean:message key="editReview.EditAggregation.Reviewer" /></td>
+                                            <c:if test="${not approvalBased}">
+                                                <td class="header"><bean:message key="editReview.EditAggregation.Reviewer" /></td>
+                                            </c:if>
                                             <td class="headerC"><bean:message key="editReview.EditAggregation.CommentNumber" /></td>
                                             <td class="header"><bean:message key="editReview.EditAggregation.Response" /></td>
                                             <td class="header"><bean:message key="editReview.EditAggregation.Type" /></td>
@@ -127,7 +129,7 @@ function OnCompleteScorecardClick() {
                                                         <c:set var="isLastCommentForItem" value="${commentStatus.index == lastCommentIdx - 1}" />
                                                         <c:set var="rowClass" value='${(isLastCommentForItem == true) ? "value" : "valueNotLast"}'/>
                                                         <tr class="dark">
-                                                            <c:if test="${firstTime == true}">
+                                                            <c:if test="${firstTime == true and not approvalBased}">
                                                                 <td class="value" rowspan="${lastCommentIdx}">
                                                                     <c:forEach items="${reviewResources}" var="resource">
                                                                         <c:if test="${resource.id == comment.author}">
@@ -227,9 +229,9 @@ function OnCompleteScorecardClick() {
 
                         <div align="right">
                             <html:hidden property="save" value=""/>
-                            <html:image onclick="javascript:this.form.save.value='submit';return OnCompleteScorecardClick();" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0"/>&#160;
-                            <html:image onclick="javascript:this.form.save.value='save';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0"/>&#160;
-                            <html:image onclick="javascript:this.form.save.value='preview';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0"/>
+                            <html:image property="submitFinalReviewBtn" onclick="javascript:this.form.save.value='submit'; this.parentNode.parentNode.target='_self'; return OnCompleteScorecardClick();" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0"/>&#160;
+                            <html:image property="saveFinalReviewBtn" onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0"/>&#160;
+                            <html:image property="preivewFinalReviewBtn" onclick="javascript:this.form.save.value='preview'; this.parentNode.parentNode.target='_blank';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0"/>
                         </div>
                     </html:form>
 

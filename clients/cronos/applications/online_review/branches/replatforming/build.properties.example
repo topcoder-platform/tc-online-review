@@ -1,4 +1,4 @@
-#######################################################################
+####################################################################### 
 # TopCoder Software Online Review Application Development Environment #
 #######################################################################
 
@@ -35,9 +35,9 @@ scp_remotejboss=<<remove jboss path>>
 ###################
 # SVN credentials #
 ###################
-or.svn.username=<<svn username>>
-or.svn.password=<<svn password>>
-# or.svn.update=uncomment this line to allow update through ant on each compile
+build.svn.username=<<svn username>>
+build.svn.password=<<svn password>>
+# build.svn.update=uncomment this line to allow update through ant on each compile
 
 
 ##################################################################################
@@ -75,9 +75,4 @@ selenium_port=5555
 # Deployment location of auto tools #
 #####################################
 auto_pilot_deploy_dir=<<path to auto pilot deployment directory>>
-auto_screening_deploy_dir=<<path to auto screening deployment directory>>
-
-############################
-# Replatforming properties #
-############################
-replatforming_components_path
+ldt_deploy_dir=<<path to late deliverable tracker deployment directory >>

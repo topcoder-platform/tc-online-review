@@ -90,7 +90,7 @@
                             </tr>
                             <tr>
                                 <td class="valueLast">&#160;</td>
-                                <td class="valueLast"><html:image altKey="login.formLogin.btnLogin.alt"
+                                <td class="valueLast"><html:image property="loginBtn" altKey="login.formLogin.btnLogin.alt"
                                         srcKey="login.formLogin.btnLogin.img" border="0" styleClass="imgLogin" /></td>
                             </tr>
                             <tr>

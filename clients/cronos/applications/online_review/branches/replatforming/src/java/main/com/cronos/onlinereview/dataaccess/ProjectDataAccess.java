@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010-2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.dataaccess;
 
@@ -11,6 +11,7 @@ import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -25,8 +26,16 @@ import java.util.Map;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.2 (Online Review Late Deliverables Edit Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #getAllCockpitProjects()} method.</li>
+ *     <li>Added {@link #getCockpitProjectsForUser(long)} method.</li>
+ *   </ol>
+ * </p>
+ *
  * @author isv
- * @version 1.1
+ * @version 1.2
  */
 public class ProjectDataAccess extends BaseDataAccess {
 
@@ -41,7 +50,7 @@ public class ProjectDataAccess extends BaseDataAccess {
      *
      * @param projectStatuses a <code>ProjectStatus</code> array listing the available project statuses.
      * @param projectCategories a <code>ProjectCategory</code> array listing available project categories.
-     * @param projectInfoTypes a <code>ProjectPropertyType</code> lising available project info types.
+     * @param projectInfoTypes a <code>ProjectPropertyType</code> listing available project info types.
      * @return a <code>Project</code> array listing the projects of specified status.
      * @throws DataAccessException if an unexpected error occurs while running the query via Query Tool.
      */
@@ -74,7 +83,7 @@ public class ProjectDataAccess extends BaseDataAccess {
      * @param userId a <code>long</code> providing the user ID.
      * @param projectStatuses a <code>ProjectStatus</code> array listing the available project statuses.
      * @param projectCategories a <code>ProjectCategory</code> array listing available project categories.
-     * @param projectInfoTypes a <code>ProjectPropertyType</code> lising available project info types.
+     * @param projectInfoTypes a <code>ProjectPropertyType</code> listing available project info types.
      * @return a <code>Project</code> array listing the projects of specified status.
      * @throws DataAccessException if an unexpected error occurs while running the query via Query Tool.
      */
@@ -126,6 +135,46 @@ public class ProjectDataAccess extends BaseDataAccess {
     }
 
     /**
+     * <p>Gets the list of all existing <code>Cockpit</code> projects.</p>
+     * 
+     * @return a <code>Map</code> mapping IDs to names for all existing <code>Cockpit</code> projects.
+     * @since 1.2 
+     */
+    public Map<Long, String> getAllCockpitProjects() {
+        Map<String, ResultSetContainer> results = runQuery("cockpit_projects", (String) null, (String) null);
+        ResultSetContainer projectsResultContainer = results.get("cockpit_projects");
+        Map<Long, String> result = new LinkedHashMap<Long, String>();
+        for (ResultSetContainer.ResultSetRow row : projectsResultContainer) {
+            long tcDirectProjectId = row.getLongItem("tc_direct_project_id");
+            String tcDirectProjectName = row.getStringItem("tc_direct_project_name");
+            result.put(tcDirectProjectId, tcDirectProjectName);
+        }
+        return result;
+    }
+
+    /**
+     * <p>Gets the list of all existing <code>Cockpit</code> projects which the specified user is granted access 
+     * permission for.</p>
+     * 
+     * @param userId a <code>long</code> providing the ID of a user to get the list of accessible <code>Cockpit</code> 
+     *        projects for. 
+     * @return a <code>Map</code> mapping IDs to names for all existing <code>Cockpit</code> projects accessible to
+     *         specified user.
+     * @since 1.2 
+     */
+    public Map<Long, String> getCockpitProjectsForUser(long userId) {
+        Map<String, ResultSetContainer> results = runQuery("direct_my_projects", "uid", String.valueOf(userId));
+        ResultSetContainer projectsResultContainer = results.get("direct_my_projects");
+        Map<Long, String> result = new LinkedHashMap<Long, String>();
+        for (ResultSetContainer.ResultSetRow row : projectsResultContainer) {
+            long tcDirectProjectId = row.getLongItem("tc_direct_project_id");
+            String tcDirectProjectName = row.getStringItem("tc_direct_project_name");
+            result.put(tcDirectProjectId, tcDirectProjectName);
+        }
+        return result;
+    }
+
+    /**
      * <p>Gets the list of projects of specified status.</p>
      *
      * @param projectQuery a <code>String</code> providing the name of the query to be run for getting the project
@@ -136,7 +185,7 @@ public class ProjectDataAccess extends BaseDataAccess {
      * @param paramValue a <code>String</code> providing the value of the query parameter for customization.
      * @param projectStatuses a <code>ProjectStatus</code> array listing the available project statuses.
      * @param projectCategories a <code>ProjectCategory</code> array listing available project categories.
-     * @param projectInfoTypes a <code>ProjectPropertyType</code> lising available project info types.
+     * @param projectInfoTypes a <code>ProjectPropertyType</code> listing available project info types.
      * @return a <code>Project</code> array listing the projects of specified status.
      * @throws DataAccessException if an unexpected error occurs while running the query via Query Tool.
      * @since 1.7

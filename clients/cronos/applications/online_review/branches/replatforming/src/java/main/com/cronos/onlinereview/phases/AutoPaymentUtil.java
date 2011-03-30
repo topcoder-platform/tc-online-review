@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
@@ -31,7 +33,7 @@ import com.topcoder.web.common.model.SoftwareComponent;
  *
  * <p>Version 1.3 (Appeals Early Completion Release Assembly 1.0) Change notes:
  *  Updated Reviewer payments to pay final review and aggregation just once.</p>
- * 
+ *
  * <p>Version 1.4 (Copilot Selection Contest Online Review and TC Site Integration Assembly 1.0) Change notes:
  *  Updated to support copilot posting project type.</p>
  *  
@@ -45,7 +47,10 @@ import com.topcoder.web.common.model.SoftwareComponent;
  *   </ol> 
  * </p>
  *
- * @author George1, brain_cn, pulky, Blues, TCSASSEMBER
+ * <p>Version 1.5 (Content Creation Contest Online Review and TC Site Integration Assembly 1.0) Change notes:
+ *  Updated to support content creation project type.</p>
+ *
+ * @author George1, brain_cn, pulky, Blues, FireIce, VolodymyrK
  * @version 1.5
  */
 public class AutoPaymentUtil {
@@ -189,7 +194,8 @@ public class AutoPaymentUtil {
         && projectCategoryId != 24    // RIA Build
         && projectCategoryId != 27    // Spec Review
         && projectCategoryId != 25    // RIA Component
-        && projectCategoryId != 29   // Copilot Posting
+        && projectCategoryId != 29    // Copilot Posting
+        && projectCategoryId != 35    // Content Creation
         && !isStudio
         ) {
                 return;
@@ -228,7 +234,7 @@ public class AutoPaymentUtil {
         // this is added to pay final review, aggregator and spec reviewer only once.
         boolean alreadyPaidAggregator = false;
         boolean alreadyPaidFinalReviewer = false;
-        boolean alreadyPaidSpecReviewer = false;        
+        boolean alreadyPaidSpecReviewer = false;
         for (Iterator<Reviewer> iter = reviewers.iterator(); iter.hasNext();) {
             Reviewer reviewer = iter.next();
 
@@ -254,6 +260,11 @@ public class AutoPaymentUtil {
                 updateResourcePayment(reviewer.getResourceId(), milestoneFPC.getMilestoneScreeningCost(), conn);
             }
 
+            // Uncomment this block to pay Post-Mortem reviewers
+            // else if (reviewer.isPostMortemReviewer() && phaseId == POST_MORTEM_PHASE) {
+            //    updateResourcePayment(reviewer.getResourceId(), fpc.getPostMortemCost(), conn);
+            //}
+
             // Unlike other reviewer payments specification reviewer is paid only after
             // at least one submission passed review.
             if (reviewer.isSpecificationReviewer() && passedReview) {
@@ -261,6 +272,47 @@ public class AutoPaymentUtil {
                     alreadyPaidSpecReviewer ? 0 : fpc.getSpecReviewCost(), conn);
                 alreadyPaidSpecReviewer = true;
             }
+        }
+    }
+
+    /**
+     * Clears payment for all Copilot resources that have not been paid yet.
+     *
+     * @param projectId project id
+     * @param conn the connection
+     *
+     * @throws SQLException if an error occurs in the persistence layer
+     */
+    public static void clearCopilotPayments(long projectId, Connection conn) throws SQLException {
+
+        String SELECT_SQL =
+            " select r.resource_id " +
+            " from resource r " +
+            " where r.resource_role_id = 14 and r.project_id = ? " +
+            " and not exists (select ri.resource_id from resource_info ri " +
+            "   where r.resource_id = ri.resource_id " +
+            "   and ri.resource_info_type_id = 8 and ri.value = 'Yes')";
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            pstmt = conn.prepareStatement(SELECT_SQL);
+            pstmt.setLong(1, projectId);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                long resourceId = rs.getLong(1);
+
+                // Clear payment value.
+                deleteResourceInfo(resourceId, 7, conn);
+
+                // Set payment status to "N/A".
+                updateResourceInfo(resourceId, 8, "N/A", conn);
+            }
+        } finally {
+            PRHelper.close(rs);
+            PRHelper.close(pstmt);
         }
     }
 
@@ -387,10 +439,10 @@ public class AutoPaymentUtil {
             "   and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9, 16, 18, 19)" +
             "   and r.project_id = ? " +
             "   and not exists (select ri1.resource_id from resource_info ri1 " +
-            "           where r.resource_id = ri1.resource_id" +
-            "           and ri1.resource_info_type_id = 8" +
-            "           and ri1.value = 'N/A')" +
-            "   and r.resource_id in (select resource_id from review where committed = 1)" +
+            "           where r.resource_id = ri1.resource_id " +
+            "           and ri1.resource_info_type_id = 8 " +
+            "           and (ri1.value = 'N/A' or ri1.value = 'Yes')) " +
+            "   and r.resource_id in (select resource_id from review where committed = 1) " +
             "order by resource_role_id";
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -549,50 +601,77 @@ public class AutoPaymentUtil {
             return;
         }
 
-        String clearPayment = "update resource_info set value = 0 " +
-                              " where resource_info_type_id = 7 " +
-                              " and resource_id in (select resource_id from resource where resource_role_id = 1 and project_id = ?)";
+        logger.log(Level.INFO, "Setting submitter payment for the project : " + projectId);
 
-        PreparedStatement pstmt = conn.prepareStatement(clearPayment);
-        pstmt.setLong(1, projectId);
-        pstmt.executeUpdate();
-        PRHelper.close(pstmt);
+        // Select submitter resources that have not been paid yet. The ones that already have been paid shouldn't change.
+        String SELECT_SQL  = "select resource_id from resource where resource_role_id = 1 and project_id = ? and " +
+                             " resource_id not in (select resource_id from resource_info where resource_info_type_id = 8 and value = 'Yes')";
 
-        logger.log(Level.INFO, "Clear submitter payment for the project :" + projectId);
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
 
-        if (prizesCount == 0) {
-            // Prepare prices for different places
-            double[] prices = new double[] { price, Math.round(price * 0.5) };
-            long[] places = new long[] { 1, 2 };
-    
-            // Update the payment resource_info and paid resource_info
-            for (int i = 0; i < places.length; ++i) {
-                long submitterId = getPassingSubmitterIdByPlace(projectId, places[i], conn);
-    
-                if (submitterId != 0) {
-                    // Update the payment for given submitter which has placed
-                    updateResourcePayment(submitterId, prices[i], conn);
-                }
-            }
-        } else {
-            // get the payments from the prize table
-            Map<Long, Float> submittersPayment = getSubmittersPayment(projectId, conn);
-            for (Map.Entry<Long, Float> entry : submittersPayment.entrySet()) {
-             // Update the payment for given submitter
-                updateResourcePayment(entry.getKey(), entry.getValue(), conn);
-            }
-        }
+			if (prizesCount == 0) {
+				pstmt = conn.prepareStatement(SELECT_SQL);
+				pstmt.setLong(1, projectId);
+				rs = pstmt.executeQuery();
+
+				Set<Long> resourceIds = new HashSet<Long>();
+				while (rs.next()) {
+					resourceIds.add(rs.getLong(1));
+
+					// Clear payment value.
+					deleteResourceInfo(rs.getLong(1), 7, conn);
+
+					// Set payment status to "N/A"
+					updateResourceInfo(rs.getLong(1), 8, "N/A", conn);
+				}
+
+				// Prepare prices for different places.
+				double[] prices = new double[] { price, Math.round(price * 0.5) };
+				long[] places = new long[] { 1, 2 };
+
+				// Update the payment value and payment status for the winners.
+				for (int i = 0; i < places.length; ++i) {
+					long submitterId = getPassingSubmitterIdByPlace(projectId,
+							places[i], conn);
+
+					if (resourceIds.contains(submitterId)) {
+						updateResourcePayment(submitterId, prices[i], conn);
+					}
+				}
+			} else {
+				// get the payments from the prize table
+				Map<Long, Float> submittersPayment = getSubmittersPayment(
+						projectId, conn);
+				for (Map.Entry<Long, Float> entry : submittersPayment
+						.entrySet()) {
+					// Update the payment for given submitter
+					updateResourcePayment(entry.getKey(), entry.getValue(),
+							conn);
+				}
+
+			}
+		} finally {
+			PRHelper.close(rs);
+			PRHelper.close(pstmt);
+		}
+
     }
 
     /**
-     * Update the submitter payment with price.
-     *
-     * @param resourceId the resource id
-     * @param price the price
-     * @param conn DOCUMENT ME!
-     *
-     * @throws SQLException if error occurs
-     */
+	 * Update the submitter payment with price.
+	 * 
+	 * @param resourceId
+	 *            the resource id
+	 * @param price
+	 *            the price
+	 * @param conn
+	 *            DOCUMENT ME!
+	 * 
+	 * @throws SQLException
+	 *             if error occurs
+	 */
     private static void updateResourcePayment(long resourceId, double price, Connection conn)
         throws SQLException {
         // Set price
@@ -600,6 +679,31 @@ public class AutoPaymentUtil {
 
         // set to Not Paid
         updateResourceInfo(resourceId, 8, "No", conn);
+    }
+
+    /**
+     * Deletes resource info for the specified resource and resoruce info type.
+     *
+     * @param resourceId the Resource id
+     * @param resourceInfoTypeId Resource info type Id.
+     * @param conn the connection
+     *
+     * @throws SQLException if error occurs
+     */
+    private static void deleteResourceInfo(long resourceId, long resourceInfoTypeId, Connection conn)
+        throws SQLException {
+        String DELETE_SQL = "delete from resource_info where resource_id = ? and resource_info_type_id = ?";
+
+        PreparedStatement pstmt = null;
+        try {
+            pstmt = conn.prepareStatement(DELETE_SQL);
+            pstmt.setLong(1, resourceId);
+            pstmt.setLong(2, resourceInfoTypeId);
+
+            pstmt.executeUpdate();
+        } finally {
+            PRHelper.close(pstmt);
+        }
     }
 
     /**
@@ -664,7 +768,7 @@ public class AutoPaymentUtil {
      * @param projectInfoTypeId the project info type id
      * @param conn the db connection
      */
-    private static String getProjectInfo(long projectId, long projectInfoTypeId, Connection conn) 
+    private static String getProjectInfo(long projectId, long projectInfoTypeId, Connection conn)
         throws SQLException {
             PreparedStatement pstmt = null;
             ResultSet rs = null;

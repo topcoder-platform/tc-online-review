@@ -39,6 +39,7 @@ import com.topcoder.util.file.fieldconfig.Field;
 import com.topcoder.util.file.fieldconfig.Node;
 import com.topcoder.util.file.fieldconfig.NodeList;
 import com.topcoder.util.file.fieldconfig.TemplateFields;
+import com.topcoder.util.file.templatesource.FileTemplateSource;
 
 /**
  * This class is used to send email notification for milestone screening result or screening result.
@@ -173,8 +174,9 @@ public class ScreeningResultNotification {
      */
     private void sendEmailForUser(Project project, ExternalUser user, Submission submission, Review review)
             throws Exception {
-        DocumentGenerator docGenerator = DocumentGenerator.getInstance();
-        Template template = getEmailTemplate();
+        DocumentGenerator docGenerator = new DocumentGenerator();
+        docGenerator.setDefaultTemplateSource(new FileTemplateSource());
+        Template template = docGenerator.getTemplate(emailTemplateName);
         TemplateFields root = setTemplateFieldValues(docGenerator.getFields(template), project, submission, review);
 
         String emailContent = docGenerator.applyTemplate(root);
@@ -247,19 +249,6 @@ public class ScreeningResultNotification {
         }
 
         return root;
-    }
-
-    /**
-     * <p>
-     * Gets the email template.
-     * </p>
-     * 
-     * @return a <code>Template</code> providing the email template.
-     * @throws Exception
-     *             if an unexpected error occurs.
-     */
-    private Template getEmailTemplate() throws Exception {
-        return DocumentGenerator.getInstance().getTemplate(this.emailTemplateSource, this.emailTemplateName);
     }
 
     /**

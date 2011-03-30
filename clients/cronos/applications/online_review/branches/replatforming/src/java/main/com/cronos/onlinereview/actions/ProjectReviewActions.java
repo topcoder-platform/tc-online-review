@@ -166,15 +166,23 @@ import com.topcoder.util.weightedcalculator.LineItem;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, isv, TCSDEVELOPER
- * @version 1.2.2
+ * <p>
+ * Version 1.3 (Online Review Payments and Status Automation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #saveFinalReview(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} to
+ *         fix the scorecard preview bug.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, isv, FireIce
+ * @version 1.3
  */
 public class ProjectReviewActions extends DispatchAction {
     private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory
             .getLog(ProjectReviewActions.class.getName());
-            
+
     private static final long ACTIVE_SCORECARD = 1;
-    
+
     /**
      * This member variable is a constant that specifies the count of comments displayed for each
      * item by default on Edit Screening, Edit Review, and Edit Approval, Edit Post-Mortem pages.
@@ -795,6 +803,9 @@ public class ProjectReviewActions extends DispatchAction {
             request.setAttribute("review", review);
             // Retrieve some basic aggregation info and store it into the request
             retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "Aggregation");
+
+            // Notify View page that this is actually a preview operation
+            request.setAttribute("isPreview", Boolean.TRUE);
 
             // Forward to preview page
             return mapping.findForward(Constants.PREVIEW_FORWARD_NAME);
@@ -1529,7 +1540,8 @@ public class ProjectReviewActions extends DispatchAction {
         Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
 
         // Verify that the scorecard template for this review is of correct type
-        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
+        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review") && 
+            !scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Approval")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect", null);
         }
@@ -1541,6 +1553,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic aggregation info and store it into the request
         retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "FinalReview");
+        request.setAttribute("approvalBased", scorecardTemplate.getScorecardType().getName().equals("Approval"));
 
         int reviewerCommentsNum = 0;
         int[] lastCommentIdxs = new int[review.getNumberOfItems()];
@@ -1692,7 +1705,8 @@ public class ProjectReviewActions extends DispatchAction {
         Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
 
         // Verify that the scorecard template for this review is of correct type
-        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
+        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review") && 
+            !scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Approval")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect", null);
         }
@@ -1806,6 +1820,8 @@ public class ProjectReviewActions extends DispatchAction {
         boolean validationSucceeded =
             (commitRequested) ? validateFinalReviewScorecard(request, scorecardTemplate, review) : true;
 
+        request.setAttribute("approvalBased", scorecardTemplate.getScorecardType().getName().equals("Approval"));
+
         // If the user has requested to complete the review
         if (validationSucceeded && commitRequested) {
             reviewLevelComment.setExtraInfo((approveFixes == true) ? "Approved" : "Rejected");
@@ -1813,11 +1829,16 @@ public class ProjectReviewActions extends DispatchAction {
             // Set the completed status of the review
             review.setCommitted(true);
         } else if (previewRequested) {
+            reviewLevelComment.setExtraInfo((approveFixes == true) ? "Approved" : "Rejected");
+
             // Retrieve some basic aggregation info and store it into the request
             retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "FinalReview");
 
             // Update review object stored in the request
             request.setAttribute("review", review);
+
+            // Notify View page that this is actually a preview operation
+            request.setAttribute("isPreview", Boolean.TRUE);
 
             // Forward to preview page
             return mapping.findForward(Constants.PREVIEW_FORWARD_NAME);
@@ -1889,7 +1910,8 @@ public class ProjectReviewActions extends DispatchAction {
         Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
 
         // Verify that the scorecard template for this review is of correct type
-        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
+        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review") && 
+            !scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Approval")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.VIEW_FINAL_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect", null);
         }
@@ -1901,6 +1923,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic aggregation info and store it into the request
         retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "FinalReview");
+        request.setAttribute("approvalBased", scorecardTemplate.getScorecardType().getName().equals("Approval"));
 
         int[] lastCommentIdxs = new int[review.getNumberOfItems()];
 
@@ -2232,7 +2255,7 @@ public class ProjectReviewActions extends DispatchAction {
                         if (lineItem != null) {
                             weight = lineItem.getWeight();
                         } else {
-                            log.log(Level.WARN, "line item for question id: " + question.getId() + 
+                            log.log(Level.WARN, "line item for question id: " + question.getId() +
                                     " for review: " + review.getId());
                         }
                         scores[i][itemIdx] = (float) (weight * scoreCalculator.evaluateItem(review.getItem(itemIdx), question));
@@ -2657,7 +2680,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * 
+     *
      *
      * @param request
      * @param review
@@ -2696,7 +2719,7 @@ public class ProjectReviewActions extends DispatchAction {
             CorrectnessCheckResult verification, String reviewType, Scorecard scorecardTemplate)
         throws BaseException {
         boolean isSubmissionDependentPhase = !reviewType.equals("Post-Mortem");
-        
+
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
         // Retrieve an information about my role(s) and place it into the request
@@ -2705,9 +2728,12 @@ public class ProjectReviewActions extends DispatchAction {
         if (isSubmissionDependentPhase) {
             ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());
         }
-        if (verification.getReview() != null) {
+        
+        Review review = verification.getReview();
+        if (review != null) {
             // Retrieve the information about the review author and place it into the request
-            retrieveAndStoreReviewAuthorInfo(request, verification.getReview());
+            retrieveAndStoreReviewAuthorInfo(request, review);
+            request.setAttribute("modificationDate", review.getModificationTimestamp());
         }
         // Place Scorecard template in the request
         request.setAttribute("scorecardTemplate", scorecardTemplate);
@@ -2900,6 +2926,7 @@ public class ProjectReviewActions extends DispatchAction {
     private ActionForward editGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, String reviewType) throws BaseException {
         String scorecardTypeName;
         // Determine permission name and phase name from the review type
+        boolean isSpecReviewPhase = false;
         if ("Screening".equals(reviewType)) {
             scorecardTypeName = "Screening";
         } else if ("Review".equals(reviewType)) {
@@ -2908,6 +2935,7 @@ public class ProjectReviewActions extends DispatchAction {
             scorecardTypeName = "Approval";
         } else if ("Specification Review".equals(reviewType)) {
             scorecardTypeName = "Specification Review";
+            isSpecReviewPhase = true;
         } else if ("Milestone Screening".equals(reviewType)) {
             scorecardTypeName = "Milestone Screening";
         } else if ("Milestone Review".equals(reviewType)) {
@@ -2919,7 +2947,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectReviewId(mapping, request, Constants.EDIT_MY_REVIEW_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -3022,11 +3050,25 @@ public class ProjectReviewActions extends DispatchAction {
         // Populate form properties
         reviewForm.set("answer", answers);
 
+        if (isSpecReviewPhase) {
+            // set the approve specification check box.
+            boolean specReviewApproved = false;
+            Comment[] allComments = review.getAllComments();
+            for (int i = 0; i < allComments.length; i++) {
+                Comment comment = allComments[i];
+                if ("Specification Review Comment".equalsIgnoreCase(comment.getCommentType().getName())) {
+                    specReviewApproved = "Approved".equals(comment.getExtraInfo());
+                    break;
+                }
+            }
+            reviewForm.set("approve_specification", specReviewApproved);
+        }
+
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**
-     * 
+     *
      *
      * @param item
      * @return
@@ -3043,7 +3085,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * 
+     *
      *
      * @param item
      * @return
@@ -3066,7 +3108,7 @@ public class ProjectReviewActions extends DispatchAction {
      * @param form an <code>ActionForm</code> mapped to this request.
      * @param request an <code>HttpServletRequest</code> representing the incoming request from the client.
      * @param reviewType a <code>String</code> referencing the type of the review.
-     * @return an <code>ActionForward</code> referencing the next view to be used for processing the request. 
+     * @return an <code>ActionForward</code> referencing the next view to be used for processing the request.
      * @throws BaseException if an unexpected error occurs.
      */
     private ActionForward saveGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -3727,41 +3769,41 @@ public class ProjectReviewActions extends DispatchAction {
         float newScore = aggrSubm[0].getAggregatedScore();
 
         float oldScore = Float.parseFloat(String.valueOf(finalScore));
-       
+
         if (newScore == oldScore) {
             // score is not changed
             return;
         }
-        
+
         // OrChange - Get the placement from the submission instead of the Resource
         Long oldPlacement = sub.getPlacement() == null ? -1 : sub.getPlacement();
-        
-        
+
+
         // Old Code
         // Object temp = submitter.getProperty("Placement");
         // long oldPlacement = temp == null ? -1 : Long.parseLong(temp.toString());
         // Old Code Ends
-        
+
         Object userId = submitter.getProperty("External Reference ID");
-        
+
         UploadManager upMgr = ActionsHelper.createUploadManager(request);
 
         // OrChange - Update the final score in the Submission table.
         sub.setFinalScore(new Double(newScore));
-        
+
         // update the final score
         upMgr.updateSubmission(sub, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
-        
+
         // Old Code
         // // Update this submitter's final score with aggregated one
         // submitter.setProperty("Final Score", String.valueOf(newScore));
-        //        
-        //        
+        //
+        //
         // // Store updated information in the database
         // resMgr.updateResource(submitter, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
         // Old Code Ends
 
-        // Retrieve all reviewed submissions of "Contest Submission" type 
+        // Retrieve all reviewed submissions of "Contest Submission" type
         // to reset placement/submission status if need
         Submission[] submissions = ActionsHelper.searchReviewedContestSubmissions(request, project);
         List<Long> submissionIds = new ArrayList<Long>();
@@ -3773,7 +3815,7 @@ public class ProjectReviewActions extends DispatchAction {
         Filter filterSubmissions = new InFilter("submission", submissionIds);
         filter = new AndFilter(Arrays.asList(new Filter[] {filterReviewers, filterSubmissions, filterCommitted}));
         reviews = revMgr.searchReviews(filter, true);
-        
+
         // Retrieve minScore
         ScorecardManager scMgr = ActionsHelper.createScorecardManager(request);
         float minScore =  ActionsHelper.getScorecardMinimumScore(scMgr, reviews[0]);
@@ -3839,7 +3881,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         Resource winningSubmitter = null;
         Resource runnerUpSubmitter = null;
-        
+
 
         //again iterate over submissions to set the initial score and placement
         for (int iSub = 0; iSub < placements.length; iSub++) {
@@ -3852,8 +3894,8 @@ public class ProjectReviewActions extends DispatchAction {
             // update submitter's Placement
             submission.setPlacement(new Long(placement));
 
-            SubmissionStatus newStatus = null; 
-                
+            SubmissionStatus newStatus = null;
+
             //if failed review, then update the status
             if (aggScore < minScore) {
                 newStatus = failedStatus;
@@ -3908,7 +3950,7 @@ public class ProjectReviewActions extends DispatchAction {
 
     /**
      * Return suitable submission for given submissionId.
-     * 
+     *
      * @param submissions the submission array
      * @param submissionId the submissionId
      * @return submission
@@ -3950,7 +3992,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * This static method submission status for the particular submitter. 
+     * This static method submission status for the particular submitter.
      *
      * @param request
      *            the http request. Used internally by some helper functions.
@@ -3993,9 +4035,9 @@ public class ProjectReviewActions extends DispatchAction {
         ScorecardManager scorecardManager = ActionsHelper.createScorecardManager(request);
 
         // Get minimum score
-        float minimumScore = 75;        
+        float minimumScore = 75;
         Scorecard[] scoreCards = scorecardManager.getScorecards(new long[]{review.getScorecard()}, false);
-        
+
         if (scoreCards.length > 0) {
             minimumScore = scoreCards[0].getMinScore();
         }
@@ -4052,7 +4094,7 @@ public class ProjectReviewActions extends DispatchAction {
     private static int populateItemComments(Item item, int itemIdx, Map<String, String> replies,
             Map<String, String> commentTypeIds, int commentCount, CommentType[] commentTypes, Resource myResource,
             boolean managerEdit) {
-        
+
         // Validate parameters
         ActionsHelper.validateParameterNotNull(item, "item");
         ActionsHelper.validateParameterInRange(itemIdx, "itemIdx", 0, Integer.MAX_VALUE);
@@ -4323,7 +4365,7 @@ public class ProjectReviewActions extends DispatchAction {
                         !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
                     isAllowed = true;
                 } else {
-                    //if any of those phases are open only, a user can see the screening if he is not a submitter 
+                    //if any of those phases are open only, a user can see the screening if he is not a submitter
                     isAllowed = !AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME);
                 }
             } else {
@@ -4415,7 +4457,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * 
+     *
      *
      * @return
      * @param scorecardTemplate
@@ -4442,7 +4484,7 @@ public class ProjectReviewActions extends DispatchAction {
             for (int iSection = 0; iSection < group.getNumberOfSections(); ++iSection) {
                 Section section = group.getSection(iSection);
                 for (int iQuestion = 0; iQuestion < section.getNumberOfQuestions(); ++iQuestion, ++itemIdx) {
-                    Question question = section.getQuestion(iQuestion);                    
+                    Question question = section.getQuestion(iQuestion);
                     if (question.isUploadDocument()) {
                         uploadedFileIds[fileIdx++] = review.getItem(itemIdx).getDocument();
                     }
@@ -4454,7 +4496,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * 
+     *
      *
      * @return
      * @param request
@@ -4752,7 +4794,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * 
+     *
      *
      * @return
      * @param request
@@ -4793,7 +4835,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Get a type of the question for the current answer
         String questionType = question.getQuestionType().getName();
 
-//        if (questionType.equalsIgnoreCase("Scale (1-4)") || questionType.equalsIgnoreCase("Scale (1-10)") || 
+//        if (questionType.equalsIgnoreCase("Scale (1-4)") || questionType.equalsIgnoreCase("Scale (1-10)") ||
 //                questionType.equalsIgnoreCase("Scale (0-9)") || questionType.equalsIgnoreCase("Scale (0-3)") ||
 //                questionType.equalsIgnoreCase("Scale (0-4)")) {
 //            if (!(correctAnswers.containsKey(answer) && correctAnswers.get(answer).equals(questionType))) {
@@ -4846,7 +4888,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * 
+     *
      *
      * @return
      * @param request
@@ -4983,7 +5025,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * 
+     *
      *
      * @return
      * @param request
@@ -5016,7 +5058,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * 
+     *
      *
      * @return
      * @param allComments
@@ -5031,7 +5073,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * 
+     *
      *
      * @return
      * @param allComments
@@ -5044,7 +5086,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
         return null;
     }
-    
+
     /**
      * This method is an implementation of &quot;View Scorecard&quot; Struts Action.
      *
@@ -5071,23 +5113,23 @@ public class ProjectReviewActions extends DispatchAction {
             AuthorizationHelper.removeLoginRedirect(request);
 
                LoggingHelper.logAction(request);
-    
+
                // Gather the roles the user has for current request
                AuthorizationHelper.gatherUserRoles(request);
 
                // Validate parameters
                ActionsHelper.validateParameterNotNull(mapping, "mapping");
                ActionsHelper.validateParameterNotNull(request, "request");
-    
+
                // Verify that Scorecard ID was specified and denotes correct scorecard
                String scidParam = request.getParameter("scid");
                if (scidParam == null || scidParam.trim().length() == 0) {
                    return(ActionsHelper.produceErrorReport(
                        mapping, getResources(request), request, null, "Error.ScorecardIdNotSpecified", null));
                }
-    
+
                long scid;
-    
+
                try {
                    // Try to convert specified scid parameter to its integer representation
                    scid = Long.parseLong(scidParam, 10);
@@ -5095,7 +5137,7 @@ public class ProjectReviewActions extends DispatchAction {
                    return(ActionsHelper.produceErrorReport(
                        mapping, getResources(request), request, null, "Error.ScorecardIdInvalid", null));
                }
-        
+
                // Obtain an instance of Scorecard Manager
                ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
                Scorecard scorecardTemplate = null;
@@ -5105,19 +5147,19 @@ public class ProjectReviewActions extends DispatchAction {
                } catch (PersistenceException e) {
                    // Eat the exception
                }
-    
+
                   // Verify that scorecard with specified ID exists
                if (scorecardTemplate == null) {
                    return(ActionsHelper.produceErrorReport(
                        mapping, getResources(request), request, null, "Error.ScorecardNotFound", null));
                }
 
-            // Verify the scorecard is active    
+            // Verify the scorecard is active
                if (scorecardTemplate.getScorecardStatus().getId() != ACTIVE_SCORECARD) {
                    return(ActionsHelper.produceErrorReport(
                        mapping, getResources(request), request, null, "Error.ScorecardNotActive", null));
                }
-    
+
                // Place Scorecard template in the request
                request.setAttribute("scorecardTemplate", scorecardTemplate);
 
@@ -5276,7 +5318,7 @@ public class ProjectReviewActions extends DispatchAction {
      * @throws BaseException if any error occurs.
      * @since 1.2
      */
-    public ActionForward editSpecificationReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, 
+    public ActionForward editSpecificationReview(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                                  HttpServletResponse response) throws BaseException{
         LoggingHelper.logAction(request);
         return editGenericReview(mapping, form, request, "Specification Review");

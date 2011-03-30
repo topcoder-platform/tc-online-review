@@ -87,7 +87,7 @@
     <property name="directory_validation.path" value="directory_validation/${directory_validation.version}"/>
     <property name="directory_validation.jar" value="${tcs_libdir}/${directory_validation.path}/${directory_validation.jar.name}"/>
 
-    <property name="configuration_manager.version" value="2.1.5"/>
+    <property name="configuration_manager.version" value="2.2.0"/>
     <property name="configuration_manager.jar.name" value="configuration_manager.jar"/>
     <property name="configuration_manager.path" value="configuration_manager/${configuration_manager.version}"/>
     <property name="configuration_manager.jar"
@@ -150,17 +150,11 @@
     <property name="distribution_tool.jar"
               value="${tcs_libdir}/${distribution_tool.path}/${distribution_tool.jar.name}"/>
 
-    <property name="document_generator.version" value="2.1"/>
+    <property name="document_generator.version" value="3.1.1"/>
     <property name="document_generator.jar.name" value="document_generator.jar"/>
     <property name="document_generator.path" value="document_generator/${document_generator.version}"/>
     <property name="document_generator.jar"
               value="${tcs_libdir}/${document_generator.path}/${document_generator.jar.name}"/>
-
-    <!-- Document Generator 3.1.0 is used by the Late Deliverables Tracker component -->
-    <property name="document_generator_3_1_0.version" value="3.1.0"/>
-    <property name="document_generator_3_1_0.jar.name" value="document_generator.jar"/>
-    <property name="document_generator_3_1_0.path" value="document_generator/${document_generator_3_1_0.version}"/>
-    <property name="document_generator_3_1_0.jar" value="${tcs_libdir}/${document_generator_3_1_0.path}/${document_generator_3_1_0.jar.name}"/>
 
     <property name="email_engine.version" value="3.2.0"/>
     <property name="email_engine.jar.name" value="email_engine.jar"/>
@@ -238,10 +232,15 @@
     <property name="JNDI_Utility.path" value="JNDI_Utility/${JNDI_Utility.version}"/>
     <property name="JNDI_Utility.jar" value="${tcs_libdir}/${JNDI_Utility.path}/${JNDI_Utility.jar.name}"/>
 
-    <property name="late_deliverables_tracker.version" value="1.0.1"/>
+    <property name="late_deliverables_tracker.version" value="1.2.0"/>
     <property name="late_deliverables_tracker.jar.name" value="late_deliverables_tracker.jar"/>
     <property name="late_deliverables_tracker.path" value="late_deliverables_tracker/${late_deliverables_tracker.version}"/>
     <property name="late_deliverables_tracker.jar" value="${tcs_libdir}/${late_deliverables_tracker.path}/${late_deliverables_tracker.jar.name}"/>
+    
+    <property name="late_deliverables_management.version" value="1.0.4"/>
+    <property name="late_deliverables_management.jar.name" value="late_deliverables_management.jar"/>
+    <property name="late_deliverables_management.path" value="late_deliverables_management/${late_deliverables_management.version}"/>
+    <property name="late_deliverables_management.jar" value="${tcs_libdir}/${late_deliverables_management.path}/${late_deliverables_management.jar.name}"/>
     
     <property name="logging_wrapper.version" value="1.2"/>
     <property name="logging_wrapper.jar.name" value="logging_wrapper.jar"/>
@@ -281,13 +280,7 @@
     <property name="online_review_login.jar"
               value="${tcs_libdir}/${online_review_login.path}/${online_review_login.jar.name}"/>
 
-    <property name="online_review_phases.version" value="1.4.2"/>
-    <property name="online_review_phases.jar.name" value="online_review_phases.jar"/>
-    <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}"/>
-    <property name="online_review_phases.jar"
-              value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}"/>
-
-    <property name="online_review_upload_services.version" value="1.0"/>
+    <property name="online_review_upload_services.version" value="1.1.1"/>
     <property name="online_review_upload_services.jar.name" value="online_review_upload_services.jar"/>
     <property name="online_review_upload_services.path"
               value="online_review_upload_services/${online_review_upload_services.version}"/>
@@ -421,7 +414,7 @@
     <property name="weighted_calculator.jar"
               value="${tcs_libdir}/${weighted_calculator.path}/${weighted_calculator.jar.name}"/>
 
-    <property name="workdays.version" value="1.0"/>
+    <property name="workdays.version" value="1.1.0"/>
     <property name="workdays.jar.name" value="workdays.jar"/>
     <property name="workdays.path" value="workdays/${workdays.version}"/>
     <property name="workdays.jar" value="${tcs_libdir}/${workdays.path}/${workdays.jar.name}"/>
@@ -500,6 +493,11 @@
     <property name="xerces.jar" value="${ext_libdir}/xerces.jar" />
     <property name="ejb-2_0.jar" value="${ext_libdir}/ejb-2_0.jar" />
     <property name="svnkit.jar" value="${ext_libdir}/svnkit/svnkit.jar"/>
+  
+    <path id="svnant.lib" >
+      <fileset dir="${ext_libdir}/svnant" includes="*.jar" />
+    </path>
+
 
     <path id="spring_libs">
         <fileset dir="${ext_libdir}/spring">
@@ -575,7 +573,6 @@
         <pathelement location="${scorecard_data_structure.jar}"/>
         <pathelement location="${scorecard_management.jar}"/>
         <pathelement location="${scorecard_management_persistence.jar}"/>
-        <!--<pathelement location="${security_manager.jar}" />-->
         <pathelement location="${user_project_data_store.jar}"/>
         <pathelement location="${typesafe_enum.jar}"/>
         <pathelement location="${weighted_calculator.jar}"/>
@@ -587,6 +584,7 @@
         <pathelement location="${heartbeat.jar}"/>
         <pathelement location="${compression_utility.jar}"/>
         <pathelement location="${svnkit.jar}"/>
+        <pathelement location="${late_deliverables_management.jar}" />
         <path refid="spring_libs"/>
     </path>
 

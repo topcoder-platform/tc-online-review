@@ -11,9 +11,11 @@
        <!ENTITY timelineTemplateDir "@exttemplatesdir@">
        <!ENTITY contactManagersTemplate "@exttemplatesdir@/contact_manager_template.txt">
        <!ENTITY managerNotificationEmailTemplatesBase "@exttemplatesdir@">
-       <!ENTITY notificationEmailFromAddress "@notificationEmailFromAddress@">
+       <!ENTITY notificationEmailFromAddress "do_not_reply@topcoder.com">
        <!ENTITY smtpServerAuthAddress "@emailengine_smtp_user@">
        <!ENTITY pactJNDIAddress "@pactJNDIAddress@">
+       <!ENTITY lateDeliverableUpdatedByManagerTemplate "@exttemplatesdir@/late_deliverable_updated_by_manager_template.txt">
+       <!ENTITY lateDeliverableUpdatedByMemberTemplate "@exttemplatesdir@/late_deliverable_updated_by_member_template.txt">
 ]>
 <CMConfig>
 <!-- [OR-584] don't need this anymore
@@ -479,22 +481,6 @@
             <Value>HanderId</Value>
         </Property>
     </Config>
-
-
-    <!--
-        ========== Configuration for Document Generator component ==========
-    -->
-    <Config name="com.topcoder.util.file">
-        <Property name="sources">
-            <Value>file</Value>
-        </Property>
-
-        <!-- file template source properties -->
-        <Property name="file_class">
-            <Value>com.topcoder.util.file.templatesource.FileTemplateSource</Value>
-        </Property>
-    </Config>
-
 
     <!--
         =============== Configuration for Email Engine component ===============
@@ -1212,9 +1198,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -1231,9 +1214,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1254,9 +1234,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/specification_submission/start.txt</Value>
                 </Property>
@@ -1273,9 +1250,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/specification_submission/end.txt</Value>
@@ -1320,9 +1294,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -1339,9 +1310,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1362,9 +1330,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/specification_review/start.txt</Value>
                 </Property>
@@ -1381,9 +1346,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/specification_review/end.txt</Value>
@@ -1428,9 +1390,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -1447,9 +1406,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1470,9 +1426,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/registration/start.txt</Value>
                 </Property>
@@ -1489,9 +1442,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/registration/end.txt</Value>
@@ -1536,9 +1486,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -1555,9 +1502,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1578,9 +1522,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/submission/start.txt</Value>
                 </Property>
@@ -1597,9 +1538,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/submission/end.txt</Value>
@@ -1644,9 +1582,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -1663,9 +1598,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1686,9 +1618,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/screening/start.txt</Value>
                 </Property>
@@ -1705,9 +1634,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/screening/end.txt</Value>
@@ -1770,9 +1696,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -1789,9 +1712,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1812,9 +1732,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/review/start.txt</Value>
                 </Property>
@@ -1831,9 +1748,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/review/end.txt</Value>
@@ -1878,9 +1792,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -1897,9 +1808,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1920,9 +1828,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/appeals/start.txt</Value>
                 </Property>
@@ -1939,9 +1844,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/appeals/end.txt</Value>
@@ -1986,9 +1888,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -2005,9 +1904,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -2028,9 +1924,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/appeals_response/start.txt</Value>
                 </Property>
@@ -2048,9 +1941,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/appeals_response/end.txt</Value>
                 </Property>
@@ -2067,9 +1957,6 @@
         </Property>
 
         <Property name="WinnersEmail">
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
             <Property name="EmailTemplateName">
                 <Value>&winnersEmailTemplate;</Value>
             </Property>
@@ -2113,9 +2000,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -2132,9 +2016,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -2155,9 +2036,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/aggregation/start.txt</Value>
                 </Property>
@@ -2174,9 +2052,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/aggregation/end.txt</Value>
@@ -2221,9 +2096,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -2240,9 +2112,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -2263,9 +2132,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/aggregation_review/start.txt</Value>
                 </Property>
@@ -2282,9 +2148,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/aggregation_review/end.txt</Value>
@@ -2329,9 +2192,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -2348,9 +2208,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -2371,9 +2228,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/final_fix/start.txt</Value>
                 </Property>
@@ -2390,9 +2244,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/final_fix/end.txt</Value>
@@ -2437,9 +2288,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -2456,9 +2304,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -2479,9 +2324,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/final_review/start.txt</Value>
                 </Property>
@@ -2498,9 +2340,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/final_review/end.txt</Value>
@@ -2554,9 +2393,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -2573,9 +2409,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -2596,9 +2429,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/approval/start.txt</Value>
                 </Property>
@@ -2615,9 +2445,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/approval/end.txt</Value>
@@ -2641,7 +2468,7 @@
             <Value>24</Value>
         </Property>
         <Property name="PostMortemPhaseDefaultReviewersNumber">
-            <Value>2</Value>
+            <Value>1</Value>
         </Property>
         <Property name="PostMortemPhaseDefaultScorecardID">
             <Value>30000721</Value>
@@ -2671,9 +2498,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
                 </Property>
@@ -2690,9 +2514,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -2713,9 +2534,6 @@
                 <Property name="SendEmail">
                     <Value>yes</Value>
                 </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
-                </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/post_mortem/start.txt</Value>
                 </Property>
@@ -2732,9 +2550,6 @@
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/post_mortem/end.txt</Value>
@@ -2885,10 +2700,11 @@
         <Property name="RIA Builds">
             <Value>135</Value>
         </Property>
-        
-        <!-- rating type added for copilot posting -->
         <Property name="Copilot Posting">
             <Value>140</Value>
+        </Property>
+        <Property name="Content Creation">
+            <Value>146</Value>
         </Property>
     </Config>
 
@@ -3416,7 +3232,7 @@
                                scorecard.scorecard_type_id AS type_id,
                                scorecard.project_category_id AS project_category_id,
                                scorecard.name AS scorecard_name,
-                               version,
+                               scorecard.version,
                                min_score,
                                max_score,
                                scorecard.create_user AS create_user,
@@ -3488,16 +3304,33 @@
                 </Property>
                 <Property name="context">
                     <Value>
-                        SELECT UNIQUE deliverable_id,
-                               resource_id,
-                               project_phase.project_phase_id
-                          FROM deliverable_lu,
-                               resource,
-                               project_phase
-                         WHERE deliverable_lu.resource_role_id = resource.resource_role_id
-                           AND deliverable_lu.phase_type_id = project_phase.phase_type_id
-                           AND resource.project_id = project_phase.project_id
-                           AND
+                        SELECT UNIQUE
+                          deliverable_lu.deliverable_id,
+                          resource.resource_id,
+                          project_phase.project_phase_id
+                        FROM
+                          deliverable_lu
+                          INNER JOIN project_phase ON deliverable_lu.phase_type_id = project_phase.phase_type_id
+                          INNER JOIN resource ON deliverable_lu.resource_role_id = resource.resource_role_id AND
+                                                 resource.project_id = project_phase.project_id
+                          LEFT OUTER JOIN project_info ON project_info.project_id = project_phase.project_id AND
+                                                          project_info.project_info_type_id = 23
+                          INNER JOIN resource_info ON resource_info.resource_id = resource.resource_id AND
+                                                      resource_info.resource_info_type_id = 1
+                        WHERE
+                          (deliverable_lu.deliverable_id NOT IN (15,22,26) OR resource.project_phase_id = project_phase.project_phase_id) AND
+                          (project_info.value is null OR resource.resource_role_id != 1 OR resource_info.value = project_info.value) AND
+                          (deliverable_id NOT IN (16,17,18,19) OR NOT EXISTS(
+                            SELECT r.resource_id
+                            FROM
+                              resource r
+                              INNER JOIN resource_info ri ON ri.resource_id = r.resource_id AND
+                                                             ri.resource_info_type_id = 1 AND
+                                                             ri.value = resource_info.value
+                            WHERE
+                              r.project_id = project_phase.project_id AND
+                              r.resource_role_id = 8
+                          )) AND 
                     </Value>
                 </Property>
                 <Property name="alias">
@@ -3548,51 +3381,11 @@
                 </Property>
                 <Property name="context">
                     <Value>
-                        SELECT     deliverable_id,
-                                   resource.resource_id,
-                                   project_phase.project_phase_id,
-                                   submission.submission_id,
-                                   submission.screening_score,
-                                   submission.initial_score,
-                                   submission.final_score,
-                                   submission.placement
-                              FROM deliverable_lu,
-                                   resource,
-                                   project_phase
-                        CROSS JOIN submission
-                        INNER JOIN submission_status_lu
-                                ON submission.submission_status_id = submission_status_lu.submission_status_id
-                        INNER JOIN upload ON upload.upload_id = submission.upload_id
-                             WHERE submission_status_lu.name = 'Active'
-                               AND NOT deliverable_lu.submission_type_id IS NULL
-                               AND upload.project_id = resource.project_id
-                               AND deliverable_lu.resource_role_id = resource.resource_role_id
-                               AND deliverable_lu.phase_type_id = project_phase.phase_type_id
-                               AND
+                        This is not used but is still needed for the Deliverable Management
+			component to initialize. It will error out in runtime if used by mistake.
                     </Value>
                 </Property>
                 <Property name="alias">
-                    <Property name="deliverable_id">
-                        <Value>deliverable_lu.deliverable_id</Value>
-                    </Property>
-                    <Property name="name">
-                        <Value>deliverable_lu.name</Value>
-                    </Property>
-                    <Property name="project_id">
-                        <Value>resource.project_id</Value>
-                    </Property>
-                    <Property name="phase_id">
-                        <Value>project_phase.project_phase_id</Value>
-                    </Property>
-                    <Property name="resource_id">
-                        <Value>resource.resource_id</Value>
-                    </Property>
-                    <Property name="required">
-                        <Value>deliverable_lu.required</Value>
-                    </Property>
-                    <Property name="submission_id">
-                        <Value>submission.submission_id</Value>
-                    </Property>
                 </Property>
             </Property>
 
@@ -4202,8 +3995,651 @@
                     </Property>
                 </Property>
             </Property>
+
+      <Property name="Non-restricted Late Deliverable Search Bundle">
+        <Property name="searchStrategy">
+          <Property name="class">
+            <Value>dbStrategy</Value>
+          </Property>
         </Property>
-    </Config>
+        <Property name="context">
+          <Value>
+            SELECT lt.late_deliverable_id,
+            pp.project_id,
+            lt.project_phase_id,
+            lt.resource_id,
+            lt.deliverable_id,
+            lt.deadline,
+	    lt.compensated_deadline,
+            lt.create_date,
+            lt.forgive_ind,
+            lt.last_notified,
+            lt.delay,
+            lt.explanation,
+            lt.explanation_date,
+            lt.response,
+            lt.response_user,
+            lt.response_date
+            FROM late_deliverable lt
+            INNER JOIN project_phase pp ON pp.project_phase_id = lt.project_phase_id
+            INNER JOIN project p ON p.project_id = pp.project_id
+            INNER JOIN resource_info ri ON ri.resource_id = lt.resource_id AND
+                  ri.resource_info_type_id = 2
+            WHERE
+          </Value>
+        </Property>
+        <Property name="searchableFields">
+          <Property name="id">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="projectPhaseId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="resourceId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="deliverableId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="deadline">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="compensatedDeadline">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="createDate">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="forgiven">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="lastNotified">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="delay">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="explanation">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="explanationDate">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="response">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="responseUser">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="responseDate">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="projectId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="projectStatusId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="projectCategoryId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="userHandle">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="tcDirectProjectId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+        </Property>
+        <Property name="alias">
+          <Property name="id">
+            <Value>lt.late_deliverable_id</Value>
+          </Property>
+          <Property name="projectPhaseId">
+            <Value>lt.project_phase_id</Value>
+          </Property>
+          <Property name="resourceId">
+            <Value>lt.resource_id</Value>
+          </Property>
+          <Property name="deliverableId">
+            <Value>lt.deliverable_id</Value>
+          </Property>
+          <Property name="deadline">
+            <Value>lt.deadline</Value>
+          </Property>
+          <Property name="compensatedDeadline">
+            <Value>lt.compensated_deadline</Value>
+          </Property>	  
+          <Property name="createDate">
+            <Value>lt.create_date</Value>
+          </Property>
+          <Property name="forgiven">
+            <Value>lt.forgive_ind</Value>
+          </Property>
+          <Property name="lastNotified">
+            <Value>lt.last_notified</Value>
+          </Property>
+          <Property name="delay">
+            <Value>lt.delay</Value>
+          </Property>
+          <Property name="explanation">
+            <Value>lt.explanation</Value>
+          </Property>
+          <Property name="explanationDate">
+            <Value>lt.explanation_date</Value>
+          </Property>
+          <Property name="response">
+            <Value>lt.response</Value>
+          </Property>
+          <Property name="responseUser">
+            <Value>lt.response_user</Value>
+          </Property>
+          <Property name="responseDate">
+            <Value>lt.response_date</Value>
+          </Property>
+          <Property name="projectId">
+            <Value>pp.project_id</Value>
+          </Property>
+          <Property name="projectStatusId">
+            <Value>p.project_status_id</Value>
+          </Property>
+          <Property name="projectCategoryId">
+            <Value>p.project_category_id</Value>
+          </Property>
+          <Property name="userHandle">
+            <Value>ri.value</Value>
+          </Property>
+          <Property name="tcDirectProjectId">
+            <Value>p.tc_direct_project_id</Value>
+          </Property>
+        </Property>
+      </Property>
+
+      <Property name="Restricted Late Deliverable Search Bundle">
+        <Property name="searchStrategy">
+          <Property name="class">
+            <Value>dbStrategy</Value>
+          </Property>
+        </Property>
+        <Property name="context">
+          <Value>
+            SELECT DISTINCT lt.late_deliverable_id,
+            pp.project_id,
+            lt.project_phase_id,
+            lt.resource_id,
+            lt.deliverable_id,
+            lt.deadline,
+	    lt.compensated_deadline,
+            lt.create_date,
+            lt.forgive_ind,
+            lt.last_notified,
+            lt.delay,
+            lt.explanation,
+            lt.explanation_date,
+            lt.response,
+            lt.response_user,
+            lt.response_date
+            FROM late_deliverable lt
+            INNER JOIN project_phase pp
+            ON pp.project_phase_id = lt.project_phase_id
+            INNER JOIN project p ON p.project_id = pp.project_id
+            LEFT OUTER JOIN resource r ON r.project_id = p.project_id and r.resource_role_id IN (12, 13, 14, 15)
+            LEFT OUTER JOIN resource_info ri ON ri.resource_id = r.resource_id and ri.resource_info_type_id = 1
+            INNER JOIN resource_info ri2 ON ri2.resource_id = lt.resource_id and ri2.resource_info_type_id = 1
+            LEFT OUTER JOIN corporate_oltp:tc_direct_project d
+            ON d.project_id = p.tc_direct_project_id
+            LEFT OUTER JOIN corporate_oltp:user_permission_grant g
+            ON g.resource_id = d.project_id
+            INNER JOIN resource_info ri3 ON ri3.resource_id = lt.resource_id AND
+                  ri3.resource_info_type_id = 2
+            WHERE
+          </Value>
+        </Property>
+        <Property name="searchableFields">
+          <Property name="id">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="projectPhaseId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="resourceId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="deliverableId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="deadline">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="compensatedDeadline">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>	  
+          <Property name="createDate">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="forgiven">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="lastNotified">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="delay">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="explanation">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="explanationDate">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="response">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="responseUser">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="responseDate">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="projectId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="projectStatusId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="projectCategoryId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="managerUserId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="lateUserId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="tcDirectUserId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="userHandle">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="tcDirectProjectId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+        </Property>
+        <Property name="alias">
+          <Property name="id">
+            <Value>lt.late_deliverable_id</Value>
+          </Property>
+          <Property name="projectPhaseId">
+            <Value>lt.project_phase_id</Value>
+          </Property>
+          <Property name="resourceId">
+            <Value>lt.resource_id</Value>
+          </Property>
+          <Property name="deliverableId">
+            <Value>lt.deliverable_id</Value>
+          </Property>
+          <Property name="deadline">
+            <Value>lt.deadline</Value>
+          </Property>
+          <Property name="compensatedDeadline">
+            <Value>lt.compensated_deadline</Value>
+          </Property>	  
+          <Property name="createDate">
+            <Value>lt.create_date</Value>
+          </Property>
+          <Property name="forgiven">
+            <Value>lt.forgive_ind</Value>
+          </Property>
+          <Property name="lastNotified">
+            <Value>lt.last_notified</Value>
+          </Property>
+          <Property name="delay">
+            <Value>lt.delay</Value>
+          </Property>
+          <Property name="explanation">
+            <Value>lt.explanation</Value>
+          </Property>
+          <Property name="explanationDate">
+            <Value>lt.explanation_date</Value>
+          </Property>
+          <Property name="response">
+            <Value>lt.response</Value>
+          </Property>
+          <Property name="responseUser">
+            <Value>lt.response_user</Value>
+          </Property>
+          <Property name="responseDate">
+            <Value>lt.response_date</Value>
+          </Property>
+          <Property name="projectId">
+            <Value>pp.project_id</Value>
+          </Property>
+          <Property name="projectStatusId">
+            <Value>p.project_status_id</Value>
+          </Property>
+          <Property name="projectCategoryId">
+            <Value>p.project_category_id</Value>
+          </Property>
+          <Property name="managerUserId">
+            <Value>ri.value</Value>
+          </Property>
+          <Property name="lateUserId">
+            <Value>ri2.value</Value>
+          </Property>
+          <Property name="tcDirectUserId">
+            <Value>g.user_id</Value>
+          </Property>
+          <Property name="userHandle">
+            <Value>ri3.value</Value>
+          </Property>
+          <Property name="tcDirectProjectId">
+            <Value>p.tc_direct_project_id</Value>
+          </Property>
+        </Property>
+      </Property>
+    </Property>
+  </Config>
 
     <!-- Object factory configuration for DBStrategy -->
     <Config name="com.topcoder.search.builder.strategy.factory">
@@ -4843,7 +5279,23 @@
                     <Value>icon_design.gif</Value>
                 </Property>
             </Property>
+             <Property name="Component Design">
+                <Property name="IconSmall">
+                    <Value>iconStatusSpecSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>icon_design.gif</Value>
+                </Property>
+            </Property>
             <Property name="Development">
+                <Property name="IconSmall">
+                    <Value>iconStatusDevSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>icon_development.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Component Development">
                 <Property name="IconSmall">
                     <Value>iconStatusDevSm.gif</Value>
                 </Property>
@@ -4979,6 +5431,14 @@
                     <Value>IconProto.gif</Value>
                 </Property>
             </Property>
+            <Property name="UI Prototype">
+                <Property name="IconSmall">
+                    <Value>IconProtoSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconProto.gif</Value>
+                </Property>
+            </Property>
             <Property name="Logos">
                 <Property name="IconSmall">
                     <Value>iconBlankSm.png</Value>
@@ -5011,7 +5471,23 @@
                     <Value>IconRIA.gif</Value>
                 </Property>
             </Property>
+            <Property name="RIA Build">
+                <Property name="IconSmall">
+                    <Value>IconRIASm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconRIA.gif</Value>
+                </Property>
+            </Property>
             <Property name="RIA Component Competition">
+                <Property name="IconSmall">
+                    <Value>iconRIAComponentCompetitionSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconRIAComponentCompetition.png</Value>
+                </Property>
+            </Property>
+            <Property name="RIA Component">
                 <Property name="IconSmall">
                     <Value>iconRIAComponentCompetitionSm.png</Value>
                 </Property>
@@ -5026,6 +5502,16 @@
                 </Property>
                 <Property name="Icon">
                     <Value>iconCopilotPosting.png</Value>
+                </Property>
+            </Property>
+            
+            <!-- Icons added for content creation project type -->
+            <Property name="Content Creation">
+                <Property name="IconSmall">
+                    <Value>iconContentCreationSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconContentCreation.gif</Value>
                 </Property>
             </Property>
         </Property>
@@ -5063,6 +5549,36 @@
             </Property>
             <Property name="Studio">
                 <Value>https://software.topcoder.com/review/actions/ViewScorecard.do?method=viewScorecard&amp;scid=&lt;SCORECARD_ID&gt;</Value>
+            </Property>
+        </Property>
+
+        <Property name="DeliverableTypes">
+        	  <Property name="Any">
+                <Value>0</Value>
+            </Property>
+            <Property name="Screening Scorecard">
+                <Value>2</Value>
+            </Property>
+            <Property name="Review Scorecard">
+                <Value>4,5,6,7</Value>
+            </Property>
+            <Property name="Test Cases">
+                <Value>8,9,10</Value>
+            </Property>
+            <Property name="Appeal Responses">
+                <Value>11,12,13,14</Value>
+            </Property>
+            <Property name="Aggregation">
+                <Value>15</Value>
+            </Property>
+            <Property name="Final Fix">
+                <Value>20</Value>
+            </Property>
+            <Property name="Final Review">
+                <Value>22</Value>
+            </Property>
+            <Property name="Specification Review">
+                <Value>26</Value>
             </Property>
         </Property>
 
@@ -5156,6 +5672,19 @@
             Resource Roles that have that permission granted. -->
         <!--  NOTE!  All names (either for permissions or for resource roles) are case sensitive!  -->
         <Property name="Permissions Matrix">
+            <Property name="View Late Deliverable">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Client Manager</Value>
+                <Value>Copilot</Value>
+                <Value>Cockpit Project User</Value>
+                <Value>Observer</Value>
+            </Property>
+            <Property name="Edit Late Deliverable">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Copilot</Value>
+            </Property>
             <Property name="Create Scorecard">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
@@ -5307,13 +5836,11 @@
                 <Value>Primary Screener</Value>
                 <Value>Reviewer</Value>
                 <Value>Specification Reviewer</Value>
-                <Value>Specification Submitter</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
-                <Value>Approver</Value>
                 <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Milestone Screener</Value>
@@ -6051,9 +6578,6 @@
         </Property>
 
         <Property name="ContactManagerEmail">
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
             <Property name="EmailTemplateName">
                 <Value>&contactManagersTemplate;</Value>
             </Property>
@@ -6061,6 +6585,46 @@
                 <Value>&notificationEmailFromAddress;</Value>
             </Property>
         </Property>
+        
+
+        <Property name="LateDeliverableUpdateNotificationEmail">
+            <Property name="EditLateDeliverablePageBaseURL">
+                <Value>https://software.topcoder.com/review/actions/EditLateDeliverable.do?method=editLateDeliverable&amp;late_deliverable_id=</Value>
+            </Property>
+            <Property name="ByManager">
+                <Property name="EmailTemplateName">
+                    <Value>&lateDeliverableUpdatedByManagerTemplate;</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Late Deliverable Resolved: {0} {1}</Value>
+                </Property>
+
+                <!--List of resource roles to be CCed on the notification email to the late member.-->
+                <Property name="Roles">
+                    <Value>Manager,Copilot</Value>
+                </Property>
+            </Property>
+            <Property name="ByMember">
+                <Property name="EmailTemplateName">
+                    <Value>&lateDeliverableUpdatedByMemberTemplate;</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Late Deliverable Explained: {0} {1}</Value>
+                </Property>
+
+                <!--List of resource roles to send email to.-->
+                <Property name="Roles">
+                    <Value>Manager,Copilot</Value>
+                </Property>
+            </Property>
+        </Property>
+        
     </Config>
 
     <!--
@@ -6159,4 +6723,57 @@
             </Property>
         </Property>
     </Config>
+
+    <!-- Configuration for Late Deliverable Management -->
+    <Config name="com.topcoder.management.deliverable.late.impl.LateDeliverableManagerImpl">
+        <Property name="loggerName">
+            <Value>com.topcoder.management.deliverable.late.impl.LateDeliverableManagerImpl</Value>
+        </Property>
+        <Property name="objectFactoryConfig">
+            <Property name="DatabaseLateDeliverablePersistence">
+                <Property name="type">
+                    <Value>com.topcoder.management.deliverable.late.impl.persistence.DatabaseLateDeliverablePersistence</Value>
+                </Property>
+            </Property>
+        </Property>
+	    <Property name="searchBundleManagerNamespace">
+	      <Value>com.topcoder.searchbuilder.common</Value>
+	    </Property>
+	    <Property name="nonRestrictedSearchBundleName">
+	      <Value>Non-restricted Late Deliverable Search Bundle</Value>
+	    </Property>
+	    <Property name="restrictedSearchBundleName">
+	      <Value>Restricted Late Deliverable Search Bundle</Value>
+	    </Property>
+	    <Property name="persistenceKey">
+	      <Value>DatabaseLateDeliverablePersistence</Value>
+	    </Property>
+	    <Property name="persistenceConfig">
+	      <Property name="loggerName">
+	        <Value>com.topcoder.management.deliverable.late.impl.persistence.DatabaseLateDeliverablePersistence</Value>
+	      </Property>
+	      <Property name="dbConnectionFactoryConfig">
+	        <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+	          <Property name="connections">
+	            <Property name="default">
+	                <Value>tcs</Value>
+	            </Property>
+	            <Property name="tcs">
+	                <Property name="producer">
+	                    <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+	                </Property>
+	                <Property name="parameters">
+	                    <Property name="jndi_name">
+	                        <Value>java:JTS_TCS_CATALOG</Value>
+	                    </Property>
+	                </Property>
+	            </Property>
+	          </Property>
+	        </Property>
+	      </Property>
+	      <Property name="connectionName">
+	        <Value>tcs</Value>
+	      </Property>
+      </Property>
+  </Config>
 </CMConfig>

@@ -1,7 +1,7 @@
 <%--
   - Author: George1, real_vg, isv
   - Version: 1.1
-  - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
+  - Copyright (C) 2005 - 2011 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment renders the details on roles assigned to current user in context of
   - selected project.
@@ -19,7 +19,7 @@
 	<table class="stat" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;"
            id="myRolesTable">
 		<tr>
-			<td class="title"><bean:message key="viewProjectDetails.box.MyRoleAndPayments" /></td>
+			<td class="title"><bean:message key="viewProjectDetails.box.MyInfo" /></td>
 			<c:if test="${empty myDeliverables}">
 				<td class="title"><!-- @ --></td>
 			</c:if>
@@ -73,11 +73,21 @@
                             </c:if>
                         </tr>
                     </c:forEach>
+                    <c:if test="${isAllowedToViewPayment or ((myDelay ne null) and (myDelay>0))}">
+                        <tr><td class="value" colspan=3><hr/></td></tr>
+                    </c:if>
                     <c:if test="${isAllowedToViewPayment}">
                         <tr>
-                            <th class="value"><bean:message key="viewProjectDetails.TotalPayment"/></th>
-                            <td class="value">${"$"}${orfn:displayPaymentAmt(pageContext.request, requestScope.totalPayment)}</td>
-                            <td class="value">&nbsp;</td>
+                            <th class="value roleHeader"><bean:message key="viewProjectDetails.TotalPayment"/></th>
+                            <td class="value" colspan=2>
+                                ${"$"}${orfn:displayPaymentAmt(pageContext.request, requestScope.totalPayment)}
+                            </td>
+                        </tr>
+                    </c:if>
+                    <c:if test="${(myDelay ne null) and (myDelay>0)}">
+                        <tr>
+                            <th class="value roleHeader"><bean:message key="viewProjectDetails.TotalDelay"/></th>
+                            <td class="value" colspan=2><c:out value="${orfn:displayDelay(myDelay)}"/></td>
                         </tr>
                     </c:if>
                 </table>
@@ -115,11 +125,9 @@
 					</c:forEach>
 				</td>
 			</c:if>
-			<c:if test="${empty outstandingDeliverables}">
-				<td class="myRoleValues" width="40%" align="left" nowrap="nowrap"><bean:message key="viewProjectDetails.NoOutstandingDeliverables" /></td>
-			</c:if>
-			<c:if test="${not empty outstandingDeliverables}">
-				<td class="myRoleValues" width="40%" align="left" nowrap="nowrap">
+
+			<td class="myRoleValues" width="40%" align="left" nowrap="nowrap">
+				<c:if test="${not empty outstandingDeliverables}">
 					<c:forEach items="${outstandingDeliverables}" var="deliverable" varStatus="deliverableStatus">
 						<c:set var="devrStatus" value="${outstandingDeliverableStatuses[deliverableStatus.index]}" />
 						<c:choose>
@@ -145,8 +153,17 @@
 							</c:if>
 						</c:if><br />
 					</c:forEach>
-				</td>
-			</c:if>
+					<br/>
+				</c:if>
+
+				<c:if test="${(empty outstandingDeliverables) and (not unrespondedLateDeliverables)}">
+					<bean:message key="viewProjectDetails.NoOutstandingDeliverables" /><br/><br/>
+				</c:if>
+
+				<c:if test="${unrespondedLateDeliverables}">
+				There are unresponded late deliverables! See the list <html:link page="/actions/${unrespondedLateDeliverablesLink}">here</html:link>.
+				</c:if>
+			</td>
 		</tr>
 		<tr>
 			<td class="lastRowTD" colspan="3"><!-- @ --></td>

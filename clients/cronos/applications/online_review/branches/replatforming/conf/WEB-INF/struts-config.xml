@@ -13,6 +13,8 @@
             <form-property name="userName" type="java.lang.String" />
             <form-property name="password" type="java.lang.String" />
             <form-property name="rememberMe" type="java.lang.String"/>
+
+            <form-property name="loginBtn" type="org.apache.struts.util.ImageButtonBean" />
         </form-bean>
 
         <form-bean name="projectForm" dynamic="true"
@@ -83,17 +85,24 @@
             <form-property name="phase_manual_screening" type="java.lang.Boolean[]" />
             <form-property name="phase_view_appeal_responses" type="java.lang.Boolean[]" />
             <form-property name="phase_scorecard" type="java.lang.Long[]" />
+
+            <form-property name="saveProjectBtn" type="org.apache.struts.util.ImageButtonBean" />
+            <form-property name="saveProjectChangesBtn" type="org.apache.struts.util.ImageButtonBean" />
         </form-bean>
 
         <form-bean name="contactManagerForm" dynamic="true"
             type="org.apache.struts.validator.DynaValidatorForm">
             <form-property name="cat" type="java.lang.String" />
             <form-property name="msg" type="java.lang.String" />
+
+            <form-property name="contactManagerBtn" type="org.apache.struts.util.ImageButtonBean" />
         </form-bean>
 
         <form-bean name="fileUploadForm" dynamic="true"
             type="org.apache.struts.validator.DynaValidatorForm">
             <form-property name="file" type="org.apache.struts.upload.FormFile" />
+
+            <form-property name="uploadBtn" type="org.apache.struts.util.ImageButtonBean" />
         </form-bean>
 
         <form-bean name="specificationUploadForm" dynamic="true"
@@ -101,6 +110,9 @@
             <form-property name="file" type="org.apache.struts.upload.FormFile" />
             <form-property name="specificationType" type="java.lang.String" />
             <form-property name="specificationText" type="java.lang.String" />
+
+            <form-property name="uploadSpecBtn" type="org.apache.struts.util.ImageButtonBean" />
+            <form-property name="submitSpecBtn" type="org.apache.struts.util.ImageButtonBean" />
         </form-bean>
 
         <form-bean name="reviewForm" dynamic="true"
@@ -113,6 +125,11 @@
             <form-property name="comment_type" type="java.util.HashMap" />
             <form-property name="comment" type="java.util.HashMap" />
             <form-property name="file" type="org.apache.struts.upload.FormFile[]" />
+
+            <form-property name="submitReviewBtn" type="org.apache.struts.util.ImageButtonBean" />
+            <form-property name="saveReviewBtn" type="org.apache.struts.util.ImageButtonBean" />
+            <form-property name="editByManagerBtn" type="org.apache.struts.util.ImageButtonBean" />
+            <form-property name="previewReviewBtn" type="org.apache.struts.util.ImageButtonBean" />
         </form-bean>
 
         <form-bean name="approvalForm" dynamic="true"
@@ -127,6 +144,12 @@
             <form-property name="file" type="org.apache.struts.upload.FormFile[]" />
             <form-property name="reject_fixes" type="java.lang.Boolean" />
             <form-property name="accept_but_require_fixes" type="java.lang.Boolean" />
+
+            <form-property name="submitApprovalBtn" type="org.apache.struts.util.ImageButtonBean" />
+            <form-property name="saveApprovalBtn" type="org.apache.struts.util.ImageButtonBean" />
+            <form-property name="saveApprovalByManagerBtn" type="org.apache.struts.util.ImageButtonBean" />
+            <form-property name="previewApprovalBtn" type="org.apache.struts.util.ImageButtonBean" />
+
         </form-bean>
 
         <form-bean name="aggregationForm" dynamic="true"
@@ -136,6 +159,10 @@
             <form-property name="aggregator_response" type="java.lang.String[]" />
             <form-property name="aggregator_response_type" type="java.lang.Long[]" />
             <form-property name="aggregate_function" type="java.lang.String[]" />
+
+            <form-property name="submitAggBtn" type="org.apache.struts.util.ImageButtonBean" />
+            <form-property name="saveAggBtn" type="org.apache.struts.util.ImageButtonBean" />
+            <form-property name="previewAggBtn" type="org.apache.struts.util.ImageButtonBean" />
         </form-bean>
 
         <form-bean name="aggregationReviewForm" dynamic="true"
@@ -144,6 +171,9 @@
             <form-property name="save" type="java.lang.String" />
             <form-property name="review_function" type="java.lang.String[]" />
             <form-property name="reject_reason" type="java.lang.String[]" />
+
+            <form-property name="submitAggReviewBtn" type="org.apache.struts.util.ImageButtonBean" />
+            <form-property name="saveAggReviewBtn" type="org.apache.struts.util.ImageButtonBean" />
         </form-bean>
 
         <form-bean name="finalReviewForm" dynamic="true"
@@ -153,6 +183,10 @@
             <form-property name="fix_status" type="java.lang.String[]" />
             <form-property name="final_comment" type="java.lang.String[]" />
             <form-property name="approve_fixes" type="java.lang.Boolean" />
+
+            <form-property name="submitFinalReviewBtn" type="org.apache.struts.util.ImageButtonBean" />
+            <form-property name="saveFinalReviewBtn" type="org.apache.struts.util.ImageButtonBean" />
+            <form-property name="preivewFinalReviewBtn" type="org.apache.struts.util.ImageButtonBean" />
         </form-bean>
 
         <form-bean name="specificationReviewForm" dynamic="true"
@@ -166,6 +200,11 @@
             <form-property name="comment" type="java.util.HashMap" />
             <form-property name="file" type="org.apache.struts.upload.FormFile[]" />
             <form-property name="approve_specification" type="java.lang.Boolean" />
+
+            <form-property name="submitSpecReviewBtn" type="org.apache.struts.util.ImageButtonBean" />
+            <form-property name="saveSpecReviewBtn" type="org.apache.struts.util.ImageButtonBean" />
+            <form-property name="saveSpecReviewByManagerBtn" type="org.apache.struts.util.ImageButtonBean" />
+            <form-property name="previewSpecReviewBtn" type="org.apache.struts.util.ImageButtonBean" />
         </form-bean>
 
         <!-- OR Project Linking Assembly -->
@@ -180,6 +219,9 @@
             <form-property name="link_dest_id" type="java.lang.Long[]" />
             <form-property name="link_type_id" type="java.lang.Long[]" />
             <form-property name="link_action" type="java.lang.String[]" />
+
+            <form-property name="saveProjectLinksBtn" type="org.apache.struts.util.ImageButtonBean" />
+
         </form-bean>
 
         <!-- Online Review Project Management Console Assembly v1.0 -->
@@ -191,6 +233,8 @@
             <form-property name="resource_handles" type="java.lang.String[]" />
             <form-property name="registration_phase_extension" type="java.lang.String" />
             <form-property name="submission_phase_extension" type="java.lang.String" />
+
+            <form-property name="savePMCChangesBtn" type="org.apache.struts.util.ImageButtonBean" />
         </form-bean>
         
         <!-- Upload Distribution Form -->
@@ -210,6 +254,37 @@
             <form-property name="return_distribution" type="java.lang.Boolean" initial="false" />
 
             <form-property name="distribution_file" type="org.apache.struts.upload.FormFile" />
+
+            <form-property name="uploadDistBtn" type="org.apache.struts.util.ImageButtonBean" />
+            <form-property name="generateBtn" type="org.apache.struts.util.ImageButtonBean" />
+        </form-bean>
+
+        <!-- Late Deliverable Search form -->
+        <form-bean name="lateDeliverableSearchForm" dynamic="true" type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="project_id" type="java.lang.String" />
+            <form-property name="tcd_project_id" type="java.lang.String" />
+            <form-property name="explanation_status" type="java.lang.String" />
+            <form-property name="response_status" type="java.lang.String" />
+            <form-property name="min_deadline" type="java.lang.String" />
+            <form-property name="max_deadline" type="java.lang.String" />
+            <form-property name="project_categories" type="java.lang.Long[]" />
+            <form-property name="project_statuses" type="java.lang.Long[]" />
+            <form-property name="deliverable_types" type="java.lang.String[]" />
+            <form-property name="forgiven" type="java.lang.String" />
+            <form-property name="handle" type="java.lang.String" />
+
+            <form-property name="searchLDBtn" type="org.apache.struts.util.ImageButtonBean" />
+            <form-property name="clearSearchLDBtn" type="org.apache.struts.util.ImageButtonBean" />
+        </form-bean>
+
+        <!-- Late Deliverable Edit form -->
+        <form-bean name="lateDeliverableEditForm" dynamic="true" type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="late_deliverable_id" type="java.lang.Long" />
+            <form-property name="forgiven" type="java.lang.Boolean" />
+            <form-property name="explanation" type="java.lang.String" />
+            <form-property name="response" type="java.lang.String" />
+
+            <form-property name="saveLateDeliverableBtn" type="org.apache.struts.util.ImageButtonBean" />
         </form-bean>
 
     </form-beans>
@@ -876,6 +951,37 @@
             name="specificationReviewForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/viewSpecificationReview.jsp" redirect="false"/>
+        </action>
+
+    <!--
+        =====  Late Deliverables Actions  =====
+    -->
+
+        <!-- "View Late Deliverbales" action -->
+        <action path="/actions/ViewLateDeliverables" unknown="false"
+            type="com.cronos.onlinereview.actions.LateDeliverablesActions"
+            parameter="method" scope="request"
+            name="lateDeliverableSearchForm"
+            input="/jsp/viewLateDeliverables.jsp">
+            <forward name="success" path="/jsp/viewLateDeliverables.jsp" redirect="false" />
+        </action>
+
+        <!-- "Edit Late Deliverbale" action -->
+        <action path="/actions/EditLateDeliverable" unknown="false"
+            type="com.cronos.onlinereview.actions.LateDeliverablesActions"
+            parameter="method" scope="request"
+            name="lateDeliverableEditForm"
+            input="/jsp/viewLateDeliverables.jsp">
+            <forward name="success" path="/jsp/editLateDeliverable.jsp" redirect="false" />
+        </action>
+
+        <!-- "Save Late Deliverbale" action -->
+        <action path="/actions/SaveLateDeliverable" unknown="false"
+            type="com.cronos.onlinereview.actions.LateDeliverablesActions"
+            parameter="method" scope="request"
+            name="lateDeliverableEditForm"
+            input="/jsp/editLateDeliverable.jsp">
+            <forward name="success" path="/actions/EditLateDeliverable.do?method=editLateDeliverable" redirect="true"/>
         </action>
 
         <!--

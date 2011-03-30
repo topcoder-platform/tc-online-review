@@ -21,7 +21,6 @@
 @database.username@=informix
 @database.password@=1nf0rm1x
 @database.INFORMIXSERVER@=informixoltp_tcp
-@database.locale@=en_us.utf8
 
 # typical VM configuration
 #@database.server@=env.topcoder.com
@@ -149,13 +148,16 @@
 ############################################
 @tests.username@=heffan
 @tests.password@=password
-@tests.projectlink@=/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=
-@tests.baseurl@=http://localhost:8080/review
+@tests.baseurl@=http://localhost:8081/review
 @tests.seleniumport@=5555
 @tests.seleniumbrowser@=*chrome
 @tests.seleniumdomain@=http://localhost:8080
-@tests.distributionurl@=<<online_review_trunk>>/test_files/Test_Distribution.jar
+@tests.filespath@=<<online_review_trunk>>/test_files
 @tests.browserspeed@=0
+@tests.competitorusername@=user
+@tests.competitoruserpassword@=password
+@tests.competitoruserid@=132458
+@tests.timeout@=5000
 
 #####################################
 # Parameters specific to Auto Pilot #
@@ -167,8 +169,6 @@
 @auto_pilot_running_file@=<<path to running file>>
 # A path to log file for Auto Pilot
 @auto_pilot_log_file@=<<path_to_log_file>>
-# A path to directory with email templates for Auto Pilot
-@auto_pilot_templates_dir@=<<path_to_directory_with_email_templates>>
 # An interval (in minutes) between Auto Pilot job executions
 @auto_pilot_poll_interval@=<<interval between job executions>>
 
@@ -179,8 +179,6 @@
 #@auto_pilot_running_file@=/home/tcs/temp_files/auto_pilot_running.txt
 # A path to log file for Auto Pilot
 #@auto_pilot_log_file@=/home/tcs/temp_files/auto_pilot_log.txt
-# A path to directory with email templates for Auto Pilot
-#@auto_pilot_templates_dir@=<<path_to_directory_with_email_templates>>
 
 ##############################################
 # Parameters specific to Auto Screening Tool #
@@ -216,22 +214,14 @@
 ####################################################
 # Parameters specific to Late Deliverables Tracker #
 ####################################################
-# Comma separated list of ID for types of deliverables to track
-# (maps to deliverable_lu.deliverable_id column values)
-@tracked_deliverable_ids@=<<deliverable_ids>>
-# Comma separated list of ID for types of deliverables to email about
-# (maps to deliverable_lu.deliverable_id column values)
-@notification_deliverable_ids@=<<deliverable_ids>>
-# An interval (in seconds) for sending notification emails on late deliverables
-@late_deliverables_notification_interval@=<<number_of_seconds>>
-# A mailbox to send notification emails on late deliverables from
-@late_deliverables_notification_mailbox@=<<mailbox>>
 # A path to file to signal to Late Deliverables Tracker to stop the job
 @late_deliverables_tracker_guard_file@=<<path_to_guard_file>>
 # A path to file to signal to Late Deliverables Tracker that there is another tool instance already running
 @late_deliverables_tracker_running_file@=<<path_to_file_indicating_on_running_job>>
-# An interval (in milliseconds) between Late Deliverables Tracker job executions
-@late_deliverables_tracker_poll_interval@=<<poll_interval>>
+# An interval (in seconds) between Late Deliverables Tracker job executions
+@late_deliverables_tracking_interval@=<<tracking_interval>>
+# An interval (in seconds) between sending PM emails about unresolved late deliverables
+@late_deliverables_pm_notification_interval@=<<pm_notification_interval>>
 # A path to log file for Late Deliverables Tracker
 @late_deliverables_tracker_log_file@=<<path_to_log_file>>
 
