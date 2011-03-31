@@ -2,6 +2,8 @@
 <!DOCTYPE CMConfig [
        <!ENTITY phasesEmailTemplate "@exttemplatesdir@/email_template.txt">
        <!ENTITY winnersEmailTemplate "@exttemplatesdir@/winners_email_template.txt">
+       <!ENTITY milestoneScreeningResultsEmailTemplate "@exttemplatesdir@/milestone_screening_results_email_template.txt">
+       <!ENTITY screeningResultsEmailTemplate "@exttemplatesdir@/screening_results_email_template.txt">
        <!ENTITY managerNotificationEmailTemplatesBase "@exttemplatesdir@">
        <!ENTITY notificationEmailFromAddress "do_not_reply@topcoder.com">
        <!ENTITY smtpServerAuthAddress "@emailengine_smtp_user@">
