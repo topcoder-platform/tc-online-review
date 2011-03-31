@@ -370,6 +370,12 @@ public class ProjectDetailsActions extends DispatchAction {
                 delay += lateDeliverable.getDelay() != null ? lateDeliverable.getDelay() : 0;
             }
             request.setAttribute("myDelay", delay);
+			
+			long paymentPenaltyPercentage = (delay>0 ? 5 : 0) + (delay/3600);
+			if (paymentPenaltyPercentage > 50) {
+			    paymentPenaltyPercentage = 50;
+			}
+            request.setAttribute("paymentPenaltyPercentage", paymentPenaltyPercentage);
         }
 
 
@@ -713,7 +719,7 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformPortMortemReview",
                 Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME)));
-        request.setAttribute("isAllowedToPay", Boolean.valueOf(isAllowedToPay(request, allProjectResources)));
+        request.setAttribute("isAllowedToPay", Boolean.valueOf(isAllowedToPay(request, project, allProjectResources)));
 
         // Checking whether some user is allowed to submit his approval or comments for the
         // Aggregation worksheet needs more robust verification since this check includes a test
@@ -3086,28 +3092,57 @@ public class ProjectDetailsActions extends DispatchAction {
      *
      * @param request
      *            the http servlet request
+     * @param project
+     *            Project instance
      * @param allProjectResources
      *            the array of all resources of this project.
      * @return true to show the 'Pay Project' button in OR, otherwise false.
+     * @throws LateDeliverableManagementException if an unexpected error occurs during retrieving late deliverables
      * @since Online Review Payments and Status Automation Assembly 1.0
      */
-    private static boolean isAllowedToPay(HttpServletRequest request, Resource[] allProjectResources) {
+    private static boolean isAllowedToPay(HttpServletRequest request, Project project, Resource[] allProjectResources)
+        throws LateDeliverableManagementException {
         boolean hasUserPermission = AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PAYMENT_PERM_NAME);
 
         if (!hasUserPermission) {
             return false;
         }
 
+        LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager(request);
+        List<Filter> filters = new ArrayList<Filter>();
+        filters.add(LateDeliverableFilterBuilder.createProjectIdFilter(project.getId()));
+        filters.add(LateDeliverableFilterBuilder.createForgivenFilter(false));
+        List<LateDeliverable> lateDeliverables = lateDeliverableManager.searchAllLateDeliverables(new AndFilter(filters));
+
+        Set<Long> pendingResources = new HashSet<Long>();
+        for(LateDeliverable lateDeliverable : lateDeliverables) {
+            Date explanationDeadline = ActionsHelper.explanationDeadline(lateDeliverable);
+            boolean pending = (lateDeliverable.getExplanation() != null && lateDeliverable.getResponse() == null) ||
+                (lateDeliverable.getExplanation() == null && explanationDeadline.compareTo(new Date()) > 0);
+
+            if (pending) {
+                pendingResources.add(lateDeliverable.getResourceId());
+            }                                                        
+        }
+
+        Set<String> pendingUsers = new HashSet<String>();
         for (Resource resource : allProjectResources) {
-
-            String paymentStr = (String) resource.getProperty("Payment");
-
-            try {
-            if (paymentStr != null && paymentStr.trim().length() != 0 && Double.parseDouble(paymentStr) > 0
-                    && !"Yes".equals(resource.getProperty("Payment Status"))) {
-                return true;
+            if (pendingResources.contains(resource.getId())) {
+                pendingUsers.add((String) resource.getProperty("External Reference ID"));
             }
+        }
 
+        for (Resource resource : allProjectResources) {
+            try {
+                String paymentStr = (String) resource.getProperty("Payment");
+                if (paymentStr == null || paymentStr.trim().length() == 0 || Double.parseDouble(paymentStr) <= 0) {
+                    continue;
+                }
+
+                String userId = (String) resource.getProperty("External Reference ID");
+                if (!pendingUsers.contains(userId) && !"Yes".equals(resource.getProperty("Payment Status"))) {
+                    return true;
+                }
             } catch (NumberFormatException e) {
                 // the payment string is not double format, we simply ignore it.
                 continue;
