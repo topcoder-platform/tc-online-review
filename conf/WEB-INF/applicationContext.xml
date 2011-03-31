@@ -18,6 +18,9 @@
 
     <bean id="userTermsOfUseLibrary" class="com.cronos.onlinereview.ejblibrary.UserTermsOfUseLibrary"
           scope="singleton"/>
+          
+    <bean id="userPreferencelibrary" class="com.cronos.onlinereview.ejblibrary.UserPreferencelibrary"
+          scope="singleton"/>          
 
     <bean id="termsOfUseLibrary" class="com.cronos.onlinereview.ejblibrary.TermsOfUseLibrary"/>
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -11,14 +11,15 @@ import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityVali
 import com.topcoder.web.ejb.forums.Forums;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
 import com.topcoder.web.ejb.termsofuse.TermsOfUse;
+import com.topcoder.web.ejb.user.UserPreference;
 import com.topcoder.web.ejb.user.UserTermsOfUse;
 import org.springframework.context.ApplicationContext;
 
 /**
  * <p>A service locator for classes implementing library-style calls to various EJBs.</p>
  *
- * @author isv
- * @version 1.0 (TopCoder Online Review Switch To Local Calls)
+ * @author isv, tangzx
+ * @version 1.1 (TopCoder Online Review Switch To Local Calls)
  */
 public class EJBLibraryServicesLocator {
 
@@ -111,5 +112,19 @@ public class EJBLibraryServicesLocator {
     public static ContestEligibilityValidationManager getContestEligibilityValidationManager() {
         ApplicationContext appContext = SpringContextProvider.getApplicationContext();
         return (ContestEligibilityValidationManager) appContext.getBean("contestEligibilityValidationManagerLibrary");
+    }
+
+    /**
+     * <p>
+     * Gets the library interface to <code>User Preference</code> service.
+     * </p>
+     * 
+     * @return a <code>UserPreference</code> implementation providing
+     *         library-style calls to <code>User Preference EJB</code>.
+     * @since 1.1
+     */
+    public static UserPreference getUserPreference() {
+        ApplicationContext appContext = SpringContextProvider.getApplicationContext();
+        return (UserPreference) appContext.getBean("userPreferencelibrary");
     }
 }

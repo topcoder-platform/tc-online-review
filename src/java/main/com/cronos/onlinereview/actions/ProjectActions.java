@@ -96,9 +96,11 @@ import com.topcoder.search.builder.filter.InFilter;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
 import com.topcoder.shared.util.DBMS;
 import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.web.common.RowNotFoundException;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
 import com.topcoder.web.ejb.termsofuse.TermsOfUse;
 import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
+import com.topcoder.web.ejb.user.UserPreference;
 import com.topcoder.web.ejb.user.UserTermsOfUse;
 
 /**
@@ -275,11 +277,18 @@ public class ProjectActions extends DispatchAction {
      * @since 1.8
      */
     private static final Set<Long> SINGLE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(2L, 8L, 9L, 18L));
+    
+    private final static int GLOBAL_TIMELINE_NOTIFICATION = 29;
 
+    private final static int GLOBAL_FORUM_WATCH = 30;
+    
+    private UserPreference userPreference;
+    
     /**
      * Creates a new instance of the <code>ProjectActions</code> class.
      */
     public ProjectActions() {
+        userPreference = EJBLibraryServicesLocator.getUserPreference();
     }
 
     /**
@@ -1925,6 +1934,10 @@ public class ProjectActions extends DispatchAction {
         Set<Long> deletedUsers = new HashSet<Long>();
         Set<Long> newSubmitters = new HashSet<Long>();
         Set<Long> newUsersForumWatch = new HashSet<Long>();
+        
+        Set<Long> newUsersForNotification = new HashSet<Long>();
+        Set<Long> deletedUsersForNotification = new HashSet<Long>();
+        Set<Long> deletedUsersForForumWatch = new HashSet<Long>();
 
         // 0-index resource is skipped as it is a "dummy" one
         boolean allResourcesValid = true;
@@ -2124,6 +2137,12 @@ public class ProjectActions extends DispatchAction {
                 resource.setProperty("Registration Date", DATE_FORMAT.format(new Date()));
 
                 newUsers.add(user.getId());
+                
+                ResourceRole role = ActionsHelper.findResourceRoleById(
+                        resourceRoles, ((Long) lazyForm.get("resources_role", i)).longValue());
+                if (!role.getName().equals("Observer") || Boolean.parseBoolean(retrieveUserPreference(user.getId(), GLOBAL_TIMELINE_NOTIFICATION))) {
+                    newUsersForNotification.add(user.getId());
+                }
 
                 //System.out.println("ADD:" + user.getId());
             }  else {
@@ -2172,6 +2191,23 @@ public class ProjectActions extends DispatchAction {
                     role.getId());
 
                 resourceRoleChanged = true;
+                
+                if (role.getName().equals("Observer")) {
+                    // change to observer
+                    if (!Boolean.parseBoolean(retrieveUserPreference(user.getId(), GLOBAL_TIMELINE_NOTIFICATION))) {
+                        deletedUsersForNotification.add(user.getId());
+                    }
+                    
+                    if (!Boolean.parseBoolean(retrieveUserPreference(user.getId(), GLOBAL_FORUM_WATCH))) {
+                        deletedUsersForForumWatch.add(user.getId());
+                    }
+                }
+                if (resource.getResourceRole().getName().equals("Observer")) {
+                    // change from observer to other role
+                    // add forum watch & notification anyway
+                    newUsersForumWatch.add(user.getId());
+                    newUsersForNotification.add(user.getId());
+                }
             }
             resource.setResourceRole(role);
 
@@ -2227,7 +2263,11 @@ public class ProjectActions extends DispatchAction {
                         !resource.getProperty("Handle").equals("Components") &&
                         !resource.getProperty("Handle").equals("LCSUPPORT"))
                     {
-                        newUsersForumWatch.add(user.getId());
+                        if (!resourceRole.equals("Observer")
+                                || Boolean.parseBoolean(retrieveUserPreference(
+                                        user.getId(), GLOBAL_FORUM_WATCH))) {
+                            newUsersForumWatch.add(user.getId());
+                        }
                     }
 
                 }
@@ -2266,11 +2306,20 @@ public class ProjectActions extends DispatchAction {
         // BUGR-2807: Update project_result.payment for submitters
         ActionsHelper.updateSubmitterPayments(project.getId(), submitterPayments);
 
+        // delete timeline notifications
+        long[] idsToDeletedForNotification = new long[deletedUsersForNotification.size()];
+        int k = 0;
+        for (long id : deletedUsersForNotification) {
+            idsToDeletedForNotification[k++] = id; 
+        }
+        resourceManager.removeNotifications(idsToDeletedForNotification, project.getId(),
+                timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        
         // Update all the timeline notifications
-        if (project.getProperty("Timeline Notification").equals("On") && !newUsers.isEmpty()) {
+        if (project.getProperty("Timeline Notification").equals("On") && !newUsersForNotification.isEmpty()) {
             // Remove duplicated user ids
             long[] existUserIds = resourceManager.getNotifications(project.getId(), timelineNotificationId);
-            Set<Long> finalUsers = new HashSet<Long>(newUsers);
+            Set<Long> finalUsers = new HashSet<Long>(newUsersForNotification);
 
             for (int i = 0; i < existUserIds.length; i++) {
                 finalUsers.remove(existUserIds[i]);
@@ -2279,7 +2328,7 @@ public class ProjectActions extends DispatchAction {
             finalUsers.remove(22770213); // Applications user
             finalUsers.remove(22719217); // Components user
             finalUsers.remove(22873364); // LCSUPPORT user
-
+            
             long[] userIds = new long[finalUsers.size()];
             int i = 0;
             for (Long id : finalUsers) {
@@ -2306,6 +2355,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         ActionsHelper.removeForumWatch(project, deletedUsers, forumId);
+        ActionsHelper.removeForumWatch(project, deletedUsersForForumWatch, forumId);
         ActionsHelper.addForumWatch(project, newUsersForumWatch, forumId);
     }
 
@@ -3412,5 +3462,26 @@ public class ProjectActions extends DispatchAction {
                         Boolean.valueOf("Yes".equals(phases[i].getAttribute("View Response During Appeals"))));
             }
         }
+    }
+    
+    private String retrieveUserPreference(long userId, int preferenceId) throws BaseException {
+        String value;
+        
+        try {
+            value = userPreference.getValue(userId, preferenceId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+            
+            //System.out.println("----------------------------------");
+            //System.out.println("Find preference " + preferenceId + " of user " + userId + " : " + value);
+            //System.out.println("----------------------------------");
+        } catch (RowNotFoundException e) {
+            value = "false";
+            //System.out.println("----------------------------------");
+            //System.out.println("Can't find preference " + preferenceId + " of user " + userId + ", use 'false' instead.");
+            //System.out.println("----------------------------------");
+        } catch (RemoteException e) {
+            throw new BaseException("Fail to retrieve user preference data", e);
+        }
+        
+        return value;
     }
 }
