@@ -78,15 +78,18 @@
                     </c:if>
                     <c:if test="${isAllowedToViewPayment}">
                         <tr>
-                            <th class="value roleHeader"><bean:message key="viewProjectDetails.TotalPayment"/></th>
+                            <th class="value roleHeader" nowrap="nowrap"><bean:message key="viewProjectDetails.TotalPayment"/></th>
                             <td class="value" colspan=2>
                                 ${"$"}${orfn:displayPaymentAmt(pageContext.request, requestScope.totalPayment)}
+                                <c:if test="${(paymentPenaltyPercentage ne null) and (paymentPenaltyPercentage>0)}">
+                                    (-${paymentPenaltyPercentage}% due to the delay)
+                                </c:if>
                             </td>
                         </tr>
                     </c:if>
                     <c:if test="${(myDelay ne null) and (myDelay>0)}">
                         <tr>
-                            <th class="value roleHeader"><bean:message key="viewProjectDetails.TotalDelay"/></th>
+                            <th class="value roleHeader" nowrap="nowrap"><bean:message key="viewProjectDetails.TotalDelay"/></th>
                             <td class="value" colspan=2><c:out value="${orfn:displayDelay(myDelay)}"/></td>
                         </tr>
                     </c:if>
