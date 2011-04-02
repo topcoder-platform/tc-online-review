@@ -11,7 +11,7 @@
        <!ENTITY timelineTemplateDir "@exttemplatesdir@">
        <!ENTITY contactManagersTemplate "@exttemplatesdir@/contact_manager_template.txt">
        <!ENTITY managerNotificationEmailTemplatesBase "@exttemplatesdir@">
-       <!ENTITY notificationEmailFromAddress "@emailengine_smtp_user@">
+       <!ENTITY notificationEmailFromAddress "@notificationEmailFromAddress@">
        <!ENTITY smtpServerAuthAddress "@emailengine_smtp_user@">
        <!ENTITY pactJNDIAddress "@pactJNDIAddress@">
        <!ENTITY lateDeliverableUpdatedByManagerTemplate "@exttemplatesdir@/late_deliverable_updated_by_manager_template.txt">

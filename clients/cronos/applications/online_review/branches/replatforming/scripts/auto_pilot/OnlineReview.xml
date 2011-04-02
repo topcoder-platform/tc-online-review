@@ -5,7 +5,7 @@
        <!ENTITY milestoneScreeningResultsEmailTemplate "@exttemplatesdir@/milestone_screening_results_email_template.txt">
        <!ENTITY screeningResultsEmailTemplate "@exttemplatesdir@/screening_results_email_template.txt">
        <!ENTITY managerNotificationEmailTemplatesBase "@exttemplatesdir@">
-       <!ENTITY notificationEmailFromAddress "@emailengine_smtp_user@">
+       <!ENTITY notificationEmailFromAddress "@notificationEmailFromAddress@">
        <!ENTITY smtpServerAuthAddress "@emailengine_smtp_user@">
        <!ENTITY pactJNDIAddress "@pactJNDIAddress@">
 ]>
