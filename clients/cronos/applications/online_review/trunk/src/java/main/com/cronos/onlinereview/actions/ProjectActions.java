@@ -936,6 +936,9 @@ public class ProjectActions extends DispatchAction {
         // Populate project rated option, note that it is inverted
         project.setProperty("Rated", (doNotRateProject) ? "No" : "Yes");
 
+        if (lazyForm.get("notes") != null && lazyForm.get("notes").toString().length() > 255) {
+            ActionsHelper.addErrorToRequest(request, "notes", "error.com.cronos.onlinereview.actions.editProject.notes.MaxExceeded");
+        }
         // Populate project notes
         project.setProperty("Notes", lazyForm.get("notes"));
 

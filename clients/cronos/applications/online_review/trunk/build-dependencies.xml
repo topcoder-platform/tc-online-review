@@ -260,7 +260,7 @@
     <property name="object_factory_configuration_api_plugin.jar"
               value="${tcs_libdir}/${object_factory_configuration_api_plugin.path}/${object_factory_configuration_api_plugin.jar.name}"/>
 
-    <property name="online_review_ajax_support.version" value="1.0.2"/>
+    <property name="online_review_ajax_support.version" value="1.0.3"/>
     <property name="online_review_ajax_support.jar.name" value="online_review_ajax_support.jar"/>
     <property name="online_review_ajax_support.path"
               value="online_review_ajax_support/${online_review_ajax_support.version}"/>
