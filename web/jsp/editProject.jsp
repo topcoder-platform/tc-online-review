@@ -1235,6 +1235,7 @@
                             </tr>
                             <tr class="light">
                                 <td class="value">
+                                    <span class="error"><html:errors property="notes" prefix="" suffix="" /></span><br />
                                     <html:textarea styleClass="inputTextBox" property="notes" />
                                     <div id="notes_validation_msg" style="display:none;" class="error"></div>
                                 </td>

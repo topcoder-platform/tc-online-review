@@ -160,6 +160,11 @@ public class ProjectReviewActions extends DispatchAction {
     private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory
             .getLog(ProjectReviewActions.class.getName());
 
+    /**
+     * The maximum size of the comment length.
+     */
+    private static final int MAX_COMMENT_LENGTH = 4096;
+
     private static final long ACTIVE_SCORECARD = 1;
 
     /**
@@ -4479,15 +4484,14 @@ public class ProjectReviewActions extends DispatchAction {
 
                     validateScorecardItemAnswer(request, question, item, itemIdx);
 
-                    // Skip the rest of the validation for Manager edits
                     if (managerEdit) {
-                        continue;
-                    }
-
-                    validateScorecardComments(request, item, itemIdx);
-                    if (question.isUploadDocument()) {
-                        validateScorecardItemUpload(request, question, item, fileIdx++);
-                    }
+					    validateManagerComments(request, item, itemIdx);
+                    } else {
+                        validateScorecardComments(request, item, itemIdx);
+                        if (question.isUploadDocument()) {
+                            validateScorecardItemUpload(request, question, item, fileIdx++);
+                        }
+					}
                 }
             }
         }
@@ -4551,11 +4555,20 @@ public class ProjectReviewActions extends DispatchAction {
                                     commentType.equalsIgnoreCase("Recommended")) {
                                 validateAggregateFunction(request, item.getComment(j), commentIdx++);
                             }
-                            /* Request from David Messinger [11/06/2006]:
-                               No need to verify presence of comments
+							
                             if (commentType.equalsIgnoreCase("Aggregation Comment")) {
+                                /* Request from David Messinger [11/06/2006]:
+                                   No need to verify presence of comments
                                 validateScorecardComment(request, comment, "aggregator_response[" + itemIdx + "]");
-                            }*/
+								*/
+								
+								// But we still need to verify comment's maximum length.
+                                String commentText = comment.getComment();
+                                if (commentText != null && commentText.length() > MAX_COMMENT_LENGTH) {
+                                    ActionsHelper.addErrorToRequest(request, "aggregator_response[" + itemIdx + "]",
+									    "Error.saveAggregation.Comment.MaxExceeded");
+                                }								
+                            }
                         }
                     }
                 }
@@ -4726,17 +4739,17 @@ public class ProjectReviewActions extends DispatchAction {
                             }
 
                             ++itemIdx;
-                            if (!notFixed || !required) {
-                                break; // Everything's good
-                            }
-
                             String commentText = comment.getComment();
 
                             if (commentText == null || commentText.trim().length() == 0) {
+							    if (notFixed && required) {
+                                    ActionsHelper.addErrorToRequest(request, "final_comment[" + itemIdx + "]",
+                                            "Error.saveFinalReview.Response.Absent");
+								}
+                            } else if (commentText.length() > MAX_COMMENT_LENGTH) {
                                 ActionsHelper.addErrorToRequest(request, "final_comment[" + itemIdx + "]",
-                                        "Error.saveFinalReview.Response.Absent");
-                            }
-                            break;
+                                        "Error.saveFinalReview.Comment.MaxExceeded");
+                            }								
                         }
                     }
                 }
@@ -4841,9 +4854,6 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     *
-     *
-     * @return
      * @param request
      * @param item
      * @param itemNum
@@ -4852,7 +4862,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             <code>null</code>, or if <code>itemNum</code> parameter is negative (less
      *             than zero).
      */
-    private static boolean validateScorecardComments(HttpServletRequest request, Item item, int itemNum) {
+    private static void validateScorecardComments(HttpServletRequest request, Item item, int itemNum) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(request, "request");
         ActionsHelper.validateParameterNotNull(item, "item");
@@ -4870,30 +4880,50 @@ public class ProjectReviewActions extends DispatchAction {
         if (noCommentsEntered) {
             ActionsHelper.addErrorToRequest(request,
                     "comment(" + itemNum + ".1)", "Error.saveReview.Comment.AtLeastOne");
-            return false;
+            return;
         }
-
-        // Success indicator
-        boolean success = true;
 
         for (int i = 0; i < item.getNumberOfComments(); ++i) {
             Comment comment = item.getComment(i);
 
             if (ActionsHelper.isReviewerComment(comment)) {
-                if (!validateScorecardComment(request, comment, "comment(" + itemNum + "." + (i + 1) + ")")) {
-                    success = false;
+                validateScorecardComment(request, comment, "comment(" + itemNum + "." + (i + 1) + ")");
+            }
+        }
+    }
+
+    /**
+     * @param request
+     * @param item
+     * @param itemNum
+     * @throws IllegalArgumentException
+     *             if <code>request</code> or <code>item</code> parameters are
+     *             <code>null</code>, or if <code>itemNum</code> parameter is negative (less
+     *             than zero).
+     */
+    private static void validateManagerComments(HttpServletRequest request, Item item, int itemNum) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(request, "request");
+        ActionsHelper.validateParameterNotNull(item, "item");
+        ActionsHelper.validateParameterInRange(itemNum, "itemNum", 0, Integer.MAX_VALUE);
+
+        int managerCommentIdx = 0;
+        for (int i = 0; i < item.getNumberOfComments(); ++i) {
+            Comment comment = item.getComment(i);
+            if (ActionsHelper.isManagerComment(comment)) {
+                managerCommentIdx++;
+                if (comment.getComment() != null && comment.getComment().length() > MAX_COMMENT_LENGTH) {
+                    ActionsHelper.addErrorToRequest(request, "comment(" + itemNum + "." + managerCommentIdx + ")",
+                            "Error.saveReview.Comment.MaxExceeded");
                 }
             }
         }
-
-        return success;
     }
 
     /**
      * This static method validates single comment at a time. The comment must have its text to be
      * non-null and non-empty string to be regarded as passing validation.
      *
-     * @return <code>true<code> if validation succeeds, <code>false</code> if it doesn't.
      * @param request
      *            an <code>HttpServletRequest</code> object where validation error messages will
      *            be placed to in case there are any.
@@ -4907,7 +4937,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             <code>errorMessageProperty</code> are <code>null</code>, or if parameter
      *             <code>errorMessageProperty</code> is empty string.
      */
-    private static boolean validateScorecardComment(
+    private static void validateScorecardComment(
             HttpServletRequest request, Comment comment, String errorMessageProperty) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(request, "request");
@@ -4917,10 +4947,9 @@ public class ProjectReviewActions extends DispatchAction {
         String commentText = comment.getComment();
         if (commentText == null || commentText.trim().length() == 0) {
             ActionsHelper.addErrorToRequest(request, errorMessageProperty, "Error.saveReview.Comment.Absent");
-            return false;
+        } else if (commentText.length() > MAX_COMMENT_LENGTH) {
+            ActionsHelper.addErrorToRequest(request, errorMessageProperty, "Error.saveReview.Comment.MaxExceeded");
         }
-
-        return true;
     }
 
     /**
