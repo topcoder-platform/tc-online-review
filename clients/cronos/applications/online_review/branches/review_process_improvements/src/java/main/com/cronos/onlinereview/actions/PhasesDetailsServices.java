@@ -1533,6 +1533,7 @@ final class PhasesDetailsServices {
                     continue;
                 }
 
+                int resolvedAppeals = 0;
                 for (int itemIdx = 0; itemIdx < review.getNumberOfItems(); ++itemIdx) {
                     Item item = review.getItem(itemIdx);
                     for (int commentIdx = 0; commentIdx < item.getNumberOfComments(); ++commentIdx) {
@@ -1541,10 +1542,11 @@ final class PhasesDetailsServices {
                             ++innerTotalAppeals[j];
                         }
                         if (commentType.equalsIgnoreCase("Appeal Response")) {
-                            ++innerUnresolvedAppeals[j];
+                            ++resolvedAppeals;
                         }
                     }
                 }
+                innerUnresolvedAppeals[j] = innerTotalAppeals[j] - resolvedAppeals;
             }
 
             totalAppeals[i] = innerTotalAppeals;

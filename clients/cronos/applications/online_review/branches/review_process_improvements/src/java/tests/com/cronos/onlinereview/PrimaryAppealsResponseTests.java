@@ -138,7 +138,7 @@ public class PrimaryAppealsResponseTests extends ProjectTests {
         assertTrue("The user should see all the reviews.", text.contains("lightspeed"));
         assertTrue("The user should see all the reviews.", text.contains("Yoshi"));
         assertTrue("The user should see all the reviews.", text.contains("100.0"));
-        assertTrue("The user should see the appeal status.", text.contains("0 / 1"));
+        assertTrue("The user should see the appeal status.", text.contains("1 / 1"));
         assertTrue("The user should see the appeal status.", text.contains("0 / 0"));
     }
 
@@ -157,7 +157,7 @@ public class PrimaryAppealsResponseTests extends ProjectTests {
         assertTrue("The user should see his review.", text.contains("lightspeed"));
         assertFalse("The user can not see other review.", text.contains("Yoshi"));
         assertTrue("The user should see the review score.", text.contains("100.0"));
-        assertTrue("The user should see the appeal status.", text.contains("0 / 1"));
+        assertTrue("The user should see the appeal status.", text.contains("1 / 1"));
     }
 
     /**
@@ -175,7 +175,7 @@ public class PrimaryAppealsResponseTests extends ProjectTests {
         assertTrue("The user should see all the reviews.", text.contains("lightspeed"));
         assertTrue("The user should see all the reviews.", text.contains("Yoshi"));
         assertTrue("The user should see the review score.", text.contains("100.0"));
-        assertTrue("The user should see the appeal status.", text.contains("0 / 2"));
+        assertTrue("The user should see the appeal status.", text.contains("2 / 2"));
         assertTrue("The user should see the appeal status.", text.contains("0 / 0"));
     }
 
@@ -200,7 +200,7 @@ public class PrimaryAppealsResponseTests extends ProjectTests {
         browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
         String text = browser.getText("//div[@id='sc4']/table/tbody/");
         // all the appeals should have response
-        assertTrue("The user should see the appeal status.", text.contains("2 / 2"));
+        assertTrue("The user should see the appeal status.", text.contains("0 / 2"));
         // the score was changed from 100.0 to 75.0
         assertTrue("The review score should be changed.", text.contains("75.0"));
 

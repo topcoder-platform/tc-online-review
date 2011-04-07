@@ -200,7 +200,7 @@ public class NewAppealsTests extends ProjectTests {
         browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
         String text = browser.getText("//div[@id='sc4']/table/tbody/");
         // the appeals text should be submitted
-        assertTrue("The user should see the appeal status.", text.contains("0 / 1"));
+        assertTrue("The user should see the appeal status.", text.contains("1 / 1"));
 
         assertNoErrorsOccurred();
     }
@@ -226,7 +226,7 @@ public class NewAppealsTests extends ProjectTests {
         browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
         String text = browser.getText("//div[@id='sc4']/table/tbody/");
         // the appeals text should be submitted
-        assertTrue("The user should see the appeal status.", text.contains("0 / 1"));
+        assertTrue("The user should see the appeal status.", text.contains("1 / 1"));
 
         assertNoErrorsOccurred();
     }
