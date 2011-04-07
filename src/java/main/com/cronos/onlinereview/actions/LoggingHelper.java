@@ -7,9 +7,14 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cronos.onlinereview.external.ExternalUser;
+import com.cronos.onlinereview.external.RetrievalException;
+import com.cronos.onlinereview.external.UserRetrieval;
+
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
 import com.topcoder.util.log.LogFactory;
+
 
 /**
  * This class provides helper methods for logging some certain application's activity. This might
@@ -51,6 +56,43 @@ final class LoggingHelper {
     	String rid = request.getParameter("rid");
     	String sid = request.getParameter("sid");
     	long uid = AuthorizationHelper.getLoggedInUserId(request);
+
+        String handle = "";
+        try
+        {
+             UserRetrieval usrMgr = ActionsHelper.createUserRetrieval(request);
+            // Get External User object for the currently logged in user
+            ExternalUser extUser = usrMgr.retrieveUser(AuthorizationHelper.getLoggedInUserId(request));
+            handle = extUser.getHandle();
+
+        }
+        catch (Exception e)
+        {
+    
+        }
+       
+        String servletPath = request.getContextPath() + request.getServletPath();
+        String query = request.getQueryString();
+        String queryString = (query == null) ? ("") : ("?" + query);
+        StringBuffer buf = new StringBuffer(200);
+        buf.append(request.getScheme()+"://");        
+        buf.append(request.getServerName());
+        buf.append(servletPath);
+        buf.append(queryString);
+        String requestString = buf.toString();
+
+
+        StringBuffer loginfo = new StringBuffer(100);
+                loginfo.append("[* ");
+                loginfo.append(handle);
+                loginfo.append(" * ");
+                loginfo.append(request.getRemoteAddr());
+                loginfo.append(" * ");
+                loginfo.append(request.getMethod());
+                loginfo.append(" ");
+                loginfo.append(requestString);
+                loginfo.append(" *]");
+                logger.log(Level.INFO, loginfo.toString());
 
     	StringBuffer sb = new StringBuffer();
     	sb.append(dateFormat.format(new Date())).append(" - ");
