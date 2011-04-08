@@ -1277,6 +1277,35 @@ public class ProjectDetailsActions extends DispatchAction {
             noRights = false;
         }
 
+        // For the Submitters we only allow to download other's submissions if the user has at least passed screening.
+        if (noRights && AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) {
+            // Get all submissions for the project that passed screening.
+            Submission[] submissions = ActionsHelper.searchReviewedContestSubmissions(request, verification.getProject());
+
+            // Get all submissions for this user.
+            Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.SUBMITTER_ROLE_NAME);
+            UploadManager upMgr = ActionsHelper.createUploadManager(request);
+            Long[] subIds = resource.getSubmissions();
+			
+            // Check that the user has a submission that passed screening.
+            // We don't need to check the current phase because if it is still prior to the Appeals Response
+            // the user won't be able to download other's submissions anyway.
+            boolean passedScreening = false;
+            for (Long id : subIds) {
+                for (Submission submission : submissions) {
+                    if (submission.getId() == id) {
+                        passedScreening = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!passedScreening) {
+                return ActionsHelper.produceErrorReport(
+                        mapping, getResources(request), request, "ViewSubmission", "Error.NoScreeningPassed", null);
+            }
+        }
+
         // the download validation for custom components is different
         String rootCatalogId = (String)((verification.getProject()).getProperty("Root Catalog ID"));
         boolean custom = ConfigHelper.isCustomRootCatalog(rootCatalogId);
@@ -1581,11 +1610,52 @@ public class ProjectDetailsActions extends DispatchAction {
             return verification.getForward();
         }
 
-        // Check that user has permissions to download Final Fixes
-        if (!AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME)) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
+        boolean hasPermission = false, hasSubmitterRole = false;
+        String[] roles = ConfigHelper.getRolesForPermission(Constants.DOWNLOAD_FINAL_FIX_PERM_NAME);
+        for (int i = 0; i < roles.length; ++i) {
+            if (!AuthorizationHelper.hasUserRole(request, roles[i])) {
+              continue;
+            }
+
+           // For the Submitters we only allow to download final fixes if the user has at least passed screening.
+            if (roles[i].equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
+                hasSubmitterRole = true;
+                // Get all submissions for the project that passed screening.
+                Submission[] submissions = ActionsHelper.searchReviewedContestSubmissions(request, verification.getProject());
+
+                // Get all submissions for this user.
+                Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.SUBMITTER_ROLE_NAME);
+                UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                Long[] subIds = resource.getSubmissions();
+				
+                // Check that the user has a submission that passed screening.
+                // We don't need to check the current phase because if there is a final fix submitted
+                // it is already past the Apepals Response anyway.
+                for (Long id : subIds) {
+                    for (Submission submission : submissions) {
+                        if (submission.getId() == id) {
+                            hasPermission = true;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                hasPermission = true;
+                break;
+            }
         }
+
+        if (!hasPermission) {
+            if (hasSubmitterRole) {
+                return ActionsHelper.produceErrorReport(
+                        mapping, getResources(request), request, "ViewSubmission", "Error.NoScreeningPassed", null);
+
+            } else {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                        request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
+            }
+        }
+
         // At this point, redirect-after-login attribute should be removed (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
 
