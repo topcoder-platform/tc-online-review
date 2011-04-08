@@ -750,7 +750,7 @@
     </target>
     
     <target name="compile_component_6">
-        <compile_component component="online_review_deliverables" version="1.0.2"
+        <compile_component component="online_review_deliverables" version="1.0.3"
                            path="${replatforming_components_path}/online_review_deliverables"/>
     </target>
 
