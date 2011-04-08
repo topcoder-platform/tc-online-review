@@ -5491,7 +5491,6 @@
                 <Value>Manager</Value>
                 <Value>Cockpit Project User</Value>
                 <Value>Approver</Value>
-                <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
                 <Value>Observer</Value>		
@@ -5501,7 +5500,6 @@
                 <Value>Manager</Value>
                 <Value>Cockpit Project User</Value>
                 <Value>Approver</Value>
-                <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
                 <Value>Observer</Value>
@@ -5542,9 +5540,6 @@
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Designer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
-                <Value>Observer</Value>			
             </Property>
             <Property name="View Most Recent after Appeals Response">
                 <Value>Submitter</Value>
