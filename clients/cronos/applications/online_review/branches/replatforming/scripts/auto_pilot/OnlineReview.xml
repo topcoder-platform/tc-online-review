@@ -2676,7 +2676,6 @@
                                submission.initial_score,
                                submission.final_score,
                                submission.placement,
-                               submission.feedback_thumb,
                                submission.user_rank,
                                submission.mark_for_purchase,
                                prize.prize_id,
