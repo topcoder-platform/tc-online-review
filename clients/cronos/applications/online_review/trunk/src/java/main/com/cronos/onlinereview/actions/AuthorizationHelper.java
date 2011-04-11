@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2009 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2006-2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -57,8 +57,15 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.3
+ * <p>
+ * Version 1.4 (Online Review Status Validation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Methods adjusted for new signatures of create managers methods from ActionsHelper.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, rac_
+ * @version 1.4
  */
 public class AuthorizationHelper {
 
@@ -263,7 +270,7 @@ public class AuthorizationHelper {
         // Create the main filter for this role-gathering operation
         Filter filter = new AndFilter(filters);
         // Obtain an instance of Resource Manager
-        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+        ResourceManager resMgr = ActionsHelper.createResourceManager();
         // Perform search for resources
         Resource[] resources = ActionsHelper.searchUserResources(getLoggedInUserId(request), null, resMgr);
 
@@ -327,7 +334,7 @@ public class AuthorizationHelper {
         }
 
         // Create an instance of Project Manager
-        ProjectManager projMgr = ActionsHelper.createProjectManager(request);
+        ProjectManager projMgr = ActionsHelper.createProjectManager();
         // Retrieve the project with specified project ID
         Project project = projMgr.getProject(projectId);
 
@@ -348,7 +355,7 @@ public class AuthorizationHelper {
         Filter filter = new AndFilter(filterExtID, filterProject);
 
         // Obtain an instance of Resource Manager
-        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+        ResourceManager resMgr = ActionsHelper.createResourceManager();
         // Perform search for resources
         Resource[] resources = resMgr.searchResources(filter);
         for (int i = 0; i < resources.length; i++) {
@@ -469,7 +476,7 @@ public class AuthorizationHelper {
     /**
      * <p>Gets the cookie manager to be used for authenticating users based on cookie.</p>
      *
-     * @return a <code>AuthCookieManager</code> to be used for user authentication based on cookie. 
+     * @return a <code>AuthCookieManager</code> to be used for user authentication based on cookie.
      * @throws ConfigurationException if an unexpected error occurs while accessing the configuration.
      * @since 1.3
      */

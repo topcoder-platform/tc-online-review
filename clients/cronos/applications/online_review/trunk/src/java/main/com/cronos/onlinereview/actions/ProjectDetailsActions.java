@@ -27,10 +27,6 @@ import org.apache.struts.upload.FormFile;
 import org.apache.struts.util.MessageResources;
 import org.apache.struts.validator.DynaValidatorForm;
 
-import com.cronos.onlinereview.autoscreening.management.ResponseSeverity;
-import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
-import com.cronos.onlinereview.autoscreening.management.ScreeningResult;
-import com.cronos.onlinereview.autoscreening.management.ScreeningTask;
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
@@ -180,8 +176,18 @@ import com.cronos.onlinereview.functions.Functions;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, FireIce
- * @version 1.7
+ * <p>
+ * Version 1.8 (Online Review Status Validation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Methods adjusted for new signatures of create managers methods from ActionsHelper</li>
+ *     <li>Updated {@link #generateDeliverableLinks(HttpServletRequest request,
+            Deliverable[] deliverables, Phase[] phases)}
+ *         to generate link to uploaded final fix, instead of link to upload page again</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, FireIce, rac_
+ * @version 1.8
  */
 public class ProjectDetailsActions extends DispatchAction {
 
@@ -356,7 +362,7 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("wasPaid", ActionsHelper.getMyPaymentStatuses(myResources));
 
         // Retrieve late records for the current user.
-        LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager(request);
+        LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager();
         if (myResources.length > 0) {
             List<Filter> filters = new ArrayList<Filter>();
 
@@ -380,13 +386,13 @@ public class ProjectDetailsActions extends DispatchAction {
 
 
         // Obtain an instance of Resource Manager
-        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+        ResourceManager resMgr = ActionsHelper.createResourceManager();
         // Get an array of all resources for the project
         Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(resMgr, project);
         ActionsHelper.populateEmailProperty(request, allProjectResources);
 
         // Obtain an instance of Phase Manager
-        PhaseManager phaseMgr = ActionsHelper.createPhaseManager(request, false);
+        PhaseManager phaseMgr = ActionsHelper.createPhaseManager(false);
         com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(project.getId());
         Phase[] phases;
 
@@ -412,7 +418,7 @@ public class ProjectDetailsActions extends DispatchAction {
         Phase approvalPhase = ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME);
         if (approvalPhase != null) {
             ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
-            ScorecardType[] allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+            ScorecardType[] allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
             ScorecardType scorecardType = ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Approval");
 
             for (int i = 0; i < deliverables.length; i++) {
@@ -541,8 +547,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
             String phaseTypeName = phase.getPhaseType().getName();
             // Get a scorecard template associated with this phase if any
-            Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(ActionsHelper
-                    .createScorecardManager(request), phase);
+            Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(ActionsHelper.createScorecardManager(), phase);
             // If there is a scorecard template for the phase, store it in the list
             if (scorecardTemplate != null) {
                 // override the previous scorecard, here assume the phases are ordered sequentially.
@@ -764,7 +769,7 @@ public class ProjectDetailsActions extends DispatchAction {
                         || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)));
 
         //OR Project Linking Assembly
-        ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager(request);
+        ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager();
         request.setAttribute("destProjectLinks", linkManager.getDestProjectLinks(project.getId()));
         request.setAttribute("srcProjectLinks", linkManager.getSourceProjectLinks(project.getId()));
 
@@ -883,10 +888,10 @@ public class ProjectDetailsActions extends DispatchAction {
         for (int i = 0; i < managerEmails.size(); ++i) {
             message.addToAddress(managerEmails.get(i), TCSEmailMessage.TO);
         }
-		
+
         // Add 'BCC' addresses to message (Client Managers wish to keep their email addresses private)
         List<Long> clientManagerUsrIds = ActionsHelper.getUserIDsByRoleNames(request, new String[]{"Client Manager"}, project.getId());
-        List<String> clientManagerEmails = ActionsHelper.getEmailsByUserIDs(request, clientManagerUsrIds);		
+        List<String> clientManagerEmails = ActionsHelper.getEmailsByUserIDs(request, clientManagerUsrIds);
         for (int i = 0; i < clientManagerEmails.size(); ++i) {
             // Don't duplicate addressee.
             if (managerEmails.contains(clientManagerEmails.get(i)) == false) {
@@ -956,7 +961,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Retrieve current project
         Project project = verification.getProject();
         // Get all phases for the current project
-        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
 
         if (ActionsHelper.getPhase(phases, true, Constants.SUBMISSION_PHASE_NAME) == null) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
@@ -991,7 +996,7 @@ public class ProjectDetailsActions extends DispatchAction {
         Resource resource = ActionsHelper.getMyResourceForRole(request, "Submitter");
 
         // Obtain an instance of Upload Manager
-        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        UploadManager upMgr = ActionsHelper.createUploadManager();
         SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
         SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
 
@@ -1034,7 +1039,7 @@ public class ProjectDetailsActions extends DispatchAction {
         upMgr.createUpload(upload, operator);
         upMgr.createSubmission(submission, operator);
         resource.addSubmission(submission.getId());
-        ActionsHelper.createResourceManager(request).updateResource(resource, operator);
+        ActionsHelper.createResourceManager().updateResource(resource, operator);
         log.debug("Allow Multiple Submissions : " + allowOldSubmissions);
         // Now depending on whether the project allows multiple submissions or not mark the old submission
         // and the upload as deleted.
@@ -1048,10 +1053,6 @@ public class ProjectDetailsActions extends DispatchAction {
                 upMgr.updateSubmission(oldSubmission, operator);
             }
         }
-
-        // Obtain an instance of Screening Manager
-        ScreeningManager scrMgr = ActionsHelper.createScreeningManager(request);
-        scrMgr.initiateScreening(upload.getId(), operator);
 
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
@@ -1097,7 +1098,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Retrieve current project
         Project project = verification.getProject();
         // Get all phases for the current project
-        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
 
         Phase specificationPhase = ActionsHelper.getPhase(phases, true, Constants.SPECIFICATION_SUBMISSION_PHASE_NAME);
         if (specificationPhase == null) {
@@ -1112,8 +1113,8 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         // Check if specification is already submitted
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
-        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
+        UploadManager upMgr = ActionsHelper.createUploadManager();
         Submission oldSubmission = ActionsHelper.getActiveSpecificationSubmission(project.getId(), upMgr);
         if (oldSubmission != null) {
             // Disallow submitting more than one Specification Submission for project
@@ -1234,7 +1235,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Get all phases for the current project (needed to do permission checks)
         Phase[] phases = ActionsHelper.getPhasesForProject(
-                ActionsHelper.createPhaseManager(request, false), verification.getProject());
+                ActionsHelper.createPhaseManager(false), verification.getProject());
 
         boolean noRights = true;
 
@@ -1284,7 +1285,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
             // Get all submissions for this user.
             Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.SUBMITTER_ROLE_NAME);
-            UploadManager upMgr = ActionsHelper.createUploadManager(request);
+            UploadManager upMgr = ActionsHelper.createUploadManager();
             Long[] subIds = resource.getSubmissions();
 			
             // Check that the user has a submission that passed screening.
@@ -1316,9 +1317,9 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (noRights && mayDownload) {
             // Obtain an instance of Resource Manager
-            ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+            ResourceManager resMgr = ActionsHelper.createResourceManager();
             Resource submitter = resMgr.getResource(upload.getOwner());
-            UploadManager upMgr = ActionsHelper.createUploadManager(request);
+            UploadManager upMgr = ActionsHelper.createUploadManager();
             Long[] subIds = submitter.getSubmissions();
             Submission submission = null;
             for (int i = 0; i < subIds.length; i++) {
@@ -1340,9 +1341,9 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (noRights && mayDownload) {
             // Obtain an instance of Resource Manager
-            ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+            ResourceManager resMgr = ActionsHelper.createResourceManager();
             Resource submitter = resMgr.getResource(upload.getOwner());
-            UploadManager upMgr = ActionsHelper.createUploadManager(request);
+            UploadManager upMgr = ActionsHelper.createUploadManager();
             Long[] subIds = submitter.getSubmissions();
             Submission submission = null;
             for (int i = 0; i < subIds.length; i++) {
@@ -1428,7 +1429,7 @@ public class ProjectDetailsActions extends DispatchAction {
         if (noRights && AuthorizationHelper.hasUserPermission(
                             request, Constants.VIEW_RECENT_SPECIFICATION_SUBMISSIONS_PERM_NAME)) {
             Phase[] phases = ActionsHelper.getPhasesForProject(
-                    ActionsHelper.createPhaseManager(request, false), verification.getProject());
+                    ActionsHelper.createPhaseManager(false), verification.getProject());
             final boolean isReviewOpen = ActionsHelper.isInOrAfterPhase(phases, 0,
                 Constants.SPECIFICATION_REVIEW_PHASE_NAME);
             if (AuthorizationHelper.hasUserRole(request, Constants.SPECIFICATION_REVIEWER_ROLE_NAME) && !isReviewOpen) {
@@ -1498,7 +1499,7 @@ public class ProjectDetailsActions extends DispatchAction {
         Project project = verification.getProject();
 
         // Get all phases for the current project
-        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
         // Retrieve the current phase for the project
         Phase currentPhase = ActionsHelper.getPhase(phases, true, Constants.FINAL_FIX_PHASE_NAME);
         // Check that active phase is Final Fix
@@ -1536,7 +1537,7 @@ public class ProjectDetailsActions extends DispatchAction {
         UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
 
         // Obtain an instance of Upload Manager
-        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        UploadManager upMgr = ActionsHelper.createUploadManager();
         UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
         UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
 
@@ -1625,7 +1626,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 // Get all submissions for this user.
                 Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.SUBMITTER_ROLE_NAME);
-                UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                UploadManager upMgr = ActionsHelper.createUploadManager();
                 Long[] subIds = resource.getSubmissions();
 				
                 // Check that the user has a submission that passed screening.
@@ -1733,7 +1734,7 @@ public class ProjectDetailsActions extends DispatchAction {
         Project project = verification.getProject();
 
         // Get all phases for the current project
-        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
         // Retrieve the current phase for the project
         Phase currentPhase = ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME);
 
@@ -1760,7 +1761,7 @@ public class ProjectDetailsActions extends DispatchAction {
         UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
 
         // Obtain an instance of Upload Manager
-        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        UploadManager upMgr = ActionsHelper.createUploadManager();
         UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
         UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
 
@@ -1836,7 +1837,7 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         Phase[] phases = ActionsHelper.getPhasesForProject(
-                ActionsHelper.createPhaseManager(request, false), verification.getProject());
+                ActionsHelper.createPhaseManager(false), verification.getProject());
 
         boolean isReviewClosed = false;
         boolean isAppealsOpen = false;
@@ -1973,7 +1974,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         Filter filter = SubmissionFilterBuilder.createUploadIdFilter(upload.getId());
         // Obtain an instance of Upload Manager
-        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        UploadManager upMgr = ActionsHelper.createUploadManager();
         Submission[] submissions = upMgr.searchSubmissions(filter);
         Submission submission = (submissions.length != 0) ? submissions[0] : null;
 
@@ -2055,7 +2056,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     request, "Unregistration", "Error.NoPermission", Boolean.TRUE);
         }
 
-        PhaseManager phaseMgr = ActionsHelper.createPhaseManager(request, false);
+        PhaseManager phaseMgr = ActionsHelper.createPhaseManager(false);
         com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(verification.getProject().getId());
         Phase[] phases = phProj.getAllPhases(new Comparators.ProjectPhaseComparer());
 
@@ -2090,7 +2091,7 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         // Obtain the instance of the Resource Manager
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
         Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(resourceManager,
                 verification.getProject());
 
@@ -2174,7 +2175,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     request, "Early Appeals", "Error.NoPermission", Boolean.TRUE);
         }
 
-        PhaseManager phaseMgr = ActionsHelper.createPhaseManager(request, false);
+        PhaseManager phaseMgr = ActionsHelper.createPhaseManager(false);
         com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(verification.getProject().getId());
         Phase[] phases = phProj.getAllPhases(new Comparators.ProjectPhaseComparer());
 
@@ -2224,7 +2225,7 @@ public class ProjectDetailsActions extends DispatchAction {
         String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
 
         // Obtain the instance of the Resource Manager
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
 
         // set appeasl completed early property
         submitter.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY,
@@ -2300,138 +2301,6 @@ public class ProjectDetailsActions extends DispatchAction {
     }
 
     /**
-     * This method is an implementation of &quot;View Auto Screening&quot; Struts Action defined for
-     * this assembly, which is supposed to show the results of auto screening to user.
-     *
-     * @return &quot;success&quot; forward, which forwards to the /jsp/viewAutoScreening.jsp page
-     *         (as defined in struts-config.xml file), or &quot;userError&quot; forward, which
-     *         forwards to the /jsp/userError.jsp page, which displays information about an error
-     *         that is usually caused by incorrect user input (such as absent upload id, or the lack
-     *         of permissions, etc.).
-     * @param mapping
-     *            action mapping.
-     * @param form
-     *            action form.
-     * @param request
-     *            the http request.
-     * @param response
-     *            the http response.
-     * @throws BaseException
-     *             if any error occurs.
-     */
-    public ActionForward viewAutoScreening(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws BaseException {
-        LoggingHelper.logAction(request);
-        // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification =
-            checkForCorrectUploadId(mapping, request, "ViewAutoScreening");
-        // If any error has occured, return action forward contained in the result bean
-        if (!verification.isSuccessful()) {
-            return verification.getForward();
-        }
-
-        // TODO: Refactor permission check
-
-        // Get an upload to display autoscreening results of
-        Upload upload = verification.getUpload();
-
-        // Verify that upload is a submission
-        if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
-            return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, "ViewAutoScreening", "Error.NotASubmission", null);
-        }
-
-        // Verify the status of upload and check whether the user has permission to download old uploads
-        if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted") &&
-                !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
-            return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, "ViewAutoScreening", "Error.UploadDeleted", null);
-        }
-
-        boolean noRights = true;
-
-        if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
-            noRights = false;
-        }
-
-        // Obtain an array of "my" resources
-        Resource[] myResources = (Resource[]) request.getAttribute("myResources");
-
-        if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
-            long owningResourceId = upload.getOwner();
-            for (int i = 0; i < myResources.length; ++i) {
-                if (myResources[i].getId() == owningResourceId) {
-                    noRights = false;
-                    break;
-                }
-            }
-        }
-
-        if (noRights) {
-            return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, "ViewAutoScreening", "Error.NoPermission", Boolean.FALSE);
-        }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
-
-        // Retrieve some basic project info (such as icons' names) and place it into request
-        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), messages);
-
-        // Place a string that represents "my" current role(s) into the request
-        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
-
-        // Retrieve the submitter id and place it into request
-        ActionsHelper.retrieveAndStoreSubmitterInfo(request, upload);
-
-        // Put review type into the request
-        request.setAttribute("reviewType", "AutoScreening");
-        // Specify that Expand All / Collapse All links are not needed
-        request.setAttribute("noExpandCollapse", Boolean.TRUE);
-
-        // Obtain Screening Manager instance
-        ScreeningManager screeningManager = ActionsHelper.createScreeningManager(request);
-
-        // Retrieve the automated screening results
-        ScreeningTask screeningTask = screeningManager.getScreeningDetails(upload.getId());
-        ScreeningResult[] screeningResults = screeningTask.getAllScreeningResults();
-
-        // Group the results according to severity statuses and screening responses
-        // Finally the results are grouped into the map where
-        // the keys are the ids of severity statuses and the values are another maps,
-        // in which keys are ids of screening responses and the values are screening results.
-        Map<Long, Map<Long, List<ScreeningResult>>> screeningResultsMap =
-                new TreeMap<Long, Map<Long, List<ScreeningResult>>>();
-        for (int i = 0; i < screeningResults.length; i++) {
-            ResponseSeverity responseSeverity = screeningResults[i].getScreeningResponse().getResponseSeverity();
-            // ignore response with "Success" severity
-            if (Constants.SUCCESS_SCREENING_SEVERITY_NAME.equalsIgnoreCase(responseSeverity.getName())) {
-                continue;
-            }
-            Long responseSeverityId = new Long(responseSeverity.getId());
-            Long screeningResponseId = new Long(screeningResults[i].getScreeningResponse().getId());
-            Map<Long, List<ScreeningResult>> innerMap;
-            if (screeningResultsMap.containsKey(responseSeverityId)) {
-                innerMap = screeningResultsMap.get(responseSeverityId);
-            } else {
-                innerMap = new TreeMap<Long, List<ScreeningResult>>();
-                screeningResultsMap.put(responseSeverityId, innerMap);
-            }
-            if (innerMap.containsKey(screeningResponseId)) {
-                innerMap.get(screeningResponseId).add(screeningResults[i]);
-            } else {
-                List<ScreeningResult> list = new ArrayList<ScreeningResult>();
-                innerMap.put(screeningResponseId, list);
-                list.add(screeningResults[i]);
-            }
-        }
-        // Store grouped results in the request
-        request.setAttribute("screeningResultsMap", screeningResultsMap);
-
-        // Return success forward
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
-    }
-
-    /**
      * This method verifies the request for certain conditions to be met. This includes verifying if
      * the user has specified an ID of the upload he wants to perform an operation on (most often
      * &#x96; to download), and whether the ID of the upload specified by user denotes existing
@@ -2486,7 +2355,7 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         // Obtain an instance of Upload Manager
-        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        UploadManager upMgr = ActionsHelper.createUploadManager();
         // Get Upload by its ID
         Upload upload = upMgr.getUpload(uid);
         // Verify that upload with given ID exists
@@ -2501,7 +2370,7 @@ public class ProjectDetailsActions extends DispatchAction {
         result.setUpload(upload);
 
         // Obtain an instance of Project Manager
-        ProjectManager projMgr = ActionsHelper.createProjectManager(request);
+        ProjectManager projMgr = ActionsHelper.createProjectManager();
         // Get a Project for this upload
         Project project = projMgr.getProject(upload.getProject());
 
@@ -2639,7 +2508,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 if (deliverable.getSubmission() == null) {
                     continue;
                 } else if (allScorecardTypes == null) {
-                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
@@ -2664,7 +2533,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 if (allScorecardTypes == null) {
                     // Get all scorecard types
-                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
@@ -2688,7 +2557,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 if (allScorecardTypes == null) {
                     // Get all scorecard types
-                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
@@ -2716,7 +2585,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 if (allScorecardTypes == null) {
                     // Get all scorecard types
-                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
@@ -2737,7 +2606,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 if (allScorecardTypes == null) {
                     // Get all scorecard types
-                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
@@ -2761,11 +2630,11 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 Phase phase = ActionsHelper.getPhase(phases, false, Constants.AGGREGATION_PHASE_NAME);
                 Resource[] aggregator =
-                    ActionsHelper.getAllResourcesForPhase(ActionsHelper.createResourceManager(request), phase);
+                    ActionsHelper.getAllResourcesForPhase(ActionsHelper.createResourceManager(), phase);
 
                 if (allScorecardTypes == null) {
                     // Get all scorecard types
-                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
@@ -2791,7 +2660,25 @@ public class ProjectDetailsActions extends DispatchAction {
                     links[i] = "EditAggregationReview.do?method=editAggregationReview&rid=" + review.getId();
                 }
             } else if (delivName.equalsIgnoreCase(Constants.FINAL_FIX_DELIVERABLE_NAME)) {
-                links[i] = "UploadFinalFix.do?method=uploadFinalFix&pid=" + deliverable.getProject();
+                if(deliverable.isComplete()) {
+                    //get final fix uploads for current project and sort them
+                    UploadManager upMgr = ActionsHelper.createUploadManager();
+                    Filter projectFilter = UploadFilterBuilder.createProjectIdFilter(deliverable.getProject());
+                    Filter resourceFilter = UploadFilterBuilder.createResourceIdFilter(deliverable.getResource());
+                    Filter typeFilter = UploadFilterBuilder.createUploadTypeIdFilter(
+                            ActionsHelper.findUploadTypeByName(upMgr.getAllUploadTypes(), "Final Fix").getId());
+                    Filter combinedFilter = new AndFilter(
+                            Arrays.asList(new Filter[] { projectFilter, resourceFilter, typeFilter }));
+                    Upload[] uploads = upMgr.searchUploads(combinedFilter);
+                    Arrays.sort(uploads, new Comparators.UploadComparer());
+
+                    //retrieve latest final fix upload
+                    long uploadIndex = uploads[uploads.length - 1].getId();
+                    links[i] = "DownloadFinalFix.do?method=downloadFinalFix&uid=" + uploadIndex;
+                }
+                else {
+                     links[i] = "UploadFinalFix.do?method=uploadFinalFix&pid=" + deliverable.getProject();
+                }
             } else if (delivName.equalsIgnoreCase(Constants.FINAL_REVIEW_DELIVERABLE_NAME)) {
                 // Skip deliverables with empty Submission ID field,
                 // as no links can be generated for such deliverables
@@ -2801,7 +2688,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 if (allScorecardTypes == null) {
                     // Get all scorecard types
-                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
@@ -2823,7 +2710,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 if (allScorecardTypes == null) {
                     // Get all scorecard types
-                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
                 Phase[] activePhases = ActionsHelper.getActivePhases(phases);
@@ -2843,7 +2730,7 @@ public class ProjectDetailsActions extends DispatchAction {
             } else if (delivName.equalsIgnoreCase(Constants.POST_MORTEM_DELIVERABLE_NAME)) {
                 if (allScorecardTypes == null) {
                     // Get all scorecard types
-                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
                 ScorecardType scorecardType = ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Post-Mortem");
@@ -2917,7 +2804,7 @@ public class ProjectDetailsActions extends DispatchAction {
         Filter filterSubmissions = new InFilter("submission_id", submissionIds);
 
         // Obtain an instance of Upload Manager
-        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        UploadManager upMgr = ActionsHelper.createUploadManager();
         Submission[] submissions = upMgr.searchSubmissions(filterSubmissions);
 
         List<Long> resourceIds = new ArrayList<Long>();
@@ -2929,7 +2816,7 @@ public class ProjectDetailsActions extends DispatchAction {
         Filter filterResources = new InFilter("resource.resource_id", resourceIds);
 
         // Obtain an instance of Resource Manager
-        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+        ResourceManager resMgr = ActionsHelper.createResourceManager();
         Resource[] resources = resMgr.searchResources(filterResources);
 
         String[] ids = new String[deliverables.length];
@@ -2993,14 +2880,14 @@ public class ProjectDetailsActions extends DispatchAction {
 
         Filter filterSubmission = new EqualToFilter("submission", submissionId);
         Filter filterReviewer = new EqualToFilter("reviewer", new Long (resourceId));
-		
+
         Filter filter = null;
-        if (scorecardType != null) {        
+        if (scorecardType != null) {
             Filter filterScorecard = new EqualToFilter("scorecardType", new Long(scorecardType.getId()));
             filter = new AndFilter(Arrays.asList(new Filter[] {filterSubmission, filterScorecard, filterReviewer}));
         } else {
             filter = new AndFilter(Arrays.asList(new Filter[] {filterSubmission, filterReviewer}));
-        }		
+        }
 
         // Get a review(s) that pass filter
         Review[] reviews = manager.searchReviews(filter, complete);
@@ -3086,7 +2973,7 @@ public class ProjectDetailsActions extends DispatchAction {
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
 
-        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        UploadManager upMgr = ActionsHelper.createUploadManager();
         Submission[] submissions = upMgr.searchSubmissions(filter);
         Submission submission = (submissions.length != 0) ? submissions[0] : null;
 
@@ -3178,7 +3065,7 @@ public class ProjectDetailsActions extends DispatchAction {
             return false;
         }
 
-        LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager(request);
+        LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager();
         List<Filter> filters = new ArrayList<Filter>();
         filters.add(LateDeliverableFilterBuilder.createProjectIdFilter(project.getId()));
         filters.add(LateDeliverableFilterBuilder.createForgivenFilter(false));

@@ -74,16 +74,15 @@
                             </tr>
                             <tr class="light">
                                 <td class="value">
-                                    <bean:message key="uploadSubmission.HelpLine1" /><br /><br />
                                     <bean:message key="uploadSubmission.UploadSubmission" />
-                                    <html:file property="file" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
+                                    <html:file property="file" size="40" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
                                     <html:image property="uploadBtn" srcKey="btnUpload.img" altKey="btnUpload.alt" border="0" style="vertical-align:bottom;" /><br /><br />
+                                    <bean:message key="uploadSubmission.HelpLine1" />
                                     <bean:message key="uploadSubmission.HelpLine2" />
-                                    <bean:message key="uploadSubmission.HelpLine3" />
 
                                     <a href="http://<%=ApplicationServer.SERVER_NAME%>/wiki/display/tc/Documentation+and+Submission+Guidelines"><bean:message key="uploadSubmission.SampleSubmissionAndDocs" /></a>
 
-                                    <bean:message key="uploadSubmission.HelpLine4" />
+                                    <bean:message key="uploadSubmission.HelpLine3" />
                                 </td>
                             </tr>
                             <tr>

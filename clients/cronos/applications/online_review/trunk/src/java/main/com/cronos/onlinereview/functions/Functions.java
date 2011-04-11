@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2011 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.functions;
 
@@ -55,9 +55,14 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
+ * Version 1.3 (Online Review Status Validation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Method adjusted for new signatures of create managers methods from ActionsHelper</li>
+ *   </ol>
+ * </p>
  * @author George1
- * @author real_vg, isv, FireIce
- * @version 1.2
+ * @author real_vg, isv, FireIce, rac_
+ * @version 1.3
  */
 public final class Functions {
 
@@ -632,7 +637,7 @@ public final class Functions {
      * @since 1.2
      */
     public static long getUserId(HttpServletRequest request, long resourceId) {
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
 
         try {
             Resource resource = resourceManager.getResource(resourceId);

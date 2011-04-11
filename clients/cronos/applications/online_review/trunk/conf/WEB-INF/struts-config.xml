@@ -542,15 +542,6 @@
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
 
-        <!-- "View Auto Screening" action -->
-        <action path="/actions/ViewAutoScreening" unknown="false"
-            type="com.cronos.onlinereview.actions.ProjectDetailsActions"
-            parameter="method" scope="request"
-            input="/jsp/viewProjectDetails.jsp">
-            <forward name="success" path="/jsp/viewAutoScreening.jsp" redirect="false"/>
-        </action>
-
-
     <!--
         =====  Project Review Actions  =====
     -->

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2011 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -42,8 +42,16 @@ import com.topcoder.project.phases.Phase;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, isv
- * @version 1.3
+ * <p>
+ * Version 1.4 (Online Review Status Validation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Removed screeningStatus, displayAggregationReviewLink, aggregationReviewCommitted members and
+ *     their getter and setter.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, isv, rac_
+ * @version 1.4
  */
 public class PhaseGroup {
 
@@ -138,15 +146,6 @@ public class PhaseGroup {
      */
     private Upload[][] pastSubmissions = null;
 
-    /**
-     * This member variable holds an array of screening tasks that might have been assigned to this
-     * phase group, or <code>null</code> value if no such array has been assigned to the phase
-     * group.
-     *
-     * @see #getScreeningTasks()
-     * @see #setScreeningTasks(ScreeningTask[])
-     */
-    private ScreeningTask[] screeningTasks = null;
 
     /**
      * This member variable holds an array of reviewers that might have been assigned to this phase
@@ -240,23 +239,6 @@ public class PhaseGroup {
      */
     private Review aggregation = null;
 
-    /**
-     * This member variable holds a value that determines whether a link to commit Aggregation
-     * Review can be displayed for the current phase group.
-     *
-     * @see #isDisplayAggregationReviewLink()
-     * @see #setDisplayAggregationReviewLink(boolean)
-     */
-    private boolean displayAggregationReviewLink = false;
-
-    /**
-     * This member variable holds a value that determines whether aggregation scorecard has been
-     * committed.
-     *
-     * @see #isAggregationReviewCommitted()
-     * @see #setAggregationReviewCommitted(boolean)
-     */
-    private boolean aggregationReviewCommitted = false;
 
     /**
      * This member variable holds an upload for a final fix that might might have been assigned
@@ -563,13 +545,6 @@ public class PhaseGroup {
         this.pastSubmissions = pastSubmissions;
     }
 
-    public ScreeningTask[] getScreeningTasks() {
-        return this.screeningTasks;
-    }
-
-    public void setScreeningTasks(ScreeningTask[] screeningTasks) {
-        this.screeningTasks = screeningTasks;
-    }
 
     /**
      * This method returns array of reviewers assigned to this phase group.
@@ -791,47 +766,6 @@ public class PhaseGroup {
         this.aggregation = aggregation;
     }
 
-    /**
-     * This method determines whether a link to commit Aggregation Review can be displayed for this
-     * phase group.
-     *
-     * @return <code>true</code> if a link can be displayed, <code>false</code> if it cannot.
-     */
-    public boolean isDisplayAggregationReviewLink() {
-        return this.displayAggregationReviewLink;
-    }
-
-    /**
-     * This method sets status flag that determines whether a link to commit Aggregation Review can
-     * be displayed for this phase group.
-     *
-     * @param displayAggregationReviewLink
-     *            a value indicating whether a link can be displayed.
-     */
-    public void setDisplayAggregationReviewLink(boolean displayAggregationReviewLink) {
-        this.displayAggregationReviewLink = displayAggregationReviewLink;
-    }
-
-    /**
-     * This method determines whether Aggregation Review has been committed by all users who had to
-     * do that.
-     *
-     * @return <code>true</code> if aggregation review has been committed by all users who had to
-     *         do that, <code>false</code> if at least one user did not do that.
-     */
-    public boolean isAggregationReviewCommitted() {
-        return this.aggregationReviewCommitted;
-    }
-
-    /**
-     * This method sets status flag that determines whether Aggregation Review has been committed.
-     *
-     * @param aggregationReviewCommitted
-     *            a value indicating whether Aggregation Review has been committed.
-     */
-    public void setAggregationReviewCommitted(boolean aggregationReviewCommitted) {
-        this.aggregationReviewCommitted = aggregationReviewCommitted;
-    }
 
     /**
      * This method returns upload object for final fix.
@@ -1045,7 +979,7 @@ public class PhaseGroup {
     /**
      * <p>Sets the list of <code>Post-Mortem</code> reviewers assigned to project..</p>
      *
-     * @param postMortemReviewers a <code>Resource</code> array listing the <code>Post-Mortem</code> reviewers.  
+     * @param postMortemReviewers a <code>Resource</code> array listing the <code>Post-Mortem</code> reviewers.
      * @since 1.1
      */
     public void setPostMortemReviewers(Resource[] postMortemReviewers) {
