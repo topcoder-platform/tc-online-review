@@ -120,8 +120,19 @@
 
     <script language="JavaScript" type="text/javascript">
         function OnCompleteScorecardClick() {
-            var approveCheckBox = document.getElementById("rejectFixes");
-            var isRejected = (approveCheckBox.checked);
+            var x = document.getElementsByTagName("input");
+            var isRejected = false;
+
+            for (var i = 0; i < x.length; ++i) {
+                var element = x[i];
+                if (element.type.toLowerCase() != "radio" || element.value.toLowerCase() != "false") {
+                    continue;
+                }
+                if (element.checked) {
+                    isRejected = true;
+                    break;
+                }
+            }
 
             return (isRejected) ? confirm("<bean:message key='editApproval.BeforeReject' />") : true;
         }
@@ -263,12 +274,18 @@
 
                         <table class="scorecard" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;">
                             <tr>
-                                <td class="title"><label for="rejectFixes"><bean:message key="editApproval.box.Approval" /></label></td>
+                                <td class="title"><label for="approveFixes">
+				    <bean:message key="editApproval.box.Approval" /></label>
+				    <span class="error"><html:errors property="approve_status" prefix="" suffix="" /></span>
+				</td>
                             </tr>
                             <tr class="highlighted">
                                 <td class="value">
-                                    <html:checkbox styleId="rejectFixes" property="reject_fixes" />
-                                    <b><bean:message key="editApproval.RejectFinalFixes" /></b></td>
+                                    <html:radio styleId="approveFixes" property="approve_fixes" value="true"/>
+                                    <b><bean:message key="editApproval.ApproveFinalFixes" /></b><br/>
+                                    <html:radio styleId="approveFixes" property="approve_fixes" value="false"/>
+                                    <b><bean:message key="editApproval.RejectFinalFixes" /></b><br/>
+				    </td>
                             </tr>
                             <tr class="highlighted">
                                 <td class="value">
@@ -286,11 +303,11 @@
                             <c:if test="${not managerEdit}">
                                 <html:image property="submitApprovalBtn" onclick="javascript:this.form.save.value='submit'; this.parentNode.parentNode.target='_self';return OnCompleteScorecardClick();" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0"/>&#160;
                                 <html:image property="saveApprovalBtn" onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0"/>&#160;
+                                <html:image property="previewApprovalBtn" onclick="javascript:this.form.save.value='preview'; this.parentNode.parentNode.target='_blank';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0"/>
                             </c:if>
                             <c:if test="${managerEdit}">
                                 <html:image property="saveApprovalByManagerBtn" onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
                             </c:if>
-                            <html:image property="previewApprovalBtn" onclick="javascript:this.form.save.value='preview'; this.parentNode.parentNode.target='_blank';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0"/>
                         </div>
                     </html:form>
 

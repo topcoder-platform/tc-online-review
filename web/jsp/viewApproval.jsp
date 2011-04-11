@@ -372,14 +372,16 @@
                         </tr>
                         <tr class="highlighted">
                             <td class="value">
-                                <c:choose>
-                                    <c:when test='${(rejectFixesComment.extraInfo == "Rejected")}'>
-                                        <bean:message key="ApprovalStatus.Rejected" />
-                                    </c:when>
-                                    <c:otherwise>
-                                        <bean:message key="ApprovalStatus.Approved" />
-                                    </c:otherwise>
-                                </c:choose>
+                                <c:if test='${rejectFixesComment.extraInfo ne null}'>
+                                    <c:choose>
+                                        <c:when test='${(rejectFixesComment.extraInfo == "Rejected")}'>
+                                            <bean:message key="ApprovalStatus.Rejected" />
+                                        </c:when>
+                                        <c:otherwise>
+                                            <bean:message key="ApprovalStatus.Approved" />
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:if>
                             </td>
                         </tr>
                         <c:if test='${(acceptButRequireFixesComment.extraInfo == "Required")}'>

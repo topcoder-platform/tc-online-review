@@ -1974,7 +1974,6 @@ public class ProjectReviewActions extends DispatchAction {
         ActionForward genericForward = createGenericReview(mapping, form, request, "Approval");
         if (Constants.SUCCESS_FORWARD_NAME.equals(genericForward.getName())) {
             LazyValidatorForm approvalForm = (LazyValidatorForm) form;
-            approvalForm.set("reject_fixes", Boolean.FALSE);
             approvalForm.set("accept_but_require_fixes", Boolean.FALSE);
         }
         return genericForward;
@@ -2010,7 +2009,7 @@ public class ProjectReviewActions extends DispatchAction {
         LoggingHelper.logAction(request);
         ActionForward genericForward = editGenericReview(mapping, form, request, "Approval");
         if (Constants.SUCCESS_FORWARD_NAME.equals(genericForward.getName())) {
-            boolean fixesRejected = false;
+            Boolean fixesRejected = null;
             boolean fixesAcceptedButOtherFixesRequired = false;
             Review review = (Review) request.getAttribute("review");
             int numberOfComments = review.getNumberOfComments();
@@ -2024,7 +2023,9 @@ public class ProjectReviewActions extends DispatchAction {
             }
 
             LazyValidatorForm approvalForm = (LazyValidatorForm) form;
-            approvalForm.set("reject_fixes", fixesRejected);
+            if (fixesRejected != null) {
+			    approvalForm.set("approve_fixes", !fixesRejected);
+            }
             approvalForm.set("accept_but_require_fixes", fixesAcceptedButOtherFixesRequired);
         }
         return genericForward;
@@ -3476,8 +3477,6 @@ public class ProjectReviewActions extends DispatchAction {
             }
         }
 
-        boolean validationSucceeded = (commitRequested || managerEdit) ?
-                validateGenericScorecard(request, scorecardTemplate, review, managerEdit) : true;
         // For Manager Edits this variable indicates whether recomputation of
         // final aggregated score for the submitter may be required
         boolean possibleFinalScoreUpdate = false;
@@ -3487,14 +3486,18 @@ public class ProjectReviewActions extends DispatchAction {
         if (isApprovalPhase) {
             Comment reviewLevelComment1 = null;
             Comment reviewLevelComment2 = null;
-            boolean rejectFixes = false;
+            boolean approveFixes = false;
             boolean acceptButRequireOtherFixes = false;
 
             Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.APPROVER_ROLE_NAME);
 
-            Boolean rejectFixesObj = (Boolean) reviewForm.get("reject_fixes");
+            Boolean approveFixesObj = (Boolean) reviewForm.get("approve_fixes");
+			if (approveFixesObj == null) {
+			    ActionsHelper.addErrorToRequest(request, "approve_status", "Error.saveApproval.Absent");
+			}
+			
             Boolean acceptButRequireOtherFixesObj = (Boolean) reviewForm.get("accept_but_require_fixes");
-            rejectFixes = (rejectFixesObj != null && rejectFixesObj.booleanValue());
+            approveFixes = (approveFixesObj != null && approveFixesObj.booleanValue());
             acceptButRequireOtherFixes
                 = (acceptButRequireOtherFixesObj != null && acceptButRequireOtherFixesObj.booleanValue());
 
@@ -3511,12 +3514,14 @@ public class ProjectReviewActions extends DispatchAction {
                 reviewLevelComment1 = new Comment();
             }
 
-            reviewLevelComment1.setCommentType(
-                ActionsHelper.findCommentTypeByName(commentTypes, "Approval Review Comment"));
-            reviewLevelComment1.setAuthor(resource.getId());
-            reviewLevelComment1.setExtraInfo(rejectFixes ? "Rejected" : "Approved");
-            reviewLevelComment1.setComment("");
-            review.addComment(reviewLevelComment1);
+            if (approveFixesObj != null) {
+                reviewLevelComment1.setCommentType(
+                    ActionsHelper.findCommentTypeByName(commentTypes, "Approval Review Comment"));
+                reviewLevelComment1.setAuthor(resource.getId());
+                reviewLevelComment1.setExtraInfo(approveFixes ? "Approved" : "Rejected");
+                reviewLevelComment1.setComment("");
+                review.addComment(reviewLevelComment1);
+            }
 
             if (reviewLevelComment2 == null) {
                 reviewLevelComment2 = new Comment();
@@ -3556,6 +3561,8 @@ public class ProjectReviewActions extends DispatchAction {
             review.addComment(reviewLevelComment1);
         }
 
+        boolean validationSucceeded = (commitRequested || managerEdit) ?
+                validateGenericScorecard(request, scorecardTemplate, review, managerEdit) : true;
 
         // If the user has requested to complete the review
         if (validationSucceeded && (commitRequested || managerEdit)) {

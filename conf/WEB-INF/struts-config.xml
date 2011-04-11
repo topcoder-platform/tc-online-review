@@ -142,7 +142,7 @@
             <form-property name="comment_type" type="java.util.HashMap" />
             <form-property name="comment" type="java.util.HashMap" />
             <form-property name="file" type="org.apache.struts.upload.FormFile[]" />
-            <form-property name="reject_fixes" type="java.lang.Boolean" />
+            <form-property name="approve_fixes" type="java.lang.Boolean"/>
             <form-property name="accept_but_require_fixes" type="java.lang.Boolean" />
 
             <form-property name="submitApprovalBtn" type="org.apache.struts.util.ImageButtonBean" />
