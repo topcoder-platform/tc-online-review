@@ -1,7 +1,7 @@
 <%--
   - Author: pulky, isv
   - Version: 1.3.1
-  - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
+  - Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays project edition page
   -
@@ -15,6 +15,9 @@
   -
   - Version 1.3.1 (SVN Automation and Late Deliverables Tracking Assembly 1.0) changes: SVN Module property is no longer
   - editable
+  -
+  - Version 1.4 (Online Review Status Validation Assembly 1.0) changes: added error display of validation for status field
+  -
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -616,7 +619,7 @@
             // Populate newly created phase inputs from the add phase form
             var inputNames = ["type",
                 "start_date",
-                "start_time", 
+                "start_time",
                 "start_phase",
                 "start_when",
                 "start_plusminus",
@@ -971,7 +974,7 @@
                         <%-- TODO: Validation errors display should be much more than is here --%>
                         <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
                             <table cellpadding="0" cellspacing="0" border="0">
-                                <tr><td width="16"><!-- @ --></td><td><!-- @ --></td></tr>
+                                <tr><td width="400"><!-- @ --></td><td><!-- @ --></td></tr>
                                 <tr>
                                     <td colspan="2"><span style="color:red;"><bean:message key="Error.saveReview.ValidationFailed" /></span></td>
                                 </tr>
@@ -1202,7 +1205,7 @@
                                 </td>
                             </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
                             <!-- since: Online Review Update - Add Project Dropdown v1.0 -->
-                            
+
                             <c:choose>
 	                            <c:when test="${allowBillingEdit}">
 	                                <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
@@ -1223,7 +1226,7 @@
 	                            	<html:hidden property="billing_project"/>
 	                            </c:otherwise>
                             </c:choose>
-                            
+
                             <tr>
                                 <td class="lastRowTD" colspan="2"><!-- @ --></td>
                             </tr>
@@ -1259,12 +1262,15 @@
                                     <td class="title"><b><bean:message key="editProject.Status.title" /></b></td>
                                 </tr>
                                 <tr class="light">
-                                    <td class="value"><p align="left"><b>&#160;<bean:message key="editProject.Status.CurrentStatus" />&#160; </b>
-                                        <html:select styleClass="inputBox" property="status">
+                                    <td class="value">
+                                        <p align="left"><b>&#160;<bean:message key="editProject.Status.CurrentStatus" />&#160; </b>
+                                          <html:select styleClass="inputBox" property="status">
                                             <c:forEach var="status" items="${projectStatuses}">
                                                 <html:option key='ProjectStatus.${fn:replace(status.name, " ", "")}' value="${status.id}" />
                                             </c:forEach>
-                                        </html:select></p>
+                                          </html:select><br />
+                                          <span class="errorText"><html:errors property="status" prefix="" suffix="" /></span>
+                                        </p>
                                         <bean:message key="editProject.Status.Explanation.description" /><br />
                                         <html:textarea styleClass="inputTextBox" property="status_explanation" />
                                     </td>

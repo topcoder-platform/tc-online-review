@@ -98,9 +98,15 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  *   </ol>
  * </p>
  *
- * @author evilisneo, BeBetter, isv, FireIce, VolodymyrK
- * @version 1.5
- * @since 1.0
+ * <p>
+ * Version 1.6 (Online Review Status Validation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Created {@link #getPhaseManagerWithoutHandlers()} to allow creating/caching PhaseManager without phase handlers.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author evilisneo, BeBetter, isv, FireIce, VolodymyrK, rac_
+ * @version 1.6
  */
 public class ManagerCreationHelper implements ManagersProvider {
 
@@ -111,51 +117,75 @@ public class ManagerCreationHelper implements ManagersProvider {
     private static final String DB_CONNECTION_NAMESPACE = "com.topcoder.db.connectionfactory.DBConnectionFactoryImpl";
 
     /**
-     * Used for caching the created the manager.
+     * Used for caching the created manager. This instance has no registered phase handlers.
+     */
+    private PhaseManager phaseManagerWithoutHandlers = null;
+    /**
+     * Used for caching the created manager.
      */
     private PhaseManager phaseManager = null;
     /**
-     * Used for caching the created the manager.
+     * Used for caching the created manager.
      */
     private UploadManager uploadManager = null;
     /**
-     * Used for caching the created the manager.
+     * Used for caching the created manager.
      */
     private ProjectManager projectManager = null;
     /**
-     * Used for caching the created the manager.
+     * Used for caching the created manager.
      */
     private ResourceManager resourceManager = null;
     /**
-     * Used for caching the created the manager.
+     * Used for caching the created manager.
      */
     private ScreeningManager screeningManager = null;
 
     /**
-     * Used for caching the created the manager.
+     * Used for caching the created manager.
      *
      * @since 1.1
      */
     private ProjectLinkManager projectLinkManager = null;
-	
+
     /**
-     * Used for caching the created the manager.
+     * Used for caching the created manager.
      *
      * @since 1.5
      */
     private LateDeliverableManager lateDeliverableManager = null;
-	
+
     /**
-     * Used for caching the created the manager.
+     * Used for caching the created manager.
      *
      * @since 1.5
      */
     private ScorecardManager scorecardManager = null;
 
+
     /**
      * <p>
-     * Returns a <code>PhaseManager</code> instance. This is used in <code>UploadServices</code> to retrieve
-     * this manager and perform all its operations.
+     * Returns a <code>PhaseManager</code> instance without registered handlers.
+     * </p>
+     *
+     * @return a <code>PhaseManager</code> instance without registered handlers
+     */
+    public PhaseManager getPhaseManagerWithoutHandlers() {
+        if(phaseManagerWithoutHandlers != null) {
+            return phaseManagerWithoutHandlers;
+        }
+        try {
+            phaseManagerWithoutHandlers = new DefaultPhaseManager("com.topcoder.management.phase");
+            return phaseManagerWithoutHandlers;
+        } catch (Exception e) {
+            throw new ManagerCreationException("Exception occurred while creating the PhaseManager.", e);
+        }
+    }
+
+    /**
+     * <p>
+     * Returns a <code>PhaseManager</code> instance with phase handlers.
+     * This is used in <code>UploadServices</code> to retrieve this manager and perform all its operations.
      * </p>
      *
      * @return a <code>PhaseManager</code> instance

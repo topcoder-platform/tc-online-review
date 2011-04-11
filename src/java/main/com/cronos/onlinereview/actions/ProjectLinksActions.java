@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2009-2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -100,13 +100,13 @@ public class ProjectLinksActions extends DispatchAction {
         }
 
         // obtains the project link manager
-        ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager(request);
+        ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager();
 
         // set up project link types
         request.setAttribute("projectLinkTypes", linkManager.getAllProjectLinkTypes());
 
         // Obtain an instance of Project Manager
-        ProjectManager manager = ActionsHelper.createProjectManager(request);
+        ProjectManager manager = ActionsHelper.createProjectManager();
 
         // get all active projects
         Filter filterStatus = new NotFilter(ProjectFilterUtility.buildStatusNameEqualFilter(STATUS_NAME_DELETED));
@@ -148,7 +148,7 @@ public class ProjectLinksActions extends DispatchAction {
         form.set("link_type_id", 0, new Long(-1));
         form.set("link_action", 0, LINK_ACTION_ADD);
 
-        ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager(request);
+        ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager();
         ProjectLink[] links = linkManager.getDestProjectLinks(project.getId());
         for (int i = 0; i < links.length; i++) {
             ProjectLink link = links[i];
@@ -200,7 +200,7 @@ public class ProjectLinksActions extends DispatchAction {
             }
         }
 
-        ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager(request);
+        ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager();
 
         long[] paramDestProjectIds = new long[destList.size()];
         long[] paramTypeIds = new long[typeList.size()];

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -231,9 +231,16 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  *     updated to support reset to resource related to project phase properly.</li>
  *   </ol>
  * </p>
+ * <p>
+ * Version 1.13 (Online Review Status Validation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Methods adjusted for new signatures of create managers methods from ActionsHelper.</li>
+ *     <li>Updated {@link #saveProjectPhases()} to handle new StatusValidationException and display its error message.</li>
+ *   </ol>
+ * </p>
 
  * @author George1, real_vg, pulky, isv, FireIce
- * @version 1.12
+ * @version 1.13
  */
 public class ProjectActions extends DispatchAction {
 
@@ -410,7 +417,7 @@ public class ProjectActions extends DispatchAction {
      */
     private void loadProjectEditLookups(HttpServletRequest request) throws BaseException {
         // Obtain an instance of Project Manager
-        ProjectManager projectManager = ActionsHelper.createProjectManager(request);
+        ProjectManager projectManager = ActionsHelper.createProjectManager();
 
         // Retrieve project types and categories
         ProjectType[] projectTypes = projectManager.getAllProjectTypes();
@@ -422,7 +429,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("projectCategoriesMap", buildProjectCategoriesLookupMap(projectCategories));
 
         // Obtain an instance of Resource Manager
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
         // Get all types of resource roles and filter out those which are not allowed for selection
         // Place resource roles into the request as attribute
         ResourceRole[] resourceRoles = resourceManager.getAllResourceRoles();
@@ -439,7 +446,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("disabledResourceRoles", disabledResourceRoles);
 
         // Obtain an instance of Phase Manager
-        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
         // Get all phase types
         PhaseType[] phaseTypes = phaseManager.getAllPhaseTypes();
         // Place them into request as an attribute
@@ -447,7 +454,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("arePhaseDependenciesEditable", true);
 
         // Obtain an instance of Scorecard Manager
-        ScorecardManager scorecardManager = ActionsHelper.createScorecardManager(request);
+        ScorecardManager scorecardManager = ActionsHelper.createScorecardManager();
 
         // TODO: Check if we need to filter by the project category
         // Retrieve the scorecard lists
@@ -569,7 +576,7 @@ public class ProjectActions extends DispatchAction {
         populateProjectFormProperty(form, String.class, "notes", project, "Notes");
 
         // Obtain Resource Manager instance
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
 
         // Retreive the list of the resources associated with the project
         Resource[] resources =
@@ -606,7 +613,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         // Obtain Phase Manager instance
-        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
 
         // Retrieve project phases
         Phase[] phases = ActionsHelper.getPhasesForProject(phaseManager, project);
@@ -802,7 +809,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         // Obtain an instance of Project Manager
-        ProjectManager manager = ActionsHelper.createProjectManager(request);
+        ProjectManager manager = ActionsHelper.createProjectManager();
         // Retrieve project types, categories and statuses
         ProjectCategory[] projectCategories = manager.getAllProjectCategories();
         ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
@@ -1002,7 +1009,7 @@ public class ProjectActions extends DispatchAction {
             // TODO: Check if the form is really for new project
             setEditProjectFormData(request, verification, lazyForm);
             setEditProjectPhasesData(lazyForm, projectPhases, true);
-            ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+            ResourceManager resourceManager = ActionsHelper.createResourceManager();
             Resource[] resources = resourceManager.searchResources(
                 ResourceFilterBuilder.createProjectIdFilter(project.getId()));
             ExternalUser[] externalUsers = ActionsHelper.getExternalUsersForResources(
@@ -1112,7 +1119,7 @@ public class ProjectActions extends DispatchAction {
             phProject.removePhase(phasesToDelete.get(i));
         }
 
-        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
 
         phaseManager.updatePhases(phProject, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
     }
@@ -1143,7 +1150,7 @@ public class ProjectActions extends DispatchAction {
             Project project, Map<Object, Phase> phasesJsMap, List<Phase> phasesToDelete, boolean statusHasChanged)
         throws BaseException {
         // Obtain an instance of Phase Manager
-        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
 
         com.topcoder.project.phases.Project phProject;
         if (newProject) {
@@ -1578,8 +1585,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         // FIXME: Refactor it
-        ProjectManager projectManager = ActionsHelper.createProjectManager(request);
-        ProjectLinkManager projectLinkManager = ActionsHelper.createProjectLinkManager(request);
+        ProjectManager projectManager = ActionsHelper.createProjectManager();
 
         // Set project rating date
         ActionsHelper.setProjectRatingDate(project, projectPhases, (Format) request.getAttribute("date_format"));
@@ -1591,8 +1597,13 @@ public class ProjectActions extends DispatchAction {
             // Set the id of Phases Project to be equal to the id of appropriate Project
             phProject.setId(project.getId());
         } else {
-            projectManager.updateProject(project, (String) lazyForm.get("explanation"),
-                    Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+            try {
+                projectManager.updateProject(project, (String) lazyForm.get("explanation"),
+                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+            } catch(StatusValidationException statusValidationException) {
+                ActionsHelper.addErrorToRequest(request, "status", statusValidationException.getStatusViolationKey());
+				return oldPhases;
+            }
         }
 
         // Save the phases at the persistence level
@@ -1635,7 +1646,7 @@ public class ProjectActions extends DispatchAction {
             PhaseType phaseType = phase.getPhaseType();
 
             // Obtain an instance of Phase Manager
-            PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, true);
+            PhaseManager phaseManager = ActionsHelper.createPhaseManager(true);
 
             if ("close_phase".equals(action)) {
                 if (phaseStatus.getName().equals(PhaseStatus.OPEN.getName()) && phaseManager.canEnd(phase)) {
@@ -1902,8 +1913,8 @@ public class ProjectActions extends DispatchAction {
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
 
         // Obtain the instance of the Resource Manager
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
-        UploadManager uploadManager = ActionsHelper.createUploadManager(request);
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
+        UploadManager uploadManager = ActionsHelper.createUploadManager();
 
         // Get all types of resource roles
         ResourceRole[] resourceRoles = resourceManager.getAllResourceRoles();
@@ -2539,7 +2550,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         // Obtain an instance of Project Manager
-        ProjectManager manager = ActionsHelper.createProjectManager(request);
+        ProjectManager manager = ActionsHelper.createProjectManager();
         // This variable will specify the index of active tab on the JSP page
         int activeTab;
 
@@ -2620,7 +2631,7 @@ public class ProjectActions extends DispatchAction {
             projectFilters.add(ungroupedProjects[i].getId());
         }
 
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
         Resource[] allMyResources = null;
         if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request)) {
             if (activeTab == 1) {  // My projects
@@ -2643,7 +2654,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         // Obtain an instance of Phase Manager
-        PhaseManager phMgr = ActionsHelper.createPhaseManager(request, false);
+        PhaseManager phMgr = ActionsHelper.createPhaseManager(false);
 
         PhaseStatus[] phaseStatuses = phMgr.getAllPhaseStatuses();
 
@@ -3137,7 +3148,7 @@ public class ProjectActions extends DispatchAction {
             if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(deliverable.getName())) {
                 Submission submission
                     = ActionsHelper.getActiveSpecificationSubmission(phases[0].getProject().getId(),
-                                                                     ActionsHelper.createUploadManager(request));
+                                                                     ActionsHelper.createUploadManager());
                 if ((submission != null) && (submission.getUpload().getOwner() != deliverable.getResource())) {
                     continue;
                 }
@@ -3249,7 +3260,7 @@ public class ProjectActions extends DispatchAction {
         // Place the flag, indicating that we are editing the existing project, into request
         request.setAttribute("newProject", Boolean.FALSE);
 
-        ProjectManager manager = ActionsHelper.createProjectManager(request);
+        ProjectManager manager = ActionsHelper.createProjectManager();
         ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
         request.setAttribute("projectStatuses", projectStatuses);
         request.setAttribute("project", verification.getProject());

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010-2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -88,8 +88,15 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  * </ul>
  * </p>
  *
- * @author isv, romanoTC
- * @version 1.1
+ * <p>
+ * Version 1.2 (Online Review Status Validation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Methods adjusted for new signatures of create managers methods from ActionsHelper.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author isv, romanoTC, rac_
+ * @version 1.2
  */
 public class ProjectManagementConsoleActions extends DispatchAction {
 
@@ -179,9 +186,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @since 1.1
      */
     private static final Pattern VERSION_PATTERN = Pattern.compile("\\s*([1-9][0-9]*)(\\.[0-9]+){0,3}\\s*");
-    
+
     /**
-     * DistributionTool is thread-safe, so we can keep it as an instance variable. 
+     * DistributionTool is thread-safe, so we can keep it as an instance variable.
      * @since 1.1
      */
     private static final DistributionTool DISTRIBUTION_TOOL = new DistributionTool();
@@ -339,7 +346,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
                 request.getSession().setAttribute("success_upload",
                     getResources(request).getMessage("manageProject.Distributions.Successful_upload"));
-                
+
                 return ActionsHelper.cloneForwardAndAppendToPath(mapping
                     .findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
             }
@@ -421,7 +428,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         };
 
         boolean isDesign = (projectCategoryId == DESIGN_PROJECT_ID);
-        
+
         // Saves the distribution file into the catalog directory
         if (!saveDistributionFileToCatalog(project, descriptor, request, isDesign)) {
 
@@ -924,12 +931,12 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         // Must select at least one of these options
         if (!uploadToServer && !returnDistribution) {
             // Add the error message to both checkboxes if design distribution
-            
+
             if (projectCategoryId == DESIGN_PROJECT_ID) {
                 ActionsHelper.addErrorToRequest(request, "upload_to_server", new ActionMessage(
                     "error.com.cronos.onlinereview.actions.manageProject.Distributions.Upload.Unchecked"));
             }
-            
+
             ActionsHelper.addErrorToRequest(request, "return_distribution", new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.Upload.Unchecked"));
         }
@@ -1096,7 +1103,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      */
     private Phase[] getProjectPhases(HttpServletRequest request, Project project) throws BaseException {
         // Get details for requested project
-        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
         com.topcoder.project.phases.Project phasesProject = phaseManager.getPhases(project.getId());
         return phasesProject.getAllPhases();
     }
@@ -1168,7 +1175,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                                                   HttpServletRequest request, ActionForm form) throws BaseException {
         // Adjust registration phase end-time and status only if extension was indeed requested by user
         if (extensionDays > 0) {
-            PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
+            PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
             if (isClosed(registrationPhase)) {
                 // Re-open closed Registration phase if necessary
                 PhaseStatus[] statuses = phaseManager.getAllPhaseStatuses();
@@ -1206,7 +1213,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                                                 HttpServletRequest request, ActionForm form) throws BaseException {
         // Adjust submission phase end-time only if Submission phase extension was indeed requested by user
         if (extensionDays > 0) {
-            PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
+            PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
             long durationExtension = extensionDays * DAY_DURATION_IN_MILLIS;
             Date currentScheduledEndDate = submissionPhase.getScheduledEndDate();
             Date newScheduledEndDate = new Date(currentScheduledEndDate.getTime() + durationExtension);
@@ -1240,7 +1247,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     private Object[] validateAddResourcesRequest(HttpServletRequest request, ActionForm form)
             throws ResourcePersistenceException, ConfigException {
 
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
         Long[] resourceRoleIds = (Long[]) lazyForm.get("resource_role_id");
         String[] resourceHandles = (String[]) lazyForm.get("resource_handles");
@@ -1322,7 +1329,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         Long[] resourceRoleIds = (Long[]) lazyForm.get("resource_role_id");
         String[] resourceHandles = (String[]) lazyForm.get("resource_handles");
 
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
 
         // Collect the lists of resources per roles already registered to project
         Resource[] resources =
@@ -1513,7 +1520,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @throws ResourcePersistenceException if an unexpected error occurs while instantiating resource manager.
      */
     private void setAvailableResourceRoles(HttpServletRequest request) throws ResourcePersistenceException {
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
         ResourceRole[] existingResourceRoles = resourceManager.getAllResourceRoles();
         List<ResourceRole> availableRoles = new ArrayList<ResourceRole>();
         for (ResourceRole role : existingResourceRoles) {
@@ -1736,7 +1743,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
         try {
             return EJBLibraryServicesLocator.getContestEligibilityService().isEligible(userId, projectId, false);
-        }catch (ContestEligibilityValidatorException e) {
+        } catch (ContestEligibilityValidatorException e) {
             throw new BaseException(e);
         }
     }

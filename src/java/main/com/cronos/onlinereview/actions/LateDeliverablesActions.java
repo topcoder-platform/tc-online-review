@@ -79,16 +79,22 @@ import edu.emory.mathcs.backport.java.util.Collections;
  *   <ol>
  *     <li>Updated the action logic to support advanced parameters for searching the late deliverables: cockpit project
  *     ID, explanation and response statuses, minimum and maximum deadlines for late deliverables.</li>
- *     <li>Added {@link #editLateDeliverable(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} 
+ *     <li>Added {@link #editLateDeliverable(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
  *     method.</li>
- *     <li>Added {@link #saveLateDeliverable(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} and 
+ *     <li>Added {@link #saveLateDeliverable(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} and
  *     accompanying methods.</li>
  *   </ol>
  * </p>
  *
- * @author FireIce, isv
- * @version 1.1
- * @since Online Review Late Deliverables Search Assembly 1.0
+ * <p>
+ * Version 1.2 (Online Review Status Validation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Methods adjusted for new signatures of create managers methods from ActionsHelper.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author FireIce, isv, rac_
+ * @version 1.2
  */
 public class LateDeliverablesActions extends DispatchAction {
 
@@ -125,57 +131,57 @@ public class LateDeliverablesActions extends DispatchAction {
     /**
      * <p>A <code>String</code> providing the name of request parameter providing the ID of TC Direct Project to search
      * late deliverables for.</p>
-     * 
+     *
      * @since 1.1
      */
     private static final String PARAM_COCKPIT_PROJECT_ID = "tcd_project_id";
-    
+
     /**
      * <p>A <code>String</code> providing the name of request parameter providing the explanation presence flag to
      * search late deliverables for.</p>
-     * 
+     *
      * @since 1.1
      */
     private static final String PARAM_EXPLANATION_STATUS = "explanation_status";
-    
+
     /**
      * <p>A <code>String</code> providing the name of request parameter providing the response presence flag to search
      * late deliverables for.</p>
-     * 
+     *
      * @since 1.1
      */
     private static final String PARAM_RESPONSE_STATUS = "response_status";
-    
+
     /**
      * <p>A <code>String</code> providing the name of request parameter providing the minimum date for deadline to
      * search late deliverables for.</p>
-     * 
+     *
      * @since 1.1
      */
     private static final String PARAM_MIN_DEADLINE = "min_deadline";
-    
+
     /**
      * <p>A <code>String</code> providing the name of request parameter providing the maximum date for deadline to
      * search late deliverables for.</p>
-     * 
+     *
      * @since 1.1
      */
     private static final String PARAM_MAX_DEADLINE = "max_deadline";
 
     /**
      * <p>A <code>String</code> array listing the names for advanced search parameters.</p>
-     *  
+     *
      * @since 1.1
      */
-    private static final String[] ADVANCED_SEARCH_PARAMS = new String[] {PARAM_COCKPIT_PROJECT_ID, 
+    private static final String[] ADVANCED_SEARCH_PARAMS = new String[] {PARAM_COCKPIT_PROJECT_ID,
         PARAM_EXPLANATION_STATUS, PARAM_RESPONSE_STATUS, PARAM_MIN_DEADLINE, PARAM_MAX_DEADLINE};
 
     /**
      * <p>A <code>String</code> array listing the default values for advanced search parameters.</p>
-     *  
+     *
      * @since 1.1
      */
-    private static final String[] ADVANCED_SEARCH_PARAM_DEFAULT_VALUES = new String[] {"", "", "", "MM.DD.YYYY", 
+    private static final String[] ADVANCED_SEARCH_PARAM_DEFAULT_VALUES = new String[] {"", "", "", "MM.DD.YYYY",
                                                                                        "MM.DD.YYYY"};
 
     /**
@@ -251,7 +257,7 @@ public class LateDeliverablesActions extends DispatchAction {
                     request.setAttribute("projectMap", projectMap);
                     request.setAttribute("groupedLateDeliverables", groupedLateDeliverables);
                 }
-                
+
                 // Return the success forward
                 return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
             }
@@ -289,7 +295,7 @@ public class LateDeliverablesActions extends DispatchAction {
 
         // remove login redirect
         AuthorizationHelper.removeLoginRedirect(request);
-        
+
         // Get requested late deliverable ID and raise an exception if it is not found
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
         Long lateDeliverableId = (Long) lazyForm.get("late_deliverable_id");
@@ -302,15 +308,15 @@ public class LateDeliverablesActions extends DispatchAction {
             AuthorizationHelper.gatherUserRoles(request, lateDeliverable.getProjectId());
 
             // Check if user has a permission to view the late deliverable. The users can view late deliverables
-            // either if the they are granted View Late Deliverable permission or if they are the source of the late 
+            // either if the they are granted View Late Deliverable permission or if they are the source of the late
             // deliverable
             long lateDeliverableUserId = getLateDeliverableUserId(request, lateDeliverable);
             long currentUserId = AuthorizationHelper.getLoggedInUserId(request);
             boolean isLateDeliverableOwner = (currentUserId == lateDeliverableUserId);
-            
-            boolean canViewLateDeliverable 
+
+            boolean canViewLateDeliverable
                 = AuthorizationHelper.hasUserPermission(request, Constants.VIEW_LATE_DELIVERABLE_PERM_NAME);
-            
+
             if (!canViewLateDeliverable && !isLateDeliverableOwner) {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                         Constants.VIEW_LATE_DELIVERABLE_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
@@ -321,10 +327,10 @@ public class LateDeliverablesActions extends DispatchAction {
             lazyForm.set("explanation", lateDeliverable.getExplanation());
             lazyForm.set("response", lateDeliverable.getResponse());
             lazyForm.set("late_deliverable_id", lateDeliverable.getId());
-            
+
             // Set additional request attributes to be consumed by JSP
             setEditLateDeliverableRequest(request, lateDeliverable, isLateDeliverableOwner);
-            
+
             return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
         }
 
@@ -355,7 +361,7 @@ public class LateDeliverablesActions extends DispatchAction {
 
         // remove login redirect
         AuthorizationHelper.removeLoginRedirect(request);
-        
+
         // Get requested late deliverable ID and raise an exception if it is not found
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
         Long lateDeliverableId = (Long) lazyForm.get("late_deliverable_id");
@@ -368,20 +374,20 @@ public class LateDeliverablesActions extends DispatchAction {
             AuthorizationHelper.gatherUserRoles(request, lateDeliverable.getProjectId());
 
             // Check if user has a permission to edit the late deliverable. The users can edit late deliverables
-            // either if the they are granted Edit Late Deliverable permission or if they are the source of the late 
+            // either if the they are granted Edit Late Deliverable permission or if they are the source of the late
             // deliverable
             long lateDeliverableUserId = getLateDeliverableUserId(request, lateDeliverable);
             long currentUserId = AuthorizationHelper.getLoggedInUserId(request);
             boolean isLateDeliverableOwner = (currentUserId == lateDeliverableUserId);
-            
-            boolean canEditLateDeliverable 
+
+            boolean canEditLateDeliverable
                 = AuthorizationHelper.hasUserPermission(request, Constants.EDIT_LATE_DELIVERABLE_PERM_NAME);
-            
+
             if (!canEditLateDeliverable && !isLateDeliverableOwner) {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                         Constants.EDIT_LATE_DELIVERABLE_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
             }
-            
+
             // Validate that desired data is submitted based on user's role
             String newResponse = null;
             String newExplanation = null;
@@ -401,12 +407,12 @@ public class LateDeliverablesActions extends DispatchAction {
                 setEditLateDeliverableRequest(request, lateDeliverable, isLateDeliverableOwner);
                 return mapping.getInputForward();
             } else {
-                boolean dataHasBeenChanged = isLateDeliverableOwner 
-                                             || canEditLateDeliverable 
-                                                && ((lateDeliverable.isForgiven() != newForgiven) 
+                boolean dataHasBeenChanged = isLateDeliverableOwner
+                                             || canEditLateDeliverable
+                                                && ((lateDeliverable.isForgiven() != newForgiven)
                                                     || (newResponse != null));
 
-                // Re-read the late deliverable from DB again to get most recent data for late deliverable before 
+                // Re-read the late deliverable from DB again to get most recent data for late deliverable before
                 // updating
                 lateDeliverable = getLateDeliverable(request, lateDeliverableId);
                 boolean alreadySet = false;
@@ -424,7 +430,7 @@ public class LateDeliverablesActions extends DispatchAction {
                     if (lateDeliverable.isForgiven() != newForgiven) {
                         lateDeliverable.setForgiven(newForgiven);
                     }
-                    boolean newResponseSubmitted = (lazyForm.get("response") != null 
+                    boolean newResponseSubmitted = (lazyForm.get("response") != null
                                                     && ((String) lazyForm.get("response")).length() > 0);
                     if (newResponseSubmitted) {
                         if (lateDeliverable.getResponse() == null) {
@@ -438,19 +444,19 @@ public class LateDeliverablesActions extends DispatchAction {
                 }
 
                 if (alreadySet) {
-                    // Raise an error since explanation/response has been already set for this late deliverable 
+                    // Raise an error since explanation/response has been already set for this late deliverable
                     return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                            Constants.EDIT_LATE_DELIVERABLE_PERM_NAME, "Error.LateDeliverableAlreadyUpdated", 
+                            Constants.EDIT_LATE_DELIVERABLE_PERM_NAME, "Error.LateDeliverableAlreadyUpdated",
                             Boolean.FALSE);
                 } else if (isLateDeliverableOwner && lateForExplanation) {
                     // Raise an error since time given for the explanation has ended
                     return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                            Constants.EDIT_LATE_DELIVERABLE_PERM_NAME, "Error.LateDeliverableExplanationLate", 
+                            Constants.EDIT_LATE_DELIVERABLE_PERM_NAME, "Error.LateDeliverableExplanationLate",
                             Boolean.FALSE);
                 } else {
 
                     // Update the affected properties of the deliverable
-                    LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager(request);
+                    LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager();
                     lateDeliverableManager.update(lateDeliverable);
 
                     // Send notification emails in case any data of late deliverable has been changed
@@ -517,7 +523,7 @@ public class LateDeliverablesActions extends DispatchAction {
 
                 // check project exist
                 // Obtain an instance of Project Manager
-                ProjectManager projectManager = ActionsHelper.createProjectManager(request);
+                ProjectManager projectManager = ActionsHelper.createProjectManager();
 
                 if (projectManager.getProject(projectId) == null) {
                     ActionsHelper.addErrorToRequest(request, PARAM_PROJECT_ID,
@@ -529,7 +535,7 @@ public class LateDeliverablesActions extends DispatchAction {
                 // simply ignore the invalid parameter
             }
         }
-        
+
         // Cockpit project ID - optional, can be null or empty.
         String cockpitProjectIdStr = (String) lateDeliverableSearchForm.get(PARAM_COCKPIT_PROJECT_ID);
         if (cockpitProjectIdStr != null && cockpitProjectIdStr.trim().length() != 0) {
@@ -540,21 +546,21 @@ public class LateDeliverablesActions extends DispatchAction {
                 // simply ignore the invalid parameter
             }
         }
-        
+
         // Explanation status - optional, can be null or empty.
         String explanationStatusStr = (String) lateDeliverableSearchForm.get(PARAM_EXPLANATION_STATUS);
         if (explanationStatusStr != null && explanationStatusStr.trim().length() != 0) {
             filters.add(LateDeliverableFilterBuilder.createHasExplanationFilter(Boolean.valueOf(explanationStatusStr)));
         }
-        
+
         // Response status - optional, can be null or empty.
         String responseStatusStr = (String) lateDeliverableSearchForm.get(PARAM_RESPONSE_STATUS);
         if (responseStatusStr != null && responseStatusStr.trim().length() != 0) {
             filters.add(LateDeliverableFilterBuilder.createHasResponseFilter(Boolean.valueOf(responseStatusStr)));
         }
-        
+
         DateFormat dateFormat = new SimpleDateFormat("MM.dd.yyyy");
-        
+
         // Min deadline - optional, can be null or empty.
         Date minDeadline = null;
         String minDeadlineStr = (String) lateDeliverableSearchForm.get(PARAM_MIN_DEADLINE);
@@ -568,7 +574,7 @@ public class LateDeliverablesActions extends DispatchAction {
                         "error.com.cronos.onlinereview.actions.LateDeliverablesActions.invalidDate");
             }
         }
-        
+
         // Max deadline - optional, can be null or empty.
         Date maxDeadline = null;
         String maxDeadlineStr = (String) lateDeliverableSearchForm.get(PARAM_MAX_DEADLINE);
@@ -588,7 +594,7 @@ public class LateDeliverablesActions extends DispatchAction {
                         "error.com.cronos.onlinereview.actions.LateDeliverablesActions.invalidDate");
             }
         }
-        
+
         // Check if min/max deadline range is valid
         if ((minDeadline != null) && (maxDeadline != null)) {
             if (minDeadline.compareTo(maxDeadline) > 0) {
@@ -596,8 +602,8 @@ public class LateDeliverablesActions extends DispatchAction {
                         "error.com.cronos.onlinereview.actions.LateDeliverablesActions.invalidDatesRange");
             }
         }
-        
- 
+
+
         // selected project categories
         Long[] projectCategories = (Long[]) lateDeliverableSearchForm.get(PARAM_PROJECT_CATEGORIES);
 
@@ -804,7 +810,7 @@ public class LateDeliverablesActions extends DispatchAction {
         }
 
         // Obtain the project manager
-        ProjectManager projectManager = ActionsHelper.createProjectManager(request);
+        ProjectManager projectManager = ActionsHelper.createProjectManager();
 
         Project[] projects = projectManager.getProjects(projectIds);
 
@@ -827,7 +833,7 @@ public class LateDeliverablesActions extends DispatchAction {
      */
     private static void loadLookups(HttpServletRequest request) throws BaseException {
         // Obtain an instance of Project Manager
-        ProjectManager projectManager = ActionsHelper.createProjectManager(request);
+        ProjectManager projectManager = ActionsHelper.createProjectManager();
 
         // Retrieve project categories
         ProjectCategory[] projectCategories = projectManager.getAllProjectCategories();
@@ -851,7 +857,7 @@ public class LateDeliverablesActions extends DispatchAction {
 
         // Retrieve deliverable types and store in request
         request.setAttribute("deliverableTypes", ConfigHelper.getDeliverableTypes());
-        
+
         // Retrieve available Cockpit projects and store in request
         ProjectDataAccess projectDataAccess = new ProjectDataAccess();
         Map<Long, String> cockpitProjects;
@@ -879,7 +885,7 @@ public class LateDeliverablesActions extends DispatchAction {
      */
     private static List<LateDeliverable> searchLateDeliverables(HttpServletRequest request, Filter filter)
         throws LateDeliverableManagementException {
-        LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager(request);
+        LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager();
 
         List<LateDeliverable> lateDeliverables = null;
         if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
@@ -933,20 +939,20 @@ public class LateDeliverablesActions extends DispatchAction {
 
     /**
      * <p>Gets the late deliverable matching the specified ID.</p>
-     * 
+     *
      * @param request the http request.
      * @param lateDeliverableId a <code>long</code> providing the ID of late deliverable to retrieve.
      * @return a <code>LateDeliverable</code> matching the specified ID or <code>null</code> if requested late
-     *         deliverable could not be found. 
+     *         deliverable could not be found.
      * @throws LateDeliverableManagementException if any error occurs.
      */
     private static LateDeliverable getLateDeliverable(HttpServletRequest request, long lateDeliverableId)
         throws LateDeliverableManagementException {
-        LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager(request);
+        LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager();
         LateDeliverable lateDeliverable = lateDeliverableManager.retrieve(lateDeliverableId);
         return lateDeliverable;
     }
-    
+
     /**
      * <p>Validates that specified property of specified form is not null and is not empty. If validation fails then
      * binds the error message to request to indicate on validation error.</p>
@@ -969,64 +975,63 @@ public class LateDeliverablesActions extends DispatchAction {
 
     /**
      * <p>Gets the ID for a user associated with the resource assigned to specified late deliverable.</p>
-     * 
+     *
      * @param request the http request.
-     * @param lateDeliverable a <code>LateDeliverable</code> providing the data for late deliverable. 
+     * @param lateDeliverable a <code>LateDeliverable</code> providing the data for late deliverable.
      * @return a <code>long</code> providing the ID of a user who is associated with the resource set for specified
      *         late deliverable.
      * @throws ResourcePersistenceException if an unexpected error occurs.
      */
     private long getLateDeliverableUserId(HttpServletRequest request, LateDeliverable lateDeliverable)
         throws ResourcePersistenceException {
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
         Resource lateDeliverableResource = resourceManager.getResource(lateDeliverable.getResourceId());
         return Long.parseLong(String.valueOf(lateDeliverableResource.getProperty("External Reference ID")));
     }
 
     /**
      * <p>Sets the request with various attributes for specified late deliverable to be consumed by the JSP.</p>
-     *  
-     * @param request an <code>HttpServletRequest</code> representing incoming request. 
-     * @param lateDeliverable a <code>LateDeliverable</code> providing the data for late deliverable. 
+     *
+     * @param request an <code>HttpServletRequest</code> representing incoming request.
+     * @param lateDeliverable a <code>LateDeliverable</code> providing the data for late deliverable.
      * @param lateDeliverableOwner <code>true</code> if current user is late member associated with late deliverable;
      *        <code>false</code> otherwise.
      * @throws PersistenceException if an unexpected error occurs.
      */
     private void setEditLateDeliverableRequest(HttpServletRequest request, LateDeliverable lateDeliverable,
                                                boolean lateDeliverableOwner) throws PersistenceException {
-        boolean canEditLateDeliverables 
+        boolean canEditLateDeliverables
             = AuthorizationHelper.hasUserPermission(request, Constants.EDIT_LATE_DELIVERABLE_PERM_NAME);
 
         request.setAttribute("lateDeliverable", lateDeliverable);
         request.setAttribute("project",
-                             ActionsHelper.createProjectManager(request).getProject(
-                                 lateDeliverable.getProjectId()));
+                             ActionsHelper.createProjectManager().getProject(lateDeliverable.getProjectId()));
 
-        boolean explanationEditable = lateDeliverableOwner && lateDeliverable.getExplanation() == null && 
+        boolean explanationEditable = lateDeliverableOwner && lateDeliverable.getExplanation() == null &&
             ActionsHelper.explanationDeadline(lateDeliverable).compareTo(new Date()) > 0;
         request.setAttribute("isExplanationEditable", explanationEditable);
 
-        request.setAttribute("isResponseEditable", 
-                             canEditLateDeliverables && !lateDeliverableOwner 
-                             && (lateDeliverable.getResponse() == null) 
+        request.setAttribute("isResponseEditable",
+                             canEditLateDeliverables && !lateDeliverableOwner
+                             && (lateDeliverable.getResponse() == null)
                              && (lateDeliverable.getExplanation() != null));
         request.setAttribute("isForgivenEditable", canEditLateDeliverables && !lateDeliverableOwner);
-        request.setAttribute("isFormSubmittable", 
+        request.setAttribute("isFormSubmittable",
                              (canEditLateDeliverables && !lateDeliverableOwner) || explanationEditable);
     }
 
     /**
      * <p>Set template fields with real values.</p>
-     * 
-     * @param root a <code>TemplateFields</code> providing the root in template fields hierarchy. 
-     * @param project a <code>Project</code> providing details for current project. 
+     *
+     * @param root a <code>TemplateFields</code> providing the root in template fields hierarchy.
+     * @param project a <code>Project</code> providing details for current project.
      * @param lateDeliverable a <code>LateDeliverable</code> which has been updated.
-     * @param request an <code>HttpServletRequest</code> representing incoming request. 
-     * @return a <code>TemplateFields</code> providing the initialized template fields. 
+     * @param request an <code>HttpServletRequest</code> representing incoming request.
+     * @return a <code>TemplateFields</code> providing the initialized template fields.
      * @throws BaseException if an unexpected error occurs.
      */
     private TemplateFields setTemplateFieldValues(TemplateFields root, Project project, LateDeliverable lateDeliverable,
-                                                  HttpServletRequest request) 
+                                                  HttpServletRequest request)
         throws BaseException {
         Node[] nodes = root.getNodes();
 
@@ -1067,7 +1072,7 @@ public class LateDeliverablesActions extends DispatchAction {
                     field.setValue(Functions.getDeliverableName(request, lateDeliverable.getDeliverableId()));
                 } else if ("LATE_MEMBER_HANDLE".equals(field.getName())) {
                     UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
-                    ExternalUser lateMember 
+                    ExternalUser lateMember
                         = userRetrieval.retrieveUser(getLateDeliverableUserId(request, lateDeliverable));
                     field.setValue(lateMember.getHandle());
                 } else if ("CURRENT_USER_HANDLE".equals(field.getName())) {
@@ -1083,19 +1088,19 @@ public class LateDeliverablesActions extends DispatchAction {
 
     /**
      * <p>Sends email to specified recipients on update of specified late deliverable.</p>
-     * 
-     * @param project a <code>Project</code> providing details for project. 
-     * @param recipients a <code>String</code> list providing the list of email addresses to send email message to. 
-     * @param ccRecipients a <code>String</code> list providing the list of email addresses to be CCed on the email message. 
+     *
+     * @param project a <code>Project</code> providing details for project.
+     * @param recipients a <code>String</code> list providing the list of email addresses to send email message to.
+     * @param ccRecipients a <code>String</code> list providing the list of email addresses to be CCed on the email message.
      * @param lateDeliverable a <code>LateDeliverable</code> which has been updated.
      * @param emailTemplateName a <code>String</code> referencing the template for generating the email message body.
      * @param emailSubjectTemplate a <code>String</code> providing the template for subject for the email message.
      * @param fromAddress a <code>String</code> providing the email address to send email from.
-     * @param request an <code>HttpServletRequest</code> representing incoming request. 
+     * @param request an <code>HttpServletRequest</code> representing incoming request.
      * @throws Exception if an unexpected error occurs.
      */
-    private void sendEmailForUsers(Project project, List<String> recipients, List<String> ccRecipients, LateDeliverable lateDeliverable, 
-                                   String emailTemplateName, String emailSubjectTemplate, 
+    private void sendEmailForUsers(Project project, List<String> recipients, List<String> ccRecipients, LateDeliverable lateDeliverable,
+                                   String emailTemplateName, String emailSubjectTemplate,
                                    String fromAddress, HttpServletRequest request) throws Exception {
         if (recipients.size() + ccRecipients.size() == 0) {
             return;
@@ -1104,12 +1109,12 @@ public class LateDeliverablesActions extends DispatchAction {
         DocumentGenerator docGenerator = new DocumentGenerator();
         docGenerator.setDefaultTemplateSource(new FileTemplateSource());
         Template template = docGenerator.getTemplate(emailTemplateName);
-        TemplateFields root = setTemplateFieldValues(docGenerator.getFields(template), project, lateDeliverable, 
+        TemplateFields root = setTemplateFieldValues(docGenerator.getFields(template), project, lateDeliverable,
                                                      request);
 
         String emailContent = docGenerator.applyTemplate(root);
         TCSEmailMessage message = new TCSEmailMessage();
-        message.setSubject(MessageFormat.format(emailSubjectTemplate, project.getProperty("Project Name"), 
+        message.setSubject(MessageFormat.format(emailSubjectTemplate, project.getProperty("Project Name"),
                                                 project.getProperty("Project Version")));
         message.setBody(emailContent);
         message.setFromAddress(fromAddress);
@@ -1118,7 +1123,7 @@ public class LateDeliverablesActions extends DispatchAction {
         }
         for (String ccRecipient : ccRecipients) {
             message.addToAddress(ccRecipient, TCSEmailMessage.CC);
-        }		
+        }
         message.setContentType("text/html");
         EmailEngine.send(message);
     }
@@ -1126,16 +1131,16 @@ public class LateDeliverablesActions extends DispatchAction {
     /**
      * <p>Sends an email to late member associated with the specified late deliverable to notify on updates of
 	 * the late deliverable by one of the managers. The other managers are CCed on the email.</p>
-     * 
-     * @param lateDeliverable a <code>LateDeliverable</code> which has been updated. 
-     * @param request an <code>HttpServletRequest</code> representing incoming request. 
+     *
+     * @param lateDeliverable a <code>LateDeliverable</code> which has been updated.
+     * @param request an <code>HttpServletRequest</code> representing incoming request.
      * @throws Exception if an unexpected error occurs.
      */
     private void sendEmailToLateMember(LateDeliverable lateDeliverable, HttpServletRequest request) throws Exception {
-        Project project = ActionsHelper.createProjectManager(request).getProject(lateDeliverable.getProjectId());
+        Project project = ActionsHelper.createProjectManager().getProject(lateDeliverable.getProjectId());
 
-        String[] recipientRoleNames = ConfigHelper.getLateDeliverableUpdateByManagerRecipientRoleNames();		
-		
+        String[] recipientRoleNames = ConfigHelper.getLateDeliverableUpdateByManagerRecipientRoleNames();
+
         List<Long> managerUserIds = ActionsHelper.getUserIDsByRoleNames(request, recipientRoleNames, project.getId());
 
         managerUserIds.remove(new Long(22719217)); // "Components" dummy user
@@ -1144,31 +1149,31 @@ public class LateDeliverablesActions extends DispatchAction {
 
         // Don't send email to the user who is editing the late deliverable.
         managerUserIds.remove(AuthorizationHelper.getLoggedInUserId(request));
-		
+
         List<String> managerEmails = ActionsHelper.getEmailsByUserIDs(request, managerUserIds);
-		
+
         // Get the late member's email.
         List<String> lateMemberEmails = new ArrayList<String>();
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
         lateMemberEmails.add( userRetrieval.retrieveUser(getLateDeliverableUserId(request, lateDeliverable)).getEmail() );
-        
+
         sendEmailForUsers(project, lateMemberEmails, managerEmails, lateDeliverable,
                           ConfigHelper.getLateDeliverableUpdateByManagerEmailTemplateName(),
                           ConfigHelper.getLateDeliverableUpdateByManagerEmailTemplateSubject(),
-                          ConfigHelper.getLateDeliverableUpdateByManagerEmailFromAddress(), 
-                          request);    
+                          ConfigHelper.getLateDeliverableUpdateByManagerEmailFromAddress(),
+                          request);
     }
 
     /**
      * <p>Sends an email to managers associated with the specified late deliverable to notify on updates of the late
      * deliverable by the late member.</p>
-     * 
-     * @param lateDeliverable a <code>LateDeliverable</code> which has been updated. 
-     * @param request an <code>HttpServletRequest</code> representing incoming request. 
+     *
+     * @param lateDeliverable a <code>LateDeliverable</code> which has been updated.
+     * @param request an <code>HttpServletRequest</code> representing incoming request.
      * @throws Exception if an unexpected error occurs.
      */
     private void sendEmailToManagers(LateDeliverable lateDeliverable, HttpServletRequest request) throws Exception {
-        Project project = ActionsHelper.createProjectManager(request).getProject(lateDeliverable.getProjectId());
+        Project project = ActionsHelper.createProjectManager().getProject(lateDeliverable.getProjectId());
 
         String[] recipientRoleNames = ConfigHelper.getLateDeliverableUpdateByMemberRecipientRoleNames();
 
@@ -1182,7 +1187,7 @@ public class LateDeliverablesActions extends DispatchAction {
         sendEmailForUsers(project, managerEmails, new ArrayList<String>(), lateDeliverable,
                           ConfigHelper.getLateDeliverableUpdateByMemberEmailTemplateName(),
                           ConfigHelper.getLateDeliverableUpdateByMemberEmailTemplateSubject(),
-                          ConfigHelper.getLateDeliverableUpdateByMemberEmailFromAddress(), 
+                          ConfigHelper.getLateDeliverableUpdateByMemberEmailFromAddress(),
                           request);
     }
 }
