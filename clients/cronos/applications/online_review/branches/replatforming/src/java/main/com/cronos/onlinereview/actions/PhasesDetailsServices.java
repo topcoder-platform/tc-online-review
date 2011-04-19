@@ -19,8 +19,6 @@ import org.apache.struts.util.MessageResources;
 
 import com.cronos.onlinereview.actions.Comparators.SubmissionComparer;
 import com.cronos.onlinereview.actions.Comparators.MilestoneSubmissionComparator;
-import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
-import com.cronos.onlinereview.autoscreening.management.ScreeningTask;
 import com.cronos.onlinereview.external.ConfigException;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.RetrievalException;
@@ -100,9 +98,16 @@ import com.topcoder.util.errorhandling.BaseException;
  *     <li>Change submission.getUplaods.get(0) to submission.getUpload().</li>
  *   </ol>
  * </p>
+ * <p>
+ * Version 1.5 (Online Review Status Validation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Methods adjusted for new signatures of create managers methods from ActionsHelper</li>
+ *     <li>Removed auto-screening and aggregation review.</li>
+ *   </ol>
+ * </p>
  *
- * @author George1, isv, TCSDEVELOPER
- * @version 1.4.2
+ * @author George1, isv, rac_
+ * @version 1.5
  */
 final class PhasesDetailsServices {
 
@@ -116,7 +121,7 @@ final class PhasesDetailsServices {
     public static PhasesDetails getPhasesDetails(HttpServletRequest request, MessageResources messages, Project project,
             Phase[] phases, Resource[] allProjectResources, ExternalUser[] allProjectExternalUsers)
             throws BaseException {
-        
+
         // Validate parameters first
         ActionsHelper.validateParameterNotNull(request, "request");
         ActionsHelper.validateParameterNotNull(messages, "messages");
@@ -145,7 +150,7 @@ final class PhasesDetailsServices {
             }
         }
 
-        // If Post-Mortem phase exists and depends on some other phase then 
+        // If Post-Mortem phase exists and depends on some other phase then
         if (postMortemPhase != null) {
             if (postMortemPhasePredecessor != null) {
                 for (int i = 0; i < phases.length; i++) {
@@ -335,14 +340,14 @@ final class PhasesDetailsServices {
                 || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_MILESTONE_SUBMISSION_PERM_NAME)
                     && ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.MILESTONE_SCREENING_PHASE_NAME))) {
                 submissions 
-                    = ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project,
+                    = ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(), project,
                                                              "Milestone Submission");
             }
 
             if (submissions == null 
                 && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_MILESTONE_SUBMISSIONS_PERM_NAME)) {
                 // Obtain an instance of Upload Manager
-                UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                UploadManager upMgr = ActionsHelper.createUploadManager();
                 SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
                 SubmissionType[] allSubmissionTypes = upMgr.getAllSubmissionTypes();
                 SubmissionType submissionType = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes,
@@ -401,7 +406,7 @@ final class PhasesDetailsServices {
             }
 
             // Obtain an instance of Scorecard Manager
-            ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+            ScorecardManager scrMgr = ActionsHelper.createScorecardManager();
             ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
 
             List<Long> submissionIds = new ArrayList<Long>();
@@ -440,7 +445,7 @@ final class PhasesDetailsServices {
             }
 
             // Obtain an instance of Scorecard Manager
-            ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+            ScorecardManager scrMgr = ActionsHelper.createScorecardManager();
             ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
 
             List<Long> submissionIds = new ArrayList<Long>();
@@ -517,7 +522,7 @@ final class PhasesDetailsServices {
         if (submissions.length > 0 &&
             AuthorizationHelper.hasUserPermission(request, viewAllSubmissionsPermission)) {
             
-            UploadManager upMgr = ActionsHelper.createUploadManager(request);
+            UploadManager upMgr = ActionsHelper.createUploadManager();
             SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
             UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
             UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
@@ -567,7 +572,7 @@ final class PhasesDetailsServices {
         }
         return pastSubmissions;
     }
-    
+
     /**
      * TODO: Write documentation for this method.
      *
@@ -589,9 +594,9 @@ final class PhasesDetailsServices {
 
         if (phaseName.equalsIgnoreCase(Constants.SUBMISSION_PHASE_NAME)) {
             Submission[] submissions = null;
-            
+
             if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
-                submissions = ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project,
+                submissions = ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(), project,
                                                                      "Contest Submission");
             }
 
@@ -601,14 +606,14 @@ final class PhasesDetailsServices {
             if (submissions == null &&
                     ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse))) {
                 submissions =
-                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project,
+                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(), project,
                                                            "Contest Submission");
             }
             if (submissions == null &&
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) &&
                     !AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES)) {
                 submissions =
-                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project,
+                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(), project,
                                                            "Contest Submission");
             }
             if (submissions == null &&
@@ -616,20 +621,20 @@ final class PhasesDetailsServices {
                     AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES) &&
                     ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.REVIEW_PHASE_NAME)) {
                 submissions =
-                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project,
+                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(), project,
                                                            "Contest Submission");
             }
             if (submissions == null &&
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME) &&
                     ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.SCREENING_PHASE_NAME)) {
                 submissions =
-                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project,
+                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(), project,
                                                            "Contest Submission");
             }
             if (submissions == null &&
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
                 // Obtain an instance of Upload Manager
-                UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                UploadManager upMgr = ActionsHelper.createUploadManager();
                 SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
                 SubmissionType[] allSubmissionTypes = upMgr.getAllSubmissionTypes();
                 SubmissionType submissionType = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes,
@@ -668,21 +673,8 @@ final class PhasesDetailsServices {
 
             phaseGroup.setPastSubmissions(getPreviousUploadsForSubmissions(request, project, submissions, 
                                                                            Constants.VIEW_ALL_SUBM_PERM_NAME));
-            
+
             phaseGroup.setSubmissions(submissions);
-
-            if (submissions.length != 0) {
-                long[] uploadIds = new long[submissions.length];
-
-                for (int j = 0; j < submissions.length; ++j) {
-                    uploadIds[j] = submissions[j].getUpload().getId();
-                }
-
-                ScreeningManager scrMgr = ActionsHelper.createScreeningManager(request);
-                ScreeningTask[] tasks = scrMgr.getScreeningTasks(uploadIds, true);
-
-                phaseGroup.setScreeningTasks(tasks);
-            }
         }
 
         if (phaseName.equalsIgnoreCase(Constants.SCREENING_PHASE_NAME) &&
@@ -692,22 +684,17 @@ final class PhasesDetailsServices {
             if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME) &&
                     !AuthorizationHelper.hasUserRole(request, Constants.PRIMARY_SCREENER_ROLE_NAME)) {
                 Resource[] my = ActionsHelper.getMyResourcesForPhase(request, phases[phaseIdx]);
-                ScreeningTask[] allTasks = phaseGroup.getScreeningTasks();
                 List<Submission> tempSubs = new ArrayList<Submission>();
-                List<ScreeningTask> tasks = new ArrayList<ScreeningTask>();
 
                 for (int j = 0; j < submissions.length; ++j) {
                     for (int k = 0; k < my.length; ++k) {
                         if (my[k].containsSubmission(submissions[j].getId())) {
                             tempSubs.add(submissions[j]);
-                            tasks.add(allTasks[j]);
                         }
                     }
                 }
-
                 submissions = (Submission[]) tempSubs.toArray(new Submission[tempSubs.size()]);
                 phaseGroup.setSubmissions(submissions);
-                phaseGroup.setScreeningTasks((ScreeningTask[]) tasks.toArray(new ScreeningTask[tasks.size()]));
             }
 
             Resource[] screeners = ActionsHelper.getResourcesForPhase(allProjectResources, phases[phaseIdx]);
@@ -720,7 +707,7 @@ final class PhasesDetailsServices {
             }
 
             // Obtain an instance of Scorecard Manager
-            ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+            ScorecardManager scrMgr = ActionsHelper.createScorecardManager();
             ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
 
             List<Long> submissionIds = new ArrayList<Long>();
@@ -770,7 +757,7 @@ final class PhasesDetailsServices {
 
             if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
                 submissions =
-                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project,
+                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(), project,
                                                            "Contest Submission");
             }
 
@@ -781,13 +768,13 @@ final class PhasesDetailsServices {
                     ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse) ||
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME))) {
                 submissions =
-                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project,
+                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(), project,
                                                            "Contest Submission");
             }
             if (submissions == null &&
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
                 // Obtain an instance of Upload Manager
-                UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                UploadManager upMgr = ActionsHelper.createUploadManager();
                 SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
                 SubmissionType[] allSubmissionTypes = upMgr.getAllSubmissionTypes();
                 SubmissionType submissionType = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes,
@@ -877,7 +864,7 @@ final class PhasesDetailsServices {
             }
 
             // Obtain an instance of Scorecard Manager
-            ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+            ScorecardManager scrMgr = ActionsHelper.createScorecardManager();
             ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
 
             List<Long> submissionIds = new ArrayList<Long>();
@@ -939,7 +926,7 @@ final class PhasesDetailsServices {
 
             if (!reviewerIds.isEmpty() && canDownloadTestCases) {
                 // Obtain an instance of Upload Manager
-                UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                UploadManager upMgr = ActionsHelper.createUploadManager();
                 UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
                 UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
 
@@ -1049,32 +1036,6 @@ final class PhasesDetailsServices {
                 phaseGroup.setAggregation(reviews[0]);
             }
         }
-
-        if (phaseName.equalsIgnoreCase(Constants.AGGREGATION_REVIEW_PHASE_NAME) &&
-                phaseGroup.getAggregation() != null && phaseGroup.getAggregation().isCommitted()) {
-            Review aggregation = phaseGroup.getAggregation();
-
-            boolean reviewCommitted = true;
-
-            for (int j = 0; j < aggregation.getNumberOfComments(); ++j) {
-                    // Get a comment for the current iteration
-                    Comment comment = aggregation.getComment(j);
-
-                if (ActionsHelper.isAggregationReviewComment(comment)) {
-                        String extraInfo = (String) comment.getExtraInfo();
-                        if (!("Approved".equalsIgnoreCase(extraInfo) ||
-                                "Rejected".equalsIgnoreCase(extraInfo))) {
-                            reviewCommitted = false;
-                            break;
-                        }
-                    }
-                }
-
-            final String phaseStatus = phase.getPhaseStatus().getName();
-
-            phaseGroup.setDisplayAggregationReviewLink(!phaseStatus.equalsIgnoreCase(Constants.SCHEDULED_PH_STATUS_NAME));
-            phaseGroup.setAggregationReviewCommitted(reviewCommitted);
-        }
     }
 
     /**
@@ -1108,7 +1069,7 @@ final class PhasesDetailsServices {
 
             if (finalFixes.finalFixes == null) {
                 // Obtain an instance of Upload Manager
-                UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                UploadManager upMgr = ActionsHelper.createUploadManager();
                 UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
 
                 Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
@@ -1179,7 +1140,7 @@ final class PhasesDetailsServices {
      * @param phase a <code>Phase</code> providing the details for <code>Post-Mortem</code> phase.
      * @param allProjectResources a <code>Resource</code> array listing all existing resources for specified project.
      * @param specifications a <code>SpecificationsInfo</code> providing the details for specification submissions for
-     *        project. 
+     *        project.
      * @throws BaseException if an unexpected error occurs.
      * @since 1.4
      */
@@ -1188,7 +1149,7 @@ final class PhasesDetailsServices {
                                                  SpecificationsInfo specifications) throws BaseException {
 
         if (specifications.specifications == null) {
-            UploadManager upMgr = ActionsHelper.createUploadManager(request);
+            UploadManager upMgr = ActionsHelper.createUploadManager();
             specifications.specifications
                 = ActionsHelper.getSpecificationSubmissions(phase.getProject().getId(), upMgr);
             specifications.specificationIdx = 0;
@@ -1200,7 +1161,7 @@ final class PhasesDetailsServices {
             if (specifications.specificationIdx < specifications.specifications.length) {
                 phaseGroup.setSpecificationSubmission(specifications.specifications[specifications.specificationIdx++]);
                 if (phaseGroup.getSpecificationSubmission() != null) {
-                    ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+                    ResourceManager resourceManager = ActionsHelper.createResourceManager();
                     phaseGroup.setSpecificationSubmitter(
                         resourceManager.getResource(
                             phaseGroup.getSpecificationSubmission().getUpload().getOwner()));
@@ -1235,7 +1196,7 @@ final class PhasesDetailsServices {
      * @param allProjectResources a <code>Resource</code> array listing all existing resources for specified project.
      * @param isAfterAppealsResponse <code>true</code> if current phase is after appeals response; <code>false</code>
      *        otherwise.
-     * @param finalFixes a <code>FinalFixesInfo</code> providing the final fixes details.  
+     * @param finalFixes a <code>FinalFixesInfo</code> providing the final fixes details.
      * @throws BaseException if an unexpected error occurs.
      */
     private static void serviceApprovalAppFunc(HttpServletRequest request, PhaseGroup phaseGroup,
@@ -1257,7 +1218,7 @@ final class PhasesDetailsServices {
         phaseGroup.setApprovalReviewers(approvers);
 
         // Obtain an instance of Scorecard Manager
-        ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+        ScorecardManager scrMgr = ActionsHelper.createScorecardManager();
         ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
 
         // Build the filter for getting the existing Approval reviews
@@ -1308,7 +1269,7 @@ final class PhasesDetailsServices {
         phaseGroup.setPostMortemReviewers(postMortemReviewers);
 
         // Get the scorecard type for Post-Mortem scorecards
-        ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+        ScorecardManager scrMgr = ActionsHelper.createScorecardManager();
         ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
         ScorecardType postMortemScorecardType = ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Post-Mortem");
 
@@ -1356,13 +1317,13 @@ final class PhasesDetailsServices {
                 AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) ||
                 AuthorizationHelper.hasUserPermission(request, Constants.VIEW_WINNING_SUBM_PERM_NAME)) {
             submissions =
-                ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project,
+                ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(), project,
                                                        "Contest Submission");
         }
         if (submissions == null &&
                 AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
             // Obtain an instance of Upload Manager
-            UploadManager upMgr = ActionsHelper.createUploadManager(request);
+            UploadManager upMgr = ActionsHelper.createUploadManager();
             SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
             SubmissionType[] allSubmissionTypes = upMgr.getAllSubmissionTypes();
             SubmissionType submissionType = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes,
@@ -1504,7 +1465,7 @@ final class PhasesDetailsServices {
      * <p>
      * Version 1.1 (Members Post-Mortem Reviews Assembly 1.0) Change notes:
      *   <ol>
-     *     <li>Added {@link #finalFixApprovalIdx} variable for mapping final fixes to <code>Approval</code> phases.</p> 
+     *     <li>Added {@link #finalFixApprovalIdx} variable for mapping final fixes to <code>Approval</code> phases.</p>
      *   </ol>
      * </p>
      *

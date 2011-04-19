@@ -99,9 +99,11 @@ import com.topcoder.search.builder.filter.InFilter;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
 import com.topcoder.shared.util.DBMS;
 import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.web.common.RowNotFoundException;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
 import com.topcoder.web.ejb.termsofuse.TermsOfUse;
 import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
+import com.topcoder.web.ejb.user.UserPreference;
 import com.topcoder.web.ejb.user.UserTermsOfUse;
 
 /**
@@ -246,9 +248,16 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  *     <li>Change submission.getUplaods.get(0) to submission.getUpload().</li>
  *   </ol>
  * </p>
- *
- * @author George1, real_vg, pulky, isv, TCSDEVELOPER
- * @version 1.12.1
+ * <p>
+ * Version 1.13 (Online Review Status Validation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Methods adjusted for new signatures of create managers methods from ActionsHelper.</li>
+ *     <li>Updated {@link #saveProjectPhases()} to handle new StatusValidationException and display its error message.</li>
+ *   </ol>
+ * </p>
+
+ * @author George1, real_vg, pulky, isv, FireIce
+ * @version 1.13
  */
 public class ProjectActions extends DispatchAction {
 
@@ -293,11 +302,18 @@ public class ProjectActions extends DispatchAction {
      * @since 1.8
      */
     private static final Set<Long> SINGLE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(2L, 8L, 9L, 18L, 19L, 20L));
+    
+    private final static int GLOBAL_TIMELINE_NOTIFICATION = 29;
 
+    private final static int GLOBAL_FORUM_WATCH = 30;
+    
+    private UserPreference userPreference;
+    
     /**
      * Creates a new instance of the <code>ProjectActions</code> class.
      */
     public ProjectActions() {
+        userPreference = EJBLibraryServicesLocator.getUserPreference();
     }
 
     /**
@@ -419,7 +435,7 @@ public class ProjectActions extends DispatchAction {
      */
     private void loadProjectEditLookups(HttpServletRequest request) throws BaseException {
         // Obtain an instance of Project Manager
-        ProjectManager projectManager = ActionsHelper.createProjectManager(request);
+        ProjectManager projectManager = ActionsHelper.createProjectManager();
 
         // Retrieve project types and categories
         ProjectType[] projectTypes = projectManager.getAllProjectTypes();
@@ -431,7 +447,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("projectCategoriesMap", buildProjectCategoriesLookupMap(projectCategories));
 
         // Obtain an instance of Resource Manager
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
         // Get all types of resource roles and filter out those which are not allowed for selection
         // Place resource roles into the request as attribute
         ResourceRole[] resourceRoles = resourceManager.getAllResourceRoles();
@@ -448,7 +464,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("disabledResourceRoles", disabledResourceRoles);
 
         // Obtain an instance of Phase Manager
-        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
         // Get all phase types
         PhaseType[] phaseTypes = phaseManager.getAllPhaseTypes();
         // Place them into request as an attribute
@@ -456,7 +472,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("arePhaseDependenciesEditable", true);
 
         // Obtain an instance of Scorecard Manager
-        ScorecardManager scorecardManager = ActionsHelper.createScorecardManager(request);
+        ScorecardManager scorecardManager = ActionsHelper.createScorecardManager();
 
         // TODO: Check if we need to filter by the project category
         // Retrieve the scorecard lists
@@ -582,7 +598,7 @@ public class ProjectActions extends DispatchAction {
         populateProjectFormProperty(form, String.class, "notes", project, "Notes");
 
         // Obtain Resource Manager instance
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
 
         // Retreive the list of the resources associated with the project
         Resource[] resources =
@@ -619,7 +635,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         // Obtain Phase Manager instance
-        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
 
         // Retrieve project phases
         Phase[] phases = ActionsHelper.getPhasesForProject(phaseManager, project);
@@ -815,7 +831,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         // Obtain an instance of Project Manager
-        ProjectManager manager = ActionsHelper.createProjectManager(request);
+        ProjectManager manager = ActionsHelper.createProjectManager();
         // Retrieve project types, categories and statuses
         ProjectCategory[] projectCategories = manager.getAllProjectCategories();
         ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
@@ -842,6 +858,7 @@ public class ProjectActions extends DispatchAction {
             project.setProperty("Post-Mortem Required", "true");
             project.setProperty("Reliability Bonus Eligible", "true");
             project.setProperty("Member Payments Eligible", "true");
+            project.setProperty("Track Late Deliverables", "true");
             statusHasChanged = true; // Status is always considered to be changed for new projects
         } else {
             long newCategoryId = ((Long) lazyForm.get("project_category")).longValue();
@@ -949,6 +966,9 @@ public class ProjectActions extends DispatchAction {
         // Populate project rated option, note that it is inverted
         project.setProperty("Rated", (doNotRateProject) ? "No" : "Yes");
 
+        if (lazyForm.get("notes") != null && lazyForm.get("notes").toString().length() > 255) {
+            ActionsHelper.addErrorToRequest(request, "notes", "error.com.cronos.onlinereview.actions.editProject.notes.MaxExceeded");
+        }
         // Populate project notes
         project.setProperty("Notes", lazyForm.get("notes"));
 
@@ -1012,7 +1032,7 @@ public class ProjectActions extends DispatchAction {
             // TODO: Check if the form is really for new project
             setEditProjectFormData(request, verification, lazyForm);
             setEditProjectPhasesData(lazyForm, projectPhases, true);
-            ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+            ResourceManager resourceManager = ActionsHelper.createResourceManager();
             Resource[] resources = resourceManager.searchResources(
                 ResourceFilterBuilder.createProjectIdFilter(project.getId()));
             ExternalUser[] externalUsers = ActionsHelper.getExternalUsersForResources(
@@ -1122,7 +1142,7 @@ public class ProjectActions extends DispatchAction {
             phProject.removePhase(phasesToDelete.get(i));
         }
 
-        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
 
         phaseManager.updatePhases(phProject, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
     }
@@ -1153,7 +1173,7 @@ public class ProjectActions extends DispatchAction {
             Project project, Map<Object, Phase> phasesJsMap, List<Phase> phasesToDelete, boolean statusHasChanged)
         throws BaseException {
         // Obtain an instance of Phase Manager
-        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
 
         com.topcoder.project.phases.Project phProject;
         if (newProject) {
@@ -1588,8 +1608,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         // FIXME: Refactor it
-        ProjectManager projectManager = ActionsHelper.createProjectManager(request);
-        ProjectLinkManager projectLinkManager = ActionsHelper.createProjectLinkManager(request);
+        ProjectManager projectManager = ActionsHelper.createProjectManager();
 
         // Set project rating date
         ActionsHelper.setProjectRatingDate(project, projectPhases, (Format) request.getAttribute("date_format"));
@@ -1601,8 +1620,13 @@ public class ProjectActions extends DispatchAction {
             // Set the id of Phases Project to be equal to the id of appropriate Project
             phProject.setId(project.getId());
         } else {
-            projectManager.updateProject(project, (String) lazyForm.get("explanation"),
-                    Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+            try {
+                projectManager.updateProject(project, (String) lazyForm.get("explanation"),
+                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+            } catch(StatusValidationException statusValidationException) {
+                ActionsHelper.addErrorToRequest(request, "status", statusValidationException.getStatusViolationKey());
+				return oldPhases;
+            }
         }
 
         // Save the phases at the persistence level
@@ -1645,7 +1669,7 @@ public class ProjectActions extends DispatchAction {
             PhaseType phaseType = phase.getPhaseType();
 
             // Obtain an instance of Phase Manager
-            PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, true);
+            PhaseManager phaseManager = ActionsHelper.createPhaseManager(true);
 
             if ("close_phase".equals(action)) {
                 if (phaseStatus.getName().equals(PhaseStatus.OPEN.getName()) && phaseManager.canEnd(phase)) {
@@ -1932,8 +1956,8 @@ public class ProjectActions extends DispatchAction {
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
 
         // Obtain the instance of the Resource Manager
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
-        UploadManager uploadManager = ActionsHelper.createUploadManager(request);
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
+        UploadManager uploadManager = ActionsHelper.createUploadManager();
 
         // Get all types of resource roles
         ResourceRole[] resourceRoles = resourceManager.getAllResourceRoles();
@@ -1967,6 +1991,10 @@ public class ProjectActions extends DispatchAction {
         Set<Long> deletedUsers = new HashSet<Long>();
         Set<Long> newSubmitters = new HashSet<Long>();
         Set<Long> newUsersForumWatch = new HashSet<Long>();
+        
+        Set<Long> newUsersForNotification = new HashSet<Long>();
+        Set<Long> deletedUsersForNotification = new HashSet<Long>();
+        Set<Long> deletedUsersForForumWatch = new HashSet<Long>();
 
         // 0-index resource is skipped as it is a "dummy" one
         boolean allResourcesValid = true;
@@ -2010,7 +2038,7 @@ public class ProjectActions extends DispatchAction {
         Set<String> disabledResourceRoles = new HashSet<String>(Arrays.asList(ConfigHelper.getDisabledResourceRoles()));
         Set<String> reviewerHandles = new HashSet<String>();
         Map<String, String> primaryReviewerRoles = new HashMap<String, String>();
-        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager( false);
         PhaseType[] phaseTypes = phaseManager.getAllPhaseTypes();
         
         for (int i = 1; i < resourceNames.length; i++) {
@@ -2183,6 +2211,12 @@ public class ProjectActions extends DispatchAction {
                 resource.setProperty("Registration Date", DATE_FORMAT.format(new Date()));
 
                 newUsers.add(user.getId());
+                
+                ResourceRole role = ActionsHelper.findResourceRoleById(
+                        resourceRoles, ((Long) lazyForm.get("resources_role", i)).longValue());
+                if (!role.getName().equals("Observer") || Boolean.parseBoolean(retrieveUserPreference(user.getId(), GLOBAL_TIMELINE_NOTIFICATION))) {
+                    newUsersForNotification.add(user.getId());
+                }
 
                 //System.out.println("ADD:" + user.getId());
             }  else {
@@ -2231,6 +2265,23 @@ public class ProjectActions extends DispatchAction {
                     role.getId());
 
                 resourceRoleChanged = true;
+                
+                if (role.getName().equals("Observer")) {
+                    // change to observer
+                    if (!Boolean.parseBoolean(retrieveUserPreference(user.getId(), GLOBAL_TIMELINE_NOTIFICATION))) {
+                        deletedUsersForNotification.add(user.getId());
+                    }
+                    
+                    if (!Boolean.parseBoolean(retrieveUserPreference(user.getId(), GLOBAL_FORUM_WATCH))) {
+                        deletedUsersForForumWatch.add(user.getId());
+                    }
+                }
+                if (resource.getResourceRole().getName().equals("Observer")) {
+                    // change from observer to other role
+                    // add forum watch & notification anyway
+                    newUsersForumWatch.add(user.getId());
+                    newUsersForNotification.add(user.getId());
+                }
             }
             resource.setResourceRole(role);
 
@@ -2286,7 +2337,11 @@ public class ProjectActions extends DispatchAction {
                         !resource.getProperty("Handle").equals("Components") &&
                         !resource.getProperty("Handle").equals("LCSUPPORT"))
                     {
-                        newUsersForumWatch.add(user.getId());
+                        if (!resourceRole.equals("Observer")
+                                || Boolean.parseBoolean(retrieveUserPreference(
+                                        user.getId(), GLOBAL_FORUM_WATCH))) {
+                            newUsersForumWatch.add(user.getId());
+                        }
                     }
 
                 }
@@ -2325,11 +2380,20 @@ public class ProjectActions extends DispatchAction {
         // BUGR-2807: Update project_result.payment for submitters
         ActionsHelper.updateSubmitterPayments(project.getId(), submitterPayments);
 
+        // delete timeline notifications
+        long[] idsToDeletedForNotification = new long[deletedUsersForNotification.size()];
+        int k = 0;
+        for (long id : deletedUsersForNotification) {
+            idsToDeletedForNotification[k++] = id; 
+        }
+        resourceManager.removeNotifications(idsToDeletedForNotification, project.getId(),
+                timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        
         // Update all the timeline notifications
-        if (project.getProperty("Timeline Notification").equals("On") && !newUsers.isEmpty()) {
+        if (project.getProperty("Timeline Notification").equals("On") && !newUsersForNotification.isEmpty()) {
             // Remove duplicated user ids
             long[] existUserIds = resourceManager.getNotifications(project.getId(), timelineNotificationId);
-            Set<Long> finalUsers = new HashSet<Long>(newUsers);
+            Set<Long> finalUsers = new HashSet<Long>(newUsersForNotification);
 
             for (int i = 0; i < existUserIds.length; i++) {
                 finalUsers.remove(existUserIds[i]);
@@ -2338,7 +2402,7 @@ public class ProjectActions extends DispatchAction {
             finalUsers.remove(22770213); // Applications user
             finalUsers.remove(22719217); // Components user
             finalUsers.remove(22873364); // LCSUPPORT user
-
+            
             long[] userIds = new long[finalUsers.size()];
             int i = 0;
             for (Long id : finalUsers) {
@@ -2365,6 +2429,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         ActionsHelper.removeForumWatch(project, deletedUsers, forumId);
+        ActionsHelper.removeForumWatch(project, deletedUsersForForumWatch, forumId);
         ActionsHelper.addForumWatch(project, newUsersForumWatch, forumId);
     }
 
@@ -2545,7 +2610,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         // Obtain an instance of Project Manager
-        ProjectManager manager = ActionsHelper.createProjectManager(request);
+        ProjectManager manager = ActionsHelper.createProjectManager();
         // This variable will specify the index of active tab on the JSP page
         int activeTab;
 
@@ -2626,7 +2691,7 @@ public class ProjectActions extends DispatchAction {
             projectFilters.add(ungroupedProjects[i].getId());
         }
 
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
         Resource[] allMyResources = null;
         if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request)) {
             if (activeTab == 1) {  // My projects
@@ -2649,7 +2714,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         // Obtain an instance of Phase Manager
-        PhaseManager phMgr = ActionsHelper.createPhaseManager(request, false);
+        PhaseManager phMgr = ActionsHelper.createPhaseManager(false);
 
         PhaseStatus[] phaseStatuses = phMgr.getAllPhaseStatuses();
 
@@ -3143,7 +3208,7 @@ public class ProjectActions extends DispatchAction {
             if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(deliverable.getName())) {
                 Submission submission
                     = ActionsHelper.getActiveSpecificationSubmission(phases[0].getProject().getId(),
-                                                                     ActionsHelper.createUploadManager(request));
+                                                                     ActionsHelper.createUploadManager());
                 if ((submission != null) && (submission.getUpload().getOwner() != deliverable.getResource())) {
                     continue;
                 }
@@ -3255,7 +3320,7 @@ public class ProjectActions extends DispatchAction {
         // Place the flag, indicating that we are editing the existing project, into request
         request.setAttribute("newProject", Boolean.FALSE);
 
-        ProjectManager manager = ActionsHelper.createProjectManager(request);
+        ProjectManager manager = ActionsHelper.createProjectManager();
         ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
         request.setAttribute("projectStatuses", projectStatuses);
         request.setAttribute("project", verification.getProject());
@@ -3481,5 +3546,26 @@ public class ProjectActions extends DispatchAction {
                         Boolean.valueOf("Yes".equals(phases[i].getAttribute("View Response During Appeals"))));
             }
         }
+    }
+    
+    private String retrieveUserPreference(long userId, int preferenceId) throws BaseException {
+        String value;
+        
+        try {
+            value = userPreference.getValue(userId, preferenceId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+            
+            //System.out.println("----------------------------------");
+            //System.out.println("Find preference " + preferenceId + " of user " + userId + " : " + value);
+            //System.out.println("----------------------------------");
+        } catch (RowNotFoundException e) {
+            value = "false";
+            //System.out.println("----------------------------------");
+            //System.out.println("Can't find preference " + preferenceId + " of user " + userId + ", use 'false' instead.");
+            //System.out.println("----------------------------------");
+        } catch (RemoteException e) {
+            throw new BaseException("Fail to retrieve user preference data", e);
+        }
+        
+        return value;
     }
 }

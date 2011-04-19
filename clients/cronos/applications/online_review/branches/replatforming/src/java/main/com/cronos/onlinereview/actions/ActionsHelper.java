@@ -263,10 +263,20 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *     <li>Updated {@link #isProjectResultCategory(long)} method.</li>
  *   </ol>
  * </p>
-
- * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK
- * @version 1.11
- * @since 1.0
+ *
+ * <p>
+ * Version 1.12 (Online Review Status Validation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #createPhaseManager(boolean registerPhaseHandlers)}to remove double caching of PhaseManager</li>
+ *     <li>Updated {@link #createResourceManager()} to remove double caching of ResourceManager</li>
+ *     <li>Updated {@link #createUploadManager()} to remove double caching of UploadManager</li>
+ *     <li>Methods adjusted for new signatures of create managers methods</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK, rac_
+ * @version 1.12
+ * @since Online Review Status Validation Assembly 1.0
  */
 public class ActionsHelper {
 
@@ -1123,7 +1133,7 @@ public class ActionsHelper {
             Group group = scorecardTemplate.getGroup(i);
             for (int j = 0; j < group.getNumberOfSections(); ++j) {
                 Section section = group.getSection(j);
-                for (int k = 0; k < section.getNumberOfQuestions(); ++k){
+                for (int k = 0; k < section.getNumberOfQuestions(); ++k) {
                     if (section.getQuestion(k).isUploadDocument()) {
                         ++uploadCount;
                     }
@@ -1207,7 +1217,7 @@ public class ActionsHelper {
         if (permission == null) {
             request.setAttribute("errorTitle", messages.getMessage("Error.Title.General"));
         } else {
-            if ("Error.NoPermission".equalsIgnoreCase(reasonKey)){
+            if ("Error.NoPermission".equalsIgnoreCase(reasonKey)) {
                 log.log(Level.WARN, "Authorization failures. User tried to perform "
                         + permission + " which he/she doesn't have permission.");
             }
@@ -1504,7 +1514,7 @@ public class ActionsHelper {
         validateParameterNotNull(upload, "upload");
 
         // Obtain an instance of Resource Manager
-        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+        ResourceManager resMgr = ActionsHelper.createResourceManager();
         // Get submitter's resource
         Resource submitter = resMgr.getResource(upload.getOwner());
         populateEmailProperty(request, submitter);
@@ -1996,8 +2006,8 @@ public class ActionsHelper {
      * @param projectId
      */
     public static Resource getWinner(HttpServletRequest request, long projectId) throws BaseException {
-        ProjectManager projectManager = createProjectManager(request);
-        ResourceManager resourceManager = createResourceManager(request);
+        ProjectManager projectManager = createProjectManager();
+        ResourceManager resourceManager = createResourceManager();
 
         Project project = projectManager.getProject(projectId);
         String winnerId = (String) project.getProperty("Winner External Reference ID");
@@ -2614,52 +2624,22 @@ public class ActionsHelper {
     /**
      * This static method helps to create an object of the <code>PhaseManager</code> class.
      *
-     * @return a newly created instance of the class.
-     * @param request
-     *            an <code>HttpServletRequest</code> object, where created
-     *            <code>PhaseManager</code> object can be stored to let reusing it later for the
-     *            same request.
+     * @return instance of the class PhaseManager
      * @param registerPhaseHandlers
-     *            a boolean parameter that determines whether phase handlers need to be registered
-     *            with the newly-created (or already existing) Phase Manager.
-     * @throws IllegalArgumentException
-     *             if <code>request</code> parameter is <code>null</code>.
+     *            a boolean parameter that determines whether version of phase handlers
+     *            with or without phase handlers should be returned
      * @throws BaseException
      *             if any error happens during object creation.
      */
-    public static PhaseManager createPhaseManager(HttpServletRequest request, boolean registerPhaseHandlers)
+    public static PhaseManager createPhaseManager(boolean registerPhaseHandlers)
         throws BaseException {
-        // Validate parameter
-        validateParameterNotNull(request, "request");
-
-        // Try retrieving Phase Manager from the request's attribute first
-        PhaseManager manager = (PhaseManager) request.getAttribute("phaseManager+handlers");
-        if (manager == null) {
-            manager = (PhaseManager) request.getAttribute("phaseManager");
+        if (registerPhaseHandlers) {
+            // get Phase Manager with handlers
+            return managerCreationHelper.getPhaseManager();
         } else {
-            registerPhaseHandlers = false;
+            // get Phase Manager without handlers
+            return managerCreationHelper.getPhaseManagerWithoutHandlers();
         }
-
-        // If this is the first time this method is called for the request,
-        // create a new instance of the object, and possibly register phase handlers
-        if (manager == null || registerPhaseHandlers) {
-            // Create Phase Manager object if needed
-            if (manager == null) {
-                manager = new DefaultPhaseManager("com.topcoder.management.phase");
-            }
-
-            // Register phase handlers if this was requested
-            if (registerPhaseHandlers) {
-                // create a fresh manager with the handlers set.
-                manager = managerCreationHelper.getPhaseManager();
-            }
-
-            // Place newly-created object into the request as attribute
-            request.setAttribute((registerPhaseHandlers) ? "phaseManager+handlers" : "phaseManager", manager);
-        }
-
-        // Return the Phase Manager object
-        return manager;
     }
 
     /**
@@ -2700,60 +2680,22 @@ public class ActionsHelper {
      * This static method helps to create an object of the <code>ProjectManager</code> class.
      *
      * @return a newly created instance of the class.
-     * @param request
-     *            an <code>HttpServletRequest</code> object, where created
-     *            <code>ProjectManager</code> object can be stored to let reusing it later for the
-     *            same request.
      * @throws IllegalArgumentException
      *             if <code>request</code> parameter is <code>null</code>.
      */
-    public static ProjectManager createProjectManager(HttpServletRequest request) {
-        // Validate parameter
-        validateParameterNotNull(request, "request");
-
-        // Try retrieving Project Manager from the request's attribute first
-        ProjectManager manager = (ProjectManager) request.getAttribute("projectManager");
-        // If this is the first time this method is called for the request,
-        // create a new instance of the object
-        if (manager == null) {
-            manager  = managerCreationHelper.getProjectManager();
-            // Place newly-created object into the request as attribute
-            request.setAttribute("projectManager", manager);
-        }
-
-        // Return the Project Manager object
-        return manager;
+    public static ProjectManager createProjectManager() {
+        return managerCreationHelper.getProjectManager();
     }
 
     /**
      * This static method helps to create an object of the <code>ResourceManager</code> class.
      *
      * @return a newly created instance of the class.
-     * @param request
-     *            an <code>HttpServletRequest</code> object, where created
-     *            <code>ResourceManager</code> object can be stored to let reusing it later for
-     *            the same request.
-     * @throws IllegalArgumentException
-     *             if <code>request</code> parameter is <code>null</code>.
      * @throws BaseRuntimeException
      *             if any error occurs.
      */
-    public static ResourceManager createResourceManager(HttpServletRequest request) {
-        // Validate parameter
-        validateParameterNotNull(request, "request");
-
-        // Try retrieving Resource Manager from the request's attribute first
-        ResourceManager manager = (ResourceManager) request.getAttribute("resourceManager");
-        // If this is the first time this method is called for the request,
-        // create a new instance of the object
-        if (manager == null) {
-            manager = managerCreationHelper.getResourceManager();
-            // Place newly-created object into the request as attribute
-            request.setAttribute("resourceManager", manager);
-        }
-
-        // Return the Resource Manager object
-        return manager;
+    public static ResourceManager createResourceManager() {
+        return managerCreationHelper.getResourceManager();
     }
 
     /**
@@ -2793,32 +2735,12 @@ public class ActionsHelper {
      * This static method helps to create an object of the <code>LateDeliverableManager</code> class.
      *
      * @return a newly created instance of the class.
-     * @param request
-     *            an <code>HttpServletRequest</code> object, where created
-     *            <code>LateDeliverableManager</code> object can be stored to let reusing it later for the
-     *            same request.
-     * @throws IllegalArgumentException
-     *             if <code>request</code> parameter is <code>null</code>.
      * @throws LateDeliverableManagementConfigurationException
      *             if fail to initialize the <code>LateDeliverableManagerImpl</code> instance.
      * @since 1.10
      */
-    public static LateDeliverableManager createLateDeliverableManager(HttpServletRequest request) {
-        // Validate parameter
-        validateParameterNotNull(request, "request");
-
-        // Try retrieving Review Manager from the request's attribute first
-        LateDeliverableManager manager = (LateDeliverableManager) request.getAttribute("lateDeliverableManager");
-        // If this is the first time this method is called for the request,
-        // create a new instance of the object
-        if (manager == null) {
-            manager = managerCreationHelper.getLateDeliverableManager();
-            // Place newly-created object into the request as attribute
-            request.setAttribute("lateDeliverableManager", manager);
-        }
-
-        // Return the Late Deliverable Manager object
-        return manager;
+    public static LateDeliverableManager createLateDeliverableManager() {
+        return managerCreationHelper.getLateDeliverableManager();
     }
 
     /**
@@ -2859,33 +2781,9 @@ public class ActionsHelper {
      * This static method helps to create an object of the <code>ScorecardManager</code> class.
      *
      * @return a newly created instance of the class.
-     * @param request
-     *            an <code>HttpServletRequest</code> object, where created
-     *            <code>ScorecardManager</code> object can be stored to let reusing it later for
-     *            the same request.
-     * @throws IllegalArgumentException
-     *             if <code>request</code> parameter is <code>null</code>.
-     * @throws com.topcoder.management.scorecard.ConfigurationException
-     *             if error occurs while loading configuration settings, or any of the required
-     *             configuration parameters are missing.
      */
-    public static ScorecardManager createScorecardManager(HttpServletRequest request)
-        throws com.topcoder.management.scorecard.ConfigurationException {
-        // Validate parameter
-        validateParameterNotNull(request, "request");
-
-        // Try retrieving Scorecard Manager from the request's attribute first
-        ScorecardManager manager = (ScorecardManager) request.getAttribute("scorecardManager");
-        // If this is the first time this method is called for the request,
-        // create a new instance of the object
-        if (manager == null) {
-            manager = managerCreationHelper.getScorecardManager();
-            // Place newly-created object into the request as attribute
-            request.setAttribute("scorecardManager", manager);
-        }
-
-        // Return the Scorecard Manager object
-        return manager;
+    public static ScorecardManager createScorecardManager() {
+        return managerCreationHelper.getScorecardManager();
     }
 
     /**
@@ -2976,91 +2874,22 @@ public class ActionsHelper {
      * This static method helps to create an object of the <code>UploadManager</code> class.
      *
      * @return a newly created instance of the class.
-     * @param request
-     *            an <code>HttpServletRequest</code> object, where created
-     *            <code>UploadManager</code> object can be stored to let reusing it later for the
-     *            same request.
-     * @throws IllegalArgumentException
-     *             if <code>request</code> parameter is <code>null</code>.
      * @throws BaseRuntimeException
      *             if any error occurs.
      */
-    public static UploadManager createUploadManager(HttpServletRequest request) {
-        // Validate parameter
-        validateParameterNotNull(request, "request");
-
-        // Try retrieving Upload Manager from the request's attribute first
-        UploadManager manager = (UploadManager) request.getAttribute("uploadManager");
-        // If this is the first time this method is called for the request,
-        // create a new instance of the object
-        if (manager == null) {
-            manager = managerCreationHelper.getUploadManager();
-            // Place newly-created object into the request as attribute
-            request.setAttribute("uploadManager", manager);
-        }
-
-        // Return the Upload Manager object
-        return manager;
-    }
-
-    /**
-     * This static method helps to create an object of the <code>ScreeningManager</code> class.
-     *
-     * @return a newly created instance of the class.
-     * @param request
-     *            an <code>HttpServletRequest</code> object, where created
-     *            <code>ScreeningManager</code> object can be stored to let reusing it later for
-     *            the same request.
-     * @throws IllegalArgumentException
-     *             if <code>request</code> parameter is <code>null</code>.
-     * @throws BaseRuntimeException
-     *             if any error occurs.
-     */
-    public static ScreeningManager createScreeningManager(HttpServletRequest request) {
-        // Validate parameter
-        validateParameterNotNull(request, "request");
-
-        // Try retrieving Auto Screening Manager from the request's attribute first
-        ScreeningManager manager = (ScreeningManager) request.getAttribute("screeningManager");
-        // If this is the first time this method is called for the request,
-        // create a new instance of the object
-        if (manager == null) {
-            manager = managerCreationHelper.getScreeningManager();
-            // Place newly-created object into the request as attribute
-            request.setAttribute("screeningManager", manager);
-        }
-
-        // Return the Screening Manager object
-        return manager;
+    public static UploadManager createUploadManager() {
+        return managerCreationHelper.getUploadManager();
     }
 
     /**
      * This static method helps to create an object of the <code>ProjectLinkManager</code> class.
      *
      * @return a newly created instance of the class.
-     * @param request an <code>HttpServletRequest</code> object, where created <code>ResourceManager</code> object can
-     *            be stored to let reusing it later for the same request.
-     * @throws IllegalArgumentException if <code>request</code> parameter is <code>null</code>.
      * @throws BaseRuntimeException if any error occurs.
      * @since 1.1 OR Project Linking Assembly
      */
-    public static ProjectLinkManager createProjectLinkManager(HttpServletRequest request) {
-        // Validate parameter
-        validateParameterNotNull(request, "request");
-
-        // Try retrieving Project Link Manager from the request's attribute first
-        ProjectLinkManager manager = (ProjectLinkManager) request.getAttribute("projectLinkManager");
-        // If this is the first time this method is called for the request,
-        // create a new instance of the object
-        if (manager == null) {
-            // manager = managerCreationHelper.getResourceManager();
-            manager = managerCreationHelper.getProjectLinkManager();
-            // Place newly-created object into the request as attribute
-            request.setAttribute("projectLinkManager", manager);
-        }
-
-        // Return the Resource Manager object
-        return manager;
+    public static ProjectLinkManager createProjectLinkManager() {
+        return managerCreationHelper.getProjectLinkManager();
     }
 
     /**
@@ -3390,7 +3219,7 @@ public class ActionsHelper {
         }
 
         // Obtain an instance of Project Manager
-        ProjectManager projMgr = createProjectManager(request);
+        ProjectManager projMgr = createProjectManager();
         // Get Project by its id
         Project project = projMgr.getProject(pid);
         // Verify that project with given ID exists
@@ -4253,7 +4082,7 @@ public class ActionsHelper {
      */
     static SubmissionStatus getSubmissionStatus(HttpServletRequest request, String statusName)
         throws BaseException {
-        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        UploadManager upMgr = ActionsHelper.createUploadManager();
         SubmissionStatus[] statuses = null;
         try {
             statuses = upMgr.getAllSubmissionStatuses();
@@ -4280,7 +4109,7 @@ public class ActionsHelper {
      */
     static Submission[] searchReviewedContestSubmissions(HttpServletRequest request, Project project)
         throws BaseException {
-        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        UploadManager upMgr = ActionsHelper.createUploadManager();
 
         SubmissionType[] allSubmissionTypes = upMgr.getAllSubmissionTypes();
 
@@ -4905,14 +4734,14 @@ public class ActionsHelper {
 
     /**
      * <p>Returns list of user IDs who have specified resource roles for the specified project.</p>
-     * 
-     * @param request the http request. 
-     * @param roleNames a <code>String</code> array representing the resource role names. 
+     *
+     * @param request the http request.
+     * @param roleNames a <code>String</code> array representing the resource role names.
 	 * @param projectID ID of the project.
      * @throws BaseException if an unexpected error occurs.
      */
     static List<Long> getUserIDsByRoleNames(HttpServletRequest request, String[] roleNames, long projectID) throws BaseException {
-        ResourceManager resMgr = createResourceManager(request);
+        ResourceManager resMgr = createResourceManager();
         ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
         List<Long> userIds = new ArrayList<Long>();
 
@@ -4932,7 +4761,7 @@ public class ActionsHelper {
             Resource[] resources = resMgr.searchResources(filter);
 
             // Collect unique external user IDs first as there may exist multiple resources for the same user
-            Set<String> stringUserIDs = new HashSet<String>();			
+            Set<String> stringUserIDs = new HashSet<String>();
             for (int i = 0; i < resources.length; ++i) {
                 String stringUserID = ((String) resources[i].getProperty("External Reference ID")).trim();
                 stringUserIDs.add(stringUserID);
@@ -4948,7 +4777,7 @@ public class ActionsHelper {
 
     /**
      * <p>Returns list of the email addresses for the specified user IDs.</p>
-     * 
+     *
      * @param request the http request.
      * @param userIDs list of user IDs.
      * @throws BaseException if an unexpected error occurs.
@@ -4960,12 +4789,12 @@ public class ActionsHelper {
         for (Long userID : userIDs) {
             emails.add(userRetrieval.retrieveUser(userID).getEmail());
         }
-        return emails;	
+        return emails;
     }
 
     /**
      * <p>Returns the deadline date for submitting the explanation for the late deliverable.</p>
-     * 
+     *
      * @param lateDeliverable late deliverable.
      * @return explanation deadline date.
      */

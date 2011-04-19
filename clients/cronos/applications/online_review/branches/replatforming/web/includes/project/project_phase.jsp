@@ -1,7 +1,7 @@
 <%--
-  - Author: isv, TCSDEVELOEPR
-  - Version: 1.3.2
-  - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
+  - Author: isv, rac_
+  - Version: 1.4
+  - Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment displays the content of tab for single project phase on Project Details screen.
   -
@@ -14,6 +14,9 @@
   - Version 1.3.1 (Milestone Support assembly) changes: Added support for Milestone phases.
   -
   - Version 1.3.2 (Online Review Replatforming Release 2) changes: Change submission.uploads[0] to submission.upload.
+  -
+  - Version 1.4 (Online Review Status Validation Assembly 1.0) changes: removing columns from Aggregation and Screening tabs
+  -
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -106,12 +109,11 @@
 						<c:when test='${group.appFunc == "VIEW_SUBMISSIONS"}'>
 							<table id="Submissions${submBoxIdx}" class="scorecard" width="100%" cellpadding="0" cellspacing="0" border="0">
 								<tr>
-									<td class="title" colspan="7">${group.tableName}</td>
+									<td class="title" colspan="6">${group.tableName}</td>
 								</tr>
 								<tr>
 									<td class="header" colspan="2" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
 									<td class="header" width="22%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.Date" arg0="${group.groupIndex}" /></td>
-									<td class="headerC" width="14%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.AutoScreening" /></td>
 									<td class="header" width="15%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.Screener" /></td>
 									<td class="headerC" width="14%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ScreeningScore" arg0="${group.groupIndex}" /></td>
 									<td class="headerC" width="15%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ScreeningResult" arg0="${group.groupIndex}" /></td>
@@ -180,36 +182,6 @@
 											<td class="value"><!-- @ --></td>
 										</c:if>
 										<td class="value" width="22%">${orfn:displayDate(pageContext.request, submission.upload.creationTimestamp)}</td>
-										<c:set var="scrTask" value="${group.screeningTasks[submissionStatus.index]}" />
-										<c:if test="${empty scrTask}">
-											<td class="valueC" width="14%"><html:img src="/i/clear.gif" width="8" height="10" /></td>
-										</c:if>
-										<c:if test="${not empty scrTask}">
-											<c:set var="scrTaskStatus" value="${scrTask.screeningStatus.name}" />
-											<c:choose>
-												<c:when test='${scrTaskStatus == "Passed"}'>
-													<td class="valueC" width="14%">
-														<html:img
-															srcKey="viewProjectDetails.box.Submission.icoPassed.img"
-															altKey="viewProjectDetails.box.Submission.icoPassed.alt" /></td>
-												</c:when>
-												<c:when test='${scrTaskStatus == "Passed with Warning"}'>
-													<td class="valueC" width="14%">
-														<html:link page="/actions/ViewAutoScreening.do?method=viewAutoScreening&uid=${submission.upload.id}"><html:img
-															srcKey="viewProjectDetails.box.Submission.icoPassedWW.img"
-															altKey="viewProjectDetails.box.Submission.icoPassedWW.alt" /></html:link></td>
-												</c:when>
-												<c:when test='${scrTaskStatus == "Failed"}'>
-													<td class="valueC" width="14%">
-														<html:link page="/actions/ViewAutoScreening.do?method=viewAutoScreening&uid=${submission.upload.id}"><html:img
-															srcKey="viewProjectDetails.box.Submission.icoFailed.img"
-															altKey="viewProjectDetails.box.Submission.icoFailed.alt" /></html:link></td>
-												</c:when>
-												<c:otherwise>
-													<td class="valueC" width="14%"><html:img src="/i/clear.gif" width="8" height="10" /></td>
-												</c:otherwise>
-											</c:choose>
-										</c:if>
 										<c:set var="screener" value="" />
 										<c:forEach items="${group.reviewers}" var="reviewer">
 											<c:if test="${(empty reviewer.submissions) and (empty screener)}">
@@ -504,21 +476,19 @@
 						<c:when test='${group.appFunc == "AGGREGATION"}'>
 							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
 								<tr>
-									<td class="title" colspan="5">${group.tableName}</td>
+									<td class="title" colspan="3">${group.tableName}</td>
 								</tr>
 								<tr>
 									<td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
 									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Aggregation.Date" arg0="${group.groupIndex}" /></td>
-									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Aggregation.Aggregation" arg0="${group.groupIndex}" /></td>
-									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.AggregationReview.Date" arg0="${group.groupIndex}" /></td>
-									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.AggregationReview.Review" arg0="${group.groupIndex}" /></td>
-								</tr>
-								<c:set var="winningSubmission" value="" />
-								<c:forEach items="${group.submissions}" var="submission">
-									<c:if test="${(not empty group.winner) and (group.winner.id == submission.upload.owner)}">
-										<c:set var="winningSubmission" value="${submission}" />
-									</c:if>
-								</c:forEach>
+                                    <td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Aggregation.Aggregation" arg0="${group.groupIndex}" /></td>
+                                </tr>
+                                <c:set var="winningSubmission" value="" />
+                                <c:forEach items="${group.submissions}" var="submission">
+                                    <c:if test="${(not empty group.winner) and (group.winner.id == submission.upload.owner)}">
+                                        <c:set var="winningSubmission" value="${submission}" />
+                                    </c:if>
+                                </c:forEach>
 								<c:if test="${not empty winningSubmission}">
 									<tr class="light">
 										<td class="value" nowrap="nowrap">
@@ -544,48 +514,15 @@
 												<c:if test="${not isAllowedToPerformAggregation}">
 													<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
 												</c:if>
-											</c:if>
-											<c:if test="${group.displayAggregationReviewLink}">
-												<c:if test="${group.aggregationReviewCommitted}">
-													<td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.aggregation.modificationTimestamp)}</td>
-													<td class="valueC" nowrap="nowrap"><html:link
-														page="/actions/ViewAggregationReview.do?method=viewAggregationReview&rid=${group.aggregation.id}"><bean:message
-														key="viewProjectDetails.box.Aggregation.ViewResults" /></html:link></td>
-												</c:if>
-												<c:if test="${not group.aggregationReviewCommitted}">
-													<td class="value"><!-- @ --></td>
-													<c:if test="${group.aggregation.committed and isAllowedToPerformAggregationReview}">
-														<c:if test="${isSubmitter}">
-															<c:set var="aggrRevKey" value="Comment" />
-														</c:if>
-														<c:if test="${not isSubmitter}">
-															<c:set var="aggrRevKey" value="Approval" />
-														</c:if>
-														<td class="valueC" nowrap="nowrap"><html:link
-															page="/actions/EditAggregationReview.do?method=editAggregationReview&rid=${group.aggregation.id}"><b><bean:message
-															key="viewProjectDetails.box.AggregationReview.Submit${aggrRevKey}" /></b></html:link></td>
-													</c:if>
-													<c:if test="${not (group.aggregation.committed and isAllowedToPerformAggregationReview)}">
-														<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
-													</c:if>
-												</c:if>
-											</c:if>
-											<c:if test="${not group.displayAggregationReviewLink}">
-												<td class="value"><!-- @ --></td>
-												<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
-											</c:if>
-										</c:if>
-										<c:if test="${empty group.aggregation}">
-											<td class="valueC"><!-- @ --></td>
-											<td class="valueC"><bean:message key="NotAvailable" /></td>
-											<td class="valueC"><!-- @ --></td>
-											<td class="valueC"><bean:message key="NotAvailable" /></td>
-										</c:if>
-									</tr>
-								</c:if>
-								<tr>
-									<td class="lastRowTD" colspan="5"><!-- @ --></td>
-								</tr>
+                                        <c:if test="${empty group.aggregation}">
+                                            <td class="valueC"><!-- @ --></td>
+                                            <td class="valueC"><bean:message key="NotAvailable" /></td>
+                                        </c:if>
+                                    </tr>
+                                </c:if>
+                                <tr>
+                                    <td class="lastRowTD" colspan="5"><!-- @ --></td>
+                                </tr>
 							</table>
 						</c:when>
 						<c:when test='${group.appFunc == "FINAL_FIX"}'>

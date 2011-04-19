@@ -1376,14 +1376,14 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>		
-            </Property>	
+                <Value>*</Value>
+            </Property>
             <Property name="ExtendedScheme">
                 <Value>Manager</Value>
                 <Value>Observer</Value>
                 <Value>Copilot</Value>
-                <Value>Client Manager</Value>			
-            </Property>		
+                <Value>Client Manager</Value>
+            </Property>
         </Property>
         <Property name="DefaultScheme">
             <Property name="StartPhaseEmail">
@@ -1401,7 +1401,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
+                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1418,8 +1418,8 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
-            </Property>	
+                </Property>
+            </Property>
         </Property>
         <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
@@ -1454,7 +1454,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>1</Value>
-                </Property>		
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -1472,14 +1472,14 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>		
-            </Property>	
+                <Value>*</Value>
+            </Property>
             <Property name="ExtendedScheme">
                 <Value>Manager</Value>
                 <Value>Observer</Value>
                 <Value>Copilot</Value>
-                <Value>Client Manager</Value>			
-            </Property>		
+                <Value>Client Manager</Value>
+            </Property>
         </Property>
         <Property name="DefaultScheme">
             <Property name="StartPhaseEmail">
@@ -1497,7 +1497,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
+                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1514,8 +1514,8 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
-            </Property>	
+                </Property>
+            </Property>
         </Property>
         <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
@@ -1550,7 +1550,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>1</Value>
-                </Property>		
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -1568,14 +1568,14 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>		
-            </Property>	
+                <Value>*</Value>
+            </Property>
             <Property name="ExtendedScheme">
                 <Value>Manager</Value>
                 <Value>Observer</Value>
                 <Value>Copilot</Value>
-                <Value>Client Manager</Value>			
-            </Property>		
+                <Value>Client Manager</Value>
+            </Property>
         </Property>
         <Property name="DefaultScheme">
             <Property name="StartPhaseEmail">
@@ -1593,7 +1593,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
+                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1610,8 +1610,8 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
-            </Property>	
+                </Property>
+            </Property>
         </Property>
         <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
@@ -1646,7 +1646,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>1</Value>
-                </Property>		
+                </Property>
             </Property>
         </Property>
         <Property name="SubmittersEmail">
@@ -1682,14 +1682,14 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>		
-            </Property>	
+                <Value>*</Value>
+            </Property>
             <Property name="ExtendedScheme">
                 <Value>Manager</Value>
                 <Value>Observer</Value>
                 <Value>Copilot</Value>
-                <Value>Client Manager</Value>			
-            </Property>		
+                <Value>Client Manager</Value>
+            </Property>
         </Property>
         <Property name="DefaultScheme">
             <Property name="StartPhaseEmail">
@@ -1707,7 +1707,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
+                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1724,8 +1724,8 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
-            </Property>	
+                </Property>
+            </Property>
         </Property>
         <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
@@ -1760,7 +1760,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>1</Value>
-                </Property>		
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -1778,14 +1778,14 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>		
-            </Property>	
+                <Value>*</Value>
+            </Property>
             <Property name="ExtendedScheme">
                 <Value>Manager</Value>
                 <Value>Observer</Value>
                 <Value>Copilot</Value>
-                <Value>Client Manager</Value>			
-            </Property>		
+                <Value>Client Manager</Value>
+            </Property>
         </Property>
         <Property name="DefaultScheme">
             <Property name="StartPhaseEmail">
@@ -1803,7 +1803,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
+                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1820,8 +1820,8 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
-            </Property>	
+                </Property>
+            </Property>
         </Property>
         <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
@@ -1856,7 +1856,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>1</Value>
-                </Property>		
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -1874,14 +1874,14 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>		
-            </Property>	
+                <Value>*</Value>
+            </Property>
             <Property name="ExtendedScheme">
                 <Value>Manager</Value>
                 <Value>Observer</Value>
                 <Value>Copilot</Value>
-                <Value>Client Manager</Value>			
-            </Property>		
+                <Value>Client Manager</Value>
+            </Property>
         </Property>
         <Property name="DefaultScheme">
             <Property name="StartPhaseEmail">
@@ -1899,7 +1899,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
+                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1916,8 +1916,8 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
-            </Property>	
+                </Property>
+            </Property>
         </Property>
         <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
@@ -1952,7 +1952,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>1</Value>
-                </Property>		
+                </Property>
             </Property>
         </Property>
 
@@ -1986,14 +1986,14 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>		
-            </Property>	
+                <Value>*</Value>
+            </Property>
             <Property name="ExtendedScheme">
                 <Value>Manager</Value>
                 <Value>Observer</Value>
                 <Value>Copilot</Value>
-                <Value>Client Manager</Value>			
-            </Property>		
+                <Value>Client Manager</Value>
+            </Property>
         </Property>
         <Property name="DefaultScheme">
             <Property name="StartPhaseEmail">
@@ -2011,7 +2011,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
+                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -2028,8 +2028,8 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
-            </Property>	
+                </Property>
+            </Property>
         </Property>
         <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
@@ -2064,7 +2064,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>1</Value>
-                </Property>		
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -2082,14 +2082,14 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>		
-            </Property>	
+                <Value>*</Value>
+            </Property>
             <Property name="ExtendedScheme">
                 <Value>Manager</Value>
                 <Value>Observer</Value>
                 <Value>Copilot</Value>
-                <Value>Client Manager</Value>			
-            </Property>		
+                <Value>Client Manager</Value>
+            </Property>
         </Property>
         <Property name="DefaultScheme">
             <Property name="StartPhaseEmail">
@@ -2107,7 +2107,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
+                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -2124,8 +2124,8 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
-            </Property>	
+                </Property>
+            </Property>
         </Property>
         <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
@@ -2160,7 +2160,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>1</Value>
-                </Property>		
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -2178,14 +2178,14 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>		
-            </Property>	
+                <Value>*</Value>
+            </Property>
             <Property name="ExtendedScheme">
                 <Value>Manager</Value>
                 <Value>Observer</Value>
                 <Value>Copilot</Value>
-                <Value>Client Manager</Value>			
-            </Property>		
+                <Value>Client Manager</Value>
+            </Property>
         </Property>
         <Property name="DefaultScheme">
             <Property name="StartPhaseEmail">
@@ -2203,7 +2203,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
+                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -2220,8 +2220,8 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
-            </Property>	
+                </Property>
+            </Property>
         </Property>
         <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
@@ -2256,7 +2256,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>1</Value>
-                </Property>		
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -2274,14 +2274,14 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>		
-            </Property>	
+                <Value>*</Value>
+            </Property>
             <Property name="ExtendedScheme">
                 <Value>Manager</Value>
                 <Value>Observer</Value>
                 <Value>Copilot</Value>
-                <Value>Client Manager</Value>			
-            </Property>		
+                <Value>Client Manager</Value>
+            </Property>
         </Property>
         <Property name="DefaultScheme">
             <Property name="StartPhaseEmail">
@@ -2299,7 +2299,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
+                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -2316,8 +2316,8 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
-            </Property>	
+                </Property>
+            </Property>
         </Property>
         <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
@@ -2352,7 +2352,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>1</Value>
-                </Property>		
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -2379,14 +2379,14 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>		
-            </Property>	
+                <Value>*</Value>
+            </Property>
             <Property name="ExtendedScheme">
                 <Value>Manager</Value>
                 <Value>Observer</Value>
                 <Value>Copilot</Value>
-                <Value>Client Manager</Value>			
-            </Property>		
+                <Value>Client Manager</Value>
+            </Property>
         </Property>
         <Property name="DefaultScheme">
             <Property name="StartPhaseEmail">
@@ -2404,7 +2404,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
+                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -2421,8 +2421,8 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
-            </Property>	
+                </Property>
+            </Property>
         </Property>
         <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
@@ -2457,7 +2457,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>1</Value>
-                </Property>		
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -2484,14 +2484,14 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>		
-            </Property>	
+                <Value>*</Value>
+            </Property>
             <Property name="ExtendedScheme">
                 <Value>Manager</Value>
                 <Value>Observer</Value>
                 <Value>Copilot</Value>
-                <Value>Client Manager</Value>			
-            </Property>		
+                <Value>Client Manager</Value>
+            </Property>
         </Property>
         <Property name="DefaultScheme">
             <Property name="StartPhaseEmail">
@@ -2509,7 +2509,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
+                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -2526,8 +2526,8 @@
                 </Property>
                 <Property name="Priority">
                     <Value>0</Value>
-                </Property>		  
-            </Property>	
+                </Property>
+            </Property>
         </Property>
         <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
@@ -2562,7 +2562,7 @@
                 </Property>
                 <Property name="Priority">
                     <Value>1</Value>
-                </Property>		
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -2723,10 +2723,10 @@
             <Value>com.topcoder.management.project.persistence.InformixProjectPersistence</Value>
         </Property>
         <Property name="ValidatorClass">
-            <Value>com.topcoder.management.project.validation.DefaultProjectValidator</Value>
+            <Value>com.cronos.onlinereview.actions.StatusProjectValidator</Value>
         </Property>
         <Property name="ValidatorNamespace">
-            <Value>com.topcoder.management.project.validation.DefaultProjectValidator</Value>
+            <Value>not used</Value>
         </Property>
     </Config>
 
@@ -4247,7 +4247,7 @@
           </Property>
           <Property name="compensatedDeadline">
             <Value>lt.compensated_deadline</Value>
-          </Property>	  
+          </Property>
           <Property name="createDate">
             <Value>lt.create_date</Value>
           </Property>
@@ -4393,7 +4393,7 @@
                 <Value>default</Value>
               </Property>
             </Property>
-          </Property>	  
+          </Property>
           <Property name="createDate">
             <Property name="validator">
               <Property name="class">
@@ -4583,7 +4583,7 @@
           </Property>
           <Property name="compensatedDeadline">
             <Value>lt.compensated_deadline</Value>
-          </Property>	  
+          </Property>
           <Property name="createDate">
             <Value>lt.create_date</Value>
           </Property>
@@ -4892,13 +4892,13 @@
         </Property>
         <Property name="minimum_hours_before_submission_deadline_for_phase_extension">
             <Value>48</Value>
-        </Property>        
+        </Property>
         <Property name="distribution_tool_output_dir">
             <Value>&distributionToolOutputDir;</Value>
-        </Property>        
+        </Property>
         <Property name="catalog_output_dir">
             <Value>&catalogOutputDir;</Value>
-        </Property>        
+        </Property>
         <Property name="default_distribution_script">
             <Value>other</Value>
         </Property>
@@ -4918,7 +4918,7 @@
                 <Property name="Custom">
                     <Value>False</Value>
                 </Property>
-                <Property name="DistributionScript"> 
+                <Property name="DistributionScript">
                     <Value>java</Value>
                 </Property>
             </Property>
@@ -5325,7 +5325,7 @@
                 <Property name="Icon">
                     <Value>IconTesting.gif</Value>
                 </Property>
-            </Property>            
+            </Property>
             <Property name="Test Suites">
                 <Property name="IconSmall">
                     <Value>IconTestSuitesSm.gif</Value>
@@ -5503,7 +5503,7 @@
                     <Value>iconCopilotPosting.png</Value>
                 </Property>
             </Property>
-            
+
             <!-- Icons added for content creation project type -->
             <Property name="Content Creation">
                 <Property name="IconSmall">
@@ -5709,7 +5709,7 @@
                 <Value>Manager</Value>
                 <Value>Client Manager</Value>
                 <Value>Copilot</Value>
-                <Value>Cockpit Project User</Value>				
+                <Value>Cockpit Project User</Value>
             </Property>
             <Property name="Set Timeline Notifications">
                 <Value>Global Manager</Value>
@@ -5897,17 +5897,15 @@
                 <Value>Manager</Value>
                 <Value>Cockpit Project User</Value>
                 <Value>Approver</Value>
-                <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
-                <Value>Observer</Value>		
+                <Value>Observer</Value>
             </Property>
             <Property name="View All Specification Submissions">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Cockpit Project User</Value>
                 <Value>Approver</Value>
-                <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
                 <Value>Observer</Value>
@@ -5976,9 +5974,6 @@
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Designer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
-                <Value>Observer</Value>			
             </Property>
             <Property name="View Winning Milestone Submission">
                 <Value>Submitter</Value>
@@ -6299,11 +6294,11 @@
                 <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
-                <Value>Designer</Value>		
+                <Value>Designer</Value>
                 <Value>Reviewer</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
-                <Value>Stress Reviewer</Value>			
+                <Value>Stress Reviewer</Value>
             </Property>
             <Property name="Perform Final Review">
                 <Value>Final Reviewer</Value>
@@ -6318,7 +6313,7 @@
                 <Value>Reviewer</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
-                <Value>Stress Reviewer</Value>			
+                <Value>Stress Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Post-Mortem Reviewer</Value>
                 <Value>Designer</Value>
@@ -6340,7 +6335,7 @@
                 <Value>Approver</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
-                <Value>Reviewer</Value>		
+                <Value>Reviewer</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
@@ -6584,7 +6579,7 @@
                 <Value>&notificationEmailFromAddress;</Value>
             </Property>
         </Property>
-        
+
 
         <Property name="LateDeliverableUpdateNotificationEmail">
             <Property name="EditLateDeliverablePageBaseURL">
@@ -6623,7 +6618,7 @@
                 </Property>
             </Property>
         </Property>
-        
+
     </Config>
 
     <!--
@@ -6677,11 +6672,11 @@
             </Property>
         </Property>
     </Config>
-    
+
     <!-- Configuration for Distribution Tool -->
     <Config name="com.topcoder.util.distribution.DistributionTool">
         <!-- Distribution tool depends on Logging Wrapper 2.0, so disable logging -->
-        <!-- 
+        <!--
         <Property name="logger_name">
             <Value>com.topcoder.util.distribution.DistributionTool</Value>
         </Property>

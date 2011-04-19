@@ -282,11 +282,11 @@
                             <c:if test="${not managerEdit}">
                                 <html:image property="submitSpecReviewBtn" onclick="javascript:this.form.save.value='submit'; this.parentNode.parentNode.target='_self';return OnCompleteScorecardClick();" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0"/>&#160;
                                 <html:image property="saveSpecReviewBtn" onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0"/>&#160;
+                                <html:image property="previewSpecReviewBtn" onclick="javascript:this.form.save.value='preview'; this.parentNode.parentNode.target='_blank';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0"/>
                             </c:if>
                             <c:if test="${managerEdit}">
                                 <html:image property="saveSpecReviewByManagerBtn" onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
                             </c:if>
-                            <html:image property="previewSpecReviewBtn" onclick="javascript:this.form.save.value='preview'; this.parentNode.parentNode.target='_blank';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0"/>
                         </div>
                     </html:form>
 
