@@ -514,6 +514,8 @@
 												<c:if test="${not isAllowedToPerformAggregation}">
 													<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
 												</c:if>
+											</c:if>
+										</c:if>
                                         <c:if test="${empty group.aggregation}">
                                             <td class="valueC"><!-- @ --></td>
                                             <td class="valueC"><bean:message key="NotAvailable" /></td>
