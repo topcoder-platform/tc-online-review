@@ -249,8 +249,16 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  * 
+ * <p>
+ * Version 2.2 (Online Review Update Review Management Topcoder web site assembly) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #synchronizeRBoardApplications(Project)} method to handle Primary Review Evaluator and Secondary Reviewer.</li>
+ *     <li>Updated {@link #getRespIdFromRoleId(Connection, List, List, long)} method to handle Primary Review Evaluator and Secondary Reviewer.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, TCSDEVELOPER
- * @version 2.1
+ * @version 2.2
  * @since 1.0
  */
 public class ActionsHelper {
@@ -3735,7 +3743,7 @@ public class ActionsHelper {
             resourceResultSet = resourceSelectStmt.executeQuery(
                     "SELECT resource_info.value, resource.resource_role_id, resource.create_date FROM resource, resource_info WHERE " +
                             "resource.project_id = "+projectId+" AND resource.resource_id = resource_info.resource_id AND " +
-                            "resource.resource_role_id in (2,4,5,6,7,8,9) AND resource_info.resource_info_type_id=1");
+                            "resource.resource_role_id in (2,4,5,6,7,8,9,19,20) AND resource_info.resource_info_type_id=1");
 
             Map<Long,Long> roles = new HashMap<Long,Long>();
             Set<Long> primaries = new HashSet<Long>();
@@ -3745,8 +3753,8 @@ public class ActionsHelper {
                 long role = resourceResultSet.getLong(2);
                 java.sql.Timestamp create_date = resourceResultSet.getTimestamp(3);
 
-                // Role 4 for Reviewer, 5 for Accuracy Reviewer, 6 for Failure Reviewer and 7 for Stress Reviewer
-                if (role==4 || role==5 || role==6 || role==7) {
+                // Role 4 for Reviewer, 5 for Accuracy Reviewer, 6 for Failure Reviewer and 7 for Stress Reviewer, 19 for secondary reviewer
+                if (role==4 || role==5 || role==6 || role==7 || role == 19 || role == 20) {
                     roles.put(userID,role);
                     createDates.put(userID,create_date);
                 }
@@ -3948,7 +3956,7 @@ public class ActionsHelper {
         }
 
         // For other projects, response ids all correspond to Reviewer role.
-        if (phaseID != 113) {
+        if (phaseID != 113 || responseIDs.size() == 0) {
             PreparedStatement ps = null;
             ResultSet rs = null;
             try {
@@ -3957,7 +3965,14 @@ public class ActionsHelper {
                 // component development track for which it corresponds to the failure reviewer).
                 // So, we retrieve all response ids for the specified track ordered by its value.
                 // The first one will be the primary then.
-                ps = conn.prepareStatement("select review_resp_id from review_resp where phase_id = ? order by review_resp_id");
+                StringBuffer ids = new StringBuffer();
+                ids.append("0");
+                Set<Long> rids = new HashSet<Long>(roles);
+                for (Long roldId : rids) {
+                    ids.append(",");
+                    ids.append(roldId);
+                }
+                ps = conn.prepareStatement("select review_resp_id from review_resp where phase_id = ? and resource_role_id in (" + ids.toString() + ") order by review_resp_id");
                 ps.setLong(1, phaseID);
 
                 long primaryResponseId=-1L;
