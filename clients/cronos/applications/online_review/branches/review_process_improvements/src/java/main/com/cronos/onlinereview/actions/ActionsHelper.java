@@ -256,7 +256,13 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *     <li>Updated {@link #getRespIdFromRoleId(Connection, List, List, long)} method to handle Primary Review Evaluator and Secondary Reviewer.</li>
  *   </ol>
  * </p>
- *
+ * <p>
+ * Version 2.2 (Online Review Update Review Management Process assembly 4) Change notes:
+ *   <ol>
+ *     <li>Added {@link #countAppealsAndResponse(Review)} method to count the number of appeals/appeals response a review.</li>
+ *   </ol>
+ * </p>
+ * 
  * @author George1, real_vg, pulky, isv, TCSDEVELOPER
  * @version 2.2
  * @since 1.0
@@ -5126,5 +5132,32 @@ public class ActionsHelper {
                 }
             }
         }
+    }
+	
+   /**
+     * Counts the number of total appeals and un-resolved appeals for a review.
+     * 
+     * @param review the specified review
+     * @return a <code>Array</code> containing two elements, the first element is the number of un-resolved appeals,
+     *         the second element is the number of total appeals.
+     * @since 2.2
+     */
+    public static int[] countAppealsAndResponse(Review review) {
+        int resolvedAppeals = 0;
+        int totalAppeals = 0;
+        for (int itemIdx = 0; itemIdx < review.getNumberOfItems(); ++itemIdx) {
+            Item item = review.getItem(itemIdx);
+            for (int commentIdx = 0; commentIdx < item.getNumberOfComments(); ++commentIdx) {
+                String commentType = item.getComment(commentIdx).getCommentType().getName();
+                if (commentType.equalsIgnoreCase("Appeal")) {
+                    ++totalAppeals;
+                }
+                if (commentType.equalsIgnoreCase("Appeal Response")) {
+                    ++resolvedAppeals;
+                }
+            }
+        }
+        int unresolvedAppeals = totalAppeals - resolvedAppeals;
+        return new int[] {unresolvedAppeals, totalAppeals};
     }
 }
