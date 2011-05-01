@@ -34,7 +34,6 @@ import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
-import com.topcoder.management.review.data.Item;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.data.ScorecardType;
@@ -109,8 +108,15 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.7 (Online Review Update Review Management Process assembly 4) Change notes:
+ *   <ol>
+ *     <li>Update {@link #countAppeals(Review[][], int[][], int[][])} method to user <code>ActionsHelper.countAppealsAndResponse(Review)</code>.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, isv, TCSASSEMBER
- * @version 1.6
+ * @version 1.7
  */
 final class PhasesDetailsServices {
 
@@ -633,6 +639,9 @@ final class PhasesDetailsServices {
             // Determine if the Review phase is closed
             boolean isReviewClosed =
                 phase.getPhaseStatus().getName().equalsIgnoreCase(Constants.CLOSED_PH_STATUS_NAME);
+            if (!allowedToSeeReviewLink && isReviewClosed) {
+                allowedToSeeReviewLink = true;
+            }
 
             phaseGroup.setDisplayReviewLinks(allowedToSeeReviewLink);
 
@@ -782,6 +791,11 @@ final class PhasesDetailsServices {
                         Constants.COCKPIT_PROJECT_USER_ROLE_NAME,
                         Constants.CLIENT_MANAGER_ROLE_NAME, Constants.COPILOT_ROLE_NAME,Constants.PRIMARY_REVIEW_EVALUATOR_ROLE_NAME});
             phaseGroup.setDisplayEvaluationReviewLinks(displayEvaluationReviewLinks);
+            boolean isReviewClosed =
+                phase.getPhaseStatus().getName().equalsIgnoreCase(Constants.CLOSED_PH_STATUS_NAME);
+            if (!displayEvaluationReviewLinks && isReviewClosed) {
+                displayEvaluationReviewLinks = true;
+            }
             phaseGroup.setDisplayReviewLinks(displayEvaluationReviewLinks);
             Resource[] evaluators= ActionsHelper.getResourcesForPhase(allProjectResources, phase);
             if (evaluators == null || evaluators.length == 0) {
@@ -1533,20 +1547,9 @@ final class PhasesDetailsServices {
                     continue;
                 }
 
-                int resolvedAppeals = 0;
-                for (int itemIdx = 0; itemIdx < review.getNumberOfItems(); ++itemIdx) {
-                    Item item = review.getItem(itemIdx);
-                    for (int commentIdx = 0; commentIdx < item.getNumberOfComments(); ++commentIdx) {
-                        String commentType = item.getComment(commentIdx).getCommentType().getName();
-                        if (commentType.equalsIgnoreCase("Appeal")) {
-                            ++innerTotalAppeals[j];
-                        }
-                        if (commentType.equalsIgnoreCase("Appeal Response")) {
-                            ++resolvedAppeals;
-                        }
-                    }
-                }
-                innerUnresolvedAppeals[j] = innerTotalAppeals[j] - resolvedAppeals;
+                int[] appealsNum = ActionsHelper.countAppealsAndResponse(review);
+                innerUnresolvedAppeals[j] = appealsNum[0];
+                innerTotalAppeals[j] = appealsNum[1];
             }
 
             totalAppeals[i] = innerTotalAppeals;

@@ -1,7 +1,7 @@
 <%--
-  - Author: isv
-  - Version: 1.3
-  - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
+  - Author: isv, TCSASSEMBER
+  - Version: 1.4
+  - Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment displays the form input elements group for editing the timeline and other
   - parameters for single project phase.
@@ -13,6 +13,9 @@
   -
   - Version 1.3 (Specification Review Part 1 assembly) changes: Removed radio buttons for selecting the type of
   - phase start
+  -
+  - Version 1.4 (Online Review Update Review Management Release assembly 4) changes: Fix the bug of number of reviewers field for
+  - Secondary Reviewer Review phase.
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -280,7 +283,7 @@
                 <td class="value" colspan="4">
                     <bean:message key="editProject.Phases.Criteria.ReviewNumber.beforeInput" />
                     <html:text style="width:30px;text-align:right;" styleClass="inputBox" disabled="${isPhaseClosed}"
-                        size="30" property="phase_required_reviewers[${phaseIdx}]" value="${requestScope.phase_required_secondary_reviewers}"/>
+                        size="30" property="phase_required_reviewers[${phaseIdx}]"/>
                     &#160;<bean:message key="editProject.Phases.Criteria.ReviewNumber.afterInput" /><br />
                     <bean:message key="editProject.Phases.Criteria.Scorecard" />
                     <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" disabled="${isPhaseClosed}">

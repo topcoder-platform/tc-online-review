@@ -167,6 +167,12 @@
             <Value>handler_review_start</Value>
             <Value>handler_review_end</Value>
             <Value>handler_review_cancel</Value>
+            <Value>handler_secondary_review_start</Value>
+            <Value>handler_secondary_review_end</Value>
+            <Value>handler_secondary_review_cancel</Value>
+            <Value>handler_primary_review_evaluation_start</Value>
+            <Value>handler_primary_review_evaluation_end</Value>
+            <Value>handler_primary_review_evaluation_cancel</Value>
             <Value>handler_appeals_start</Value>
             <Value>handler_appeals_end</Value>
             <Value>handler_appeals_cancel</Value>
@@ -502,6 +508,72 @@
                 <Value>handler_review_def</Value>
             </Property>
         </Property>
+        <Property name="handler_secondary_review_start">
+            <Property name="phaseType">
+                <Value>secondary_review</Value>
+            </Property>
+            <Property name="operation">
+                <Value>start</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_secondary_review_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_secondary_review_end">
+            <Property name="phaseType">
+                <Value>secondary_review</Value>
+            </Property>
+            <Property name="operation">
+                <Value>end</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_secondary_review_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_secondary_review_cancel">
+            <Property name="phaseType">
+                <Value>secondary_review</Value>
+            </Property>
+            <Property name="operation">
+                <Value>cancel</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_secondary_review_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_primary_review_evaluation_start">
+            <Property name="phaseType">
+                <Value>primary_review_evaluation</Value>
+            </Property>
+            <Property name="operation">
+                <Value>start</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_primary_review_evaluation_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_primary_review_evaluation_end">
+            <Property name="phaseType">
+                <Value>primary_review_evaluation</Value>
+            </Property>
+            <Property name="operation">
+                <Value>end</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_primary_review_evaluation_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_primary_review_evaluation_cancel">
+            <Property name="phaseType">
+                <Value>primary_review_evaluation</Value>
+            </Property>
+            <Property name="operation">
+                <Value>cancel</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_primary_review_evaluation_def</Value>
+            </Property>
+        </Property>
         <Property name="handler_screening_start">
             <Property name="phaseType">
                 <Value>screening</Value>
@@ -832,6 +904,52 @@
                 </Property>
             </Property>
         </Property>
+        <Property name="secondary_review">
+            <Property name="type">
+                <Value>com.topcoder.project.phases.PhaseType</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>long</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>15</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>Secondary Reviewer Review</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="primary_review_evaluation">
+            <Property name="type">
+                <Value>com.topcoder.project.phases.PhaseType</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>long</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>16</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>Primary Review Evaluation</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
         <Property name="appeals">
             <Property name="type">
                 <Value>com.topcoder.project.phases.PhaseType</Value>
@@ -942,7 +1060,7 @@
                         <Value>String</Value>
                     </Property>
                     <Property name="value">
-                        <Value>aggregation</Value>
+                        <Value>Aggregation</Value>
                     </Property>
                 </Property>
             </Property>
@@ -1129,6 +1247,16 @@
                 <Value>com.cronos.onlinereview.phases.PRReviewPhaseHandler</Value>
             </Property>
         </Property>
+        <Property name="handler_secondary_review_def">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.phases.SecondaryReviewerReviewPhaseHandler</Value>
+            </Property>
+        </Property>
+        <Property name="handler_primary_review_evaluation_def">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.phases.PrimaryReviewEvaluationPhaseHandler</Value>
+            </Property>
+        </Property>
         <Property name="handler_appeals_def">
             <Property name="type">
                 <Value>com.cronos.onlinereview.phases.AppealsPhaseHandler</Value>
@@ -1146,7 +1274,7 @@
         </Property>
         <Property name="handler_primary_appeals_response_def">
             <Property name="type">
-                <Value>com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler</Value>
+                <Value>com.cronos.onlinereview.phases.PRPrimaryReviewAppealResponsePhaseHandler</Value>
             </Property>
         </Property>
         <Property name="handler_aggregation_def">

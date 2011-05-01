@@ -240,8 +240,16 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.14 (Online Review Update Review Management Process assembly 4) Change notes:
+ *   <ol>
+ *     <li>Update {@link #populateProjectFormDefaults(LazyValidatorForm, HttpServletRequest)} method, the attribute "phase_required_secondary_reviewers"
+ *     was changed to "default_required_secondary_reviewers".</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, TCSASSEMBER
- * @version 1.13
+ * @version 1.14
  */
 public class ProjectActions extends DispatchAction {
 
@@ -385,7 +393,7 @@ public class ProjectActions extends DispatchAction {
             lazyForm.set("phase_required_reviewers", 0, new Integer(ConfigHelper.getDefaultRequiredReviewers()));
         }
         if (ConfigHelper.getDefaultRequiredSecondaryReviewers() >= 0) {
-            request.setAttribute("phase_required_secondary_reviewers", new Integer(ConfigHelper.getDefaultRequiredSecondaryReviewers()));
+            request.setAttribute("default_required_secondary_reviewers", new Integer(ConfigHelper.getDefaultRequiredSecondaryReviewers()));
         }
         if (ConfigHelper.getDefaultRequiredApprovers() >= 0) {
             request.setAttribute("phase_required_reviewers_approval",

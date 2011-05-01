@@ -1,6 +1,6 @@
 <%--
-  - Author: pulky, isv
-  - Version: 1.3.1
+  - Author: pulky, isv, TCSASSEMBER
+  - Version: 1.3.2
   - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays project edition page
@@ -15,6 +15,9 @@
   -
   - Version 1.3.1 (SVN Automation and Late Deliverables Tracking Assembly 1.0) changes: SVN Module property is no longer
   - editable
+  -
+  - Version 1.3.2 (Online Review Update Review Management Release assembly 4 ) changes: Fix the bug of number of reviewers field for
+  - Secondary Reviewer Review phase.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -60,6 +63,7 @@
         var lastResourceIndex = ${fn:length(projectForm.map['resources_id']) - 1};
         var lastPhaseIndex = ${fn:length(projectForm.map['phase_id']) - 1};
         var nameCellIndex = ${newProject ? 0 : 1};
+        var defaultSecondaryReviewers = ${requestScope.default_required_secondary_reviewers};
 
         var resourceRoleToPhaseTypeMap = {};
         <c:forEach items="${resourceRoles}" var="resourceRole">
@@ -487,6 +491,9 @@
                 }
 
                  criterionRow = cloneInputRow(templateRow);
+                 if (phaseName == "Secondary Reviewer Review") {
+                     criterionRow.getElementsByTagName('input')[0].value = defaultSecondaryReviewers;
+                 }
 
                  // Assign the id
                 criterionRow.id = getUniqueId();
@@ -839,6 +846,7 @@
                     // operation succeeded
                     // Populate project phases using loaded template
                     populateTimeLineFromTemplate(respXML.getElementsByTagName("timeline")[0]);
+                    onProjectCategoryChange(document.getElementsByName("project_category")[0]);
                 },
                 function (result, respXML) {
                     // operation failed, alert the error message to the user

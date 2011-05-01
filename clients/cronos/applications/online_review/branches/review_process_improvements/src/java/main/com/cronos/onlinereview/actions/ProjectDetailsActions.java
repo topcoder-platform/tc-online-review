@@ -58,6 +58,7 @@ import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
+import com.topcoder.management.review.data.Item;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.data.Scorecard;
@@ -184,8 +185,26 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.9 (Online Review Update Review Management Process assembly 4) Change noets:
+ *   <ol>
+ *     <li>Updated {@link #viewProjectDetails(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method
+ *     to support Appeals Response Deliverables for Primary Review Appeals Response phsae.</li>
+ *     <li>Updated {@link #downloadContestSubmission(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method
+ *     to fix the bug bring in "Online Review Update Review Management Process assembly 1".</li>
+ *     <li>Updated {@link #uploadTestCase(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method
+ *     to fix the bug bring in "Online Review Update Review Management Process assembly 1".</li>
+ *     <li>Updated {@link #downloadTestCase(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method
+ *     to fix the bug bring in "Online Review Update Review Management Process assembly 1".</li>
+ *     <li>Updated {@link #generateDeliverableLinks(HttpServletRequest, Deliverable[], Phase[])} method
+ *     to generate links for Primary Review Appeals Response Deliverable.</li>
+ *     <li>Updated {@link #getDeliverableSubmissionUserIds(HttpServletRequest, Deliverable[])} method
+ *     to work for the Primary Review Appeals Response Deliverable.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, TCSASSEMBER
- * @version 1.8
+ * @version 1.9
  */
 public class ProjectDetailsActions extends DispatchAction {
 
@@ -495,6 +514,65 @@ public class ProjectDetailsActions extends DispatchAction {
         	deliverables = newDeliverables.toArray(new Deliverable[newDeliverables.size()]);
         }
         
+        // For Primary Review Appeals Response phase
+        Phase primaryReviewAppealsResponsePhase = ActionsHelper.getPhase(phases, true, Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME);
+        if (primaryReviewAppealsResponsePhase != null) {
+            List<Deliverable> newDeliverables = new ArrayList<Deliverable>();
+            ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
+            // Get the scorecard type for Review scorecards
+            ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+            ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
+            ScorecardType scoreCardType = ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review");
+            
+            for (int i = 0; i < deliverables.length; i++) {
+                Deliverable deliverable = deliverables[i];
+                if (deliverable.getName().equals(Constants.PRIMARY_REVIEW_APPEALS_RESP_DELIVERABLE_NAME)) {
+                    // get review boards for this submission
+                    Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
+                    Filter filterSubmission = new EqualToFilter("submission", new Long(deliverable.getSubmission()));
+                    Filter scoreCardTypeFilter = new EqualToFilter("scorecardType", new Long(scoreCardType.getId()));
+                    Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterProject, filterSubmission,scoreCardTypeFilter}));
+                    Review[] submissionReviews = reviewManager.searchReviews(filter, true);
+                    for (Review review : submissionReviews) {
+                        if (review.getAuthor() == deliverable.getResource()) {
+                            // Skip Review Evaluation Review board
+                            continue;
+                        }
+                        
+                        int[] appealsNum = ActionsHelper.countAppealsAndResponse(review);
+                        if (appealsNum[1] > 0) {
+                            //Use ReviewId for Submission id
+                            Deliverable newDeliverable = new Deliverable(deliverable.getProject(), deliverable.getPhase(),
+                                    deliverable.getResource(), review.getId(), deliverable.isRequired());
+                            newDeliverable.setId(deliverable.getId());
+                            newDeliverable.setName(deliverable.getName());
+                            newDeliverable.setCreationTimestamp(deliverable.getCreationTimestamp());
+                            newDeliverable.setCreationUser(deliverable.getCreationUser());
+                            newDeliverable.setDescription(deliverable.getDescription());
+                            newDeliverable.setModificationTimestamp(deliverable.getModificationTimestamp());
+                            newDeliverable.setModificationUser(deliverable.getModificationUser());
+                            if (appealsNum[0] == 0) {
+                                Date lastDate = null;
+                                for (Item item : review.getAllItems()) {
+                                    for (Comment comment : item.getAllComments()) {
+                                        Date modifyDate = comment.getModificationTimestamp();
+                                        if (modifyDate != null && (lastDate == null || lastDate.before(modifyDate))) {
+                                            lastDate = modifyDate;
+                                        }
+                                    }
+                                }
+                                newDeliverable.setCompletionDate(lastDate);
+                            }
+                            newDeliverables.add(newDeliverable);
+                        }
+                    }
+                } else {
+                    newDeliverables.add(deliverable);
+                }
+            }
+            deliverables = newDeliverables.toArray(new Deliverable[newDeliverables.size()]);
+        }
+        
         Deliverable[] myDeliverables = ActionsHelper.getMyDeliverables(deliverables, myResources);
         Deliverable[] outstandingDeliverables = ActionsHelper.getOutstandingDeliverables(deliverables);
 
@@ -728,7 +806,6 @@ public class ProjectDetailsActions extends DispatchAction {
                         request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
                         (ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME) != null ||
                         		ActionsHelper.getPhase(phases, true, Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME) != null ||
-                        		ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME) != null ||
                                 ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null ||
                                 ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null ||
                                 ActionsHelper.getPhase(phases, true, Constants.APPEALS_PHASE_NAME) != null ||
@@ -1348,7 +1425,10 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME)) {
             // Determine whether Review phase has already been opened (does not have Scheduled status)
-            final boolean isReviewOpen = ActionsHelper.isInOrAfterPhase(phases, 0, Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME);
+            boolean isReviewOpen = ActionsHelper.isInOrAfterPhase(phases, 0, Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME);
+            if (!isReviewOpen) {
+                isReviewOpen = ActionsHelper.isInOrAfterPhase(phases, 0, Constants.REVIEW_PHASE_NAME);
+            }
             // If reviewer tries to download submission before Review phase opens,
             // notify him about this wrong-doing and do not let perform the action
             if (AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES) && !isReviewOpen) {
@@ -1746,10 +1826,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Get all phases for the current project
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
         // Retrieve the current phase for the project
-        Phase currentPhase = ActionsHelper.getPhase(phases, true, Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME);
-        if (currentPhase == null ) {
-        	currentPhase = ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME);
-        }
+        Phase currentPhase = ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME);
         if (currentPhase == null) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.UPLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase", null);
@@ -1779,7 +1856,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Get my resource
         Resource resource = ActionsHelper.getMyResourceForPhase(
-                request, ActionsHelper.getPhase(phases, false, Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME));
+                request, ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME));
 
         Filter filterProject = UploadFilterBuilder.createProjectIdFilter(project.getId());
         Filter filterResource = UploadFilterBuilder.createResourceIdFilter(resource.getId());
@@ -1858,7 +1935,7 @@ public class ProjectDetailsActions extends DispatchAction {
             // Get phase's type name for the current iteration
             String phaseName = phases[i].getPhaseType().getName();
             // Skip the phase if it is not a Review phase
-            if (!phaseName.equalsIgnoreCase(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME)) {
+            if (!phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME)) {
                 continue;
             }
             // Check if this phase is closed
@@ -2800,6 +2877,13 @@ public class ProjectDetailsActions extends DispatchAction {
                 if (review != null) {
                     links[i] = "ViewReview.do?method=viewReview&rid=" + review.getId();
                 }
+            } else if (delivName.equalsIgnoreCase(Constants.PRIMARY_REVIEW_APPEALS_RESP_DELIVERABLE_NAME)) {
+                // for primary review appeals response deliverable, the submission id is the review id
+                if (deliverable.getSubmission() == null) {
+                    continue;
+                }
+                
+                links[i] = "ViewSecondaryReview.do?method=viewSecondaryReview&rid=" + deliverable.getSubmission();
             } else if (delivName.equalsIgnoreCase(Constants.AGGREGATION_DELIVERABLE_NAME)) {
                 // Skip deliverables with empty Submission ID field,
                 // as no links can be generated for such deliverables
@@ -2980,7 +3064,8 @@ public class ProjectDetailsActions extends DispatchAction {
         
         for (int i = 0; i < deliverables.length; ++i) {
             if (deliverables[i].getSubmission() != null) {
-            	if (deliverables[i].getName().equals(Constants.REVIEW_EVALUATION)){
+            	if (deliverables[i].getName().equals(Constants.REVIEW_EVALUATION)
+            	        || deliverables[i].getName().equals(Constants.PRIMARY_REVIEW_APPEALS_RESP_DELIVERABLE_NAME)) {
             		reviewIds.add(deliverables[i].getSubmission());
             	} else {
             		submissionIds.add(deliverables[i].getSubmission());
@@ -3027,7 +3112,8 @@ public class ProjectDetailsActions extends DispatchAction {
             if (deliverables[i].getSubmission() == null) {
                 continue;
             }
-            if (deliverables[i].getName().equals(Constants.REVIEW_EVALUATION)){
+            if (deliverables[i].getName().equals(Constants.REVIEW_EVALUATION)
+                    || deliverables[i].getName().equals(Constants.PRIMARY_REVIEW_APPEALS_RESP_DELIVERABLE_NAME)) {
             	long reviewId = deliverables[i].getSubmission().longValue();
 	            for (int j = 0; j < reviews.length; ++j) {
 	                if (reviews[j].getId() != reviewId) {

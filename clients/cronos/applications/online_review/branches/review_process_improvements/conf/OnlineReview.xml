@@ -1919,9 +1919,6 @@
         <Property name="phaseType">
         	<Value>New Appeals</Value>
         </Property>
-        <Property name="secondaryReviewerCount">
-        	<Value>2</Value>
-        </Property>
     </Config>
 
     <!-- Default namespace for Appeals Response handler -->

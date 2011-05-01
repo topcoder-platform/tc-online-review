@@ -93,8 +93,16 @@ package com.cronos.onlinereview.actions;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.9 (Online Review Update Review Management Process assembly 4) Change notes:
+ *   <ol>
+ *     <li>Added {@link #PRIMARY_REVIEW_APPEALS_RESP_DELIVERABLE_NAME} constant to represent the deliverable name
+ *     of Primary Review Appeals Reponse deliverable.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, TCSASSEMBER
- * @version 1.8
+ * @version 1.9
  */
 public class Constants {
 
@@ -1006,6 +1014,14 @@ public class Constants {
      */
     public static final String APPEAL_RESP_DELIVERABLE_NAME = "Appeal Responses";
 
+    /**
+     * This member variable is a string constant that defines the name of the Primary Review Appeals Response
+     * deliverable.
+     * 
+     * @since 1.9
+     */
+    public static final String PRIMARY_REVIEW_APPEALS_RESP_DELIVERABLE_NAME = "Appeals Response";
+    
     /**
      * This member variable is a string constant that defines the name of the Aggregation
      * deliverable.

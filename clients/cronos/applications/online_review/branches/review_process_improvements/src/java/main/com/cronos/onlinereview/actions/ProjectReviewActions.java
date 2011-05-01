@@ -178,8 +178,17 @@ import com.topcoder.util.weightedcalculator.LineItem;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.5 (Online Review Update Review Management Process assembly 4) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #saveReviewEvaluation(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method
+ *     to fix the bugs when saving Primary Review Evaluation Comments.</li>
+ *     <li>Updated {@link #viewAggregationReview(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method
+ *     to to fix bug when checking whether the Aggregation Review is committed.</li>
+ * </p>
+ *
  * @author George1, real_vg, isv, TCSASSEMBER
- * @version 1.4
+ * @version 1.5
  */
 public class ProjectReviewActions extends DispatchAction {
     private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory
@@ -1046,6 +1055,9 @@ public class ProjectReviewActions extends DispatchAction {
         EvaluationType[] evaluationTypes = revMgr.getAllEvaluationTypes();
         int numberOfItems = review.getNumberOfItems();
         
+        CommentType managerCommentType = ActionsHelper.findCommentTypeByName(allCommentTypes, "Manager Comment");
+        CommentType primaryReviewEvaluatorCommentType = ActionsHelper.findCommentTypeByName(allCommentTypes, "Primary Review Evaluation Comment");
+
         for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
             Group group = scorecardTemplate.getGroup(groupIdx);
             for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
@@ -1087,10 +1099,10 @@ public class ProjectReviewActions extends DispatchAction {
                         while(iterator.hasNext()){
                         	String commentKey = iterator.next();
                         	String commentValue = comments.get(commentKey);
-                        	if (commentValue != null && commentValue.trim().length() > 0 ) {
+                        	if (commentKey.startsWith(itemIdx + ".") && commentValue != null && commentValue.trim().length() > 0 ) {
                         		Comment newcomment = new Comment();
                             	newcomment.setComment(commentValue);
-                            	newcomment.setCommentType(managerEdit ? ActionsHelper.findCommentTypeByName(allCommentTypes,"Manager Comment") : ActionsHelper.findCommentTypeByName(allCommentTypes,"Primary Review Evaluation Comment") );
+                            	newcomment.setCommentType(managerEdit ?  managerCommentType : primaryReviewEvaluatorCommentType);
                             	newcomment.setAuthor(myResource.getId());
                             	item.addComment(newcomment);
                         	}
@@ -2316,10 +2328,12 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that Aggregation Review has been committed by all users who should have done that
         for (int i = 0; i < review.getNumberOfComments(); ++i) {
             Comment comment = review.getComment(i);
-            String status = (String) comment.getExtraInfo();
-            if (!("Approved".equalsIgnoreCase(status) || "Rejected".equalsIgnoreCase(status))) {
-                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                        Constants.VIEW_AGGREG_REVIEW_PERM_NAME, "Error.AggregationReviewNotCommitted", null);
+            if (ActionsHelper.isAggregationReviewComment(comment)) {
+                String status = (String) comment.getExtraInfo();
+                if (!("Approved".equalsIgnoreCase(status) || "Rejected".equalsIgnoreCase(status))) {
+                    return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                            Constants.VIEW_AGGREG_REVIEW_PERM_NAME, "Error.AggregationReviewNotCommitted", null);
+                }
             }
         }
 
