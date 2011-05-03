@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2011 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -83,16 +83,16 @@ final class LoggingHelper {
 
 
         StringBuffer loginfo = new StringBuffer(100);
-                loginfo.append("[* ");
-                loginfo.append(handle);
-                loginfo.append(" * ");
-                loginfo.append(request.getRemoteAddr());
-                loginfo.append(" * ");
-                loginfo.append(request.getMethod());
-                loginfo.append(" ");
-                loginfo.append(requestString);
-                loginfo.append(" *]");
-                logger.log(Level.INFO, loginfo.toString());
+        loginfo.append("[* ");
+        loginfo.append(handle);
+        loginfo.append(" * ");
+        loginfo.append(request.getRemoteAddr());
+        loginfo.append(" * ");
+        loginfo.append(request.getMethod());
+        loginfo.append(" ");
+        loginfo.append(requestString);
+        loginfo.append(" *]");
+        logger.log(Level.INFO, loginfo.toString());
 
     	StringBuffer sb = new StringBuffer();
     	sb.append(dateFormat.format(new Date())).append(" - ");
