@@ -3067,8 +3067,8 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Verify the status of upload and check whether the user has permission to download old uploads
         if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted") 
-            ActionsHelper.logDownloadAttempt(request, upload, false);
             && !AuthorizationHelper.hasUserPermission(request, viewAllSubmissionsPermName)) {
+        	ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(
                     mapping, getResources(request), request, errorMessageKey, "Error.UploadDeleted", null);
         }
@@ -3113,8 +3113,8 @@ public class ProjectDetailsActions extends DispatchAction {
             // If reviewer tries to download submission before Review phase opens,
             // notify him about this wrong-doing and do not let perform the action
             if (AuthorizationHelper.hasUserRole(request, reviewerRoleNames) && !isReviewOpen) {
+            	ActionsHelper.logDownloadAttempt(request, upload, false);
                 return ActionsHelper.produceErrorReport(
-                ActionsHelper.logDownloadAttempt(request, upload, false);
                         mapping, getResources(request), request, errorMessageKey, "Error.IncorrectPhase", null);
             }
             noRights = false;
