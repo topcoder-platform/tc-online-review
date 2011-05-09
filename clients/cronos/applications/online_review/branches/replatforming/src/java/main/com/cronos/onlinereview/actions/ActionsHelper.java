@@ -4805,4 +4805,43 @@ public class ActionsHelper {
         return cal.getTime();
     }
 
+    /**
+     * <p>Saves the attempt to download a file to the project_download_audit table in the DB.</p>
+     *
+     * @param request The http request.
+     * @param upload The upload object that is being downloaded.
+     * @param succesfull True if the download attempt was succesfull and false otherwise (e.g. no permission).
+     */
+	static void logDownloadAttempt(HttpServletRequest request, Upload upload, boolean succesfull) throws BaseException {
+        Connection conn = null;
+        PreparedStatement insertStmt = null;
+        try {	
+            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+            conn = dbconn.createConnection();
+
+            insertStmt = conn.prepareStatement("INSERT INTO project_download_audit VALUES (?,?,?,?,current)");
+            insertStmt.setLong(1, upload.getId());
+            if (AuthorizationHelper.isUserLoggedIn(request)) {
+                insertStmt.setLong(2, AuthorizationHelper.getLoggedInUserId(request));
+            } else {
+                insertStmt.setNull(2, Types.INTEGER);
+            }
+            insertStmt.setString(3, request.getRemoteAddr());			
+            insertStmt.setBoolean(4, succesfull);
+            insertStmt.executeUpdate();			
+			
+        } catch (UnknownConnectionException e) {
+            throw new BaseException("Failed to create connection", e);
+        } catch (ConfigurationException e) {
+            throw new BaseException("Failed to config for DBNamespace", e);
+        } catch (DBConnectionException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } catch (SQLException e) {
+            log.log(Level.ERROR, "Failed to save download attempt to project_download_audit table." + e);
+        } finally {
+            close(insertStmt);
+            close(conn);
+        }
+	}
+
 }

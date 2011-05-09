@@ -1223,6 +1223,7 @@ public class ProjectDetailsActions extends DispatchAction {
         Upload upload = verification.getUpload();
         // Verify that upload is a submission
         if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
+            ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request, "ViewSubmission",
                 "Error.NotASubmission", null);
         }
@@ -1231,6 +1232,7 @@ public class ProjectDetailsActions extends DispatchAction {
         boolean hasViewAllSpecSubmissionsPermission
             = AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SPECIFICATION_SUBMISSIONS_PERM_NAME);
         if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted") && !hasViewAllSpecSubmissionsPermission) {
+			ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(
                     mapping, getResources(request), request, "ViewSubmission", "Error.UploadDeleted", null);
         }
@@ -1260,12 +1262,15 @@ public class ProjectDetailsActions extends DispatchAction {
             final boolean isReviewOpen = ActionsHelper.isInOrAfterPhase(phases, 0,
                 Constants.SPECIFICATION_REVIEW_PHASE_NAME);
             if (AuthorizationHelper.hasUserRole(request, Constants.SPECIFICATION_REVIEWER_ROLE_NAME) && !isReviewOpen) {
+			    ActionsHelper.logDownloadAttempt(request, upload, false);
                 return ActionsHelper.produceErrorReport(
                         mapping, getResources(request), request, "ViewSubmission", "Error.IncorrectPhase", null);
             }
             noRights = false;
         }
 
+        ActionsHelper.logDownloadAttempt(request, upload, !noRights);
+		
         if (noRights) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request, "ViewSubmission",
                 "Error.NoPermission", Boolean.TRUE);
@@ -1473,7 +1478,11 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
 
+        // Get the upload the user wants to download
+        Upload upload = verification.getUpload();
+
         if (!hasPermission) {
+            ActionsHelper.logDownloadAttempt(request, upload, false);		
             if (hasSubmitterRole) {
                 return ActionsHelper.produceErrorReport(
                         mapping, getResources(request), request, "ViewSubmission", "Error.NoScreeningPassed", null);
@@ -1487,21 +1496,13 @@ public class ProjectDetailsActions extends DispatchAction {
         // At this point, redirect-after-login attribute should be removed (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
 
-        // Get an upload the user wants to download
-        Upload upload = verification.getUpload();
-
         // Verify that upload is a Final Fix
         if (!upload.getUploadType().getName().equalsIgnoreCase("Final Fix")) {
+            ActionsHelper.logDownloadAttempt(request, upload, false);		
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.NotAFinalFix", null);
         }
-/* TODO: Remove this commented block when everything works ok
-        // Verify the status of upload
-        if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted")) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.UploadDeleted");
-        }
-*/
+        ActionsHelper.logDownloadAttempt(request, upload, true);	
 
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
@@ -1704,39 +1705,46 @@ public class ProjectDetailsActions extends DispatchAction {
         final boolean canPlaceAppeals =
             AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME);
 
+        // Get the upload the user wants to download
+        Upload upload = verification.getUpload();
+
         // If Review phase is not closed yet, there is a need to check whether the user that is
         // attempting to download test cases is a Submitter and an Appeals phase is open
         if (canDownload && canPlaceAppeals && !isReviewClosed && !canDownloadDuringReview && !isAppealsOpen) {
+            ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase", null);
         }
         // Verify that user can download test cases during Review
         if (canDownload && !isReviewClosed && !canDownloadDuringReview) {
+            ActionsHelper.logDownloadAttempt(request, upload, false);		
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase", null);
         }
         // Check that the user is allowed to download test cases in general
         if (!canDownload) {
+            ActionsHelper.logDownloadAttempt(request, upload, false);		
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
         }
         // At this point, redirect-after-login attribute should be removed (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
 
-        // Get an upload the user wants to download
-        Upload upload = verification.getUpload();
-
         // Verify that upload is Test Cases
         if (!upload.getUploadType().getName().equalsIgnoreCase("Test Case")) {
+		    ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.NotTestCases", null);
         }
         // Verify the status of upload
         if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted")) {
+            ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.UploadDeleted", null);
         }
 
+        ActionsHelper.logDownloadAttempt(request, upload, true);
+		
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
         outputDownloadedFile(uploadedFile, "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"",
@@ -2097,27 +2105,32 @@ public class ProjectDetailsActions extends DispatchAction {
             return verification.getForward();
         }
 
+        // Get an upload the user wants to download
+        Upload upload = verification.getUpload();
+
         // Check that user has permissions to download a Document
         if (!AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME)) {
+            ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
         }
         // At this point, redirect-after-login attribute should be removed (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
 
-        // Get an upload the user wants to download
-        Upload upload = verification.getUpload();
-
         // Verify that upload is a Review Document
         if (!upload.getUploadType().getName().equalsIgnoreCase("Review Document")) {
+            ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.NotADocument", null);
         }
         // Verify the status of upload
         if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted")) {
+            ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.UploadDeleted", null);
         }
+
+        ActionsHelper.logDownloadAttempt(request, upload, true);
 
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
@@ -3047,12 +3060,14 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Verify that upload is a submission
         if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
+            ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(
                     mapping, getResources(request), request, errorMessageKey, "Error.NotASubmission", null);
         }
 
         // Verify the status of upload and check whether the user has permission to download old uploads
         if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted") 
+            ActionsHelper.logDownloadAttempt(request, upload, false);
             && !AuthorizationHelper.hasUserPermission(request, viewAllSubmissionsPermName)) {
             return ActionsHelper.produceErrorReport(
                     mapping, getResources(request), request, errorMessageKey, "Error.UploadDeleted", null);
@@ -3085,6 +3100,7 @@ public class ProjectDetailsActions extends DispatchAction {
             // If screener tries to download submission before Screening phase opens,
             // notify him about this wrong-doing and do not let perform the action
             if (AuthorizationHelper.hasUserRole(request, screenerRoleNames) && !isScreeningOpen) {
+                ActionsHelper.logDownloadAttempt(request, upload, false);
                 return ActionsHelper.produceErrorReport(
                         mapping, getResources(request), request, errorMessageKey, "Error.IncorrectPhase", null);
             }
@@ -3098,9 +3114,40 @@ public class ProjectDetailsActions extends DispatchAction {
             // notify him about this wrong-doing and do not let perform the action
             if (AuthorizationHelper.hasUserRole(request, reviewerRoleNames) && !isReviewOpen) {
                 return ActionsHelper.produceErrorReport(
+                ActionsHelper.logDownloadAttempt(request, upload, false);
                         mapping, getResources(request), request, errorMessageKey, "Error.IncorrectPhase", null);
             }
             noRights = false;
+        }
+
+        // For the Submitters we only allow to download other's submissions if the user has at least passed screening.
+        if (noRights && AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) {
+            // Get all submissions for the project that passed screening.
+            Submission[] submissions = ActionsHelper.searchReviewedContestSubmissions(request, verification.getProject());
+
+            // Get all submissions for this user.
+            Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.SUBMITTER_ROLE_NAME);
+            UploadManager upMgr = ActionsHelper.createUploadManager();
+            Long[] subIds = resource.getSubmissions();
+			
+            // Check that the user has a submission that passed screening.
+            // We don't need to check the current phase because if it is still prior to the Appeals Response
+            // the user won't be able to download other's submissions anyway.
+            boolean passedScreening = false;
+            for (Long id : subIds) {
+                for (Submission submission : submissions) {
+                    if (submission.getId() == id) {
+                        passedScreening = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!passedScreening) {
+                ActionsHelper.logDownloadAttempt(request, upload, false);
+                return ActionsHelper.produceErrorReport(
+                        mapping, getResources(request), request, "ViewSubmission", "Error.NoScreeningPassed", null);
+            }
         }
 
         // the download validation for custom components is different
