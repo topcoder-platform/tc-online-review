@@ -1852,6 +1852,7 @@ public class ProjectActions extends DispatchAction {
                     if (i == 0 ||
                             (!previousPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME) 
                              && !previousPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME) 
+							 && !previousPhaseName.equals(AGGREGATION_PHASE_NAME)
                              && !previousPhaseName.equals(APPROVAL_PHASE_NAME) 
                              && !(previousPhaseName.equals(REVIEW_PHASE_NAME) && isStudioProject) 
                              && !previousPhaseName.equals(FINAL_REVIEW_PHASE_NAME))
