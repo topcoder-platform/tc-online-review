@@ -15,6 +15,8 @@
   - phase start
   -
   - Version 1.3.1 (Milestone Support assembly) changes: Added support for Milestone phases.
+  -
+  - Version 1.3.2 (Online Review Phases 1.6.1 integration): removed Manual and Auto Screening support for Submissions phase. 
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -206,18 +208,6 @@
                         size="30" property="phase_required_registrations[${phaseIdx}]" />
                     &#160;<bean:message key="editProject.Phases.Criteria.RequiredRegistrations.afterInput" />
                     <br /><bean:message key="editProject.Phases.Criteria.RequiredRegistrations.note" /></td>
-            </tr>
-        </c:if>
-        <c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_required_submissions'][phaseIdx])}">
-            <tr class="highlighted" ${(phaseIdx eq 0) ? 'id="required_submissions_row_template" style="display:none;"' : ''}>
-                <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
-                <td class="value" colspan="4">
-                    <bean:message key="editProject.Phases.Criteria.RequiredSubmissions.beforeInput" />
-                    <html:text styleClass="inputBox" property="phase_required_submissions[${phaseIdx}]" style="width:30px;text-align:right;" disabled="${isPhaseClosed}" />
-                    <bean:message key="editProject.Phases.Criteria.RequiredSubmissions.afterInput" /><br />
-                    <html:checkbox styleId="manualScreeningCheckbox${phaseIdx}" property="phase_manual_screening[${phaseIdx}]"  disabled="${isPhaseClosed}"/><label
-                        for="manualScreeningCheckbox${phaseIdx}"><bean:message key="editProject.Phases.Criteria.RequiredSubmissions.ManualScreening" /></label>
-                </td>
             </tr>
         </c:if>
 

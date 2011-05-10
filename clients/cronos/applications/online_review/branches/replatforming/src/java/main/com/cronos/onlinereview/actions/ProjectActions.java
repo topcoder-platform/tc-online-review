@@ -256,9 +256,16 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  *     <li>Updated {@link #saveProjectPhases()} to handle new StatusValidationException and display its error message.</li>
  *   </ol>
  * </p>
-
- * @author George1, real_vg, pulky, isv, FireIce
- * @version 1.13
+ * Version 1.13.1 (Online Review Phases 1.6.1 Integration) Change notes:
+ *   <ol>
+ *     <li>Removed Manual Screening support</li>
+ *     <li>Removed Submission Number support</li>
+ *   </ol>
+ * <p>
+ *    
+ * </p>
+ * @author George1, real_vg, pulky, isv, FireIce, lmmortal
+ * @version 1.14
  */
 public class ProjectActions extends DispatchAction {
 
@@ -402,9 +409,6 @@ public class ProjectActions extends DispatchAction {
         // Populate some phase criteria with default values read from the configuration
         if (ConfigHelper.getDefaultRequiredRegistrants() >= 0) {
             lazyForm.set("phase_required_registrations", 0, new Integer(ConfigHelper.getDefaultRequiredRegistrants()));
-        }
-        if (ConfigHelper.getDefaultRequiredSubmissions() >= 0) {
-            lazyForm.set("phase_required_submissions", 0, new Integer(ConfigHelper.getDefaultRequiredSubmissions()));
         }
         if (ConfigHelper.getDefaultRequiredReviewers() >= 0) {
             lazyForm.set("phase_required_reviewers", 0, new Integer(ConfigHelper.getDefaultRequiredReviewers()));
@@ -1419,11 +1423,6 @@ public class ProjectActions extends DispatchAction {
             if (requiredRegistrations != null) {
                 phase.setAttribute("Registration Number", requiredRegistrations.toString());
             }
-            Integer requiredSubmissions = (Integer) lazyForm.get("phase_required_submissions", i);
-            // If the number of required submissions is specified, set it
-            if (requiredSubmissions != null) {
-                phase.setAttribute("Submission Number", requiredSubmissions.toString());
-            }
             // If the number of required reviewers is specified, set it
             Integer requiredReviewer = (Integer) lazyForm.get("phase_required_reviewers", i);
             if (requiredReviewer != null) {
@@ -1439,12 +1438,6 @@ public class ProjectActions extends DispatchAction {
             }
 
             Boolean manualScreening = (Boolean) lazyForm.get("phase_manual_screening", i);
-            // If the manual screening flag is specified, set it
-            if (manualScreening != null) {
-                phase.setAttribute("Manual Screening", manualScreening.booleanValue() ? "Yes" : "No");
-            } else {
-                phase.setAttribute("Manual Screening", "No");
-            }
             Boolean viewAppealResponses = (Boolean) lazyForm.get("phase_view_appeal_responses", i);
             // If the view appeal response during appeals flag is specified, set it
             if (viewAppealResponses != null) {
@@ -3536,12 +3529,6 @@ public class ProjectActions extends DispatchAction {
             if (phases[i].getAttribute("Registration Number") != null) {
                 form.set("phase_required_registrations", i + 1,
                         Integer.valueOf((String) phases[i].getAttribute("Registration Number")));
-            }
-            if (phases[i].getAttribute("Submission Number") != null) {
-                form.set("phase_required_submissions", i + 1,
-                        Integer.valueOf((String) phases[i].getAttribute("Submission Number")));
-                form.set("phase_manual_screening", i + 1,
-                        Boolean.valueOf("Yes".equals(phases[i].getAttribute("Manual Screening"))));
             }
             if (phases[i].getAttribute("Reviewer Number") != null) {
                 form.set("phase_required_reviewers", i + 1,
