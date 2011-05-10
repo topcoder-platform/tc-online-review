@@ -493,7 +493,5 @@ public class ManagerCreationHelper implements ManagersProvider {
                 PhaseOperationEnum.START);
         manager.registerHandler(handler, ActionsHelper.findPhaseTypeByName(phaseTypes, phaseName),
                 PhaseOperationEnum.END);
-        manager.registerHandler(handler, ActionsHelper.findPhaseTypeByName(phaseTypes, phaseName),
-                PhaseOperationEnum.CANCEL);
     }
 }

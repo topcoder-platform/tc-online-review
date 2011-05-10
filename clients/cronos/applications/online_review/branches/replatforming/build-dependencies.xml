@@ -25,7 +25,7 @@
     <property name="authentication_factory.jar"
               value="${tcs_libdir}/${authentication_factory.path}/${authentication_factory.jar.name}"/>
 
-    <property name="auto_pilot.version" value="1.1"/>
+    <property name="auto_pilot.version" value="1.1.1"/>
     <property name="auto_pilot.jar.name" value="auto_pilot.jar"/>
     <property name="auto_pilot.path" value="auto_pilot/${auto_pilot.version}"/>
     <property name="auto_pilot.jar" value="${tcs_libdir}/${auto_pilot.path}/${auto_pilot.jar.name}"/>
@@ -207,7 +207,7 @@
     <property name="magic_numbers.path" value="magic_numbers/${magic_numbers.version}" />
     <property name="magic_numbers.jar" value="${tcs_libdir}/${magic_numbers.path}/${magic_numbers.jar.name}" />
 
-    <property name="online_review_phases.version" value="1.6.0"/>
+    <property name="online_review_phases.version" value="1.6.1"/>
     <property name="online_review_phases.jar.name" value="online_review_phases.jar"/>
     <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}"/>
     <property name="online_review_phases.jar"
@@ -287,7 +287,7 @@
     <property name="online_review_upload_services.jar"
               value="${tcs_libdir}/${online_review_upload_services.path}/${online_review_upload_services.jar.name}"/>
 
-    <property name="phase_management.version" value="1.0.4"/>
+    <property name="phase_management.version" value="1.1.0"/>
     <property name="phase_management.jar.name" value="phase_management.jar"/>
     <property name="phase_management.path" value="phase_management/${phase_management.version}"/>
     <property name="phase_management.jar" value="${tcs_libdir}/${phase_management.path}/${phase_management.jar.name}"/>
@@ -533,6 +533,7 @@
         <pathelement location="${auto_pilot.jar}"/>
         <pathelement location="${auto_screening_management.jar}"/>
         <pathelement location="${base_exception.jar}"/>
+		<pathelement location="${command_line_utility.jar}"/>
         <pathelement location="${configuration_manager.jar}"/>
         <pathelement location="${contest_eligibility_validation.jar}"/>
         <pathelement location="${contest_eligibility_persistence.jar}"/>
@@ -548,6 +549,7 @@
         <pathelement location="${email_engine.jar}"/>
         <pathelement location="${file_upload.jar}"/>
         <pathelement location="${id_generator.jar}"/>
+		<pathelement location="${job_scheduler.jar}"/>
         <pathelement location="${logging_wrapper.jar}"/>
         <pathelement location="${object_factory.jar}"/>
         <pathelement location="${object_factory_configuration_api_plugin.jar}"/>

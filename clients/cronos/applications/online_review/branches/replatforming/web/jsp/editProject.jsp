@@ -1033,7 +1033,7 @@
                         <%-- TODO: Validation errors display should be much more than is here --%>
                         <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
                             <table cellpadding="0" cellspacing="0" border="0">
-                                <tr><td width="400"><!-- @ --></td><td><!-- @ --></td></tr>
+                                <tr><td><!-- @ --></td><td width="400"><!-- @ --></td></tr>
                                 <tr>
                                     <td colspan="2"><span style="color:red;"><bean:message key="Error.saveReview.ValidationFailed" /></span></td>
                                 </tr>

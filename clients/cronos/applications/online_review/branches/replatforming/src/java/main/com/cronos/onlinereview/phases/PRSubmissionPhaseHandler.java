@@ -6,6 +6,7 @@ package com.cronos.onlinereview.phases;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import com.topcoder.management.phase.OperationCheckResult;
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.project.phases.Phase;
 
@@ -49,7 +50,7 @@ public class PRSubmissionPhaseHandler extends SubmissionPhaseHandler {
      * @throws PhaseHandlingException if there is any error occurred while processing the phase.
      * @throws IllegalArgumentException if the input is null.
      */
-    public boolean canPerform(Phase phase) throws PhaseHandlingException {
+    public OperationCheckResult canPerform(Phase phase) throws PhaseHandlingException {
     	return super.canPerform(phase);
     }
 

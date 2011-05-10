@@ -745,7 +745,7 @@
     </target>
     
     <target name="compile_component_5">
-        <compile_component component="online_review_phases" version="1.6.0"
+        <compile_component component="online_review_phases" version="1.6.1"
                            path="${replatforming_components_path}/online_review_phases"/>
     </target>
     
@@ -758,6 +758,11 @@
         <compile_component component="online_review_ajax_support" version="1.0.2"
                            path="${replatforming_components_path}/online_review_ajax_support"/>
     </target>
+	
+	<target name="compile_component_8">
+        <compile_component component="auto_pilot" version="1.1.1"
+                           path="${replatforming_components_path}/auto_pilot"/>
+    </target>
 
     <target name="compile_components_all" >
       <antcall target="compile_component_1" />
@@ -767,6 +772,7 @@
       <antcall target="compile_component_5" />
       <antcall target="compile_component_6" />
       <antcall target="compile_component_7" />
+	  <antcall target="compile_component_8" />
     </target>
 
 </project>

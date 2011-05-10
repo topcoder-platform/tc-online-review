@@ -73,11 +73,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/tcs/phase_management/1.0.4/phase_management.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/project_phases/2.0/project_phases.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
@@ -327,28 +322,23 @@
 	<classpathentry kind="lib" path="lib/tcs/contest_eligibility_persistence/1.0.1/contest_eligibility_persistence.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/contest_eligibility_validation/1.0.1/contest_eligibility_validation.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/db_connection_factory/1.1.0/db_connection_factory.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/auto_pilot/1.1/auto_pilot.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.4.7/online_review_phases.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/workdays/1.1.0/workdays.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/email_engine/3.2.0/email_engine.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/online_review_login/1.1.4/online_review_login.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/svnkit/svnkit.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/deliverable_management/1.2.0/deliverable_management.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/deliverable_management_persistence/1.2.0/deliverable_management_persistence.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.6.0/online_review_phases.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/project_management/1.2.0/project_management.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/project_management_persistence/1.2.0/project_management_persistence.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/configuration_manager/2.2.0/configuration_manager.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/document_generator/3.1.1/document_generator.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/online_review_upload_services/1.1.1/online_review_upload_services.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.generic.runtimeTarget/JBoss v4.0">
-		<attributes>
-			<attribute name="owner.project.facets" value="jst.web"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/tcs/online_review_ajax_support/1.0.3/online_review_ajax_support.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/online_review_deliverables/1.0.3/online_review_deliverables.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/late_deliverables_management/1.0.4/late_deliverables_management.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.6.1/online_review_phases.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/phase_management/1.1.0/phase_management.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/auto_pilot/1.1.1/auto_pilot.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

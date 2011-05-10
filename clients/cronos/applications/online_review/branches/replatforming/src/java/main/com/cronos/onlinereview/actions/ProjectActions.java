@@ -67,6 +67,7 @@ import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
 import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
+import com.topcoder.management.phase.OperationCheckResult;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
@@ -1671,21 +1672,26 @@ public class ProjectActions extends DispatchAction {
             // Obtain an instance of Phase Manager
             PhaseManager phaseManager = ActionsHelper.createPhaseManager(true);
 
+            OperationCheckResult result = null;
             if ("close_phase".equals(action)) {
-                if (phaseStatus.getName().equals(PhaseStatus.OPEN.getName()) && phaseManager.canEnd(phase)) {
+            	result = phaseManager.canEnd(phase);
+            	if (phaseStatus.getName().equals(PhaseStatus.OPEN.getName()) && result.isSuccess()) {
                     // Close the phase
                     phaseManager.end(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 } else {
                     ActionsHelper.addErrorToRequest(request, new ActionMessage(
-                            "error.com.cronos.onlinereview.actions.editProject.CannotClosePhase", phaseType.getName()));
+                            "error.com.cronos.onlinereview.actions.editProject.CannotClosePhase", 
+                            phaseType.getName(), result.getMessage()));
                 }
             } else if ("open_phase".equals(action)) {
-                if (phaseStatus.getName().equals(PhaseStatus.SCHEDULED.getName()) && phaseManager.canStart(phase)) {
+            	result = phaseManager.canStart(phase);
+                if (phaseStatus.getName().equals(PhaseStatus.SCHEDULED.getName()) && result.isSuccess()) {
                     // Open the phase
                     phaseManager.start(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 } else {
                     ActionsHelper.addErrorToRequest(request, new ActionMessage(
-                            "error.com.cronos.onlinereview.actions.editProject.CannotOpenPhase", phaseType.getName()));
+                            "error.com.cronos.onlinereview.actions.editProject.CannotOpenPhase", 
+                            phaseType.getName(), result.getMessage()));
                 }
             }
         }
