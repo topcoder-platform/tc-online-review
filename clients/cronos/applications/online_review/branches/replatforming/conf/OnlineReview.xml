@@ -5020,7 +5020,7 @@
                     <Value>26887152</Value>
                 </Property>
                 <Property name="IconSmall">
-                    <Value>iconBlankSm.png</Value>
+                    <Value>iconStudioSm.png</Value>
                 </Property>
                 <Property name="AltTextKey">
                     <Value>RootCatalog.Studio</Value>
@@ -5267,7 +5267,21 @@
                     <Value>True</Value>
                 </Property>
             </Property>
-        </Property>
+            <Property name="NotSet">
+                <Property name="id">
+                    <Value>27202915</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>iconNotSetSm.png</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.NotSet</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+            </Property>
+          </Property>     
 
         <Property name="ProjectCategoryIcons">
             <Property name="Design">
@@ -5398,30 +5412,6 @@
                     <Value>IconLegacy.gif</Value>
                 </Property>
             </Property>
-            <Property name="Icon Sets">
-                <Property name="IconSmall">
-                    <Value>iconBlankSm.png</Value>
-                </Property>
-                <Property name="Icon">
-                    <Value>iconBlank.png</Value>
-                </Property>
-            </Property>
-            <Property name="Storyboards">
-                <Property name="IconSmall">
-                    <Value>iconBlankSm.png</Value>
-                </Property>
-                <Property name="Icon">
-                    <Value>iconBlank.png</Value>
-                </Property>
-            </Property>
-            <Property name="Wireframes">
-                <Property name="IconSmall">
-                    <Value>iconBlankSm.png</Value>
-                </Property>
-                <Property name="Icon">
-                    <Value>iconBlank.png</Value>
-                </Property>
-            </Property>
             <Property name="UI Prototype Competition">
                 <Property name="IconSmall">
                     <Value>IconProtoSm.gif</Value>
@@ -5436,22 +5426,6 @@
                 </Property>
                 <Property name="Icon">
                     <Value>IconProto.gif</Value>
-                </Property>
-            </Property>
-            <Property name="Logos">
-                <Property name="IconSmall">
-                    <Value>iconBlankSm.png</Value>
-                </Property>
-                <Property name="Icon">
-                    <Value>iconBlank.png</Value>
-                </Property>
-            </Property>
-            <Property name="Print">
-                <Property name="IconSmall">
-                    <Value>iconBlankSm.png</Value>
-                </Property>
-                <Property name="Icon">
-                    <Value>iconBlank.png</Value>
                 </Property>
             </Property>
             <Property name="Conceptualization">
@@ -5511,6 +5485,87 @@
                 </Property>
                 <Property name="Icon">
                     <Value>iconContentCreation.gif</Value>
+                </Property>
+            </Property>
+            <!-- Studio categories icons -->
+            <Property name="Banners/Icons">
+                <Property name="IconSmall">
+                    <Value>IconBannersIconsSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconBannersIcons.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Web Design">
+                <Property name="IconSmall">
+                    <Value>IconWebDesignSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconWebDesign.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Wireframes">
+                <Property name="IconSmall">
+                    <Value>IconWireframesSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconWireframes.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Logo Design">
+                <Property name="IconSmall">
+                    <Value>IconLogoDesignSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconLogoDesign.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Print/Presentation">
+                <Property name="IconSmall">
+                    <Value>IconPrintPresentationSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconPrintPresentation.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Idea Generation">
+                <Property name="IconSmall">
+                    <Value>IconIdeaGenerationSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconIdeaGeneration.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Widget or Mobile Screen Design">
+                <Property name="IconSmall">
+                    <Value>IconWidgetorMobileScreenDesignSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconWidgetorMobileScreenDesign.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Front-End Flash">
+                <Property name="IconSmall">
+                    <Value>IconFrontEndFlashSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconFrontEndFlash.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Application Front-End Design">
+                <Property name="IconSmall">
+                    <Value>IconApplicationFrontEndDesignSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconApplicationFrontEndDesign.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Other">
+                <Property name="IconSmall">
+                    <Value>IconOtherSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconOther.gif</Value>
                 </Property>
             </Property>
         </Property>
