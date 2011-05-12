@@ -251,15 +251,13 @@
                                                         <bean:message key="viewProjectDetails.box.Submission.Previous.UploadID" />
                                                         ${pastSubmission.id}</html:link></td>
                                             <td class="value" width="22%">${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
-                                            <td class="value" width="14%"><!-- @ --></td>
                                             <td class="value" width="15%"><!-- @ --></td>
                                             <td class="value" width="14%"><!-- @ --></td>
-                                            <td class="value" width="15%"><!-- @ --></td>
                                         </tr>
 									</c:forEach>
 								</c:forEach>
 								<tr>
-									<td class="lastRowTD" colspan="7"><!-- @ --></td>
+									<td class="lastRowTD" colspan="6"><!-- @ --></td>
 								</tr>
 							</table>
 
