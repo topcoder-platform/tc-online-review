@@ -140,55 +140,38 @@
         <Property name="Handlers">
             <Value>handler_registration_start</Value>
             <Value>handler_registration_end</Value>
-            <Value>handler_registration_cancel</Value>
             <Value>handler_submission_start</Value>
             <Value>handler_submission_end</Value>
-            <Value>handler_submission_cancel</Value>
             <Value>handler_screening_start</Value>
             <Value>handler_screening_end</Value>
-            <Value>handler_screening_cancel</Value>
             <Value>handler_review_start</Value>
             <Value>handler_review_end</Value>
-            <Value>handler_review_cancel</Value>
             <Value>handler_appeals_start</Value>
             <Value>handler_appeals_end</Value>
-            <Value>handler_appeals_cancel</Value>
             <Value>handler_appeals_response_start</Value>
             <Value>handler_appeals_response_end</Value>
-            <Value>handler_appeals_response_cancel</Value>
             <Value>handler_aggregation_start</Value>
             <Value>handler_aggregation_end</Value>
-            <Value>handler_aggregation_cancel</Value>
             <Value>handler_aggregation_review_start</Value>
             <Value>handler_aggregation_review_end</Value>
-            <Value>handler_aggregation_review_cancel</Value>
             <Value>handler_final_fix_start</Value>
             <Value>handler_final_fix_end</Value>
-            <Value>handler_final_fix_cancel</Value>
             <Value>handler_final_review_start</Value>
             <Value>handler_final_review_end</Value>
-            <Value>handler_final_review_cancel</Value>
             <Value>handler_approval_start</Value>
             <Value>handler_approval_end</Value>
-            <Value>handler_approval_cancel</Value>
             <Value>handler_post-mortem_start</Value>
             <Value>handler_post-mortem_end</Value>
-            <Value>handler_post-mortem_cancel</Value>
             <Value>handler_specification_submission_start</Value>
             <Value>handler_specification_submission_end</Value>
-            <Value>handler_specification_submission_cancel</Value>
             <Value>handler_specification_review_start</Value>
             <Value>handler_specification_review_end</Value>
-            <Value>handler_specification_review_cancel</Value>
             <Value>handler_milestone_submission_start</Value>
             <Value>handler_milestone_submission_end</Value>
-            <Value>handler_milestone_submission_cancel</Value>
             <Value>handler_milestone_screening_start</Value>
             <Value>handler_milestone_screening_end</Value>
-            <Value>handler_milestone_screening_cancel</Value>
             <Value>handler_milestone_review_start</Value>
             <Value>handler_milestone_review_end</Value>
-            <Value>handler_milestone_review_cancel</Value>
         </Property>
         <!-- The details about each handler -->
         <Property name="handler_final_review_start">
@@ -208,17 +191,6 @@
             </Property>
             <Property name="operation">
                 <Value>end</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_final_review_def</Value>
-            </Property>
-        </Property>
-        <Property name="handler_final_review_cancel">
-            <Property name="phaseType">
-                <Value>final_review</Value>
-            </Property>
-            <Property name="operation">
-                <Value>cancel</Value>
             </Property>
             <Property name="handler">
                 <Value>handler_final_review_def</Value>
@@ -246,17 +218,6 @@
                 <Value>handler_final_fix_def</Value>
             </Property>
         </Property>
-        <Property name="handler_final_fix_cancel">
-            <Property name="phaseType">
-                <Value>final_fix</Value>
-            </Property>
-            <Property name="operation">
-                <Value>cancel</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_final_fix_def</Value>
-            </Property>
-        </Property>
         <Property name="handler_aggregation_review_start">
             <Property name="phaseType">
                 <Value>aggregation_review</Value>
@@ -274,17 +235,6 @@
             </Property>
             <Property name="operation">
                 <Value>end</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_aggregation_review_def</Value>
-            </Property>
-        </Property>
-        <Property name="handler_aggregation_review_cancel">
-            <Property name="phaseType">
-                <Value>aggregation_review</Value>
-            </Property>
-            <Property name="operation">
-                <Value>cancel</Value>
             </Property>
             <Property name="handler">
                 <Value>handler_aggregation_review_def</Value>
@@ -312,17 +262,6 @@
                 <Value>handler_aggregation_def</Value>
             </Property>
         </Property>
-        <Property name="handler_aggregation_cancel">
-            <Property name="phaseType">
-                <Value>aggregation</Value>
-            </Property>
-            <Property name="operation">
-                <Value>cancel</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_aggregation_def</Value>
-            </Property>
-        </Property>
         <Property name="handler_appeals_response_start">
             <Property name="phaseType">
                 <Value>appeals_response</Value>
@@ -340,17 +279,6 @@
             </Property>
             <Property name="operation">
                 <Value>end</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_appeals_response_def</Value>
-            </Property>
-        </Property>
-        <Property name="handler_appeals_response_cancel">
-            <Property name="phaseType">
-                <Value>appeals_response</Value>
-            </Property>
-            <Property name="operation">
-                <Value>cancel</Value>
             </Property>
             <Property name="handler">
                 <Value>handler_appeals_response_def</Value>
@@ -378,17 +306,6 @@
                 <Value>handler_appeals_def</Value>
             </Property>
         </Property>
-        <Property name="handler_appeals_cancel">
-            <Property name="phaseType">
-                <Value>appeals</Value>
-            </Property>
-            <Property name="operation">
-                <Value>cancel</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_appeals_def</Value>
-            </Property>
-        </Property>
         <Property name="handler_review_start">
             <Property name="phaseType">
                 <Value>review</Value>
@@ -406,17 +323,6 @@
             </Property>
             <Property name="operation">
                 <Value>end</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_review_def</Value>
-            </Property>
-        </Property>
-        <Property name="handler_review_cancel">
-            <Property name="phaseType">
-                <Value>review</Value>
-            </Property>
-            <Property name="operation">
-                <Value>cancel</Value>
             </Property>
             <Property name="handler">
                 <Value>handler_review_def</Value>
@@ -444,17 +350,6 @@
                 <Value>handler_screening_def</Value>
             </Property>
         </Property>
-        <Property name="handler_screening_cancel">
-            <Property name="phaseType">
-                <Value>screening</Value>
-            </Property>
-            <Property name="operation">
-                <Value>cancel</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_screening_def</Value>
-            </Property>
-        </Property>
         <Property name="handler_registration_start">
             <Property name="phaseType">
                 <Value>registration</Value>
@@ -472,17 +367,6 @@
             </Property>
             <Property name="operation">
                 <Value>end</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_registration_def</Value>
-            </Property>
-        </Property>
-        <Property name="handler_registration_cancel">
-            <Property name="phaseType">
-                <Value>registration</Value>
-            </Property>
-            <Property name="operation">
-                <Value>cancel</Value>
             </Property>
             <Property name="handler">
                 <Value>handler_registration_def</Value>
@@ -510,17 +394,6 @@
                 <Value>handler_submission_def</Value>
             </Property>
         </Property>
-        <Property name="handler_submission_cancel">
-            <Property name="phaseType">
-                <Value>submission</Value>
-            </Property>
-            <Property name="operation">
-                <Value>cancel</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_submission_def</Value>
-            </Property>
-        </Property>
         <Property name="handler_approval_start">
             <Property name="phaseType">
                 <Value>approval</Value>
@@ -538,17 +411,6 @@
             </Property>
             <Property name="operation">
                 <Value>end</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_approval_def</Value>
-            </Property>
-        </Property>
-        <Property name="handler_approval_cancel">
-            <Property name="phaseType">
-                <Value>approval</Value>
-            </Property>
-            <Property name="operation">
-                <Value>cancel</Value>
             </Property>
             <Property name="handler">
                 <Value>handler_approval_def</Value>
@@ -576,17 +438,6 @@
                 <Value>handler_post-mortem_def</Value>
             </Property>
         </Property>
-        <Property name="handler_post-mortem_cancel">
-            <Property name="phaseType">
-                <Value>post-mortem</Value>
-            </Property>
-            <Property name="operation">
-                <Value>cancel</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_post-mortem_def</Value>
-            </Property>
-        </Property>
         <Property name="handler_specification_submission_start">
             <Property name="phaseType">
                 <Value>specification_submission</Value>
@@ -604,17 +455,6 @@
             </Property>
             <Property name="operation">
                 <Value>end</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_specification_submission_def</Value>
-            </Property>
-        </Property>
-        <Property name="handler_specification_submission_cancel">
-            <Property name="phaseType">
-                <Value>specification_submission</Value>
-            </Property>
-            <Property name="operation">
-                <Value>cancel</Value>
             </Property>
             <Property name="handler">
                 <Value>handler_specification_submission_def</Value>
@@ -642,17 +482,6 @@
                 <Value>handler_specification_review_def</Value>
             </Property>
         </Property>
-        <Property name="handler_specification_review_cancel">
-            <Property name="phaseType">
-                <Value>specification_review</Value>
-            </Property>
-            <Property name="operation">
-                <Value>cancel</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_specification_review_def</Value>
-            </Property>
-        </Property>
         <Property name="handler_milestone_submission_start">
             <Property name="phaseType">
                 <Value>milestone_submission</Value>
@@ -670,17 +499,6 @@
             </Property>
             <Property name="operation">
                 <Value>end</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_milestone_submission_def</Value>
-            </Property>
-        </Property>
-        <Property name="handler_milestone_submission_cancel">
-            <Property name="phaseType">
-                <Value>milestone_submission</Value>
-            </Property>
-            <Property name="operation">
-                <Value>cancel</Value>
             </Property>
             <Property name="handler">
                 <Value>handler_milestone_submission_def</Value>
@@ -708,17 +526,6 @@
                 <Value>handler_milestone_screening_def</Value>
             </Property>
         </Property>
-        <Property name="handler_milestone_screening_cancel">
-            <Property name="phaseType">
-                <Value>milestone_screening</Value>
-            </Property>
-            <Property name="operation">
-                <Value>cancel</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_milestone_screening_def</Value>
-            </Property>
-        </Property>
         <Property name="handler_milestone_review_start">
             <Property name="phaseType">
                 <Value>milestone_review</Value>
@@ -736,17 +543,6 @@
             </Property>
             <Property name="operation">
                 <Value>end</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_milestone_review_def</Value>
-            </Property>
-        </Property>
-        <Property name="handler_milestone_review_cancel">
-            <Property name="phaseType">
-                <Value>milestone_review</Value>
-            </Property>
-            <Property name="operation">
-                <Value>cancel</Value>
             </Property>
             <Property name="handler">
                 <Value>handler_milestone_review_def</Value>
