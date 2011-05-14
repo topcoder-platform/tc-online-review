@@ -499,7 +499,7 @@
             // TODO: Should be done in locale-independent way
             // Check if the phase should have a criterion row and at it if it is needed
             if (phaseName == "Screening" || phaseName == "Review" || phaseName == "Approval" ||
-                    phaseName == "Registration" || phaseName == "Submission" || phaseName == "Appeals"
+                    phaseName == "Registration" || phaseName == "Appeals"
                     || phaseName == "Post-Mortem" || phaseName == "Milestone Screening" 
                     || phaseName == "Milestone Review") {
                 var templateRow;
@@ -511,8 +511,6 @@
                       templateRow = document.getElementById("approval_scorecard_row_template");
                 } else if (phaseName == "Registration") {
                       templateRow = document.getElementById("required_registrations_row_template");
-                } else if (phaseName == "Submission") {
-                      templateRow = document.getElementById("required_submissions_row_template");
                 } else if (phaseName == "Appeals") {
                       templateRow = document.getElementById("view_appeal_responses_row_template");
                 } else if (phaseName == "Post-Mortem") {
@@ -940,8 +938,8 @@
                 getChildByNamePrefix(newPhaseRow, "phase_end_time").value = endDateParts[1];
 
                 var duration = parseInt(dojo.dom.textContent(phaseNodes[i].getElementsByTagName("length")[0])) / 3600 / 1000;
-                getChildByNamePrefix(newPhaseRow, "phase_duration").value = duration;
 
+                getChildByNamePrefix(newPhaseRow, "phase_duration").value = duration;
 
                 // Add phase criterion row if needed
                 addPhaseCriterion(phaseName, newPhaseRow);
