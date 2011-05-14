@@ -2089,13 +2089,19 @@ public class ProjectActions extends DispatchAction {
                         primaryReviewerRoles.put(resourceKey, handle);
                     }
                 }
-                // Check if the phase related to resource role exists
+				// Check if the phase related to resource role exists
                 ResourceRole role = ActionsHelper.findResourceRoleById(resourceRoles, resourceRoleId);
                 if (role != null) {
                     Long relatedPhaseTypeId = role.getPhaseType();
                     if (relatedPhaseTypeId != null) {
-                        Phase phase = phasesJsMap.get(lazyForm.get("resources_phase", i));
-                        if (phase == null) {
+
+                        boolean found = false;
+                        for(Phase phase : projectPhases){
+                            if(phase.getPhaseType().getId() == relatedPhaseTypeId.longValue())
+                                found = true;
+                        }
+
+                        if (!found) {
                             PhaseType phaseType = ActionsHelper.findPhaseTypeById(phaseTypes, relatedPhaseTypeId);
                             ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                                                             new ActionMessage( "error.com.cronos.onlinereview.actions."
