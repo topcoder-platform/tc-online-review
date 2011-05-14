@@ -4,7 +4,7 @@
         <PhaseType id="registration" typeId="1" typeName="Registration"/>
         <PhaseType id="submission" typeId="2" typeName="Submission"/>
         <PhaseType id="screening" typeId="3" typeName="Screening"/>
-        <PhaseType id="review" typeId="2" typeName="Review"/>
+        <PhaseType id="review" typeId="4" typeName="Review"/>
         <PhaseType id="final_fixes" typeId="7" typeName="Final Fix"/>
         <PhaseType id="final_review" typeId="8" typeName="Final Review"/>
         <PhaseType id="milestone_submission" typeId="15" typeName="Milestone Submission"/>
