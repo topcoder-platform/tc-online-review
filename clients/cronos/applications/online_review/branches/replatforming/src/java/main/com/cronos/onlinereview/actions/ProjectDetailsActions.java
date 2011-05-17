@@ -75,7 +75,6 @@ import com.topcoder.servlet.request.FileUploadResult;
 import com.topcoder.servlet.request.PersistenceException;
 import com.topcoder.servlet.request.RequestParser;
 import com.topcoder.servlet.request.UploadedFile;
-import com.topcoder.shared.util.ApplicationServer;
 import com.topcoder.util.config.ConfigManagerException;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.util.file.DocumentGenerator;
@@ -2341,16 +2340,11 @@ public class ProjectDetailsActions extends DispatchAction {
             Deliverable deliverable = deliverables[i];
             String delivName = deliverable.getName();
             if (delivName.equalsIgnoreCase(Constants.SUBMISSION_DELIVERABLE_NAME)) {
-                if (isStudio) {
-                	links[i] = "http://" + ApplicationServer.STUDIO_SERVER_NAME + "/?module=ViewSubmission&ct=" + deliverable.getProject();
-                } else {
-                	links[i] = "UploadContestSubmission.do?method=uploadContestSubmission&pid=" + deliverable.getProject();
+                if (!isStudio) {
+                    links[i] = "UploadContestSubmission.do?method=uploadContestSubmission&pid=" + deliverable.getProject();
                 }
-                	
             } else if (delivName.equalsIgnoreCase(Constants.MILESTONE_SUBMISSION_DELIVERABLE_NAME)) {
-                if (isStudio) {
-                	links[i] = "http://" + ApplicationServer.STUDIO_SERVER_NAME + "/?module=ViewSubmission&ct=" + deliverable.getProject();
-                } else {
+                if (!isStudio) {
                     links[i] = "UploadMilestoneSubmission.do?method=uploadMilestoneSubmission&pid=" + deliverable.getProject();
                 }
             } else if (delivName.equalsIgnoreCase(Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME)) {
