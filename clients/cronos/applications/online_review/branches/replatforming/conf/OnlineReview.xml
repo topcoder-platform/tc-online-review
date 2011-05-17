@@ -5578,7 +5578,7 @@
                 <Value>http://www.topcoder.com/tc?module=ProjectDetail&amp;pj=&lt;PROJECT_ID&gt;</Value>
             </Property>
             <Property name="Studio">
-                <Value>http://www.topcoder.com/tc?module=ProjectDetail&amp;pj=&lt;PROJECT_ID&gt;</Value>
+                <Value>http://studio2.topcoder.com/?module=ViewContestDetail&amp;ct=&lt;PROJECT_ID&gt;</Value>
             </Property>
         </Property>
 
@@ -5590,7 +5590,7 @@
                 <Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
             </Property>
             <Property name="Studio">
-                <Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
+                <Value>http://studio.topcoder.com/forums?module=ThreadList&amp;forumID=&lt;FORUM_ID&gt;</Value>
             </Property>
         </Property>
 
