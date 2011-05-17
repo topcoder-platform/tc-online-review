@@ -5578,7 +5578,7 @@
                 <Value>http://www.topcoder.com/tc?module=ProjectDetail&amp;pj=&lt;PROJECT_ID&gt;</Value>
             </Property>
             <Property name="Studio">
-                <Value>http://studio2.topcoder.com/?module=ViewContestDetail&amp;ct=&lt;PROJECT_ID&gt;</Value>
+                <Value>http://studio2.topcoder.com/?module=ViewContestDetails&amp;ct=&lt;PROJECT_ID&gt;</Value>
             </Property>
         </Property>
 
