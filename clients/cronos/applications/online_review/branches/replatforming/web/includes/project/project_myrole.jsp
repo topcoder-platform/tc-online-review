@@ -120,10 +120,19 @@
 							</c:if>
 						</c:if>
 						<c:if test="${not empty myDeliverableLinks[deliverableStatus.index]}">
-							<html:link page="/actions/${myDeliverableLinks[deliverableStatus.index]}"><b><bean:message
-								key='Deliverable.${fn:replace(deliverable.name, " ", "")}' /></b></html:link><c:if
-								test="${deliverableStatus.index != fn:length(myDeliverables) - 1}"><br />
+
+							<c:if test="${fn:startsWith(myDeliverableLinks[deliverableStatus.index],'http') == true}">
+							      <a href="${myDeliverableLinks[deliverableStatus.index]}"><b><bean:message
+                                     key='Deliverable.${fn:replace(deliverable.name, " ", "")}' /></b></a><c:if
+                                     test="${deliverableStatus.index != fn:length(myDeliverables) - 1}"><br />
+                                  </c:if>
 							</c:if>
+							<c:if test="${fn:startsWith(myDeliverableLinks[deliverableStatus.index],'http') == false}">
+                                  <html:link page="/actions/${myDeliverableLinks[deliverableStatus.index]}"><b><bean:message
+                                     key='Deliverable.${fn:replace(deliverable.name, " ", "")}' /></b></html:link><c:if
+                                     test="${deliverableStatus.index != fn:length(myDeliverables) - 1}"><br />
+                                  </c:if>
+                            </c:if>
 						</c:if>
 					</c:forEach>
 				</td>

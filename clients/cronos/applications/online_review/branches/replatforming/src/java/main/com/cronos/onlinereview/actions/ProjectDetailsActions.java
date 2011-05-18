@@ -75,6 +75,7 @@ import com.topcoder.servlet.request.FileUploadResult;
 import com.topcoder.servlet.request.PersistenceException;
 import com.topcoder.servlet.request.RequestParser;
 import com.topcoder.servlet.request.UploadedFile;
+import com.topcoder.shared.util.ApplicationServer;
 import com.topcoder.util.config.ConfigManagerException;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.util.file.DocumentGenerator;
@@ -394,7 +395,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 delay += lateDeliverable.getDelay() != null ? lateDeliverable.getDelay() : 0;
             }
             request.setAttribute("myDelay", delay);
-			
+
 			long paymentPenaltyPercentage = (delay>0 ? 5 : 0) + (delay/3600);
 			if (paymentPenaltyPercentage > 50) {
 			    paymentPenaltyPercentage = 50;
@@ -1152,15 +1153,15 @@ public class ProjectDetailsActions extends DispatchAction {
      *             if some error occurs during disk input/output operation.
      */
     public ActionForward downloadContestSubmission(ActionMapping mapping, ActionForm form,
-                                                   HttpServletRequest request, HttpServletResponse response) 
+                                                   HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
-        return handleDownloadSubmission(mapping, request, response, "ViewSubmission", 
-                                        Constants.VIEW_ALL_SUBM_PERM_NAME, Constants.VIEW_MY_SUBM_PERM_NAME, 
+        return handleDownloadSubmission(mapping, request, response, "ViewSubmission",
+                                        Constants.VIEW_ALL_SUBM_PERM_NAME, Constants.VIEW_MY_SUBM_PERM_NAME,
                                         Constants.VIEW_SCREENER_SUBM_PERM_NAME, Constants.VIEW_RECENT_SUBM_PERM_NAME,
-                                        Constants.DOWNLOAD_CUSTOM_SUBM_PERM_NAME, 
+                                        Constants.DOWNLOAD_CUSTOM_SUBM_PERM_NAME,
                                         Constants.VIEW_WINNING_SUBM_PERM_NAME,
-                                        Constants.SCREENING_PHASE_NAME, Constants.REVIEW_PHASE_NAME, 
-                                        Constants.SCREENER_ROLE_NAMES, Constants.REVIEWER_ROLE_NAMES, 
+                                        Constants.SCREENING_PHASE_NAME, Constants.REVIEW_PHASE_NAME,
+                                        Constants.SCREENER_ROLE_NAMES, Constants.REVIEWER_ROLE_NAMES,
                                         true, 1);
     }
 
@@ -1181,17 +1182,17 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadMilestoneSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
-        return handleDownloadSubmission(mapping, request, response, "ViewMilestoneSubmission", 
-                                        Constants.VIEW_ALL_MILESTONE_SUBMISSIONS_PERM_NAME, 
-                                        Constants.VIEW_MY_MILESTONE_SUBMISSIONS_PERM_NAME, 
-                                        Constants.VIEW_SCREENER_MILESTONE_SUBMISSION_PERM_NAME, 
+        return handleDownloadSubmission(mapping, request, response, "ViewMilestoneSubmission",
+                                        Constants.VIEW_ALL_MILESTONE_SUBMISSIONS_PERM_NAME,
+                                        Constants.VIEW_MY_MILESTONE_SUBMISSIONS_PERM_NAME,
+                                        Constants.VIEW_SCREENER_MILESTONE_SUBMISSION_PERM_NAME,
                                         Constants.VIEW_RECENT_MILESTONE_SUBMISSIONS_PERM_NAME,
                                         Constants.DOWNLOAD_CUSTOM_MILESTONE_SUBMISSION_PERM_NAME,
                                         Constants.VIEW_WINNING_MILESTONE_SUBMISSION_PERM_NAME,
-                                        Constants.MILESTONE_SCREENING_PHASE_NAME, 
-                                        Constants.MILESTONE_REVIEW_PHASE_NAME, 
-                                        new String[] {Constants.MILESTONE_SCREENER_ROLE_NAME}, 
-                                        new String[] {Constants.MILESTONE_REVIEWER_ROLE_NAME}, 
+                                        Constants.MILESTONE_SCREENING_PHASE_NAME,
+                                        Constants.MILESTONE_REVIEW_PHASE_NAME,
+                                        new String[] {Constants.MILESTONE_SCREENER_ROLE_NAME},
+                                        new String[] {Constants.MILESTONE_REVIEWER_ROLE_NAME},
                                         false, 3);
     }
 
@@ -1270,7 +1271,7 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         ActionsHelper.logDownloadAttempt(request, upload, !noRights);
-		
+
         if (noRights) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request, "ViewSubmission",
                 "Error.NoPermission", Boolean.TRUE);
@@ -1460,7 +1461,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.SUBMITTER_ROLE_NAME);
                 UploadManager upMgr = ActionsHelper.createUploadManager();
                 Long[] subIds = resource.getSubmissions();
-				
+
                 // Check that the user has a submission that passed screening.
                 // We don't need to check the current phase because if there is a final fix submitted
                 // it is already past the Apepals Response anyway.
@@ -1482,7 +1483,7 @@ public class ProjectDetailsActions extends DispatchAction {
         Upload upload = verification.getUpload();
 
         if (!hasPermission) {
-            ActionsHelper.logDownloadAttempt(request, upload, false);		
+            ActionsHelper.logDownloadAttempt(request, upload, false);
             if (hasSubmitterRole) {
                 return ActionsHelper.produceErrorReport(
                         mapping, getResources(request), request, "ViewSubmission", "Error.NoScreeningPassed", null);
@@ -1498,11 +1499,11 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Verify that upload is a Final Fix
         if (!upload.getUploadType().getName().equalsIgnoreCase("Final Fix")) {
-            ActionsHelper.logDownloadAttempt(request, upload, false);		
+            ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.NotAFinalFix", null);
         }
-        ActionsHelper.logDownloadAttempt(request, upload, true);	
+        ActionsHelper.logDownloadAttempt(request, upload, true);
 
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
@@ -1717,13 +1718,13 @@ public class ProjectDetailsActions extends DispatchAction {
         }
         // Verify that user can download test cases during Review
         if (canDownload && !isReviewClosed && !canDownloadDuringReview) {
-            ActionsHelper.logDownloadAttempt(request, upload, false);		
+            ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase", null);
         }
         // Check that the user is allowed to download test cases in general
         if (!canDownload) {
-            ActionsHelper.logDownloadAttempt(request, upload, false);		
+            ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
         }
@@ -1744,7 +1745,7 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         ActionsHelper.logDownloadAttempt(request, upload, true);
-		
+
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
         outputDownloadedFile(uploadedFile, "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"",
@@ -2343,9 +2344,15 @@ public class ProjectDetailsActions extends DispatchAction {
                 if (!isStudio) {
                     links[i] = "UploadContestSubmission.do?method=uploadContestSubmission&pid=" + deliverable.getProject();
                 }
+                else{
+                    links[i] = "http://" + ApplicationServer.STUDIO_SERVER_NAME + "/?module=ViewContestDetails&ct=" + deliverable.getProject();
+                }
             } else if (delivName.equalsIgnoreCase(Constants.MILESTONE_SUBMISSION_DELIVERABLE_NAME)) {
                 if (!isStudio) {
                     links[i] = "UploadMilestoneSubmission.do?method=uploadMilestoneSubmission&pid=" + deliverable.getProject();
+                }
+                else{
+                    links[i] = "http://" + ApplicationServer.STUDIO_SERVER_NAME + "/?module=ViewContestDetails&ct=" + deliverable.getProject();
                 }
             } else if (delivName.equalsIgnoreCase(Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME)) {
                 if (!deliverable.isComplete()) {
@@ -2968,7 +2975,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
             if (pending) {
                 pendingResources.add(lateDeliverable.getResourceId());
-            }                                                        
+            }
         }
 
         Set<String> pendingUsers = new HashSet<String>();
@@ -3001,34 +3008,34 @@ public class ProjectDetailsActions extends DispatchAction {
 
     /**
      * <p>Handles the request for downloading the submission of desired type.</p>
-     *  
+     *
      *
      * @param mapping an <code>ActionMapping</code> used to map the request to this action.
      * @param request an <code>HttpServletRequest</code> providing the details for incoming request.
      * @param response an <code>HttpServletResponse</code> providing the details for outgoing response.
-     * @param errorMessageKey a <code>String</code> providing the key in message bundle for the error to be displayed 
-     *        to user.  
-     * @param viewAllSubmissionsPermName a <code>String</code> providing the name for permission for viewing all 
-     *        submissions. 
+     * @param errorMessageKey a <code>String</code> providing the key in message bundle for the error to be displayed
+     *        to user.
+     * @param viewAllSubmissionsPermName a <code>String</code> providing the name for permission for viewing all
+     *        submissions.
      * @param viewMySubmissionsPermissionName a <code>String</code> providing the name for permission for viewing own
-     *        submissions 
+     *        submissions
      * @param viewSubmissionByScreenerPermissionName a <code>String</code> providing the name for permission for viewing
-     *        submissions by screener. 
-     * @param viewMostRecentSubmissionsPermissionName a <code>String</code> providing the name for permission for 
-     *        viewing most recent submissions. 
-     * @param downloadCustomSubmissionPermissionName a <code>String</code> providing the name for permission for 
-     *        downloading submission for custom catalog. 
+     *        submissions by screener.
+     * @param viewMostRecentSubmissionsPermissionName a <code>String</code> providing the name for permission for
+     *        viewing most recent submissions.
+     * @param downloadCustomSubmissionPermissionName a <code>String</code> providing the name for permission for
+     *        downloading submission for custom catalog.
      * @param viewWinningSubmissionPermissionName a <code>String</code> providing the name for permission for viewing
-     *        winning submissions. 
-     * @param screeningPhaseName a <code>String</code> providing the name for screening phase type.  
+     *        winning submissions.
+     * @param screeningPhaseName a <code>String</code> providing the name for screening phase type.
      * @param reviewPhaseName a <code>String</code> providing the name for review phase type.
-     * @param screenerRoleNames a <code>String</code> array listing the names for screener roles. 
+     * @param screenerRoleNames a <code>String</code> array listing the names for screener roles.
      * @param reviewerRoleNames a <code>String</code> array listing the names for reviewer roles.
      * @param isAppealSupported <code>true</code> if submission type assumes the appeals to reviews to be allowed;
      *        <code>false</code> otherwise.
      * @param submissionType a <code>long</code> referencing the type of the submission being downloaded.
      * @return an <code>ActionForward</code> referencing the next view to be displayed to user in case of errors or
-     *         <code>null</code> if submission is downloaded successfully.   
+     *         <code>null</code> if submission is downloaded successfully.
      * @throws BaseException if an unexpected error occurs.
      * @throws IOException if an I/O error occurs.
      * @since 1.6.1
@@ -3045,9 +3052,10 @@ public class ProjectDetailsActions extends DispatchAction {
                                                    String reviewPhaseName,
                                                    String[] screenerRoleNames,
                                                    String[] reviewerRoleNames, boolean isAppealSupported,
-                                                   long submissionType) 
+                                                   long submissionType)
         throws BaseException, IOException {
         LoggingHelper.logAction(request);
+
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification = checkForCorrectUploadId(mapping, request, errorMessageKey);
         // If any error has occured, return action forward contained in the result bean
@@ -3066,7 +3074,7 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         // Verify the status of upload and check whether the user has permission to download old uploads
-        if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted") 
+        if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted")
             && !AuthorizationHelper.hasUserPermission(request, viewAllSubmissionsPermName)) {
         	ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(
@@ -3129,7 +3137,7 @@ public class ProjectDetailsActions extends DispatchAction {
             Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.SUBMITTER_ROLE_NAME);
             UploadManager upMgr = ActionsHelper.createUploadManager();
             Long[] subIds = resource.getSubmissions();
-			
+
             // Check that the user has a submission that passed screening.
             // We don't need to check the current phase because if it is still prior to the Appeals Response
             // the user won't be able to download other's submissions anyway.
@@ -3178,15 +3186,15 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
 
-        mayDownload = (custom ? AuthorizationHelper.hasUserPermission(request, downloadCustomSubmissionPermissionName) 
-                              : (submissionType == 1 
-                                 && AuthorizationHelper.hasUserPermission(request, 
+        mayDownload = (custom ? AuthorizationHelper.hasUserPermission(request, downloadCustomSubmissionPermissionName)
+                              : (submissionType == 1
+                                 && AuthorizationHelper.hasUserPermission(request,
                                                                           Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME)
-                                 || 
-                                 submissionType == 3 
-                                 && AuthorizationHelper.hasUserPermission(request, 
+                                 ||
+                                 submissionType == 3
+                                 && AuthorizationHelper.hasUserPermission(request,
                                                                           Constants.VIEW_RECENT_MILESTONE_SUBMISSIONS_AFTER_REVIEW_PERM_NAME)));
-        
+
         if (noRights && mayDownload) {
             // Obtain an instance of Resource Manager
             ResourceManager resMgr = ActionsHelper.createResourceManager();
@@ -3311,7 +3319,7 @@ public class ProjectDetailsActions extends DispatchAction {
         Filter filterType = SubmissionFilterBuilder.createSubmissionTypeIdFilter(
                 ActionsHelper.findSubmissionTypeByName(submissionTypes, submissionTypeName).getId());
 
-        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterProject, filterResource, filterStatus, 
+        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterProject, filterResource, filterStatus,
                                                                   filterType}));
 
         Submission[] oldSubmissions = upMgr.searchSubmissions(filter);
