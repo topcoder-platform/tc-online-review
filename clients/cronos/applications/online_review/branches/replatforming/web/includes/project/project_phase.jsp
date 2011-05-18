@@ -263,6 +263,7 @@
                                             <td class="value" width="22%">${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
                                             <td class="value" width="15%"><!-- @ --></td>
                                             <td class="value" width="14%"><!-- @ --></td>
+											<td class="value" width="15%"><!-- @ --></td>
                                         </tr>
 									</c:forEach>
 								</c:forEach>
