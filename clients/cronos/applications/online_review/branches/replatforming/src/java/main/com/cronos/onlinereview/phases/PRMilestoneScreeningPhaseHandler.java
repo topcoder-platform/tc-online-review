@@ -71,8 +71,9 @@ public class PRMilestoneScreeningPhaseHandler extends MilestoneScreeningPhaseHan
         Connection conn = this.createConnection();
         
         try {
-            if (!toStart) {
-                long projectId = phase.getProject().getId();
+        	long projectId = phase.getProject().getId();
+            if (!toStart && PRHelper.isStudioProject(projectId)) {
+                
                 try {
                     notification.sendEmailToSubmitters(getManagerHelper().getProjectManager().getProject(projectId));
                 } catch (Exception e) {
