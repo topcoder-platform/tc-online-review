@@ -60,7 +60,7 @@ public class PRHelper {
             + "and ri_u.resource_info_type_id = 1 " + "and r.resource_id = ri1.resource_id "
             + "and ri1.resource_info_type_id = 7 " + "and u.project_id = r.project_id "
             + "and u.resource_id = r.resource_id " + "and upload_type_id = 1 " + "and u.upload_id = s.upload_id "
-            + "and r.project_id = ? " + "and r.resource_role_id = 1 ";
+            + "and r.project_id = ? " + "and r.resource_role_id = 1 and s.submission_status_id != 5 ";
 
     private static final String APPEAL_RESPONSE_UPDATE_PROJECT_RESULT_STMT = "update project_result set final_score = ?, placed = ?, passed_review_ind = ?, payment = ? "
             + "where project_id = ? and user_id = ? ";

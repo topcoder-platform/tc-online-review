@@ -2471,7 +2471,7 @@
             <Value>1</Value>
         </Property>
         <Property name="PostMortemPhaseDefaultScorecardID">
-            <Value>30000721</Value>
+            <Value>30001013</Value>
         </Property>
         <Property name="ConnectionFactoryNS">
             <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
