@@ -16,7 +16,7 @@
         <PhaseType id="specification_submission" typeId="13" typeName="Specification Submission"/>
         <PhaseType id="specification_review" typeId="14" typeName="Specification Review"/>
         <PhaseType id="milestone_submission" typeId="15" typeName="Milestone Submission"/>
-        <PhaseType id="milestone_review" typeId="17" thpeName="Milestone Review"/>
+        <PhaseType id="milestone_review" typeId="17" typeName="Milestone Review"/>
     </PhaseTypes>
     <!-- A set of project phases defined in this template. -->
     <Phases>
