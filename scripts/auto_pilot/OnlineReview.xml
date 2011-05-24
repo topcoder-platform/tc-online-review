@@ -2,8 +2,10 @@
 <!DOCTYPE CMConfig [
        <!ENTITY phasesEmailTemplate "@exttemplatesdir@/email_template.txt">
        <!ENTITY winnersEmailTemplate "@exttemplatesdir@/winners_email_template.txt">
+       <!ENTITY milestoneScreeningResultsEmailTemplate "@exttemplatesdir@/milestone_screening_results_email_template.txt">
+       <!ENTITY screeningResultsEmailTemplate "@exttemplatesdir@/screening_results_email_template.txt">
        <!ENTITY managerNotificationEmailTemplatesBase "@exttemplatesdir@">
-       <!ENTITY notificationEmailFromAddress "do_not_reply@topcoder.com">
+       <!ENTITY notificationEmailFromAddress "@notificationEmailFromAddress@">
        <!ENTITY smtpServerAuthAddress "@emailengine_smtp_user@">
        <!ENTITY pactJNDIAddress "@pactJNDIAddress@">
 ]>
@@ -84,6 +86,25 @@
     <Config name="com.cronos.onlinereview.phases.ManagerHelper">
         <Property name="ProjectDetailsURL">
             <Value>https://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
+        </Property>
+        <Property name="StudioProjectDetailsURL">
+            <Value>http://studio.topcoder.com/?module=ViewContestDetails&amp;ct=</Value>
+        </Property>
+        <Property name="ProjectRoleTermsOfUse">
+            <Property name="ClassName">
+                <Value>com.cronos.onlinereview.ejblibrary.ProjectRoleTermsOfUseLibrary</Value>
+            </Property>
+            <Property name="Namespace">
+                <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+            </Property>
+        </Property>
+        <Property name="UserTermsOfUse">
+            <Property name="ClassName">
+                <Value>com.cronos.onlinereview.ejblibrary.UserTermsOfUseLibrary</Value>
+            </Property>
+            <Property name="Namespace">
+                <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+            </Property>
         </Property>
         <Property name="ProjectManager">
             <Property name="ClassName">
@@ -238,6 +259,345 @@
         ===== Configuration for Phase Handlers from Online Review Phases component =====
     -->
     <!-- Default namespace for Specification Submission handler -->
+    <Config name="com.cronos.onlinereview.phases.MilestoneSubmissionPhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/milestone_submission/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/milestone_submission/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+    
+    <Config name="com.cronos.onlinereview.phases.MilestoneScreeningPhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/milestone_screening/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/milestone_screening/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="SubmittersEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&milestoneScreeningResultsEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>[{0}] {1} place </Value>
+            </Property>
+            <Property name="ProjectLink">
+                <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
+                <Value>http://www.topcoder.com/PactsMemberServlet?module=AssignmentDocumentDetails&amp;amp;assignment_document_id={0,number,#}</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+        </Property>
+    </Config>
+    
+    <Config name="com.cronos.onlinereview.phases.MilestoneReviewPhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/milestone_review/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/milestone_review/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+    
     <Config name="com.cronos.onlinereview.phases.SpecificationSubmissionPhaseHandler">
         <Property name="ConnectionFactoryNS">
             <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
@@ -715,6 +1075,24 @@
                 </Property>		
             </Property>
         </Property>
+        <Property name="SubmittersEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&screeningResultsEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>[{0}] {1} place </Value>
+            </Property>
+            <Property name="ProjectLink">
+                <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
+                <Value>http://www.topcoder.com/PactsMemberServlet?module=AssignmentDocumentDetails&amp;amp;assignment_document_id={0,number,#}</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+        </Property>
     </Config>
 
     <!-- Default namespace for Review handler -->
@@ -1013,7 +1391,7 @@
             </Property>
             <Property name="AssignmentDocumentLink">
                 <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
-                <Value>http://www.topcoder.com/PactsMemberServlet?module=AssignmentDocumentDetails&amp;amp;assignment_document_id={0}</Value>
+                <Value>http://www.topcoder.com/PactsMemberServlet?module=AssignmentDocumentDetails&amp;amp;assignment_document_id={0,number,#}</Value>
             </Property>
             <Property name="EmailFromAddress">
                 <Value>&notificationEmailFromAddress;</Value>
@@ -2279,6 +2657,7 @@
                                upload.project_id AS project_id,
                                upload.resource_id AS resource_id,
                                upload.parameter AS upload_parameter,
+                               upload.upload_desc AS upload_desc,
                                upload_type_lu.upload_type_id AS upload_type_id,
                                upload_type_lu.create_user AS upload_type_create_user,
                                upload_type_lu.create_date AS upload_type_create_date,
@@ -2297,6 +2676,18 @@
                                submission.initial_score,
                                submission.final_score,
                                submission.placement,
+                               submission.user_rank,
+                               submission.mark_for_purchase,
+                               prize.prize_id,
+                               prize.place,
+                               prize.prize_amount,
+                               prize.number_of_submissions,
+                               prize.create_user AS prize_create_user,
+                               prize.create_date AS prize_create_date,
+                               prize.modify_user AS prize_modify_user,
+                               prize.modify_date AS prize_modify_date,
+                               prize_type_lu.prize_type_id,
+                               prize_type_lu.prize_type_desc,
                                submission_type_lu.submission_type_id AS submission_type_id,
                                submission_type_lu.create_user AS submission_type_create_user,
                                submission_type_lu.create_date AS submission_type_create_date,
@@ -2304,18 +2695,16 @@
                                submission_type_lu.modify_date AS submission_type_modify_date,
                                submission_type_lu.name AS submission_type_name,
                                submission_type_lu.description AS submission_type_description
-                          FROM submission,
-                               upload,
-                               submission_status_lu,
-                               submission_type_lu,
-                               upload_type_lu,
-                               upload_status_lu
-                         WHERE submission.upload_id = upload.upload_id
-                           AND submission.submission_status_id = submission_status_lu.submission_status_id
-                           AND submission.submission_type_id = submission_type_lu.submission_type_id
-                           AND upload.upload_type_id = upload_type_lu.upload_type_id
-                           AND upload.upload_status_id = upload_status_lu.upload_status_id
-                           AND
+                        FROM submission
+                        INNER JOIN upload ON upload.upload_id = submission.upload_id
+                        INNER JOIN submission_status_lu ON submission.submission_status_id = submission_status_lu.submission_status_id
+                        INNER JOIN submission_type_lu ON submission.submission_type_id = submission_type_lu.submission_type_id
+                        INNER JOIN upload_type_lu ON upload.upload_type_id = upload_type_lu.upload_type_id
+                        INNER JOIN upload_status_lu ON upload.upload_status_id = upload_status_lu.upload_status_id
+                        LEFT JOIN prize ON submission.prize_id = prize.prize_id
+                        LEFT JOIN prize_type_lu ON prize.prize_type_id = prize_type_lu.prize_type_id
+                       WHERE 1=1 
+                         AND 
                     </Value>
                 </Property>
                 <Property name="alias">
@@ -2323,7 +2712,7 @@
                         <Value>submission.submission_id</Value>
                     </Property>
                     <Property name="upload_id">
-                        <Value>submission.upload_id</Value>
+                        <Value>upload.upload_id</Value>
                     </Property>
                     <Property name="submission_status_id">
                         <Value>submission.submission_status_id</Value>
@@ -2374,6 +2763,7 @@
                                upload.project_id AS project_id,
                                upload.resource_id AS resource_id,
                                upload.parameter AS upload_parameter,
+                               upload.upload_desc AS upload_desc,
                                upload_type_lu.upload_type_id AS upload_type_id,
                                upload_type_lu.create_user AS upload_type_create_user,
                                upload_type_lu.create_date AS upload_type_create_date,

@@ -1,12 +1,14 @@
 <%--
-  - Author: George1, real_vg, isv
-  - Version: 1.1
+  - Author: George1, real_vg, isv, TCSDEVELOPER
+  - Version: 1.2
   - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page renders the Review scorecard.
   -
   - Version 1.1 (Impersonation Login Release assembly) changes: Updated link for "Back" button to refer to
   - "View Project Details" screen.
+  -
+  - Version 1.2 (Milestone Support assembly) changes: Added support for Milestone phases.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -249,7 +251,7 @@
                     <h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
 
                     <%-- Note, that the form is a "dummy" one, only needed to support Struts tags inside of it --%>
-                    <html:form action="/actions/View${reviewType}.do?method=view${reviewType}&rid=${review.id}">
+                    <html:form action="/actions/View${fn:replace(reviewType, ' ', '')}.do?method=view${reviewType}&rid=${review.id}">
 
                     <c:set var="itemIdx" value="0" />
                     <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;" id="table2">

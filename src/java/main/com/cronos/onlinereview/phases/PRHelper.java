@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2005 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2005 - 2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -25,6 +25,14 @@ import com.topcoder.util.log.Level;
 
 /**
  * The PRHelper which is used to provide helper method for Phase Handler.
+ * 
+ * <p>
+ * Version 1.1 (Online Review Replatforming Release 2) Change notes:
+ *   <ol>
+ *     <li>Update {@link #processReviewPR(long, Connection, boolean)} to populate
+ *     the project result if the contest is studio contest.</li>
+ *   </ol>
+ * </p>
  *
  * <p>
  * Version 1.1 (Online Review Payments and Status Automation Assembly 1.0) Change notes:
@@ -216,6 +224,11 @@ public class PRHelper {
                     updateStmt.setLong(2, projectId);
                     updateStmt.setLong(3, userId);
                     updateStmt.execute();
+                }
+                
+                if (isStudioProject(projectId)) {
+                    // populate project result
+                    populateProjectResult(projectId, conn);
                 }
             }
 

@@ -1,6 +1,6 @@
 <%--
-  - Author: isv
-  - Version: 1.3
+  - Author: isv, TCSDEVELOPER
+  - Version: 1.3.1
   - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment displays the form input elements group for editing the timeline and other
@@ -13,6 +13,10 @@
   -
   - Version 1.3 (Specification Review Part 1 assembly) changes: Removed radio buttons for selecting the type of
   - phase start
+  -
+  - Version 1.3.1 (Milestone Support assembly) changes: Added support for Milestone phases.
+  -
+  - Version 1.3.2 (Online Review Phases 1.6.1 integration): removed Manual and Auto Screening support for Submissions phase. 
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -206,18 +210,6 @@
                     <br /><bean:message key="editProject.Phases.Criteria.RequiredRegistrations.note" /></td>
             </tr>
         </c:if>
-        <c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_required_submissions'][phaseIdx])}">
-            <tr class="highlighted" ${(phaseIdx eq 0) ? 'id="required_submissions_row_template" style="display:none;"' : ''}>
-                <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
-                <td class="value" colspan="4">
-                    <bean:message key="editProject.Phases.Criteria.RequiredSubmissions.beforeInput" />
-                    <html:text styleClass="inputBox" property="phase_required_submissions[${phaseIdx}]" style="width:30px;text-align:right;" disabled="${isPhaseClosed}" />
-                    <bean:message key="editProject.Phases.Criteria.RequiredSubmissions.afterInput" /><br />
-                    <html:checkbox styleId="manualScreeningCheckbox${phaseIdx}" property="phase_manual_screening[${phaseIdx}]"  disabled="${isPhaseClosed}"/><label
-                        for="manualScreeningCheckbox${phaseIdx}"><bean:message key="editProject.Phases.Criteria.RequiredSubmissions.ManualScreening" /></label>
-                </td>
-            </tr>
-        </c:if>
 
         <c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_scorecard'][phaseIdx] and projectForm.map['phase_name'][phaseIdx] eq 'Screening')}">
             <c:if test="${phaseIdx eq 0}">
@@ -387,6 +379,60 @@
                     <script type="text/javascript">
                         <!--
                          specReviewScorecardNodes[specReviewScorecardNodes.length]
+                             = document.getElementsByName("phase_scorecard[${phaseIdx}]")[0];
+                        -->
+                    </script>
+                </td>
+            </tr>
+        </c:if>
+        <c:if test="${(phaseIdx eq 0) or (projectForm.map['phase_name'][phaseIdx] eq 'Milestone Screening')}">
+            <c:if test="${phaseIdx eq 0}">
+                <tr class="highlighted" id="milestone_screening_scorecard_row_template" style="display: none;">
+            </c:if>
+            <c:if test="${phaseIdx ne 0}">
+                <tr class="highlighted">
+            </c:if>
+                <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
+                <td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
+                    <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" disabled="${isPhaseClosed}">
+                        <c:forEach items="${milestoneScreeningScorecards}" var="scorecard">
+                            <c:if test="${(newProject && scorecard.category == 1)
+                                          || (not newProject && project.projectCategory.id == scorecard.category)
+                                          || projectCategoriesMap[scorecard.category].projectType.generic}">
+                                <html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>
+                            </c:if>
+                        </c:forEach>
+                    </html:select>
+                    <script type="text/javascript">
+                        <!--
+                         milestoneScreeningScorecardNodes[milestoneScreeningScorecardNodes.length]
+                             = document.getElementsByName("phase_scorecard[${phaseIdx}]")[0];
+                        -->
+                    </script>
+                </td>
+            </tr>
+        </c:if>
+        <c:if test="${(phaseIdx eq 0) or (projectForm.map['phase_name'][phaseIdx] eq 'Milestone Review')}">
+            <c:if test="${phaseIdx eq 0}">
+                <tr class="highlighted" id="milestone_review_scorecard_row_template" style="display: none;">
+            </c:if>
+            <c:if test="${phaseIdx ne 0}">
+                <tr class="highlighted">
+            </c:if>
+                <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
+                <td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
+                    <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" disabled="${isPhaseClosed}">
+                        <c:forEach items="${milestoneReviewScorecards}" var="scorecard">
+                            <c:if test="${(newProject && scorecard.category == 1)
+                                          || (not newProject && project.projectCategory.id == scorecard.category)
+                                          || projectCategoriesMap[scorecard.category].projectType.generic}">
+                                <html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>
+                            </c:if>
+                        </c:forEach>
+                    </html:select>
+                    <script type="text/javascript">
+                        <!--
+                         milestoneReviewScorecardNodes[milestoneReviewScorecardNodes.length]
                              = document.getElementsByName("phase_scorecard[${phaseIdx}]")[0];
                         -->
                     </script>

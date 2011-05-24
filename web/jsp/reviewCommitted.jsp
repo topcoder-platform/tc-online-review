@@ -3,6 +3,7 @@
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html:html xhtml="true">
 
@@ -59,7 +60,7 @@
 
                     <div align="right">
                         <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img srcKey="reviewCommitted.ReturnToProjDet.img" altKey="reviewCommitted.ReturnToProjDet.alt" border="0" /></html:link>&#160;
-                        <html:link page="/actions/View${reviewType}.do?method=view${reviewType}&rid=${rid}"><html:img srcKey="reviewCommitted.ViewScorecard.img" altKey="reviewCommitted.ViewScorecard.alt" border="0" /></html:link>
+                        <html:link page="/actions/View${fn:replace(reviewType, ' ', '')}.do?method=view${fn:replace(reviewType, ' ', '')}&rid=${rid}"><html:img srcKey="reviewCommitted.ViewScorecard.img" altKey="reviewCommitted.ViewScorecard.alt" border="0" /></html:link>
                     </div><br />
 
                 </div>

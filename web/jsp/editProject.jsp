@@ -1,6 +1,6 @@
 <%--
-  - Author: pulky, isv
-  - Version: 1.3.1
+  - Author: pulky, isv, TCSDEVELOPER
+  - Version: 1.3.2
   - Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays project edition page
@@ -15,6 +15,8 @@
   -
   - Version 1.3.1 (SVN Automation and Late Deliverables Tracking Assembly 1.0) changes: SVN Module property is no longer
   - editable
+  -
+  - Version 1.3.2 (Milestone Support assembly) changes: Added support for Milestone phases.
   -
   - Version 1.4 (Online Review Status Validation Assembly 1.0) changes: added error display of validation for status field
   -
@@ -125,9 +127,25 @@
         var specificationReviewScorecards = [];
         <c:forEach items="${requestScope.specificationReviewScorecards}" var="scorecard">
         specificationReviewScorecards.push({});
-        specificationReviewScorecards[postMortemScorecards.length - 1]["id"] = ${scorecard.id};
-        specificationReviewScorecards[postMortemScorecards.length - 1]["category"] = ${scorecard.category};
-        specificationReviewScorecards[postMortemScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";
+        specificationReviewScorecards[specificationReviewScorecards.length - 1]["id"] = ${scorecard.id};
+        specificationReviewScorecards[specificationReviewScorecards.length - 1]["category"] = ${scorecard.category};
+        specificationReviewScorecards[specificationReviewScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";
+        </c:forEach>
+
+        var milestoneScreeningScorecards = [];
+        <c:forEach items="${requestScope.milestoneScreeningScorecards}" var="scorecard">
+        milestoneScreeningScorecards.push({});
+        milestoneScreeningScorecards[milestoneScreeningScorecards.length - 1]["id"] = ${scorecard.id};
+        milestoneScreeningScorecards[milestoneScreeningScorecards.length - 1]["category"] = ${scorecard.category};
+        milestoneScreeningScorecards[milestoneScreeningScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";
+        </c:forEach>
+
+        var milestoneReviewScorecards = [];
+        <c:forEach items="${requestScope.milestoneReviewScorecards}" var="scorecard">
+        milestoneReviewScorecards.push({});
+        milestoneReviewScorecards[milestoneReviewScorecards.length - 1]["id"] = ${scorecard.id};
+        milestoneReviewScorecards[milestoneReviewScorecards.length - 1]["category"] = ${scorecard.category};
+        milestoneReviewScorecards[milestoneReviewScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";
         </c:forEach>
 
         var defaultScorecards = [];
@@ -171,6 +189,8 @@
         var approvalScorecardNodes = new Array();;
         var postMortemScorecardNodes = new Array();;
         var specReviewScorecardNodes = new Array();;
+        var milestoneScreeningScorecardNodes = new Array();;
+        var milestoneReviewScorecardNodes = new Array();;
 
         /*
          * TODO: Document it
@@ -228,10 +248,17 @@
             changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, approvalScorecards, 'Approval');
 
             templateRow = document.getElementById("post_mortem_scorecard_row_template");
-            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, approvalScorecards, 'Post-Mortem');
+            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, postMortemScorecards, 'Post-Mortem');
 
             templateRow = document.getElementById("specification_review_scorecard_row_template");
             changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, specificationReviewScorecards, 'Specification Review');
+
+            templateRow = document.getElementById("milestone_review_scorecard_row_template");
+            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, milestoneReviewScorecards, 'Milestone Review');
+
+            templateRow = document.getElementById("milestone_screening_scorecard_row_template");
+            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, milestoneScreeningScorecards, 'Milestone Screening');
+
 
             for (var i = 0; i < screeningScorecardNodes.length; i++) {
                 changeScorecardByCategory(screeningScorecardNodes[i], projectCategoryNode.value, screeningScorecards, 'Screening');
@@ -248,6 +275,12 @@
             }
             for (var i = 0; i < specReviewScorecardNodes.length; i++) {
                 changeScorecardByCategory(specReviewScorecardNodes[i], projectCategoryNode.value, specificationReviewScorecards, 'Specification Review');
+            }
+            for (var i = 0; i < milestoneScreeningScorecardNodes.length; i++) {
+                changeScorecardByCategory(milestoneScreeningScorecardNodes[i], projectCategoryNode.value, milestoneScreeningScorecards, 'Milestone Screening');
+            }
+            for (var i = 0; i < milestoneReviewScorecardNodes.length; i++) {
+                changeScorecardByCategory(milestoneReviewScorecardNodes[i], projectCategoryNode.value, milestoneReviewScorecards, 'Milestone Review');
             }
 
             //var digitalRunChecked = false;
@@ -466,8 +499,9 @@
             // TODO: Should be done in locale-independent way
             // Check if the phase should have a criterion row and at it if it is needed
             if (phaseName == "Screening" || phaseName == "Review" || phaseName == "Approval" ||
-                    phaseName == "Registration" || phaseName == "Submission" || phaseName == "Appeals"
-                    || phaseName == "Post-Mortem") {
+                    phaseName == "Registration" || phaseName == "Appeals"
+                    || phaseName == "Post-Mortem" || phaseName == "Milestone Screening" 
+                    || phaseName == "Milestone Review") {
                 var templateRow;
                 if (phaseName == "Screening") {
                       templateRow = document.getElementById("screening_scorecard_row_template");
@@ -477,14 +511,16 @@
                       templateRow = document.getElementById("approval_scorecard_row_template");
                 } else if (phaseName == "Registration") {
                       templateRow = document.getElementById("required_registrations_row_template");
-                } else if (phaseName == "Submission") {
-                      templateRow = document.getElementById("required_submissions_row_template");
                 } else if (phaseName == "Appeals") {
                       templateRow = document.getElementById("view_appeal_responses_row_template");
                 } else if (phaseName == "Post-Mortem") {
                       templateRow = document.getElementById("post_mortem_scorecard_row_template");
                 } else if (phaseName == "Specification Review") {
                       templateRow = document.getElementById("specification_review_scorecard_row_template");
+                } else if (phaseName == "Milestone Screening") {
+                      templateRow = document.getElementById("milestone_screening_scorecard_row_template");
+                } else if (phaseName == "Milestone Review") {
+                      templateRow = document.getElementById("milestone_review_scorecard_row_template");
                 }
 
                  criterionRow = cloneInputRow(templateRow);
@@ -510,6 +546,10 @@
                      postMortemScorecardNodes[postMortemScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
                  } else if (phaseName == "Specification Review") {
                      specReviewScorecardNodes[specReviewScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
+                 } else if (phaseName == "Milestone Screening") {
+                     milestoneScreeningScorecardNodes[milestoneScreeningScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
+                 } else if (phaseName == "Milestone Review") {
+                     milestoneReviewScorecardNodes[milestoneReviewScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
                 }
             }
         }
@@ -898,8 +938,8 @@
                 getChildByNamePrefix(newPhaseRow, "phase_end_time").value = endDateParts[1];
 
                 var duration = parseInt(dojo.dom.textContent(phaseNodes[i].getElementsByTagName("length")[0])) / 3600 / 1000;
-                getChildByNamePrefix(newPhaseRow, "phase_duration").value = duration;
 
+                getChildByNamePrefix(newPhaseRow, "phase_duration").value = duration;
 
                 // Add phase criterion row if needed
                 addPhaseCriterion(phaseName, newPhaseRow);
@@ -918,8 +958,19 @@
 
                     var dependencyId =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-id")[0]);
                     var dependencyStart =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-start")[0]);
+                    var lagTime =  parseInt(dojo.dom.textContent(dependencies[0].getElementsByTagName("lag-time")[0]));
+                    if (lagTime < 0) {
+                        lagTime = -lagTime;
+                        getChildByNamePrefix(newPhaseRow, "phase_start_plusminus").value = 'minus';
+                    }
+                    
+                    if (lagTime != 0) {
+                        getChildByNamePrefix(newPhaseRow, "phase_start_dayshrs").value = 'mins';
+                    }
+                    
                     getChildByNamePrefix(newPhaseRow, "phase_start_phase").value = "template_" + dependencyId;
                     getChildByNamePrefix(newPhaseRow, "phase_start_when").value = (dependencyStart == "true") ? "starts" : "ends";
+                    getChildByNamePrefix(newPhaseRow, "phase_start_amount").value = '' + lagTime / 1000 / 60;
                     var phaseStartButtons = getChildByNamePrefix(newPhaseRow, "phase_start_by_phase");
                     phaseStartButtons.checked = true;
                     getChildByNamePrefix(newPhaseRow, "phase_start_phase").removeAttribute("disabled");
@@ -952,6 +1003,12 @@
 
             templateRow = document.getElementById("specification_review_scorecard_row_template");
             changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, specificationReviewScorecards, 'Specification Review');
+
+            templateRow = document.getElementById("milestone_screening_scorecard_row_template");
+            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, milestoneScreeningScorecards, 'Milestone Screening');
+
+            templateRow = document.getElementById("milestone_review_scorecard_row_template");
+            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, milestoneReviewScorecards, 'Milestone Review');
         }
 
     //--></script>

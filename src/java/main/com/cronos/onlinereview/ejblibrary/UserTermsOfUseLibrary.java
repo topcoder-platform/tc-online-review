@@ -10,10 +10,17 @@ import com.topcoder.web.ejb.user.UserTermsOfUseBean;
  * <p>An implementation of {@link UserTermsOfUse} interface which provides the library-call style for API of
  * <code>User Terms Of Use EJB</code>.</p>
  *
+ * <p>
+ * Version 1.0.1 (Milestone Support Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added constructor with namespace.</li>
+ *   </ol>
+ * </p>
+ *
  * <p><b>Thread safety:</b> This class is thread-safe.</p>
  *
- * @author isv
- * @version 1.0 (TopCoder Online Review Switch To Local Calls)
+ * @author isv, TCSDEVELOPER
+ * @version 1.0.1 (TopCoder Online Review Switch To Local Calls)
  */
 public class UserTermsOfUseLibrary extends BaseEJBLibrary implements UserTermsOfUse {
 
@@ -27,6 +34,15 @@ public class UserTermsOfUseLibrary extends BaseEJBLibrary implements UserTermsOf
      */
     public UserTermsOfUseLibrary() {
         this.bean = new UserTermsOfUseBean();
+    }
+
+    /**
+     * <p>Constructs new <code>UserTermsOfUseLibrary</code> instance.</p>
+     * 
+     * @param namespace a <code>String</code> providing the configuration namespace.
+     * @since 1.0.1 
+     */
+    public UserTermsOfUseLibrary(String namespace) {
     }
 
     /**
