@@ -116,7 +116,7 @@ public class StatusProjectValidator implements com.topcoder.management.project.P
                 if(appealsResponsePhase == null || !arePhaseStatusesEqual(PhaseStatus.CLOSED, appealsResponsePhase.getPhaseStatus())) {
                     throw new StatusValidationException(ExcMsgCancelledFailedReviewViol, KeyCancelledFailedReviewViol);
                 }
-                Submission[] submissions =  ActionsHelper.getMostRecentSubmissions(uploadManager, project);
+                Submission[] submissions =  ActionsHelper.getMostRecentSubmissions(uploadManager, project, "Contest Submission");
                 //make sure there's at least one submission
                 if(submissions == null || submissions.length == 0) {
                     throw new StatusValidationException(ExcMsgCancelledFailedReviewViol, KeyCancelledFailedReviewViol);
@@ -137,7 +137,7 @@ public class StatusProjectValidator implements com.topcoder.management.project.P
                     throw new StatusValidationException(ExcMsgCancelledFailedScreeningViol, KeyCancelledFailedScreeningViol);
                 }
 
-                Submission[] submissions =  ActionsHelper.getMostRecentSubmissions(uploadManager, project);
+                Submission[] submissions =  ActionsHelper.getMostRecentSubmissions(uploadManager, project, "Contest Submission");
                 //make sure theres at least one submission
                 if(submissions == null || submissions.length == 0) {
                     throw new StatusValidationException(ExcMsgCancelledFailedScreeningViol, KeyCancelledFailedScreeningViol);
@@ -163,7 +163,7 @@ public class StatusProjectValidator implements com.topcoder.management.project.P
                     throw new StatusValidationException(ExcMsgCancelledZeroSubmissionsViol, KeyCancelledZeroSubmissionsViol);
                 }
                 //make sure there are no submissions
-                Submission[] submissions =  ActionsHelper.getMostRecentSubmissions(uploadManager, project);
+                Submission[] submissions =  ActionsHelper.getMostRecentSubmissions(uploadManager, project, "Contest Submission");
                 if(submissions != null && submissions.length > 0) {
                     throw new StatusValidationException(ExcMsgCancelledZeroSubmissionsViol, KeyCancelledZeroSubmissionsViol);
                 }
@@ -174,7 +174,7 @@ public class StatusProjectValidator implements com.topcoder.management.project.P
                 if(appealsResponsePhase == null || !arePhaseStatusesEqual(PhaseStatus.CLOSED, appealsResponsePhase.getPhaseStatus())) {
                     throw new StatusValidationException(ExcMsgCancelledWinnerUnresponsiveViol, KeyCancelledWinnerUnresponsiveViol);
                 }
-                Submission[] submissions =  ActionsHelper.getMostRecentSubmissions(uploadManager, project);
+                Submission[] submissions =  ActionsHelper.getMostRecentSubmissions(uploadManager, project, "Contest Submission");
                 if(submissions == null) {
                     throw new StatusValidationException(ExcMsgCancelledWinnerUnresponsiveViol, KeyCancelledWinnerUnresponsiveViol);
                 }

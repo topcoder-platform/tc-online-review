@@ -9,9 +9,10 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html:html xhtml="true">
 
+<c:set var="reviewTypeWSStrippedOut" value="${fn:replace(reviewType, ' ', '')}"/>
 <head>
     <jsp:include page="/includes/project/project_title.jsp">
-        <jsp:param name="thirdLevelPageKey" value="editReview.title.${reviewType}" />
+        <jsp:param name="thirdLevelPageKey" value="editReview.title.${reviewTypeWSStrippedOut}" />
     </jsp:include>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
@@ -127,8 +128,8 @@
                     <jsp:include page="/includes/review/review_project.jsp" />
                     <h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
 
-                    <html:form action="/actions/Save${reviewType}" method="POST" enctype="multipart/form-data">
-                        <html:hidden property="method" value="save${reviewType}" />
+                    <html:form action="/actions/Save${reviewTypeWSStrippedOut}" method="POST" enctype="multipart/form-data">
+                        <html:hidden property="method" value="save${reviewTypeWSStrippedOut}" />
                         <c:choose>
                             <c:when test="${review.id > -1}">
                                 <html:hidden property="rid" value="${review.id}" />

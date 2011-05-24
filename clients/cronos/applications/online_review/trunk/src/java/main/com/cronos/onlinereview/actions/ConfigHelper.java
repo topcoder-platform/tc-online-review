@@ -96,8 +96,13 @@ import com.topcoder.util.config.UnknownNamespaceException;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, romanoTC, isv, FireIce
- * @version 1.7.1
+ * <p>
+ * Version 1.7.2 (Online Review Phases 1.6.1 Integration) Change notes
+ *    <ol>
+ *      <li>Removed {@link #reqSubmissions} support.</li>
+ *    </ol>
+ * @author George1, real_vg, pulky, romanoTC, isv, FireIce, lmmortal
+ * @version 1.7.2
  */
 public class ConfigHelper {
 
@@ -327,7 +332,6 @@ public class ConfigHelper {
      * @see #PHASE_DURATION_PROP
      * @see #NOTE_LENGTH_PROP
      * @see #REQ_REGISTRANTS_PROP
-     * @see #REQ_SUBMISSIONS_PROP
      * @see #REQ_REVIEWERS_PROP
      * @see #DEADLINE_NEAR_DURATION_PROP
      */
@@ -364,14 +368,6 @@ public class ConfigHelper {
      * @see #DEFAULT_VALUES_PROP
      */
     private static final String REQ_REGISTRANTS_PROP = "RequiredRegistrants";
-
-    /**
-     * This member variable is a string constant that specifies the name of the property which
-     * defines the default minimum amount of passing submissions before Submission phase can end.
-     *
-     * @see #DEFAULT_VALUES_PROP
-     */
-    private static final String REQ_SUBMISSIONS_PROP = "RequiredSubmissions";
 
     /**
      * This member variable is a string constant that specifies the name of the property which
@@ -807,12 +803,6 @@ public class ConfigHelper {
      * Registration phase.
      */
     private static int reqRegistrants = -1;
-
-    /**
-     * This member variable holds the default minimum amount of passing submissions required for
-     * ending Submission phase.
-     */
-    private static int reqSubmissions = -1;
 
     /**
      * This member variable holds the default minimum amount of registered reviewers required for
@@ -1314,8 +1304,6 @@ public class ConfigHelper {
             // Get the default minimum registrants amount
             String reqRegistrantsStr = propDefaults.getValue(REQ_REGISTRANTS_PROP);
             // Get the default minimum submissions amount
-            String reqSubmissionsStr = propDefaults.getValue(REQ_SUBMISSIONS_PROP);
-            // Get the default minimum submissions amount
             String reqReviewersStr = propDefaults.getValue(REQ_REVIEWERS_PROP);
             // Get the duration of "Deadline Near" status
             String deadlineNearDurationStr = propDefaults.getValue(DEADLINE_NEAR_DURATION_PROP);
@@ -1346,13 +1334,6 @@ public class ConfigHelper {
                 int minimum = Integer.parseInt(reqRegistrantsStr, 10);
                 if (minimum >= 0) {
                     reqRegistrants = minimum;
-                }
-            }
-            // Verify that default minimum submissions amount is specified, and assign it
-            if (reqSubmissionsStr != null && reqSubmissionsStr.trim().length() != 0) {
-                int minimum = Integer.parseInt(reqSubmissionsStr, 10);
-                if (minimum >= 0) {
-                    reqSubmissions = minimum;
                 }
             }
             // Verify that default minimum submissions amount is specified, and assign it
@@ -1875,16 +1856,6 @@ public class ConfigHelper {
      */
     public static int getDefaultRequiredRegistrants() {
         return reqRegistrants;
-    }
-
-    /**
-     * This static method returns default minimum of submissions required before Submission phase
-     * can be closed.
-     *
-     * @return default minimum amount, or -1 if there is no default minimum value.
-     */
-    public static int getDefaultRequiredSubmissions() {
-        return reqSubmissions;
     }
 
     /**

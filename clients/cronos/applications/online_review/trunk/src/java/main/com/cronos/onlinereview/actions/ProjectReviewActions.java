@@ -144,6 +144,27 @@ import com.topcoder.util.weightedcalculator.LineItem;
  *     handling <code>Post-Mortem</code> phase.</li>
  *   </ol>
  * </p>
+ * <p>
+ * Version 1.2.1 (Milestone Support 1 Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added logic for processing Milestone reviews.</li>
+ *     <li>Updated {@link #saveGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
+ *     saving review comments for <code>Milestone</code> phases.</li>
+ *     <li>Updated {@link #createGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
+ *     handling <code>Milestone</code> phases.</li>
+ *     <li>Updated {@link #viewGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
+ *     handling <code>Milestone</code> phases.</li>
+ *     <li>Updated {@link #editGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
+ *     handling <code>Milestone</code> phases.</li>
+ *   </ol>
+ * </p>
+ *
+ * <p>
+ * Version 1.2.2 (Online Review Replatforming Release 2) Change notes:
+ *   <ol>
+ *     <li>Change submission.getUplaods.get(0) to submission.getUpload().</li>
+ *   </ol>
+ * </p>
  *
  * <p>
  * Version 1.3 (Online Review Payments and Status Automation Assembly 1.0) Change notes:
@@ -2769,6 +2790,12 @@ public class ProjectReviewActions extends DispatchAction {
         } else if ("Specification Review".equals(reviewType)) {
             permName = Constants.PERFORM_SPECIFICATION_REVIEW_PERM_NAME;
             phaseName = Constants.SPECIFICATION_REVIEW_PHASE_NAME;
+        } else if ("Milestone Screening".equals(reviewType)) {
+            permName = Constants.PERFORM_MILESTONE_SCREENING_PERM_NAME;
+            phaseName = Constants.MILESTONE_SCREENING_PHASE_NAME;
+        } else if ("Milestone Review".equals(reviewType)) {
+            permName = Constants.PERFORM_MILESTONE_REVIEW_PERM_NAME;
+            phaseName = Constants.MILESTONE_REVIEW_PHASE_NAME;
         } else {
             isPostMortemPhase = true;
             permName = Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME;
@@ -2924,6 +2951,10 @@ public class ProjectReviewActions extends DispatchAction {
         } else if ("Specification Review".equals(reviewType)) {
             scorecardTypeName = "Specification Review";
             isSpecReviewPhase = true;
+        } else if ("Milestone Screening".equals(reviewType)) {
+            scorecardTypeName = "Milestone Screening";
+        } else if ("Milestone Review".equals(reviewType)) {
+            scorecardTypeName = "Milestone Review";
         } else {
             scorecardTypeName = "Post-Mortem";
         }
@@ -3113,6 +3144,14 @@ public class ProjectReviewActions extends DispatchAction {
             permName = Constants.PERFORM_SCREENING_PERM_NAME;
             phaseName = Constants.SCREENING_PHASE_NAME;
             scorecardTypeName = "Screening";
+        } else if ("Milestone Screening".equals(reviewType)) {
+            permName = Constants.PERFORM_MILESTONE_SCREENING_PERM_NAME;
+            phaseName = Constants.MILESTONE_SCREENING_PHASE_NAME;
+            scorecardTypeName = "Milestone Screening";
+        } else if ("Milestone Review".equals(reviewType)) {
+            permName = Constants.PERFORM_MILESTONE_REVIEW_PERM_NAME;
+            phaseName = Constants.MILESTONE_REVIEW_PHASE_NAME;
+            scorecardTypeName = "Milestone Review";
         } else if ("Review".equals(reviewType)) {
             permName = Constants.PERFORM_REVIEW_PERM_NAME;
             phaseName = Constants.REVIEW_PHASE_NAME;
@@ -4236,6 +4275,14 @@ public class ProjectReviewActions extends DispatchAction {
             permName = Constants.VIEW_SCREENING_PERM_NAME;
             phaseName = Constants.SCREENING_PHASE_NAME;
             scorecardTypeName = "Screening";
+        } else if (reviewType.equals("Milestone Screening")) {
+            permName = Constants.VIEW_MILESTONE_SCREENING_PERM_NAME;
+            phaseName = Constants.MILESTONE_SCREENING_PHASE_NAME;
+            scorecardTypeName = "Milestone Screening";
+        } else if (reviewType.equals("Milestone Review")) {
+            permName = Constants.VIEW_ALL_REVIEWS_PERM_NAME;
+            phaseName = Constants.MILESTONE_REVIEW_PHASE_NAME;
+            scorecardTypeName = "Milestone Review";
         } else if (reviewType.equals("Review")) {
             permName = Constants.VIEW_ALL_REVIEWS_PERM_NAME;
             phaseName = Constants.REVIEW_PHASE_NAME;
@@ -5377,5 +5424,239 @@ public class ProjectReviewActions extends DispatchAction {
                                                  HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
         return viewGenericReview(mapping, form, request, "Specification Review");
+    }
+
+    /**
+     * This method is an implementation of &quot;Create Milestone Screening&quot; Struts Action defined for
+     * this assembly, which is supposed to gather needed information (scorecard template) and
+     * present it to editReview.jsp page, which will fill the required fields and post them to the
+     * &quot;Save Milestone Screening&quot; action. The action implemented by this method is executed to edit
+     * screening that does not exist yet, and hence is supposed to be created.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent submission id, or the lack of
+     *         permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward createMilestoneScreening(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return createGenericReview(mapping, form, request, "Milestone Screening");
+    }
+
+    /**
+     * This method is an implementation of &quot;Edit Milestone Screening&quot; Struts Action defined for this
+     * assembly, which is supposed to gather needed information (screening and scorecard template)
+     * and present it to editReview.jsp page, which will fill the required fields and post them to
+     * the &quot;Save Milestone Screening&quot; action. The action implemented by this method is executed to
+     * edit screening that has already been created, but has not been submitted yet, and hence is
+     * supposed to be edited.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward editMilestoneScreening(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return editGenericReview(mapping, form, request, "Milestone Screening");
+    }
+
+    /**
+     * This method is an implementation of &quot;Save Milestone Screening&quot; Struts Action defined for this
+     * assembly, which is supposed to save information posted from /jsp/editReview.jsp page. This
+     * method will either create new screening or update (edit) an existing one depending on which
+     * action was called to display /jsp/editReview.jsp page.
+     *
+     * @return &quot;success&quot; forward, which forwards to the &quot;View Project Details&quot;
+     *         action, or &quot;userError&quot; forward, which forwards to the /jsp/userError.jsp
+     *         page, which displays information about an error that is usually caused by incorrect
+     *         user input (such as absent submission id, or the lack of permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward saveMilestoneScreening(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return saveGenericReview(mapping, form, request, "Milestone Screening");
+    }
+
+    /**
+     * This method is an implementation of &quot;View Milestone Screening&quot; Struts Action defined for this
+     * assembly, which is supposed to view completed screening.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/viewReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward viewMilestoneScreening(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return viewGenericReview(mapping, form, request, "Milestone Screening");
+    }
+
+
+
+    /**
+     * This method is an implementation of &quot;Create Milestone Review&quot; Struts Action defined for
+     * this assembly, which is supposed to gather needed information (scorecard template) and
+     * present it to editReview.jsp page, which will fill the required fields and post them to the
+     * &quot;Save Milestone Review&quot; action. The action implemented by this method is executed to edit
+     * screening that does not exist yet, and hence is supposed to be created.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent submission id, or the lack of
+     *         permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward createMilestoneReview(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return createGenericReview(mapping, form, request, "Milestone Review");
+    }
+
+    /**
+     * This method is an implementation of &quot;Edit Milestone Review&quot; Struts Action defined for this
+     * assembly, which is supposed to gather needed information (screening and scorecard template)
+     * and present it to editReview.jsp page, which will fill the required fields and post them to
+     * the &quot;Save Milestone Review&quot; action. The action implemented by this method is executed to
+     * edit screening that has already been created, but has not been submitted yet, and hence is
+     * supposed to be edited.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward editMilestoneReview(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return editGenericReview(mapping, form, request, "Milestone Review");
+    }
+
+    /**
+     * This method is an implementation of &quot;Save Milestone Review&quot; Struts Action defined for this
+     * assembly, which is supposed to save information posted from /jsp/editReview.jsp page. This
+     * method will either create new screening or update (edit) an existing one depending on which
+     * action was called to display /jsp/editReview.jsp page.
+     *
+     * @return &quot;success&quot; forward, which forwards to the &quot;View Project Details&quot;
+     *         action, or &quot;userError&quot; forward, which forwards to the /jsp/userError.jsp
+     *         page, which displays information about an error that is usually caused by incorrect
+     *         user input (such as absent submission id, or the lack of permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward saveMilestoneReview(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return saveGenericReview(mapping, form, request, "Milestone Review");
+    }
+
+    /**
+     * This method is an implementation of &quot;View Milestone Review&quot; Struts Action defined for this
+     * assembly, which is supposed to view completed screening.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/viewReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward viewMilestoneReview(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return viewGenericReview(mapping, form, request, "Milestone Review");
     }
 }

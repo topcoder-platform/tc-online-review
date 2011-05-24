@@ -15,7 +15,14 @@ import java.util.List;
  *
  * <p><b>Thread safety:</b> This class is thread-safe.</p>
  *
- * @author isv
+ * <p>
+ * Version 1.0.1 (Milestone Support Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added constructor with namespace.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author isv, TCSDEVELOPER
  * @version 1.0 (TopCoder Online Review Switch To Local Calls)
  */
 public class ProjectRoleTermsOfUseLibrary extends BaseEJBLibrary implements ProjectRoleTermsOfUse {
@@ -31,6 +38,15 @@ public class ProjectRoleTermsOfUseLibrary extends BaseEJBLibrary implements Proj
      */
     public ProjectRoleTermsOfUseLibrary() {
         this.bean = new ProjectRoleTermsOfUseBean();
+    }
+
+    /**
+     * <p>Constructs new <code>ProjectRoleTermsOfUseLibrary</code> instance.</p>
+     * 
+     * @param namespace a <code>String</code> providing the configuration namespace. 
+     * @since 1.0.1 
+     */
+    public ProjectRoleTermsOfUseLibrary(String namespace) {
     }
 
     /**

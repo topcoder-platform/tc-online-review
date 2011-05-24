@@ -17,6 +17,9 @@ import static com.cronos.onlinereview.actions.Constants.SCREENING_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.SPECIFICATION_REVIEW_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.SPECIFICATION_SUBMISSION_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.SUBMISSION_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.MILESTONE_SUBMISSION_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.MILESTONE_SCREENING_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.MILESTONE_REVIEW_PHASE_NAME;
 
 import java.rmi.RemoteException;
 import java.text.DateFormat;
@@ -64,6 +67,7 @@ import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
 import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
+import com.topcoder.management.phase.OperationCheckResult;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
@@ -231,6 +235,20 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  *     updated to support reset to resource related to project phase properly.</li>
  *   </ol>
  * </p>
+ *
+ * <p>
+ * Version 1.12 (Milestone Support Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added support for <code>Milestone</code> phases.</li>
+ *   </ol>
+ * </p>
+ *
+ * <p>
+ * Version 1.12.1 (Online Review Replatforming Release 2) Change notes:
+ *   <ol>
+ *     <li>Change submission.getUplaods.get(0) to submission.getUpload().</li>
+ *   </ol>
+ * </p>
  * <p>
  * Version 1.13 (Online Review Status Validation Assembly 1.0) Change notes:
  *   <ol>
@@ -238,9 +256,16 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  *     <li>Updated {@link #saveProjectPhases()} to handle new StatusValidationException and display its error message.</li>
  *   </ol>
  * </p>
-
- * @author George1, real_vg, pulky, isv, FireIce
- * @version 1.13
+ * Version 1.13.1 (Online Review Phases 1.6.1 Integration) Change notes:
+ *   <ol>
+ *     <li>Removed Manual Screening support</li>
+ *     <li>Removed Submission Number support</li>
+ *   </ol>
+ * <p>
+ *    
+ * </p>
+ * @author George1, real_vg, pulky, isv, FireIce, lmmortal
+ * @version 1.14
  */
 public class ProjectActions extends DispatchAction {
 
@@ -267,7 +292,8 @@ public class ProjectActions extends DispatchAction {
      */
     private static final Set<String> REVIEWER_ROLE_NAMES = new HashSet<String>(Arrays.asList("Reviewer",
         "Accuracy Reviewer", "Failure Reviewer", "Stress Reviewer", "Screener", "Primary Screener", "Aggregator",
-        "Final Reviewer", "Approver", "Post-Mortem Reviewer", "Specification Reviewer"));
+        "Final Reviewer", "Approver", "Post-Mortem Reviewer", "Specification Reviewer", "Milestone Screener", 
+        "Milestone Reviewer"));
 
     /**
      * <p>A <code>Set</code> holding the IDs for reviewer roles which do not allow duplicate users to be assigned to.
@@ -283,7 +309,7 @@ public class ProjectActions extends DispatchAction {
      *
      * @since 1.8
      */
-    private static final Set<Long> SINGLE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(2L, 8L, 9L, 18L));
+    private static final Set<Long> SINGLE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(2L, 8L, 9L, 18L, 19L, 20L));
     
     private final static int GLOBAL_TIMELINE_NOTIFICATION = 29;
 
@@ -384,9 +410,6 @@ public class ProjectActions extends DispatchAction {
         if (ConfigHelper.getDefaultRequiredRegistrants() >= 0) {
             lazyForm.set("phase_required_registrations", 0, new Integer(ConfigHelper.getDefaultRequiredRegistrants()));
         }
-        if (ConfigHelper.getDefaultRequiredSubmissions() >= 0) {
-            lazyForm.set("phase_required_submissions", 0, new Integer(ConfigHelper.getDefaultRequiredSubmissions()));
-        }
         if (ConfigHelper.getDefaultRequiredReviewers() >= 0) {
             lazyForm.set("phase_required_reviewers", 0, new Integer(ConfigHelper.getDefaultRequiredReviewers()));
         }
@@ -463,6 +486,8 @@ public class ProjectActions extends DispatchAction {
         Scorecard[] approvalScorecards = searchActiveScorecards(scorecardManager, "Approval");
         Scorecard[] postMortemScorecards = searchActiveScorecards(scorecardManager, "Post-Mortem");
         Scorecard[] specificationReviewScorecards = searchActiveScorecards(scorecardManager, "Specification Review");
+        Scorecard[] milestoneScreeningScorecards = searchActiveScorecards(scorecardManager, "Milestone Screening");
+        Scorecard[] milestoneReviewScorecards = searchActiveScorecards(scorecardManager, "Milestone Review");
 
         // Store them in the request
         request.setAttribute("screeningScorecards", screeningScorecards);
@@ -470,6 +495,8 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("approvalScorecards", approvalScorecards);
         request.setAttribute("postMortemScorecards", postMortemScorecards);
         request.setAttribute("specificationReviewScorecards", specificationReviewScorecards);
+        request.setAttribute("milestoneScreeningScorecards", milestoneScreeningScorecards);
+        request.setAttribute("milestoneReviewScorecards", milestoneReviewScorecards);
         request.setAttribute("defaultScorecards", ActionsHelper.getDefaultScorecards());
 
         // Load phase template names
@@ -871,7 +898,8 @@ public class ProjectActions extends DispatchAction {
                 log.debug("setting 'Root Catalog ID' to 26887152");
                 project.setProperty("Root Catalog ID", "26887152");
                 log.debug("Allowing multiple submissions for this project.");
-                project.setProperty("Allow multiple submissions", true);
+                // As per Milestone Support assembly multiple submissions are not allowed for Studio projects for now
+                project.setProperty("Allow multiple submissions", false);
             } else {
                 project.setProperty("Root Catalog ID", ActionsHelper.getRootCategoryIdByComponentId(lazyForm.get("component_id")));
             }
@@ -972,7 +1000,7 @@ public class ProjectActions extends DispatchAction {
             saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap, phasesToDelete, statusHasChanged);
 
 
-        if (newProject || categoryChanged) {
+        if (!ActionsHelper.isErrorsPresent(request) && (newProject || categoryChanged)) {
             // generate new project role terms of use associations for the recently created project.
             try {
                 generateProjectRoleTermsOfUseAssociations(project.getId(),
@@ -1395,11 +1423,6 @@ public class ProjectActions extends DispatchAction {
             if (requiredRegistrations != null) {
                 phase.setAttribute("Registration Number", requiredRegistrations.toString());
             }
-            Integer requiredSubmissions = (Integer) lazyForm.get("phase_required_submissions", i);
-            // If the number of required submissions is specified, set it
-            if (requiredSubmissions != null) {
-                phase.setAttribute("Submission Number", requiredSubmissions.toString());
-            }
             // If the number of required reviewers is specified, set it
             Integer requiredReviewer = (Integer) lazyForm.get("phase_required_reviewers", i);
             if (requiredReviewer != null) {
@@ -1415,12 +1438,6 @@ public class ProjectActions extends DispatchAction {
             }
 
             Boolean manualScreening = (Boolean) lazyForm.get("phase_manual_screening", i);
-            // If the manual screening flag is specified, set it
-            if (manualScreening != null) {
-                phase.setAttribute("Manual Screening", manualScreening.booleanValue() ? "Yes" : "No");
-            } else {
-                phase.setAttribute("Manual Screening", "No");
-            }
             Boolean viewAppealResponses = (Boolean) lazyForm.get("phase_view_appeal_responses", i);
             // If the view appeal response during appeals flag is specified, set it
             if (viewAppealResponses != null) {
@@ -1648,21 +1665,26 @@ public class ProjectActions extends DispatchAction {
             // Obtain an instance of Phase Manager
             PhaseManager phaseManager = ActionsHelper.createPhaseManager(true);
 
+            OperationCheckResult result = null;
             if ("close_phase".equals(action)) {
-                if (phaseStatus.getName().equals(PhaseStatus.OPEN.getName()) && phaseManager.canEnd(phase)) {
+            	result = phaseManager.canEnd(phase);
+            	if (phaseStatus.getName().equals(PhaseStatus.OPEN.getName()) && result.isSuccess()) {
                     // Close the phase
                     phaseManager.end(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 } else {
                     ActionsHelper.addErrorToRequest(request, new ActionMessage(
-                            "error.com.cronos.onlinereview.actions.editProject.CannotClosePhase", phaseType.getName()));
+                            "error.com.cronos.onlinereview.actions.editProject.CannotClosePhase", 
+                            phaseType.getName(), result.getMessage()));
                 }
             } else if ("open_phase".equals(action)) {
-                if (phaseStatus.getName().equals(PhaseStatus.SCHEDULED.getName()) && phaseManager.canStart(phase)) {
+            	result = phaseManager.canStart(phase);
+                if (phaseStatus.getName().equals(PhaseStatus.SCHEDULED.getName()) && result.isSuccess()) {
                     // Open the phase
                     phaseManager.start(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 } else {
                     ActionsHelper.addErrorToRequest(request, new ActionMessage(
-                            "error.com.cronos.onlinereview.actions.editProject.CannotOpenPhase", phaseType.getName()));
+                            "error.com.cronos.onlinereview.actions.editProject.CannotOpenPhase", 
+                            phaseType.getName(), result.getMessage()));
                 }
             }
         }
@@ -1680,6 +1702,8 @@ public class ProjectActions extends DispatchAction {
     private boolean validateProjectPhases(HttpServletRequest request, Project project, Phase[] projectPhases) {
         boolean arePhasesValid = true;
 
+        boolean isStudioProject = project.getProjectCategory().getProjectType().getId() == Constants.STUDIO_PROJECT_ID;
+        
         // TODO: Refactor this function, make it more concise
         // IF there is a Post-Mortem phase in project skip the validation as that phase may appear anywhere
         // in project timeline and actual order of the phases is not significant
@@ -1710,21 +1734,38 @@ public class ProjectActions extends DispatchAction {
             final String currentPhaseName = projectPhases[i].getPhaseType().getName();
             if (currentPhaseName.equals(SUBMISSION_PHASE_NAME)) {
                 // Submission should follow registration or post-mortem if it exists
-                if (i > 0 && !previousPhaseName.equals(REGISTRATION_PHASE_NAME)
-                          && !postMortemPhaseExists) {
+                if (i > 0 && !(previousPhaseName.equals(REGISTRATION_PHASE_NAME) 
+                               || previousPhaseName.equals(MILESTONE_REVIEW_PHASE_NAME))
+                    && !postMortemPhaseExists) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.SubmissionMustFollow");
                     arePhasesValid = false;
                 }
             } else {
-                final String nextPhaseName = i < (projectPhases.length - 1) ? projectPhases[i + 1].getPhaseType().getName() : "";
+                final String nextPhaseName 
+                    = i < (projectPhases.length - 1) ? projectPhases[i + 1].getPhaseType().getName() : "";
                 if (currentPhaseName.equals(REGISTRATION_PHASE_NAME)) {
                     // Registration should be followed by submission or post-mortem
-                    if (i == projectPhases.length - 1
-                            || !nextPhaseName.equals(SUBMISSION_PHASE_NAME)
-                            && !postMortemPhaseExists) {
+                    if (i == projectPhases.length - 1 
+                        || !(nextPhaseName.equals(SUBMISSION_PHASE_NAME) 
+                             || nextPhaseName.equals(MILESTONE_SUBMISSION_PHASE_NAME)) 
+                           && !postMortemPhaseExists) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.RegistrationMustBeFollowed");
+                        arePhasesValid = false;
+                    }
+                } else if (currentPhaseName.equals(MILESTONE_SUBMISSION_PHASE_NAME)) {
+                    // Milestone Submission should be followed by Milestone Screening
+                    if (!nextPhaseName.equals(MILESTONE_SCREENING_PHASE_NAME)) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.MilestoneSubmissionMustBeFollowed");
+                        arePhasesValid = false;
+                    }
+                } else if (currentPhaseName.equals(MILESTONE_SCREENING_PHASE_NAME)) {
+                    // Milestone Screening should be followed by Milestone Review
+                    if (!nextPhaseName.equals(MILESTONE_REVIEW_PHASE_NAME)) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.MilestoneScreeningMustBeFollowed");
                         arePhasesValid = false;
                     }
                 } else if (currentPhaseName.equals(SPECIFICATION_SUBMISSION_PHASE_NAME)) {
@@ -1809,12 +1850,14 @@ public class ProjectActions extends DispatchAction {
                 } else if (currentPhaseName.equals(FINAL_FIX_PHASE_NAME)) {
                     // Final fix should follow either appeals response or aggregation review, or final review
                     if (i == 0 ||
-                            (!previousPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME) &&
-                            !previousPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME) &&
-                            !previousPhaseName.equals(AGGREGATION_PHASE_NAME) &&
-                            !previousPhaseName.equals(APPROVAL_PHASE_NAME) &&
-                            !postMortemPhaseExists &&
-                            !previousPhaseName.equals(FINAL_REVIEW_PHASE_NAME))) {
+                            (!previousPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME) 
+                             && !previousPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME) 
+							 && !previousPhaseName.equals(AGGREGATION_PHASE_NAME)
+                             && !previousPhaseName.equals(APPROVAL_PHASE_NAME) 
+                             && !(previousPhaseName.equals(REVIEW_PHASE_NAME) && isStudioProject) 
+                             && !previousPhaseName.equals(FINAL_REVIEW_PHASE_NAME))
+                             && !postMortemPhaseExists
+                        ) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.FinalFixMustFollow");
                         arePhasesValid = false;
@@ -1995,6 +2038,9 @@ public class ProjectActions extends DispatchAction {
         Set<String> disabledResourceRoles = new HashSet<String>(Arrays.asList(ConfigHelper.getDisabledResourceRoles()));
         Set<String> reviewerHandles = new HashSet<String>();
         Map<String, String> primaryReviewerRoles = new HashMap<String, String>();
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager( false);
+        PhaseType[] phaseTypes = phaseManager.getAllPhaseTypes();
+        
         for (int i = 1; i < resourceNames.length; i++) {
             String resourceAction = (String) lazyForm.get("resources_action", i);
             if (!"delete".equalsIgnoreCase(resourceAction)) {
@@ -2043,15 +2089,35 @@ public class ProjectActions extends DispatchAction {
                         primaryReviewerRoles.put(resourceKey, handle);
                     }
                 }
+				// Check if the phase related to resource role exists
+                ResourceRole role = ActionsHelper.findResourceRoleById(resourceRoles, resourceRoleId);
+                if (role != null) {
+                    Long relatedPhaseTypeId = role.getPhaseType();
+                    if (relatedPhaseTypeId != null) {
+
+                        boolean found = false;
+                        for(Phase phase : projectPhases){
+                            if(phase.getPhaseType().getId() == relatedPhaseTypeId.longValue())
+                                found = true;
+                        }
+
+                        if (!found) {
+                            PhaseType phaseType = ActionsHelper.findPhaseTypeById(phaseTypes, relatedPhaseTypeId);
+                            ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                                            new ActionMessage( "error.com.cronos.onlinereview.actions."
+                                                                               + "editProject.Resource.PhaseNotFound",
+                                                                               phaseType.getName()));
+                            allResourcesValid = false;
+                        }
+                    }
+                }
             }
         }
-
 
         // Validate that no submitters who have submitted for project were changed (either by role or handle) or deleted
         // 0-index resource is skipped as it is a "dummy" one
         ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
         Set<Long> reviewResourceIds = findResourcesWithReviewsForProject(reviewManager, project.getId());
-        Set<Long> reviewersWithScorecards = findResourcesWithReviewsForProject(reviewManager, project.getId());
         for (int i = 1; i < resourceNames.length; i++) {
             String resourceAction = (String) lazyForm.get("resources_action", i);
             if (!"add".equals(resourceAction)) {
@@ -3293,8 +3359,18 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformScreening",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SCREENING_PERM_NAME) &&
                         ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME) != null));
+        request.setAttribute("isAllowedToPerformMilestoneScreening",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_MILESTONE_SCREENING_PERM_NAME) &&
+                        ActionsHelper.getPhase(phases, true, Constants.MILESTONE_SCREENING_PHASE_NAME) != null));
+        request.setAttribute("isAllowedToPerformMilestoneReview",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_MILESTONE_REVIEW_PERM_NAME) &&
+                        ActionsHelper.getPhase(phases, true, Constants.MILESTONE_REVIEW_PHASE_NAME) != null));
         request.setAttribute("isAllowedToViewScreening",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENING_PERM_NAME)));
+        request.setAttribute("isAllowedToViewMilestoneScreening",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MILESTONE_SCREENING_PERM_NAME)));
+        request.setAttribute("isAllowedToViewMilestoneReview",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MILESTONE_REVIEW_PERM_NAME)));
         request.setAttribute("isAllowedToUploadTC",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.UPLOAD_TEST_CASES_PERM_NAME)));
         request.setAttribute("isAllowedToPerformAggregation",
@@ -3460,12 +3536,6 @@ public class ProjectActions extends DispatchAction {
             if (phases[i].getAttribute("Registration Number") != null) {
                 form.set("phase_required_registrations", i + 1,
                         Integer.valueOf((String) phases[i].getAttribute("Registration Number")));
-            }
-            if (phases[i].getAttribute("Submission Number") != null) {
-                form.set("phase_required_submissions", i + 1,
-                        Integer.valueOf((String) phases[i].getAttribute("Submission Number")));
-                form.set("phase_manual_screening", i + 1,
-                        Boolean.valueOf("Yes".equals(phases[i].getAttribute("Manual Screening"))));
             }
             if (phases[i].getAttribute("Reviewer Number") != null) {
                 form.set("phase_required_reviewers", i + 1,

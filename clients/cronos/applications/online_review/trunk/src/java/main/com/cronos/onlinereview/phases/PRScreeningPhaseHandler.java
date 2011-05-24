@@ -1,22 +1,36 @@
 /**
- * Copyright (C) 2005 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2005 - 2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import com.topcoder.management.phase.OperationCheckResult;
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.project.phases.Phase;
 
 /**
  * The extend from ScreeningPhaseHandler to add on the logic to push data to project_result.
  *
- * @author brain_cn
- * @version 1.0
+ * <p>
+ * Version 1.1 (Online Review Replatforming Release 2) Change notes:
+ *   <ol>
+ *     <li>Update {@link #perform(Phase, String)} to send screening result notification emails for studio contest.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author brain_cn, TCSASSEMBER
+ * @version 1.1
  */
 public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
-
+    /**
+     * Represents the <code>ScreeningResultNotification</code> instance to send notification email.
+     * 
+     * @since 1.1
+     */
+    private final ScreeningResultNotification notification;
+    
     /**
      * Create a new instance of ScreeningPhaseHandler using the default namespace for loading configuration settings.
      *
@@ -24,6 +38,7 @@ public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
      */
 	public PRScreeningPhaseHandler() throws ConfigurationException {
 		super();
+		notification = new ScreeningResultNotification(DEFAULT_NAMESPACE, "Contest Submission", "Screening", "Failed Screening");
 	}
 
     /**
@@ -36,6 +51,7 @@ public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
      */
 	public PRScreeningPhaseHandler(String namespace) throws ConfigurationException {
 		super(namespace);
+		notification = new ScreeningResultNotification(namespace, "Contest Submission", "Screening", "Failed Screening");
 	}
 
     /**
@@ -49,7 +65,7 @@ public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
      * @throws PhaseHandlingException if there is any error occurred while processing the phase.
      * @throws IllegalArgumentException if the input is null.
      */
-    public boolean canPerform(Phase phase) throws PhaseHandlingException {
+    public OperationCheckResult canPerform(Phase phase) throws PhaseHandlingException {
     	return super.canPerform(phase);
     }
 
@@ -71,6 +87,18 @@ public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
     	Connection conn = this.createConnection();
     	try {
     		processPR(phase.getProject().getId(), conn, toStart);
+    		
+    		if (!toStart) {
+    		    long projectId = phase.getProject().getId();
+    		    if (PRHelper.isStudioProject(projectId)) {
+    		        try {
+    	                notification.sendEmailToSubmitters(getManagerHelper().getProjectManager().getProject(projectId));
+    	            } catch (Exception e) {
+    	                throw new PhaseHandlingException("Failed to send email to submitters on Screening results", 
+    	                                                 e);
+    	            }
+    		    }
+    		}
     	} finally {
     		PRHelper.close(conn);
     	}

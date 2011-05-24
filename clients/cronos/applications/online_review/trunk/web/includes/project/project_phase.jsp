@@ -11,9 +11,14 @@
   - Version 1.3 (Specification Review Part 1 assembly) changes: Added support for Specification Submission/Review
   - phases.
   -
+  - Version 1.3.1 (Milestone Support assembly) changes: Added support for Milestone phases.
+  -
+  - Version 1.3.2 (Online Review Replatforming Release 2) changes: Change submission.uploads[0] to submission.upload.
+  -
   - Version 1.4 (Online Review Status Validation Assembly 1.0) changes: removing columns from Aggregation and Screening tabs
   -
 --%>
+<%@page import="com.topcoder.shared.util.ApplicationServer"%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -166,7 +171,12 @@
 													<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" alt="${placeStr}" border="0" />
 												</c:if>
 											</c:if>
-											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
+											<c:if test="${project.projectCategory.projectType.id ne 3}">
+											    <html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
+											</c:if>
+											<c:if test="${project.projectCategory.projectType.id eq 3}">
+                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<bean:message key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                            </c:if>
 											<c:if test="${not empty submitter}">
 												(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 											</c:if>
@@ -240,22 +250,25 @@
 										</c:if>
 									</tr>
 									<c:forEach items="${prevSubmissions}" var="pastSubmission" varStatus="pastSubmissionStatus">
-										<tr id="PrevSubm${submBoxIdx}_${submissionStatus.index}" class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}' style="display:none;">
-											<td class="value" colspan="2" nowrap="nowrap">
-												<html:img border="0" srcKey="viewProjectDetails.box.Submission.icoShowMore.img" styleClass="Outline" style="visibility:hidden;" />
-												<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&amp;uid=${pastSubmission.id}">
-													<bean:message key="viewProjectDetails.box.Submission.Previous.UploadID" />
-													${pastSubmission.id}</html:link></td>
-											<td class="value" width="22%">${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
-											<td class="value" width="14%"><!-- @ --></td>
+                                        <tr id="PrevSubm${submBoxIdx}_${submissionStatus.index}" class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}' style="display:none;">
+                                            <td class="value" colspan="2" nowrap="nowrap">
+                                                    <html:img border="0" srcKey="viewProjectDetails.box.Submission.icoShowMore.img" styleClass="Outline" style="visibility:hidden;" />
+		                                            <c:if test="${project.projectCategory.projectType.id ne 3}">
+		                                                <html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${pastSubmission.id}" titleKey="viewProjectDetails.box.Submission.Previous.UploadID">${pastSubmission.id}</html:link>
+		                                            </c:if>
+		                                            <c:if test="${project.projectCategory.projectType.id eq 3}">
+		                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&uid=${pastSubmission.id}&sbt=original" title="<bean:message key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
+		                                            </c:if>
+                                            </td>
+                                            <td class="value" width="22%">${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
+                                            <td class="value" width="15%"><!-- @ --></td>
+                                            <td class="value" width="14%"><!-- @ --></td>
 											<td class="value" width="15%"><!-- @ --></td>
-											<td class="value" width="14%"><!-- @ --></td>
-											<td class="value" width="15%"><!-- @ --></td>
-										</tr>
+                                        </tr>
 									</c:forEach>
 								</c:forEach>
 								<tr>
-									<td class="lastRowTD" colspan="7"><!-- @ --></td>
+									<td class="lastRowTD" colspan="6"><!-- @ --></td>
 								</tr>
 							</table>
 
@@ -485,33 +498,33 @@
                                         <c:set var="winningSubmission" value="${submission}" />
                                     </c:if>
                                 </c:forEach>
-                                <c:if test="${not empty winningSubmission}">
-                                    <tr class="light">
-                                        <td class="value" nowrap="nowrap">
-                                            <html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
-                                            <html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningSubmission.upload.id}"
-                                                titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
-                                            (<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
-                                        </td>
-                                        <c:if test="${not empty group.aggregation}">
-                                            <c:if test="${group.aggregation.committed}">
-                                                <td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.aggregation.modificationTimestamp)}</td>
-                                                <td class="valueC" nowrap="nowrap"><html:link
-                                                    page="/actions/ViewAggregation.do?method=viewAggregation&rid=${group.aggregation.id}"><bean:message
-                                                    key="viewProjectDetails.box.Aggregation.ViewResults" /></html:link></td>
-                                            </c:if>
-                                            <c:if test="${not group.aggregation.committed}">
-                                                <td class="value"><!-- @ --></td>
-                                                <c:if test="${isAllowedToPerformAggregation}">
-                                                    <td class="valueC" nowrap="nowrap"><html:link
-                                                        page="/actions/EditAggregation.do?method=editAggregation&rid=${group.aggregation.id}"><b><bean:message
-                                                        key="viewProjectDetails.box.Aggregation.Submit" /></b></html:link></td>
-                                                </c:if>
-                                                <c:if test="${not isAllowedToPerformAggregation}">
-                                                    <td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
-                                                </c:if>
-                                            </c:if>
-                                        </c:if>
+								<c:if test="${not empty winningSubmission}">
+									<tr class="light">
+										<td class="value" nowrap="nowrap">
+											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
+											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningsubmission.upload.id}"
+												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
+											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
+										</td>
+										<c:if test="${not empty group.aggregation}">
+											<c:if test="${group.aggregation.committed}">
+												<td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.aggregation.modificationTimestamp)}</td>
+												<td class="valueC" nowrap="nowrap"><html:link
+													page="/actions/ViewAggregation.do?method=viewAggregation&rid=${group.aggregation.id}"><bean:message
+													key="viewProjectDetails.box.Aggregation.ViewResults" /></html:link></td>
+											</c:if>
+											<c:if test="${not group.aggregation.committed}">
+												<td class="value"><!-- @ --></td>
+												<c:if test="${isAllowedToPerformAggregation}">
+													<td class="valueC" nowrap="nowrap"><html:link
+														page="/actions/EditAggregation.do?method=editAggregation&rid=${group.aggregation.id}"><b><bean:message
+														key="viewProjectDetails.box.Aggregation.Submit" /></b></html:link></td>
+												</c:if>
+												<c:if test="${not isAllowedToPerformAggregation}">
+													<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
+												</c:if>
+											</c:if>
+										</c:if>
                                         <c:if test="${empty group.aggregation}">
                                             <td class="valueC"><!-- @ --></td>
                                             <td class="valueC"><bean:message key="NotAvailable" /></td>
@@ -545,7 +558,7 @@
 									<tr class="light">
 										<td class="value" nowrap="nowrap">
 											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
-											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningSubmission.upload.id}"
+											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningsubmission.upload.id}"
 												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
 											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 										</td>
@@ -633,7 +646,7 @@
                                                           altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0"
                                                           styleClass="Outline"/>
                                                 <html:link
-                                                        page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningSubmission.upload.id}"
+                                                        page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningsubmission.upload.id}"
                                                         titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
                                                 (<tc-webtag:handle
                                                     coderId='${group.winner.allProperties["External Reference ID"]}'
@@ -859,6 +872,356 @@
                                     <td class="lastRowTD" colspan="5"><!-- @ --></td>
                                 </tr>
                             </table>
+                        </c:when>
+                        <c:when test='${group.appFunc == "MILESTONE"}'>
+                            <table id="Submissions${submBoxIdx}" class="scorecard" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td class="title" colspan="11">${group.tableName}</td>
+                                </tr>
+                                <tr>
+                                    <td class="header" colspan="2" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
+                                    <td class="header" width="12%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.Date" arg0="${group.groupIndex}" /></td>
+                                    <td class="headerC" width="12%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.Screener" /></td>
+                                    <td class="headerC" width="12%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ScreeningScore" arg0="${group.groupIndex}" /></td>
+                                    <td class="headerC" width="12%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ScreeningResult" arg0="${group.groupIndex}" /></td>
+                                    <td class="headerC" width="12%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.Reviewer" /></td>
+                                    <td class="headerC" width="12%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ReviewScore" arg0="${group.groupIndex}" /></td>
+                                    <td class="headerC" width="12%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ReviewResult" arg0="${group.groupIndex}" /></td>
+                                </tr>
+                                <c:set var="prevMilestoneSubm" value="${group.pastMilestoneSubmissions}" />
+                                <c:set var="prevMilestoneSubmissions" value="" />
+                                <c:forEach items="${group.milestoneSubmissions}" var="submission" varStatus="submissionStatus">
+                                    <c:set var="submitter" value="" />
+                                    <c:set var="submissionStatusName" value="${submission.submissionStatus.name}" />
+                                    <c:forEach items="${group.submitters}" var="curSubmitter">
+                                        <c:if test="${curSubmitter.id == submission.upload.owner}">
+                                            <c:set var="submitter" value="${curSubmitter}" />
+                                        </c:if>
+                                    </c:forEach>
+                                    <c:if test="${not empty prevMilestoneSubm}">
+                                        <c:set var="prevMilestoneSubmissions" value="${prevMilestoneSubm[submissionStatus.index]}" />
+                                    </c:if>
+                                    <tr class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}'>
+                                        <%-- Submission ID --%>
+                                        <td class="value" width="10%" nowrap="nowrap">
+                                            <c:if test="${not empty prevMilestoneSubmissions}">
+                                                <a id="PrevSubm${submBoxIdx}_${submissionStatus.index}_plus" href="javascript:void(0)" onClick='return expandSubmissions(${submBoxIdx}, ${submissionStatus.index}, this)'><html:img
+                                                        styleClass="Outline" border="0" srcKey="viewProjectDetails.box.Submission.icoShowMore.img" altKey="viewProjectDetails.box.Submission.icoShowMore.alt" /></a><a
+                                                    id="PrevSubm${submBoxIdx}_${submissionStatus.index}_minus" href="javascript:void(0)" onClick='return collapseSubmissions(${submBoxIdx}, ${submissionStatus.index}, this)' style="display:none;"><html:img
+                                                        styleClass="Outline" border="0" srcKey="viewProjectDetails.box.Submission.icoShowLess.img" altKey="viewProjectDetails.box.Submission.icoShowLess.alt" /></a>
+                                            </c:if>
+                                            <c:if test="${(empty prevMilestoneSubmissions) and (not empty prevMilestoneSubm)}">
+                                                <html:img styleClass="Outline" border="0" srcKey="viewProjectDetails.box.Submission.icoShowMore.img" style="visibility:hidden;" />
+                                            </c:if>
+                                            <c:set var="placement" value="" />
+                                            <c:if test="${not empty submission}">
+                                                <c:set var="placement" value='${submission.placement}' />
+                                            </c:if>
+                                            <c:set var="failedReview"
+                                                   value="${(submissionStatusName == 'Failed Milestone Screening') or (submissionStatusName == 'Failed Milestone Review')}" />
+                                            <c:if test="${(not empty placement) and (not failedReview)}">
+                                                <c:choose>
+                                                    <c:when test="${placement == 1}">
+                                                        <html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" styleClass="Outline" border="0" />
+                                                    </c:when>
+                                                    <c:when test="${placement == 2}">
+                                                        <html:img srcKey="viewProjectDetails.Submitter.icoRunnerUp.img" altKey="viewProjectDetails.Submitter.icoRunnerUp.alt" styleClass="Outline" border="0" />
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <html:img srcKey="viewProjectDetails.Submitter.icoOther.img" alt="${placement} Place" styleClass="Outline" border="0" />
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:if>
+                                            <c:if test="${failedReview}">
+                                                <c:set var="failureKeyName" value='SubmissionStatus.${fn:replace(submissionStatusName, " ", "")}' />
+                                                <c:if test="${empty placement}">
+                                                    <html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" altKey="${failureKeyName}" border="0" />
+                                                </c:if>
+                                                <c:if test="${not empty placement}">
+                                                    <c:set var="placeStr" value="${orfn:getMessage(pageContext, failureKeyName)} (Place ${placement})" />
+                                                    <html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" alt="${placeStr}" border="0" />
+                                                </c:if>
+                                            </c:if>
+                                            <c:if test="${project.projectCategory.projectType.id ne 3}">
+                                                <html:link page="/actions/DownloadMilestoneSubmission.do?method=downloadMilestoneSubmission&uid=${submission.upload.id}"
+                                                       titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
+                                            </c:if>
+                                            <c:if test="${project.projectCategory.projectType.id eq 3}">
+                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.upload.id}&sbt=original" title="<bean:message key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                            </c:if>
+                                            <c:if test="${not empty submitter}">
+                                                (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}'
+                                                                   context="${orfn:getHandlerContext(pageContext.request)}" />)
+                                            </c:if>
+                                        </td>
+
+                                        <%-- Delete submission --%>
+                                        <td class="value" <c:if test="${isManager and not group.milestoneReviewFinished}">width="5%"</c:if>>
+                                            <c:choose>
+                                               <c:when test="${isManager and not group.milestoneReviewFinished}">
+                                                   <html:link page="/actions/DeleteSubmission.do?method=deleteSubmission&uid=${submission.upload.id}">
+                                                       <html:img srcKey="viewProjectDetails.box.Submission.icoTrash.img"
+                                                                 altKey="viewProjectDetails.box.Submission.icoTrash.alt"
+                                                                 border="0" styleClass="Outline" />
+                                                   </html:link>
+                                               </c:when>
+                                               <c:otherwise><!-- @ --></c:otherwise>
+                                            </c:choose>
+                                        </td>
+
+                                        <%-- Submission Date --%>
+                                        <td class="value" width="12%">
+                                            ${orfn:displayDate(pageContext.request, submission.upload.creationTimestamp)}
+                                        </td>
+
+                                        <%-- Milestone Screener --%>
+                                            <td class="valueC" width="15%">
+                                                <c:choose>
+                                                    <c:when test="${empty group.milestoneScreener}">
+                                                        <bean:message
+                                                                key="viewProjectDetails.box.Screening.ScreenerNotAssigned"/>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <tc-webtag:handle
+                                                                coderId='${group.milestoneScreener.allProperties["External Reference ID"]}'
+                                                                context="${orfn:getHandlerContext(pageContext.request)}"/>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+
+                                        <%-- Screening Score --%>
+                                        <c:set var="review" value="" />
+                                        <c:forEach items="${group.milestoneScreeningReviews}" var="screening">
+                                            <c:if test="${screening.submission == submission.id}">
+                                                <c:set var="review" value="${screening}" />
+                                            </c:if>
+                                        </c:forEach>
+
+                                        <td class="valueC" width="14%" nowrap="nowrap">
+                                            <c:choose>
+                                                <c:when test="${empty review}">
+                                                    <c:choose>
+                                                        <c:when test="${isAllowedToPerformMilestoneScreening}">
+                                                            <b><html:link
+                                                                    page="/actions/CreateMilestoneScreening.do?method=createMilestoneScreening&sid=${submission.id}">
+                                                                <bean:message
+                                                                        key="viewProjectDetails.box.Screening.Submit"/></html:link></b>
+                                                        </c:when>
+                                                        <c:otherwise><bean:message key="Pending"/></c:otherwise>
+                                                    </c:choose>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:choose>
+                                                        <c:when test="${review.committed}">
+                                                            <c:choose>
+                                                                <c:when test="${isAllowedToViewMilestoneScreening}">
+                                                                    <html:link
+                                                                            page="/actions/ViewMilestoneScreening.do?method=viewMilestoneScreening&rid=${review.id}">
+                                                                        ${orfn:displayScore(pageContext.request, review.score)}</html:link>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    ${orfn:displayScore(pageContext.request, review.score)}
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <c:choose>
+                                                                <c:when test="${isAllowedToPerformMilestoneScreening}">
+                                                                    <b><html:link
+                                                                            page="/actions/EditMilestoneScreening.do?method=editMilestoneScreening&rid=${review.id}">
+                                                                        <bean:message
+                                                                                key="viewProjectDetails.box.Screening.Submit"/></html:link></b>
+                                                                </c:when>
+                                                                <c:otherwise><bean:message key="Pending"/></c:otherwise>
+                                                            </c:choose>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+
+                                        <%-- Screening Results --%>
+                                        <td class="valueC">
+                                            <c:choose>
+                                                <c:when test="${not empty review and review.committed}">
+                                                    <c:choose>
+                                                        <c:when test="${review.score >= passingMinimum}">
+                                                            <bean:message key="viewProjectDetails.box.Screening.Passed"/>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <bean:message key="viewProjectDetails.box.Screening.Failed"/>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </c:when>
+                                                <c:otherwise><!--@--></c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <c:set var="failedScreening" value="${(submissionStatusName == 'Failed Milestone Screening')}" />
+
+                                            <%-- Milestone Reviewer --%>
+                                            <td class="valueC" width="12%">
+                                                <c:if test="${not failedScreening}">
+                                                    <c:choose>
+                                                        <c:when test="${empty group.milestoneReviewer}">
+                                                            <bean:message
+                                                                    key="viewProjectDetails.box.Milestone.ReviewerNotAssigned"/>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <tc-webtag:handle
+                                                                    coderId='${group.milestoneReviewer.allProperties["External Reference ID"]}'
+                                                                    context="${orfn:getHandlerContext(pageContext.request)}"/>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </c:if>
+                                            </td>
+
+                                            <%-- Milestone Review Score --%>
+                                            <c:set var="review" value="" />
+                                            <c:forEach items="${group.milestoneReviews}" var="item">
+                                                <c:if test="${item.submission == submission.id}">
+                                                    <c:set var="review" value="${item}" />
+                                                </c:if>
+                                            </c:forEach>
+
+                                            <td class="valueC" width="14%" nowrap="nowrap">
+                                                <c:if test="${not failedScreening}">
+                                                <c:choose>
+                                                    <c:when test="${empty review}">
+                                                        <c:choose>
+                                                            <c:when test="${isAllowedToPerformMilestoneReview}">
+                                                                <b><html:link
+                                                                        page="/actions/CreateMilestoneReview.do?method=createMilestoneReview&sid=${submission.id}">
+                                                                    <bean:message
+                                                                            key="viewProjectDetails.box.Screening.Submit"/></html:link></b>
+                                                            </c:when>
+                                                            <c:otherwise><bean:message key="Pending"/></c:otherwise>
+                                                        </c:choose>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <c:choose>
+                                                            <c:when test="${review.committed}">
+                                                                <c:choose>
+                                                                    <c:when test="${isSubmitter and not group.milestoneReviewFinished}">
+                                                                        <bean:message key="Pending"/>
+                                                                    </c:when>
+                                                                    <c:when test="${isAllowedToViewMilestoneReview}">
+                                                                        <html:link
+                                                                                page="/actions/ViewMilestoneReview.do?method=viewMilestoneReview&rid=${review.id}">
+                                                                            ${orfn:displayScore(pageContext.request, review.score)}</html:link>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        ${orfn:displayScore(pageContext.request, review.score)}
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <c:choose>
+                                                                    <c:when test="${isAllowedToPerformMilestoneReview}">
+                                                                        <b><html:link
+                                                                                page="/actions/EditMilestoneReview.do?method=editMilestoneReview&rid=${review.id}">
+                                                                            <bean:message
+                                                                                    key="viewProjectDetails.box.Screening.Submit"/></html:link></b>
+                                                                    </c:when>
+                                                                    <c:otherwise><bean:message key="Pending"/></c:otherwise>
+                                                                </c:choose>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                                </c:if>
+                                            </td>
+
+                                            <%-- Milestone Review Results --%>
+                                            <td class="valueC">
+                                                <c:if test="${not failedScreening}">
+
+                                                <c:choose>
+                                                    <c:when test="${not empty review and review.committed}">
+                                                        <c:choose>
+                                                            <c:when test="${isSubmitter and not group.milestoneReviewFinished}">
+                                                                <!--@-->
+                                                            </c:when>
+                                                            <c:when test="${review.score >= passingMinimum}">
+                                                                <bean:message key="viewProjectDetails.box.Screening.Passed"/>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <bean:message key="viewProjectDetails.box.Screening.Failed"/>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </c:when>
+                                                    <c:otherwise><!--@--></c:otherwise>
+                                                </c:choose>
+                                                </c:if>
+                                            </td>
+                                    </tr>
+
+
+                                    <c:forEach items="${prevMilestoneSubmissions}" var="pastSubmission" varStatus="pastSubmissionStatus">
+                                        <tr id="PrevSubm${submBoxIdx}_${submissionStatus.index}" class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}' style="display:none;">
+                                            <td class="value" colspan="2" nowrap="nowrap">
+                                                <html:img border="0" srcKey="viewProjectDetails.box.Submission.icoShowMore.img" styleClass="Outline" style="visibility:hidden;" />
+		                                        <c:if test="${project.projectCategory.projectType.id ne 3}">
+		                                                <html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&amp;uid=${pastSubmission.id}"
+		                                                       titleKey="viewProjectDetails.box.Submission.Previous.UploadID">${pastSubmission.id}</html:link>
+		                                        </c:if>
+		                                        <c:if test="${project.projectCategory.projectType.id eq 3}">
+		                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${pastSubmission.id}&sbt=original" title="<bean:message key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
+		                                        </c:if>
+                                            </td>
+                                            <td class="value" width="12%">${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
+                                            <td class="value" width="12%"><!-- @ --></td>
+                                            <td class="value" width="12%"><!-- @ --></td>
+                                            <td class="value" width="12%"><!-- @ --></td>
+                                            <td class="value" width="12%"><!-- @ --></td>
+                                            <td class="value" width="12%"><!-- @ --></td>
+                                            <td class="value" width="12%"><!-- @ --></td>
+                                        </tr>
+                                    </c:forEach>
+                                </c:forEach>
+                                <tr>
+                                    <td class="lastRowTD" colspan="11"><!-- @ --></td>
+                                </tr>
+                            </table>
+
+                            <c:if test="${(not empty prevMilestoneSubm) && (submBoxIdx == 0)}">
+<script language="JavaScript" type="text/javascript">
+    function expandSubmissions(iBoxIdx, iLinkIdx, aObject) {
+        return expcollSubmissions(iBoxIdx, iLinkIdx, aObject, "none", "inline", "");
+    }
+    function collapseSubmissions(iBoxIdx, iLinkIdx, aObject) {
+        return expcollSubmissions(iBoxIdx, iLinkIdx, aObject, "inline", "none", "none");
+    }
+
+    function expcollSubmissions(iBoxIdx, iLinkIdx, aObject, strStyle1, strStyle2, strStyle3) {
+        var strRowGroup = "PrevSubm" + iBoxIdx + "_" + iLinkIdx;
+        var imgPlus = document.getElementById(strRowGroup + "_plus");
+        var imgMinus = document.getElementById(strRowGroup + "_minus");
+        var table = document.getElementById("Submissions" + iBoxIdx);
+
+        if (imgPlus) {
+            imgPlus.style.display = strStyle1;
+        }
+        if (imgMinus) {
+            imgMinus.style.display = strStyle2;
+        }
+        if (table) {
+            var rows = table.getElementsByTagName("tr");
+            for (var i = 0; i < rows.length; ++i) {
+                var row = table.rows[i];
+                if (row.id == strRowGroup) {
+                    row.style.display = strStyle3;
+                }
+            }
+        }
+
+        if (aObject.blur) {
+            aObject.blur();
+        }
+        return false;
+    }
+</script>
+                            </c:if>
+                            <c:set var="submBoxIdx" value="${submBoxIdx + 1}" />
                         </c:when>
 					</c:choose>
 				</c:if>

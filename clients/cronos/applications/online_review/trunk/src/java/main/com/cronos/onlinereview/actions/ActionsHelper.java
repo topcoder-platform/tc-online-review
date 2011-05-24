@@ -233,6 +233,22 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  * </p>
  *
  * <p>
+ * Version 1.9.1 (Milestone Support Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #getMostRecentSubmissions(UploadManager, Project, String)} method to introduce new parameter
+ *     for submission type.</li>
+ *   </ol>
+ * </p>
+ *
+ * <p>
+ * Version 1.9.2 (Online Review Replatforming Release 2) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #isProjectResultCategory(long)} method to include the studio contest.</li>
+ *     <li>Change submission.getUplaods.get(0) to submission.getUpload().</li>
+ *   </ol>
+ * </p>
+ *
+ * <p>
  * Version 1.10 (Online Review Late Deliverables Search Assembly 1.0) Change notes:
  *   <ol>
  *     <li>Added {@link #createPhasePersistence(HttpServletRequest)} method.</li>
@@ -310,6 +326,19 @@ public class ActionsHelper {
     /** constant for "Closed" phase status. */
     private static final String PHASE_STATUS_CLOSED = "Closed";
 
+    /**
+     * <p>A <code>long</code> providing the ID for <code>Contest Submission</code> submission type.</p>
+     * 
+     * @since 1.9.1
+     */
+    private static final long SUBMISSION_TYPE_CONTEST = 1;
+
+    /**
+     * <p>A <code>long</code> providing the ID for <code>Milestone Submission</code> submission type.</p>
+     * 
+     * @since 1.9.1
+     */
+    private static final long SUBMISSION_TYPE_MILESTONE = 3;
 
     /**
      * This constructor is declared private to prohibit instantiation of the <code>ActionsHelper</code> class.
@@ -341,6 +370,16 @@ public class ActionsHelper {
                 || categoryId == 25   // RIA Component
                 || categoryId == 29   // Copilot Posting
                 || categoryId == 35   // Content Creation
+                || categoryId == 16   // Icon Sets
+                || categoryId == 17   // Storyboards
+                || categoryId == 18   // Wireframes
+                || categoryId == 20   // Logos
+                || categoryId == 21   // Print
+                || categoryId == 22   // Specification
+                || categoryId == 30   // Windget or Mobile Screen Design
+                || categoryId == 31   // Front-End Flash
+                || categoryId == 32   // Application Front-End Design
+                || categoryId == 34   // Other
         );
     }
 
@@ -1179,7 +1218,7 @@ public class ActionsHelper {
             request.setAttribute("errorTitle", messages.getMessage("Error.Title.General"));
         } else {
             if ("Error.NoPermission".equalsIgnoreCase(reasonKey)) {
-                log.log(Level.WARN, "Authorization failures.User tried to perform "
+                log.log(Level.WARN, "Authorization failures. User tried to perform "
                         + permission + " which he/she doesn't have permission.");
             }
             request.setAttribute("errorTitle", messages.getMessage("Error.Title." + permission.replaceAll(" ", "")));
@@ -2356,17 +2395,17 @@ public class ActionsHelper {
     }
 
     /**
-     * TODO: Write documentation for this method.
+     * <p>Gets the list of submissions of specified type for specified project.</p>
      *
-     * @return
-     * @param manager
-     * @param project
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>.
-     * @throws BaseException
+     * @param manager an <code>UploadManager</code> providing the interface to upload manager. 
+     * @param project a <code>Project</code> providing the details for the project. 
+     * @param submissionTypeName a <code>String</code> providing the name of desired submission type.
+     * @return a <code>Submission</code> array listing the submissions of specified type for project. 
+     * @throws BaseException if an unexpected error occurs.
+     * @throws IllegalArgumentException if any of the parameters are <code>null</code>.
      */
-    public static Submission[] getMostRecentSubmissions(UploadManager manager, Project project)
-        throws BaseException {
+    public static Submission[] getMostRecentSubmissions(UploadManager manager, Project project,
+                                                        String submissionTypeName) throws BaseException {
         // Validate parameters
         validateParameterNotNull(manager, "manager");
         validateParameterNotNull(project, "project");
@@ -2374,13 +2413,11 @@ public class ActionsHelper {
         SubmissionStatus[] allSubmissionStatuses = manager.getAllSubmissionStatuses();
         SubmissionType[] allSubmissionTypes = manager.getAllSubmissionTypes();
         SubmissionType submissionType
-            = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes, "Contest Submission");
-
+            = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes, submissionTypeName);
 
         Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
         Filter filterType = SubmissionFilterBuilder.createSubmissionTypeIdFilter(submissionType.getId());
         Filter filterStatus = createSubmissionStatusFilter(allSubmissionStatuses);
-
         Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterType));
 
         return manager.searchSubmissions(filter);
@@ -2489,8 +2526,11 @@ public class ActionsHelper {
             // Get this phase's type name
             String phaseName = phase.getPhaseType().getName();
 
-            if (phaseName.equalsIgnoreCase(Constants.REGISTRATION_PHASE_NAME) ||
-                    phaseName.equalsIgnoreCase(Constants.SUBMISSION_PHASE_NAME)) {
+            if (phaseName.equalsIgnoreCase(Constants.REGISTRATION_PHASE_NAME) 
+                || phaseName.equalsIgnoreCase(Constants.SUBMISSION_PHASE_NAME)
+                || phaseName.equalsIgnoreCase(Constants.MILESTONE_SUBMISSION_PHASE_NAME)
+                || phaseName.equalsIgnoreCase(Constants.MILESTONE_SCREENING_PHASE_NAME)
+                || phaseName.equalsIgnoreCase(Constants.MILESTONE_REVIEW_PHASE_NAME)) {
                 if (prevPhase == true) {
                     return true;
                 }
@@ -2795,7 +2835,12 @@ public class ActionsHelper {
                 = new CommittedReviewDeliverableChecker(dbconn, false);
             DeliverableChecker testCasesChecker = new TestCasesDeliverableChecker(dbconn);
 
-            checkers.put(Constants.SUBMISSION_DELIVERABLE_NAME, new SubmissionDeliverableChecker(dbconn));
+            checkers.put(Constants.SUBMISSION_DELIVERABLE_NAME, 
+                         new SubmissionDeliverableChecker(dbconn, SUBMISSION_TYPE_CONTEST));
+            checkers.put(Constants.MILESTONE_SUBMISSION_DELIVERABLE_NAME, 
+                         new SubmissionDeliverableChecker(dbconn, SUBMISSION_TYPE_MILESTONE));
+            checkers.put(Constants.MILESTONE_SCREENING_DELIVERABLE_NAME, committedChecker);
+            checkers.put(Constants.MILESTONE_REVIEW_DELIVERABLE_NAME, committedChecker);
             checkers.put(Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME,
                          new SpecificationSubmissionDeliverableChecker(dbconn));
             checkers.put(Constants.SPECIFICATION_REVIEW_DELIVERABLE_NAME, committedChecker);
