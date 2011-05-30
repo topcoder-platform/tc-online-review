@@ -43,6 +43,7 @@ public class UserTermsOfUseLibrary extends BaseEJBLibrary implements UserTermsOf
      * @since 1.0.1 
      */
     public UserTermsOfUseLibrary(String namespace) {
+    	this.bean = new UserTermsOfUseBean();
     }
 
     /**

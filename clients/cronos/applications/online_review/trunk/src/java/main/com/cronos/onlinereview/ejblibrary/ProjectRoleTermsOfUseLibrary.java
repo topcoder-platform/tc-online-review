@@ -47,6 +47,7 @@ public class ProjectRoleTermsOfUseLibrary extends BaseEJBLibrary implements Proj
      * @since 1.0.1 
      */
     public ProjectRoleTermsOfUseLibrary(String namespace) {
+    	this.bean = new ProjectRoleTermsOfUseBean();
     }
 
     /**
