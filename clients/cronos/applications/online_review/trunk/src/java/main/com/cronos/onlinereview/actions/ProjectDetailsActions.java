@@ -14,7 +14,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,7 +50,6 @@ import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.search.NotificationFilterBuilder;
-import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
@@ -66,7 +64,6 @@ import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.EqualToFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.InFilter;
-import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.servlet.request.ConfigurationException;
 import com.topcoder.servlet.request.DisallowedDirectoryException;
 import com.topcoder.servlet.request.FileDoesNotExistException;
@@ -3222,13 +3219,16 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
 
+        ActionsHelper.logDownloadAttempt(request, upload, !noRights);
+        
         if (noRights) {
+        	ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     errorMessageKey, "Error.NoPermission", Boolean.TRUE);
         }
 
         processSubmissionDownload(upload, request, response);
-
+        
         return null;
     }
 
