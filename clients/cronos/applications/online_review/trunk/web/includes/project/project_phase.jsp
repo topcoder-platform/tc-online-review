@@ -502,7 +502,7 @@
 									<tr class="light">
 										<td class="value" nowrap="nowrap">
 											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
-											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningsubmission.upload.id}"
+											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningSubmission.upload.id}"
 												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
 											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 										</td>
@@ -558,7 +558,7 @@
 									<tr class="light">
 										<td class="value" nowrap="nowrap">
 											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
-											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningsubmission.upload.id}"
+											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningSubmission.upload.id}"
 												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
 											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 										</td>
@@ -646,7 +646,7 @@
                                                           altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0"
                                                           styleClass="Outline"/>
                                                 <html:link
-                                                        page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningsubmission.upload.id}"
+                                                        page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningSubmission.upload.id}"
                                                         titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
                                                 (<tc-webtag:handle
                                                     coderId='${group.winner.allProperties["External Reference ID"]}'
