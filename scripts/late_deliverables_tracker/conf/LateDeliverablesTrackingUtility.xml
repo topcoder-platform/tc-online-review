@@ -208,6 +208,30 @@
                             </Property>
                         </Property>
                     </Property>
+                    <Property name="milestoneScreeningDeliverableChecker">
+                        <Property name="type">
+                            <Value>com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker</Value>
+                        </Property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="name">
+                                    <Value>DBConnectionFactory</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="milestoneReviewDeliverableChecker">
+                        <Property name="type">
+                            <Value>com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker</Value>
+                        </Property>
+                        <Property name="params">
+                            <Property name="param1">
+                                <Property name="name">
+                                    <Value>DBConnectionFactory</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </Property>
                     <Property name="screeningDeliverableChecker">
                         <Property name="type">
                             <Value>com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker</Value>
@@ -392,6 +416,22 @@
                     </Property>
                     <Property name="deliverableCheckerKey">
                         <Value>testCaseDeliverableChecker</Value>
+                    </Property>
+                </Property>
+                <Property name="deliverableChecker11">
+                    <Property name="deliverableName">
+                        <Value>Milestone Screening</Value>
+                    </Property>
+                    <Property name="deliverableCheckerKey">
+                        <Value>milestoneScreeningDeliverableChecker</Value>
+                    </Property>
+                </Property>
+                <Property name="deliverableChecker12">
+                    <Property name="deliverableName">
+                        <Value>Milestone Review</Value>
+                    </Property>
+                    <Property name="deliverableCheckerKey">
+                        <Value>milestoneReviewDeliverableChecker</Value>
                     </Property>
                 </Property>
                 <Property name="searchBundleManagerNamespace">
