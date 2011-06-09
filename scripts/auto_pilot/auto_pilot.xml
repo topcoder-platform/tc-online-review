@@ -1029,7 +1029,7 @@
         </Property>
         <Property name="handler_milestone_review_def">
             <Property name="type">
-                <Value>com.cronos.onlinereview.phases.MilestoneReviewPhaseHandler</Value>
+                <Value>com.cronos.onlinereview.phases.PRMilestoneReviewPhaseHandler</Value>
             </Property>
         </Property>
     </Config>
