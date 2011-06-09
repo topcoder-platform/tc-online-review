@@ -10,7 +10,6 @@ import com.cronos.onlinereview.autoscreening.management.ConfigurationException;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManagerFactory;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
-import com.cronos.onlinereview.phases.MilestoneReviewPhaseHandler;
 import com.cronos.onlinereview.phases.MilestoneSubmissionPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler;
@@ -18,6 +17,7 @@ import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
 import com.cronos.onlinereview.phases.PRApprovalPhaseHandler;
 import com.cronos.onlinereview.phases.PRFinalFixPhaseHandler;
 import com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler;
+import com.cronos.onlinereview.phases.PRMilestoneReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRMilestoneScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRPostMortemPhaseHandler;
 import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
@@ -31,6 +31,8 @@ import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
 import com.topcoder.management.deliverable.PersistenceUploadManager;
 import com.topcoder.management.deliverable.UploadManager;
+import com.topcoder.management.deliverable.late.LateDeliverableManager;
+import com.topcoder.management.deliverable.late.impl.LateDeliverableManagerImpl;
 import com.topcoder.management.deliverable.persistence.UploadPersistence;
 import com.topcoder.management.deliverable.persistence.sql.SqlUploadPersistence;
 import com.topcoder.management.phase.DefaultPhaseManager;
@@ -49,8 +51,6 @@ import com.topcoder.management.resource.search.NotificationFilterBuilder;
 import com.topcoder.management.resource.search.NotificationTypeFilterBuilder;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.resource.search.ResourceRoleFilterBuilder;
-import com.topcoder.management.deliverable.late.LateDeliverableManager;
-import com.topcoder.management.deliverable.late.impl.LateDeliverableManagerImpl;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardManagerImpl;
 import com.topcoder.project.phases.PhaseType;
@@ -114,8 +114,15 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  *   </ol>
  * </p>
  *
- * @author evilisneo, BeBetter, isv, FireIce, VolodymyrK, rac_
- * @version 1.6
+ * <p>
+ * Version 1.7 (BUGR-4778) Change notes:
+ *   <ol>
+ *     <li>Use {@link PRMilestoneReviewPhaseHandler} instead of {@link MilestoneReviewPhaseHandler}.</li>
+ *   </ol> 
+ * </p>
+ *
+ * @author evilisneo, BeBetter, isv, FireIce, VolodymyrK, rac_, flexme
+ * @version 1.7
  */
 public class ManagerCreationHelper implements ManagersProvider {
 
@@ -240,7 +247,7 @@ public class ManagerCreationHelper implements ManagersProvider {
                     Constants.MILESTONE_SUBMISSION_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRMilestoneScreeningPhaseHandler(),
                     Constants.MILESTONE_SCREENING_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new MilestoneReviewPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRMilestoneReviewPhaseHandler(),
                     Constants.MILESTONE_REVIEW_PHASE_NAME);
             return phaseManager;
         } catch (Exception e) {
