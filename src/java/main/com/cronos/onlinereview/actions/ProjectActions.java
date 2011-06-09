@@ -1755,8 +1755,9 @@ public class ProjectActions extends DispatchAction {
                         arePhasesValid = false;
                     }
                 } else if (currentPhaseName.equals(MILESTONE_SUBMISSION_PHASE_NAME)) {
-                    // Milestone Submission should be followed by Milestone Screening
-                    if (!nextPhaseName.equals(MILESTONE_SCREENING_PHASE_NAME)) {
+                    // Milestone Submission should be followed by Milestone Screening or Milestone Review
+                    if (!nextPhaseName.equals(MILESTONE_SCREENING_PHASE_NAME) 
+					    && !nextPhaseName.equals(MILESTONE_REVIEW_PHASE_NAME) ) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.MilestoneSubmissionMustBeFollowed");
                         arePhasesValid = false;
