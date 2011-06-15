@@ -33,7 +33,7 @@
             <Dependency id="registrationPhase" isDependencyStart="true" isDependentStart="true" lagTime="300000"/>
         </Phase>
 
-        <Phase id="screeningPhase" length="21600000" type="screening" phaseId="5">
+        <Phase id="screeningPhase" length="43200000" type="screening" phaseId="5">
             <Dependency id="submissionPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
         </Phase>
 
@@ -52,7 +52,7 @@
             <Dependency id="appealsPhase" isDependencyStart="false" isDependentStart="true"/>
         </Phase>
 
-        <Phase id="aggregationPhase" length="21600000" type="aggregation" phaseId="9">
+        <Phase id="aggregationPhase" length="43200000" type="aggregation" phaseId="9">
             <!-- all attributes except "id" are omitted -->
             <Dependency id="appealsReponsePhase"/>
         </Phase>
