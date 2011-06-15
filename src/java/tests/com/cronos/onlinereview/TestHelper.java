@@ -390,8 +390,8 @@ public class TestHelper {
         // Data for comp_versions
         long versionId = getNextComponentVersionsId();
         executeStatement(con,
-            "INSERT INTO comp_versions (comp_vers_id, component_id, version, version_text, create_time, phase_id, phase_time, price, comments, modify_date, suspended_ind, browse, location, issue_tracker_path, revision) VALUES (" +
-            versionId + ", " + componentId + ", '1', '1.0', CURRENT, '112', CURRENT, '10000.00', '"+ componentName + "', CURRENT, '0', NULL, NULL, NULL, NULL)");
+            "INSERT INTO comp_versions (comp_vers_id, component_id, version, version_text, create_time, phase_id, phase_time, price, comments, modify_date, suspended_ind) VALUES (" +
+            versionId + ", " + componentId + ", '1', '1.0', CURRENT, '112', CURRENT, '10000.00', '"+ componentName + "', CURRENT, '0')");
         // Data for comp_categories
         executeStatement(con,
             "INSERT INTO comp_categories (comp_categories_id, component_id, category_id) VALUES (" +
