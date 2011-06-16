@@ -66,6 +66,11 @@ public class TestHelper {
     private static final String REVIEW_URL = "review_link";
 
     /**
+     * <p>Represents the unregister link.</p>
+     */
+    private static final String UNREGISTER_URL = "unregister_link";
+
+    /**
      * <p>Represents the selenium port.</p>
      */
     private static final String PORT = "port";
@@ -150,6 +155,16 @@ public class TestHelper {
      */
     public static final long DESIGN_REVIEW_SCORECARD_ID = 30000411;
 
+    /**
+     * <p>Represents Post-Moterm review scorecard </p>
+     */
+    public static final long POST_MORTEM_SCORECARD_ID = 30000721;
+
+    /**
+     * <p>Represents default screening scorecard id used when writing data into database.</p>
+     */
+    public static final long SCREENING_SCORECARD_ID = 30000412;
+
      /**
      * <p>Represents review scorecard question id used when writing data into database.</p>
      */
@@ -159,6 +174,7 @@ public class TestHelper {
      * <p>Represents date format to use in project name.</p>
      */
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(" MMM-dd-yyyy 'at' HH'h' mm'm' ss's'");
+
     
     /**
      * <p>Represents date format to use when performing database manipulations.
@@ -252,6 +268,19 @@ public class TestHelper {
     }
 
     /**
+     * To get the unregister URL.
+     *
+     * @return the unregister url
+     *
+     * @throws Exception if any error occurred
+     */
+    static String getUnregisterURL() throws Exception {
+        ConfigManager cm = ConfigManager.getInstance();
+
+        return cm.getProperty(TEST_NAMESPACE, UNREGISTER_URL).toString();
+    }
+
+    /**
      * Get the login Page.
      *
      * @return the index page.
@@ -323,10 +352,8 @@ public class TestHelper {
      * Create the project with generated id.
      *
      * @param projectId the project id.
-     * @param projectId2 the 2nd project id
-     * @param registrationClosed indicate if the registration is closed
-     * @param allPhase indicates if all phases are included for this project
-     *
+     * @param testName the project name
+     * @param phaseIds the map of all phase id
      * @throws Exception if any error
      */
     static void createProject(long projectId, String testName, Map<String, Long> phaseIds)
@@ -470,6 +497,22 @@ public class TestHelper {
             projectId + ", '46', 'true', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
         
     }
+
+    /**
+     * Update project to the specified category.
+     *
+     * @param projectId project id to use.
+     *
+     * @param category project category id to set.
+     *
+     * @param con connection to use.
+     *
+     * @throws Exception if any error occurred.
+     */
+    static void updateProjectCategory(long projectId, int category, Connection con) throws Exception{
+        executeStatement(con,
+            "UPDATE project set project_category_id="+ category +" where project_id=" + projectId);
+    }
     
     /**
      * Crates phase criterias
@@ -488,10 +531,19 @@ public class TestHelper {
             phaseIds.get("registration") + ", '5', 'No', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
         executeStatement(con,
             "INSERT INTO phase_criteria (project_phase_id, phase_criteria_type_id, parameter, create_user, create_date, modify_user, modify_date) VALUES (" +
+            phaseIds.get("review") + ", '1', '"+ DESIGN_REVIEW_SCORECARD_ID +"','" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+        executeStatement(con,
+            "INSERT INTO phase_criteria (project_phase_id, phase_criteria_type_id, parameter, create_user, create_date, modify_user, modify_date) VALUES (" +
+            phaseIds.get("review") + ", '6', '1','" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+        executeStatement(con,
+            "INSERT INTO phase_criteria (project_phase_id, phase_criteria_type_id, parameter, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("screening") + ", '3', '0', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
         executeStatement(con,
             "INSERT INTO phase_criteria (project_phase_id, phase_criteria_type_id, parameter, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("screening") + ", '5', 'No', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+        executeStatement(con,
+            "INSERT INTO phase_criteria (project_phase_id, phase_criteria_type_id, parameter, create_user, create_date, modify_user, modify_date) VALUES (" +
+            phaseIds.get("screening") + ", '1', '"+ SCREENING_SCORECARD_ID +"','" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
         executeStatement(con,
             "INSERT INTO phase_criteria (project_phase_id, phase_criteria_type_id, parameter, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("approval") + ", '6', '1', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
@@ -511,7 +563,7 @@ public class TestHelper {
      */
     static void createProjectPhases (long projectId, Map<String, Long> phaseIds, Connection con) throws Exception {
     	Calendar specSubmissionStartTime = Calendar.getInstance();
-    	specSubmissionStartTime.add(Calendar.HOUR, -48);
+    	specSubmissionStartTime.add(Calendar.HOUR, -2*24);
     	
     	Calendar specReviewStartTime = Calendar.getInstance();
     	specReviewStartTime.add(Calendar.HOUR, -24);
@@ -519,37 +571,37 @@ public class TestHelper {
     	Calendar registrationStartTime = Calendar.getInstance();
     	
     	Calendar registrationEndTime = Calendar.getInstance();
-    	registrationEndTime.add(Calendar.HOUR, 48);
+    	registrationEndTime.add(Calendar.HOUR, 2*24);
     	
     	Calendar screeningStartTime = Calendar.getInstance();
-    	screeningStartTime.add(Calendar.HOUR, 168);
+    	screeningStartTime.add(Calendar.HOUR, 7*24);
     	
     	Calendar reviewStartTime = Calendar.getInstance();
-    	reviewStartTime.add(Calendar.HOUR, 192);
+    	reviewStartTime.add(Calendar.HOUR, 8*24);
     	
     	Calendar appealsStartTime = Calendar.getInstance();
-    	appealsStartTime.add(Calendar.HOUR, 336);
+    	appealsStartTime.add(Calendar.HOUR, 14*24);
     	
     	Calendar appealsResponseStartTime = Calendar.getInstance();
-    	appealsResponseStartTime.add(Calendar.HOUR, 360);
+    	appealsResponseStartTime.add(Calendar.HOUR, 15*24);
     	
     	Calendar aggregationStartTime = Calendar.getInstance();
-    	aggregationStartTime.add(Calendar.HOUR, 384);
+    	aggregationStartTime.add(Calendar.HOUR, 16*24);
     	
     	Calendar aggregationReviewStartTime = Calendar.getInstance();
-    	aggregationReviewStartTime.add(Calendar.HOUR, 408);
+    	aggregationReviewStartTime.add(Calendar.HOUR, 17*24);
     	
     	Calendar finalFixesStartTime = Calendar.getInstance();
-    	finalFixesStartTime.add(Calendar.HOUR, 432);
+    	finalFixesStartTime.add(Calendar.HOUR, 18*24);
     	
     	Calendar finalReviewStartTime = Calendar.getInstance();
-    	finalReviewStartTime.add(Calendar.HOUR, 528);
+    	finalReviewStartTime.add(Calendar.HOUR, 22*24);
     	
     	Calendar approvalStartTime = Calendar.getInstance();
-    	approvalStartTime.add(Calendar.HOUR, 552);
+    	approvalStartTime.add(Calendar.HOUR, 23*24);
     	
     	Calendar approvalEndTime = Calendar.getInstance();
-    	approvalEndTime.add(Calendar.HOUR, 576);
+    	approvalEndTime.add(Calendar.HOUR, 24*24);
     	
     	// insert project phases.
         executeStatement(con,
@@ -604,6 +656,35 @@ public class TestHelper {
 	        "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
 	        phaseIds.get("approval") + ", " + projectId +
 	        ", '11', '1', NULL, '"+ DB_DATE_FORMAT.format(approvalStartTime.getTime())+"', '" + DB_DATE_FORMAT.format(approvalEndTime.getTime())+"', NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+    }
+
+
+    /**
+     * Creates Post-Moterm phases for specified project
+     *
+     * @param projectId project id to use.
+     * @param phaseIds map which holds ids of all phases to create.
+     * @param con connection to use.
+     *
+     * @throws Exception if any error occurred.
+     */
+    static void createPostMotermPhase(long projectId, Map<String, Long> phaseIds, Connection con) throws Exception {
+    	Calendar postMortemStartTime= Calendar.getInstance();
+    	postMortemStartTime.add(Calendar.HOUR, 7*24);
+
+    	Calendar postMortemEndTime= Calendar.getInstance();
+    	postMortemEndTime.add(Calendar.HOUR, 8*24);
+
+        //generate the phase Id
+        phaseIds.put("post_mortem", getNextProjectPhaseId());
+        executeStatement(con,
+            "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
+            phaseIds.get("post_mortem") + ", " + projectId +
+            ", '12', '1', NULL, '" + DB_DATE_FORMAT.format(postMortemStartTime.getTime()) + " ', '" + DB_DATE_FORMAT.format(postMortemStartTime.getTime()) + " ', NULL, NULL, '86400000', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
+        //add dependency
+        executeStatement(con,
+                "INSERT INTO phase_dependency (dependency_phase_id, dependent_phase_id, dependency_start, dependent_start, lag_time, create_user, create_date, modify_user, modify_date) VALUES (" +
+                phaseIds.get("submission") + ", " + phaseIds.get("post_mortem") + ", '0', '1', '0', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
     }
     
     /**
@@ -682,6 +763,45 @@ public class TestHelper {
     static void ClosePhase(long phaseId, Connection con) throws Exception {
     	executeStatement(con,
     			"UPDATE project_phase SET phase_status_id = 3 WHERE project_phase_id = " + phaseId);
+    }
+
+    /*
+    * open the project phase
+    * @param browser the selenium browser
+    * @param id , phase element id
+    * @param PhaseName, phase name
+    */
+    static void OpenPhaseByUI(Selenium browser, int id, String PhaseName ) throws Exception {
+        // Click the 'Edit Project' Link
+        browser.click("//img[@alt='Edit Project']");
+        browser.waitForPageToLoad(getTimeout());
+        // set phase duration to 0
+        browser.type("phase_duration["+ id +"]","0");
+        // open phase
+        String elementId = browser.getValue("name=phase_js_id[" + id + "]");
+        browser.type("explanation", "open the " + PhaseName + " for test");
+        browser.click("//tr[@id='" + elementId + "']/td[1]/img[1]");
+        browser.waitForPageToLoad(getTimeout());
+
+    }
+
+    /*
+    * close the project phase
+    * @param browser the selenium browser
+    * @param id , phase element id
+    * @param PhaseName, phase name
+    */
+    static void ClosePhaseByUI(Selenium browser, int id, String PhaseName ) throws Exception {
+        // Click the 'Edit Project' Link
+        browser.click("//img[@alt='Edit Project']");
+        browser.waitForPageToLoad(getTimeout());
+        // set phase duration to 0
+        browser.type("phase_duration["+ id +"]","0");
+        // Close phase
+        String elementId = browser.getValue("name=phase_js_id[" + id +"]");
+        browser.type("explanation", "close "+ PhaseName +" for test");
+        browser.click("//tr[@id='" + elementId + "']/td[1]/img[2]");
+        browser.waitForPageToLoad(getTimeout());
     }
 
     /**
@@ -1211,6 +1331,51 @@ public class TestHelper {
     		TestHelper.loginUser(browser);
     		TestHelper.deleteProject(browser, projectId);
     	}
+    }
+
+    /**
+     * submit the scorecard.
+     * @param browser the selenium browser
+     * @param rating result rating for the scorecard.
+     * @param clickElement element to be clicked.
+     * @param specReview indicate if it is a specification review
+     * @throws Exception if any error occurred.
+     */
+    static void submitScorecard(Selenium browser, String rating, String clickElement, boolean specReview) throws Exception{
+        browser.click("//table[@id='myRolesTable']/tbody/tr[2]/td[2]/a/b");
+        browser.waitForPageToLoad(TestHelper.getTimeout());
+        // fill the  scorecard
+        browser.select("answer[0]","label="+ rating);
+        browser.type("comment(0.1)", "This is my comments!");
+        if(specReview) {
+            browser.click("approve_specification");    
+        }
+        browser.click("//input[@alt='Save and Mark Complete']");
+        browser.waitForPageToLoad(TestHelper.getTimeout());
+        //Return to project details page
+        browser.click("//img[@alt='" + clickElement +"']");
+        browser.waitForPageToLoad(TestHelper.getTimeout());
+    }
+
+    /**
+     * add role to the project.
+     * @param browser the selenium browser
+     * @param role resource role to be added.
+     * @param user the name of the user to add as 'role'.
+     * @throws Exception if any error occurred.
+    */
+    static void addRoles(Selenium browser, String role, String user) throws Exception{
+        // Click the 'Edit Project' Link
+        browser.click("//img[@alt='Edit Project']");
+        browser.waitForPageToLoad(TestHelper.getTimeout());
+        // select the  role, no error expected
+        browser.select("resources_role[0]", "label=" + role);
+        browser.type("resources_name[0]", user);
+        browser.click("//img[@alt='Add']");
+        // add explanation
+        browser.type("explanation", "add " + role +" role");
+        browser.click("//input[@name='saveProjectChangesBtn']");
+        browser.waitForPageToLoad(TestHelper.getTimeout());
     }
 
  }

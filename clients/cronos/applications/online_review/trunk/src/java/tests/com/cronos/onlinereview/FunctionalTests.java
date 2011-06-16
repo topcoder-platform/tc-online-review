@@ -36,6 +36,16 @@ public class FunctionalTests extends TestCase {
         suite.addTestSuite(ScoreCardTests.class);
         suite.addTestSuite(DeleteReviewerTests.class);
         suite.addTestSuite(ChangeScorecardTests.class);
+
+        suite.addTestSuite(ReviewerManageScorecardTests.class);
+        suite.addTestSuite(ReviewerUploadTestCaseTests.class);
+        suite.addTestSuite(ManageAppealTests.class);
+        suite.addTestSuite(ScreenPhaseCannotOpenTests.class);
+        suite.addTestSuite(UnregisterProjectTests.class);
+        suite.addTestSuite(PostmortemReviewerManageScorecardTests.class);
+        suite.addTestSuite(ScreenerManageScorecardTests.class);
+        suite.addTestSuite(AggregatorAddScorecardTests.class);
+        suite.addTestSuite(TimelineAdvancementTests.class);
         
         return suite;
     }
