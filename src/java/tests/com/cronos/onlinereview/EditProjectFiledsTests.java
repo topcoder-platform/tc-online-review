@@ -233,15 +233,15 @@ public class EditProjectFiledsTests extends ProjectTests {
         browser.click("//img[@alt='Edit Project']");
         browser.waitForPageToLoad(TIMEOUT);
 
-        // select 'Completed' as status, no error expected
-        browser.select("//select[@name='status']", "label=Completed");
+        // select 'Cancelled - Client Request' as status, no error expected
+        browser.select("//select[@name='status']", "label=Cancelled - Client Request");
         browser.type("explanation", "Contest Status field edition");
-        browser.type("status_explanation", "Contest Status changed to Completed");
+        browser.type("status_explanation", "Contest Status changed to Cancelled - Client Request");
         browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
-        status = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[12]/td[2]");
-        assertEquals("Status should be changed to Completed", "Completed", status);
+        status = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[14]/td[2]");
+        assertEquals("Status should be changed to Cancelled - Client Request", "Cancelled - Client Request", status);
 
         assertNoErrorsOccurred();
     }
