@@ -234,7 +234,7 @@ public class TimelineAdvancementTests extends ProjectTests {
         browser.click("//table[@id='myRolesTable']/tbody/tr[2]/td[2]/a");
         browser.waitForPageToLoad(TIMEOUT);
         browser.type("file", TestHelper.getUploadFilePath());
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='uploadBtn']");
         Thread.sleep(2*(new Long(TIMEOUT)));
         assertNoErrorsOccurred();
 
@@ -279,9 +279,10 @@ public class TimelineAdvancementTests extends ProjectTests {
         browser.select("answer[0]","label=4 - Strongly Agree");
         if(!approval) {
             browser.type("comment(0.1)", "Reject");
-            browser.click("reject_fixes");
+            browser.click("name=approve_fixes value=false");
         } else {
             browser.type("comment(0.1)", "Approval");
+            browser.click("name=approve_fixes value=true");
         }
         browser.click("//input[@alt='Save and Mark Complete']");
         if(browser.isConfirmationPresent()) {
