@@ -158,7 +158,7 @@ public class TestHelper {
     /**
      * <p>Represents Post-Moterm review scorecard </p>
      */
-    public static final long POST_MORTEM_SCORECARD_ID = 30000721;
+    public static final long POST_MORTEM_SCORECARD_ID = 30001013;
 
     /**
      * <p>Represents default screening scorecard id used when writing data into database.</p>
