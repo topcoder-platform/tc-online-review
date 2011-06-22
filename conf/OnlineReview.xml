@@ -1070,6 +1070,9 @@
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
+            <Property name="StudioScheme">
+                <Value>SubmitterStudio</Value>
+            </Property>
         </Property>
         <Property name="DefaultScheme">
             <Property name="StartPhaseEmail">
@@ -1152,6 +1155,48 @@
                 </Property>
                 <Property name="Priority">
                     <Value>1</Value>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="StudioScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>2</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/milestone_review/studio_end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>2</Value>
                 </Property>
             </Property>
         </Property>
