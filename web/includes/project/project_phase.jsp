@@ -16,7 +16,8 @@
   - Version 1.3.2 (Online Review Replatforming Release 2) changes: Change submission.uploads[0] to submission.upload.
   -
   - Version 1.4 (Online Review Status Validation Assembly 1.0) changes: removing columns from Aggregation and Screening tabs
-  -
+  - 
+  - Version 1.4.1 (TCCC-3285) changes: fixed wrong submissions download links for Studio competitions
 --%>
 <%@page import="com.topcoder.shared.util.ApplicationServer"%>
 <%@ page language="java" isELIgnored="false" %>
@@ -403,9 +404,13 @@
 														<c:set var="placeStr" value="${orfn:getMessage(pageContext, failureKeyName)} (Place ${placement})" />
 														<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" alt="${placeStr}" border="0" />
 													</c:if>
+												</c:if>                                   
+												<c:if test="${project.projectCategory.projectType.id ne 3}">
+												    <html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
 												</c:if>
-												<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${submission.upload.id}"
-													titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
+												<c:if test="${project.projectCategory.projectType.id eq 3}">
+	                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<bean:message key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+	                                            </c:if>												
 												<c:if test="${not empty submitter}">
 													(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 												</c:if>
@@ -947,7 +952,7 @@
                                                        titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
                                             </c:if>
                                             <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.upload.id}&sbt=original" title="<bean:message key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<bean:message key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                             </c:if>
                                             <c:if test="${not empty submitter}">
                                                 (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}'
