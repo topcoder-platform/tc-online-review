@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010-2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.ejblibrary;
 
@@ -19,8 +19,8 @@ import com.topcoder.web.ejb.user.UserTermsOfUseBean;
  *
  * <p><b>Thread safety:</b> This class is thread-safe.</p>
  *
- * @author isv, TCSDEVELOPER
- * @version 1.0.1 (TopCoder Online Review Switch To Local Calls)
+ * @author isv, VolodymyrK
+ * @version 1.0.2
  */
 public class UserTermsOfUseLibrary extends BaseEJBLibrary implements UserTermsOfUse {
 
@@ -81,5 +81,19 @@ public class UserTermsOfUseLibrary extends BaseEJBLibrary implements UserTermsOf
      */
     public boolean hasTermsOfUse(long userId, long termsOfUseId, String dataSource) {
         return this.bean.hasTermsOfUse(userId, termsOfUseId, dataSource);
+    }
+
+    /**
+     * <p>Checks if there is a record on the fact of banning the specified user from acceptinhg the specified terms of use.</p>
+     *
+     * @param userId a <code>long</code> providing the user ID.
+     * @param termsOfUseId a <code>long</code> providing the terms of use ID.
+     * @param dataSource a <code>String</code> referencing the datasource to be used for establishing connection to
+     *        target database.
+     * @return <code>true</code> if specified user has ban for the specified terms of use; <code>false</code> otherwise.
+     * @throws EJBException if an unexpected error occurs.
+     */
+    public boolean hasTermsOfUseBan(long userId, long termsOfUseId, String dataSource) {
+        return this.bean.hasTermsOfUseBan(userId, termsOfUseId, dataSource);
     }
 }
