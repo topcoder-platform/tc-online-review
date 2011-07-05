@@ -3222,7 +3222,6 @@ public class ProjectDetailsActions extends DispatchAction {
         ActionsHelper.logDownloadAttempt(request, upload, !noRights);
         
         if (noRights) {
-        	ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     errorMessageKey, "Error.NoPermission", Boolean.TRUE);
         }
