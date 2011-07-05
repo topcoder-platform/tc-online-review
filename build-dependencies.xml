@@ -274,7 +274,7 @@
     <property name="online_review_deliverables.jar"
               value="${tcs_libdir}/${online_review_deliverables.path}/${online_review_deliverables.jar.name}"/>
 
-    <property name="online_review_login.version" value="1.1.4"/>
+    <property name="online_review_login.version" value="1.1.5"/>
     <property name="online_review_login.jar.name" value="online_review_login.jar"/>
     <property name="online_review_login.path" value="online_review_login/${online_review_login.version}"/>
     <property name="online_review_login.jar"
