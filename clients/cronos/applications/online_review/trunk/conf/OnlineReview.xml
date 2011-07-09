@@ -830,22 +830,35 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>
+                <Property name="Roles">
+                    <Value>*</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
             </Property>
             <Property name="ExtendedScheme">
-                <Value>Manager</Value>
-                <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
             </Property>
         </Property>
         <Property name="DefaultScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -856,16 +869,10 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -876,18 +883,12 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
         </Property>
         <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/milestone_submission/start.txt</Value>
@@ -898,16 +899,10 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/milestone_submission/end.txt</Value>
@@ -918,13 +913,10 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
         </Property>
     </Config>
-    
+
     <Config name="com.cronos.onlinereview.phases.MilestoneScreeningPhaseHandler">
         <Property name="ConnectionFactoryNS">
             <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
@@ -937,22 +929,35 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>
+                <Property name="Roles">
+                    <Value>*</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
             </Property>
             <Property name="ExtendedScheme">
-                <Value>Manager</Value>
-                <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
             </Property>
         </Property>
         <Property name="DefaultScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -963,16 +968,10 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -983,18 +982,12 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
         </Property>
         <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/milestone_screening/start.txt</Value>
@@ -1005,16 +998,10 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/milestone_screening/end.txt</Value>
@@ -1025,15 +1012,9 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
         </Property>
         <Property name="SubmittersEmail">
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
             <Property name="EmailTemplateName">
                 <Value>&milestoneScreeningResultsEmailTemplate;</Value>
             </Property>
@@ -1049,7 +1030,7 @@
             </Property>
         </Property>
     </Config>
-    
+
     <Config name="com.cronos.onlinereview.phases.MilestoneReviewPhaseHandler">
         <Property name="ConnectionFactoryNS">
             <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
@@ -1060,27 +1041,49 @@
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
+
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>
+                <Property name="Roles">
+                    <Value>*</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
             </Property>
             <Property name="ExtendedScheme">
-                <Value>Manager</Value>
-                <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
             </Property>
             <Property name="StudioScheme">
-                <Value>SubmitterStudio</Value>
+                <Property name="Roles">
+                    <Value>Submitter</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>3</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>2</Value>
+                </Property>
             </Property>
         </Property>
         <Property name="DefaultScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1091,16 +1094,10 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1111,18 +1108,12 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
         </Property>
         <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/milestone_review/start.txt</Value>
@@ -1133,16 +1124,10 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/milestone_review/end.txt</Value>
@@ -1153,18 +1138,12 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
         </Property>
         <Property name="StudioScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&phasesEmailTemplate;</Value>
@@ -1175,16 +1154,10 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>2</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateSource">
-                    <Value>file</Value>
                 </Property>
                 <Property name="EmailTemplateName">
                     <Value>&managerNotificationEmailTemplatesBase;/milestone_review/studio_end.txt</Value>
@@ -1194,9 +1167,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>2</Value>
                 </Property>
             </Property>
         </Property>
@@ -1213,13 +1183,29 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>
+                <Property name="Roles">
+                    <Value>*</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
             </Property>
             <Property name="ExtendedScheme">
-                <Value>Manager</Value>
-                <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
             </Property>
         </Property>
         <Property name="DefaultScheme">
@@ -1236,9 +1222,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1252,9 +1235,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
                 </Property>
             </Property>
         </Property>
@@ -1272,9 +1252,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1288,9 +1265,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
                 </Property>
             </Property>
         </Property>
@@ -1309,13 +1283,29 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>
+                <Property name="Roles">
+                    <Value>*</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
             </Property>
             <Property name="ExtendedScheme">
-                <Value>Manager</Value>
-                <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
             </Property>
         </Property>
         <Property name="DefaultScheme">
@@ -1332,9 +1322,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1348,9 +1335,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
                 </Property>
             </Property>
         </Property>
@@ -1368,9 +1352,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1384,9 +1365,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
                 </Property>
             </Property>
         </Property>
@@ -1405,13 +1383,29 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>
+                <Property name="Roles">
+                    <Value>*</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
             </Property>
             <Property name="ExtendedScheme">
-                <Value>Manager</Value>
-                <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
             </Property>
         </Property>
         <Property name="DefaultScheme">
@@ -1428,9 +1422,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1444,9 +1435,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
                 </Property>
             </Property>
         </Property>
@@ -1464,9 +1452,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1480,9 +1465,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
                 </Property>
             </Property>
         </Property>
@@ -1501,13 +1483,29 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>
+                <Property name="Roles">
+                    <Value>*</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
             </Property>
             <Property name="ExtendedScheme">
-                <Value>Manager</Value>
-                <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
             </Property>
         </Property>
         <Property name="DefaultScheme">
@@ -1524,9 +1522,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1540,9 +1535,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
                 </Property>
             </Property>
         </Property>
@@ -1560,9 +1552,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1576,9 +1565,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
                 </Property>
             </Property>
         </Property>
@@ -1597,13 +1583,29 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>
+                <Property name="Roles">
+                    <Value>*</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
             </Property>
             <Property name="ExtendedScheme">
-                <Value>Manager</Value>
-                <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
             </Property>
         </Property>
         <Property name="DefaultScheme">
@@ -1620,9 +1622,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1636,9 +1635,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
                 </Property>
             </Property>
         </Property>
@@ -1656,9 +1652,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1672,9 +1665,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
                 </Property>
             </Property>
         </Property>
@@ -1711,13 +1701,29 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>
+                <Property name="Roles">
+                    <Value>*</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
             </Property>
             <Property name="ExtendedScheme">
-                <Value>Manager</Value>
-                <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
             </Property>
         </Property>
         <Property name="DefaultScheme">
@@ -1734,9 +1740,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1750,9 +1753,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
                 </Property>
             </Property>
         </Property>
@@ -1770,9 +1770,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1786,9 +1783,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
                 </Property>
             </Property>
         </Property>
@@ -1807,13 +1801,29 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>
+                <Property name="Roles">
+                    <Value>*</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
             </Property>
             <Property name="ExtendedScheme">
-                <Value>Manager</Value>
-                <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
             </Property>
         </Property>
         <Property name="DefaultScheme">
@@ -1830,9 +1840,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1846,9 +1853,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
                 </Property>
             </Property>
         </Property>
@@ -1866,9 +1870,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1882,9 +1883,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
                 </Property>
             </Property>
         </Property>
@@ -1903,13 +1901,29 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>
+                <Property name="Roles">
+                    <Value>*</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
             </Property>
             <Property name="ExtendedScheme">
-                <Value>Manager</Value>
-                <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
             </Property>
         </Property>
         <Property name="DefaultScheme">
@@ -1926,9 +1940,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1942,9 +1953,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
                 </Property>
             </Property>
         </Property>
@@ -1962,9 +1970,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -1978,9 +1983,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
                 </Property>
             </Property>
         </Property>
@@ -2015,13 +2017,29 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>
+                <Property name="Roles">
+                    <Value>*</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
             </Property>
             <Property name="ExtendedScheme">
-                <Value>Manager</Value>
-                <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
             </Property>
         </Property>
         <Property name="DefaultScheme">
@@ -2038,9 +2056,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -2054,9 +2069,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
                 </Property>
             </Property>
         </Property>
@@ -2074,9 +2086,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -2090,9 +2099,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
                 </Property>
             </Property>
         </Property>
@@ -2111,13 +2117,29 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>
+                <Property name="Roles">
+                    <Value>*</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
             </Property>
             <Property name="ExtendedScheme">
-                <Value>Manager</Value>
-                <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
             </Property>
         </Property>
         <Property name="DefaultScheme">
@@ -2134,9 +2156,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -2150,9 +2169,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
                 </Property>
             </Property>
         </Property>
@@ -2170,9 +2186,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -2187,15 +2200,15 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
         </Property>
     </Config>
 
     <!-- Default namespace for Final Fix handler -->
     <Config name="com.cronos.onlinereview.phases.FinalFixPhaseHandler">
+        <Property name="FinalFixPhaseDuration">
+            <Value>24</Value>
+        </Property>
         <Property name="ConnectionFactoryNS">
             <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
         </Property>
@@ -2207,13 +2220,29 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>
+                <Property name="Roles">
+                    <Value>*</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
             </Property>
             <Property name="ExtendedScheme">
-                <Value>Manager</Value>
-                <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
             </Property>
         </Property>
         <Property name="DefaultScheme">
@@ -2230,9 +2259,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -2246,9 +2272,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
                 </Property>
             </Property>
         </Property>
@@ -2266,9 +2289,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -2282,9 +2302,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
                 </Property>
             </Property>
         </Property>
@@ -2303,13 +2320,29 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>
+                <Property name="Roles">
+                    <Value>*</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
             </Property>
             <Property name="ExtendedScheme">
-                <Value>Manager</Value>
-                <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
             </Property>
         </Property>
         <Property name="DefaultScheme">
@@ -2326,9 +2359,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -2342,9 +2372,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
                 </Property>
             </Property>
         </Property>
@@ -2362,9 +2389,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -2378,9 +2402,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
                 </Property>
             </Property>
         </Property>
@@ -2408,13 +2429,29 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>
+                <Property name="Roles">
+                    <Value>*</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
             </Property>
             <Property name="ExtendedScheme">
-                <Value>Manager</Value>
-                <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
             </Property>
         </Property>
         <Property name="DefaultScheme">
@@ -2431,9 +2468,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -2447,9 +2481,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
                 </Property>
             </Property>
         </Property>
@@ -2467,9 +2498,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -2483,9 +2511,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
                 </Property>
             </Property>
         </Property>
@@ -2513,13 +2538,29 @@
         </Property>
         <Property name="Schemes">
             <Property name="DefaultScheme">
-                <Value>*</Value>
+                <Property name="Roles">
+                    <Value>*</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
             </Property>
             <Property name="ExtendedScheme">
-                <Value>Manager</Value>
-                <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
             </Property>
         </Property>
         <Property name="DefaultScheme">
@@ -2536,9 +2577,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -2552,9 +2590,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
                 </Property>
             </Property>
         </Property>
@@ -2572,9 +2607,6 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
             </Property>
             <Property name="EndPhaseEmail">
                 <Property name="SendEmail">
@@ -2588,9 +2620,6 @@
                 </Property>
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
                 </Property>
             </Property>
         </Property>
@@ -3411,7 +3440,7 @@
                 <Property name="context">
                     <Value>
                         This is not used but is still needed for the Deliverable Management
-			component to initialize. It will error out in runtime if used by mistake.
+            component to initialize. It will error out in runtime if used by mistake.
                     </Value>
                 </Property>
                 <Property name="alias">
@@ -4038,7 +4067,7 @@
             lt.resource_id,
             lt.deliverable_id,
             lt.deadline,
-	    lt.compensated_deadline,
+        lt.compensated_deadline,
             lt.create_date,
             lt.forgive_ind,
             lt.last_notified,
@@ -4336,7 +4365,7 @@
             lt.resource_id,
             lt.deliverable_id,
             lt.deadline,
-	    lt.compensated_deadline,
+        lt.compensated_deadline,
             lt.create_date,
             lt.forgive_ind,
             lt.last_notified,
@@ -5636,7 +5665,7 @@
         </Property>
 
         <Property name="DeliverableTypes">
-        	  <Property name="Any">
+              <Property name="Any">
                 <Value>0</Value>
             </Property>
             <Property name="Screening Scorecard">
@@ -6060,7 +6089,7 @@
                 <Value>Submitter</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
-                <Value>Observer</Value>			
+                <Value>Observer</Value>            
             </Property>
             <Property name="View Most Recent after Appeals Response">
                 <Value>Submitter</Value>
@@ -6811,44 +6840,44 @@
                 </Property>
             </Property>
         </Property>
-	    <Property name="searchBundleManagerNamespace">
-	      <Value>com.topcoder.searchbuilder.common</Value>
-	    </Property>
-	    <Property name="nonRestrictedSearchBundleName">
-	      <Value>Non-restricted Late Deliverable Search Bundle</Value>
-	    </Property>
-	    <Property name="restrictedSearchBundleName">
-	      <Value>Restricted Late Deliverable Search Bundle</Value>
-	    </Property>
-	    <Property name="persistenceKey">
-	      <Value>DatabaseLateDeliverablePersistence</Value>
-	    </Property>
-	    <Property name="persistenceConfig">
-	      <Property name="loggerName">
-	        <Value>com.topcoder.management.deliverable.late.impl.persistence.DatabaseLateDeliverablePersistence</Value>
-	      </Property>
-	      <Property name="dbConnectionFactoryConfig">
-	        <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
-	          <Property name="connections">
-	            <Property name="default">
-	                <Value>tcs</Value>
-	            </Property>
-	            <Property name="tcs">
-	                <Property name="producer">
-	                    <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
-	                </Property>
-	                <Property name="parameters">
-	                    <Property name="jndi_name">
-	                        <Value>java:JTS_TCS_CATALOG</Value>
-	                    </Property>
-	                </Property>
-	            </Property>
-	          </Property>
-	        </Property>
-	      </Property>
-	      <Property name="connectionName">
-	        <Value>tcs</Value>
-	      </Property>
+        <Property name="searchBundleManagerNamespace">
+          <Value>com.topcoder.searchbuilder.common</Value>
+        </Property>
+        <Property name="nonRestrictedSearchBundleName">
+          <Value>Non-restricted Late Deliverable Search Bundle</Value>
+        </Property>
+        <Property name="restrictedSearchBundleName">
+          <Value>Restricted Late Deliverable Search Bundle</Value>
+        </Property>
+        <Property name="persistenceKey">
+          <Value>DatabaseLateDeliverablePersistence</Value>
+        </Property>
+        <Property name="persistenceConfig">
+          <Property name="loggerName">
+            <Value>com.topcoder.management.deliverable.late.impl.persistence.DatabaseLateDeliverablePersistence</Value>
+          </Property>
+          <Property name="dbConnectionFactoryConfig">
+            <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+              <Property name="connections">
+                <Property name="default">
+                    <Value>tcs</Value>
+                </Property>
+                <Property name="tcs">
+                    <Property name="producer">
+                        <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+                    </Property>
+                    <Property name="parameters">
+                        <Property name="jndi_name">
+                            <Value>java:JTS_TCS_CATALOG</Value>
+                        </Property>
+                    </Property>
+                </Property>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="connectionName">
+            <Value>tcs</Value>
+          </Property>
       </Property>
   </Config>
 </CMConfig>
