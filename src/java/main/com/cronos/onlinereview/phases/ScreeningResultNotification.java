@@ -48,10 +48,6 @@ import com.topcoder.util.file.templatesource.FileTemplateSource;
  * @version 1.0 (Online Review Replatforming Release 2)
  */
 public class ScreeningResultNotification {
-    /**
-     * winners email template source type
-     */
-    private String emailTemplateSource;
 
     /**
      * winners email template name
@@ -109,8 +105,6 @@ public class ScreeningResultNotification {
         PhasesHelper.checkString(scorecardTypeName, "scorecardTypeName");
         PhasesHelper.checkString(failedScreeningStatusName, "failedScreeningStatusName");
 
-        this.emailTemplateSource = PhasesHelper
-                .getPropertyValue(namespace, "SubmittersEmail.EmailTemplateSource", true);
         this.emailTemplateName = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.EmailTemplateName", true);
         this.emailSubject = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.EmailSubject", true);
         this.projectLinkTemplate = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.ProjectLink", true);
