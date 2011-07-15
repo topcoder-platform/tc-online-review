@@ -226,20 +226,12 @@ public class ScreeningResultNotification {
                     } else {
                         field.setValue("0");
                     }
-                } else if ("OR_LINK".equals(field.getName())) {
+                } else if ("STUDIO_LINK".equals(field.getName())) {
                     field.setValue(MessageFormat.format(this.projectLinkTemplate, project.getId()));
                 } else if ("SCORECARD_LINK".equals(field.getName())) {
                     field.setValue(MessageFormat.format(this.scorecardLinkTemplate, review.getId()));
                 } else if ("SUBMISSION_ID".equals(field.getName())) {
                     field.setValue(String.valueOf(submission.getId()));
-                } else if ("REASON_FOR_FAILING_SCREENING".equals(field.getName())) {
-                    StringBuilder b = new StringBuilder();
-                    Comment[] comments = review.getAllItems()[0].getAllComments();
-                    for (int j = 0; j < comments.length; j++) {
-                        Comment comment = comments[j];
-                        b.append(comment.getComment()).append("<br/>");
-                    }
-                    field.setValue(b.toString());
                 } else if ("SUBMISSION_DATE".equals(field.getName())) {
                     field.setValue(formatDate(submission.getCreationTimestamp()));
                 }
