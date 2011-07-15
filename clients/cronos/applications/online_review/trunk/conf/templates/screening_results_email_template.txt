@@ -1,34 +1,15 @@
-This is a template for email to be sent to Submitters to notify on results for screening
-for their submissions. 
+Your submission has been screened and the results are detailed below. Learn more about screening (and common reasons for failure) by visiting this page\:<br/>
+<a href\="http\://community.topcoder.com/studio/the-process/screening/">http\://community.topcoder.com/studio/the-process/screening/</a><br/><br/>
 
-The content below just demonstrates which template fields are used and how the content
-is configured based on whether submission passed screening or not.
-
-The actual content for this template is to be set by administrators.
-
-%if:SCREENING_FAILED='0'%
-
-This content is included into email if submission passed screening
-
-Link to project - <a href\="%OR_LINK%">%PROJECT_NAME{Project name}%</a><br/> 
-
-Passed/Failed Screening - PASSED 
-
-Submission ID -  %SUBMISSION_ID%
-
-%endif%
-
+If your submission passes screening, it will be presented to the client and is eligible for prize placement.
+If your submission fails screening, your scorecard will note the reasons for failure.
+IMPORTANT\: Even if your submission passed screening, you should review your scorecard to see if the screener has issued any warnings or important comments.<br/><br/>
 
 %if:SCREENING_FAILED='1'%
-
-This content is included into email if submission failed to pass screening
-
-Link to project - <a href\="%OR_LINK%">%PROJECT_NAME{Project name}%</a><br/>
-
-Passed/Failed Screening - FAILED
-
-Reason - %REASON_FOR_FAILING_SCREENING%
-
-Submission ID - %SUBMISSION_ID%
-
+Your Submission %SUBMISSION_ID% which was uploaded on %SUBMISSION_DATE% for the contest <a href\="%OR_LINK%">%PROJECT_NAME{Project name}%</a> has PASSED Screening.<br/><br/>
 %endif%
+%if:SCREENING_FAILED='0'%
+Your Submission %SUBMISSION_ID% which was uploaded on %SUBMISSION_DATE% for the contest <a href\="%OR_LINK%">%PROJECT_NAME{Project name}%</a> has FAILED Screening.<br/><br/>
+%endif%
+
+Your Screening scorecard results\: <a href\="%SCORECARD_LINK%">%SCORECARD_LINK%</a>

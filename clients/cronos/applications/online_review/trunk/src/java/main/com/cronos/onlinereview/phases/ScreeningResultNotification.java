@@ -4,7 +4,9 @@
 package com.cronos.onlinereview.phases;
 
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
@@ -49,6 +51,9 @@ import com.topcoder.util.file.templatesource.FileTemplateSource;
  */
 public class ScreeningResultNotification {
 
+    /** format for the email timestamp. Will format as "Fri, Jul 28, 2006 01:34 PM EST". */
+    private static final String EMAIL_TIMESTAMP_FORMAT = "EEE, MMM d, yyyy hh:mm a z";
+    
     /**
      * winners email template name
      */
@@ -68,6 +73,11 @@ public class ScreeningResultNotification {
      * template for project link URL
      */
     private String projectLinkTemplate;
+
+    /**
+     * template for scorecard link URL
+     */
+    private String scorecardLinkTemplate;
 
     /**
      * helper class for obtaining several managers
@@ -108,6 +118,7 @@ public class ScreeningResultNotification {
         this.emailTemplateName = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.EmailTemplateName", true);
         this.emailSubject = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.EmailSubject", true);
         this.projectLinkTemplate = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.ProjectLink", true);
+        this.scorecardLinkTemplate = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.ScorecardLink", true);
         this.emailFromAddress = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.EmailFromAddress", true);
         this.submissionTypeName = submissionTypeName;
         this.scorecardTypeName = scorecardTypeName;
@@ -179,6 +190,7 @@ public class ScreeningResultNotification {
         message.setBody(emailContent);
         message.setFromAddress(emailFromAddress);
         message.setToAddress(user.getEmail(), TCSEmailMessage.TO);
+        message.setContentType("text/html");
         EmailEngine.send(message);
     }
 
@@ -216,6 +228,8 @@ public class ScreeningResultNotification {
                     }
                 } else if ("OR_LINK".equals(field.getName())) {
                     field.setValue(MessageFormat.format(this.projectLinkTemplate, project.getId()));
+                } else if ("SCORECARD_LINK".equals(field.getName())) {
+                    field.setValue(MessageFormat.format(this.scorecardLinkTemplate, review.getId()));
                 } else if ("SUBMISSION_ID".equals(field.getName())) {
                     field.setValue(String.valueOf(submission.getId()));
                 } else if ("REASON_FOR_FAILING_SCREENING".equals(field.getName())) {
@@ -226,6 +240,8 @@ public class ScreeningResultNotification {
                         b.append(comment.getComment()).append("<br/>");
                     }
                     field.setValue(b.toString());
+                } else if ("SUBMISSION_DATE".equals(field.getName())) {
+                    field.setValue(formatDate(submission.getCreationTimestamp()));
                 }
             } else if (nodes[i] instanceof Condition) {
                 Condition condition = ((Condition) nodes[i]);
@@ -368,5 +384,18 @@ public class ScreeningResultNotification {
 
         Submission[] submissions = uploadManager.searchSubmissions(filter);
         return submissions;
+    }
+    
+    /**
+     * Returns the date formatted as "Fri, Jul 28, 2006 01:34 PM EST" for example.
+     *
+     * @param dt date to be formatted.
+     *
+     * @return formatted date string.
+     */
+    private static String formatDate(Date dt) {
+        SimpleDateFormat formatter = new SimpleDateFormat(EMAIL_TIMESTAMP_FORMAT);
+
+        return formatter.format(dt);
     }
 }
