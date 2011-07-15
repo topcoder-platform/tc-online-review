@@ -5,10 +5,10 @@ If your milestone submission passes screening, it will be presented to the clien
 If your milestone submission fails screening, your scorecard will note the reasons for failure.
 IMPORTANT\: Even if your milestone submission passed screening, you should review your scorecard to see if the screener has issued any warnings or important comments.<br/><br/>
 
-%if:SCREENING_FAILED='1'%
+%if:SCREENING_FAILED='0'%
 Your Milestone Submission %SUBMISSION_ID% which was uploaded on %SUBMISSION_DATE% for the contest <a href\="%STUDIO_LINK%">%PROJECT_NAME{Project name}%</a> has PASSED Milestone Screening.<br/><br/>
 %endif%
-%if:SCREENING_FAILED='0'%
+%if:SCREENING_FAILED='1'%
 Your Milestone Submission %SUBMISSION_ID% which was uploaded on %SUBMISSION_DATE% for the contest <a href\="%STUDIO_LINK%">%PROJECT_NAME{Project name}%</a> has FAILED Milestone Screening.<br/><br/>
 %endif%
 
