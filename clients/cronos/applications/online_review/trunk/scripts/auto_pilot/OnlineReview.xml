@@ -444,7 +444,7 @@
                 <Value>&milestoneScreeningResultsEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
-                <Value>[{0}] {1} place </Value>
+                <Value>[{0}] {1} Milestone Screening Results</Value>
             </Property>
             <Property name="ProjectLink">
                 <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
@@ -1105,7 +1105,7 @@
                 <Value>&screeningResultsEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
-                <Value>[{0}] {1} place </Value>
+                <Value>[{0}] {1} Screening Results</Value>
             </Property>
             <Property name="ProjectLink">
                 <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->

@@ -186,7 +186,7 @@ public class ScreeningResultNotification {
 
         String emailContent = docGenerator.applyTemplate(root);
         TCSEmailMessage message = new TCSEmailMessage();
-        message.setSubject(MessageFormat.format(emailSubject, "Online Review", project.getProperty("Project Name")));
+        message.setSubject(MessageFormat.format(emailSubject, "Studio", project.getProperty("Project Name")));
         message.setBody(emailContent);
         message.setFromAddress(emailFromAddress);
         message.setToAddress(user.getEmail(), TCSEmailMessage.TO);
