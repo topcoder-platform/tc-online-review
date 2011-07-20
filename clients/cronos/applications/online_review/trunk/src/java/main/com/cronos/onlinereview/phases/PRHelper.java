@@ -195,17 +195,15 @@ public class PRHelper {
     /**
      * Pull data to project_result.
      *
-     * @param projectId
-     *            the projectId
-     * @param phaseId
-     *            the phase id
      * @throws PhaseHandlingException
      *             if error occurs
      */
-    static void processReviewPR(long projectId, Connection conn, boolean toStart) throws SQLException {
+    static void processReviewPR(Phase phase, Connection conn, boolean toStart) throws PhaseHandlingException, SQLException {
         PreparedStatement pstmt = null;
         PreparedStatement updateStmt = null;
         ResultSet rs = null;
+        long projectId = phase.getProject().getId();
+
         try {
             if (!toStart) {
                 logger.log(Level.INFO,
@@ -226,7 +224,8 @@ public class PRHelper {
                     updateStmt.execute();
                 }
                 
-                if (isStudioProject(projectId)) {
+                Phase appealsResponsePhase = PhasesHelper.locatePhase(phase, "Appeals Response", true, false);
+                if (isStudioProject(projectId) || appealsResponsePhase == null) {
                     // populate project result
                     populateProjectResult(projectId, conn);
                 }
