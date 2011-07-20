@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2005 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2005-2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -71,7 +71,7 @@ public class PRReviewPhaseHandler extends ReviewPhaseHandler {
 
     	Connection conn = this.createConnection();
     	try {
-    		processPR(phase.getProject().getId(), conn, toStart);
+    		processPR(phase, conn, toStart);
     	} finally {
     		PRHelper.close(conn);
     	}
@@ -80,13 +80,11 @@ public class PRReviewPhaseHandler extends ReviewPhaseHandler {
     /**
      * Pull data to project_result.
      * 
-     * @param projectId the projectId
-     * @param phaseId the phase id
      * @throws PhaseHandlingException if error occurs
      */
-    public void processPR(long projectId, Connection conn, boolean toStart) throws PhaseHandlingException {
+    public void processPR(Phase phase, Connection conn, boolean toStart) throws PhaseHandlingException {
     	try {
-        	PRHelper.processReviewPR(projectId, conn, toStart);
+        	PRHelper.processReviewPR(phase, conn, toStart);
     	} catch(SQLException e) {
     		throw new PhaseHandlingException("Failed to push data to project_result", e);
     	}
