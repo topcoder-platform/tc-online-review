@@ -907,7 +907,7 @@
                                         <c:set var="prevMilestoneSubmissions" value="${prevMilestoneSubm[submissionStatus.index]}" />
                                     </c:if>
                                     <tr class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}'>
-                                        <%-- Submission ID --%>
+                                        <%-- Milestone Submission ID --%>
                                         <td class="value" width="10%" nowrap="nowrap">
                                             <c:if test="${not empty prevMilestoneSubmissions}">
                                                 <a id="PrevSubm${submBoxIdx}_${submissionStatus.index}_plus" href="javascript:void(0)" onClick='return expandSubmissions(${submBoxIdx}, ${submissionStatus.index}, this)'><html:img
@@ -960,7 +960,7 @@
                                             </c:if>
                                         </td>
 
-                                        <%-- Delete submission --%>
+                                        <%-- Delete Milestone Submission --%>
                                         <td class="value" <c:if test="${isManager and not group.milestoneReviewFinished}">width="5%"</c:if>>
                                             <c:choose>
                                                <c:when test="${isManager and not group.milestoneReviewFinished}">
@@ -974,7 +974,7 @@
                                             </c:choose>
                                         </td>
 
-                                        <%-- Submission Date --%>
+                                        <%-- Milestone Submission Date --%>
                                         <td class="value" width="12%">
                                             ${orfn:displayDate(pageContext.request, submission.upload.creationTimestamp)}
                                         </td>
@@ -994,7 +994,7 @@
                                                 </c:choose>
                                             </td>
 
-                                        <%-- Screening Score --%>
+                                        <%-- Milestone Screening Score --%>
                                         <c:set var="review" value="" />
                                         <c:forEach items="${group.milestoneScreeningReviews}" var="screening">
                                             <c:if test="${screening.submission == submission.id}">
@@ -1045,12 +1045,13 @@
                                             </c:choose>
                                         </td>
 
-                                        <%-- Screening Results --%>
+                                        <c:set var="failedScreening" value="${(submissionStatusName == 'Failed Milestone Screening')}" />
+                                        <%-- Milestone Screening Results --%>
                                         <td class="valueC">
                                             <c:choose>
                                                 <c:when test="${not empty review and review.committed}">
                                                     <c:choose>
-                                                        <c:when test="${review.score >= passingMinimum}">
+                                                        <c:when test="${not failedScreening}">
                                                             <bean:message key="viewProjectDetails.box.Screening.Passed"/>
                                                         </c:when>
                                                         <c:otherwise>
@@ -1061,7 +1062,7 @@
                                                 <c:otherwise><!--@--></c:otherwise>
                                             </c:choose>
                                         </td>
-                                        <c:set var="failedScreening" value="${(submissionStatusName == 'Failed Milestone Screening')}" />
+                                        
 
                                             <%-- Milestone Reviewer --%>
                                             <td class="valueC" width="12%">
@@ -1146,11 +1147,11 @@
                                                             <c:when test="${isSubmitter and not group.milestoneReviewFinished}">
                                                                 <!--@-->
                                                             </c:when>
-                                                            <c:when test="${review.score >= passingMinimum}">
-                                                                <bean:message key="viewProjectDetails.box.Screening.Passed"/>
+                                                            <c:when test="${not failedReview}">
+                                                                <bean:message key="viewProjectDetails.box.MilestoneReview.Passed"/>
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <bean:message key="viewProjectDetails.box.Screening.Failed"/>
+                                                                <bean:message key="viewProjectDetails.box.MilestoneReview.Failed"/>
                                                             </c:otherwise>
                                                         </c:choose>
                                                     </c:when>
