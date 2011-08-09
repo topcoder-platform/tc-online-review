@@ -1,0 +1,42 @@
+############################################
+# Build parameters for Auto Screening tool #
+############################################
+
+
+# The online_review_home is the directory where the development distribution for
+# Online Review application is checked to
+online_review_home=<<Path to local dev distribution of Online Review application>>
+
+
+# The tcs_libdir is the location of all TopCoder Software component jars.
+tcs_libdir=${online_review_home}/lib/tcs
+
+
+# The ext_libdir is the location of 3rd party jars.
+ext_libdir=${online_review_home}/lib/third_party
+
+
+# The shared_libdir is the location of all TopCoder shared component jars.
+shared_libdir=${online_review_home}/lib/shared
+
+
+# A deployment directory for Auto Screening tool
+deploy-dir=<<path_to_directory_where_to_deploy_the_AUTOSCREENING_to>>
+
+
+# A path to file to signal to Auto Screening to stop the job
+guard_file=@auto_screening_guard_file@
+
+
+# A path to file to signal to Auto Screening that there is another tool instance already running
+running_file=@auto_screening_running_file@
+
+
+# An interval (in milliseconds) between Auto Screening Tool job executions
+poll_interval=@auto_screening_poll_interval@
+
+
+# An ID for the Auto Screener resource
+screener_id=@auto_screener_id@
+
+

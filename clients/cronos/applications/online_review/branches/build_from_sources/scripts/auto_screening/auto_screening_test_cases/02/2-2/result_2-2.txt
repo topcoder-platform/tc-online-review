@@ -1,0 +1,22 @@
+TCS-003: Your submission does not conform to the directory standard.
+
+File or directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-2.zip.contents\.\docs] failed to pass the validation: The directory does not exist 
+File or directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-2.zip.contents\.\conf] failed to pass the validation: The directory does not exist 
+File or directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-2.zip.contents\.\test_files] failed to pass the validation: The directory does not exist 
+
+TCS-004: Your submission does not contain a component specification document in rich text format (rtf).
+
+No component specification files are found in directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-2.zip.contents\docs], or they are not of rtf type. 
+
+TCS-007: Your submission does not contain a zargo or zuml file.
+
+An exception was thrown during the screening. 
+
+TCS-008: Your submission does not contain one or more use cases.
+
+The property [extracted_xmi_file] does not exist in the screening context or its value is null. 
+
+TCS-015: Your submission has passed the auto screening process.
+
+OK. The submission archive was successfully unzipped to [E:\tcs\app\online_review\scripts\auto_screening\temp\2-2.zip.contents]. 
+OK. There are no personal info in the submission
