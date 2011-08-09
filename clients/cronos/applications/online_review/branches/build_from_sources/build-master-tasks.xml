@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     Aug 9, 2011
+
+     Build Master (copied from direct scripts)
+                        
+     lmmortal                                                                
+     ====================================================================== -->
+<project name="tools.master.tasks">
+    <description>
+        Defines tasks that execute ant scripts or build targets on all the components.
+    </description>
+
+    <!-- = = = = = = = = = = = = = = = = =
+          macrodef: run-targets-all
+
+          Builds a target on each of the components.
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="run-target-all" description="Builds a target on each of the component.">
+
+        <!-- the target to build on every component -->
+        <attribute name="target" />
+
+        <!-- properties that will be passed to the target to build -->
+        <element name="properties" optional="true"/>
+
+        <sequential>
+            <execute-all prefix="project.current">
+                <sequential>
+                  <echo message=""/>
+                  <echo message="--- Executing for: ${project.current.name}"/>
+                  <ant antfile="${project.current.basedir}/${project.current.buildfile}" target="@{target}" inheritall="false">
+                    <propertyset>
+                      <propertyref builtin="commandline"/>
+                    </propertyset>
+                    <properties />
+                  </ant>
+                </sequential>
+            </execute-all>
+        </sequential>
+    </macrodef>
+
+    <!-- = = = = = = = = = = = = = = = = =
+         scriptdef: execute-all
+
+         Runs any ant-script sequence on all components.
+         = = = = = = = = = = = = = = = = = -->
+    <scriptdef name="execute-all" language="groovy" description="Runs a sequence of ant script on all the components." classpathref="script.path">
+
+        <!-- the prefix of the exported properties -->
+        <attribute name="prefix" />
+
+        <!-- the ant-script to run on each of the projects -->
+        <element name="sequential" type="sequential" />
+
+        <![CDATA[
+        import groovy.util.XmlParser
+
+        def prefix = attributes.prefix
+        def components = new XmlParser().parse(new File(project.getProperty("components.conf")))
+
+        components.component.each { component ->
+            [[name : 'name', required : true ],
+                    [name : 'svnbase', required : true ],
+                    [name : 'basedir', required : false, defaultValue : 'components/'+ component.'@name'],
+                    [name : 'revision', required : false, defaultValue : 'HEAD']].each {
+
+                        def value = component."@${it.name}"
+
+                        if (value == null || value.trim().length() == 0) {
+                            if (it.required) {
+                                self.fail("The ${it.name} attribute of a component is required.")
+                            }
+
+                            value = it.defaultValue
+                        }
+
+                        value = project.replaceProperties(value)
+                        project.setProperty("${prefix}.${it.name}", value)
+                    }
+            elements.sequential.each { it.execute() }
+        }
+        ]]>
+    </scriptdef>    
+</project>

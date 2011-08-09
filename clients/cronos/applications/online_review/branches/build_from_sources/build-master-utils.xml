@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     Aug 9, 2011
+
+     Build Master (copied from direct scripts)
+                        
+     lmmortal                                                                
+     ====================================================================== -->
+<project name="tools.master.utils">
+    <description>
+        Defines utitlity tasks.
+    </description>
+
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+
+    <!-- = = = = = = = = = = = = = = = = =
+           scriptdef: component-info
+
+           Gets the svn path of a component.
+
+           This task is only used within the 'execute-all' task.
+          = = = = = = = = = = = = = = = = = = = = -->
+    <scriptdef name="component-info" language="groovy" classpathref="script.path"
+        description="Gets the info of a specific component.">
+
+        <!-- prefix of the properties containing the component information -->
+        <attribute name="prefix" />
+
+        <!-- the property which holds the svn path of the specific component -->
+        <attribute name="property" />
+
+        <![CDATA[
+        def prefix = attributes.prefix
+
+        def svnbase = project.getProperty("${prefix}.svnbase")
+        def revision = project.getProperty("${prefix}.revision")
+
+        project.setProperty("${attributes.property}", "${svnbase}")
+        project.setProperty("revision", "${revision}")
+        ]]>
+    </scriptdef>
+
+    <!-- = = = = = = = = = = = = = = = = =
+          macrodef: svnex
+
+          This tasks execute svn operations against cached credentials,
+          or prompt for password if svn.username property is set.
+         = = = = = = = = = = = = = = = = = -->
+    <macrodef name="svnex">
+
+        <!-- the operations to be performed via subversion -->
+        <element name="operation" implicit="true"/>
+
+        <sequential>
+            <if>
+                <isset property="svn.username"/>
+                <then>
+                    <if>
+                        <not>
+                            <isset property="svn.password"/>
+                        </not>
+                        <then>
+                            <input addproperty="svn.password" message="Please enter svn password: "/>
+                        </then>
+                    </if>
+                    <svn javahl="false" username="${svn.username}" password="${svn.password}">
+                        <operation />
+                    </svn>
+                </then>
+                <else>
+                    <svn javahl="false">
+                        <operation />
+                    </svn>
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+</project>

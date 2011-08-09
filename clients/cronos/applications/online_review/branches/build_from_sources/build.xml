@@ -13,6 +13,11 @@
   <!-- Load build properties -->
   <property file="build.properties"/>
   <property file="${db_scripts_path}/build.properties" />
+  
+  <!--Import the build-master.xml -->
+  <property name="components.conf" value="${basedir}/components.xml"/>
+  <import file="${basedir}/build-master.xml"/>
+
 
   <!-- COMPONENT PARAMETERS -->
   <property name="component" value="online_review"/>
@@ -81,17 +86,7 @@
   <target name="clean">
     <delete failonerror="false" dir="${builddir}"/>
   </target>
-
-  <!-- updates Online Review files from SVN -->
-  <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.lib" />
   
-  <target name="svn_update" if="build.svn.update">
-    <svn username="${build.svn.username}" password="${build.svn.password}">
-      <info target="${basedir}" verbose="true"/>
-      <update dir="${basedir}" recurse="true"/>
-    </svn>
-  </target>
-
   <!-- compiles the application -->
   <target name="compile">
     <mkdir dir="${build_classdir}"/>
@@ -108,7 +103,7 @@
   </target>
 
   <!-- updates Online Review files from SVN and builds application -->
-  <target name="build" depends="svn_update, compile"/>
+  <target name="build" depends="compile"/>
 
   <!-- replaces variables in configuration files with values for the target environment -->
   <target name="tokenize">

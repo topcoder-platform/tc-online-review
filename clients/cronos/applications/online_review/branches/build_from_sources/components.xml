@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<components>
+    <component
+        name="online_review_phases"
+        svnbase="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/trunk"
+        revision = "200000">
+    </component>    
+</components>
