@@ -31,6 +31,5 @@
     </path>
 
     <import file="${tools.master.basedir}/build-master-tasks.xml"/>
-    <import file="${tools.master.basedir}/build-master-utils.xml"/>
     <import file="${tools.master.basedir}/build-master-targets.xml"/>
 </project>
