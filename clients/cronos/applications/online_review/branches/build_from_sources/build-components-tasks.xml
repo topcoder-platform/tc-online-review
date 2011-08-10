@@ -86,33 +86,6 @@
     </scriptdef> 
 
     <!-- = = = = = = = = = = = = = = = = =
-           scriptdef: component-info
-
-           Gets the svn path and revision of a component.
-
-           This task is only used within the 'execute-all' task.
-          = = = = = = = = = = = = = = = = = = = = -->
-    <scriptdef name="component-info" language="groovy" classpathref="script.path"
-        description="Gets the info of a specific component.">
-
-        <!-- prefix of the properties containing the component information -->
-        <attribute name="prefix" />
-
-        <!-- the property which holds the svn path of the specific component -->
-        <attribute name="property1" />
-        
-        <!-- the property which holds the svn revision of the specific component -->
-        <attribute name="property2" />
-
-        <![CDATA[
-        def prefix = attributes.prefix
-
-        project.setProperty("${attributes.property1}", project.getProperty("${prefix}.svnpath"))
-        project.setProperty("${attributes.property2}", project.getProperty("${prefix}.revision"))
-        ]]>
-    </scriptdef>
-
-    <!-- = = = = = = = = = = = = = = = = =
           macrodef: svnex
 
           This tasks execute svn operations against cached credentials,

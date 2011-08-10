@@ -34,7 +34,6 @@
     <target name="checkout-components" description="Checks out all components">
         <execute-all prefix="component.current">
             <sequential>
-                <component-info property1="url" property2="revision" prefix="component.current"  />
                 <echo message="-------------------- Checking for: ${component.current.basedir}"/>
                 <!-- check if directory exist -->
                 <!-- if yes check the svn path -->
@@ -48,29 +47,29 @@
                         </svnex>
                         <if>
                             <not>
-                                <equals arg1="${svn.info.url}" arg2="${url}"/>
+                                <equals arg1="${svn.info.url}" arg2="${component.current.svnpath}"/>
                             </not>
                             <then>
                                 <echo message="-------------------- Deleting ${component.current.basedir}"/>
                                 <delete dir="${component.current.basedir}" />
-                                <echo message="-------------------- Checking out: ${component.current.basedir} to revision ${revision}"/>
+                                <echo message="-------------------- Checking out: ${component.current.basedir} to revision ${component.current.revision}"/>
                                 <svnex>
-                                    <checkout destPath="${component.current.basedir}" url="${url}" revision="${revision}" />
+                                    <checkout destPath="${component.current.basedir}" url="${component.current.svnpath}" revision="${component.current.revision}" />
                                 </svnex>
                             </then>
                             <else>
-                                <echo message="-------------------- Updating: ${component.current.basedir} to revision ${revision}" />
+                                <echo message="-------------------- Updating: ${component.current.basedir} to revision ${component.current.revision}" />
                                 <svnex>
-                                    <update dir="${component.current.basedir}" revision="${revision}" />
+                                    <update dir="${component.current.basedir}" revision="${component.current.revision}" />
                                 </svnex>
                             </else>
                         </if>
                     </then>
                     <!-- if not checkout the component -->
                     <else>
-                        <echo message="-------------------- Checking out: ${component.current.basedir} to revision ${revision}"/>
+                        <echo message="-------------------- Checking out: ${component.current.basedir} to revision ${component.current.revision}"/>
                         <svnex>
-                            <checkout destPath="${component.current.basedir}" url="${url}" revision="${revision}" />
+                            <checkout destPath="${component.current.basedir}" url="${component.current.svnpath}" revision="${component.current.revision}" />
                         </svnex>
                     </else>
                 </if>
