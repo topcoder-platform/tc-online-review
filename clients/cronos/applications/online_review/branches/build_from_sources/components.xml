@@ -2,7 +2,13 @@
 <components>
     <component
         name="online_review_phases"
-        svnbase="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/trunk"
-        revision = "200000">
-    </component>    
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/trunk"
+        >
+    </component>
+
+    <component
+        name="deliverable_management"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/deliverable_management/trunk"
+        revision="200000">
+    </component>
 </components>

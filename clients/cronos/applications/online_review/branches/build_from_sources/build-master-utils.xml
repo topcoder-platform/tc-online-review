@@ -2,7 +2,7 @@
 <!-- ====================================================================== 
      Aug 9, 2011
 
-     Build Master (copied from direct scripts)
+     Build Master (based on direct scripts)
                         
      lmmortal                                                                
      ====================================================================== -->
@@ -16,7 +16,7 @@
     <!-- = = = = = = = = = = = = = = = = =
            scriptdef: component-info
 
-           Gets the svn path of a component.
+           Gets the svn path and revision of a component.
 
            This task is only used within the 'execute-all' task.
           = = = = = = = = = = = = = = = = = = = = -->
@@ -27,16 +27,16 @@
         <attribute name="prefix" />
 
         <!-- the property which holds the svn path of the specific component -->
-        <attribute name="property" />
+        <attribute name="property1" />
+        
+        <!-- the property which holds the svn revision of the specific component -->
+        <attribute name="property2" />
 
         <![CDATA[
         def prefix = attributes.prefix
 
-        def svnbase = project.getProperty("${prefix}.svnbase")
-        def revision = project.getProperty("${prefix}.revision")
-
-        project.setProperty("${attributes.property}", "${svnbase}")
-        project.setProperty("revision", "${revision}")
+        project.setProperty("${attributes.property1}", project.getProperty("${prefix}.svnpath"))
+        project.setProperty("${attributes.property2}", project.getProperty("${prefix}.revision"))
         ]]>
     </scriptdef>
 

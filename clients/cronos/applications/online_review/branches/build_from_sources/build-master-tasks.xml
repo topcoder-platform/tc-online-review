@@ -2,7 +2,7 @@
 <!-- ====================================================================== 
      Aug 9, 2011
 
-     Build Master (copied from direct scripts)
+     Build Master (based on direct scripts)
                         
      lmmortal                                                                
      ====================================================================== -->
@@ -61,8 +61,8 @@
 
         components.component.each { component ->
             [[name : 'name', required : true ],
-                    [name : 'svnbase', required : true ],
-                    [name : 'basedir', required : false, defaultValue : 'components/'+ component.'@name'],
+                    [name : 'svnpath', required : true ],
+                    [name : 'basedir', required : false, defaultValue : project.getProperty("components_dir")+'/'+ component.'@name'],
                     [name : 'revision', required : false, defaultValue : 'HEAD']].each {
 
                         def value = component."@${it.name}"
