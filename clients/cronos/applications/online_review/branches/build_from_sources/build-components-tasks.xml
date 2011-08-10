@@ -84,40 +84,4 @@
         }
         ]]>
     </scriptdef> 
-
-    <!-- = = = = = = = = = = = = = = = = =
-          macrodef: svnex
-
-          This tasks execute svn operations against cached credentials,
-          or prompt for password if svn.username property is set.
-         = = = = = = = = = = = = = = = = = -->
-    <macrodef name="svnex">
-
-        <!-- the operations to be performed via subversion -->
-        <element name="operation" implicit="true"/>
-
-        <sequential>
-            <if>
-                <isset property="svn.username"/>
-                <then>
-                    <if>
-                        <not>
-                            <isset property="svn.password"/>
-                        </not>
-                        <then>
-                            <input addproperty="svn.password" message="Please enter svn password: "/>
-                        </then>
-                    </if>
-                    <svn javahl="false" username="${svn.username}" password="${svn.password}">
-                        <operation />
-                    </svn>
-                </then>
-                <else>
-                    <svn javahl="false">
-                        <operation />
-                    </svn>
-                </else>
-            </if>
-        </sequential>
-    </macrodef>
 </project>
