@@ -9,6 +9,9 @@
 
   <!-- include ant contrib tasks -->
   <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${ant-contrib.jar}"/>
+
+  <!-- Load build properties -->
+  <property file="${db_scripts_path}/build.properties" />
   
   <!--Import the build-components.xml -->
   <property name="components.conf" value="${basedir}/components.xml"/>
