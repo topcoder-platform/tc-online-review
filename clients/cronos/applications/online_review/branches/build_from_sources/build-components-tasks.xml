@@ -2,11 +2,11 @@
 <!-- ====================================================================== 
      Aug 9, 2011
 
-     Build Master (based on direct scripts)
+     Build Components (based on direct scripts)
                         
      lmmortal                                                                
      ====================================================================== -->
-<project name="tools.master.tasks">
+<project name="tools.components.tasks">
     <description>
         Defines tasks that execute ant scripts or build targets on all the components.
     </description>

@@ -14,10 +14,10 @@
   <property file="build.properties"/>
   <property file="${db_scripts_path}/build.properties" />
   
-  <!--Import the build-master.xml -->
+  <!--Import the build-components.xml -->
   <property name="components.conf" value="${basedir}/components.xml"/>
   <property name="components_dir" value="components"/>
-  <import file="${basedir}/build-master.xml"/>
+  <import file="${basedir}/build-components.xml"/>
 
 
   <!-- COMPONENT PARAMETERS -->
