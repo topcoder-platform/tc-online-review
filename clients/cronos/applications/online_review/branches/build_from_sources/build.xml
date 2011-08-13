@@ -14,8 +14,10 @@
   <property file="${db_scripts_path}/build.properties" />
   
   <!--Import the build-components.xml -->
-  <property name="components.conf" value="${basedir}/components.xml"/>
-  <property name="components_dir" value="components"/>
+  <property name="components.conf" value="${basedir}/components.xml" />
+  <property name="components_dir" value="components" />
+  <property name="components_src" value="" />
+  <property name="comp_src_dir" value="src/java/main" />
   <import file="${basedir}/build-components.xml"/>
 
 
@@ -89,8 +91,10 @@
   
   <!-- compiles the application -->
   <target name="compile">
+    <get-components-src />
     <mkdir dir="${build_classdir}"/>
-    <javac srcdir="${javamain}"
+    <javac
+           srcdir="${javamain};${components_src}"
            destdir="${build_classdir}"
            includes="**/*.java"
            debug="true"
@@ -147,7 +151,6 @@
       <lib dir="${jar_tcs_libdir}/${data_validation.path}" includes="*.jar"/>
       <lib dir="${jar_tcs_libdir}/${database_abstraction.path}" includes="*.jar"/>
       <lib dir="${jar_tcs_libdir}/${db_connection_factory.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${deliverable_management.path}" includes="*.jar"/>
       <lib dir="${jar_tcs_libdir}/${deliverable_management_persistence.path}" includes="*.jar"/>
       <lib dir="${jar_tcs_libdir}/${document_generator.path}" includes="*.jar"/>
       <lib dir="${jar_tcs_libdir}/${email_engine.path}" includes="*.jar"/>
@@ -163,7 +166,6 @@
       <lib dir="${jar_tcs_libdir}/${online_review_ajax_support.path}" includes="*.jar"/>
       <lib dir="${jar_tcs_libdir}/${online_review_deliverables.path}" includes="*.jar"/>
       <lib dir="${jar_tcs_libdir}/${online_review_login.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${online_review_phases.path}" includes="*.jar"/>
       <lib dir="${jar_tcs_libdir}/${online_review_upload_services.path}" includes="*.jar"/>
       <lib dir="${jar_tcs_libdir}/${distribution_tool.path}" includes="*.jar"/>
       <lib dir="${jar_tcs_libdir}/${phase_management.path}" includes="*.jar"/>

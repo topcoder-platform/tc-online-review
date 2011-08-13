@@ -75,4 +75,18 @@
             </sequential>
         </execute-all>
     </target>
+
+    <!-- =================================
+         target: get-components-src
+    ================================= -->
+
+    <macrodef name="get-components-src" description="Generates path to components sources" >
+        <sequential>
+            <execute-all prefix="component.current">
+                <sequential>
+                    <source-path prefix="component.current" property="components_src" />
+                </sequential>
+            </execute-all>
+        </sequential>
+    </macrodef>
 </project>

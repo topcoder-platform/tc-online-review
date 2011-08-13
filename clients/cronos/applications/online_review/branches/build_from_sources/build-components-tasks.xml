@@ -84,4 +84,31 @@
         }
         ]]>
     </scriptdef> 
+
+    <!-- = = = = = = = = = = = = = = = = =
+           scriptdef: source path
+
+           Gets the path to sources of a component and append it to property with passed name.
+
+           This task is only used within the 'execute-all' task.
+          = = = = = = = = = = = = = = = = = = = = -->
+    <scriptdef name="source-path" language="groovy" classpathref="script.path"
+        description="Gets the path to sources of a specific component.">
+
+        <!-- prefix of the properties containing the component information -->
+        <attribute name="prefix" />
+
+        <!-- the property which holds the paths to components sources-->
+        <attribute name="property" />
+        
+        <![CDATA[
+        def prefix = attributes.prefix
+        def name = project.getProperty("${prefix}.name")
+        def src = project.getProperty("comp_src_dir")
+        def dir = project.getProperty("components_dir")
+
+        project.setProperty("${attributes.property}", project.getProperty("${attributes.property}") + ';' + 
+                    "${dir}" + '/' + "${name}" + '/' + "${src}" )
+        ]]>
+    </scriptdef>
 </project>

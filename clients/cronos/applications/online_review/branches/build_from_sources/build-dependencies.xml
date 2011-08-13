@@ -131,19 +131,6 @@
     <property name="db_connection_factory.jar"
               value="${tcs_libdir}/${db_connection_factory.path}/${db_connection_factory.jar.name}"/>
 
-    <property name="deliverable_management.version" value="1.2.0"/>
-    <property name="deliverable_management.jar.name" value="deliverable_management.jar"/>
-    <property name="deliverable_management.path" value="deliverable_management/${deliverable_management.version}"/>
-    <property name="deliverable_management.jar"
-              value="${tcs_libdir}/${deliverable_management.path}/${deliverable_management.jar.name}"/>
-
-    <property name="deliverable_management_persistence.version" value="1.1.2"/>
-    <property name="deliverable_management_persistence.jar.name" value="deliverable_management_persistence.jar"/>
-    <property name="deliverable_management_persistence.path"
-              value="deliverable_management_persistence/${deliverable_management_persistence.version}"/>
-    <property name="deliverable_management_persistence.jar"
-              value="${tcs_libdir}/${deliverable_management_persistence.path}/${deliverable_management_persistence.jar.name}"/>
-
     <property name="distribution_tool.version" value="1.0.1"/>
     <property name="distribution_tool.jar.name" value="distribution_tool.jar"/>
     <property name="distribution_tool.path" value="distribution_tool/${distribution_tool.version}"/>
@@ -207,11 +194,6 @@
     <property name="magic_numbers.path" value="magic_numbers/${magic_numbers.version}" />
     <property name="magic_numbers.jar" value="${tcs_libdir}/${magic_numbers.path}/${magic_numbers.jar.name}" />
 
-    <property name="online_review_phases.version" value="1.6.1"/>
-    <property name="online_review_phases.jar.name" value="online_review_phases.jar"/>
-    <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}"/>
-    <property name="online_review_phases.jar"
-              value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}"/>
     <property name="guid_generator.version" value="1.0"/>
     <property name="guid_generator.jar.name" value="guid_generator.jar"/>
     <property name="guid_generator.path" value="guid_generator/${guid_generator.version}"/>
@@ -542,7 +524,6 @@
         <pathelement location="${data_validation.jar}"/>
         <pathelement location="${database_abstraction.jar}"/>
         <pathelement location="${db_connection_factory.jar}"/>
-        <pathelement location="${deliverable_management.jar}"/>
         <pathelement location="${deliverable_management_persistence.jar}"/>
         <pathelement location="${distribution_tool.jar}"/>
         <pathelement location="${document_generator.jar}"/>
@@ -556,7 +537,6 @@
         <pathelement location="${online_review_ajax_support.jar}"/>
         <pathelement location="${online_review_deliverables.jar}"/>
         <pathelement location="${online_review_login.jar}"/>
-        <pathelement location="${online_review_phases.jar}"/>
         <pathelement location="${online_review_upload_services.jar}"/>
         <pathelement location="${phase_management.jar}"/>
         <pathelement location="${phase_management_persistence.jar}"/>

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <components>
     <component
-        name="online_review_phases"
-        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/trunk"
-        >
+        name="deliverable_management"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/deliverable_management/trunk"
+        revision="HEAD">
     </component>
 
     <component
-        name="deliverable_management"
-        svnpath="https://coder.topcoder.com/tcs/catalog/java/deliverable_management/trunk"
-        revision="200000">
+        name="online_review_phases"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/trunk"
+        >
     </component>
 </components>
