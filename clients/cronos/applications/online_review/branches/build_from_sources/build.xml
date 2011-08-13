@@ -91,7 +91,7 @@
   
   <!-- compiles the application -->
   <target name="compile">
-    <trycatch >
+    <trycatch property="error">
         <try>
             <get-components-src />
             <mkdir dir="${build_classdir}"/>
@@ -111,6 +111,7 @@
             <echo >----------------------------------------------------------------------------------------------------------</echo>
             <echo >IMPORTANT - Make sure that all component's sources are up to date by executing 'ant checkout-components' !</echo>
             <echo >----------------------------------------------------------------------------------------------------------</echo>
+            <fail>${error}</fail>
         </catch>
     </trycatch >
   </target>
