@@ -11,37 +11,6 @@
         Defines tasks that execute ant scripts or build targets on all the components.
     </description>
 
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
-
-    <!-- = = = = = = = = = = = = = = = = =
-          macrodef: run-targets-all
-
-          Builds a target on each of the components.
-         = = = = = = = = = = = = = = = = = -->
-    <macrodef name="run-target-all" description="Builds a target on each of the component.">
-
-        <!-- the target to build on every component -->
-        <attribute name="target" />
-
-        <!-- properties that will be passed to the target to build -->
-        <element name="properties" optional="true"/>
-
-        <sequential>
-            <execute-all prefix="project.current">
-                <sequential>
-                  <echo message=""/>
-                  <echo message="--- Executing for: ${project.current.name}"/>
-                  <ant antfile="${project.current.basedir}/${project.current.buildfile}" target="@{target}" inheritall="false">
-                    <propertyset>
-                      <propertyref builtin="commandline"/>
-                    </propertyset>
-                    <properties />
-                  </ant>
-                </sequential>
-            </execute-all>
-        </sequential>
-    </macrodef>
-
     <!-- = = = = = = = = = = = = = = = = =
          scriptdef: execute-all
 
