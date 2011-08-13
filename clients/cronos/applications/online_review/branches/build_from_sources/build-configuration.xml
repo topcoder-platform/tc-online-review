@@ -114,13 +114,17 @@
               <isset property="build.svn.password"/>
             </not>
             <then>
-              <input addproperty="build.svn.password" message="Please enter svn password: "/>
+              <input addproperty="build.svn.password" message="Please enter svn password: ">
+                <handler classname="org.apache.tools.ant.input.SecureInputHandler" />
+              </input>
             </then>
           </if>
         </then>
         <else>
           <input addproperty="build.svn.username" message="Please enter svn username: "/>
-          <input addproperty="build.svn.password" message="Please enter svn password: "/>
+          <input addproperty="build.svn.password" message="Please enter svn password: ">
+            <handler classname="org.apache.tools.ant.input.SecureInputHandler" />
+          </input>
         </else>
       </if>
       <svn javahl="false" username="${build.svn.username}" password="${build.svn.password}">
