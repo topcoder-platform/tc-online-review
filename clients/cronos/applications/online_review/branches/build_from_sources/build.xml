@@ -91,19 +91,28 @@
   
   <!-- compiles the application -->
   <target name="compile">
-    <get-components-src />
-    <mkdir dir="${build_classdir}"/>
-    <javac
-           srcdir="${javamain};${components_src}"
-           destdir="${build_classdir}"
-           includes="**/*.java"
-           debug="true"
-           verbose="${verbose}"
-           source="1.5"
-           target="1.5"
-                >
-      <classpath refid="buildlibs"/>
-    </javac>
+    <trycatch >
+        <try>
+            <get-components-src />
+            <mkdir dir="${build_classdir}"/>
+            <javac
+                   srcdir="${javamain};${components_src}"
+                   destdir="${build_classdir}"
+                   includes="**/*.java"
+                   debug="true"
+                   verbose="${verbose}"
+                   source="1.5"
+                   target="1.5"
+                        >
+              <classpath refid="buildlibs"/>
+            </javac>
+        </try>
+        <catch >
+            <echo >----------------------------------------------------------------------------------------------------------</echo>
+            <echo >IMPORTANT - Make sure that all component's sources are up to date by executing 'ant checkout-components' !</echo>
+            <echo >----------------------------------------------------------------------------------------------------------</echo>
+        </catch>
+    </trycatch >
   </target>
 
   <!-- updates Online Review files from SVN and builds application -->
