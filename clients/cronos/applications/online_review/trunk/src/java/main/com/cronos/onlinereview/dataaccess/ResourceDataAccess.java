@@ -33,7 +33,9 @@ public class ResourceDataAccess extends BaseDataAccess {
     }
 
     /**
-     * <p>Searches the resources for specified user for projects of specified status.</p>
+     * <p>Searches the resources for specified user for projects of specified status.
+     * If status parameter is null it will search for the 'global' resources with no
+     * project associated.</p>
      *
      * @param userId a <code>long</code> providing the user ID.
      * @param status a <code>ProjectStatus</code> specifying the status of the projects.
@@ -56,7 +58,7 @@ public class ResourceDataAccess extends BaseDataAccess {
         // Get resources details by user ID using Query Tool
         Map<String, ResultSetContainer> results;
         if (status == null) {
-            results = runQuery("tcs_resources_by_user", "uid", String.valueOf(userId));
+            results = runQuery("tcs_global_resources_by_user", "uid", String.valueOf(userId));
         } else {
             results = runQuery("tcs_resources_by_user_and_status", new String[] {"uid", "stid"},
                                new String[] {String.valueOf(userId), String.valueOf(status.getId())});
@@ -65,7 +67,7 @@ public class ResourceDataAccess extends BaseDataAccess {
         // Convert returned data into Resource objects
         ResultSetContainer resourcesData;
         if (status == null) {
-            resourcesData = results.get("tcs_resources_by_user");
+            resourcesData = results.get("tcs_global_resources_by_user");
         } else {
             resourcesData = results.get("tcs_resources_by_user_and_status");
         }
@@ -103,17 +105,17 @@ public class ResourceDataAccess extends BaseDataAccess {
         // Fill resources with resource info records
         ResultSetContainer resourceInfosData;
         if (status == null) {
-            resourceInfosData = results.get("tcs_resource_infos_by_user");
+            resourceInfosData = results.get("tcs_global_resource_infos_by_user");
         } else {
             resourceInfosData = results.get("tcs_resource_infos_by_user_and_status");
         }
         recordNum = resourceInfosData.size();
 
         for (int i = 0; i < recordNum; i++) {
-            long projectId = resourceInfosData.getLongItem(i, "resource_id");
+            long resourceId = resourceInfosData.getLongItem(i, "resource_id");
             String propName = resourceInfosData.getStringItem(i, "resource_info_type_name");
             String value = resourceInfosData.getStringItem(i, "value");
-            Resource resource = cachedResources.get(projectId);
+            Resource resource = cachedResources.get(resourceId);
             resource.setProperty(propName, value);
         }
 

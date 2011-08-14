@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.lang.System;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -428,12 +429,12 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("phases", phases);
 
         Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForPhases(
-                ActionsHelper.createDeliverableManager(request), activePhases, allProjectResources);
+                ActionsHelper.createDeliverableManager(), activePhases, allProjectResources);
 
         // For approval phase
         Phase approvalPhase = ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME);
         if (approvalPhase != null) {
-            ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
+            ReviewManager reviewManager = ActionsHelper.createReviewManager();
             ScorecardType[] allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
             ScorecardType scorecardType = ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Approval");
 
@@ -2363,7 +2364,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
-                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
                         ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Specification Review"),
                         deliverable.getSubmission(), deliverable.getResource(), false);
 
@@ -2388,7 +2389,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
-                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
                         ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Screening"),
                         deliverable.getSubmission(), deliverable.getResource(), false);
 
@@ -2408,7 +2409,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
-                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
                         ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Milestone Screening"),
                         deliverable.getSubmission(), deliverable.getResource(), false);
 
@@ -2432,7 +2433,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
-                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
                         ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
                         deliverable.getSubmission(), deliverable.getResource(), false);
 
@@ -2453,7 +2454,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
-                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
                         ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Milestone Review"),
                         deliverable.getSubmission(), deliverable.getResource(), false);
 
@@ -2481,7 +2482,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
-                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
                         ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
                         deliverable.getSubmission(), deliverable.getResource(), false);
 
@@ -2502,7 +2503,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
-                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
                         ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
                         deliverable.getSubmission(), deliverable.getResource(), false);
 
@@ -2530,7 +2531,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
-                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
                         ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
                         deliverable.getSubmission(), aggregator[0].getId(), true);
 
@@ -2584,7 +2585,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
-                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
                         null, deliverable.getSubmission(), deliverable.getResource(), false);
 
                 if (review != null) {
@@ -2608,7 +2609,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 Phase[] activePhases = ActionsHelper.getActivePhases(phases);
                 Phase phase = ActionsHelper.getPhaseForDeliverable(activePhases, deliverable);
-                Review review = ActionsHelper.findLastApprovalReview(ActionsHelper.createReviewManager(request), phase,
+                Review review = ActionsHelper.findLastApprovalReview(ActionsHelper.createReviewManager(), phase,
                     ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Approval"), deliverable.getResource(),
                     false);
 
@@ -2627,7 +2628,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 }
 
                 ScorecardType scorecardType = ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Post-Mortem");
-                Review review = findReviewForProject(ActionsHelper.createReviewManager(request), scorecardType,
+                Review review = findReviewForProject(ActionsHelper.createReviewManager(), scorecardType,
                                                      deliverable.getProject(), deliverable.getResource(), false);
                 if (review == null) {
                     links[i] = "CreatePostMortem.do?method=createPostMortem&pid=" + deliverable.getProject();
