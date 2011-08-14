@@ -2117,7 +2117,7 @@ public class ProjectActions extends DispatchAction {
 
         // Validate that no submitters who have submitted for project were changed (either by role or handle) or deleted
         // 0-index resource is skipped as it is a "dummy" one
-        ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
+        ReviewManager reviewManager = ActionsHelper.createReviewManager();
         Set<Long> reviewResourceIds = findResourcesWithReviewsForProject(reviewManager, project.getId());
         for (int i = 1; i < resourceNames.length; i++) {
             String resourceAction = (String) lazyForm.get("resources_action", i);
@@ -2837,7 +2837,7 @@ public class ProjectActions extends DispatchAction {
 
         if (ungroupedProjects.length != 0 && myProjects) {
             Deliverable[] allMyDeliverables = getDeliverables(
-                    ActionsHelper.createDeliverableManager(request), projects, phases, myResources);
+                    ActionsHelper.createDeliverableManager(), projects, phases, myResources);
 
             // Group the deliverables per projects in list
             for (int i = 0; i < projects.length; ++i) {
@@ -3391,7 +3391,7 @@ public class ProjectActions extends DispatchAction {
                 Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME)));
 
-        collectTrueSubmittersAndReviewers(project, resources, ActionsHelper.createReviewManager(request), request);
+        collectTrueSubmittersAndReviewers(project, resources, ActionsHelper.createReviewManager(), request);
     }
 
     /**

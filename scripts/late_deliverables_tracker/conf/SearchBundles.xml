@@ -160,13 +160,8 @@
                         resource_role_id,
                         project_id,
                         project_phase_id
-                        FROM resource,
-                        resource_info,
-                        resource_info_type_lu,
-                        OUTER resource_submission
-                        WHERE resource.resource_id = resource_info.resource_id
-                        AND resource_info.resource_info_type_id = resource_info_type_lu.resource_info_type_id
-                        AND resource.resource_id = resource_submission.resource_id
+                        FROM resource
+                        WHERE 1=1
                         AND
                     </Value>
                 </Property>

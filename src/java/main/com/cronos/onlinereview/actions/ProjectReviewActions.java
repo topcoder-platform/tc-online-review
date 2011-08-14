@@ -577,7 +577,7 @@ public class ProjectReviewActions extends DispatchAction {
         retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "Aggregation");
 
         // Obtain an instance of Review Manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
 
         // Retrieve all comment types first
         CommentType allCommentTypes[] = revMgr.getAllCommentTypes();
@@ -748,7 +748,7 @@ public class ProjectReviewActions extends DispatchAction {
         int itemIdx = 0;
 
         // Obtain an instance of review manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
         // Retrieve all comment types
         CommentType[] allCommentTypes = revMgr.getAllCommentTypes();
         int numberOfItems = review.getNumberOfItems();
@@ -916,7 +916,7 @@ public class ProjectReviewActions extends DispatchAction {
             // Build final combined filter
             Filter filter = new AndFilter(filterReviewers, filterCommitted);
             // Obtain an instance of Review Manager
-            ReviewManager reviewMgr = ActionsHelper.createReviewManager(request);
+            ReviewManager reviewMgr = ActionsHelper.createReviewManager();
             // Fetch all reviews (Aggregations only) for the project
             Review[] reviews = reviewMgr.searchReviews(filter, true);
 
@@ -1292,7 +1292,7 @@ public class ProjectReviewActions extends DispatchAction {
         String[] rejectReasons = (String[]) aggregationReviewForm.get("reject_reason");
 
         // Obtain an instance of review manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
         // Retrieve all comment types
         CommentType[] allCommentTypes = revMgr.getAllCommentTypes();
         // Determine the type of comment to search for
@@ -1760,7 +1760,7 @@ public class ProjectReviewActions extends DispatchAction {
         int itemIdx = 0;
 
         // Obtain an instance of review manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
         // Retrieve all comment types
         CommentType[] allCommentTypes = revMgr.getAllCommentTypes();
 
@@ -2202,7 +2202,7 @@ public class ProjectReviewActions extends DispatchAction {
         Filter filter = new AndFilter(Arrays.asList(
                 new Filter[] {filterReviewers, filterSubmission, filterCommitted, filterScorecard}));
         // Obtain an instance of Review Manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
         // Retrieve an array of reviews
         Review[] reviews = revMgr.searchReviews(filter, true);
 
@@ -2520,7 +2520,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Obtain an instance of Review Manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
 
         /*
          * Review Management Persistence component throws an exception
@@ -2650,7 +2650,7 @@ public class ProjectReviewActions extends DispatchAction {
                 {filterResources, filterCommitted, filterSubmission, filterProject, filterScorecard}));
 
         // Obtain an instance of Review Manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
         // Fetch reviews (only basic review info is fetched, no items/comments)
         Review[] reviews = revMgr.searchReviews(filter, false);
         // Place reviews into the request. This will be used to provide links to individual reviews
@@ -2678,7 +2678,7 @@ public class ProjectReviewActions extends DispatchAction {
      */
     private CommentType[] retreiveAndStoreReviewLookUpData(HttpServletRequest request) throws BaseException {
         // Obtain Review Manager instance
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
 
         // Retrieve all comment types first
         CommentType reviewCommentTypesAll[] = revMgr.getAllCommentTypes();
@@ -2874,7 +2874,7 @@ public class ProjectReviewActions extends DispatchAction {
             filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterSubmission, filterScorecard}));
         }
         // Obtain an instance of Review Manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
         // Retrieve an array of reviews
         Review[] reviews = revMgr.searchReviews(filter, false);
         if (phase.getPhaseType().getName().equals(Constants.APPROVAL_PHASE_NAME)) {
@@ -3275,7 +3275,7 @@ public class ProjectReviewActions extends DispatchAction {
             }
 
             // Obtain an instance of Review Manager
-            ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+            ReviewManager revMgr = ActionsHelper.createReviewManager();
             // Retrieve an array of reviews
             Review[] reviews = revMgr.searchReviews(filter, false);
             if (phase.getPhaseType().getName().equals(Constants.APPROVAL_PHASE_NAME)) {
@@ -3369,7 +3369,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Obtain an instance of review manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
         // Obtain an instance of Upload Manager
         UploadManager upMgr = ActionsHelper.createUploadManager();
 
@@ -3767,7 +3767,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Prepare final combined filter
         Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterReviewers, filterSubmission, filterCommitted}));
         // Obtain an instance of Review Manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
         // Retrieve an array of reviews
         Review[] reviews = revMgr.searchReviews(filter, true);
 

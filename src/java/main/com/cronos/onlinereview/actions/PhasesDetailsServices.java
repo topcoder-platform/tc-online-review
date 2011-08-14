@@ -184,6 +184,9 @@ final class PhasesDetailsServices {
         FinalFixesInfo finalFixes = new FinalFixesInfo();
         SpecificationsInfo specifications = new SpecificationsInfo();
 
+        Submission[] mostRecentContestSubmissions = ActionsHelper.getMostRecentSubmissions(
+            ActionsHelper.createUploadManager(), project, "Contest Submission");
+
         for (int phaseIdx = 0; phaseIdx < phases.length; ++phaseIdx) {
             // Get a phase for the current iteration
             Phase phase = phases[phaseIdx];
@@ -262,19 +265,19 @@ final class PhasesDetailsServices {
                 serviceRegistrantsAppFunc(request, phaseGroup, submitters, allProjectExternalUsers);
             } else if (phaseGroup.getAppFunc().equals(Constants.VIEW_SUBMISSIONS_APP_FUNC)) {
                 serviceSubmissionsAppFunc(request, phaseGroup, project, phases, phaseIdx,
-                        allProjectResources, submitters, isAfterAppealsResponse);
+                        allProjectResources, submitters, mostRecentContestSubmissions, isAfterAppealsResponse);
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.VIEW_REVIEWS_APP_FUNC)) {
                 serviceReviewsAppFunc(request, phaseGroup, project, phase, nextPhase,
-                        allProjectResources, submitters, isAfterAppealsResponse);
+                        allProjectResources, submitters, mostRecentContestSubmissions, isAfterAppealsResponse);
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.AGGREGATION_APP_FUNC)) {
                 serviceAggregationAppFunc(request, phaseGroup, project, phase,
-                        allProjectResources, isAfterAppealsResponse);
+                        allProjectResources, mostRecentContestSubmissions, isAfterAppealsResponse);
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC)) {
                 serviceFinalFixAppFunc(request, phaseGroup, project, phase,
-                        allProjectResources, finalFixes, isAfterAppealsResponse);
+                        allProjectResources, finalFixes, mostRecentContestSubmissions, isAfterAppealsResponse);
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.APPROVAL_APP_FUNC)) {
                 serviceApprovalAppFunc(request, phaseGroup, project, phase,
-                        allProjectResources, isAfterAppealsResponse, finalFixes);
+                        allProjectResources, isAfterAppealsResponse, finalFixes, mostRecentContestSubmissions);
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.POST_MORTEM_APP_FUNC)) {
                 servicePostMortemAppFunc(request, phaseGroup, project, phase, allProjectResources);
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.SPEC_REVIEW_APP_FUNC)) {
@@ -339,9 +342,8 @@ final class PhasesDetailsServices {
                     && ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.FINAL_FIX_PHASE_NAME))
                 || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_MILESTONE_SUBMISSION_PERM_NAME)
                     && ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.MILESTONE_SCREENING_PHASE_NAME))) {
-                submissions 
-                    = ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(), project,
-                                                             "Milestone Submission");
+                submissions = ActionsHelper.getMostRecentSubmissions(
+                    ActionsHelper.createUploadManager(), project,"Milestone Submission");
             }
 
             if (submissions == null 
@@ -350,8 +352,7 @@ final class PhasesDetailsServices {
                 UploadManager upMgr = ActionsHelper.createUploadManager();
                 SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
                 SubmissionType[] allSubmissionTypes = upMgr.getAllSubmissionTypes();
-                SubmissionType submissionType = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes,
-                                                                                       "Milestone Submission");
+                SubmissionType submissionType = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes, "Milestone Submission");
 
                 // Get "my" (submitter's) resource
                 Resource myResource = null;
@@ -422,7 +423,7 @@ final class PhasesDetailsServices {
             Filter filter = new AndFilter(filterSubmissions, filterScorecard);
 
             // Obtain an instance of Review Manager
-            ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+            ReviewManager revMgr = ActionsHelper.createReviewManager();
             Review[] reviews = revMgr.searchReviews(filter, false);
 
             phaseGroup.setMilestoneScreeningReviews(reviews);
@@ -461,7 +462,7 @@ final class PhasesDetailsServices {
             Filter filter = new AndFilter(filterSubmissions, filterScorecard);
 
             // Obtain an instance of Review Manager
-            ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+            ReviewManager revMgr = ActionsHelper.createReviewManager();
             Review[] reviews = revMgr.searchReviews(filter, false);
 
             phaseGroup.setMilestoneReviews(reviews);
@@ -588,48 +589,40 @@ final class PhasesDetailsServices {
      */
     private static void serviceSubmissionsAppFunc(HttpServletRequest request,
             PhaseGroup phaseGroup, Project project, Phase[] phases, int phaseIdx,
-            Resource[] allProjectResources, Resource[] submitters, boolean isAfterAppealsResponse)
+            Resource[] allProjectResources, Resource[] submitters, Submission[] mostRecentContestSubmissions,
+            boolean isAfterAppealsResponse)
         throws BaseException {
         String phaseName = phases[phaseIdx].getPhaseType().getName();
 
         if (phaseName.equalsIgnoreCase(Constants.SUBMISSION_PHASE_NAME)) {
+
             Submission[] submissions = null;
 
             if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
-                submissions = ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(), project,
-                                                                     "Contest Submission");
+                submissions = mostRecentContestSubmissions;
             }
 
             boolean mayViewMostRecentAfterAppealsResponse =
                 AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME);
 
-            if (submissions == null &&
-                    ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse))) {
-                submissions =
-                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(), project,
-                                                           "Contest Submission");
+            if (submissions == null && ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse))) {
+                submissions = mostRecentContestSubmissions;
             }
             if (submissions == null &&
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) &&
                     !AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES)) {
-                submissions =
-                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(), project,
-                                                           "Contest Submission");
+                submissions = mostRecentContestSubmissions;
             }
             if (submissions == null &&
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) &&
                     AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES) &&
                     ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.REVIEW_PHASE_NAME)) {
-                submissions =
-                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(), project,
-                                                           "Contest Submission");
+                submissions = mostRecentContestSubmissions;
             }
             if (submissions == null &&
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME) &&
                     ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.SCREENING_PHASE_NAME)) {
-                submissions =
-                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(), project,
-                                                           "Contest Submission");
+                submissions = mostRecentContestSubmissions;
             }
             if (submissions == null &&
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
@@ -662,7 +655,7 @@ final class PhasesDetailsServices {
             }
 
             if (submissions == null) {
-                    submissions = new Submission[0];
+                submissions = new Submission[0];
             }
             // Use comparator to sort submissions either by placement
             // or by the time when they were uploaded
@@ -723,7 +716,7 @@ final class PhasesDetailsServices {
             Filter filter = new AndFilter(filterSubmissions, filterScorecard);
 
             // Obtain an instance of Review Manager
-            ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+            ReviewManager revMgr = ActionsHelper.createReviewManager();
             Review[] reviews = revMgr.searchReviews(filter, false);
 
             phaseGroup.setScreenings(reviews);
@@ -745,7 +738,8 @@ final class PhasesDetailsServices {
      */
     private static void serviceReviewsAppFunc(HttpServletRequest request,
             PhaseGroup phaseGroup, Project project, Phase phase, Phase nextPhase,
-            Resource[] allProjectResources, Resource[] submitters, boolean isAfterAppealsResponse)
+            Resource[] allProjectResources, Resource[] submitters, Submission[] mostRecentContestSubmissions,
+            boolean isAfterAppealsResponse)
         throws BaseException {
         String phaseName = phase.getPhaseType().getName();
 
@@ -756,9 +750,7 @@ final class PhasesDetailsServices {
             Submission[] submissions = null;
 
             if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
-                submissions =
-                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(), project,
-                                                           "Contest Submission");
+                submissions = mostRecentContestSubmissions;
             }
 
             boolean mayViewMostRecentAfterAppealsResponse =
@@ -767,9 +759,7 @@ final class PhasesDetailsServices {
             if (submissions == null &&
                     ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse) ||
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME))) {
-                submissions =
-                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(), project,
-                                                           "Contest Submission");
+                submissions = mostRecentContestSubmissions;
             }
             if (submissions == null &&
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
@@ -907,7 +897,7 @@ final class PhasesDetailsServices {
                 }
 
                 // Obtain an instance of Review Manager
-                ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+                ReviewManager revMgr = ActionsHelper.createReviewManager();
                 // Get the reviews from every individual reviewer
                 ungroupedReviews = revMgr.searchReviews(filterForReviews, needFullReviews);
             }
@@ -1006,10 +996,10 @@ final class PhasesDetailsServices {
      * @throws BaseException if an unexpected error occurs.
      */
     private static void serviceAggregationAppFunc(HttpServletRequest request, PhaseGroup phaseGroup,
-            Project project, Phase phase, Resource[] allProjectResources, boolean isAfterAppealsResponse)
+        Project project, Phase phase, Resource[] allProjectResources, Submission[] mostRecentContestSubmissions,
+        boolean isAfterAppealsResponse)
         throws BaseException {
-        retrieveSubmissions(request, phaseGroup, project, isAfterAppealsResponse);
-
+        retrieveSubmissions(request, phaseGroup, project, mostRecentContestSubmissions, isAfterAppealsResponse);
         String phaseName = phase.getPhaseType().getName();
 
         if (phaseName.equalsIgnoreCase(Constants.AGGREGATION_PHASE_NAME) &&
@@ -1029,9 +1019,8 @@ final class PhasesDetailsServices {
             Filter filter = new AndFilter(filterResource, filterProject);
 
             // Obtain an instance of Review Manager
-            ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-            Review[] reviews = revMgr.searchReviews(filter, true);
-
+            ReviewManager revMgr = ActionsHelper.createReviewManager();
+            Review[] reviews = revMgr.searchReviews(filter, false);
             if (reviews.length != 0) {
                 phaseGroup.setAggregation(reviews[0]);
             }
@@ -1051,10 +1040,9 @@ final class PhasesDetailsServices {
      * @throws BaseException if an unexpected error occurs.
      */
     private static void serviceFinalFixAppFunc(HttpServletRequest request, PhaseGroup phaseGroup, Project project,
-            Phase phase, Resource[] allProjectResources, FinalFixesInfo finalFixes, boolean isAfterAppealsResponse)
-        throws BaseException {
-        retrieveSubmissions(request, phaseGroup, project, isAfterAppealsResponse);
-
+        Phase phase, Resource[] allProjectResources, FinalFixesInfo finalFixes, Submission[] mostRecentContestSubmissions,
+        boolean isAfterAppealsResponse) throws BaseException {
+        retrieveSubmissions(request, phaseGroup, project, mostRecentContestSubmissions, isAfterAppealsResponse);
         String phaseName = phase.getPhaseType().getName();
 
         if (phaseGroup.getSubmitters() != null) {
@@ -1106,7 +1094,7 @@ final class PhasesDetailsServices {
             Filter filter = new AndFilter(filterResource, filterProject);
 
             // Obtain an instance of Review Manager
-            ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+            ReviewManager revMgr = ActionsHelper.createReviewManager();
             Review[] reviews = revMgr.searchReviews(filter, true);
 
             if (reviews.length != 0) {
@@ -1177,7 +1165,7 @@ final class PhasesDetailsServices {
             Filter filterResource = new EqualToFilter("reviewer", new Long(reviewers[0].getId()));
             Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
             Filter filter = new AndFilter(filterResource, filterProject);
-            ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+            ReviewManager revMgr = ActionsHelper.createReviewManager();
             Review[] reviews = revMgr.searchReviews(filter, true);
             if (reviews.length != 0) {
                 phaseGroup.setSpecificationReview(reviews[0]);
@@ -1200,14 +1188,13 @@ final class PhasesDetailsServices {
      * @throws BaseException if an unexpected error occurs.
      */
     private static void serviceApprovalAppFunc(HttpServletRequest request, PhaseGroup phaseGroup,
-                                               Project project, Phase thisPhase, Resource[] allProjectResources,
-                                               boolean isAfterAppealsResponse, FinalFixesInfo finalFixes)
+        Project project, Phase thisPhase, Resource[] allProjectResources, boolean isAfterAppealsResponse,
+        FinalFixesInfo finalFixes, Submission[] mostRecentContestSubmissions)
         throws BaseException {
         if (phaseGroup.getSubmitters() == null) {
             return;
         }
-        retrieveSubmissions(request, phaseGroup, project, isAfterAppealsResponse);
-
+        retrieveSubmissions(request, phaseGroup, project, mostRecentContestSubmissions, isAfterAppealsResponse);
         Resource winner = ActionsHelper.getWinner(request, project.getId());
         phaseGroup.setWinner(winner);
 
@@ -1235,7 +1222,7 @@ final class PhasesDetailsServices {
         Filter filter = new AndFilter(Arrays.asList(filterResource, filterProject, filterScorecard));
 
         // Obtain an instance of Review Manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
         Review[] reviews = revMgr.searchReviews(filter, true);
 
         phaseGroup.setApproval(ActionsHelper.getApprovalPhaseReviews(reviews, thisPhase));
@@ -1285,7 +1272,7 @@ final class PhasesDetailsServices {
         Filter filter = new AndFilter(Arrays.asList(filterResource, filterProject, filterScorecard));
 
         // Get existing Post-Mortem reviews and set phase group with them
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
         Review[] reviews = revMgr.searchReviews(filter, false);
         phaseGroup.setPostMortemReviews(reviews);
         phaseGroup.setPostMortemPhaseStatus(thisPhase.getPhaseStatus().getId());
@@ -1300,8 +1287,8 @@ final class PhasesDetailsServices {
      * @param isAfterAppealsResponse a
      * @throws BaseException if an unexpected error occurs.
      */
-    private static void retrieveSubmissions(HttpServletRequest request,
-            PhaseGroup phaseGroup, Project project, boolean isAfterAppealsResponse)
+    private static void retrieveSubmissions(HttpServletRequest request, PhaseGroup phaseGroup,
+	    Project project, Submission[] mostRecentContestSubmissions, boolean isAfterAppealsResponse)
         throws BaseException {
         if (phaseGroup.getSubmitters() == null || phaseGroup.getSubmissions() != null) {
             return;
@@ -1316,9 +1303,7 @@ final class PhasesDetailsServices {
                 AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME) ||
                 AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) ||
                 AuthorizationHelper.hasUserPermission(request, Constants.VIEW_WINNING_SUBM_PERM_NAME)) {
-            submissions =
-                ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(), project,
-                                                       "Contest Submission");
+            submissions = mostRecentContestSubmissions;
         }
         if (submissions == null &&
                 AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
