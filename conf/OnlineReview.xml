@@ -4159,9 +4159,14 @@
                                resource.create_date AS create_date,
                                resource.modify_user AS modify_user,
                                resource.modify_date AS modify_date
-                        FROM resource
-                        WHERE 1=1
-                        AND
+                          FROM resource,
+                               resource_info,
+                               resource_info_type_lu,
+                         OUTER resource_submission
+                         WHERE resource.resource_id = resource_info.resource_id
+                           AND resource_info.resource_info_type_id = resource_info_type_lu.resource_info_type_id
+                           AND resource.resource_id = resource_submission.resource_id
+                           AND
                     </Value>
                 </Property>
 
