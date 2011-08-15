@@ -6,9 +6,6 @@ package com.cronos.onlinereview.actions;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.cronos.onlinereview.autoscreening.management.ConfigurationException;
-import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
-import com.cronos.onlinereview.autoscreening.management.ScreeningManagerFactory;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
 import com.cronos.onlinereview.phases.MilestoneSubmissionPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
@@ -121,8 +118,15 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  *   </ol> 
  * </p>
  *
- * @author evilisneo, BeBetter, isv, FireIce, VolodymyrK, rac_, flexme
- * @version 1.7
+ * <p>
+ * Version 1.8 (Online Review Build From Sources) Change notes:
+ *   <ol>
+ *     <li>Removed dependency on Auto Screening.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author evilisneo, BeBetter, isv, FireIce, VolodymyrK, rac_, flexme, lmmortal
+ * @version 1.8
  */
 public class ManagerCreationHelper implements ManagersProvider {
 
@@ -152,10 +156,6 @@ public class ManagerCreationHelper implements ManagersProvider {
      * Used for caching the created manager.
      */
     private ResourceManager resourceManager = null;
-    /**
-     * Used for caching the created manager.
-     */
-    private ScreeningManager screeningManager = null;
 
     /**
      * Used for caching the created manager.
@@ -344,26 +344,6 @@ public class ManagerCreationHelper implements ManagersProvider {
             return resourceManager;
         } catch (Exception e) {
             throw new ManagerCreationException("Exception occurred while creating the resource manager.", e);
-        }
-    }
-
-    /**
-     * <p>
-     * Returns a <code>ScreeningManager</code> instance. This is used in <code>UploadServices</code> to
-     * retrieve this manager and perform all its operations.
-     * </p>
-     *
-     * @return a <code>ScreeningManager</code> instance
-     * @see ManagersProvider#getScreeningManager()
-     */
-    public ScreeningManager getScreeningManager() {
-        try {
-            if(screeningManager == null) {
-                screeningManager = ScreeningManagerFactory.createScreeningManager();
-            }
-            return screeningManager;
-        } catch (ConfigurationException e) {
-            throw new ManagerCreationException("Exception occurred while creating the ScreeningManager.", e);
         }
     }
 

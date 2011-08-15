@@ -44,7 +44,7 @@
   <property name="javatests" value="${javasrc}/tests"/>
   <property name="sqlsrc" value="${srcdir}/sql"/>
 
-  <property name="builddir" value="build/ant" />
+  <property name="builddir" value="build/ant/online_review" />
   <property name="build_conf" value="${builddir}/conf" />
   <property name="build_tests" value="${builddir}/tests" />
   <property name="build_shared" value="${builddir}/shared" />
@@ -143,7 +143,6 @@
       <classes dir="${build_conf}" includes="**" excludes="WEB-INF/**, META-INF/**"/>
       <classes dir="${build_conf}/WEB-INF/classes"/>
       <lib dir="${tcs_libdir}/${authentication_factory.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${auto_screening_management.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${base_exception.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${class_associations.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${command_line_utility.path}" includes="*.jar"/>
@@ -170,7 +169,6 @@
       <lib dir="${tcs_libdir}/${online_review_ajax_support.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${online_review_deliverables.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${online_review_login.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${online_review_upload_services.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${distribution_tool.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${phase_management.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${phase_management_persistence.path}" includes="*.jar"/>

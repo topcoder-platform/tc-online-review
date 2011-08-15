@@ -39,7 +39,6 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionRedirect;
 import org.apache.struts.util.MessageResources;
 
-import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.dataaccess.ResourceDataAccess;
 import com.cronos.onlinereview.deliverables.AggregationDeliverableChecker;
 import com.cronos.onlinereview.deliverables.AggregationReviewDeliverableChecker;
@@ -274,8 +273,16 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK, rac_
- * @version 1.12
+ * <p>
+ * Version 1.13 (Online Review Build From Sources) Change notes:
+ *   <ol>
+ *     <li>Removed dependency on Auto Screening.</li>
+ *   </ol>
+ * </p>
+ *
+ *
+ * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK, rac_, lmmortal
+ * @version 1.13
  * @since Online Review Status Validation Assembly 1.0
  */
 public class ActionsHelper {

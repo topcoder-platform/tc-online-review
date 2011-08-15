@@ -11,7 +11,17 @@
         revision="HEAD" />
 
     <component
+        name="late_deliverables_tracker"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/late_deliverables_tracker/trunk"
+        revision="HEAD" />
+
+    <component
         name="auto_pilot"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/auto_pilot/trunk/"
         revision="HEAD"/>
+
+    <component
+        name="online_review_upload_services"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_upload_services/trunk"
+        revision="HEAD" />
 </components>

@@ -22,23 +22,6 @@
     <property name="authentication_factory.jar"
               value="${tcs_libdir}/${authentication_factory.path}/${authentication_factory.jar.name}"/>
 
-    <property name="auto_screening_management.version" value="1.0"/>
-    <property name="auto_screening_management.jar.name" value="auto_screening_management.jar"/>
-    <property name="auto_screening_management.path"
-              value="auto_screening_management/${auto_screening_management.version}"/>
-    <property name="auto_screening_management.jar"
-              value="${tcs_libdir}/${auto_screening_management.path}/${auto_screening_management.jar.name}"/>
-
-    <property name="auto_screening_tool.version" value="1.1"/>
-    <property name="auto_screening_tool.jar.name" value="auto_screening_tool.jar"/>
-    <property name="auto_screening_tool.path" value="auto_screening_tool/${auto_screening_tool.version}"/>
-    <property name="auto_screening_tool.jar" value="${tcs_libdir}/${auto_screening_tool.path}/${auto_screening_tool.jar.name}"/>
-
-    <property name="auto_screening_tool_persistence.version" value="1.0" />
-    <property name="auto_screening_tool_persistence.jar.name" value="auto_screening_tool_persistence.jar" />
-    <property name="auto_screening_tool_persistence.path" value="auto_screening_tool_persistence/${auto_screening_tool_persistence.version}" />
-    <property name="auto_screening_tool_persistence.jar" value="${tcs_libdir}/${auto_screening_tool_persistence.path}/${auto_screening_tool_persistence.jar.name}" />
-
     <property name="base_exception.version" value="2.0.0"/>
     <property name="base_exception.jar.name" value="base_exception.jar"/>
     <property name="base_exception.path" value="base_exception/${base_exception.version}"/>
@@ -205,11 +188,6 @@
     <property name="JNDI_Utility.jar.name" value="JNDI_Utility.jar"/>
     <property name="JNDI_Utility.path" value="JNDI_Utility/${JNDI_Utility.version}"/>
     <property name="JNDI_Utility.jar" value="${tcs_libdir}/${JNDI_Utility.path}/${JNDI_Utility.jar.name}"/>
-
-    <property name="late_deliverables_tracker.version" value="1.2.0"/>
-    <property name="late_deliverables_tracker.jar.name" value="late_deliverables_tracker.jar"/>
-    <property name="late_deliverables_tracker.path" value="late_deliverables_tracker/${late_deliverables_tracker.version}"/>
-    <property name="late_deliverables_tracker.jar" value="${tcs_libdir}/${late_deliverables_tracker.path}/${late_deliverables_tracker.jar.name}"/>
     
     <property name="late_deliverables_management.version" value="1.0.4"/>
     <property name="late_deliverables_management.jar.name" value="late_deliverables_management.jar"/>
@@ -253,13 +231,6 @@
     <property name="online_review_login.path" value="online_review_login/${online_review_login.version}"/>
     <property name="online_review_login.jar"
               value="${tcs_libdir}/${online_review_login.path}/${online_review_login.jar.name}"/>
-
-    <property name="online_review_upload_services.version" value="1.1.1"/>
-    <property name="online_review_upload_services.jar.name" value="online_review_upload_services.jar"/>
-    <property name="online_review_upload_services.path"
-              value="online_review_upload_services/${online_review_upload_services.version}"/>
-    <property name="online_review_upload_services.jar"
-              value="${tcs_libdir}/${online_review_upload_services.path}/${online_review_upload_services.jar.name}"/>
 
     <property name="phase_management.version" value="1.1.0"/>
     <property name="phase_management.jar.name" value="phase_management.jar"/>
@@ -504,7 +475,6 @@
         <pathelement location="${JNDI_Utility.jar}"/>
         <pathelement location="${tcIdGenerator.jar}"/>
         <pathelement location="${authentication_factory.jar}"/>
-        <pathelement location="${auto_screening_management.jar}"/>
         <pathelement location="${base_exception.jar}"/>
         <pathelement location="${command_line_utility.jar}"/>
         <pathelement location="${configuration_manager.jar}"/>
@@ -522,13 +492,14 @@
         <pathelement location="${file_upload.jar}"/>
         <pathelement location="${id_generator.jar}"/>
         <pathelement location="${job_scheduler.jar}"/>
+        <pathelement location="${job_scheduling.jar}"/>
+        <pathelement location="${job_processor.jar}"/>
         <pathelement location="${logging_wrapper.jar}"/>
         <pathelement location="${object_factory.jar}"/>
         <pathelement location="${object_factory_configuration_api_plugin.jar}"/>
         <pathelement location="${online_review_ajax_support.jar}"/>
         <pathelement location="${online_review_deliverables.jar}"/>
         <pathelement location="${online_review_login.jar}"/>
-        <pathelement location="${online_review_upload_services.jar}"/>
         <pathelement location="${phase_management.jar}"/>
         <pathelement location="${phase_management_persistence.jar}"/>
         <pathelement location="${project_management.jar}"/>
@@ -551,13 +522,12 @@
         <pathelement location="${weighted_calculator.jar}"/>
         <pathelement location="${workdays.jar}"/>
         <pathelement location="${xmi_parser.jar}"/>
-        <pathelement location="${auto_screening_tool.jar}"/>
-        <pathelement location="${auto_screening_management.jar}"/>
         <pathelement location="${directory_validation.jar}"/>
         <pathelement location="${heartbeat.jar}"/>
         <pathelement location="${compression_utility.jar}"/>
         <pathelement location="${svnkit.jar}"/>
         <pathelement location="${late_deliverables_management.jar}" />
+        <pathelement location="${guid_generator.jar}" />
         <path refid="spring_libs"/>
     </path>
 

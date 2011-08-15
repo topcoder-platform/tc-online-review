@@ -81,7 +81,6 @@
         <delete file="${build_distdir}/auto_pilot_app.jar" failonerror="no"/>
         <jar destfile="${build_distdir}/auto_pilot_app.jar" filesonly="true">
             <fileset file="${auto_pilot.jar}"/>
-            <fileset file="${auto_screening_management.jar}"/>
             <fileset file="${base_exception.jar}"/>
             <fileset file="${class_associations.jar}"/>
             <fileset file="${command_line_utility.jar}"/>
