@@ -3,12 +3,15 @@
     <component
         name="deliverable_management"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/deliverable_management/trunk"
-        revision="HEAD">
-    </component>
+        revision="HEAD"/>
 
     <component
         name="online_review_phases"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/trunk"
-        >
-    </component>
+        revision="HEAD" />
+
+    <component
+        name="auto_pilot"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/auto_pilot/trunk/"
+        revision="HEAD"/>
 </components>

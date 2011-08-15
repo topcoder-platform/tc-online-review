@@ -9,15 +9,10 @@
 
   <!-- include ant contrib tasks -->
   <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${ant-contrib.jar}"/>
-
-  <!-- Load build properties -->
-  <property file="${db_scripts_path}/build.properties" />
   
   <!--Import the build-components.xml -->
   <property name="components.conf" value="${basedir}/components.xml" />
   <property name="components_dir" value="components" />
-  <property name="components_src" value="" />
-  <property name="comp_src_dir" value="src/java/main" />
   <import file="${basedir}/build-components.xml"/>
 
 
@@ -147,78 +142,77 @@
       <classes dir="${build_classdir}" includes="**"/>
       <classes dir="${build_conf}" includes="**" excludes="WEB-INF/**, META-INF/**"/>
       <classes dir="${build_conf}/WEB-INF/classes"/>
-      <lib dir="${jar_tcs_libdir}/${authentication_factory.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${auto_pilot.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${auto_screening_management.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${base_exception.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${class_associations.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${command_line_utility.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${configuration_api.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${configuration_manager.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${configuration_persistence.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${contest_eligibility_persistence.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${contest_eligibility_validation.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${data_validation.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${database_abstraction.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${db_connection_factory.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${deliverable_management_persistence.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${document_generator.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${email_engine.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${file_system_server.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${file_upload.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${guid_generator.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${id_generator.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${ip_server.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${JNDI_Utility.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${logging_wrapper.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${object_factory.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${object_factory_configuration_api_plugin.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${online_review_ajax_support.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${online_review_deliverables.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${online_review_login.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${online_review_upload_services.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${distribution_tool.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${phase_management.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${phase_management_persistence.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${project_management.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${project_management_persistence.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${project_phases.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${project_phase_template.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${resource_management.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${resource_management_persistence.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${review_data_structure.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${review_management.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${review_management_persistence.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${review_score_aggregator.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${review_score_calculator.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${scorecard_data_structure.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${scorecard_management.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${scorecard_management_persistence.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${search_builder.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${simple_cache.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${typesafe_enum.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${user_project_data_store.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${weighted_calculator.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${workdays.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${projectEJB.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${userEJB.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${securityEJB.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}/${late_deliverables_management.path}" includes="*.jar"/>
-      <lib dir="${jar_tcs_libdir}" includes="tc_id_generator.jar"/>
-      <lib dir="${jar_tcs_libdir}" includes="tcjive.jar"/>
-      <lib dir="${jar_tcs_libdir}" includes="${tcsUtil.jar.name}"/>
-      <lib dir="${jar_ext_libdir}" includes="*.jar"
+      <lib dir="${tcs_libdir}/${authentication_factory.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${auto_screening_management.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${base_exception.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${class_associations.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${command_line_utility.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${configuration_api.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${configuration_manager.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${configuration_persistence.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${contest_eligibility_persistence.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${contest_eligibility_validation.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${data_validation.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${database_abstraction.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${db_connection_factory.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${deliverable_management_persistence.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${document_generator.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${email_engine.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${file_system_server.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${file_upload.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${guid_generator.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${id_generator.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${ip_server.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${JNDI_Utility.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${logging_wrapper.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${object_factory.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${object_factory_configuration_api_plugin.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${online_review_ajax_support.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${online_review_deliverables.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${online_review_login.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${online_review_upload_services.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${distribution_tool.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${phase_management.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${phase_management_persistence.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${project_management.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${project_management_persistence.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${project_phases.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${project_phase_template.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${resource_management.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${resource_management_persistence.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${review_data_structure.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${review_management.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${review_management_persistence.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${review_score_aggregator.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${review_score_calculator.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${scorecard_data_structure.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${scorecard_management.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${scorecard_management_persistence.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${search_builder.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${simple_cache.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${typesafe_enum.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${user_project_data_store.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${weighted_calculator.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${workdays.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${projectEJB.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${userEJB.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${securityEJB.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${late_deliverables_management.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}" includes="tc_id_generator.jar"/>
+      <lib dir="${tcs_libdir}" includes="tcjive.jar"/>
+      <lib dir="${tcs_libdir}" includes="${tcsUtil.jar.name}"/>
+      <lib dir="${ext_libdir}" includes="*.jar"
            excludes="mail.jar, ejb-2_0.jar, servlet-api.jar, jsp-api.jar, log4j.jar"/>
-      <lib dir="${jar_ext_libdir}/spring" includes="*.jar"/>
-      <lib dir="${jar_ext_libdir}/hibernate" includes="*.jar"/>
-      <lib dir="${jar_ext_libdir}/svnkit" includes="*.jar"/>
+      <lib dir="${ext_libdir}/spring" includes="*.jar"/>
+      <lib dir="${ext_libdir}/hibernate" includes="*.jar"/>
+      <lib dir="${ext_libdir}/svnkit" includes="*.jar"/>
       <lib dir="${shared_libdir}" includes="${catalog.jar.name}"/>
       <lib dir="${shared_libdir}" includes="${tcwebcommon.jar.name}"/>
       <lib dir="${shared_libdir}" includes="${shared.jar.name}"/>
 
       <!-- Added libs to support ejb3 calls -->
-      <lib dir="${jar_ext_libdir}/jboss/">
+      <lib dir="${ext_libdir}/jboss/">
         <include name="jboss-ejb3-client.jar"/>
         <include name="jboss-ejb3x.jar"/>
         <include name="jboss-aop-jdk50-client.jar"/>
@@ -383,22 +377,13 @@
   <target name="deploy" depends="clean, build, deploy_locally"/>
   <target name="deploy_remote" depends="clean, build, deploy_remote_unix, deploy_remote_windows"/>
 
-  <!-- builds db schema, deploys OR, deploys. -->
+  <!-- builds deploys OR with dependencies -->
   <target name="first_deploy" depends="deploy, copy_jboss_files">
   </target>
 
   <!-- stops Jboss, reinstalls database, redeploys OR and starts jboss. -->
   <target name="redeploy">
     <antcall target="stop_tools" />
-
-    <!-- install databases -->
-    <if>
-      <isset property="update_db"/>
-      <then>
-        <ant antfile="${db_scripts_path}/build.xml" target="drop_db" dir="${db_scripts_path}"/>
-        <ant antfile="${db_scripts_path}/build.xml" target="setup_db" dir="${db_scripts_path}"/>
-      </then>
-    </if>
 
     <antcall target="deploy_tools" />
 

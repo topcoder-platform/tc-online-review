@@ -4,29 +4,22 @@
     <!-- property file defining the component's dependencies -->
     <property file="build.properties"/>
 
-    <condition property="is_windows">
-        <and>
-            <os family="windows"/>
-        </and>
-    </condition>
-
-    <condition property="is_unix">
-        <and>
-            <os family="unix"/>
-        </and>
-    </condition>
-
     <!-- Import the dependencies of this build file -->
-    <import file="${basedir}/../../build-dependencies.xml" optional="yes"/>
+    <import file="${online_review_home}/build-dependencies.xml" optional="yes"/>
+
+    <!--Import the build-components.xml -->
+    <property name="components.conf" value="${online_review_home}/components.xml" />
+    <property name="components_dir" value="${online_review_home}/components" />
+    <import file="${online_review_home}/build-components.xml" optional="yes"/>
 
     <!-- DIRECTORY SETUP -->
-    <property name="srcdir" value="${online_review_home}/src"/>
-    <property name="javasrc" value="${srcdir}/java"/>
-    <property name="javamain" value="${javasrc}/main"/>
+    <property name="javamain" value="${online_review_home}/src/java/main"/>
 
     <property name="builddir" value="${online_review_home}/build/ant/auto_pilot"/>
     <property name="build_classdir" value="${builddir}/classes"/>
     <property name="build_distdir" value="${builddir}/dist"/>
+
+    <property name="auto_pilot.jar" value="${build_distdir}/auto_pilot.jar" />
 
     <!-- EXECUTION TAGS -->
     <property name="debug" value="true"/>
@@ -36,25 +29,29 @@
         <delete failonerror="false" dir="${builddir}"/>
     </target>
 
-    <property name="phase_handler_extend.path" value="${build_components}/phase_handler_extend" />
-    <property name="phase_handler_extend.jar" value="${phase_handler_extend.path}/phase_handler_extend.jar" />
-
     <target name="compile">
-        <mkdir dir="${build_classdir}"/>
-        <delete failonerror="false">
-            <fileset dir="${build_classdir}" includes="**/*.class"/>
-        </delete>
-        <javac srcdir="${javamain}" destdir="${build_classdir}" includes="com/cronos/onlinereview/phases/**/*.java"
-               debug="${debug}" verbose="${verbose}"
-               source="1.5" target="1.5">
-            <classpath refid="buildlibs"/>
-        </javac>
+        <trycatch property="error">
+            <try>
+                <get-components-src />
+                <mkdir dir="${build_classdir}"/>
+                <javac srcdir="${javamain};${components_src}" destdir="${build_classdir}" includes="**/*.java"
+                       debug="${debug}" verbose="${verbose}"
+                       source="1.5" target="1.5">
+                    <classpath refid="buildlibs"/>
+                </javac>
+            </try>
+            <catch >
+                <echo >----------------------------------------------------------------------------------------------------------</echo>
+                <echo >IMPORTANT - Make sure that all component's sources are up to date by executing 'ant checkout-components' !</echo>
+                <echo >----------------------------------------------------------------------------------------------------------</echo>
+                <fail>${error}</fail>
+            </catch>
+        </trycatch >
     </target>
 
     <!-- replaces variables in configuration files with values for the target environment -->
     <target name="tokenize"
             description="Initializes the configuration files for Auto Pilot with parameters set in token.properties file">
-        <mkdir dir="${build_distdir}"/>
 
         <copy todir="${build_distdir}" overwrite="true">
             <fileset dir=".">
@@ -72,14 +69,14 @@
         </replace>
     </target>
 
-    <target name="dist_phase_handler" depends="compile"
-            description="Compiles and builds the distribution for Phase Handler Extend component">
-      <mkdir dir="${phase_handler_extend.path}" />
-        <jar destfile="${phase_handler_extend.jar}" basedir="${build_classdir}"
-             includes="com/cronos/onlinereview/phases/**"/>
+    <target name="package_auto_pilot" depends="clean, compile"
+            description="Compiles and packages auto_pilot">
+        <mkdir dir="${build_distdir}"/>
+        <jar destfile="${auto_pilot.jar}" basedir="${build_classdir}"
+             includes="**/*.class"/>
     </target>
 
-    <target name="dist" depends="dist_phase_handler, tokenize"
+    <target name="dist" depends="package_auto_pilot, tokenize"
             description="Builds the JAR file with binary distribution of Auto Pilot">
         <delete file="${build_distdir}/auto_pilot_app.jar" failonerror="no"/>
         <jar destfile="${build_distdir}/auto_pilot_app.jar" filesonly="true">
@@ -94,7 +91,6 @@
             <fileset file="${data_validation.jar}"/>
             <fileset file="${database_abstraction.jar}"/>
             <fileset file="${db_connection_factory.jar}"/>
-            <fileset file="${deliverable_management.jar}"/>
             <fileset file="${deliverable_management_persistence.jar}"/>
             <fileset file="${document_generator.jar}"/>
             <fileset file="${email_engine.jar}"/>
@@ -107,7 +103,6 @@
             <fileset file="${magic_numbers.jar}"/>
             <fileset file="${object_factory.jar}"/>
             <fileset file="${online_review_deliverables.jar}"/>
-            <fileset file="${online_review_phases.jar}"/>
             <fileset file="${phase_handler_extend.jar}"/>
             <fileset file="${phase_management.jar}"/>
             <fileset file="${phase_management_persistence.jar}"/>
@@ -173,7 +168,7 @@
 
     <target name="main" depends="dist" description="Builds the JAR file with binary distribution of Auto Pilot"/>
 
-    <target name="all" depends="clean, main, deploy" description="--> cleans and rebuilds the Auto Pilot project"/>
+    <target name="all" depends="main, deploy" description="--> cleans and rebuilds the Auto Pilot project"/>
 
     <target name="start_ap" description="Starts Auto Pilot in background thread">
         <launch_auto_pilot background="true"/>

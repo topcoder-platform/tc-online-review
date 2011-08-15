@@ -46,25 +46,6 @@ build.svn.password=<<svn password>>
 ##################################################################################
 online_review_home=<<Path to local dev distribution of Online Review application>>
 
-
-###########################################################################
-# The tcs_libdir is the location of all TopCoder Software component jars. #
-###########################################################################
-tcs_libdir=${online_review_home}/lib/tcs
-
-
-#####################################################
-# The ext_libdir is the location of 3rd party jars. #
-#####################################################
-ext_libdir=${online_review_home}/lib/third_party
-
-
-############################################################################
-# The shared_libdir is the location of all TopCoder shared component jars. #
-############################################################################
-shared_libdir=${online_review_home}/lib/shared
-
-
 ###########################
 # Properties to run tests #
 ###########################

@@ -76,8 +76,8 @@
         def src = project.getProperty("comp_src_dir")
         def dir = project.getProperty("components_dir")
 
-        project.setProperty("${attributes.property}", project.getProperty("${attributes.property}") + ';' + 
-                    "${dir}" + '/' + "${name}" + '/' + "${src}" )
+        project.setProperty("${attributes.property}", "${dir}" + '/' + "${name}" + '/' + "${src}"+ ';' +
+                    project.getProperty("${attributes.property}") )
         ]]>
     </scriptdef>
 </project>

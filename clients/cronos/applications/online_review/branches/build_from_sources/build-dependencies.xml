@@ -11,24 +11,16 @@
         </and>
     </condition>
 
+    <property name="tcs_libdir" value="${online_review_home}/lib/tcs" />
+    <property name="ext_libdir" value="${online_review_home}/lib/third_party" />
+    <property name="shared_libdir" value="${online_review_home}/lib/shared" />
     <property name="token.properties" value="${online_review_home}/token.properties"/>
-
-    <property name="jar_tcs_libdir" value="${tcs_libdir}"/>
-    <property name="ext_libdir" location="./lib/third_party"/>
-    <property name="jar_ext_libdir" location="${ext_libdir}"/>
-    <property name="jar_shared_libdir" location="${shared_libdir}"/>
-    <property name="build_components" location="${online_review_home}/build/ant/components" />
 
     <property name="authentication_factory.version" value="2.0"/>
     <property name="authentication_factory.jar.name" value="authentication_factory.jar"/>
     <property name="authentication_factory.path" value="authentication_factory/${authentication_factory.version}"/>
     <property name="authentication_factory.jar"
               value="${tcs_libdir}/${authentication_factory.path}/${authentication_factory.jar.name}"/>
-
-    <property name="auto_pilot.version" value="1.1.1"/>
-    <property name="auto_pilot.jar.name" value="auto_pilot.jar"/>
-    <property name="auto_pilot.path" value="auto_pilot/${auto_pilot.version}"/>
-    <property name="auto_pilot.jar" value="${tcs_libdir}/${auto_pilot.path}/${auto_pilot.jar.name}"/>
 
     <property name="auto_screening_management.version" value="1.0"/>
     <property name="auto_screening_management.jar.name" value="auto_screening_management.jar"/>
@@ -443,19 +435,19 @@
     <property name="tcwebcommon.jar" value="${shared_libdir}/${tcwebcommon.jar.name}"/>
 
     <!-- 3rd Party Dependencies  -->
-    <property name="ejb3-persistence.jar" value="${jar_ext_libdir}/ejb3-persistence.jar"/>
+    <property name="ejb3-persistence.jar" value="${ext_libdir}/ejb3-persistence.jar"/>
     <property name="ifx-jdbc.jar" value="${ext_libdir}/ifx-jdbc.jar"/>
-    <property name="jboss-ejb3x.jar" value="${jar_ext_libdir}/jboss/jboss-ejb3x.jar"/>
+    <property name="jboss-ejb3x.jar" value="${ext_libdir}/jboss/jboss-ejb3x.jar"/>
     <property name="jstl.jar" value="${ext_libdir}/jstl.jar"/>
-    <property name="jboss-j2ee.jar" value="${jar_ext_libdir}/jboss/jboss-j2ee.jar"/>
+    <property name="jboss-j2ee.jar" value="${ext_libdir}/jboss/jboss-j2ee.jar"/>
     <property name="servlet.jar" value="${cactus.home.tomcat5x}/common/lib/servlet-api.jar"/>
-    <property name="jbossall-client.jar" value="${jar_ext_libdir}/jboss/jbossall-client.jar"/>
+    <property name="jbossall-client.jar" value="${ext_libdir}/jboss/jbossall-client.jar"/>
     <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar"/>
-    <property name="jiveforums.jar" value="${jar_ext_libdir}/jiveforums.jar"/>
-    <property name="jsp-api.jar" value="${jar_ext_libdir}/jsp-api.jar"/>
-    <property name="mail.jar" value="${jar_ext_libdir}/mail.jar"/>
-    <property name="servlet-api.jar" value="${jar_ext_libdir}/servlet-api.jar"/>
-    <property name="struts.jar" value="${jar_ext_libdir}/struts-1.2.9.jar"/>
+    <property name="jiveforums.jar" value="${ext_libdir}/jiveforums.jar"/>
+    <property name="jsp-api.jar" value="${ext_libdir}/jsp-api.jar"/>
+    <property name="mail.jar" value="${ext_libdir}/mail.jar"/>
+    <property name="servlet-api.jar" value="${ext_libdir}/servlet-api.jar"/>
+    <property name="struts.jar" value="${ext_libdir}/struts-1.2.9.jar"/>
     <property name="axis.jar" value="${ext_libdir}/axis-dok.jar"/>
     <property name="commons.beanutils.jar" value="${ext_libdir}/commons-beanutils.jar"/>
     <property name="log4j.jar" value="${ext_libdir}/log4j.jar"/>
@@ -512,7 +504,6 @@
         <pathelement location="${JNDI_Utility.jar}"/>
         <pathelement location="${tcIdGenerator.jar}"/>
         <pathelement location="${authentication_factory.jar}"/>
-        <pathelement location="${auto_pilot.jar}"/>
         <pathelement location="${auto_screening_management.jar}"/>
         <pathelement location="${base_exception.jar}"/>
         <pathelement location="${command_line_utility.jar}"/>
