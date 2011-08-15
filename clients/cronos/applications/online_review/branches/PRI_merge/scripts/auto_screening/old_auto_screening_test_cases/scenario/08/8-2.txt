@@ -1,0 +1,9 @@
+Java Dev - Source code contains handle.
+
+ Warnings: 
+ TCS-013: Checkstyle has produced the following warnings. 
+src/java/tests/Hold.java:11: Type Javadoc tag @author must match pattern '^TCSDEVELOPER$'. 
+ 
+ TCS-014: Your submission contains personal information. 
+Hold.java contains handle (Standlove). 
+ 
