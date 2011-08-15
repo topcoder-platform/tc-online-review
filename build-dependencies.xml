@@ -348,7 +348,7 @@
     <property name="review_management.jar"
               value="${tcs_libdir}/${review_management.path}/${review_management.jar.name}"/>
 
-    <property name="review_management_persistence.version" value="1.0.1"/>
+    <property name="review_management_persistence.version" value="1.0.2"/>
     <property name="review_management_persistence.jar.name" value="review_management_persistence.jar"/>
     <property name="review_management_persistence.path"
               value="review_management_persistence/${review_management_persistence.version}"/>
