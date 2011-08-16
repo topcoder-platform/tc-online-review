@@ -329,7 +329,7 @@
     <property name="resource_management.jar"
               value="${tcs_libdir}/${resource_management.path}/${resource_management.jar.name}"/>
 
-    <property name="resource_management_persistence.version" value="1.2.2"/>
+    <property name="resource_management_persistence.version" value="1.2.3"/>
     <property name="resource_management_persistence.jar.name" value="resource_management_persistence.jar"/>
     <property name="resource_management_persistence.path"
               value="resource_management_persistence/${resource_management_persistence.version}"/>
