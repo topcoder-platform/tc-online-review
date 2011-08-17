@@ -17,7 +17,7 @@
 
     <component
         name="auto_pilot"
-        svnpath="https://coder.topcoder.com/tcs/catalog/java/auto_pilot/trunk/"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/auto_pilot/trunk"
         revision="205997"/>
 
     <component
