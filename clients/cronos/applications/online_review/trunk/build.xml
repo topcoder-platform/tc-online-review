@@ -538,15 +538,6 @@
     </junitreport>
     <echo>The execution of reports is complete.  Reports are available in /${reports}</echo>
   </target>
-
-
-  <target name="update_properties" >
-    <ant antfile="build-configuration.xml" target="update_properties" /> 
-  </target>
-
-  <target name="move_properties" >
-    <ant antfile="build-configuration.xml" target="move_properties" /> 
-  </target>
   
   <!-- - - - - - - - - - - - - - - - - -
       target: prod-init
