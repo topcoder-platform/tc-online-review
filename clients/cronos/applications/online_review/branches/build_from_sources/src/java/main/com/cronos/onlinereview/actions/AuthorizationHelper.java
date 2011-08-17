@@ -246,29 +246,7 @@ public class AuthorizationHelper {
             // Place handle of the user into session as attribute
             request.getSession().setAttribute("userHandle", extUser.getHandle());
         }
-
-        // Prepare filter to select resources by the External ID of currently logged in user
-        Filter filterExtIDname = ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
-        Filter filterExtIDvalue = ResourceFilterBuilder.createExtensionPropertyValueFilter(
-                String.valueOf(getLoggedInUserId(request)));
-        Filter filterExtID = new AndFilter(filterExtIDname, filterExtIDvalue);
-        // Prepare filter to select resources that do not have any project assigned
-//        Filter filterNoProject = ResourceFilterBuilder.createNoProjectFilter();
-        // Prepare filter to select resources that do not have any phase assigned
-//        Filter filterNoPhase = ResourceFilterBuilder.createNoPhaseFilter();
-
-        // The list that will contain all the individual
-        // filters that will later be combined by the AndFilter
-        List<Filter> filters = new ArrayList<Filter>();
-
-        // Add individual filters to list
-        filters.add(filterExtID);
-/* Awaiting fixes in Resource Management component
-        filters.add(filterNoProject);
-        filters.add(filterNoPhase);*/
-
-        // Create the main filter for this role-gathering operation
-        Filter filter = new AndFilter(filters);
+		
         // Obtain an instance of Resource Manager
         ResourceManager resMgr = ActionsHelper.createResourceManager();
         // Perform search for resources
@@ -277,7 +255,6 @@ public class AuthorizationHelper {
         // Iterate over all resources retrieved and take into
         // consideration only those ones that have Manager role
         for (int i = 0; i < resources.length; ++i) {
-            // Temporary workaround until Resource Management component is fixed
             if (resources[i].getProject() != null || resources[i].getPhase() != null) {
                 continue;
             }

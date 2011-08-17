@@ -50,6 +50,30 @@ import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.resource.search.ResourceRoleFilterBuilder;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardManagerImpl;
+import com.topcoder.management.review.DefaultReviewManager;
+import com.topcoder.management.review.ReviewManagementException;
+import com.topcoder.management.review.ReviewManager;
+
+import com.topcoder.management.deliverable.DeliverableChecker;
+import com.topcoder.management.deliverable.DeliverableManager;
+import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
+import com.topcoder.management.deliverable.persistence.DeliverablePersistence;
+import com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersistence;
+import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
+import com.topcoder.management.deliverable.PersistenceDeliverableManager;
+import com.cronos.onlinereview.deliverables.AggregationDeliverableChecker;
+import com.cronos.onlinereview.deliverables.AggregationReviewDeliverableChecker;
+import com.cronos.onlinereview.deliverables.AppealResponsesDeliverableChecker;
+import com.cronos.onlinereview.deliverables.ApprovalDeliverableChecker;
+import com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker;
+import com.cronos.onlinereview.deliverables.FinalFixesDeliverableChecker;
+import com.cronos.onlinereview.deliverables.FinalReviewDeliverableChecker;
+import com.cronos.onlinereview.deliverables.IndividualReviewDeliverableChecker;
+import com.cronos.onlinereview.deliverables.SpecificationSubmissionDeliverableChecker;
+import com.cronos.onlinereview.deliverables.SubmissionDeliverableChecker;
+import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
+import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
+
 import com.topcoder.project.phases.PhaseType;
 import com.topcoder.search.builder.SearchBundle;
 import com.topcoder.search.builder.SearchBundleManager;
@@ -137,6 +161,20 @@ public class ManagerCreationHelper implements ManagersProvider {
     private static final String DB_CONNECTION_NAMESPACE = "com.topcoder.db.connectionfactory.DBConnectionFactoryImpl";
 
     /**
+     * <p>A <code>long</code> providing the ID for <code>Contest Submission</code> submission type.</p>
+     * 
+     * @since 1.5
+     */
+    private static final long SUBMISSION_TYPE_CONTEST = 1;
+
+    /**
+     * <p>A <code>long</code> providing the ID for <code>Milestone Submission</code> submission type.</p>
+     * 
+     * @since 1.5
+     */
+    private static final long SUBMISSION_TYPE_MILESTONE = 3;
+
+    /**
      * Used for caching the created manager. This instance has no registered phase handlers.
      */
     private PhaseManager phaseManagerWithoutHandlers = null;
@@ -176,7 +214,21 @@ public class ManagerCreationHelper implements ManagersProvider {
      *
      * @since 1.5
      */
+    private DeliverableManager deliverableManager = null;
+
+    /**
+     * Used for caching the created manager.
+     *
+     * @since 1.5
+     */
     private ScorecardManager scorecardManager = null;
+
+    /**
+     * Used for caching the created manager.
+     *
+     * @since 1.5
+     */
+    private ReviewManager reviewManager = null;
 
 
     /**
@@ -411,6 +463,74 @@ public class ManagerCreationHelper implements ManagersProvider {
 
     /**
      * <p>
+     * Returns a <code>DeliverableManager</code> instance.
+     * </p>
+     *
+     * @return a <code>DeliverableManager</code> instance
+     */
+    public DeliverableManager getDeliverableManager() {
+        if(deliverableManager == null) {
+            try {
+                // Get connection factory
+                DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+                // Get the persistence
+                DeliverablePersistence deliverablePersistence = new SqlDeliverablePersistence(dbconn);
+
+                // Get the search bundles
+                SearchBundleManager searchBundleManager =
+                        new SearchBundleManager("com.topcoder.searchbuilder.common");
+
+                SearchBundle deliverableSearchBundle = searchBundleManager.getSearchBundle(
+                        PersistenceDeliverableManager.DELIVERABLE_SEARCH_BUNDLE_NAME);
+                SearchBundle deliverableWithSubmissionsSearchBundle = searchBundleManager.getSearchBundle(
+                        PersistenceDeliverableManager.DELIVERABLE_WITH_SUBMISSIONS_SEARCH_BUNDLE_NAME);
+
+                // The checkers are used when deliverable instances are retrieved
+                Map<String, DeliverableChecker> checkers = new HashMap<String, DeliverableChecker>();
+
+                // Some checkers are used more than once
+                DeliverableChecker committedChecker = new CommittedReviewDeliverableChecker(dbconn);
+                DeliverableChecker submissionIndependentReviewChecker
+                    = new CommittedReviewDeliverableChecker(dbconn, false);
+                DeliverableChecker testCasesChecker = new TestCasesDeliverableChecker(dbconn);
+
+                checkers.put(Constants.SUBMISSION_DELIVERABLE_NAME, 
+                             new SubmissionDeliverableChecker(dbconn, SUBMISSION_TYPE_CONTEST));
+                checkers.put(Constants.MILESTONE_SUBMISSION_DELIVERABLE_NAME, 
+                             new SubmissionDeliverableChecker(dbconn, SUBMISSION_TYPE_MILESTONE));
+                checkers.put(Constants.MILESTONE_SCREENING_DELIVERABLE_NAME, committedChecker);
+                checkers.put(Constants.MILESTONE_REVIEW_DELIVERABLE_NAME, committedChecker);
+                checkers.put(Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME,
+                             new SpecificationSubmissionDeliverableChecker(dbconn));
+                checkers.put(Constants.SPECIFICATION_REVIEW_DELIVERABLE_NAME, committedChecker);
+                checkers.put(Constants.SCREENING_DELIVERABLE_NAME, new IndividualReviewDeliverableChecker(dbconn));
+                checkers.put(Constants.PRIMARY_SCREENING_DELIVERABLE_NAME, committedChecker);
+                checkers.put(Constants.REVIEW_DELIVERABLE_NAME, committedChecker);
+                checkers.put(Constants.ACC_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);
+                checkers.put(Constants.FAIL_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);
+                checkers.put(Constants.STRS_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);
+                checkers.put(Constants.APPEAL_RESP_DELIVERABLE_NAME, new AppealResponsesDeliverableChecker(dbconn));
+                checkers.put(Constants.AGGREGATION_DELIVERABLE_NAME, new AggregationDeliverableChecker(dbconn));
+                checkers.put(Constants.AGGREGATION_REV_DELIVERABLE_NAME, new AggregationReviewDeliverableChecker(dbconn));
+                checkers.put(Constants.FINAL_FIX_DELIVERABLE_NAME, new FinalFixesDeliverableChecker(dbconn));
+                checkers.put(Constants.SCORECARD_COMM_DELIVERABLE_NAME, new SubmitterCommentDeliverableChecker(dbconn));
+                checkers.put(Constants.FINAL_REVIEW_PHASE_NAME, new FinalReviewDeliverableChecker(dbconn));
+                checkers.put(Constants.APPROVAL_DELIVERABLE_NAME, new ApprovalDeliverableChecker(dbconn));
+                checkers.put(Constants.POST_MORTEM_DELIVERABLE_NAME, submissionIndependentReviewChecker);
+
+                // Initialize the PersistenceDeliverableManager
+                deliverableManager = new PersistenceDeliverableManager(deliverablePersistence, checkers,
+                    deliverableSearchBundle, deliverableWithSubmissionsSearchBundle);
+            } catch (Exception e) {
+                throw new ManagerCreationException("Exception occurred while creating the deliverable manager.", e);
+            }
+        }
+
+        return deliverableManager;
+    }
+
+    /**
+     * <p>
      * Returns a <code>ScorecardManager</code> instance.
      * </p>
      *
@@ -425,6 +545,24 @@ public class ManagerCreationHelper implements ManagersProvider {
             }
         }
         return scorecardManager;
+    }
+
+    /**
+     * <p>
+     * Returns a <code>ReviewManager</code> instance.
+     * </p>
+     *
+     * @return a <code>ReviewManager</code> instance
+     */
+    public ReviewManager getReviewManager() {
+        if(reviewManager == null) {
+            try {
+                reviewManager = new DefaultReviewManager();
+            } catch (com.topcoder.management.review.ConfigurationException e) {
+                throw new ManagerCreationException("Exception occurred while creating the review manager.", e);
+            }
+        }
+        return reviewManager;
     }
 
     /**

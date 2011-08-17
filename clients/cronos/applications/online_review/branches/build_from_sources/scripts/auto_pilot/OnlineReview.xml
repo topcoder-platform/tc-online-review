@@ -3621,12 +3621,11 @@
                                review.create_date AS create_date,
                                review.modify_user AS modify_user,
                                review.modify_date AS modify_date
-                          FROM review,
-                               scorecard,
-                               resource
-                         WHERE review.scorecard_id = scorecard.scorecard_id
-                           AND review.resource_id = resource.resource_id
-                           AND
+                        FROM review
+                        INNER JOIN scorecard ON review.scorecard_id = scorecard.scorecard_id
+                        INNER JOIN resource ON review.resource_id = resource.resource_id
+                        WHERE 1=1
+                        AND
                     </Value>
                 </Property>
 
