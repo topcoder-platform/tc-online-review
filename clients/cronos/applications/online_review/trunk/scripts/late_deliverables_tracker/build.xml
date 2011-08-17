@@ -6,15 +6,13 @@
 
     <!-- Import the dependencies of this build file -->
     <import file="${online_review_home}/build-dependencies.xml" optional="yes"/>
-
+    
+    <property name="javamain" value="${online_review_home}/src/java/main/com/cronos/onlinereview/phases/logging"/>
     <!--Import the build-components.xml -->
     <property name="components.conf" value="${online_review_home}/components.xml" />
     <property name="components_dir" value="${online_review_home}/components" />
     <import file="${online_review_home}/build-components.xml" optional="yes"/>
 
-
-    <!-- DIRECTORY SETUP -->
-    <property name="srcdir" value="${online_review_home}/src/java/main"/>
 
     <property name="builddir" value="${online_review_home}/build/ant/late_deliverables_tracker"/>
     <property name="build_classdir" value="${builddir}/classes"/>
@@ -35,7 +33,7 @@
             <try>
                 <get-components-src />
                 <mkdir dir="${build_classdir}"/>
-                <javac srcdir="${components_src}" destdir="${build_classdir}" includes="**/*.java"
+                <javac srcdir="${javamain};${components_src}" destdir="${build_classdir}" includes="**/*.java"
                        debug="${debug}" verbose="${verbose}"
                        source="1.5" target="1.5">
                     <classpath refid="buildlibs"/>
