@@ -1,8 +1,5 @@
 <project name="TopCoder Configuration Scripts" basedir="." default="update_properties">
   <property file="build.properties"/>
-
-  <!-- Import the dependencies of this build file -->
-  <import file="${basedir}/build-dependencies.xml"/>
   
   <!-- subversion tasks -->
   <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.lib" />

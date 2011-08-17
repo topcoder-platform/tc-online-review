@@ -4,29 +4,23 @@
     <!-- property file defining the component's dependencies -->
     <property file="build.properties"/>
 
-    <condition property="is_windows">
-        <and>
-            <os family="windows"/>
-        </and>
-    </condition>
-
-    <condition property="is_unix">
-        <and>
-            <os family="unix"/>
-        </and>
-    </condition>
-
     <!-- Import the dependencies of this build file -->
-    <import file="${basedir}/../../build-dependencies.xml" optional="yes"/>
+    <import file="${online_review_home}/build-dependencies.xml" optional="yes"/>
+
+    <!--Import the build-components.xml -->
+    <property name="components.conf" value="${online_review_home}/components.xml" />
+    <property name="components_dir" value="${online_review_home}/components" />
+    <import file="${online_review_home}/build-components.xml" optional="yes"/>
+
 
     <!-- DIRECTORY SETUP -->
-    <property name="srcdir" value="${online_review_home}/src"/>
-    <property name="javasrc" value="${srcdir}/java"/>
-    <property name="javamain" value="${javasrc}/main"/>
+    <property name="srcdir" value="${online_review_home}/src/java/main"/>
 
     <property name="builddir" value="${online_review_home}/build/ant/late_deliverables_tracker"/>
     <property name="build_classdir" value="${builddir}/classes"/>
     <property name="build_distdir" value="${builddir}/dist"/>
+
+    <property name="late_deliverables_tracker.jar" value="${build_distdir}/late_deliverables_tracker.jar" />
 
     <!-- EXECUTION TAGS -->
     <property name="debug" value="true"/>
@@ -34,6 +28,26 @@
 
     <target name="clean" description="Removes the build directory for Late Deliverables Tracker">
         <delete failonerror="false" dir="${builddir}"/>
+    </target>
+
+    <target name="compile">
+        <trycatch property="error">
+            <try>
+                <get-components-src />
+                <mkdir dir="${build_classdir}"/>
+                <javac srcdir="${components_src}" destdir="${build_classdir}" includes="**/*.java"
+                       debug="${debug}" verbose="${verbose}"
+                       source="1.5" target="1.5">
+                    <classpath refid="buildlibs"/>
+                </javac>
+            </try>
+            <catch >
+                <echo >----------------------------------------------------------------------------------------------------------</echo>
+                <echo >IMPORTANT - Make sure that all component's sources are up to date by executing 'ant checkout-components' !</echo>
+                <echo >----------------------------------------------------------------------------------------------------------</echo>
+                <fail>${error}</fail>
+            </catch>
+        </trycatch >
     </target>
 
     <!-- replaces variables in configuration files with values for the target environment -->
@@ -53,10 +67,18 @@
         </replace>
     </target>
 
-    <target name="dist" depends="tokenize"
+    <target name="package_ldt" depends="clean, compile"
+            description="Compiles and packages late deliveragble tracker tool">
+        <mkdir dir="${build_distdir}"/>
+        <jar destfile="${late_deliverables_tracker.jar}" basedir="${build_classdir}"
+             includes="**/*.class"/>
+    </target>
+
+    <target name="dist" depends="package_ldt, tokenize"
             description="Builds the JAR file with binary distribution of Late Deliverables Tracker">
         <delete file="${build_distdir}/late_deliverables_tracker_app.jar" failonerror="false"/>
         <jar destfile="${build_distdir}/late_deliverables_tracker_app.jar" filesonly="true">
+            <fileset file="${late_deliverables_tracker.jar}"/>
             <fileset file="${activation.jar}"/>
             <fileset file="${base_exception.jar}"/>
             <fileset file="${class_associations.jar}"/>
@@ -67,7 +89,6 @@
             <fileset file="${database_abstraction.jar}"/>
             <fileset file="${data_validation.jar}"/>
             <fileset file="${db_connection_factory.jar}"/>
-            <fileset file="${deliverable_management.jar}"/>
             <fileset file="${deliverable_management_persistence.jar}"/>
             <fileset file="${late_deliverables_management.jar}" />
             <fileset file="${document_generator.jar}"/>
@@ -77,7 +98,6 @@
             <fileset file="${ifx-jdbc.jar}"/>
             <fileset file="${job_processor.jar}"/>
             <fileset file="${job_scheduling.jar}"/>
-            <fileset file="${late_deliverables_tracker.jar}"/>
             <fileset file="${logging_wrapper.jar}"/>
             <fileset file="${log4j.jar}"/>
             <fileset file="${mail.jar}"/>
