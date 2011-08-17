@@ -12,6 +12,11 @@
         <wb-resource deploy-path="/WEB-INF/classes/xml_phase_template.xsd" source-path="/conf/xml_phase_template.xsd"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/java/main"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/java/tests"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/auto_pilot/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/deliverable_management/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/online_review_phases/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/online_review_upload_services/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/late_deliverables_tracker/src/java/main"/>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/authentication_factory/2.0/authentication_factory.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
