@@ -383,6 +383,7 @@
   <target name="redeploy">
     <antcall target="stop_tools" />
 
+    <antcall target="checkout-components" />
     <antcall target="deploy_tools" />
 
     <antcall target="start_jboss" />
