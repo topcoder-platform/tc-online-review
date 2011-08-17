@@ -527,7 +527,8 @@
         <pathelement location="${compression_utility.jar}"/>
         <pathelement location="${svnkit.jar}"/>
         <pathelement location="${late_deliverables_management.jar}" />
-		<pathelement location="${guid_generator.jar}" />
+        <pathelement location="${guid_generator.jar}" />
+        <pathelement location="${activation.jar}" />
         <path refid="spring_libs"/>
     </path>
 
