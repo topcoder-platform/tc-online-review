@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.cronos.onlinereview.autoscreening.management.ScreeningTask;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.management.deliverable.Submission;
@@ -56,8 +55,15 @@ import com.topcoder.project.phases.Phase;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, isv
- * @version 1.4.1
+ * <p>
+ * Version 1.4.2 (Online Review Build From Sources) Change notes:
+ *   <ol>
+ *     <li>Removed dependency on Auto Screening.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, isv, lmmortal
+ * @version 1.4.2
  */
 public class PhaseGroup {
 
