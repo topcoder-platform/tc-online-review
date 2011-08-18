@@ -6,7 +6,7 @@
 # Properties to automatically start/stop Jboss. Supposed to be used mostly for Continuos Integration server #
 #############################################################################################################
 # update_db=uncomment to reinstall db on each redeploy
-jdk_home=<<path to jdk>>
+jdk_home=<<path to jdk >>
 bind_addr=127.0.0.1
 jnp_port=1099
 jboss_heap_size=512m
