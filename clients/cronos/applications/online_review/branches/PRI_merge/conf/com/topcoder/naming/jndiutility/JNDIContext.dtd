@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!ELEMENT Context (Context*, Binding*)>
-<!ATTLIST Context
-	name CDATA #IMPLIED
-	fullname CDATA #IMPLIED
->
-<!ELEMENT Binding (Name, Class)>
-<!ELEMENT Name (#PCDATA)>
-<!ELEMENT Class (#PCDATA)>

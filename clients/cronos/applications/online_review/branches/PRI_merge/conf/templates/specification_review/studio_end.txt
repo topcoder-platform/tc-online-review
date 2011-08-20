@@ -1,8 +1,0 @@
-<p>
-Handle\: %USER_HANDLE{User handle}%<br/>
-Contest\: <a href\="%STUDIO_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
-
-Your contest specification has been reviewed and %RESULT%. Please log into TopCoder Direct to view your scorecard. 
-Even if your spec has passed review, your scorecard may contain comments and suggestions from your spec reviewer. 
-Learn more about Spec Review here\: <a href\="http\://apps.topcoder.com/wiki/display/tcstudio/Contest+Spec+Review">http\://apps.topcoder.com/wiki/display/tcstudio/Contest+Spec+Review</a>
-</p>
