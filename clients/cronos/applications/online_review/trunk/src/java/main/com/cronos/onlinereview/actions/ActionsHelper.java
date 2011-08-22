@@ -1634,12 +1634,16 @@ public class ActionsHelper {
 
         for (int i = 0; i < myResources.length; ++i) {
             Resource resource = myResources[i];
+            ResourceRole role = resource.getResourceRole();
             String paymentStr = (String) resource.getProperty("Payment");
             if (paymentStr != null && paymentStr.trim().length() != 0) {
                 double payment = Double.parseDouble(paymentStr);
-                payments.put(resource.getResourceRole(), payment);
+                Double oldPayment = payments.containsKey(role) ? payments.get(role) : 0.0;
+
+                payments.put(role, oldPayment + payment);
             } else {
-                payments.put(resource.getResourceRole(), null);
+                // Insert null if there's no mapping for the role yet otherwise just keep the value.
+                payments.put(role, payments.get(role));
             }
         }
 
