@@ -154,7 +154,6 @@
       <lib dir="${tcs_libdir}/${data_validation.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${database_abstraction.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${db_connection_factory.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${deliverable_management_persistence.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${document_generator.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${email_engine.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${file_system_server.path}" includes="*.jar"/>
@@ -166,24 +165,10 @@
       <lib dir="${tcs_libdir}/${logging_wrapper.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${object_factory.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${object_factory_configuration_api_plugin.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${online_review_ajax_support.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${online_review_deliverables.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${online_review_login.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${distribution_tool.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${phase_management.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${phase_management_persistence.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${project_management.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${project_management_persistence.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${project_phases.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${project_phase_template.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${resource_management.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${resource_management_persistence.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${review_data_structure.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${review_management.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${review_management_persistence.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${review_score_aggregator.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${review_score_calculator.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${scorecard_data_structure.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${scorecard_management.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${scorecard_management_persistence.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${search_builder.path}" includes="*.jar"/>
@@ -196,7 +181,6 @@
       <lib dir="${tcs_libdir}/${userEJB.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${securityEJB.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${late_deliverables_management.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}" includes="tc_id_generator.jar"/>
       <lib dir="${tcs_libdir}" includes="tcjive.jar"/>
       <lib dir="${tcs_libdir}" includes="${tcsUtil.jar.name}"/>
