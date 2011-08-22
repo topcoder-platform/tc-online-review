@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <components>
     <component
+        name="auto_pilot"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/auto_pilot/trunk"
+        revision="205997"/>
+
+    <component
         name="deliverable_management"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/deliverable_management/trunk"
         revision="205997"/>
 
     <component
-        name="online_review_phases"
-        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/trunk"
-        revision="205997" />
+        name="deliverable_management_persistence"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/deliverable_management_persistence/trunk"
+        revision="206269"/>
 
     <component
         name="late_deliverables_tracker"
@@ -16,12 +21,87 @@
         revision="205997" />
 
     <component
-        name="auto_pilot"
-        svnpath="https://coder.topcoder.com/tcs/catalog/java/auto_pilot/trunk"
-        revision="205997"/>
+        name="late_deliverables_management"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/late_deliverables_management/trunk"
+        revision="206269" />
+
+    <component
+        name="online_review_deliverables"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_deliverables/trunk"
+        revision="206269" />
+
+    <component
+        name="online_review_ajax_support"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_ajax_support/trunk"
+        revision="206269" />
+
+    <component
+        name="online_review_login"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_login/trunk"
+        revision="206269" />
+
+    <component
+        name="online_review_phases"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/trunk"
+        revision="205997" />
 
     <component
         name="online_review_upload_services"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_upload_services/trunk"
         revision="205997" />
+
+    <component
+        name="phase_management"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/phase_management/trunk"
+        revision="206269" />
+
+    <component
+        name="phase_management_persistence"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/phase_management_persistence/tags/version-1.0.2.1"
+        revision="206269" />
+
+    <component
+        name="project_management"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/project_management/trunk"
+        revision="206269" />
+
+    <component
+        name="project_management_persistence"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_management_persistence/trunk"
+        revision="206269" />
+
+    <component
+        name="project_phase_template"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/project_phase_template/trunk"
+        revision="206269" />
+
+    <component
+        name="review_data_structure"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/review_data_structure/trunk"
+        revision="206269" />
+
+    <component
+        name="review_management"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/review_management/trunk"
+        revision="206269" />
+
+    <component
+        name="review_management_persistence"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_management_persistence/trunk"
+        revision="206269" />
+
+    <component
+        name="review_score_aggregator"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/review_score_aggregator/trunk"
+        revision="206269" />
+
+    <component
+        name="review_score_calculator"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/review_score_calculator/trunk"
+        revision="206269" />
+
+    <component
+        name="scorecard_data_structure"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/scorecard_data_structure/trunk"
+        revision="206269" />
 </components>

@@ -50,13 +50,6 @@
     <property name="configuration_api.jar"
               value="${tcs_libdir}/${configuration_api.path}/${configuration_api.jar.name}"/>
 
-    <property name="deliverable_management_persistence.version" value="1.2.0"/>
-    <property name="deliverable_management_persistence.jar.name" value="deliverable_management_persistence.jar"/>
-    <property name="deliverable_management_persistence.path"
-              value="deliverable_management_persistence/${deliverable_management_persistence.version}"/>
-    <property name="deliverable_management_persistence.jar"
-              value="${tcs_libdir}/${deliverable_management_persistence.path}/${deliverable_management_persistence.jar.name}"/>
-
     <property name="directory_validation.version" value="1.0"/>
     <property name="directory_validation.jar.name" value="directory_validation.jar"/>
     <property name="directory_validation.path" value="directory_validation/${directory_validation.version}"/>
@@ -188,12 +181,7 @@
     <property name="JNDI_Utility.jar.name" value="JNDI_Utility.jar"/>
     <property name="JNDI_Utility.path" value="JNDI_Utility/${JNDI_Utility.version}"/>
     <property name="JNDI_Utility.jar" value="${tcs_libdir}/${JNDI_Utility.path}/${JNDI_Utility.jar.name}"/>
-    
-    <property name="late_deliverables_management.version" value="1.0.4"/>
-    <property name="late_deliverables_management.jar.name" value="late_deliverables_management.jar"/>
-    <property name="late_deliverables_management.path" value="late_deliverables_management/${late_deliverables_management.version}"/>
-    <property name="late_deliverables_management.jar" value="${tcs_libdir}/${late_deliverables_management.path}/${late_deliverables_management.jar.name}"/>
-    
+        
     <property name="logging_wrapper.version" value="1.2"/>
     <property name="logging_wrapper.jar.name" value="logging_wrapper.jar"/>
     <property name="logging_wrapper.path" value="logging_wrapper/${logging_wrapper.version}"/>
@@ -212,61 +200,10 @@
     <property name="object_factory_configuration_api_plugin.jar"
               value="${tcs_libdir}/${object_factory_configuration_api_plugin.path}/${object_factory_configuration_api_plugin.jar.name}"/>
 
-    <property name="online_review_ajax_support.version" value="1.0.3"/>
-    <property name="online_review_ajax_support.jar.name" value="online_review_ajax_support.jar"/>
-    <property name="online_review_ajax_support.path"
-              value="online_review_ajax_support/${online_review_ajax_support.version}"/>
-    <property name="online_review_ajax_support.jar"
-              value="${tcs_libdir}/${online_review_ajax_support.path}/${online_review_ajax_support.jar.name}"/>
-
-    <property name="online_review_deliverables.version" value="1.0.3"/>
-    <property name="online_review_deliverables.jar.name" value="online_review_deliverables.jar"/>
-    <property name="online_review_deliverables.path"
-              value="online_review_deliverables/${online_review_deliverables.version}"/>
-    <property name="online_review_deliverables.jar"
-              value="${tcs_libdir}/${online_review_deliverables.path}/${online_review_deliverables.jar.name}"/>
-
-    <property name="online_review_login.version" value="1.1.5"/>
-    <property name="online_review_login.jar.name" value="online_review_login.jar"/>
-    <property name="online_review_login.path" value="online_review_login/${online_review_login.version}"/>
-    <property name="online_review_login.jar"
-              value="${tcs_libdir}/${online_review_login.path}/${online_review_login.jar.name}"/>
-
-    <property name="phase_management.version" value="1.1.0"/>
-    <property name="phase_management.jar.name" value="phase_management.jar"/>
-    <property name="phase_management.path" value="phase_management/${phase_management.version}"/>
-    <property name="phase_management.jar" value="${tcs_libdir}/${phase_management.path}/${phase_management.jar.name}"/>
-
-    <property name="phase_management_persistence.version" value="1.0.2"/>
-    <property name="phase_management_persistence.jar.name" value="phase_management_persistence.jar"/>
-    <property name="phase_management_persistence.path"
-              value="phase_management_persistence/${phase_management_persistence.version}"/>
-    <property name="phase_management_persistence.jar"
-              value="${tcs_libdir}/${phase_management_persistence.path}/${phase_management_persistence.jar.name}"/>
-
-    <property name="project_management.version" value="1.2.0"/>
-    <property name="project_management.jar.name" value="project_management.jar"/>
-    <property name="project_management.path" value="project_management/${project_management.version}"/>
-    <property name="project_management.jar"
-              value="${tcs_libdir}/${project_management.path}/${project_management.jar.name}"/>
-
-    <property name="project_management_persistence.version" value="1.2.0"/>
-    <property name="project_management_persistence.jar.name" value="project_management_persistence.jar"/>
-    <property name="project_management_persistence.path"
-              value="project_management_persistence/${project_management_persistence.version}"/>
-    <property name="project_management_persistence.jar"
-              value="${tcs_libdir}/${project_management_persistence.path}/${project_management_persistence.jar.name}"/>
-
     <property name="project_phases.version" value="2.0"/>
     <property name="project_phases.jar.name" value="project_phases.jar"/>
     <property name="project_phases.path" value="project_phases/${project_phases.version}"/>
     <property name="project_phases.jar" value="${tcs_libdir}/${project_phases.path}/${project_phases.jar.name}"/>
-
-    <property name="project_phase_template.version" value="1.2.0"/>
-    <property name="project_phase_template.jar.name" value="project_phase_template.jar"/>
-    <property name="project_phase_template.path" value="project_phase_template/${project_phase_template.version}"/>
-    <property name="project_phase_template.jar"
-              value="${tcs_libdir}/${project_phase_template.path}/${project_phase_template.jar.name}"/>
 
     <property name="resource_management.version" value="1.1.1"/>
     <property name="resource_management.jar.name" value="resource_management.jar"/>
@@ -280,44 +217,6 @@
               value="resource_management_persistence/${resource_management_persistence.version}"/>
     <property name="resource_management_persistence.jar"
               value="${tcs_libdir}/${resource_management_persistence.path}/${resource_management_persistence.jar.name}"/>
-
-    <property name="review_data_structure.version" value="1.0"/>
-    <property name="review_data_structure.jar.name" value="review_data_structure.jar"/>
-    <property name="review_data_structure.path" value="review_data_structure/${review_data_structure.version}"/>
-    <property name="review_data_structure.jar"
-              value="${tcs_libdir}/${review_data_structure.path}/${review_data_structure.jar.name}"/>
-
-    <property name="review_management.version" value="1.0"/>
-    <property name="review_management.jar.name" value="review_management.jar"/>
-    <property name="review_management.path" value="review_management/${review_management.version}"/>
-    <property name="review_management.jar"
-              value="${tcs_libdir}/${review_management.path}/${review_management.jar.name}"/>
-
-    <property name="review_management_persistence.version" value="1.0.2"/>
-    <property name="review_management_persistence.jar.name" value="review_management_persistence.jar"/>
-    <property name="review_management_persistence.path"
-              value="review_management_persistence/${review_management_persistence.version}"/>
-    <property name="review_management_persistence.jar"
-              value="${tcs_libdir}/${review_management_persistence.path}/${review_management_persistence.jar.name}"/>
-
-    <property name="review_score_aggregator.version" value="1.0"/>
-    <property name="review_score_aggregator.jar.name" value="review_score_aggregator.jar"/>
-    <property name="review_score_aggregator.path" value="review_score_aggregator/${review_score_aggregator.version}"/>
-    <property name="review_score_aggregator.jar"
-              value="${tcs_libdir}/${review_score_aggregator.path}/${review_score_aggregator.jar.name}"/>
-
-    <property name="review_score_calculator.version" value="1.0.3"/>
-    <property name="review_score_calculator.jar.name" value="review_score_calculator.jar"/>
-    <property name="review_score_calculator.path" value="review_score_calculator/${review_score_calculator.version}"/>
-    <property name="review_score_calculator.jar"
-              value="${tcs_libdir}/${review_score_calculator.path}/${review_score_calculator.jar.name}"/>
-
-    <property name="scorecard_data_structure.version" value="1.0"/>
-    <property name="scorecard_data_structure.jar.name" value="scorecard_data_structure.jar"/>
-    <property name="scorecard_data_structure.path"
-              value="scorecard_data_structure/${scorecard_data_structure.version}"/>
-    <property name="scorecard_data_structure.jar"
-              value="${tcs_libdir}/${scorecard_data_structure.path}/${scorecard_data_structure.jar.name}"/>
 
     <property name="scorecard_management.version" value="1.0.1"/>
     <property name="scorecard_management.jar.name" value="scorecard_management.jar"/>
@@ -485,7 +384,6 @@
         <pathelement location="${data_validation.jar}"/>
         <pathelement location="${database_abstraction.jar}"/>
         <pathelement location="${db_connection_factory.jar}"/>
-        <pathelement location="${deliverable_management_persistence.jar}"/>
         <pathelement location="${distribution_tool.jar}"/>
         <pathelement location="${document_generator.jar}"/>
         <pathelement location="${email_engine.jar}"/>
@@ -497,24 +395,10 @@
         <pathelement location="${logging_wrapper.jar}"/>
         <pathelement location="${object_factory.jar}"/>
         <pathelement location="${object_factory_configuration_api_plugin.jar}"/>
-        <pathelement location="${online_review_ajax_support.jar}"/>
-        <pathelement location="${online_review_deliverables.jar}"/>
-        <pathelement location="${online_review_login.jar}"/>
-        <pathelement location="${phase_management.jar}"/>
-        <pathelement location="${phase_management_persistence.jar}"/>
-        <pathelement location="${project_management.jar}"/>
-        <pathelement location="${project_management_persistence.jar}"/>
         <pathelement location="${project_phases.jar}"/>
-        <pathelement location="${project_phase_template.jar}"/>
         <pathelement location="${resource_management.jar}"/>
         <pathelement location="${resource_management_persistence.jar}"/>
-        <pathelement location="${review_data_structure.jar}"/>
-        <pathelement location="${review_management.jar}"/>
-        <pathelement location="${review_management_persistence.jar}"/>
         <pathelement location="${search_builder.jar}"/>
-        <pathelement location="${review_score_aggregator.jar}"/>
-        <pathelement location="${review_score_calculator.jar}"/>
-        <pathelement location="${scorecard_data_structure.jar}"/>
         <pathelement location="${scorecard_management.jar}"/>
         <pathelement location="${scorecard_management_persistence.jar}"/>
         <pathelement location="${user_project_data_store.jar}"/>
@@ -526,9 +410,9 @@
         <pathelement location="${heartbeat.jar}"/>
         <pathelement location="${compression_utility.jar}"/>
         <pathelement location="${svnkit.jar}"/>
-        <pathelement location="${late_deliverables_management.jar}" />
         <pathelement location="${guid_generator.jar}" />
         <pathelement location="${activation.jar}" />
+        <pathelement location="${simple_cache.jar}" />
         <path refid="spring_libs"/>
     </path>
 
