@@ -8,6 +8,22 @@
 	<classpathentry kind="src" path="components/online_review_phases/src/java/main"/>
 	<classpathentry kind="src" path="components/online_review_upload_services/src/java/main"/>
 	<classpathentry kind="src" path="components/late_deliverables_tracker/src/java/main"/>
+	<classpathentry kind="src" path="components/deliverable_management_persistence/src/java/main"/>
+	<classpathentry kind="src" path="components/late_deliverables_management/src/java/main"/>
+	<classpathentry kind="src" path="components/online_review_ajax_support/src/java/main"/>
+	<classpathentry kind="src" path="components/online_review_deliverables/src/java/main"/>
+	<classpathentry kind="src" path="components/online_review_login/src/java/main"/>
+	<classpathentry kind="src" path="components/phase_management/src/java/main"/>
+	<classpathentry kind="src" path="components/phase_management_persistence/src/java/main"/>
+	<classpathentry kind="src" path="components/project_management/src/java/main"/>
+	<classpathentry kind="src" path="components/project_management_persistence/src/java/main"/>
+	<classpathentry kind="src" path="components/project_phase_template/src/java/main"/>
+	<classpathentry kind="src" path="components/review_data_structure/src/java/main"/>
+	<classpathentry kind="src" path="components/review_management/src/java/main"/>
+	<classpathentry kind="src" path="components/review_management_persistence/src/java/main"/>
+	<classpathentry kind="src" path="components/review_score_aggregator/src/java/main"/>
+	<classpathentry kind="src" path="components/review_score_calculator/src/java/main"/>
+	<classpathentry kind="src" path="components/scorecard_data_structure/src/java/main"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/authentication_factory/2.0/authentication_factory.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
@@ -79,26 +95,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/tcs/resource_management/1.1.1/resource_management.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/review_data_structure/1.0/review_data_structure.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/review_management/1.0/review_management.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/review_score_aggregator/1.0/review_score_aggregator.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/review_score_calculator/1.0.3/review_score_calculator.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -263,11 +259,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/tcs/project_phase_template/1.2.0/project_phase_template.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="lib/tcs/scorecard_management/1.0.1/scorecard_management.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
@@ -281,7 +272,6 @@
 	<classpathentry kind="lib" path="lib/tcs/project_ejb/Project.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/user_ejb/User.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/terms_of_use_ejb/TermsOfUse.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/phase_management_persistence/1.0.2/phase_management_persistence.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/jivebase.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/jiveforums.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/base_exception/2.0.0/base_exception.jar"/>
@@ -319,24 +309,15 @@
 	<classpathentry kind="lib" path="lib/tcs/workdays/1.1.0/workdays.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/email_engine/3.2.0/email_engine.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/svnkit/svnkit.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/deliverable_management_persistence/1.2.0/deliverable_management_persistence.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/project_management/1.2.0/project_management.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/project_management_persistence/1.2.0/project_management_persistence.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/configuration_manager/2.2.0/configuration_manager.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/document_generator/3.1.1/document_generator.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/online_review_ajax_support/1.0.3/online_review_ajax_support.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/online_review_deliverables/1.0.3/online_review_deliverables.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/late_deliverables_management/1.0.4/late_deliverables_management.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/phase_management/1.1.0/phase_management.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/tcs/resource_management_persistence/1.2.3/resource_management_persistence.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/review_management_persistence/1.0.2/review_management_persistence.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/online_review_login/1.1.5/online_review_login.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/configuration_api/1.0.0/configuration_api.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/configuration_persistence/1.0.2/configuration_persistence.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/job_scheduler/1.0/job_scheduler.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/job_scheduling/3.2.0/job_scheduling.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/job_processor/3.0.1/job_processor.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/object_factory_configuration_api_plugin/1.0.0/object_factory_configuration_api_plugin.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

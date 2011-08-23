@@ -17,6 +17,22 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/online_review_phases/src/java/main"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/online_review_upload_services/src/java/main"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/late_deliverables_tracker/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/deliverable_management_persistence/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/late_deliverables_management/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/online_review_ajax_support/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/online_review_deliverables/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/online_review_login/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/phase_management/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/phase_management_persistence/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/project_management/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/project_management_persistence/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/project_phase_template/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/review_data_structure/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/review_management/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/review_management_persistence/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/review_score_aggregator/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/review_score_calculator/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/components/scorecard_data_structure/src/java/main"/>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/authentication_factory/2.0/authentication_factory.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
