@@ -266,8 +266,8 @@ public class AutoPaymentUtil {
             //}
 
             // Unlike other reviewer payments specification reviewer is paid only after
-            // at least one submission passed review.
-            if ((reviewer.isSpecificationReviewer() && passedReview) || isStudio) {
+            // at least one submission passed review. Specification reviewer is always paid in studio competitions.
+            if (reviewer.isSpecificationReviewer() && (passedReview || isStudio)) {
                 updateResourcePayment(reviewer.getResourceId(),
                     alreadyPaidSpecReviewer ? 0 : fpc.getSpecReviewCost(), conn);
                 alreadyPaidSpecReviewer = true;
