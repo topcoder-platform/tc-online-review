@@ -97,7 +97,6 @@
             <fileset file="${guid_generator.jar}"/>
             <fileset file="${id_generator.jar}"/>
             <fileset file="${job_scheduler.jar}"/>
-            <fileset file="${logging_wrapper.jar}"/>
             <fileset file="${magic_numbers.jar}"/>
             <fileset file="${object_factory.jar}"/>
             <fileset file="${project_phases.jar}"/>
@@ -105,7 +104,6 @@
             <fileset file="${resource_management_persistence.jar}"/>
             <fileset file="${scorecard_management.jar}"/>
             <fileset file="${scorecard_management_persistence.jar}"/>
-            <fileset file="${search_builder.jar}"/>
             <fileset file="${simple_cache.jar}"/>
             <fileset file="${typesafe_enum.jar}"/>
             <fileset file="${user_project_data_store.jar}"/>

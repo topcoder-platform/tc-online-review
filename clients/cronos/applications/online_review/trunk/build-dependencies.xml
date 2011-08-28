@@ -176,11 +176,6 @@
     <property name="JNDI_Utility.path" value="JNDI_Utility/${JNDI_Utility.version}"/>
     <property name="JNDI_Utility.jar" value="${tcs_libdir}/${JNDI_Utility.path}/${JNDI_Utility.jar.name}"/>
         
-    <property name="logging_wrapper.version" value="1.2"/>
-    <property name="logging_wrapper.jar.name" value="logging_wrapper.jar"/>
-    <property name="logging_wrapper.path" value="logging_wrapper/${logging_wrapper.version}"/>
-    <property name="logging_wrapper.jar" value="${tcs_libdir}/${logging_wrapper.path}/${logging_wrapper.jar.name}"/>
-
     <property name="object_factory.version" value="2.0.1"/>
     <property name="object_factory.jar.name" value="object_factory.jar"/>
     <property name="object_factory.path" value="object_factory/${object_factory.version}"/>
@@ -224,11 +219,6 @@
               value="scorecard_management_persistence/${scorecard_management_persistence.version}"/>
     <property name="scorecard_management_persistence.jar"
               value="${tcs_libdir}/${scorecard_management_persistence.path}/${scorecard_management_persistence.jar.name}"/>
-
-    <property name="search_builder.version" value="1.3.1"/>
-    <property name="search_builder.jar.name" value="search_builder.jar"/>
-    <property name="search_builder.path" value="search_builder/${search_builder.version}"/>
-    <property name="search_builder.jar" value="${tcs_libdir}/${search_builder.path}/${search_builder.jar.name}"/>
 
     <property name="simple_cache.version" value="2.0"/>
     <property name="simple_cache.jar.name" value="simple_cache.jar"/>
@@ -314,6 +304,7 @@
     <property name="axis.jar" value="${ext_libdir}/axis-dok.jar"/>
     <property name="commons.beanutils.jar" value="${ext_libdir}/commons-beanutils.jar"/>
     <property name="log4j.jar" value="${ext_libdir}/log4j.jar"/>
+    <property name="ldapjdk.jar" value="${ext_libdir}/ldapjdk.jar"/>
 
     <property name="junit.jar" value="${ext_libdir}/testing/junit-3.8.1.jar"/>
     <property name="selenium_client.jar" value="${ext_libdir}/testing/selenium-java-client-driver.jar" />
@@ -367,6 +358,7 @@
         <pathelement location="${JNDI_Utility.jar}"/>
         <pathelement location="${tcIdGenerator.jar}"/>
         <pathelement location="${base_exception.jar}"/>
+        <pathelement location="${class_associations.jar}"/>
         <pathelement location="${command_line_utility.jar}"/>
         <pathelement location="${configuration_manager.jar}"/>
         <pathelement location="${contest_eligibility_validation.jar}"/>
@@ -384,13 +376,11 @@
         <pathelement location="${job_scheduler.jar}"/>
         <pathelement location="${job_scheduling.jar}"/>
         <pathelement location="${job_processor.jar}"/>
-        <pathelement location="${logging_wrapper.jar}"/>
         <pathelement location="${object_factory.jar}"/>
         <pathelement location="${object_factory_configuration_api_plugin.jar}"/>
         <pathelement location="${project_phases.jar}"/>
         <pathelement location="${resource_management.jar}"/>
         <pathelement location="${resource_management_persistence.jar}"/>
-        <pathelement location="${search_builder.jar}"/>
         <pathelement location="${scorecard_management.jar}"/>
         <pathelement location="${scorecard_management_persistence.jar}"/>
         <pathelement location="${user_project_data_store.jar}"/>
@@ -405,6 +395,8 @@
         <pathelement location="${guid_generator.jar}" />
         <pathelement location="${activation.jar}" />
         <pathelement location="${simple_cache.jar}" />
+        <pathelement location="${log4j.jar}" />
+        <pathelement location="${ldapjdk.jar}" />
         <path refid="spring_libs"/>
     </path>
 
