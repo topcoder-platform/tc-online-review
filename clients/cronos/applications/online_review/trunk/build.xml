@@ -165,8 +165,6 @@
       <lib dir="${tcs_libdir}/${object_factory_configuration_api_plugin.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${distribution_tool.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${project_phases.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${resource_management.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${resource_management_persistence.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${scorecard_management.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${scorecard_management_persistence.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${simple_cache.path}" includes="*.jar"/>
