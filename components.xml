@@ -110,4 +110,20 @@
         svnpath="https://coder.topcoder.com/tcs/catalog/java/authentication_factory/trunk"
         revision="206507" />
 
+    <component
+        name="logging_wrapper"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/logging_wrapper/trunk"
+        revision="2413" />
+
+    <component
+        name="search_builder"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/search_builder/trunk"
+        revision="66715" />
+
+    <!-- ldap_sdk_interface is a dependency of the search_builder -->
+    <component
+        name="ldap_sdk_interface"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/ldap_sdk_interface/trunk"
+        revision="130310" />
+
 </components>
