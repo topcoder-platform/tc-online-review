@@ -16,12 +16,6 @@
     <property name="shared_libdir" value="${online_review_home}/lib/shared" />
     <property name="token.properties" value="${online_review_home}/token.properties"/>
 
-    <property name="authentication_factory.version" value="2.0"/>
-    <property name="authentication_factory.jar.name" value="authentication_factory.jar"/>
-    <property name="authentication_factory.path" value="authentication_factory/${authentication_factory.version}"/>
-    <property name="authentication_factory.jar"
-              value="${tcs_libdir}/${authentication_factory.path}/${authentication_factory.jar.name}"/>
-
     <property name="base_exception.version" value="2.0.0"/>
     <property name="base_exception.jar.name" value="base_exception.jar"/>
     <property name="base_exception.path" value="base_exception/${base_exception.version}"/>
@@ -240,7 +234,6 @@
     <property name="simple_cache.jar.name" value="simple_cache.jar"/>
     <property name="simple_cache.path" value="simple_cache/${simple_cache.version}"/>
     <property name="simple_cache.jar" value="${tcs_libdir}/${simple_cache.path}/${simple_cache.jar.name}"/>
-
     <property name="typesafe_enum.version" value="1.0"/>
     <property name="typesafe_enum.jar.name" value="typesafe_enum.jar"/>
     <property name="typesafe_enum.path" value="typesafe_enum/${typesafe_enum.version}"/>
@@ -373,7 +366,6 @@
         <pathelement location="${securityEJB.jar}"/>
         <pathelement location="${JNDI_Utility.jar}"/>
         <pathelement location="${tcIdGenerator.jar}"/>
-        <pathelement location="${authentication_factory.jar}"/>
         <pathelement location="${base_exception.jar}"/>
         <pathelement location="${command_line_utility.jar}"/>
         <pathelement location="${configuration_manager.jar}"/>
