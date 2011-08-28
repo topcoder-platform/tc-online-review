@@ -104,4 +104,10 @@
         name="scorecard_data_structure"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/scorecard_data_structure/trunk"
         revision="206269" />
+
+    <component
+        name="authentication_factory"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/authentication_factory/trunk"
+        revision="206507" />
+
 </components>

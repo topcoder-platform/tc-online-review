@@ -142,7 +142,6 @@
       <classes dir="${build_classdir}" includes="**"/>
       <classes dir="${build_conf}" includes="**" excludes="WEB-INF/**, META-INF/**"/>
       <classes dir="${build_conf}/WEB-INF/classes"/>
-      <lib dir="${tcs_libdir}/${authentication_factory.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${base_exception.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${class_associations.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${command_line_utility.path}" includes="*.jar"/>
