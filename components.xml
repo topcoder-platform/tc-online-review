@@ -8,7 +8,7 @@
     <component
         name="deliverable_management"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/deliverable_management/trunk"
-        revision="205997"/>
+        revision="206514"/>
 
     <component
         name="deliverable_management_persistence"
@@ -53,7 +53,7 @@
     <component
         name="phase_management"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/phase_management/trunk"
-        revision="206269" />
+        revision="206513" />
 
     <component
         name="phase_management_persistence"
@@ -73,7 +73,7 @@
     <component
         name="project_phase_template"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/project_phase_template/trunk"
-        revision="206269" />
+        revision="206512" />
 
     <component
         name="review_data_structure"
@@ -125,5 +125,15 @@
         name="ldap_sdk_interface"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/ldap_sdk_interface/trunk"
         revision="130310" />
+
+    <component
+        name="resource_management"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/resource_management/trunk"
+        revision="72309" />
+
+    <component
+        name="resource_management_persistence"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/resource_management_persistence/trunk"
+        revision="206001" />
 
 </components>

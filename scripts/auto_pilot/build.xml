@@ -100,8 +100,6 @@
             <fileset file="${magic_numbers.jar}"/>
             <fileset file="${object_factory.jar}"/>
             <fileset file="${project_phases.jar}"/>
-            <fileset file="${resource_management.jar}"/>
-            <fileset file="${resource_management_persistence.jar}"/>
             <fileset file="${scorecard_management.jar}"/>
             <fileset file="${scorecard_management_persistence.jar}"/>
             <fileset file="${simple_cache.jar}"/>
