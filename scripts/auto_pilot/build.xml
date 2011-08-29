@@ -81,8 +81,6 @@
         <delete file="${build_distdir}/auto_pilot_app.jar" failonerror="no"/>
         <jar destfile="${build_distdir}/auto_pilot_app.jar" filesonly="true">
             <fileset file="${auto_pilot.jar}"/>
-            <fileset file="${class_associations.jar}"/>
-            <fileset file="${command_line_utility.jar}"/>
             <fileset file="${configuration_manager.jar}"/>
             <fileset file="${configuration_api.jar}"/>
             <fileset file="${configuration_persistence.jar}" />
@@ -107,7 +105,7 @@
             <fileset file="${ifx-jdbc.jar}"/>
             <fileset file="${javamail.jar}"/>
             <fileset file="${log4j.jar}"/>
-            <fileset file="${activation.jar}"/>
+            <fileset file="${jaf.jar}"/>
             <fileset file="${xerces.jar}"/>
             <fileset file="${termsOfUseEJB.jar}"/>
             <fileset file="${userEJB.jar}"/>

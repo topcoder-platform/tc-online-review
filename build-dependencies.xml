@@ -16,23 +16,6 @@
     <property name="shared_libdir" value="${online_review_home}/lib/shared" />
     <property name="token.properties" value="${online_review_home}/token.properties"/>
 
-    <property name="class_associations.version" value="1.0"/>
-    <property name="class_associations.jar.name" value="class_associations.jar"/>
-    <property name="class_associations.path" value="class_associations/${class_associations.version}"/>
-    <property name="class_associations.jar"
-              value="${tcs_libdir}/${class_associations.path}/${class_associations.jar.name}"/>
-
-    <property name="command_line_utility.version" value="1.0"/>
-    <property name="command_line_utility.jar.name" value="command_line_utility.jar"/>
-    <property name="command_line_utility.path" value="command_line_utility/${command_line_utility.version}"/>
-    <property name="command_line_utility.jar"
-              value="${tcs_libdir}/${command_line_utility.path}/${command_line_utility.jar.name}"/>
-
-    <property name="compression_utility.version" value="2.0.1" />
-    <property name="compression_utility.jar.name" value="compression_utility.jar" />
-    <property name="compression_utility.path" value="compression_utility/${compression_utility.version}" />
-    <property name="compression_utility.jar" value="${tcs_libdir}/${compression_utility.path}/${compression_utility.jar.name}" />
-
     <property name="configuration_api.version" value="1.0.0"/>
     <property name="configuration_api.jar.name" value="configuration_api.jar"/>
     <property name="configuration_api.path" value="configuration_api/${configuration_api.version}"/>
@@ -289,7 +272,6 @@
     <property name="jivebase.jar" value="${ext_libdir}/${jivebase.jar.name}"/>
     <property name="checkstyle.jar" value="${ext_libdir}/checkstyle-all-4.2.jar"/>
     <property name="ant-contrib.jar" value="${ext_libdir}/ant-contrib-1.0b3.jar"/>
-    <property name="activation.jar" value="${ext_libdir}/activation.jar" />
     <property name="xerces.jar" value="${ext_libdir}/xerces.jar" />
     <property name="ejb-2_0.jar" value="${ext_libdir}/ejb-2_0.jar" />
     <property name="svnkit.jar" value="${ext_libdir}/svnkit/svnkit.jar"/>
@@ -329,8 +311,6 @@
         <pathelement location="${securityEJB.jar}"/>
         <pathelement location="${JNDI_Utility.jar}"/>
         <pathelement location="${tcIdGenerator.jar}"/>
-        <pathelement location="${class_associations.jar}"/>
-        <pathelement location="${command_line_utility.jar}"/>
         <pathelement location="${configuration_manager.jar}"/>
         <pathelement location="${contest_eligibility_validation.jar}"/>
         <pathelement location="${contest_eligibility_persistence.jar}"/>
@@ -357,10 +337,8 @@
         <pathelement location="${xmi_parser.jar}"/>
         <pathelement location="${directory_validation.jar}"/>
         <pathelement location="${heartbeat.jar}"/>
-        <pathelement location="${compression_utility.jar}"/>
         <pathelement location="${svnkit.jar}"/>
         <pathelement location="${guid_generator.jar}" />
-        <pathelement location="${activation.jar}" />
         <pathelement location="${simple_cache.jar}" />
         <pathelement location="${log4j.jar}" />
         <pathelement location="${ldapjdk.jar}" />

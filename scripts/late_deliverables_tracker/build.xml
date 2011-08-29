@@ -76,9 +76,7 @@
         <delete file="${build_distdir}/late_deliverables_tracker_app.jar" failonerror="false"/>
         <jar destfile="${build_distdir}/late_deliverables_tracker_app.jar" filesonly="true">
             <fileset file="${late_deliverables_tracker.jar}"/>
-            <fileset file="${activation.jar}"/>
-            <fileset file="${class_associations.jar}"/>
-            <fileset file="${command_line_utility.jar}"/>
+            <fileset file="${jaf.jar}"/>
             <fileset file="${configuration_api.jar}"/>
             <fileset file="${configuration_manager.jar}"/>
             <fileset file="${configuration_persistence.jar}"/>
