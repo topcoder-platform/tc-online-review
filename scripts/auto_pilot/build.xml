@@ -81,7 +81,6 @@
         <delete file="${build_distdir}/auto_pilot_app.jar" failonerror="no"/>
         <jar destfile="${build_distdir}/auto_pilot_app.jar" filesonly="true">
             <fileset file="${auto_pilot.jar}"/>
-            <fileset file="${base_exception.jar}"/>
             <fileset file="${class_associations.jar}"/>
             <fileset file="${command_line_utility.jar}"/>
             <fileset file="${configuration_manager.jar}"/>
@@ -90,8 +89,6 @@
             <fileset file="${data_validation.jar}"/>
             <fileset file="${database_abstraction.jar}"/>
             <fileset file="${db_connection_factory.jar}"/>
-            <fileset file="${document_generator.jar}"/>
-            <fileset file="${email_engine.jar}"/>
             <fileset file="${executable_wrapper.jar}"/>
             <fileset file="${generic_event_manager.jar}"/>
             <fileset file="${guid_generator.jar}"/>
@@ -108,7 +105,7 @@
             <fileset file="${weighted_calculator.jar}"/>
             <fileset file="${workdays.jar}"/>
             <fileset file="${ifx-jdbc.jar}"/>
-            <fileset file="${mail.jar}"/>
+            <fileset file="${javamail.jar}"/>
             <fileset file="${log4j.jar}"/>
             <fileset file="${activation.jar}"/>
             <fileset file="${xerces.jar}"/>

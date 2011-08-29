@@ -136,4 +136,19 @@
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/resource_management_persistence/trunk"
         revision="206001" />
 
+    <component
+        name="email_engine"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/email_engine/trunk"
+        revision="177218" />
+
+    <component
+        name="document_generator"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/document_generator/trunk"
+        revision="206522" />
+
+    <component
+        name="base_exception"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/base_exception/trunk"
+        revision="106287" />
+
 </components>
