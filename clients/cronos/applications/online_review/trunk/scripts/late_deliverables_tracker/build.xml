@@ -77,7 +77,6 @@
         <jar destfile="${build_distdir}/late_deliverables_tracker_app.jar" filesonly="true">
             <fileset file="${late_deliverables_tracker.jar}"/>
             <fileset file="${activation.jar}"/>
-            <fileset file="${base_exception.jar}"/>
             <fileset file="${class_associations.jar}"/>
             <fileset file="${command_line_utility.jar}"/>
             <fileset file="${configuration_api.jar}"/>
@@ -86,15 +85,13 @@
             <fileset file="${database_abstraction.jar}"/>
             <fileset file="${data_validation.jar}"/>
             <fileset file="${db_connection_factory.jar}"/>
-            <fileset file="${document_generator.jar}"/>
-            <fileset file="${email_engine.jar}"/>
             <fileset file="${executable_wrapper.jar}"/>
             <fileset file="${id_generator.jar}"/>
             <fileset file="${ifx-jdbc.jar}"/>
             <fileset file="${job_processor.jar}"/>
             <fileset file="${job_scheduling.jar}"/>
             <fileset file="${log4j.jar}"/>
-            <fileset file="${mail.jar}"/>
+            <fileset file="${javamail.jar}"/>
             <fileset file="${object_factory.jar}"/>
             <fileset file="${object_factory_configuration_api_plugin.jar}"/>
             <fileset file="${project_phases.jar}"/>
