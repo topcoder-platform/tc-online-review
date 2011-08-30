@@ -9,11 +9,12 @@
 <c:if test="${isAllowedToViewResources}">
 	<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
 		<tr>
-			<td class="title" colspan='${(isAllowedToViewAllPayment) ? "5" : "3"}'><bean:message key="viewProjectDetails.box.Resources" /></td>
+			<td class="title" colspan='${(isAllowedToViewAllPayment) ? "6" : "4"}'><bean:message key="viewProjectDetails.box.Resources" /></td>
 		</tr>
 		<tr>
 			<td class="header"><b><bean:message key="viewProjectDetails.Resource.Role" /></b></td>
-			<td class="header"><b><bean:message key="viewProjectDetails.Resource.Name" /></b></td>
+			<td class="header"><b><bean:message key="viewProjectDetails.Resource.Handle" /></b></td>
+			<td class="header"><b><bean:message key="viewProjectDetails.Resource.Email" /></b></td>
 			<c:if test="${isAllowedToViewAllPayment}">
 				<td class="header" nowrap="nowrap"><b><bean:message key="viewProjectDetails.Resource.Payment" /></b></td>
 				<td class="header" nowrap="nowrap"><b><bean:message key="viewProjectDetails.Resource.Paid_qm" /></b></td>
@@ -24,9 +25,9 @@
 			<tr class='${(idxrResource.index % 2 == 0) ? "light" : "dark"}'>
 				<td class="value" nowrap="nowrap"><bean:message key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}.bold' /></td>
 				<td class="value" nowrap="nowrap">
-					<html:link href="mailto:${users[idxrResource.index].email}" title="Send Email"><html:img srcKey="viewProjectDetails.Resource.Email.img" border="0" /></html:link>
 					<tc-webtag:handle coderId="${users[idxrResource.index].id}" context="${orfn:getHandlerContext(pageContext.request)}" />
 				</td>
+                                <td class="value" nowrap="nowrap"> <html:link href="mailto:${users[idxrResource.index].email}">${users[idxrResource.index].email}</html:link> </td>
 				<c:if test="${isAllowedToViewAllPayment}">
 					<c:choose>
 						<c:when test='${not empty resource.allProperties["Payment"]}'>
@@ -58,7 +59,7 @@
 			</tr>
 		</c:forEach>
 		<tr>
-			<td class="lastRowTD" colspan='${(isAllowedToViewAllPayment) ? "5" : "3"}'><!-- @ --></td>
+			<td class="lastRowTD" colspan='${(isAllowedToViewAllPayment) ? "6" : "4"}'><!-- @ --></td>
 		</tr>
 	</table><br />
 </c:if>
