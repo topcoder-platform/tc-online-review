@@ -16,12 +16,6 @@
     <property name="shared_libdir" value="${online_review_home}/lib/shared" />
     <property name="token.properties" value="${online_review_home}/token.properties"/>
 
-    <property name="configuration_api.version" value="1.0.0"/>
-    <property name="configuration_api.jar.name" value="configuration_api.jar"/>
-    <property name="configuration_api.path" value="configuration_api/${configuration_api.version}"/>
-    <property name="configuration_api.jar"
-              value="${tcs_libdir}/${configuration_api.path}/${configuration_api.jar.name}"/>
-
     <property name="directory_validation.version" value="1.0"/>
     <property name="directory_validation.jar.name" value="directory_validation.jar"/>
     <property name="directory_validation.path" value="directory_validation/${directory_validation.version}"/>
@@ -32,13 +26,6 @@
     <property name="configuration_manager.path" value="configuration_manager/${configuration_manager.version}"/>
     <property name="configuration_manager.jar"
               value="${tcs_libdir}/${configuration_manager.path}/${configuration_manager.jar.name}"/>
-
-    <property name="configuration_persistence.version" value="1.0.2"/>
-    <property name="configuration_persistence.jar.name" value="configuration_persistence.jar"/>
-    <property name="configuration_persistence.path"
-              value="configuration_persistence/${configuration_persistence.version}"/>
-    <property name="configuration_persistence.jar"
-              value="${tcs_libdir}/${configuration_persistence.path}/${configuration_persistence.jar.name}"/>
 
     <property name="contest_eligibility_persistence.version" value="1.0.1"/>
     <property name="contest_eligibility_persistence.jar.name" value="contest_eligibility_persistence.jar"/>
@@ -53,11 +40,6 @@
               value="contest_eligibility_validation/${contest_eligibility_validation.version}"/>
     <property name="contest_eligibility_validation.jar"
               value="${tcs_libdir}/${contest_eligibility_validation.path}/${contest_eligibility_validation.jar.name}"/>
-
-    <property name="data_validation.version" value="1.1.1"/>
-    <property name="data_validation.jar.name" value="data_validation.jar"/>
-    <property name="data_validation.path" value="data_validation/${data_validation.version}"/>
-    <property name="data_validation.jar" value="${tcs_libdir}/${data_validation.path}/${data_validation.jar.name}"/>
 
     <property name="database_abstraction.version" value="1.1"/>
     <property name="database_abstraction.jar.name" value="database_abstraction.jar"/>
@@ -314,9 +296,6 @@
         <pathelement location="${configuration_manager.jar}"/>
         <pathelement location="${contest_eligibility_validation.jar}"/>
         <pathelement location="${contest_eligibility_persistence.jar}"/>
-        <pathelement location="${configuration_api.jar}"/>
-        <pathelement location="${configuration_persistence.jar}"/>
-        <pathelement location="${data_validation.jar}"/>
         <pathelement location="${database_abstraction.jar}"/>
         <pathelement location="${db_connection_factory.jar}"/>
         <pathelement location="${distribution_tool.jar}"/>
