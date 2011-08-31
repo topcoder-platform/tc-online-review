@@ -3326,12 +3326,15 @@ public class ActionsHelper {
 
 
     /**
-     * Synchronizes rboard_application with reviewers set in the OR.
+     * Synchronizes rboard_application with reviewers set in the OR. Does nothing for Studio contests.
      *
      * @param project the project
      * @throws BaseException if error occurs
      */
     public static void synchronizeRBoardApplications(Project project) throws BaseException {
+        if (isStudioProject(project)) {
+            return;
+        }
         long projectId = project.getId();
         long phaseID = 111 + project.getProjectCategory().getId();
 
