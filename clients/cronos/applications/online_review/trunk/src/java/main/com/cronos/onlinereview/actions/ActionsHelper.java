@@ -4168,15 +4168,19 @@ public class ActionsHelper {
 
 
     public static void addForumPermissions(Project project, Collection<Long> users, boolean moderator) throws BaseException {
-        try {
+        try {            
+            long forumId = getProjectLongValue(project, "Developer Forum ID");
+            if (forumId == 0) {
+                // Don't try to create the forum bean if the forum ID is not set (as in the VM).
+                return;
+            }
+
             Forums forumBean = getForumBean();
-
-
-            String roleId = SOFTWARE_USER_FORUM_ROLE_PREFIX + getProjectLongValue(project, "Developer Forum ID");
+            String roleId = SOFTWARE_USER_FORUM_ROLE_PREFIX + forumId;
 
             if (moderator)
             {
-                roleId = SOFTWARE_MODERATOR_FORUM_ROLE_PREFIX + getProjectLongValue(project, "Developer Forum ID");
+                roleId = SOFTWARE_MODERATOR_FORUM_ROLE_PREFIX + forumId;
             }
 
             for (Long userId : users) {
@@ -4193,11 +4197,17 @@ public class ActionsHelper {
 
     public static void removeForumPermissions(Project project, Collection<Long> users) throws BaseException {
         try {
+            long forumId = getProjectLongValue(project, "Developer Forum ID");
+            if (forumId == 0) {
+                // Don't try to create the forum bean if the forum ID is not set (as in the VM).
+                return;
+            }
+
             Forums forumBean = getForumBean();
 
             // just be safe, remove both roles, since we start assigning two roles.
-            String userroleId = SOFTWARE_USER_FORUM_ROLE_PREFIX + getProjectLongValue(project, "Developer Forum ID");
-            String moderatorroleId = SOFTWARE_MODERATOR_FORUM_ROLE_PREFIX + getProjectLongValue(project, "Developer Forum ID");
+            String userroleId = SOFTWARE_USER_FORUM_ROLE_PREFIX + forumId;
+            String moderatorroleId = SOFTWARE_MODERATOR_FORUM_ROLE_PREFIX + forumId;
 
             for (Long userId : users) {
                 forumBean.removeRole(userId, userroleId);
@@ -4215,6 +4225,11 @@ public class ActionsHelper {
 
     public static void addForumWatch(Project project, Collection<Long> users, long forumId) throws BaseException {
         try {
+            if (forumId == 0) {
+                // Don't try to create the forum bean if the forum ID is not set (as in the VM).
+                return;
+            }
+
             Forums forumBean = getForumBean();
 
             if (forumId != 0) {
@@ -4233,6 +4248,11 @@ public class ActionsHelper {
 
     public static void removeForumWatch(Project project, Collection<Long> users, long forumId) throws BaseException {
         try {
+            if (forumId == 0) {
+                // Don't try to create the forum bean if the forum ID is not set (as in the VM).
+                return;
+            }
+
             Forums forumBean = getForumBean();
 
             if (forumId != 0) {
