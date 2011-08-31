@@ -166,4 +166,19 @@
         svnpath="https://coder.topcoder.com/tcs/catalog/java/compression_utility/trunk"
         revision="206534" />
 
+    <component
+        name="configuration_api"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/configuration_api/trunk"
+        revision="202162" />
+
+    <component
+        name="configuration_persistence"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/configuration_persistence/trunk"
+        revision="151229" />
+
+    <component
+        name="data_validation"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/data_validation/trunk"
+        revision="106974" />
+
 </components>

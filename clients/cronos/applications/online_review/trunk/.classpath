@@ -36,13 +36,11 @@
 	<classpathentry kind="src" path="components/class_associations/src/java/main"/>
 	<classpathentry kind="src" path="components/command_line_utility/src/java/main"/>
 	<classpathentry kind="src" path="components/compression_utility/src/java/main"/>
+	<classpathentry kind="src" path="components/configuration_api/src/java/main"/>
+	<classpathentry kind="src" path="components/configuration_persistence/src/java/main"/>
+	<classpathentry kind="src" path="components/data_validation/src/java/main"/>
 
 	<classpathentry exported="true" kind="lib" path="lib/tcs/database_abstraction/1.1/database_abstraction.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/tcs/data_validation/1.1.1/data_validation.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -305,8 +303,6 @@
 	<classpathentry kind="lib" path="lib/tcs/workdays/1.1.0/workdays.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/svnkit/svnkit.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/configuration_manager/2.2.0/configuration_manager.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/configuration_api/1.0.0/configuration_api.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/configuration_persistence/1.0.2/configuration_persistence.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/job_scheduler/1.0/job_scheduler.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/job_scheduling/3.2.0/job_scheduling.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/job_processor/3.0.1/job_processor.jar"/>

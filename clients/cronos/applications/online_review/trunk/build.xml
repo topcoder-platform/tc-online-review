@@ -141,12 +141,9 @@
       <classes dir="${build_classdir}" includes="**"/>
       <classes dir="${build_conf}" includes="**" excludes="WEB-INF/**, META-INF/**"/>
       <classes dir="${build_conf}/WEB-INF/classes"/>
-      <lib dir="${tcs_libdir}/${configuration_api.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${configuration_manager.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${configuration_persistence.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${contest_eligibility_persistence.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${contest_eligibility_validation.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${data_validation.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${database_abstraction.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${db_connection_factory.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${file_system_server.path}" includes="*.jar"/>
