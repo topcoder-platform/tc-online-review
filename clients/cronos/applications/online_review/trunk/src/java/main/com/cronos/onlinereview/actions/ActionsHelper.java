@@ -1638,7 +1638,7 @@ public class ActionsHelper {
             String paymentStr = (String) resource.getProperty("Payment");
             if (paymentStr != null && paymentStr.trim().length() != 0) {
                 double payment = Double.parseDouble(paymentStr);
-                Double oldPayment = payments.containsKey(role) ? payments.get(role) : 0.0;
+                Double oldPayment = payments.get(role) == null ? 0.0 : payments.get(role);
 
                 payments.put(role, oldPayment + payment);
             } else {
