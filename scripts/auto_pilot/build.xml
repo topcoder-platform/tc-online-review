@@ -82,7 +82,6 @@
         <jar destfile="${build_distdir}/auto_pilot_app.jar" filesonly="true">
             <fileset file="${auto_pilot.jar}"/>
             <fileset file="${configuration_manager.jar}"/>
-            <fileset file="${database_abstraction.jar}"/>
             <fileset file="${db_connection_factory.jar}"/>
             <fileset file="${executable_wrapper.jar}"/>
             <fileset file="${generic_event_manager.jar}"/>
