@@ -137,19 +137,6 @@
     <property name="project_phases.path" value="project_phases/${project_phases.version}"/>
     <property name="project_phases.jar" value="${tcs_libdir}/${project_phases.path}/${project_phases.jar.name}"/>
 
-    <property name="scorecard_management.version" value="1.0.1"/>
-    <property name="scorecard_management.jar.name" value="scorecard_management.jar"/>
-    <property name="scorecard_management.path" value="scorecard_management/${scorecard_management.version}"/>
-    <property name="scorecard_management.jar"
-              value="${tcs_libdir}/${scorecard_management.path}/${scorecard_management.jar.name}"/>
-
-    <property name="scorecard_management_persistence.version" value="1.0.1"/>
-    <property name="scorecard_management_persistence.jar.name" value="scorecard_management_persistence.jar"/>
-    <property name="scorecard_management_persistence.path"
-              value="scorecard_management_persistence/${scorecard_management_persistence.version}"/>
-    <property name="scorecard_management_persistence.jar"
-              value="${tcs_libdir}/${scorecard_management_persistence.path}/${scorecard_management_persistence.jar.name}"/>
-
     <property name="simple_cache.version" value="2.0"/>
     <property name="simple_cache.jar.name" value="simple_cache.jar"/>
     <property name="simple_cache.path" value="simple_cache/${simple_cache.version}"/>
@@ -300,8 +287,6 @@
         <pathelement location="${object_factory.jar}"/>
         <pathelement location="${object_factory_configuration_api_plugin.jar}"/>
         <pathelement location="${project_phases.jar}"/>
-        <pathelement location="${scorecard_management.jar}"/>
-        <pathelement location="${scorecard_management_persistence.jar}"/>
         <pathelement location="${user_project_data_store.jar}"/>
         <pathelement location="${typesafe_enum.jar}"/>
         <pathelement location="${weighted_calculator.jar}"/>

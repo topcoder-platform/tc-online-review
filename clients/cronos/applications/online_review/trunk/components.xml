@@ -186,4 +186,14 @@
         svnpath="https://coder.topcoder.com/tcs/catalog/java/database_abstraction/trunk"
         revision="204004" />
 
+    <component
+        name="scorecard_management"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/scorecard_management/trunk"
+        revision="112924" />
+
+    <component
+        name="scorecard_management_persistence"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/scorecard_management_persistence/trunk"
+        revision="206981" />
+
 </components>
