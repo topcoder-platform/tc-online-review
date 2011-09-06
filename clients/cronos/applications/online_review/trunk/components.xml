@@ -8,12 +8,12 @@
     <component
         name="deliverable_management"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/deliverable_management/trunk"
-        revision="206514"/>
+        revision="206969"/>
 
     <component
         name="deliverable_management_persistence"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/deliverable_management_persistence/trunk"
-        revision="206269"/>
+        revision="206970"/>
 
     <component
         name="late_deliverables_tracker"
@@ -23,7 +23,7 @@
     <component
         name="late_deliverables_management"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/late_deliverables_management/trunk"
-        revision="206269" />
+        revision="206971" />
 
     <component
         name="online_review_deliverables"
@@ -68,7 +68,7 @@
     <component
         name="project_management_persistence"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_management_persistence/trunk"
-        revision="206269" />
+        revision="206972" />
 
     <component
         name="project_phase_template"
@@ -88,7 +88,7 @@
     <component
         name="review_management_persistence"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_management_persistence/trunk"
-        revision="206269" />
+        revision="206974" />
 
     <component
         name="review_score_aggregator"
@@ -134,7 +134,7 @@
     <component
         name="resource_management_persistence"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/resource_management_persistence/trunk"
-        revision="206001" />
+        revision="206973" />
 
     <component
         name="email_engine"
@@ -180,5 +180,10 @@
         name="data_validation"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/data_validation/trunk"
         revision="106974" />
+
+    <component
+        name="database_abstraction"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/database_abstraction/trunk"
+        revision="204004" />
 
 </components>

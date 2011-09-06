@@ -78,7 +78,6 @@
             <fileset file="${late_deliverables_tracker.jar}"/>
             <fileset file="${jaf.jar}"/>
             <fileset file="${configuration_manager.jar}"/>
-            <fileset file="${database_abstraction.jar}"/>
             <fileset file="${db_connection_factory.jar}"/>
             <fileset file="${executable_wrapper.jar}"/>
             <fileset file="${id_generator.jar}"/>

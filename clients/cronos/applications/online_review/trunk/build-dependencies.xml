@@ -41,12 +41,6 @@
     <property name="contest_eligibility_validation.jar"
               value="${tcs_libdir}/${contest_eligibility_validation.path}/${contest_eligibility_validation.jar.name}"/>
 
-    <property name="database_abstraction.version" value="1.1"/>
-    <property name="database_abstraction.jar.name" value="database_abstraction.jar"/>
-    <property name="database_abstraction.path" value="database_abstraction/${database_abstraction.version}"/>
-    <property name="database_abstraction.jar"
-              value="${tcs_libdir}/${database_abstraction.path}/${database_abstraction.jar.name}"/>
-
     <property name="db_connection_factory.version" value="1.1.0"/>
     <property name="db_connection_factory.jar.name" value="db_connection_factory.jar"/>
     <property name="db_connection_factory.path" value="db_connection_factory/${db_connection_factory.version}"/>
@@ -296,7 +290,6 @@
         <pathelement location="${configuration_manager.jar}"/>
         <pathelement location="${contest_eligibility_validation.jar}"/>
         <pathelement location="${contest_eligibility_persistence.jar}"/>
-        <pathelement location="${database_abstraction.jar}"/>
         <pathelement location="${db_connection_factory.jar}"/>
         <pathelement location="${distribution_tool.jar}"/>
         <pathelement location="${file_upload.jar}"/>
