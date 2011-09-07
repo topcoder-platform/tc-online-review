@@ -16,11 +16,6 @@
     <property name="shared_libdir" value="${online_review_home}/lib/shared" />
     <property name="token.properties" value="${online_review_home}/token.properties"/>
 
-    <property name="directory_validation.version" value="1.0"/>
-    <property name="directory_validation.jar.name" value="directory_validation.jar"/>
-    <property name="directory_validation.path" value="directory_validation/${directory_validation.version}"/>
-    <property name="directory_validation.jar" value="${tcs_libdir}/${directory_validation.path}/${directory_validation.jar.name}"/>
-
     <property name="configuration_manager.version" value="2.2.0"/>
     <property name="configuration_manager.jar.name" value="configuration_manager.jar"/>
     <property name="configuration_manager.path" value="configuration_manager/${configuration_manager.version}"/>
@@ -41,22 +36,11 @@
     <property name="contest_eligibility_validation.jar"
               value="${tcs_libdir}/${contest_eligibility_validation.path}/${contest_eligibility_validation.jar.name}"/>
 
-    <property name="db_connection_factory.version" value="1.1.0"/>
-    <property name="db_connection_factory.jar.name" value="db_connection_factory.jar"/>
-    <property name="db_connection_factory.path" value="db_connection_factory/${db_connection_factory.version}"/>
-    <property name="db_connection_factory.jar"
-              value="${tcs_libdir}/${db_connection_factory.path}/${db_connection_factory.jar.name}"/>
-
     <property name="distribution_tool.version" value="1.0.1"/>
     <property name="distribution_tool.jar.name" value="distribution_tool.jar"/>
     <property name="distribution_tool.path" value="distribution_tool/${distribution_tool.version}"/>
     <property name="distribution_tool.jar"
               value="${tcs_libdir}/${distribution_tool.path}/${distribution_tool.jar.name}"/>
-
-    <property name="executable_wrapper.version" value="1.0" />
-    <property name="executable_wrapper.jar.name" value="executable_wrapper.jar" />
-    <property name="executable_wrapper.path" value="executable_wrapper/${executable_wrapper.version}" />
-    <property name="executable_wrapper.jar" value="${tcs_libdir}/${executable_wrapper.path}/${executable_wrapper.jar.name}" />
 
     <property name="file_system_server.version" value="1.0"/>
     <property name="file_system_server.jar.name" value="file_system_server.jar"/>
@@ -277,7 +261,6 @@
         <pathelement location="${configuration_manager.jar}"/>
         <pathelement location="${contest_eligibility_validation.jar}"/>
         <pathelement location="${contest_eligibility_persistence.jar}"/>
-        <pathelement location="${db_connection_factory.jar}"/>
         <pathelement location="${distribution_tool.jar}"/>
         <pathelement location="${file_upload.jar}"/>
         <pathelement location="${id_generator.jar}"/>
@@ -292,7 +275,6 @@
         <pathelement location="${weighted_calculator.jar}"/>
         <pathelement location="${workdays.jar}"/>
         <pathelement location="${xmi_parser.jar}"/>
-        <pathelement location="${directory_validation.jar}"/>
         <pathelement location="${heartbeat.jar}"/>
         <pathelement location="${svnkit.jar}"/>
         <pathelement location="${guid_generator.jar}" />

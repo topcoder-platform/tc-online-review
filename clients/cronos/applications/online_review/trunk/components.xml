@@ -196,4 +196,14 @@
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/scorecard_management_persistence/trunk"
         revision="206981" />
 
+    <component
+        name="db_connection_factory"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/db_connection_factory/trunk"
+        revision="110583" />
+
+    <component
+        name="executable_wrapper"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/executable_wrapper/trunk"
+        revision="139065" />
+
 </components>
