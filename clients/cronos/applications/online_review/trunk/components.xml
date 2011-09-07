@@ -154,7 +154,7 @@
     <component
         name="class_associations"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/class_associations/trunk"
-        revision="107201" />
+        revision="207028" />
 
     <component
         name="command_line_utility"
@@ -204,6 +204,21 @@
     <component
         name="executable_wrapper"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/executable_wrapper/trunk"
-        revision="139065" />
+        revision="207027" />
+
+    <component
+        name="workdays"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/workdays/trunk"
+        revision="196056" />
+
+    <component
+        name="weighted_calculator"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/weighted_calculator/trunk"
+        revision="107671" />
+
+    <component
+        name="type_safe_enum"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/type_safe_enum/trunk"
+        revision="106290" />
 
 </components>

@@ -125,27 +125,12 @@
     <property name="simple_cache.jar.name" value="simple_cache.jar"/>
     <property name="simple_cache.path" value="simple_cache/${simple_cache.version}"/>
     <property name="simple_cache.jar" value="${tcs_libdir}/${simple_cache.path}/${simple_cache.jar.name}"/>
-    <property name="typesafe_enum.version" value="1.0"/>
-    <property name="typesafe_enum.jar.name" value="typesafe_enum.jar"/>
-    <property name="typesafe_enum.path" value="typesafe_enum/${typesafe_enum.version}"/>
-    <property name="typesafe_enum.jar" value="${tcs_libdir}/${typesafe_enum.path}/${typesafe_enum.jar.name}"/>
 
     <property name="user_project_data_store.version" value="1.0.1"/>
     <property name="user_project_data_store.jar.name" value="user_project_data_store.jar"/>
     <property name="user_project_data_store.path" value="user_project_data_store/${user_project_data_store.version}"/>
     <property name="user_project_data_store.jar"
               value="${tcs_libdir}/${user_project_data_store.path}/${user_project_data_store.jar.name}"/>
-
-    <property name="weighted_calculator.version" value="1.0"/>
-    <property name="weighted_calculator.jar.name" value="weighted_calculator.jar"/>
-    <property name="weighted_calculator.path" value="weighted_calculator/${weighted_calculator.version}"/>
-    <property name="weighted_calculator.jar"
-              value="${tcs_libdir}/${weighted_calculator.path}/${weighted_calculator.jar.name}"/>
-
-    <property name="workdays.version" value="1.1.0"/>
-    <property name="workdays.jar.name" value="workdays.jar"/>
-    <property name="workdays.path" value="workdays/${workdays.version}"/>
-    <property name="workdays.jar" value="${tcs_libdir}/${workdays.path}/${workdays.jar.name}"/>
 
     <property name="xmi_parser.version" value="1.1"/>
     <property name="xmi_parser.jar.name" value="xmi_parser.jar"/>
@@ -271,9 +256,6 @@
         <pathelement location="${object_factory_configuration_api_plugin.jar}"/>
         <pathelement location="${project_phases.jar}"/>
         <pathelement location="${user_project_data_store.jar}"/>
-        <pathelement location="${typesafe_enum.jar}"/>
-        <pathelement location="${weighted_calculator.jar}"/>
-        <pathelement location="${workdays.jar}"/>
         <pathelement location="${xmi_parser.jar}"/>
         <pathelement location="${heartbeat.jar}"/>
         <pathelement location="${svnkit.jar}"/>
