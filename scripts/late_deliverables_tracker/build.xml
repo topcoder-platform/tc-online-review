@@ -88,9 +88,7 @@
             <fileset file="${object_factory.jar}"/>
             <fileset file="${object_factory_configuration_api_plugin.jar}"/>
             <fileset file="${project_phases.jar}"/>
-            <fileset file="${typesafe_enum.jar}"/>
             <fileset file="${user_project_data_store.jar}"/>
-            <fileset file="${workdays.jar}"/>
             <fileset file="${xerces.jar}"/>
             <fileset dir=".">
                 <include name="build.xml"/>
