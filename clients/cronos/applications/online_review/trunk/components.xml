@@ -221,4 +221,9 @@
         svnpath="https://coder.topcoder.com/tcs/catalog/java/type_safe_enum/trunk"
         revision="106290" />
 
+    <component
+        name="project_phases"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/project_phases/trunk"
+        revision="207105" />
+
 </components>
