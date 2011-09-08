@@ -116,11 +116,6 @@
     <property name="object_factory_configuration_api_plugin.jar"
               value="${tcs_libdir}/${object_factory_configuration_api_plugin.path}/${object_factory_configuration_api_plugin.jar.name}"/>
 
-    <property name="project_phases.version" value="2.0"/>
-    <property name="project_phases.jar.name" value="project_phases.jar"/>
-    <property name="project_phases.path" value="project_phases/${project_phases.version}"/>
-    <property name="project_phases.jar" value="${tcs_libdir}/${project_phases.path}/${project_phases.jar.name}"/>
-
     <property name="simple_cache.version" value="2.0"/>
     <property name="simple_cache.jar.name" value="simple_cache.jar"/>
     <property name="simple_cache.path" value="simple_cache/${simple_cache.version}"/>
@@ -254,7 +249,6 @@
         <pathelement location="${job_processor.jar}"/>
         <pathelement location="${object_factory.jar}"/>
         <pathelement location="${object_factory_configuration_api_plugin.jar}"/>
-        <pathelement location="${project_phases.jar}"/>
         <pathelement location="${user_project_data_store.jar}"/>
         <pathelement location="${xmi_parser.jar}"/>
         <pathelement location="${heartbeat.jar}"/>
