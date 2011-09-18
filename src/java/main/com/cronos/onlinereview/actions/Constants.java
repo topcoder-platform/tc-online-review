@@ -80,8 +80,21 @@ package com.cronos.onlinereview.actions;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.7
+ * <p>
+ * Version 1.8 (Online Review Miscellaneous Improvements) Change notes:
+ *   <ol>
+ *     <li>Added {@link #ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME} constant.</li>
+ *     <li>Added {@link #POST_MORTEM_SCORECARD_TYPE_NAME} constant.</li>
+ *     <li>Added {@link #SUBMISSION_UPLOAD_TYPE_NAME} constant.</li>
+ *     <li>Added {@link #ACTIVE_PROJECT_STATUS_NAME} constant.</li>
+ *     <li>Added {@link #ACTIVE_SUBMISSION_STATUS_NAME} constant.</li>
+ *     <li>Added {@link #FAILED_SCREENING_SUBMISSION_STATUS_NAME} constant.</li>
+ *     <li>Added {@link #CANNOT_OPEN_PHASE_STATUS_CODE} constant and other constants for Milestone.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, flexme
+ * @version 1.8
  */
 public class Constants {
 
@@ -838,6 +851,13 @@ public class Constants {
      */
     public static final String EDIT_LATE_DELIVERABLE_PERM_NAME = "Edit Late Deliverable";
 
+    /**
+     * <p>A <code>String</code> providing the <code>Advance Submissions That Failed Screening</code> permission.</p>
+     * 
+     * @since 1.8
+     */
+    public static final String ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME = "Advance Submissions That Failed Screening";
+    
     // -------------------------------------------------------------------------- Phase names -----
 
     /**
@@ -1137,28 +1157,6 @@ public class Constants {
      */
     public static final String POST_MORTEM_DELIVERABLE_NAME = "Post-Mortem Review";
 
-
-    // --------------------------------------------------- Auto Screening Response Severities -----
-
-    /**
-     * This member variable is a string constant that defines the name of the Success auto screening
-     * response severity.
-     */
-    public static final String SUCCESS_SCREENING_SEVERITY_NAME = "Success";
-
-    /**
-     * This member variable is a string constant that defines the name of the Warning auto screening
-     * response severity.
-     */
-    public static final String WARNING_SCREENING_SEVERITY_NAME = "Warning";
-
-    /**
-     * This member variable is a string constant that defines the name of the Fatal Error auto
-     * screening response severity.
-     */
-    public static final String FATAL_ERROR_SCREENING_SEVERITY_NAME = "Fatal Error";
-
-
     // ----------------------------------------------------------------- Action Forward names -----
 
     /**
@@ -1233,6 +1231,57 @@ public class Constants {
      * @since 1.6.1
      */
     public static final long STUDIO_PROJECT_ID = 3;
+    
+    // ----------------------------------------------------------------- Scorecard Type names -----
+    
+    /**
+     * The constant for the name of the Post-Mortem scorecard type.
+     * 
+     * @since 1.8
+     */
+    public static final String POST_MORTEM_SCORECARD_TYPE_NAME = "Post-Mortem";
+    
+    // ----------------------------------------------------------------- Upload Type names -----
+    
+    /**
+     * The constant for the name of the "submission" upload type.
+     * 
+     * @since 1.8
+     */
+    public static final String SUBMISSION_UPLOAD_TYPE_NAME = "Submission";
+    
+    // ----------------------------------------------------------------- Project status names -----
+    
+    /**
+     * The constant for the name of the "Activate" project status.
+     * 
+     * @since 1.8
+     */
+    public static final String ACTIVE_PROJECT_STATUS_NAME = "Active";
+    
+    // ----------------------------------------------------------------- Submission status names -----
+    
+    /**
+     * The constant for the name of the "Activate" submission status.
+     * 
+     * @since 1.8
+     */
+    public static final String ACTIVE_SUBMISSION_STATUS_NAME = "Active";
+    
+    /**
+     * The constant for the name of the "Failed Screening" submission status.
+     * 
+     * @since 1.8
+     */
+    public static final String FAILED_SCREENING_SUBMISSION_STATUS_NAME = "Failed Screening";
+    
+    /**
+     * The constant for the phase status code which can't be open.
+     * 
+     * @since 1.8
+     */
+    public static final int CANNOT_OPEN_PHASE_STATUS_CODE = 5;
+    
     // Hidden constructor
 
     /**

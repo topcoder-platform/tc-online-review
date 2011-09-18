@@ -6194,6 +6194,32 @@
             </Property>
         </Property>
 
+        <!-- Configure the tabs to be displayed in Resources section in project detail page -->
+        <Property name="ResourceTabs">
+            <Property name="Submitters">
+                <Value>1</Value> <!-- Submitter -->
+            </Property>
+            <Property name="Reviewers">
+                <Value>18</Value> <!-- Specification Reviewer -->
+                <Value>2</Value> <!-- Primary Screener -->
+                <Value>4</Value> <!-- Reviewer -->
+                <Value>6</Value> <!-- Failure Reviewer -->
+                <Value>5</Value> <!-- Accuracy Reviewer -->
+                <Value>7</Value> <!-- Stress Reviewer -->
+                <Value>8</Value> <!-- Aggregator -->
+                <Value>9</Value> <!-- Final Reviewer -->
+                <Value>19</Value> <!-- Milestone Screener -->
+                <Value>20</Value> <!-- Milestone Reviewer -->
+            </Property>
+            <Property name="Managers/Copilots/Observers">
+                <Value>13</Value> <!-- Manager -->
+                <Value>1003</Value> <!-- Payment Manager -->
+                <Value>15</Value> <!-- Client Manager -->
+                <Value>14</Value> <!-- Observer -->
+                <Value>12</Value> <!-- Copilot -->
+            </Property>
+        </Property>
+        
         <!-- Definition of the Permissions Matrix.  Each property inside the main one denotes one
             certain permission, while the name attribute for that property specifies the name of
             the permission.  The values contained inside each property specify the names of the
@@ -6960,6 +6986,14 @@
                 <Value>Cockpit Project User</Value>
                 <Value>Client Manager</Value>
                 <Value>Copilot</Value>
+            </Property>
+            
+            <Property name="Advance Submissions That Failed Screening">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Client Manager</Value>
+                <Value>Copilot</Value>
+                <Value>Cockpit Project User</Value>
             </Property>
         </Property>
 

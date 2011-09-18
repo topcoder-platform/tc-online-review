@@ -57,8 +57,8 @@
 
     <component
         name="phase_management_persistence"
-        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/phase_management_persistence/tags/version-1.0.2.1"
-        revision="206269" />
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/phase_management_persistence/tags/version-1.0.3.1"
+        revision="207643" />
 
     <component
         name="project_management"
@@ -83,12 +83,12 @@
     <component
         name="review_management"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/review_management/trunk"
-        revision="206269" />
+        revision="207644" />
 
     <component
         name="review_management_persistence"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_management_persistence/trunk"
-        revision="207004" />
+        revision="207645" />
 
     <component
         name="review_score_aggregator"

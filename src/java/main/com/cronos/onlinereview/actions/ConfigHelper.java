@@ -4,6 +4,7 @@
 package com.cronos.onlinereview.actions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -101,8 +102,18 @@ import com.topcoder.util.config.UnknownNamespaceException;
  *    <ol>
  *      <li>Removed {@link #reqSubmissions} support.</li>
  *    </ol>
- * @author George1, real_vg, pulky, romanoTC, isv, FireIce, lmmortal
- * @version 1.7.2
+ * </p>
+ * 
+ * <p>
+ * Version 1.8 (Online Review Miscellaneous Improvements) Change notes
+ *    <ol>
+ *      <li>Added {@link #resourceTabs} field with respective accessor method and updated static initializer to
+ *     set that field with data read from configuration file.</li>
+ *    </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, romanoTC, isv, FireIce, lmmortal, flexme
+ * @version 1.8
  */
 public class ConfigHelper {
 
@@ -636,6 +647,14 @@ public class ConfigHelper {
     private static final String SVN_CONFIG_PROP = "SVNConfig";
 
     /**
+     * <p>A <code>String</code> providing the name for configuration property listing the parameters of the Resources tabs
+     * to be displayed in the Resource section in project detail page.</p>
+     * 
+     * @since 1.8
+     */
+    private static final String RESOURCE_TABS_PROP_STRING = "ResourceTabs";
+
+    /**
      * This member variable holds the name of the session attribute which ID of the currently logged
      * in user will be stored in.
      */
@@ -997,6 +1016,14 @@ public class ConfigHelper {
      * @since 1.7.1
      */
     private static String lateDeliverableBaseURL;
+
+    /**
+     * <p>A <code>Map</code> providing the Resources tabs to be displayed in the Resource section in project detail page.
+     * The key is the tab name, the value is a <code>Set</code> of resource role IDs.</p>
+     *  
+     * @since 1.8
+     */
+    private static Map<String, Set<String>> resourceTabs = new LinkedHashMap<String, Set<String>>();
 
     static {
         // Obtaining the instance of Configuration Manager
@@ -1561,6 +1588,20 @@ public class ConfigHelper {
                 lateDeliverableEmailConfig.getValue("ByMember.Roles")};
             
             lateDeliverableBaseURL = lateDeliverableEmailConfig.getValue("EditLateDeliverablePageBaseURL");
+            
+            // Retrieve the property that contains the definitions of resource tabs to be displayed in Resource section
+            Property propResourceTabs = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, RESOURCE_TABS_PROP_STRING);
+            // Prepare to enumerate all the nested properties
+            Enumeration<String> propsResourceTab = propResourceTabs.propertyNames();
+            while (propsResourceTab.hasMoreElements()) {
+                // Get the name of the next property in the list
+                String strPropName = propsResourceTab.nextElement();
+                
+                String[] resourceIds = propResourceTabs.getValues(strPropName);
+                if (resourceIds != null && resourceIds.length > 0) {
+                    resourceTabs.put(strPropName, new HashSet<String>(Arrays.asList(resourceIds)));
+                }
+            }
         } catch (UnknownNamespaceException une) {
             // TODO: Add proper logging here
             System.out.println(une.getMessage());
@@ -2340,5 +2381,15 @@ public class ConfigHelper {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Gets the Resources tabs to be displayed in the Resource section in project detail page.
+     * 
+     * @return the Resources tabs to be displayed in the Resource section in project detail page.
+     * @since 1.8
+     */
+    public static Map<String, Set<String>> getResourceTabs() {
+        return resourceTabs;
     }
 }

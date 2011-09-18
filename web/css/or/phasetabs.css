@@ -54,9 +54,9 @@
 }
 
 #tablist a:hover { color: #000; }
-#tablist #current { background-image: url(../../i/or/tab_left_on.gif); }
+#tablist #current, #tablist .current { background-image: url(../../i/or/tab_left_on.gif); }
 
-#tablist #current a
+#tablist #current a, #tablist .current a
 {
 	background-image: url(../../i/or/tab_right_on.gif);
 	color: #000;
