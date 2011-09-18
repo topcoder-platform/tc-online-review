@@ -14,7 +14,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.lang.System;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +29,7 @@ import org.apache.struts.validator.DynaValidatorForm;
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
+import com.cronos.onlinereview.functions.Functions;
 import com.cronos.onlinereview.model.ClientProject;
 import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.Submission;
@@ -39,9 +39,15 @@ import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.UploadStatus;
 import com.topcoder.management.deliverable.UploadType;
+import com.topcoder.management.deliverable.late.LateDeliverable;
+import com.topcoder.management.deliverable.late.LateDeliverableManagementException;
+import com.topcoder.management.deliverable.late.LateDeliverableManager;
+import com.topcoder.management.deliverable.late.search.LateDeliverableFilterBuilder;
 import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
 import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
 import com.topcoder.management.deliverable.search.UploadFilterBuilder;
+import com.topcoder.management.phase.OperationCheckResult;
+import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
@@ -82,13 +88,6 @@ import com.topcoder.util.file.fieldconfig.Field;
 import com.topcoder.util.file.fieldconfig.Node;
 import com.topcoder.util.file.fieldconfig.TemplateFields;
 import com.topcoder.util.file.templatesource.FileTemplateSource;
-
-import com.topcoder.management.deliverable.late.LateDeliverable;
-import com.topcoder.management.deliverable.late.LateDeliverableManagementException;
-import com.topcoder.management.deliverable.late.LateDeliverableManager;
-import com.topcoder.management.deliverable.late.search.LateDeliverableFilterBuilder;
-
-import com.cronos.onlinereview.functions.Functions;
 
 /**
  * This class contains Struts Actions that are meant to deal with Project's details. There are
@@ -203,8 +202,20 @@ import com.cronos.onlinereview.functions.Functions;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, FireIce, rac_
- * @version 1.8
+ * <p>
+ * Version 1.9 (Online Review Miscellaneous Improvements) Change notes:
+ *   <ol>
+ *     <li>Added {@link #getPhaseCannotOpenHints(PhaseManager, Phase[], int[], MessageResources)} to get the hints for the phases
+ *     which can't be open.</li>
+ *     <li>Added struts action {@link #advanceFailedScreeningSubmission(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} 
+ *     to advance the submission that failed screening.</li>
+ *     <li>Updated {@link #viewProjectDetails(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method to get the hints for
+ *     the phases which can't be open.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, FireIce, rac_, flexme
+ * @version 1.9
  */
 public class ProjectDetailsActions extends DispatchAction {
 
@@ -409,7 +420,7 @@ public class ProjectDetailsActions extends DispatchAction {
         ActionsHelper.populateEmailProperty(request, allProjectResources);
 
         // Obtain an instance of Phase Manager
-        PhaseManager phaseMgr = ActionsHelper.createPhaseManager(false);
+        PhaseManager phaseMgr = ActionsHelper.createPhaseManager(true);
         com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(project.getId());
         Phase[] phases;
 
@@ -579,6 +590,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Collect Open / Closing / Late / Closed codes for phases
         int[] phaseStatuseCodes = getPhaseStatusCodes(phases, currentTime);
+        String[] cannotOpenHints = getPhaseCannotOpenHints(phaseMgr, phases, phaseStatuseCodes, messages);
 
         /*
          * Place all gathered information about phases into the request as attributes
@@ -589,6 +601,7 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("originalStart", originalStart);
         request.setAttribute("originalEnd", originalEnd);
         request.setAttribute("phaseStatuseCodes", phaseStatuseCodes);
+        request.setAttribute("cannotOpenHints", cannotOpenHints);
         // Place phases durations for Gantt chart
         request.setAttribute("ganttOffsets", ganttOffsets);
         request.setAttribute("ganttLengths", ganttLengths);
@@ -709,6 +722,13 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformScreening",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SCREENING_PERM_NAME) &&
                         ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME) != null));
+        
+        Phase reviewPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.REVIEW_PHASE_NAME);
+        request.setAttribute("isAllowedToAdvanceSubmissionWithFailedScreening",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME) &&
+                        project.getProjectStatus().getName().equals("Active")) &&
+                        reviewPhase != null && !ActionsHelper.isPhaseClosed(reviewPhase.getPhaseStatus()));
+        
         request.setAttribute("isAllowedToPerformMilestoneScreening",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_MILESTONE_SCREENING_PERM_NAME) &&
                         ActionsHelper.getPhase(phases, true, Constants.MILESTONE_SCREENING_PHASE_NAME) != null));
@@ -1753,10 +1773,136 @@ public class ProjectDetailsActions extends DispatchAction {
     }
 
     /**
+     * This method is an implementation of &quot;Advance Submission That Failed Screening&quot; Struts Action defined for
+     * this assembly, which is supposed to advance submission that failed screening for particular upload
+     * (denoted by <code>uid</code> parameter). This action gets executed twice &#x96; once to
+     * display the page with the confirmation, and once to process the confirmed advance request to
+     * actually advance the submission to pass screening.
+     *
+     * @return an action forward to the appropriate page. If no error has occured and this action
+     *         was called the first time, the forward will be to /jsp/confirmAdvanceFailedScreeningSubmission.jsp
+     *         page, which displays the confirmation dialog where user can confirm his intention to
+     *         advance the submission. If this action was called during the post back (the second
+     *         time), then this method verifies if everything is correct, and process the advance logic.
+     *         After this it returns a forward to the View Project Details page.
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     * @since 1.9
+     */
+    public ActionForward advanceFailedScreeningSubmission(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification =
+            checkForCorrectUploadId(mapping, request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+        
+        // Retrieve the upload user tries to advance
+        Upload upload = verification.getUpload();
+        Project project = verification.getProject();
+        
+        // Check that user has permissions to delete submission
+        if (!AuthorizationHelper.hasUserPermission(request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME)) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
+        }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
+        
+        // Verify that the user is attempting to advance submission
+        if (!upload.getUploadType().getName().equalsIgnoreCase(Constants.SUBMISSION_UPLOAD_TYPE_NAME)) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME, "Error.NotASubmission3", null);
+        }
+        
+        Filter filter = SubmissionFilterBuilder.createUploadIdFilter(upload.getId());
+        // Obtain an instance of Upload Manager
+        UploadManager upMgr = ActionsHelper.createUploadManager();
+        Submission[] submissions = upMgr.searchSubmissions(filter);
+        Submission submission = (submissions.length != 0) ? submissions[0] : null;
+
+        // Check the submission status is Failed Screening
+        if (submission == null || !submission.getSubmissionStatus().getName().equalsIgnoreCase(Constants.FAILED_SCREENING_SUBMISSION_STATUS_NAME)) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME, "Error.SubmissionNotFailedScreening", null);
+        }
+        
+        // Check the project status is Active
+        if (!project.getProjectStatus().getName().equalsIgnoreCase(Constants.ACTIVE_PROJECT_STATUS_NAME)) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME, "Error.ProjectNotActive", null);
+        }
+        
+        // Check the Review phase is not closed
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
+        Phase reviewPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.REVIEW_PHASE_NAME);
+        if (reviewPhase == null || ActionsHelper.isPhaseClosed(reviewPhase.getPhaseStatus())) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME, "Error.ReviewClosed", null);
+        }
+        
+        // Determine if this request is a post back
+        boolean postBack = (request.getParameter("advance") != null);
+
+        if (postBack != true) {
+            // Retrieve some basic project info (such as icons' names) and place it into request
+            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+            // Place upload ID into the request as attribute
+            request.setAttribute("uid", new Long(upload.getId()));
+            return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
+        }
+        
+        String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
+        ProjectManager projectMgr = ActionsHelper.createProjectManager();
+        String oldAutoPilotOption = (String) project.getProperty("Autopilot Option");
+        if (!"Off".equalsIgnoreCase(oldAutoPilotOption)) {
+            // Set AutoPilot status to Off
+            project.setProperty("Autopilot Option", "Off");
+            projectMgr.updateProject(project, "Turing AP off before advancing failed screening submission", operator);
+        }
+        
+        Phase postMortemPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.POST_MORTEM_PHASE_NAME);
+        if (postMortemPhase != null) {
+            ActionsHelper.deletePostMortem(project, postMortemPhase, operator);
+        }
+        // Set submission status to Active
+        SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
+        SubmissionStatus submissionActiveStatus = ActionsHelper.findSubmissionStatusByName(submissionStatuses, Constants.ACTIVE_SUBMISSION_STATUS_NAME);
+        submission.setSubmissionStatus(submissionActiveStatus);
+        upMgr.updateSubmission(submission, operator);
+        
+        // Update the project_result table
+        ResourceManager resMgr = ActionsHelper.createResourceManager();
+        Resource uploadOwner = resMgr.getResource(upload.getOwner());
+        ActionsHelper.updateProjectResultForAdvanceScreening(project.getId(), Long.parseLong((String) uploadOwner.getProperty("External Reference ID")));
+        
+        if (!"Off".equalsIgnoreCase(oldAutoPilotOption)) {
+            // Restore the AutoPilot status
+            project.setProperty("Autopilot Option", oldAutoPilotOption);
+            projectMgr.updateProject(project, "Restoring the AP status after advancing failed screening submission", operator);
+        }
+        
+        return ActionsHelper.cloneForwardAndAppendToPath(
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
+    }
+
+    /**
      * This method is an implementation of &quot;Delete Submission&quot; Struts Action defined for
      * this assembly, which is supposed to delete (mark as deleted) submission for particular upload
      * (denoted by <code>uid</code> parameter). This action gets executed twice &#x96; once to
-     * display the page with the confirmation, and once to process the confiremed delete request to
+     * display the page with the confirmation, and once to process the confirmed delete request to
      * actually delete the submission.
      *
      * @return an action forward to the appropriate page. If no error has occured and this action
@@ -2247,7 +2393,7 @@ public class ProjectDetailsActions extends DispatchAction {
             if (phaseStatus.equalsIgnoreCase("Scheduled")) {
                 long phaseTime = phase.getScheduledStartDate().getTime();
                 if ((currentTime >= phaseTime) && (ActionsHelper.arePhaseDependenciesMet(phase, true))) {
-                    statusCodes[i] = 5; // Can't open, phase start time is reached and dependencies are met
+                    statusCodes[i] = Constants.CANNOT_OPEN_PHASE_STATUS_CODE; // Can't open, phase start time is reached and dependencies are met
                 } else {
                     statusCodes[i] = 0; // Scheduled, not yet open, nothing will be displayed
                 }
@@ -2266,6 +2412,39 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
         return statusCodes;
+    }
+
+    /**
+     * This method returns the hints for the phases which can't open.
+     *
+     * @param phaseMgr the <code>PhaseManager</code> instance.
+     * @param phases the array of <code>Phase</code> to get the hints.
+     * @param phaseStatusCodes the status codes of the provided phases.
+     * @param messages the <code>MessageResources</code> instance used to retrieve message.
+     * @return the hints for the phases which can't be open.
+     * @throws PhaseManagementException if error occurs
+     * @since 1.9
+     */
+    private static String[] getPhaseCannotOpenHints(PhaseManager phaseMgr, Phase[] phases, int[] phaseStatusCodes, MessageResources messages)
+        throws PhaseManagementException {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(phases, "phases");
+        ActionsHelper.validateParameterNotNull(phaseMgr, "phaseMgr");
+        ActionsHelper.validateParameterNotNull(phaseStatusCodes, "phaseStatusCodes");
+        
+        String[] hints = new String[phases.length];
+        for (int i = 0; i < phases.length; i++) {
+            if (phaseStatusCodes[i] == Constants.CANNOT_OPEN_PHASE_STATUS_CODE) {
+                // Can't open
+                OperationCheckResult result = phaseMgr.canStart(phases[i]);
+                if (result.isSuccess()) {
+                    hints[i] = messages.getMessage("viewProjectDetails.CannotOpenHint.AllMet");
+                } else {
+                    hints[i] = result.getMessage();
+                }
+            }
+        }
+        return hints;
     }
 
     /**

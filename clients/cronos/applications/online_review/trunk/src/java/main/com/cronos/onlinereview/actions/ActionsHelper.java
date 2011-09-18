@@ -264,9 +264,17 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.14 (Online Review Miscellaneous Improvements) Change notes:
+ *   <ol>
+ *     <li>Added {@link #updateProjectResultForAdvanceScreening(long, long)} method to update project_result table when the
+ *     screening result has been changed.</li>
+ *     <li>Added {@link #deletePostMortem(Project, Phase, String)} method to delete a Post-Mortem phase.</li>
+ *   </ol>
+ * </p>
  *
- * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK, rac_, lmmortal
- * @version 1.13
+ * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK, rac_, lmmortal, flexme
+ * @version 1.14
  * @since Online Review Status Validation Assembly 1.0
  */
 public class ActionsHelper {
@@ -3899,6 +3907,38 @@ public class ActionsHelper {
     }
 
     /**
+     * Update the project_result table when the user's submission has advanced screening.
+     * 
+     * @param projectId the id of the project needs to be updated
+     * @param userId the user id whose submission will advance screening 
+     * @throws BaseException if any error occurs
+     * @since 1.14
+     */
+    public static void updateProjectResultForAdvanceScreening(long projectId, long userId) throws BaseException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+            conn = dbconn.createConnection();
+            log.log(Level.INFO,
+                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
+                    + DB_CONNECTION_NAMESPACE);
+            
+            pstmt = conn.prepareStatement("update project_result set rating_ind=1, valid_submission_ind=1 where project_id=? and user_id=?");
+            pstmt.setLong(1, projectId);
+            pstmt.setLong(2, userId);
+            pstmt.execute();
+        } catch (DBConnectionException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } catch (SQLException e) {
+            throw new BaseException("Failed to updateProjectResultForScreening for project " + projectId, e);
+        } finally {
+            close(pstmt);
+            close(conn);
+        }
+    }
+
+    /**
      * Gets version from comp_versions table
      *
      * @param componentVersionId the component version id
@@ -4761,4 +4801,51 @@ public class ActionsHelper {
         }
 	}
 
+    /**
+     * Delete the Post-Mortem phase of a specified project.
+     * 
+     * @param project the specified project.
+     * @param postMortemPhase the Post-Mortem phase to be deleted.
+     * @param operator the operator
+     * @throws BaseException if any error occurs
+     * @since 1.14
+     */
+    public static void deletePostMortem(Project project, Phase postMortemPhase, String operator) throws BaseException {
+        validateParameterNotNull(project, "project");
+        validateParameterNotNull(postMortemPhase, "postMortemPhase");
+        
+        ReviewManager reviewMgr = createReviewManager();
+        ScorecardManager scrMgr = createScorecardManager();
+        ResourceManager resMgr = createResourceManager();
+        PhaseManager phaseManager = createPhaseManager(false);
+        ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
+        
+        // Get all the Post Mortem reviews
+        Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
+        Filter filterScorecard = new EqualToFilter("scorecardType",
+                new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, Constants.POST_MORTEM_SCORECARD_TYPE_NAME).getId()));
+        Filter filter = new AndFilter(Arrays.asList(filterProject, filterScorecard));
+        Review[] reviews = reviewMgr.searchReviews(filter, false);
+        // Delete all the Post Mortem reviews
+        for (Review review : reviews) {
+            reviewMgr.deleteReview(review.getId());
+        }
+        
+        // Get all the Post Mortem Reviewers
+        filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
+        long postMortemRoleId = findResourceRoleByName(resMgr.getAllResourceRoles(), Constants.POST_MORTEM_REVIEWER_ROLE_NAME).getId();
+        Filter filterResourceRole = ResourceFilterBuilder.createResourceRoleIdFilter(postMortemRoleId);
+        filter = new AndFilter(Arrays.asList(filterProject, filterResourceRole));
+        Resource[] resources = resMgr.searchResources(filter);
+		
+        // Delete the Post Mortem Reviewers
+        for (Resource resource : resources) {
+            resMgr.removeResource(resource, operator);
+        }
+        
+        // Delete the Post Mortem Phase
+        com.topcoder.project.phases.Project phProject = postMortemPhase.getProject();
+        phProject.removePhase(postMortemPhase);
+        phaseManager.updatePhases(phProject, operator);
+    }
 }

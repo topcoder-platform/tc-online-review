@@ -549,6 +549,15 @@
             <forward name="displayPage" path="/jsp/confirmUnregistration.jsp" redirect="false"/>
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
+        
+        <!-- "Advance Failed Screening Submission" action -->
+        <action path="/actions/AdvanceFailedScreeningSubmission" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectDetailsActions"
+            parameter="method" scope="request"
+            input="/jsp/confirmAdvanceFailedScreeningSubmission.jsp">
+            <forward name="displayPage" path="/jsp/confirmAdvanceFailedScreeningSubmission.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
 
         <!-- "EarlyAppeals" action -->
         <action path="/actions/EarlyAppeals" unknown="false"

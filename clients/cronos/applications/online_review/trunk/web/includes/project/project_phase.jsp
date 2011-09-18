@@ -1,6 +1,6 @@
 <%--
-  - Author: isv, rac_
-  - Version: 1.4
+  - Author: isv, rac_, flexme
+  - Version: 1.5
   - Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment displays the content of tab for single project phase on Project Details screen.
@@ -18,6 +18,8 @@
   - Version 1.4 (Online Review Status Validation Assembly 1.0) changes: removing columns from Aggregation and Screening tabs
   - 
   - Version 1.4.1 (TCCC-3285) changes: fixed wrong submissions download links for Studio competitions
+  -
+  - Version 1.5 (Online Review Miscellaneous Improvements) changes: Add advance link for the submissions which failed screening
 --%>
 <%@page import="com.topcoder.shared.util.ApplicationServer"%>
 <%@ page language="java" isELIgnored="false" %>
@@ -230,12 +232,17 @@
 												<c:if test="${not isAllowedToViewScreening}">
 													<td class="valueC" width="14%">${orfn:displayScore(pageContext.request, review.score)}</td>
 												</c:if>
+												<td class="valueC" width="15%">
 												<c:if test="${review.score >= passingMinimum}">
-													<td class="valueC" width="15%"><bean:message key="viewProjectDetails.box.Screening.Passed" /></td>
+													<bean:message key="viewProjectDetails.box.Screening.Passed" />
 												</c:if>
 												<c:if test="${review.score < passingMinimum}">
-													<td class="valueC" width="15%"><bean:message key="viewProjectDetails.box.Screening.Failed" /></td>
+													<bean:message key="viewProjectDetails.box.Screening.Failed" />
 												</c:if>
+												<c:if test="${isAllowedToAdvanceSubmissionWithFailedScreening and submission.submissionStatus.name eq 'Failed Screening'}">
+													(<html:link page="/actions/AdvanceFailedScreeningSubmission.do?method=advanceFailedScreeningSubmission&uid=${submission.upload.id}"><bean:message key="viewProjectDetails.box.Screening.Advance" /></html:link>)
+												</c:if>
+												</td>
 											</c:if>
 											<c:if test="${not review.committed}">
 												<c:if test="${isAllowedToPerformScreening}">
