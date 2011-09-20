@@ -612,7 +612,7 @@
           <waitfor maxwait="30" maxwaitunit="second">
             <and>
               <socket server="${bind_addr}" port="${selenium_port}"/>
-              <http url="http://${bind_addr}:${selenium_port}/selenium-server/core/index.html" errorsBeginAt="404" />
+              <http url="http://${bind_addr}:${selenium_port}/selenium-server/index.html" errorsBeginAt="404" />
             </and>
           </waitfor>
     </sequential>
