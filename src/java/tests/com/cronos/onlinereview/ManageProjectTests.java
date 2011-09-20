@@ -19,9 +19,10 @@ public class ManageProjectTests extends ProjectTests {
      * @throws Exception if any error occurs
      */
     public void testManagerPrivileges() throws Exception {
-    	// login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        // login the user first
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        browser.waitForPageToLoad(TIMEOUT);
         assertTrue("Manage Project link must be presented", browser.isElementPresent("//img[@alt='Manage Project']"));
         assertTrue("Edit Project Links link must be presented",
             browser.isElementPresent("//img[@alt='Edit Project Link']"));
