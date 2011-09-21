@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.cronos.onlinereview.phases.logging.LoggerMessage;
+import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.management.project.PersistenceException;
 import com.topcoder.management.project.ProjectManager;
@@ -193,41 +194,48 @@ public class PRHelper {
     }
 
     /**
-     * Pull data to project_result.
+     * Pull data to project_result for software competitions; update submitter's payments and complete project for Studio competitions.
      *
      * @throws PhaseHandlingException
      *             if error occurs
      */
-    static void processReviewPR(Phase phase, Connection conn, boolean toStart) throws PhaseHandlingException, SQLException {
+    static void processReviewPR(ManagerHelper managerHelper, Phase phase, Connection conn, String operator, boolean toStart) throws PhaseHandlingException, SQLException {
         PreparedStatement pstmt = null;
         PreparedStatement updateStmt = null;
         ResultSet rs = null;
         long projectId = phase.getProject().getId();
-
         try {
             if (!toStart) {
-                logger.log(Level.INFO,
-                    new LoggerMessage("project", new Long(projectId), null, "process review phase."));
-                // Retrieve all
-                pstmt = conn.prepareStatement(REVIEW_SELECT_STMT);
-                pstmt.setLong(1, projectId);
-                rs = pstmt.executeQuery();
-
-                updateStmt = conn.prepareStatement(REVIEW_UPDATE_PROJECT_RESULT_STMT);
-                while (rs.next()) {
-                    // Update all raw score
-                    double rawScore = rs.getDouble("raw_score");
-                    long userId = rs.getLong("user_id");
-                    updateStmt.setDouble(1, rawScore);
-                    updateStmt.setLong(2, projectId);
-                    updateStmt.setLong(3, userId);
-                    updateStmt.execute();
-                }
-                
-                Phase appealsResponsePhase = PhasesHelper.locatePhase(phase, "Appeals Response", true, false);
-                if (isStudioProject(projectId) || appealsResponsePhase == null) {
-                    // populate project result
-                    populateProjectResult(projectId, conn);
+                if (isStudioProject(projectId)) {
+                    AutoPaymentUtil.populateSubmitterPayments(projectId, conn);
+                    Submission [] activeSubs = PhasesHelper.searchActiveSubmissions(managerHelper.getUploadManager(), conn, projectId, PhasesHelper.CONTEST_SUBMISSION_TYPE);
+                    if (activeSubs.length > 0) {
+                        completeProject(managerHelper, phase, operator);
+                    }
+                } else {
+                    logger.log(Level.INFO,
+                        new LoggerMessage("project", new Long(projectId), null, "process review phase."));
+                    // Retrieve all
+                    pstmt = conn.prepareStatement(REVIEW_SELECT_STMT);
+                    pstmt.setLong(1, projectId);
+                    rs = pstmt.executeQuery();
+    
+                    updateStmt = conn.prepareStatement(REVIEW_UPDATE_PROJECT_RESULT_STMT);
+                    while (rs.next()) {
+                        // Update all raw score
+                        double rawScore = rs.getDouble("raw_score");
+                        long userId = rs.getLong("user_id");
+                        updateStmt.setDouble(1, rawScore);
+                        updateStmt.setLong(2, projectId);
+                        updateStmt.setLong(3, userId);
+                        updateStmt.execute();
+                    }
+                    
+                    Phase appealsResponsePhase = PhasesHelper.locatePhase(phase, "Appeals Response", true, false);
+                    if (appealsResponsePhase == null) {
+                        // populate project result
+                        populateProjectResult(projectId, conn);
+                    }
                 }
             }
 

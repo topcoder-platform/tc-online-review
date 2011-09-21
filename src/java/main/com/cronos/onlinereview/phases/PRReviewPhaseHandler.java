@@ -69,24 +69,24 @@ public class PRReviewPhaseHandler extends ReviewPhaseHandler {
     	super.perform(phase, operator);
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
 
-    	Connection conn = this.createConnection();
-    	try {
-    		processPR(phase, conn, toStart);
-    	} finally {
-    		PRHelper.close(conn);
-    	}
+        Connection conn = this.createConnection();
+        try {
+            processPR(phase, conn, operator, toStart);
+        } finally {
+            PRHelper.close(conn);
+        }
     }
 
     /**
-     * Pull data to project_result.
+     * Pull data to project_result for software competitions; update submitter's payments and complete project for Studio competitions.
      * 
      * @throws PhaseHandlingException if error occurs
      */
-    public void processPR(Phase phase, Connection conn, boolean toStart) throws PhaseHandlingException {
-    	try {
-        	PRHelper.processReviewPR(phase, conn, toStart);
-    	} catch(SQLException e) {
-    		throw new PhaseHandlingException("Failed to push data to project_result", e);
-    	}
+    public void processPR(Phase phase, Connection conn, String operator, boolean toStart) throws PhaseHandlingException {
+        try {
+            PRHelper.processReviewPR(getManagerHelper(), phase, conn, toStart);
+        } catch(SQLException e) {
+            throw new PhaseHandlingException("Failed to push data to project_result", e);
+        }
     }
 }
