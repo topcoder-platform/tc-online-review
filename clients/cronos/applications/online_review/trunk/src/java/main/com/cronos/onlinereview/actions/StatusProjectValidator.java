@@ -113,7 +113,7 @@ public class StatusProjectValidator implements com.topcoder.management.project.P
             if("Cancelled - Failed Review".equalsIgnoreCase(projectStatusName)) {
                 //make sure appeals response is closed
                 Phase appealsResponsePhase = ActionsHelper.findPhaseByTypeName(projectPhases, Constants.APPEALS_RESPONSE_PHASE_NAME);
-                if(appealsResponsePhase == null || !arePhaseStatusesEqual(PhaseStatus.CLOSED, appealsResponsePhase.getPhaseStatus())) {
+                if(appealsResponsePhase != null && !arePhaseStatusesEqual(PhaseStatus.CLOSED, appealsResponsePhase.getPhaseStatus())) {
                     throw new StatusValidationException(ExcMsgCancelledFailedReviewViol, KeyCancelledFailedReviewViol);
                 }
                 Submission[] submissions =  ActionsHelper.getMostRecentSubmissions(uploadManager, project, "Contest Submission");
