@@ -84,7 +84,7 @@ public class PRReviewPhaseHandler extends ReviewPhaseHandler {
      */
     public void processPR(Phase phase, Connection conn, String operator, boolean toStart) throws PhaseHandlingException {
         try {
-            PRHelper.processReviewPR(getManagerHelper(), phase, conn, toStart);
+            PRHelper.processReviewPR(getManagerHelper(), phase, conn, operator, toStart);
         } catch(SQLException e) {
             throw new PhaseHandlingException("Failed to push data to project_result", e);
         }
