@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010-2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -45,6 +45,7 @@ public class BaseTests extends TestCase {
     public void setUp() throws Exception {
         browser = TestHelper.getLoginPage();
         browser.setSpeed(TestHelper.getBrowserSpeed());
+        browser.setTimeout(TIMEOUT);
         super.setUp();
     }
 
