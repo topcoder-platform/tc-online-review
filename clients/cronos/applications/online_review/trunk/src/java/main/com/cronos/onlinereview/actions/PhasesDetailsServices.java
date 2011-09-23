@@ -245,8 +245,17 @@ final class PhasesDetailsServices {
             }
 
             boolean isAfterAppealsResponse = ActionsHelper.isAfterAppealsResponse(phases, phaseIdx);
+            boolean isStudioScreening = false;
+            Phase[] activePhases = ActionsHelper.getActivePhases(phases);
+            if (ActionsHelper.isStudioProject(project)) {
+                for (Phase p : activePhases) {
+                    if (p.getPhaseType().getName().equals(Constants.SCREENING_PHASE_NAME) || p.getPhaseType().getName().equals(Constants.MILESTONE_SCREENING_PHASE_NAME)) {
+                        isStudioScreening = true;
+                    }
+                }
+            }
 
-            submitters = getSubmitters(request, allProjectResources, isAfterAppealsResponse, submitters);
+            submitters = getSubmitters(request, allProjectResources, isAfterAppealsResponse, isStudioScreening, submitters);
             phaseGroup.setSubmitters(submitters);
 
             // Determine an index of the current phase group (needed for timeline phases list)
@@ -1346,13 +1355,16 @@ final class PhasesDetailsServices {
      * @param request a
      * @param allProjectResources a
      * @param isAfterAppealsResponse a
+     * @param isStudioScreening a
      * @param prevSubmitters a
      * @return a
      */
     private static Resource[] getSubmitters(HttpServletRequest request,
-            Resource[] allProjectResources, boolean isAfterAppealsResponse, Resource[] prevSubmitters) {
-        final boolean canSeeSubmitters = (isAfterAppealsResponse ||
-                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME));
+            Resource[] allProjectResources, boolean isAfterAppealsResponse, boolean isStudioScreening, Resource[] prevSubmitters) {
+        final boolean canSeeSubmitters = (isAfterAppealsResponse 
+                || AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME) 
+                || (isStudioScreening && (AuthorizationHelper.hasUserRole(request, Constants.SCREENER_ROLE_NAME) || 
+                AuthorizationHelper.hasUserRole(request, Constants.MILESTONE_SCREENER_ROLE_NAME) )));
 
         if (!canSeeSubmitters) {
             return null;
