@@ -76,6 +76,7 @@ import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.phase.PhasePersistence;
 import com.topcoder.management.phase.db.InformixPhasePersistence;
+import com.topcoder.management.project.PrizeType;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
@@ -273,8 +274,15 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.15 (TCCC-3631) Change notes:
+ *   <ol>
+ *     <li>Added {@link #getPrizeTypeByName(ProjectManager, String)} method to retrieve prize type by name.</li>
+ *   </ol>
+ * </p>
+ * 
  * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK, rac_, lmmortal, flexme
- * @version 1.14
+ * @version 1.15
  * @since Online Review Status Validation Assembly 1.0
  */
 public class ActionsHelper {
@@ -4847,5 +4855,24 @@ public class ActionsHelper {
         com.topcoder.project.phases.Project phProject = postMortemPhase.getProject();
         phProject.removePhase(postMortemPhase);
         phaseManager.updatePhases(phProject, operator);
+    }
+    
+    /**
+     * Finds prize type with given name among all available prize types.
+     * 
+     * @param manager project manager to use.
+     * @param name name to use.
+     * @return prize type with given name. null if not found.
+     * @throws BaseException if any exception occurs.
+     * @since 1.9
+     */
+    public static PrizeType getPrizeTypeByName(ProjectManager manager, String name) throws BaseException {
+        PrizeType [] allTypes = manager.getPrizeTypes();
+        for(PrizeType type : allTypes) {
+            if (type.getDescription().equalsIgnoreCase(name)) {
+                return type;
+            }
+        }
+        return null;
     }
 }

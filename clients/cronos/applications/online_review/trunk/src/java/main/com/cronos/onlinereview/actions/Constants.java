@@ -1282,6 +1282,13 @@ public class Constants {
      */
     public static final int CANNOT_OPEN_PHASE_STATUS_CODE = 5;
     
+    /**
+     * The constant for the contest prize type.
+     * 
+     * @since 1.8
+     */
+    public static final String CONTEST_PRIZE_TYPE_NAME = "Contest Prize";
+    
     // Hidden constructor
 
     /**
