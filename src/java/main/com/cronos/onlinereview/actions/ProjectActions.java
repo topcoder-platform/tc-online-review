@@ -69,6 +69,8 @@ import com.topcoder.management.deliverable.persistence.DeliverablePersistenceExc
 import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
 import com.topcoder.management.phase.OperationCheckResult;
 import com.topcoder.management.phase.PhaseManager;
+import com.topcoder.management.project.Prize;
+import com.topcoder.management.project.PrizeType;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
@@ -933,6 +935,17 @@ public class ProjectActions extends DispatchAction {
         project.setProperty("External Reference ID", lazyForm.get("external_reference_id"));
         // Populate project price
         project.setProperty("Payments", lazyForm.get("payments"));
+        PrizeType contestPrizeType = ActionsHelper.getPrizeTypeByName(manager, Constants.CONTEST_PRIZE_TYPE_NAME); 
+        if (project.getPrizes() != null) {
+            for(Prize p : project.getPrizes()) {
+                if(p.getPrizeType().getId() == contestPrizeType.getId() && p.getPlace() == 1) {
+                    p.setPrizeAmount(Double.parseDouble(lazyForm.get("payments").toString()));
+                } else if (!ActionsHelper.isStudioProject(project) && p.getPrizeType().getId() == contestPrizeType.getId() && p.getPlace() == 2) {
+                    p.setPrizeAmount(Double.parseDouble(lazyForm.get("payments").toString())/2.0);
+                }
+            }
+        }
+        
         // Populate project dr points
         Double drPoints = (Double)lazyForm.get("dr_points");
         project.setProperty("DR points", drPoints.equals(0d) ? null : drPoints);
