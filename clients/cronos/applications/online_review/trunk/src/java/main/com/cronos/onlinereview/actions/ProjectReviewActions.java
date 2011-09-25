@@ -2045,7 +2045,7 @@ public class ProjectReviewActions extends DispatchAction {
 
             LazyValidatorForm approvalForm = (LazyValidatorForm) form;
             if (fixesRejected != null) {
-			    approvalForm.set("approve_fixes", !fixesRejected);
+                approvalForm.set("approve_fixes", !fixesRejected);
             }
             approvalForm.set("accept_but_require_fixes", fixesAcceptedButOtherFixesRequired);
         }
@@ -3531,10 +3531,10 @@ public class ProjectReviewActions extends DispatchAction {
             Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.APPROVER_ROLE_NAME);
 
             Boolean approveFixesObj = (Boolean) reviewForm.get("approve_fixes");
-			if (approveFixesObj == null) {
-			    ActionsHelper.addErrorToRequest(request, "approve_status", "Error.saveApproval.Absent");
-			}
-			
+            if (approveFixesObj == null) {
+                ActionsHelper.addErrorToRequest(request, "approve_status", "Error.saveApproval.Absent");
+            }
+            
             Boolean acceptButRequireOtherFixesObj = (Boolean) reviewForm.get("accept_but_require_fixes");
             approveFixes = (approveFixesObj != null && approveFixesObj.booleanValue());
             acceptButRequireOtherFixes
@@ -4425,7 +4425,7 @@ public class ProjectReviewActions extends DispatchAction {
                     AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME)) {
                 Resource mySubmitterResource = getMySubmitterResource(request);
                 if(mySubmitterResource != null && verification.getSubmission() != null &&
-				   verification.getSubmission().getUpload().getOwner() == mySubmitterResource.getId()) {
+                    verification.getSubmission().getUpload().getOwner() == mySubmitterResource.getId()) {
                     // Can place appeal, put an appropriate flag to request
                     request.setAttribute("canPlaceAppeal", Boolean.TRUE);
                     canPlaceAppeal = true;
@@ -4560,13 +4560,13 @@ public class ProjectReviewActions extends DispatchAction {
                     validateScorecardItemAnswer(request, question, item, itemIdx);
 
                     if (managerEdit) {
-					    validateManagerComments(request, item, itemIdx);
+                        validateManagerComments(request, item, itemIdx);
                     } else {
                         validateScorecardComments(request, item, itemIdx);
                         if (question.isUploadDocument()) {
                             validateScorecardItemUpload(request, question, item, fileIdx++);
                         }
-					}
+                    }
                 }
             }
         }
@@ -4630,19 +4630,19 @@ public class ProjectReviewActions extends DispatchAction {
                                     commentType.equalsIgnoreCase("Recommended")) {
                                 validateAggregateFunction(request, item.getComment(j), commentIdx++);
                             }
-							
+                            
                             if (commentType.equalsIgnoreCase("Aggregation Comment")) {
                                 /* Request from David Messinger [11/06/2006]:
                                    No need to verify presence of comments
                                 validateScorecardComment(request, comment, "aggregator_response[" + itemIdx + "]");
-								*/
-								
-								// But we still need to verify comment's maximum length.
+                                */
+                                
+                                // But we still need to verify comment's maximum length.
                                 String commentText = comment.getComment();
                                 if (commentText != null && commentText.length() > MAX_COMMENT_LENGTH) {
                                     ActionsHelper.addErrorToRequest(request, "aggregator_response[" + itemIdx + "]",
-									    "Error.saveAggregation.Comment.MaxExceeded");
-                                }								
+                                        "Error.saveAggregation.Comment.MaxExceeded");
+                                }                               
                             }
                         }
                     }
@@ -4817,14 +4817,14 @@ public class ProjectReviewActions extends DispatchAction {
                             String commentText = comment.getComment();
 
                             if (commentText == null || commentText.trim().length() == 0) {
-							    if (notFixed && required) {
+                                if (notFixed && required) {
                                     ActionsHelper.addErrorToRequest(request, "final_comment[" + itemIdx + "]",
                                             "Error.saveFinalReview.Response.Absent");
-								}
+                                }
                             } else if (commentText.length() > MAX_COMMENT_LENGTH) {
                                 ActionsHelper.addErrorToRequest(request, "final_comment[" + itemIdx + "]",
                                         "Error.saveFinalReview.Comment.MaxExceeded");
-                            }								
+                            }                               
                         }
                     }
                 }
@@ -4943,20 +4943,23 @@ public class ProjectReviewActions extends DispatchAction {
         ActionsHelper.validateParameterNotNull(item, "item");
         ActionsHelper.validateParameterInRange(itemNum, "itemNum", 0, Integer.MAX_VALUE);
 
-        boolean noCommentsEntered = true;
+        /* Request from Jessica Williams [Sep 16 2011]:
+           No need to verify presence of review item comments (for Studio but we do it for everything).
+        */
+        //boolean noCommentsEntered = true;
 
-        for (int i = 0; i < item.getNumberOfComments(); ++i) {
-            if (ActionsHelper.isReviewerComment(item.getComment(i))) {
-                noCommentsEntered = false;
-                break;
-            }
-        }
+        //for (int i = 0; i < item.getNumberOfComments(); ++i) {
+        //    if (ActionsHelper.isReviewerComment(item.getComment(i))) {
+        //        noCommentsEntered = false;
+        //        break;
+        //    }
+        //}
 
-        if (noCommentsEntered) {
-            ActionsHelper.addErrorToRequest(request,
-                    "comment(" + itemNum + ".1)", "Error.saveReview.Comment.AtLeastOne");
-            return;
-        }
+        //if (noCommentsEntered) {
+        //    ActionsHelper.addErrorToRequest(request,
+        //            "comment(" + itemNum + ".1)", "Error.saveReview.Comment.AtLeastOne");
+        //    return;
+        //}
 
         for (int i = 0; i < item.getNumberOfComments(); ++i) {
             Comment comment = item.getComment(i);
