@@ -4150,7 +4150,17 @@ public class ProjectReviewActions extends DispatchAction {
             if (managerEdit) {
                 commentType = ActionsHelper.findCommentTypeByName(commentTypes, "Manager Comment");
             } else {
-                commentType = ActionsHelper.findCommentTypeById(commentTypes, Long.parseLong(commentTypeIds.get(commentKey)));
+                try {
+                    commentType = ActionsHelper.findCommentTypeById(commentTypes, Long.parseLong(commentTypeIds.get(commentKey)));
+                } catch (java.lang.NumberFormatException nfe) {
+                    System.out.println("VolodymyrK debug - NumberFormatException in populateItemComments method");
+                    System.out.println("commentKey: " + commentKey);
+                    System.out.println("item.getNumberOfComments(): " + item.getNumberOfComments());
+                    for (String key: commentTypeIds.keySet()) {
+                        System.out.println(key + " - " + commentTypeIds.get(key));
+                    }
+                    throw nfe;
+                }
             }
             // Check that correct comment type ID has been specified
             // (user may intentionally submit malformed form data)
