@@ -3625,6 +3625,20 @@ public class ProjectReviewActions extends DispatchAction {
             }
             // Set the completed status of the review
             if (commitRequested) {
+
+                // Make sure that each item has at least one comment before committing the review.
+                // If not, create an empty one.
+                for (int i = 0; i < review.getNumberOfItems(); ++i) {
+                    Item item = review.getItem(i);
+                    if (item.getNumberOfComments() == 0) {
+                        Comment comment = new Comment();
+                        comment.setAuthor(myResource.getId());
+                        comment.setComment("");
+                        comment.setCommentType(ActionsHelper.findCommentTypeByName(commentTypes, "Comment"));
+                        item.addComment(comment);
+                    }
+                }
+
                 review.setCommitted(true);
             }
         } else if (previewRequested) {
