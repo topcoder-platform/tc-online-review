@@ -83,12 +83,12 @@
     <component
         name="review_management"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/review_management/trunk"
-        revision="207644" />
+        revision="207889" />
 
     <component
         name="review_management_persistence"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_management_persistence/trunk"
-        revision="207645" />
+        revision="208113" />
 
     <component
         name="review_score_aggregator"
