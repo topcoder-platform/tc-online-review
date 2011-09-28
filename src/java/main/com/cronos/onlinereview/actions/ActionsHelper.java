@@ -4702,7 +4702,7 @@ public class ActionsHelper {
      *
      * @param request the http request.
      * @param roleNames a <code>String</code> array representing the resource role names.
-	 * @param projectID ID of the project.
+     * @param projectID ID of the project.
      * @throws BaseException if an unexpected error occurs.
      */
     static List<Long> getUserIDsByRoleNames(HttpServletRequest request, String[] roleNames, long projectID) throws BaseException {
@@ -4777,10 +4777,10 @@ public class ActionsHelper {
      * @param upload The upload object that is being downloaded.
      * @param succesfull True if the download attempt was succesfull and false otherwise (e.g. no permission).
      */
-	static void logDownloadAttempt(HttpServletRequest request, Upload upload, boolean succesfull) throws BaseException {
+    static void logDownloadAttempt(HttpServletRequest request, Upload upload, boolean succesfull) throws BaseException {
         Connection conn = null;
         PreparedStatement insertStmt = null;
-        try {	
+        try {   
             DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
             conn = dbconn.createConnection();
 
@@ -4791,10 +4791,10 @@ public class ActionsHelper {
             } else {
                 insertStmt.setNull(2, Types.INTEGER);
             }
-            insertStmt.setString(3, request.getRemoteAddr());			
+            insertStmt.setString(3, request.getRemoteAddr());           
             insertStmt.setBoolean(4, succesfull);
-            insertStmt.executeUpdate();			
-			
+            insertStmt.executeUpdate();         
+            
         } catch (UnknownConnectionException e) {
             throw new BaseException("Failed to create connection", e);
         } catch (ConfigurationException e) {
@@ -4807,7 +4807,7 @@ public class ActionsHelper {
             close(insertStmt);
             close(conn);
         }
-	}
+    }
 
     /**
      * Delete the Post-Mortem phase of a specified project.
@@ -4836,7 +4836,7 @@ public class ActionsHelper {
         Review[] reviews = reviewMgr.searchReviews(filter, false);
         // Delete all the Post Mortem reviews
         for (Review review : reviews) {
-            reviewMgr.deleteReview(review.getId());
+            reviewMgr.removeReview(review.getId(), operator);
         }
         
         // Get all the Post Mortem Reviewers
@@ -4845,7 +4845,7 @@ public class ActionsHelper {
         Filter filterResourceRole = ResourceFilterBuilder.createResourceRoleIdFilter(postMortemRoleId);
         filter = new AndFilter(Arrays.asList(filterProject, filterResourceRole));
         Resource[] resources = resMgr.searchResources(filter);
-		
+        
         // Delete the Post Mortem Reviewers
         for (Resource resource : resources) {
             resMgr.removeResource(resource, operator);
