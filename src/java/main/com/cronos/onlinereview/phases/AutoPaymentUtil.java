@@ -134,7 +134,9 @@ public class AutoPaymentUtil {
         "    and submission_status_lu.name in ('Active', 'Completed Without Win') " +
         "    and resource.project_id = ? " + 
         "    and upload.resource_id = resource.resource_id " +
-        "    and submission.prize_id = prize.prize_id " + 
+        "    and submission.prize_id = prize.prize_id " +
+        "    and not exists (select 1 from resource_info ri where ri.resource_id = resource.resource_id " +
+        "    and ri.resource_info_type_id = 8 and ri.value = 'Yes' ) " +
         "  group by resource.resource_id";
 
     /**
@@ -610,23 +612,23 @@ public class AutoPaymentUtil {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         try {
+            // clear non-paid resources in case if project was reverted. 
+            pstmt = conn.prepareStatement(SELECT_SQL);
+            pstmt.setLong(1, projectId);
+            rs = pstmt.executeQuery();
 
-			if (prizesCount == 0) {
-				pstmt = conn.prepareStatement(SELECT_SQL);
-				pstmt.setLong(1, projectId);
-				rs = pstmt.executeQuery();
+            Set<Long> resourceIds = new HashSet<Long>();
+            while (rs.next()) {
+                resourceIds.add(rs.getLong(1));
 
-				Set<Long> resourceIds = new HashSet<Long>();
-				while (rs.next()) {
-					resourceIds.add(rs.getLong(1));
+                // Clear payment value.
+                deleteResourceInfo(rs.getLong(1), 7, conn);
 
-					// Clear payment value.
-					deleteResourceInfo(rs.getLong(1), 7, conn);
+                // Set payment status to "N/A"
+                updateResourceInfo(rs.getLong(1), 8, "N/A", conn);
+            }
 
-					// Set payment status to "N/A"
-					updateResourceInfo(rs.getLong(1), 8, "N/A", conn);
-				}
-
+            if (prizesCount == 0) {
 				// Prepare prices for different places.
 				double[] prices = new double[] { price, Math.round(price * 0.5) };
 				long[] places = new long[] { 1, 2 };
