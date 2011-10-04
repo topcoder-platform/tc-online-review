@@ -371,7 +371,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 (ResourceRole[]) myPayments.keySet().toArray(new ResourceRole[myPayments.size()]), "Manager");
         if (managerResourceRole == null) {
             if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) ||
-			    AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
+                AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
                 ResourceRole globalManagerRole = new ResourceRole();
                 globalManagerRole.setName(messages.getMessage("ResourceRole."
                         + Constants.MANAGER_ROLE_NAME.replaceAll(" ", "")));
@@ -405,10 +405,10 @@ public class ProjectDetailsActions extends DispatchAction {
             }
             request.setAttribute("myDelay", delay);
 
-			long paymentPenaltyPercentage = (delay>0 ? 5 : 0) + (delay/3600);
-			if (paymentPenaltyPercentage > 50) {
-			    paymentPenaltyPercentage = 50;
-			}
+            long paymentPenaltyPercentage = (delay>0 ? 5 : 0) + (delay/3600);
+            if (paymentPenaltyPercentage > 50) {
+                paymentPenaltyPercentage = 50;
+            }
             request.setAttribute("paymentPenaltyPercentage", paymentPenaltyPercentage);
         }
 
@@ -495,7 +495,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 request.setAttribute("unrespondedLateDeliverables", (Boolean)true);
 
                 request.setAttribute("unrespondedLateDeliverablesLink", "ViewLateDeliverables.do?method=viewLateDeliverables&project_id=" +
-				                     projectId + "&forgiven=Not+forgiven&explanation_status=true&response_status=false");
+                                     projectId + "&forgiven=Not+forgiven&explanation_status=true&response_status=false");
             }
         }
 
@@ -1251,7 +1251,7 @@ public class ProjectDetailsActions extends DispatchAction {
         boolean hasViewAllSpecSubmissionsPermission
             = AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SPECIFICATION_SUBMISSIONS_PERM_NAME);
         if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted") && !hasViewAllSpecSubmissionsPermission) {
-			ActionsHelper.logDownloadAttempt(request, upload, false);
+            ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(
                     mapping, getResources(request), request, "ViewSubmission", "Error.UploadDeleted", null);
         }
@@ -1281,7 +1281,7 @@ public class ProjectDetailsActions extends DispatchAction {
             final boolean isReviewOpen = ActionsHelper.isInOrAfterPhase(phases, 0,
                 Constants.SPECIFICATION_REVIEW_PHASE_NAME);
             if (AuthorizationHelper.hasUserRole(request, Constants.SPECIFICATION_REVIEWER_ROLE_NAME) && !isReviewOpen) {
-			    ActionsHelper.logDownloadAttempt(request, upload, false);
+                ActionsHelper.logDownloadAttempt(request, upload, false);
                 return ActionsHelper.produceErrorReport(
                         mapping, getResources(request), request, "ViewSubmission", "Error.IncorrectPhase", null);
             }
@@ -1751,7 +1751,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Verify that upload is Test Cases
         if (!upload.getUploadType().getName().equalsIgnoreCase("Test Case")) {
-		    ActionsHelper.logDownloadAttempt(request, upload, false);
+            ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.NotTestCases", null);
         }
@@ -1813,8 +1813,14 @@ public class ProjectDetailsActions extends DispatchAction {
         Upload upload = verification.getUpload();
         Project project = verification.getProject();
         
-        // Check that user has permissions to delete submission
-        if (!AuthorizationHelper.hasUserPermission(request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME)) {
+        // Check that user has permissions to delete submission.
+        boolean hasPermission = AuthorizationHelper.hasUserPermission(request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME);
+        // For Studio projects only Global Managers are authorized to advance submissions.
+        if (ActionsHelper.isStudioProject(project)) {
+            hasPermission = hasPermission && AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME);
+        }
+
+        if (!hasPermission) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
         }
@@ -3253,7 +3259,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify the status of upload and check whether the user has permission to download old uploads
         if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted")
             && !AuthorizationHelper.hasUserPermission(request, viewAllSubmissionsPermName)) {
-        	ActionsHelper.logDownloadAttempt(request, upload, false);
+            ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(
                     mapping, getResources(request), request, errorMessageKey, "Error.UploadDeleted", null);
         }
@@ -3298,7 +3304,7 @@ public class ProjectDetailsActions extends DispatchAction {
             // If reviewer tries to download submission before Review phase opens,
             // notify him about this wrong-doing and do not let perform the action
             if (AuthorizationHelper.hasUserRole(request, reviewerRoleNames) && !isReviewOpen) {
-            	ActionsHelper.logDownloadAttempt(request, upload, false);
+                ActionsHelper.logDownloadAttempt(request, upload, false);
                 return ActionsHelper.produceErrorReport(
                         mapping, getResources(request), request, errorMessageKey, "Error.IncorrectPhase", null);
             }
