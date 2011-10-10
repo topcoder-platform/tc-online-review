@@ -140,7 +140,9 @@
             <div id="mainMiddleContent">
                 <div style="position: relative; width: 100%;">
 
-                    <jsp:include page="/includes/review/review_project.jsp" />
+                    <jsp:include page="/includes/review/review_project.jsp">
+						<jsp:param name="showFillScorecardLink" value="true" />
+					</jsp:include>
                     <h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
 
                     <html:form action="/actions/SaveSpecificationReview" method="POST" enctype="multipart/form-data">
