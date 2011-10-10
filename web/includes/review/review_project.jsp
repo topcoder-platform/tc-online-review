@@ -5,6 +5,33 @@
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
+
+<c:if test="${param.showFillScorecardLink}">
+<script language="javascript" type="text/javascript">
+    <!--
+	function fillScorecard() {
+		var scores = document.getElementsByTagName("select");
+		for (var i = 0; i < scores.length; i++) {
+			if (scores[i].getAttribute("name").indexOf("answer[") == 0) {
+				if (scores[i].selectedIndex == 0) {
+					var options = scores[i].options;
+					for (var j = 1; j < options.length ; j++) {
+						if (options[j].value.indexOf("/") >= 0) {
+							scores[i].selectedIndex = scores[i].options.length - 1;
+							break;
+						} else if (options[j].value == "1") {
+							scores[i].selectedIndex = j;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	 // -->
+    </script>
+</c:if>
+
 <div style="padding: 11px 0px 9px 0px;">
 	<table width="100%" cellpadding="0" cellspacing="0" border="0">
 		<tr>
@@ -27,6 +54,9 @@
 				<td align="right" valign="top">
 					<c:if test="${canEditScorecard}">
 						<html:link page="/actions/Edit${reviewType}.do?method=edit${reviewType}&rid=${review.id}"><bean:message key="editReview.EditScorecard" /></html:link>&#160;|
+					</c:if>
+					<c:if test="${param.showFillScorecardLink}">
+						<a href="javascript:fillScorecard();"><bean:message key="global.fillScorecard" /></a> |
 					</c:if>
 					<a href="javascript:showAll();"><bean:message key="global.expandAll" /></a> |
 					<a href="javascript:hideAll();"><bean:message key="global.collapseAll" /></a>

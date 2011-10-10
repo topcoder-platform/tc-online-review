@@ -39,7 +39,9 @@
             <div id="mainMiddleContent">
                 <div style="position: relative; width: 100%;">
 
-                    <jsp:include page="/includes/review/review_project.jsp" />
+                    <jsp:include page="/includes/review/review_project.jsp">
+						<jsp:param name="showFillScorecardLink" value="false" />
+					</jsp:include>
 
                     <h3><bean:message key="editReview.EditAggregation.title" /></h3>
 
