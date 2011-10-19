@@ -1,0 +1,12 @@
+The late deliverable has been resolved by %CURRENT_USER_HANDLE{Current user handle}%.<br/>
+<br/>
+
+<table border\="1">
+<tr><td valign\="top">Contest\:</td><td><a href\="%OR_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a></td></tr>
+<tr><td nowrap\="nowrap">Late deliverable\:</td><td><a href\="%LATE_DELIVERABLE_LINK%">%DELIVERABLE_TYPE{Deliverable type}%</a></td></tr>
+<tr><td>Late member\:</td><td>%LATE_MEMBER_HANDLE{Late member handle}%</td></tr>
+<tr><td>Deadline\:</td><td>%DEADLINE{Deadline}%</td></tr>
+<tr><td>Forgiven\:</td><td>%FORGIVEN{Forgiven status}%</td></tr>
+<tr><td valign\="top">Explanation\:</td><td>%EXPLANATION{Explanation}%</td></tr>
+<tr><td valign\="top">Response\:</td><td>%RESPONSE{Response}%</td></tr>
+</table>
