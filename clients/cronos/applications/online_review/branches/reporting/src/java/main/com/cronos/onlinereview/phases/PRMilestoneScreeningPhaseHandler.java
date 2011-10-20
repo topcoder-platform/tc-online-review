@@ -75,7 +75,7 @@ public class PRMilestoneScreeningPhaseHandler extends MilestoneScreeningPhaseHan
             if (!toStart && PRHelper.isStudioProject(projectId)) {
                 
                 try {
-                    //notification.sendEmailToSubmitters(getManagerHelper().getProjectManager().getProject(projectId));
+                    notification.sendEmailToSubmitters(getManagerHelper().getProjectManager().getProject(projectId));
                 } catch (Exception e) {
                     throw new PhaseHandlingException("Failed to send email to submitters on Milestone Screening results", 
                                                      e);

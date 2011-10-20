@@ -92,7 +92,7 @@ public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
     		    long projectId = phase.getProject().getId();
     		    if (PRHelper.isStudioProject(projectId)) {
     		        try {
-    	                //notification.sendEmailToSubmitters(getManagerHelper().getProjectManager().getProject(projectId));
+    	                notification.sendEmailToSubmitters(getManagerHelper().getProjectManager().getProject(projectId));
     	            } catch (Exception e) {
     	                throw new PhaseHandlingException("Failed to send email to submitters on Screening results", 
     	                                                 e);

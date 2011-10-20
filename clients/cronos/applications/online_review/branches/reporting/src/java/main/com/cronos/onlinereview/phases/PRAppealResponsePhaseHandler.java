@@ -104,7 +104,7 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
     		processPR(projectId, conn, toStart);
             //send winner email as appropriate here
             if (!toStart) {
-                //sendMailForWinners(getManagerHelper().getProjectManager().getProject(projectId));
+                sendMailForWinners(getManagerHelper().getProjectManager().getProject(projectId));
             }
     	} catch (Throwable e) {
 			throw new PhaseHandlingException(e.getMessage(), e);
