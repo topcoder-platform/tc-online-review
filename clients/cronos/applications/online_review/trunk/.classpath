@@ -45,7 +45,7 @@
 	<classpathentry kind="src" path="components/weighted_calculator/src/java/main"/>
 	<classpathentry kind="src" path="components/type_safe_enum/src/java/main"/>
 	<classpathentry kind="src" path="components/project_phases/src/java/main"/>
-
+	<classpathentry kind="src" path="components/auto_pilot/src/java/main"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/file_system_server/1.0/file_system_server.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
@@ -176,7 +176,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-
 	<classpathentry exported="true" kind="lib" path="lib/third_party/testing/aspectjrt-1.2.1.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
@@ -276,6 +275,10 @@
 	<classpathentry kind="lib" path="lib/tcs/job_scheduling/3.2.0/job_scheduling.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/job_processor/3.0.1/job_processor.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/object_factory_configuration_api_plugin/1.0.0/object_factory_configuration_api_plugin.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
