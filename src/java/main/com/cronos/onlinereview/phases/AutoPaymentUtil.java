@@ -198,6 +198,7 @@ public class AutoPaymentUtil {
         && projectCategoryId != 25    // RIA Component
         && projectCategoryId != 29    // Copilot Posting
         && projectCategoryId != 35    // Content Creation
+        && projectCategoryId != 36    // Reporting
         && !isStudio
         ) {
                 return;

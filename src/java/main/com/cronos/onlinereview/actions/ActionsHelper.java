@@ -368,16 +368,7 @@ public class ActionsHelper {
                 || categoryId == 25   // RIA Component
                 || categoryId == 29   // Copilot Posting
                 || categoryId == 35   // Content Creation
-                || categoryId == 16   // Icon Sets
-                || categoryId == 17   // Storyboards
-                || categoryId == 18   // Wireframes
-                || categoryId == 20   // Logos
-                || categoryId == 21   // Print
-                || categoryId == 22   // Specification
-                || categoryId == 30   // Windget or Mobile Screen Design
-                || categoryId == 31   // Front-End Flash
-                || categoryId == 32   // Application Front-End Design
-                || categoryId == 34   // Other
+                || categoryId == 36   // Reporting
         );
     }
 

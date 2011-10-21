@@ -5964,6 +5964,17 @@
                     <Value>iconContentCreation.gif</Value>
                 </Property>
             </Property>
+
+            <!-- Icons added for reporting project type -->
+            <Property name="Reporting">
+                <Property name="IconSmall">
+                    <Value>IconReportingSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconReporting.gif</Value>
+                </Property>
+            </Property>
+
             <!-- Studio categories icons -->
             <Property name="Banners/Icons">
                 <Property name="IconSmall">
