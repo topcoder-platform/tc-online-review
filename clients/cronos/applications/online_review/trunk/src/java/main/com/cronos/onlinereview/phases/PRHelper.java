@@ -206,12 +206,16 @@ public class PRHelper {
         long projectId = phase.getProject().getId();
         try {
             if (!toStart) {
-                if (isStudioProject(projectId)) {
-                    AutoPaymentUtil.populateSubmitterPayments(projectId, conn);
+                // if reivew phase is last one and there is at least one active submission complete the project.
+                if (PhasesHelper.isLastPhase(phase)) {
                     Submission [] activeSubs = PhasesHelper.searchActiveSubmissions(managerHelper.getUploadManager(), conn, projectId, PhasesHelper.CONTEST_SUBMISSION_TYPE);
                     if (activeSubs.length > 0) {
                         completeProject(managerHelper, phase, operator);
                     }
+                }
+                
+                if (isStudioProject(projectId)) {
+                    AutoPaymentUtil.populateSubmitterPayments(projectId, conn);
                 } else {
                     logger.log(Level.INFO,
                         new LoggerMessage("project", new Long(projectId), null, "process review phase."));

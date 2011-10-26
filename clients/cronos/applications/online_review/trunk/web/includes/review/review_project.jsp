@@ -10,18 +10,20 @@
 <script language="javascript" type="text/javascript">
     <!--
 	function fillScorecard() {
-		var scores = document.getElementsByTagName("select");
-		for (var i = 0; i < scores.length; i++) {
-			if (scores[i].getAttribute("name").indexOf("answer[") == 0) {
-				if (scores[i].selectedIndex == 0) {
-					var options = scores[i].options;
-					for (var j = 1; j < options.length ; j++) {
-						if (options[j].value.indexOf("/") >= 0) {
-							scores[i].selectedIndex = scores[i].options.length - 1;
-							break;
-						} else if (options[j].value == "1") {
-							scores[i].selectedIndex = j;
-							break;
+		if (confirm("<bean:message key="global.fillScorecardConfirmation" />")) {
+			var scores = document.getElementsByTagName("select");
+			for (var i = 0; i < scores.length; i++) {
+				if (scores[i].getAttribute("name").indexOf("answer[") == 0) {
+					if (scores[i].selectedIndex == 0) {
+						var options = scores[i].options;
+						for (var j = 1; j < options.length ; j++) {
+							if (options[j].value.indexOf("/") >= 0) {
+								scores[i].selectedIndex = scores[i].options.length - 1;
+								break;
+							} else if (options[j].value == "1") {
+								scores[i].selectedIndex = j;
+								break;
+							}
 						}
 					}
 				}
