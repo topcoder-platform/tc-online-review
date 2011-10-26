@@ -2757,6 +2757,10 @@ public class ProjectReviewActions extends DispatchAction {
             request.setAttribute("reviewType", "PostMortem");
         } else if (reviewType.equals("Specification Review")) {
             request.setAttribute("reviewType", "SpecificationReview");
+        } else if (reviewType.equals("Milestone Screening")) {
+            request.setAttribute("reviewType", "MilestoneScreening");
+        } else if (reviewType.equals("Milestone Review")) {
+            request.setAttribute("reviewType", "MilestoneReview");
         } else {
             request.setAttribute("reviewType", reviewType);
         }
