@@ -4254,7 +4254,6 @@ public class ActionsHelper {
             for (Long userId : users) {
                 forumBean.removeRole(userId, userroleId);
                 forumBean.removeRole(userId, moderatorroleId);
-                forumBean.removeUserPermission(userId, forumId);
             }
 
         } catch (Exception e) {
