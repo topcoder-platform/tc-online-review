@@ -8,8 +8,15 @@ import com.jivesoftware.base.UserNotFoundException;
 import com.jivesoftware.forum.ForumCategoryNotFoundException;
 import com.topcoder.web.ejb.forums.Forums;
 import com.topcoder.web.ejb.forums.ForumsBean;
+import com.topcoder.web.ejb.forums.ForumsException;
+import com.topcoder.web.ejb.forums.ForumsSpecReviewComment;
+import com.topcoder.web.ejb.forums.ForumsUserComment;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.ejb.EJBException;
 
 /**
  * <p>An implementation of {@link Forums} interface which provides the library-call style for API of <code>Forums EJB
@@ -344,5 +351,45 @@ public class ForumsLibrary extends BaseEJBLibrary implements Forums {
      */
     public String[][] getSoftwareCategoriesData() {
         return bean.getSoftwareCategoriesData();
+    }
+
+    public long addSpecReviewComment(long categoryId, long userId, long questionId, ForumsUserComment comment)
+                    throws EJBException, RemoteException, ForumsException {
+        return bean.addSpecReviewComment(categoryId, userId, questionId, comment);
+    }
+
+    public List<ForumsSpecReviewComment> getSpecReviewComments(long categoryId) throws EJBException, RemoteException,
+                    ForumsException {
+        return bean.getSpecReviewComments(categoryId);
+    }
+
+    public void updateSpecReviewComment(long categoryId, long userId, long questionId, ForumsUserComment comment)
+                    throws EJBException, RemoteException, ForumsException {
+        bean.updateSpecReviewComment(categoryId, userId, questionId, comment);
+    }
+
+    public long[] areForumsWatched(long userID, long[] forumIDs) throws EJBException, RemoteException, Exception {
+        return bean.areForumsWatched(userID, forumIDs);
+    }
+
+    public void deleteForumWatches(long userID, long[] forumIDs) throws EJBException, RemoteException, Exception {
+        bean.deleteForumWatches(userID, forumIDs);
+    }
+
+    public void createForumWatches(long userID, long[] forumIDs) throws EJBException, RemoteException, Exception {
+        bean.createForumWatches(userID, forumIDs);
+    }
+
+    public void deleteForumWatch(long userID, long forumID) throws EJBException, RemoteException, Exception {
+        bean.deleteForumWatch(userID, forumID);
+    }
+
+    public void removeUserPermission(long userID, long forumCategoryID) throws EJBException, Exception {
+        bean.removeUserPermission(userID, forumCategoryID);
+    }
+
+    public long createTopCoderDirectProjectForums(String projectName, Long tcDirectProjectTypeId) throws EJBException,
+                    RemoteException, Exception {
+        return bean.createTopCoderDirectProjectForums(projectName, tcDirectProjectTypeId);
     }
 }
