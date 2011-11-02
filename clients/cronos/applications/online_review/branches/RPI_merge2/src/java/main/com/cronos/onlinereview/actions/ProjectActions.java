@@ -10,10 +10,15 @@ import static com.cronos.onlinereview.actions.Constants.APPEALS_RESPONSE_PHASE_N
 import static com.cronos.onlinereview.actions.Constants.APPROVAL_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.FINAL_FIX_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.FINAL_REVIEW_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.NEW_APPEALS_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.REGISTRATION_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.REVIEW_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.REVIEW_REGISTRATION_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.SCREENING_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.SPECIFICATION_REVIEW_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.SPECIFICATION_SUBMISSION_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.SUBMISSION_PHASE_NAME;
@@ -255,7 +260,8 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  * Version 1.13 (Online Review Status Validation Assembly 1.0) Change notes:
  *   <ol>
  *     <li>Methods adjusted for new signatures of create managers methods from ActionsHelper.</li>
- *     <li>Updated {@link #saveProjectPhases()} to handle new StatusValidationException and display its error message.</li>
+ *     <li>Updated {@link #saveProjectPhases(boolean, HttpServletRequest, LazyValidatorForm, Project, Map, List, boolean)} 
+ *     to handle new StatusValidationException and display its error message.</li>
  *   </ol>
  * </p>
  * Version 1.13.1 (Online Review Phases 1.6.1 Integration) Change notes:
@@ -264,8 +270,30 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  *     <li>Removed Submission Number support</li>
  *   </ol>
  * <p>
- *    
+ * 
+ * <p>
+ * Version 1.12 (Online Review Update Review Management Process assembly 1 version 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #validateProjectPhases(HttpServletRequest, Project, Phase[])} method to
+ *     take care of <code>SECONDARY_REVIEWER_REVIEW_PHASE_NAME</code>.</li>
+ *   </ol>
  * </p>
+ *
+ * <p>
+ * Version 1.13 (Online Review Update Review Management Process assembly 2) Change notes:
+ *   <ol>
+ *     <li>Change <code>FIRST_APPEALS_PHASE_NAME</code> to <code>NEW_APPEALS_PHASE_NAME</code>.</li>
+ *   </ol>
+ * </p>
+ *
+ * <p>
+ * Version 1.14 (Online Review Update Review Management Process assembly 4) Change notes:
+ *   <ol>
+ *     <li>Update {@link #populateProjectFormDefaults(LazyValidatorForm, HttpServletRequest)} method, the attribute "phase_required_secondary_reviewers"
+ *     was changed to "default_required_secondary_reviewers".</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, FireIce, lmmortal
  * @version 1.14
  */
@@ -295,7 +323,7 @@ public class ProjectActions extends DispatchAction {
     private static final Set<String> REVIEWER_ROLE_NAMES = new HashSet<String>(Arrays.asList("Reviewer",
         "Accuracy Reviewer", "Failure Reviewer", "Stress Reviewer", "Screener", "Primary Screener", "Aggregator",
         "Final Reviewer", "Approver", "Post-Mortem Reviewer", "Specification Reviewer", "Milestone Screener", 
-        "Milestone Reviewer"));
+        "Milestone Reviewer", "Secondary Reviewer","Primary Review Evaluator"));
 
     /**
      * <p>A <code>Set</code> holding the IDs for reviewer roles which do not allow duplicate users to be assigned to.
@@ -303,7 +331,7 @@ public class ProjectActions extends DispatchAction {
      *
      * @since 1.8
      */
-    private static final Set<Long> NODUPLICATE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(4L, 5L, 6L, 7L));
+    private static final Set<Long> NODUPLICATE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(4L, 5L, 6L, 7L, 21L));
 
     /**
      * <p>A <code>Set</code> holding the IDs for reviewer roles which do not allow more than one user to be assigned to.
@@ -311,8 +339,8 @@ public class ProjectActions extends DispatchAction {
      *
      * @since 1.8
      */
-    private static final Set<Long> SINGLE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(2L, 8L, 9L, 18L, 19L, 20L));
-    
+    private static final Set<Long> SINGLE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(2L, 8L, 9L, 18L, 19L, 20L, 22L));
+
     private final static int GLOBAL_TIMELINE_NOTIFICATION = 29;
 
     private final static int GLOBAL_FORUM_WATCH = 30;
@@ -414,6 +442,9 @@ public class ProjectActions extends DispatchAction {
         }
         if (ConfigHelper.getDefaultRequiredReviewers() >= 0) {
             lazyForm.set("phase_required_reviewers", 0, new Integer(ConfigHelper.getDefaultRequiredReviewers()));
+        }
+        if (ConfigHelper.getDefaultRequiredSecondaryReviewers() >= 0) {
+            request.setAttribute("default_required_secondary_reviewers", new Integer(ConfigHelper.getDefaultRequiredSecondaryReviewers()));
         }
         if (ConfigHelper.getDefaultRequiredApprovers() >= 0) {
             request.setAttribute("phase_required_reviewers_approval",
@@ -1799,13 +1830,21 @@ public class ProjectActions extends DispatchAction {
                                 "error.com.cronos.onlinereview.actions.editProject.SpecReviewMustBeFollowed");
                         arePhasesValid = false;
                     }
-                } else if (currentPhaseName.equals(REVIEW_PHASE_NAME)) {
+                } else if (currentPhaseName.equals(SECONDARY_REVIEWER_REVIEW_PHASE_NAME) || currentPhaseName.equals(REVIEW_PHASE_NAME)) {
                     // Review should follow submission or screening or post-mortem
                     if (i == 0 || (!previousPhaseName.equals(SUBMISSION_PHASE_NAME) &&
                             !previousPhaseName.equals(SCREENING_PHASE_NAME)
                             && !postMortemPhaseExists)) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.ReviewMustFollow");
+                        arePhasesValid = false;
+                    }
+                } else if (currentPhaseName.equals(PRIMARY_REVIEW_EVALUATION_PHASE_NAME )) {
+                    // Review Evaluation should follow secondary review or post-mortem
+                    if (i == 0 || (!previousPhaseName.equals(SECONDARY_REVIEWER_REVIEW_PHASE_NAME)
+                                   && !postMortemPhaseExists)) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.ReviewEvaluationMustFollow");
                         arePhasesValid = false;
                     }
                 } else if (currentPhaseName.equals(APPEALS_PHASE_NAME)) {
@@ -1824,6 +1863,22 @@ public class ProjectActions extends DispatchAction {
                                 "error.com.cronos.onlinereview.actions.editProject.AppealsMustBeFollowed");
                         arePhasesValid = false;
                     }
+                } else if (currentPhaseName.equals(NEW_APPEALS_PHASE_NAME)) {
+                    // Appeals should follow review
+                    if (i == 0 || !previousPhaseName.equals(PRIMARY_REVIEW_EVALUATION_PHASE_NAME) &&
+                                  !postMortemPhaseExists) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.AppealsMustFollow");
+                        arePhasesValid = false;
+                    }
+                    // Appeals should be followed by the appeals response
+                    if (i == projectPhases.length - 1 ||
+                            !nextPhaseName.equals(PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME) &&
+                            !postMortemPhaseExists) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.AppealsMustBeFollowed");
+                        arePhasesValid = false;
+                    }
                 } else if (currentPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME)) {
                     // Appeal response should follow appeals
                     if (i == 0 || !previousPhaseName.equals(APPEALS_PHASE_NAME) &&
@@ -1832,10 +1887,19 @@ public class ProjectActions extends DispatchAction {
                                 "error.com.cronos.onlinereview.actions.editProject.AppealsResponseMustFollow");
                         arePhasesValid = false;
                     }
+                } else if (currentPhaseName.equals(PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME)) {
+                    // Appeal response should follow appeals
+                    if (i == 0 || !previousPhaseName.equals(NEW_APPEALS_PHASE_NAME) &&
+                                  !postMortemPhaseExists) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.AppealsResponseMustFollow");
+                        arePhasesValid = false;
+                    }
                 } else if (currentPhaseName.equals(AGGREGATION_PHASE_NAME)) {
                     // Aggregation should follow appeals response or review, or aggregation review or post-mortem
                     if (i == 0 ||
-                            (!previousPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME) &&
+                            (!previousPhaseName.equals(PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME) &&
+                            !previousPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME) &&
                             !previousPhaseName.equals(REVIEW_PHASE_NAME) &&
                             !previousPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME) &&
                             !postMortemPhaseExists)) {
@@ -1864,14 +1928,14 @@ public class ProjectActions extends DispatchAction {
                 } else if (currentPhaseName.equals(FINAL_FIX_PHASE_NAME)) {
                     // Final fix should follow either appeals response or aggregation review, or final review
                     if (i == 0 ||
-                            (!previousPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME) 
-                             && !previousPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME) 
-							 && !previousPhaseName.equals(AGGREGATION_PHASE_NAME)
-                             && !previousPhaseName.equals(APPROVAL_PHASE_NAME) 
-                             && !(previousPhaseName.equals(REVIEW_PHASE_NAME) && isStudioProject) 
-                             && !previousPhaseName.equals(FINAL_REVIEW_PHASE_NAME))
-                             && !postMortemPhaseExists
-                        ) {
+                            (!previousPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME) && 
+                             !previousPhaseName.equals(PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME) &&
+                            !previousPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME) &&
+                            !previousPhaseName.equals(AGGREGATION_PHASE_NAME) &&
+                            !previousPhaseName.equals(APPROVAL_PHASE_NAME) &&
+                            !(previousPhaseName.equals(REVIEW_PHASE_NAME) && isStudioProject) && 
+                            !postMortemPhaseExists &&
+                            !previousPhaseName.equals(FINAL_REVIEW_PHASE_NAME))) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.FinalFixMustFollow");
                         arePhasesValid = false;
@@ -1906,7 +1970,6 @@ public class ProjectActions extends DispatchAction {
      * @param lazyForm
      * @param dateProperty
      * @param timeProperty
-     * @param ampmProperty
      * @return
      */
     private Date parseDatetimeFormProperties(LazyValidatorForm lazyForm, int propertyIndex, String dateProperty,

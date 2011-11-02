@@ -18,16 +18,16 @@
     <table class="stat" width="100%" cellpadding="0" cellspacing="0"
            style="table-layout: fixed; border-bottom: 1px solid #999999;">
         <tr>
-            <td class="title" width="50%"><bean:message key="viewProjectDetails.box.Timeline" /></td>
+            <td class="title" width="55%"><bean:message key="viewProjectDetails.box.Timeline" /></td>
             <c:if test="${isAllowedToSetTL}">
-                <td class="title" style="text-align:right;" width="50%">
+                <td class="title" style="text-align:right;">
                     <input id="notifCheckbox" type="checkbox" onclick="setTimelineNotification(${project.id}, this)"
                         ${(sendTLNotifications == 'On') ? 'value="On" checked="checked"' : 'value="Off"' } />
                     <label for="notifCheckbox"><bean:message key="viewProjectDetails.ReceiveTLNotifications" /></label>
                 </td>
             </c:if>
             <c:if test="${not isAllowedToSetTL}">
-                <td class="title" width="50%">&#160;</td>
+                <td class="title" width="53%">&#160;</td>
             </c:if>
         </tr>
         <tr>

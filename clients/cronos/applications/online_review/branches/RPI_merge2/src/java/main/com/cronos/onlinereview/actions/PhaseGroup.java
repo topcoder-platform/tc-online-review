@@ -48,6 +48,7 @@ import com.topcoder.project.phases.Phase;
  *     their getter and setter.</li>
  *   </ol>
  * </p>
+ * 
  * <p>
  * Version 1.4.1 (Milestone Support Assembly 1.0) Change notes:
  *   <ol>
@@ -61,9 +62,17 @@ import com.topcoder.project.phases.Phase;
  *     <li>Removed dependency on Auto Screening.</li>
  *   </ol>
  * </p>
- *
+ * 
+ * <p>
+ * Version 1.4.3 (Online Review Update Review Management Process assembly 1 version 1.0) Change notes:
+ *   <ol>
+ *     <li>Expanded the bean with new <code>evaluations</code>, <code>displayEvaluationReviewLinks</code>,
+ *     <code>evaluationReviewCommitted</code>,<code>evaluationPhaseStatus</code>,<code>reviewType</code> properties.</li>
+ *   </ol>
+ * </p>
+ * 
  * @author George1, real_vg, isv, lmmortal
- * @version 1.4.2
+ * @version 1.4.3
  */
 public class PhaseGroup {
 
@@ -240,6 +249,52 @@ public class PhaseGroup {
      * every particular review.
      */
     private int unresolvedAppealsCounts[][] = null;
+    
+
+    /**
+     * This member variable holds the ReviewType that might have been assigned to
+     * this phase group, or <code>null</code> value if no review type has been assigned to the
+     * phase group.
+     *
+     * @see #getReviewType()
+     * @see #setReviewType(String)
+     */
+    private String reviewType = null;
+
+    
+    /**
+     * This member variable holds an evaluation scorecards that might have been assigned to
+     * this phase group, or <code>null</code> value if no such scorecard has been assigned to the
+     * phase group.
+     *
+     * @see #getEvaluations()
+     * @see #setEvaluations(Review[])
+     */
+    private Review[] evaluations= null;
+
+    /**
+     * This member variable holds a value that determines whether a link to display evaluation review links
+     * for the current phase group.
+     *
+     * @see #isDisplayEvaluationReviewLinks()
+     * @see #setDisplayEvaluationReviewLinks(boolean)
+     */
+    private boolean displayEvaluationReviewLinks = false;
+
+    /**
+     * This member variable holds a value that determines whether Evaluations scorecard has been
+     * committed.
+     *
+     * @see #isEvaluationReviewCommitted()
+     * @see #setEvaluationReviewCommitted(boolean)
+     */
+    private boolean evaluationReviewCommitted = false;
+   /**
+     * <p>A <code>long</code> referencing the current status of the <code>Primary Review Evaluation</code> phase.</p>
+     *
+     * @since 
+     */
+    private long evaluationPhaseStatus;
 
     /**
      * This member variable holds an aggregation scorecard that might have been assigned assigned to
@@ -1330,4 +1385,94 @@ public class PhaseGroup {
     public void setMilestoneReviewFinished(boolean milestoneReviewFinished) {
         this.milestoneReviewFinished = milestoneReviewFinished;
     }
+
+	/**
+	 * <p>Gets the Evaluation Reviews.</p>
+	 * @return a <code>Review</code>array listing the existing <code>Primary Evaluation</code> reviews for project.
+	 */
+	public Review[] getEvaluations() {
+		return evaluations;
+	}
+
+	/**
+     * <p>Sets the list of <code>Primary Evaluation</code> review assigned to project.</p>
+     *
+     * @param evaluations a <code>Review</code> array listing the <code>Primary Evaluation</code> reviews.  
+     * @since 1.1
+     */
+	public void setEvaluations(Review[] evaluations) {
+		this.evaluations = evaluations;
+	}
+
+	/**
+     * This method determines whether a user is allowed to see links to Evaluation Reviews when he opens a tab
+     * which this phase group is assigned to.
+     *
+     * @return <code>true</code> if the user is allowed to see evaluation review links, <code>false</code>
+     *         if he isn't.
+     */
+	public boolean isDisplayEvaluationReviewLinks() {
+		return displayEvaluationReviewLinks;
+	}
+
+	/**
+     * This method sets status flag that determines whether a link to Evaluation Review can
+     * be displayed for this phase group.
+     *
+     * @param displayEvaluationReviewLinks
+     *            a value indicating whether a link can be displayed.
+     */
+	public void setDisplayEvaluationReviewLinks(boolean displayEvaluationReviewLinks) {
+		this.displayEvaluationReviewLinks = displayEvaluationReviewLinks;
+	}
+
+	/**
+     * This method determines whether Evaluation Review has been committed.
+     *
+     * @return <code>true</code> if Evaluation review has been committed, <code>false</code> if it
+     *         hasn't.
+     */
+	public boolean isEvaluationReviewCommitted() {
+		return evaluationReviewCommitted;
+	}
+
+	/**
+     * This method sets status flag that determines whether Evaluation Review has been committed.
+     *
+     * @param evaluationReviewCommitted
+     *            a value indicating whether Evaluation Review has been committed.
+     * @since 1.4           
+     */
+	public void setEvaluationReviewCommitted(boolean evaluationReviewCommitted) {
+		this.evaluationReviewCommitted = evaluationReviewCommitted;
+	}
+
+	 /**
+     * <p>Gets the current <code>Primary Review Evaluation</code> phase status.</p>
+     *
+     * @return a <code>long</code> referencing the current status of the <code>Primary Review Evaluation</code> phase.
+     * @since 1.4
+     */
+	public long getEvaluationPhaseStatus() {
+		return evaluationPhaseStatus;
+	}
+
+	/**
+     * <p>Sets the current <code>Primary Review Evaluation</code> phase status.</p>
+     *
+     * @param evaluationPhaseStatus a <code>long</code> referencing the current status of the <code>Primary Review Evaluation</code>
+     *        phase.
+     * @since 1.4
+     */
+	public void setEvaluationPhaseStatus(long evaluationPhaseStatus) {
+		this.evaluationPhaseStatus = evaluationPhaseStatus;
+	}
+
+	public String getReviewType() {
+		return reviewType;
+	}
+
+	public void setReviewType(String reviewType) {
+		this.reviewType = reviewType;
+	}
 }

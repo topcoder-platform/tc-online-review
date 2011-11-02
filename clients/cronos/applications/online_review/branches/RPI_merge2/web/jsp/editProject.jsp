@@ -1,7 +1,7 @@
 <%--
-  - Author: pulky, isv, TCSDEVELOPER
+  - Author: pulky, isv, TCSASSEMBER
   - Version: 1.3.2
-  - Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
+  - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays project edition page
   -
@@ -16,10 +16,12 @@
   - Version 1.3.1 (SVN Automation and Late Deliverables Tracking Assembly 1.0) changes: SVN Module property is no longer
   - editable
   -
+  - Version 1.3.2 (Online Review Update Review Management Release assembly 4 ) changes: Fix the bug of number of reviewers field for
+  - Secondary Reviewer Review phase.
+  -
   - Version 1.3.2 (Milestone Support assembly) changes: Added support for Milestone phases.
   -
   - Version 1.4 (Online Review Status Validation Assembly 1.0) changes: added error display of validation for status field
-  -
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -65,6 +67,7 @@
         var lastResourceIndex = ${fn:length(projectForm.map['resources_id']) - 1};
         var lastPhaseIndex = ${fn:length(projectForm.map['phase_id']) - 1};
         var nameCellIndex = ${newProject ? 0 : 1};
+        var defaultSecondaryReviewers = ${requestScope.default_required_secondary_reviewers};
 
         var resourceRoleToPhaseTypeMap = {};
         <c:forEach items="${resourceRoles}" var="resourceRole">
@@ -498,7 +501,7 @@
             var criterionRow = null;
             // TODO: Should be done in locale-independent way
             // Check if the phase should have a criterion row and at it if it is needed
-            if (phaseName == "Screening" || phaseName == "Review" || phaseName == "Approval" ||
+            if (phaseName == "Screening" || phaseName == "Specification Review" || phaseName == "Review" || phaseName == "Secondary Reviewer Review" || phaseName == "Approval" ||
                     phaseName == "Registration" || phaseName == "Appeals"
                     || phaseName == "Post-Mortem" || phaseName == "Milestone Screening" 
                     || phaseName == "Milestone Review") {
@@ -506,6 +509,8 @@
                 if (phaseName == "Screening") {
                       templateRow = document.getElementById("screening_scorecard_row_template");
                 } else if (phaseName == "Review") {
+                      templateRow = document.getElementById("review_scorecard_row_template");
+                } else if (phaseName == "Secondary Reviewer Review") {
                       templateRow = document.getElementById("review_scorecard_row_template");
                 } else if (phaseName == "Approval") {
                       templateRow = document.getElementById("approval_scorecard_row_template");
@@ -524,6 +529,9 @@
                 }
 
                  criterionRow = cloneInputRow(templateRow);
+                 if (phaseName == "Secondary Reviewer Review") {
+                     criterionRow.getElementsByTagName('input')[0].value = defaultSecondaryReviewers;
+                 }
 
                  // Assign the id
                 criterionRow.id = getUniqueId();
@@ -539,6 +547,8 @@
                  if (phaseName == "Screening") {
                     screeningScorecardNodes[screeningScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
                 } else if (phaseName == "Review") {
+                    reviewScorecardNodes[reviewScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
+                } else if (phaseName == "Secondary Reviewer Review") {
                     reviewScorecardNodes[reviewScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
                 } else if (phaseName == "Approval") {
                     approvalScorecardNodes[approvalScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
@@ -878,6 +888,7 @@
                     // operation succeeded
                     // Populate project phases using loaded template
                     populateTimeLineFromTemplate(respXML.getElementsByTagName("timeline")[0]);
+                    onProjectCategoryChange(document.getElementsByName("project_category")[0]);
                 },
                 function (result, respXML) {
                     // operation failed, alert the error message to the user

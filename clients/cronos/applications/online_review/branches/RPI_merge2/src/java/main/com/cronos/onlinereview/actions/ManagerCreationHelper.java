@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
+import com.cronos.onlinereview.phases.GenericAppealPhaseHandler;
 import com.cronos.onlinereview.phases.MilestoneSubmissionPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler;
@@ -17,10 +18,13 @@ import com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRMilestoneReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRMilestoneScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRPostMortemPhaseHandler;
+import com.cronos.onlinereview.phases.PRPrimaryReviewAppealResponsePhaseHandler;
 import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
 import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
+import com.cronos.onlinereview.phases.PrimaryReviewEvaluationPhaseHandler;
+import com.cronos.onlinereview.phases.SecondaryReviewerReviewPhaseHandler;
 import com.cronos.onlinereview.phases.SpecificationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.SpecificationSubmissionPhaseHandler;
 import com.cronos.onlinereview.services.uploads.ManagersProvider;
@@ -51,15 +55,12 @@ import com.topcoder.management.resource.search.ResourceRoleFilterBuilder;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardManagerImpl;
 import com.topcoder.management.review.DefaultReviewManager;
-import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.management.review.ReviewManager;
 
 import com.topcoder.management.deliverable.DeliverableChecker;
 import com.topcoder.management.deliverable.DeliverableManager;
-import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistence;
 import com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersistence;
-import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
 import com.topcoder.management.deliverable.PersistenceDeliverableManager;
 import com.cronos.onlinereview.deliverables.AggregationDeliverableChecker;
 import com.cronos.onlinereview.deliverables.AggregationReviewDeliverableChecker;
@@ -148,9 +149,17 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  *     <li>Removed dependency on Auto Screening.</li>
  *   </ol>
  * </p>
+ * 
+ * <p>
+ * Version 1.9 (Online Review Update Review Management Process assembly 2) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #getPhaseManager()} method to set handler for <code>New Appeals</code> and
+ *     <code>Primary Review Appeals Response</code> phases.</li>
+ *   </ol>
+ * </p>
  *
  * @author evilisneo, BeBetter, isv, FireIce, VolodymyrK, rac_, flexme, lmmortal
- * @version 1.8
+ * @version 1.9
  */
 public class ManagerCreationHelper implements ManagersProvider {
 
@@ -275,10 +284,18 @@ public class ManagerCreationHelper implements ManagersProvider {
                     Constants.SCREENING_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRReviewPhaseHandler(),
                     Constants.REVIEW_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new SecondaryReviewerReviewPhaseHandler(),
+                    Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PrimaryReviewEvaluationPhaseHandler(),
+                    Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new AppealsPhaseHandler(),
                     Constants.APPEALS_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new GenericAppealPhaseHandler(),
+                    Constants.NEW_APPEALS_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAppealResponsePhaseHandler(),
                     Constants.APPEALS_RESPONSE_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRPrimaryReviewAppealResponsePhaseHandler(),
+                    Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAggregationPhaseHandler(),
                     Constants.AGGREGATION_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAggregationReviewPhaseHandler(),
@@ -506,6 +523,7 @@ public class ManagerCreationHelper implements ManagersProvider {
                 checkers.put(Constants.SCREENING_DELIVERABLE_NAME, new IndividualReviewDeliverableChecker(dbconn));
                 checkers.put(Constants.PRIMARY_SCREENING_DELIVERABLE_NAME, committedChecker);
                 checkers.put(Constants.REVIEW_DELIVERABLE_NAME, committedChecker);
+                checkers.put(Constants.NEW_REVIEW_DELIVERABLE_NAME, committedChecker);
                 checkers.put(Constants.ACC_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);
                 checkers.put(Constants.FAIL_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);
                 checkers.put(Constants.STRS_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);

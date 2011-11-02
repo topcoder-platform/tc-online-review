@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,9 +40,11 @@ import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.review.ReviewEntityNotFoundException;
+import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
 import com.topcoder.management.review.data.CommentType;
+import com.topcoder.management.review.data.EvaluationType;
 import com.topcoder.management.review.data.Item;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.management.review.data.ReviewEditor;
@@ -52,8 +55,8 @@ import com.topcoder.management.review.scorecalculator.CalculationManager;
 import com.topcoder.management.review.scorecalculator.ScoreCalculator;
 import com.topcoder.management.review.scorecalculator.ScorecardMatrix;
 import com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder;
-import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.PersistenceException;
+import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.data.Group;
 import com.topcoder.management.scorecard.data.Question;
 import com.topcoder.management.scorecard.data.Scorecard;
@@ -83,6 +86,10 @@ import com.topcoder.util.weightedcalculator.LineItem;
  * <li>Edit Review</li>
  * <li>Save Review</li>
  * <li>View Review</li>
+ * <li>Create Review Evaluation</li>
+ * <li>Edit Review Evaluation</li>
+ * <li>Save Review Evaluation</li>
+ * <li>View Review Evaluation</li>
  * <li>Edit Aggregation</li>
  * <li>Save Aggregation</li>
  * <li>View Aggregation</li>
@@ -175,6 +182,21 @@ import com.topcoder.util.weightedcalculator.LineItem;
  * </p>
  *
  * <p>
+ * Version 1.3 (Online Review Update Review Management Process assembly 1 version 1.0) Change notes:
+ *   <ol>
+ *     <li>Added logic for processing review evaluation.</li>
+ *     <li>Added {@link #createReviewEvaluation(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} to add logic for
+ *    creating new review evaluation for Review Evaluation phase.</li>
+ *     <li>Added {@link #editReviewEvaluation(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} to add logic for
+ *    edit review evaluation for Review Evaluation phase.</li>
+ *     <li>Added {@link #viewReviewEvaluation(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse))} to add logic for
+ *     view evaluation.</li>
+ *     <li>Added {@link #saveReviewEvaluation(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} to add logic for
+ *     saving review evaluation.</li>
+ *   </ol>
+ * </p>
+ *
+ * <p>
  * Version 1.4 (Online Review Status Validation Assembly 1.0) Change notes:
  *   <ol>
  *     <li>Methods adjusted for new signatures of create managers methods from ActionsHelper</li>
@@ -183,8 +205,28 @@ import com.topcoder.util.weightedcalculator.LineItem;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, isv, FireIce, rac_
- * @version 1.4
+ * <p>
+ * Version 1.4 (Online Review Update Review Management Process assembly 2) Change notes:
+ *   <ol>
+ *     <li>Change <code>FIRST_APPEALS_PHASE_NAME</code> to <code>NEW_APPEALS_PHASE_NAME</code>.</li>
+ *     <li>Update {@link #viewGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} method to work for the
+ *     new <code>Secondary Reviewer Review</code> review.</li>
+ *     <li>Update {@link #getCommentAppeal(Comment[], long)} and {@link #getCommentAppealResponse(Comment[], long)} method to return
+ *     a list of comments.</li>
+ *   </ol>
+ * </p>
+ *
+ * <p>
+ * Version 1.5 (Online Review Update Review Management Process assembly 4) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #saveReviewEvaluation(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method
+ *     to fix the bugs when saving Primary Review Evaluation Comments.</li>
+ *     <li>Updated {@link #viewAggregationReview(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method
+ *     to to fix bug when checking whether the Aggregation Review is committed.</li>
+ * </p>
+ *
+ * @author George1, real_vg, isv, TCSASSEMBER
+ * @version 1.5
  */
 public class ProjectReviewActions extends DispatchAction {
     private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory
@@ -209,6 +251,12 @@ public class ProjectReviewActions extends DispatchAction {
      */
     private static final int MANAGER_COMMENTS_NUMBER = 1;
 
+    /**
+     * array of comment types to be copied from individual review scorecards to
+     * new evaluation scorecard.
+     */
+    private static final String[] COMMENT_TYPES_TO_COPY = new String[] {
+        "Comment", "Required", "Recommended"};
     /**
      * This member variable holds the all possible values of answers to &#39;Scale&#160;(1-4)&#39;
      * and &#39;Scale&#160;(1-10)&#39; types of scorecard question.
@@ -397,6 +445,36 @@ public class ProjectReviewActions extends DispatchAction {
         LoggingHelper.logAction(request);
         return createGenericReview(mapping, form, request, "Review");
     }
+    
+    /**
+     * This method is an implementation of &quot;Create Secondary Review&quot; Struts Action defined for this
+     * assembly, which is supposed to gather needed information (scorecard template) and present it
+     * to editReview.jsp page, which will fill the required fields and post them to the &quot;Save
+     * Review&quot; Action. The action implemented by this method is executed to edit review that
+     * does not exist yet, and hence is supposed to be created.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent submission id, or the lack of
+     *         permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward createSecondaryReview(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return createGenericReview(mapping, form, request, "Secondary Review");
+    }
 
     /**
      * This method is an implementation of &quot;Edit Review&quot; Struts Action defined for this
@@ -428,6 +506,37 @@ public class ProjectReviewActions extends DispatchAction {
         LoggingHelper.logAction(request);
         return editGenericReview(mapping, form, request, "Review");
     }
+    
+    /**
+     * This method is an implementation of &quot;Edit Secondary Review&quot; Struts Action defined for this
+     * assembly, which is supposed to gather needed information (review and scorecard template) and
+     * present it to editReview.jsp page, which will fill the required fields and post them to the
+     * &quot;Save Review&quot; action. The action implemented by this method is executed to edit
+     * review that has already been created, but has not been submitted yet, and hence is supposed
+     * to be edited.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward editSecondaryReview(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return editGenericReview(mapping, form, request, "Secondary Review");
+    }
 
     /**
      * This method is an implementation of &quot;Save Review&quot; Struts Action defined for this
@@ -456,6 +565,34 @@ public class ProjectReviewActions extends DispatchAction {
         LoggingHelper.logAction(request);
         return saveGenericReview(mapping, form, request, "Review");
     }
+    
+    /**
+     * This method is an implementation of &quot;Save Secondary Review&quot; Struts Action defined for this
+     * assembly, which is supposed to save information posted from /jsp/editReview.jsp page. This
+     * method will either create new review or update (edit) an existing one depending on which
+     * action was called to display /jsp/editReview.jsp page.
+     *
+     * @return &quot;success&quot; forward, which forwards to the &quot;View Project Details&quot;
+     *         action, or &quot;userError&quot; forward, which forwards to the /jsp/userError.jsp
+     *         page, which displays information about an error that is usually caused by incorrect
+     *         user input (such as absent submission id, or the lack of permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward saveSecondaryReview(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return saveGenericReview(mapping, form, request, "Secondary Review");
+    }
 
     /**
      * This method is an implementation of &quot;View Review&quot; Struts Action defined for this
@@ -463,7 +600,8 @@ public class ProjectReviewActions extends DispatchAction {
      *
      * @return &quot;success&quot; forward, which forwards to the /jsp/viewReview.jsp page (as
      *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
-     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         to the /jsp/use
+     *         rError.jsp page, which displays information about an error that is
      *         usually caused by incorrect user input (such as absent review id, or the lack of
      *         permissions, etc.).
      * @param mapping
@@ -482,6 +620,785 @@ public class ProjectReviewActions extends DispatchAction {
         throws BaseException {
         LoggingHelper.logAction(request);
         return viewGenericReview(mapping, form, request, "Review");
+    }
+
+    /**
+     * This method is an implementation of &quot;View Secondary Review&quot; Struts Action defined for this
+     * assembly, which is supposed to view completed review.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/viewReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/use
+     *         rError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward viewSecondaryReview(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return viewGenericReview(mapping, form, request, "Secondary Review");
+    }
+    /**
+     * This method is an implementation of &quot;Create Review Evaluation&quot; Struts Action defined for this
+     * assembly, which is supposed to gather needed information (scorecard template) and present it
+     * to editReviewEvaluation.jsp page, which will fill the required fields and post them to the &quot;Save
+     * ReviewEvaluation&quot; Action. This method accepts a rid ( which is the rid which is supposed to be evaluated) 
+     * The action implemented by this method is executed to create review that
+     * does not exist yet, and hence is supposed to be created.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent submission id, or the lack of
+     *         permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward createReviewEvaluation(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        
+        // Verify that certain requirements are met before proceeding with the Action
+        CorrectnessCheckResult verification =
+                checkForCorrectReviewId(mapping, request, Constants.PERFORM_PRIMARY_REVIEW_EVALUATION_PERM_NAME);
+        
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Verify that user has the permission to perform review evaluation
+        if (!AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_PRIMARY_REVIEW_EVALUATION_PERM_NAME)) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_PRIMARY_REVIEW_EVALUATION_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
+        }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
+
+        // Retrieve a review to edit
+        Review reviewerReview = verification.getReview();
+        
+        // Get current project
+        Project project = verification.getProject();
+
+        // Get an array of all phases for the project
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
+        // Get active (current) phase
+        Phase phase = ActionsHelper.getPhase(phases, true, Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME);
+        // Check that the phase in question is really active (open)
+        if (phase == null) {
+            return ActionsHelper.produceErrorReport(
+                        mapping, getResources(request), request, Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME, "Error.IncorrectPhase", null);
+        }
+        // Obtain an instance of Review Manager
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
+        // Get "My" resource for the appropriate phase
+        Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
+        /*
+         * Verify that the user is not trying to create an evaluation review that already exists
+         */
+        Long evaluationReviewId = reviewerReview.getReviewEvaluation();
+        Review evaluationReview = null;
+        if (evaluationReviewId >= 0 ) {
+	        try{
+	        	evaluationReview = revMgr.getReview(evaluationReviewId);
+	        } catch (ReviewManagementException e){
+	        	
+	        }
+        }
+        // If there are no evaluation review created for this review
+        if ( evaluationReview == null ) {
+        	evaluationReview = new Review();
+        	ReviewEditor reviewEvaluationEditor =
+                new ReviewEditor(evaluationReview,Long.toString(AuthorizationHelper.getLoggedInUserId(request))); 
+        	reviewEvaluationEditor.setScorecard(reviewerReview.getScorecard());
+        	reviewEvaluationEditor.setSubmission(reviewerReview.getSubmission());
+        	
+    		ActionsHelper.copyComments(reviewerReview, evaluationReview,
+                    COMMENT_TYPES_TO_COPY, null);
+    		ActionsHelper.copyReviewItems(reviewerReview, evaluationReview,
+                        COMMENT_TYPES_TO_COPY);
+            
+        	reviewEvaluationEditor.setAuthor(myResource.getId());
+        	revMgr.createReview(evaluationReview, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        	// Update the reviewEvaluation column for the secondary review with this evaluation review 
+            reviewerReview.setReviewEvaluation(evaluationReview.getId());
+            revMgr.updateReview(reviewerReview, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        } else {
+        	if ( evaluationReview.isCommitted()){
+        		return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.PERFORM_PRIMARY_REVIEW_EVALUATION_PERM_NAME, "Error.ReviewCommitted", null);
+        	}
+        }
+        
+        return ActionsHelper.cloneForwardAndAppendToPath(
+                    mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&rid="+ reviewerReview.getId());
+    }
+
+    /**
+     * This method is an implementation of &quot;Edit Review Evaluation&quot; Struts Action defined for this
+     * assembly, which is supposed to gather needed information (review and scorecard template) and
+     * present it to editReviewEvaluation.jsp page, which will fill the evaluation and post them to the
+     * &quot;Save ReviewEvaluation&quot; action. The action implemented by this method is executed to edit
+     * review that has already been created, but has not been submitted yet, and hence is supposed
+     * to be edited.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward editReviewEvaluation(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        
+
+        // Verify that certain requirements are met before proceeding with the Action
+        CorrectnessCheckResult verification =
+                checkForCorrectReviewId(mapping, request, Constants.PERFORM_PRIMARY_REVIEW_EVALUATION_PERM_NAME);
+        
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+        
+        // Retrieve a review to edit
+        Review review = verification.getReview();
+        Project project = verification.getProject();
+        
+        // Get an array of all phases for the project
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
+        // Get active (current) phase
+        Phase phase = ActionsHelper.getPhase(phases, true, Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME);
+        // Check that the phase in question is really active (open)
+        if (phase == null) {
+            return ActionsHelper.produceErrorReport(
+                        mapping, getResources(request), request, Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME, "Error.IncorrectPhase", null);
+        }
+
+        //Obtain an instance of Review Manager
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
+        Long evaluationReviewId = review.getReviewEvaluation();
+        Review evaluationReview = null;
+        if (evaluationReviewId >= 0 ) {
+	        try{
+	        	evaluationReview = revMgr.getReview(evaluationReviewId);
+	        } catch (ReviewManagementException e){
+	        	
+	        }
+        }
+        
+        if (evaluationReview == null ){
+        	return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    null, "Error.EvaluationNotCreated", null);
+        }
+        
+        boolean managerEdit = false;
+        // Check if evaluation review has been committed
+        if (evaluationReview.isCommitted()) {
+            // If user has a Manager or Global Manager role, put special flag to the request
+            // indicating that we need "Manager Edit"
+            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
+                request.setAttribute("managerEdit", Boolean.TRUE);
+                managerEdit = true;
+            } else {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                            Constants.PERFORM_PRIMARY_REVIEW_EVALUATION_PERM_NAME, "Error.ReviewCommitted", null);
+            }
+        }
+        // Verify that user has the permission to edit review evaluation
+        if (!AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_PRIMARY_REVIEW_EVALUATION_PERM_NAME) && !managerEdit) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_PRIMARY_REVIEW_EVALUATION_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
+        }
+        // 	Obtain an instance of Resource Manager
+        ResourceManager resMgr = ActionsHelper.createResourceManager();
+        // Get the list of all possible resource roles
+        ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
+
+        // Create filters to select Review Evaluators for the project
+        Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(verification.getProject().getId());
+        Filter filterRole = ResourceFilterBuilder.createResourceRoleIdFilter(
+                ActionsHelper.findResourceRoleByName(allResourceRoles, Constants.PRIMARY_REVIEW_EVALUATOR_ROLE_NAME).getId());
+        // Combine the upper two filter
+        Filter filterReviewEvaluators = new AndFilter(filterProject, filterRole);
+        // Fetch all Review Evaluators for the project
+        Resource[] reviewEvaluators = resMgr.searchResources(filterReviewEvaluators);
+        // there cannot be any Review Evaluation. Signal about the error to the user
+        if (reviewEvaluators.length == 0) {
+            return ActionsHelper.produceErrorReport(mapping, messages, request,
+                    Constants.VIEW_REVIEW_EVALUATION_PERM_NAME, "Error.NoReviewEvaluations", null);
+        }
+        
+        // Obtain an instance of Scorecard Manager
+        ScorecardManager scorMgr = ActionsHelper.createScorecardManager();
+        // Retrieve a scorecard template for the review
+        Scorecard scorecardTemplate = scorMgr.getScorecard(review.getScorecard());      
+
+        // Retrieve some basic review info and store it in the request
+        retrieveAndStoreBasicReviewInfo(request, verification, "Review Evaluation", scorecardTemplate);
+        
+        retrieveAndStoreReviewAuthorInfo(request,evaluationReview);
+        
+        retrieveAndStoreReviewerIdInfo(request, verification.getReview());
+                
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
+
+        // Retrive some look-up data and store it into the request
+        CommentType[] commentTypes = revMgr.getAllCommentTypes();
+        request.setAttribute("allCommentTypes", commentTypes);
+
+        // Retrieve Evaluation Types
+        EvaluationType[] evaluationtypes = retreiveAndStoreEvaluationTypeData(request);
+        // Prepare the arrays
+        String[] answers = new String[review.getNumberOfItems()];
+
+        
+        int numberOfItems = review.getNumberOfItems();
+        LazyValidatorForm reviewForm = (LazyValidatorForm) form;
+
+        // Walk the items in the review setting appropriate values in the arrays
+        for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
+            Group group = scorecardTemplate.getGroup(groupIdx);
+            for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
+                Section section = group.getSection(sectionIdx);
+                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx) {
+                    Question question = section.getQuestion(questionIdx);
+                    long questionId = question.getId();
+
+                    for (int itemIdx  = 0; itemIdx  < numberOfItems; ++itemIdx) {
+                        if (review.getItem(itemIdx ).getQuestion() != questionId) {
+                            continue;
+                        }
+                        // Get an item
+
+                        Item item = review.getItem(itemIdx);
+                        Comment[] allComments = item.getAllComments(); //(managerEdit) ? getItemManagerComments(item) : getItemEvaluatorComments(item);
+                        Comment[] othercomments = (managerEdit) ? getItemManagerComments(item) : getItemEvaluatorComments(item);
+                        answers[itemIdx] = (String) item.getAnswer();
+
+                        reviewForm.set("comment_eval_type", itemIdx  + ".0", null);
+        	          reviewForm.set("comment_type", itemIdx  + ".0", null);
+              	   reviewForm.set("comment", itemIdx  + ".0", "");
+
+                        int commentcount = allComments.length;
+	                 for (int commentIdx = 0; commentIdx < allComments.length; ++commentIdx) {
+	                 Comment comment = allComments[commentIdx];
+                        String commentKey = itemIdx  + "." + (commentIdx + 1);
+                        reviewForm.set("comment", commentKey, (comment != null) ? comment.getComment() : "");
+                        reviewForm.set("comment_type", commentKey,
+                                new Long((comment != null) ? comment.getCommentType().getId() :
+                                    ActionsHelper.findCommentTypeByName(commentTypes, "Comment").getId()));
+                        reviewForm.set("comment_eval_type", commentKey,
+                                new Long((comment != null && comment.getEvaluationType() != null) ? comment.getEvaluationType().getId() :
+                                    ActionsHelper.findEvaluationTypeByName(evaluationtypes, "Comment").getId()));
+                        }
+                    
+                        final int othercommentCount =  Math.max(othercomments.length, (managerEdit) ? MANAGER_COMMENTS_NUMBER : DEFAULT_COMMENTS_NUMBER);
+                        if (othercommentCount != othercomments.length) {
+	                    for (int otherCommentIdx = 0; otherCommentIdx < othercommentCount; ++otherCommentIdx) {
+	                    	Comment comment = null;
+	                        String commentKey = itemIdx + "." + (allComments.length + otherCommentIdx + 1);
+	                        reviewForm.set("comment", commentKey, (comment != null) ? comment.getComment() : "");
+	                        if (managerEdit) {
+	                        	reviewForm.set("comment_type", commentKey,ActionsHelper.findCommentTypeByName(commentTypes, "Manager Comment").getId());
+	                        } else {
+	                        	reviewForm.set("comment_type", commentKey,ActionsHelper.findCommentTypeByName(commentTypes, "Primary Review Evaluation Comment").getId());
+	                        }
+	                    }
+	                    commentcount =  commentcount + othercommentCount;
+                        } else {
+                    	
+                        }
+                        reviewForm.set("comment_count", itemIdx , new Integer(commentcount));
+                    }
+                }
+            }
+        }
+
+        //if (!managerEdit) {
+        //    request.setAttribute("uploadedFileIds", collectUploadedFileIds(scorecardTemplate, review));
+        //}
+        
+        reviewForm.set("answer", answers);
+        if (managerEdit){
+        	request.setAttribute("viewEvaluation", Boolean.TRUE);
+        } else {
+        	request.setAttribute("editEvaluation", Boolean.TRUE);
+        }
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+
+    }
+
+    /**
+     * This method is an implementation of &quot;Save Review Evaluation&quot; Struts Action defined for this
+     * assembly, which is supposed to save information posted from /jsp/editReviewEvaluation.jsp page. This
+     * method will either update (edit) an existing review depending on which
+     * action was called to display /jsp/editReviewEvaluation.jsp page.
+     *
+     * @return &quot;success&quot; forward, which forwards to the &quot;View Project Details&quot;
+     *         action, or &quot;userError&quot; forward, which forwards to the /jsp/userError.jsp
+     *         page, which displays information about an error that is usually caused by incorrect
+     *         user input (such as absent submission id, or the lack of permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward saveReviewEvaluation(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        
+        // Verify that certain requirements are met before proceeding with the Action
+        CorrectnessCheckResult verification = checkForCorrectReviewId(mapping, request, Constants.PERFORM_PRIMARY_REVIEW_EVALUATION_PERM_NAME);
+
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Get current project
+        Project project = verification.getProject();
+
+        // Get an array of all phases for the project
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
+        // Get active (current) phase
+        Phase phase = ActionsHelper.getPhase(phases, true, Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME);
+        // Check that the phase in question is really active (open)
+        if (phase == null) {
+            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
+                // Managers can edit reviews in any phase
+                phase = ActionsHelper.getPhase(phases, false, Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME);
+            } else {
+                return ActionsHelper.produceErrorReport(
+                        mapping, getResources(request), request, Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME, "Error.IncorrectPhase", null);
+            }
+        }
+        
+        Review review = verification.getReview();
+        
+        //Obtain an instance of Review Manager
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
+        Long evaluationReviewId = review.getReviewEvaluation();
+        Review evaluationReview = null;
+        if (evaluationReviewId >= 0 ) {
+	        try{
+	        	evaluationReview = revMgr.getReview(evaluationReviewId);
+	        } catch (ReviewManagementException e){
+	        	
+	        }
+        }
+        
+        if (evaluationReview == null ){
+        	return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    null, "Error.EvaluationNotCreated", null);
+        }
+
+        boolean managerEdit = false;
+        // Check if review has been committed
+        if (evaluationReview.isCommitted()) {
+            // If user has a Manager or Global Manager role, put special flag to the request
+            // indicating that we need "Manager Edit"
+            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
+                request.setAttribute("managerEdit", Boolean.TRUE);
+                managerEdit = true;
+            } else {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                            Constants.PERFORM_PRIMARY_REVIEW_EVALUATION_PERM_NAME, "Error.ReviewCommitted", null);
+            }
+        }
+        // Verify that user has the permission to edit review evaluation
+        if (!AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_PRIMARY_REVIEW_EVALUATION_PERM_NAME) && !managerEdit) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_PRIMARY_REVIEW_EVALUATION_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
+        }
+        //	Obtain an instance of Resource Manager
+        ResourceManager resMgr = ActionsHelper.createResourceManager();
+        // 	Get the list of all possible resource roles
+        ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
+
+        // Create filters to select Review Evaluators for the project
+        Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(verification.getProject().getId());
+        Filter filterRole = ResourceFilterBuilder.createResourceRoleIdFilter(
+                ActionsHelper.findResourceRoleByName(allResourceRoles, Constants.PRIMARY_REVIEW_EVALUATOR_ROLE_NAME).getId());
+        // Combine the upper two filter
+        Filter filterReviewEvaluators = new AndFilter(filterProject, filterRole);
+        // Fetch all Review Evaluators for the project
+        Resource[] reviewEvaluators = resMgr.searchResources(filterReviewEvaluators);
+        // there cannot be any Review Evaluation. Signal about the error to the user
+        if (reviewEvaluators.length == 0) {
+            return ActionsHelper.produceErrorReport(mapping, messages, request,
+                    Constants.VIEW_REVIEW_EVALUATION_PERM_NAME, "Error.NoReviewEvaluations", null);
+        }
+        
+        // Get "My" resource for the appropriate phase
+        Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
+        // If no resource found for particular phase, try to find resource without phase assigned
+        if (myResource == null) {
+            myResource = ActionsHelper.getMyResourceForPhase(request, null);
+        }
+        if (myResource == null) {
+            myResource = (Resource) request.getAttribute("global_resource");
+        }
+
+        // Obtain an instance of Scorecard Manager
+        ScorecardManager scorMgr = ActionsHelper.createScorecardManager();
+        // Retrieve a scorecard template for the review
+        Scorecard scorecardTemplate = scorMgr.getScorecard(review.getScorecard());      
+        LazyValidatorForm evaluationForm = (LazyValidatorForm) form;
+        
+        //Get form's fields
+        String[] answers = (String[]) evaluationForm.get("answer");
+        Map<String, String> comments = (Map<String, String>) evaluationForm.get("comment");
+        Map<String, String> commentEvalTypes = (Map<String, String>) evaluationForm.get("comment_eval_type");
+        
+        // Retrieve all comment types
+        CommentType[] allCommentTypes = revMgr.getAllCommentTypes();
+        // Retrieve all evaluation types types
+        EvaluationType[] evaluationTypes = revMgr.getAllEvaluationTypes();
+        int numberOfItems = review.getNumberOfItems();
+        
+        CommentType managerCommentType = ActionsHelper.findCommentTypeByName(allCommentTypes, "Manager Comment");
+        CommentType primaryReviewEvaluatorCommentType = ActionsHelper.findCommentTypeByName(allCommentTypes, "Primary Review Evaluation Comment");
+
+        for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
+            Group group = scorecardTemplate.getGroup(groupIdx);
+            for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
+                Section section = group.getSection(sectionIdx);
+                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++ questionIdx) {
+                    Question question = section.getQuestion(questionIdx);
+                    long questionId = question.getId();
+
+                    for (int itemIdx = 0; itemIdx < numberOfItems; ++itemIdx) {
+                        if (review.getItem(itemIdx).getQuestion() != questionId) {
+                            continue;
+                        }
+                        // Get an item
+                        Item item = review.getItem(itemIdx);
+                        if (answers[itemIdx] != null ) {
+                        	item.setAnswer(answers[itemIdx]);
+                        }
+                        String commentEvalType = null;
+                        for (int commentIdx = 0; commentIdx < item.getNumberOfComments(); ++commentIdx) {
+                            Comment comment = item.getComment(commentIdx);
+                            String commentKey = itemIdx + "." + (commentIdx + 1);
+                            String typeName = comment.getCommentType().getName();
+                            if ( ActionsHelper.isReviewerComment(comment) && !managerEdit ) {
+                            	commentEvalType = commentEvalTypes.get(commentKey);
+                            	if (commentEvalType != null ){
+                            		comment.setEvaluationType(ActionsHelper.findEvaluationTypeById(evaluationTypes, Long.valueOf(commentEvalType)));
+                            	}
+                            }
+                            boolean validComment = managerEdit ? ActionsHelper.isManagerComment(comment) : ActionsHelper.isEvaluatorComment(comment); 
+                            if (validComment) {
+                            	String commentValue = comments.get(commentKey);
+                            	if ( commentValue != null ){
+                            		comment.setComment(commentValue);
+                            		comments.remove(commentKey);
+                            	}
+                            }
+                        }
+                        Iterator<String> iterator = comments.keySet().iterator();
+                        while(iterator.hasNext()){
+                        	String commentKey = iterator.next();
+                        	String commentValue = comments.get(commentKey);
+                        	if (commentKey.startsWith(itemIdx + ".") && commentValue != null && commentValue.trim().length() > 0 ) {
+                        		Comment newcomment = new Comment();
+                            	newcomment.setComment(commentValue);
+                            	newcomment.setCommentType(managerEdit ?  managerCommentType : primaryReviewEvaluatorCommentType);
+                            	newcomment.setAuthor(myResource.getId());
+                            	item.addComment(newcomment);
+                        	}
+                        }
+                        itemIdx++;
+                    }
+                }
+            }
+        }
+
+
+    	Comment reviewLevelComment = null;
+
+        for (int i = 0; i < review.getNumberOfComments(); ++i) {
+            Comment comment = review.getComment(i);
+            if (comment.getCommentType().getName().equalsIgnoreCase("Primary Review Evaluation Comment")) {
+                reviewLevelComment = comment;
+                break;
+            }
+        }
+
+        if (reviewLevelComment == null) {
+            reviewLevelComment = new Comment();
+            reviewLevelComment.setCommentType(
+                    ActionsHelper.findCommentTypeByName(allCommentTypes, "Primary Review Evaluation Comment"));
+            review.addComment(reviewLevelComment);
+        }
+
+        reviewLevelComment.setAuthor(myResource.getId());
+        reviewLevelComment.setExtraInfo("Evaluating");
+        reviewLevelComment.setComment("");
+        // This variable determines if 'Save and Mark Complete' button has been clicked
+        final boolean commitRequested = "submit".equalsIgnoreCase(request.getParameter("save"));
+        // This variable determines if Preview button has been clicked
+        final boolean previewRequested = "preview".equalsIgnoreCase(request.getParameter("save"));
+
+
+        boolean validationSucceeded =
+            (commitRequested || managerEdit ) ? validateEvaluationScorecard(request, scorecardTemplate, review, false) : true;
+
+        // If the user has requested to complete the review
+        if (validationSucceeded && (commitRequested || managerEdit)) {
+        	 // Obtain an instance of CalculationManager
+            CalculationManager scoreCalculator = new CalculationManager();
+            // Compute scorecard's score
+            float newScore = scoreCalculator.getScore(scorecardTemplate, review);
+            reviewLevelComment.setExtraInfo("Evaluated");
+            review.setScore(new Float(newScore));
+            evaluationReview.setScore(review.getScore());
+            evaluationReview.setInitialScore(review.getInitialScore());
+            if (commitRequested)
+            	evaluationReview.setCommitted(true);
+        } else if (previewRequested) {
+            // Put the review object into the request
+            request.setAttribute("review", review);
+            // 
+            request.setAttribute("viewEvaluation", Boolean.TRUE);
+            // Retrieve some basic review info and store it in the request
+            retrieveAndStoreBasicReviewInfo(request, verification, "Review Evaluation", scorecardTemplate);
+            
+            retrieveAndStoreReviewAuthorInfo(request,evaluationReview);
+            
+            retrieveAndStoreReviewerIdInfo(request, verification.getReview());
+
+            // Forward to preview page
+            return mapping.findForward(Constants.PREVIEW_FORWARD_NAME);
+        }
+
+        if (!validationSucceeded) {
+            // Put the review object into the request
+            request.setAttribute("review", review);
+            
+            // Retrieve some basic review info and store it in the request
+            retrieveAndStoreBasicReviewInfo(request, verification, "Review Evaluation", scorecardTemplate);
+            // Retrieve some look-up data and store it into the request
+            retrieveAndStoreReviewAuthorInfo(request,evaluationReview);
+            
+            retrieveAndStoreReviewerIdInfo(request, verification.getReview());
+
+            return mapping.getInputForward();
+        }
+        revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        revMgr.updateReview(evaluationReview, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        // Forward to project details page
+        return ActionsHelper.cloneForwardAndAppendToPath(
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
+    }
+
+    /**
+     * This method is an implementation of &quot;View Review Evaluation&quot; Struts Action defined for this
+     * assembly, which is supposed to view completed Evaluation review.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/viewReviewEvaluation.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward viewReviewEvaluation(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        String reviewType = "ReviewEvaluation";
+        boolean isSubmissionDependentPhase = !reviewType.equals("Post-Mortem");
+        // Verify that certain requirements are met before proceeding with the Action
+        CorrectnessCheckResult verification = checkForCorrectReviewId(mapping, request, Constants.VIEW_REVIEW_EVALUATION_PERM_NAME);
+        // If any error has occurred, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Get current project
+        Project project = verification.getProject();
+
+        // Get an array of all phases for the project
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
+        // Get active (opened) phases names
+        List<String> activePhases = new ArrayList<String>();
+        for (int i = 0; i < phases.length; i++) {
+            if (phases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
+                activePhases.add(phases[i].getPhaseType().getName());
+            }
+        }
+
+        Review review = verification.getReview();
+        // Get a phase with the specified name
+        Phase phase = ActionsHelper.getPhase(phases, false, Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME);
+
+        
+        // Obtain an instance of Resource Manager
+        ResourceManager resMgr = ActionsHelper.createResourceManager();
+        // Get the list of all possible resource roles
+        ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
+
+
+        //Obtain an instance of Review Manager
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
+        Long evaluationReviewId = review.getReviewEvaluation();
+        Review evaluationReview = null;
+        if (evaluationReviewId >= 0 ) {
+	        try{
+	        	evaluationReview = revMgr.getReview(evaluationReviewId);
+	        } catch (ReviewManagementException e){
+	        	
+	        }
+        }
+        
+        if (evaluationReview == null ){
+        	return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    null, "Error.EvaluationNotCreated", null);
+        }
+        
+        // Get "My" resource for the appropriate phase (for reviewers evaluators actually)
+        Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
+
+        // If no resource found and Appeals phase is opened then try to find Submitter role
+        if (myResource == null) {
+        	if (activePhases.contains(Constants.NEW_APPEALS_PHASE_NAME)) {
+                Resource[] myResources = ActionsHelper.getMyResourcesForPhase(request, null);
+                for (int i = 0; i < myResources.length; i++) {
+                    Resource resource = myResources[i];
+                    if (resource.getResourceRole().getName().equals("Submitter")) {
+                        myResource = resource;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // If no resource found for particular phase, try to find resource without phase assigned
+        if (myResource == null) {
+            myResource = ActionsHelper.getMyResourceForPhase(request, null);
+        }
+
+        /*
+         *  Verify that user has the permission to view the review
+         */
+        boolean isAllowed = false;
+        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES) ||
+                AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) ||
+                AuthorizationHelper.hasUserRole(request, Constants.CLIENT_MANAGER_ROLE_NAME) ||
+                AuthorizationHelper.hasUserRole(request, Constants.COPILOT_ROLE_NAME) ||
+                AuthorizationHelper.hasUserRole(request, Constants.OBSERVER_ROLE_NAME)) {
+            // User is manager or observer
+            isAllowed = true;
+        } else if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
+                    myResource != null && verification.getReview().getAuthor() == myResource.getId()) {
+            // User is authorized to view review authored by him
+            isAllowed = true;
+        } else if (isSubmissionDependentPhase && (myResource != null)
+                   && (verification.getSubmission().getUpload().getOwner() == myResource.getId())) {
+            // User is authorized to view review for his submission (when not in Review or in Appeals)
+            if ( !activePhases.contains(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME) ||
+                    activePhases.contains(Constants.NEW_APPEALS_PHASE_NAME)) {
+                isAllowed = true;
+            }
+        } else if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEW_EVALUATION_PERM_NAME) && (evaluationReview !=null && (evaluationReview.getAuthor() == myResource.getId()))) {
+        	isAllowed = true;
+        }
+        
+        if (!isAllowed) {
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, Constants.VIEW_REVIEW_EVALUATION_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
+        }
+        
+//        if ( verification.getReview().isCommitted()) {
+//        	return ActionsHelper.produceErrorReport(
+//                    mapping, getResources(request), request, Constants.VIEW_REVIEW_EVALUATION_PERM_NAME, "Error.ReviewEvaluationNotCommitted", Boolean.FALSE);
+//        }
+
+
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
+
+        // Obtain an instance of Scorecard Manager
+        ScorecardManager scrMgr = ActionsHelper.createScorecardManager();
+        // Retrieve a scorecard template for this review
+        Scorecard scorecardTemplate = scrMgr.getScorecard(verification.getReview().getScorecard());
+
+        // Verify that the scorecard template for this review is of correct type
+        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.VIEW_REVIEW_EVALUATION_PERM_NAME, "Error.ReviewTypeIncorrect", null);
+        }
+        // Make sure that the user is not trying to view unfinished review
+        if (!evaluationReview.isCommitted()) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+            		Constants.VIEW_REVIEW_EVALUATION_PERM_NAME, "Error.ReviewNotCommitted", null);
+        } else {
+            // If user has a Manager role, put special flag to the request,
+            // indicating that we can edit the review
+            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
+                request.setAttribute("canEditScorecard", Boolean.TRUE);
+            }
+        }
+
+        // Retrieve some basic review info and store it in the request
+        retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
+        
+        retrieveAndStoreReviewAuthorInfo(request, evaluationReview);
+        retrieveAndStoreReviewerIdInfo(request, verification.getReview());
+        request.setAttribute("viewEvaluation", Boolean.TRUE);
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**
@@ -578,7 +1495,6 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Obtain an instance of Review Manager
         ReviewManager revMgr = ActionsHelper.createReviewManager();
-
         // Retrieve all comment types first
         CommentType allCommentTypes[] = revMgr.getAllCommentTypes();
         // Select only those needed for this scorecard
@@ -1459,10 +2375,12 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that Aggregation Review has been committed by all users who should have done that
         for (int i = 0; i < review.getNumberOfComments(); ++i) {
             Comment comment = review.getComment(i);
-            String status = (String) comment.getExtraInfo();
-            if (!("Approved".equalsIgnoreCase(status) || "Rejected".equalsIgnoreCase(status))) {
-                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                        Constants.VIEW_AGGREG_REVIEW_PERM_NAME, "Error.AggregationReviewNotCommitted", null);
+            if (ActionsHelper.isAggregationReviewComment(comment)) {
+                String status = (String) comment.getExtraInfo();
+                if (!("Approved".equalsIgnoreCase(status) || "Rejected".equalsIgnoreCase(status))) {
+                    return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                            Constants.VIEW_AGGREG_REVIEW_PERM_NAME, "Error.AggregationReviewNotCommitted", null);
+                }
             }
         }
 
@@ -2162,7 +3080,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Get the Review phase
-        Phase phase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
+        Phase phase = ActionsHelper.getPhase(phases, false, Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME);
 
         // Retrieve a scorecard template for the Review phase
         Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(
@@ -2621,7 +3539,11 @@ public class ProjectReviewActions extends DispatchAction {
                 ActionsHelper.createPhaseManager(false), project);
 
         // Get a Review phase
-        Phase reviewPhase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
+        Phase reviewPhase = null;
+        reviewPhase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
+        if ( reviewPhase == null ){
+        	reviewPhase = ActionsHelper.getPhase(phases, false, Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME);
+        }
         // Retrieve all resources (reviewers) for that phase
         Resource[] reviewResources = ActionsHelper.getAllResourcesForPhase(
                 ActionsHelper.createResourceManager(), reviewPhase);
@@ -2690,11 +3612,33 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Place comment types in the request
         request.setAttribute("allCommentTypes", reviewCommentTypes);
+        request.setAttribute("allReviewCommentTypes",reviewCommentTypesAll);
         // and return them
         return reviewCommentTypes;
     }
+    
 
     /**
+     * .
+     *
+     * @param request
+     * @throws BaseException
+     */
+    private EvaluationType[] retreiveAndStoreEvaluationTypeData(HttpServletRequest request) throws BaseException {
+        // Obtain Review Manager instance
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
+
+        // Retrieve all Evaluation types first
+        EvaluationType[] commentEvaluationTypesAll = revMgr.getAllEvaluationTypes();
+
+        // Place comment types in the request
+        request.setAttribute("allEvaluationTypes", commentEvaluationTypesAll);
+        // and return them
+        return commentEvaluationTypesAll;
+    }
+
+    /**
+     * 
      *
      *
      * @param request
@@ -2717,6 +3661,33 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Place submitter's user ID into the request
         request.setAttribute("authorId", author.getProperty("External Reference ID"));
+        // Place submitter's resource into the request
+        request.setAttribute("authorResource", author);
+    }
+    
+    /**
+     * 
+     *
+     * @param request
+     * @param review
+     * @throws BaseException
+     */
+    private void retrieveAndStoreReviewerIdInfo(HttpServletRequest request, Review review)
+        throws BaseException {
+        // TODO: Remove this and other functions to a separate helper class. Name it ProjectReviewActionsHelper
+
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(request, "request");
+        ActionsHelper.validateParameterNotNull(review, "review");
+
+        // Obtain an instance of Resource Manager
+        ResourceManager resMgr = ActionsHelper.createResourceManager();
+        // Get review author's resource
+        Resource author = resMgr.getResource(review.getAuthor());
+        ActionsHelper.populateEmailProperty(request, author);
+
+        // Place submitter's user ID into the request
+        request.setAttribute("reviewerId", author.getProperty("External Reference ID"));
         // Place submitter's resource into the request
         request.setAttribute("authorResource", author);
     }
@@ -2743,9 +3714,8 @@ public class ProjectReviewActions extends DispatchAction {
         if (isSubmissionDependentPhase) {
             ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());
         }
-
         Review review = verification.getReview();
-        if (review != null) {
+        if (review != null && !reviewType.equals("ReviewEvaluation")) {
             // Retrieve the information about the review author and place it into the request
             retrieveAndStoreReviewAuthorInfo(request, review);
             request.setAttribute("modificationDate", review.getModificationTimestamp());
@@ -2757,6 +3727,10 @@ public class ProjectReviewActions extends DispatchAction {
             request.setAttribute("reviewType", "PostMortem");
         } else if (reviewType.equals("Specification Review")) {
             request.setAttribute("reviewType", "SpecificationReview");
+        } else if (reviewType.equals("Review Evaluation")){
+        	request.setAttribute("reviewType", "ReviewEvaluation");
+        } else if (reviewType.equals("Secondary Review")){
+        	request.setAttribute("reviewType", "SecondaryReview");
         } else {
             request.setAttribute("reviewType", reviewType);
         }
@@ -2784,6 +3758,9 @@ public class ProjectReviewActions extends DispatchAction {
         } else if ("Review".equals(reviewType)) {
             permName = Constants.PERFORM_REVIEW_PERM_NAME;
             phaseName = Constants.REVIEW_PHASE_NAME;
+        } else if ("Secondary Review".equals(reviewType)) {
+            permName = Constants.PERFORM_REVIEW_PERM_NAME;
+            phaseName = Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME;
         } else if ("Approval".equals(reviewType)) {
             permName = Constants.PERFORM_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
@@ -2946,6 +3923,8 @@ public class ProjectReviewActions extends DispatchAction {
             scorecardTypeName = "Screening";
         } else if ("Review".equals(reviewType)) {
             scorecardTypeName = "Review";
+        } else if ("Secondary Review".equals(reviewType)) {
+        	scorecardTypeName = "Review";
         } else if ("Approval".equals(reviewType)) {
             scorecardTypeName = "Approval";
         } else if ("Specification Review".equals(reviewType)) {
@@ -3115,6 +4094,23 @@ public class ProjectReviewActions extends DispatchAction {
         }
         return result.toArray(new Comment[result.size()]);
     }
+    
+    /**
+     * 
+     *
+     * @param item
+     * @return
+     */
+    private static Comment[] getItemEvaluatorComments(Item item) {
+        List<Comment> result = new ArrayList<Comment>();
+        for (int i = 0; i < item.getNumberOfComments(); i++) {
+            Comment comment = item.getComment(i);
+            if (ActionsHelper.isEvaluatorComment(comment)) {
+                result.add(comment);
+            }
+        }
+        return result.toArray(new Comment[result.size()]);
+    }
 
     /**
      * <p>Handles the request for saving the generic review details.</p>
@@ -3155,6 +4151,10 @@ public class ProjectReviewActions extends DispatchAction {
         } else if ("Review".equals(reviewType)) {
             permName = Constants.PERFORM_REVIEW_PERM_NAME;
             phaseName = Constants.REVIEW_PHASE_NAME;
+            scorecardTypeName = "Review";
+        } else if ("Secondary Review".equals(reviewType)) {
+            permName = Constants.PERFORM_REVIEW_PERM_NAME;
+            phaseName = Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME;
             scorecardTypeName = "Review";
         } else if ("Approval".equals(reviewType)) {
             isApprovalPhase = true;
@@ -3375,6 +4375,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve all comment types
         CommentType[] commentTypes = revMgr.getAllCommentTypes();
+       
         // Retrieve all upload statuses
         UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
         // Retrieve all upload types
@@ -3594,6 +4595,7 @@ public class ProjectReviewActions extends DispatchAction {
 
             reviewLevelComment1.setCommentType(
                 ActionsHelper.findCommentTypeByName(commentTypes, "Specification Review Comment"));
+            reviewLevelComment1.setEvaluationType(revMgr.getAllEvaluationTypes()[3]);
             reviewLevelComment1.setAuthor(myResource.getId());
             reviewLevelComment1.setExtraInfo(approveSpecification ? "Approved" : "Rejected");
             reviewLevelComment1.setComment("");
@@ -3610,7 +4612,7 @@ public class ProjectReviewActions extends DispatchAction {
             // Compute scorecard's score
             float newScore = scoreCalculator.getScore(scorecardTemplate, review);
             // If score has been updated during Manager Edit, additional actions may need to be taken
-            if ("Review".equals(reviewType) && managerEdit &&
+            if ( ("Review".equals(reviewType)) || ("Secondary Review".equals(reviewType)) && managerEdit &&
                     (review.getScore() == null || review.getScore().floatValue() != newScore)) {
                 possibleFinalScoreUpdate = true;
             }
@@ -4147,7 +5149,6 @@ public class ProjectReviewActions extends DispatchAction {
                 for (;commentIdx < item.getNumberOfComments();) {
                     // Get a comment for the current iteration
                     Comment comment = item.getComment(commentIdx++);
-
                     // Locate next manager's comment for Manager edits or
                     // next reviewer's comment for non-Manager edits
                     if ((managerEdit && ActionsHelper.isManagerComment(comment)) ||
@@ -4236,6 +5237,7 @@ public class ProjectReviewActions extends DispatchAction {
             // If new comment needs to be added to review's item, add it
             if (newComment) {
                 item.addComment(currentComment);
+                
             }
             // Indicate that there are no current comment anymore,
             // so it will be located or created during next iteration
@@ -4311,6 +5313,10 @@ public class ProjectReviewActions extends DispatchAction {
             permName = Constants.VIEW_ALL_REVIEWS_PERM_NAME;
             phaseName = Constants.REVIEW_PHASE_NAME;
             scorecardTypeName = "Review";
+        } else if (reviewType.equals("Secondary Review")) {
+            permName = Constants.VIEW_ALL_REVIEWS_PERM_NAME;
+            phaseName = Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME;
+            scorecardTypeName = "Review";
         } else if (reviewType.equals("Approval")) {
             permName = Constants.VIEW_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
@@ -4354,10 +5360,18 @@ public class ProjectReviewActions extends DispatchAction {
         // Get "My" resource for the appropriate phase (for reviewers actually)
         Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
 
-        // If no resource found and Appeals phase is opened then try to find Submitter role
+        // If no resource found and Appeals/New Appeals phase is opened then try to find Submitter/Secondary Reviewer role
         if (myResource == null) {
-            if (activePhases.contains(Constants.APPEALS_PHASE_NAME)) {
-                myResource = getMySubmitterResource(request);
+            if (activePhases.contains(Constants.APPEALS_PHASE_NAME) || activePhases.contains(Constants.NEW_APPEALS_PHASE_NAME)) {
+                Resource[] myResources = ActionsHelper.getMyResourcesForPhase(request, null);
+                for (int i = 0; i < myResources.length; i++) {
+                    Resource resource = myResources[i];
+                    if (resource.getResourceRole().getName().equals("Submitter")
+                            || resource.getResourceRole().getName().equals("Secondary Reviewer")) {
+                        myResource = resource;
+                        break;
+                    }
+                }
             }
         }
 
@@ -4380,11 +5394,12 @@ public class ProjectReviewActions extends DispatchAction {
                     myResource != null && verification.getReview().getAuthor() == myResource.getId()) {
             // User is authorized to view review authored by him
             isAllowed = true;
-        } else if (isSubmissionDependentPhase && (myResource != null)
+        } else if (isSubmissionDependentPhase && (myResource != null && myResource.getResourceRole().getName().equals("Submitter"))
                    && (verification.getSubmission().getUpload().getOwner() == myResource.getId())) {
             // User is authorized to view review for his submission (when not in Review or in Appeals)
-            if (reviewType != "Review" || !activePhases.contains(Constants.REVIEW_PHASE_NAME) ||
-                    activePhases.contains(Constants.APPEALS_PHASE_NAME)) {
+            if (reviewType != "Review" || 
+                    (!activePhases.contains(Constants.REVIEW_PHASE_NAME) && !activePhases.contains(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME)) || 
+                    (activePhases.contains(Constants.APPEALS_PHASE_NAME) || activePhases.contains(Constants.NEW_APPEALS_PHASE_NAME))) {
                 isAllowed = true;
             }
         } else if (AuthorizationHelper.hasUserPermission(request, permName)) {
@@ -4392,13 +5407,19 @@ public class ProjectReviewActions extends DispatchAction {
                 // User is authorized to view all reviews (when not in Review, Appeals or Appeals Response)
                 if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
                         !activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
-                        !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
+                        !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME) &&
+                        !activePhases.contains(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME) &&
+                        !activePhases.contains(Constants.NEW_APPEALS_PHASE_NAME) &&
+                        !activePhases.contains(Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME)) {
                     isAllowed = true;
                 }
             } else if (reviewType == "Screening") {
                 if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
                         !activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
-                        !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
+                        !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME) &&
+                        !activePhases.contains(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME) &&
+                        !activePhases.contains(Constants.NEW_APPEALS_PHASE_NAME) &&
+                        !activePhases.contains(Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME)) {
                     isAllowed = true;
                 } else {
                     //if any of those phases are open only, a user can see the screening if he is not a submitter
@@ -4443,22 +5464,37 @@ public class ProjectReviewActions extends DispatchAction {
         if (scorecardTypeName.equals("Review")) {
             boolean canPlaceAppeal = false;
             boolean canPlaceAppealResponse = false;
+            boolean isSubmitter = false;
+            Resource secondaryReviewerResource = null;
 
             // Check if user can place appeals or appeal responses
-            if (activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
+            if ((activePhases.contains(Constants.APPEALS_PHASE_NAME) || activePhases.contains(Constants.NEW_APPEALS_PHASE_NAME)) &&
                     AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME)) {
                 Resource mySubmitterResource = getMySubmitterResource(request);
-                if(mySubmitterResource != null && verification.getSubmission() != null &&
-                    verification.getSubmission().getUpload().getOwner() == mySubmitterResource.getId()) {
+                if (mySubmitterResource != null) {
+                    isSubmitter = true;
+                    if(verification.getSubmission() != null
+                       && verification.getSubmission().getUpload().getOwner() == mySubmitterResource.getId()) {
+                        // Can place appeal, put an appropriate flag to request
+                        request.setAttribute("canPlaceAppeal", Boolean.TRUE);
+                        canPlaceAppeal = true;
+                    }
+                } else {
                     // Can place appeal, put an appropriate flag to request
+                    secondaryReviewerResource 
+                        = ActionsHelper.getMyResourcesForPhase(request, ActionsHelper.getPhase(phases, false, "Secondary Reviewer Review"))[0];
                     request.setAttribute("canPlaceAppeal", Boolean.TRUE);
                     canPlaceAppeal = true;
                 }
-            } else if (activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)  &&
+            } else if ( ( activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME) || activePhases.contains(Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME))  &&
                     AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_RESP_PERM_NAME)) {
                 // Can place response, put an appropriate flag to request
                 request.setAttribute("canPlaceAppealResponse", Boolean.TRUE);
                 canPlaceAppealResponse = true;
+            }
+
+            if (!ActionsHelper.isAfterAppealsResponse(phases) && !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_APPEALS_PERM_NAME)) {
+                ActionsHelper.filterOwnAppeals(verification.getReview(), new Resource[] {myResource});
             }
 
             if (canPlaceAppeal || canPlaceAppealResponse) {
@@ -4468,12 +5504,18 @@ public class ProjectReviewActions extends DispatchAction {
                 // Message Resources to be used for the Action
                 MessageResources messages = getResources(request);
                 for (int i = 0; i < appealStatuses.length; i++) {
-                    Comment appeal = getCommentAppeal(verification.getReview().getItem(i).getAllComments());
-                    Comment response = getCommentAppealResponse(verification.getReview().getItem(i).getAllComments());
-                    if (appeal != null && response == null) {
+                    List<Comment> appeal;
+                    if (isSubmitter || canPlaceAppealResponse) {
+                        appeal = getCommentAppeal(verification.getReview().getItem(i).getAllComments());
+                    } else {
+                        appeal = getCommentAppealBySecondaryReviewer(verification.getReview().getItem(i).getAllComments(), 
+                                                                     secondaryReviewerResource.getId());
+                    }
+                    List<Comment> response = getCommentAppealResponse(verification.getReview().getItem(i).getAllComments());
+                    if (appeal.size() > 0 && response.size() != appeal.size()) {
                         appealStatuses[i] = messages.getMessage("editReview.Appeal.Unresolved");
-                    } else if (appeal != null) {
-                        appealStatuses[i] = messages.getMessage("editReview.Appeal.Resolved." + appeal.getExtraInfo());
+                    } else if (appeal.size() > 0) {
+                        appealStatuses[i] = messages.getMessage("editReview.Appeal.Resolved." + appeal.get(0).getExtraInfo());
                     } else {
                         appealStatuses[i] = "";
                     }
@@ -4487,6 +5529,14 @@ public class ProjectReviewActions extends DispatchAction {
 
                 // Retrieve some look-up data and store it into the request
                 retreiveAndStoreReviewLookUpData(request);
+            }
+            
+            retreiveAndStoreEvaluationTypeData(request);
+            if (canPlaceAppealResponse && activePhases.contains(Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME)) {
+                // can edit evaluation
+                request.setAttribute("editEvaluation", true);
+            } else {
+                request.setAttribute("editEvaluation", false);
             }
         }
 
@@ -4584,13 +5634,70 @@ public class ProjectReviewActions extends DispatchAction {
                     validateScorecardItemAnswer(request, question, item, itemIdx);
 
                     if (managerEdit) {
-                        validateManagerComments(request, item, itemIdx);
+					    validateManagerComments(request, item, itemIdx);
                     } else {
                         validateScorecardComments(request, item, itemIdx);
                         if (question.isUploadDocument()) {
                             validateScorecardItemUpload(request, question, item, fileIdx++);
                         }
+					}
+                }
+            }
+        }
+
+        return !ActionsHelper.isErrorsPresent(request);
+    }
+    
+    
+    /**
+     * 
+     *
+     * @return
+     * @param request
+     * @param scorecardTemplate
+     * @param review
+     * @param managerEdit
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     */
+    private static boolean validateEvaluationScorecard(HttpServletRequest request,
+            Scorecard scorecardTemplate, Review review, boolean managerEdit) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(request, "request");
+        ActionsHelper.validateParameterNotNull(scorecardTemplate, "scorecardTemplate");
+        ActionsHelper.validateParameterNotNull(review, "review");
+
+        final int numberOfItems = review.getNumberOfItems();
+        int itemIdx = 0;
+        int commentIdx = 0;
+        if (managerEdit){
+        	return true;
+        }
+
+        for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
+            Group group = scorecardTemplate.getGroup(groupIdx);
+            for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
+                Section section = group.getSection(sectionIdx);
+                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx) {
+                    Question question = section.getQuestion(questionIdx);
+                    long questionId = question.getId();
+                    for (int i = 0; i < numberOfItems; ++i) {
+                        if (review.getItem(i).getQuestion() != questionId) {
+                            continue;
+                        }
+                        // Get a review's item
+                        Item item = review.getItem(i);
+
+                        // Validate item's aggregate functions
+                        for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                            Comment comment = item.getComment(j);
+                            if (ActionsHelper.isReviewerComment(comment) && comment.getEvaluationType() == null ){
+                            	  ActionsHelper.addErrorToRequest(request, "comment_eval_type_[" + i + "."+ (j+1) +"]",
+                                  "Error.saveEvaluationReview.EvaluationType.Absent");
+                            }
+                        }
                     }
+                    
                 }
             }
         }
@@ -4654,19 +5761,19 @@ public class ProjectReviewActions extends DispatchAction {
                                     commentType.equalsIgnoreCase("Recommended")) {
                                 validateAggregateFunction(request, item.getComment(j), commentIdx++);
                             }
-                            
+							
                             if (commentType.equalsIgnoreCase("Aggregation Comment")) {
                                 /* Request from David Messinger [11/06/2006]:
                                    No need to verify presence of comments
                                 validateScorecardComment(request, comment, "aggregator_response[" + itemIdx + "]");
-                                */
-                                
-                                // But we still need to verify comment's maximum length.
+								*/
+								
+								// But we still need to verify comment's maximum length.
                                 String commentText = comment.getComment();
                                 if (commentText != null && commentText.length() > MAX_COMMENT_LENGTH) {
                                     ActionsHelper.addErrorToRequest(request, "aggregator_response[" + itemIdx + "]",
-                                        "Error.saveAggregation.Comment.MaxExceeded");
-                                }                               
+									    "Error.saveAggregation.Comment.MaxExceeded");
+                                }								
                             }
                         }
                     }
@@ -4841,14 +5948,14 @@ public class ProjectReviewActions extends DispatchAction {
                             String commentText = comment.getComment();
 
                             if (commentText == null || commentText.trim().length() == 0) {
-                                if (notFixed && required) {
+							    if (notFixed && required) {
                                     ActionsHelper.addErrorToRequest(request, "final_comment[" + itemIdx + "]",
                                             "Error.saveFinalReview.Response.Absent");
-                                }
+								}
                             } else if (commentText.length() > MAX_COMMENT_LENGTH) {
                                 ActionsHelper.addErrorToRequest(request, "final_comment[" + itemIdx + "]",
                                         "Error.saveFinalReview.Comment.MaxExceeded");
-                            }                               
+                            }								
                         }
                     }
                 }
@@ -5142,33 +6249,58 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
+     * Gets all the appeals in the specific comments.
      *
      *
-     * @return
-     * @param allComments
+     * @param allComments the specific comments
+     * @param authorId ID of a comment author.
+     * @return the appeals in the comments
      */
-    private static Comment getCommentAppeal(Comment[] allComments) {
+    private static List<Comment> getCommentAppeal(Comment[] allComments) {
+        List<Comment> comments = new ArrayList<Comment>();
         for (int i = 0; i < allComments.length; i++) {
             if (allComments[i].getCommentType().getName().equals("Appeal")) {
-                return allComments[i];
+                comments.add(allComments[i]);
             }
         }
-        return null;
+        return comments;
     }
 
     /**
+     * Gets all the appeals in the specific comments.
      *
      *
-     * @return
-     * @param allComments
+     * @param allComments the specific comments
+     * @param authorId ID of a comment author.
+     * @return the appeals in the comments
      */
-    private static Comment getCommentAppealResponse(Comment[] allComments) {
+    private static List<Comment> getCommentAppealBySecondaryReviewer(Comment[] allComments, long resourceId) {
+        List<Comment> comments = new ArrayList<Comment>();
         for (int i = 0; i < allComments.length; i++) {
-            if (allComments[i].getCommentType().getName().equals("Appeal Response")) {
-                return allComments[i];
+            if (allComments[i].getCommentType().getName().equals("Appeal") 
+                && allComments[i].getAuthor() == resourceId) {
+                comments.add(allComments[i]);
             }
         }
-        return null;
+        return comments;
+    }
+
+    /**
+     * Gets all the appeals response in the specific comments.
+     *
+     *
+     * @param allComments the specific comments
+     * @param appealComments ID of a comment author.
+     * @return the appeals response in the comments
+     */
+    private static List<Comment> getCommentAppealResponse(Comment[] allComments) {
+        List<Comment> comments = new ArrayList<Comment>();
+        for (int i = 0; i < allComments.length; i++) {
+            if (allComments[i].getCommentType().getName().equals("Appeal Response")) {
+                comments.add(allComments[i]);
+            }
+        }
+        return comments;
     }
 
     /**

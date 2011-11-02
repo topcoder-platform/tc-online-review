@@ -1,12 +1,15 @@
 <%--
-  - Author: George1, real_vg, isv
-  - Version: 1.1
-  - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
+  - Author: George1, real_vg, isv, TCSASSEMBER
+  - Version: 1.2
+  - Copyright (C) 2005 - 2011 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page renders the Aggregation scorecard.
   -
   - Version 1.1 (Impersonation Login Release assembly) changes: Updated link for "Back" button to refer to
   - "View Project Details" screen.
+  -
+  - Version 1.2 (Online Review Update Review Management Release assembly 4 ) changes: Add support for
+  - Primary Review Evaluation Comment type.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -105,7 +108,7 @@
                                                 </c:choose>
                                                 <c:if test='${(isReviewerComment == true) || (commentType == "Manager Comment") ||
                                                         (commentType == "Appeal") || (commentType == "Appeal Response") ||
-                                                        (commentType == "Aggregation Comment")}'>
+                                                        (commentType == "Aggregation Comment") || (commentType == "Primary Review Evaluation Comment")}'>
                                                     <tr class="dark">
                                                         <td class="value">
                                                             <c:if test="${firstTime == true}">
@@ -136,7 +139,7 @@
                                                                 </c:when>
                                                                 <c:when test='${(commentType == "Manager Comment") ||
                                                                     (commentType == "Appeal") || (commentType == "Appeal Response") ||
-                                                                    (commentType == "Aggregation Comment")}'>
+                                                                    (commentType == "Aggregation Comment") || (commentType == "Primary Review Evaluation Comment")}'>
                                                                     <b><bean:message key='editReview.EditAggregation.${fn:replace(commentType, " ", "")}' /></b>
                                                                 </c:when>
                                                             </c:choose>
