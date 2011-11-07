@@ -33,7 +33,7 @@
     <component
         name="online_review_ajax_support"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_ajax_support/branches/review_process_improvements"
-        revision="208940" />
+        revision="209807" />
 
     <component
         name="online_review_login"
@@ -42,8 +42,8 @@
 
     <component
         name="online_review_phases"
-        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/trunk"
-        revision="209232" />
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/tags/RPI_merge2_version-1.6.2.1"
+        revision="209787" />
 
     <component
         name="online_review_upload_services"
@@ -68,7 +68,7 @@
     <component
         name="project_management_persistence"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_management_persistence/tags/RPI_merge2_version-1.2.0.1"
-        revision="208940" />
+        revision="209784" />
 
     <component
         name="project_phase_template"
@@ -82,13 +82,13 @@
 
     <component
         name="review_management"
-        svnpath="https://coder.topcoder.com/tcs/catalog/java/review_management/trunk"
-        revision="207889" />
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/review_management/branches/review_process_improvements"
+        revision="209808" />
 
     <component
         name="review_management_persistence"
-        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_management_persistence/trunk"
-        revision="208113" />
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_management_persistence/branches/review_process_improvements"
+        revision="209749" />
 
     <component
         name="review_score_aggregator"
