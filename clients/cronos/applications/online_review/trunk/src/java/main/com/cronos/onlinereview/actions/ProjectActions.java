@@ -31,6 +31,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -2009,6 +2010,7 @@ public class ProjectActions extends DispatchAction {
         Set<Long> newUsersForNotification = new HashSet<Long>();
         Set<Long> deletedUsersForNotification = new HashSet<Long>();
         Set<Long> deletedUsersForForumWatch = new HashSet<Long>();
+        Set<Long> deletedUsersForumAccess = new HashSet<Long>();
 
         // 0-index resource is skipped as it is a "dummy" one
         boolean allResourcesValid = true;
@@ -2259,6 +2261,7 @@ public class ProjectActions extends DispatchAction {
             // If action is "delete", delete the resource and proceed to the next one
             if ("delete".equals(resourceAction)) {
                 deletedUsers.add(user.getId());
+
                 // delete project_result
                 ActionsHelper.deleteProjectResult(project, user.getId(),
                         ((Long) lazyForm.get("resources_role", i)).longValue());
@@ -2388,6 +2391,22 @@ public class ProjectActions extends DispatchAction {
                 newSubmitters.add(user.getId());
             }
         }
+
+        // check the list of users to delete and remove those still have other roles
+        Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(resourceManager, project);
+        Set<Long> usersToKeep = new HashSet<Long>();
+        for (Long id : deletedUsers) {
+            for (int i = 0; i < allProjectResources.length; i++) {
+                long userId = Long.parseLong(((String) allProjectResources[i].getProperty("External Reference ID")).trim());
+                if (userId == id) {
+                    // still have other roles
+                    usersToKeep.add(userId);
+                    break;
+                }
+            }
+        }
+        deletedUsers.removeAll(usersToKeep);
+
 
         for (Long id : oldUsers) {
             newUsers.remove(id);
