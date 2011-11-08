@@ -2255,26 +2255,31 @@
         <Property name="context">
           <Value>
             SELECT lt.late_deliverable_id,
-            pp.project_id,
-            lt.project_phase_id,
-            lt.resource_id,
-            lt.deliverable_id,
-            lt.deadline,
-        lt.compensated_deadline,
-            lt.create_date,
-            lt.forgive_ind,
-            lt.last_notified,
-            lt.delay,
-            lt.explanation,
-            lt.explanation_date,
-            lt.response,
-            lt.response_user,
-            lt.response_date
+              pp.project_id,
+              lt.project_phase_id,
+              lt.resource_id,
+              lt.deliverable_id,
+              lt.deadline,
+              lt.compensated_deadline,
+              lt.create_date,
+              lt.forgive_ind,
+              lt.last_notified,
+              lt.delay,
+              lt.explanation,
+              lt.explanation_date,
+              lt.response,
+              lt.response_user,
+              lt.response_date,
+              lt.late_deliverable_type_id,
+              ldt.name,
+              ldt.description
             FROM late_deliverable lt
-            INNER JOIN project_phase pp ON pp.project_phase_id = lt.project_phase_id
-            INNER JOIN project p ON p.project_id = pp.project_id
-            INNER JOIN resource_info ri ON ri.resource_id = lt.resource_id AND
-                  ri.resource_info_type_id = 2
+              INNER JOIN project_phase pp ON pp.project_phase_id = lt.project_phase_id
+              INNER JOIN project p ON p.project_id = pp.project_id
+              INNER JOIN resource_info ri ON ri.resource_id = lt.resource_id AND
+                ri.resource_info_type_id = 2
+              INNER JOIN late_deliverable_type_lu ldt
+                ON ldt.late_deliverable_type_id = lt.late_deliverable_type_id
             WHERE
           </Value>
         </Property>
@@ -2420,6 +2425,26 @@
             </Property>
           </Property>
           <Property name="responseDate">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="lateDeliverableTypeId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="lateDeliverableTypeName">
             <Property name="validator">
               <Property name="class">
                 <Value>validator</Value>
@@ -2541,6 +2566,15 @@
           <Property name="tcDirectProjectId">
             <Value>p.tc_direct_project_id</Value>
           </Property>
+          <Property name="lateDeliverableTypeId">
+            <Value>lt.late_deliverable_type_id</Value>
+          </Property>
+          <Property name="lateDeliverableTypeName">
+            <Value>ldt.name</Value>
+          </Property>
+          <Property name="lateDeliverableTypeDescription">
+            <Value>ldt.description</Value>
+          </Property>
         </Property>
       </Property>
 
@@ -2553,34 +2587,39 @@
         <Property name="context">
           <Value>
             SELECT DISTINCT lt.late_deliverable_id,
-            pp.project_id,
-            lt.project_phase_id,
-            lt.resource_id,
-            lt.deliverable_id,
-            lt.deadline,
-        lt.compensated_deadline,
-            lt.create_date,
-            lt.forgive_ind,
-            lt.last_notified,
-            lt.delay,
-            lt.explanation,
-            lt.explanation_date,
-            lt.response,
-            lt.response_user,
-            lt.response_date
+              pp.project_id,
+              lt.project_phase_id,
+              lt.resource_id,
+              lt.deliverable_id,
+              lt.deadline,
+              lt.compensated_deadline,
+              lt.create_date,
+              lt.forgive_ind,
+              lt.last_notified,
+              lt.delay,
+              lt.explanation,
+              lt.explanation_date,
+              lt.response,
+              lt.response_user,
+              lt.response_date,
+              lt.late_deliverable_type_id,
+              ldt.name,
+              ldt.description
             FROM late_deliverable lt
-            INNER JOIN project_phase pp
-            ON pp.project_phase_id = lt.project_phase_id
-            INNER JOIN project p ON p.project_id = pp.project_id
-            LEFT OUTER JOIN resource r ON r.project_id = p.project_id and r.resource_role_id IN (12, 13, 14, 15)
-            LEFT OUTER JOIN resource_info ri ON ri.resource_id = r.resource_id and ri.resource_info_type_id = 1
-            INNER JOIN resource_info ri2 ON ri2.resource_id = lt.resource_id and ri2.resource_info_type_id = 1
-            LEFT OUTER JOIN corporate_oltp:tc_direct_project d
-            ON d.project_id = p.tc_direct_project_id
-            LEFT OUTER JOIN corporate_oltp:user_permission_grant g
-            ON g.resource_id = d.project_id
-            INNER JOIN resource_info ri3 ON ri3.resource_id = lt.resource_id AND
-                  ri3.resource_info_type_id = 2
+              INNER JOIN project_phase pp
+                ON pp.project_phase_id = lt.project_phase_id
+              INNER JOIN project p ON p.project_id = pp.project_id
+              LEFT OUTER JOIN resource r ON r.project_id = p.project_id and r.resource_role_id IN (12, 13, 14, 15)
+              LEFT OUTER JOIN resource_info ri ON ri.resource_id = r.resource_id and ri.resource_info_type_id = 1
+              INNER JOIN resource_info ri2 ON ri2.resource_id = lt.resource_id and ri2.resource_info_type_id = 1
+              LEFT OUTER JOIN corporate_oltp:tc_direct_project d
+                ON d.project_id = p.tc_direct_project_id
+              LEFT OUTER JOIN corporate_oltp:user_permission_grant g
+                ON g.resource_id = d.project_id
+              INNER JOIN resource_info ri3 ON ri3.resource_id = lt.resource_id AND
+                ri3.resource_info_type_id = 2
+              INNER JOIN late_deliverable_type_lu ldt
+                ON ldt.late_deliverable_type_id = lt.late_deliverable_type_id
             WHERE
           </Value>
         </Property>
@@ -2726,6 +2765,26 @@
             </Property>
           </Property>
           <Property name="responseDate">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="lateDeliverableTypeId">
+            <Property name="validator">
+              <Property name="class">
+                <Value>validator</Value>
+              </Property>
+              <Property name="identifier">
+                <Value>default</Value>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="lateDeliverableTypeName">
             <Property name="validator">
               <Property name="class">
                 <Value>validator</Value>
@@ -2885,6 +2944,15 @@
           </Property>
           <Property name="tcDirectProjectId">
             <Value>p.tc_direct_project_id</Value>
+          </Property>
+          <Property name="lateDeliverableTypeId">
+            <Value>lt.late_deliverable_type_id</Value>
+          </Property>
+          <Property name="lateDeliverableTypeName">
+            <Value>ldt.name</Value>
+          </Property>
+          <Property name="lateDeliverableTypeDescription">
+            <Value>ldt.description</Value>
           </Property>
         </Property>
       </Property>

@@ -46,6 +46,7 @@ import org.apache.struts.validator.LazyValidatorForm;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.topcoder.management.deliverable.late.LateDeliverable;
+import com.topcoder.management.deliverable.late.LateDeliverableType;
 import com.topcoder.management.deliverable.late.LateDeliverableManagementException;
 import com.topcoder.management.deliverable.late.LateDeliverableManager;
 import com.topcoder.management.deliverable.late.search.LateDeliverableFilterBuilder;
@@ -114,6 +115,11 @@ public class LateDeliverablesActions extends DispatchAction {
     private static final String PARAM_DELIVERABLE_TYPES = "deliverable_types";
 
     /**
+     * Represents the late deliverable type parameter name.
+     */
+    private static final String PARAM_LATE_DELIVERABLE_TYPE = "late_deliverable_type";
+
+    /**
      * Represents the project statuses parameter name.
      */
     private static final String PARAM_PROJECT_STATUSES = "project_statuses";
@@ -174,7 +180,7 @@ public class LateDeliverablesActions extends DispatchAction {
      * @since 1.1
      */
     private static final String[] ADVANCED_SEARCH_PARAMS = new String[] {PARAM_COCKPIT_PROJECT_ID,
-        PARAM_EXPLANATION_STATUS, PARAM_RESPONSE_STATUS, PARAM_MIN_DEADLINE, PARAM_MAX_DEADLINE};
+        PARAM_EXPLANATION_STATUS, PARAM_RESPONSE_STATUS, PARAM_MIN_DEADLINE, PARAM_MAX_DEADLINE, PARAM_LATE_DELIVERABLE_TYPE};
 
     /**
      * <p>A <code>String</code> array listing the default values for advanced search parameters.</p>
@@ -182,7 +188,7 @@ public class LateDeliverablesActions extends DispatchAction {
      * @since 1.1
      */
     private static final String[] ADVANCED_SEARCH_PARAM_DEFAULT_VALUES = new String[] {"", "", "", "MM.DD.YYYY",
-                                                                                       "MM.DD.YYYY"};
+                                                                                       "MM.DD.YYYY", ""};
 
     /**
      * Creates a new instance of the <code>LateDeliverablesActions</code> class.
@@ -494,6 +500,7 @@ public class LateDeliverablesActions extends DispatchAction {
         lateDeliverableSearchForm.set(PARAM_PROJECT_CATEGORIES, new Long[] {0l});
         lateDeliverableSearchForm.set(PARAM_PROJECT_STATUSES, new Long[] {0l});
         lateDeliverableSearchForm.set(PARAM_DELIVERABLE_TYPES, new String[] {"0"});
+        lateDeliverableSearchForm.set(PARAM_LATE_DELIVERABLE_TYPE, "");
         lateDeliverableSearchForm.set(PARAM_FORGIVEN, "Any");
         lateDeliverableSearchForm.set(PARAM_HANDLE, "Any");
     }
@@ -557,6 +564,17 @@ public class LateDeliverablesActions extends DispatchAction {
         String responseStatusStr = (String) lateDeliverableSearchForm.get(PARAM_RESPONSE_STATUS);
         if (responseStatusStr != null && responseStatusStr.trim().length() != 0) {
             filters.add(LateDeliverableFilterBuilder.createHasResponseFilter(Boolean.valueOf(responseStatusStr)));
+        }
+
+        // Late Deliverable Type ID - optional, can be null or empty.
+        String lateDeliverableTypeIdStr = (String) lateDeliverableSearchForm.get(PARAM_LATE_DELIVERABLE_TYPE);
+        if (lateDeliverableTypeIdStr != null && lateDeliverableTypeIdStr.trim().length() != 0) {
+            try {
+                Long lateDeliverableTypeId = Long.parseLong(lateDeliverableTypeIdStr);
+                filters.add(LateDeliverableFilterBuilder.createLateDeliverableTypeIdFilter(lateDeliverableTypeId));
+            } catch (NumberFormatException e) {
+                // simply ignore the invalid parameter
+            }
         }
 
         DateFormat dateFormat = new SimpleDateFormat("MM.dd.yyyy");
@@ -868,6 +886,10 @@ public class LateDeliverablesActions extends DispatchAction {
             cockpitProjects = projectDataAccess.getCockpitProjectsForUser(currentUserId);
         }
         request.setAttribute("cockpitProjects", cockpitProjects);
+
+        LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager();        
+        List<LateDeliverableType> lateDeliverableTypes = lateDeliverableManager.getLateDeliverableTypes();
+        request.setAttribute("lateDeliverableTypes", lateDeliverableTypes.toArray(new LateDeliverableType[0]));
     }
 
     /**
@@ -949,8 +971,7 @@ public class LateDeliverablesActions extends DispatchAction {
     private static LateDeliverable getLateDeliverable(HttpServletRequest request, long lateDeliverableId)
         throws LateDeliverableManagementException {
         LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager();
-        LateDeliverable lateDeliverable = lateDeliverableManager.retrieve(lateDeliverableId);
-        return lateDeliverable;
+        return lateDeliverableManager.retrieve(lateDeliverableId);
     }
 
     /**
@@ -966,7 +987,7 @@ public class LateDeliverablesActions extends DispatchAction {
         String value = (String) form.get(propertyName);
         if ((value == null) || (value.trim().length() == 0)) {
             ActionsHelper.addErrorToRequest(request, propertyName,
-                                            "error.com.cronos.onlinereview.actions.LateDeliverablesActions.emptyText");
+                "error.com.cronos.onlinereview.actions.LateDeliverablesActions.emptyText");
             return null;
         } else {
             return value;
@@ -1070,6 +1091,8 @@ public class LateDeliverablesActions extends DispatchAction {
                     field.setValue(Functions.displayDate(request, lateDeliverable.getDeadline()));
                 } else if ("DELIVERABLE_TYPE".equals(field.getName())) {
                     field.setValue(Functions.getDeliverableName(request, lateDeliverable.getDeliverableId()));
+                } else if ("LATE_DELIVERABLE_TYPE".equals(field.getName())) {
+                    field.setValue(lateDeliverable.getType().getName());
                 } else if ("LATE_MEMBER_HANDLE".equals(field.getName())) {
                     UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
                     ExternalUser lateMember
