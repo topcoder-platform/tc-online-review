@@ -193,7 +193,7 @@
                                         <html:option key='global.responded' value="true"/>
                                         <html:option key='global.notResponded' value="false"/>
                                     </html:select>
-                                </td>                                                                                        
+                                </td>
                             </tr>
                             <tr class="dark">
                                 <td class="value" nowrap="nowrap">
@@ -211,7 +211,7 @@
                                 <td class="value" nowrap="nowrap">
                                     <b><bean:message key="viewLateDeliverables.DeadlineMaxDate.Label"/></b>
                                 </td>
-                                <td class="value" nowrap="nowrap" colspan="3">
+                                <td class="value" nowrap="nowrap">
                                     <html:text style="width: 75px;" property="max_deadline"
                                                styleClass="inputBoxDate"
                                                onfocus="this.value = getDateValueOnFocus(this, true);" 
@@ -220,6 +220,19 @@
                                     <div id="max_deadline_validation_msg" style="display:none;" class="error"></div>
                                     <div id="deadline_serverside_validation" class="error">
                                         <html:errors property="max_deadline" prefix="" suffix="" /></div>
+                                </td>
+                                <td class="value" nowrap="nowrap">
+                                    <b><bean:message key="viewLateDeliverables.LateDeliverableType.Label"/></b>
+                                </td>
+                                <td class="value">
+                                    <html:select property="late_deliverable_type" styleClass="inputBox"
+                                                 onkeypress="return submitOnEnter(this, event);">
+                                        <html:option key='global.any' value="" />
+                                        <c:forEach items="${lateDeliverableTypes}" var="entry">
+                                            <html:option key='LateDeliverableType.${fn:replace(entry.name, " ", "")}' value="${entry.id}" />
+                                        </c:forEach>
+                                    </html:select>
+
                                 </td>
                             </tr>
                         </tbody>                

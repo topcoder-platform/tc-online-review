@@ -84,6 +84,10 @@
                             <td width="100%" nowrap="nowrap" class="value"><c:out value="${lateDeliverable.id}"/></td>
                         </tr>
                         <tr class="dark">
+                            <td class="valueB"><bean:message key="editLateDeliverable.LateDeliverableType.label"/></td>
+                            <td width="100%" nowrap="nowrap" class="value"><c:out value="${lateDeliverable.type.name}"/></td>
+                        </tr>
+                        <tr class="light">
                             <td width="9%" class="valueB">
                                 <bean:message key="editLateDeliverable.ProjectName.label"/>
                             </td>
@@ -95,13 +99,13 @@
                                 </html:link>
                             </td>
                         </tr>
-                        <tr class="light">
+                        <tr class="dark">
                             <td class="valueB"><bean:message key="editLateDeliverable.DeliverableType.label"/></td>
                             <td nowrap="nowrap" class="value">
                                 <c:out value="${orfn:getDeliverableName(pageContext.request, lateDeliverable.deliverableId)}"/>
                             </td>
                         </tr>
-                        <tr class="dark">
+                        <tr class="light">
                             <td nowrap="nowrap" class="valueB">
                                 <bean:message key="editLateDeliverable.LateMember.label"/>
                             </td>
@@ -110,7 +114,7 @@
                                                   context="${orfn:getHandlerContextByCategoryId(project.projectCategory.id)}" />
                             </td>
                         </tr>
-                        <tr class="light">
+                        <tr class="dark">
                             <td nowrap="nowrap" class="valueB">
                                 <bean:message key="editLateDeliverable.Deadline.label"/>
                             </td>
@@ -126,7 +130,7 @@
                                 </c:choose>
                             </td>
                         </tr>
-                        <tr class="dark">
+                        <tr class="light">
                             <td nowrap="nowrap" class="valueB">
                                 <bean:message key="editLateDeliverable.Delay.label"/>
                             </td>
@@ -134,7 +138,7 @@
                                 <c:out value="${orfn:displayDelay(lateDeliverable.delay)}"/>
                             </td>
                         </tr>
-                        <tr class="light">
+                        <tr class="dark">
                             <td nowrap="nowrap" class="valueB">
                                 <bean:message key="editLateDeliverable.Forgiven.label"/>
                             </td>
@@ -158,7 +162,7 @@
                             </td>
                         </tr>
 
-                        <tr class="dark">
+                        <tr class="light">
                             <td nowrap="nowrap" class="valueB">
                                 <bean:message key="editLateDeliverable.Explanation.label"/>
                             </td>
@@ -187,7 +191,7 @@
                             </td>
                         </tr>
 
-                        <tr class="light">
+                        <tr class="dark">
                             <td nowrap="nowrap" class="valueB">
                                 <bean:message key="editLateDeliverable.Response.label"/>
                             </td>

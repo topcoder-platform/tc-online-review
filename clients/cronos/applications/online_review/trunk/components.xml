@@ -23,7 +23,7 @@
     <component
         name="late_deliverables_management"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/late_deliverables_management/trunk"
-        revision="206971" />
+        revision="209414" />
 
     <component
         name="online_review_deliverables"
