@@ -1282,7 +1282,28 @@
 	                            <c:otherwise>
 	                            	<html:hidden property="billing_project"/>
 	                            </c:otherwise>
-                            </c:choose>
+                            </c:choose><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+
+                            <c:choose>
+	                            <c:when test="${allowCockpitProjectEdit}">
+	                                <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
+	                                    <td class="value" nowrap="nowrap">
+	                                        <b><bean:message key="editProject.ProjectDetails.CockpitProject" /></b><br />
+	                                    </td>
+	                                    <td class="value" nowrap="nowrap">
+	                                        <html:select styleClass="inputBox" property="cockpit_project" style="width:150px;">
+	                                            <c:forEach var="cockpitProject" items="${cockpitProjects}">
+	                                                <html:option key='CockpitProject.${fn:replace(cockpitProject.name, " ", "")}' value="${cockpitProject.id}">${cockpitProject.name}</html:option>
+	                                            </c:forEach>
+	                                        </html:select>
+	                                        <span id="cockpit_project_validation_msg" style="display:none;" class="error"></span>
+	                                    </td>
+	                                </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+	                            </c:when>
+	                            <c:otherwise>
+	                            	<html:hidden property="cockpit_project"/>
+	                            </c:otherwise>
+                            </c:choose><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
 
                             <tr>
                                 <td class="lastRowTD" colspan="2"><!-- @ --></td>
