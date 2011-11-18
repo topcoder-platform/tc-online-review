@@ -71,6 +71,7 @@
                     <c:set var="lateDeliverable" value="${requestScope.lateDeliverable}"/>
                     <c:set var="project" value="${requestScope.project}"/>
                     
+                    <c:set var="rowCount" value="0" />
                     <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse: collapse;"
                            class="scorecard">
                         <tbody>
@@ -78,16 +79,19 @@
                             <td colspan="2" class="title"><bean:message key="editLateDeliverable.title"/></td>
                         </tr>
 
-
-                        <tr class="light">
+                        <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
                             <td class="valueB"><bean:message key="editLateDeliverable.LateDeliverableId.label"/></td>
                             <td width="100%" nowrap="nowrap" class="value"><c:out value="${lateDeliverable.id}"/></td>
                         </tr>
-                        <tr class="dark">
+                        <c:set var="rowCount" value="${rowCount + 1}" />
+
+                        <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
                             <td class="valueB"><bean:message key="editLateDeliverable.LateDeliverableType.label"/></td>
                             <td width="100%" nowrap="nowrap" class="value"><c:out value="${lateDeliverable.type.name}"/></td>
                         </tr>
-                        <tr class="light">
+                        <c:set var="rowCount" value="${rowCount + 1}" />
+
+                        <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
                             <td width="9%" class="valueB">
                                 <bean:message key="editLateDeliverable.ProjectName.label"/>
                             </td>
@@ -99,13 +103,17 @@
                                 </html:link>
                             </td>
                         </tr>
-                        <tr class="dark">
+                        <c:set var="rowCount" value="${rowCount + 1}" />
+
+                        <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
                             <td class="valueB"><bean:message key="editLateDeliverable.DeliverableType.label"/></td>
                             <td nowrap="nowrap" class="value">
                                 <c:out value="${orfn:getDeliverableName(pageContext.request, lateDeliverable.deliverableId)}"/>
                             </td>
                         </tr>
-                        <tr class="light">
+                        <c:set var="rowCount" value="${rowCount + 1}" />
+
+                        <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
                             <td nowrap="nowrap" class="valueB">
                                 <bean:message key="editLateDeliverable.LateMember.label"/>
                             </td>
@@ -114,31 +122,41 @@
                                                   context="${orfn:getHandlerContextByCategoryId(project.projectCategory.id)}" />
                             </td>
                         </tr>
-                        <tr class="dark">
-                            <td nowrap="nowrap" class="valueB">
-                                <bean:message key="editLateDeliverable.Deadline.label"/>
-                            </td>
-                            <td nowrap="nowrap" class="value">
-                                <c:choose>
-                                    <c:when test="${lateDeliverable.compensatedDeadline ne null}">
-                                        <c:out value="${orfn:displayDate(pageContext.request, lateDeliverable.compensatedDeadline)}"/>
-                                        (compensated due to the premature end of the previous phase)
-                                    </c:when>
-                                    <c:otherwise>
-                                        <c:out value="${orfn:displayDate(pageContext.request, lateDeliverable.deadline)}"/>
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
-                        </tr>
-                        <tr class="light">
-                            <td nowrap="nowrap" class="valueB">
-                                <bean:message key="editLateDeliverable.Delay.label"/>
-                            </td>
-                            <td nowrap="nowrap" class="value">
-                                <c:out value="${orfn:displayDelay(lateDeliverable.delay)}"/>
-                            </td>
-                        </tr>
-                        <tr class="dark">
+                        <c:set var="rowCount" value="${rowCount + 1}" />
+
+                        <c:if test='${lateDeliverable.deadline ne null}'>
+                            <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
+                                <td nowrap="nowrap" class="valueB">
+                                    <bean:message key="editLateDeliverable.Deadline.label"/>
+                                </td>
+                                <td nowrap="nowrap" class="value">
+                                    <c:choose>
+                                        <c:when test="${lateDeliverable.compensatedDeadline ne null}">
+                                            <c:out value="${orfn:displayDate(pageContext.request, lateDeliverable.compensatedDeadline)}"/>
+                                            (compensated due to the premature end of the previous phase)
+                                        </c:when>
+                                        <c:otherwise>
+                                            <c:out value="${orfn:displayDate(pageContext.request, lateDeliverable.deadline)}"/>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </tr>
+                            <c:set var="rowCount" value="${rowCount + 1}" />
+                        </c:if>
+
+                        <c:if test='${lateDeliverable.delay ne null}'>
+                            <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
+                                <td nowrap="nowrap" class="valueB">
+                                    <bean:message key="editLateDeliverable.Delay.label"/>
+                                </td>
+                                <td nowrap="nowrap" class="value">
+                                    <c:out value="${orfn:displayDelay(lateDeliverable.delay)}"/>
+                                </td>
+                            </tr>
+                            <c:set var="rowCount" value="${rowCount + 1}" />
+                        </c:if>
+
+                        <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
                             <td nowrap="nowrap" class="valueB">
                                 <bean:message key="editLateDeliverable.Forgiven.label"/>
                             </td>
@@ -161,8 +179,9 @@
                                 </c:choose>
                             </td>
                         </tr>
+                        <c:set var="rowCount" value="${rowCount + 1}" />
 
-                        <tr class="light">
+                        <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
                             <td nowrap="nowrap" class="valueB">
                                 <bean:message key="editLateDeliverable.Explanation.label"/>
                             </td>
@@ -190,8 +209,9 @@
                                 </c:choose>
                             </td>
                         </tr>
+                        <c:set var="rowCount" value="${rowCount + 1}" />
 
-                        <tr class="dark">
+                        <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
                             <td nowrap="nowrap" class="valueB">
                                 <bean:message key="editLateDeliverable.Response.label"/>
                             </td>
@@ -219,6 +239,8 @@
                                 </c:choose>
                             </td>
                         </tr>
+                        <c:set var="rowCount" value="${rowCount + 1}" />
+
                         <tr>
                             <td colspan="2" class="lastRowTD"><!-- @ --></td>
                         </tr>

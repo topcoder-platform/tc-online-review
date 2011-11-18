@@ -4167,7 +4167,6 @@ public class ActionsHelper {
         if (connection != null) {
             try {
                 connection.close();
-                log.log(Level.INFO, "close the connection.");
             } catch (SQLException e) {
                 log.log(Level.ERROR, "Error closing JDBC Connection: " + e.getMessage());
             }

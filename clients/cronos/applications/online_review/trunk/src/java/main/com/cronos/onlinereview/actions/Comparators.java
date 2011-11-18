@@ -439,7 +439,7 @@ final class Comparators {
 
     /**
      * <p>This class implements <code>Comparator</code> interface and is used to sort late deliverables in
-     * the list. It sorts late deliverables by their deadline, from the least recent to the most recent ones.</p>
+     * the list. It sorts late deliverables by their creation date, from the least recent to the most recent ones.</p>
      *
      * @author FireIce
      * @since 1.2
@@ -456,7 +456,7 @@ final class Comparators {
          *         greater than the second respectively.
          */
         public int compare(LateDeliverable lateDeliverable1, LateDeliverable lateDeliverable2) {
-            return lateDeliverable1.getDeadline().compareTo(lateDeliverable2.getDeadline());
+            return lateDeliverable1.getCreateDate().compareTo(lateDeliverable2.getCreateDate());
         }
     }
 

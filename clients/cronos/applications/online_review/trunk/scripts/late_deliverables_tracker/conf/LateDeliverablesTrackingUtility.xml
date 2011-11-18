@@ -113,7 +113,7 @@
                 <Property name="resourceManagerKey">
                     <Value>resourceManager</Value>
                 </Property>
-                <Property name="trackingDeliverableIds">
+                <Property name="missedDeadlineTrackingDeliverableIds">
                     <Value>2,4,5,6,7,8,9,10,11,12,13,14,15,20,22,26,28,29</Value>
                 </Property>
                 <Property name="objectFactoryConfig">
@@ -549,14 +549,20 @@
                         </Property>
                     </Property>
                 </Property>
-                <Property name="notificationDeliverableIds">
+                <Property name="missedDeadlineNotificationDeliverableIds">
                     <Value>2,4,5,6,7,8,9,10,11,12,13,14,15,20,22,26,28,29</Value>
                 </Property>
-                <Property name="defaultEmailSubjectTemplateText">
+                <Property name="defaultMissedDeadlineEmailSubjectTemplateText">
                     <Value>WARNING\: Your %DELIVERABLE_NAME% is late for %PROJECT_NAME% %PROJECT_VERSION%</Value>
                 </Property>
-                <Property name="defaultEmailBodyTemplatePath">
-                    <Value>@exttemplatesdir@/warn_email_template.html</Value>
+                <Property name="defaultMissedDeadlineEmailBodyTemplatePath">
+                    <Value>@exttemplatesdir@/missed_deadline_email_template.html</Value>
+                </Property>
+                <Property name="rejectedFinalFixEmailSubjectTemplateText">
+                    <Value>WARNING\: Your Final Fix for %PROJECT_NAME% %PROJECT_VERSION% has failed the final review</Value>
+                </Property>
+                <Property name="rejectedFinalFixEmailBodyTemplatePath">
+                    <Value>@exttemplatesdir@/rejected_ff_email_template.html</Value>
                 </Property>
                 <Property name="emailSender">
                     <Value>do_not_reply@topcoder.com</Value>
@@ -576,6 +582,16 @@
                 <Property name="explanationDeadlineIntervalInHours">
                     <Value>24</Value> <!-- 24 hours are given for the members to explain late deliverables -->
                 </Property>
+                <Property name="lateDeliverableTypeIds">
+                    <Value>Missed Deadline=1,Rejected Final Fix=2</Value>
+                </Property>
+                <Property name="sendRejectedFinalFixNotifications">
+                    <Value>false</Value>
+                </Property>
+            </Property>
+            <Property name="lateDeliverableTypes">
+                <Value>Missed Deadline</Value>
+                <Value>Rejected Final Fix</Value>
             </Property>
         </Property>
 	
