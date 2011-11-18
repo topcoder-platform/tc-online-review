@@ -18,12 +18,12 @@
     <component
         name="late_deliverables_tracker"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/late_deliverables_tracker/trunk"
-        revision="205997" />
+        revision="209930" />
 
     <component
         name="late_deliverables_management"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/late_deliverables_management/trunk"
-        revision="209414" />
+        revision="210254" />
 
     <component
         name="online_review_deliverables"

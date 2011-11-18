@@ -301,8 +301,22 @@
                                         <c:forEach items="${lateDeliverables}" var="lateDeliverable" varStatus="status">
                                         <tr class="${(status.index % 2 == 0) ? 'light' : 'dark'}">
                                             <td class="value" width="20%"><tc-webtag:handle coderId="${orfn:getUserId(pageContext.request, lateDeliverable.resourceId)}" context="${orfn:getHandlerContextByCategoryId(project.projectCategory.id)}" /></td>
-                                            <td class="value" width="20%">${orfn:getDeliverableName(pageContext.request, lateDeliverable.deliverableId)}</td>
-                                            <td class="value" width="20%">${orfn:displayDate(pageContext.request, lateDeliverable.deadline)}</td>
+                                            <c:choose>
+                                                <c:when test="${lateDeliverable.type.id == 1}">
+                                                    <td class="value" width="20%">${orfn:getDeliverableName(pageContext.request, lateDeliverable.deliverableId)}</td>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <td class="value" width="20%"><bean:message key="LateDeliverableType.RejectedFinalFix" /></td>
+                                                </c:otherwise>
+                                            </c:choose>
+                                            <c:choose>
+                                                <c:when test="${lateDeliverable.deadline != null}">
+                                                    <td class="value" width="20%">${orfn:displayDate(pageContext.request, lateDeliverable.deadline)}</td>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <td class="value" width="20%">N/A</td>
+                                                </c:otherwise>
+                                            </c:choose>
                                             <c:choose>
                                                 <c:when test="${lateDeliverable.delay != null}">
                                                     <td class="value" width="20%">${orfn:displayDelay(lateDeliverable.delay)}</td>

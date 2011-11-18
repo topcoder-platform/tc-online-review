@@ -36,6 +36,7 @@ import com.topcoder.util.file.Template;
 import com.topcoder.util.file.fieldconfig.Field;
 import com.topcoder.util.file.fieldconfig.Node;
 import com.topcoder.util.file.fieldconfig.TemplateFields;
+import com.topcoder.util.file.fieldconfig.Condition;
 import com.topcoder.util.file.templatesource.FileTemplateSource;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -1041,72 +1042,87 @@ public class LateDeliverablesActions extends DispatchAction {
                              (canEditLateDeliverables && !lateDeliverableOwner) || explanationEditable);
     }
 
+
     /**
-     * <p>Set template fields with real values.</p>
+     * This method sets the values of the nodes.
      *
-     * @param root a <code>TemplateFields</code> providing the root in template fields hierarchy.
+     * @param nodes the nodes in template
      * @param project a <code>Project</code> providing details for current project.
      * @param lateDeliverable a <code>LateDeliverable</code> which has been updated.
      * @param request an <code>HttpServletRequest</code> representing incoming request.
-     * @return a <code>TemplateFields</code> providing the initialized template fields.
      * @throws BaseException if an unexpected error occurs.
      */
-    private TemplateFields setTemplateFieldValues(TemplateFields root, Project project, LateDeliverable lateDeliverable,
-                                                  HttpServletRequest request)
+    private void setNodes(Node[] nodes, Project project, LateDeliverable lateDeliverable, HttpServletRequest request)
         throws BaseException {
-        Node[] nodes = root.getNodes();
-
         for (int i = 0; i < nodes.length; i++) {
             if (nodes[i] instanceof Field) {
                 Field field = (Field) nodes[i];
-                if ("PROJECT_NAME".equals(field.getName())) {
-                    field.setValue("" + project.getProperty("Project Name"));
-                } else if ("PROJECT_VERSION".equals(field.getName())) {
-                    field.setValue("" + project.getProperty("Project Version"));
-                } else if ("LATE_DELIVERABLE_LINK".equals(field.getName())) {
-                    field.setValue(ConfigHelper.getLateDeliverableBaseURL() + lateDeliverable.getId());
-                } else if ("OR_LINK".equals(field.getName())) {
-                    field.setValue(ConfigHelper.getProjectDetailsBaseURL() + project.getId());
-                } else if ("FORGIVEN".equals(field.getName())) {
-                    if (lateDeliverable.isForgiven()) {
-                        field.setValue("Yes");
-                    } else {
-                        field.setValue("No");
-                    }
-                } else if ("EXPLANATION".equals(field.getName())) {
-                    String explanation = lateDeliverable.getExplanation();
-                    if (explanation == null) {
-                        field.setValue("N/A");
-                    } else {
-                        field.setValue(Functions.htmlEncode(explanation));
-                    }
-                } else if ("RESPONSE".equals(field.getName())) {
-                    String response = lateDeliverable.getResponse();
-                    if (response == null) {
-                        field.setValue("N/A");
-                    } else {
-                        field.setValue(Functions.htmlEncode(response));
-                    }
-                } else if ("DEADLINE".equals(field.getName())) {
-                    field.setValue(Functions.displayDate(request, lateDeliverable.getDeadline()));
-                } else if ("DELIVERABLE_TYPE".equals(field.getName())) {
-                    field.setValue(Functions.getDeliverableName(request, lateDeliverable.getDeliverableId()));
-                } else if ("LATE_DELIVERABLE_TYPE".equals(field.getName())) {
-                    field.setValue(lateDeliverable.getType().getName());
-                } else if ("LATE_MEMBER_HANDLE".equals(field.getName())) {
-                    UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
-                    ExternalUser lateMember
-                        = userRetrieval.retrieveUser(getLateDeliverableUserId(request, lateDeliverable));
-                    field.setValue(lateMember.getHandle());
-                } else if ("CURRENT_USER_HANDLE".equals(field.getName())) {
-                    UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
-                    ExternalUser currentUser = userRetrieval.retrieveUser(AuthorizationHelper.getLoggedInUserId(request));
-                    field.setValue(currentUser.getHandle());
-                }
+                field.setValue(getFieldValue(field.getName(), project, lateDeliverable, request));
+            } else if (nodes[i] instanceof Condition) {
+                Condition condition = ((Condition) nodes[i]);
+                condition.setValue(getFieldValue(condition.getName(), project, lateDeliverable, request));
+
+                setNodes(condition.getSubNodes().getNodes(), project, lateDeliverable, request);
             }
         }
+    }
 
-        return root;
+    /**
+     * <p>Gets field value.</p>
+     *
+     * @param fieldName the Name of the field in template
+     * @param project a <code>Project</code> providing details for current project.
+     * @param lateDeliverable a <code>LateDeliverable</code> which has been updated.
+     * @param request an <code>HttpServletRequest</code> representing incoming request.
+     * @return a <code>String</code> providing the value of the template field
+     * @throws BaseException if an unexpected error occurs.
+     */
+    private String getFieldValue(String fieldName, Project project, LateDeliverable lateDeliverable,
+	                             HttpServletRequest request) throws BaseException {
+        if ("PROJECT_NAME".equals(fieldName)) {
+            return "" + project.getProperty("Project Name");
+        } else if ("PROJECT_VERSION".equals(fieldName)) {
+            return "" + project.getProperty("Project Version");
+        } else if ("LATE_DELIVERABLE_LINK".equals(fieldName)) {
+            return ConfigHelper.getLateDeliverableBaseURL() + lateDeliverable.getId();
+        } else if ("OR_LINK".equals(fieldName)) {
+            return ConfigHelper.getProjectDetailsBaseURL() + project.getId();
+        } else if ("FORGIVEN".equals(fieldName)) {
+            if (lateDeliverable.isForgiven()) {
+                return "Yes";
+            } else {
+                return "No";
+            }
+        } else if ("EXPLANATION".equals(fieldName)) {
+            String explanation = lateDeliverable.getExplanation();
+            if (explanation == null) {
+                return "N/A";
+            } else {
+                return Functions.htmlEncode(explanation);
+            }
+        } else if ("RESPONSE".equals(fieldName)) {
+            String response = lateDeliverable.getResponse();
+            if (response == null) {
+                return "N/A";
+            } else {
+                return Functions.htmlEncode(response);
+            }
+        } else if ("DEADLINE".equals(fieldName)) {
+            return Functions.displayDate(request, lateDeliverable.getDeadline());
+        } else if ("DELIVERABLE_TYPE".equals(fieldName)) {
+            return Functions.getDeliverableName(request, lateDeliverable.getDeliverableId());
+        } else if ("LATE_DELIVERABLE_TYPE".equals(fieldName)) {
+            return lateDeliverable.getType().getName();
+        } else if ("LATE_MEMBER_HANDLE".equals(fieldName)) {
+            UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
+            ExternalUser lateMember = userRetrieval.retrieveUser(getLateDeliverableUserId(request, lateDeliverable));
+            return lateMember.getHandle();
+        } else if ("CURRENT_USER_HANDLE".equals(fieldName)) {
+            UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
+            ExternalUser currentUser = userRetrieval.retrieveUser(AuthorizationHelper.getLoggedInUserId(request));
+            return currentUser.getHandle();
+        }
+        return "";
     }
 
     /**
@@ -1132,8 +1148,8 @@ public class LateDeliverablesActions extends DispatchAction {
         DocumentGenerator docGenerator = new DocumentGenerator();
         docGenerator.setDefaultTemplateSource(new FileTemplateSource());
         Template template = docGenerator.getTemplate(emailTemplateName);
-        TemplateFields root = setTemplateFieldValues(docGenerator.getFields(template), project, lateDeliverable,
-                                                     request);
+        TemplateFields root = docGenerator.getFields(template);
+        setNodes(root.getNodes(), project, lateDeliverable, request);
 
         String emailContent = docGenerator.applyTemplate(root);
         TCSEmailMessage message = new TCSEmailMessage();
