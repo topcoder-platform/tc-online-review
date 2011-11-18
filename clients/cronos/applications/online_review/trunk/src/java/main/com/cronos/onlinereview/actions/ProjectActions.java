@@ -58,6 +58,7 @@ import com.cronos.onlinereview.dataaccess.ProjectPhaseDataAccess;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.model.ClientProject;
+import com.cronos.onlinereview.model.CockpitProject;
 import com.topcoder.date.workdays.DefaultWorkdaysFactory;
 import com.topcoder.date.workdays.Workdays;
 import com.topcoder.date.workdays.WorkdaysUnitOfTime;
@@ -513,6 +514,7 @@ public class ProjectActions extends DispatchAction {
                 || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)
                 || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
             request.setAttribute("billingProjects", ActionsHelper.getClientProjects(request));
+            request.setAttribute("cockpitProjects", ActionsHelper.getCockpitProjects(request));
         }
     }
 
@@ -587,6 +589,7 @@ public class ProjectActions extends DispatchAction {
         // since Online Review Update - Add Project Dropdown v1.0
         // Populate project billing project
         populateProjectFormProperty(form, Long.class, "billing_project", project, "Billing Project");
+        form.set("cockpit_project", new Long(project.getTcDirectProjectId()));
 
         // Populate project autopilot option
         form.set("autopilot", new Boolean("On".equals(project.getProperty("Autopilot Option"))));
@@ -677,9 +680,22 @@ public class ProjectActions extends DispatchAction {
         }
 
        request.setAttribute("allowBillingEdit", isAdmin && inList);
-
-
        // end BUG-4039
+
+       List<CockpitProject> availableCockpitProjects = ActionsHelper.getCockpitProjects(request);
+       Long currentCockpitProjectId = (Long) form.get("cockpit_project");
+       inList = false;
+       if (currentCockpitProjectId == null) {
+           inList = true;
+       } else {
+           for (CockpitProject cockpitProject : availableCockpitProjects) {
+               if (cockpitProject.getId() == currentCockpitProjectId) {
+                   inList = true;
+                   break;
+               }
+           }
+       }
+       request.setAttribute("allowCockpitProjectEdit", isAdmin && inList);
     }
 
     /**
@@ -997,6 +1013,7 @@ public class ProjectActions extends DispatchAction {
                 || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
                  || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
                 project.setProperty("Billing Project", lazyForm.get("billing_project"));
+                project.setTcDirectProjectId(Integer.parseInt((String) lazyForm.get("cockpit_project")));
         }
 
 

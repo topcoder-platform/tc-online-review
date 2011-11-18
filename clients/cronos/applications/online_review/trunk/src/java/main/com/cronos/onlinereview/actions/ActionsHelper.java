@@ -39,12 +39,14 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionRedirect;
 import org.apache.struts.util.MessageResources;
 
+import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.dataaccess.ResourceDataAccess;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.RetrievalException;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.external.impl.DBUserRetrieval;
 import com.cronos.onlinereview.model.ClientProject;
+import com.cronos.onlinereview.model.CockpitProject;
 import com.cronos.onlinereview.phases.AutoPaymentUtil;
 import com.cronos.onlinereview.phases.PRHelper;
 import com.topcoder.date.workdays.DefaultWorkdaysFactory;
@@ -2855,6 +2857,33 @@ public class ActionsHelper {
 
         // Return the File Upload object
         return fileUpload;
+    }
+
+    /**
+     * This static method helps to get a list of cockpit projects belonging to the given user.
+     *
+     * @param request the request
+     * @return a list of cockpit projects
+     * @throws BaseException if any error occurs
+     */
+    public static List<CockpitProject> getCockpitProjects(HttpServletRequest request) throws BaseException {
+        validateParameterNotNull(request, "request");
+
+        long userId = AuthorizationHelper.getLoggedInUserId(request);
+
+        Map<Long, String> mapOfCockpitProjects = new ProjectDataAccess().getCockpitProjectsForUser(userId);
+        List<CockpitProject> cockpitProjects = new LinkedList<CockpitProject>();
+        CockpitProject project = new CockpitProject();
+        project.setId(0);
+        project.setName("-------------");
+        cockpitProjects.add(project);
+        for (Long id : mapOfCockpitProjects.keySet()) {
+            project = new CockpitProject();
+            project.setId(id);
+            project.setName(mapOfCockpitProjects.get(id));
+            cockpitProjects.add(project);
+        }
+        return cockpitProjects;
     }
 
     /**
