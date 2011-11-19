@@ -2871,7 +2871,12 @@ public class ActionsHelper {
 
         long userId = AuthorizationHelper.getLoggedInUserId(request);
 
-        Map<Long, String> mapOfCockpitProjects = new ProjectDataAccess().getCockpitProjectsForUser(userId);
+        Map<Long, String> mapOfCockpitProjects = null;
+        if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
+            mapOfCockpitProjects = new ProjectDataAccess().getAllCockpitProjects();
+        } else {
+            mapOfCockpitProjects = new ProjectDataAccess().getCockpitProjectsForUser(userId);
+        }
         List<CockpitProject> cockpitProjects = new LinkedList<CockpitProject>();
         CockpitProject project = new CockpitProject();
         project.setId(0);
