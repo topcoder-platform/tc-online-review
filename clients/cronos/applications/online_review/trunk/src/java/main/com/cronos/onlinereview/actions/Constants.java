@@ -94,7 +94,7 @@ package com.cronos.onlinereview.actions;
  * </p>
  *
  * @author George1, real_vg, pulky, isv, flexme
- * @version 1.8
+ * @version 1.8.1
  */
 public class Constants {
 
@@ -1288,6 +1288,20 @@ public class Constants {
      * @since 1.8
      */
     public static final String CONTEST_PRIZE_TYPE_NAME = "Contest Prize";
+
+    /**
+     * The constant for the "Missed Deadline" late deliverable type id.
+     * 
+     * @since 1.8.1
+     */
+    public static final long MISSED_DEADLINE_ID = 1;
+    
+    /**
+     * The constant for the "Rejected Final Fix" late deliverable type id.
+     * 
+     * @since 1.8.1
+     */
+    public static final long REJECTED_FINAL_FIX_ID = 2;
     
     // Hidden constructor
 

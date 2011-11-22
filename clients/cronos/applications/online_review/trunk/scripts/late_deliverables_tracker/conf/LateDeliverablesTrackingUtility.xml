@@ -559,7 +559,7 @@
                     <Value>@exttemplatesdir@/missed_deadline_email_template.html</Value>
                 </Property>
                 <Property name="rejectedFinalFixEmailSubjectTemplateText">
-                    <Value>WARNING\: Your Final Fix for %PROJECT_NAME% %PROJECT_VERSION% has failed the final review</Value>
+                    <Value>WARNING\: Your Final Fixes for %PROJECT_NAME% %PROJECT_VERSION% have failed the Final Review</Value>
                 </Property>
                 <Property name="rejectedFinalFixEmailBodyTemplatePath">
                     <Value>@exttemplatesdir@/rejected_ff_email_template.html</Value>
@@ -586,7 +586,7 @@
                     <Value>Missed Deadline=1,Rejected Final Fix=2</Value>
                 </Property>
                 <Property name="sendRejectedFinalFixNotifications">
-                    <Value>false</Value>
+                    <Value>true</Value>
                 </Property>
             </Property>
             <Property name="lateDeliverableTypes">
