@@ -399,13 +399,17 @@ public class ProjectDetailsActions extends DispatchAction {
             filters.add(LateDeliverableFilterBuilder.createUserHandleFilter((String) myResources[0].getProperty("Handle")));
 
             List<LateDeliverable> lateDeliverables = lateDeliverableManager.searchAllLateDeliverables(new AndFilter(filters));
-            long delay = 0;
+            long delay = 0, rejectedFinalFixes = 0;
             for(LateDeliverable lateDeliverable : lateDeliverables) {
-                delay += lateDeliverable.getDelay() != null ? lateDeliverable.getDelay() : 0;
+                if (lateDeliverable.getType().getId() == Constants.MISSED_DEADLINE_ID) {
+                    delay += lateDeliverable.getDelay() != null ? lateDeliverable.getDelay() : 0;
+                } else if (lateDeliverable.getType().getId() == Constants.REJECTED_FINAL_FIX_ID) {
+                    rejectedFinalFixes++;
+                }
             }
             request.setAttribute("myDelay", delay);
 
-            long paymentPenaltyPercentage = (delay>0 ? 5 : 0) + (delay/3600);
+            long paymentPenaltyPercentage = (delay>0 ? 5 : 0) + (delay/3600) + rejectedFinalFixes * 5;
             if (paymentPenaltyPercentage > 50) {
                 paymentPenaltyPercentage = 50;
             }
