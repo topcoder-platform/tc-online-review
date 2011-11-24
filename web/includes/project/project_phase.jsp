@@ -575,7 +575,7 @@
 											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 										</td>
 										<c:if test="${not empty group.finalFix}">
-											<td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.finalFix.modificationTimestamp)}</td>
+											<td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.finalFix.creationTimestamp)}</td>
 											<td class="valueC" nowrap="nowrap">
 												<html:link page="/actions/DownloadFinalFix.do?method=downloadFinalFix&uid=${group.finalFix.id}"
 													titleKey="viewProjectDetails.box.FinalFix.Download.alt"><bean:message
