@@ -2427,7 +2427,6 @@ public class ProjectActions extends DispatchAction {
 
         for (Long id : oldUsers) {
             newUsers.remove(id);
-            newSubmitters.remove(id);
         }
 
         // Populate project_result and component_inquiry for new submitters
