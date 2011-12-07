@@ -178,7 +178,7 @@
 											    <html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
 											</c:if>
 											<c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}" title="<bean:message key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<bean:message key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                             </c:if>
 											<c:if test="${not empty submitter}">
 												(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
@@ -265,7 +265,7 @@
 		                                                <html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${pastSubmission.id}" titleKey="viewProjectDetails.box.Submission.Previous.UploadID">${pastSubmission.id}</html:link>
 		                                            </c:if>
 		                                            <c:if test="${project.projectCategory.projectType.id eq 3}">
-		                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&uid=${pastSubmission.id}" title="<bean:message key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
+		                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&uid=${pastSubmission.id}&sbt=original" title="<bean:message key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
 		                                            </c:if>
                                             </td>
                                             <td class="value" width="22%">${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
@@ -416,7 +416,7 @@
 												    <html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
 												</c:if>
 												<c:if test="${project.projectCategory.projectType.id eq 3}">
-	                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}" title="<bean:message key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+	                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<bean:message key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
 	                                            </c:if>												
 												<c:if test="${not empty submitter}">
 													(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
@@ -959,7 +959,7 @@
                                                        titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
                                             </c:if>
                                             <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}" title="<bean:message key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<bean:message key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                             </c:if>
                                             <c:if test="${not empty submitter}">
                                                 (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}'
@@ -1178,7 +1178,7 @@
 		                                                       titleKey="viewProjectDetails.box.Submission.Previous.UploadID">${pastSubmission.id}</html:link>
 		                                        </c:if>
 		                                        <c:if test="${project.projectCategory.projectType.id eq 3}">
-		                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${pastSubmission.id}" title="<bean:message key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
+		                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${pastSubmission.id}&sbt=original" title="<bean:message key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
 		                                        </c:if>
                                             </td>
                                             <td class="value" width="12%">${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
