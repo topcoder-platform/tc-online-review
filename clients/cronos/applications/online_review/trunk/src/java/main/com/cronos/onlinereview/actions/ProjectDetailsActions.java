@@ -556,7 +556,6 @@ public class ProjectDetailsActions extends DispatchAction {
 
         Map<String, Scorecard> phaseScorecardTemplates = new LinkedHashMap<String, Scorecard>();
         Map<String, String> phaseScorecardLinks = new LinkedHashMap<String, String>();
-        Float minimumScreeningScore = 75f;
         // Iterate over all phases determining dates, durations and assigned scorecards
         for (int i = 0; i < phases.length; ++i) {
             // Get a phase for this iteration
@@ -585,10 +584,6 @@ public class ProjectDetailsActions extends DispatchAction {
                 // override the previous scorecard, here assume the phases are ordered sequentially.
                 phaseScorecardTemplates.put(phaseTypeName, scorecardTemplate);
                 phaseScorecardLinks.put(phaseTypeName, ConfigHelper.getProjectTypeScorecardLink(projectTypeName, scorecardTemplate.getId()));
-
-                if (phase.getPhaseType().getName().equals(Constants.SCREENING_PHASE_NAME)) {
-                    minimumScreeningScore = scorecardTemplate.getMinScore();
-                }
             }
         }
 
@@ -631,7 +626,6 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("phaseGroupIndexes", phasesDetails.getPhaseGroupIndexes());
         request.setAttribute("phaseGroups", phasesDetails.getPhaseGroups());
         request.setAttribute("activeTabIdx", phasesDetails.getActiveTabIndex());
-        request.setAttribute("passingMinimum", minimumScreeningScore);
 
         boolean sendTLNotifications = false;
 

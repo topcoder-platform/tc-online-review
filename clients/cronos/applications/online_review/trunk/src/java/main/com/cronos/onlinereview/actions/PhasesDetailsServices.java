@@ -410,6 +410,8 @@ final class PhasesDetailsServices {
                 phaseGroup.setMilestoneScreener(screeners[0]);
             }
 
+            phaseGroup.setMilestoneScreeningPhaseStatus(phase.getPhaseStatus().getId());
+
             // No need to fetch auto screening results if there are no submissions
             if (submissions.length == 0) {
                 return;
@@ -702,6 +704,7 @@ final class PhasesDetailsServices {
             Resource[] screeners = ActionsHelper.getResourcesForPhase(allProjectResources, phases[phaseIdx]);
 
             phaseGroup.setReviewers(screeners);
+            phaseGroup.setScreeningPhaseStatus(phases[phaseIdx].getPhaseStatus().getId());
 
             // No need to fetch auto screening results if there are no submissions
             if (submissions.length == 0) {
