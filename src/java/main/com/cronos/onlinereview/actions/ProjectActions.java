@@ -379,10 +379,8 @@ public class ProjectActions extends DispatchAction {
         boolean isAdmin = Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
                 || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
                 || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME));
-        if (isAdmin) {
-            request.setAttribute("allowBillingEdit", isAdmin);
-            request.setAttribute("allowCockpitProjectEdit", isAdmin);
-        }
+        request.setAttribute("allowBillingEdit", isAdmin);
+        request.setAttribute("allowCockpitProjectEdit", isAdmin);
 
         // Load the look up data
         loadProjectEditLookups(request);
@@ -1021,7 +1019,10 @@ public class ProjectActions extends DispatchAction {
                 || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
                  || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
                 project.setProperty("Billing Project", lazyForm.get("billing_project"));
-                project.setTcDirectProjectId(Integer.parseInt((String) lazyForm.get("cockpit_project")));
+                String cockpitProjectId = (String) lazyForm.get("cockpit_project");
+                if (cockpitProjectId.trim().length() > 0) {
+                    project.setTcDirectProjectId(Integer.parseInt(cockpitProjectId));
+                }
         }
 
 
