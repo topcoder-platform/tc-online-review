@@ -63,7 +63,7 @@ import com.topcoder.project.phases.Phase;
  * </p>
  *
  * @author George1, real_vg, isv, lmmortal
- * @version 1.4.2
+ * @version 1.4.3
  */
 public class PhaseGroup {
 
@@ -337,6 +337,20 @@ public class PhaseGroup {
      * @since 1.1
      */
     private Resource[] approvalReviewers;
+
+    /**
+     * <p>A <code>long</code> referencing the current status of the <code>Screening</code> phase.</p>
+     *
+     * @since 1.4.3
+     */
+    private long screeningPhaseStatus;
+
+    /**
+     * <p>A <code>long</code> referencing the current status of the <code>Milestone Screening</code> phase.</p>
+     *
+     * @since 1.4.3
+     */
+    private long milestoneScreeningPhaseStatus;
 
     /**
      * <p>A <code>long</code> referencing the current status of the <code>Approval</code> phase.</p>
@@ -1066,6 +1080,46 @@ public class PhaseGroup {
      */
     public void setApprovalReviewers(Resource[] approvalReviewers) {
         this.approvalReviewers = approvalReviewers;
+    }
+
+    /**
+     * <p>Gets the current <code>Screening</code> phase status.</p>
+     *
+     * @return a <code>long</code> referencing the current status of the <code>Screening</code> phase.
+     * @since 1.4.3
+     */
+    public long getScreeningPhaseStatus() {
+        return screeningPhaseStatus;
+    }
+
+    /**
+     * <p>Sets the current <code>Screening</code> phase status.</p>
+     *
+     * @param screeningPhaseStatus a <code>long</code> referencing the current status of the <code>Screening</code> phase.
+     * @since 1.4.3
+     */
+    public void setScreeningPhaseStatus(long screeningPhaseStatus) {
+        this.screeningPhaseStatus = screeningPhaseStatus;
+    }
+
+    /**
+     * <p>Gets the current <code>Milestone Screening</code> phase status.</p>
+     *
+     * @return a <code>long</code> referencing the current status of the <code>Milestone Screening</code> phase.
+     * @since 1.4.3
+     */
+    public long getMilestoneScreeningPhaseStatus() {
+        return milestoneScreeningPhaseStatus;
+    }
+
+    /**
+     * <p>Sets the current <code>Milestone Screening</code> phase status.</p>
+     *
+     * @param milestoneScreeningPhaseStatus a <code>long</code> referencing the current status of the <code>Milestone Screening</code> phase.
+     * @since 1.4.3
+     */
+    public void setMilestoneScreeningPhaseStatus(long milestoneScreeningPhaseStatus) {
+        this.milestoneScreeningPhaseStatus = milestoneScreeningPhaseStatus;
     }
 
     /**
