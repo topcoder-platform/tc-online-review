@@ -376,6 +376,14 @@ public class ProjectActions extends DispatchAction {
         formNewProject.set("email_notifications", Boolean.TRUE);
         formNewProject.set("timeline_notifications", Boolean.TRUE);
 
+        boolean isAdmin = Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
+                || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
+                || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME));
+        if (isAdmin) {
+            request.setAttribute("allowBillingEdit", isAdmin);
+            request.setAttribute("allowCockpitProjectEdit", isAdmin);
+        }
+
         // Load the look up data
         loadProjectEditLookups(request);
 
