@@ -164,8 +164,8 @@
                                                  onkeypress="return submitOnEnter(this, event);">
                                         <html:option key='global.any' value=""/>
                                         <c:forEach var="entry" items="${requestScope.cockpitProjects}">
-                                            <html:option value="${entry.key}">
-                                                <c:out value="${entry.value}"/>
+                                            <html:option value="${entry.id}">
+                                                <c:out value="${entry.name}"/>
                                             </html:option>
                                         </c:forEach>
                                     </html:select>
