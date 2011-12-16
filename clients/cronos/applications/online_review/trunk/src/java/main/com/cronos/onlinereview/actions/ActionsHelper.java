@@ -392,32 +392,6 @@ public class ActionsHelper {
                 || categoryId == 19); // UI Prototypes
     }
 
-    /**
-     * The query to select worker project.
-     */
-    private static final String SELECT_WORKER_PROJECT = "SELECT distinct project_id FROM project_worker p, user_account u "
-            + "WHERE p.start_date <= current and current <= p.end_date and p.active =1 and "
-            + "p.user_account_id = u.user_account_id and u.user_name = ";
-
-    /**
-     * The query string used to select projects.
-     */
-    private static final String SELECT_MANAGER_PROJECT = "SELECT distinct project_id FROM project_manager p, user_account u "
-           + "WHERE p.user_account_id = u.user_account_id and p.active = 1 and  u.user_name = ";
-
-    /**
-     * The query string used to select projects.
-     *
-     * Updated for Cockpit Release Assembly for Receipts
-     *     - now fetching client name too.
-     *
-     * Updated for Version 1.1.1 - added fetch for is_manual_prize_setting property too.
-     */
-    private static final String SELECT_PROJECT     = "select p.project_id, p.name "
-              + " from project as p left join client_project as cp on p.project_id = cp.project_id left join client c "
-              + "            on c.client_id = cp.client_id and (c.is_deleted = 0 or c.is_deleted is null) "
-              + " where p.start_date <= current and current <= p.end_date ";
-
     // ------------------------------------------------------------ Validator type of methods -----
 
     /**
@@ -2871,22 +2845,17 @@ public class ActionsHelper {
 
         long userId = AuthorizationHelper.getLoggedInUserId(request);
 
-        Map<Long, String> mapOfCockpitProjects = null;
-        if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
-            mapOfCockpitProjects = new ProjectDataAccess().getAllCockpitProjects();
-        } else {
-            mapOfCockpitProjects = new ProjectDataAccess().getCockpitProjectsForUser(userId);
-        }
-        List<CockpitProject> cockpitProjects = new LinkedList<CockpitProject>();
+        List<CockpitProject> cockpitProjects = new ArrayList<CockpitProject>();
+
         CockpitProject project = new CockpitProject();
         project.setId(0);
         project.setName("-------------");
         cockpitProjects.add(project);
-        for (Long id : mapOfCockpitProjects.keySet()) {
-            project = new CockpitProject();
-            project.setId(id);
-            project.setName(mapOfCockpitProjects.get(id));
-            cockpitProjects.add(project);
+
+        if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
+            cockpitProjects.addAll(new ProjectDataAccess().getAllCockpitProjects());
+        } else {
+            cockpitProjects.addAll(new ProjectDataAccess().getCockpitProjectsForUser(userId));
         }
         return cockpitProjects;
     }
@@ -2904,99 +2873,24 @@ public class ActionsHelper {
      *             if any error occurs.
      * @since Online Review Update - Add Project Dropdown v1.0
      */
-    @SuppressWarnings("unchecked")
-    public static List<ClientProject> getClientProjects(HttpServletRequest request) throws ManagerCreationException,
-            BaseException {
+    public static List<ClientProject> getClientProjects(HttpServletRequest request) throws BaseException {
         validateParameterNotNull(request, "request");
 
         long userId = AuthorizationHelper.getLoggedInUserId(request);
 
-        List<ClientProject> clientProjects = (List<ClientProject>) request.getAttribute("clientProjectsList");
-        if (clientProjects == null) {
+        List<ClientProject> clientProjects = new ArrayList<ClientProject>();
 
-            // If this function is called the first time after the user has logged in,
-            // obtain and store in the session the handle of the user
-            if (request.getSession().getAttribute("userHandle") == null) {
-                // Obtain an instance of the User Retrieveal object
-                UserRetrieval usrMgr = ActionsHelper.createUserRetrieval(request);
-                // Get External User object for the currently logged in user
-                ExternalUser extUser = usrMgr.retrieveUser(AuthorizationHelper.getLoggedInUserId(request));
-                // Place handle of the user into session as attribute
-                request.getSession().setAttribute("userHandle", extUser.getHandle());
-            }
+        // We first add an empty client project for a default selection.
+        ClientProject project = new ClientProject();
+        project.setId(0);
+        project.setName("-------------");
+        clientProjects.add(project);
 
-            String username = (String)(request.getSession().getAttribute("userHandle"));
-
-            Connection conn = null;
-            Statement selectStmt = null;
-            ResultSet resultSet = null;
-            try {
-
-                clientProjects = new LinkedList<ClientProject>();
-
-                // we first add the empty client project for a default selection.
-                ClientProject cp = new ClientProject();
-                // set the default id to 0.
-                cp.setId(0);
-                cp.setName("-------------");
-                clientProjects.add(cp);
-
-                DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-                conn = dbconn.createConnection(DB_CONNECTION_TIMEDS);
-                log.log(Level.DEBUG, "create db connection with timeDS from DBConnectionFactoryImpl with namespace:"
-                        + DB_CONNECTION_NAMESPACE);
-
-                String queryString = "";
-
-                String nonadminQueryString = SELECT_PROJECT + " and active = 1 and p.project_id in " + "("
-                    + SELECT_MANAGER_PROJECT + "'" + username + "' " + "union "
-                    + SELECT_WORKER_PROJECT + "'" + username + "')";
-                nonadminQueryString += " order by upper(name) ";
-
-                String adminQueryString = "SELECT project_id, name FROM project WHERE is_deleted = 0 or is_deleted IS NULL ORDER BY UPPER(name)";
-
-                if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME))
-                {
-                    queryString = adminQueryString;
-                }
-                else
-                {
-                    queryString = nonadminQueryString;
-                }
-
-
-                selectStmt = conn.createStatement();
-                resultSet = selectStmt.executeQuery(queryString);
-
-                while (resultSet.next()) {
-                    long projectID = resultSet.getLong(1);
-                    String projectName = resultSet.getString(2);
-
-                    ClientProject clientProject = new ClientProject();
-                    clientProject.setId(projectID);
-                    clientProject.setName(projectName);
-
-                    clientProjects.add(clientProject);
-                }
-            } catch (UnknownConnectionException e) {
-                throw new BaseException("Failed to create connection", e);
-            } catch (ConfigurationException e) {
-                throw new BaseException("Failed to config for DBNamespace", e);
-            } catch (DBConnectionException e) {
-                throw new BaseException("Failed to return DBConnection", e);
-            } catch (SQLException e) {
-                log.log(Level.WARN, "Failed to read from project table in time_oltp" + e);
-            } finally {
-                close(resultSet);
-                close(selectStmt);
-                close(conn);
-            }
-
-            // Place newly-created client projects into the request as attribute
-            request.setAttribute("clientProjectsList", clientProjects);
+        if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
+            clientProjects.addAll(new ProjectDataAccess().getAllClientProjects());
+        } else {
+            clientProjects.addAll(new ProjectDataAccess().getClientProjectsForUser(userId));
         }
-
-        // Return the client projects
         return clientProjects;
     }
 

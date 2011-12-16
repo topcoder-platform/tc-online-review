@@ -31,6 +31,7 @@ import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.functions.Functions;
 import com.cronos.onlinereview.model.ClientProject;
+import com.cronos.onlinereview.model.CockpitProject;
 import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.SubmissionStatus;
@@ -324,6 +325,8 @@ public class ProjectDetailsActions extends DispatchAction {
                 request.setAttribute("projectDRP", Double.valueOf(drpointStr));
             }
         }
+        
+        ProjectDataAccess projectDataAccess = new ProjectDataAccess();
 
         // since Online Review Update - Add Project Dropdown v1.0
         // Retrieve the billing project id from property.
@@ -341,13 +344,8 @@ public class ProjectDetailsActions extends DispatchAction {
 
 
             if (billingProjectId > 0) {
-                List<ClientProject> clientProjects = ActionsHelper.getClientProjects(request);
-                for (ClientProject cp : clientProjects) {
-                    if (cp.getId() == billingProjectId) {
-                        request.setAttribute("billingProject", cp.getName());
-                        break;
-                    }
-                }
+                ClientProject cp = projectDataAccess.getClientProject(billingProjectId);
+                request.setAttribute("billingProject", cp != null ? cp.getName() : "");
             } else {
                 request.setAttribute("billingProject", "");
             }
@@ -356,8 +354,8 @@ public class ProjectDetailsActions extends DispatchAction {
                 = AuthorizationHelper.hasUserPermission(request, Constants.VIEW_COCKPIT_PROJECT_NAME_PERM_NAME);
         request.setAttribute("isAllowedToViewCockpitProjectName", isAllowedToViewCockpitProjectName);
         if (isAllowedToViewCockpitProjectName) {
-            ProjectDataAccess projectDataAccess = new ProjectDataAccess();
-            request.setAttribute("cockpitProject", projectDataAccess.getCockpitProjectName(projectId));
+            CockpitProject cp = projectDataAccess.getCockpitProject(project.getTcDirectProjectId());
+            request.setAttribute("cockpitProject", cp != null ? cp.getName() : "");
         }
 
         // Place a string that represents "my" current role(s) into the request

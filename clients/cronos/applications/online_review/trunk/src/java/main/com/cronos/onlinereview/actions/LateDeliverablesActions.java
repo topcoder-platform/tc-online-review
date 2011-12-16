@@ -46,6 +46,7 @@ import org.apache.struts.validator.LazyValidatorForm;
 
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
+import com.cronos.onlinereview.model.CockpitProject;
 import com.topcoder.management.deliverable.late.LateDeliverable;
 import com.topcoder.management.deliverable.late.LateDeliverableType;
 import com.topcoder.management.deliverable.late.LateDeliverableManagementException;
@@ -879,7 +880,7 @@ public class LateDeliverablesActions extends DispatchAction {
 
         // Retrieve available Cockpit projects and store in request
         ProjectDataAccess projectDataAccess = new ProjectDataAccess();
-        Map<Long, String> cockpitProjects;
+        List<CockpitProject> cockpitProjects = null;
         if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
             cockpitProjects = projectDataAccess.getAllCockpitProjects();
         } else {

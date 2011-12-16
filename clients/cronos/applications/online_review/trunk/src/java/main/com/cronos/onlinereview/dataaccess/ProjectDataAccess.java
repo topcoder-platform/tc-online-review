@@ -1,8 +1,10 @@
-/*
+ /*
  * Copyright (C) 2010-2011 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.dataaccess;
 
+import com.cronos.onlinereview.model.CockpitProject;
+import com.cronos.onlinereview.model.ClientProject;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectPropertyType;
@@ -10,9 +12,7 @@ import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>A simple DAO for projects backed up by Query Tool.</p>
@@ -34,8 +34,15 @@ import java.util.Map;
  *   </ol>
  * </p>
  *
- * @author isv
- * @version 1.2
+ * <p>
+ * Version 1.3 Change notes:
+ *   <ol>
+ *     <li>Added methods to retrieve client projects (billings).</li>
+ *   </ol>
+ * </p>
+ *
+ * @author isv, VolodymyrK
+ * @version 1.3
  */
 public class ProjectDataAccess extends BaseDataAccess {
 
@@ -96,25 +103,6 @@ public class ProjectDataAccess extends BaseDataAccess {
     }
 
     /**
-     * <p>Gets the name for <code>Cockpit</code> project which might have been associated with the specified project.
-     * </p>
-     *
-     * @param projectId a <code>long</code> providing the ID of a project.
-     * @return a <code>String</code> providing the name for <code>Cockpit</code> project associated with specified
-     *         project or <code>null</code> if there is no such <code>Cockpit</code> project.
-     * @since 1.1
-     */
-    public String getCockpitProjectName(long projectId) {
-        Map<String, ResultSetContainer> results = runQuery("cockpit_project", "pj", String.valueOf(projectId));
-        ResultSetContainer result = results.get("cockpit_project");
-        if (!result.isEmpty()) {
-            return result.getStringItem(0, "name");
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * <p>Checks if the specified user has access to the specified cockpit project.</p>
      *
      * @param projectId a <code>long</code> providing the ID of a project.
@@ -135,41 +123,127 @@ public class ProjectDataAccess extends BaseDataAccess {
     }
 
     /**
-     * <p>Gets the list of all existing <code>Cockpit</code> projects.</p>
+     * <p>Gets the <code>CockpitProject</code> by the ID.</p>
+     *
+     * @param projectId a <code>long</code> providing the ID of the cockpit project.
+     * @return a <code>CockpitProject</code> or null if not found.
+     * @since 1.1
+     */
+    public CockpitProject getCockpitProject(long cockpitProjectId) {
+        Map<String, ResultSetContainer> results = runQuery("cockpit_project_by_id", "pj", String.valueOf(cockpitProjectId));
+        ResultSetContainer result = results.get("cockpit_project_by_id");
+        if (!result.isEmpty()) {
+            CockpitProject project = new CockpitProject();
+            project.setId(result.getLongItem(0, "tc_direct_project_id"));
+            project.setName(result.getStringItem(0, "tc_direct_project_name"));
+            return project;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * <p>Gets the list of all existing <code>CockpitProject</code> projects.</p>
      * 
-     * @return a <code>Map</code> mapping IDs to names for all existing <code>Cockpit</code> projects.
+     * @return a <code>List</code> of all existing <code>CockpitProject</code> projects.
      * @since 1.2 
      */
-    public Map<Long, String> getAllCockpitProjects() {
+    public List<CockpitProject> getAllCockpitProjects() {
         Map<String, ResultSetContainer> results = runQuery("cockpit_projects", (String) null, (String) null);
         ResultSetContainer projectsResultContainer = results.get("cockpit_projects");
-        Map<Long, String> result = new LinkedHashMap<Long, String>();
+
+        List<CockpitProject> result = new ArrayList<CockpitProject>();
         for (ResultSetContainer.ResultSetRow row : projectsResultContainer) {
-            long tcDirectProjectId = row.getLongItem("tc_direct_project_id");
-            String tcDirectProjectName = row.getStringItem("tc_direct_project_name");
-            result.put(tcDirectProjectId, tcDirectProjectName);
+            CockpitProject project = new CockpitProject();
+            project.setId(row.getLongItem("tc_direct_project_id"));
+            project.setName(row.getStringItem("tc_direct_project_name"));
+            result.add(project);
         }
         return result;
     }
 
     /**
-     * <p>Gets the list of all existing <code>Cockpit</code> projects which the specified user is granted access 
+     * <p>Gets the list of all existing <code>CockpitProject</code> projects which the specified user is granted access 
      * permission for.</p>
      * 
-     * @param userId a <code>long</code> providing the ID of a user to get the list of accessible <code>Cockpit</code> 
+     * @param userId a <code>long</code> providing the ID of a user to get the list of accessible <code>CockpitProject</code> 
      *        projects for. 
-     * @return a <code>Map</code> mapping IDs to names for all existing <code>Cockpit</code> projects accessible to
-     *         specified user.
-     * @since 1.2 
+     * @return a <code>List</code> of all existing <code>CockpitProject</code> projects accessible by the specified user.
+     * @since 1.2
      */
-    public Map<Long, String> getCockpitProjectsForUser(long userId) {
+    public List<CockpitProject> getCockpitProjectsForUser(long userId) {
         Map<String, ResultSetContainer> results = runQuery("direct_my_projects", "uid", String.valueOf(userId));
         ResultSetContainer projectsResultContainer = results.get("direct_my_projects");
-        Map<Long, String> result = new LinkedHashMap<Long, String>();
+
+        List<CockpitProject> result = new ArrayList<CockpitProject>();
         for (ResultSetContainer.ResultSetRow row : projectsResultContainer) {
-            long tcDirectProjectId = row.getLongItem("tc_direct_project_id");
-            String tcDirectProjectName = row.getStringItem("tc_direct_project_name");
-            result.put(tcDirectProjectId, tcDirectProjectName);
+            CockpitProject project = new CockpitProject();
+            project.setId(row.getLongItem("tc_direct_project_id"));
+            project.setName(row.getStringItem("tc_direct_project_name"));
+            result.add(project);
+        }
+        return result;
+    }
+
+    /**
+     * <p>Gets the <code>ClientProject</code> by the ID.</p>
+     *
+     * @param projectId a <code>long</code> providing the ID of the client project.
+     * @return a <code>ClientProject</code> or null if not found.
+     * @since 1.3
+     */
+    public ClientProject getClientProject(long clientProjectId) {
+        Map<String, ResultSetContainer> results = runQuery("client_project_by_id", "pj", String.valueOf(clientProjectId));
+        ResultSetContainer result = results.get("client_project_by_id");
+        if (!result.isEmpty()) {
+            ClientProject project = new ClientProject();
+            project.setId(result.getLongItem(0, "project_id"));
+            project.setName(result.getStringItem(0, "project_name"));
+            return project;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * <p>Gets the list of all existing <code>ClientProject</code> projects.</p>
+     * 
+     * @return a <code>List</code> of all existing <code>ClientProject</code> projects.
+     * @since 1.3
+     */
+    public List<ClientProject> getAllClientProjects() {
+        Map<String, ResultSetContainer> results = runQuery("client_projects", (String) null, (String) null);
+        ResultSetContainer projectsResultContainer = results.get("client_projects");
+
+        List<ClientProject> result = new ArrayList<ClientProject>();
+        for (ResultSetContainer.ResultSetRow row : projectsResultContainer) {
+            ClientProject project = new ClientProject();
+            project.setId(row.getLongItem("project_id"));
+            project.setName(row.getStringItem("project_name"));
+            result.add(project);
+        }
+        return result;
+    }
+
+    /**
+     * <p>Gets the list of all existing <code>ClientProject</code> projects which the specified user is granted access 
+     * permission for.</p>
+     * 
+     * @param userId a <code>long</code> providing the ID of a user to get the list of accessible <code>ClientProject</code> 
+     *        projects for. 
+     * @return a <code>List</code> of all existing <code>ClientProject</code> projects accessible by the specified user.
+     * @since 1.3
+     */
+    public List<ClientProject> getClientProjectsForUser(long userId) {
+        Map<String, ResultSetContainer> results = runQuery("client_projects_by_user", "uid", String.valueOf(userId));
+        ResultSetContainer projectsResultContainer = results.get("client_projects_by_user");
+
+        List<ClientProject> result = new ArrayList<ClientProject>();
+        for (ResultSetContainer.ResultSetRow row : projectsResultContainer) {
+            ClientProject project = new ClientProject();
+            project.setId(row.getLongItem("project_id"));
+            project.setName(row.getStringItem("project_name"));
+            result.add(project);
         }
         return result;
     }
