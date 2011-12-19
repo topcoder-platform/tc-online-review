@@ -407,3 +407,11 @@ div.leftColContent, div.leftColContent td {
 color: #FFFFFF;
 }
 div.rightColContent{ width:170px; }
+
+.currentTime {
+    border-left: 1px dashed blue;
+    bottom: 0;
+    display: block;
+    position: absolute;
+    top: 18px;   
+}

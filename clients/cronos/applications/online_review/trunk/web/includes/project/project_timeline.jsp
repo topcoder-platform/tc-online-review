@@ -86,7 +86,10 @@
                 </table>
             </td>
             <td valign="top" bgcolor="#F7F7F7" style="border-bottom: 1px solid #999999;">
-                <div style="width: 100%; overflow-x: scroll; overflow-y: visible;">
+                <div style="width: 100%; overflow-x: scroll; overflow-y: visible; position:relative; height:100%">
+                    <c:if test="${ganttCurrentTime ne null}">
+                        <div class="currentTime" style="left: ${orfn:getGanttLen(ganttCurrentTime)}px;"></div>
+                    </c:if>
                     <table class="stat" cellpadding="0" cellspacing="0" style="border:none;" width="100%">
                         <tr class="header">
                             <td class="header">&#160;</td>
@@ -95,7 +98,7 @@
                           <tr class='${(phaseStatus.index % 2) == 0 ? "light" : "dark"}'>
                             <td class="ganttRow">
                             <c:set var="ganttOffset" value="${orfn:getGanttLen(ganttOffsets[phaseStatus.index])}" />
-                            <dl style="margin-left:${ganttOffset}; width: ${orfn:getGanttLen(ganttLengths[phaseStatus.index]) + 80}px;">
+                            <dl style="margin-left:${ganttOffset}px; width: ${orfn:getGanttLen(ganttLengths[phaseStatus.index]) + 80}px;">
                             <dt style="width:${orfn:getGanttLen(ganttLengths[phaseStatus.index])}px;"><bean:message key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></dt>
                             <dd>${orfn:getGanttHours(pageContext, ganttLengths[phaseStatus.index])}</dd>
                             </dl>

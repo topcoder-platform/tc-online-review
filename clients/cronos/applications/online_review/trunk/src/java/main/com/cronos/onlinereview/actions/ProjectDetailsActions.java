@@ -547,11 +547,13 @@ public class ProjectDetailsActions extends DispatchAction {
         Date[] originalStart = new Date[phases.length];
         Date[] originalEnd = new Date[phases.length];
         long projectStartTime = (phProj != null) ? (phProj.getStartDate().getTime() / (60 * 1000)) : 0;
+        long projectEndTime = projectStartTime; // The project end date will be set as the max phase's end date.
+
         // The following two arrays are used to display Gantt chart
         long[] ganttOffsets = new long[phases.length];
         long[] ganttLengths = new long[phases.length];
-        // List of scorecard templates used for this project
 
+        // List of scorecard templates used for this project
         Map<String, Scorecard> phaseScorecardTemplates = new LinkedHashMap<String, Scorecard>();
         Map<String, String> phaseScorecardLinks = new LinkedHashMap<String, String>();
         // Iterate over all phases determining dates, durations and assigned scorecards
@@ -565,6 +567,10 @@ public class ProjectDetailsActions extends DispatchAction {
             // Get times in minutes
             long startTime = startDate.getTime() / (60 * 1000);
             long endTime = endDate.getTime() / (60 * 1000);
+
+            if (endTime > projectEndTime) {
+                projectEndTime = endTime;
+            }
 
             // Determine the dates to display for start/end dates
             originalStart[i] = startDate;
@@ -583,6 +589,11 @@ public class ProjectDetailsActions extends DispatchAction {
                 phaseScorecardTemplates.put(phaseTypeName, scorecardTemplate);
                 phaseScorecardLinks.put(phaseTypeName, ConfigHelper.getProjectTypeScorecardLink(projectTypeName, scorecardTemplate.getId()));
             }
+        }
+
+        long currentTimeInMinutes = (new Date()).getTime() / (60 * 1000);
+        if (currentTimeInMinutes >= projectStartTime && currentTimeInMinutes <= projectEndTime) {
+            request.setAttribute("ganttCurrentTime", currentTimeInMinutes);
         }
 
         // Collect Open / Closing / Late / Closed codes for phases
