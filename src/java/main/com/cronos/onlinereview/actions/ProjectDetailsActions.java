@@ -593,7 +593,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         long currentTimeInMinutes = (new Date()).getTime() / (60 * 1000);
         if (currentTimeInMinutes >= projectStartTime && currentTimeInMinutes <= projectEndTime) {
-            request.setAttribute("ganttCurrentTime", currentTimeInMinutes);
+            request.setAttribute("ganttCurrentTime", currentTimeInMinutes - projectStartTime);
         }
 
         // Collect Open / Closing / Late / Closed codes for phases
