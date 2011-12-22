@@ -42,12 +42,6 @@
     <property name="distribution_tool.jar"
               value="${tcs_libdir}/${distribution_tool.path}/${distribution_tool.jar.name}"/>
 
-    <property name="file_system_server.version" value="1.0"/>
-    <property name="file_system_server.jar.name" value="file_system_server.jar"/>
-    <property name="file_system_server.path" value="file_system_server/${file_system_server.version}"/>
-    <property name="file_system_server.jar"
-              value="${tcs_libdir}/${file_system_server.path}/${file_system_server.jar.name}"/>
-
     <property name="file_upload.version" value="2.0"/>
     <property name="file_upload.jar.name" value="file_upload.jar"/>
     <property name="file_upload.path" value="file_upload/${file_upload.version}"/>
@@ -57,11 +51,6 @@
     <property name="generic_event_manager.jar.name" value="generic_event_manager.jar" />
     <property name="generic_event_manager.path" value="generic_event_manager/${generic_event_manager.version}" />
     <property name="generic_event_manager.jar" value="${tcs_libdir}/${generic_event_manager.path}/${generic_event_manager.jar.name}" />
-
-    <property name="heartbeat.version" value="1.0"/>
-    <property name="heartbeat.jar.name" value="heartbeat.jar"/>
-    <property name="heartbeat.path" value="heartbeat/${heartbeat.version}"/>
-    <property name="heartbeat.jar" value="${tcs_libdir}/${heartbeat.path}/${heartbeat.jar.name}"/>
 
     <property name="job_scheduler.version" value="1.0" />
     <property name="job_scheduler.jar.name" value="job_scheduler.jar" />
@@ -78,11 +67,6 @@
     <property name="job_scheduling.path" value="job_scheduling/${job_scheduling.version}"/>
     <property name="job_scheduling.jar" value="${tcs_libdir}/${job_scheduling.path}/${job_scheduling.jar.name}"/>
     
-    <property name="magic_numbers.version" value="1.0" />
-    <property name="magic_numbers.jar.name" value="magic_numbers.jar" />
-    <property name="magic_numbers.path" value="magic_numbers/${magic_numbers.version}" />
-    <property name="magic_numbers.jar" value="${tcs_libdir}/${magic_numbers.path}/${magic_numbers.jar.name}" />
-
     <property name="guid_generator.version" value="1.0"/>
     <property name="guid_generator.jar.name" value="guid_generator.jar"/>
     <property name="guid_generator.path" value="guid_generator/${guid_generator.version}"/>
@@ -92,11 +76,6 @@
     <property name="id_generator.jar.name" value="id_generator.jar"/>
     <property name="id_generator.path" value="id_generator/${id_generator.version}"/>
     <property name="id_generator.jar" value="${tcs_libdir}/${id_generator.path}/${id_generator.jar.name}"/>
-
-    <property name="ip_server.version" value="2.0.1"/>
-    <property name="ip_server.jar.name" value="ip_server.jar"/>
-    <property name="ip_server.path" value="ip_server/${ip_server.version}"/>
-    <property name="ip_server.jar" value="${tcs_libdir}/${ip_server.path}/${ip_server.jar.name}"/>
 
     <property name="JNDI_Utility.version" value="1.0"/>
     <property name="JNDI_Utility.jar.name" value="JNDI_Utility.jar"/>
@@ -251,7 +230,6 @@
         <pathelement location="${object_factory_configuration_api_plugin.jar}"/>
         <pathelement location="${user_project_data_store.jar}"/>
         <pathelement location="${xmi_parser.jar}"/>
-        <pathelement location="${heartbeat.jar}"/>
         <pathelement location="${svnkit.jar}"/>
         <pathelement location="${guid_generator.jar}" />
         <pathelement location="${simple_cache.jar}" />
