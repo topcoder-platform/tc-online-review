@@ -106,11 +106,6 @@
     <property name="user_project_data_store.jar"
               value="${tcs_libdir}/${user_project_data_store.path}/${user_project_data_store.jar.name}"/>
 
-    <property name="xmi_parser.version" value="1.1"/>
-    <property name="xmi_parser.jar.name" value="xmi_parser.jar"/>
-    <property name="xmi_parser.path" value="xmi_parser/${xmi_parser.version}"/>
-    <property name="xmi_parser.jar" value="${tcs_libdir}/${xmi_parser.path}/${xmi_parser.jar.name}"/>
-
     <!-- TCS Dependencies - non-versioned -->
     <property name="projectEJB.path" value="project_ejb"/>
     <property name="projectEJB.jar.name" value="Project.jar"/>
@@ -229,7 +224,6 @@
         <pathelement location="${object_factory.jar}"/>
         <pathelement location="${object_factory_configuration_api_plugin.jar}"/>
         <pathelement location="${user_project_data_store.jar}"/>
-        <pathelement location="${xmi_parser.jar}"/>
         <pathelement location="${svnkit.jar}"/>
         <pathelement location="${guid_generator.jar}" />
         <pathelement location="${simple_cache.jar}" />
