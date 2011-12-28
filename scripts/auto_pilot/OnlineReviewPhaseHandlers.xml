@@ -14,12 +14,6 @@
     -->
     <!-- Default namespace for Specification Submission handler -->
     <Config name="com.cronos.onlinereview.phases.MilestoneSubmissionPhaseHandler">
-        <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-        </Property>
-        <Property name="ConnectionName">
-            <Value>tcs</Value>
-        </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
@@ -155,12 +149,6 @@
         
 
     <Config name="com.cronos.onlinereview.phases.MilestoneScreeningPhaseHandler">
-        <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-        </Property>
-        <Property name="ConnectionName">
-            <Value>tcs</Value>
-        </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
@@ -314,12 +302,6 @@
     </Config>
 
     <Config name="com.cronos.onlinereview.phases.MilestoneReviewPhaseHandler">
-        <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-        </Property>
-        <Property name="ConnectionName">
-            <Value>tcs</Value>
-        </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
@@ -454,12 +436,6 @@
         </Property>
     </Config>
     <Config name="com.cronos.onlinereview.phases.SpecificationSubmissionPhaseHandler">
-        <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-        </Property>
-        <Property name="ConnectionName">
-            <Value>tcs</Value>
-        </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
@@ -636,12 +612,6 @@
 
     <!-- Default namespace for Specification Review handler -->
     <Config name="com.cronos.onlinereview.phases.SpecificationReviewPhaseHandler">
-        <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-        </Property>
-        <Property name="ConnectionName">
-            <Value>tcs</Value>
-        </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
@@ -818,12 +788,6 @@
 
     <!-- Default namespace for Registration handler -->
     <Config name="com.cronos.onlinereview.phases.RegistrationPhaseHandler">
-        <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-        </Property>
-        <Property name="ConnectionName">
-            <Value>tcs</Value>
-        </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
@@ -959,12 +923,6 @@
 
     <!-- Default namespace for Submission handler -->
     <Config name="com.cronos.onlinereview.phases.SubmissionPhaseHandler">
-        <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-        </Property>
-        <Property name="ConnectionName">
-            <Value>tcs</Value>
-        </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
@@ -1100,12 +1058,6 @@
 
     <!-- Default namespace for Screening handler -->
     <Config name="com.cronos.onlinereview.phases.ScreeningPhaseHandler">
-        <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-        </Property>
-        <Property name="ConnectionName">
-            <Value>tcs</Value>
-        </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
@@ -1263,12 +1215,6 @@
 
     <!-- Default namespace for Review handler -->
     <Config name="com.cronos.onlinereview.phases.ReviewPhaseHandler">
-        <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-        </Property>
-        <Property name="ConnectionName">
-            <Value>tcs</Value>
-        </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
@@ -1404,12 +1350,6 @@
 
     <!-- Default namespace for Appeals handler -->
     <Config name="com.cronos.onlinereview.phases.AppealsPhaseHandler">
-        <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-        </Property>
-        <Property name="ConnectionName">
-            <Value>tcs</Value>
-        </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
@@ -1504,12 +1444,6 @@
 
     <!-- Default namespace for Appeals Response handler -->
     <Config name="com.cronos.onlinereview.phases.AppealsResponsePhaseHandler">
-        <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-        </Property>
-        <Property name="ConnectionName">
-            <Value>tcs</Value>
-        </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
@@ -1620,12 +1554,6 @@
 
     <!-- Default namespace for Aggregation handler -->
     <Config name="com.cronos.onlinereview.phases.AggregationPhaseHandler">
-        <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-        </Property>
-        <Property name="ConnectionName">
-            <Value>tcs</Value>
-        </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
@@ -1718,116 +1646,10 @@
         </Property>
     </Config>
 
-    <!-- Default namespace for Aggregation Review handler -->
-    <Config name="com.cronos.onlinereview.phases.AggregationReviewPhaseHandler">
-        <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-        </Property>
-        <Property name="ConnectionName">
-            <Value>tcs</Value>
-        </Property>
-        <Property name="ManagerHelperNamespace">
-            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
-        </Property>
-        <Property name="Schemes">
-            <Property name="DefaultScheme">
-                <Property name="Roles">
-                    <Value>*</Value>
-                </Property>
-                <Property name="ProjectTypes">
-                    <Value>*</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>0</Value>
-                </Property>
-            </Property>
-            <Property name="ExtendedScheme">
-                <Property name="Roles">
-                    <Value>Manager</Value>
-                    <Value>Observer</Value>
-                    <Value>Copilot</Value>
-                    <Value>Client Manager</Value>
-                </Property>
-                <Property name="ProjectTypes">
-                    <Value>*</Value>
-                </Property>
-                <Property name="Priority">
-                    <Value>1</Value>
-                </Property>
-            </Property>
-        </Property>
-        <Property name="DefaultScheme">
-            <Property name="StartPhaseEmail">
-                <Property name="SendEmail">
-                    <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateName">
-                    <Value>&phasesEmailTemplate;</Value>
-                </Property>
-                <Property name="EmailSubject">
-                    <Value>Phase Start</Value>
-                </Property>
-                <Property name="EmailFromAddress">
-                    <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-            </Property>
-            <Property name="EndPhaseEmail">
-                <Property name="SendEmail">
-                    <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateName">
-                    <Value>&phasesEmailTemplate;</Value>
-                </Property>
-                <Property name="EmailSubject">
-                    <Value>Phase End</Value>
-                </Property>
-                <Property name="EmailFromAddress">
-                    <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-            </Property>
-        </Property>
-        <Property name="ExtendedScheme">
-            <Property name="StartPhaseEmail">
-                <Property name="SendEmail">
-                    <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateName">
-                    <Value>&managerNotificationEmailTemplatesBase;/aggregation_review/start.txt</Value>
-                </Property>
-                <Property name="EmailSubject">
-                    <Value>Phase Start</Value>
-                </Property>
-                <Property name="EmailFromAddress">
-                    <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-            </Property>
-            <Property name="EndPhaseEmail">
-                <Property name="SendEmail">
-                    <Value>yes</Value>
-                </Property>
-                <Property name="EmailTemplateName">
-                    <Value>&managerNotificationEmailTemplatesBase;/aggregation_review/end.txt</Value>
-                </Property>
-                <Property name="EmailSubject">
-                    <Value>Phase End</Value>
-                </Property>
-                <Property name="EmailFromAddress">
-                    <Value>&notificationEmailFromAddress;</Value>
-                </Property>
-            </Property>
-        </Property>
-    </Config>
-
     <!-- Default namespace for Final Fix handler -->
     <Config name="com.cronos.onlinereview.phases.FinalFixPhaseHandler">
         <Property name="FinalFixPhaseDuration">
             <Value>24</Value>
-        </Property>
-        <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-        </Property>
-        <Property name="ConnectionName">
-            <Value>tcs</Value>
         </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
@@ -1923,12 +1745,6 @@
 
     <!-- Default namespace for Final Review handler -->
     <Config name="com.cronos.onlinereview.phases.FinalReviewPhaseHandler">
-        <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-        </Property>
-        <Property name="ConnectionName">
-            <Value>tcs</Value>
-        </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
@@ -2032,12 +1848,6 @@
         <Property name="ApprovalPhaseDefaultScorecardID">
             <Value>30000720</Value>
         </Property>
-        <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-        </Property>
-        <Property name="ConnectionName">
-            <Value>tcs</Value>
-        </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
@@ -2140,12 +1950,6 @@
         </Property>
         <Property name="PostMortemPhaseDefaultScorecardID">
             <Value>30001013</Value>
-        </Property>
-        <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-        </Property>
-        <Property name="ConnectionName">
-            <Value>tcs</Value>
         </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>

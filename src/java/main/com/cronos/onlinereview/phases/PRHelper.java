@@ -17,12 +17,14 @@ import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.management.project.PersistenceException;
 import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectManagerImpl;
 import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.project.ValidationException;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.util.log.Level;
+
+import com.topcoder.db.connectionfactory.DBConnectionException;
+import com.topcoder.db.connectionfactory.DBConnectionFactory;
 
 /**
  * The PRHelper which is used to provide helper method for Phase Handler.
@@ -46,10 +48,6 @@ import com.topcoder.util.log.Level;
  * @version 1.1
  */
 public class PRHelper {
-    /**
-     * This member variable holds the formatting string used to format dates.
-     */
-    private static String dateFormat = "MM.dd.yyyy HH:mm z";
 
     private static final com.topcoder.util.log.Log logger = com.topcoder.util.log.LogFactory.getLog(PRHelper.class
             .getName());
@@ -111,28 +109,100 @@ public class PRHelper {
             + " and submission_status_id <> 5 ) and " + " project_id = ?";
 
     /**
-     * Prevent to be created outside.
+     * This member variable holds the formatting string used to format dates.
      */
-    private PRHelper() {
+    private static String dateFormat = "MM.dd.yyyy HH:mm z";
+
+    /** Property name constant for connection factory namespace. */
+    private static final String PROP_CONNECTION_FACTORY_NS = "ConnectionFactoryNS";
+
+    /** Property name constant for connection name. */
+    private static final String PROP_CONNECTION_NAME = "ConnectionName";
+
+    /**
+     * The default configuration namespace of this class. It is used in the default constructor.
+     */
+    private static final String DEFAULT_NAMESPACE = "com.cronos.onlinereview.phases.PRHelper";
+
+    /**
+     * The factory instance used to create connection to the database. It is initialized in the constructor using
+     * DBConnectionFactory component and never changed after that. It will be used in various persistence methods of
+     * this project. This field is never null.
+     */
+    private final DBConnectionFactory factory;
+
+    /**
+     * Represents the connection name used to create connection to the database using DBConnectionFactory. This
+     * variable can be null. When it is null, default connection is be created. This variable can be initialized in
+     * the constructor and never change after that.
+     */
+    private final String connectionName;
+
+    PRHelper() throws ConfigurationException {
+        // initialize DBConnectionFactory from default namespace, throw exception if property is missing.
+        this.factory = PhasesHelper.createDBConnectionFactory(DEFAULT_NAMESPACE, PROP_CONNECTION_FACTORY_NS);
+
+        // initialize connectionName with property value if provided.
+        String connName = PhasesHelper.getPropertyValue(DEFAULT_NAMESPACE, PROP_CONNECTION_NAME, false);
+
+        if (!PhasesHelper.isStringNullOrEmpty(connName)) {
+            this.connectionName = connName;
+        } else {
+            this.connectionName = null;
+        }
+    }
+
+    /**
+     * <p>
+     * This method is used by the subclass to create the connection to access database. The connection needs to be
+     * closed after use.
+     * </p>
+     *
+     * @return The database connection.
+     *
+     * @throws PhaseHandlingException if connection could not be created.
+     */
+    private Connection createConnection() throws PhaseHandlingException {
+        try {
+            if (connectionName == null) {
+                return factory.createConnection();
+            } else {
+                return factory.createConnection(connectionName);
+            }
+        } catch (DBConnectionException ex) {
+            throw new PhaseHandlingException("Could not create connection", ex);
+        }
+    }
+
+    public void populateSubmitterPayments(long projectId) throws PhaseHandlingException {
+        Connection conn = createConnection();
+        try {
+            AutoPaymentUtil.populateSubmitterPayments(projectId, conn);
+        } catch(SQLException e) {
+            throw new PhaseHandlingException("Failed to populate submitter payments.", e);
+        } finally {
+            close(conn);
+        }
+    }
+
+    public void populateReviewerPayments(long projectId, int phaseId) throws PhaseHandlingException {
+        Connection conn = createConnection();
+        try {
+            AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.SCREENING_PHASE);
+        } catch(SQLException e) {
+            throw new PhaseHandlingException("Failed to populate reviewer payments.", e);
+        } finally {
+            close(conn);
+        }
     }
 
     /**
      * Pull data to project_result.
-     *
-     * @param phaseId
-     *            the phase id
-     * @throws PhaseHandlingException
-     *             if error occurs
      */
-    static void processRegistrationPR(long projectId, Connection conn, boolean toStart) throws SQLException {
-        PreparedStatement pstmt = null;
-        try {
-            if (toStart) {
-                logger.log(Level.INFO,
-                    new LoggerMessage("project", new Long(projectId), null, "start registration process."));
-            }
-        } finally {
-            close(pstmt);
+    void processRegistrationPR(long projectId, boolean toStart) {
+        if (toStart) {
+            logger.log(Level.INFO,
+                new LoggerMessage("project", projectId, null, "start registration process."));
         }
     }
 
@@ -144,20 +214,24 @@ public class PRHelper {
      * @throws PhaseHandlingException
      *             if error occurs
      */
-    static void processSubmissionPR(long projectId, Connection conn, boolean toStart) throws SQLException {
+    void processSubmissionPR(long projectId, boolean toStart) throws PhaseHandlingException {
+        Connection conn = createConnection();
         PreparedStatement pstmt = null;
         try {
             if (!toStart) {
                 logger.log(Level.INFO,
-                    new LoggerMessage("project", new Long(projectId), null, "process submission phase."));
+                    new LoggerMessage("project", projectId, null, "process submission phase."));
 
                 // Update all users who submit submission
                 pstmt = conn.prepareStatement(UPDATE_PROJECT_RESULT_STMT);
                 pstmt.setLong(1, projectId);
                 pstmt.execute();
             }
+        } catch(SQLException e) {
+            throw new PhaseHandlingException("Failed to push data to project_result", e);
         } finally {
             close(pstmt);
+            close(conn);
         }
     }
 
@@ -169,12 +243,13 @@ public class PRHelper {
      * @throws PhaseHandlingException
      *             if error occurs
      */
-    static void processScreeningPR(long projectId, Connection conn, boolean toStart) throws SQLException {
+    void processScreeningPR(long projectId, boolean toStart) throws PhaseHandlingException {
+        Connection conn = createConnection();
         PreparedStatement pstmt = null;
         try {
             if (!toStart) {
                 logger.log(Level.INFO,
-                    new LoggerMessage("project", new Long(projectId), null, "process screening phase."));
+                    new LoggerMessage("project", projectId, null, "process screening phase."));
                 // Update all users who failed to pass screen, set valid_submission_ind = 0
                 pstmt = conn.prepareStatement(FAILED_PASS_SCREENING_STMT);
                 pstmt.setLong(1, projectId);
@@ -188,8 +263,11 @@ public class PRHelper {
             }
 
             AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.SCREENING_PHASE);
+        } catch(SQLException e) {
+            throw new PhaseHandlingException("Failed to push data to project_result", e);
         } finally {
             close(pstmt);
+            close(conn);
         }
     }
 
@@ -199,26 +277,28 @@ public class PRHelper {
      * @throws PhaseHandlingException
      *             if error occurs
      */
-    static void processReviewPR(ManagerHelper managerHelper, Phase phase, Connection conn, String operator, boolean toStart) throws PhaseHandlingException, SQLException {
+    void processReviewPR(ManagerHelper managerHelper, Phase phase, String operator, boolean toStart) throws PhaseHandlingException {
         PreparedStatement pstmt = null;
         PreparedStatement updateStmt = null;
+        Connection conn = createConnection();
         ResultSet rs = null;
         long projectId = phase.getProject().getId();
         try {
             if (!toStart) {
                 // if reivew phase is last one and there is at least one active submission complete the project.
-                if (PhasesHelper.isLastPhase(phase)) {
-                    Submission [] activeSubs = PhasesHelper.searchActiveSubmissions(managerHelper.getUploadManager(), conn, projectId, PhasesHelper.CONTEST_SUBMISSION_TYPE);
+                if (isLastPhase(phase)) {
+                    Submission [] activeSubs = PhasesHelper.searchActiveSubmissions(managerHelper.getUploadManager(),
+                        projectId, PhasesHelper.CONTEST_SUBMISSION_TYPE);
                     if (activeSubs.length > 0) {
                         completeProject(managerHelper, phase, operator);
                     }
                 }
                 
-                if (isStudioProject(projectId)) {
+                if (isStudioProject(managerHelper.getProjectManager(), projectId)) {
                     AutoPaymentUtil.populateSubmitterPayments(projectId, conn);
                 } else {
                     logger.log(Level.INFO,
-                        new LoggerMessage("project", new Long(projectId), null, "process review phase."));
+                        new LoggerMessage("project", projectId, null, "process review phase."));
                     // Retrieve all
                     pstmt = conn.prepareStatement(REVIEW_SELECT_STMT);
                     pstmt.setLong(1, projectId);
@@ -244,10 +324,13 @@ public class PRHelper {
             }
 
             AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.REVIEW_PHASE);
+        } catch(SQLException e) {
+            throw new PhaseHandlingException("Failed to push data to project_result", e);
         } finally {
             close(rs);
             close(pstmt);
             close(updateStmt);
+            close(conn);
         }
     }
 
@@ -259,11 +342,19 @@ public class PRHelper {
      * @throws PhaseHandlingException
      *             if error occurs
      */
-    static void processAppealResponsePR(long projectId, Connection conn, boolean toStart) throws SQLException {
-        if (!toStart) {
-            logger.log(Level.INFO,
-                new LoggerMessage("project", new Long(projectId), null, "process Appeal Response phase."));
-            populateProjectResult(projectId, conn);
+    void processAppealResponsePR(long projectId, boolean toStart) throws PhaseHandlingException {
+        Connection conn = createConnection();
+
+        try {
+            if (!toStart) {
+                logger.log(Level.INFO,
+                    new LoggerMessage("project", projectId, null, "process Appeal Response phase."));
+                populateProjectResult(projectId, conn);
+            }
+        } catch(SQLException e) {
+            throw new PhaseHandlingException("Failed to push data to project_result", e);
+        } finally {
+            close(conn);
         }
     }
 
@@ -275,28 +366,19 @@ public class PRHelper {
      * @throws PhaseHandlingException
      *             if error occurs
      */
-    static void processAggregationPR(long projectId, Connection conn, boolean toStart) throws SQLException {
-        if (!toStart) {
-            logger.log(Level.INFO,
-                    new LoggerMessage("project", new Long(projectId), null, "process Aggregation phase."));
-            populateProjectResult(projectId, conn);
-        }
-        AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.AGGREGATION_PHASE);
-    }
-
-    /**
-     * Pull data to project_result.
-     *
-     * @param projectId
-     *            the projectId
-     * @throws PhaseHandlingException
-     *             if error occurs
-     */
-    static void processAggregationReviewPR(long projectId, Connection conn, boolean toStart) throws SQLException {
-        if (!toStart) {
-            logger.log(Level.INFO,
-                    new LoggerMessage("project", new Long(projectId), null, "Process Aggregation Review phase."));
-            populateProjectResult(projectId, conn);
+    void processAggregationPR(long projectId,  boolean toStart) throws PhaseHandlingException {
+        Connection conn = createConnection();
+        try {
+            if (!toStart) {
+                logger.log(Level.INFO,
+                        new LoggerMessage("project", projectId, null, "process Aggregation phase."));
+                populateProjectResult(projectId, conn);
+            }
+            AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.AGGREGATION_PHASE);
+        } catch(SQLException e) {
+            throw new PhaseHandlingException("Failed to push data to project_result", e);
+        } finally {
+            close(conn);
         }
     }
 
@@ -308,11 +390,18 @@ public class PRHelper {
      * @throws PhaseHandlingException
      *             if error occurs
      */
-    static void processFinalFixPR(long projectId, Connection conn, boolean toStart) throws SQLException {
-        if (!toStart) {
-            logger.log(Level.INFO,
-                    new LoggerMessage("project", new Long(projectId), null, "Process final fix phase."));
-            populateProjectResult(projectId, conn);
+    void processFinalFixPR(long projectId, boolean toStart) throws PhaseHandlingException {
+        Connection conn = createConnection();
+        try {
+            if (!toStart) {
+                logger.log(Level.INFO,
+                        new LoggerMessage("project", projectId, null, "Process final fix phase."));
+                populateProjectResult(projectId, conn);
+            }
+        } catch(SQLException e) {
+            throw new PhaseHandlingException("Failed to push data to project_result", e);
+        } finally {
+            close(conn);
         }
     }
 
@@ -324,16 +413,23 @@ public class PRHelper {
      * @throws PhaseHandlingException
      *             if error occurs
      */
-    static void processFinalReviewPR(long projectId, Connection conn, boolean toStart) throws SQLException {
-        if (!toStart) {
-            logger.log(Level.INFO,
-                    new LoggerMessage("project", new Long(projectId), null, "Process final review phase."));
-            populateProjectResult(projectId, conn);
-        } else {
-            logger.log(Level.INFO,
-                    new LoggerMessage("project", new Long(projectId), null, "start final review phase."));
+    void processFinalReviewPR(long projectId, boolean toStart) throws PhaseHandlingException {
+        Connection conn = createConnection();
+        try {
+            if (!toStart) {
+                logger.log(Level.INFO,
+                        new LoggerMessage("project", projectId, null, "Process final review phase."));
+                populateProjectResult(projectId, conn);
+            } else {
+                logger.log(Level.INFO,
+                        new LoggerMessage("project", projectId, null, "start final review phase."));
+            }
+            AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.FINAL_REVIEW_PHASE);
+        } catch(SQLException e) {
+            throw new PhaseHandlingException("Failed to push data to project_result", e);
+        } finally {
+            close(conn);
         }
-        AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.FINAL_REVIEW_PHASE);
     }
 
     /**
@@ -344,19 +440,26 @@ public class PRHelper {
      * @throws PhaseHandlingException
      *             if error occurs
      */
-    static void processPostMortemPR(long projectId, Connection conn, boolean toStart) throws SQLException {
-        if (!toStart) {
-            logger.log(Level.INFO,
-                    new LoggerMessage("project", new Long(projectId), null, "Process post mortem phase."));
-            populateProjectResult(projectId, conn);
-        } else {
-            logger.log(Level.INFO,
-                    new LoggerMessage("project", new Long(projectId), null, "start post mortem phase."));
+    void processPostMortemPR(long projectId, boolean toStart) throws PhaseHandlingException {
+        Connection conn = createConnection();
+        try {
+            if (!toStart) {
+                logger.log(Level.INFO,
+                        new LoggerMessage("project", projectId, null, "Process post mortem phase."));
+                populateProjectResult(projectId, conn);
+            } else {
+                logger.log(Level.INFO,
+                        new LoggerMessage("project", projectId, null, "start post mortem phase."));
+            }
+            AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.POST_MORTEM_PHASE);
+
+            // Copilots aren't getting paid for failed projects.
+            AutoPaymentUtil.clearCopilotPayments(projectId, conn);
+        } catch(SQLException e) {
+            throw new PhaseHandlingException("Failed to push data to project_result", e);
+        } finally {
+            close(conn);
         }
-        AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.POST_MORTEM_PHASE);
-		
-		// Copilots aren't getting paid for failed projects.
-        AutoPaymentUtil.clearCopilotPayments(projectId, conn);
     }
 
     /**
@@ -467,13 +570,43 @@ public class PRHelper {
      *            the project d.
      * @return true if it is a studio project.
      */
-    static boolean isStudioProject(long projectId) {
+    static boolean isStudioProject(ProjectManager projectManager, long projectId) {
         try {
-            ProjectManager projectManager = new ProjectManagerImpl();
             return "Studio".equals(projectManager.getProject(projectId).getProjectCategory().getProjectType().getName());
         } catch (BaseException e) {
             return false;
         }
+    }
+
+    /**
+     * Checks if the given phase is the last phase in the project. Note that if multiple
+     * phases end at the same date/time at the end of the project, all they are
+     * considered to be last phases of the project.
+     * @param phase
+     *            the phase to be checked.
+     * @return true if phase is the last phase in the project, false otherwise.
+     */
+    static boolean isLastPhase(Phase phase) {
+        // Get all phases for the project
+        Phase[] phases = phase.getProject().getAllPhases();
+
+        // Get index of the input phase in phases array
+        int phaseIndex = 0;
+
+        for (int i = 0; i < phases.length; i++) {
+            if (phases[i].getId() == phase.getId()) {
+                phaseIndex = i;
+            }
+        }
+
+        Date endDate = phases[phaseIndex].calcEndDate();
+        for (int i=0; i < phases.length; i++) {
+            if (i != phaseIndex && (phases[i].calcEndDate().after(endDate))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

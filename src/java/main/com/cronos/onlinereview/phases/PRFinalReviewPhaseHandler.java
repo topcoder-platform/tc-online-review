@@ -4,8 +4,6 @@
 package com.cronos.onlinereview.phases;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,6 +70,12 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  * @version 1.1
  */
 public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
+    
+    /**
+    * Used for pulling data to project_result table and filling payments.
+    */
+    private PRHelper prHelper = new PRHelper();
+	
     /**
      * <p>A <code>String</code> providing the name of resource property providing the flag indicating whether the
      * resource has permission for accessing the project's SVN module set or not.</p>
@@ -121,38 +125,29 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
 
         super.perform(phase, operator);
 
-        Connection conn = this.createConnection();
-        try {
-            processPR(phase.getProject().getId(), conn, toStart);
+        prHelper.processFinalReviewPR(phase.getProject().getId(), toStart);
 
-            // If stopping phase and final fix is approved.
-            if (!toStart && !checkFinalReview(conn, phase, operator)) {
-                // checks the existence of approval phase
-                Phase approvalPhase = PhasesHelper.locatePhase(phase, "Approval", true, false);
+        // If stopping phase and final fix is approved.
+        if (!toStart && !checkFinalReview(phase, operator)) {
+            // checks the existence of approval phase
+            Phase approvalPhase = PhasesHelper.locatePhase(phase, "Approval", true, false);
 
-                if (approvalPhase == null) {
-                    try {
-                        // check "Approval Required" project property
-                        ProjectManager projectManager = getManagerHelper().getProjectManager();
-                        com.topcoder.management.project.Project project = projectManager.getProject(phase.getProject()
-                                .getId());
+            if (approvalPhase == null) {
+                try {
+                    // check "Approval Required" project property
+                    ProjectManager projectManager = getManagerHelper().getProjectManager();
+                    com.topcoder.management.project.Project project = projectManager.getProject(phase.getProject()
+                            .getId());
 
-                        if (!"true".equalsIgnoreCase((String) project.getProperty("Approval Required"))) {
-                            // update project status to Complete
-                            PRHelper.completeProject(getManagerHelper(), phase, operator);
-                        }
-                    } catch (PersistenceException e) {
-                        throw new PhaseHandlingException("Problem when retrieving project", e);
+                    if (!"true".equalsIgnoreCase((String) project.getProperty("Approval Required"))) {
+                        // update project status to Complete
+                        PRHelper.completeProject(getManagerHelper(), phase, operator);
                     }
+                } catch (PersistenceException e) {
+                    throw new PhaseHandlingException("Problem when retrieving project", e);
                 }
-
             }
-
-        } finally {
-            PRHelper.close(conn);
         }
-
-
     }
 
     /**
@@ -240,20 +235,6 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
             throw new PhaseHandlingException("Failed to access SVN repository", e);
         } catch (com.topcoder.management.project.ConfigurationException e) {
             throw new PhaseHandlingException("Failed to create ProjectManager", e);
-        }
-    }
-
-    /**
-     * Pull data to project_result.
-     *
-     * @param projectId the projectId
-     * @throws PhaseHandlingException if error occurs
-     */
-    public void processPR(long projectId, Connection conn, boolean toStart) throws PhaseHandlingException {
-        try {
-            PRHelper.processFinalReviewPR(projectId, conn, toStart);
-        } catch (SQLException e) {
-            throw new PhaseHandlingException("Failed to push data to project_result", e);
         }
     }
 
@@ -353,10 +334,10 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
      * @throws PhaseHandlingException if an error occurs when retrieving/saving
      *         data.
      */
-    private boolean checkFinalReview(Connection conn, Phase phase, String operator) throws PhaseHandlingException {
+    private boolean checkFinalReview(Phase phase, String operator) throws PhaseHandlingException {
         try {
             ManagerHelper managerHelper = getManagerHelper();
-            Review finalWorksheet = PhasesHelper.getWorksheet(conn, managerHelper, "Final Reviewer", phase.getId());
+            Review finalWorksheet = PhasesHelper.getWorksheet(managerHelper, "Final Reviewer", phase.getId());
 
             // check for approved/rejected comments.
             Comment[] comments = finalWorksheet.getAllComments();

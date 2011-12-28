@@ -3,9 +3,6 @@
  */
 package com.cronos.onlinereview.phases;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import com.topcoder.management.phase.OperationCheckResult;
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.project.phases.Phase;
@@ -17,15 +14,20 @@ import com.topcoder.project.phases.Phase;
  * @version 1.0
  */
 public class PRReviewPhaseHandler extends ReviewPhaseHandler {
+    
+    /**
+    * Used for pulling data to project_result table and filling payments.
+    */
+    private PRHelper prHelper = new PRHelper();
 
     /**
      * Create a new instance of ReviewPhaseHandler using the default namespace for loading configuration settings.
      *
      * @throws ConfigurationException if errors occurred while loading configuration settings.
      */
-	public PRReviewPhaseHandler() throws ConfigurationException {
-		super();
-	}
+    public PRReviewPhaseHandler() throws ConfigurationException {
+        super();
+    }
 
     /**
      * Create a new instance of ReviewPhaseHandler using the given namespace for loading configuration settings.
@@ -35,9 +37,9 @@ public class PRReviewPhaseHandler extends ReviewPhaseHandler {
      * missing.
      * @throws IllegalArgumentException if the input is null or empty string.
      */
-	public PRReviewPhaseHandler(String namespace) throws ConfigurationException {
-		super(namespace);
-	}
+    public PRReviewPhaseHandler(String namespace) throws ConfigurationException {
+        super(namespace);
+    }
 
     /**
      * Check if the input phase can be executed or not. Just call super method.</p>
@@ -51,7 +53,7 @@ public class PRReviewPhaseHandler extends ReviewPhaseHandler {
      * @throws IllegalArgumentException if the input is null.
      */
     public OperationCheckResult canPerform(Phase phase) throws PhaseHandlingException {
-    	return super.canPerform(phase);
+        return super.canPerform(phase);
     }
 
     /**
@@ -66,27 +68,10 @@ public class PRReviewPhaseHandler extends ReviewPhaseHandler {
      * @throws IllegalArgumentException if the input parameters is null or empty string.
      */
     public void perform(Phase phase, String operator) throws PhaseHandlingException {
-    	super.perform(phase, operator);
+        super.perform(phase, operator);
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
 
-        Connection conn = this.createConnection();
-        try {
-            processPR(phase, conn, operator, toStart);
-        } finally {
-            PRHelper.close(conn);
-        }
+        prHelper.processReviewPR(getManagerHelper(), phase, operator, toStart);
     }
 
-    /**
-     * Pull data to project_result for software competitions; update submitter's payments and complete project for Studio competitions.
-     * 
-     * @throws PhaseHandlingException if error occurs
-     */
-    public void processPR(Phase phase, Connection conn, String operator, boolean toStart) throws PhaseHandlingException {
-        try {
-            PRHelper.processReviewPR(getManagerHelper(), phase, conn, operator, toStart);
-        } catch(SQLException e) {
-            throw new PhaseHandlingException("Failed to push data to project_result", e);
-        }
-    }
 }

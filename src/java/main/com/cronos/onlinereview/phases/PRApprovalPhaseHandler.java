@@ -3,9 +3,6 @@
  */
 package com.cronos.onlinereview.phases;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.review.data.Comment;
@@ -92,10 +89,8 @@ public class PRApprovalPhaseHandler extends ApprovalPhaseHandler {
      *             if any error occurs
      */
     private boolean checkScorecardsRejected(Phase phase) throws PhaseHandlingException {
-        Connection conn = null;
         try {
-            conn = createConnection();
-            Review[] approveReviews = PhasesHelper.searchProjectReviewsForResourceRoles(conn, getManagerHelper(), phase
+            Review[] approveReviews = PhasesHelper.searchProjectReviewsForResourceRoles(getManagerHelper(), phase
                     .getProject().getId(), new String[] {APPROVER}, null);
             approveReviews = PhasesHelper.getApprovalPhaseReviews(approveReviews, phase);
 
@@ -128,8 +123,6 @@ public class PRApprovalPhaseHandler extends ApprovalPhaseHandler {
 
         } catch (PhaseManagementException e) {
             throw new PhaseHandlingException("Problem when persisting phases", e);
-        } finally {
-            PhasesHelper.closeConnection(conn);
         }
     }
 }

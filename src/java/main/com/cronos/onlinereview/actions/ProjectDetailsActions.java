@@ -999,7 +999,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadContestSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return handleUploadSubmission(mapping, form, request, "Contest Submission",
+        return handleUploadSubmission(mapping, form, request, Constants.CONTEST_SUBMISSION_TYPE_NAME,
                                       Constants.PERFORM_SUBM_PERM_NAME, Constants.SUBMISSION_PHASE_NAME);
     }
 
@@ -1025,7 +1025,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadMilestoneSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return handleUploadSubmission(mapping, form, request, "Milestone Submission",
+        return handleUploadSubmission(mapping, form, request, Constants.MILESTONE_SUBMISSION_TYPE_NAME,
                                       Constants.PERFORM_MILESTONE_SUBMISSION_PERM_NAME,
                                       Constants.MILESTONE_SUBMISSION_PHASE_NAME);
     }
@@ -1142,7 +1142,7 @@ public class ProjectDetailsActions extends DispatchAction {
         SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
         SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
         SubmissionType specSubmissionType
-            = ActionsHelper.findSubmissionTypeByName(submissionTypes, "Specification Submission");
+            = ActionsHelper.findSubmissionTypeByName(submissionTypes, Constants.SPECIFICATION_SUBMISSION_TYPE_NAME);
         SubmissionStatus submissionActiveStatus
             = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active");
         submission.setSubmissionStatus(submissionActiveStatus);
@@ -1479,8 +1479,6 @@ public class ProjectDetailsActions extends DispatchAction {
            // For the Submitters we only allow to download final fixes if the user has at least passed screening.
             if (roles[i].equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
                 hasSubmitterRole = true;
-                // Get all submissions for the project that passed screening.
-                Submission[] submissions = ActionsHelper.searchReviewedContestSubmissions(request, verification.getProject());
 
                 // Get all submissions for this user.
                 Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.SUBMITTER_ROLE_NAME);
@@ -1491,11 +1489,11 @@ public class ProjectDetailsActions extends DispatchAction {
                 // We don't need to check the current phase because if there is a final fix submitted
                 // it is already past the Apepals Response anyway.
                 for (Long id : subIds) {
-                    for (Submission submission : submissions) {
-                        if (submission.getId() == id) {
-                            hasPermission = true;
-                            break;
-                        }
+                    Submission submission = upMgr.getSubmission(id);
+                    if (submission != null && submission.getSubmissionType().getName().equals(Constants.CONTEST_SUBMISSION_TYPE_NAME) &&
+                        !submission.getSubmissionStatus().getName().equals(Constants.FAILED_SCREENING_SUBMISSION_STATUS_NAME)) {
+                        hasPermission = true;
+                        break;
                     }
                 }
             } else {
@@ -3320,9 +3318,6 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // For the Submitters we only allow to download other's submissions if the user has at least passed screening.
         if (noRights && AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) {
-            // Get all submissions for the project that passed screening.
-            Submission[] submissions = ActionsHelper.searchReviewedContestSubmissions(request, verification.getProject());
-
             // Get all submissions for this user.
             Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.SUBMITTER_ROLE_NAME);
             UploadManager upMgr = ActionsHelper.createUploadManager();
@@ -3333,11 +3328,11 @@ public class ProjectDetailsActions extends DispatchAction {
             // the user won't be able to download other's submissions anyway.
             boolean passedScreening = false;
             for (Long id : subIds) {
-                for (Submission submission : submissions) {
-                    if (submission.getId() == id) {
-                        passedScreening = true;
-                        break;
-                    }
+                Submission submission = upMgr.getSubmission(id);
+                if (submission != null && submission.getSubmissionType().getName().equals(Constants.CONTEST_SUBMISSION_TYPE_NAME) &&
+                    !submission.getSubmissionStatus().getName().equals(Constants.FAILED_SCREENING_SUBMISSION_STATUS_NAME)) {
+                    passedScreening = true;
+                    break;
                 }
             }
 
@@ -3467,7 +3462,8 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // We don't allow user to upload contest submissions/milestone submissions for studio contest
         if ("Studio".equalsIgnoreCase(project.getProjectCategory().getProjectType().getName())
-                && ("Contest Submission".equals(submissionTypeName) || "Milestone Submission".equals(submissionTypeName))) {
+                && (submissionTypeName.equals(Constants.CONTEST_SUBMISSION_TYPE_NAME) ||
+                    submissionTypeName.equals(Constants.MILESTONE_SUBMISSION_TYPE_NAME))) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     submitPermissionName, "Error.UploadForStudio", null);
         }

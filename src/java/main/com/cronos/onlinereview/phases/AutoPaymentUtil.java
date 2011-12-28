@@ -587,7 +587,7 @@ public class AutoPaymentUtil {
      *
      * @throws SQLException if error occurs
      */
-    static void populateSubmitterPayments(long projectId, Connection conn)
+    public static void populateSubmitterPayments(long projectId, Connection conn)
             throws SQLException {
         if (!isMemberPaymentEligible(projectId, conn)) {
             return;
@@ -629,51 +629,51 @@ public class AutoPaymentUtil {
             }
 
             if (prizesCount == 0) {
-				// Prepare prices for different places.
-				double[] prices = new double[] { price, Math.round(price * 0.5) };
-				long[] places = new long[] { 1, 2 };
+                // Prepare prices for different places.
+                double[] prices = new double[] { price, Math.round(price * 0.5) };
+                long[] places = new long[] { 1, 2 };
 
-				// Update the payment value and payment status for the winners.
-				for (int i = 0; i < places.length; ++i) {
-					long submitterId = getPassingSubmitterIdByPlace(projectId,
-							places[i], conn);
+                // Update the payment value and payment status for the winners.
+                for (int i = 0; i < places.length; ++i) {
+                    long submitterId = getPassingSubmitterIdByPlace(projectId,
+                            places[i], conn);
 
-					if (resourceIds.contains(submitterId)) {
-						updateResourcePayment(submitterId, prices[i], conn);
-					}
-				}
-			} else {
-				// get the payments from the prize table
-				Map<Long, Float> submittersPayment = getSubmittersPayment(
-						projectId, conn);
-				for (Map.Entry<Long, Float> entry : submittersPayment
-						.entrySet()) {
-					// Update the payment for given submitter
-					updateResourcePayment(entry.getKey(), entry.getValue(),
-							conn);
-				}
+                    if (resourceIds.contains(submitterId)) {
+                        updateResourcePayment(submitterId, prices[i], conn);
+                    }
+                }
+            } else {
+                // get the payments from the prize table
+                Map<Long, Float> submittersPayment = getSubmittersPayment(
+                        projectId, conn);
+                for (Map.Entry<Long, Float> entry : submittersPayment
+                        .entrySet()) {
+                    // Update the payment for given submitter
+                    updateResourcePayment(entry.getKey(), entry.getValue(),
+                            conn);
+                }
 
-			}
-		} finally {
-			PRHelper.close(rs);
-			PRHelper.close(pstmt);
-		}
+            }
+        } finally {
+            PRHelper.close(rs);
+            PRHelper.close(pstmt);
+        }
 
     }
 
     /**
-	 * Update the submitter payment with price.
-	 * 
-	 * @param resourceId
-	 *            the resource id
-	 * @param price
-	 *            the price
-	 * @param conn
-	 *            DOCUMENT ME!
-	 * 
-	 * @throws SQLException
-	 *             if error occurs
-	 */
+     * Update the submitter payment with price.
+     * 
+     * @param resourceId
+     *            the resource id
+     * @param price
+     *            the price
+     * @param conn
+     *            DOCUMENT ME!
+     * 
+     * @throws SQLException
+     *             if error occurs
+     */
     private static void updateResourcePayment(long resourceId, double price, Connection conn)
         throws SQLException {
         // Set price

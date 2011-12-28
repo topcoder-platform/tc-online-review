@@ -3,10 +3,8 @@
  */
 package com.cronos.onlinereview.phases;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import com.topcoder.management.phase.PhaseHandlingException;
+import com.topcoder.management.project.ProjectManager;
 import com.topcoder.project.phases.Phase;
 
 /**
@@ -25,6 +23,12 @@ import com.topcoder.project.phases.Phase;
  * @version 1.1 (Milestone Support assembly)
  */
 public class PRMilestoneScreeningPhaseHandler extends MilestoneScreeningPhaseHandler {
+    
+    /**
+    * Used for pulling data to project_result table and filling payments.
+    */
+    private PRHelper prHelper = new PRHelper();
+	
     /**
      * Represents the <code>ScreeningResultNotification</code> instance to send notification email.
      * 
@@ -67,29 +71,18 @@ public class PRMilestoneScreeningPhaseHandler extends MilestoneScreeningPhaseHan
     public void perform(Phase phase, String operator) throws PhaseHandlingException {
         super.perform(phase, operator);
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
-        
-        Connection conn = this.createConnection();
-        
-        try {
-        	long projectId = phase.getProject().getId();
-            if (!toStart && PRHelper.isStudioProject(projectId)) {
+        ProjectManager projectManager = getManagerHelper().getProjectManager();
+        long projectId = phase.getProject().getId();
+
+        if (!toStart && PRHelper.isStudioProject(projectManager, projectId)) {
                 
-                try {
-                    notification.sendEmailToSubmitters(getManagerHelper().getProjectManager().getProject(projectId));
-                } catch (Exception e) {
-                    throw new PhaseHandlingException("Failed to send email to submitters on Milestone Screening results", 
-                                                     e);
-                }
-                
-                try {
-                    AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.MILESTONE_SCREENING_PHASE);
-                } catch (SQLException e) {
-                    throw new PhaseHandlingException("Failed to populate reviewer payment for Milestone Screening phase", 
-                            e);
-                }
+            try {
+                notification.sendEmailToSubmitters(projectManager.getProject(projectId));
+            } catch (Exception e) {
+                throw new PhaseHandlingException("Failed to send email to submitters on Milestone Screening results", e);
             }
-        } finally {
-            PRHelper.close(conn);
+                
+            prHelper.populateReviewerPayments(projectId, AutoPaymentUtil.MILESTONE_SCREENING_PHASE);
         }
     }
 }

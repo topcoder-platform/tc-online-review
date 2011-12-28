@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -26,14 +25,11 @@ import org.apache.struts.util.MessageResources;
 import org.apache.struts.validator.LazyValidatorForm;
 
 import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.SubmissionStatus;
 import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.UploadStatus;
 import com.topcoder.management.deliverable.UploadType;
-import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
@@ -45,9 +41,6 @@ import com.topcoder.management.review.data.CommentType;
 import com.topcoder.management.review.data.Item;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.management.review.data.ReviewEditor;
-import com.topcoder.management.review.scoreaggregator.AggregatedSubmission;
-import com.topcoder.management.review.scoreaggregator.RankedSubmission;
-import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregator;
 import com.topcoder.management.review.scorecalculator.CalculationManager;
 import com.topcoder.management.review.scorecalculator.ScoreCalculator;
 import com.topcoder.management.review.scorecalculator.ScorecardMatrix;
@@ -70,6 +63,7 @@ import com.topcoder.servlet.request.UploadedFile;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.util.log.Level;
 import com.topcoder.util.weightedcalculator.LineItem;
+import com.cronos.onlinereview.phases.OnlineReviewServices;
 
 /**
  * This class contains Struts Actions that are meant to deal with Project's Reviews. There are
@@ -276,7 +270,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward createScreening(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                         HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return createGenericReview(mapping, form, request, "Screening");
@@ -307,7 +301,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward editScreening(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                       HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return editGenericReview(mapping, form, request, "Screening");
@@ -335,7 +329,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward saveScreening(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                       HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return saveGenericReview(mapping, form, request, "Screening");
@@ -362,7 +356,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward viewScreening(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                       HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return viewGenericReview(mapping, form, request, "Screening");
@@ -392,7 +386,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward createReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                      HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return createGenericReview(mapping, form, request, "Review");
@@ -423,7 +417,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward editReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                    HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return editGenericReview(mapping, form, request, "Review");
@@ -451,7 +445,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward saveReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                    HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return saveGenericReview(mapping, form, request, "Review");
@@ -478,7 +472,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward viewReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                    HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return viewGenericReview(mapping, form, request, "Review");
@@ -503,7 +497,7 @@ public class ProjectReviewActions extends DispatchAction {
      *            the http response.
      */
     public ActionForward createAggregation(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws BaseException {
+                                           HttpServletRequest request, HttpServletResponse response) throws BaseException {
 
         LoggingHelper.logAction(request);
         // Nothing needs to be done
@@ -535,7 +529,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward editAggregation(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                         HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
@@ -681,7 +675,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward saveAggregation(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                         HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
@@ -865,7 +859,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward viewAggregation(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                         HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
@@ -1004,7 +998,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward editAggregationReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws BaseException {
+                                               HttpServletRequest request, HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before proceeding with the Action
@@ -1200,7 +1194,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward saveAggregationReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                               HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
@@ -1418,7 +1412,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward viewAggregationReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                               HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
@@ -1491,7 +1485,7 @@ public class ProjectReviewActions extends DispatchAction {
      *            the http response.
      */
     public ActionForward createFinalReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws BaseException {
+                                           HttpServletRequest request, HttpServletResponse response) throws BaseException {
         // Nothing needs to be done
         LoggingHelper.logAction(request);
         return null;
@@ -1522,7 +1516,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward editFinalReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                         HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
@@ -1687,7 +1681,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward saveFinalReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                         HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
@@ -1896,7 +1890,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward viewFinalReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                         HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
@@ -1989,7 +1983,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward createApproval(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                        HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
         LoggingHelper.logAction(request);
         ActionForward genericForward = createGenericReview(mapping, form, request, "Approval");
@@ -2025,7 +2019,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward editApproval(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                      HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
         LoggingHelper.logAction(request);
         ActionForward genericForward = editGenericReview(mapping, form, request, "Approval");
@@ -2074,7 +2068,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward saveApproval(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                      HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return saveGenericReview(mapping, form, request, "Approval");
@@ -2101,7 +2095,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward viewApproval(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                      HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return viewGenericReview(mapping, form, request, "Approval");
@@ -2130,7 +2124,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward viewCompositeScorecard(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                                HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         try {
         LoggingHelper.logAction(request);
@@ -2334,7 +2328,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     private CorrectnessCheckResult checkForCorrectSubmissionId(ActionMapping mapping,
-            HttpServletRequest request, String permission)
+                                                               HttpServletRequest request, String permission)
         throws BaseException {
         // Prepare bean that will be returned as the result
         CorrectnessCheckResult result = new CorrectnessCheckResult();
@@ -2489,7 +2483,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     private CorrectnessCheckResult checkForCorrectReviewId(ActionMapping mapping,
-            HttpServletRequest request, String permission)
+                                                           HttpServletRequest request, String permission)
         throws BaseException {
         // Prepare bean that will be returned as the result
         CorrectnessCheckResult result = new CorrectnessCheckResult();
@@ -2603,7 +2597,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     private void retrieveAndStoreBasicAggregationInfo(HttpServletRequest request,
-            CorrectnessCheckResult verification, Scorecard scorecardTemplate, String reviewType)
+                                                      CorrectnessCheckResult verification, Scorecard scorecardTemplate, String reviewType)
         throws BaseException {
         // Retrieve a project from verification-result bean
         Project project = verification.getProject();
@@ -2731,7 +2725,7 @@ public class ProjectReviewActions extends DispatchAction {
      * @throws BaseException
      */
     private void retrieveAndStoreBasicReviewInfo(HttpServletRequest request,
-            CorrectnessCheckResult verification, String reviewType, Scorecard scorecardTemplate)
+                                                 CorrectnessCheckResult verification, String reviewType, Scorecard scorecardTemplate)
         throws BaseException {
         boolean isSubmissionDependentPhase = !reviewType.equals("Post-Mortem");
 
@@ -2857,26 +2851,20 @@ public class ProjectReviewActions extends DispatchAction {
         /*
          * Verify that the user is not trying to create review that already exists
          */
+        // Prepare filters
+        Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
+        Filter filterScorecard = new EqualToFilter("scorecardType", new Long(scorecardTemplate.getScorecardType().getId()));
+
         Filter filter;
-
         if (isPostMortemPhase) {
-            // Prepare filters
-            Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
-            Filter filterScorecard = new EqualToFilter("scorecardType",
-                    new Long(scorecardTemplate.getScorecardType().getId()));
-
             // Prepare final combined filter
             filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterScorecard}));
         } else {
-            // Prepare filters
-            Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
-            Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
-            Filter filterScorecard = new EqualToFilter("scorecardType",
-                    new Long(scorecardTemplate.getScorecardType().getId()));
-
             // Prepare final combined filter
+            Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
             filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterSubmission, filterScorecard}));
         }
+
         // Obtain an instance of Review Manager
         ReviewManager revMgr = ActionsHelper.createReviewManager();
         // Retrieve an array of reviews
@@ -2885,8 +2873,7 @@ public class ProjectReviewActions extends DispatchAction {
             reviews = ActionsHelper.getApprovalPhaseReviews(reviews, phase);
         }
 
-        // Non-empty array of reviews indicates that
-        // user is trying to create review that already exists
+        // Non-empty array of reviews indicates that user is trying to create review that already exists
         if (reviews.length != 0) {
             // Forward to Edit Sceeening page
             return ActionsHelper.cloneForwardAndAppendToPath(
@@ -3249,33 +3236,16 @@ public class ProjectReviewActions extends DispatchAction {
             scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(ActionsHelper.createScorecardManager(), phase);
 
             // Prepare filters
+            Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
+            Filter filterScorecard = new EqualToFilter("scorecardType", new Long(scorecardTemplate.getScorecardType().getId()));
+
             Filter filter;
             if (isSubmissionDependentPhase) {
-                Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
                 Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
-                Filter filterScorecard = new EqualToFilter("scorecardType",
-                        new Long(scorecardTemplate.getScorecardType().getId()));
-
-                // Build the list of all filters that should be joined using AND operator
-                List<Filter> filters = new ArrayList<Filter>();
-                filters.add(filterResource);
-                filters.add(filterSubmission);
-                filters.add(filterScorecard);
-
-                // Prepare final combined filter
-                filter = new AndFilter(filters);
+                filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterSubmission, filterScorecard}));
             } else {
-                Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
-                Filter filterScorecard = new EqualToFilter("scorecardType",
-                                                           new Long(scorecardTemplate.getScorecardType().getId()));
-
-                // Build the list of all filters that should be joined using AND operator
-                List<Filter> filters = new ArrayList<Filter>();
-                filters.add(filterResource);
-                filters.add(filterScorecard);
-
                 // Prepare final combined filter
-                filter = new AndFilter(filters);
+                filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterScorecard}));
             }
 
             // Obtain an instance of Review Manager
@@ -3286,8 +3256,7 @@ public class ProjectReviewActions extends DispatchAction {
                 reviews = ActionsHelper.getApprovalPhaseReviews(reviews, phase);
             }
 
-            // Non-empty array of reviews indicates that
-            // user is trying to create review that already exists
+            // Non-empty array of reviews indicates that user is trying to create review that already exists
             if (reviews.length != 0) {
                 review = reviews[0];
                 verification.setReview(review);
@@ -3523,7 +3492,6 @@ public class ProjectReviewActions extends DispatchAction {
         // For Manager Edits this variable indicates whether recomputation of
         // final aggregated score for the submitter may be required
         boolean possibleFinalScoreUpdate = false;
-        boolean possibleSubmissionStatusUpdate = false;
 
 
         if (isApprovalPhase) {
@@ -3538,7 +3506,7 @@ public class ProjectReviewActions extends DispatchAction {
             if (approveFixesObj == null) {
                 ActionsHelper.addErrorToRequest(request, "approve_status", "Error.saveApproval.Absent");
             }
-            
+
             Boolean acceptButRequireOtherFixesObj = (Boolean) reviewForm.get("accept_but_require_fixes");
             approveFixes = (approveFixesObj != null && approveFixesObj.booleanValue());
             acceptButRequireOtherFixes
@@ -3607,23 +3575,38 @@ public class ProjectReviewActions extends DispatchAction {
         boolean validationSucceeded = (commitRequested || managerEdit) ?
                 validateGenericScorecard(request, scorecardTemplate, review, managerEdit) : true;
 
+        if (!validationSucceeded) {
+            // Put the review object into the request
+            request.setAttribute("review", review);
+            // Put the review object into the bean (it may not always be there by default)
+            verification.setReview(review);
+            // Retrieve some basic review info and store it in the request
+            retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
+            // Retrive some look-up data and store it into the request
+            retreiveAndStoreReviewLookUpData(request);
+            // Need to store uploaded file IDs, so that the user will be able to download them
+            if (!managerEdit) {
+                request.setAttribute("uploadedFileIds", collectUploadedFileIds(scorecardTemplate, review));
+            }
+
+            return mapping.getInputForward();
+        }
+
+        // At this point going forward we assume the validation succeeded
         // If the user has requested to complete the review
-        if (validationSucceeded && (commitRequested || managerEdit)) {
+        if (commitRequested || managerEdit) {
             // Obtain an instance of CalculationManager
             CalculationManager scoreCalculator = new CalculationManager();
             // Compute scorecard's score
             float newScore = scoreCalculator.getScore(scorecardTemplate, review);
             // If score has been updated during Manager Edit, additional actions may need to be taken
-            if ("Review".equals(reviewType) && managerEdit &&
-                    (review.getScore() == null || review.getScore().floatValue() != newScore)) {
+            if ((reviewType.equals("Review") || reviewType.equals("Milestone Review")) &&
+                    managerEdit && (review.getScore() == null || review.getScore() != newScore)) {
                 possibleFinalScoreUpdate = true;
             }
-            if ("Screening".equals(reviewType) && managerEdit &&
-                    (review.getScore() == null || review.getScore().floatValue() != newScore)) {
-                possibleSubmissionStatusUpdate = true;
-            }
+
             // Update scorecard's score
-            review.setScore(new Float(newScore));
+            review.setScore(newScore);
             if (review.getInitialScore() == null) {
                 review.setInitialScore(review.getScore());
             }
@@ -3659,14 +3642,11 @@ public class ProjectReviewActions extends DispatchAction {
             return mapping.findForward(Constants.PREVIEW_FORWARD_NAME);
         }
 
-        // Do not allow to save invalid manager's edits
-        if (!managerEdit || validationSucceeded) {
-            // Determine which action should be performed -- creation or updating
-            if (verification.getReview() == null) {
-                revMgr.createReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-            } else {
-                revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-            }
+        // Determine which action should be performed - creation or updating
+        if (verification.getReview() == null) {
+            revMgr.createReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        } else {
+            revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
 
         // This operation will possibly update final aggregated score for the submitter
@@ -3674,12 +3654,7 @@ public class ProjectReviewActions extends DispatchAction {
             updateFinalAggregatedScore(request, project, phase, verification.getSubmission());
         }
 
-        // This operation will possibly update submission status for the submitter
-        if (possibleSubmissionStatusUpdate) {
-            updateSubmissionStatusScreeningScoreChanged(request, project, phases, review, verification.getSubmission());
-        }
-
-        if (validationSucceeded && commitRequested) {
+        if (commitRequested) {
             // Put the review object into the bean (it may not always be there by default)
             verification.setReview(review);
             // Retrieve some basic review info and store it in the request
@@ -3688,27 +3663,10 @@ public class ProjectReviewActions extends DispatchAction {
             // Place information about the final score into the request
             request.setAttribute("reviewScore", review.getScore());
             // Place review ID into the request
-            request.setAttribute("rid", new Long(review.getId()));
+            request.setAttribute("rid", review.getId());
 
             // Forward to the page that says that scorecard has been committed
             return mapping.findForward(Constants.REVIEW_COMMITTD_FORWARD_NAME);
-        }
-
-        if (!validationSucceeded) {
-            // Put the review object into the request
-            request.setAttribute("review", review);
-            // Put the review object into the bean (it may not always be there by default)
-            verification.setReview(review);
-            // Retrieve some basic review info and store it in the request
-            retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
-            // Retrive some look-up data and store it into the request
-            retreiveAndStoreReviewLookUpData(request);
-            // Need to store uploaded file IDs, so that the user will be able to download them
-            if (!managerEdit) {
-                request.setAttribute("uploadedFileIds", collectUploadedFileIds(scorecardTemplate, review));
-            }
-
-            return mapping.getInputForward();
         }
 
         // Forward to project details page
@@ -3729,315 +3687,8 @@ public class ProjectReviewActions extends DispatchAction {
      * @param project
      *            a project the submission was originally made for.
      * @param reviewPhase
-     *            phase of type &quot;Review&quot; used internally to retrieve reviewers' resources.
-     * @param sub
-     *            a submission in question, i.e. the one that needs its final score updated.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>.
-     * @throws BaseException
-     *             if any unexpected error occurs during final score update.
-     */
-    private static void updateFinalAggregatedScore(HttpServletRequest request, Project project, Phase reviewPhase, Submission sub)
-            throws BaseException {
-        // Validate parameters
-        ActionsHelper.validateParameterNotNull(request, "request");
-        ActionsHelper.validateParameterNotNull(project, "project");
-        ActionsHelper.validateParameterNotNull(reviewPhase, "reviewPhase");
-        ActionsHelper.validateParameterNotNull(sub, "submission");
-
-        // Obtain an instance of Resource Manager
-        ResourceManager resMgr = ActionsHelper.createResourceManager();
-        // Get a resource identificating the submitter for this review
-        Resource submitter = resMgr.getResource(sub.getUpload().getOwner());
-
-        // OrChange - Get the final score from the submission instead of the Resource
-        // Get final aggregated score for this submitter, if any
-        Double finalScore = sub.getFinalScore();
-
-        // If there is no final (post Appeals Response) score for the submitter yet,
-        // there is nothing to do anymore
-        log.log(Level.INFO, "Final Score: " + finalScore);
-        if (finalScore == null) {
-            return;
-        }
-
-        // Build a filter to select resources (i.e. reviewers) for Review phase
-        Filter filterPhase = ResourceFilterBuilder.createPhaseIdFilter(reviewPhase.getId());
-        // Retrieve reviewers that did the reviews
-        Resource[] reviewers = resMgr.searchResources(filterPhase);
-
-        if (reviewers.length == 0) {
-            // Impossible situation, but a safety-check prevents application from crashing
-            return;
-        }
-
-        List<Long> reviewerIds = new ArrayList<Long>();
-
-        for (int i = 0; i < reviewers.length; ++i) {
-            reviewerIds.add(reviewers[i].getId());
-        }
-
-        // Prepare filters
-        Filter filterReviewers = new InFilter("reviewer", reviewerIds);
-        Filter filterSubmission = new EqualToFilter("submission", new Long(sub.getId()));
-        Filter filterCommitted = new EqualToFilter("committed", new Integer(1));
-
-        // Prepare final combined filter
-        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterReviewers, filterSubmission, filterCommitted}));
-        // Obtain an instance of Review Manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager();
-        // Retrieve an array of reviews
-        Review[] reviews = revMgr.searchReviews(filter, true);
-
-        if (reviews.length == 0) {
-            // Another generally impossible situation guarded by a safety-check just in case
-            return;
-        }
-
-        float[] scores = new float[reviews.length];
-        // Prepare needed parameters for score aggregator
-        for (int i = 0; i < reviews.length; ++i) {
-            scores[i] = (reviews[i].getScore() != null) ? reviews[i].getScore().floatValue() : 0.0f;
-        }
-
-        // Obtain an instance of Review Score Aggregator
-        ReviewScoreAggregator aggregator = ActionsHelper.createScoreAggregator(request);
-        // Aggregate scores for the current submission
-        AggregatedSubmission[] aggrSubm = aggregator.aggregateScores(new float[][] {scores});
-        float newScore = aggrSubm[0].getAggregatedScore();
-
-        float oldScore = Float.parseFloat(String.valueOf(finalScore));
-
-        if (newScore == oldScore) {
-            // score is not changed
-            return;
-        }
-
-        // OrChange - Get the placement from the submission instead of the Resource
-        Long oldPlacement = sub.getPlacement() == null ? -1 : sub.getPlacement();
-
-
-        // Old Code
-        // Object temp = submitter.getProperty("Placement");
-        // long oldPlacement = temp == null ? -1 : Long.parseLong(temp.toString());
-        // Old Code Ends
-
-        Object userId = submitter.getProperty("External Reference ID");
-
-        UploadManager upMgr = ActionsHelper.createUploadManager();
-
-        // OrChange - Update the final score in the Submission table.
-        sub.setFinalScore(new Double(newScore));
-
-        // update the final score
-        upMgr.updateSubmission(sub, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
-
-        // Old Code
-        // // Update this submitter's final score with aggregated one
-        // submitter.setProperty("Final Score", String.valueOf(newScore));
-        //
-        //
-        // // Store updated information in the database
-        // resMgr.updateResource(submitter, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
-        // Old Code Ends
-
-        // Retrieve all reviewed submissions of "Contest Submission" type
-        // to reset placement/submission status if need
-        Submission[] submissions = ActionsHelper.searchReviewedContestSubmissions(request, project);
-        List<Long> submissionIds = new ArrayList<Long>();
-
-        for (int i = 0; i < submissions.length; ++i) {
-            submissionIds.add(submissions[i].getId());
-        }
-
-        Filter filterSubmissions = new InFilter("submission", submissionIds);
-        filter = new AndFilter(Arrays.asList(new Filter[] {filterReviewers, filterSubmissions, filterCommitted}));
-        reviews = revMgr.searchReviews(filter, true);
-
-        // Retrieve minScore
-        ScorecardManager scMgr = ActionsHelper.createScorecardManager();
-        float minScore =  ActionsHelper.getScorecardMinimumScore(scMgr, reviews[0]);
-
-        //create array to hold scores from all reviewers for all submissions
-        com.topcoder.management.review.scoreaggregator.Submission[] submissionScores =
-            new com.topcoder.management.review.scoreaggregator.Submission[submissions.length];
-
-        // for each submission, populate scores array to use with review score aggregator.
-        for (int iSub = 0; iSub < submissions.length; iSub++) {
-            long subId = submissions[iSub].getId();
-            List<Float> scoresList = new ArrayList<Float>();
-
-            //Match the submission with its reviews
-            for (int j = 0; j < reviews.length; j++) {
-                if (subId == reviews[j].getSubmission()) {
-                    //get review score
-                    scoresList.add(reviews[j].getScore());
-                }
-            }
-
-            //create float array
-            scores = new float[scoresList.size()];
-
-            for (int iScore = 0; iScore < scores.length; iScore++) {
-                scores[iScore] = scoresList.get(iScore);
-            }
-
-            submissionScores[iSub] = new com.topcoder.management.review.scoreaggregator.Submission(subId, scores);
-        }
-
-        //this will hold as many elements as submissions
-        AggregatedSubmission[] aggregations = aggregator.aggregateScores(submissionScores);
-        RankedSubmission[] placements = aggregator.calcPlacements(aggregations);
-
-        // check if placement is changed
-        long newPlacement = -1;
-        for (int i = 0; i < placements.length; i++) {
-            if (placements[i].getId() == sub.getId()) {
-                newPlacement = placements[i].getRank();
-            }
-        }
-
-        if (newPlacement != -1 && newPlacement == oldPlacement) {
-            // placement is not changed
-
-            // Check if submission status is changed
-            if ((oldScore < minScore && newScore < minScore) ||
-                    (oldScore >= minScore && newScore >= minScore)) {
-                // the submission status is not changed, but we still need to update the project_result
-                ActionsHelper.resetProjectResultWithChangedScores(project.getId(), userId);
-                return;
-            }
-        }
-
-        //status objects
-        SubmissionStatus failedStatus = ActionsHelper.getSubmissionStatus(request,
-                "Failed Review");
-        SubmissionStatus noWinStatus = ActionsHelper.getSubmissionStatus(request,
-                "Completed Without Win");
-        SubmissionStatus activeStatus = ActionsHelper.getSubmissionStatus(request,
-                "Active");
-
-        Resource winningSubmitter = null;
-        Resource runnerUpSubmitter = null;
-
-
-        //again iterate over submissions to set the initial score and placement
-        for (int iSub = 0; iSub < placements.length; iSub++) {
-            RankedSubmission rankedSubmission = placements[iSub];
-            rankedSubmission = breakTies(rankedSubmission, submissions, placements);
-            Submission submission = getSubmissionById(submissions, rankedSubmission.getId());
-            float aggScore = rankedSubmission.getAggregatedScore();
-            int placement = rankedSubmission.getRank();
-
-            // update submitter's Placement
-            submission.setPlacement(new Long(placement));
-
-            SubmissionStatus newStatus = null;
-
-            //if failed review, then update the status
-            if (aggScore < minScore) {
-                newStatus = failedStatus;
-            } else {
-                //if not winner, update submission status
-                if (placement != 1) {
-                    newStatus = noWinStatus;
-                } else {
-                    newStatus = activeStatus;
-                }
-            }
-
-            submission.setSubmissionStatus(newStatus);
-
-            //cache winning and runner up submitter.
-            if (placement == 1 && aggScore >= minScore) {
-                winningSubmitter = resMgr.getResource( submission.getUpload().getOwner() );
-            } else if (placement == 2 && aggScore >= minScore) {
-                runnerUpSubmitter = resMgr.getResource( submission.getUpload().getOwner() );
-            }
-
-            //persist the change
-            upMgr.updateSubmission(submission, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
-        } //end for
-
-        ProjectManager projectManager = ActionsHelper.createProjectManager();
-
-        // if there is a winner
-        if (winningSubmitter != null) {
-            //Set project properties to store the winner and the runner up
-            //Get the project instance
-            Object winnerExtId = winningSubmitter.getProperty("External Reference ID");
-            project.setProperty("Winner External Reference ID", winnerExtId);
-        } else {
-            project.setProperty("Winner External Reference ID", null);
-        }
-
-        //if there is a runner up
-        if (runnerUpSubmitter != null) {
-            Object runnerExtId = runnerUpSubmitter.getProperty("External Reference ID");
-            project.setProperty("Runner-up External Reference ID", runnerExtId);
-        }else {
-            project.setProperty("Runner-up External Reference ID", null);
-        }
-
-        //update the project
-        projectManager.updateProject(project, "Update the winner and runner up.",
-                String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
-
-        ActionsHelper.resetProjectResultWithChangedScores(project.getId(), userId);
-    }
-
-    /**
-     * Return suitable submission for given submissionId.
-     *
-     * @param submissions the submission array
-     * @param submissionId the submissionId
-     * @return submission
-     * @throws BaseException
-     */
-    private static Submission getSubmissionById(Submission[] submissions, long submissionId)
-        throws BaseException {
-        for (int i = 0; i < submissions.length; i++) {
-            if (submissions[i].getId() == submissionId) {
-                return submissions[i];
-            }
-        }
-        throw new PhaseHandlingException("submissions not found for submissionId: " + submissionId);
-    }
-
-    /**
-     * Break ties by submission timestamp
-     * @param submission the submission to calculate
-     * @param submissions all the submission records
-     * @param placements all the ranked submission records
-     * @return the submission with fixed placement
-     * @throws BaseException
-     */
-    private static RankedSubmission breakTies(RankedSubmission submission,
-            Submission[] submissions, RankedSubmission[] placements) throws BaseException {
-        int rank = submission.getRank();
-        Date timestamp = getSubmissionById(submissions, submission.getId())
-                .getUpload().getCreationTimestamp();
-        for (int i = 0; i < placements.length; ++i) {
-            if (placements[i].getRank() == submission.getRank()) {
-                Submission tie = getSubmissionById(submissions, placements[i].getId());
-                if (tie.getUpload().getCreationTimestamp().before(timestamp)) {
-                    ++rank;
-                }
-            }
-        }
-
-        return new RankedSubmission(submission, rank);
-    }
-
-    /**
-     * This static method submission status for the particular submitter.
-     *
-     * @param request
-     *            the http request. Used internally by some helper functions.
-     * @param project
-     *            a project the submission was originally made for.
-     * @param phases
-     *            phases of project.
+     *            phase of type &quot;Review&quot; or &quot;Milestone Review&quot; used internally to retrieve
+     *            reviewers' resources.
      * @param submission
      *            a submission in question, i.e. the one that needs its final score updated.
      * @throws IllegalArgumentException
@@ -4045,70 +3696,27 @@ public class ProjectReviewActions extends DispatchAction {
      * @throws BaseException
      *             if any unexpected error occurs during final score update.
      */
-    private static void updateSubmissionStatusScreeningScoreChanged(
-            HttpServletRequest request, Project project, Phase[] phases, Review review, Submission submission)
-        throws BaseException {
-        // Check if current open phase is Review
-        boolean isReviewPhase = false;
-        for (int i = 0; i < phases.length; i++) {
-            if ("Review".equals(phases[i].getPhaseType().getName())) {
-                isReviewPhase = "Open".equals(phases[i].getPhaseStatus().getName());
-                break;
-            }
+    private static void updateFinalAggregatedScore(HttpServletRequest request, Project project,
+        Phase reviewPhase, Submission submission) throws BaseException {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(request, "request");
+        ActionsHelper.validateParameterNotNull(project, "project");
+        ActionsHelper.validateParameterNotNull(reviewPhase, "reviewPhase");
+        ActionsHelper.validateParameterNotNull(submission, "submission");
 
-            // If screening phase is open, then needn't change anything
-            if ("Screening".equals(phases[i].getPhaseType().getName())) {
-                if ("Open".equals(phases[i].getPhaseStatus().getName())) {
-                    return;
-                }
-            }
-        }
-
-        if (!isReviewPhase) {
-            // Current we only process while review phase is open
+        // Get final aggregated score for this submitter, if any
+        Double finalScore = submission.getFinalScore();
+        // If there is no final (post Appeals Response) score for the submission yet, there is nothing to do anymore
+        log.log(Level.INFO, "Final Score: " + finalScore);
+        if (finalScore == null) {
             return;
         }
 
-        UploadManager upMgr = ActionsHelper.createUploadManager();
-        ScorecardManager scorecardManager = ActionsHelper.createScorecardManager();
+        OnlineReviewServices orServices = new OnlineReviewServices();
+        orServices.updateSubmissionsResults(reviewPhase,
+            String.valueOf(AuthorizationHelper.getLoggedInUserId(request)), false, true);
 
-        // Get minimum score
-        float minimumScore = 75;
-        Scorecard[] scoreCards = scorecardManager.getScorecards(new long[]{review.getScorecard()}, false);
-
-        if (scoreCards.length > 0) {
-            minimumScore = scoreCards[0].getMinScore();
-        }
-
-        boolean passScreening = review.getScore().floatValue() >= minimumScore;
-
-        // Retrieve submission status
-        SubmissionStatus failedScreening = null;
-        SubmissionStatus active = null;
-        SubmissionStatus failedReview = null;
-        SubmissionStatus[] statuses = upMgr.getAllSubmissionStatuses();
-
-        for (int i = 0; i < statuses.length; i++) {
-            if ("Failed Screening".equals(statuses[i].getName())) {
-                failedScreening = statuses[i];
-            } else if ("Failed Review".equals(statuses[i].getName())) {
-                failedReview = statuses[i];
-            } else if ("Active".equals(statuses[i].getName())) {
-                active = statuses[i];
-            }
-        }
-
-        if (!passScreening) {
-            submission.setSubmissionStatus(failedScreening);
-        } else {
-            // pass screening
-            if (isReviewPhase) {
-                submission.setSubmissionStatus(active);
-            } else {
-                submission.setSubmissionStatus(failedReview);
-            }
-        }
-        upMgr.updateSubmission(submission, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
+        ActionsHelper.resetProjectResultWithChangedScores(project);
     }
 
     /**
@@ -4130,8 +3738,8 @@ public class ProjectReviewActions extends DispatchAction {
      *             <code>itemIdx</code> or <code>commentCount</code> are negative.
      */
     private static int populateItemComments(Item item, int itemIdx, Map<String, String> replies,
-            Map<String, String> commentTypeIds, int commentCount, CommentType[] commentTypes, Resource myResource,
-            boolean managerEdit) {
+                                            Map<String, String> commentTypeIds, int commentCount, CommentType[] commentTypes, Resource myResource,
+                                            boolean managerEdit) {
 
         // Validate parameters
         ActionsHelper.validateParameterNotNull(item, "item");
@@ -4565,7 +4173,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any of the parameters are <code>null</code>.
      */
     private static boolean validateGenericScorecard(HttpServletRequest request,
-            Scorecard scorecardTemplate, Review review, boolean managerEdit) {
+                                                    Scorecard scorecardTemplate, Review review, boolean managerEdit) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(request, "request");
         ActionsHelper.validateParameterNotNull(scorecardTemplate, "scorecardTemplate");
@@ -4655,19 +4263,19 @@ public class ProjectReviewActions extends DispatchAction {
                                     commentType.equalsIgnoreCase("Recommended")) {
                                 validateAggregateFunction(request, item.getComment(j), commentIdx++);
                             }
-                            
+
                             if (commentType.equalsIgnoreCase("Aggregation Comment")) {
                                 /* Request from David Messinger [11/06/2006]:
                                    No need to verify presence of comments
                                 validateScorecardComment(request, comment, "aggregator_response[" + itemIdx + "]");
                                 */
-                                
+
                                 // But we still need to verify comment's maximum length.
                                 String commentText = comment.getComment();
                                 if (commentText != null && commentText.length() > MAX_COMMENT_LENGTH) {
                                     ActionsHelper.addErrorToRequest(request, "aggregator_response[" + itemIdx + "]",
                                         "Error.saveAggregation.Comment.MaxExceeded");
-                                }                               
+                                }
                             }
                         }
                     }
@@ -4849,7 +4457,7 @@ public class ProjectReviewActions extends DispatchAction {
                             } else if (commentText.length() > MAX_COMMENT_LENGTH) {
                                 ActionsHelper.addErrorToRequest(request, "final_comment[" + itemIdx + "]",
                                         "Error.saveFinalReview.Comment.MaxExceeded");
-                            }                               
+                            }
                         }
                     }
                 }
@@ -5190,7 +4798,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward viewScorecard(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                       HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
 
         try {
@@ -5278,7 +4886,7 @@ public class ProjectReviewActions extends DispatchAction {
      * @since 1.1
      */
     public ActionForward createPostMortem(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                          HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
         LoggingHelper.logAction(request);
         return createGenericReview(mapping, form, request, "Post-Mortem");
@@ -5305,7 +4913,7 @@ public class ProjectReviewActions extends DispatchAction {
      * @since 1.1
      */
     public ActionForward editPostMortem(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                        HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
         LoggingHelper.logAction(request);
         return editGenericReview(mapping, form, request, "Post-Mortem");
@@ -5329,7 +4937,7 @@ public class ProjectReviewActions extends DispatchAction {
      * @since 1.1
      */
     public ActionForward savePostMortem(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                        HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return saveGenericReview(mapping, form, request, "Post-Mortem");
@@ -5352,7 +4960,7 @@ public class ProjectReviewActions extends DispatchAction {
      * @since 1.1
      */
     public ActionForward viewPostMortem(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                        HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return viewGenericReview(mapping, form, request, "Post-Mortem");
@@ -5478,7 +5086,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward createMilestoneScreening(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                                  HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return createGenericReview(mapping, form, request, "Milestone Screening");
@@ -5509,7 +5117,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward editMilestoneScreening(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                                HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return editGenericReview(mapping, form, request, "Milestone Screening");
@@ -5537,7 +5145,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward saveMilestoneScreening(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                                HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return saveGenericReview(mapping, form, request, "Milestone Screening");
@@ -5564,7 +5172,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward viewMilestoneScreening(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                                HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return viewGenericReview(mapping, form, request, "Milestone Screening");
@@ -5596,7 +5204,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward createMilestoneReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                               HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return createGenericReview(mapping, form, request, "Milestone Review");
@@ -5627,7 +5235,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward editMilestoneReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return editGenericReview(mapping, form, request, "Milestone Review");
@@ -5655,7 +5263,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward saveMilestoneReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return saveGenericReview(mapping, form, request, "Milestone Review");
@@ -5682,7 +5290,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward viewMilestoneReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+                                             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
         return viewGenericReview(mapping, form, request, "Milestone Review");

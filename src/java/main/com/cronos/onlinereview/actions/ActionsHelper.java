@@ -3688,7 +3688,7 @@ public class ActionsHelper {
     /**
      * Retrieve all default scorecards.
      *
-     * @throws Exception if error occurs
+     * @throws BaseException if error occurs
      */
     public static List<DefaultScorecard> getDefaultScorecards() throws BaseException {
         Connection conn = null;
@@ -3808,14 +3808,13 @@ public class ActionsHelper {
     }
 
     /**
-     * Reset ProjectResult With ChangedScores.
+     * Reset ProjectResult after score change.
      *
-     * @param projectId project id
-     * @param userId userId
+     * @param project the Project instance
      *
-     * @throws Exception if error occurs
+     * @throws BaseException if any error occurs
      */
-    public static void resetProjectResultWithChangedScores(long projectId, Object userId) throws BaseException {
+    public static void resetProjectResultWithChangedScores(Project project) throws BaseException {
         Connection conn = null;
         try {
             DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
@@ -3823,11 +3822,16 @@ public class ActionsHelper {
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
                     + DB_CONNECTION_NAMESPACE);
-            PRHelper.populateProjectResult(projectId, conn);
+
+            if (isStudioProject(project)) {
+                AutoPaymentUtil.populateSubmitterPayments(project.getId(), conn);
+            } else {
+                PRHelper.populateProjectResult(project.getId(), conn);
+            }
         } catch (DBConnectionException e) {
             throw new BaseException("Failed to return DBConnection", e);
         } catch (SQLException e) {
-            throw new BaseException("Failed to resetProjectResultWithChangedScores for project " + projectId, e);
+            throw new BaseException("Failed to resetProjectResultWithChangedScores for project " + project.getId(), e);
         } finally {
             close(conn);
         }
@@ -3883,17 +3887,15 @@ public class ActionsHelper {
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
                     + DB_CONNECTION_NAMESPACE);
 
-            String sqlString = "select version from comp_versions where comp_vers_id = ?";
-
-            ps = conn.prepareStatement(sqlString);
+            ps = conn.prepareStatement("select version from comp_versions where comp_vers_id = ?");
             ps.setLong(1, componentVersionId);
-                    rs = ps.executeQuery();
+            rs = ps.executeQuery();
 
-                    if (rs.next()) {
-                        return rs.getInt("version");
-                    }
+            if (rs.next()) {
+                return rs.getInt("version");
+            }
 
-                    return 0;
+            return 0;
         } catch (DBConnectionException e) {
             throw new BaseException("Failed to return DBConnection", e);
         } catch (SQLException e) {
@@ -3902,97 +3904,6 @@ public class ActionsHelper {
             close(rs);
             close(ps);
             close(conn);
-        }
-    }
-
-    /**
-     * Gets the scorecard minimum score from the given review.
-     *
-     * @param scorecardManager ScorecardManager instance.
-     * @param review Review instance.
-     *
-     * @return the scorecard minimum score from the given review.
-     *
-     * @throws Exception if error occurs
-     */
-    static float getScorecardMinimumScore(ScorecardManager scorecardManager, Review review)
-        throws BaseException {
-        long scorecardId = review.getScorecard();
-
-        try {
-            Scorecard[] scoreCards = scorecardManager.getScorecards(new long[]{scorecardId}, false);
-            if (scoreCards.length == 0) {
-                throw new BaseException("No scorecards found for scorecard id: " + scorecardId);
-            }
-            Scorecard scoreCard = scoreCards[0];
-
-            return scoreCard.getMinScore();
-        } catch (PersistenceException e) {
-            throw new BaseException("Problem with scorecard retrieval", e);
-        }
-    }
-
-    /**
-     * utility method to get a SubmissionStatus object for the given status name.
-     *
-     * @param request request instance to use for searching.
-     * @param statusName submission status name.
-     *
-     * @return a SubmissionStatus object for the given status name.
-     *
-     * @throws BaseException if submission status could not be found.
-     */
-    static SubmissionStatus getSubmissionStatus(HttpServletRequest request, String statusName)
-        throws BaseException {
-        UploadManager upMgr = ActionsHelper.createUploadManager();
-        SubmissionStatus[] statuses = null;
-        try {
-            statuses = upMgr.getAllSubmissionStatuses();
-        } catch (UploadPersistenceException e) {
-            throw new PhaseHandlingException("Error finding submission status with name: " + statusName, e);
-        }
-        for (int i = 0; i < statuses.length; i++) {
-            if (statusName.equals(statuses[i].getName())) {
-                return statuses[i];
-            }
-        }
-        throw new BaseException("Could not find submission status with name: " + statusName);
-    }
-
-    /**
-     * retrieves all Reviewed submissions for the given project id.
-     *
-     * @param request request instance to use for searching.
-     * @param project project.
-     *
-     * @return all active submissions for the given project id.
-     *
-     * @throws Exception if error occurs
-     */
-    static Submission[] searchReviewedContestSubmissions(HttpServletRequest request, Project project)
-        throws BaseException {
-        UploadManager upMgr = ActionsHelper.createUploadManager();
-
-        SubmissionType[] allSubmissionTypes = upMgr.getAllSubmissionTypes();
-
-        SubmissionType contestSubmissionType
-            = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes, "Contest Submission");
-
-        //first get submission status id for "Active" status
-        Filter submissionStatusFilter = new InFilter("submission_status_id",
-                Arrays.asList(new Long[] {new Long(1), new Long(3), new Long(4)}));
-
-        //then search for submissions
-        Filter projectIdFilter = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
-        Filter typeFilter = SubmissionFilterBuilder.createSubmissionTypeIdFilter(contestSubmissionType.getId());
-        Filter fullFilter = new AndFilter(Arrays.asList(projectIdFilter, typeFilter, submissionStatusFilter));
-
-        try {
-            return upMgr.searchSubmissions(fullFilter);
-        } catch (UploadPersistenceException e) {
-            throw new PhaseHandlingException("There was a submission retrieval error", e);
-        } catch (SearchBuilderException e) {
-            throw new PhaseHandlingException("There was a search builder error", e);
         }
     }
 
@@ -4253,7 +4164,7 @@ public class ActionsHelper {
         throws UploadPersistenceException, SearchBuilderException {
         SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
         SubmissionType specSubmissionType
-            = ActionsHelper.findSubmissionTypeByName(submissionTypes, "Specification Submission");
+            = ActionsHelper.findSubmissionTypeByName(submissionTypes, Constants.SPECIFICATION_SUBMISSION_TYPE_NAME);
 
         Filter submissionTypeFilter
             = SubmissionFilterBuilder.createSubmissionTypeIdFilter(specSubmissionType.getId());
@@ -4279,7 +4190,7 @@ public class ActionsHelper {
 
         SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
         SubmissionType specSubmissionType
-            = ActionsHelper.findSubmissionTypeByName(submissionTypes, "Specification Submission");
+            = ActionsHelper.findSubmissionTypeByName(submissionTypes, Constants.SPECIFICATION_SUBMISSION_TYPE_NAME);
         SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
         SubmissionStatus activeSubmissionStatus
             = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active");

@@ -3,9 +3,6 @@
  */
 package com.cronos.onlinereview.phases;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.project.phases.Phase;
 
@@ -17,6 +14,12 @@ import com.topcoder.project.phases.Phase;
  * @version 1.0 (BUGR-4778)
  */
 public class PRMilestoneReviewPhaseHandler extends MilestoneReviewPhaseHandler {
+
+    /**
+    * Used for pulling data to project_result table and filling payments.
+    */
+    private PRHelper prHelper = new PRHelper();
+
     /**
      * <p>Constructs new <code>PRMilestoneReviewPhaseHandler</code> instance. This implementation does nothing.</p>
      *
@@ -51,17 +54,8 @@ public class PRMilestoneReviewPhaseHandler extends MilestoneReviewPhaseHandler {
         super.perform(phase, operator);
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
         if (!toStart) {
-            
-            Connection conn = this.createConnection();
-            
-            try {
-                long projectId = phase.getProject().getId();
-                AutoPaymentUtil.populateSubmitterPayments(projectId, conn);
-            } catch (SQLException e) {
-                throw new PhaseHandlingException("Failed to populate submitter payment for Milestone Review phase", e);
-            } finally {
-                PRHelper.close(conn);
-            }
+            long projectId = phase.getProject().getId();
+            prHelper.populateSubmitterPayments(projectId);
         }
     }
 }

@@ -185,7 +185,7 @@ final class PhasesDetailsServices {
         SpecificationsInfo specifications = new SpecificationsInfo();
 
         Submission[] mostRecentContestSubmissions = ActionsHelper.getMostRecentSubmissions(
-            ActionsHelper.createUploadManager(), project, "Contest Submission");
+            ActionsHelper.createUploadManager(), project, Constants.CONTEST_SUBMISSION_TYPE_NAME);
 
         for (int phaseIdx = 0; phaseIdx < phases.length; ++phaseIdx) {
             // Get a phase for the current iteration
@@ -352,7 +352,7 @@ final class PhasesDetailsServices {
                 || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_MILESTONE_SUBMISSION_PERM_NAME)
                     && ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.MILESTONE_SCREENING_PHASE_NAME))) {
                 submissions = ActionsHelper.getMostRecentSubmissions(
-                    ActionsHelper.createUploadManager(), project,"Milestone Submission");
+                    ActionsHelper.createUploadManager(), project, Constants.MILESTONE_SUBMISSION_TYPE_NAME);
             }
 
             if (submissions == null 
@@ -361,7 +361,8 @@ final class PhasesDetailsServices {
                 UploadManager upMgr = ActionsHelper.createUploadManager();
                 SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
                 SubmissionType[] allSubmissionTypes = upMgr.getAllSubmissionTypes();
-                SubmissionType submissionType = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes, "Milestone Submission");
+                SubmissionType submissionType = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes,
+                    Constants.MILESTONE_SUBMISSION_TYPE_NAME);
 
                 // Get "my" (submitter's) resource
                 Resource myResource = null;
@@ -385,7 +386,7 @@ final class PhasesDetailsServices {
             }
 
             if (submissions == null) {
-                    submissions = new Submission[0];
+                submissions = new Submission[0];
             }
             // Use comparator to sort submissions either by placement
             // or by the time when they were uploaded
@@ -642,7 +643,7 @@ final class PhasesDetailsServices {
                 SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
                 SubmissionType[] allSubmissionTypes = upMgr.getAllSubmissionTypes();
                 SubmissionType submissionType = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes,
-                                                                                       "Contest Submission");
+                    Constants.CONTEST_SUBMISSION_TYPE_NAME);
 
                 // Get "my" (submitter's) resource
                 Resource myResource = null;
@@ -780,7 +781,7 @@ final class PhasesDetailsServices {
                 SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
                 SubmissionType[] allSubmissionTypes = upMgr.getAllSubmissionTypes();
                 SubmissionType submissionType = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes,
-                                                                                       "Contest Submission");
+                    Constants.CONTEST_SUBMISSION_TYPE_NAME);
 
                 // Get "my" (submitter's) resource
                 Resource myResource = null;
@@ -1324,7 +1325,7 @@ final class PhasesDetailsServices {
             SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
             SubmissionType[] allSubmissionTypes = upMgr.getAllSubmissionTypes();
             SubmissionType submissionType = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes,
-                                                                                   "Contest Submission");
+                Constants.CONTEST_SUBMISSION_TYPE_NAME);
 
             // Get "my" (submitter's) resource
             Resource myResource = null;
