@@ -3,8 +3,6 @@
  */
 package com.cronos.onlinereview.phases;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.project.phases.Phase;
@@ -16,14 +14,20 @@ import com.topcoder.project.phases.Phase;
  * @version 1.0
  */
 public class PRAggregationPhaseHandler extends AggregationPhaseHandler {
+    
+    /**
+    * Used for pulling data to project_result table and filling payments.
+    */
+    private PRHelper prHelper = new PRHelper();
+    
     /**
      * Create a new instance of AggregationPhaseHandler using the default namespace for loading configuration settings.
      *
      * @throws ConfigurationException if errors occurred while loading configuration settings.
      */
-	public PRAggregationPhaseHandler() throws ConfigurationException {
-		super();
-	}
+    public PRAggregationPhaseHandler() throws ConfigurationException {
+        super();
+    }
 
     /**
      * Create a new instance of AggregationPhaseHandler using the given namespace for loading configuration settings.
@@ -33,9 +37,9 @@ public class PRAggregationPhaseHandler extends AggregationPhaseHandler {
      * missing.
      * @throws IllegalArgumentException if the input is null or empty string.
      */
-	public PRAggregationPhaseHandler(String namespace) throws ConfigurationException {
-		super(namespace);
-	}
+    public PRAggregationPhaseHandler(String namespace) throws ConfigurationException {
+        super(namespace);
+    }
 
     /**
      * Provides additional logic to execute a phase. this exetension will update update placed, final_score
@@ -49,28 +53,9 @@ public class PRAggregationPhaseHandler extends AggregationPhaseHandler {
      * @throws IllegalArgumentException if the input parameters is null or empty string.
      */
     public void perform(Phase phase, String operator) throws PhaseHandlingException {
-    	super.perform(phase, operator);
+        super.perform(phase, operator);
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
 
-    	Connection conn = this.createConnection();
-    	try {
-    		processPR(phase.getProject().getId(), conn, toStart);
-    	} finally {
-    		PRHelper.close(conn);
-    	}
-    }
-
-    /**
-     * Pull data to project_result.
-     * 
-     * @param projectId the projectId
-     * @throws PhaseHandlingException if error occurs
-     */
-    public void processPR(long projectId, Connection conn, boolean toStart) throws PhaseHandlingException {
-    	try {
-        	PRHelper.processAggregationPR(projectId, conn, toStart);
-    	} catch(SQLException e) {
-    		throw new PhaseHandlingException("Failed to push data to project_result", e);
-    	}
+        prHelper.processAggregationPR(phase.getProject().getId(), toStart);
     }
 }

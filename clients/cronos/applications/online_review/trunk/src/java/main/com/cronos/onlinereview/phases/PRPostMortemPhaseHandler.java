@@ -3,9 +3,6 @@
  */
 package com.cronos.onlinereview.phases;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.project.phases.Phase;
 
@@ -16,14 +13,20 @@ import com.topcoder.project.phases.Phase;
  * @version 1.0
  */
 public class PRPostMortemPhaseHandler extends PostMortemPhaseHandler {
+    
+    /**
+    * Used for pulling data to project_result table and filling payments.
+    */
+    private PRHelper prHelper = new PRHelper();
+	
     /**
      * Create a new instance of PRPostMortemPhaseHandler using the default namespace for loading configuration settings.
      *
      * @throws ConfigurationException if errors occurred while loading configuration settings.
      */
-	public PRPostMortemPhaseHandler() throws ConfigurationException {
-		super();
-	}
+    public PRPostMortemPhaseHandler() throws ConfigurationException {
+        super();
+    }
 
     /**
      * Create a new instance of PRPostMortemPhaseHandler using the given namespace for loading configuration settings.
@@ -33,9 +36,9 @@ public class PRPostMortemPhaseHandler extends PostMortemPhaseHandler {
      * missing.
      * @throws IllegalArgumentException if the input is null or empty string.
      */
-	public PRPostMortemPhaseHandler(String namespace) throws ConfigurationException {
-		super(namespace);
-	}
+    public PRPostMortemPhaseHandler(String namespace) throws ConfigurationException {
+        super(namespace);
+    }
 
     /**
      * Provides additional logic to execute a phase. this extension will update placed, final_score
@@ -49,28 +52,9 @@ public class PRPostMortemPhaseHandler extends PostMortemPhaseHandler {
      * @throws IllegalArgumentException if the input parameters is null or empty string.
      */
     public void perform(Phase phase, String operator) throws PhaseHandlingException {
-    	super.perform(phase, operator);
+        super.perform(phase, operator);
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
 
-    	Connection conn = this.createConnection();
-    	try {
-    		processPR(phase.getProject().getId(), conn, toStart);
-    	} finally {
-    		PRHelper.close(conn);
-    	}
-    }
-
-    /**
-     * Pull data to project_result.
-     * 
-     * @param projectId the projectId
-     * @throws PhaseHandlingException if error occurs
-     */
-    public void processPR(long projectId, Connection conn, boolean toStart) throws PhaseHandlingException {
-    	try {
-        	PRHelper.processPostMortemPR(projectId, conn, toStart);
-    	} catch(SQLException e) {
-    		throw new PhaseHandlingException("Failed to push data to project_result", e);
-    	}
+        prHelper.processPostMortemPR(phase.getProject().getId(), toStart);
     }
 }

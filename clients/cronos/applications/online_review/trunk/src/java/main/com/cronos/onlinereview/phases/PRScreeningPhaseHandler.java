@@ -3,11 +3,9 @@
  */
 package com.cronos.onlinereview.phases;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import com.topcoder.management.phase.OperationCheckResult;
 import com.topcoder.management.phase.PhaseHandlingException;
+import com.topcoder.management.project.ProjectManager;
 import com.topcoder.project.phases.Phase;
 
 /**
@@ -24,6 +22,12 @@ import com.topcoder.project.phases.Phase;
  * @version 1.1
  */
 public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
+    
+    /**
+    * Used for pulling data to project_result table and filling payments.
+    */
+    private PRHelper prHelper = new PRHelper();
+    
     /**
      * Represents the <code>ScreeningResultNotification</code> instance to send notification email.
      * 
@@ -36,10 +40,10 @@ public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
      *
      * @throws ConfigurationException if errors occurred while loading configuration settings.
      */
-	public PRScreeningPhaseHandler() throws ConfigurationException {
-		super();
-		notification = new ScreeningResultNotification(DEFAULT_NAMESPACE, "Contest Submission", "Screening", "Failed Screening");
-	}
+    public PRScreeningPhaseHandler() throws ConfigurationException {
+        super();
+        notification = new ScreeningResultNotification(DEFAULT_NAMESPACE, "Contest Submission", "Screening", "Failed Screening");
+    }
 
     /**
      * Create a new instance of ScreeningPhaseHandler using the given namespace for loading configuration settings.
@@ -49,10 +53,10 @@ public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
      * missing.
      * @throws IllegalArgumentException if the input is null or empty string.
      */
-	public PRScreeningPhaseHandler(String namespace) throws ConfigurationException {
-		super(namespace);
-		notification = new ScreeningResultNotification(namespace, "Contest Submission", "Screening", "Failed Screening");
-	}
+    public PRScreeningPhaseHandler(String namespace) throws ConfigurationException {
+        super(namespace);
+        notification = new ScreeningResultNotification(namespace, "Contest Submission", "Screening", "Failed Screening");
+    }
 
     /**
      * Check if the input phase can be executed or not. Just call super method.</p>
@@ -66,7 +70,7 @@ public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
      * @throws IllegalArgumentException if the input is null.
      */
     public OperationCheckResult canPerform(Phase phase) throws PhaseHandlingException {
-    	return super.canPerform(phase);
+        return super.canPerform(phase);
     }
 
     /**
@@ -81,40 +85,23 @@ public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
      * @throws IllegalArgumentException if the input parameters is null or empty string.
      */
     public void perform(Phase phase, String operator) throws PhaseHandlingException {
-    	super.perform(phase, operator);
+        super.perform(phase, operator);
+
+        long projectId = phase.getProject().getId();
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
+        ProjectManager projectManager = getManagerHelper().getProjectManager();
 
-    	Connection conn = this.createConnection();
-    	try {
-    		processPR(phase.getProject().getId(), conn, toStart);
-    		
-    		if (!toStart) {
-    		    long projectId = phase.getProject().getId();
-    		    if (PRHelper.isStudioProject(projectId)) {
-    		        try {
-    	                notification.sendEmailToSubmitters(getManagerHelper().getProjectManager().getProject(projectId));
-    	            } catch (Exception e) {
-    	                throw new PhaseHandlingException("Failed to send email to submitters on Screening results", 
-    	                                                 e);
-    	            }
-    		    }
-    		}
-    	} finally {
-    		PRHelper.close(conn);
-    	}
+        prHelper.processScreeningPR(projectId, toStart);
+            
+        if (!toStart) {
+            if (PRHelper.isStudioProject(projectManager, projectId)) {
+                try {
+                    notification.sendEmailToSubmitters(projectManager.getProject(projectId));
+                } catch (Exception e) {
+                    throw new PhaseHandlingException("Failed to send email to submitters on Screening results", e);
+                }
+            }
+        }
     }
 
-    /**
-     * Pull data to project_result.
-     * 
-     * @param projectId the projectId
-     * @throws PhaseHandlingException if error occurs
-     */
-    public void processPR(long projectId, Connection conn, boolean toStart) throws PhaseHandlingException {
-    	try {
-    		PRHelper.processScreeningPR(projectId, conn, toStart);
-    	} catch(SQLException e) {
-    		throw new PhaseHandlingException("Failed to push data to project_result", e);
-    	}
-    }
 }

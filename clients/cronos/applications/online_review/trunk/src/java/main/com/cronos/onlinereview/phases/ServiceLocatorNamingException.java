@@ -13,33 +13,33 @@ import com.topcoder.util.errorhandling.BaseException;
  */
 public class ServiceLocatorNamingException extends BaseException {
 
-	/**
-	 * 
-	 */
-	public ServiceLocatorNamingException() {
-		super();
-	}
+    /**
+     * 
+     */
+    public ServiceLocatorNamingException() {
+        super();
+    }
 
-	/**
-	 * @param message
-	 */
-	public ServiceLocatorNamingException(String message) {
-		super(message);
-	}
+    /**
+     * @param message
+     */
+    public ServiceLocatorNamingException(String message) {
+        super(message);
+    }
 
-	/**
-	 * @param cause
-	 */
-	public ServiceLocatorNamingException(Throwable cause) {
-		super(cause);
-	}
+    /**
+     * @param cause
+     */
+    public ServiceLocatorNamingException(Throwable cause) {
+        super(cause);
+    }
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public ServiceLocatorNamingException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public ServiceLocatorNamingException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

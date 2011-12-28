@@ -152,8 +152,6 @@
             <Value>handler_appeals_response_end</Value>
             <Value>handler_aggregation_start</Value>
             <Value>handler_aggregation_end</Value>
-            <Value>handler_aggregation_review_start</Value>
-            <Value>handler_aggregation_review_end</Value>
             <Value>handler_final_fix_start</Value>
             <Value>handler_final_fix_end</Value>
             <Value>handler_final_review_start</Value>
@@ -216,28 +214,6 @@
             </Property>
             <Property name="handler">
                 <Value>handler_final_fix_def</Value>
-            </Property>
-        </Property>
-        <Property name="handler_aggregation_review_start">
-            <Property name="phaseType">
-                <Value>aggregation_review</Value>
-            </Property>
-            <Property name="operation">
-                <Value>start</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_aggregation_review_def</Value>
-            </Property>
-        </Property>
-        <Property name="handler_aggregation_review_end">
-            <Property name="phaseType">
-                <Value>aggregation_review</Value>
-            </Property>
-            <Property name="operation">
-                <Value>end</Value>
-            </Property>
-            <Property name="handler">
-                <Value>handler_aggregation_review_def</Value>
             </Property>
         </Property>
         <Property name="handler_aggregation_start">
@@ -716,29 +692,6 @@
                 </Property>
             </Property>
         </Property>
-        <Property name="aggregation_review">
-            <Property name="type">
-                <Value>com.topcoder.project.phases.PhaseType</Value>
-            </Property>
-            <Property name="params">
-                <Property name="param1">
-                    <Property name="type">
-                        <Value>long</Value>
-                    </Property>
-                    <Property name="value">
-                        <Value>8</Value>
-                    </Property>
-                </Property>
-                <Property name="param2">
-                    <Property name="type">
-                        <Value>String</Value>
-                    </Property>
-                    <Property name="value">
-                        <Value>Aggregation Review</Value>
-                    </Property>
-                </Property>
-            </Property>
-        </Property>
         <Property name="final_fix">
             <Property name="type">
                 <Value>com.topcoder.project.phases.PhaseType</Value>
@@ -980,11 +933,6 @@
         <Property name="handler_aggregation_def">
             <Property name="type">
                 <Value>com.cronos.onlinereview.phases.PRAggregationPhaseHandler</Value>
-            </Property>
-        </Property>
-        <Property name="handler_aggregation_review_def">
-            <Property name="type">
-                <Value>com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler</Value>
             </Property>
         </Property>
         <Property name="handler_final_fix_def">

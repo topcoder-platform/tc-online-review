@@ -245,6 +245,16 @@
         </Property>
     </Config>
 
+    <Config name="com.cronos.onlinereview.phases.PRHelper">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+    </Config>
+
     <!--
         ===== Configuration for Auto Screening Management component =====
     -->

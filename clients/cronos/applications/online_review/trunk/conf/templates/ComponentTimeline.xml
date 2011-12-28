@@ -10,7 +10,6 @@
 		<PhaseType id="appeals" typeId="5" typeName="Appeals"/>
 		<PhaseType id="appeals_response" typeId="6" typeName="Appeals Response"/>
 		<PhaseType id="aggregation" typeId="7" typeName="Aggregation"/>
-		<PhaseType id="aggregation_review" typeId="8" typeName="Aggregation Review"/>
 		<PhaseType id="final_fixes" typeId="9" typeName="Final Fix"/>
 		<PhaseType id="final_review" typeId="10" typeName="Final Review"/>
 	</PhaseTypes>
@@ -40,11 +39,8 @@
 			<!-- all attributes except "id" are omitted -->
 			<Dependency id="appealsReponsePhase"/>
 		</Phase>
-		<Phase id="aggregationReviewPhase" length="43200000" type="aggregation_review">
-			<Dependency id="aggregationPhase"/>
-		</Phase>
 		<Phase id="finalFixesPhase" length="259200000" type="final_fixes">
-			<Dependency id="aggregationReviewPhase" />
+			<Dependency id="aggregationPhase" />
 		</Phase>
 		<Phase id="finalReviewPhase" length="86400000" type="final_review">
 			<Dependency id="finalFixesPhase" />

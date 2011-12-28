@@ -93,8 +93,8 @@ package com.cronos.onlinereview.actions;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, flexme
- * @version 1.8.1
+ * @author George1, real_vg, pulky, isv, flexme, VolodymyrK
+ * @version 1.8.2
  */
 public class Constants {
 
@@ -1275,19 +1275,30 @@ public class Constants {
      */
     public static final String FAILED_SCREENING_SUBMISSION_STATUS_NAME = "Failed Screening";
     
-    /**
-     * The constant for the phase status code which can't be open.
-     * 
-     * @since 1.8
-     */
-    public static final int CANNOT_OPEN_PHASE_STATUS_CODE = 5;
+    // ----------------------------------------------------------------- Submission type names -----
     
     /**
-     * The constant for the contest prize type.
+     * The constant for the name of the "Contest" submission type.
      * 
-     * @since 1.8
+     * @since 1.8.2
      */
-    public static final String CONTEST_PRIZE_TYPE_NAME = "Contest Prize";
+    public static final String CONTEST_SUBMISSION_TYPE_NAME = "Contest Submission";
+    
+    /**
+     * The constant for the name of the "Specification" submission type.
+     * 
+     * @since 1.8.2
+     */
+    public static final String SPECIFICATION_SUBMISSION_TYPE_NAME = "Specification Submission";
+
+    /**
+     * The constant for the name of the "Milestone" submission type.
+     * 
+     * @since 1.8.2
+     */
+    public static final String MILESTONE_SUBMISSION_TYPE_NAME = "Milestone Submission";
+
+    // ----------------------------------------------------------------- Late Deliverable type names -----
 
     /**
      * The constant for the "Missed Deadline" late deliverable type id.
@@ -1302,7 +1313,24 @@ public class Constants {
      * @since 1.8.1
      */
     public static final long REJECTED_FINAL_FIX_ID = 2;
+
+    // ----------------------------------------------------------------- Other constants -----
+
+    /**
+     * The constant for the phase status code which can't be open.
+     * 
+     * @since 1.8
+     */
+    public static final int CANNOT_OPEN_PHASE_STATUS_CODE = 5;
     
+    /**
+     * The constant for the contest prize type.
+     * 
+     * @since 1.8
+     */
+    public static final String CONTEST_PRIZE_TYPE_NAME = "Contest Prize";
+    
+
     // Hidden constructor
 
     /**

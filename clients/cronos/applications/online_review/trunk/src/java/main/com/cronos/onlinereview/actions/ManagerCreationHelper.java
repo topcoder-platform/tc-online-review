@@ -9,7 +9,6 @@ import java.util.Map;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
 import com.cronos.onlinereview.phases.MilestoneSubmissionPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
-import com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
 import com.cronos.onlinereview.phases.PRApprovalPhaseHandler;
 import com.cronos.onlinereview.phases.PRFinalFixPhaseHandler;
@@ -62,7 +61,6 @@ import com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersist
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
 import com.topcoder.management.deliverable.PersistenceDeliverableManager;
 import com.cronos.onlinereview.deliverables.AggregationDeliverableChecker;
-import com.cronos.onlinereview.deliverables.AggregationReviewDeliverableChecker;
 import com.cronos.onlinereview.deliverables.AppealResponsesDeliverableChecker;
 import com.cronos.onlinereview.deliverables.ApprovalDeliverableChecker;
 import com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker;
@@ -162,14 +160,14 @@ public class ManagerCreationHelper implements ManagersProvider {
 
     /**
      * <p>A <code>long</code> providing the ID for <code>Contest Submission</code> submission type.</p>
-     * 
+     *
      * @since 1.5
      */
     private static final long SUBMISSION_TYPE_CONTEST = 1;
 
     /**
      * <p>A <code>long</code> providing the ID for <code>Milestone Submission</code> submission type.</p>
-     * 
+     *
      * @since 1.5
      */
     private static final long SUBMISSION_TYPE_MILESTONE = 3;
@@ -281,8 +279,6 @@ public class ManagerCreationHelper implements ManagersProvider {
                     Constants.APPEALS_RESPONSE_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAggregationPhaseHandler(),
                     Constants.AGGREGATION_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAggregationReviewPhaseHandler(),
-                    Constants.AGGREGATION_REVIEW_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRFinalFixPhaseHandler(),
                     Constants.FINAL_FIX_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRFinalReviewPhaseHandler(),
@@ -511,7 +507,6 @@ public class ManagerCreationHelper implements ManagersProvider {
                 checkers.put(Constants.STRS_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);
                 checkers.put(Constants.APPEAL_RESP_DELIVERABLE_NAME, new AppealResponsesDeliverableChecker(dbconn));
                 checkers.put(Constants.AGGREGATION_DELIVERABLE_NAME, new AggregationDeliverableChecker(dbconn));
-                checkers.put(Constants.AGGREGATION_REV_DELIVERABLE_NAME, new AggregationReviewDeliverableChecker(dbconn));
                 checkers.put(Constants.FINAL_FIX_DELIVERABLE_NAME, new FinalFixesDeliverableChecker(dbconn));
                 checkers.put(Constants.SCORECARD_COMM_DELIVERABLE_NAME, new SubmitterCommentDeliverableChecker(dbconn));
                 checkers.put(Constants.FINAL_REVIEW_PHASE_NAME, new FinalReviewDeliverableChecker(dbconn));
