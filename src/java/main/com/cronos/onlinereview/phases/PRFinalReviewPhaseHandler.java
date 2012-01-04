@@ -347,9 +347,9 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
                 String value = (String) comments[i].getExtraInfo();
 
                 if (comments[i].getCommentType().getName().equals("Final Review Comment")) {
-                    if (PhasesHelper.APPROVED.equalsIgnoreCase(value) || PhasesHelper.ACCEPTED.equalsIgnoreCase(value)) {
+                    if (Constants.COMMENT_VALUE_APPROVED.equalsIgnoreCase(value) || Constants.COMMENT_VALUE_ACCEPTED.equalsIgnoreCase(value)) {
                         continue;
-                    } else if (PhasesHelper.REJECTED.equalsIgnoreCase(value)) {
+                    } else if (Constants.COMMENT_VALUE_REJECTED.equalsIgnoreCase(value)) {
                         rejected = true;
 
                         break;
