@@ -157,7 +157,6 @@
       <lib dir="${tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}" includes="tc_id_generator.jar"/>
       <lib dir="${tcs_libdir}" includes="tcjive.jar"/>
-      <lib dir="${tcs_libdir}" includes="${tcsUtil.jar.name}"/>
       <lib dir="${ext_libdir}" includes="*.jar" excludes="ejb-2_0.jar, servlet-api.jar, jsp-api.jar, log4j.jar"/>
       <lib dir="${ext_libdir}/spring" includes="*.jar"/>
       <lib dir="${ext_libdir}/hibernate" includes="*.jar"/>
@@ -221,9 +220,6 @@
         <include name="${shared.jar.name}"/>
         <include name="${tcwebcommon.jar.name}"/>
       </fileset>
-      <fileset dir="${tcs_libdir}">
-        <include name="${tcsUtil.jar.name}"/>
-      </fileset>
     </copy>
   </target>
 
@@ -235,7 +231,6 @@
               isdir="false"/>
     <scp_unix id="ad" file="${shared_libdir}/${tcwebcommon.jar.name}" remotefile="${remotedeploy-lib-dir}"
               isdir="false"/>
-    <scp_unix id="ae" file="${tcs_libdir}/${tcsUtil.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false"/>
   </target>
 
   <target name="copy_shared_files_remote_windows" if="is_windows" depends="tokenize_shared_files">
@@ -245,8 +240,6 @@
     <scp_windows id="ac" file="${shared_libdir}/${shared.jar.name}" remotefile="${remotedeploy-lib-dir}"
                  isdir="false"/>
     <scp_windows id="ad" file="${shared_libdir}/${tcwebcommon.jar.name}" remotefile="${remotedeploy-lib-dir}"
-                 isdir="false"/>
-    <scp_windows id="ae" file="${tcs_libdir}/${tcsUtil.jar.name}" remotefile="${remotedeploy-lib-dir}"
                  isdir="false"/>
   </target>
 
@@ -509,7 +502,6 @@
     <unwar src="${component.war}" dest="${deploy-dir}" />
     <move todir="${deploy-dir}/../../lib" overwrite="true" verbose="true">
       <fileset dir="${deploy-dir}/WEB-INF/lib">
-        <include name="${tcsUtil.jar.name}"/>
         <include name="${tcwebcommon.jar.name}"/>
         <include name="${catalog.jar.name}"/>
         <include name="${shared.jar.name}"/>

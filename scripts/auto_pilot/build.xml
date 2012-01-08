@@ -82,7 +82,6 @@
         <jar destfile="${build_distdir}/auto_pilot_app.jar" filesonly="true">
             <fileset file="${auto_pilot.jar}"/>
             <fileset file="${executable_wrapper.jar}"/>
-            <fileset file="${generic_event_manager.jar}"/>
             <fileset file="${guid_generator.jar}"/>
             <fileset file="${id_generator.jar}"/>
             <fileset file="${job_scheduler.jar}"/>
@@ -98,7 +97,6 @@
             <fileset file="${userEJB.jar}"/>
             <fileset file="${projectEJB.jar}"/>
             <fileset file="${tcwebcommon.jar}"/>
-            <fileset file="${tcsUtil.jar}"/>
             <fileset file="${shared.jar}"/>
             <fileset file="${jbossall-client.jar}"/>
             <fileset file="${svnkit.jar}"/>
