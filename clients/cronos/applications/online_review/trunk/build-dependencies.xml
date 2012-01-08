@@ -42,11 +42,6 @@
     <property name="distribution_tool.jar"
               value="${tcs_libdir}/${distribution_tool.path}/${distribution_tool.jar.name}"/>
 
-    <property name="file_upload.version" value="2.0"/>
-    <property name="file_upload.jar.name" value="file_upload.jar"/>
-    <property name="file_upload.path" value="file_upload/${file_upload.version}"/>
-    <property name="file_upload.jar" value="${tcs_libdir}/${file_upload.path}/${file_upload.jar.name}"/>
-
     <property name="generic_event_manager.version" value="1.0" />
     <property name="generic_event_manager.jar.name" value="generic_event_manager.jar" />
     <property name="generic_event_manager.path" value="generic_event_manager/${generic_event_manager.version}" />
@@ -216,7 +211,6 @@
         <pathelement location="${contest_eligibility_validation.jar}"/>
         <pathelement location="${contest_eligibility_persistence.jar}"/>
         <pathelement location="${distribution_tool.jar}"/>
-        <pathelement location="${file_upload.jar}"/>
         <pathelement location="${id_generator.jar}"/>
         <pathelement location="${job_scheduler.jar}"/>
         <pathelement location="${job_scheduling.jar}"/>

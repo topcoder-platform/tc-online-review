@@ -2823,7 +2823,6 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (fileUpload == null) {
-//            fileUpload = new RemoteFileUpload("com.topcoder.servlet.request.RemoteFileUpload");
             fileUpload = new LocalFileUpload("com.topcoder.servlet.request.LocalFileUpload");
             // Place newly-created object into the request as attribute
             request.setAttribute("fileUploadManager", fileUpload);

@@ -144,7 +144,6 @@
       <lib dir="${tcs_libdir}/${configuration_manager.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${contest_eligibility_persistence.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${contest_eligibility_validation.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${file_upload.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${guid_generator.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${id_generator.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${JNDI_Utility.path}" includes="*.jar"/>
