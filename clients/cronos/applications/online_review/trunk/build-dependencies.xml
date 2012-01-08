@@ -36,11 +36,6 @@
     <property name="distribution_tool.jar"
               value="${tcs_libdir}/${distribution_tool.path}/${distribution_tool.jar.name}"/>
 
-    <property name="generic_event_manager.version" value="1.0" />
-    <property name="generic_event_manager.jar.name" value="generic_event_manager.jar" />
-    <property name="generic_event_manager.path" value="generic_event_manager/${generic_event_manager.version}" />
-    <property name="generic_event_manager.jar" value="${tcs_libdir}/${generic_event_manager.path}/${generic_event_manager.jar.name}" />
-
     <property name="job_scheduler.version" value="1.0" />
     <property name="job_scheduler.jar.name" value="job_scheduler.jar" />
     <property name="job_scheduler.path" value="job_scheduler/${job_scheduler.version}" />
@@ -121,9 +116,6 @@
 
     <property name="shared.jar.name" value="shared.jar"/>
     <property name="shared.jar" value="${shared_libdir}/${shared.jar.name}"/>
-
-    <property name="tcsUtil.jar.name" value="tcsUtil.jar"/>
-    <property name="tcsUtil.jar" value="${tcs_libdir}/${tcsUtil.jar.name}"/>
 
     <property name="tcIdGenerator.jar.name" value="tc_id_generator.jar"/>
     <property name="tcIdGenerator.jar" value="${tcs_libdir}/${tcIdGenerator.jar.name}"/>
