@@ -249,4 +249,9 @@
         svnpath="https://coder.topcoder.com/tcs/catalog/java/heartbeat/trunk"
         revision="107400" />
 
+    <component
+        name="configuration_manager"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/configuration_manager/trunk"
+        revision="211653" />
+
 </components>
