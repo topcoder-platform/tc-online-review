@@ -382,62 +382,6 @@
 
     </Config>
 
-
-    <!--
-        ========== Configuration for IP Server component ==========
-    -->
-    <Config name="com.topcoder.processor.ipserver">
-        <!-- Names of the servers -->
-        <Property name="servers">
-            <Value>server1</Value>
-        </Property>
-
-        <!-- Listen IP-address -->
-        <Property name="server1_address">
-            <Value>127.0.0.1</Value>
-        </Property>
-        <!-- Listen port -->
-        <Property name="server1_port">
-            <Value>9998</Value>
-        </Property>
-        <!-- Maximum connections (optional parameter) -->
-        <Property name="server1_max_connections">
-            <Value>100</Value>
-        </Property>
-        <!-- Namespace used to create message factory -->
-        <Property name="server1_message_factory_namespace">
-            <Value>com.topcoder.processor.ipserver.message</Value>
-        </Property>
-        <!-- Start upon startup (optional parameter) -->
-        <Property name="server1_started">
-            <Value>false</Value>
-        </Property>
-        <!-- Number of backlog (optional parameter)-->
-        <Property name="server1_backlog">
-            <Value>100</Value>
-        </Property>
-        <!-- Names of handlers -->
-        <Property name="server1_handlers">
-            <Value>handler1</Value>
-        </Property>
-        <!-- Class name of handler -->
-        <Property name="server1_handler1_class">
-            <Value>com.topcoder.processor.ipserver.keepalive.KeepAliveHandler</Value>
-        </Property>
-    </Config>
-
-    <Config name="com.topcoder.processor.ipserver.message">
-        <Property name="MessageTypes">
-            <Property name="simple">
-                <Value>com.topcoder.processor.ipserver.message.serializable.SimpleSerializableMessage</Value>
-            </Property>
-            <Property name="KeepAlive">
-                <Value>com.topcoder.processor.ipserver.message.serializable.SimpleSerializableMessage</Value>
-            </Property>
-        </Property>
-    </Config>
-
-
     <!--
         =============== Configuration for File Upload component ===============
     -->
@@ -456,30 +400,6 @@
         </Property>
         <Property name="overwrite">
             <Value>false</Value>
-        </Property>
-    </Config>
-
-    <Config name="com.topcoder.servlet.request.RemoteFileUpload">
-        <Property name="single_file_limit">
-            <Value>-1</Value>
-        </Property>
-        <Property name="total_file_limit">
-            <Value>-1</Value>
-        </Property>
-        <Property name="temp_dir">
-            <Value>E:\\Temp\\System\\</Value>
-        </Property>
-        <Property name="ip_address">
-            <Value>127.0.0.1</Value>
-        </Property>
-        <Property name="port">
-            <Value>9998</Value>
-        </Property>
-        <Property name="message_namespace">
-            <Value>com.topcoder.processor.ipserver.message</Value>
-        </Property>
-        <Property name="handler_id">
-            <Value>HanderId</Value>
         </Property>
     </Config>
 

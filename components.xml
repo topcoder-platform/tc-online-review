@@ -226,4 +226,27 @@
         svnpath="https://coder.topcoder.com/tcs/catalog/java/project_phases/trunk"
         revision="207105" />
 
+    <component
+        name="file_upload"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/file_upload/trunk"
+        revision="32579" />
+
+    <!-- file_system_server is a dependency of the file_upload -->
+    <component
+        name="file_system_server"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/file_system_server/trunk"
+        revision="211649" />
+
+    <!-- ip_server is a dependency of the file_upload -->
+    <component
+        name="ip_server"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/ip_server/trunk"
+        revision="109478" />
+
+    <!-- heartbeat is a dependency of the ip_server -->
+    <component
+        name="heartbeat"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/heartbeat/trunk"
+        revision="107400" />
+
 </components>
