@@ -77,7 +77,6 @@
         <jar destfile="${build_distdir}/late_deliverables_tracker_app.jar" filesonly="true">
             <fileset file="${late_deliverables_tracker.jar}"/>
             <fileset file="${jaf.jar}"/>
-            <fileset file="${configuration_manager.jar}"/>
             <fileset file="${executable_wrapper.jar}"/>
             <fileset file="${id_generator.jar}"/>
             <fileset file="${ifx-jdbc.jar}"/>

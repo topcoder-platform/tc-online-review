@@ -16,12 +16,6 @@
     <property name="shared_libdir" value="${online_review_home}/lib/shared" />
     <property name="token.properties" value="${online_review_home}/token.properties"/>
 
-    <property name="configuration_manager.version" value="2.2.0"/>
-    <property name="configuration_manager.jar.name" value="configuration_manager.jar"/>
-    <property name="configuration_manager.path" value="configuration_manager/${configuration_manager.version}"/>
-    <property name="configuration_manager.jar"
-              value="${tcs_libdir}/${configuration_manager.path}/${configuration_manager.jar.name}"/>
-
     <property name="contest_eligibility_persistence.version" value="1.0.1"/>
     <property name="contest_eligibility_persistence.jar.name" value="contest_eligibility_persistence.jar"/>
     <property name="contest_eligibility_persistence.path"
@@ -207,7 +201,6 @@
         <pathelement location="${securityEJB.jar}"/>
         <pathelement location="${JNDI_Utility.jar}"/>
         <pathelement location="${tcIdGenerator.jar}"/>
-        <pathelement location="${configuration_manager.jar}"/>
         <pathelement location="${contest_eligibility_validation.jar}"/>
         <pathelement location="${contest_eligibility_persistence.jar}"/>
         <pathelement location="${distribution_tool.jar}"/>

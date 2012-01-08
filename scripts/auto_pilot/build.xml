@@ -81,7 +81,6 @@
         <delete file="${build_distdir}/auto_pilot_app.jar" failonerror="no"/>
         <jar destfile="${build_distdir}/auto_pilot_app.jar" filesonly="true">
             <fileset file="${auto_pilot.jar}"/>
-            <fileset file="${configuration_manager.jar}"/>
             <fileset file="${executable_wrapper.jar}"/>
             <fileset file="${generic_event_manager.jar}"/>
             <fileset file="${guid_generator.jar}"/>
