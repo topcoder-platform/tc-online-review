@@ -82,8 +82,6 @@
         <jar destfile="${build_distdir}/auto_pilot_app.jar" filesonly="true">
             <fileset file="${auto_pilot.jar}"/>
             <fileset file="${executable_wrapper.jar}"/>
-            <fileset file="${guid_generator.jar}"/>
-            <fileset file="${id_generator.jar}"/>
             <fileset file="${job_scheduler.jar}"/>
             <fileset file="${object_factory.jar}"/>
             <fileset file="${simple_cache.jar}"/>

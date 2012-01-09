@@ -51,16 +51,6 @@
     <property name="job_scheduling.path" value="job_scheduling/${job_scheduling.version}"/>
     <property name="job_scheduling.jar" value="${tcs_libdir}/${job_scheduling.path}/${job_scheduling.jar.name}"/>
     
-    <property name="guid_generator.version" value="1.0"/>
-    <property name="guid_generator.jar.name" value="guid_generator.jar"/>
-    <property name="guid_generator.path" value="guid_generator/${guid_generator.version}"/>
-    <property name="guid_generator.jar" value="${tcs_libdir}/${guid_generator.path}/${guid_generator.jar.name}"/>
-
-    <property name="id_generator.version" value="3.0"/>
-    <property name="id_generator.jar.name" value="id_generator.jar"/>
-    <property name="id_generator.path" value="id_generator/${id_generator.version}"/>
-    <property name="id_generator.jar" value="${tcs_libdir}/${id_generator.path}/${id_generator.jar.name}"/>
-
     <property name="JNDI_Utility.version" value="1.0"/>
     <property name="JNDI_Utility.jar.name" value="JNDI_Utility.jar"/>
     <property name="JNDI_Utility.path" value="JNDI_Utility/${JNDI_Utility.version}"/>
@@ -196,7 +186,6 @@
         <pathelement location="${contest_eligibility_validation.jar}"/>
         <pathelement location="${contest_eligibility_persistence.jar}"/>
         <pathelement location="${distribution_tool.jar}"/>
-        <pathelement location="${id_generator.jar}"/>
         <pathelement location="${job_scheduler.jar}"/>
         <pathelement location="${job_scheduling.jar}"/>
         <pathelement location="${job_processor.jar}"/>
@@ -204,7 +193,6 @@
         <pathelement location="${object_factory_configuration_api_plugin.jar}"/>
         <pathelement location="${user_project_data_store.jar}"/>
         <pathelement location="${svnkit.jar}"/>
-        <pathelement location="${guid_generator.jar}" />
         <pathelement location="${simple_cache.jar}" />
         <pathelement location="${log4j.jar}" />
         <pathelement location="${ldapjdk.jar}" />
