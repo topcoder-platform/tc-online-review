@@ -143,8 +143,6 @@
       <classes dir="${build_conf}/WEB-INF/classes"/>
       <lib dir="${tcs_libdir}/${contest_eligibility_persistence.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${contest_eligibility_validation.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${guid_generator.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${id_generator.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${JNDI_Utility.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${object_factory.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${object_factory_configuration_api_plugin.path}" includes="*.jar"/>
