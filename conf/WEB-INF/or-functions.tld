@@ -93,7 +93,7 @@
     <function>
         <name>getUserId</name>
         <function-class>com.cronos.onlinereview.functions.Functions</function-class>
-        <function-signature>long getUserId(javax.servlet.http.HttpServletRequest, long)</function-signature>
+        <function-signature>long getUserId(long)</function-signature>
     </function>
     <function>
         <name>displayDelay</name>

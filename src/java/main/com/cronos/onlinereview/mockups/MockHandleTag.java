@@ -147,7 +147,7 @@ public final class MockHandleTag extends TagSupport {
                     !ratingDesStr.equalsIgnoreCase("N/A")) ? Integer.parseInt(ratingDesStr) : 0;
             int ratingDev = (ratingDevStr != null && ratingDevStr.trim().length() != 0 &&
                     !ratingDevStr.equalsIgnoreCase("N/A")) ? Integer.parseInt(ratingDevStr) : 0;
-            int rating = 0;
+            int rating;
 
             if (context.equalsIgnoreCase("design")) {
                 rating = ratingDes;

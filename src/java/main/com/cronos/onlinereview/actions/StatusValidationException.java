@@ -34,9 +34,8 @@ public class StatusValidationException extends ValidationException {
      * @param message the message
      * @param throwable throwable to wrap
      * @param statusViolationKey the status violation key
-     * @throws StatusValidationException the status validation exception
      */
-    public StatusValidationException(String message, Throwable throwable, String statusViolationKey) throws StatusValidationException {
+    public StatusValidationException(String message, Throwable throwable, String statusViolationKey) {
         super(message, throwable);
         this.statusViolationKey = statusViolationKey;
     }

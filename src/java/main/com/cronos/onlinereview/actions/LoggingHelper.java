@@ -64,10 +64,7 @@ final class LoggingHelper {
             // Get External User object for the currently logged in user
             ExternalUser extUser = usrMgr.retrieveUser(AuthorizationHelper.getLoggedInUserId(request));
             handle = extUser.getHandle();
-
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
     
         }
        
@@ -80,7 +77,6 @@ final class LoggingHelper {
         buf.append(servletPath);
         buf.append(queryString);
         String requestString = buf.toString();
-
 
         StringBuffer loginfo = new StringBuffer(100);
         loginfo.append("[* ");

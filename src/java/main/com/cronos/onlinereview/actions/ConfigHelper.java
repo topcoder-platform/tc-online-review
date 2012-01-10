@@ -1459,7 +1459,7 @@ public class ConfigHelper {
 
             while (phaseGroups.hasMoreElements()) {
                 // Get the name of the next property in the list.
-                String propertyName = ((String) phaseGroups.nextElement()) + ".";
+                String propertyName = phaseGroups.nextElement() + ".";
                 // Retrieve a name of a key that will point to a message containing the name of group
                 String strGroupNameKey = propPhaseGrouping.getValue(propertyName + PHASE_GROUP_RM_KEY_PROP);
                 // Retrieve a name of a key that will point to a message containing the name of table
@@ -1486,8 +1486,8 @@ public class ConfigHelper {
                     Set<String> phasesSet = new HashSet<String>();
                     phaseGroupPhases.add(phasesSet);
 
-                    for (int i = 0; i < strPhases.length; ++i) {
-                        phasesSet.add(strPhases[i]);
+                    for (String strPhase : strPhases) {
+                        phasesSet.add(strPhase);
                     }
                 }
             }
@@ -1738,7 +1738,7 @@ public class ConfigHelper {
      *            Root Catalog ID which small icon's filename should be looked up for.
      */
     public static String getRootCatalogIconNameSm(String rootCatalogId) {
-        return (String) rootCatalogIconsSm.get(rootCatalogId);
+        return rootCatalogIconsSm.get(rootCatalogId);
     }
 
     /**
@@ -1752,7 +1752,7 @@ public class ConfigHelper {
      *            Root Catalog ID which name should be looked up for.
      */
     public static String getRootCatalogAltTextKey(String rootCatalogId) {
-        return (String) rootCatalogAltTextKeys.get(rootCatalogId);
+        return rootCatalogAltTextKeys.get(rootCatalogId);
     }
 
     /**
@@ -1788,7 +1788,7 @@ public class ConfigHelper {
      *            Project Category name which small icon's filename should be looked up for.
      */
     public static String getProjectCategoryIconNameSm(String projectCategoryName) {
-        return (String) projectCategoryIconsSm.get(projectCategoryName);
+        return projectCategoryIconsSm.get(projectCategoryName);
     }
 
     /**
@@ -1800,7 +1800,7 @@ public class ConfigHelper {
      *            Project Category name which icon's filename should be looked up for.
      */
     public static String getProjectCategoryIconName(String projectCategoryName) {
-        return (String) projectCategoryIcons.get(projectCategoryName);
+        return projectCategoryIcons.get(projectCategoryName);
     }
 
     /**
@@ -1817,7 +1817,7 @@ public class ConfigHelper {
      *            substring will be simply removed from the template link.
      */
     public static String getProjectTypeViewContestLink(String projectTypeName, long projectId) {
-        String templateLink = (String) projectTypeViewContestLinks.get(projectTypeName);
+        String templateLink = projectTypeViewContestLinks.get(projectTypeName);
 
         templateLink = templateLink.replaceFirst("\\<PROJECT_ID\\>", (projectId > 0) ? String.valueOf(projectId) : "");
         return templateLink;
@@ -1837,7 +1837,7 @@ public class ConfigHelper {
      *            will be simply removed from the template link.
      */
     public static String getProjectTypeForumLink(String projectTypeName, long forumId) {
-        String templateLink = (String) projectTypeForumLinks.get(projectTypeName);
+        String templateLink = projectTypeForumLinks.get(projectTypeName);
 
         templateLink = templateLink.replaceFirst("\\<FORUM_ID\\>", (forumId > 0) ? String.valueOf(forumId) : "");
         return templateLink;
@@ -1853,7 +1853,7 @@ public class ConfigHelper {
      * @since 1.6
      */
     public static String getProjectTypeScorecardLink(String projectTypeName, long scorecardId) {
-        String templateLink = (String) projectTypeScorecardLinks.get(projectTypeName);
+        String templateLink = projectTypeScorecardLinks.get(projectTypeName);
         templateLink = templateLink.replaceFirst("\\<SCORECARD_ID\\>", (scorecardId > 0)
                                                                        ? String.valueOf(scorecardId) : "");
         return templateLink;

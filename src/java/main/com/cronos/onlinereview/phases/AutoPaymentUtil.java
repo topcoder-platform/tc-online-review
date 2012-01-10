@@ -211,12 +211,6 @@ public class AutoPaymentUtil {
         int passedCount = getScreenPassedCount(projectId, conn);
         float[] payments = getPayments(projectId, projectCategoryId, conn);
 
-        // Temporary fix for the transition period until we get rid of the Spec Review projects completely.
-        if (projectCategoryId == 27) {
-            payments[1] = payments[0];
-            payments[2] = payments[0];
-        }
-
         float prize = (float) getPriceByProjectId(projectId, conn);
         float drPoints = (float) getDrPointsByProjectId(projectId, conn);
 
@@ -237,20 +231,18 @@ public class AutoPaymentUtil {
         boolean alreadyPaidAggregator = false;
         boolean alreadyPaidFinalReviewer = false;
         boolean alreadyPaidSpecReviewer = false;
-        for (Iterator<Reviewer> iter = reviewers.iterator(); iter.hasNext();) {
-            Reviewer reviewer = iter.next();
-
+        for (Reviewer reviewer : reviewers) {
             if (reviewer.isPrimaryScreener() && phaseId == SCREENING_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getScreeningCost(), conn);
             } else if (reviewer.isScreener() && phaseId == SCREENING_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getScreeningCost(), conn);
             } else if (!isStudio && reviewer.isAggregator() && phaseId == AGGREGATION_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(),
-                    alreadyPaidAggregator ? 0 : fpc.getAggregationCost(), conn);
+                        alreadyPaidAggregator ? 0 : fpc.getAggregationCost(), conn);
                 alreadyPaidAggregator = true;
             } else if (!isStudio && reviewer.isFinalReviewer() && phaseId == FINAL_REVIEW_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(),
-                    alreadyPaidFinalReviewer ? 0 : fpc.getFinalReviewCost(), conn);
+                        alreadyPaidFinalReviewer ? 0 : fpc.getFinalReviewCost(), conn);
                 alreadyPaidFinalReviewer = true;
             } else if (!isStudio && reviewer.isPrimaryReviewer() && phaseId == REVIEW_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getCoreReviewCost(), conn);
@@ -271,7 +263,7 @@ public class AutoPaymentUtil {
             // at least one submission passed review. Specification reviewer is always paid in studio competitions.
             if (reviewer.isSpecificationReviewer() && (passedReview || isStudio)) {
                 updateResourcePayment(reviewer.getResourceId(),
-                    alreadyPaidSpecReviewer ? 0 : fpc.getSpecReviewCost(), conn);
+                        alreadyPaidSpecReviewer ? 0 : fpc.getSpecReviewCost(), conn);
                 alreadyPaidSpecReviewer = true;
             }
         }
@@ -495,9 +487,8 @@ public class AutoPaymentUtil {
             pstmt.setLong(1, projectId);
             rs = pstmt.executeQuery();
 
-            while (rs.next()) {
+            if (rs.next()) {
                 passedReview = true;
-                break;
             }
 
         } finally {

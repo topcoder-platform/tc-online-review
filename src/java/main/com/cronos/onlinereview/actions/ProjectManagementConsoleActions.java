@@ -261,7 +261,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
         // set the active tab index to able to re-render the page with the correct selected tab in
         // case an error occurs
-        request.setAttribute("activeTabIdx", new Integer(2));
+        request.setAttribute("activeTabIdx", 2);
 
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
@@ -378,7 +378,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
         // set the active tab index to able to re-render the page with the correct selected tab in
         // case an error occurs
-        request.setAttribute("activeTabIdx", new Integer(2));
+        request.setAttribute("activeTabIdx", 2);
 
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
@@ -534,8 +534,8 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @since 1.1
      */
     private Document getDocumentOfType(Collection<?> documents, long documentType) {
-        for (Iterator<?> itr = documents.iterator(); itr.hasNext(); ) {
-            Document document = (Document) itr.next();
+        for (Object documentObject : documents) {
+            Document document = (Document) documentObject;
             if (document.getType() == documentType) {
                 // Assume a single document of this type will exist
                 return document;
@@ -974,7 +974,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                                        HttpServletResponse response) throws Exception {
         LoggingHelper.logAction(request);
 
-        request.setAttribute("activeTabIdx", new Integer(1));
+        request.setAttribute("activeTabIdx", 1);
 
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
@@ -990,7 +990,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         } else {
             // Validate the forms
             final Project project = verification.getProject();
-            final Phase[] phases = getProjectPhases(request, project);
+            final Phase[] phases = getProjectPhases(project);
 
             // Validate that Registration phase indeed exists and can be extended based on current state of the project
             // and that valid positive amount of days to extend is provided
@@ -1063,7 +1063,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      */
     private static boolean getBooleanFromForm(LazyValidatorForm lazyForm, String attribute) {
         Boolean value = (Boolean) lazyForm.get(attribute);
-        return (value == null) ? false : value.booleanValue();
+        return (value != null) && value;
     }
 
     /**
@@ -1077,7 +1077,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @throws BaseException if an unexpected error occurs.
      */
     private void initProjectManagementConsole(HttpServletRequest request, Project project) throws BaseException {
-        Phase[] phases = getProjectPhases(request, project);
+        Phase[] phases = getProjectPhases(project);
         setAvailableResourceRoles(request);
         setRegistrationPhaseExtensionParameters(request, phases);
         setSubmissionPhaseExtensionParameters(request, phases);
@@ -1096,12 +1096,11 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     /**
      * <p>Gets the phases for the specified project.</p>
      *
-     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
      * @param project a <code>Project</code> providing the details for current project being managed by current user.
      * @return a <code>Phase</code> array listing the phases for specified project.
      * @throws BaseException if an unexpected error occurs.
      */
-    private Phase[] getProjectPhases(HttpServletRequest request, Project project) throws BaseException {
+    private Phase[] getProjectPhases(Project project) throws BaseException {
         // Get details for requested project
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
         com.topcoder.project.phases.Project phasesProject = phaseManager.getPhases(project.getId());
@@ -1317,13 +1316,11 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @param roleMapping a <code>Map</code> mapping resource role IDs to role details.
      * @param users a <code>Map</code> mapping user handlers to user account details.
      * @throws BaseException if an unexpected error occurs.
-     * @throws NamingException if an unexpected error occurs.
      * @throws RemoteException if an unexpected error occurs.
-     * @throws CreateException if an unexpected error occurs.
      */
     private void handleResourceAddition(Project project, HttpServletRequest request, ActionForm form,
                                         Map<Long, ResourceRole> roleMapping, Map<String, ExternalUser> users)
-            throws BaseException, NamingException, CreateException, RemoteException {
+            throws BaseException, RemoteException {
 
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
         Long[] resourceRoleIds = (Long[]) lazyForm.get("resource_role_id");
@@ -1355,8 +1352,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         Map<Long, Set<String>> usersWithPendingTerms = new HashMap<Long, Set<String>>();
         Map<Long, Set<String>> badHandles = new HashMap<Long, Set<String>>();
 
-        for (int i = 0; i < resourceRoleIds.length; i++) {
-            Long resourceRoleId = resourceRoleIds[i];
+        for (Long resourceRoleId : resourceRoleIds) {
             duplicateHandles.put(resourceRoleId, new HashSet<String>());
             processedHandles.put(resourceRoleId, new HashSet<String>());
             existingResourceHandles.put(resourceRoleId, new HashSet<String>());
@@ -1602,10 +1598,8 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @param request an <code>HttpServletRequest</code> representing incoming request from the client to bind the flags
      *        related to phase extension to.
      * @param phases a <code>Phase</code> array listing the current project phases.
-     * @throws BaseException if an unexpected error occurs.
      */
-    private void setRegistrationPhaseExtensionParameters(HttpServletRequest request, Phase[] phases)
-        throws BaseException {
+    private void setRegistrationPhaseExtensionParameters(HttpServletRequest request, Phase[] phases) {
         Phase registrationPhase = getRegistrationPhaseForExtension(phases);
         if ((registrationPhase != null)) {
             // Registration phase can be extended
@@ -1629,10 +1623,8 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @param request an <code>HttpServletRequest</code> representing incoming request from the client to bind the flags
      *        related to phase extension to.
      * @param phases a <code>Phase</code> array listing the current project phases.
-     * @throws BaseException if an unexpected error occurs.
      */
-    private void setSubmissionPhaseExtensionParameters(HttpServletRequest request, Phase[] phases)
-        throws BaseException {
+    private void setSubmissionPhaseExtensionParameters(HttpServletRequest request, Phase[] phases) {
         Phase submissionPhase = ActionsHelper.findPhaseByTypeName(phases, SUBMISSION_PHASE_NAME);
         if (submissionPhase != null) {
             if (submissionPhaseAllowsExtension(submissionPhase)) {
@@ -1694,12 +1686,10 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @param roleId a <code>long</code> providing the role ID.
      * @return a <code>List</code> of terms of use which are not yet accepted by the specified user or empty list if all
      *         necessary terms of use are accepted.
-     * @throws NamingException if any errors occur during EJB lookup.
      * @throws RemoteException if any errors occur during EJB remote invocation.
-     * @throws CreateException if any errors occur during EJB creation.
      */
     private List<TermsOfUseEntity> validateResourceTermsOfUse(long projectId, long userId, long roleId)
-        throws CreateException, NamingException, RemoteException {
+        throws RemoteException {
 
         List<TermsOfUseEntity> unAcceptedTerms = new ArrayList<TermsOfUseEntity>();
 
@@ -1711,9 +1701,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         List<Long>[] necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(
             (int) projectId, new int[]{new Long(roleId).intValue()}, DBMS.COMMON_OLTP_DATASOURCE_NAME);
 
-        for (int j = 0; j < necessaryTerms.length; j++) {
-            if (necessaryTerms[j] != null) {
-                for (Long termsId : necessaryTerms[j]) {
+        for (List<Long> necessaryTerm : necessaryTerms) {
+            if (necessaryTerm != null) {
+                for (Long termsId : necessaryTerm) {
                     if (!userTermsOfUse.hasTermsOfUse(userId, termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME)) {
                         TermsOfUseEntity terms = termsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
                         unAcceptedTerms.add(terms);
@@ -1733,13 +1723,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @param userId a <code>long</code> providing the user ID.
      * @return a <code>List</code> of terms of use which are not yet accepted by the specified user or empty list if all
      *         necessary terms of use are accepted.
-     * @throws NamingException if any errors occur during EJB lookup.
-     * @throws RemoteException if any errors occur during EJB remote invocation.
-     * @throws CreateException if any errors occur during EJB creation.
      * @throws BaseException if an unexpected error occurs.
      */
-    private boolean validateResourceEligibility(long projectId, long userId)
-        throws CreateException, NamingException, RemoteException, BaseException {
+    private boolean validateResourceEligibility(long projectId, long userId) throws BaseException {
 
         try {
             return EJBLibraryServicesLocator.getContestEligibilityService().isEligible(userId, projectId, false);

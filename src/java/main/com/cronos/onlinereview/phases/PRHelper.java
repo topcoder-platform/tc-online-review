@@ -188,7 +188,7 @@ public class PRHelper {
     public void populateReviewerPayments(long projectId, int phaseId) throws PhaseHandlingException {
         Connection conn = createConnection();
         try {
-            AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.SCREENING_PHASE);
+            AutoPaymentUtil.populateReviewerPayments(projectId, conn, phaseId);
         } catch(SQLException e) {
             throw new PhaseHandlingException("Failed to populate reviewer payments.", e);
         } finally {
@@ -485,14 +485,14 @@ public class PRHelper {
             pstmt.setLong(1, projectId);
             rs = pstmt.executeQuery();
 
-            logger.log(Level.INFO, new LoggerMessage("Project", new Long(projectId), null,
+            logger.log(Level.INFO, new LoggerMessage("Project", projectId, null,
                     "update project_result with final scores, placed and passed_review_ind."));
             updateStmt = conn.prepareStatement(APPEAL_RESPONSE_UPDATE_PROJECT_RESULT_STMT);
             while (rs.next()) {
                 double finalScore = rs.getDouble("final_score");
                 long userId = rs.getLong("user_id");
                 int status = rs.getInt("submission_status_id");
-                String p = null;
+                String p;
 
                 double payment = 0;
                 p = rs.getString("payment");

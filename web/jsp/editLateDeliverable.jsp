@@ -118,7 +118,7 @@
                                 <bean:message key="editLateDeliverable.LateMember.label"/>
                             </td>
                             <td nowrap="nowrap" class="value">
-                                <tc-webtag:handle coderId="${orfn:getUserId(pageContext.request, lateDeliverable.resourceId)}" 
+                                <tc-webtag:handle coderId="${orfn:getUserId(lateDeliverable.resourceId)}" 
                                                   context="${orfn:getHandlerContextByCategoryId(project.projectCategory.id)}" />
                             </td>
                         </tr>
@@ -197,7 +197,7 @@
                                     <c:when test="${lateDeliverable.explanation ne null}">
                                         <c:choose>
                                             <c:when test="${lateDeliverable.explanationDate ne null}">
-                                                By <tc-webtag:handle coderId="${orfn:getUserId(pageContext.request, lateDeliverable.resourceId)}" 
+                                                By <tc-webtag:handle coderId="${orfn:getUserId(lateDeliverable.resourceId)}" 
                                                     context="${orfn:getHandlerContextByCategoryId(project.projectCategory.id)}" />
                                                 at <c:out value="${orfn:displayDate(pageContext.request, lateDeliverable.explanationDate)}"/>
                                                 <br/><br/>

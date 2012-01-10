@@ -160,9 +160,7 @@ public class ProjectPhaseDataAccess extends BaseDataAccess {
         }
 
         // Resolve deferred dependencies
-        Iterator<Long> iterator = deferredDependencies.keySet().iterator();
-        while (iterator.hasNext()) {
-            Long dependencyId = iterator.next();
+        for (Long dependencyId : deferredDependencies.keySet()) {
             List<Object[]> dependencies = deferredDependencies.get(dependencyId);
             for (Object[] dependency : dependencies) {
                 long dependentId = (Long) dependency[0];
@@ -171,7 +169,7 @@ public class ProjectPhaseDataAccess extends BaseDataAccess {
                 boolean dependentStart = (Boolean) dependency[3];
                 Phase dependentPhase = cachedPhases.get(dependentId);
                 Dependency dep = new Dependency(cachedPhases.get(dependencyId), dependentPhase,
-                                                dependencyStart, dependentStart, lagTime);
+                        dependencyStart, dependentStart, lagTime);
                 dependentPhase.addDependency(dep);
             }
         }

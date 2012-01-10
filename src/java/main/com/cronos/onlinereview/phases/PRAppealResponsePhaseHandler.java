@@ -157,9 +157,8 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
             ResourceRole submitterRole = null;
             ResourceRole[] roles = managerHelper.getResourceManager().getAllResourceRoles();
             log.log(Level.DEBUG, "roles size: " + roles.length);
-            for (int i = 0; i < roles.length; i++) {
-                ResourceRole role = roles[i];
-                log.log(Level.DEBUG, "roles id: " + roles[i].getId() + ", name: " + roles[i].getName());
+            for (ResourceRole role : roles) {
+                log.log(Level.DEBUG, "roles id: " + role.getId() + ", name: " + role.getName());
                 if ("Submitter".equals(role.getName())) {
                     submitterRole = role;
                     break;
@@ -176,8 +175,7 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 
             // Perform search for resources
             Resource[] submitters = managerHelper.getResourceManager().searchResources(filter);
-            for (int i = 0; i < submitters.length; i++) {
-                Resource resource = submitters[i];
+            for (Resource resource : submitters) {
                 if (userId.equals(resource.getProperty("External Reference ID"))) {
                     return resource;
                 }
@@ -191,9 +189,9 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
     private TemplateFields setTemplateFieldValues(TemplateFields root, Project project, ExternalUser user, String position) throws BaseException {
         Node[] nodes = root.getNodes();
 
-        for (int i = 0; i < nodes.length; i++) {
-            if (nodes[i] instanceof Field) {
-                Field field = (Field) nodes[i];
+        for (Node node : nodes) {
+            if (node instanceof Field) {
+                Field field = (Field) node;
 
                 if ("PROJECT_TYPE".equals(field.getName())) {
                     field.setValue(project.getProjectCategory().getDescription());
@@ -201,15 +199,15 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
                     field.setValue((String) project.getProperty(PROJECT_NAME));
                 } else if ("SCORE".equals(field.getName())) {
                     // get all the submissions for the user in the project
-                    Long[] submissions = getResourceForProjectAndUser(project, 
+                    Long[] submissions = getResourceForProjectAndUser(project,
                             String.valueOf(user.getId())).getSubmissions();
                     int placement = position.equals("1st") ? 1 : 2;
                     UploadManager uploadManager = managerHelper.getUploadManager();
                     for (Long submissionId : submissions) {
                         // get the score for the placement depending on the position
                         Submission submission = uploadManager.getSubmission(submissionId);
-                        if(submission.getPlacement() != null && submission.getPlacement() == placement) {
-                            field.setValue(submission.getFinalScore()+"");
+                        if (submission.getPlacement() != null && submission.getPlacement() == placement) {
+                            field.setValue(submission.getFinalScore() + "");
                             break;
                         }
                     }

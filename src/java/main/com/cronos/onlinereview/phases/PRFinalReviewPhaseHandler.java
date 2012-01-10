@@ -128,7 +128,7 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
         prHelper.processFinalReviewPR(phase.getProject().getId(), toStart);
 
         // If stopping phase and final fix is approved.
-        if (!toStart && !checkFinalReview(phase, operator)) {
+        if (!toStart && !checkFinalReview(phase)) {
             // checks the existence of approval phase
             Phase approvalPhase = PhasesHelper.locatePhase(phase, "Approval", true, false);
 
@@ -188,9 +188,7 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
                 // Collect the list of resources which indeed need to have permission granted
                 String winnerId = (String) project.getProperty("Winner External Reference ID");
                 Map<String, List<Resource>> candidates = new HashMap<String, List<Resource>>();
-                for (int i = 0; i < resources.length; i++) {
-                    Resource resource = resources[i];
-
+                for (Resource resource : resources) {
                     // Of resources with Submitter role only a winning Submitter is to be granted a permission
                     if (resource.getResourceRole().getId() == 1) {
                         if ((winnerId == null) || !(winnerId.equals(resource.getProperty("External Reference ID")))) {
@@ -199,7 +197,7 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
                     }
 
                     String svnPermissionAddedProperty
-                        = (String) resource.getProperty(SVN_PERMISSION_ADDED_RESOURCE_INFO);
+                            = (String) resource.getProperty(SVN_PERMISSION_ADDED_RESOURCE_INFO);
                     if (!"true".equals(svnPermissionAddedProperty)) {
                         String handle = (String) resource.getProperty(PhasesHelper.HANDLE);
                         if (!candidates.containsKey(handle)) {
@@ -328,13 +326,12 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
      * checks if the final review is rejected.
      *
      * @param phase phase instance.
-     * @param operator operator name
      * @return if pass the final review of not
      *
      * @throws PhaseHandlingException if an error occurs when retrieving/saving
      *         data.
      */
-    private boolean checkFinalReview(Phase phase, String operator) throws PhaseHandlingException {
+    private boolean checkFinalReview(Phase phase) throws PhaseHandlingException {
         try {
             ManagerHelper managerHelper = getManagerHelper();
             Review finalWorksheet = PhasesHelper.getWorksheet(managerHelper, "Final Reviewer", phase.getId());
@@ -343,10 +340,10 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
             Comment[] comments = finalWorksheet.getAllComments();
             boolean rejected = false;
 
-            for (int i = 0; i < comments.length; i++) {
-                String value = (String) comments[i].getExtraInfo();
+            for (Comment comment : comments) {
+                String value = (String) comment.getExtraInfo();
 
-                if (comments[i].getCommentType().getName().equals("Final Review Comment")) {
+                if (comment.getCommentType().getName().equals("Final Review Comment")) {
                     if (Constants.COMMENT_VALUE_APPROVED.equalsIgnoreCase(value) || Constants.COMMENT_VALUE_ACCEPTED.equalsIgnoreCase(value)) {
                         continue;
                     } else if (Constants.COMMENT_VALUE_REJECTED.equalsIgnoreCase(value)) {
