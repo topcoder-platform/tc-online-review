@@ -96,16 +96,16 @@ public class PRApprovalPhaseHandler extends ApprovalPhaseHandler {
 
             // check for approved/rejected comments.
             boolean rejected = false;
-            for (int reviewIndex = 0; reviewIndex < approveReviews.length; reviewIndex++) {
-                if (!approveReviews[reviewIndex].isCommitted()) {
+            for (Review approveReview : approveReviews) {
+                if (!approveReview.isCommitted()) {
                     continue;
                 }
 
-                Comment[] comments = approveReviews[reviewIndex].getAllComments();
+                Comment[] comments = approveReview.getAllComments();
 
-                for (int i = 0; i < comments.length; i++) {
-                    String value = (String) comments[i].getExtraInfo();
-                    if (comments[i].getCommentType().getName().equals("Approval Review Comment")) {
+                for (Comment comment : comments) {
+                    String value = (String) comment.getExtraInfo();
+                    if (comment.getCommentType().getName().equals("Approval Review Comment")) {
                         if (Constants.COMMENT_VALUE_APPROVED.equalsIgnoreCase(value)
                                 || Constants.COMMENT_VALUE_ACCEPTED.equalsIgnoreCase(value)) {
                             continue;

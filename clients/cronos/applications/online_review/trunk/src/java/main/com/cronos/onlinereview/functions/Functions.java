@@ -148,7 +148,7 @@ public final class Functions {
      *            call this method to pass a valid object to it.
      */
     public static Boolean isUserLoggedIn(HttpServletRequest request) {
-        return new Boolean((request != null) ? AuthorizationHelper.isUserLoggedIn(request) : false);
+        return (request != null) && AuthorizationHelper.isUserLoggedIn(request);
     }
 
     /**
@@ -221,7 +221,7 @@ public final class Functions {
             return Boolean.FALSE;
         }
 
-        return new Boolean(ActionsHelper.isErrorsPresent(request));
+        return ActionsHelper.isErrorsPresent(request);
     }
 
     /**
@@ -247,7 +247,7 @@ public final class Functions {
             return null;
         }
 
-        MessageResources messages = null;
+        MessageResources messages;
 
         try {
             // Use a helper method from Struts framework to obtain Message Resources
@@ -280,12 +280,12 @@ public final class Functions {
      */
     public static Integer getGanttLen(Integer minutes) {
         // Return zero for incorrect input values
-        if (minutes == null || minutes.intValue() < 0) {
-            return new Integer(0);
+        if (minutes == null || minutes < 0) {
+            return 0;
         }
 
         // Compute the amount of pixels
-        return new Integer((minutes.intValue() * ConfigHelper.getPixelsPerHour()) / 60);
+        return (minutes * ConfigHelper.getPixelsPerHour()) / 60;
     }
 
     /**
@@ -305,11 +305,11 @@ public final class Functions {
      */
     public static String getGanttHours(PageContext pageContext, Integer minutes) {
         // Return empty string for incorrect input values
-        if (minutes == null || minutes.intValue() < 0) {
+        if (minutes == null || minutes < 0) {
             return "";
         }
 
-        int mins = minutes.intValue();
+        int mins = minutes;
 
         // Special formatting is needed in case amount of minutes is not zero
         if (mins % 60 != 0) {
@@ -368,7 +368,7 @@ public final class Functions {
      */
     public static String displayScore(HttpServletRequest request, Double score) {
         // Return empty string for incorrect input values
-        if (score == null || score.doubleValue() < 0) {
+        if (score == null || score < 0) {
             return "";
         }
 
@@ -407,13 +407,13 @@ public final class Functions {
      */
     public static String displayPaymentAmt(HttpServletRequest request, Double payment) {
         // Return empty string for incorrect input values
-        if (payment == null || payment.doubleValue() < 0) {
+        if (payment == null || payment < 0) {
             return "";
         }
 
-        Format format = null;
+        Format format;
 
-        if (Math.round(payment.doubleValue() * 100) % 100 == 0) {
+        if (Math.round(payment * 100) % 100 == 0) {
             // Try to extract a formatter from the request
             format = (Format) ((request != null) ? request.getAttribute("payment_amount_nf_format") : null);
             // If there is no such attribute stored in the request, build a new one and store it
@@ -629,14 +629,12 @@ public final class Functions {
      * Get the user id.
      * </p>
      *
-     * @param request
-     *            the http servlet request
      * @param resourceId
      *            the resource id.
      * @return the corresponding user id, or -1 if any problem occurs.
      * @since 1.2
      */
-    public static long getUserId(HttpServletRequest request, long resourceId) {
+    public static long getUserId(long resourceId) {
         ResourceManager resourceManager = ActionsHelper.createResourceManager();
 
         try {

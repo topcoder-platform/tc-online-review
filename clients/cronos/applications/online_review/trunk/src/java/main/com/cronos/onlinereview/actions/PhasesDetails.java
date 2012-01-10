@@ -48,7 +48,7 @@ final class PhasesDetails {
     }
 
     public Integer getActiveTabIndex() {
-        return (this.activeTabIndex != null) ? this.activeTabIndex : new Integer(0);
+        return (this.activeTabIndex != null) ? this.activeTabIndex : 0;
     }
 
     public void setActiveTabIndex(Integer activeTabIndex) {
@@ -56,6 +56,6 @@ final class PhasesDetails {
     }
 
     public void setActiveTabIndex(int activeTabIndex) {
-        this.activeTabIndex = new Integer((activeTabIndex >= 0) ? activeTabIndex : 0);
+        this.activeTabIndex = (activeTabIndex >= 0) ? activeTabIndex : 0;
     }
 }

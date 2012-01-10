@@ -155,12 +155,10 @@ import com.topcoder.util.file.templatesource.FileTemplateSource;
  *   <ol>
  *    <li>Renamed <code>uploadSubmission</code> to <code>uploadContestSubmission</code> and
  *        <code>downloadSubmission</code> to <code>downloadContestSubmission</code> methods.</li>
- *    <li>Added {@link #uploadSpecificationSubmission(ActionMapping, ActionForm, HttpServletRequest,
- *        HttpServletResponse)} method.</li>
- *    <li>Updated {@link #uploadContestSubmission(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
+ *    <li>Added {@link #uploadSpecificationSubmission(org.apache.struts.action.ActionMapping,org.apache.struts.action.ActionForm,javax.servlet.http.HttpServletRequest)} method.</li>
+ *    <li>Updated {@link #uploadContestSubmission(org.apache.struts.action.ActionMapping,org.apache.struts.action.ActionForm,javax.servlet.http.HttpServletRequest)}
  *        method to set type for uploaded submission.</li>
- *    <li>Added {@link #downloadSpecificationSubmission(ActionMapping, ActionForm, HttpServletRequest,
- *        HttpServletResponse)} method.</li>
+ *    <li>Added {@link #downloadSpecificationSubmission(org.apache.struts.action.ActionMapping,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)} method.</li>
  *   </ol>
  * </p>
  *
@@ -185,9 +183,9 @@ import com.topcoder.util.file.templatesource.FileTemplateSource;
  * <p>
  * Version 1.7 (Online Review Payments and Status Automation Assembly 1.0) Change notes:
  *   <ol>
- *    <li>Update {@link #viewProjectDetails(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method
+ *    <li>Update {@link #viewProjectDetails(org.apache.struts.action.ActionMapping,javax.servlet.http.HttpServletRequest)} method
  *        to fix the duplication of scorecard templates.</li>
- *    <li>Update {@link #viewProjectDetails(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method
+ *    <li>Update {@link #viewProjectDetails(org.apache.struts.action.ActionMapping,javax.servlet.http.HttpServletRequest)} method
  *        to show the &quot;Pay Project&quot; button in the Online Review shows when there's at least one resource with
  *        non-zero payment value and payment status other than "Paid".</li>
  *   </ol>
@@ -208,9 +206,9 @@ import com.topcoder.util.file.templatesource.FileTemplateSource;
  *   <ol>
  *     <li>Added {@link #getPhaseCannotOpenHints(PhaseManager, Phase[], int[], MessageResources)} to get the hints for the phases
  *     which can't be open.</li>
- *     <li>Added struts action {@link #advanceFailedScreeningSubmission(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} 
+ *     <li>Added struts action {@link #advanceFailedScreeningSubmission(org.apache.struts.action.ActionMapping,javax.servlet.http.HttpServletRequest)}
  *     to advance the submission that failed screening.</li>
- *     <li>Updated {@link #viewProjectDetails(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method to get the hints for
+ *     <li>Updated {@link #viewProjectDetails(org.apache.struts.action.ActionMapping,javax.servlet.http.HttpServletRequest)} method to get the hints for
  *     the phases which can't be open.</li>
  *   </ol>
  * </p>
@@ -325,7 +323,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 request.setAttribute("projectDRP", Double.valueOf(drpointStr));
             }
         }
-        
+
         ProjectDataAccess projectDataAccess = new ProjectDataAccess();
 
         // since Online Review Update - Add Project Dropdown v1.0
@@ -364,9 +362,9 @@ public class ProjectDetailsActions extends DispatchAction {
         // Obtain an array of "my" resources
         Resource[] myResources = (Resource[]) request.getAttribute("myResources");
         // Place an information about the amount of "my" payment into the request
-        Map<ResourceRole, Double> myPayments = ActionsHelper.getMyPayments(myResources, request);
+        Map<ResourceRole, Double> myPayments = ActionsHelper.getMyPayments(myResources);
         ResourceRole managerResourceRole = ActionsHelper.findResourceRoleByName(
-                (ResourceRole[]) myPayments.keySet().toArray(new ResourceRole[myPayments.size()]), "Manager");
+                myPayments.keySet().toArray(new ResourceRole[myPayments.size()]), "Manager");
         if (managerResourceRole == null) {
             if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) ||
                 AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
@@ -483,7 +481,7 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("myDeliverables", myDeliverables);
         request.setAttribute("outstandingDeliverables", outstandingDeliverables);
 
-        request.setAttribute("unrespondedLateDeliverables", (Boolean)false);
+        request.setAttribute("unrespondedLateDeliverables", false);
         if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_LATE_DELIVERABLE_PERM_NAME)) {
             List<Filter> filters = new ArrayList<Filter>();
 
@@ -494,7 +492,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
             List<LateDeliverable> lateDeliverables = lateDeliverableManager.searchAllLateDeliverables(new AndFilter(filters));
             if (lateDeliverables.size() > 0) {
-                request.setAttribute("unrespondedLateDeliverables", (Boolean)true);
+                request.setAttribute("unrespondedLateDeliverables", true);
 
                 request.setAttribute("unrespondedLateDeliverablesLink", "ViewLateDeliverables.do?method=viewLateDeliverables&project_id=" +
                                      projectId + "&forgiven=Not+forgiven&explanation_status=true&response_status=false");
@@ -533,8 +531,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         String[] myDeliverableLinks = generateDeliverableLinks(request, myDeliverables, phases);
         String[] outstandingDeliverableUserIds = getDeliverableUserIds(outstandingDeliverables, allProjectResources);
-        String[] outstandingDeliverableSubmissionUserIds =
-            getDeliverableSubmissionUserIds(request, outstandingDeliverables);
+        String[] outstandingDeliverableSubmissionUserIds = getDeliverableSubmissionUserIds(outstandingDeliverables);
 
         request.setAttribute("myDeliverableDates", myDeliverableDates);
         request.setAttribute("outstandingDeliverableDates", outstandingDeliverableDates);
@@ -729,13 +726,13 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformScreening",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SCREENING_PERM_NAME) &&
                         ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME) != null));
-        
+
         Phase reviewPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.REVIEW_PHASE_NAME);
         request.setAttribute("isAllowedToAdvanceSubmissionWithFailedScreening",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME) &&
                         project.getProjectStatus().getName().equals("Active")) &&
                         reviewPhase != null && !ActionsHelper.isPhaseClosed(reviewPhase.getPhaseStatus()));
-        
+
         request.setAttribute("isAllowedToPerformMilestoneScreening",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_MILESTONE_SCREENING_PERM_NAME) &&
                         ActionsHelper.getPhase(phases, true, Constants.MILESTONE_SCREENING_PHASE_NAME) != null));
@@ -799,17 +796,15 @@ public class ProjectDetailsActions extends DispatchAction {
 
             // Iterate over all 'my' resources looking for 'Submitter' ones and comparing them to the
             // value of the winner for the current project (if there is any winner already)
-            for (int i = 0; i < myResources.length; ++i) {
-                // Get a resource for the current iteration
-                final Resource resource = myResources[i];
+            for (Resource resource : myResources) {
                 // Examine only Submitters, skip all other ones
                 if (!resource.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
                     continue;
                 }
                 // This resource is a submitter;
                 // compare its external user ID to the official project's winner's one
-                if (myResources[i].getProperty("External Reference ID").equals(winnerExtId)) {
-                        allowedToReviewAggregation = true;
+                if (resource.getProperty("External Reference ID").equals(winnerExtId)) {
+                    allowedToReviewAggregation = true;
                     break;
                 }
             }
@@ -898,9 +893,9 @@ public class ProjectDetailsActions extends DispatchAction {
         Node[] nodes = fields.getNodes();
 
         // Construct the body of the email
-        for (int i = 0; i < nodes.length; i++) {
-            if (nodes[i] instanceof Field) {
-                Field field = (Field) nodes[i];
+        for (Node node : nodes) {
+            if (node instanceof Field) {
+                Field field = (Field) node;
 
                 if ("USER_FIRST_NAME".equals(field.getName())) {
                     field.setValue(sender.getFirstName());
@@ -937,19 +932,19 @@ public class ProjectDetailsActions extends DispatchAction {
         TCSEmailMessage message = new TCSEmailMessage();
 
         // Add 'TO' addresses to message
-        List<Long> managerUsrIds = ActionsHelper.getUserIDsByRoleNames(request, new String[]{"Manager", "Copilot"}, project.getId());
+        List<Long> managerUsrIds = ActionsHelper.getUserIDsByRoleNames(new String[]{"Manager", "Copilot"}, project.getId());
         List<String> managerEmails = ActionsHelper.getEmailsByUserIDs(request, managerUsrIds);
-        for (int i = 0; i < managerEmails.size(); ++i) {
-            message.addToAddress(managerEmails.get(i), TCSEmailMessage.TO);
+        for (String managerEmail : managerEmails) {
+            message.addToAddress(managerEmail, TCSEmailMessage.TO);
         }
 
         // Add 'BCC' addresses to message (Client Managers wish to keep their email addresses private)
-        List<Long> clientManagerUsrIds = ActionsHelper.getUserIDsByRoleNames(request, new String[]{"Client Manager"}, project.getId());
+        List<Long> clientManagerUsrIds = ActionsHelper.getUserIDsByRoleNames(new String[]{"Client Manager"}, project.getId());
         List<String> clientManagerEmails = ActionsHelper.getEmailsByUserIDs(request, clientManagerUsrIds);
-        for (int i = 0; i < clientManagerEmails.size(); ++i) {
+        for (String clientManagerEmail : clientManagerEmails) {
             // Don't duplicate addressee.
-            if (managerEmails.contains(clientManagerEmails.get(i)) == false) {
-                message.addToAddress(clientManagerEmails.get(i), TCSEmailMessage.BCC);
+            if (!managerEmails.contains(clientManagerEmail)) {
+                message.addToAddress(clientManagerEmail, TCSEmailMessage.BCC);
             }
         }
 
@@ -959,7 +954,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Add 'From' address
         message.setFromAddress(sender.getEmail());
         // Set message's subject
-        message.setSubject((String) project.getProperty("Project Name") + " - " + sender.getHandle());
+        message.setSubject(project.getProperty("Project Name") + " - " + sender.getHandle());
         // Insert a body into the message
         message.setBody(docGenerator.applyTemplate(fields));
 
@@ -1023,8 +1018,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * @since 1.6.1
      */
     public ActionForward uploadMilestoneSubmission(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
-        throws BaseException {
+            HttpServletRequest request, HttpServletResponse response) throws BaseException {
         return handleUploadSubmission(mapping, form, request, Constants.MILESTONE_SUBMISSION_TYPE_NAME,
                                       Constants.PERFORM_MILESTONE_SUBMISSION_PERM_NAME,
                                       Constants.MILESTONE_SUBMISSION_PHASE_NAME);
@@ -1186,8 +1180,7 @@ public class ProjectDetailsActions extends DispatchAction {
                                         Constants.DOWNLOAD_CUSTOM_SUBM_PERM_NAME,
                                         Constants.VIEW_WINNING_SUBM_PERM_NAME,
                                         Constants.SCREENING_PHASE_NAME, Constants.REVIEW_PHASE_NAME,
-                                        Constants.SCREENER_ROLE_NAMES, Constants.REVIEWER_ROLE_NAMES,
-                                        true, 1);
+                                        Constants.SCREENER_ROLE_NAMES, Constants.REVIEWER_ROLE_NAMES, 1);
     }
 
     /**
@@ -1217,8 +1210,7 @@ public class ProjectDetailsActions extends DispatchAction {
                                         Constants.MILESTONE_SCREENING_PHASE_NAME,
                                         Constants.MILESTONE_REVIEW_PHASE_NAME,
                                         new String[] {Constants.MILESTONE_SCREENER_ROLE_NAME},
-                                        new String[] {Constants.MILESTONE_REVIEWER_ROLE_NAME},
-                                        false, 3);
+                                        new String[] {Constants.MILESTONE_REVIEWER_ROLE_NAME}, 3);
     }
 
     /**
@@ -1273,8 +1265,8 @@ public class ProjectDetailsActions extends DispatchAction {
             && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SPECIFICATION_SUBMISSIONS_PERM_NAME)) {
             long owningResourceId = upload.getOwner();
             Resource[] myResources = (Resource[]) request.getAttribute("myResources");
-            for (int i = 0; i < myResources.length; ++i) {
-                if (myResources[i].getId() == owningResourceId) {
+            for (Resource myResource : myResources) {
+                if (myResource.getId() == owningResourceId) {
                     noRights = false;
                     break;
                 }
@@ -1347,7 +1339,7 @@ public class ProjectDetailsActions extends DispatchAction {
             return verification.getForward();
         }
 
-        if (postBack != true) {
+        if (!postBack) {
             // Retrieve some basic project info (such as icons' names) and place it into request
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
             return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
@@ -1368,8 +1360,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         int finalFixCount = 0;
 
-        for (int i = 0; i < phases.length; ++i) {
-            Phase phase = phases[i];
+        for (Phase phase : phases) {
             if (phase.getPhaseType().getName().equalsIgnoreCase(Constants.FINAL_FIX_PHASE_NAME)) {
                 ++finalFixCount;
             }
@@ -1471,13 +1462,13 @@ public class ProjectDetailsActions extends DispatchAction {
 
         boolean hasPermission = false, hasSubmitterRole = false;
         String[] roles = ConfigHelper.getRolesForPermission(Constants.DOWNLOAD_FINAL_FIX_PERM_NAME);
-        for (int i = 0; i < roles.length; ++i) {
-            if (!AuthorizationHelper.hasUserRole(request, roles[i])) {
-              continue;
+        for (String role : roles) {
+            if (!AuthorizationHelper.hasUserRole(request, role)) {
+                continue;
             }
 
-           // For the Submitters we only allow to download final fixes if the user has at least passed screening.
-            if (roles[i].equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
+            // For the Submitters we only allow to download final fixes if the user has at least passed screening.
+            if (role.equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
                 hasSubmitterRole = true;
 
                 // Get all submissions for this user.
@@ -1491,7 +1482,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 for (Long id : subIds) {
                     Submission submission = upMgr.getSubmission(id);
                     if (submission != null && submission.getSubmissionType().getName().equals(Constants.CONTEST_SUBMISSION_TYPE_NAME) &&
-                        !submission.getSubmissionStatus().getName().equals(Constants.FAILED_SCREENING_SUBMISSION_STATUS_NAME)) {
+                            !submission.getSubmissionStatus().getName().equals(Constants.FAILED_SCREENING_SUBMISSION_STATUS_NAME)) {
                         hasPermission = true;
                         break;
                     }
@@ -1530,8 +1521,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
-        outputDownloadedFile(uploadedFile, "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"",
-                             request, response);
+        outputDownloadedFile(uploadedFile, "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"", response);
 
         return null;
     }
@@ -1576,7 +1566,7 @@ public class ProjectDetailsActions extends DispatchAction {
             return verification.getForward();
         }
 
-        if (postBack != true) {
+        if (!postBack) {
             // Retrieve some basic project info (such as icons' names) and place it into request
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
             return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
@@ -1771,8 +1761,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
-        outputDownloadedFile(uploadedFile, "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"",
-                             request, response);
+        outputDownloadedFile(uploadedFile, "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"", response);
 
         return null;
     }
@@ -1813,11 +1802,11 @@ public class ProjectDetailsActions extends DispatchAction {
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
-        
+
         // Retrieve the upload user tries to advance
         Upload upload = verification.getUpload();
         Project project = verification.getProject();
-        
+
         // Check that user has permissions to delete submission.
         boolean hasPermission = AuthorizationHelper.hasUserPermission(request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME);
         // For Studio projects only Global Managers are authorized to advance submissions.
@@ -1831,13 +1820,13 @@ public class ProjectDetailsActions extends DispatchAction {
         }
         // At this point, redirect-after-login attribute should be removed (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
-        
+
         // Verify that the user is attempting to advance submission
         if (!upload.getUploadType().getName().equalsIgnoreCase(Constants.SUBMISSION_UPLOAD_TYPE_NAME)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME, "Error.NotASubmission3", null);
         }
-        
+
         Filter filter = SubmissionFilterBuilder.createUploadIdFilter(upload.getId());
         // Obtain an instance of Upload Manager
         UploadManager upMgr = ActionsHelper.createUploadManager();
@@ -1849,13 +1838,13 @@ public class ProjectDetailsActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME, "Error.SubmissionNotFailedScreening", null);
         }
-        
+
         // Check the project status is Active
         if (!project.getProjectStatus().getName().equalsIgnoreCase(Constants.ACTIVE_PROJECT_STATUS_NAME)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME, "Error.ProjectNotActive", null);
         }
-        
+
         // Check the Review phase is not closed
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
         Phase reviewPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.REVIEW_PHASE_NAME);
@@ -1863,18 +1852,18 @@ public class ProjectDetailsActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME, "Error.ReviewClosed", null);
         }
-        
+
         // Determine if this request is a post back
         boolean postBack = (request.getParameter("advance") != null);
 
-        if (postBack != true) {
+        if (!postBack) {
             // Retrieve some basic project info (such as icons' names) and place it into request
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
             // Place upload ID into the request as attribute
-            request.setAttribute("uid", new Long(upload.getId()));
+            request.setAttribute("uid", upload.getId());
             return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
         }
-        
+
         String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
         ProjectManager projectMgr = ActionsHelper.createProjectManager();
         String oldAutoPilotOption = (String) project.getProperty("Autopilot Option");
@@ -1883,7 +1872,7 @@ public class ProjectDetailsActions extends DispatchAction {
             project.setProperty("Autopilot Option", "Off");
             projectMgr.updateProject(project, "Turing AP off before advancing failed screening submission", operator);
         }
-        
+
         Phase postMortemPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.POST_MORTEM_PHASE_NAME);
         if (postMortemPhase != null) {
             ActionsHelper.deletePostMortem(project, postMortemPhase, operator);
@@ -1893,18 +1882,18 @@ public class ProjectDetailsActions extends DispatchAction {
         SubmissionStatus submissionActiveStatus = ActionsHelper.findSubmissionStatusByName(submissionStatuses, Constants.ACTIVE_SUBMISSION_STATUS_NAME);
         submission.setSubmissionStatus(submissionActiveStatus);
         upMgr.updateSubmission(submission, operator);
-        
+
         // Update the project_result table
         ResourceManager resMgr = ActionsHelper.createResourceManager();
         Resource uploadOwner = resMgr.getResource(upload.getOwner());
         ActionsHelper.updateProjectResultForAdvanceScreening(project.getId(), Long.parseLong((String) uploadOwner.getProperty("External Reference ID")));
-        
+
         if (!"Off".equalsIgnoreCase(oldAutoPilotOption)) {
             // Restore the AutoPilot status
             project.setProperty("Autopilot Option", oldAutoPilotOption);
             projectMgr.updateProject(project, "Restoring the AP status after advancing failed screening submission", operator);
         }
-        
+
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
     }
@@ -1935,8 +1924,7 @@ public class ProjectDetailsActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward deleteSubmission(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
-        throws BaseException {
+            HttpServletRequest request, HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
@@ -1977,11 +1965,11 @@ public class ProjectDetailsActions extends DispatchAction {
         // Determine if this request is a post back
         boolean postBack = (request.getParameter("delete") != null);
 
-        if (postBack != true) {
+        if (!postBack) {
             // Retrieve some basic project info (such as icons' names) and place it into request
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
             // Place upload ID into the request as attribute
-            request.setAttribute("uid", new Long(upload.getId()));
+            request.setAttribute("uid", upload.getId());
             return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
         }
 
@@ -2026,8 +2014,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * @since 1.1
      */
     public ActionForward unregister(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
-        throws BaseException {
+            HttpServletRequest request, HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before processing with the Action
@@ -2073,7 +2060,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Determine if this request is a post back
         boolean postBack = (request.getParameter("unregister") != null);
 
-        if (postBack != true) {
+        if (!postBack) {
             // Retrieve some basic project info (such as icons' names) and place it into request
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(),
                     getResources(request));
@@ -2145,8 +2132,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * @since 1.2
      */
     public ActionForward earlyAppeals(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
-        throws BaseException {
+        HttpServletRequest request, HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before processing with the Action
@@ -2190,19 +2176,21 @@ public class ProjectDetailsActions extends DispatchAction {
         AuthorizationHelper.removeLoginRedirect(request);
 
         Resource submitter = ActionsHelper.getMyResourceForRole(request, "Submitter");
+        if (submitter == null) {
+            throw new BaseException("Unable to find the Submitter resource " +
+                    "associated with the current user for project " + verification.getProject().getId());
+        }
 
         // get appeals completed early property value
         boolean appealsCompletedFlag = false;
-        if (submitter != null) {
-            String value = (String) submitter.getProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY);
-            if (value != null && value.equals(Constants.YES_VALUE)) {
-                appealsCompletedFlag = true;
-            }
+        String value = (String) submitter.getProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY);
+        if (value != null && value.equals(Constants.YES_VALUE)) {
+            appealsCompletedFlag = true;
         }
 
         // Determine if this request is a post back
         boolean postBack = (request.getParameter("perform") != null);
-        if (postBack != true) {
+        if (!postBack) {
             // Retrieve some basic project info (such as icons' names) and place it into request
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(),
                     getResources(request));
@@ -2250,8 +2238,7 @@ public class ProjectDetailsActions extends DispatchAction {
      *             if some error occurs during disk input/output operation.
      */
     public ActionForward downloadDocument(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
-        throws BaseException, IOException {
+        HttpServletRequest request, HttpServletResponse response) throws BaseException, IOException {
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
@@ -2290,8 +2277,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
-        outputDownloadedFile(uploadedFile, "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"",
-                             request, response);
+        outputDownloadedFile(uploadedFile, "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"", response);
 
         return null;
     }
@@ -2442,7 +2428,7 @@ public class ProjectDetailsActions extends DispatchAction {
         ActionsHelper.validateParameterNotNull(phases, "phases");
         ActionsHelper.validateParameterNotNull(phaseMgr, "phaseMgr");
         ActionsHelper.validateParameterNotNull(phaseStatusCodes, "phaseStatusCodes");
-        
+
         String[] hints = new String[phases.length];
         for (int i = 0; i < phases.length; i++) {
             if (phaseStatusCodes[i] == Constants.CANNOT_OPEN_PHASE_STATUS_CODE) {
@@ -2585,7 +2571,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 if (review == null) {
                     links[i] = "CreateScreening.do?method=createScreening&sid=" +
-                            deliverable.getSubmission().longValue();
+                            deliverable.getSubmission();
                 } else if (!review.isCommitted()) {
                     links[i] = "EditScreening.do?method=editScreening&rid=" + review.getId();
                 } else {
@@ -2605,7 +2591,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 if (review == null) {
                     links[i] = "CreateMilestoneScreening.do?method=createMilestoneScreening&sid=" +
-                            deliverable.getSubmission().longValue();
+                            deliverable.getSubmission();
                 } else if (!review.isCommitted()) {
                     links[i] = "EditMilestoneScreening.do?method=editMilestoneScreening&rid=" + review.getId();
                 } else {
@@ -2629,7 +2615,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 if (review == null) {
                     links[i] = "CreateReview.do?method=createReview&sid=" +
-                            deliverable.getSubmission().longValue();
+                            deliverable.getSubmission();
                 } else if (!review.isCommitted()) {
                     links[i] = "EditReview.do?method=editReview&rid=" + review.getId();
                 } else {
@@ -2650,7 +2636,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 if (review == null) {
                     links[i] = "CreateMilestoneReview.do?method=createMilestoneReview&sid=" +
-                            deliverable.getSubmission().longValue();
+                            deliverable.getSubmission();
                 } else if (!review.isCommitted()) {
                     links[i] = "EditMilestoneReview.do?method=editMilestoneReview&rid=" + review.getId();
                 } else {
@@ -2805,7 +2791,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 if (review == null) {
                     links[i] = "CreateApproval.do?method=createApproval&sid=" +
-                            deliverable.getSubmission().longValue();
+                            deliverable.getSubmission();
                 } else if (!review.isCommitted()) {
                     links[i] = "EditApproval.do?method=editApproval&rid=" + review.getId();
                 } else {
@@ -2851,9 +2837,9 @@ public class ProjectDetailsActions extends DispatchAction {
 
         for (int i = 0; i < deliverables.length; ++i) {
             final long deliverableResourceId = deliverables[i].getResource();
-            for (int j = 0; j < resources.length; ++j) {
-                if (resources[j].getId() == deliverableResourceId) {
-                    ids[i] = (String) resources[j].getProperty("External Reference ID");
+            for (Resource resource : resources) {
+                if (resource.getId() == deliverableResourceId) {
+                    ids[i] = (String) resource.getProperty("External Reference ID");
                     break;
                 }
             }
@@ -2866,18 +2852,17 @@ public class ProjectDetailsActions extends DispatchAction {
      * TODO: Write documentation for this method.
      *
      * @return
-     * @param request
      * @param deliverables
      * @throws BaseException
      */
-    private static String[] getDeliverableSubmissionUserIds(HttpServletRequest request, Deliverable[] deliverables)
+    private static String[] getDeliverableSubmissionUserIds(Deliverable[] deliverables)
             throws BaseException {
 
         List<Long> submissionIds = new ArrayList<Long>();
 
-        for (int i = 0; i < deliverables.length; ++i) {
-            if (deliverables[i].getSubmission() != null) {
-                submissionIds.add(deliverables[i].getSubmission());
+        for (Deliverable deliverable : deliverables) {
+            if (deliverable.getSubmission() != null) {
+                submissionIds.add(deliverable.getSubmission());
             }
         }
 
@@ -2893,8 +2878,8 @@ public class ProjectDetailsActions extends DispatchAction {
 
         List<Long> resourceIds = new ArrayList<Long>();
 
-        for (int i = 0; i < submissions.length; ++i) {
-            resourceIds.add(submissions[i].getUpload().getOwner());
+        for (Submission submission : submissions) {
+            resourceIds.add(submission.getUpload().getOwner());
         }
 
         Filter filterResources = new InFilter("resource.resource_id", resourceIds);
@@ -2909,15 +2894,15 @@ public class ProjectDetailsActions extends DispatchAction {
             if (deliverables[i].getSubmission() == null) {
                 continue;
             }
-            long deliverableId = deliverables[i].getSubmission().longValue();
-            for (int j = 0; j < submissions.length; ++j) {
-                if (submissions[j].getId() != deliverableId) {
+            long deliverableId = deliverables[i].getSubmission();
+            for (Submission submission : submissions) {
+                if (submission.getId() != deliverableId) {
                     continue;
                 }
-                long submissionOwnerId = submissions[j].getUpload().getOwner();
-                for (int k = 0; k < resources.length; ++k) {
-                    if (resources[k].getId() == submissionOwnerId) {
-                        ids[i] = (String) resources[k].getProperty("External Reference ID");
+                long submissionOwnerId = submission.getUpload().getOwner();
+                for (Resource resource : resources) {
+                    if (resource.getId() == submissionOwnerId) {
+                        ids[i] = (String) resource.getProperty("External Reference ID");
                         break;
                     }
                 }
@@ -2959,15 +2944,15 @@ public class ProjectDetailsActions extends DispatchAction {
         ActionsHelper.validateParameterNotNull(manager, "manager");
 
         ActionsHelper.validateParameterNotNull(submissionId, "submissionId");
-        ActionsHelper.validateParameterPositive(submissionId.longValue(), "submissionId");
+        ActionsHelper.validateParameterPositive(submissionId, "submissionId");
         ActionsHelper.validateParameterPositive(resourceId, "resourceId");
 
         Filter filterSubmission = new EqualToFilter("submission", submissionId);
-        Filter filterReviewer = new EqualToFilter("reviewer", new Long (resourceId));
+        Filter filterReviewer = new EqualToFilter("reviewer", resourceId);
 
-        Filter filter = null;
+        Filter filter;
         if (scorecardType != null) {
-            Filter filterScorecard = new EqualToFilter("scorecardType", new Long(scorecardType.getId()));
+            Filter filterScorecard = new EqualToFilter("scorecardType", scorecardType.getId());
             filter = new AndFilter(Arrays.asList(new Filter[] {filterSubmission, filterScorecard, filterReviewer}));
         } else {
             filter = new AndFilter(Arrays.asList(new Filter[] {filterSubmission, filterReviewer}));
@@ -3010,12 +2995,12 @@ public class ProjectDetailsActions extends DispatchAction {
         ActionsHelper.validateParameterNotNull(manager, "manager");
         ActionsHelper.validateParameterNotNull(scorecardType, "scorecardType");
         ActionsHelper.validateParameterNotNull(projectId, "projectId");
-        ActionsHelper.validateParameterPositive(projectId.longValue(), "projectId");
+        ActionsHelper.validateParameterPositive(projectId, "projectId");
         ActionsHelper.validateParameterPositive(resourceId, "resourceId");
 
         Filter filterProject = new EqualToFilter("project", projectId);
-        Filter filterScorecard = new EqualToFilter("scorecardType", new Long(scorecardType.getId()));
-        Filter filterReviewer = new EqualToFilter("reviewer", new Long (resourceId));
+        Filter filterScorecard = new EqualToFilter("scorecardType", scorecardType.getId());
+        Filter filterReviewer = new EqualToFilter("reviewer", resourceId);
 
         Filter filter = new AndFilter(Arrays.asList(filterProject, filterScorecard, filterReviewer));
 
@@ -3070,7 +3055,7 @@ public class ProjectDetailsActions extends DispatchAction {
                                  + uploadedFile.getRemoteFileName() + "\"";
         }
 
-        outputDownloadedFile(uploadedFile, contentDisposition, request, response);
+        outputDownloadedFile(uploadedFile, contentDisposition, response);
     }
 
     /**
@@ -3079,19 +3064,15 @@ public class ProjectDetailsActions extends DispatchAction {
      *
      * @param uploadedFile an <code>UploadedFile</code> providing the details for the filr to be downloaded by client.
      * @param contentDisposition a <code>String</code> providing the value for <code>Content-Disposition</code> header.
-     * @param request an <code>HttpServletRequest</code> representing the incoming request.
      * @param response an <code>HttpServletResponse</code> representing the outgoing response.
-     * @throws DisallowedDirectoryException if an unexpected error occurs.
-     * @throws ConfigurationException if an unexpected error occurs.
      * @throws PersistenceException if an unexpected error occurs.
      * @throws FileDoesNotExistException if an unexpected error occurs.
      * @throws IOException if an unexpected error occurs.
      * @since 1.6
      */
-    private void outputDownloadedFile(UploadedFile uploadedFile, String contentDisposition, HttpServletRequest request,
+    private void outputDownloadedFile(UploadedFile uploadedFile, String contentDisposition,
                                       HttpServletResponse response)
-        throws DisallowedDirectoryException, ConfigurationException, PersistenceException, FileDoesNotExistException,
-               IOException {
+        throws PersistenceException, FileDoesNotExistException, IOException {
 
         InputStream in = uploadedFile.getInputStream();
 
@@ -3186,7 +3167,6 @@ public class ProjectDetailsActions extends DispatchAction {
                 }
             } catch (NumberFormatException e) {
                 // the payment string is not double format, we simply ignore it.
-                continue;
             }
 
         }
@@ -3219,8 +3199,6 @@ public class ProjectDetailsActions extends DispatchAction {
      * @param reviewPhaseName a <code>String</code> providing the name for review phase type.
      * @param screenerRoleNames a <code>String</code> array listing the names for screener roles.
      * @param reviewerRoleNames a <code>String</code> array listing the names for reviewer roles.
-     * @param isAppealSupported <code>true</code> if submission type assumes the appeals to reviews to be allowed;
-     *        <code>false</code> otherwise.
      * @param submissionType a <code>long</code> referencing the type of the submission being downloaded.
      * @return an <code>ActionForward</code> referencing the next view to be displayed to user in case of errors or
      *         <code>null</code> if submission is downloaded successfully.
@@ -3239,7 +3217,7 @@ public class ProjectDetailsActions extends DispatchAction {
                                                    String screeningPhaseName,
                                                    String reviewPhaseName,
                                                    String[] screenerRoleNames,
-                                                   String[] reviewerRoleNames, boolean isAppealSupported,
+                                                   String[] reviewerRoleNames,
                                                    long submissionType)
         throws BaseException, IOException {
         LoggingHelper.logAction(request);
@@ -3282,8 +3260,8 @@ public class ProjectDetailsActions extends DispatchAction {
         if (AuthorizationHelper.hasUserPermission(request, viewMySubmissionsPermissionName)) {
             long owningResourceId = upload.getOwner();
             Resource[] myResources = (Resource[]) request.getAttribute("myResources");
-            for (int i = 0; i < myResources.length; ++i) {
-                if (myResources[i].getId() == owningResourceId) {
+            for (Resource myResource : myResources) {
+                if (myResource.getId() == owningResourceId) {
                     noRights = false;
                     break;
                 }
@@ -3358,9 +3336,9 @@ public class ProjectDetailsActions extends DispatchAction {
             UploadManager upMgr = ActionsHelper.createUploadManager();
             Long[] subIds = submitter.getSubmissions();
             Submission submission = null;
-            for (int i = 0; i < subIds.length; i++) {
-                submission = upMgr.getSubmission(subIds[i]);
-                if(submission.getUpload().getId() == upload.getId()) {
+            for (Long subId : subIds) {
+                submission = upMgr.getSubmission(subId);
+                if (submission.getUpload().getId() == upload.getId()) {
                     break;
                 }
             }
@@ -3387,8 +3365,8 @@ public class ProjectDetailsActions extends DispatchAction {
             UploadManager upMgr = ActionsHelper.createUploadManager();
             Long[] subIds = submitter.getSubmissions();
             Submission submission = null;
-            for (int i = 0; i < subIds.length; i++) {
-                submission = upMgr.getSubmission(subIds[i]);
+            for (Long subId : subIds) {
+                submission = upMgr.getSubmission(subId);
                 if (submission.getUpload().getId() == upload.getId()) {
                     break;
                 }

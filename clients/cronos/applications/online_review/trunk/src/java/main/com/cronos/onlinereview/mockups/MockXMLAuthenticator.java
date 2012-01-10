@@ -57,7 +57,7 @@ public class MockXMLAuthenticator extends AbstractAuthenticator {
     public MockXMLAuthenticator(String namespace) throws ConfigurationException {
         super(namespace);
 
-        InputStream input = null;
+        InputStream input;
         try {
             ConfigManager cm = ConfigManager.getInstance();
 

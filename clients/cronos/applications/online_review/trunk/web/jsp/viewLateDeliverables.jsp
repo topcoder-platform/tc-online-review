@@ -300,7 +300,7 @@
                                         <c:set var="lateDeliverables" value="${groupedLateDeliverables[projectId]}" />
                                         <c:forEach items="${lateDeliverables}" var="lateDeliverable" varStatus="status">
                                         <tr class="${(status.index % 2 == 0) ? 'light' : 'dark'}">
-                                            <td class="value" width="20%"><tc-webtag:handle coderId="${orfn:getUserId(pageContext.request, lateDeliverable.resourceId)}" context="${orfn:getHandlerContextByCategoryId(project.projectCategory.id)}" /></td>
+                                            <td class="value" width="20%"><tc-webtag:handle coderId="${orfn:getUserId(lateDeliverable.resourceId)}" context="${orfn:getHandlerContextByCategoryId(project.projectCategory.id)}" /></td>
                                             <c:choose>
                                                 <c:when test="${lateDeliverable.type.id == 1}">
                                                     <td class="value" width="20%">${orfn:getDeliverableName(pageContext.request, lateDeliverable.deliverableId)}</td>

@@ -31,16 +31,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import javax.ejb.CreateException;
 import javax.ejb.EJBException;
-import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -79,7 +76,6 @@ import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.ProjectPropertyType;
 import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.project.ProjectType;
-import com.topcoder.management.project.link.ProjectLinkManager;
 import com.topcoder.management.resource.NotificationType;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
@@ -169,7 +165,7 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  * Version 1.6 (Online Review End Of Project Analysis Assembly 1.0) Change notes:
  *   <ol>
  *     <li>
- *       Updated {@link #saveProject(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method to
+ *       Updated {@link #saveProject(org.apache.struts.action.ActionMapping,org.apache.struts.action.ActionForm,javax.servlet.http.HttpServletRequest)} method to
  *       validate that category selected for project is not generic one.
  *     </li>
  *     <li>
@@ -183,7 +179,7 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  * Version 1.7 (Online Review Performance Refactoring 1.0) Change notes:
  *   <ol>
  *     <li>
- *       Updated {@link #listProjects(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method to
+ *       Updated {@link #listProjects(org.apache.struts.action.ActionMapping,javax.servlet.http.HttpServletRequest)} method to
  *       speed up the projects data retrieval using Query Tool.
  *     </li>
  *   </ol>
@@ -193,7 +189,7 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  * Version 1.8 (Member Post-Mortem Review Assembly 1.0) Change notes:
  *   <ol>
  *     <li>
- *       Updated {@link #saveResources(boolean, HttpServletRequest, LazyValidatorForm, Project, Phase[], Map)} method to
+ *       Updated {@link #saveResources(javax.servlet.http.HttpServletRequest,org.apache.struts.validator.LazyValidatorForm,com.topcoder.management.project.Project,com.topcoder.project.phases.Phase[],java.util.Map} method to
  *       deny removal, handle/role update for resources which have submissions or review scorecards associated with
  *       them.
  *     </li>
@@ -225,7 +221,7 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  * <p>
  * Version 1.11 (SVN Automation and Late Deliverables Tracking Assembly 1.0) Change notes:
  *   <ol>
- *     <li>Updated {@link #saveProject(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method to
+ *     <li>Updated {@link #saveProject(org.apache.struts.action.ActionMapping,org.apache.struts.action.ActionForm,javax.servlet.http.HttpServletRequest)} method to
  *     skip updating the <code>SVN Module</code> property of the project.</li>
  *   </ol>
  * </p>
@@ -235,7 +231,7 @@ import com.topcoder.web.ejb.user.UserTermsOfUse;
  *   <ol>
  *     <li>Updated {@link #saveProjectPhases(boolean, HttpServletRequest, LazyValidatorForm, Project, Map, List, boolean)} method to
  *     support negative lag time, notes, workdays component is updated to support the functionality.</li>
- *     <li>Updated {@link #saveResources(boolean, HttpServletRequest, LazyValidatorForm, Project, Phase[], Map)} method is
+ *     <li>Updated {@link #saveResources(javax.servlet.http.HttpServletRequest,org.apache.struts.validator.LazyValidatorForm,com.topcoder.management.project.Project,com.topcoder.project.phases.Phase[],java.util.Map} method is
  *     updated to support reset to resource related to project phase properly.</li>
  *   </ol>
  * </p>
@@ -365,7 +361,7 @@ public class ProjectActions extends DispatchAction {
         AuthorizationHelper.removeLoginRedirect(request);
 
         // Place the index of the active tab into the request
-        request.setAttribute("projectTabIndex", new Integer(3));
+        request.setAttribute("projectTabIndex", 3);
         // Place the flag, indicating that we are creating a new project, into request
         request.setAttribute("newProject", Boolean.TRUE);
 
@@ -400,17 +396,17 @@ public class ProjectActions extends DispatchAction {
      */
     private void populateProjectFormDefaults(LazyValidatorForm lazyForm, HttpServletRequest request) {
         // Set the JS id to start generation from
-        lazyForm.set("js_current_id", new Long(0));
+        lazyForm.set("js_current_id", (long) 0);
 
         // Populate form with some data so that resources row template
         // is rendered properly by the appropriate JSP
-        lazyForm.set("resources_role", 0, new Long(-1));
-        lazyForm.set("resources_id", 0, new Long(-1));
+        lazyForm.set("resources_role", 0, (long) -1);
+        lazyForm.set("resources_id", 0, (long) -1);
         lazyForm.set("resources_action", 0, "add");
 
         // Populate form with some data so that phases row template
         // is rendered properly by the appropriate JSP
-        lazyForm.set("phase_id", 0, new Long(-1));
+        lazyForm.set("phase_id", 0, (long) -1);
         lazyForm.set("phase_action", 0, "add");
         lazyForm.set("phase_can_open", 0, Boolean.TRUE);
         lazyForm.set("phase_can_close", 0, Boolean.FALSE);
@@ -418,18 +414,18 @@ public class ProjectActions extends DispatchAction {
 
         // Populate some phase criteria with default values read from the configuration
         if (ConfigHelper.getDefaultRequiredRegistrants() >= 0) {
-            lazyForm.set("phase_required_registrations", 0, new Integer(ConfigHelper.getDefaultRequiredRegistrants()));
+            lazyForm.set("phase_required_registrations", 0, ConfigHelper.getDefaultRequiredRegistrants());
         }
         if (ConfigHelper.getDefaultRequiredReviewers() >= 0) {
-            lazyForm.set("phase_required_reviewers", 0, new Integer(ConfigHelper.getDefaultRequiredReviewers()));
+            lazyForm.set("phase_required_reviewers", 0, ConfigHelper.getDefaultRequiredReviewers());
         }
         if (ConfigHelper.getDefaultRequiredApprovers() >= 0) {
             request.setAttribute("phase_required_reviewers_approval",
-                                 new Integer(ConfigHelper.getDefaultRequiredApprovers()));
+                    ConfigHelper.getDefaultRequiredApprovers());
         }
         if (ConfigHelper.getDefaultRequiredPostMortemReviewers() >= 0) {
             request.setAttribute("phase_required_reviewers_postmortem",
-                                 new Integer(ConfigHelper.getDefaultRequiredPostMortemReviewers()));
+                    ConfigHelper.getDefaultRequiredPostMortemReviewers());
         }
 
         // Populate default phase duration
@@ -468,8 +464,7 @@ public class ProjectActions extends DispatchAction {
         ResourceRole[] resourceRoles = resourceManager.getAllResourceRoles();
         Set<String> disabledResourceRoles = new HashSet<String>(Arrays.asList(ConfigHelper.getDisabledResourceRoles()));
         List<ResourceRole> allowedResourceRoles = new ArrayList<ResourceRole>();
-        for (int i = 0; i < resourceRoles.length; i++) {
-            ResourceRole resourceRole = resourceRoles[i];
+        for (ResourceRole resourceRole : resourceRoles) {
             if (!disabledResourceRoles.contains(String.valueOf(resourceRole.getId()))) {
                 allowedResourceRoles.add(resourceRole);
             }
@@ -563,21 +558,21 @@ public class ProjectActions extends DispatchAction {
         // TODO: Possibly use string constants instead of hardcoded strings
 
         // Populate project id
-        form.set("pid", new Long(project.getId()));
+        form.set("pid", project.getId());
 
         // Populate project name
         populateProjectFormProperty(form, String.class, "project_name", project, "Project Name");
 
         // Populate project type
-        Long projectTypeId = new Long(project.getProjectCategory().getProjectType().getId());
+        Long projectTypeId = project.getProjectCategory().getProjectType().getId();
         form.set("project_type", projectTypeId);
 
         // Populate project category
-        Long projectCategoryId = new Long(project.getProjectCategory().getId());
+        Long projectCategoryId = project.getProjectCategory().getId();
         form.set("project_category", projectCategoryId);
 
         // Populate project category
-        Long projectStatusId = new Long(project.getProjectStatus().getId());
+        Long projectStatusId = project.getProjectStatus().getId();
         form.set("status", projectStatusId);
 
         // Populate project forum id
@@ -595,19 +590,19 @@ public class ProjectActions extends DispatchAction {
         // since Online Review Update - Add Project Dropdown v1.0
         // Populate project billing project
         populateProjectFormProperty(form, Long.class, "billing_project", project, "Billing Project");
-        form.set("cockpit_project", new Long(project.getTcDirectProjectId()));
+        form.set("cockpit_project", (long) project.getTcDirectProjectId());
 
         // Populate project autopilot option
-        form.set("autopilot", new Boolean("On".equals(project.getProperty("Autopilot Option"))));
+        form.set("autopilot", "On".equals(project.getProperty("Autopilot Option")));
         // Populate project status notification option
-        form.set("email_notifications", new Boolean("On".equals(project.getProperty("Status Notification"))));
+        form.set("email_notifications", "On".equals(project.getProperty("Status Notification")));
         // Populate project timeline notification option
-        form.set("timeline_notifications", new Boolean("On".equals(project.getProperty("Timeline Notification"))));
+        form.set("timeline_notifications", "On".equals(project.getProperty("Timeline Notification")));
         // Populate project Digital Run option
-        form.set("digital_run_flag", new Boolean("On".equals(project.getProperty("Digital Run Flag"))));
+        form.set("digital_run_flag", "On".equals(project.getProperty("Digital Run Flag")));
         // Populate project's 'do not rate this project' option
         // Note, this property is inverse by its meaning in project and form
-        form.set("no_rate_project", new Boolean(!("Yes".equals(project.getProperty("Rated")))));
+        form.set("no_rate_project", !("Yes".equals(project.getProperty("Rated"))));
 
         // Populate project SVN module
         populateProjectFormProperty(form, String.class, "SVN_module", project, "SVN Module");
@@ -630,10 +625,10 @@ public class ProjectActions extends DispatchAction {
 
         // Populate form with resources data
         for (int i = 0; i < resources.length; ++i) {
-            form.set("resources_id", i + 1, new Long(resources[i].getId()));
+            form.set("resources_id", i + 1, resources[i].getId());
             form.set("resources_action", i + 1, "update");
 
-            form.set("resources_role", i + 1, new Long(resources[i].getResourceRole().getId()));
+            form.set("resources_role", i + 1, resources[i].getResourceRole().getId());
             form.set("resources_phase", i + 1, "loaded_" + resources[i].getPhase());
             form.set("resources_name", i + 1, externalUsers[i].getHandle());
 
@@ -678,7 +673,7 @@ public class ProjectActions extends DispatchAction {
             inList = true;
         } else {
             for(ClientProject cp : availableClientProjects) {
-                if(cp.getId() == currentClientProjectId.longValue()) {
+                if(cp.getId() == currentClientProjectId) {
                     inList = true;
                     break;
                 }
@@ -867,7 +862,7 @@ public class ProjectActions extends DispatchAction {
         ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
 
         // This variable determines whether status of the project has been changed by this save
-        // operation. This is useful to determine whether Explanation is a required field or not
+        // operation.
         boolean statusHasChanged = false;
         boolean categoryChanged = false;
         if (newProject) {
@@ -875,7 +870,7 @@ public class ProjectActions extends DispatchAction {
             ProjectStatus activeStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Active");
             // Find the project category by the specified id
             ProjectCategory category = ActionsHelper.findProjectCategoryById(projectCategories,
-                    ((Long) lazyForm.get("project_category")).longValue());
+                    (Long) lazyForm.get("project_category"));
             if (category.getProjectType().isGeneric()) {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                         Constants.CREATE_PROJECT_PERM_NAME, "Error.GenericProjectType", Boolean.TRUE);
@@ -891,8 +886,7 @@ public class ProjectActions extends DispatchAction {
             project.setProperty("Track Late Deliverables", "true");
             statusHasChanged = true; // Status is always considered to be changed for new projects
         } else {
-            long newCategoryId = ((Long) lazyForm.get("project_category")).longValue();
-            String oldStatusName = project.getProjectStatus().getName();
+            long newCategoryId = (Long) lazyForm.get("project_category");
             if (project.getProjectCategory().getId() != newCategoryId) {
                 categoryChanged = true;
             }
@@ -932,7 +926,7 @@ public class ProjectActions extends DispatchAction {
             project.setProperty("Contest Indicator", "On");
         } else {
             ProjectStatus newProjectStatus =
-                ActionsHelper.findProjectStatusById(projectStatuses, ((Long) lazyForm.get("status")).longValue());
+                ActionsHelper.findProjectStatusById(projectStatuses, (Long) lazyForm.get("status"));
             String oldStatusName = project.getProjectStatus().getName();
             String newStatusName = (newProjectStatus != null) ? newProjectStatus.getName() : oldStatusName;
 
@@ -958,7 +952,7 @@ public class ProjectActions extends DispatchAction {
         project.setProperty("External Reference ID", lazyForm.get("external_reference_id"));
         // Populate project price
         project.setProperty("Payments", lazyForm.get("payments"));
-        PrizeType contestPrizeType = ActionsHelper.getPrizeTypeByName(manager, Constants.CONTEST_PRIZE_TYPE_NAME); 
+        PrizeType contestPrizeType = ActionsHelper.getPrizeTypeByName(manager, Constants.CONTEST_PRIZE_TYPE_NAME);
         if (project.getPrizes() != null) {
             for(Prize p : project.getPrizes()) {
                 if(p.getPrizeType().getId() == contestPrizeType.getId() && p.getPlace() == 1) {
@@ -968,7 +962,7 @@ public class ProjectActions extends DispatchAction {
                 }
             }
         }
-        
+
         // Populate project dr points
         Double drPoints = (Double)lazyForm.get("dr_points");
         project.setProperty("DR points", drPoints.equals(0d) ? null : drPoints);
@@ -977,7 +971,7 @@ public class ProjectActions extends DispatchAction {
             // Retrieve and populate version
             project.setProperty("Version ID",
                     ActionsHelper.getVersionUsingComponentVersionId(
-                    ((Long) lazyForm.get("external_reference_id")).longValue()));
+                            (Long) lazyForm.get("external_reference_id")));
         }
 
         // Extract project's properties from the form
@@ -988,13 +982,13 @@ public class ProjectActions extends DispatchAction {
         Boolean doNotRateProjectObj = (Boolean) lazyForm.get("no_rate_project");
 
         // Unbox the properties
-        boolean autopilotOn = (autopilotOnObj != null) ? autopilotOnObj.booleanValue() : false;
+        boolean autopilotOn = (autopilotOnObj != null) && autopilotOnObj;
         boolean sendEmailNotifications =
-            (sendEmailNotificationsObj != null) ? sendEmailNotificationsObj.booleanValue() : false;
+                (sendEmailNotificationsObj != null) && sendEmailNotificationsObj;
         boolean sendTLChangeNotifications =
-            (sendTLChangeNotificationsObj != null) ? sendTLChangeNotificationsObj.booleanValue() : false;
-        boolean digitalRunFlag = (digitalRunFlagObj != null) ? digitalRunFlagObj.booleanValue() : false;
-        boolean doNotRateProject = (doNotRateProjectObj != null) ? doNotRateProjectObj.booleanValue() : false;
+                (sendTLChangeNotificationsObj != null) && sendTLChangeNotificationsObj;
+        boolean digitalRunFlag = (digitalRunFlagObj != null) && digitalRunFlagObj;
+        boolean doNotRateProject = (doNotRateProjectObj != null) && doNotRateProjectObj;
 
         // Populate project autopilot option
         project.setProperty("Autopilot Option", (autopilotOn) ? "On" : "Off");
@@ -1037,20 +1031,15 @@ public class ProjectActions extends DispatchAction {
         // Save the project phases
         // FIXME: the project itself is also saved by the following call. Needs to be refactored
         Phase[] projectPhases =
-            saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap, phasesToDelete, statusHasChanged);
+            saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap, phasesToDelete);
 
 
         if (!ActionsHelper.isErrorsPresent(request) && (newProject || categoryChanged)) {
             // generate new project role terms of use associations for the recently created project.
             try {
-                generateProjectRoleTermsOfUseAssociations(project.getId(),
-                        project.getProjectCategory().getId(), categoryChanged, request);
-            } catch (NamingException ne) {
-                throw new BaseException(ne);
+                generateProjectRoleTermsOfUseAssociations(project.getId(), project.getProjectCategory().getId(), categoryChanged);
             } catch (RemoteException re) {
                 throw new BaseException(re);
-            } catch (CreateException ce) {
-                throw new BaseException(ce);
             } catch (EJBException e) {
                 throw new BaseException(e);
             }
@@ -1059,17 +1048,17 @@ public class ProjectActions extends DispatchAction {
         // FIXME: resources must be saved even if there are validation errors to validate resources
         if (!ActionsHelper.isErrorsPresent(request)) {
             // Save the project resources
-            saveResources(newProject, request, lazyForm, project, projectPhases, phasesJsMap);
+            saveResources(request, lazyForm, project, projectPhases, phasesJsMap);
         }
 
         if (!ActionsHelper.isErrorsPresent(request)) {
             // Delete the phases to be deleted
-            deletePhases(request, project, phasesToDelete);
+            deletePhases(request, phasesToDelete);
         }
 
         // If needed switch project current phase
         if (!newProject && !ActionsHelper.isErrorsPresent(request)) {
-            switchProjectPhase(request, lazyForm, projectPhases, phasesJsMap);
+            switchProjectPhase(request, lazyForm, phasesJsMap);
         }
 
         // Check if there are any validation errors and return appropriate forward
@@ -1100,17 +1089,13 @@ public class ProjectActions extends DispatchAction {
      * @param projectId the project id for the associations
      * @param projectTypeId the project type id of the provided project id
      * @param categoryChanged <code>true</code> if category was changed; <code>false</code> otherwise.
-     * @param request an <code>HttpServletRequest</code> representing incoming request.
-     * @throws NamingException if any errors occur during EJB lookup
      * @throws RemoteException if any errors occur during EJB remote invocation
-     * @throws CreateException if any errors occur during EJB creation
      * @throws EJBException if any other errors occur while invoking EJB services
      *
      * @since 1.1
      */
-    private void generateProjectRoleTermsOfUseAssociations(long projectId, long projectTypeId, boolean categoryChanged,
-                                                           HttpServletRequest request)
-        throws NamingException, RemoteException, CreateException, EJBException {
+    private void generateProjectRoleTermsOfUseAssociations(long projectId, long projectTypeId, boolean categoryChanged)
+        throws RemoteException, EJBException {
 
         ProjectRoleTermsOfUse projectRoleTermsOfUse = EJBLibraryServicesLocator.getProjectRoleTermsOfUseService();
 
@@ -1170,11 +1155,10 @@ public class ProjectActions extends DispatchAction {
      * TODO: Document it
      *
      * @param request
-     * @param project
      * @param phasesToDelete
      * @throws BaseException
      */
-    private void deletePhases(HttpServletRequest request, Project project, List<Phase> phasesToDelete)
+    private void deletePhases(HttpServletRequest request, List<Phase> phasesToDelete)
             throws BaseException {
 
         if (phasesToDelete.isEmpty()) {
@@ -1183,12 +1167,11 @@ public class ProjectActions extends DispatchAction {
 
         com.topcoder.project.phases.Project phProject = phasesToDelete.get(0).getProject();
 
-        for (int i = 0; i < phasesToDelete.size(); i++) {
-            phProject.removePhase(phasesToDelete.get(i));
+        for (Phase phase : phasesToDelete) {
+            phProject.removePhase(phase);
         }
 
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
-
         phaseManager.updatePhases(phProject, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
     }
 
@@ -1215,7 +1198,7 @@ public class ProjectActions extends DispatchAction {
      * @throws BaseException if an unexpected error occurs.
      */
     private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
-            Project project, Map<Object, Phase> phasesJsMap, List<Phase> phasesToDelete, boolean statusHasChanged)
+            Project project, Map<Object, Phase> phasesJsMap, List<Phase> phasesToDelete)
         throws BaseException {
         // Obtain an instance of Phase Manager
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
@@ -1260,7 +1243,7 @@ public class ProjectActions extends DispatchAction {
                 phasesToForm.put(phase, i);
                 continue;
             }
-            Phase phase = null;
+            Phase phase;
 
             // Check what is the action to be performed with the phase
             // and obtain Phase instance in appropriate way
@@ -1272,7 +1255,7 @@ public class ProjectActions extends DispatchAction {
                 // Add it to Phases Project
                 phProject.addPhase(phase);
             }  else {
-                long phaseId = ((Long) lazyForm.get("phase_id", i)).longValue();
+                long phaseId = (Long) lazyForm.get("phase_id", i);
                 if (phaseId != -1) {
                     // Retrieve the phase with the specified id
                     phase = ActionsHelper.findPhaseById(oldPhases, phaseId);
@@ -1295,7 +1278,7 @@ public class ProjectActions extends DispatchAction {
             }
 
             // flag value indicates using end date or using duration
-            boolean useDuration = ((Boolean) lazyForm.get("phase_use_duration", i)).booleanValue();
+            boolean useDuration = (Boolean) lazyForm.get("phase_use_duration", i);
 
             // If phase duration is specified
             if (useDuration) {
@@ -1348,7 +1331,7 @@ public class ProjectActions extends DispatchAction {
             Object phaseObj = phasesJsMap.get(lazyForm.get("phase_js_id", i));
             // If phase is not found in map, it is to be deleted
             if (phaseObj == null) {
-                long phaseId = ((Long) lazyForm.get("phase_id", i)).longValue();
+                long phaseId = (Long) lazyForm.get("phase_id", i);
 
                 if (phaseId != -1) {
                     // Retrieve the phase with the specified id
@@ -1372,7 +1355,7 @@ public class ProjectActions extends DispatchAction {
 
             if ("add".equals(phaseAction)) {
                 // Set phase type
-                phase.setPhaseType(ActionsHelper.findPhaseTypeById(allPhaseTypes, phaseTypes[i].longValue()));
+                phase.setPhaseType(ActionsHelper.findPhaseTypeById(allPhaseTypes, phaseTypes[i]));
                 // Set phase status to "Scheduled"
                 phase.setPhaseStatus(PhaseStatus.SCHEDULED);
             }
@@ -1413,7 +1396,7 @@ public class ProjectActions extends DispatchAction {
             if (startsByAnotherPhase != null && startsByAnotherPhase) {
                 String phaseJsId = (String) lazyForm.get("phase_start_phase", i);
                 if (phaseJsId != null && phaseJsId.trim().length() > 0) {
-                    Phase dependencyPhase = (Phase) phasesJsMap.get(phaseJsId);
+                    Phase dependencyPhase = phasesJsMap.get(phaseJsId);
                     if (dependencyPhase != null) {
                         mainPhaseSet = true;
                         boolean dependencyStart;
@@ -1477,11 +1460,10 @@ public class ProjectActions extends DispatchAction {
                 phase.setAttribute("Reviewer Number", requiredReviewer.toString());
             }
 
-            Boolean manualScreening = (Boolean) lazyForm.get("phase_manual_screening", i);
             Boolean viewAppealResponses = (Boolean) lazyForm.get("phase_view_appeal_responses", i);
             // If the view appeal response during appeals flag is specified, set it
             if (viewAppealResponses != null) {
-                phase.setAttribute("View Response During Appeals", viewAppealResponses.booleanValue() ? "Yes" : "No");
+                phase.setAttribute("View Response During Appeals", viewAppealResponses ? "Yes" : "No");
             }
         }
 
@@ -1539,8 +1521,8 @@ public class ProjectActions extends DispatchAction {
             }
 
             while (!stack.empty()) {
-                phase = (Phase) stack.pop();
-                int paramIndex = ((Integer) phasesToForm.get(phase)).intValue();
+                phase = stack.pop();
+                int paramIndex = phasesToForm.get(phase);
                 if (phaseTypes[paramIndex] == null) {
                     continue;
                 }
@@ -1550,7 +1532,7 @@ public class ProjectActions extends DispatchAction {
                     phase.setScheduledStartDate(phase.calcStartDate());
 
                     // flag value indicates using end date or using duration
-                    boolean useDuration = ((Boolean) lazyForm.get("phase_use_duration", paramIndex)).booleanValue();
+                    boolean useDuration = (Boolean) lazyForm.get("phase_use_duration", paramIndex);
 
                     // If phase duration was not specified
                     if (!useDuration) {
@@ -1627,15 +1609,6 @@ public class ProjectActions extends DispatchAction {
         // Validate the project phases
         boolean validationSucceeded = validateProjectPhases(request, project, projectPhases);
 
-        // Get Explanation for edited project.
-        // It does not matter what this string contains for new projects
-        String explanationText = (!newProject && !statusHasChanged) ? (String) lazyForm.get("explanation") : "***";
-
-        // Validate Explanation, but only if status has not been changed
-        if (explanationText == null || explanationText.trim().length() == 0) {
-            explanationText = "No explanation.";
-        }
-
         if (!validationSucceeded) {
             // If project validation has failed, return immediately
             return oldPhases;
@@ -1680,12 +1653,11 @@ public class ProjectActions extends DispatchAction {
      *
      * @param request
      * @param lazyForm
-     * @param projectPhases
      * @param phasesJsMap
      * @throws BaseException
      */
     private void switchProjectPhase(HttpServletRequest request, LazyValidatorForm lazyForm,
-            Phase[] projectPhases, Map<Object, Phase> phasesJsMap) throws BaseException {
+                                    Map<Object, Phase> phasesJsMap) throws BaseException {
 
         // Get name of action to be performed
         String action = (String) lazyForm.get("action");
@@ -1695,7 +1667,7 @@ public class ProjectActions extends DispatchAction {
 
         if (phaseJsId != null && phasesJsMap.containsKey(phaseJsId)) {
             // Get the phase to be operated on
-            Phase phase = (Phase) phasesJsMap.get(phaseJsId);
+            Phase phase = phasesJsMap.get(phaseJsId);
 
             // Get the status of phase
             PhaseStatus phaseStatus = phase.getPhaseStatus();
@@ -1705,7 +1677,7 @@ public class ProjectActions extends DispatchAction {
             // Obtain an instance of Phase Manager
             PhaseManager phaseManager = ActionsHelper.createPhaseManager(true);
 
-            OperationCheckResult result = null;
+            OperationCheckResult result;
             if ("close_phase".equals(action)) {
             	result = phaseManager.canEnd(phase);
             	if (phaseStatus.getName().equals(PhaseStatus.OPEN.getName()) && result.isSuccess()) {
@@ -1713,7 +1685,7 @@ public class ProjectActions extends DispatchAction {
                     phaseManager.end(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 } else {
                     ActionsHelper.addErrorToRequest(request, new ActionMessage(
-                            "error.com.cronos.onlinereview.actions.editProject.CannotClosePhase", 
+                            "error.com.cronos.onlinereview.actions.editProject.CannotClosePhase",
                             phaseType.getName(), result.getMessage()));
                 }
             } else if ("open_phase".equals(action)) {
@@ -1723,7 +1695,7 @@ public class ProjectActions extends DispatchAction {
                     phaseManager.start(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 } else {
                     ActionsHelper.addErrorToRequest(request, new ActionMessage(
-                            "error.com.cronos.onlinereview.actions.editProject.CannotOpenPhase", 
+                            "error.com.cronos.onlinereview.actions.editProject.CannotOpenPhase",
                             phaseType.getName(), result.getMessage()));
                 }
             }
@@ -1743,13 +1715,12 @@ public class ProjectActions extends DispatchAction {
         boolean arePhasesValid = true;
 
         boolean isStudioProject = project.getProjectCategory().getProjectType().getId() == Constants.STUDIO_PROJECT_ID;
-        
+
         // TODO: Refactor this function, make it more concise
         // IF there is a Post-Mortem phase in project skip the validation as that phase may appear anywhere
         // in project timeline and actual order of the phases is not significant
         boolean postMortemPhaseExists = false;
-        for (int i = 0; i < projectPhases.length; i++) {
-            Phase projectPhase = projectPhases[i];
+        for (Phase projectPhase : projectPhases) {
             if (projectPhase.getPhaseType().getName().equals(POST_MORTEM_PHASE_NAME)) {
                 return true;
             }
@@ -1774,7 +1745,7 @@ public class ProjectActions extends DispatchAction {
             final String currentPhaseName = projectPhases[i].getPhaseType().getName();
             if (currentPhaseName.equals(SUBMISSION_PHASE_NAME)) {
                 // Submission should follow registration or post-mortem if it exists
-                if (i > 0 && !(previousPhaseName.equals(REGISTRATION_PHASE_NAME) 
+                if (i > 0 && !(previousPhaseName.equals(REGISTRATION_PHASE_NAME)
                                || previousPhaseName.equals(MILESTONE_REVIEW_PHASE_NAME))
                     && !postMortemPhaseExists) {
                     ActionsHelper.addErrorToRequest(request,
@@ -1782,13 +1753,13 @@ public class ProjectActions extends DispatchAction {
                     arePhasesValid = false;
                 }
             } else {
-                final String nextPhaseName 
+                final String nextPhaseName
                     = i < (projectPhases.length - 1) ? projectPhases[i + 1].getPhaseType().getName() : "";
                 if (currentPhaseName.equals(REGISTRATION_PHASE_NAME)) {
                     // Registration should be followed by submission or post-mortem
-                    if (i == projectPhases.length - 1 
-                        || !(nextPhaseName.equals(SUBMISSION_PHASE_NAME) 
-                             || nextPhaseName.equals(MILESTONE_SUBMISSION_PHASE_NAME)) 
+                    if (i == projectPhases.length - 1
+                        || !(nextPhaseName.equals(SUBMISSION_PHASE_NAME)
+                             || nextPhaseName.equals(MILESTONE_SUBMISSION_PHASE_NAME))
                            && !postMortemPhaseExists) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.RegistrationMustBeFollowed");
@@ -1796,7 +1767,7 @@ public class ProjectActions extends DispatchAction {
                     }
                 } else if (currentPhaseName.equals(MILESTONE_SUBMISSION_PHASE_NAME)) {
                     // Milestone Submission should be followed by Milestone Screening or Milestone Review
-                    if (!nextPhaseName.equals(MILESTONE_SCREENING_PHASE_NAME) 
+                    if (!nextPhaseName.equals(MILESTONE_SCREENING_PHASE_NAME)
 					    && !nextPhaseName.equals(MILESTONE_REVIEW_PHASE_NAME) ) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.MilestoneSubmissionMustBeFollowed");
@@ -1891,11 +1862,11 @@ public class ProjectActions extends DispatchAction {
                 } else if (currentPhaseName.equals(FINAL_FIX_PHASE_NAME)) {
                     // Final fix should follow either appeals response or aggregation review, or final review
                     if (i == 0 ||
-                            (!previousPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME) 
-                             && !previousPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME) 
+                            (!previousPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME)
+                             && !previousPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME)
 							 && !previousPhaseName.equals(AGGREGATION_PHASE_NAME)
-                             && !previousPhaseName.equals(APPROVAL_PHASE_NAME) 
-                             && !(previousPhaseName.equals(REVIEW_PHASE_NAME) && isStudioProject) 
+                             && !previousPhaseName.equals(APPROVAL_PHASE_NAME)
+                             && !(previousPhaseName.equals(REVIEW_PHASE_NAME) && isStudioProject)
                              && !previousPhaseName.equals(FINAL_REVIEW_PHASE_NAME))
                              && !postMortemPhaseExists
                         ) {
@@ -1982,7 +1953,6 @@ public class ProjectActions extends DispatchAction {
      *     Added Appeals Completed Early flag manipulation when project is saved
      * </p>
      *
-     * @param newProject true if a new project is being saved
      * @param request the HttpServletRequest
      * @param lazyForm the form
      * @param project the project being saved
@@ -1990,15 +1960,14 @@ public class ProjectActions extends DispatchAction {
      * @param phasesJsMap the phasesJsMap
      * @throws BaseException if any error occurs
      */
-    private void saveResources(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
-            Project project, Phase[] projectPhases, Map<Object, Phase> phasesJsMap) throws BaseException {
+    private void saveResources(HttpServletRequest request, LazyValidatorForm lazyForm,
+                               Project project, Phase[] projectPhases, Map<Object, Phase> phasesJsMap) throws BaseException {
 
         // Obtain the instance of the User Retrieval
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
 
         // Obtain the instance of the Resource Manager
         ResourceManager resourceManager = ActionsHelper.createResourceManager();
-        UploadManager uploadManager = ActionsHelper.createUploadManager();
 
         // Get all types of resource roles
         ResourceRole[] resourceRoles = resourceManager.getAllResourceRoles();
@@ -2008,9 +1977,9 @@ public class ProjectActions extends DispatchAction {
         long timelineNotificationId = Long.MIN_VALUE;
 
         // get the id for the timelineNotification
-        for (int i = 0; i < types.length; ++i) {
-            if (types[i].getName().equals("Timeline Notification")) {
-                timelineNotificationId = types[i].getId();
+        for (NotificationType type : types) {
+            if (type.getName().equals("Timeline Notification")) {
+                timelineNotificationId = type.getId();
                 break;
             }
         }
@@ -2032,11 +2001,10 @@ public class ProjectActions extends DispatchAction {
         Set<Long> deletedUsers = new HashSet<Long>();
         Set<Long> newSubmitters = new HashSet<Long>();
         Set<Long> newUsersForumWatch = new HashSet<Long>();
-        
+
         Set<Long> newUsersForNotification = new HashSet<Long>();
         Set<Long> deletedUsersForNotification = new HashSet<Long>();
         Set<Long> deletedUsersForForumWatch = new HashSet<Long>();
-        Set<Long> deletedUsersForumAccess = new HashSet<Long>();
 
         // 0-index resource is skipped as it is a "dummy" one
         boolean allResourcesValid = true;
@@ -2064,12 +2032,8 @@ public class ProjectActions extends DispatchAction {
         try {
             allResourcesValid = allResourcesValid && validateResourceTermsOfUse(request, lazyForm, project, userRetrieval, resourceNames);
             allResourcesValid = allResourcesValid && validateResourceEligibility(request, lazyForm, project, userRetrieval, resourceNames);
-        } catch (NamingException ne) {
-            throw new BaseException(ne);
         } catch (RemoteException re) {
             throw new BaseException(re);
-        } catch (CreateException ce) {
-            throw new BaseException(ce);
         } catch (EJBException e) {
             throw new BaseException(e);
         } catch (ContestEligibilityValidatorException e) {
@@ -2082,7 +2046,7 @@ public class ProjectActions extends DispatchAction {
         Map<String, String> primaryReviewerRoles = new HashMap<String, String>();
         PhaseManager phaseManager = ActionsHelper.createPhaseManager( false);
         PhaseType[] phaseTypes = phaseManager.getAllPhaseTypes();
-        
+
         for (int i = 1; i < resourceNames.length; i++) {
             String resourceAction = (String) lazyForm.get("resources_action", i);
             if (!"delete".equalsIgnoreCase(resourceAction)) {
@@ -2097,7 +2061,7 @@ public class ProjectActions extends DispatchAction {
                         attemptingToAssignDisabledRole = true;
                     } else if ("update".equalsIgnoreCase(resourceAction)) {
                         Long resourceId = (Long) lazyForm.get("resources_id", i);
-                        Resource oldResource = resourceManager.getResource(resourceId.longValue());
+                        Resource oldResource = resourceManager.getResource(resourceId);
                         if (oldResource.getResourceRole().getId() != resourceRoleId) {
                             attemptingToAssignDisabledRole = true;
                         }
@@ -2139,7 +2103,7 @@ public class ProjectActions extends DispatchAction {
 
                         boolean found = false;
                         for(Phase phase : projectPhases){
-                            if(phase.getPhaseType().getId() == relatedPhaseTypeId.longValue())
+                            if(phase.getPhaseType().getId() == (relatedPhaseTypeId))
                                 found = true;
                         }
 
@@ -2164,8 +2128,8 @@ public class ProjectActions extends DispatchAction {
             String resourceAction = (String) lazyForm.get("resources_action", i);
             if (!"add".equals(resourceAction)) {
                 Long resourceId = (Long) lazyForm.get("resources_id", i);
-                if (resourceId.longValue() != -1) {
-                    Resource oldResource = resourceManager.getResource(resourceId.longValue());
+                if (resourceId != -1) {
+                    Resource oldResource = resourceManager.getResource(resourceId);
                     String oldResourceRoleName = oldResource.getResourceRole().getName();
                     boolean resourceHasSubmissions = false;
                     boolean resourceHasReviews = false;
@@ -2259,9 +2223,9 @@ public class ProjectActions extends DispatchAction {
                 resource.setProperty("Registration Date", DATE_FORMAT.format(new Date()));
 
                 newUsers.add(user.getId());
-                
+
                 ResourceRole role = ActionsHelper.findResourceRoleById(
-                        resourceRoles, ((Long) lazyForm.get("resources_role", i)).longValue());
+                        resourceRoles, (Long) lazyForm.get("resources_role", i));
                 if (!role.getName().equals("Observer") || Boolean.parseBoolean(retrieveUserPreference(user.getId(), GLOBAL_TIMELINE_NOTIFICATION))) {
                     newUsersForNotification.add(user.getId());
                 }
@@ -2270,9 +2234,9 @@ public class ProjectActions extends DispatchAction {
             }  else {
                 Long resourceId = (Long) lazyForm.get("resources_id", i);
 
-                if (resourceId.longValue() != -1) {
+                if (resourceId != -1) {
                     // Retrieve the resource with the specified id
-                    resource = resourceManager.getResource(resourceId.longValue());
+                    resource = resourceManager.getResource(resourceId);
                     oldUsers.add(user.getId());
                     //System.out.println("REMOVE:" + user.getId());
                 } else {
@@ -2290,7 +2254,7 @@ public class ProjectActions extends DispatchAction {
 
                 // delete project_result
                 ActionsHelper.deleteProjectResult(project, user.getId(),
-                        ((Long) lazyForm.get("resources_role", i)).longValue());
+                        (Long) lazyForm.get("resources_role", i));
                 resourceManager.removeResource(resource,
                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 resourceManager.removeNotifications(new long[] {user.getId()}, project.getId(),
@@ -2299,13 +2263,13 @@ public class ProjectActions extends DispatchAction {
             }
 
             // Set resource properties
-            resource.setProject(new Long(project.getId()));
+            resource.setProject(project.getId());
             resource.setProperty("Payment", resourcePayment);
             resource.setProperty("Payment Status", lazyForm.get("resources_paid", i));
 
             boolean resourceRoleChanged = false;
             ResourceRole role = ActionsHelper.findResourceRoleById(
-                    resourceRoles, ((Long) lazyForm.get("resources_role", i)).longValue());
+                    resourceRoles, (Long) lazyForm.get("resources_role", i));
             if (role != null && resource.getResourceRole() != null &&
                 role.getId() != resource.getResourceRole().getId()) {
                 // delete project_result if old role is submitter
@@ -2314,13 +2278,13 @@ public class ProjectActions extends DispatchAction {
                     role.getId());
 
                 resourceRoleChanged = true;
-                
+
                 if (role.getName().equals("Observer")) {
                     // change to observer
                     if (!Boolean.parseBoolean(retrieveUserPreference(user.getId(), GLOBAL_TIMELINE_NOTIFICATION))) {
                         deletedUsersForNotification.add(user.getId());
                     }
-                    
+
                     if (!Boolean.parseBoolean(retrieveUserPreference(user.getId(), GLOBAL_FORUM_WATCH))) {
                         deletedUsersForForumWatch.add(user.getId());
                     }
@@ -2357,7 +2321,7 @@ public class ProjectActions extends DispatchAction {
             }
 
             // Set resource properties copied from external user
-            resource.setProperty("External Reference ID", new Long(user.getId()));
+            resource.setProperty("External Reference ID", user.getId());
             // not store in resource info resource.setProperty("Email", user.getEmail());
 
             String resourceRole = resource.getResourceRole().getName();
@@ -2422,8 +2386,8 @@ public class ProjectActions extends DispatchAction {
         Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(resourceManager, project);
         Set<Long> usersToKeep = new HashSet<Long>();
         for (Long id : deletedUsers) {
-            for (int i = 0; i < allProjectResources.length; i++) {
-                long userId = Long.parseLong(((String) allProjectResources[i].getProperty("External Reference ID")).trim());
+            for (Resource projectResource : allProjectResources) {
+                long userId = Long.parseLong(((String) projectResource.getProperty("External Reference ID")).trim());
                 if (userId == id) {
                     // still have other roles
                     usersToKeep.add(userId);
@@ -2448,25 +2412,25 @@ public class ProjectActions extends DispatchAction {
         long[] idsToDeletedForNotification = new long[deletedUsersForNotification.size()];
         int k = 0;
         for (long id : deletedUsersForNotification) {
-            idsToDeletedForNotification[k++] = id; 
+            idsToDeletedForNotification[k++] = id;
         }
         resourceManager.removeNotifications(idsToDeletedForNotification, project.getId(),
                 timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-        
+
         // Update all the timeline notifications
         if (project.getProperty("Timeline Notification").equals("On") && !newUsersForNotification.isEmpty()) {
             // Remove duplicated user ids
             long[] existUserIds = resourceManager.getNotifications(project.getId(), timelineNotificationId);
             Set<Long> finalUsers = new HashSet<Long>(newUsersForNotification);
 
-            for (int i = 0; i < existUserIds.length; i++) {
-                finalUsers.remove(existUserIds[i]);
+            for (long existUserId : existUserIds) {
+                finalUsers.remove(existUserId);
             }
 
             finalUsers.remove(22770213); // Applications user
             finalUsers.remove(22719217); // Components user
             finalUsers.remove(22873364); // LCSUPPORT user
-            
+
             long[] userIds = new long[finalUsers.size()];
             int i = 0;
             for (Long id : finalUsers) {
@@ -2486,10 +2450,8 @@ public class ProjectActions extends DispatchAction {
         ActionsHelper.addForumPermissions(project, newModerators, true);
 
         long forumId = 0;
-        if (project.getProperty("Developer Forum ID") != null
-              && ((Long)project.getProperty("Developer Forum ID")).longValue() != 0)
-        {
-            forumId = ((Long)project.getProperty("Developer Forum ID")).longValue();
+        if (project.getProperty("Developer Forum ID") != null && (Long) project.getProperty("Developer Forum ID") != 0) {
+            forumId = ((Long) project.getProperty("Developer Forum ID"));
         }
 
         ActionsHelper.removeForumWatch(project, deletedUsers, forumId);
@@ -2506,9 +2468,7 @@ public class ProjectActions extends DispatchAction {
      * @param userRetrieval a <code>UserRetrieval</code> instance to obtain the user id.
      * @param resourceNames a <code>String[]</code> containing edited resource names.
      *
-     * @throws NamingException if any errors occur during EJB lookup
      * @throws RemoteException if any errors occur during EJB remote invocation
-     * @throws CreateException if any errors occur during EJB creation
      * @throws EJBException if any other errors occur while invoking EJB services
      * @throws BaseException if any other errors occur while retrieving user
      *
@@ -2517,7 +2477,7 @@ public class ProjectActions extends DispatchAction {
      */
     private boolean validateResourceTermsOfUse(HttpServletRequest request, LazyValidatorForm lazyForm,
             Project project, UserRetrieval userRetrieval, String[] resourceNames)
-            throws NamingException, RemoteException, CreateException, EJBException, BaseException {
+            throws RemoteException, EJBException, BaseException {
 
         boolean allResourcesValid = true;
 
@@ -2535,26 +2495,26 @@ public class ProjectActions extends DispatchAction {
                 String resourceAction = (String) lazyForm.get("resources_action", i);
                 // check for additions or modifications
                 if (!"delete".equals(resourceAction)) {
-                    long roleId = ((Long) lazyForm.get("resources_role", i)).longValue();
+                    long roleId = (Long) lazyForm.get("resources_role", i);
                     long userId = user.getId();
 
                     List<Long>[] necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(new Long(project.getId()).intValue(),
                             new int[] {new Long(roleId).intValue()}, DBMS.COMMON_OLTP_DATASOURCE_NAME);
 
-                    for (int j = 0; j < necessaryTerms.length; j++) {
-                        if (necessaryTerms[j] != null) {
-                            for (Long termsId : necessaryTerms[j]) {
+                    for (List<Long> necessaryTerm : necessaryTerms) {
+                        if (necessaryTerm != null) {
+                            for (Long termsId : necessaryTerm) {
                                 // check if the user has this terms
                                 if (!userTermsOfUse.hasTermsOfUse(userId, termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME)) {
                                     // get missing terms of use title
-                                    TermsOfUseEntity terms =  termsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                                    TermsOfUseEntity terms = termsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
 
                                     // add the error
                                     ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
-                                        new ActionMessage("error.com.cronos.onlinereview.actions.editProject.Resource.MissingTerms",
-                                        terms.getTitle()));
+                                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.Resource.MissingTerms",
+                                                    terms.getTitle()));
 
-                                    allResourcesValid=false;
+                                    allResourcesValid = false;
                                 }
                             }
                         }
@@ -2575,9 +2535,6 @@ public class ProjectActions extends DispatchAction {
      * @param userRetrieval a <code>UserRetrieval</code> instance to obtain the user id.
      * @param resourceNames a <code>String[]</code> containing edited resource names.
      *
-     * @throws NamingException if any errors occur during EJB lookup
-     * @throws RemoteException if any errors occur during EJB remote invocation
-     * @throws CreateException if any errors occur during EJB creation
      * @throws EJBException if any other errors occur while invoking EJB services
      * @throws BaseException if any other errors occur while retrieving user
      *
@@ -2586,8 +2543,7 @@ public class ProjectActions extends DispatchAction {
      */
     private boolean validateResourceEligibility(HttpServletRequest request, LazyValidatorForm lazyForm,
             Project project, UserRetrieval userRetrieval, String[] resourceNames)
-            throws NamingException, RemoteException, CreateException,
-                   EJBException, BaseException, ContestEligibilityValidatorException {
+            throws EJBException, BaseException, ContestEligibilityValidatorException {
 
         boolean allResourcesValid = true;
 
@@ -2689,7 +2645,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         // Pass the index of the active tab into request
-        request.setAttribute("projectTabIndex", new Integer(activeTab));
+        request.setAttribute("projectTabIndex", activeTab);
 
         // Get all project types defined in the database (e.g. Assembly, Component, etc.)
         ProjectType[] projectTypes = manager.getAllProjectTypes();
@@ -2751,8 +2707,8 @@ public class ProjectActions extends DispatchAction {
         Arrays.sort(ungroupedProjects, new Comparators.ProjectNameComparer());
 
         List<Long> projectFilters = new ArrayList<Long>();
-        for (int i = 0; i < ungroupedProjects.length; ++i) {
-            projectFilters.add(ungroupedProjects[i].getId());
+        for (Project ungroupedProject : ungroupedProjects) {
+            projectFilters.add(ungroupedProject.getId());
         }
 
         ResourceManager resourceManager = ActionsHelper.createResourceManager();
@@ -2802,8 +2758,8 @@ public class ProjectActions extends DispatchAction {
 
         for (int i = 0; i < projectCategories.length; ++i) {
             // Count number of projects in this category
-            for (int j = 0; j < ungroupedProjects.length; ++j) {
-                if (ungroupedProjects[j].getProjectCategory().getId() == projectCategories[i].getId()) {
+            for (Project ungroupedProject : ungroupedProjects) {
+                if (ungroupedProject.getProjectCategory().getId() == projectCategories[i].getId()) {
                     ++categoryCounts[i];
                 }
             }
@@ -2828,15 +2784,15 @@ public class ProjectActions extends DispatchAction {
                 // Counter of projects currently added to this category
                 int counter = 0;
                 // Copy ungrouped projects into group of this category
-                for (int j = 0; j < ungroupedProjects.length; ++j) {
+                for (Project ungroupedProject : ungroupedProjects) {
                     // Skip projects that are not in this category
                     // (they'll be processed later, or have already been processed)
-                    if (ungroupedProjects[j].getProjectCategory().getId() != projectCategories[i].getId()) {
+                    if (ungroupedProject.getProjectCategory().getId() != projectCategories[i].getId()) {
                         continue;
                     }
 
                     // Get a project to store in current group
-                    Project project = ungroupedProjects[j];
+                    Project project = ungroupedProject;
                     // Get this project's Root Catalog ID
                     String rootCatalogId = (String) project.getProperty("Root Catalog ID");
 
@@ -2906,7 +2862,7 @@ public class ProjectActions extends DispatchAction {
                     }
 
                     deliverables[j] = getMyDeliverablesForPhases(
-                            messages, allMyDeliverables, phases[i][j], myResources[i][j], winnerIdStr, request);
+                            messages, allMyDeliverables, phases[i][j], myResources[i][j], winnerIdStr);
                 }
                 myDeliverables[i] = deliverables;
             }
@@ -2933,12 +2889,12 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("projectEndDates", projectEndDates);
         request.setAttribute("typeCounts", typeCounts);
         request.setAttribute("categoryCounts", categoryCounts);
-        request.setAttribute("totalProjectsCount", new Integer(totalProjectsCount));
+        request.setAttribute("totalProjectsCount", totalProjectsCount);
         request.setAttribute("categoryIconNames", categoryIconNames);
 
         // If the currently displayed list is a list of "My" Projects, add some more attributes
         if (myProjects) {
-            request.setAttribute("isMyProjects", new Boolean(myProjects));
+            request.setAttribute("isMyProjects", myProjects);
             request.setAttribute("myRoles", myRoles);
             request.setAttribute("myDeliverables", myDeliverables);
         }
@@ -3055,8 +3011,8 @@ public class ProjectActions extends DispatchAction {
                     continue;
                 }
 
-                for (int k = 0; k < activePhases.length; ++k) {
-                    phaseTypeIds.add(activePhases[k].getId());
+                for (Phase activePhase : activePhases) {
+                    phaseTypeIds.add(activePhase.getId());
                 }
 
                 // Get an array of "my" resources for the active phases
@@ -3069,18 +3025,18 @@ public class ProjectActions extends DispatchAction {
                 // Filter out those resources which do not correspond to active phases. If resource has phase set
                 // explicitly (but is not one of the reviewer roles) then check if it's phase is in list of active
                 // phases; otherwise check if it's role has a deliverable for one of the active phases
-                for (int k = 0; k < myResources.length; ++k) {
+                for (Resource myResource : myResources) {
                     boolean toAdd = false;
-                    long resourceRoleId = myResources[k].getResourceRole().getId();
+                    long resourceRoleId = myResource.getResourceRole().getId();
                     boolean isReviewer = (resourceRoleId == 4) || (resourceRoleId == 5) || (resourceRoleId == 6)
-                                         || (resourceRoleId == 7);
+                            || (resourceRoleId == 7);
                     for (int m = 0; !toAdd && (m < activePhases.length); m++) {
                         Phase activePhase = activePhases[m];
-                        if (myResources[k].getPhase() != null && !isReviewer) {
-                            toAdd = (activePhase.getId() == myResources[k].getPhase());
+                        if (myResource.getPhase() != null && !isReviewer) {
+                            toAdd = (activePhase.getId() == myResource.getPhase());
                         } else {
                             Map<Long, Long> roleDeliverables
-                                = deliverableTypes.get(myResources[k].getResourceRole().getId());
+                                    = deliverableTypes.get(myResource.getResourceRole().getId());
                             if (roleDeliverables != null) {
                                 if (roleDeliverables.containsKey(activePhase.getPhaseType().getId())) {
                                     toAdd = true;
@@ -3090,7 +3046,7 @@ public class ProjectActions extends DispatchAction {
                     }
 
                     if (toAdd) {
-                        resourceIds.add(myResources[k].getId());
+                        resourceIds.add(myResource.getId());
                     }
                 }
             }
@@ -3141,9 +3097,9 @@ public class ProjectActions extends DispatchAction {
         StringBuffer buffer = new StringBuffer();
         Set<String> rolesSet = new HashSet<String>();
 
-        for (int i = 0; i < resources.length; ++i) {
+        for (Resource resource : resources) {
             // Get the name for a resource in the current iteration
-            String resourceRole = resources[i].getResourceRole().getName();
+            String resourceRole = resource.getResourceRole().getName();
 
             if (rolesSet.contains(resourceRole)) {
                 continue;
@@ -3185,8 +3141,8 @@ public class ProjectActions extends DispatchAction {
      * @throws SearchBuilderException if an unexpected error occurs.
      */
     private static String getMyDeliverablesForPhases(MessageResources messages,
-            Deliverable[] deliverables, Phase[] phases, Resource[] resources, String winnerExtUserId,
-            HttpServletRequest request) throws SearchBuilderException, UploadPersistenceException {
+        Deliverable[] deliverables, Phase[] phases, Resource[] resources, String winnerExtUserId)
+        throws SearchBuilderException, UploadPersistenceException {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(messages, "messages");
 
@@ -3199,14 +3155,12 @@ public class ProjectActions extends DispatchAction {
         StringBuffer buffer = new StringBuffer();
         Set<String> deliverablesSet = new HashSet<String>();
 
-        for (int i = 0; i < deliverables.length; ++i) {
+        for (Deliverable deliverable : deliverables) {
             // Get a deliverable for the current iteration
-            Deliverable deliverable = deliverables[i];
-
             // Check if this deliverable is for any of the phases in question
             int j = 0;
 
-            for (;j < phases.length; ++j) {
+            for (; j < phases.length; ++j) {
                 if (deliverable.getPhase() == phases[j].getId()) {
                     break;
                 }
@@ -3216,7 +3170,7 @@ public class ProjectActions extends DispatchAction {
                 continue;
             }
 
-            for (j = 0;j < resources.length; ++j) {
+            for (j = 0; j < resources.length; ++j) {
                 if (deliverable.getResource() == resources[j].getId()) {
                     break;
                 }
@@ -3271,8 +3225,8 @@ public class ProjectActions extends DispatchAction {
             // Some additional special checking is need for Specification Submission type of deliverables
             if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(deliverable.getName())) {
                 Submission submission
-                    = ActionsHelper.getActiveSpecificationSubmission(phases[0].getProject().getId(),
-                                                                     ActionsHelper.createUploadManager());
+                        = ActionsHelper.getActiveSpecificationSubmission(phases[0].getProject().getId(),
+                        ActionsHelper.createUploadManager());
                 if ((submission != null) && (submission.getUpload().getOwner() != deliverable.getResource())) {
                     continue;
                 }
@@ -3371,8 +3325,7 @@ public class ProjectActions extends DispatchAction {
      * @throws BaseException if an unexpected error occurs.
      */
     private void setEditProjectFormData(HttpServletRequest request, CorrectnessCheckResult verification,
-                                        LazyValidatorForm form)
-        throws BaseException {
+                                        LazyValidatorForm form) throws BaseException {
 
         // Load the lookup data
         loadProjectEditLookups(request);
@@ -3516,20 +3469,20 @@ public class ProjectActions extends DispatchAction {
             if (closedPhasesOnly && phases[i].getPhaseStatus().getId() != 3) {
                 continue;
             }
-            form.set("phase_id", i + 1, new Long(phases[i].getId()));
+            form.set("phase_id", i + 1, phases[i].getId());
 
             form.set("phase_can_open", i + 1,
                     Boolean.valueOf(phases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())));
             form.set("phase_can_close", i + 1,
                     Boolean.valueOf(phases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())));
 
-            Long phaseTypeId = new Long(phases[i].getPhaseType().getId());
+            Long phaseTypeId = phases[i].getPhaseType().getId();
             form.set("phase_type", i + 1, phaseTypeId);
-            Integer phaseNumber = (Integer) phaseNumberMap.get(phaseTypeId);
+            Integer phaseNumber = phaseNumberMap.get(phaseTypeId);
             if (phaseNumber == null) {
-                phaseNumber = new Integer(1);
+                phaseNumber = 1;
             } else {
-                phaseNumber = new Integer(phaseNumber.intValue() + 1);
+                phaseNumber = phaseNumber + 1;
             }
             phaseNumberMap.put(phaseTypeId, phaseNumber);
             form.set("phase_number", i + 1, phaseNumber);
@@ -3553,13 +3506,13 @@ public class ProjectActions extends DispatchAction {
                 }
                 if (lagTime % (24 * 3600 * 1000L) == 0) {
                     form.set("phase_start_dayshrs", i + 1, "days");
-                    form.set("phase_start_amount", i + 1, new Integer((int) (lagTime / (24 * 3600 * 1000L))));
+                    form.set("phase_start_amount", i + 1, (int) (lagTime / (24 * 3600 * 1000L)));
                 } else if (lagTime % (3600 * 1000L) == 0) {
                     form.set("phase_start_dayshrs", i + 1, "hrs");
-                    form.set("phase_start_amount", i + 1, new Integer((int) (lagTime / (3600 * 1000L))));
+                    form.set("phase_start_amount", i + 1, (int) (lagTime / (3600 * 1000L)));
                 } else {
                     form.set("phase_start_dayshrs", i + 1, "mins");
-                    form.set("phase_start_amount", i + 1, new Integer((int) (lagTime / (60 * 1000L))));
+                    form.set("phase_start_amount", i + 1, (int) (lagTime / (60 * 1000L)));
                 }
             }
             if (phases[i].getFixedStartDate() != null) {
@@ -3575,7 +3528,7 @@ public class ProjectActions extends DispatchAction {
 
             // populate the phase duration
             long phaseLength = phases[i].getLength();
-            String phaseDuration = "";
+            String phaseDuration;
             if (phaseLength % (3600*1000) == 0) {
                 phaseDuration = "" + phaseLength / (3600 * 1000);
             } else {

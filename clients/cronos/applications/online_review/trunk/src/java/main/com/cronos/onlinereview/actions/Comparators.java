@@ -344,9 +344,7 @@ final class Comparators {
                 return;
             }
 
-            for (int i = 0; i < submitters.length; ++i) {
-                Resource submitter = submitters[i];
-
+            for (Resource submitter : submitters) {
                 if (submitter == null) {
                     throw new IllegalArgumentException("Parameter 'submitters' must not contain null elements.");
                 }
@@ -534,9 +532,7 @@ final class Comparators {
                 return;
             }
 
-            for (int i = 0; i < submitters.length; ++i) {
-                Resource submitter = submitters[i];
-
+            for (Resource submitter : submitters) {
                 if (submitter == null) {
                     throw new IllegalArgumentException("Parameter 'submitters' must not contain null elements.");
                 }

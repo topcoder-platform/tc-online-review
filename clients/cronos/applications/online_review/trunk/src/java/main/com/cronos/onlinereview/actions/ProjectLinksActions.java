@@ -38,7 +38,7 @@ import com.topcoder.util.errorhandling.BaseException;
  *
  * <p>
  * Change log for version 1.1: updated
- * {@link #saveProjectLinks(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method to handle the
+ * {@link #saveProjectLinks(org.apache.struts.action.ActionMapping,org.apache.struts.action.ActionForm,javax.servlet.http.HttpServletRequest)} method to handle the
  * CyclicDependencyError.
  * </p>
  *
@@ -108,9 +108,6 @@ public class ProjectLinksActions extends DispatchAction {
         // Obtain an instance of Project Manager
         ProjectManager manager = ActionsHelper.createProjectManager();
 
-        // get all active projects
-        Filter filterStatus = new NotFilter(ProjectFilterUtility.buildStatusNameEqualFilter(STATUS_NAME_DELETED));
-
         //Project[] allProjects = manager.searchProjects(filterStatus);
 
 		Project[] allProjects = manager.getProjectsByCreateDate(90);
@@ -121,7 +118,7 @@ public class ProjectLinksActions extends DispatchAction {
         request.setAttribute("allProjects", allProjects);
 
         // Populate the form with project and project link properties
-        populateProjectLinkForm(request, (LazyValidatorForm) form, verification.getProject());
+        populateProjectLinkForm((LazyValidatorForm) form, verification.getProject());
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
@@ -131,21 +128,20 @@ public class ProjectLinksActions extends DispatchAction {
      * This method populates the specified LazyValidatorForm with the values taken from the specified Project.
      * </p>
      *
-     * @param request the request to be processed
      * @param form the form to be populated with data
      * @param project the project to take the data from
      *
      * @throws BaseException if any error occurs during the population
      */
-    private void populateProjectLinkForm(HttpServletRequest request, LazyValidatorForm form, Project project)
+    private void populateProjectLinkForm(LazyValidatorForm form, Project project)
         throws BaseException {
         // Populate project id
-        form.set("pid", new Long(project.getId()));
+        form.set("pid", project.getId());
 
         // template row
         form.set("link_dest_id_text", 0, "");
-        form.set("link_dest_id", 0, new Long(-1));
-        form.set("link_type_id", 0, new Long(-1));
+        form.set("link_dest_id", 0, (long) -1);
+        form.set("link_type_id", 0, (long) -1);
         form.set("link_action", 0, LINK_ACTION_ADD);
 
         ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager();
@@ -153,8 +149,8 @@ public class ProjectLinksActions extends DispatchAction {
         for (int i = 0; i < links.length; i++) {
             ProjectLink link = links[i];
             form.set("link_dest_id_text", i + 1, "" + link.getDestProject().getId());
-            form.set("link_dest_id", i + 1, new Long(link.getDestProject().getId()));
-            form.set("link_type_id", i + 1, new Long(link.getType().getId()));
+            form.set("link_dest_id", i + 1, link.getDestProject().getId());
+            form.set("link_type_id", i + 1, link.getType().getId());
             form.set("link_action", i + 1, LINK_ACTION_ADD);
         }
     }

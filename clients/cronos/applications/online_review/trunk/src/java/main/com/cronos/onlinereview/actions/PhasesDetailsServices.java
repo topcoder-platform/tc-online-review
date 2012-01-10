@@ -54,7 +54,7 @@ import com.topcoder.util.errorhandling.BaseException;
  *     <li>Updated
  *     {@link #getPhasesDetails(HttpServletRequest, MessageResources, Project, Phase[], Resource[], ExternalUser[])}
  *     method to newly added
- *     {@link #servicePostMortemAppFunc(HttpServletRequest, PhaseGroup, Project, Phase, Resource[])} method to
+ *     {@link #servicePostMortemAppFunc(PhaseGroup,com.topcoder.management.project.Project,com.topcoder.project.phases.Phase,com.topcoder.management.resource.Resource[])} method to
  *      provide details for <code>Post-Mortem</code> phase.</li>
  *   </ol>
  * </p>
@@ -79,8 +79,7 @@ import com.topcoder.util.errorhandling.BaseException;
  * <p>
  * Version 1.4 (Specification Review Part 1 Assembly 1.0) Change notes:
  *   <ol>
- *     <li>Added {@link #serviceSpecReviewAppFunc(HttpServletRequest, PhaseGroup, Project, Phase, Resource[],
- *     SpecificationsInfo)} method.
+ *     <li>Added {@link #serviceSpecReviewAppFunc(PhaseGroup,com.topcoder.management.project.Project,com.topcoder.project.phases.Phase,com.topcoder.management.resource.Resource[],com.cronos.onlinereview.actions.PhasesDetailsServices.SpecificationsInfo)} method.
  *     </li>
  *   </ol>
  * </p>
@@ -206,8 +205,8 @@ final class PhasesDetailsServices {
                     phaseGroup = new PhaseGroup();
                     phaseGroups.add(phaseGroup);
 
-                    Integer groupIndexObj = (Integer) similarPhaseGroupIndexes.get(appFuncName);
-                    int groupIndex = (groupIndexObj != null) ? groupIndexObj.intValue() : 0;
+                    Integer groupIndexObj = similarPhaseGroupIndexes.get(appFuncName);
+                    int groupIndex = (groupIndexObj != null) ? groupIndexObj : 0;
 
                     similarPhaseGroupIndexes.put(appFuncName, groupIndex + 1);
 
@@ -288,11 +287,11 @@ final class PhasesDetailsServices {
                 serviceApprovalAppFunc(request, phaseGroup, project, phase,
                         allProjectResources, isAfterAppealsResponse, finalFixes, mostRecentContestSubmissions);
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.POST_MORTEM_APP_FUNC)) {
-                servicePostMortemAppFunc(request, phaseGroup, project, phase, allProjectResources);
+                servicePostMortemAppFunc(phaseGroup, project, phase, allProjectResources);
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.SPEC_REVIEW_APP_FUNC)) {
-                serviceSpecReviewAppFunc(request, phaseGroup, project, phase, allProjectResources, specifications);
+                serviceSpecReviewAppFunc(phaseGroup, project, phase, allProjectResources, specifications);
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.MILESTONE_APP_FUNC)) {
-                serviceMilestoneAppFunc(request, phaseGroup, project, phase, allProjectResources, phases, phaseIdx, 
+                serviceMilestoneAppFunc(request, phaseGroup, project, phase, allProjectResources, phases, phaseIdx,
                                         submitters);
             }
         }
@@ -308,41 +307,41 @@ final class PhasesDetailsServices {
 
     /**
      * <p>Processes the current phase from <code>Milestone</code> group of phases.</p>
-     * 
-     * @param request an <code>HttpServletRequest</code> referencing the incoming request. 
-     * @param phaseGroup a <code>PhaseGroup</code> providing the collected data for groups of phases. 
-     * @param project a <code>Project</code> providing details for current project. 
-     * @param phase a <code>Phase</code> providing details for current phase. 
+     *
+     * @param request an <code>HttpServletRequest</code> referencing the incoming request.
+     * @param phaseGroup a <code>PhaseGroup</code> providing the collected data for groups of phases.
+     * @param project a <code>Project</code> providing details for current project.
+     * @param phase a <code>Phase</code> providing details for current phase.
      * @param allProjectResources a <code>Resource</code> listing all project resources.
      * @param phases a <code>Phase</code> array listing all project phases.
      * @param phaseIdx an <code>int</code> specifying the index of current phase.
-     * @param submitters a <code>Resource</code> array listing the submitters for project.  
-     * @throws BaseException if an unexpected error occurs. 
+     * @param submitters a <code>Resource</code> array listing the submitters for project.
+     * @throws BaseException if an unexpected error occurs.
      */
     private static void serviceMilestoneAppFunc(HttpServletRequest request, PhaseGroup phaseGroup, Project project,
-                                                Phase phase, Resource[] allProjectResources, Phase[] phases, 
+                                                Phase phase, Resource[] allProjectResources, Phase[] phases,
                                                 int phaseIdx, Resource[] submitters) throws BaseException {
         Phase milestoneReviewPhase = ActionsHelper.getPhase(phases, false, Constants.MILESTONE_REVIEW_PHASE_NAME);
         if (milestoneReviewPhase != null) {
             phaseGroup.setMilestoneReviewFinished(milestoneReviewPhase.getPhaseStatus().getId() == 3);
         }
-        
+
         Phase reviewPhase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
         boolean isReviewFinished = (reviewPhase != null) && (reviewPhase.getPhaseStatus().getId() == 3);
-        
+
         String phaseName = phase.getPhaseType().getName();
-        
-        boolean mayViewMostRecentAfterReview 
-            = AuthorizationHelper.hasUserPermission(request, 
+
+        boolean mayViewMostRecentAfterReview
+            = AuthorizationHelper.hasUserPermission(request,
                                                     Constants.VIEW_RECENT_MILESTONE_SUBMISSIONS_AFTER_REVIEW_PERM_NAME);
 
         // Milestone Submission phase
         if (phaseName.equalsIgnoreCase(Constants.MILESTONE_SUBMISSION_PHASE_NAME)) {
             Submission[] submissions = null;
-            
+
             if (mayViewMostRecentAfterReview && isReviewFinished
                 || AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_MILESTONE_SUBMISSIONS_PERM_NAME)
-                || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_MILESTONE_SUBMISSIONS_PERM_NAME) 
+                || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_MILESTONE_SUBMISSIONS_PERM_NAME)
                     && !AuthorizationHelper.hasUserRole(request, Constants.MILESTONE_REVIEWER_ROLE_NAME))
                 || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_MILESTONE_SUBMISSIONS_PERM_NAME)
                     && AuthorizationHelper.hasUserRole(request, Constants.MILESTONE_REVIEWER_ROLE_NAME)
@@ -355,7 +354,7 @@ final class PhasesDetailsServices {
                     ActionsHelper.createUploadManager(), project, Constants.MILESTONE_SUBMISSION_TYPE_NAME);
             }
 
-            if (submissions == null 
+            if (submissions == null
                 && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_MILESTONE_SUBMISSIONS_PERM_NAME)) {
                 // Obtain an instance of Upload Manager
                 UploadManager upMgr = ActionsHelper.createUploadManager();
@@ -367,12 +366,16 @@ final class PhasesDetailsServices {
                 // Get "my" (submitter's) resource
                 Resource myResource = null;
                 Resource[] myResources = ActionsHelper.getMyResourcesForPhase(request, null);
-                for (int i = 0; i < myResources.length; i++) {
-                    Resource resource = myResources[i];
+                for (Resource resource : myResources) {
                     if (resource.getResourceRole().getName().equals("Submitter")) {
                         myResource = resource;
                         break;
                     }
+                }
+
+                if (myResource == null) {
+                    throw new BaseException("Unable to find the Submitter resource " +
+                            "associated with the current user for project " + project.getId());
                 }
 
                 Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
@@ -396,13 +399,13 @@ final class PhasesDetailsServices {
             Arrays.sort(submissions, comparator);
 
             phaseGroup.setPastMilestoneSubmissions(
-                getPreviousUploadsForSubmissions(request, project, submissions, 
+                getPreviousUploadsForSubmissions(request, project, submissions,
                                                  Constants.VIEW_ALL_MILESTONE_SUBMISSIONS_PERM_NAME));
             phaseGroup.setMilestoneSubmissions(submissions);
         }
 
         // Milestone Screening phase
-        if (phaseName.equalsIgnoreCase(Constants.MILESTONE_SCREENING_PHASE_NAME) 
+        if (phaseName.equalsIgnoreCase(Constants.MILESTONE_SCREENING_PHASE_NAME)
             && phaseGroup.getMilestoneSubmissions() != null) {
             Submission[] submissions = phaseGroup.getMilestoneSubmissions();
 
@@ -424,13 +427,13 @@ final class PhasesDetailsServices {
 
             List<Long> submissionIds = new ArrayList<Long>();
 
-            for (int j = 0; j < submissions.length; ++j) {
-                submissionIds.add(submissions[j].getId());
+            for (Submission submission : submissions) {
+                submissionIds.add(submission.getId());
             }
 
             Filter filterSubmissions = new InFilter("submission", submissionIds);
             Filter filterScorecard = new EqualToFilter("scorecardType",
-                    new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Milestone Screening").getId()));
+                    ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Milestone Screening").getId());
 
             Filter filter = new AndFilter(filterSubmissions, filterScorecard);
 
@@ -440,11 +443,11 @@ final class PhasesDetailsServices {
 
             phaseGroup.setMilestoneScreeningReviews(reviews);
         }
-        
+
         // Milestone Review phase
-        if (phaseName.equalsIgnoreCase(Constants.MILESTONE_REVIEW_PHASE_NAME) 
+        if (phaseName.equalsIgnoreCase(Constants.MILESTONE_REVIEW_PHASE_NAME)
             && phaseGroup.getMilestoneSubmissions() != null) {
-            
+
             Submission[] submissions = phaseGroup.getMilestoneSubmissions();
 
             Resource[] reviewers = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
@@ -463,13 +466,13 @@ final class PhasesDetailsServices {
 
             List<Long> submissionIds = new ArrayList<Long>();
 
-            for (int j = 0; j < submissions.length; ++j) {
-                submissionIds.add(submissions[j].getId());
+            for (Submission submission : submissions) {
+                submissionIds.add(submission.getId());
             }
 
             Filter filterSubmissions = new InFilter("submission", submissionIds);
             Filter filterScorecard = new EqualToFilter("scorecardType",
-                    new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Milestone Review").getId()));
+                    ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Milestone Review").getId());
 
             Filter filter = new AndFilter(filterSubmissions, filterScorecard);
 
@@ -505,9 +508,9 @@ final class PhasesDetailsServices {
         for (int j = 0; j < submitters.length; ++j) {
             // Get external ID for the current submitter's resource
             long extUserId = Long.parseLong((String) submitters[j].getProperty("External Reference ID"), 10);
-            for (int k = 0; k < extUsers.length; ++k) {
-                if (extUserId == extUsers[k].getId()) {
-                    userEmails[j] = extUsers[k].getEmail();
+            for (ExternalUser extUser : extUsers) {
+                if (extUserId == extUser.getId()) {
+                    userEmails[j] = extUser.getEmail();
                     break;
                 }
             }
@@ -518,34 +521,34 @@ final class PhasesDetailsServices {
 
     /**
      * <p>Gets the pervious uploads for specified submissions.</p>
-     * 
-     * @param request an <code>HttpServletRequest</code> representing incoming request. 
-     * @param project a <code>Project</code> providing details for project. 
-     * @param submissions a <code>Submission</code> array listing the current submissions to get previous uploads for. 
+     *
+     * @param request an <code>HttpServletRequest</code> representing incoming request.
+     * @param project a <code>Project</code> providing details for project.
+     * @param submissions a <code>Submission</code> array listing the current submissions to get previous uploads for.
      * @param viewAllSubmissionsPermission a <code>String</code> providing the permission for viewing all submissions of
      *        desired type.
-     * @return an <code>Upload</code> array listing the uploads for previous submissions for specified submissions. 
+     * @return an <code>Upload</code> array listing the uploads for previous submissions for specified submissions.
      * @throws BaseException if an unexpected error occurs.
      */
-    private static Upload[][] getPreviousUploadsForSubmissions(HttpServletRequest request, Project project, 
-                                                               Submission[] submissions, 
-                                                               String viewAllSubmissionsPermission) 
+    private static Upload[][] getPreviousUploadsForSubmissions(HttpServletRequest request, Project project,
+                                                               Submission[] submissions,
+                                                               String viewAllSubmissionsPermission)
         throws BaseException {
         Upload[][] pastSubmissions = null;
         if (submissions.length > 0 &&
             AuthorizationHelper.hasUserPermission(request, viewAllSubmissionsPermission)) {
-            
+
             UploadManager upMgr = ActionsHelper.createUploadManager();
             SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
             UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
             UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
-            
+
             // Find all deleted submissions for specified project
             Filter filterSubmissionProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
             Filter filterSubmissionStatus = SubmissionFilterBuilder.createSubmissionStatusIdFilter(
                 ActionsHelper.findSubmissionStatusByName(allSubmissionStatuses, "Deleted").getId());
 
-            Submission[] allDeletedSubmissions 
+            Submission[] allDeletedSubmissions
                 = upMgr.searchSubmissions(new AndFilter(filterSubmissionProject, filterSubmissionStatus));
 
             // Find all deleted uploads for specified project
@@ -556,22 +559,22 @@ final class PhasesDetailsServices {
                 ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted").getId());
             Filter filter = new AndFilter(Arrays.asList(filterProject, filterUploadType, filterUploadStatus));
             Upload[] ungroupedUploads = upMgr.searchUploads(filter);
-            
-            
+
+
             pastSubmissions = new Upload[submissions.length][];
 
             for (int j = 0; j < pastSubmissions.length; ++j) {
                 List<Upload> temp = new ArrayList<Upload>();
                 long currentUploadOwnerId = submissions[j].getUpload().getOwner();
 
-                for (int k = 0; k < ungroupedUploads.length; k++) {
-                    if (currentUploadOwnerId == ungroupedUploads[k].getOwner()) {
+                for (Upload ungroupedUpload : ungroupedUploads) {
+                    if (currentUploadOwnerId == ungroupedUpload.getOwner()) {
                         for (Submission deletedSubmission : allDeletedSubmissions) {
                             Upload deletedSubmissionUpload = deletedSubmission.getUpload();
-                            if (deletedSubmissionUpload.getId() == ungroupedUploads[k].getId()) {
-                                if (deletedSubmission.getSubmissionType().getId() 
-                                    == submissions[j].getSubmissionType().getId()) {
-                                    temp.add(ungroupedUploads[k]);
+                            if (deletedSubmissionUpload.getId() == ungroupedUpload.getId()) {
+                                if (deletedSubmission.getSubmissionType().getId()
+                                        == submissions[j].getSubmissionType().getId()) {
+                                    temp.add(ungroupedUpload);
                                 }
                             }
                         }
@@ -579,7 +582,7 @@ final class PhasesDetailsServices {
                 }
 
                 if (!temp.isEmpty()) {
-                    pastSubmissions[j] = (Upload[]) temp.toArray(new Upload[temp.size()]);
+                    pastSubmissions[j] = temp.toArray(new Upload[temp.size()]);
                 }
             }
         }
@@ -648,12 +651,16 @@ final class PhasesDetailsServices {
                 // Get "my" (submitter's) resource
                 Resource myResource = null;
                 Resource[] myResources = ActionsHelper.getMyResourcesForPhase(request, null);
-                for (int i = 0; i < myResources.length; i++) {
-                    Resource resource = myResources[i];
+                for (Resource resource : myResources) {
                     if (resource.getResourceRole().getName().equals("Submitter")) {
                         myResource = resource;
                         break;
                     }
+                }
+
+                if (myResource == null) {
+                    throw new BaseException("Unable to find the Submitter resource " +
+                            "associated with the current user for project " + project.getId());
                 }
 
                 Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
@@ -676,7 +683,7 @@ final class PhasesDetailsServices {
             comparator.assignSubmitters(submitters);
             Arrays.sort(submissions, comparator);
 
-            phaseGroup.setPastSubmissions(getPreviousUploadsForSubmissions(request, project, submissions, 
+            phaseGroup.setPastSubmissions(getPreviousUploadsForSubmissions(request, project, submissions,
                                                                            Constants.VIEW_ALL_SUBM_PERM_NAME));
 
             phaseGroup.setSubmissions(submissions);
@@ -688,17 +695,17 @@ final class PhasesDetailsServices {
 
             if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME) &&
                     !AuthorizationHelper.hasUserRole(request, Constants.PRIMARY_SCREENER_ROLE_NAME)) {
-                Resource[] my = ActionsHelper.getMyResourcesForPhase(request, phases[phaseIdx]);
+                Resource[] myResources = ActionsHelper.getMyResourcesForPhase(request, phases[phaseIdx]);
                 List<Submission> tempSubs = new ArrayList<Submission>();
 
-                for (int j = 0; j < submissions.length; ++j) {
-                    for (int k = 0; k < my.length; ++k) {
-                        if (my[k].containsSubmission(submissions[j].getId())) {
-                            tempSubs.add(submissions[j]);
+                for (Submission submission : submissions) {
+                    for (Resource resource : myResources) {
+                        if (resource.containsSubmission(submission.getId())) {
+                            tempSubs.add(submission);
                         }
                     }
                 }
-                submissions = (Submission[]) tempSubs.toArray(new Submission[tempSubs.size()]);
+                submissions = tempSubs.toArray(new Submission[tempSubs.size()]);
                 phaseGroup.setSubmissions(submissions);
             }
 
@@ -718,13 +725,13 @@ final class PhasesDetailsServices {
 
             List<Long> submissionIds = new ArrayList<Long>();
 
-            for (int j = 0; j < submissions.length; ++j) {
-                submissionIds.add(submissions[j].getId());
+            for (Submission submission : submissions) {
+                submissionIds.add(submission.getId());
             }
 
             Filter filterSubmissions = new InFilter("submission", submissionIds);
             Filter filterScorecard = new EqualToFilter("scorecardType",
-                    new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Screening").getId()));
+                    ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Screening").getId());
 
             Filter filter = new AndFilter(filterSubmissions, filterScorecard);
 
@@ -786,8 +793,7 @@ final class PhasesDetailsServices {
                 // Get "my" (submitter's) resource
                 Resource myResource = null;
                 Resource[] myResources = ActionsHelper.getMyResourcesForPhase(request, null);
-                for (int i = 0; i < myResources.length; i++) {
-                    Resource resource = myResources[i];
+                for (Resource resource : myResources) {
                     if (resource.getResourceRole().getName().equals("Submitter")) {
                         myResource = resource;
                         break;
@@ -872,14 +878,14 @@ final class PhasesDetailsServices {
 
             List<Long> submissionIds = new ArrayList<Long>();
 
-            for (int j = 0; j < submissions.length; ++j) {
-                submissionIds.add(submissions[j].getId());
+            for (Submission submission : submissions) {
+                submissionIds.add(submission.getId());
             }
 
             List<Long> reviewerIds = new ArrayList<Long>();
 
-            for (int j = 0; j < reviewers.length; ++j) {
-                reviewerIds.add(reviewers[j].getId());
+            for (Resource reviewer : reviewers) {
+                reviewerIds.add(reviewer.getId());
             }
 
             Review[] ungroupedReviews = null;
@@ -888,7 +894,7 @@ final class PhasesDetailsServices {
                 Filter filterSubmissions = new InFilter("submission", submissionIds);
                 Filter filterReviewers = new InFilter("reviewer", reviewerIds);
                 Filter filterScorecard = new EqualToFilter("scorecardType",
-                        new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review").getId()));
+                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review").getId());
 
                 List<Filter> reviewFilters = new ArrayList<Filter>();
                 reviewFilters.add(filterReviewers);
@@ -955,8 +961,7 @@ final class PhasesDetailsServices {
                 Arrays.fill(innerReviews, null);
 
                 for (int k = 0; k < reviewers.length; ++k) {
-                    for (int l = 0; l < ungroupedReviews.length; ++l) {
-                        Review ungrouped = ungroupedReviews[l];
+                    for (Review ungrouped : ungroupedReviews) {
                         if (ungrouped.getAuthor() == reviewers[k].getId() &&
                                 ungrouped.getSubmission() == submissions[j].getId()) {
                             innerReviews[k] = ungrouped;
@@ -1017,7 +1022,7 @@ final class PhasesDetailsServices {
 
         if (phaseName.equalsIgnoreCase(Constants.AGGREGATION_PHASE_NAME) &&
                 phaseGroup.getSubmitters() != null) {
-            Resource winner = ActionsHelper.getWinner(request, phase.getProject().getId());
+            Resource winner = ActionsHelper.getWinner(phase.getProject().getId());
             phaseGroup.setWinner(winner);
 
             Resource[] aggregator = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
@@ -1026,8 +1031,8 @@ final class PhasesDetailsServices {
                 return;
             }
 
-            Filter filterResource = new EqualToFilter("reviewer", new Long(aggregator[0].getId()));
-            Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
+            Filter filterResource = new EqualToFilter("reviewer", aggregator[0].getId());
+            Filter filterProject = new EqualToFilter("project", project.getId());
 
             Filter filter = new AndFilter(filterResource, filterProject);
 
@@ -1061,7 +1066,7 @@ final class PhasesDetailsServices {
         if (phaseGroup.getSubmitters() != null) {
             Resource winner = phaseGroup.getWinner();
             if (winner == null) {
-                winner = ActionsHelper.getWinner(request, phase.getProject().getId());
+                winner = ActionsHelper.getWinner(phase.getProject().getId());
                 phaseGroup.setWinner(winner);
             }
             if (winner == null) {
@@ -1101,9 +1106,8 @@ final class PhasesDetailsServices {
                 return;
             }
 
-            Filter filterResource = new EqualToFilter("reviewer", new Long(reviewer[0].getId()));
-            Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
-
+            Filter filterResource = new EqualToFilter("reviewer", reviewer[0].getId());
+            Filter filterProject = new EqualToFilter("project", project.getId());
             Filter filter = new AndFilter(filterResource, filterProject);
 
             // Obtain an instance of Review Manager
@@ -1134,7 +1138,6 @@ final class PhasesDetailsServices {
     /**
      * <p>Sets the specified phase group with details for <code>Specification Submission/Review</code> phases.</p>
      *
-     * @param request an <code>HttpServletRequest</code> representing incoming request from client.
      * @param phaseGroup a <code>PhaseGroup</code> providing the details for group of phase the current phase belongs
      *        to.
      * @param project a <code>Project</code> providing the details for current project.
@@ -1145,7 +1148,7 @@ final class PhasesDetailsServices {
      * @throws BaseException if an unexpected error occurs.
      * @since 1.4
      */
-    private static void serviceSpecReviewAppFunc(HttpServletRequest request, PhaseGroup phaseGroup, Project project,
+    private static void serviceSpecReviewAppFunc(PhaseGroup phaseGroup, Project project,
                                                  Phase phase, Resource[] allProjectResources,
                                                  SpecificationsInfo specifications) throws BaseException {
 
@@ -1175,8 +1178,8 @@ final class PhasesDetailsServices {
             if ((reviewers == null) || (reviewers.length == 0)) {
                 return;
             }
-            Filter filterResource = new EqualToFilter("reviewer", new Long(reviewers[0].getId()));
-            Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
+            Filter filterResource = new EqualToFilter("reviewer", reviewers[0].getId());
+            Filter filterProject = new EqualToFilter("project", project.getId());
             Filter filter = new AndFilter(filterResource, filterProject);
             ReviewManager revMgr = ActionsHelper.createReviewManager();
             Review[] reviews = revMgr.searchReviews(filter, true);
@@ -1208,7 +1211,7 @@ final class PhasesDetailsServices {
             return;
         }
         retrieveSubmissions(request, phaseGroup, project, mostRecentContestSubmissions, isAfterAppealsResponse);
-        Resource winner = ActionsHelper.getWinner(request, project.getId());
+        Resource winner = ActionsHelper.getWinner(project.getId());
         phaseGroup.setWinner(winner);
 
         Resource[] approvers = ActionsHelper.getResourcesForPhase(allProjectResources, thisPhase);
@@ -1223,14 +1226,13 @@ final class PhasesDetailsServices {
 
         // Build the filter for getting the existing Approval reviews
         List<Filter> reviewersFilter = new ArrayList<Filter>();
-        for (int i = 0; i < approvers.length; i++) {
-            Resource approver = approvers[i];
-            reviewersFilter.add(new EqualToFilter("reviewer", new Long(approver.getId())));
+        for (Resource approver : approvers) {
+            reviewersFilter.add(new EqualToFilter("reviewer", approver.getId()));
         }
         Filter filterResource = new OrFilter(reviewersFilter);
-        Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
+        Filter filterProject = new EqualToFilter("project", project.getId());
         Filter filterScorecard = new EqualToFilter("scorecardType",
-                new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Approval").getId()));
+                ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Approval").getId());
 
         Filter filter = new AndFilter(Arrays.asList(filterResource, filterProject, filterScorecard));
 
@@ -1250,7 +1252,6 @@ final class PhasesDetailsServices {
     /**
      * <p>Sets the specified phase group with details for <code>Post-Mortem</code> phase.</p>
      *
-     * @param request an <code>HttpServletRequest</code> providing incoming request from the client.
      * @param phaseGroup a <code>PhaseGroup</code> providing the details for group of phase the current phase belongs
      *        to.
      * @param project a <code>Project</code> providing the details for current project.
@@ -1258,7 +1259,7 @@ final class PhasesDetailsServices {
      * @param allProjectResources a <code>Resource</code> array listing all existing resources for specified project.
      * @throws BaseException if an unexpected error occurs.
      */
-    private static void servicePostMortemAppFunc(HttpServletRequest request, PhaseGroup phaseGroup,
+    private static void servicePostMortemAppFunc(PhaseGroup phaseGroup,
                                                  Project project, Phase thisPhase, Resource[] allProjectResources
     ) throws BaseException {
         // Get the list of Post-Mortem reviewers assigned to project
@@ -1275,13 +1276,12 @@ final class PhasesDetailsServices {
 
         // Build the filter for getting the existing Posrt-Mortem reviews
         List<Filter> reviewersFilter = new ArrayList<Filter>();
-        for (int i = 0; i < postMortemReviewers.length; i++) {
-            Resource postMortemReviewer = postMortemReviewers[i];
-            reviewersFilter.add(new EqualToFilter("reviewer", new Long(postMortemReviewer.getId())));
+        for (Resource postMortemReviewer : postMortemReviewers) {
+            reviewersFilter.add(new EqualToFilter("reviewer", postMortemReviewer.getId()));
         }
         Filter filterResource = new OrFilter(reviewersFilter);
-        Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
-        Filter filterScorecard = new EqualToFilter("scorecardType", new Long(postMortemScorecardType.getId()));
+        Filter filterProject = new EqualToFilter("project", project.getId());
+        Filter filterScorecard = new EqualToFilter("scorecardType", postMortemScorecardType.getId());
         Filter filter = new AndFilter(Arrays.asList(filterResource, filterProject, filterScorecard));
 
         // Get existing Post-Mortem reviews and set phase group with them
@@ -1301,8 +1301,7 @@ final class PhasesDetailsServices {
      * @throws BaseException if an unexpected error occurs.
      */
     private static void retrieveSubmissions(HttpServletRequest request, PhaseGroup phaseGroup,
-	    Project project, Submission[] mostRecentContestSubmissions, boolean isAfterAppealsResponse)
-        throws BaseException {
+	    Project project, Submission[] mostRecentContestSubmissions, boolean isAfterAppealsResponse) throws BaseException {
         if (phaseGroup.getSubmitters() == null || phaseGroup.getSubmissions() != null) {
             return;
         }
@@ -1330,12 +1329,16 @@ final class PhasesDetailsServices {
             // Get "my" (submitter's) resource
             Resource myResource = null;
             Resource[] myResources = ActionsHelper.getMyResourcesForPhase(request, null);
-            for (int i = 0; i < myResources.length; i++) {
-                Resource resource = myResources[i];
+            for (Resource resource : myResources) {
                 if (resource.getResourceRole().getName().equals("Submitter")) {
                     myResource = resource;
                     break;
                 }
+            }
+
+            if (myResource == null) {
+                throw new BaseException("Unable to find the Submitter resource " +
+                        "associated with the current user for project " + project.getId());
             }
 
             Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
@@ -1441,7 +1444,6 @@ final class PhasesDetailsServices {
                         }
                         if (!appealResolved && commentType.equalsIgnoreCase("Appeal Response")) {
                             appealResolved = true;
-                            continue;
                         }
                     }
 

@@ -176,7 +176,7 @@ public class AuthorizationHelper {
                 e.printStackTrace();
             }
         }
-        return (userId != null) ? userId.longValue() : NO_USER_LOGGED_IN_ID;
+        return (userId != null) ? (userId) : NO_USER_LOGGED_IN_ID;
     }
 
     /**
@@ -192,7 +192,7 @@ public class AuthorizationHelper {
      */
     public static void setLoggedInUserId(HttpServletRequest request, long userId) {
         request.getSession().setAttribute(ConfigHelper.getUserIdAttributeName(),
-                (userId != NO_USER_LOGGED_IN_ID) ? new Long(userId) : null);
+                (userId != NO_USER_LOGGED_IN_ID) ? userId : null);
     }
 
     /**
@@ -254,18 +254,18 @@ public class AuthorizationHelper {
 
         // Iterate over all resources retrieved and take into
         // consideration only those ones that have Manager role
-        for (int i = 0; i < resources.length; ++i) {
-            if (resources[i].getProject() != null || resources[i].getPhase() != null) {
+        for (Resource resource : resources) {
+            if (resource.getProject() != null || resource.getPhase() != null) {
                 continue;
             }
 
             // Get the role this resource has
-            ResourceRole role = resources[i].getResourceRole();
+            ResourceRole role = resource.getResourceRole();
             // If this resource has the Manager role and no projects associated with it
             if (role.getName().equalsIgnoreCase(Constants.MANAGER_ROLE_NAME)) {
                 // Add Global Manager role to the roles set
                 roles.add(Constants.GLOBAL_MANAGER_ROLE_NAME);
-                request.setAttribute("global_resource", resources[i]);
+                request.setAttribute("global_resource", resource);
             }
 
             // If this resource has the Payment Manager role and no projects associated with it,
@@ -279,7 +279,7 @@ public class AuthorizationHelper {
 
         // Determine some common permissions
         request.setAttribute("isAllowedToCreateProject",
-                new Boolean(hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME)));
+                hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME));
     }
 
     /**
@@ -335,16 +335,16 @@ public class AuthorizationHelper {
         ResourceManager resMgr = ActionsHelper.createResourceManager();
         // Perform search for resources
         Resource[] resources = resMgr.searchResources(filter);
-        for (int i = 0; i < resources.length; i++) {
-            ActionsHelper.populateEmailProperty(request, resources[i]);
+        for (Resource resource : resources) {
+            ActionsHelper.populateEmailProperty(request, resource);
         }
         // Place resources for currently logged in user into the request
         request.setAttribute("myResources", resources);
 
         // Iterate over all resources and retrieve their roles
-        for (int i = 0; i < resources.length; ++i) {
+        for (Resource resource : resources) {
             // Get the role this resource has
-            ResourceRole role = resources[i].getResourceRole();
+            ResourceRole role = resource.getResourceRole();
             // Add the name of the role to the roles set (gather the role)
             roles.add(role.getName());
         }
@@ -401,8 +401,8 @@ public class AuthorizationHelper {
      * @see #gatherUserRoles(HttpServletRequest, long)
      */
     public static boolean hasUserRole(HttpServletRequest request, String[] roles) {
-        for (int i = 0; i < roles.length; ++i) {
-            if (hasUserRole(request, roles[i])) {
+        for (String role : roles) {
+            if (hasUserRole(request, role)) {
                 return true;
             }
         }
@@ -432,8 +432,8 @@ public class AuthorizationHelper {
     public static boolean hasUserPermission(HttpServletRequest request, String permissionName) {
         String[] roles = ConfigHelper.getRolesForPermission(permissionName);
 
-        for (int i = 0; i < roles.length; ++i) {
-            if (hasUserRole(request, roles[i])) {
+        for (String role : roles) {
+            if (hasUserRole(request, role)) {
                 return true;
             }
         }

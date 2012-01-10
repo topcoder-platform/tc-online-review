@@ -122,13 +122,12 @@ public class StatusProjectValidator implements com.topcoder.management.project.P
                     throw new StatusValidationException(ExcMsgCancelledFailedReviewViol, KeyCancelledFailedReviewViol);
                 }
                 //iterate through submissions and look if all failed
-                if(submissions != null) {
-                    for(Submission submission : submissions) {
-                        if("Active".equals(submission.getSubmissionStatus().getName())) {
-                            throw new StatusValidationException(ExcMsgCancelledFailedReviewViol, KeyCancelledFailedReviewViol);
-                        }
+                for(Submission submission : submissions) {
+                    if("Active".equals(submission.getSubmissionStatus().getName())) {
+                        throw new StatusValidationException(ExcMsgCancelledFailedReviewViol, KeyCancelledFailedReviewViol);
                     }
-                }                        
+                }
+
             }
 
             if("Cancelled - Failed Screening".equalsIgnoreCase(projectStatusName)) {
@@ -144,11 +143,9 @@ public class StatusProjectValidator implements com.topcoder.management.project.P
                 }
 
                 //iterate through submissions and look if all failed screening
-                if(submissions != null) {
-                    for(Submission submission : submissions) {
-                        if(!"Failed Screening".equals(submission.getSubmissionStatus().getName()))
-                            throw new StatusValidationException(ExcMsgCancelledFailedScreeningViol, KeyCancelledFailedScreeningViol);
-                    }
+                for(Submission submission : submissions) {
+                    if(!"Failed Screening".equals(submission.getSubmissionStatus().getName()))
+                        throw new StatusValidationException(ExcMsgCancelledFailedScreeningViol, KeyCancelledFailedScreeningViol);
                 }
             }
 
@@ -180,11 +177,9 @@ public class StatusProjectValidator implements com.topcoder.management.project.P
                 }
                 //make sure there's at least one active submission
                 boolean existsSubmissionThatPassed = false;
-                if(submissions != null) {
-                    for(Submission submission : submissions) {
-                        if("Active".equals(submission.getSubmissionStatus().getName())) {
-                            existsSubmissionThatPassed = true;
-                        }
+                for(Submission submission : submissions) {
+                    if("Active".equals(submission.getSubmissionStatus().getName())) {
+                        existsSubmissionThatPassed = true;
                     }
                 }
                 if(!existsSubmissionThatPassed) {

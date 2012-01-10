@@ -144,15 +144,13 @@ public class ScreeningResultNotification {
         // Send emails to each submitter on screening results
         ResourceManager resourceManager = managerHelper.getResourceManager();
         UserRetrieval userRetrieval = managerHelper.getUserRetrieval();
-        for (int i = 0; i < submissions.length; i++) {
-            Submission submission = submissions[i];
+        for (Submission submission : submissions) {
             long submitterResourceId = submission.getUpload().getOwner();
             Resource submitterResource = resourceManager.getResource(submitterResourceId);
             long submitterUserId = Long
                     .parseLong(String.valueOf(submitterResource.getProperty("External Reference ID")));
             ExternalUser submitterUser = userRetrieval.retrieveUser(submitterUserId);
-            for (int j = 0; j < reviews.length; j++) {
-                Review review = reviews[j];
+            for (Review review : reviews) {
                 if (review.getSubmission() == submission.getId()) {
                     sendEmailForUser(project, submitterUser, submission, review);
                     break;
@@ -215,9 +213,9 @@ public class ScreeningResultNotification {
             Review review) throws BaseException {
         Node[] nodes = root.getNodes();
 
-        for (int i = 0; i < nodes.length; i++) {
-            if (nodes[i] instanceof Field) {
-                Field field = (Field) nodes[i];
+        for (Node node : nodes) {
+            if (node instanceof Field) {
+                Field field = (Field) node;
                 if ("PROJECT_NAME".equals(field.getName())) {
                     field.setValue((String) project.getProperty("Project Name"));
                 } else if ("SCREENING_FAILED".equals(field.getName())) {
@@ -235,8 +233,8 @@ public class ScreeningResultNotification {
                 } else if ("SUBMISSION_DATE".equals(field.getName())) {
                     field.setValue(formatDate(submission.getCreationTimestamp()));
                 }
-            } else if (nodes[i] instanceof Condition) {
-                Condition condition = ((Condition) nodes[i]);
+            } else if (node instanceof Condition) {
+                Condition condition = ((Condition) node);
                 if ("SCREENING_FAILED".equals(condition.getName())) {
                     if (failedScreeningStatusName.equalsIgnoreCase(submission.getSubmissionStatus().getName())) {
                         condition.setValue("1");
@@ -290,9 +288,9 @@ public class ScreeningResultNotification {
      */
     private static SubmissionStatus findSubmissionStatusByName(SubmissionStatus[] submissionStatuses,
             String submissionStatusName) {
-        for (int i = 0; i < submissionStatuses.length; ++i) {
-            if (submissionStatuses[i].getName().equalsIgnoreCase(submissionStatusName)) {
-                return submissionStatuses[i];
+        for (SubmissionStatus submissionStatus : submissionStatuses) {
+            if (submissionStatus.getName().equalsIgnoreCase(submissionStatusName)) {
+                return submissionStatus;
             }
         }
         return null;
@@ -312,9 +310,9 @@ public class ScreeningResultNotification {
      *         provided array of scorecard types.
      */
     private static ScorecardType findScorecardTypeByName(ScorecardType[] scorecardTypes, String typeName) {
-        for (int i = 0; i < scorecardTypes.length; ++i) {
-            if (scorecardTypes[i].getName().equalsIgnoreCase(typeName)) {
-                return scorecardTypes[i];
+        for (ScorecardType scorecardType : scorecardTypes) {
+            if (scorecardType.getName().equalsIgnoreCase(typeName)) {
+                return scorecardType;
             }
         }
         return null;
@@ -338,13 +336,12 @@ public class ScreeningResultNotification {
         ScorecardType[] scorecardTypes = scorecardManager.getAllScorecardTypes();
         ScorecardType scorecardType = findScorecardTypeByName(scorecardTypes, scorecardTypeName);
 
-        Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
-        Filter filterScorecard = new EqualToFilter("scorecardType", new Long(scorecardType.getId()));
+        Filter filterProject = new EqualToFilter("project", project.getId());
+        Filter filterScorecard = new EqualToFilter("scorecardType", scorecardType.getId());
         Filter filter = new AndFilter(Arrays.asList(filterProject, filterScorecard));
 
         ReviewManager reviewManager = managerHelper.getReviewManager();
-        Review[] reviews = reviewManager.searchReviews(filter, true);
-        return reviews;
+        return reviewManager.searchReviews(filter, true);
     }
 
     /**
@@ -374,8 +371,7 @@ public class ScreeningResultNotification {
                 SubmissionFilterBuilder.createSubmissionStatusIdFilter(deletedSubmissionStatus.getId()));
         Filter filter = new AndFilter(Arrays.asList(filterProject, filterType, filterStatus));
 
-        Submission[] submissions = uploadManager.searchSubmissions(filter);
-        return submissions;
+        return uploadManager.searchSubmissions(filter);
     }
     
     /**

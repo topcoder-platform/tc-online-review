@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -72,8 +71,6 @@ import com.topcoder.management.deliverable.persistence.DeliverablePersistenceExc
 import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
 import com.topcoder.management.deliverable.search.DeliverableFilterBuilder;
 import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
-import com.topcoder.management.phase.DefaultPhaseManager;
-import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.phase.PhasePersistence;
@@ -90,7 +87,6 @@ import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.persistence.ResourcePersistenceException;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
-import com.topcoder.management.review.DefaultReviewManager;
 import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
@@ -100,7 +96,6 @@ import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregator;
 import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregatorConfigException;
 import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
-import com.topcoder.management.scorecard.ScorecardManagerImpl;
 import com.topcoder.management.scorecard.data.Group;
 import com.topcoder.management.scorecard.data.Scorecard;
 import com.topcoder.management.scorecard.data.ScorecardType;
@@ -115,10 +110,7 @@ import com.topcoder.project.phases.template.PhaseTemplatePersistence;
 import com.topcoder.project.phases.template.StartDateGenerator;
 import com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence;
 import com.topcoder.project.phases.template.startdategenerator.RelativeWeekTimeStartDateGenerator;
-import com.topcoder.search.builder.SearchBuilderConfigurationException;
 import com.topcoder.search.builder.SearchBuilderException;
-import com.topcoder.search.builder.SearchBundle;
-import com.topcoder.search.builder.SearchBundleManager;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.EqualToFilter;
 import com.topcoder.search.builder.filter.Filter;
@@ -201,7 +193,7 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *     <li>Added {@link #arePhaseDependenciesMet(Phase, boolean)}, {@link #isPhaseOpen(PhaseStatus)},
  *     {@link #isPhaseClosed(PhaseStatus)} methods and {@link #PHASE_STATUS_OPEN} and {@link #PHASE_STATUS_CLOSED}
  *     constants.</li>
- *     <li>Added {@link #getMyPayments(Resource[], HttpServletRequest)} method.</li>
+ *     <li>Added {@link #getMyPayments(com.topcoder.management.resource.Resource[])} method.</li>
  *     <li>Added {@link #getMyPaymentStatuses(Resource[])} method.</li>
  *   </ol>
  * </p>
@@ -530,9 +522,9 @@ public class ActionsHelper {
         validateParameterNotNull(scorecardTypes, "scorecardTypes");
         validateParameterStringNotEmpty(typeName, "typeName");
 
-        for (int i = 0; i < scorecardTypes.length; ++i) {
-            if (scorecardTypes[i].getName().equalsIgnoreCase(typeName)) {
-                return scorecardTypes[i];
+        for (ScorecardType scorecardType : scorecardTypes) {
+            if (scorecardType.getName().equalsIgnoreCase(typeName)) {
+                return scorecardType;
             }
         }
         return null;
@@ -557,9 +549,9 @@ public class ActionsHelper {
         validateParameterNotNull(commentTypes, "commentTypes");
         validateParameterPositive(typeId, "typeId");
 
-        for (int i = 0; i < commentTypes.length; ++i) {
-            if (commentTypes[i].getId() == typeId) {
-                return commentTypes[i];
+        for (CommentType commentType : commentTypes) {
+            if (commentType.getId() == typeId) {
+                return commentType;
             }
         }
         return null;
@@ -584,9 +576,9 @@ public class ActionsHelper {
         validateParameterNotNull(commentTypes, "commentTypes");
         validateParameterStringNotEmpty(typeName, "typeName");
 
-        for (int i = 0; i < commentTypes.length; ++i) {
-            if (commentTypes[i].getName().equalsIgnoreCase(typeName)) {
-                return commentTypes[i];
+        for (CommentType commentType : commentTypes) {
+            if (commentType.getName().equalsIgnoreCase(typeName)) {
+                return commentType;
             }
         }
         return null;
@@ -612,9 +604,9 @@ public class ActionsHelper {
         validateParameterNotNull(projectCategories, "projectCategories");
         validateParameterPositive(categoryId, "categoryId");
 
-        for (int i = 0; i < projectCategories.length; ++i) {
-            if (projectCategories[i].getId() == categoryId) {
-                return projectCategories[i];
+        for (ProjectCategory projectCategory : projectCategories) {
+            if (projectCategory.getId() == categoryId) {
+                return projectCategory;
             }
         }
         return null;
@@ -640,9 +632,9 @@ public class ActionsHelper {
         validateParameterNotNull(projectCategories, "projectCategories");
         validateParameterStringNotEmpty(categoryName, "categoryName");
 
-        for (int i = 0; i < projectCategories.length; ++i) {
-            if (projectCategories[i].getName().equalsIgnoreCase(categoryName)) {
-                return projectCategories[i];
+        for (ProjectCategory projectCategory : projectCategories) {
+            if (projectCategory.getName().equalsIgnoreCase(categoryName)) {
+                return projectCategory;
             }
         }
         return null;
@@ -668,9 +660,9 @@ public class ActionsHelper {
         validateParameterNotNull(projectStatuses, "projectStatuses");
         validateParameterPositive(statusId, "statusId");
 
-        for (int i = 0; i < projectStatuses.length; ++i) {
-            if (projectStatuses[i].getId() == statusId) {
-                return projectStatuses[i];
+        for (ProjectStatus projectStatus : projectStatuses) {
+            if (projectStatus.getId() == statusId) {
+                return projectStatus;
             }
         }
         return null;
@@ -696,9 +688,9 @@ public class ActionsHelper {
         validateParameterNotNull(projectStatuses, "projectStatuses");
         validateParameterStringNotEmpty(statusName, "statusName");
 
-        for (int i = 0; i < projectStatuses.length; ++i) {
-            if (projectStatuses[i].getName().equalsIgnoreCase(statusName)) {
-                return projectStatuses[i];
+        for (ProjectStatus projectStatus : projectStatuses) {
+            if (projectStatus.getName().equalsIgnoreCase(statusName)) {
+                return projectStatus;
             }
         }
         return null;
@@ -723,9 +715,9 @@ public class ActionsHelper {
         validateParameterNotNull(resourceRoles, "resourceRoles");
         validateParameterPositive(roleId, "roleId");
 
-        for (int i = 0; i < resourceRoles.length; ++i) {
-            if (resourceRoles[i].getId() == roleId) {
-                return resourceRoles[i];
+        for (ResourceRole resourceRole : resourceRoles) {
+            if (resourceRole.getId() == roleId) {
+                return resourceRole;
             }
         }
         return null;
@@ -750,9 +742,9 @@ public class ActionsHelper {
         validateParameterNotNull(resourceRoles, "resourceRoles");
         validateParameterStringNotEmpty(roleName, "roleName");
 
-        for (int i = 0; i < resourceRoles.length; ++i) {
-            if (resourceRoles[i].getName().equalsIgnoreCase(roleName)) {
-                return resourceRoles[i];
+        for (ResourceRole resourceRole : resourceRoles) {
+            if (resourceRole.getName().equalsIgnoreCase(roleName)) {
+                return resourceRole;
             }
         }
         return null;
@@ -777,9 +769,9 @@ public class ActionsHelper {
         validateParameterNotNull(phases, "phases");
         validateParameterPositive(phaseId, "phaseId");
 
-        for (int i = 0; i < phases.length; ++i) {
-            if (phases[i].getId() == phaseId) {
-                return phases[i];
+        for (Phase phase : phases) {
+            if (phase.getId() == phaseId) {
+                return phase;
             }
         }
         return null;
@@ -802,9 +794,9 @@ public class ActionsHelper {
         validateParameterNotNull(phases, "phases");
         validateParameterStringNotEmpty(phaseTypeName, "phaseTypeName");
 
-        for (int i = 0; i < phases.length; ++i) {
-            if (phases[i].getPhaseType().getName().equalsIgnoreCase(phaseTypeName)) {
-                return phases[i];
+        for (Phase phase : phases) {
+            if (phase.getPhaseType().getName().equalsIgnoreCase(phaseTypeName)) {
+                return phase;
             }
         }
         return null;
@@ -831,9 +823,9 @@ public class ActionsHelper {
         validateParameterNotNull(phases, "phases");
         validateParameterPositive(phaseTypeId, "phaseTypeId");
 
-        for (int i = 0; i < phases.length; ++i) {
-            if (phases[i].getPhaseType().getId() == phaseTypeId) {
-                return phases[i];
+        for (Phase phase : phases) {
+            if (phase.getPhaseType().getId() == phaseTypeId) {
+                return phase;
             }
         }
         return null;
@@ -858,9 +850,9 @@ public class ActionsHelper {
         validateParameterNotNull(phaseTypes, "phaseTypes");
         validateParameterPositive(phaseTypeId, "phaseTypeId");
 
-        for (int i = 0; i < phaseTypes.length; ++i) {
-            if (phaseTypes[i].getId() == phaseTypeId) {
-                return phaseTypes[i];
+        for (PhaseType phaseType : phaseTypes) {
+            if (phaseType.getId() == phaseTypeId) {
+                return phaseType;
             }
         }
         return null;
@@ -885,9 +877,9 @@ public class ActionsHelper {
         validateParameterNotNull(phaseTypes, "phaseTypes");
         validateParameterStringNotEmpty(phaseTypeName, "phaseTypeName");
 
-        for (int i = 0; i < phaseTypes.length; ++i) {
-            if (phaseTypes[i].getName().equalsIgnoreCase(phaseTypeName)) {
-                return phaseTypes[i];
+        for (PhaseType phaseType : phaseTypes) {
+            if (phaseType.getName().equalsIgnoreCase(phaseTypeName)) {
+                return phaseType;
             }
         }
         return null;
@@ -912,9 +904,9 @@ public class ActionsHelper {
         validateParameterNotNull(phaseStatuses, "phaseStatuses");
         validateParameterPositive(phaseStatusId, "phaseStatusId");
 
-        for (int i = 0; i < phaseStatuses.length; ++i) {
-            if (phaseStatuses[i].getId() == phaseStatusId) {
-                return phaseStatuses[i];
+        for (PhaseStatus phaseStatus : phaseStatuses) {
+            if (phaseStatus.getId() == phaseStatusId) {
+                return phaseStatus;
             }
         }
         return null;
@@ -939,9 +931,9 @@ public class ActionsHelper {
         validateParameterNotNull(phaseStatuses, "phaseStatuses");
         validateParameterStringNotEmpty(phaseStatusName, "phaseStatusName");
 
-        for (int i = 0; i < phaseStatuses.length; ++i) {
-            if (phaseStatuses[i].getName().equalsIgnoreCase(phaseStatusName)) {
-                return phaseStatuses[i];
+        for (PhaseStatus phaseStatus : phaseStatuses) {
+            if (phaseStatus.getName().equalsIgnoreCase(phaseStatusName)) {
+                return phaseStatus;
             }
         }
         return null;
@@ -967,9 +959,9 @@ public class ActionsHelper {
         validateParameterNotNull(submissionStatuses, "submissionStatuses");
         validateParameterStringNotEmpty(submissionStatusName, "submissionStatusName");
 
-        for (int i = 0; i < submissionStatuses.length; ++i) {
-            if (submissionStatuses[i].getName().equalsIgnoreCase(submissionStatusName)) {
-                return submissionStatuses[i];
+        for (SubmissionStatus submissionStatus : submissionStatuses) {
+            if (submissionStatus.getName().equalsIgnoreCase(submissionStatusName)) {
+                return submissionStatus;
             }
         }
         return null;
@@ -1018,9 +1010,9 @@ public class ActionsHelper {
         validateParameterNotNull(uploadStatuses, "uploadStatuses");
         validateParameterStringNotEmpty(uploadStatusName, "uploadStatusName");
 
-        for (int i = 0; i < uploadStatuses.length; ++i) {
-            if (uploadStatuses[i].getName().equalsIgnoreCase(uploadStatusName)) {
-                return uploadStatuses[i];
+        for (UploadStatus uploadStatus : uploadStatuses) {
+            if (uploadStatus.getName().equalsIgnoreCase(uploadStatusName)) {
+                return uploadStatus;
             }
         }
         return null;
@@ -1045,9 +1037,9 @@ public class ActionsHelper {
         validateParameterNotNull(uploadTypes, "uploadTypes");
         validateParameterStringNotEmpty(uploadTypeName, "uploadTypeName");
 
-        for (int i = 0; i < uploadTypes.length; ++i) {
-            if (uploadTypes[i].getName().equalsIgnoreCase(uploadTypeName)) {
-                return uploadTypes[i];
+        for (UploadType uploadType : uploadTypes) {
+            if (uploadType.getName().equalsIgnoreCase(uploadTypeName)) {
+                return uploadType;
             }
         }
         return null;
@@ -1168,7 +1160,7 @@ public class ActionsHelper {
         // If the user is not logged in, this is the reason
         // why they don't have permissions to do the job. Let the user login first
         if (getRedirectUrlFromReferer != null && !AuthorizationHelper.isUserLoggedIn(request)) {
-            AuthorizationHelper.setLoginRedirect(request, getRedirectUrlFromReferer.booleanValue());
+            AuthorizationHelper.setLoginRedirect(request, getRedirectUrlFromReferer);
             return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
         }
 
@@ -1525,8 +1517,8 @@ public class ActionsHelper {
             throw new BaseException("Error during user retrieval in populateEmailProperty() method.");
         }
         Map<Long,String> emailsMap = new HashMap<Long,String>();
-        for (int i=0;i<users.length;i++) {
-            emailsMap.put(users[i].getId(), users[i].getEmail());
+        for (ExternalUser user : users) {
+            emailsMap.put(user.getId(), user.getEmail());
         }
 
         for (int i=0;i<resources.length;i++) {
@@ -1571,8 +1563,8 @@ public class ActionsHelper {
 
         List<String> roleNames = new ArrayList<String>();
         // Add individual roles to the list
-        for (int i = 0; i < resources.length; ++i) {
-            String roleName = resources[i].getResourceRole().getName();
+        for (Resource resource : resources) {
+            String roleName = resource.getResourceRole().getName();
             // Do not add the same role twice
             if (!roleNames.contains(roleName)) {
                 roleNames.add(roleName);
@@ -1586,17 +1578,17 @@ public class ActionsHelper {
         }
         // Avoid unneeded object creation of the list contains single item
         if (roleNames.size() == 1) {
-            return messages.getMessage("ResourceRole." + ((String) roleNames.get(0)).replaceAll(" ", ""));
+            return messages.getMessage("ResourceRole." + roleNames.get(0).replaceAll(" ", ""));
         }
 
         StringBuffer roles = new StringBuffer(32);
 
         // Form a string with roles separated by forward slash character
-        for (int i = 0; i < roleNames.size(); ++i) {
+        for (String roleName : roleNames) {
             if (roles.length() != 0) {
                 roles.append('/');
             }
-            roles.append(messages.getMessage("ResourceRole." + ((String) roleNames.get(i)).replaceAll(" ", "")));
+            roles.append(messages.getMessage("ResourceRole." + roleName.replaceAll(" ", "")));
         }
         // Return the resulting string
         return roles.toString();
@@ -1606,17 +1598,13 @@ public class ActionsHelper {
      * <p>Gets the list of payments per resource roles assigned to user.</p>
      *
      * @param myResources a <code>Resource</code> array listing the resources associated with user.
-     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
      * @return a <code>Map</code> mapping the resource roles to respective payments.
-     * @throws ResourcePersistenceException if an unexpected error occurs.
      * @since 1.8
      */
-    public static Map<ResourceRole, Double> getMyPayments(Resource[] myResources, HttpServletRequest request)
-            throws ResourcePersistenceException {
+    public static Map<ResourceRole, Double> getMyPayments(Resource[] myResources) {
         Map<ResourceRole, Double> payments = new LinkedHashMap<ResourceRole, Double>();
 
-        for (int i = 0; i < myResources.length; ++i) {
-            Resource resource = myResources[i];
+        for (Resource resource : myResources) {
             ResourceRole role = resource.getResourceRole();
             String paymentStr = (String) resource.getProperty("Payment");
             if (paymentStr != null && paymentStr.trim().length() != 0) {
@@ -1643,8 +1631,7 @@ public class ActionsHelper {
     public static Map<ResourceRole, Boolean> getMyPaymentStatuses(Resource[] myResources) {
         Map<ResourceRole, Boolean> paymentStatuses = new LinkedHashMap<ResourceRole, Boolean>();
 
-        for (int i = 0; i < myResources.length; ++i) {
-            Resource resource = myResources[i];
+        for (Resource resource : myResources) {
             String paid = (String) resource.getProperty("Payment Status");
             if ("Yes".equalsIgnoreCase(paid)) {
                 paymentStatuses.put(resource.getResourceRole(), Boolean.TRUE);
@@ -1698,9 +1685,8 @@ public class ActionsHelper {
 
         List<Phase> activePhases = new ArrayList<Phase>();
 
-        for (int i = 0; i < phases.length; ++i) {
+        for (Phase phase : phases) {
             // Get a phase for the current iteration
-            Phase phase = phases[i];
             // Add the phase to list if it is open and, hence, active
             if (phase.getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
                 activePhases.add(phase);
@@ -1732,7 +1718,7 @@ public class ActionsHelper {
         // Validate parameters
         validateParameterNotNull(phases, "phases");
 
-        if (activeOnly == true) {
+        if (activeOnly) {
             // This method is a simpler version of the getActivePhases one
             // It will simply return the first phase in the array returned
             // from that method that has the specified name if the name was specified
@@ -1748,9 +1734,9 @@ public class ActionsHelper {
             }
 
             // Perform a search
-            for (int i = 0; i < activePhases.length; ++i) {
-                if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(phaseName)) {
-                    return activePhases[i];
+            for (Phase activePhase : activePhases) {
+                if (activePhase.getPhaseType().getName().equalsIgnoreCase(phaseName)) {
+                    return activePhase;
                 }
             }
             // Active phase with specified name has not been found
@@ -1761,9 +1747,8 @@ public class ActionsHelper {
 
             Phase phaseFound = null;
 
-            for (int i = 0; i < phases.length; ++i) {
+            for (Phase phase : phases) {
                 // Get a phase for the current iteration
-                Phase phase = phases[i];
                 // Get a name of status of this phase
                 String phaseStatus = phase.getPhaseStatus().getName();
                 // If the phase found that is not yet open, stop the search
@@ -1795,9 +1780,9 @@ public class ActionsHelper {
         validateParameterNotNull(phases, "phases");
         validateParameterNotNull(deliverable, "deliverable");
 
-        for (int i = 0; i < phases.length; ++i) {
-            if (phases[i].getId() == deliverable.getPhase()) {
-                return phases[i];
+        for (Phase phase : phases) {
+            if (phase.getId() == deliverable.getPhase()) {
+                return phase;
             }
         }
 
@@ -1836,7 +1821,7 @@ public class ActionsHelper {
         }
 
         Long longScorecardId = Long.parseLong(scorecardId, 10);
-        if (cachedScorecards.containsKey(longScorecardId) == false) {
+        if (!cachedScorecards.containsKey(longScorecardId)) {
             Scorecard scorecard = manager.getScorecard(longScorecardId);
             cachedScorecards.put(longScorecardId, scorecard);
         }
@@ -1916,9 +1901,8 @@ public class ActionsHelper {
 
         List<Resource> foundResources = new ArrayList<Resource>();
 
-        for (int i = 0; i < resources.length; ++i) {
+        for (Resource resource : resources) {
             // Get a resource for the current iteration
-            Resource resource = resources[i];
             // If this resource is from phase in question, add it to the list
             if (phase == null) {
                 if (resource.getPhase() == null) {
@@ -1936,7 +1920,7 @@ public class ActionsHelper {
                         foundResources.add(resource);
                     }
                 } else {
-                    if (resource.getPhase() != null && resource.getPhase().longValue() == phase.getId()) {
+                    if (resource.getPhase() != null && resource.getPhase() == phase.getId()) {
                         foundResources.add(resource);
                     }
                 }
@@ -1963,9 +1947,9 @@ public class ActionsHelper {
 
         List<Resource> submitters = new ArrayList<Resource>();
         // Search for the appropriate resources and add them to the list
-        for (int j = 0; j < resources.length; ++j) {
-            if (resources[j].getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
-                submitters.add(resources[j]);
+        for (Resource resource : resources) {
+            if (resource.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
+                submitters.add(resource);
             }
         }
 
@@ -1979,7 +1963,7 @@ public class ActionsHelper {
      * @return
      * @param projectId
      */
-    public static Resource getWinner(HttpServletRequest request, long projectId) throws BaseException {
+    public static Resource getWinner(long projectId) throws BaseException {
         ProjectManager projectManager = createProjectManager();
         ResourceManager resourceManager = createResourceManager();
 
@@ -2026,11 +2010,10 @@ public class ActionsHelper {
         validateParameterNotNull(resources, "resources");
         validateParameterPositive(extUserId, "extUserId");
 
-        for (int i = 0; i < resources.length; ++i) {
+        for (Resource resource : resources) {
             // Get a resource for the current iteration
-            Resource resource = resources[i];
             // Get an associated "External Reference ID" property for the resource
-            String extRefIdStr = (String)resource.getProperty("External Reference ID");
+            String extRefIdStr = (String) resource.getProperty("External Reference ID");
             // If the property was not specified, skip this resource
             if (extRefIdStr == null || extRefIdStr.trim().length() == 0) {
                 continue;
@@ -2069,11 +2052,10 @@ public class ActionsHelper {
 
         List<Resource> myResources = new ArrayList<Resource>();
 
-        for (int i = 0; i < allResources.length; ++i) {
+        for (Resource resource : allResources) {
             // Get a resource for the current iteration
-            Resource resource = allResources[i];
             // Determine if the resource is for current project
-            if (resource.getProject() != null && resource.getProject().longValue() == project.getId()) {
+            if (resource.getProject() != null && (resource.getProject()) == project.getId()) {
                 myResources.add(resource);
             }
         }
@@ -2136,7 +2118,6 @@ public class ActionsHelper {
                 return resource;
             }
         }
-        // Return the resources using another helper-method
         return null;
     }
 
@@ -2193,7 +2174,7 @@ public class ActionsHelper {
         validateParameterNotNull(phases, "phases");
 
         // A filter to search for deliverables for specific phase(s) of the project
-        Filter filter = null;
+        Filter filter;
         switch (phases.length) {
         case 0:
             // No phases -- no deliverables
@@ -2208,8 +2189,8 @@ public class ActionsHelper {
         default:
             List<Filter> phaseFilters = new ArrayList<Filter>();
             // Prepare a list of filters for each phase in the array of phases
-            for (int i = 0; i < phases.length; ++i) {
-                phaseFilters.add(DeliverableFilterBuilder.createPhaseIdFilter(phases[i].getId()));
+            for (Phase phase : phases) {
+                phaseFilters.add(DeliverableFilterBuilder.createPhaseIdFilter(phase.getId()));
             }
             // Combine all filters using OR operator
             filter = new OrFilter(phaseFilters);
@@ -2220,16 +2201,15 @@ public class ActionsHelper {
 
         List<Deliverable> deliverables = new ArrayList<Deliverable>();
 
-        for (int i = 0; i < allDeliverables.length; ++i) {
+        for (Deliverable deliverable : allDeliverables) {
             // Get a deliverable for the current iteration
-            final Deliverable deliverable = allDeliverables[i];
             // Get an ID of resource this deliverable is for
             final long deliverableResourceId = deliverable.getResource();
             Resource forResource = null;
             // Find a resource this deliverable is for
-            for (int j = 0; j < resources.length; ++j) {
-                if (resources[j].getId() == deliverableResourceId) {
-                    forResource = resources[j];
+            for (Resource resource : resources) {
+                if (resource.getId() == deliverableResourceId) {
+                    forResource = resource;
                     break;
                 }
             }
@@ -2263,8 +2243,7 @@ public class ActionsHelper {
 
         List<Deliverable> deliverables = new ArrayList<Deliverable>();
         // Perform a search for outstanding deliverables
-        for (int i = 0; i < allDeliverables.length; ++i) {
-            Deliverable deliverable = allDeliverables[i];
+        for (Deliverable deliverable : allDeliverables) {
             if (!deliverable.isComplete()) {
                 addDeliverable(deliverable, allDeliverables, deliverables);
             }
@@ -2292,20 +2271,18 @@ public class ActionsHelper {
 
         List<Deliverable> deliverables = new ArrayList<Deliverable>();
         // Perform a search for "my" deliverables
-        for (int i = 0; i < allDeliverables.length; ++i) {
+        for (Deliverable deliverable : allDeliverables) {
             // Get a deliverable for current iteration
-            Deliverable deliverable = allDeliverables[i];
             boolean found = false;
             // Determine if this deliverable is assigned to currently logged in user
-            for (int j = 0; j < myResources.length; ++j) {
-                if (deliverable.getResource() == myResources[j].getId()) {
+            for (Resource myResource : myResources) {
+                if (deliverable.getResource() == myResource.getId()) {
                     found = true;
                     break;
                 }
             }
-            // If found is true, it means that current
-            // deliverable is assigned to currently logged in user
-            if (found == true) {
+            // If found is true, it means that current deliverable is assigned to currently logged in user
+            if (found) {
                 addDeliverable(deliverable, allDeliverables, deliverables);
             }
         }
@@ -2357,9 +2334,9 @@ public class ActionsHelper {
         ExternalUser[] allExtUsers = new ExternalUser[resources.length];
 
         for (int i = 0; i < extUserIds.length; ++i) {
-            for (int j = 0; j < extUsers.length; ++j) {
-                if (extUsers[j].getId() == extUserIds[i]) {
-                    allExtUsers[i] = extUsers[j];
+            for (ExternalUser extUser : extUsers) {
+                if (extUser.getId() == extUserIds[i]) {
+                    allExtUsers[i] = extUser;
                     break;
                 }
             }
@@ -2371,10 +2348,10 @@ public class ActionsHelper {
     /**
      * <p>Gets the list of submissions of specified type for specified project.</p>
      *
-     * @param manager an <code>UploadManager</code> providing the interface to upload manager. 
-     * @param project a <code>Project</code> providing the details for the project. 
+     * @param manager an <code>UploadManager</code> providing the interface to upload manager.
+     * @param project a <code>Project</code> providing the details for the project.
      * @param submissionTypeName a <code>String</code> providing the name of desired submission type.
-     * @return a <code>Submission</code> array listing the submissions of specified type for project. 
+     * @return a <code>Submission</code> array listing the submissions of specified type for project.
      * @throws BaseException if an unexpected error occurs.
      * @throws IllegalArgumentException if any of the parameters are <code>null</code>.
      */
@@ -2411,9 +2388,9 @@ public class ActionsHelper {
 
         List<Long> statusIds = new ArrayList<Long>();
 
-        for (int i = 0; i < allSubmissionStatuses.length; ++i) {
-            if (!allSubmissionStatuses[i].getName().equalsIgnoreCase("Deleted")) {
-                statusIds.add(allSubmissionStatuses[i].getId());
+        for (SubmissionStatus allSubmissionStatus: allSubmissionStatuses) {
+            if (!allSubmissionStatus.getName().equalsIgnoreCase("Deleted")) {
+                statusIds.add(allSubmissionStatus.getId());
             }
         }
 
@@ -2443,10 +2420,8 @@ public class ActionsHelper {
 
         // Get an upload for this submission
         Upload upload = submission.getUpload();
-        // Get Project by its id
-        Project project = manager.getProject(upload.getProject());
-        // Return the project
-        return project;
+        // Return Project by its id
+        return manager.getProject(upload.getProject());
     }
 
     /**
@@ -2500,12 +2475,12 @@ public class ActionsHelper {
             // Get this phase's type name
             String phaseName = phase.getPhaseType().getName();
 
-            if (phaseName.equalsIgnoreCase(Constants.REGISTRATION_PHASE_NAME) 
+            if (phaseName.equalsIgnoreCase(Constants.REGISTRATION_PHASE_NAME)
                 || phaseName.equalsIgnoreCase(Constants.SUBMISSION_PHASE_NAME)
                 || phaseName.equalsIgnoreCase(Constants.MILESTONE_SUBMISSION_PHASE_NAME)
                 || phaseName.equalsIgnoreCase(Constants.MILESTONE_SCREENING_PHASE_NAME)
                 || phaseName.equalsIgnoreCase(Constants.MILESTONE_REVIEW_PHASE_NAME)) {
-                if (prevPhase == true) {
+                if (prevPhase) {
                     return true;
                 }
                 prevPhase = false;
@@ -2521,7 +2496,7 @@ public class ActionsHelper {
                 found = true;
                 continue;
             }
-            if (found == true) {
+            if (found) {
                 return true;
             }
         }
@@ -2602,11 +2577,8 @@ public class ActionsHelper {
      * @param registerPhaseHandlers
      *            a boolean parameter that determines whether version of phase handlers
      *            with or without phase handlers should be returned
-     * @throws BaseException
-     *             if any error happens during object creation.
      */
-    public static PhaseManager createPhaseManager(boolean registerPhaseHandlers)
-        throws BaseException {
+    public static PhaseManager createPhaseManager(boolean registerPhaseHandlers) {
         if (registerPhaseHandlers) {
             // get Phase Manager with handlers
             return managerCreationHelper.getPhaseManager();
@@ -2837,9 +2809,8 @@ public class ActionsHelper {
      *
      * @param request the request
      * @return a list of cockpit projects
-     * @throws BaseException if any error occurs
      */
-    public static List<CockpitProject> getCockpitProjects(HttpServletRequest request) throws BaseException {
+    public static List<CockpitProject> getCockpitProjects(HttpServletRequest request) {
         validateParameterNotNull(request, "request");
 
         long userId = AuthorizationHelper.getLoggedInUserId(request);
@@ -2868,11 +2839,9 @@ public class ActionsHelper {
      *            stored to let reusing it later for the same request.
      * @throws IllegalArgumentException
      *             if <code>request</code> parameter is <code>null</code>.
-     * @throws BaseException
-     *             if any error occurs.
      * @since Online Review Update - Add Project Dropdown v1.0
      */
-    public static List<ClientProject> getClientProjects(HttpServletRequest request) throws BaseException {
+    public static List<ClientProject> getClientProjects(HttpServletRequest request) {
         validateParameterNotNull(request, "request");
 
         long userId = AuthorizationHelper.getLoggedInUserId(request);
@@ -2925,10 +2894,7 @@ public class ActionsHelper {
         // Create workdays instance
         Workdays workdays = (new DefaultWorkdaysFactory()).createWorkdaysInstance();
 
-        // Create phase template instance
-        PhaseTemplate phaseTemplate = new DefaultPhaseTemplate(persistence, generator, workdays );
-
-        return phaseTemplate;
+        return new DefaultPhaseTemplate(persistence, generator, workdays );
     }
 
     /**
@@ -2937,10 +2903,8 @@ public class ActionsHelper {
      * @param project the project instance
      * @param newProjectStatus new project status
      * @param format the date format
-     * @throws BaseException if any
      */
-    static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format)
-            throws BaseException {
+    static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format) {
 
         String name = newProjectStatus.getName();
         if ("Completed".equals(name)
@@ -3182,7 +3146,7 @@ public class ActionsHelper {
 
                 // Retrieve oldRating
                 double oldRating = 0;
-                ResultSet rs = null;
+                ResultSet rs;
                 if (!existPR || !existCI) {
                     ratingStmt.clearParameters();
                     ratingStmt.setLong(1, projectId);
@@ -3527,7 +3491,7 @@ public class ActionsHelper {
                 }
 
                 // Iterate by all input reviewers and set the response id for each.
-                for(long primary : primaries) {
+                for (long primary : primaries) {
 
                     // Assign the primary response id only to the primary reviewer or if all the secondary response ids are already assigned.
                     if (primary == 1L || (primary == 0L && secondaryResponseIDs.size() == 0))
@@ -3538,12 +3502,12 @@ public class ActionsHelper {
                         }
 
                     // Assign the secondary response id only to a secondary reviewer or if the primary response id is already assigned.
-                    if (primary == 0L || (primary == 1L && primaryResponseId == -1L))
+                    if (primary == 0L || (primary == 1L && primaryResponseId == -1L)) {
                         if (secondaryResponseIDs.size() > 0) {
                             responseIDs.add(secondaryResponseIDs.get(secondaryResponseIDs.size()-1));
                             secondaryResponseIDs.remove(secondaryResponseIDs.size()-1);
-                            continue;
                         }
+                    }
                 }
 
             } catch (SQLException e) {
@@ -3838,9 +3802,9 @@ public class ActionsHelper {
 
     /**
      * Update the project_result table when the user's submission has advanced screening.
-     * 
+     *
      * @param projectId the id of the project needs to be updated
-     * @param userId the user id whose submission will advance screening 
+     * @param userId the user id whose submission will advance screening
      * @throws BaseException if any error occurs
      * @since 1.14
      */
@@ -3853,7 +3817,7 @@ public class ActionsHelper {
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
                     + DB_CONNECTION_NAMESPACE);
-            
+
             pstmt = conn.prepareStatement("update project_result set rating_ind=1, valid_submission_ind=1 where project_id=? and user_id=?");
             pstmt.setLong(1, projectId);
             pstmt.setLong(2, userId);
@@ -4013,7 +3977,7 @@ public class ActionsHelper {
     }
 
     public static ActionForward findForwardNotAuthorized(ActionMapping mapping, Long projectId) {
-        if (projectId != null && projectId.longValue() > 0) {
+        if (projectId != null && projectId > 0) {
             ActionRedirect redirect = new ActionRedirect(mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME));
             redirect.addParameter("pid", projectId);
             redirect.addParameter("redirectToProjectID", projectId);
@@ -4047,7 +4011,7 @@ public class ActionsHelper {
 
 
     public static void addForumPermissions(Project project, Collection<Long> users, boolean moderator) throws BaseException {
-        try {            
+        try {
             long forumId = getProjectLongValue(project, "Developer Forum ID");
             if (forumId == 0) {
                 // Don't try to create the forum bean if the forum ID is not set (as in the VM).
@@ -4111,11 +4075,8 @@ public class ActionsHelper {
             }
 
             Forums forumBean = getForumBean();
-
-            if (forumId != 0) {
-                for (Long userId : users) {
-                      forumBean.createCategoryWatch(userId, forumId);
-                }
+            for (Long userId : users) {
+                  forumBean.createCategoryWatch(userId, forumId);
             }
         } catch (Exception e) {
             throw new BaseException("Error adding forum permissions for project id " + project.getId(), e);
@@ -4134,11 +4095,8 @@ public class ActionsHelper {
             }
 
             Forums forumBean = getForumBean();
-
-            if (forumId != 0) {
-                for (Long userId : users) {
-                    forumBean.deleteCategoryWatch(userId, forumId);
-                }
+            for (Long userId : users) {
+                forumBean.deleteCategoryWatch(userId, forumId);
             }
         } catch (Exception e) {
             throw new BaseException("Error removing forum permissions for project id " + project.getId(), e);
@@ -4170,8 +4128,7 @@ public class ActionsHelper {
         Filter projectFilter = SubmissionFilterBuilder.createProjectIdFilter(projectId);
 
         Filter filter = new AndFilter(Arrays.asList(projectFilter, submissionTypeFilter));
-        Submission[] specificationSubmissions = upMgr.searchSubmissions(filter);
-        return specificationSubmissions;
+        return upMgr.searchSubmissions(filter);
     }
 
     /**
@@ -4254,8 +4211,7 @@ public class ActionsHelper {
      * @since 1.3
      */
     static void recalculateScheduledDates(Phase[] allPhases) {
-        for (int i = 0; i < allPhases.length; ++i) {
-            Phase phase = allPhases[i];
+        for (Phase phase : allPhases) {
             Date newStartDate = phase.calcStartDate();
             Date newEndDate = phase.calcEndDate();
             phase.setScheduledStartDate(newStartDate);
@@ -4273,12 +4229,11 @@ public class ActionsHelper {
      */
     static Phase getLastPhase(Phase[] phases) {
         Phase lastPhase = null;
-        for (int i = 0; i < phases.length; i++) {
-            Phase phase = phases[i];
+        for (Phase phase : phases) {
             PhaseType phaseType = phase.getPhaseType();
 
             if ((phaseType != null)
-                && (phaseType.getName().equalsIgnoreCase("Final Review")
+                    && (phaseType.getName().equalsIgnoreCase("Final Review")
                     || phaseType.getName().equalsIgnoreCase("Approval"))) {
                 lastPhase = phase;
             }
@@ -4296,8 +4251,7 @@ public class ActionsHelper {
      */
     static Review[] getApprovalPhaseReviews(Review[] reviews, Phase thisPhase) {
         List<Review> thisPhaseReviews = new ArrayList<Review>();
-        for (int i = 0; i < reviews.length; i++) {
-            Review review = reviews[i];
+        for (Review review : reviews) {
             Date reviewCreated = review.getCreationTimestamp();
             Date phaseActualStart = thisPhase.getActualStartDate();
             Date phaseActualEnd = thisPhase.getActualEndDate();
@@ -4330,8 +4284,8 @@ public class ActionsHelper {
     static Review findLastApprovalReview(ReviewManager manager, Phase phase, ScorecardType scorecardType,
                                                  long resourceId, boolean complete) throws ReviewManagementException {
 
-        Filter filterProject = new EqualToFilter("project", new Long(phase.getProject().getId()));
-        Filter filterScorecard = new EqualToFilter("scorecardType", new Long(scorecardType.getId()));
+        Filter filterProject = new EqualToFilter("project", phase.getProject().getId());
+        Filter filterScorecard = new EqualToFilter("scorecardType", scorecardType.getId());
         Filter filter = new AndFilter(Arrays.asList(filterProject, filterScorecard));
 
         // Get a review(s) that pass filter
@@ -4340,8 +4294,7 @@ public class ActionsHelper {
             reviews = ActionsHelper.getApprovalPhaseReviews(reviews, phase);
         }
 
-        for (int i = 0; i < reviews.length; i++) {
-            Review review = reviews[i];
+        for (Review review : reviews) {
             if (review.getAuthor() == resourceId) {
                 return review;
             }
@@ -4390,25 +4343,25 @@ public class ActionsHelper {
             return true;
         }
 
-        for (int i = 0; i < dependencies.length; i++) {
-            Phase dependency = dependencies[i].getDependency();
+        for (Dependency dependency : dependencies) {
+            Phase dependencyPhase = dependency.getDependency();
             if (phaseStarting) {
-                if (dependencies[i].isDependencyStart() && dependencies[i].isDependentStart()) {
-                    if (!(isPhaseOpen(dependency.getPhaseStatus()) || isPhaseClosed(dependency.getPhaseStatus()))) {
+                if (dependency.isDependencyStart() && dependency.isDependentStart()) {
+                    if (!(isPhaseOpen(dependencyPhase.getPhaseStatus()) || isPhaseClosed(dependencyPhase.getPhaseStatus()))) {
                         return false;
                     }
-                } else if (!dependencies[i].isDependencyStart() && dependencies[i].isDependentStart()) {
-                    if (!isPhaseClosed(dependency.getPhaseStatus())) {
+                } else if (!dependency.isDependencyStart() && dependency.isDependentStart()) {
+                    if (!isPhaseClosed(dependencyPhase.getPhaseStatus())) {
                         return false;
                     }
                 }
             } else {
-                if (dependencies[i].isDependencyStart() && !dependencies[i].isDependentStart()) {
-                    if (!(isPhaseOpen(dependency.getPhaseStatus()) || isPhaseClosed(dependency.getPhaseStatus()))) {
+                if (dependency.isDependencyStart() && !dependency.isDependentStart()) {
+                    if (!(isPhaseOpen(dependencyPhase.getPhaseStatus()) || isPhaseClosed(dependencyPhase.getPhaseStatus()))) {
                         return false;
                     }
-                } else if (!dependencies[i].isDependencyStart() && !dependencies[i].isDependentStart()) {
-                    if (!isPhaseClosed(dependency.getPhaseStatus())) {
+                } else if (!dependency.isDependencyStart() && !dependency.isDependentStart()) {
+                    if (!isPhaseClosed(dependencyPhase.getPhaseStatus())) {
                         return false;
                     }
                 }
@@ -4529,12 +4482,11 @@ public class ActionsHelper {
     /**
      * <p>Returns list of user IDs who have specified resource roles for the specified project.</p>
      *
-     * @param request the http request.
      * @param roleNames a <code>String</code> array representing the resource role names.
      * @param projectID ID of the project.
      * @throws BaseException if an unexpected error occurs.
      */
-    static List<Long> getUserIDsByRoleNames(HttpServletRequest request, String[] roleNames, long projectID) throws BaseException {
+    static List<Long> getUserIDsByRoleNames(String[] roleNames, long projectID) throws BaseException {
         ResourceManager resMgr = createResourceManager();
         ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
         List<Long> userIds = new ArrayList<Long>();
@@ -4556,8 +4508,8 @@ public class ActionsHelper {
 
             // Collect unique external user IDs first as there may exist multiple resources for the same user
             Set<String> stringUserIDs = new HashSet<String>();
-            for (int i = 0; i < resources.length; ++i) {
-                String stringUserID = ((String) resources[i].getProperty("External Reference ID")).trim();
+            for (Resource resource : resources) {
+                String stringUserID = ((String) resource.getProperty("External Reference ID")).trim();
                 stringUserIDs.add(stringUserID);
             }
 
@@ -4658,9 +4610,9 @@ public class ActionsHelper {
         ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
         
         // Get all the Post Mortem reviews
-        Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
+        Filter filterProject = new EqualToFilter("project", project.getId());
         Filter filterScorecard = new EqualToFilter("scorecardType",
-                new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, Constants.POST_MORTEM_SCORECARD_TYPE_NAME).getId()));
+                ActionsHelper.findScorecardTypeByName(allScorecardTypes, Constants.POST_MORTEM_SCORECARD_TYPE_NAME).getId());
         Filter filter = new AndFilter(Arrays.asList(filterProject, filterScorecard));
         Review[] reviews = reviewMgr.searchReviews(filter, false);
         // Delete all the Post Mortem reviews

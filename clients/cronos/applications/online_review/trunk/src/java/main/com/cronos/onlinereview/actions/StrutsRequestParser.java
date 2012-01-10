@@ -135,7 +135,7 @@ class StrutsRequestParser implements RequestParser {
             ++this.currentFileIdx;
         }
         if (this.currentFileIdx < this.files.size()) {
-            this.currentFile = (FormFile) this.files.get(this.currentFileIdx);
+            this.currentFile = this.files.get(this.currentFileIdx);
         } else {
             this.currentFile = null;
         }

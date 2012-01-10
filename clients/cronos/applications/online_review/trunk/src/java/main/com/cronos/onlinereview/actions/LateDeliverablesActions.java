@@ -26,9 +26,7 @@ import com.cronos.onlinereview.functions.Functions;
 import com.topcoder.management.project.PersistenceException;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.persistence.ResourcePersistenceException;
-import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.message.email.EmailEngine;
 import com.topcoder.message.email.TCSEmailMessage;
 import com.topcoder.util.file.DocumentGenerator;
@@ -82,9 +80,9 @@ import edu.emory.mathcs.backport.java.util.Collections;
  *   <ol>
  *     <li>Updated the action logic to support advanced parameters for searching the late deliverables: cockpit project
  *     ID, explanation and response statuses, minimum and maximum deadlines for late deliverables.</li>
- *     <li>Added {@link #editLateDeliverable(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
+ *     <li>Added {@link #editLateDeliverable(org.apache.struts.action.ActionMapping,org.apache.struts.action.ActionForm,javax.servlet.http.HttpServletRequest)}
  *     method.</li>
- *     <li>Added {@link #saveLateDeliverable(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} and
+ *     <li>Added {@link #saveLateDeliverable(org.apache.struts.action.ActionMapping,org.apache.struts.action.ActionForm,javax.servlet.http.HttpServletRequest)} and
  *     accompanying methods.</li>
  *   </ol>
  * </p>
@@ -232,7 +230,7 @@ public class LateDeliverablesActions extends DispatchAction {
         AuthorizationHelper.removeLoginRedirect(request);
 
         // Place the index of the active tab into the request
-        request.setAttribute("projectTabIndex", new Integer(5));
+        request.setAttribute("projectTabIndex", 5);
 
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
@@ -253,14 +251,14 @@ public class LateDeliverablesActions extends DispatchAction {
                 // set flag to show the search result section.
                 request.setAttribute("showSearchResultsSection", Boolean.TRUE);
 
-                Map<Long, List<LateDeliverable>> groupedLateDeliverables = new HashMap<Long, List<LateDeliverable>>();
-                Map<Long, Project> projectMap = new HashMap<Long, Project>();
+                Map<Long, List<LateDeliverable>> groupedLateDeliverables;
+                Map<Long, Project> projectMap;
                 if (!lateDeliverables.isEmpty()) {
                     // group the late deliverables by project.
-                    groupedLateDeliverables = groupLateDeliverablesByProject(request, lateDeliverables);
+                    groupedLateDeliverables = groupLateDeliverablesByProject(lateDeliverables);
 
                     // retrieve the projects for the project ids.
-                    projectMap = getProjects(request, groupedLateDeliverables.keySet());
+                    projectMap = getProjects(groupedLateDeliverables.keySet());
 
                     request.setAttribute("projectMap", projectMap);
                     request.setAttribute("groupedLateDeliverables", groupedLateDeliverables);
@@ -308,7 +306,7 @@ public class LateDeliverablesActions extends DispatchAction {
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
         Long lateDeliverableId = (Long) lazyForm.get("late_deliverable_id");
         LateDeliverable lateDeliverable;
-        if (lateDeliverableId <= 0 || ((lateDeliverable = getLateDeliverable(request, lateDeliverableId)) == null)) {
+        if (lateDeliverableId <= 0 || ((lateDeliverable = getLateDeliverable(lateDeliverableId)) == null)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.VIEW_LATE_DELIVERABLE_PERM_NAME, "Error.UnknownLateDeliverable", null);
         } else {
@@ -318,7 +316,7 @@ public class LateDeliverablesActions extends DispatchAction {
             // Check if user has a permission to view the late deliverable. The users can view late deliverables
             // either if the they are granted View Late Deliverable permission or if they are the source of the late
             // deliverable
-            long lateDeliverableUserId = getLateDeliverableUserId(request, lateDeliverable);
+            long lateDeliverableUserId = getLateDeliverableUserId(lateDeliverable);
             long currentUserId = AuthorizationHelper.getLoggedInUserId(request);
             boolean isLateDeliverableOwner = (currentUserId == lateDeliverableUserId);
 
@@ -374,7 +372,7 @@ public class LateDeliverablesActions extends DispatchAction {
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
         Long lateDeliverableId = (Long) lazyForm.get("late_deliverable_id");
         LateDeliverable lateDeliverable;
-        if (lateDeliverableId <= 0 || ((lateDeliverable = getLateDeliverable(request, lateDeliverableId)) == null)) {
+        if (lateDeliverableId <= 0 || ((lateDeliverable = getLateDeliverable(lateDeliverableId)) == null)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.VIEW_LATE_DELIVERABLE_PERM_NAME, "Error.UnknownLateDeliverable", null);
         } else {
@@ -384,7 +382,7 @@ public class LateDeliverablesActions extends DispatchAction {
             // Check if user has a permission to edit the late deliverable. The users can edit late deliverables
             // either if the they are granted Edit Late Deliverable permission or if they are the source of the late
             // deliverable
-            long lateDeliverableUserId = getLateDeliverableUserId(request, lateDeliverable);
+            long lateDeliverableUserId = getLateDeliverableUserId(lateDeliverable);
             long currentUserId = AuthorizationHelper.getLoggedInUserId(request);
             boolean isLateDeliverableOwner = (currentUserId == lateDeliverableUserId);
 
@@ -422,11 +420,11 @@ public class LateDeliverablesActions extends DispatchAction {
 
                 // Re-read the late deliverable from DB again to get most recent data for late deliverable before
                 // updating
-                lateDeliverable = getLateDeliverable(request, lateDeliverableId);
+                lateDeliverable = getLateDeliverable(lateDeliverableId);
                 boolean alreadySet = false;
                 boolean lateForExplanation = ActionsHelper.explanationDeadline(lateDeliverable).compareTo(new Date()) < 0;
                 if (isLateDeliverableOwner) {
-                    if (lateForExplanation == false) {
+                    if (!lateForExplanation) {
                         if (lateDeliverable.getExplanation() == null) {
                             lateDeliverable.setExplanation(newExplanation);
                             lateDeliverable.setExplanationDate(new Date());
@@ -775,16 +773,12 @@ public class LateDeliverablesActions extends DispatchAction {
     /**
      * Groups the late deliverables by project.
      *
-     * @param request
-     *            the http request
      * @param lateDeliverables
      *            the late deliverables to group
      * @return the grouped late deliverables mapped to the specific project.
-     * @throws BaseException
-     *             if any error occurs.
      */
-    private static Map<Long, List<LateDeliverable>> groupLateDeliverablesByProject(HttpServletRequest request,
-            List<LateDeliverable> lateDeliverables) throws BaseException {
+    private static Map<Long, List<LateDeliverable>> groupLateDeliverablesByProject(
+            List<LateDeliverable> lateDeliverables) {
         Map<Long, List<LateDeliverable>> groupedLateDeliverables = new HashMap<Long, List<LateDeliverable>>();
 
         // we should group the late deliverables by project.
@@ -813,15 +807,13 @@ public class LateDeliverablesActions extends DispatchAction {
     /**
      * Retrieves the projects for the given project id set.
      *
-     * @param request
-     *            the http request
      * @param projectIdSet
      *            the project id set.
      * @return the map of Projects.
      * @throws BaseException
      *             if any error occurs.
      */
-    private static Map<Long, Project> getProjects(HttpServletRequest request, Set<Long> projectIdSet)
+    private static Map<Long, Project> getProjects(Set<Long> projectIdSet)
         throws BaseException {
         long[] projectIds = new long[projectIdSet.size()];
         int i = 0;
@@ -880,7 +872,7 @@ public class LateDeliverablesActions extends DispatchAction {
 
         // Retrieve available Cockpit projects and store in request
         ProjectDataAccess projectDataAccess = new ProjectDataAccess();
-        List<CockpitProject> cockpitProjects = null;
+        List<CockpitProject> cockpitProjects;
         if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
             cockpitProjects = projectDataAccess.getAllCockpitProjects();
         } else {
@@ -911,7 +903,7 @@ public class LateDeliverablesActions extends DispatchAction {
         throws LateDeliverableManagementException {
         LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager();
 
-        List<LateDeliverable> lateDeliverables = null;
+        List<LateDeliverable> lateDeliverables;
         if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
             lateDeliverables = lateDeliverableManager.searchAllLateDeliverables(filter);
         } else {
@@ -964,13 +956,12 @@ public class LateDeliverablesActions extends DispatchAction {
     /**
      * <p>Gets the late deliverable matching the specified ID.</p>
      *
-     * @param request the http request.
      * @param lateDeliverableId a <code>long</code> providing the ID of late deliverable to retrieve.
      * @return a <code>LateDeliverable</code> matching the specified ID or <code>null</code> if requested late
      *         deliverable could not be found.
      * @throws LateDeliverableManagementException if any error occurs.
      */
-    private static LateDeliverable getLateDeliverable(HttpServletRequest request, long lateDeliverableId)
+    private static LateDeliverable getLateDeliverable(long lateDeliverableId)
         throws LateDeliverableManagementException {
         LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager();
         return lateDeliverableManager.retrieve(lateDeliverableId);
@@ -999,13 +990,12 @@ public class LateDeliverablesActions extends DispatchAction {
     /**
      * <p>Gets the ID for a user associated with the resource assigned to specified late deliverable.</p>
      *
-     * @param request the http request.
      * @param lateDeliverable a <code>LateDeliverable</code> providing the data for late deliverable.
      * @return a <code>long</code> providing the ID of a user who is associated with the resource set for specified
      *         late deliverable.
      * @throws ResourcePersistenceException if an unexpected error occurs.
      */
-    private long getLateDeliverableUserId(HttpServletRequest request, LateDeliverable lateDeliverable)
+    private long getLateDeliverableUserId(LateDeliverable lateDeliverable)
         throws ResourcePersistenceException {
         ResourceManager resourceManager = ActionsHelper.createResourceManager();
         Resource lateDeliverableResource = resourceManager.getResource(lateDeliverable.getResourceId());
@@ -1055,12 +1045,12 @@ public class LateDeliverablesActions extends DispatchAction {
      */
     private void setNodes(Node[] nodes, Project project, LateDeliverable lateDeliverable, HttpServletRequest request)
         throws BaseException {
-        for (int i = 0; i < nodes.length; i++) {
-            if (nodes[i] instanceof Field) {
-                Field field = (Field) nodes[i];
+        for (Node node : nodes) {
+            if (node instanceof Field) {
+                Field field = (Field) node;
                 field.setValue(getFieldValue(field.getName(), project, lateDeliverable, request));
-            } else if (nodes[i] instanceof Condition) {
-                Condition condition = ((Condition) nodes[i]);
+            } else if (node instanceof Condition) {
+                Condition condition = ((Condition) node);
                 condition.setValue(getFieldValue(condition.getName(), project, lateDeliverable, request));
 
                 setNodes(condition.getSubNodes().getNodes(), project, lateDeliverable, request);
@@ -1116,7 +1106,7 @@ public class LateDeliverablesActions extends DispatchAction {
             return lateDeliverable.getType().getName();
         } else if ("LATE_MEMBER_HANDLE".equals(fieldName)) {
             UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
-            ExternalUser lateMember = userRetrieval.retrieveUser(getLateDeliverableUserId(request, lateDeliverable));
+            ExternalUser lateMember = userRetrieval.retrieveUser(getLateDeliverableUserId(lateDeliverable));
             return lateMember.getHandle();
         } else if ("CURRENT_USER_HANDLE".equals(fieldName)) {
             UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
@@ -1181,11 +1171,11 @@ public class LateDeliverablesActions extends DispatchAction {
 
         String[] recipientRoleNames = ConfigHelper.getLateDeliverableUpdateByManagerRecipientRoleNames();
 
-        List<Long> managerUserIds = ActionsHelper.getUserIDsByRoleNames(request, recipientRoleNames, project.getId());
+        List<Long> managerUserIds = ActionsHelper.getUserIDsByRoleNames(recipientRoleNames, project.getId());
 
-        managerUserIds.remove(new Long(22719217)); // "Components" dummy user
-        managerUserIds.remove(new Long(22770213)); // "Applications" dummy user
-        managerUserIds.remove(new Long(22873364)); // "LCSUPPORT" dummy user
+        managerUserIds.remove((long) 22719217); // "Components" dummy user
+        managerUserIds.remove((long) 22770213); // "Applications" dummy user
+        managerUserIds.remove((long) 22873364); // "LCSUPPORT" dummy user
 
         // Don't send email to the user who is editing the late deliverable.
         managerUserIds.remove(AuthorizationHelper.getLoggedInUserId(request));
@@ -1195,7 +1185,7 @@ public class LateDeliverablesActions extends DispatchAction {
         // Get the late member's email.
         List<String> lateMemberEmails = new ArrayList<String>();
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
-        lateMemberEmails.add( userRetrieval.retrieveUser(getLateDeliverableUserId(request, lateDeliverable)).getEmail() );
+        lateMemberEmails.add( userRetrieval.retrieveUser(getLateDeliverableUserId(lateDeliverable)).getEmail() );
 
         sendEmailForUsers(project, lateMemberEmails, managerEmails, lateDeliverable,
                           ConfigHelper.getLateDeliverableUpdateByManagerEmailTemplateName(),
@@ -1217,11 +1207,11 @@ public class LateDeliverablesActions extends DispatchAction {
 
         String[] recipientRoleNames = ConfigHelper.getLateDeliverableUpdateByMemberRecipientRoleNames();
 
-        List<Long> managerUserIds = ActionsHelper.getUserIDsByRoleNames(request, recipientRoleNames, project.getId());
+        List<Long> managerUserIds = ActionsHelper.getUserIDsByRoleNames(recipientRoleNames, project.getId());
 
-        managerUserIds.remove(new Long(22719217)); // "Components" dummy user
-        managerUserIds.remove(new Long(22770213)); // "Applications" dummy user
-        managerUserIds.remove(new Long(22873364)); // "LCSUPPORT" dummy user
+        managerUserIds.remove((long) 22719217); // "Components" dummy user
+        managerUserIds.remove((long) 22770213); // "Applications" dummy user
+        managerUserIds.remove((long) 22873364); // "LCSUPPORT" dummy user
 
         List<String> managerEmails = ActionsHelper.getEmailsByUserIDs(request, managerUserIds);
         sendEmailForUsers(project, managerEmails, new ArrayList<String>(), lateDeliverable,
