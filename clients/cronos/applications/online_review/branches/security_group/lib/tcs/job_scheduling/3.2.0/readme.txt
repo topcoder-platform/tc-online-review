@@ -1,0 +1,2 @@
+The job_scheduling.jar file in this directory is the original version 3.2.0 that has been modified to work with Logging Wrapper 1.2 instead of Logging Wrapper 2.0
+The source of the modified version can be found in the JobSchedulerModified.zip file.
