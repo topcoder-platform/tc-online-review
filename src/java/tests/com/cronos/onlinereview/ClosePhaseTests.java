@@ -26,7 +26,7 @@ public class ClosePhaseTests extends ProjectTests {
     		// add spec submitter. 
     		long specSubmitter = TestHelper.AddResource(projectId, 17, -1, Long.parseLong(TestHelper.getCompetitiorUserId()), TestHelper.getCompetitorUsername(), con);
     		// add spec submission.
-    		TestHelper.AddSubmission(projectId, specSubmitter, 2, con);
+    		TestHelper.AddSubmission(projectId, phaseIds.get("spec_submission"), specSubmitter, 2, con);
     	}
     	finally {
     		con.close();

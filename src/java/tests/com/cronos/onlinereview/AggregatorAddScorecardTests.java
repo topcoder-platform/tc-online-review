@@ -36,7 +36,7 @@ public class AggregatorAddScorecardTests extends ProjectTests {
             // add aggregator.
     		TestHelper.AddResource(projectId, 8, phaseIds.get("aggregation") , Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
     		// add contest submission.
-    		long submissionId = TestHelper.AddSubmission(projectId, submitterId, 1, con);
+    		long submissionId = TestHelper.AddSubmission(projectId, phaseIds.get("submission"), submitterId, 1, con);
             /*// add review
             TestHelper.AddReview (reviewerId, submissionId, con);*/
 
