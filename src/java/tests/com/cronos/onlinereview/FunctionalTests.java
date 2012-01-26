@@ -31,7 +31,6 @@ public class FunctionalTests extends TestCase {
         suite.addTestSuite(FinalFixSubmissionUploadTests.class);
         suite.addTestSuite(SubmissionUploadTests.class);
         suite.addTestSuite(EditProjectFiledsTests.class);
-        suite.addTestSuite(DeleteSubmissionTests.class);
         suite.addTestSuite(CompetitorPrivilegeTests.class);
         suite.addTestSuite(ScoreCardTests.class);
         suite.addTestSuite(DeleteReviewerTests.class);
