@@ -36,7 +36,7 @@ public class TimelineAdvancementTests extends ProjectTests {
             // add approver.
     		TestHelper.AddResource(projectId, 10, phaseIds.get("approval") , Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
     		// add contest submission.
-    		TestHelper.AddSubmission(projectId, Submitter, 1, con);
+    		TestHelper.AddSubmission(projectId, phaseIds.get("submission"), Submitter, 1, con);
         } finally {
     		con.close();
     	}

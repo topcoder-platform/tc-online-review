@@ -31,7 +31,7 @@ public class DeleteSubmissionTests extends ProjectTests {
     		// add  submitter.
     		long Submitter = TestHelper.AddResource(projectId, 1, phaseIds.get("registration"), Long.parseLong(TestHelper.getCompetitiorUserId()), TestHelper.getCompetitorUsername(), con);
     		// add contest submission.
-    		TestHelper.AddSubmission(projectId, Submitter, 1, con);
+    		TestHelper.AddSubmission(projectId, phaseIds.get("submission"), Submitter, 1, con);
         } finally {
     		con.close();
     	}

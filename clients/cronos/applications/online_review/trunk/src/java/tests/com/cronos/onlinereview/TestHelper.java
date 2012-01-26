@@ -847,6 +847,8 @@ public class TestHelper {
      * 
      * @param projectId project id to add submission.
      * 
+     * @param phaseId project phase id to add submission.
+     * 
      * @param resourceId submitter's id. 
      * 
      * @param submissionTypeId submission type (spec submission of contest submission)
@@ -857,11 +859,11 @@ public class TestHelper {
      * 
      * @throws Exception if any error occurred. 
      */
-    static long AddSubmission (long projectId, long resourceId, long submissionTypeId, Connection con) throws Exception {
+    static long AddSubmission (long projectId, long phaseId, long resourceId, long submissionTypeId, Connection con) throws Exception {
     	long uploadId = getNextUploadId();
     	executeStatement(con, 
-    			"INSERT INTO upload (upload_id, project_id, resource_id, upload_type_id, upload_status_id, parameter, create_user, create_date, modify_user, modify_date) VALUES (" +
-    			uploadId + ", " + projectId + ", " + resourceId + ", 1, 1, 'no_file.txt', '" +TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
+    			"INSERT INTO upload (upload_id, project_id, project_phase_id, resource_id, upload_type_id, upload_status_id, parameter, create_user, create_date, modify_user, modify_date) VALUES (" +
+    			uploadId + ", " + projectId + ", " + phaseId + ", " + resourceId + ", 1, 1, 'no_file.txt', '" +TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
     	
     	long submissionId = getNextSubmissionId();
     	executeStatement(con,
