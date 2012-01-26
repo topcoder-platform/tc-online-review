@@ -60,25 +60,25 @@ final class LoggingHelper {
         String handle = "";
         try
         {
-             UserRetrieval usrMgr = ActionsHelper.createUserRetrieval(request);
+            UserRetrieval usrMgr = ActionsHelper.createUserRetrieval(request);
             // Get External User object for the currently logged in user
             ExternalUser extUser = usrMgr.retrieveUser(AuthorizationHelper.getLoggedInUserId(request));
             handle = extUser.getHandle();
         } catch (Exception e) {
-    
+            logger.log(Level.ERROR, "Unable to retrieve current user handle.");
         }
        
         String servletPath = request.getContextPath() + request.getServletPath();
         String query = request.getQueryString();
         String queryString = (query == null) ? ("") : ("?" + query);
-        StringBuffer buf = new StringBuffer(200);
+        StringBuilder buf = new StringBuilder(200);
         buf.append(request.getScheme()+"://");        
         buf.append(request.getServerName());
         buf.append(servletPath);
         buf.append(queryString);
         String requestString = buf.toString();
 
-        StringBuffer loginfo = new StringBuffer(100);
+        StringBuilder loginfo = new StringBuilder(100);
         loginfo.append("[* ");
         loginfo.append(handle);
         loginfo.append(" * ");
@@ -90,7 +90,7 @@ final class LoggingHelper {
         loginfo.append(" *]");
         logger.log(Level.INFO, loginfo.toString());
 
-    	StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
     	sb.append(dateFormat.format(new Date())).append(" - ");
     	if (uid != AuthorizationHelper.NO_USER_LOGGED_IN_ID) {
     		sb.append("  User ID : ");
@@ -116,7 +116,7 @@ final class LoggingHelper {
     
     /**
      * This static method logs the information about the exception.
-     * TODO: detarmine is the exception should be rethrown from logException static method
+     * TODO: determine is the exception should be rethrown from logException static method
      * 
      * @param e
      *            exception containing the information to be logged

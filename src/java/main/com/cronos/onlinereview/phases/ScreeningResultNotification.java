@@ -129,7 +129,7 @@ public class ScreeningResultNotification {
 
     /**
      * <p>
-     * Sends email to submiters on results of Screening.
+     * Sends email to submitters on results of Screening.
      * </p>
      * 
      * @param project

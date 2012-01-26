@@ -70,7 +70,7 @@
                                     <td class="headerC"><bean:message key="viewProjectDetails.box.Registration.RegistrationDate" /></td>
                                 </tr>
                                 <c:forEach items="${group.submitters}" var="resource" varStatus="resourceStatus">
-                                    <c:set var="registrantEmail" value="${group.registantsEmails[resourceStatus.index]}" />
+                                    <c:set var="registrantEmail" value="${group.registrantsEmails[resourceStatus.index]}" />
                                     <tr class='${(resourceStatus.index % 2 == 0) ? "light" : "dark"}'>
                                         <td class="value" nowrap="nowrap"><tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" /></td>
                                         <c:if test="${not empty registrantEmail}">

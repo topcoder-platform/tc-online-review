@@ -535,7 +535,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREGATION_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -570,16 +570,11 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve some basic aggregation info and store it into the request
         retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "Aggregation");
 
-        // Obtain an instance of Review Manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager();
-
-        // Retrieve all comment types first
-        CommentType allCommentTypes[] = revMgr.getAllCommentTypes();
         // Select only those needed for this scorecard
         CommentType reviewCommentTypes[] = new CommentType[] {
-                ActionsHelper.findCommentTypeByName(allCommentTypes, "Comment"),
-                ActionsHelper.findCommentTypeByName(allCommentTypes, "Required"),
-                ActionsHelper.findCommentTypeByName(allCommentTypes, "Recommended") };
+                LookupHelper.getCommentType("Comment"),
+                LookupHelper.getCommentType("Required"),
+                LookupHelper.getCommentType("Recommended") };
 
         // Place comment types in the request
         request.setAttribute("allCommentTypes", reviewCommentTypes);
@@ -741,10 +736,6 @@ public class ProjectReviewActions extends DispatchAction {
         int commentIndex = 0;
         int itemIdx = 0;
 
-        // Obtain an instance of review manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager();
-        // Retrieve all comment types
-        CommentType[] allCommentTypes = revMgr.getAllCommentTypes();
         int numberOfItems = review.getNumberOfItems();
 
         for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
@@ -776,8 +767,7 @@ public class ProjectReviewActions extends DispatchAction {
                                 } else {
                                     comment.setExtraInfo(null);
                                 }
-                                comment.setCommentType(ActionsHelper.findCommentTypeById(
-                                        allCommentTypes, responseTypeIds[commentIndex]));
+                                comment.setCommentType(LookupHelper.getCommentType(responseTypeIds[commentIndex]));
                                 ++commentIndex;
                             }
                             if (typeName.equalsIgnoreCase("Aggregation Comment")) {
@@ -787,8 +777,7 @@ public class ProjectReviewActions extends DispatchAction {
 
                         if (aggregatorComment == null) {
                             aggregatorComment = new Comment();
-                            aggregatorComment.setCommentType(
-                                    ActionsHelper.findCommentTypeByName(allCommentTypes, "Aggregation Comment"));
+                            aggregatorComment.setCommentType(LookupHelper.getCommentType("Aggregation Comment"));
                             item.addComment(aggregatorComment);
                         }
 
@@ -820,6 +809,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Update (save) edited Aggregation
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
         revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
         if (!validationSucceeded) {
@@ -869,7 +859,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Get message resources
         MessageResources messages = getResources(request);
 
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             // Need to support view aggregation just by specifying the project id
             verification = ActionsHelper.checkForCorrectProjectId(
@@ -878,19 +868,14 @@ public class ProjectReviewActions extends DispatchAction {
                 return verification.getForward();
             }
 
-            // Obtain an instance of Resource Manager
-            ResourceManager resMgr = ActionsHelper.createResourceManager();
-            // Get the list of all possible resource roles
-            ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
-
             // Create filters to select Aggregators for the project
             Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(verification.getProject().getId());
             Filter filterRole = ResourceFilterBuilder.createResourceRoleIdFilter(
-                    ActionsHelper.findResourceRoleByName(allResourceRoles, Constants.AGGREGATOR_ROLE_NAME).getId());
+                    LookupHelper.getResourceRole(Constants.AGGREGATOR_ROLE_NAME).getId());
             // Combine the upper two filter
             Filter filterAggregators = new AndFilter(filterProject, filterRole);
             // Fetch all Aggregators for the project
-            Resource[] aggregators = resMgr.searchResources(filterAggregators);
+            Resource[] aggregators = ActionsHelper.createResourceManager().searchResources(filterAggregators);
 
             // If the project does not have any Aggregators,
             // there cannot be any Aggregation worksheets. Signal about the error to the user
@@ -1004,7 +989,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             log.log(Level.DEBUG, "failed checkForCorrectReviewId");
             return verification.getForward();
@@ -1086,10 +1071,10 @@ public class ProjectReviewActions extends DispatchAction {
             }
         }
 
-        // Do actual verificartion. Values "Approved" and "Rejected" denote committed Aggregation Review
+        // Do actual verification. Values "Approved" and "Rejected" denote committed Aggregation Review
         String myExtaInfo = (String) myReviewComment.getExtraInfo();
         if ("Approved".equalsIgnoreCase(myExtaInfo) || "Rejected".equalsIgnoreCase(myExtaInfo)) {
-            log.log(Level.DEBUG, "failed Do actual verificartion. Values \"Approved\" and \"Rejected\" denote committed Aggregation Review");
+            log.log(Level.DEBUG, "failed Do actual verification. Values \"Approved\" and \"Rejected\" denote committed Aggregation Review");
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.ReviewCommitted", null);
         }
@@ -1099,7 +1084,7 @@ public class ProjectReviewActions extends DispatchAction {
         // If the user is a Submitter, let underlying JSP page know about this fact
         if (AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) {
             isSubmitter = true;
-            request.setAttribute("isSubmitter", Boolean.valueOf(isSubmitter));
+            request.setAttribute("isSubmitter", isSubmitter);
         } else {
             // Otherwise examine the submitter's comment
             if (submitterComment != null) {
@@ -1266,7 +1251,7 @@ public class ProjectReviewActions extends DispatchAction {
             }
         }
 
-        // Do actual verificartion. Values "Approved" and "Rejected" denote committed Aggregation Review
+        // Do actual verification. Values "Approved" and "Rejected" denote committed Aggregation Review
         String myExtaInfo = (String) myReviewComment.getExtraInfo();
         if ("Approved".equalsIgnoreCase(myExtaInfo) || "Rejected".equalsIgnoreCase(myExtaInfo)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
@@ -1285,12 +1270,8 @@ public class ProjectReviewActions extends DispatchAction {
         String[] reviewFunctions = (String[]) aggregationReviewForm.get("review_function");
         String[] rejectReasons = (String[]) aggregationReviewForm.get("reject_reason");
 
-        // Obtain an instance of review manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager();
-        // Retrieve all comment types
-        CommentType[] allCommentTypes = revMgr.getAllCommentTypes();
         // Determine the type of comment to search for
-        CommentType commentType = ActionsHelper.findCommentTypeByName(allCommentTypes,
+        CommentType commentType = LookupHelper.getCommentType(
                 (isSubmitter) ? "Submitter Comment" : "Aggregation Review Comment");
 
         // Denotes the rejected status of the Aggregation Review.
@@ -1342,7 +1323,7 @@ public class ProjectReviewActions extends DispatchAction {
                         // Set the reason of reject/accept (i.e. actual comment's text)
                         userComment.setComment(rejectReasons[itemIdx]);
 
-                        // If review function equals to anythning but "Accept", regard the item as
+                        // If review function equals to anything but "Accept", regard the item as
                         // rejected. If current user is a Submitter, disregard a value in the
                         // reviewFunctions array and always treat it as containing "Accept" string
                         // (thus, Submitter can never reject aggregation worksheet)
@@ -1373,6 +1354,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Update (save) edited Aggregation Review
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
         revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
         if (!validationSucceeded) {
@@ -1418,7 +1400,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
             checkForCorrectReviewId(mapping, request, Constants.VIEW_AGGREG_REVIEW_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1522,7 +1504,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectReviewId(mapping, request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1753,11 +1735,6 @@ public class ProjectReviewActions extends DispatchAction {
         int commentIdx = 0;
         int itemIdx = 0;
 
-        // Obtain an instance of review manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager();
-        // Retrieve all comment types
-        CommentType[] allCommentTypes = revMgr.getAllCommentTypes();
-
         for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
             Group group = scorecardTemplate.getGroup(groupIdx);
             for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
@@ -1792,8 +1769,7 @@ public class ProjectReviewActions extends DispatchAction {
 
                         if (finalReviewComment == null) {
                             finalReviewComment = new Comment();
-                            finalReviewComment.setCommentType(
-                                    ActionsHelper.findCommentTypeByName(allCommentTypes, "Final Review Comment"));
+                            finalReviewComment.setCommentType(LookupHelper.getCommentType("Final Review Comment"));
                             item.addComment(finalReviewComment);
                         }
 
@@ -1816,8 +1792,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         if (reviewLevelComment == null) {
             reviewLevelComment = new Comment();
-            reviewLevelComment.setCommentType(
-                    ActionsHelper.findCommentTypeByName(allCommentTypes, "Final Review Comment"));
+            reviewLevelComment.setCommentType(LookupHelper.getCommentType("Final Review Comment"));
             review.addComment(reviewLevelComment);
         }
 
@@ -1853,6 +1828,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Update (save) edited Aggregation
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
         revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
         if (!validationSucceeded) {
@@ -2131,7 +2107,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectSubmissionId(mapping, request, Constants.VIEW_COMPOS_SCORECARD_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -2159,8 +2135,7 @@ public class ProjectReviewActions extends DispatchAction {
         Phase phase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
 
         // Retrieve a scorecard template for the Review phase
-        Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(
-                ActionsHelper.createScorecardManager(), phase);
+        Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(phase);
         // Get the count of questions in the current scorecard
         final int questionsCount = ActionsHelper.getScorecardQuestionsCount(scorecardTemplate);
 
@@ -2180,7 +2155,6 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         List<Long> reviewerIds = new ArrayList<Long>();
-
         for (Resource reviewer : reviewers) {
             reviewerIds.add(reviewer.getId());
         }
@@ -2194,7 +2168,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Prepare final combined filter
         Filter filter = new AndFilter(Arrays.asList(
-                new Filter[] {filterReviewers, filterSubmission, filterCommitted, filterScorecard}));
+            filterReviewers, filterSubmission, filterCommitted, filterScorecard));
         // Obtain an instance of Review Manager
         ReviewManager revMgr = ActionsHelper.createReviewManager();
         // Retrieve an array of reviews
@@ -2205,8 +2179,7 @@ public class ProjectReviewActions extends DispatchAction {
                     Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.CompositeScorecardIsNotReady", null);
         }
 
-        // Verify that number of items in every review scorecard
-        // match the number of questions in scorecard template
+        // Verify that number of items in every review scorecard match the number of questions in scorecard template
         for (Review review : reviews) {
             if (review.getNumberOfItems() != questionsCount) {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
@@ -2323,7 +2296,7 @@ public class ProjectReviewActions extends DispatchAction {
      * @param request
      *            the http request.
      * @param permission
-     *            permission to check against, or <code>null</code> if no check is requeired.
+     *            permission to check against, or <code>null</code> if no check is required.
      * @throws BaseException
      *             if any error occurs.
      */
@@ -2375,9 +2348,8 @@ public class ProjectReviewActions extends DispatchAction {
         // Place the id of the submission as attribute in the request
         request.setAttribute("sid", sid);
 
-        // Retrieve the project following submission's infromation chain
-        Project project = ActionsHelper.getProjectForSubmission(
-                ActionsHelper.createProjectManager(), submission);
+        // Retrieve the project following submission's information chain
+        Project project = ActionsHelper.getProjectForSubmission(submission);
         // Store Project object in the result bean
         result.setProject(project);
         // Place project as attribute in the request
@@ -2391,7 +2363,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * This method verifies the request for ceratins conditions to be met. This includes verifying
+     * This method verifies the request for certain conditions to be met. This includes verifying
      * if the user has specified an ID of project he wants to perform an operation on, if the
      * ID of the project specified by user denotes an existing project, and whether the user
      * has enough rights to perform the operation specified by <code>permission</code> parameter.
@@ -2405,7 +2377,7 @@ public class ProjectReviewActions extends DispatchAction {
      * @param request
      *            the http request.
      * @param permission
-     *            permission to check against, or <code>null</code> if no check is requeired.
+     *            permission to check against, or <code>null</code> if no check is required.
      * @throws BaseException
      *             if any error occurs.
      * @since 1.1
@@ -2440,7 +2412,7 @@ public class ProjectReviewActions extends DispatchAction {
             return result;
         }
 
-        // Retrieve the project following submission's infromation chain
+        // Retrieve the project following submission's information chain
         Project project = ActionsHelper.createProjectManager().getProject(pid);
         if (project == null) {
             result.setForward(ActionsHelper.produceErrorReport(
@@ -2478,7 +2450,7 @@ public class ProjectReviewActions extends DispatchAction {
      * @param request
      *            the http request.
      * @param permission
-     *            permission to check against, or <code>null</code> if no check is requeired.
+     *            permission to check against, or <code>null</code> if no check is required.
      * @throws BaseException
      *             if any error occurs.
      */
@@ -2556,9 +2528,8 @@ public class ProjectReviewActions extends DispatchAction {
             // Place the id of the submission as attribute in the request
             request.setAttribute("sid", submission.getId());
 
-            // Retrieve the project following submission's infromation chain
-            project = ActionsHelper.getProjectForSubmission(
-                    ActionsHelper.createProjectManager(), submission);
+            // Retrieve the project following submission's information chain
+            project = ActionsHelper.getProjectForSubmission(submission);
         } else {
             long reviewAuthorId = review.getAuthor();
             Resource resource = ActionsHelper.createResourceManager().getResource(reviewAuthorId);
@@ -2617,8 +2588,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Get a Review phase
         Phase reviewPhase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
         // Retrieve all resources (reviewers) for that phase
-        Resource[] reviewResources = ActionsHelper.getAllResourcesForPhase(
-                ActionsHelper.createResourceManager(), reviewPhase);
+        Resource[] reviewResources = ActionsHelper.getAllResourcesForPhase(reviewPhase);
         for (Resource reviewResource : reviewResources) {
             ActionsHelper.populateEmailProperty(request, reviewResource);
         }
@@ -2640,8 +2610,7 @@ public class ProjectReviewActions extends DispatchAction {
                 "scorecardType", scorecardTemplate.getScorecardType().getId());
 
         // Prepare final filter that combines all the above filters
-        Filter filter = new AndFilter(Arrays.asList(new Filter[]
-                {filterResources, filterCommitted, filterSubmission, filterProject, filterScorecard}));
+        Filter filter = new AndFilter(Arrays.asList(filterResources, filterCommitted, filterSubmission, filterProject, filterScorecard));
 
         // Obtain an instance of Review Manager
         ReviewManager revMgr = ActionsHelper.createReviewManager();
@@ -2670,22 +2639,15 @@ public class ProjectReviewActions extends DispatchAction {
      * @param request
      * @throws BaseException
      */
-    private CommentType[] retreiveAndStoreReviewLookUpData(HttpServletRequest request) throws BaseException {
-        // Obtain Review Manager instance
-        ReviewManager revMgr = ActionsHelper.createReviewManager();
-
-        // Retrieve all comment types first
-        CommentType reviewCommentTypesAll[] = revMgr.getAllCommentTypes();
+    private void retreiveAndStoreReviewLookUpData(HttpServletRequest request) throws BaseException {
         // Select only those needed for this scorecard
         CommentType reviewCommentTypes[] = new CommentType[] {
-                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Comment"),
-                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Required"),
-                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Recommended") };
+                LookupHelper.getCommentType("Comment"),
+                LookupHelper.getCommentType("Required"),
+                LookupHelper.getCommentType("Recommended") };
 
         // Place comment types in the request
         request.setAttribute("allCommentTypes", reviewCommentTypes);
-        // and return them
-        return reviewCommentTypes;
     }
 
     /**
@@ -2801,7 +2763,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Verify that certain requirements are met before proceeding with the Action
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         CorrectnessCheckResult verification;
         if (isPostMortemPhase) {
             verification = checkForCorrectProjectId(mapping, request, permName);
@@ -2845,8 +2807,7 @@ public class ProjectReviewActions extends DispatchAction {
             myResource = ActionsHelper.getMyResourceForPhase(request, phase);
         }
         // Retrieve a scorecard template for the appropriate phase
-        Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(
-                ActionsHelper.createScorecardManager(), phase);
+        Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(phase);
 
         /*
          * Verify that the user is not trying to create review that already exists
@@ -2858,11 +2819,11 @@ public class ProjectReviewActions extends DispatchAction {
         Filter filter;
         if (isPostMortemPhase) {
             // Prepare final combined filter
-            filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterScorecard}));
+            filter = new AndFilter(Arrays.asList(filterResource, filterScorecard));
         } else {
             // Prepare final combined filter
             Filter filterSubmission = new EqualToFilter("submission", verification.getSubmission().getId());
-            filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterSubmission, filterScorecard}));
+            filter = new AndFilter(Arrays.asList(filterResource, filterSubmission, filterScorecard));
         }
 
         // Obtain an instance of Review Manager
@@ -2902,8 +2863,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Populate form properties
         reviewForm.set("answer", emptyStrings);
 
-        CommentType typeComment = ActionsHelper.findCommentTypeByName(
-                (CommentType[]) request.getAttribute("allCommentTypes"), "Comment");
+        CommentType typeComment = LookupHelper.getCommentType("Comment");
 
         Integer[] commentCounts = new Integer[questionsCount];
         Arrays.fill(commentCounts, DEFAULT_COMMENTS_NUMBER);
@@ -3004,7 +2964,7 @@ public class ProjectReviewActions extends DispatchAction {
         AuthorizationHelper.removeLoginRedirect(request);
 
         // Retrive some look-up data and store it into the request
-        CommentType[] commentTypes = retreiveAndStoreReviewLookUpData(request);
+        retreiveAndStoreReviewLookUpData(request);
 
         // Prepare the arrays
         String[] answers = new String[review.getNumberOfItems()];
@@ -3039,7 +2999,7 @@ public class ProjectReviewActions extends DispatchAction {
                         reviewForm.set("comment", commentKey, (comment != null) ? comment.getComment() : "");
                         reviewForm.set("comment_type", commentKey,
                                 (comment != null) ? comment.getCommentType().getId() :
-                                        ActionsHelper.findCommentTypeByName(commentTypes, "Comment").getId());
+                                        LookupHelper.getCommentType("Comment").getId());
                     }
                 }
             }
@@ -3232,7 +3192,7 @@ public class ProjectReviewActions extends DispatchAction {
              */
 
             // Retrieve a scorecard template for the appropriate phase
-            scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(ActionsHelper.createScorecardManager(), phase);
+            scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(phase);
 
             // Prepare filters
             Filter filterResource = new EqualToFilter("reviewer", myResource.getId());
@@ -3241,10 +3201,10 @@ public class ProjectReviewActions extends DispatchAction {
             Filter filter;
             if (isSubmissionDependentPhase) {
                 Filter filterSubmission = new EqualToFilter("submission", verification.getSubmission().getId());
-                filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterSubmission, filterScorecard}));
+                filter = new AndFilter(Arrays.asList(filterResource, filterSubmission, filterScorecard));
             } else {
                 // Prepare final combined filter
-                filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterScorecard}));
+                filter = new AndFilter(Arrays.asList(filterResource, filterScorecard));
             }
 
             // Obtain an instance of Review Manager
@@ -3340,17 +3300,8 @@ public class ProjectReviewActions extends DispatchAction {
             uploadedFiles = uploadResult.getUploadedFiles("file");
         }
 
-        // Obtain an instance of review manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager();
         // Obtain an instance of Upload Manager
         UploadManager upMgr = ActionsHelper.createUploadManager();
-
-        // Retrieve all comment types
-        CommentType[] commentTypes = revMgr.getAllCommentTypes();
-        // Retrieve all upload statuses
-        UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
-        // Retrieve all upload types
-        UploadType[] allUploadType = upMgr.getAllUploadTypes();
 
         int itemIdx = 0;
         int fileIdx = 0;
@@ -3376,7 +3327,7 @@ public class ProjectReviewActions extends DispatchAction {
 
                         // Populate the review item comments
                         int newCommentCount = populateItemComments(item, itemIdx, replies, commentTypeIds,
-                                commentCounts[itemIdx], commentTypes, myResource, managerEdit);
+                                commentCounts[itemIdx], myResource, managerEdit);
 
                         if (newCommentCount != commentCounts[itemIdx]) {
                             commentCounts[itemIdx] = newCommentCount;
@@ -3394,14 +3345,12 @@ public class ProjectReviewActions extends DispatchAction {
 
                                 upload.setOwner(myResource.getId());
                                 upload.setProject(project.getId());
+                                upload.setProjectPhase(phase.getId());
                                 upload.setParameter(uploadedFiles[uploadedFileIdx++].getFileId());
-                                upload.setUploadStatus(
-                                        ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active"));
-                                upload.setUploadType(
-                                        ActionsHelper.findUploadTypeByName(allUploadType, "Review Document"));
+                                upload.setUploadStatus(LookupHelper.getUploadStatus("Active"));
+                                upload.setUploadType(LookupHelper.getUploadType("Review Document"));
 
-                                upMgr.createUpload(upload,
-                                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                                upMgr.createUpload(upload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
                                 item.setDocument(upload.getId());
                             }
@@ -3436,7 +3385,7 @@ public class ProjectReviewActions extends DispatchAction {
 
                         // Populate the review item comments
                         int newCommentCount = populateItemComments(item, itemIdx, replies, commentTypeIds,
-                                commentCounts[itemIdx], commentTypes, myResource, managerEdit);
+                                commentCounts[itemIdx], myResource, managerEdit);
 
                         if (newCommentCount != commentCounts[itemIdx]) {
                             commentCounts[itemIdx] = newCommentCount;
@@ -3462,15 +3411,13 @@ public class ProjectReviewActions extends DispatchAction {
                                 upload.setOwner(myResource.getId());
                                 upload.setParameter(uploadedFiles[uploadedFileIdx++].getFileId());
                                 upload.setProject(project.getId());
-                                upload.setUploadStatus(
-                                        ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active"));
-                                upload.setUploadType(
-                                        ActionsHelper.findUploadTypeByName(allUploadType, "Review Document"));
+                                upload.setProjectPhase(phase.getId());
+                                upload.setUploadStatus(LookupHelper.getUploadStatus("Active"));
+                                upload.setUploadType(LookupHelper.getUploadType("Review Document"));
 
                                 // Update and store old upload (if there was any)
                                 if (oldUpload != null) {
-                                    oldUpload.setUploadStatus(
-                                            ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted"));
+                                    oldUpload.setUploadStatus(LookupHelper.getUploadStatus("Deleted"));
                                     upMgr.updateUpload(oldUpload,
                                             Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                                 }
@@ -3525,7 +3472,7 @@ public class ProjectReviewActions extends DispatchAction {
 
             if (approveFixesObj != null) {
                 reviewLevelComment1.setCommentType(
-                    ActionsHelper.findCommentTypeByName(commentTypes, "Approval Review Comment"));
+                    LookupHelper.getCommentType("Approval Review Comment"));
                 reviewLevelComment1.setAuthor(resource.getId());
                 reviewLevelComment1.setExtraInfo(approveFixes ? "Approved" : "Rejected");
                 reviewLevelComment1.setComment("");
@@ -3537,7 +3484,7 @@ public class ProjectReviewActions extends DispatchAction {
             }
 
             reviewLevelComment2.setCommentType(
-                ActionsHelper.findCommentTypeByName(commentTypes, "Approval Review Comment - Other Fixes"));
+                LookupHelper.getCommentType("Approval Review Comment - Other Fixes"));
             reviewLevelComment2.setAuthor(resource.getId());
             reviewLevelComment2.setExtraInfo(acceptButRequireOtherFixes ? "Required" : "");
             reviewLevelComment2.setComment("");
@@ -3563,7 +3510,7 @@ public class ProjectReviewActions extends DispatchAction {
             }
 
             reviewLevelComment1.setCommentType(
-                ActionsHelper.findCommentTypeByName(commentTypes, "Specification Review Comment"));
+                LookupHelper.getCommentType("Specification Review Comment"));
             reviewLevelComment1.setAuthor(myResource.getId());
             reviewLevelComment1.setExtraInfo(approveSpecification ? "Approved" : "Rejected");
             reviewLevelComment1.setComment("");
@@ -3618,7 +3565,7 @@ public class ProjectReviewActions extends DispatchAction {
                         Comment comment = new Comment();
                         comment.setAuthor(myResource.getId());
                         comment.setComment("");
-                        comment.setCommentType(ActionsHelper.findCommentTypeByName(commentTypes, "Comment"));
+                        comment.setCommentType(LookupHelper.getCommentType("Comment"));
                         item.addComment(comment);
                     }
                 }
@@ -3639,6 +3586,7 @@ public class ProjectReviewActions extends DispatchAction {
             return mapping.findForward(Constants.PREVIEW_FORWARD_NAME);
         }
 
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
         // Determine which action should be performed - creation or updating
         if (verification.getReview() == null) {
             revMgr.createReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
@@ -3726,17 +3674,17 @@ public class ProjectReviewActions extends DispatchAction {
      * @param replies
      * @param commentTypeIds
      * @param commentCount
-     * @param commentTypes
      * @param managerEdit
      * @throws IllegalArgumentException
      *             if any of the parameters <code>item</code>, <code>replies</code>,
-     *             <code>commentTypeIds</code>, <code>commentTypes</code>, or
+     *             <code>commentTypeIds</code> or
      *             <code>myResource</code> is <code>null</code>, or if parameters
      *             <code>itemIdx</code> or <code>commentCount</code> are negative.
+     * @throws BaseException if any other error occur
      */
     private static int populateItemComments(Item item, int itemIdx, Map<String, String> replies,
-                                            Map<String, String> commentTypeIds, int commentCount, CommentType[] commentTypes, Resource myResource,
-                                            boolean managerEdit) {
+                                            Map<String, String> commentTypeIds, int commentCount, Resource myResource,
+                                            boolean managerEdit) throws BaseException {
 
         // Validate parameters
         ActionsHelper.validateParameterNotNull(item, "item");
@@ -3771,7 +3719,7 @@ public class ProjectReviewActions extends DispatchAction {
             CommentType commentType;
 
             if (managerEdit) {
-                commentType = ActionsHelper.findCommentTypeByName(commentTypes, "Manager Comment");
+                commentType = LookupHelper.getCommentType("Manager Comment");
             } else {
                 // Check that a mapping for the commentKey actually exists.
                 // It may not exist when the browser is confused when the user clicks 'Back' button after validation fails (probably an error in the JS).
@@ -3780,7 +3728,7 @@ public class ProjectReviewActions extends DispatchAction {
                     continue;
                 }
 
-                commentType = ActionsHelper.findCommentTypeById(commentTypes, Long.parseLong(commentTypeIds.get(commentKey)));
+                commentType = LookupHelper.getCommentType(Long.parseLong(commentTypeIds.get(commentKey)));
             }
             // Check that correct comment type ID has been specified
             // (user may intentionally submit malformed form data)
@@ -3870,8 +3818,7 @@ public class ProjectReviewActions extends DispatchAction {
         for (;newCommentCount <= properCommentCount; ++newCommentCount) {
             String emptyCommentKey = itemIdx + "." + newCommentCount;
             replies.put(emptyCommentKey, "");
-            commentTypeIds.put(emptyCommentKey,
-                    Long.toString(ActionsHelper.findCommentTypeByName(commentTypes, "Comment").getId()));
+            commentTypeIds.put(emptyCommentKey, Long.toString(LookupHelper.getCommentType("Comment").getId()));
         }
 
         return newCommentCount - 1;

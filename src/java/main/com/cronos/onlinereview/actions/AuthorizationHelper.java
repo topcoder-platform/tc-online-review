@@ -123,7 +123,7 @@ public class AuthorizationHelper {
             return;
         }
 
-        StringBuffer redirectBackUrl = new StringBuffer();
+        StringBuilder redirectBackUrl = new StringBuilder();
 
         redirectBackUrl.append(request.getScheme());
         redirectBackUrl.append("://");
@@ -239,18 +239,16 @@ public class AuthorizationHelper {
         // If this function is called the first time after the user has logged in,
         // obtain and store in the session the handle of the user
         if (request.getSession().getAttribute("userHandle") == null) {
-            // Obtain an instance of the User Retrieveal object
+            // Obtain an instance of the User Retrieval object
             UserRetrieval usrMgr = ActionsHelper.createUserRetrieval(request);
             // Get External User object for the currently logged in user
             ExternalUser extUser = usrMgr.retrieveUser(getLoggedInUserId(request));
             // Place handle of the user into session as attribute
             request.getSession().setAttribute("userHandle", extUser.getHandle());
         }
-		
-        // Obtain an instance of Resource Manager
-        ResourceManager resMgr = ActionsHelper.createResourceManager();
+
         // Perform search for resources
-        Resource[] resources = ActionsHelper.searchUserResources(getLoggedInUserId(request), null, resMgr);
+        Resource[] resources = ActionsHelper.searchUserResources(getLoggedInUserId(request), null);
 
         // Iterate over all resources retrieved and take into
         // consideration only those ones that have Manager role

@@ -849,6 +849,7 @@
                                upload.create_date AS upload_create_date,
                                upload.modify_user AS upload_modify_user,
                                upload.modify_date AS upload_modify_date,
+                               upload.project_phase_id AS project_phase_id,
                                upload.project_id AS project_id,
                                upload.resource_id AS resource_id,
                                upload.parameter AS upload_parameter,
@@ -918,6 +919,9 @@
                     <Property name="project_id">
                         <Value>upload.project_id</Value>
                     </Property>
+                    <Property name="project_phase_id">
+                        <Value>upload.project_phase_id</Value>
+                    </Property>
                     <Property name="resource_id">
                         <Value>upload.resource_id</Value>
                     </Property>
@@ -955,6 +959,7 @@
                                upload.create_date AS upload_create_date,
                                upload.modify_user AS upload_modify_user,
                                upload.modify_date AS upload_modify_date,
+                               upload.project_phase_id AS project_phase_id,
                                upload.project_id AS project_id,
                                upload.resource_id AS resource_id,
                                upload.parameter AS upload_parameter,
@@ -993,6 +998,9 @@
                     </Property>
                     <Property name="project_id">
                         <Value>upload.project_id</Value>
+                    </Property>
+                    <Property name="project_phase_id">
+                        <Value>upload.project_phase_id</Value>
                     </Property>
                     <Property name="resource_id">
                         <Value>upload.resource_id</Value>

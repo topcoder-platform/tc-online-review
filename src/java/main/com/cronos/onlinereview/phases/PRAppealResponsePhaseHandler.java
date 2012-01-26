@@ -89,7 +89,7 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
     }
 
     /**
-     * Provides additional logic to execute a phase. this exetension will update valid_submission_ind, submit_timestamp
+     * Provides additional logic to execute a phase. this extension will update valid_submission_ind, submit_timestamp
      * field of project_result table.</p>
      *
      * @param phase The input phase to check.
@@ -145,7 +145,7 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
         
         String emailContent = docGenerator.applyTemplate(root);
         TCSEmailMessage message = new TCSEmailMessage();
-        message.setSubject(MessageFormat.format(winnersEmailSubject, new Object[] {"Online Review", project.getProperty(PROJECT_NAME)}));
+        message.setSubject(MessageFormat.format(winnersEmailSubject, "Online Review", project.getProperty(PROJECT_NAME)));
         message.setBody(emailContent);
         message.setFromAddress(winnersEmailFromAddress);
         message.setToAddress(user.getEmail(), TCSEmailMessage.TO);

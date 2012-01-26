@@ -112,7 +112,7 @@ public class TextContentRequestParser implements RequestParser {
      */
     public void writeNextFile(OutputStream out, long fileLimit) throws IOException, FileSizeLimitExceededException {
         if (!this.hasNextFile) {
-            throw new IllegalStateException("There is no content for writting");
+            throw new IllegalStateException("There is no content for writing");
         }
         if (fileLimit != -1) {
             if (this.content.length() > fileLimit) {

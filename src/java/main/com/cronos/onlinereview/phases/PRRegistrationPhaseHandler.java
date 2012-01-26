@@ -41,7 +41,7 @@ public class PRRegistrationPhaseHandler extends RegistrationPhaseHandler {
     }
 
     /**
-     * Provides additional logic to execute a phase. this exetension will insert data to project_result table.</p>
+     * Provides additional logic to execute a phase. this extension will insert data to project_result table.</p>
      *
      * @param phase The input phase to check.
      * @param operator The operator that execute the phase.

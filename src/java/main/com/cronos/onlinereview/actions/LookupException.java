@@ -1,18 +1,17 @@
 /*
- * Copyright (C) 2007 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2012 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
-import com.topcoder.util.errorhandling.BaseRuntimeException;
+import com.topcoder.util.errorhandling.BaseException;
 
 /**
- * This class extends BaseRuntimeException and is used to signal about any error
- * occurred when creating manager instances in ManagerCreationHelper class.
+ * This class extends BaseException and is used to signal about any error
+ * occurred when retrieving entities in LookupHelper class.
  * 
- * @author TCSDEVELOPER
- * @version 1.0
+ * @author VolodymyrK
  */
-public class ManagerCreationException extends BaseRuntimeException {
+public class LookupException extends BaseException {
 
     /**
      * <p>
@@ -22,7 +21,7 @@ public class ManagerCreationException extends BaseRuntimeException {
      * @param message
      *            the error message
      */
-    public ManagerCreationException(String message) {
+    public LookupException(String message) {
         super(message);
     }
 
@@ -36,7 +35,7 @@ public class ManagerCreationException extends BaseRuntimeException {
      * @param cause
      *            the cause of this exception
      */
-    public ManagerCreationException(String message, Throwable cause) {
+    public LookupException(String message, Throwable cause) {
         super(message, cause);
     }
 }

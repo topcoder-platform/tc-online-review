@@ -1174,11 +1174,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                                                   HttpServletRequest request, ActionForm form) throws BaseException {
         // Adjust registration phase end-time and status only if extension was indeed requested by user
         if (extensionDays > 0) {
-            PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
             if (isClosed(registrationPhase)) {
                 // Re-open closed Registration phase if necessary
-                PhaseStatus[] statuses = phaseManager.getAllPhaseStatuses();
-                PhaseStatus openPhaseStatus = ActionsHelper.findPhaseStatusById(statuses, PhaseStatusEnum.OPEN.getId());
+                PhaseStatus openPhaseStatus = LookupHelper.getPhaseStatus(PhaseStatusEnum.OPEN.getId());
                 registrationPhase.setPhaseStatus(openPhaseStatus);
                 registrationPhase.setActualEndDate(null);
             }
@@ -1190,6 +1188,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
             com.topcoder.project.phases.Project phasesProject = registrationPhase.getProject();
             recalculateScheduledDates(phasesProject.getAllPhases());
+            PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
             phaseManager.updatePhases(phasesProject, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
             // Clean-up successfully processed form input
@@ -1240,13 +1239,12 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @return an <code>Object</code> array of two elements. The first element provides mapping from role IDs to
      *         <code>ResourceRole</code> objects. The second element provides the mapping from user handles to
      *         <code>ExternalUser</code> objects.
-     * @throws ResourcePersistenceException if an unexpected error occurs while accessing user project data store.
      * @throws ConfigException if a configuration error is encountered while initializing user project data store.
+     * @throws BaseException if an unexpected error occurs
      */
     private Object[] validateAddResourcesRequest(HttpServletRequest request, ActionForm form)
-            throws ResourcePersistenceException, ConfigException {
+            throws BaseException {
 
-        ResourceManager resourceManager = ActionsHelper.createResourceManager();
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
         Long[] resourceRoleIds = (Long[]) lazyForm.get("resource_role_id");
         String[] resourceHandles = (String[]) lazyForm.get("resource_handles");
@@ -1257,10 +1255,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         Map<Long, ResourceRole> roleMapping = new HashMap<Long, ResourceRole>();
         Map<String, ExternalUser> users = new HashMap<String, ExternalUser>();
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
-        ResourceRole[] existingResourceRoles = resourceManager.getAllResourceRoles();
         for (int i = 0; i < resourceRoleIds.length; i++) {
             Long requestedRoleId = resourceRoleIds[i];
-            ResourceRole existingRole = ActionsHelper.findResourceRoleById(existingResourceRoles, requestedRoleId);
+            ResourceRole existingRole = LookupHelper.getResourceRole(requestedRoleId);
             if (existingRole == null) {
                 ActionsHelper.addErrorToRequest(request, "resource_role_id[" + i + "]",
                     new ActionMessage("error.com.cronos.onlinereview.actions.manageProject.ResourceRole.InvalidId",
@@ -1449,10 +1446,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             badRoleHandles.addAll(usersWithPendingTerms.get(resourceRoleId));
         }
 
-        ResourceRole[] resourceRoles = resourceManager.getAllResourceRoles();
         for (int i = 0; i < resourceRoleIds.length; i++) {
             Long resourceRoleId = resourceRoleIds[i];
-            ResourceRole role = ActionsHelper.findResourceRoleById(resourceRoles, resourceRoleId);
+            ResourceRole role = LookupHelper.getResourceRole(resourceRoleId);
             Set<String> duplicates = duplicateHandles.get(resourceRoleId);
             Set<String> existing = existingResourceHandles.get(resourceRoleId);
             if (!duplicates.isEmpty()) {
@@ -1486,27 +1482,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         lazyForm.set("resource_handles", index, badHandles);
     }
 
-    /**
-     * <p>Gets the list of roles available for resources which current user can add to project.</p>
-     *
-     * @param allowedRoleNames a <code>String</code> array listing the names for roles for resources which can be added
-     *        by current user to project.
-     * @param existingResourceRoles a <code>ResourceRole</code> array listing all existing resource roles.
-     * @return a <code>ResourceRole</code> array listing the roles available for resources which current user can add to
-     *         project.
-     */
-    private ResourceRole[] getAvailableRoles(String[] allowedRoleNames, ResourceRole[] existingResourceRoles) {
-        List<ResourceRole> availableRoles = new ArrayList<ResourceRole>();
-        for (String allowedRoleName : allowedRoleNames) {
-            ResourceRole role = ActionsHelper.findResourceRoleByName(existingResourceRoles, allowedRoleName);
-            if (role != null) {
-                availableRoles.add(role);
-            }
-        }
-        return availableRoles.toArray(new ResourceRole[availableRoles.size()]);
-    }
-
-    /**
+     /**
      * <p>Binds to specified request the list of roles available for resources which current user can add to project.
      * Analyzes the assigned roles for current user and binds appropriate list of available resource roles to specified
      * request.</p>

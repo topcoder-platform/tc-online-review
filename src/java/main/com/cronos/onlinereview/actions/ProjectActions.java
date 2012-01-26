@@ -62,10 +62,8 @@ import com.topcoder.date.workdays.WorkdaysUnitOfTime;
 import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.DeliverableManager;
 import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
-import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
 import com.topcoder.management.phase.OperationCheckResult;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Prize;
@@ -76,7 +74,6 @@ import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.ProjectPropertyType;
 import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.project.ProjectType;
-import com.topcoder.management.resource.NotificationType;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
@@ -327,10 +324,10 @@ public class ProjectActions extends DispatchAction {
     /**
      * This method is an implementation of &quot;New Project&quot; Struts Action defined for this
      * assembly, which is supposed to fetch lists of project types and categories from the database
-     * and pass it to the JSP page to use it for populating approprate drop down lists.
+     * and pass it to the JSP page to use it for populating appropriate drop down lists.
      *
      * @return &quot;success&quot; forward that forwards to the /jsp/editProject.jsp page (as
-     *         defined in struts-config.xml file) in the case of successfull processing,
+     *         defined in struts-config.xml file) in the case of successful processing,
      *         &quot;notAuthorized&quot; forward in the case of user not being authorized to perform
      *         the action.
      * @param mapping
@@ -372,9 +369,9 @@ public class ProjectActions extends DispatchAction {
         formNewProject.set("email_notifications", Boolean.TRUE);
         formNewProject.set("timeline_notifications", Boolean.TRUE);
 
-        boolean isAdmin = Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
+        boolean isAdmin = AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
                 || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
-                || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME));
+                || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME);
         request.setAttribute("allowBillingEdit", isAdmin);
         request.setAttribute("allowCockpitProjectEdit", isAdmin);
 
@@ -505,7 +502,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("defaultScorecards", ActionsHelper.getDefaultScorecards());
 
         // Load phase template names
-        String[] phaseTemplateNames = ActionsHelper.createPhaseTemplate(null).getAllTemplateNames();
+        String[] phaseTemplateNames = ActionsHelper.createPhaseTemplate().getAllTemplateNames();
         request.setAttribute("phaseTemplateNames", phaseTemplateNames);
 
         // since Online Review Update - Add Project Dropdown v1.0
@@ -612,7 +609,7 @@ public class ProjectActions extends DispatchAction {
         // Obtain Resource Manager instance
         ResourceManager resourceManager = ActionsHelper.createResourceManager();
 
-        // Retreive the list of the resources associated with the project
+        // Retrieve the list of the resources associated with the project
         Resource[] resources =
             resourceManager.searchResources(ResourceFilterBuilder.createProjectIdFilter(project.getId()));
         // Get an array of external users for the corresponding resources
@@ -658,9 +655,9 @@ public class ProjectActions extends DispatchAction {
         setEditProjectRequestAttributes(request, project, resources, externalUsers, phases);
 
         // since Online Review Update - Add Project Dropdown v1.0
-        boolean isAdmin = Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
-                        || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
-                        || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME));
+        boolean isAdmin = AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
+                || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
+                || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME);
         request.setAttribute("isAdmin", isAdmin);
 
        // start BUGR 4039 - Check whether the billing project id is in the user's allowed billing projects list
@@ -754,12 +751,12 @@ public class ProjectActions extends DispatchAction {
     /**
      * This method is an implementation of &quot;Edit Project&quot; Struts Action defined for this
      * assembly, which is supposed to fetch lists of project types and categories from the database
-     * and pass it to the JSP page to use it for populating approprate drop down lists. It is also
+     * and pass it to the JSP page to use it for populating appropriate drop down lists. It is also
      * supposed to retrieve the project to be edited and to populate the form with appropriate
      * values.
      *
      * @return &quot;success&quot; forward that forwards to the /jsp/editProject.jsp page (as
-     *         defined in struts-config.xml file) in the case of successfull processing,
+     *         defined in struts-config.xml file) in the case of successful processing,
      *         &quot;notAuthorized&quot; forward in the case of user not being authorized to perform
      *         the action.
      * @param mapping
@@ -855,22 +852,14 @@ public class ProjectActions extends DispatchAction {
 
         }
 
-        // Obtain an instance of Project Manager
-        ProjectManager manager = ActionsHelper.createProjectManager();
-        // Retrieve project types, categories and statuses
-        ProjectCategory[] projectCategories = manager.getAllProjectCategories();
-        ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
-
-        // This variable determines whether status of the project has been changed by this save
-        // operation.
+        // This variable determines whether status of the project has been changed by this save operation.
         boolean statusHasChanged = false;
         boolean categoryChanged = false;
         if (newProject) {
             // Find "Active" project status
-            ProjectStatus activeStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Active");
+            ProjectStatus activeStatus = LookupHelper.getProjectStatus("Active");
             // Find the project category by the specified id
-            ProjectCategory category = ActionsHelper.findProjectCategoryById(projectCategories,
-                    (Long) lazyForm.get("project_category"));
+            ProjectCategory category = LookupHelper.getProjectCategory((Long) lazyForm.get("project_category"));
             if (category.getProjectType().isGeneric()) {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                         Constants.CREATE_PROJECT_PERM_NAME, "Error.GenericProjectType", Boolean.TRUE);
@@ -891,7 +880,7 @@ public class ProjectActions extends DispatchAction {
                 categoryChanged = true;
             }
             // Sets Project category
-            ProjectCategory projectCategory = ActionsHelper.findProjectCategoryById(projectCategories, newCategoryId);
+            ProjectCategory projectCategory = LookupHelper.getProjectCategory(newCategoryId);
             if (projectCategory.getProjectType().isGeneric()) {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                         Constants.CREATE_PROJECT_PERM_NAME, "Error.GenericProjectType", Boolean.TRUE);
@@ -925,8 +914,7 @@ public class ProjectActions extends DispatchAction {
             // Populate contest indicator flag
             project.setProperty("Contest Indicator", "On");
         } else {
-            ProjectStatus newProjectStatus =
-                ActionsHelper.findProjectStatusById(projectStatuses, (Long) lazyForm.get("status"));
+            ProjectStatus newProjectStatus = LookupHelper.getProjectStatus((Long) lazyForm.get("status"));
             String oldStatusName = project.getProjectStatus().getName();
             String newStatusName = (newProjectStatus != null) ? newProjectStatus.getName() : oldStatusName;
 
@@ -952,7 +940,7 @@ public class ProjectActions extends DispatchAction {
         project.setProperty("External Reference ID", lazyForm.get("external_reference_id"));
         // Populate project price
         project.setProperty("Payments", lazyForm.get("payments"));
-        PrizeType contestPrizeType = ActionsHelper.getPrizeTypeByName(manager, Constants.CONTEST_PRIZE_TYPE_NAME);
+        PrizeType contestPrizeType = LookupHelper.getPrizeType(Constants.CONTEST_PRIZE_TYPE_NAME);
         if (project.getPrizes() != null) {
             for(Prize p : project.getPrizes()) {
                 if(p.getPrizeType().getId() == contestPrizeType.getId() && p.getPlace() == 1) {
@@ -1073,7 +1061,7 @@ public class ProjectActions extends DispatchAction {
                 ActionsHelper.createUserRetrieval(request), resources);
             setEditProjectRequestAttributes(request, project, resources, externalUsers, projectPhases);
 
-            request.setAttribute("newProject", Boolean.valueOf(newProject));
+            request.setAttribute("newProject", newProject);
 
             return mapping.getInputForward();
         }
@@ -1223,9 +1211,6 @@ public class ProjectActions extends DispatchAction {
         // Get the list of all previously existing phases
         Phase[] oldPhases = phProject.getAllPhases();
 
-        // Get the list of all existing phase types
-        PhaseType[] allPhaseTypes = phaseManager.getAllPhaseTypes();
-
         // Get the array of phase types specified for each phase
         Long[] phaseTypes = (Long[]) lazyForm.get("phase_type");
 
@@ -1355,7 +1340,7 @@ public class ProjectActions extends DispatchAction {
 
             if ("add".equals(phaseAction)) {
                 // Set phase type
-                phase.setPhaseType(ActionsHelper.findPhaseTypeById(allPhaseTypes, phaseTypes[i]));
+                phase.setPhaseType(LookupHelper.getPhaseType(phaseTypes[i]));
                 // Set phase status to "Scheduled"
                 phase.setPhaseStatus(PhaseStatus.SCHEDULED);
             }
@@ -1966,30 +1951,7 @@ public class ProjectActions extends DispatchAction {
         // Obtain the instance of the User Retrieval
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
 
-        // Obtain the instance of the Resource Manager
-        ResourceManager resourceManager = ActionsHelper.createResourceManager();
-
-        // Get all types of resource roles
-        ResourceRole[] resourceRoles = resourceManager.getAllResourceRoles();
-
-        // Get all types of notifications
-        NotificationType[] types = resourceManager.getAllNotificationTypes();
-        long timelineNotificationId = Long.MIN_VALUE;
-
-        // get the id for the timelineNotification
-        for (NotificationType type : types) {
-            if (type.getName().equals("Timeline Notification")) {
-                timelineNotificationId = type.getId();
-                break;
-            }
-        }
-
-        // need to do the check timelineNotifictionId exists here
-        if (timelineNotificationId == Long.MIN_VALUE) {
-            ActionsHelper.addErrorToRequest(request,
-            "error.com.cronos.onlinereview.actions.editProject.TimelineNotification.NotFound");
-            return;
-        }
+        long timelineNotificationId = LookupHelper.getNotificationType("Timeline Notification").getId();
 
         // Get the array of resource names
         String[] resourceNames = (String[]) lazyForm.get("resources_name");
@@ -2044,8 +2006,9 @@ public class ProjectActions extends DispatchAction {
         Set<String> disabledResourceRoles = new HashSet<String>(Arrays.asList(ConfigHelper.getDisabledResourceRoles()));
         Set<String> reviewerHandles = new HashSet<String>();
         Map<String, String> primaryReviewerRoles = new HashMap<String, String>();
-        PhaseManager phaseManager = ActionsHelper.createPhaseManager( false);
-        PhaseType[] phaseTypes = phaseManager.getAllPhaseTypes();
+
+        // Obtain the instance of the Resource Manager
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
 
         for (int i = 1; i < resourceNames.length; i++) {
             String resourceAction = (String) lazyForm.get("resources_action", i);
@@ -2096,7 +2059,7 @@ public class ProjectActions extends DispatchAction {
                     }
                 }
 				// Check if the phase related to resource role exists
-                ResourceRole role = ActionsHelper.findResourceRoleById(resourceRoles, resourceRoleId);
+                ResourceRole role = LookupHelper.getResourceRole(resourceRoleId);
                 if (role != null) {
                     Long relatedPhaseTypeId = role.getPhaseType();
                     if (relatedPhaseTypeId != null) {
@@ -2108,7 +2071,7 @@ public class ProjectActions extends DispatchAction {
                         }
 
                         if (!found) {
-                            PhaseType phaseType = ActionsHelper.findPhaseTypeById(phaseTypes, relatedPhaseTypeId);
+                            PhaseType phaseType = LookupHelper.getPhaseType(relatedPhaseTypeId);
                             ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                                                             new ActionMessage( "error.com.cronos.onlinereview.actions."
                                                                                + "editProject.Resource.PhaseNotFound",
@@ -2224,8 +2187,7 @@ public class ProjectActions extends DispatchAction {
 
                 newUsers.add(user.getId());
 
-                ResourceRole role = ActionsHelper.findResourceRoleById(
-                        resourceRoles, (Long) lazyForm.get("resources_role", i));
+                ResourceRole role = LookupHelper.getResourceRole((Long) lazyForm.get("resources_role", i));
                 if (!role.getName().equals("Observer") || Boolean.parseBoolean(retrieveUserPreference(user.getId(), GLOBAL_TIMELINE_NOTIFICATION))) {
                     newUsersForNotification.add(user.getId());
                 }
@@ -2268,8 +2230,7 @@ public class ProjectActions extends DispatchAction {
             resource.setProperty("Payment Status", lazyForm.get("resources_paid", i));
 
             boolean resourceRoleChanged = false;
-            ResourceRole role = ActionsHelper.findResourceRoleById(
-                    resourceRoles, (Long) lazyForm.get("resources_role", i));
+            ResourceRole role = LookupHelper.getResourceRole((Long) lazyForm.get("resources_role", i));
             if (role != null && resource.getResourceRole() != null &&
                 role.getId() != resource.getResourceRole().getId()) {
                 // delete project_result if old role is submitter
@@ -2383,7 +2344,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         // check the list of users to delete and remove those still have other roles
-        Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(resourceManager, project);
+        Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(project);
         Set<Long> usersToKeep = new HashSet<Long>();
         for (Long id : deletedUsers) {
             for (Resource projectResource : allProjectResources) {
@@ -2427,9 +2388,9 @@ public class ProjectActions extends DispatchAction {
                 finalUsers.remove(existUserId);
             }
 
-            finalUsers.remove(22770213); // Applications user
-            finalUsers.remove(22719217); // Components user
-            finalUsers.remove(22873364); // LCSUPPORT user
+            finalUsers.remove((long)22770213); // Applications user
+            finalUsers.remove((long)22719217); // Components user
+            finalUsers.remove((long)22873364); // LCSUPPORT user
 
             long[] userIds = new long[finalUsers.size()];
             int i = 0;
@@ -2659,8 +2620,6 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("projectTypes", projectTypes);
         request.setAttribute("projectCategories", projectCategories);
 
-        ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
-
         ProjectPropertyType[] projectInfoTypes = manager.getAllProjectPropertyTypes();
 
         int[] typeCounts = new int[projectTypes.length];
@@ -2684,11 +2643,12 @@ public class ProjectActions extends DispatchAction {
         String[][] myDeliverables = (myProjects) ? new String[projectCategories.length][] : null;
 
         // Fetch projects from the database. These projects will require further grouping
-        ProjectStatus draftStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Draft");
-        ProjectStatus activeStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Active");
+        ProjectStatus draftStatus = LookupHelper.getProjectStatus("Draft");
+        ProjectStatus activeStatus = LookupHelper.getProjectStatus("Active");
         long userId = AuthorizationHelper.getLoggedInUserId(request);
         Project[] ungroupedProjects;
         ProjectDataAccess projectDataAccess = new ProjectDataAccess();
+        ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
         if (activeTab != 1) {
             if (activeTab == 4) {
                 ungroupedProjects = projectDataAccess.searchDraftProjects(projectStatuses, projectCategories,
@@ -2711,15 +2671,14 @@ public class ProjectActions extends DispatchAction {
             projectFilters.add(ungroupedProject.getId());
         }
 
-        ResourceManager resourceManager = ActionsHelper.createResourceManager();
         Resource[] allMyResources = null;
         if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request)) {
             if (activeTab == 1) {  // My projects
-                allMyResources = ActionsHelper.searchUserResources(userId, activeStatus, resourceManager);
+                allMyResources = ActionsHelper.searchUserResources(userId, activeStatus);
             } else if (activeTab == 2) { // Active projects
-                allMyResources = ActionsHelper.searchUserResources(userId, activeStatus, resourceManager);
+                allMyResources = ActionsHelper.searchUserResources(userId, activeStatus);
             } else if (activeTab == 4) { // Draft projects
-                allMyResources = ActionsHelper.searchUserResources(userId, draftStatus, resourceManager);
+                allMyResources = ActionsHelper.searchUserResources(userId, draftStatus);
             }
         }
 
@@ -3062,7 +3021,7 @@ public class ProjectActions extends DispatchAction {
         Filter filterPhases = new InFilter("phase_id", phaseTypeIds);
         Filter filterResources = new InFilter("resource_id", resourceIds);
         // Build final combined filter
-        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterProjects, filterPhases, filterResources}));
+        Filter filter = new AndFilter(Arrays.asList(filterProjects, filterPhases, filterResources));
 
         // Get and return an array of my incomplete deliverables for all active phases.
         // These deliverables will require further grouping
@@ -3094,7 +3053,7 @@ public class ProjectActions extends DispatchAction {
             return messages.getMessage("ResourceRole.Public");
         }
 
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         Set<String> rolesSet = new HashSet<String>();
 
         for (Resource resource : resources) {
@@ -3137,12 +3096,11 @@ public class ProjectActions extends DispatchAction {
      *            winner for the project, this parameter must be <code>null</code>.
      * @throws IllegalArgumentException
      *             if parameter <code>messages</code> is <code>null</code>.
-     * @throws UploadPersistenceException if an unexpected error occurs.
-     * @throws SearchBuilderException if an unexpected error occurs.
+     * @throws BaseException if an unexpected error occurs.
      */
     private static String getMyDeliverablesForPhases(MessageResources messages,
         Deliverable[] deliverables, Phase[] phases, Resource[] resources, String winnerExtUserId)
-        throws SearchBuilderException, UploadPersistenceException {
+        throws BaseException {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(messages, "messages");
 
@@ -3152,7 +3110,7 @@ public class ProjectActions extends DispatchAction {
             return null; // No deliverables
         }
 
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         Set<String> deliverablesSet = new HashSet<String>();
 
         for (Deliverable deliverable : deliverables) {
@@ -3183,51 +3141,13 @@ public class ProjectActions extends DispatchAction {
             // Get a resource this deliverable is for
             final Resource forResource = resources[j];
 
-            // Some additional special checking is need for Aggregation Review type of deliverables
-            if (deliverable.getName().equalsIgnoreCase(Constants.AGGREGATION_REV_DELIVERABLE_NAME)) {
-                // Get the name of the resource's role
-                final String resourceRole = forResource.getResourceRole().getName();
-                // Check that this deliverable is for one of the reviewers
-                if (resourceRole.equalsIgnoreCase(Constants.REVIEWER_ROLE_NAME) ||
-                        resourceRole.equalsIgnoreCase(Constants.ACCURACY_REVIEWER_ROLE_NAME) ||
-                        resourceRole.equalsIgnoreCase(Constants.FAILURE_REVIEWER_ROLE_NAME) ||
-                        resourceRole.equalsIgnoreCase(Constants.STRESS_REVIEWER_ROLE_NAME)) {
-                    final String originalExtId = (String) forResource.getProperty("External Reference ID");
-
-                    // Iterate over all resources and check
-                    // if there is any resource assigned to the same user
-                    for (j = 0; j < resources.length; ++j) {
-                        // Skip resource that is being checked
-                        if (forResource == resources[j]) {
-                            continue;
-                        }
-
-                        // Get a resource for the current iteration
-                        final Resource otherResource = resources[j];
-                        // Verify whether this resource is an Aggregator, and skip it if it isn't
-                        if (!otherResource.getResourceRole().getName().equalsIgnoreCase(Constants.AGGREGATOR_ROLE_NAME)) {
-                            continue;
-                        }
-
-                        String otherExtId = (String) resources[j].getProperty("External Reference ID");
-                        // If appropriate aggregator's resource has been found, stop the search
-                        if (originalExtId.equals(otherExtId)) {
-                            break;
-                        }
-                    }
-                    // Skip this deliverable if it is assigned to aggregator
-                    if (j != resources.length) {
-                        continue;
-                    }
-                }
-            }
-
             // Some additional special checking is need for Specification Submission type of deliverables
             if (Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME.equals(deliverable.getName())) {
-                Submission submission
-                        = ActionsHelper.getActiveSpecificationSubmission(phases[0].getProject().getId(),
-                        ActionsHelper.createUploadManager());
-                if ((submission != null) && (submission.getUpload().getOwner() != deliverable.getResource())) {
+                Submission[] submissions= ActionsHelper.getProjectSubmissions(
+                    phases[0].getProject().getId(), Constants.SPECIFICATION_SUBMISSION_TYPE_NAME,
+                    Constants.ACTIVE_SUBMISSION_STATUS_NAME, false);
+                if (submissions != null && submissions.length > 0 &&
+                        submissions[0].getUpload().getOwner() != deliverable.getResource()) {
                     continue;
                 }
             }
@@ -3365,40 +3285,40 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("activeTabIdx", phasesDetails.getActiveTabIndex());
 
         request.setAttribute("isManager",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)));
+                AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES));
         request.setAttribute("isAllowedToPerformScreening",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SCREENING_PERM_NAME) &&
-                        ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME) != null));
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SCREENING_PERM_NAME) &&
+                        ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME) != null);
         request.setAttribute("isAllowedToPerformMilestoneScreening",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_MILESTONE_SCREENING_PERM_NAME) &&
-                        ActionsHelper.getPhase(phases, true, Constants.MILESTONE_SCREENING_PHASE_NAME) != null));
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_MILESTONE_SCREENING_PERM_NAME) &&
+                        ActionsHelper.getPhase(phases, true, Constants.MILESTONE_SCREENING_PHASE_NAME) != null);
         request.setAttribute("isAllowedToPerformMilestoneReview",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_MILESTONE_REVIEW_PERM_NAME) &&
-                        ActionsHelper.getPhase(phases, true, Constants.MILESTONE_REVIEW_PHASE_NAME) != null));
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_MILESTONE_REVIEW_PERM_NAME) &&
+                        ActionsHelper.getPhase(phases, true, Constants.MILESTONE_REVIEW_PHASE_NAME) != null);
         request.setAttribute("isAllowedToViewScreening",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENING_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENING_PERM_NAME));
         request.setAttribute("isAllowedToViewMilestoneScreening",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MILESTONE_SCREENING_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MILESTONE_SCREENING_PERM_NAME));
         request.setAttribute("isAllowedToViewMilestoneReview",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MILESTONE_REVIEW_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MILESTONE_REVIEW_PERM_NAME));
         request.setAttribute("isAllowedToUploadTC",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.UPLOAD_TEST_CASES_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.UPLOAD_TEST_CASES_PERM_NAME));
         request.setAttribute("isAllowedToPerformAggregation",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME));
         request.setAttribute("isAllowedToPerformAggregationReview",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME) &&
-                        !AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME) &&
+                        !AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME));
         request.setAttribute("isAllowedToUploadFF",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_FIX_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_FIX_PERM_NAME));
         request.setAttribute("isAllowedToPerformFinalReview",
-                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.FINAL_REVIEW_PHASE_NAME) != null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME)));
+                ActionsHelper.getPhase(phases, true, Constants.FINAL_REVIEW_PHASE_NAME) != null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME));
         request.setAttribute("isAllowedToPerformApproval",
-                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME)));
+                ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME));
         request.setAttribute("isAllowedToPerformPortMortemReview",
-                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME)));
+                ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME));
 
         collectTrueSubmittersAndReviewers(project, resources, ActionsHelper.createReviewManager(), request);
     }
@@ -3433,7 +3353,7 @@ public class ProjectActions extends DispatchAction {
      * @param resource a <code>Resource</code> to be verified.
      * @param hasReviewScorecardFilled <code>true</code> if resource has review filled; <code>false</code> otherwise.
      * @param index an <code>int</code> providing the index in the form for specified resource.
-     * @param trueSubmitters a <code>Map</code> collecting the submiters.
+     * @param trueSubmitters a <code>Map</code> collecting the submitters.
      * @param trueReviewers a <code>Map</code> collecting the reviewers.
      */
     private void collectSingleTrueSubmitterOrReviewer(Resource resource, boolean hasReviewScorecardFilled, int index,

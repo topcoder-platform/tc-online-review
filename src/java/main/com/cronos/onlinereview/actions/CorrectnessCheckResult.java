@@ -31,7 +31,7 @@ final class CorrectnessCheckResult {
      * <code>null</code> if no action forward has been assigned.
      * <p>
      * This member variable is initialized in the constructor and can be accessed or changed via
-     * approptiate get/set methods. The default value for this variable is <code>null</code>.
+     * appropriate get/set methods. The default value for this variable is <code>null</code>.
      * </p>
      */
     private ActionForward forward = null;
@@ -41,7 +41,7 @@ final class CorrectnessCheckResult {
      * <code>null</code> if no project has been assigned.
      * <p>
      * This member variable is initialized in the constructor and can be accessed or changed via
-     * approptiate get/set methods. The default value for this variable is <code>null</code>.
+     * appropriate get/set methods. The default value for this variable is <code>null</code>.
      * </p>
      */
     private Project project = null;
@@ -51,7 +51,7 @@ final class CorrectnessCheckResult {
      * <code>null</code> if no upload has been assigned.
      * <p>
      * This member variable is initialized in the constructor and can be accessed or changed via
-     * approptiate get/set methods. The default value for this variable is <code>null</code>.
+     * appropriate get/set methods. The default value for this variable is <code>null</code>.
      * </p>
      */
     private Upload upload = null;
@@ -61,7 +61,7 @@ final class CorrectnessCheckResult {
      * <code>null</code> if no submission has been assigned.
      * <p>
      * This member variable is initialized in the constructor and can be accessed or changed via
-     * approptiate get/set methods. The default value for this variable is <code>null</code>.
+     * appropriate get/set methods. The default value for this variable is <code>null</code>.
      * </p>
      */
     private Submission submission = null;
@@ -71,7 +71,7 @@ final class CorrectnessCheckResult {
      * <code>null</code> if no review has been assigned.
      * <p>
      * This member variable is initialized in the constructor and can be accessed or changed via
-     * approptiate get/set methods. The default value for this variable is <code>null</code>.
+     * appropriate get/set methods. The default value for this variable is <code>null</code>.
      * </p>
      */
     private Review review = null;
@@ -195,13 +195,13 @@ final class CorrectnessCheckResult {
 
     /**
      * This method gets a value indicating whether the check performed by one of the
-     * <code>checkForXXX</code> methods was successfull. If this method returns <code>false</code>,
+     * <code>checkForXXX</code> methods was successful. If this method returns <code>false</code>,
      * action forward should be retrieved from this bean and used to forward the request. Usually
      * this action forward will contain a forward to the error page, but actual contents of the
      * forward is determined by the checker method and forward-mappings configuration in Struts
      * configuration file.
      * 
-     * @return <code>true</code> if the check was successfull, <code>false</code> if it wasn't.
+     * @return <code>true</code> if the check was successful, <code>false</code> if it wasn't.
      */
     public boolean isSuccessful() {
         return (getForward() == null);
