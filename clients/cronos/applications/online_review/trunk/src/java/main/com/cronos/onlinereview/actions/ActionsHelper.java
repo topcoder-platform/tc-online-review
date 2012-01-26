@@ -29,6 +29,8 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
+import com.topcoder.management.deliverable.search.UploadFilterBuilder;
+import com.topcoder.search.builder.filter.*;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForward;
@@ -58,29 +60,20 @@ import com.topcoder.db.connectionfactory.UnknownConnectionException;
 import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.DeliverableManager;
 import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.SubmissionStatus;
 import com.topcoder.management.deliverable.SubmissionType;
 import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.UploadManager;
-import com.topcoder.management.deliverable.UploadStatus;
-import com.topcoder.management.deliverable.UploadType;
 import com.topcoder.management.deliverable.late.LateDeliverable;
 import com.topcoder.management.deliverable.late.LateDeliverableManager;
 import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
-import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
 import com.topcoder.management.deliverable.search.DeliverableFilterBuilder;
 import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
 import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.phase.PhaseManager;
-import com.topcoder.management.phase.PhasePersistence;
-import com.topcoder.management.phase.db.InformixPhasePersistence;
-import com.topcoder.management.project.PrizeType;
 import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.ProjectStatus;
-import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.project.link.ProjectLinkManager;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
@@ -90,10 +83,7 @@ import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
-import com.topcoder.management.review.data.CommentType;
 import com.topcoder.management.review.data.Review;
-import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregator;
-import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregatorConfigException;
 import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.data.Group;
@@ -103,19 +93,12 @@ import com.topcoder.management.scorecard.data.Section;
 import com.topcoder.project.phases.Dependency;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
-import com.topcoder.project.phases.PhaseType;
 import com.topcoder.project.phases.template.DefaultPhaseTemplate;
 import com.topcoder.project.phases.template.PhaseTemplate;
 import com.topcoder.project.phases.template.PhaseTemplatePersistence;
 import com.topcoder.project.phases.template.StartDateGenerator;
 import com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence;
-import com.topcoder.project.phases.template.startdategenerator.RelativeWeekTimeStartDateGenerator;
 import com.topcoder.search.builder.SearchBuilderException;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.EqualToFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.search.builder.filter.InFilter;
-import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.servlet.request.DisallowedDirectoryException;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.LocalFileUpload;
@@ -213,7 +196,7 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  * <p>
  * Version 1.9.1 (Milestone Support Assembly 1.0) Change notes:
  *   <ol>
- *     <li>Updated {@link #getMostRecentSubmissions(UploadManager, Project, String)} method to introduce new parameter
+ *     <li>Updated {@link #getProjectSubmissions} method to introduce new parameter
  *     for submission type.</li>
  *   </ol>
  * </p>
@@ -222,7 +205,7 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  * Version 1.9.2 (Online Review Replatforming Release 2) Change notes:
  *   <ol>
  *     <li>Updated {@link #isProjectResultCategory(long)} method to include the studio contest.</li>
- *     <li>Change submission.getUplaods.get(0) to submission.getUpload().</li>
+ *     <li>Change submission.getUploads.get(0) to submission.getUpload().</li>
  *   </ol>
  * </p>
  *
@@ -316,12 +299,12 @@ public class ActionsHelper {
     private static final Map<Long, Scorecard> cachedScorecards = new HashMap<Long, Scorecard>();
 
     /**
-     * constant for software user fourm role prefix
+     * constant for software user forum role prefix
      */
     private static final String SOFTWARE_USER_FORUM_ROLE_PREFIX = "Software_Users_";
 
     /**
-     * constant for software moderator fourm role prefix
+     * constant for software moderator forum role prefix
      */
     private static final String SOFTWARE_MODERATOR_FORUM_ROLE_PREFIX = "Software_Moderators_";
 
@@ -399,7 +382,7 @@ public class ActionsHelper {
      */
     public static void validateParameterNotNull(Object param, String paramName) throws IllegalArgumentException {
         if (param == null) {
-            throw new IllegalArgumentException("Paramter '" + paramName + "' must not be null.");
+            throw new IllegalArgumentException("Parameter '" + paramName + "' must not be null.");
         }
     }
 
@@ -417,7 +400,7 @@ public class ActionsHelper {
     public static void validateParameterStringNotEmpty(String str, String paramName) throws IllegalArgumentException {
         validateParameterNotNull(str, paramName);
         if (str.trim().length() == 0) {
-            throw new IllegalArgumentException("Paramter '" + paramName + "' must not be empty string.");
+            throw new IllegalArgumentException("Parameter '" + paramName + "' must not be empty string.");
         }
     }
 
@@ -443,7 +426,7 @@ public class ActionsHelper {
     /**
      * This static method verifies that parameter of type <code>int</code> specified by
      * <code>value</code> parameter falls in the range of allowed values specified by
-     * <code>minValue</code> and <code>maxValue</code> parameters. The reange's boundaries are
+     * <code>minValue</code> and <code>maxValue</code> parameters. The range's boundaries are
      * inclusive. This method itself throws an exception if the value of <code>minValue</code> is
      * greater than the value of <code>maxValue</code> parameter.
      *
@@ -467,7 +450,7 @@ public class ActionsHelper {
         }
         if (value < minValue || value > maxValue) {
             throw new IllegalArgumentException("Parameter '" + paramName +
-                    "' does not fall into the specifed range of [" + minValue + "; " + maxValue + "].");
+                    "' does not fall into the specified range of [" + minValue + "; " + maxValue + "].");
         }
     }
 
@@ -498,256 +481,6 @@ public class ActionsHelper {
                     "' stored in the request scope, or the attrubute stored is null.");
         }
         return obj;
-    }
-
-
-    // --------------------------------------------------------------- Finder type of methods -----
-
-    /**
-     * This static method searches for the scorecard type with the specified name in a provided
-     * array of scorecard types.
-     *
-     * @return found scorecard type, or <code>null</code> if a type with the specified name has
-     *         not been found in the provided array of scorecard types.
-     * @param scorecardTypes
-     *            an array of scorecard types to search for wanted scorecard type among.
-     * @param typeName
-     *            the name of the needed scorecard type.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or <code>typeName</code>
-     *             parameter is empty string.
-     */
-    public static ScorecardType findScorecardTypeByName(ScorecardType[] scorecardTypes, String typeName) {
-        // Validate parameters
-        validateParameterNotNull(scorecardTypes, "scorecardTypes");
-        validateParameterStringNotEmpty(typeName, "typeName");
-
-        for (ScorecardType scorecardType : scorecardTypes) {
-            if (scorecardType.getName().equalsIgnoreCase(typeName)) {
-                return scorecardType;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This static method searches for the comment type with the specified ID in a provided array of
-     * comment types.
-     *
-     * @return found comment type, or <code>null</code> if a type with the specified ID has not
-     *         been found in the provided array of comment types.
-     * @param commentTypes
-     *            an array of comment types to search for wanted comment type among.
-     * @param typeId
-     *            the ID of the needed comment type.
-     * @throws IllegalArgumentException
-     *             if <code>commentTypes</code> parameter is <code>null</code>, or
-     *             <code>typeId</code> parameter is zero or negative.
-     */
-    public static CommentType findCommentTypeById(CommentType[] commentTypes, long typeId) {
-        // Validate parameters
-        validateParameterNotNull(commentTypes, "commentTypes");
-        validateParameterPositive(typeId, "typeId");
-
-        for (CommentType commentType : commentTypes) {
-            if (commentType.getId() == typeId) {
-                return commentType;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This static method searches for the comment type with the specified name in a provided array
-     * of comment types. The search is case-insensitive.
-     *
-     * @return found comment type, or <code>null</code> if a type with the specified name has not
-     *         been found in the provided array of comment types.
-     * @param commentTypes
-     *            an array of comment types to search for wanted comment type among.
-     * @param typeName
-     *            the name of the needed comment type.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or <code>typeName</code>
-     *             parameter is empty string.
-     */
-    public static CommentType findCommentTypeByName(CommentType[] commentTypes, String typeName) {
-        // Validate parameters
-        validateParameterNotNull(commentTypes, "commentTypes");
-        validateParameterStringNotEmpty(typeName, "typeName");
-
-        for (CommentType commentType : commentTypes) {
-            if (commentType.getName().equalsIgnoreCase(typeName)) {
-                return commentType;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This static method searches for the project category with the specified ID in a provided
-     * array of project categories.
-     *
-     * @return found project category, or <code>null</code> if a category with the specified ID
-     *         has not been found in the provided array of project categories.
-     * @param projectCategories
-     *            an array of project categories to search for wanted project category among.
-     * @param categoryId
-     *            the ID of the needed project category.
-     * @throws IllegalArgumentException
-     *             if <code>projectCategories</code> parameter is <code>null</code>, or
-     *             <code>categoryId</code> parameter is zero or negative.
-     * @see #findProjectCategoryByName(ProjectCategory[], String)
-     */
-    public static ProjectCategory findProjectCategoryById(ProjectCategory[] projectCategories, long categoryId) {
-        // Validate parameters
-        validateParameterNotNull(projectCategories, "projectCategories");
-        validateParameterPositive(categoryId, "categoryId");
-
-        for (ProjectCategory projectCategory : projectCategories) {
-            if (projectCategory.getId() == categoryId) {
-                return projectCategory;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This static method searches for the project category with the specified name in a provided
-     * array of project categories. The search is case-insensitive.
-     *
-     * @return found project category, or <code>null</code> if a category with the specified name
-     *         has not been found in the provided array of project categories.
-     * @param projectCategories
-     *            an array of project categories to search for wanted project category among.
-     * @param categoryName
-     *            the name of the needed project category.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or <code>categoryName</code>
-     *             parameter is empty string.
-     * @see #findProjectCategoryById(ProjectCategory[], long)
-     */
-    public static ProjectCategory findProjectCategoryByName(ProjectCategory[] projectCategories, String categoryName) {
-        // Validate parameters
-        validateParameterNotNull(projectCategories, "projectCategories");
-        validateParameterStringNotEmpty(categoryName, "categoryName");
-
-        for (ProjectCategory projectCategory : projectCategories) {
-            if (projectCategory.getName().equalsIgnoreCase(categoryName)) {
-                return projectCategory;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This static method searches for the project status with the specified ID in a provided array
-     * of project statuses.
-     *
-     * @return found project status, or <code>null</code> if a status with the specified ID has
-     *         not been found in the provided array of project statuses.
-     * @param projectStatuses
-     *            an array of project statuses to search for wanted project status among.
-     * @param statusId
-     *            the ID of the needed project status.
-     * @throws IllegalArgumentException
-     *             if <code>projectStatuses</code> parameter is <code>null</code>, or
-     *             <code>statusId</code> parameter is zero or negative.
-     * @see #findProjectStatusByName(ProjectStatus[], String)
-     */
-    public static ProjectStatus findProjectStatusById(ProjectStatus[] projectStatuses, long statusId) {
-        // Validate parameters
-        validateParameterNotNull(projectStatuses, "projectStatuses");
-        validateParameterPositive(statusId, "statusId");
-
-        for (ProjectStatus projectStatus : projectStatuses) {
-            if (projectStatus.getId() == statusId) {
-                return projectStatus;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This static method searches for the project status with the specified name in a provided
-     * array of project statuses. The search is case-insensitive.
-     *
-     * @return found project status, or <code>null</code> if a status with the specified name has
-     *         not been found in the provided array of project statuses.
-     * @param projectStatuses
-     *            an array of project statuses to search for wanted project status among.
-     * @param statusName
-     *            the name of the needed project status.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or <code>statusName</code>
-     *             parameter is empty string.
-     * @see #findProjectStatusById(ProjectStatus[], long)
-     */
-    public static ProjectStatus findProjectStatusByName(ProjectStatus[] projectStatuses, String statusName) {
-        // Validate parameters
-        validateParameterNotNull(projectStatuses, "projectStatuses");
-        validateParameterStringNotEmpty(statusName, "statusName");
-
-        for (ProjectStatus projectStatus : projectStatuses) {
-            if (projectStatus.getName().equalsIgnoreCase(statusName)) {
-                return projectStatus;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This static method searches for the resource role with the specified ID in a provided array
-     * of resource roles.
-     *
-     * @return found resource role, or <code>null</code> if a role with the specified ID has not
-     *         been found in the provided array of resource roles.
-     * @param resourceRoles
-     *            an array of resource roles to search for wanted resource role among.
-     * @param roleId
-     *            the ID of the needed resource role.
-     * @throws IllegalArgumentException
-     *             if <code>resourceRoles</code> parameter is <code>null</code>, or
-     *             <code>roleId</code> parameter is zero or negative.
-     */
-    public static ResourceRole findResourceRoleById(ResourceRole[] resourceRoles, long roleId) {
-        // Validate parameters
-        validateParameterNotNull(resourceRoles, "resourceRoles");
-        validateParameterPositive(roleId, "roleId");
-
-        for (ResourceRole resourceRole : resourceRoles) {
-            if (resourceRole.getId() == roleId) {
-                return resourceRole;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This static method searches for the resource role with the specified name in a provided array
-     * of resource roles.
-     *
-     * @return foundresource role, or <code>null</code> if a role with the specified name has not
-     *         been found in the provided array of resource roles.
-     * @param resourceRoles
-     *            an array of resource roles to search for wanted resource role among.
-     * @param roleName
-     *            the name of the needed resource role.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or if <code>roleName</code>
-     *             parameter is empty string.
-     */
-    public static ResourceRole findResourceRoleByName(ResourceRole[] resourceRoles, String roleName) {
-        // Validate parameters
-        validateParameterNotNull(resourceRoles, "resourceRoles");
-        validateParameterStringNotEmpty(roleName, "roleName");
-
-        for (ResourceRole resourceRole : resourceRoles) {
-            if (resourceRole.getName().equalsIgnoreCase(roleName)) {
-                return resourceRole;
-            }
-        }
-        return null;
     }
 
     /**
@@ -797,249 +530,6 @@ public class ActionsHelper {
         for (Phase phase : phases) {
             if (phase.getPhaseType().getName().equalsIgnoreCase(phaseTypeName)) {
                 return phase;
-            }
-        }
-        return null;
-    }
-
-
-
-    /**
-     * This static method searches for the project phase with
-     * the specified phase type ID in a provided array of project phases.
-     *
-     * @return found project phase, or <code>null</code> if a phase with the specified
-     *         phase type ID has not been found in the provided array of project phases.
-     * @param phases
-     *            an array of project phases to search for wanted project phase among.
-     * @param phaseTypeId
-     *            the phase type ID of the needed project phase.
-     * @throws IllegalArgumentException
-     *             if <code>phases</code> parameter is <code>null</code>, or
-     *             <code>phaseTypeId</code> parameter is zero or negative.
-     */
-    public static Phase findPhaseByPhaseTypeId(Phase[] phases, long phaseTypeId) {
-        // Validate parameters
-        validateParameterNotNull(phases, "phases");
-        validateParameterPositive(phaseTypeId, "phaseTypeId");
-
-        for (Phase phase : phases) {
-            if (phase.getPhaseType().getId() == phaseTypeId) {
-                return phase;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This static method searches for the phase type with the specified ID in a provided array of
-     * phase types.
-     *
-     * @return found phase type, or <code>null</code> if a type with the specified ID has not been
-     *         found in the provided array of phase types.
-     * @param phaseTypes
-     *            an array of phase types to search for wanted phase type among.
-     * @param phaseTypeId
-     *            the ID of the needed phase type.
-     * @throws IllegalArgumentException
-     *             if <code>phaseTypes</code> parameter is <code>null</code>, or
-     *             <code>phaseTypeId</code> parameter is zero or negative.
-     */
-    public static PhaseType findPhaseTypeById(PhaseType[] phaseTypes, long phaseTypeId) {
-        // Validate parameters
-        validateParameterNotNull(phaseTypes, "phaseTypes");
-        validateParameterPositive(phaseTypeId, "phaseTypeId");
-
-        for (PhaseType phaseType : phaseTypes) {
-            if (phaseType.getId() == phaseTypeId) {
-                return phaseType;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This static method searches for the phase type with the specified name in a provided array of
-     * phase types. The search is case-insensitive.
-     *
-     * @return found phase type, or <code>null</code> if a type with the specified name has not been
-     *         found in the provided array of phase types.
-     * @param phaseTypes
-     *            an array of phase types to search for wanted phase type among.
-     * @param phaseTypeName
-     *            the name of the needed phase type.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or <code>phaseTypeName</code>
-     *             parameter is empty string.
-     */
-    public static PhaseType findPhaseTypeByName(PhaseType[] phaseTypes, String phaseTypeName) {
-        // Validate parameters
-        validateParameterNotNull(phaseTypes, "phaseTypes");
-        validateParameterStringNotEmpty(phaseTypeName, "phaseTypeName");
-
-        for (PhaseType phaseType : phaseTypes) {
-            if (phaseType.getName().equalsIgnoreCase(phaseTypeName)) {
-                return phaseType;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This static method searches for the phase status with the specified ID in a provided array of
-     * phase statuses.
-     *
-     * @return found phase status, or <code>null</code> if a status with the specified ID has not
-     *         been found in the provided array of phase statuses.
-     * @param phaseStatuses
-     *            an array of phase statuses to search for wanted phase status among.
-     * @param phaseStatusId
-     *            the ID of the needed phase status.
-     * @throws IllegalArgumentException
-     *             if <code>phaseStatuses</code> parameter is <code>null</code>, or
-     *             <code>phaseStatusId</code> parameter is zero or negative.
-     */
-    public static PhaseStatus findPhaseStatusById(PhaseStatus[] phaseStatuses, long phaseStatusId) {
-        // Validate parameters
-        validateParameterNotNull(phaseStatuses, "phaseStatuses");
-        validateParameterPositive(phaseStatusId, "phaseStatusId");
-
-        for (PhaseStatus phaseStatus : phaseStatuses) {
-            if (phaseStatus.getId() == phaseStatusId) {
-                return phaseStatus;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This static method searches for the phase status with the specified name in a provided array
-     * of phase statuses. The search is case-insensitive.
-     *
-     * @return found phase status, or <code>null</code> if a status with the specified name has
-     *         not been found in the provided array of phase statuses.
-     * @param phaseStatuses
-     *            an array of phase statuses to search for wanted phase status among.
-     * @param phaseStatusName
-     *            the name of the needed phase status.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or
-     *             <code>phaseStatusName</code> parameter is empty string.
-     */
-    public static PhaseStatus findPhaseStatusByName(PhaseStatus[] phaseStatuses, String phaseStatusName) {
-        // Validate parameters
-        validateParameterNotNull(phaseStatuses, "phaseStatuses");
-        validateParameterStringNotEmpty(phaseStatusName, "phaseStatusName");
-
-        for (PhaseStatus phaseStatus : phaseStatuses) {
-            if (phaseStatus.getName().equalsIgnoreCase(phaseStatusName)) {
-                return phaseStatus;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This static method searches for the submission status with the specified name in a provided
-     * array of submission statuses. The search is case-insensitive.
-     *
-     * @return found submission status, or <code>null</code> if a status with the specified name
-     *         has not been found in the provided array of submission statuses.
-     * @param submissionStatuses
-     *            an array of submission statuses to search for wanted submission status among.
-     * @param submissionStatusName
-     *            the name of the needed submission status.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or
-     *             <code>submissionStatusName</code> parameter is empty string.
-     */
-    public static SubmissionStatus findSubmissionStatusByName(
-            SubmissionStatus[] submissionStatuses, String submissionStatusName) {
-        // Validate parameters
-        validateParameterNotNull(submissionStatuses, "submissionStatuses");
-        validateParameterStringNotEmpty(submissionStatusName, "submissionStatusName");
-
-        for (SubmissionStatus submissionStatus : submissionStatuses) {
-            if (submissionStatus.getName().equalsIgnoreCase(submissionStatusName)) {
-                return submissionStatus;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * <p>This static method searches for the submission type with the specified name in a provided array of submission
-     * types. The search is case-insensitive.</p>
-     *
-     * @param submissionTypes an array of submission types to search for wanted submission type among.
-     * @param submissionTypeName the name of the needed submission type.
-     * @return found submission type, or <code>null</code> if a type with the specified name has not been found in
-     *         the provided array of submission types.
-     * @throws IllegalArgumentException if any of the parameters are <code>null</code> or
-     *         <code>submissionTypeName</code> parameter is empty string.
-     * @since 1.9
-     */
-    public static SubmissionType findSubmissionTypeByName(SubmissionType[] submissionTypes, String submissionTypeName) {
-        validateParameterNotNull(submissionTypes, "submissionTypes");
-        validateParameterStringNotEmpty(submissionTypeName, "submissionTypeName");
-
-        for (SubmissionType submissionType :  submissionTypes) {
-            if (submissionType.getName().equalsIgnoreCase(submissionTypeName)) {
-                return submissionType;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This static method searches for the upload status with the specified name in a provided array
-     * of upload statuses. The search is case-insensitive.
-     *
-     * @return found upload status, or <code>null</code> if a status with the specified name has
-     *         not been found in the provided array of upload statuses.
-     * @param uploadStatuses
-     *            an array of upload statuses to search for wanted upload status among.
-     * @param uploadStatusName
-     *            the name of the needed upload status.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or
-     *             <code>uploadStatusName</code> parameter is empty string.
-     */
-    public static UploadStatus findUploadStatusByName(UploadStatus[] uploadStatuses, String uploadStatusName) {
-        // Validate parameters
-        validateParameterNotNull(uploadStatuses, "uploadStatuses");
-        validateParameterStringNotEmpty(uploadStatusName, "uploadStatusName");
-
-        for (UploadStatus uploadStatus : uploadStatuses) {
-            if (uploadStatus.getName().equalsIgnoreCase(uploadStatusName)) {
-                return uploadStatus;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This static method searches for the upload type with the specified name in a provided array
-     * of upload types. The search is case-insensitive.
-     *
-     * @return found upload type, or <code>null</code> if a type with the specified name has not
-     *         been found in the provided array of upload types.
-     * @param uploadTypes
-     *            an array of upload types to search for wanted upload type among.
-     * @param uploadTypeName
-     *            the name of the needed upload type.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or <code>uploadTypeName</code>
-     *             parameter is empty string.
-     */
-    public static UploadType findUploadTypeByName(UploadType[] uploadTypes, String uploadTypeName) {
-        // Validate parameters
-        validateParameterNotNull(uploadTypes, "uploadTypes");
-        validateParameterStringNotEmpty(uploadTypeName, "uploadTypeName");
-
-        for (UploadType uploadType : uploadTypes) {
-            if (uploadType.getName().equalsIgnoreCase(uploadTypeName)) {
-                return uploadType;
             }
         }
         return null;
@@ -1104,7 +594,7 @@ public class ActionsHelper {
      * This static method clones specified action forward and appends specified string argument to
      * the path of the newly-created forward.
      *
-     * @return cloned and mofied action forward.
+     * @return cloned and modified action forward.
      * @param forward
      *            an action forward to clone.
      * @param arg0
@@ -1278,11 +768,11 @@ public class ActionsHelper {
     }
 
     /**
-     * This static method determines if the specifed comment is reviewer's comment. Reviewer's
+     * This static method determines if the specified comment is reviewer's comment. Reviewer's
      * comments are those of any of the following types: &quot;Comment&quot;, &quot;Required&quot;,
      * or &quot;Recommended&quot;.
      *
-     * @return <code>true</code> if the specifed comment is reviewer's comment, <code>false</code>
+     * @return <code>true</code> if the specified comment is reviewer's comment, <code>false</code>
      *         if it is not.
      * @param comment
      *            a comment to determine type of.
@@ -1302,7 +792,7 @@ public class ActionsHelper {
     /**
      * This static method determines if the specified comment is manager's comment.
      *
-     * @return <code>true</code> if the specifed comment is manager's comment, <code>false</code>
+     * @return <code>true</code> if the specified comment is manager's comment, <code>false</code>
      *         if it is not.
      * @param comment
      *            a comment to determine type of.
@@ -1321,7 +811,7 @@ public class ActionsHelper {
     /**
      * This static method determines if the specified comment is appeal or appeal response.
      *
-     * @return <code>true</code> if the specifed comment is appeal or appeal response,
+     * @return <code>true</code> if the specified comment is appeal or appeal response,
      *         <code>false</code> if it is not.
      * @param comment
      *            a comment to determine type of.
@@ -1341,7 +831,7 @@ public class ActionsHelper {
     /**
      * This static method determines if the specified comment is aggregator's comment.
      *
-     * @return <code>true</code> if the specifed comment is aggregator's comment,
+     * @return <code>true</code> if the specified comment is aggregator's comment,
      *         <code>false</code> if it is not.
      * @param comment
      *            a comment to determine type of.
@@ -1362,7 +852,7 @@ public class ActionsHelper {
      * Aggregation review comments are those that were put either by reviewer or by submitter when
      * they were doing the review of aggregation scorecard.
      *
-     * @return <code>true</code> if the specifed comment is aggregation review comment,
+     * @return <code>true</code> if the specified comment is aggregation review comment,
      *         <code>false</code> if it is not.
      * @param comment
      *            a comment to determine type of.
@@ -1383,7 +873,7 @@ public class ActionsHelper {
     /**
      * This static method determines if the specified comment is a final review comment.
      *
-     * @return <code>true</code> if the specifed comment is final review comment,
+     * @return <code>true</code> if the specified comment is final review comment,
      *         <code>false</code> if it is not.
      * @param comment
      *            a comment to determine type of.
@@ -1438,7 +928,7 @@ public class ActionsHelper {
 
     /**
      * This method helps to retrieve the roles currently logged in user has. This method then places
-     * the retrieved info into the request as attrobute named &quot;myRole&quot;.
+     * the retrieved info into the request as attribute named &quot;myRole&quot;.
      *
      * @param request
      *            the http request.
@@ -1534,7 +1024,7 @@ public class ActionsHelper {
      * This static member function examines an array of supplied resources and forms a string that
      * specifies the roles based on the roles the resources in the array have. All roles in the
      * array are supposed to be assigned to the same external user, although the check of meeting
-     * this condition is not perforemd by this method.
+     * this condition is not performed by this method.
      *
      * @return a string with the role(s) the resource from the specified array have. If there are
      *         more than one role, the roles will be separated by forward slash (<code>/</code>)
@@ -1581,7 +1071,7 @@ public class ActionsHelper {
             return messages.getMessage("ResourceRole." + roleNames.get(0).replaceAll(" ", ""));
         }
 
-        StringBuffer roles = new StringBuffer(32);
+        StringBuilder roles = new StringBuilder(32);
 
         // Form a string with roles separated by forward slash character
         for (String roleName : roleNames) {
@@ -1756,7 +1246,7 @@ public class ActionsHelper {
                     break;
                 }
                 // If the name of the current phase matches the one
-                // specified by method's parameter, remeber this phase
+                // specified by method's parameter, remember this phase
                 if (phase.getPhaseType().getName().equalsIgnoreCase(phaseName)) {
                     phaseFound = phase;
                 }
@@ -1790,14 +1280,10 @@ public class ActionsHelper {
     }
 
     /**
-     * This static method retrieves a scorecard template for the specified phase using provided
-     * Scorecard Manager.
+     * This static method retrieves a scorecard template for the specified phase.
      *
      * @return found Scorecard template, or <code>null</code> if no scorecard template was
      *         associated with the phase.
-     * @param manager
-     *            an instance of <code>ScorecardManager</code> object used to retrieve scorecard
-     *            template.
      * @param phase
      *            a phase to retrieve scorecard template from.
      * @throws IllegalArgumentException
@@ -1807,10 +1293,9 @@ public class ActionsHelper {
      * @throws PersistenceException
      *             if an error occurred while accessing the database.
      */
-    public static Scorecard getScorecardTemplateForPhase(ScorecardManager manager, Phase phase)
+    public static Scorecard getScorecardTemplateForPhase(Phase phase)
         throws NumberFormatException, PersistenceException {
         // Validate parameters
-        validateParameterNotNull(manager, "manager");
         validateParameterNotNull(phase, "phase");
 
         // Get an ID of scorecard template associated with this phase
@@ -1822,7 +1307,7 @@ public class ActionsHelper {
 
         Long longScorecardId = Long.parseLong(scorecardId, 10);
         if (!cachedScorecards.containsKey(longScorecardId)) {
-            Scorecard scorecard = manager.getScorecard(longScorecardId);
+            Scorecard scorecard = createScorecardManager().getScorecard(longScorecardId);
             cachedScorecards.put(longScorecardId, scorecard);
         }
 
@@ -1830,11 +1315,9 @@ public class ActionsHelper {
     }
 
     /**
-     * This static method retrieves the resources for a project using provided Resource Manager.
+     * This static method retrieves the resources for a project.
      *
      * @return an array of the resources for the specified project.
-     * @param manager
-     *            an instance of <code>ResourceManager</code> object used to retrieve resources.
      * @param project
      *            a project to retrieve the resources for.
      * @throws IllegalArgumentException
@@ -1842,24 +1325,21 @@ public class ActionsHelper {
      * @throws BaseException
      *             if any error occurs.
      */
-    public static Resource[] getAllResourcesForProject(ResourceManager manager, Project project)
+    public static Resource[] getAllResourcesForProject(Project project)
         throws IllegalArgumentException, BaseException {
         // Validate parameters
-        validateParameterNotNull(manager, "manager");
         validateParameterNotNull(project, "project");
 
         // Build a filter to fetch all resources for the current project
         Filter filter = ResourceFilterBuilder.createProjectIdFilter(project.getId());
         // Perform a search for the resources and return them
-        return manager.searchResources(filter);
+        return createResourceManager().searchResources(filter);
     }
 
     /**
-     * This static method retrieves the resources for a phase using provided Resource Manager.
+     * This static method retrieves the resources for a phase.
      *
      * @return an array of the resources for the specified phase.
-     * @param manager
-     *            an instance of <code>ResourceManager</code> object used to retrieve resources.
      * @param phase
      *            a phase to retrieve the resources for.
      * @throws IllegalArgumentException
@@ -1867,10 +1347,9 @@ public class ActionsHelper {
      * @throws BaseException
      *             if any error occurs.
      */
-    public static Resource[] getAllResourcesForPhase(ResourceManager manager, Phase phase)
+    public static Resource[] getAllResourcesForPhase(Phase phase)
         throws BaseException {
         // Validate parameters
-        validateParameterNotNull(manager, "manager");
         validateParameterNotNull(phase, "phase");
 
         // Prepare filter to select resource by project ID
@@ -1881,7 +1360,7 @@ public class ActionsHelper {
         Filter filter = new AndFilter(filterProject, filterPhase);
 
         // Perform a search for the resources and return them
-        return manager.searchResources(filter);
+        return createResourceManager().searchResources(filter);
     }
 
     /**
@@ -1971,15 +1450,14 @@ public class ActionsHelper {
         String winnerId = (String) project.getProperty("Winner External Reference ID");
         if (winnerId != null) {
 
-            long submitterRoleId = findResourceRoleByName(resourceManager.getAllResourceRoles(), "Submitter").getId();
+            long submitterRoleId = LookupHelper.getResourceRole("Submitter").getId();
             ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
 
-            AndFilter fullFilter = new AndFilter(Arrays.asList(new Filter[] {
+            AndFilter fullFilter = new AndFilter(Arrays.asList(
                     ResourceFilterBuilder.createResourceRoleIdFilter(submitterRoleId),
                     ResourceFilterBuilder.createProjectIdFilter(projectId),
                     ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID"),
-                    ResourceFilterBuilder.createExtensionPropertyValueFilter(winnerId)
-            }));
+                    ResourceFilterBuilder.createExtensionPropertyValueFilter(winnerId)));
 
 
             Resource[] submitters = resourceManager.searchResources(fullFilter);
@@ -2071,12 +1549,12 @@ public class ActionsHelper {
      * parameter. Method <code>gatherUserRoles(HttpServletRequest, long)</code> should be called
      * prior making a call to this method.
      *
-     * @return an array of found resources, or emtpy array if no resources for currently logged in user
+     * @return an array of found resources, or empty array if no resources for currently logged in user
      *         found such that those resources would be associated with the specified phase.
      * @param request
      *            an <code>HttpServletRequest</code> object containing additional information.
      * @param phase
-     *            a phase to search the resouces for. This parameter can be <code>null</code>, in
+     *            a phase to search the resources for. This parameter can be <code>null</code>, in
      *            which case the search is made for resources with no phase assigned.
      * @throws IllegalArgumentException
      *             if <code>request</code> parameter is <code>null</code>.
@@ -2148,8 +1626,6 @@ public class ActionsHelper {
      * This method returns either completed or incomplete deliverables.
      *
      * @return an array of deliverables.
-     * @param manager
-     *            an instance of the <code>DeliverableManager</code> class.
      * @param phases
      *            an array of phases to search deliverables for.
      * @param resources
@@ -2165,12 +1641,10 @@ public class ActionsHelper {
      *             if an error occurs when determining whether a Deliverable has been completed or
      *             not.
      */
-    public static Deliverable[] getAllDeliverablesForPhases(
-            DeliverableManager manager, Phase[] phases, Resource[] resources)
+    public static Deliverable[] getAllDeliverablesForPhases(Phase[] phases, Resource[] resources)
             throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
 
         // Validate parameters
-        validateParameterNotNull(manager, "manager");
         validateParameterNotNull(phases, "phases");
 
         // A filter to search for deliverables for specific phase(s) of the project
@@ -2197,7 +1671,7 @@ public class ActionsHelper {
         }
 
         // Perform a search for the deliverables
-        Deliverable[] allDeliverables = manager.searchDeliverables(filter, null);
+        Deliverable[] allDeliverables = createDeliverableManager().searchDeliverables(filter, null);
 
         List<Deliverable> deliverables = new ArrayList<Deliverable>();
 
@@ -2346,55 +1820,79 @@ public class ActionsHelper {
     }
 
     /**
-     * <p>Gets the list of submissions of specified type for specified project.</p>
+     * <p>Gets the list of submissions of specified type and status for specified project.</p>
      *
-     * @param manager an <code>UploadManager</code> providing the interface to upload manager.
-     * @param project a <code>Project</code> providing the details for the project.
+     * @param projectId ID of the project.
      * @param submissionTypeName a <code>String</code> providing the name of desired submission type.
+     *                           If null, all submission types will be included.
+     * @param submissionStatusName a <code>String</code> providing the name of desired submission status.
+     *                           If null, all submission statuses will be included.
+     * @param includeDeleted true if the Deleted status should be included and false otherwise.
      * @return a <code>Submission</code> array listing the submissions of specified type for project.
      * @throws BaseException if an unexpected error occurs.
      * @throws IllegalArgumentException if any of the parameters are <code>null</code>.
      */
-    public static Submission[] getMostRecentSubmissions(UploadManager manager, Project project,
-                                                        String submissionTypeName) throws BaseException {
-        // Validate parameters
-        validateParameterNotNull(manager, "manager");
-        validateParameterNotNull(project, "project");
+    public static Submission[] getProjectSubmissions(long projectId, String submissionTypeName,
+        String submissionStatusName, boolean includeDeleted) throws BaseException {
+        
+        List<Filter> filters = new ArrayList<Filter>();
+        filters.add(SubmissionFilterBuilder.createProjectIdFilter(projectId));
 
-        SubmissionStatus[] allSubmissionStatuses = manager.getAllSubmissionStatuses();
-        SubmissionType[] allSubmissionTypes = manager.getAllSubmissionTypes();
-        SubmissionType submissionType
-            = ActionsHelper.findSubmissionTypeByName(allSubmissionTypes, submissionTypeName);
+        if (submissionTypeName != null) {
+            long submissionTypeId = LookupHelper.getSubmissionType(submissionTypeName).getId();
+            filters.add(SubmissionFilterBuilder.createSubmissionTypeIdFilter(submissionTypeId));
+        }
 
-        Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
-        Filter filterType = SubmissionFilterBuilder.createSubmissionTypeIdFilter(submissionType.getId());
-        Filter filterStatus = createSubmissionStatusFilter(allSubmissionStatuses);
-        Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterType));
+        if (submissionStatusName != null) {
+            long submissionStatusId = LookupHelper.getSubmissionStatus(submissionStatusName).getId();
+            filters.add(SubmissionFilterBuilder.createSubmissionStatusIdFilter(submissionStatusId));
+        }
+        
+        if (!includeDeleted) {
+            // Exclude the Deleted status
+            long deletedStatusId=LookupHelper.getSubmissionStatus("Deleted").getId();
+            filters.add(new NotFilter(SubmissionFilterBuilder.createSubmissionStatusIdFilter(deletedStatusId)));
+        }
 
-        return manager.searchSubmissions(filter);
+        return createUploadManager().searchSubmissions(new AndFilter(filters));
     }
 
     /**
-     * TODO: Write documentation for this method.
+     * <p>Gets the list of submissions of specified type and status for specified resource.</p>
      *
-     * @return
-     * @param allSubmissionStatuses
-     * @throws IllegalArgumentException
-     *             if <code>allSubmissionStatuses</code> parameter is <code>null</code>.
+     * @param resourceID ID of the resource.
+     * @param submissionTypeName a <code>String</code> providing the name of desired submission type.
+     *                           If null, all submission types will be included.
+     * @param submissionStatusName a <code>String</code> providing the name of desired submission status.
+     *                           If null, all submission statuses will be included.
+     * @param includeDeleted true if the Deleted status should be included and false otherwise.
+     * @return a <code>Submission</code> array listing the submissions of specified type for project.
+     * @throws BaseException if an unexpected error occurs.
+     * @throws IllegalArgumentException if any of the parameters are <code>null</code>.
      */
-    public static Filter createSubmissionStatusFilter(SubmissionStatus[] allSubmissionStatuses) {
-        // Validate parameter
-        validateParameterNotNull(allSubmissionStatuses, "allSubmissionStatuses");
+    public static Submission[] getResourceSubmissions(long resourceID, String submissionTypeName,
+        String submissionStatusName, boolean includeDeleted) throws BaseException {
 
-        List<Long> statusIds = new ArrayList<Long>();
+        List<Filter> filters = new ArrayList<Filter>();
+        filters.add(SubmissionFilterBuilder.createResourceIdFilter(resourceID));
 
-        for (SubmissionStatus allSubmissionStatus: allSubmissionStatuses) {
-            if (!allSubmissionStatus.getName().equalsIgnoreCase("Deleted")) {
-                statusIds.add(allSubmissionStatus.getId());
-            }
+        if (submissionTypeName != null) {
+            long submissionTypeId = LookupHelper.getSubmissionType(submissionTypeName).getId();
+            filters.add(SubmissionFilterBuilder.createSubmissionTypeIdFilter(submissionTypeId));
         }
 
-        return new InFilter("submission_status_id", statusIds);
+        if (submissionStatusName != null) {
+            long submissionStatusId = LookupHelper.getSubmissionStatus(submissionStatusName).getId();
+            filters.add(SubmissionFilterBuilder.createSubmissionStatusIdFilter(submissionStatusId));
+        }
+
+        if (!includeDeleted) {
+            // Exclude the Deleted status
+            long deletedStatusId=LookupHelper.getSubmissionStatus("Deleted").getId();
+            filters.add(new NotFilter(SubmissionFilterBuilder.createSubmissionStatusIdFilter(deletedStatusId)));
+        }
+
+        return createUploadManager().searchSubmissions(new AndFilter(filters));
     }
 
     /**
@@ -2402,9 +1900,6 @@ public class ActionsHelper {
      * <code>submission</code> parameter was made for.
      *
      * @return a retrieved project.
-     * @param manager
-     *            an instance of <code>ProjectManager</code> object used to retrieve project from
-     *            the submission.
      * @param submission
      *            a submission to retrieve the project for.
      * @throws IllegalArgumentException
@@ -2412,16 +1907,15 @@ public class ActionsHelper {
      * @throws com.topcoder.management.project.PersistenceException
      *             if an error occurred while accessing the database.
      */
-    public static Project getProjectForSubmission(ProjectManager manager, Submission submission)
+    public static Project getProjectForSubmission(Submission submission)
         throws com.topcoder.management.project.PersistenceException {
         // Validate parameters
-        ActionsHelper.validateParameterNotNull(manager, "manager");
         ActionsHelper.validateParameterNotNull(submission, "submission");
 
         // Get an upload for this submission
         Upload upload = submission.getUpload();
         // Return Project by its id
-        return manager.getProject(upload.getProject());
+        return createProjectManager().getProject(upload.getProject());
     }
 
     /**
@@ -2589,40 +2083,6 @@ public class ActionsHelper {
     }
 
     /**
-     * This static method helps to create an object of the <code>PhasePersistence</code> class.
-     *
-     * @return a newly created instance of the class.
-     * @param request
-     *            an <code>HttpServletRequest</code> object, where created
-     *            <code>PhaseManager</code> object can be stored to let reusing it later for the
-     *            same request.
-     * @throws IllegalArgumentException
-     *             if <code>request</code> parameter is <code>null</code>.
-     * @throws BaseException
-     *             if any error happens during object creation.
-     * @since 1.10
-     */
-    public static PhasePersistence createPhasePersistence(HttpServletRequest request)
-        throws BaseException {
-        // Validate parameter
-        validateParameterNotNull(request, "request");
-
-        // Try retrieving Phase Persistence from the request's attribute first
-        PhasePersistence persistence = (PhasePersistence) request.getAttribute("phasePersistence");
-
-        // If this is the first time this method is called for the request,
-        if (persistence == null) {
-            persistence = new InformixPhasePersistence("com.topcoder.management.phase");
-
-            // Place newly-created object into the request as attribute
-            request.setAttribute("phasePersistence", persistence);
-        }
-
-        // Return the Phase Persistence object
-        return persistence;
-    }
-
-    /**
      * This static method helps to create an object of the <code>ProjectManager</code> class.
      *
      * @return a newly created instance of the class.
@@ -2657,46 +2117,10 @@ public class ActionsHelper {
      * This static method helps to create an object of the <code>LateDeliverableManager</code> class.
      *
      * @return a newly created instance of the class.
-     * @throws LateDeliverableManagementConfigurationException
-     *             if fail to initialize the <code>LateDeliverableManagerImpl</code> instance.
      * @since 1.10
      */
     public static LateDeliverableManager createLateDeliverableManager() {
         return managerCreationHelper.getLateDeliverableManager();
-    }
-
-    /**
-     * This static method helps to create an object of the <code>ReviewScoreAggregator</code>
-     * class.
-     *
-     * @return a newly created instance of the class.
-     * @param request
-     *            an <code>HttpServletRequest</code> object, where created
-     *            <code>ReviewScoreAggregator</code> object can be stored to let reusing it later
-     *            for the same request.
-     * @throws IllegalArgumentException
-     *             if <code>request</code> parameter is <code>null</code>.
-     * @throws ReviewScoreAggregatorConfigException
-     *             if any of the four required algorithm objects cannot be instantiated or the
-     *             configuration is invalid.
-     */
-    public static ReviewScoreAggregator createScoreAggregator(HttpServletRequest request)
-        throws ReviewScoreAggregatorConfigException {
-        // Validate parameter
-        validateParameterNotNull(request, "request");
-
-        // Try retrieving Review Score Aggregator from the request's attribute first
-        ReviewScoreAggregator aggregator = (ReviewScoreAggregator) request.getAttribute("reviewScoreAggregator");
-        // If this is the first time this method is called for the request,
-        // create a new instance of the object
-        if (aggregator == null) {
-            aggregator = new ReviewScoreAggregator("com.topcoder.management.review.scoreaggregator");
-            // Place newly-created object into the request as attribute
-            request.setAttribute("reviewScoreAggregator", aggregator);
-        }
-
-        // Return the Review Score Aggregator object
-        return aggregator;
     }
 
     /**
@@ -2866,30 +2290,19 @@ public class ActionsHelper {
      * This static method helps to create an object of the <code>PhaseTemplate</code> class.
      *
      * @return a newly created instance of the class.
-     * @param projectType
-     *            a project type for which the PhaseTemplate object should be created,
-     *            can be null if start date generator type doesn't matter
-     * @throws IllegalArgumentException
      *             if <code>request</code> parameter is <code>null</code>.
      * @throws BaseException
      *             if any error happens during object creation.
      */
-    public static PhaseTemplate createPhaseTemplate(ProjectType projectType) throws BaseException {
+    public static PhaseTemplate createPhaseTemplate() throws BaseException {
         // Create phase template persistence
         PhaseTemplatePersistence persistence = new XmlPhaseTemplatePersistence(PHASES_TEMPLATE_PERSISTENCE_NAMESPACE);
         // Create start date generator
-        StartDateGenerator generator;
-        if ("Component".equals(projectType)) {
-            // TODO: Specify conf. namespace
-            generator = new RelativeWeekTimeStartDateGenerator("");
-        } else {
-            // Create start date generator which always returns current date
-            generator = new StartDateGenerator() {
+        StartDateGenerator generator = new StartDateGenerator() {
                 public Date generateStartDate() {
                     return new Date();
                 }
             };
-        }
 
         // Create workdays instance
         Workdays workdays = (new DefaultWorkdaysFactory()).createWorkdaysInstance();
@@ -3029,9 +2442,9 @@ public class ActionsHelper {
         AuthorizationHelper.gatherUserRoles(request, pid);
 
         request.setAttribute("isAdmin",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
+                AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
                         || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)
-                        || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)));
+                        || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME));
 
         // If permission parameter was not null or empty string ...
         if (permission != null) {
@@ -3040,7 +2453,7 @@ public class ActionsHelper {
                 // If it does not, and the user is logged in, display a message about the lack of
                 // permissions, otherwise redirect the request to the Login page
                 result.setForward(produceErrorReport(mapping, resources, request,
-                        permission, "Error.NoPermission", Boolean.valueOf(getRedirectUrlFromReferer)));
+                        permission, "Error.NoPermission", getRedirectUrlFromReferer));
                 // Return the result of the check
                 return result;
             }
@@ -3067,7 +2480,7 @@ public class ActionsHelper {
                 // if the user is not logged in and the project has any eligibility constraint, ask for login
                 if (EJBLibraryServicesLocator.getContestEligibilityService().hasEligibility(pid, false)) {
                     result.setForward(produceErrorReport(mapping, resources, request,
-                            permission, "Error.NoPermission", Boolean.valueOf(getRedirectUrlFromReferer)));
+                            permission, "Error.NoPermission", getRedirectUrlFromReferer));
                     // Return the result of the check
                     return result;
                 }
@@ -3364,7 +2777,7 @@ public class ActionsHelper {
         }
 
         // Return the result as a list.
-        return Arrays.asList(result.toArray(new Long[0]));
+        return Arrays.asList(result.toArray(new Long[result.size()]));
     }
 
     /**
@@ -3584,31 +2997,6 @@ public class ActionsHelper {
     }
 
     /**
-     * Recalculate Screening reviewers payment.
-     *
-     * @param projectId project id
-     *
-     * @throws Exception if error occurs
-     */
-    public static void recaculateScreeningReviewerPayments(long projectId) throws BaseException {
-        Connection conn = null;
-        try {
-            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-            conn = dbconn.createConnection();
-            log.log(Level.INFO,
-                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-                    + DB_CONNECTION_NAMESPACE);
-            AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.SCREENING_PHASE);
-        } catch (DBConnectionException e) {
-            throw new BaseException("Failed to return DBConnection", e);
-        } catch (SQLException e) {
-            throw new BaseException("Failed to recaculateScreeningReviewerPayments for project " + projectId, e);
-        } finally {
-            close(conn);
-        }
-    }
-
-    /**
      * Get the catalog for a component.
      *
      * @param componentId project id
@@ -3708,7 +3096,7 @@ public class ActionsHelper {
 
             if (newRoleId == 1) {
                 // added otherwise
-                populateProjectResult(project, Arrays.asList(new Long[] { userId }));
+                populateProjectResult(project, Arrays.asList(userId));
             }
         }
     }
@@ -4106,63 +3494,60 @@ public class ActionsHelper {
     public static void removeForumWatch(Project project, Long user, long forumId) throws BaseException {
         removeForumWatch(project, userToUsers(user), forumId);
     }
-
+    
     /**
-     * <p>Gets the specification submissions for the specified project.</p>
+     * <p>Gets all uploads of the specified type associated with the specified project phase.</p>
      *
-     * @param projectId a <code>long</code> providing the ID of a project.
-     * @param upMgr an <code>UploadManager</code> to be used for searching for submissions.
-     * @return a <code>Submission</code> array listing the specification submissions for specified project.
-     * @throws UploadPersistenceException if an unexpected error occurs.
-     * @throws SearchBuilderException if an unexpected error occurs.
-     * @since 1.9
+     * @param projectPhaseId a <code>long</code> providing the ID of a project phase.
+     * @param uploadTypeName a <code>String</code> providing the name of desired upload type.
+     *                           If null, all upload types will be included.
+     * @return an arrays of <code>Upload</code> objects for the specified project phase.
+     * @throws BaseException if an unexpected error occurs.
      */
-    public static Submission[] getSpecificationSubmissions(long projectId, UploadManager upMgr)
-        throws UploadPersistenceException, SearchBuilderException {
-        SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
-        SubmissionType specSubmissionType
-            = ActionsHelper.findSubmissionTypeByName(submissionTypes, Constants.SPECIFICATION_SUBMISSION_TYPE_NAME);
+    public static Upload[] getPhaseUploads(long projectPhaseId, String uploadTypeName) throws BaseException {
+        List<Filter> filters = new ArrayList<Filter>();
+        filters.add(UploadFilterBuilder.createProjectPhaseIdFilter(projectPhaseId));
+        if (uploadTypeName != null) {
+            long uploadTypeId = LookupHelper.getUploadType(uploadTypeName).getId();
+            filters.add(UploadFilterBuilder.createUploadTypeIdFilter(uploadTypeId));
+        }
 
-        Filter submissionTypeFilter
-            = SubmissionFilterBuilder.createSubmissionTypeIdFilter(specSubmissionType.getId());
-        Filter projectFilter = SubmissionFilterBuilder.createProjectIdFilter(projectId);
-
-        Filter filter = new AndFilter(Arrays.asList(projectFilter, submissionTypeFilter));
-        return upMgr.searchSubmissions(filter);
+        return createUploadManager().searchUploads(new AndFilter(filters));
     }
 
     /**
-     * <p>Gets the active specification submission for the specified project and specified phase.</p>
+     * <p>Gets final fix upload for the specified approval phase.</p>
      *
-     * @param projectId a <code>long</code> providing the ID of a project.
-     * @param upMgr an <code>UploadManager</code> to be used for searching for submissions.
-     * @return a <code>Submission</code> array listing the specification submissions for specified project.
-     * @throws UploadPersistenceException if an unexpected error occurs.
-     * @throws SearchBuilderException if an unexpected error occurs.
-     * @since 1.9
+     * @param approvalPhase Approval phase.
+     * @return an <code>Upload</code> for the specified approval phase or null if not present.
+     * @throws BaseException if an unexpected error occurs.
      */
-    public static Submission getActiveSpecificationSubmission(long projectId, UploadManager upMgr)
-        throws UploadPersistenceException, SearchBuilderException {
-
-        SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
-        SubmissionType specSubmissionType
-            = ActionsHelper.findSubmissionTypeByName(submissionTypes, Constants.SPECIFICATION_SUBMISSION_TYPE_NAME);
-        SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
-        SubmissionStatus activeSubmissionStatus
-            = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active");
-
-        Filter submissionTypeFilter
-            = SubmissionFilterBuilder.createSubmissionTypeIdFilter(specSubmissionType.getId());
-        Filter projectFilter = SubmissionFilterBuilder.createProjectIdFilter(projectId);
-        Filter statusFilter = SubmissionFilterBuilder.createSubmissionStatusIdFilter(activeSubmissionStatus.getId());
-
-        Filter filter = new AndFilter(Arrays.asList(projectFilter, submissionTypeFilter, statusFilter));
-        Submission[] specificationSubmissions = upMgr.searchSubmissions(filter);
-        if (specificationSubmissions == null || specificationSubmissions.length == 0) {
+    public static Upload getFinalFixForApprovalPhase(Phase approvalPhase) throws BaseException {
+        
+        Phase finalReview = null;
+        for(Dependency dep : approvalPhase.getAllDependencies()) {
+            if (dep.getDependent() == approvalPhase && dep.getDependency().getPhaseType().getName().equals("Final Review")) {
+                finalReview = dep.getDependency();
+                break;
+            }
+        }        
+        if (finalReview == null) {
             return null;
-        } else {
-            return specificationSubmissions[0];
         }
+        
+        Phase finalFix = null;
+        for(Dependency dep : finalReview.getAllDependencies()) {
+            if (dep.getDependent() == finalReview && dep.getDependency().getPhaseType().getName().equals("Final Fix")) {
+                finalFix = dep.getDependency();
+                break;
+            }
+        }        
+        if (finalFix == null) {
+            return null;
+        }
+        
+        Upload[] uploads = getPhaseUploads(finalFix.getId(), "Final Fix");
+        return uploads.length > 0 ? uploads[0] : null;
     }
 
     /**
@@ -4220,28 +3605,6 @@ public class ActionsHelper {
     }
 
     /**
-     * <p>Gets the last phase from specified list of project phase. Current implementation looks up for the <code>Final
-     * Review</code> phase but this may change later.</p>
-     *
-     * @param phases a <code>Phase</code> array providing current project phases.
-     * @return a <code>Phase</code> providing the last phase or <code>null</code> if there is no such phase found,
-     * @since 1.3
-     */
-    static Phase getLastPhase(Phase[] phases) {
-        Phase lastPhase = null;
-        for (Phase phase : phases) {
-            PhaseType phaseType = phase.getPhaseType();
-
-            if ((phaseType != null)
-                    && (phaseType.getName().equalsIgnoreCase("Final Review")
-                    || phaseType.getName().equalsIgnoreCase("Approval"))) {
-                lastPhase = phase;
-            }
-        }
-        return lastPhase;
-    }
-
-    /**
      * <p>Gets the reviews (if any) for specified <code>Approval</code> phase.</p>
      *
      * @param reviews a <code>Review</code> array providing the <code>Apporval</code> reviews for project.
@@ -4271,7 +3634,6 @@ public class ActionsHelper {
      * <p>This static method finds and returns last review of <code>Approval</code> type and made by specified resource.
      * </p>
      *
-     * @param manager an instance of <code>ReviewManager</code> class that retrieves a review from the database.
      * @param phase approval phase.
      * @param scorecardType a scorecard template type that found review should have.
      * @param resourceId an ID of the resource who made (created) the review.
@@ -4281,7 +3643,7 @@ public class ActionsHelper {
      * @throws ReviewManagementException if any error occurs during review search or retrieval.
      * @since 1.3
      */
-    static Review findLastApprovalReview(ReviewManager manager, Phase phase, ScorecardType scorecardType,
+    static Review findLastApprovalReview(Phase phase, ScorecardType scorecardType,
                                                  long resourceId, boolean complete) throws ReviewManagementException {
 
         Filter filterProject = new EqualToFilter("project", phase.getProject().getId());
@@ -4289,7 +3651,7 @@ public class ActionsHelper {
         Filter filter = new AndFilter(Arrays.asList(filterProject, filterScorecard));
 
         // Get a review(s) that pass filter
-        Review[] reviews = manager.searchReviews(filter, complete);
+        Review[] reviews = createReviewManager().searchReviews(filter, complete);
         if (phase.getPhaseType().getName().equals(Constants.APPROVAL_PHASE_NAME)) {
             reviews = ActionsHelper.getApprovalPhaseReviews(reviews, phase);
         }
@@ -4315,16 +3677,15 @@ public class ActionsHelper {
      *
      * @param userId a <code>long</code> providing the user ID.
      * @param status a <code>ProjectStatus</code> specifying the status of the projects.
-     * @param resourceManager a <code>ResourceManager</code> to be used for searching.
      * @return a <code>Resource</code> array providing the details for found resources.
      * @throws ResourcePersistenceException if an error occurs while retrieveing resource roles.
      * @throws com.cronos.onlinereview.dataaccess.DataAccessException if an unexpected error occurs.
      * @since 1.6
      */
-    static Resource[] searchUserResources(long userId, ProjectStatus status, ResourceManager resourceManager)
+    static Resource[] searchUserResources(long userId, ProjectStatus status)
         throws ResourcePersistenceException {
         ResourceDataAccess resourceDataAccess = new ResourceDataAccess();
-        return resourceDataAccess.searchUserResources(userId, status, resourceManager);
+        return resourceDataAccess.searchUserResources(userId, status, createResourceManager());
     }
 
     /**
@@ -4487,24 +3848,20 @@ public class ActionsHelper {
      * @throws BaseException if an unexpected error occurs.
      */
     static List<Long> getUserIDsByRoleNames(String[] roleNames, long projectID) throws BaseException {
-        ResourceManager resMgr = createResourceManager();
-        ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
         List<Long> userIds = new ArrayList<Long>();
 
         if ((roleNames != null) && (roleNames.length > 0)) {
             // Build filters
             List<Filter> roleFilters = new ArrayList<Filter>();
             for (String roleName : roleNames) {
-                ResourceRole role = ActionsHelper.findResourceRoleByName(allResourceRoles, roleName);
-                if (role != null) {
-                    roleFilters.add(ResourceFilterBuilder.createResourceRoleIdFilter(role.getId()));
-                }
+                ResourceRole role = LookupHelper.getResourceRole(roleName);
+                roleFilters.add(ResourceFilterBuilder.createResourceRoleIdFilter(role.getId()));
             }
             Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(projectID);
             Filter filterRole = new OrFilter(roleFilters);
             Filter filter = new AndFilter(filterProject, filterRole);
 
-            Resource[] resources = resMgr.searchResources(filter);
+            Resource[] resources = createResourceManager().searchResources(filter);
 
             // Collect unique external user IDs first as there may exist multiple resources for the same user
             Set<String> stringUserIDs = new HashSet<String>();
@@ -4556,9 +3913,9 @@ public class ActionsHelper {
      *
      * @param request The http request.
      * @param upload The upload object that is being downloaded.
-     * @param succesfull True if the download attempt was succesfull and false otherwise (e.g. no permission).
+     * @param successful True if the download attempt was successful and false otherwise (e.g. no permission).
      */
-    static void logDownloadAttempt(HttpServletRequest request, Upload upload, boolean succesfull) throws BaseException {
+    static void logDownloadAttempt(HttpServletRequest request, Upload upload, boolean successful) throws BaseException {
         Connection conn = null;
         PreparedStatement insertStmt = null;
         try {   
@@ -4573,7 +3930,7 @@ public class ActionsHelper {
                 insertStmt.setNull(2, Types.INTEGER);
             }
             insertStmt.setString(3, request.getRemoteAddr());           
-            insertStmt.setBoolean(4, succesfull);
+            insertStmt.setBoolean(4, successful);
             insertStmt.executeUpdate();         
             
         } catch (UnknownConnectionException e) {
@@ -4604,16 +3961,14 @@ public class ActionsHelper {
         validateParameterNotNull(postMortemPhase, "postMortemPhase");
         
         ReviewManager reviewMgr = createReviewManager();
-        ScorecardManager scrMgr = createScorecardManager();
         ResourceManager resMgr = createResourceManager();
         PhaseManager phaseManager = createPhaseManager(false);
-        ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
         
         // Get all the Post Mortem reviews
         Filter filterProject = new EqualToFilter("project", project.getId());
         Filter filterScorecard = new EqualToFilter("scorecardType",
-                ActionsHelper.findScorecardTypeByName(allScorecardTypes, Constants.POST_MORTEM_SCORECARD_TYPE_NAME).getId());
-        Filter filter = new AndFilter(Arrays.asList(filterProject, filterScorecard));
+                LookupHelper.getScorecardType(Constants.POST_MORTEM_SCORECARD_TYPE_NAME).getId());
+        Filter filter = new AndFilter(filterProject, filterScorecard);
         Review[] reviews = reviewMgr.searchReviews(filter, false);
         // Delete all the Post Mortem reviews
         for (Review review : reviews) {
@@ -4622,9 +3977,9 @@ public class ActionsHelper {
         
         // Get all the Post Mortem Reviewers
         filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
-        long postMortemRoleId = findResourceRoleByName(resMgr.getAllResourceRoles(), Constants.POST_MORTEM_REVIEWER_ROLE_NAME).getId();
+        long postMortemRoleId = LookupHelper.getResourceRole(Constants.POST_MORTEM_REVIEWER_ROLE_NAME).getId();
         Filter filterResourceRole = ResourceFilterBuilder.createResourceRoleIdFilter(postMortemRoleId);
-        filter = new AndFilter(Arrays.asList(filterProject, filterResourceRole));
+        filter = new AndFilter(filterProject, filterResourceRole);
         Resource[] resources = resMgr.searchResources(filter);
         
         // Delete the Post Mortem Reviewers
@@ -4636,24 +3991,5 @@ public class ActionsHelper {
         com.topcoder.project.phases.Project phProject = postMortemPhase.getProject();
         phProject.removePhase(postMortemPhase);
         phaseManager.updatePhases(phProject, operator);
-    }
-    
-    /**
-     * Finds prize type with given name among all available prize types.
-     * 
-     * @param manager project manager to use.
-     * @param name name to use.
-     * @return prize type with given name. null if not found.
-     * @throws BaseException if any exception occurs.
-     * @since 1.9
-     */
-    public static PrizeType getPrizeTypeByName(ProjectManager manager, String name) throws BaseException {
-        PrizeType [] allTypes = manager.getPrizeTypes();
-        for(PrizeType type : allTypes) {
-            if (type.getDescription().equalsIgnoreCase(name)) {
-                return type;
-            }
-        }
-        return null;
     }
 }

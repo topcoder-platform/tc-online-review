@@ -57,7 +57,7 @@ public class PRReviewPhaseHandler extends ReviewPhaseHandler {
     }
 
     /**
-     * Provides additional logic to execute a phase. this exetension will update valid_submission_ind, submit_timestamp
+     * Provides additional logic to execute a phase. this extension will update valid_submission_ind, submit_timestamp
      * field of project_result table.</p>
      *
      * @param phase The input phase to check.

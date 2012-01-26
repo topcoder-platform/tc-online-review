@@ -91,8 +91,8 @@ final class Comparators {
 
         /**
          * This method compares its two arguments for order. This method expects that type of
-         * objects passed as arguments is <code>Phase</code>. It then detemines which of the
-         * objects is smaller using <code>compare</code> method from the superclas first, and then
+         * objects passed as arguments is <code>Phase</code>. It then determines which of the
+         * objects is smaller using <code>compare</code> method from the superclass first, and then
          * comparing phases' imaginary rankings if the first comparison does not let determine the
          * order.
          * <p>
@@ -194,9 +194,9 @@ final class Comparators {
          *
          * @return a negative integer, zero, or a positive integer as the first argument is less
          *         than, equal to, or greater than the second respectively.
-         * @param o1
+         * @param pt1
          *            the first object to be compared.
-         * @param o2
+         * @param pt2
          *            the second object to be compared.
          */
         public int compare(ProjectType pt1, ProjectType pt2) {
@@ -224,9 +224,9 @@ final class Comparators {
          *
          * @return a negative integer, zero, or a positive integer as the first argument is less
          *         than, equal to, or greater than the second respectively.
-         * @param o1
+         * @param project1
          *            the first object to be compared.
-         * @param o2
+         * @param project2
          *            the second object to be compared.
          */
         public int compare(Project project1, Project project2) {
@@ -302,9 +302,9 @@ final class Comparators {
          *
          * @return a negative integer, zero, or a positive integer as the first argument is less
          *         than, equal to, or greater than the second respectively.
-         * @param o1
+         * @param submission1
          *            the first object to be compared.
-         * @param o2
+         * @param submission2
          *            the second object to be compared.
          */
         public int compare(Submission submission1, Submission submission2) {
@@ -317,7 +317,7 @@ final class Comparators {
 
             // Compare submissions by their final scores,
             // or by their upload times, which are the creation times of their respective uploads
-            return ((finalScore1 != finalScore2)
+            return ((finalScore1.compareTo(finalScore2) != 0)
             		? finalScore2.compareTo(finalScore1)
             		: submission2.getUpload().getCreationTimestamp().compareTo(
             				submission1.getUpload().getCreationTimestamp()));
@@ -357,34 +357,6 @@ final class Comparators {
     }
 
     /**
-     * This class implements <code>Comparator</code> interface and is used to sort Uploads in
-     * array. It sorts Uploads by their creation time, from the least recent to the most recent
-     * ones.
-     */
-    static class UploadComparer implements Comparator<Upload> {
-
-        /**
-         * This method compares its two arguments for order. This method expects that type of
-         * the objects passed as arguments is <code>Upload</code>.
-         * <p>
-         * This method implements the <code>compare</code> method from the
-         * <code>Comparator</code> interface.
-         * </p>
-         *
-         * @return a negative integer, zero, or a positive integer as the first argument is less
-         *         than, equal to, or greater than the second respectively.
-         * @param o1
-         *            the first object to be compared.
-         * @param o2
-         *            the second object to be compared.
-         */
-        public int compare(Upload up1, Upload up2) {
-            // Compare uploads by their creation times
-            return up1.getCreationTimestamp().compareTo(up2.getCreationTimestamp());
-        }
-    }
-
-    /**
      * This class implements <code>Comparator</code> interface and is used to sort reviews in
      * array. It sorts reviews by their creation time, from the least recent to the most recent
      * ones.
@@ -401,37 +373,14 @@ final class Comparators {
          *
          * @return a negative integer, zero, or a positive integer as the first argument is less
          *         than, equal to, or greater than the second respectively.
-         * @param o1
+         * @param review1
          *            the first object to be compared.
-         * @param o2
+         * @param review2
          *            the second object to be compared.
          */
         public int compare(Review review1, Review review2) {
             // Compare reviews by their creation times
             return review1.getCreationTimestamp().compareTo(review2.getCreationTimestamp());
-        }
-    }
-
-    /**
-     * <p>This class implements <code>Comparator</code> interface and is used to sort submissions for specifications in
-     * array. It sorts submissions by their creation time, from the least recent to the most recent ones.</p>
-     *
-     * @author isv
-     * @since 1.1
-     */
-    static class SpecificationComparer implements Comparator<Submission> {
-
-        /**
-         * <p>This method compares its two arguments for order. This method expects that type of the objects passed as
-         * arguments is <code>Submission</code>.</p>
-         *
-         * @param submission1 the first submission to be compared.
-         * @param submission2 the second submission to be compared.
-         * @return a negative integer, zero, or a positive integer as the first argument is less than, equal to, or
-         *         greater than the second respectively.
-         */
-        public int compare(Submission submission1, Submission submission2) {
-            return submission1.getCreationTimestamp().compareTo(submission2.getCreationTimestamp());
         }
     }
 

@@ -115,11 +115,7 @@ public class ProjectDataAccess extends BaseDataAccess {
         Map<String, ResultSetContainer> results = runQuery("cockpit_project_user",
                 new String[] {"pj", "uid"}, new String[] {String.valueOf(projectId), String.valueOf(userId)});
         ResultSetContainer result = results.get("cockpit_project_user");
-        if (!result.isEmpty()) {
-            return true;
-        } else {
-            return false;
-        }
+        return !result.isEmpty();
     }
 
     /**
@@ -188,7 +184,7 @@ public class ProjectDataAccess extends BaseDataAccess {
     /**
      * <p>Gets the <code>ClientProject</code> by the ID.</p>
      *
-     * @param projectId a <code>long</code> providing the ID of the client project.
+     * @param clientProjectId a <code>long</code> providing the ID of the client project.
      * @return a <code>ClientProject</code> or null if not found.
      * @since 1.3
      */

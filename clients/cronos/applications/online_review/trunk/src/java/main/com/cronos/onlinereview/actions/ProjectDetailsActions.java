@@ -249,7 +249,7 @@ public class ProjectDetailsActions extends DispatchAction {
      *         - resume appeals if his "Appeals Completed Early" flag is "Yes".
      * </p>
      *
-     * @return an action forward to the appropriate page. If no error has occured, the forward will
+     * @return an action forward to the appropriate page. If no error has occurred, the forward will
      *         be to viewProjectDetails.jsp page.
      * @param mapping
      *            action mapping.
@@ -363,17 +363,7 @@ public class ProjectDetailsActions extends DispatchAction {
         Resource[] myResources = (Resource[]) request.getAttribute("myResources");
         // Place an information about the amount of "my" payment into the request
         Map<ResourceRole, Double> myPayments = ActionsHelper.getMyPayments(myResources);
-        ResourceRole managerResourceRole = ActionsHelper.findResourceRoleByName(
-                myPayments.keySet().toArray(new ResourceRole[myPayments.size()]), "Manager");
-        if (managerResourceRole == null) {
-            if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) ||
-                AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
-                ResourceRole globalManagerRole = new ResourceRole();
-                globalManagerRole.setName(messages.getMessage("ResourceRole."
-                        + Constants.MANAGER_ROLE_NAME.replaceAll(" ", "")));
-                myPayments.put(globalManagerRole, null);
-            }
-        }
+
         double totalPayment = 0;
         request.setAttribute("myPayment", myPayments);
         for (Double payment : myPayments.values()) {
@@ -412,11 +402,8 @@ public class ProjectDetailsActions extends DispatchAction {
             request.setAttribute("paymentPenaltyPercentage", paymentPenaltyPercentage);
         }
 
-
-        // Obtain an instance of Resource Manager
-        ResourceManager resMgr = ActionsHelper.createResourceManager();
         // Get an array of all resources for the project
-        Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(resMgr, project);
+        Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(project);
         ActionsHelper.populateEmailProperty(request, allProjectResources);
 
         // Obtain an instance of Phase Manager
@@ -439,20 +426,17 @@ public class ProjectDetailsActions extends DispatchAction {
         // Place all phases of the project into the request
         request.setAttribute("phases", phases);
 
-        Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForPhases(
-                ActionsHelper.createDeliverableManager(), activePhases, allProjectResources);
+        Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForPhases(activePhases, allProjectResources);
 
         // For approval phase
         Phase approvalPhase = ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME);
         if (approvalPhase != null) {
-            ReviewManager reviewManager = ActionsHelper.createReviewManager();
-            ScorecardType[] allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
-            ScorecardType scorecardType = ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Approval");
+            ScorecardType scorecardType = LookupHelper.getScorecardType("Approval");
 
             for (int i = 0; i < deliverables.length; i++) {
                 Deliverable deliverable = deliverables[i];
                 if (deliverable.getName().equals(Constants.APPROVAL_DELIVERABLE_NAME)) {
-                    Review review = ActionsHelper.findLastApprovalReview(reviewManager, approvalPhase, scorecardType,
+                    Review review = ActionsHelper.findLastApprovalReview(approvalPhase, scorecardType,
                                                                          deliverable.getResource(), false);
                     if ((review == null) || !review.isCommitted()) {
                         Deliverable newDeliverable
@@ -579,7 +563,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
             String phaseTypeName = phase.getPhaseType().getName();
             // Get a scorecard template associated with this phase if any
-            Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(ActionsHelper.createScorecardManager(), phase);
+            Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(phase);
             // If there is a scorecard template for the phase, store it in the list
             if (scorecardTemplate != null) {
                 // override the previous scorecard, here assume the phases are ordered sequentially.
@@ -642,7 +626,7 @@ public class ProjectDetailsActions extends DispatchAction {
             Filter filterTNtype = NotificationFilterBuilder.createNotificationTypeIdFilter(1);
             Filter filterTN = new AndFilter(filterTNproject, new AndFilter(filterTNuser, filterTNtype));
 
-            Notification[] notifications = resMgr.searchNotifications(filterTN);
+            Notification[] notifications = ActionsHelper.createResourceManager().searchNotifications(filterTN);
             sendTLNotifications = (notifications.length != 0);
         }
 
@@ -650,9 +634,9 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Check resource roles
         request.setAttribute("isManager",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)));
+                AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES));
         request.setAttribute("isSubmitter",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)));
+                AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME));
 
         // check if registration phase is open
         boolean registrationOpen = false;
@@ -674,7 +658,7 @@ public class ProjectDetailsActions extends DispatchAction {
         boolean alreadySubmitted = submitter != null && submitter.getSubmissions() != null && submitter.getSubmissions().length > 0;
 
         request.setAttribute("isAllowedToUnregister",
-            Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) && registrationOpen
+                AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME) && registrationOpen
             && !alreadySubmitted);
 
         // get appeals completed early property value
@@ -695,87 +679,86 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // check if the user can mark appeals as completed
         request.setAttribute("isAllowedToCompleteAppeals",
-            Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) &&
+                AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME) &&
             appealsOpen && !appealsCompletedFlag);
 
         // check if the user can resume appeals
         request.setAttribute("isAllowedToResumeAppeals",
-            Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) &&
+                AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME) &&
             appealsOpen && appealsCompletedFlag);
 
         // Check permissions
         request.setAttribute("isAllowedToManageProjects",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request,
-                                Constants.VIEW_PROJECT_MANAGEMENT_CONSOLE_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request,
+                        Constants.VIEW_PROJECT_MANAGEMENT_CONSOLE_PERM_NAME));
         request.setAttribute("isAllowedToEditProjects",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME));
         request.setAttribute("isAllowedToContactPM",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.CONTACT_PM_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.CONTACT_PM_PERM_NAME));
         request.setAttribute("isAllowedToSetTL",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.SET_TL_NOTIFY_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.SET_TL_NOTIFY_PERM_NAME));
         request.setAttribute("isAllowedToViewSVNLink",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SVN_LINK_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SVN_LINK_PERM_NAME));
         request.setAttribute("isAllowedToViewAutopilotStatus",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_AUTOPILOT_STATUS_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_AUTOPILOT_STATUS_PERM_NAME));
         request.setAttribute("isAllowedToViewPayment",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_PAY_INFO_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_PAY_INFO_PERM_NAME));
         request.setAttribute("isAllowedToViewAllPayment",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_PAYMENT_INFO_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_PAYMENT_INFO_PERM_NAME));
         request.setAttribute("isAllowedToViewResources",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECT_RESOURCES_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECT_RESOURCES_PERM_NAME));
         request.setAttribute("isAllowedToPerformScreening",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SCREENING_PERM_NAME) &&
-                        ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME) != null));
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SCREENING_PERM_NAME) &&
+                        ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME) != null);
 
         Phase reviewPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.REVIEW_PHASE_NAME);
         request.setAttribute("isAllowedToAdvanceSubmissionWithFailedScreening",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME) &&
-                        project.getProjectStatus().getName().equals("Active")) &&
+                AuthorizationHelper.hasUserPermission(request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME) &&
+                        project.getProjectStatus().getName().equals("Active") &&
                         reviewPhase != null && !ActionsHelper.isPhaseClosed(reviewPhase.getPhaseStatus()));
 
         request.setAttribute("isAllowedToPerformMilestoneScreening",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_MILESTONE_SCREENING_PERM_NAME) &&
-                        ActionsHelper.getPhase(phases, true, Constants.MILESTONE_SCREENING_PHASE_NAME) != null));
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_MILESTONE_SCREENING_PERM_NAME) &&
+                        ActionsHelper.getPhase(phases, true, Constants.MILESTONE_SCREENING_PHASE_NAME) != null);
         request.setAttribute("isAllowedToPerformMilestoneReview",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_MILESTONE_REVIEW_PERM_NAME) &&
-                        ActionsHelper.getPhase(phases, true, Constants.MILESTONE_REVIEW_PHASE_NAME) != null));
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_MILESTONE_REVIEW_PERM_NAME) &&
+                        ActionsHelper.getPhase(phases, true, Constants.MILESTONE_REVIEW_PHASE_NAME) != null);
         request.setAttribute("isAllowedToViewScreening",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENING_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENING_PERM_NAME));
         request.setAttribute("isAllowedToViewMilestoneScreening",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MILESTONE_SCREENING_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MILESTONE_SCREENING_PERM_NAME));
         request.setAttribute("isAllowedToViewMilestoneReview",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MILESTONE_REVIEW_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MILESTONE_REVIEW_PERM_NAME));
         request.setAttribute("isAllowedToEditHisReviews",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(
+                AuthorizationHelper.hasUserPermission(
                         request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
                         (ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME) != null ||
                                 ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null ||
                                 ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null ||
                                 ActionsHelper.getPhase(phases, true, Constants.APPEALS_PHASE_NAME) != null ||
-                                ActionsHelper.getPhase(phases, true, Constants.APPEALS_RESPONSE_PHASE_NAME) != null)));
+                                ActionsHelper.getPhase(phases, true, Constants.APPEALS_RESPONSE_PHASE_NAME) != null));
         request.setAttribute("isAllowedToUploadTC",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.UPLOAD_TEST_CASES_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.UPLOAD_TEST_CASES_PERM_NAME));
         request.setAttribute("isAllowedToPerformAggregation",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME));
         request.setAttribute("isAllowedToUploadFF",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_FIX_PERM_NAME) &&
-                        AuthorizationHelper.getLoggedInUserId(request) == winnerExtUserId));
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_FIX_PERM_NAME) &&
+                        AuthorizationHelper.getLoggedInUserId(request) == winnerExtUserId);
         request.setAttribute("isAllowedToUploadSpec",
-                Boolean.valueOf(
-                    AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME)));
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME));
         request.setAttribute("isAllowedToPerformFinalReview",
-                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.FINAL_REVIEW_PHASE_NAME) != null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME)));
+                ActionsHelper.getPhase(phases, true, Constants.FINAL_REVIEW_PHASE_NAME) != null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME));
         request.setAttribute("isAllowedToPerformSpecReview",
-                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.SPECIFICATION_REVIEW_PHASE_NAME) != null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SPECIFICATION_REVIEW_PERM_NAME)));
+                ActionsHelper.getPhase(phases, true, Constants.SPECIFICATION_REVIEW_PHASE_NAME) != null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SPECIFICATION_REVIEW_PERM_NAME));
         request.setAttribute("isAllowedToPerformApproval",
-                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME)));
+                ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME));
         request.setAttribute("isAllowedToPerformPortMortemReview",
-                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME)));
-        request.setAttribute("isAllowedToPay", Boolean.valueOf(isAllowedToPay(request, project, allProjectResources)));
+                ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME));
+        request.setAttribute("isAllowedToPay", isAllowedToPay(request, project, allProjectResources));
 
         // Checking whether some user is allowed to submit his approval or comments for the
         // Aggregation worksheet needs more robust verification since this check includes a test
@@ -809,13 +792,13 @@ public class ProjectDetailsActions extends DispatchAction {
                 }
             }
         }
-        request.setAttribute("isAllowedToPerformAggregationReview", Boolean.valueOf(allowedToReviewAggregation));
+        request.setAttribute("isAllowedToPerformAggregationReview", allowedToReviewAggregation);
 
         // since Online Review Update - Add Project Dropdown v1.0
         request.setAttribute("isAdmin",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
+                AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
                         || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
-                        || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)));
+                        || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME));
 
         //OR Project Linking Assembly
         ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager();
@@ -831,7 +814,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * project. This action gets executed twice &#x96; once to display the page with the form, and
      * once to process the message entered by user on that form.
      *
-     * @return an action forward to the appropriate page. If no error has occured and this action
+     * @return an action forward to the appropriate page. If no error has occurred and this action
      *         was called the first time, the forward will be to contactManager.jsp page, which
      *         displays the form where user can enter his message. If this action was called during
      *         the post back (the second time), then the request should contain the message to send
@@ -861,7 +844,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, Constants.CONTACT_PM_PERM_NAME, postBack);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -973,7 +956,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * action gets executed twice &#x96; once to display the page with the form, and once to process
      * the uploaded file.
      *
-     * @return an action forward to the appropriate page. If no error has occured and this action
+     * @return an action forward to the appropriate page. If no error has occurred and this action
      *         was called the first time, the forward will be to uploadSubmission.jsp page, which
      *         displays the form where user can specify the file he/she wants to upload. If this
      *         action was called during the post back (the second time), then the request should
@@ -1008,7 +991,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * @param form an <code>ActionForm</code> providing the form submitted by user.
      * @param request an <code>HttpServletRequest</code> providing the details for incoming request.
      * @param response an <code>HttpServletResponse</code> providing the details for outgoing response.
-     * @return an <code>ActionForward</code> to the appropriate page. If no error has occured and this action was called
+     * @return an <code>ActionForward</code> to the appropriate page. If no error has occurred and this action was called
      *         the first time, the forward will be to uploadMilestoneSubmission.jsp page, which displays the form where
      *         user can specify the file he/she wants to upload. If this action was called during the post back (the
      *         second time), then the request should contain the file uploaded by user. In this case, this method
@@ -1030,7 +1013,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * action gets executed twice &#x96; once to display the page with the form, and once to process
      * the uploaded file.</p>
      *
-     * @return an action forward to the appropriate page. If no error has occured and this action
+     * @return an action forward to the appropriate page. If no error has occurred and this action
      *         was called the first time, the forward will be to uploadSubmission.jsp page, which
      *         displays the form where user can specify the file he/she wants to upload. If this
      *         action was called during the post back (the second time), then the request should
@@ -1056,7 +1039,7 @@ public class ProjectDetailsActions extends DispatchAction {
             mapping, getResources(request), request, Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME,
             postBack);
 
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1079,10 +1062,11 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         // Check if specification is already submitted
-        ResourceManager resourceManager = ActionsHelper.createResourceManager();
-        UploadManager upMgr = ActionsHelper.createUploadManager();
-        Submission oldSubmission = ActionsHelper.getActiveSpecificationSubmission(project.getId(), upMgr);
-        if (oldSubmission != null) {
+        Submission[] oldSubmissions = ActionsHelper.getProjectSubmissions(
+                project.getId(), Constants.SPECIFICATION_SUBMISSION_TYPE_NAME,
+                Constants.ACTIVE_SUBMISSION_STATUS_NAME, false);
+
+        if (oldSubmissions != null && oldSubmissions.length > 0) {
             // Disallow submitting more than one Specification Submission for project
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME, "Error.SpecificationAlreadyUploaded", null);
@@ -1121,32 +1105,27 @@ public class ProjectDetailsActions extends DispatchAction {
         // Always create a new submission/ upload
         Upload upload = new Upload();
 
-        UploadStatus[] uploadStatuses = upMgr.getAllUploadStatuses();
-        UploadType[] uploadTypes = upMgr.getAllUploadTypes();
-
         upload.setProject(project.getId());
+        upload.setProjectPhase(specificationPhase.getId());
         upload.setOwner(resource.getId());
-        upload.setUploadStatus(ActionsHelper.findUploadStatusByName(uploadStatuses, "Active"));
-        upload.setUploadType(ActionsHelper.findUploadTypeByName(uploadTypes, "Submission"));
+        upload.setUploadStatus(LookupHelper.getUploadStatus("Active"));
+        upload.setUploadType(LookupHelper.getUploadType("Submission"));
         upload.setParameter(uploadedFile.getFileId());
 
         Submission submission = new Submission();
         submission.setUpload(upload);
 
-        SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
-        SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
-        SubmissionType specSubmissionType
-            = ActionsHelper.findSubmissionTypeByName(submissionTypes, Constants.SPECIFICATION_SUBMISSION_TYPE_NAME);
-        SubmissionStatus submissionActiveStatus
-            = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active");
+        SubmissionType specSubmissionType = LookupHelper.getSubmissionType(Constants.SPECIFICATION_SUBMISSION_TYPE_NAME);
+        SubmissionStatus submissionActiveStatus = LookupHelper.getSubmissionStatus("Active");
         submission.setSubmissionStatus(submissionActiveStatus);
         submission.setSubmissionType(specSubmissionType);
 
         String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
+        UploadManager upMgr = ActionsHelper.createUploadManager();
         upMgr.createUpload(upload, operator);
         upMgr.createSubmission(submission, operator);
         resource.addSubmission(submission.getId());
-        resourceManager.updateResource(resource, operator);
+        ActionsHelper.createResourceManager().updateResource(resource, operator);
 
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
@@ -1305,7 +1284,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * action gets executed twice &#x96; once to display the page with the form, and once to process
      * the uploaded file.
      *
-     * @return an action forward to the appropriate page. If no error has occured and this action
+     * @return an action forward to the appropriate page. If no error has occurred and this action
      *         was called the first time, the forward will be to uploadFinalFix.jsp page, which
      *         displays the form where user can specify the file he/she wants to upload. If this
      *         action was called during the post back (the second time), then the request should
@@ -1334,7 +1313,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, Constants.PERFORM_FINAL_FIX_PERM_NAME, postBack);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1358,17 +1337,6 @@ public class ProjectDetailsActions extends DispatchAction {
                     request, Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.IncorrectPhase", null);
         }
 
-        int finalFixCount = 0;
-
-        for (Phase phase : phases) {
-            if (phase.getPhaseType().getName().equalsIgnoreCase(Constants.FINAL_FIX_PHASE_NAME)) {
-                ++finalFixCount;
-            }
-            if (phase == currentPhase) {
-                break;
-            }
-        }
-
         DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
         FormFile file = (FormFile) uploadSubmissionForm.get("file");
 
@@ -1385,45 +1353,26 @@ public class ProjectDetailsActions extends DispatchAction {
         FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
         UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
 
-        // Obtain an instance of Upload Manager
-        UploadManager upMgr = ActionsHelper.createUploadManager();
-        UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
-        UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
-
         // Get my resource
         Resource resource = ActionsHelper.getMyResourceForRole(request, "Submitter");
 
-        Filter projectFilter = UploadFilterBuilder.createProjectIdFilter(project.getId());
-        Filter resourceFilter = UploadFilterBuilder.createResourceIdFilter(resource.getId());
-        Filter typeFilter = UploadFilterBuilder.createUploadTypeIdFilter(
-                ActionsHelper.findUploadTypeByName(allUploadTypes, "Final Fix").getId());
-        Filter combinedFilter = new AndFilter(
-                Arrays.asList(new Filter[] { projectFilter, resourceFilter, typeFilter }));
-
-        Upload[] uploads = upMgr.searchUploads(combinedFilter);
-
-        if (uploads.length >= finalFixCount) {
+        Upload[] uploads = ActionsHelper.getPhaseUploads(currentPhase.getId(), "Final Fix");
+        if (uploads.length > 0) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.OnlyOneFinalFix", null);
         }
 
-        Arrays.sort(uploads, new Comparators.UploadComparer());
-        Upload oldUpload = (uploads.length != 0) ? uploads[uploads.length - 1] : null;
-
         Upload upload = new Upload();
 
         upload.setProject(project.getId());
+        upload.setProjectPhase(currentPhase.getId());
         upload.setOwner(resource.getId());
-        upload.setUploadStatus(ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active"));
-        upload.setUploadType(ActionsHelper.findUploadTypeByName(allUploadTypes, "Final Fix"));
+        upload.setUploadStatus(LookupHelper.getUploadStatus("Active"));
+        upload.setUploadType(LookupHelper.getUploadType("Final Fix"));
         upload.setParameter(uploadedFile.getFileId());
 
-        if (oldUpload != null) {
-            oldUpload.setUploadStatus(ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted"));
-            upMgr.updateUpload(oldUpload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-        }
-
-        upMgr.createUpload(upload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        ActionsHelper.createUploadManager().createUpload(
+                upload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
@@ -1455,7 +1404,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1532,7 +1481,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * action gets executed twice &#x96; once to display the page with the form, and once to process
      * the uploaded file.
      *
-     * @return an action forward to the appropriate page. If no error has occured and this action
+     * @return an action forward to the appropriate page. If no error has occurred and this action
      *         was called the first time, the forward will be to uploadTestCase.jsp page, which
      *         displays the form where user can specify the file he/she wants to upload. If this
      *         action was called during the post back (the second time), then the request should
@@ -1561,7 +1510,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, Constants.UPLOAD_TEST_CASES_PERM_NAME, postBack);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1577,10 +1526,12 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Get all phases for the current project
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
-        // Retrieve the current phase for the project
-        Phase currentPhase = ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME);
 
-        if (currentPhase == null) {
+        // Retrieve the current phase for the project, it should be either Review or Appeals Response
+        Phase reviewPhase = ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME);
+        Phase appealsResponsePhase = ActionsHelper.getPhase(phases, true, Constants.APPEALS_RESPONSE_PHASE_NAME);
+
+        if (reviewPhase == null && appealsResponsePhase == null) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.UPLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase", null);
         }
@@ -1602,11 +1553,6 @@ public class ProjectDetailsActions extends DispatchAction {
         FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
         UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
 
-        // Obtain an instance of Upload Manager
-        UploadManager upMgr = ActionsHelper.createUploadManager();
-        UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
-        UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
-
         // Get my resource
         Resource resource = ActionsHelper.getMyResourceForPhase(
                 request, ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME));
@@ -1614,34 +1560,32 @@ public class ProjectDetailsActions extends DispatchAction {
         Filter filterProject = UploadFilterBuilder.createProjectIdFilter(project.getId());
         Filter filterResource = UploadFilterBuilder.createResourceIdFilter(resource.getId());
         Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
-                ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
+                LookupHelper.getUploadStatus("Active").getId());
         Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
-                ActionsHelper.findUploadTypeByName(allUploadTypes, "Test Case").getId());
+                LookupHelper.getUploadType("Test Case").getId());
 
         Filter filter = new AndFilter(
-                Arrays.asList(new Filter[] {filterProject, filterResource, filterStatus, filterType}));
+                Arrays.asList(filterProject, filterResource, filterStatus, filterType));
 
-        Upload[] uploads = upMgr.searchUploads(filter);
-        Upload oldUpload = (uploads.length != 0) ? uploads[0] : null;
+        UploadManager upMgr = ActionsHelper.createUploadManager();
+        Upload[] oldUploads = upMgr.searchUploads(filter);
+
+        // Set the status for old uploads to Deleted
+        for (Upload oldUpload : oldUploads) {
+            oldUpload.setUploadStatus(LookupHelper.getUploadStatus("Deleted"));
+            upMgr.updateUpload(oldUpload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        }
 
         Upload upload = new Upload();
 
         upload.setProject(project.getId());
+        upload.setProjectPhase(reviewPhase != null ? reviewPhase.getId() : appealsResponsePhase.getId());
         upload.setOwner(resource.getId());
-        upload.setUploadStatus(ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active"));
-        upload.setUploadType(ActionsHelper.findUploadTypeByName(allUploadTypes, "Test Case"));
+        upload.setUploadStatus(LookupHelper.getUploadStatus("Active"));
+        upload.setUploadType(LookupHelper.getUploadType("Test Case"));
         upload.setParameter(uploadedFile.getFileId());
 
-        if (oldUpload != null) {
-            oldUpload.setUploadStatus(ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted"));
-            upMgr.updateUpload(oldUpload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-        }
-
         upMgr.createUpload(upload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-
-        if (oldUpload != null) {
-            // TODO: Send email notifications here
-        }
 
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
@@ -1673,7 +1617,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1773,7 +1717,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * display the page with the confirmation, and once to process the confirmed advance request to
      * actually advance the submission to pass screening.
      *
-     * @return an action forward to the appropriate page. If no error has occured and this action
+     * @return an action forward to the appropriate page. If no error has occurred and this action
      *         was called the first time, the forward will be to /jsp/confirmAdvanceFailedScreeningSubmission.jsp
      *         page, which displays the confirmation dialog where user can confirm his intention to
      *         advance the submission. If this action was called during the post back (the second
@@ -1798,7 +1742,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1827,10 +1771,9 @@ public class ProjectDetailsActions extends DispatchAction {
                     request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME, "Error.NotASubmission3", null);
         }
 
-        Filter filter = SubmissionFilterBuilder.createUploadIdFilter(upload.getId());
         // Obtain an instance of Upload Manager
         UploadManager upMgr = ActionsHelper.createUploadManager();
-        Submission[] submissions = upMgr.searchSubmissions(filter);
+        Submission[] submissions = upMgr.searchSubmissions(SubmissionFilterBuilder.createUploadIdFilter(upload.getId()));
         Submission submission = (submissions.length != 0) ? submissions[0] : null;
 
         // Check the submission status is Failed Screening
@@ -1878,8 +1821,7 @@ public class ProjectDetailsActions extends DispatchAction {
             ActionsHelper.deletePostMortem(project, postMortemPhase, operator);
         }
         // Set submission status to Active
-        SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
-        SubmissionStatus submissionActiveStatus = ActionsHelper.findSubmissionStatusByName(submissionStatuses, Constants.ACTIVE_SUBMISSION_STATUS_NAME);
+        SubmissionStatus submissionActiveStatus = LookupHelper.getSubmissionStatus(Constants.ACTIVE_SUBMISSION_STATUS_NAME);
         submission.setSubmissionStatus(submissionActiveStatus);
         upMgr.updateSubmission(submission, operator);
 
@@ -1905,7 +1847,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * display the page with the confirmation, and once to process the confirmed delete request to
      * actually delete the submission.
      *
-     * @return an action forward to the appropriate page. If no error has occured and this action
+     * @return an action forward to the appropriate page. If no error has occurred and this action
      *         was called the first time, the forward will be to /jsp/confirmDeleteSubmission.jsp
      *         page, which displays the confirmation dialog where user can confirm his intention to
      *         remove the submission. If this action was called during the post back (the second
@@ -1926,67 +1868,8 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward deleteSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
-        // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification =
-            checkForCorrectUploadId(mapping, request, Constants.REMOVE_SUBM_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
-        if (!verification.isSuccessful()) {
-            return verification.getForward();
-        }
-
-        // Retrieve the upload user tries to delete
-        Upload upload = verification.getUpload();
-
-        // Check that user has permissions to delete submission
-        if (!AuthorizationHelper.hasUserPermission(request, Constants.REMOVE_SUBM_PERM_NAME)) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.REMOVE_SUBM_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
-        }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
-
-        // Verify that the user is attempting to delete submission
-        if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.REMOVE_SUBM_PERM_NAME, "Error.NotASubmission2", null);
-        }
-
-        Filter filter = SubmissionFilterBuilder.createUploadIdFilter(upload.getId());
-        // Obtain an instance of Upload Manager
-        UploadManager upMgr = ActionsHelper.createUploadManager();
-        Submission[] submissions = upMgr.searchSubmissions(filter);
-        Submission submission = (submissions.length != 0) ? submissions[0] : null;
-
-        if (submission == null || submission.getSubmissionStatus().getName().equalsIgnoreCase("Deleted")) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.REMOVE_SUBM_PERM_NAME, "Error.SubmissionDeleted", null);
-        }
-
-        // Determine if this request is a post back
-        boolean postBack = (request.getParameter("delete") != null);
-
-        if (!postBack) {
-            // Retrieve some basic project info (such as icons' names) and place it into request
-            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
-            // Place upload ID into the request as attribute
-            request.setAttribute("uid", upload.getId());
-            return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
-        }
-
-        UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
-        SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
-
-        upload.setUploadStatus(ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted"));
-        submission.setSubmissionStatus(ActionsHelper.findSubmissionStatusByName(allSubmissionStatuses, "Deleted"));
-
-        upMgr.updateUpload(upload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-        upMgr.updateSubmission(submission, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-
-        // recaculate screening reviewer payments
-        ActionsHelper.recaculateScreeningReviewerPayments(upload.getProject());
-
-        return ActionsHelper.cloneForwardAndAppendToPath(
-                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
+        // TODO: Delete this method and the whole action.
+        throw new BaseException("Not supported anymore");
     }
 
     /**
@@ -2026,8 +1909,8 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         // Check the user has submitter role and registration phase is open
-        boolean isSubmitter = Boolean.valueOf(AuthorizationHelper.hasUserRole(request,
-                Constants.SUBMITTER_ROLE_NAME));
+        boolean isSubmitter = AuthorizationHelper.hasUserRole(request,
+                Constants.SUBMITTER_ROLE_NAME);
 
         if (!isSubmitter) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
@@ -2068,10 +1951,7 @@ public class ProjectDetailsActions extends DispatchAction {
             return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
         }
 
-        // Obtain the instance of the Resource Manager
-        ResourceManager resourceManager = ActionsHelper.createResourceManager();
-        Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(resourceManager,
-                verification.getProject());
+        Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(verification.getProject());
 
         boolean found = false;
         boolean hasOtherRoles = false;
@@ -2081,7 +1961,7 @@ public class ProjectDetailsActions extends DispatchAction {
             if (userId == AuthorizationHelper.getLoggedInUserId(request)) {
                 if (allProjectResources[i].getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
                     ActionsHelper.deleteProjectResult(verification.getProject(), userId, allProjectResources[i].getResourceRole().getId());
-                    resourceManager.removeResource(allProjectResources[i],
+                    ActionsHelper.createResourceManager().removeResource(allProjectResources[i],
                             Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
                     found = true;
@@ -2138,14 +2018,14 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME, false);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
 
         // Check the user has submitter role and appeals phase is open
-        boolean isSubmitter = Boolean.valueOf(AuthorizationHelper.hasUserRole(request,
-                Constants.SUBMITTER_ROLE_NAME));
+        boolean isSubmitter = AuthorizationHelper.hasUserRole(request,
+                Constants.SUBMITTER_ROLE_NAME);
 
         if (!isSubmitter) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
@@ -2243,7 +2123,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -2297,7 +2177,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * @param request
      *            the http request.
      * @param errorMessageKey
-     *            permission to check against, or <code>null</code> if no check is requeired.
+     *            permission to check against, or <code>null</code> if no check is required.
      * @throws IllegalArgumentException
      *             if any of the parameters are <code>null</code>, or if
      *             <code>errorMessageKey</code> parameter is an empty string.
@@ -2506,8 +2386,6 @@ public class ProjectDetailsActions extends DispatchAction {
 
         String[] links = new String[deliverables.length];
 
-        ScorecardType[] allScorecardTypes = null;
-
         boolean isStudio = "Studio".equalsIgnoreCase((String) request.getAttribute("projectType"));
 
         for (int i = 0; i < deliverables.length; ++i) {
@@ -2536,12 +2414,10 @@ public class ProjectDetailsActions extends DispatchAction {
             } else if (delivName.equalsIgnoreCase(Constants.SPECIFICATION_REVIEW_DELIVERABLE_NAME)) {
                 if (deliverable.getSubmission() == null) {
                     continue;
-                } else if (allScorecardTypes == null) {
-                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
-                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Specification Review"),
+                        LookupHelper.getScorecardType("Specification Review"),
                         deliverable.getSubmission(), deliverable.getResource(), false);
 
                 if (review == null) {
@@ -2560,13 +2436,8 @@ public class ProjectDetailsActions extends DispatchAction {
                     continue;
                 }
 
-                if (allScorecardTypes == null) {
-                    // Get all scorecard types
-                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
-                }
-
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
-                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Screening"),
+                        LookupHelper.getScorecardType("Screening"),
                         deliverable.getSubmission(), deliverable.getResource(), false);
 
                 if (review == null) {
@@ -2581,12 +2452,9 @@ public class ProjectDetailsActions extends DispatchAction {
                 if (deliverable.getSubmission() == null) {
                     continue;
                 }
-                if (allScorecardTypes == null) {
-                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
-                }
 
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
-                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Milestone Screening"),
+                        LookupHelper.getScorecardType("Milestone Screening"),
                         deliverable.getSubmission(), deliverable.getResource(), false);
 
                 if (review == null) {
@@ -2604,13 +2472,8 @@ public class ProjectDetailsActions extends DispatchAction {
                     continue;
                 }
 
-                if (allScorecardTypes == null) {
-                    // Get all scorecard types
-                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
-                }
-
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
-                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
+                        LookupHelper.getScorecardType("Review"),
                         deliverable.getSubmission(), deliverable.getResource(), false);
 
                 if (review == null) {
@@ -2626,12 +2489,8 @@ public class ProjectDetailsActions extends DispatchAction {
                     continue;
                 }
 
-                if (allScorecardTypes == null) {
-                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
-                }
-
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
-                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Milestone Review"),
+                        LookupHelper.getScorecardType("Milestone Review"),
                         deliverable.getSubmission(), deliverable.getResource(), false);
 
                 if (review == null) {
@@ -2653,13 +2512,9 @@ public class ProjectDetailsActions extends DispatchAction {
                     continue;
                 }
 
-                if (allScorecardTypes == null) {
-                    // Get all scorecard types
-                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
-                }
 
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
-                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
+                        LookupHelper.getScorecardType("Review"),
                         deliverable.getSubmission(), deliverable.getResource(), false);
 
                 // If review for the submission is absent, something is wrong
@@ -2674,13 +2529,8 @@ public class ProjectDetailsActions extends DispatchAction {
                     continue;
                 }
 
-                if (allScorecardTypes == null) {
-                    // Get all scorecard types
-                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
-                }
-
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
-                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
+                        LookupHelper.getScorecardType("Review"),
                         deliverable.getSubmission(), deliverable.getResource(), false);
 
                 if (review != null) {
@@ -2699,16 +2549,10 @@ public class ProjectDetailsActions extends DispatchAction {
                 }
 
                 Phase phase = ActionsHelper.getPhase(phases, false, Constants.AGGREGATION_PHASE_NAME);
-                Resource[] aggregator =
-                    ActionsHelper.getAllResourcesForPhase(ActionsHelper.createResourceManager(), phase);
-
-                if (allScorecardTypes == null) {
-                    // Get all scorecard types
-                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
-                }
+                Resource[] aggregator = ActionsHelper.getAllResourcesForPhase(phase);
 
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
-                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
+                        LookupHelper.getScorecardType("Review"),
                         deliverable.getSubmission(), aggregator[0].getId(), true);
 
                 if (review == null) {
@@ -2731,34 +2575,16 @@ public class ProjectDetailsActions extends DispatchAction {
                 }
             } else if (delivName.equalsIgnoreCase(Constants.FINAL_FIX_DELIVERABLE_NAME)) {
                 if(deliverable.isComplete()) {
-                    //get final fix uploads for current project and sort them
-                    UploadManager upMgr = ActionsHelper.createUploadManager();
-                    Filter projectFilter = UploadFilterBuilder.createProjectIdFilter(deliverable.getProject());
-                    Filter resourceFilter = UploadFilterBuilder.createResourceIdFilter(deliverable.getResource());
-                    Filter typeFilter = UploadFilterBuilder.createUploadTypeIdFilter(
-                            ActionsHelper.findUploadTypeByName(upMgr.getAllUploadTypes(), "Final Fix").getId());
-                    Filter combinedFilter = new AndFilter(
-                            Arrays.asList(new Filter[] { projectFilter, resourceFilter, typeFilter }));
-                    Upload[] uploads = upMgr.searchUploads(combinedFilter);
-                    Arrays.sort(uploads, new Comparators.UploadComparer());
-
-                    //retrieve latest final fix upload
-                    long uploadIndex = uploads[uploads.length - 1].getId();
-                    links[i] = "DownloadFinalFix.do?method=downloadFinalFix&uid=" + uploadIndex;
-                }
-                else {
-                     links[i] = "UploadFinalFix.do?method=uploadFinalFix&pid=" + deliverable.getProject();
+                    //get final fix uploads for current project phase
+                    Upload[] uploads = ActionsHelper.getPhaseUploads(deliverable.getPhase(), "Final Fix");
+                    links[i] = "DownloadFinalFix.do?method=downloadFinalFix&uid=" + uploads[0].getId();
+                } else {
+                    links[i] = "UploadFinalFix.do?method=uploadFinalFix&pid=" + deliverable.getProject();
                 }
             } else if (delivName.equalsIgnoreCase(Constants.FINAL_REVIEW_DELIVERABLE_NAME)) {
-                // Skip deliverables with empty Submission ID field,
-                // as no links can be generated for such deliverables
+                // Skip deliverables with empty Submission ID field, as no links can be generated for such deliverables
                 if (deliverable.getSubmission() == null) {
                     continue;
-                }
-
-                if (allScorecardTypes == null) {
-                    // Get all scorecard types
-                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
                 }
 
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
@@ -2778,16 +2604,10 @@ public class ProjectDetailsActions extends DispatchAction {
                     continue;
                 }
 
-                if (allScorecardTypes == null) {
-                    // Get all scorecard types
-                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
-                }
-
                 Phase[] activePhases = ActionsHelper.getActivePhases(phases);
                 Phase phase = ActionsHelper.getPhaseForDeliverable(activePhases, deliverable);
-                Review review = ActionsHelper.findLastApprovalReview(ActionsHelper.createReviewManager(), phase,
-                    ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Approval"), deliverable.getResource(),
-                    false);
+                Review review = ActionsHelper.findLastApprovalReview(phase,
+                    LookupHelper.getScorecardType("Approval"), deliverable.getResource(),false);
 
                 if (review == null) {
                     links[i] = "CreateApproval.do?method=createApproval&sid=" +
@@ -2798,12 +2618,8 @@ public class ProjectDetailsActions extends DispatchAction {
                     links[i] = "ViewApproval.do?method=viewApproval&rid=" + review.getId();
                 }
             } else if (delivName.equalsIgnoreCase(Constants.POST_MORTEM_DELIVERABLE_NAME)) {
-                if (allScorecardTypes == null) {
-                    // Get all scorecard types
-                    allScorecardTypes = ActionsHelper.createScorecardManager().getAllScorecardTypes();
-                }
 
-                ScorecardType scorecardType = ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Post-Mortem");
+                ScorecardType scorecardType = LookupHelper.getScorecardType("Post-Mortem");
                 Review review = findReviewForProject(ActionsHelper.createReviewManager(), scorecardType,
                                                      deliverable.getProject(), deliverable.getResource(), false);
                 if (review == null) {
@@ -2953,9 +2769,9 @@ public class ProjectDetailsActions extends DispatchAction {
         Filter filter;
         if (scorecardType != null) {
             Filter filterScorecard = new EqualToFilter("scorecardType", scorecardType.getId());
-            filter = new AndFilter(Arrays.asList(new Filter[] {filterSubmission, filterScorecard, filterReviewer}));
+            filter = new AndFilter(Arrays.asList(filterSubmission, filterScorecard, filterReviewer));
         } else {
-            filter = new AndFilter(Arrays.asList(new Filter[] {filterSubmission, filterReviewer}));
+            filter = new AndFilter(Arrays.asList(filterSubmission, filterReviewer));
         }
 
         // Get a review(s) that pass filter
@@ -3033,17 +2849,11 @@ public class ProjectDetailsActions extends DispatchAction {
         // At this point, redirect-after-login attribute should be removed (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
 
-        Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(upload.getProject());
-        Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(upload.getOwner());
-        Filter filterUpload = SubmissionFilterBuilder.createUploadIdFilter(upload.getId());
-
-        Filter filter = new AndFilter(Arrays.asList(filterProject, filterResource, filterUpload));
-
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
 
         UploadManager upMgr = ActionsHelper.createUploadManager();
-        Submission[] submissions = upMgr.searchSubmissions(filter);
+        Submission[] submissions = upMgr.searchSubmissions(SubmissionFilterBuilder.createUploadIdFilter(upload.getId()));
         Submission submission = (submissions.length != 0) ? submissions[0] : null;
 
         String contentDisposition;
@@ -3224,7 +3034,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification = checkForCorrectUploadId(mapping, request, errorMessageKey);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -3423,7 +3233,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, submitPermissionName, postBack);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -3433,7 +3243,8 @@ public class ProjectDetailsActions extends DispatchAction {
         // Get all phases for the current project
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
 
-        if (ActionsHelper.getPhase(phases, true, phaseName) == null) {
+        Phase currentPhase = ActionsHelper.getPhase(phases, true, phaseName);
+        if (currentPhase == null) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     submitPermissionName, "Error.IncorrectPhase", null);
         }
@@ -3473,42 +3284,22 @@ public class ProjectDetailsActions extends DispatchAction {
         // Get my resource
         Resource resource = ActionsHelper.getMyResourceForRole(request, "Submitter");
 
-        // Obtain an instance of Upload Manager
-        UploadManager upMgr = ActionsHelper.createUploadManager();
-        SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
-        SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
+        Submission[] oldSubmissions = ActionsHelper.getResourceSubmissions(resource.getId(), submissionTypeName,
+                Constants.ACTIVE_SUBMISSION_STATUS_NAME, false);
 
-        Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
-        Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(resource.getId());
-        Filter filterStatus = SubmissionFilterBuilder.createSubmissionStatusIdFilter(
-                ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active").getId());
-        Filter filterType = SubmissionFilterBuilder.createSubmissionTypeIdFilter(
-                ActionsHelper.findSubmissionTypeByName(submissionTypes, submissionTypeName).getId());
-
-        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterProject, filterResource, filterStatus,
-                                                                  filterType}));
-
-        Submission[] oldSubmissions = upMgr.searchSubmissions(filter);
-
-        // Modification for the new requirement - uploading new submission/upload every time.
-
-        // Begins - OrChange - Modified to create upload/submission pair always
-        // Always create a new submission/ upload
         Submission submission = new Submission();
         Upload upload = new Upload();
 
-        UploadStatus[] uploadStatuses = upMgr.getAllUploadStatuses();
-        UploadType[] uploadTypes = upMgr.getAllUploadTypes();
-
         upload.setProject(project.getId());
+        upload.setProjectPhase(currentPhase.getId());
         upload.setOwner(resource.getId());
-        upload.setUploadStatus(ActionsHelper.findUploadStatusByName(uploadStatuses, "Active"));
-        upload.setUploadType(ActionsHelper.findUploadTypeByName(uploadTypes, "Submission"));
+        upload.setUploadStatus(LookupHelper.getUploadStatus("Active"));
+        upload.setUploadType(LookupHelper.getUploadType("Submission"));
         upload.setParameter(uploadedFile.getFileId());
 
         submission.setUpload(upload);
-        submission.setSubmissionStatus(ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active"));
-        submission.setSubmissionType(ActionsHelper.findSubmissionTypeByName(submissionTypes, submissionTypeName));
+        submission.setSubmissionStatus(LookupHelper.getSubmissionStatus("Active"));
+        submission.setSubmissionType(LookupHelper.getSubmissionType(submissionTypeName));
 
         // Get the name (id) of the user performing the operations
         String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
@@ -3517,16 +3308,18 @@ public class ProjectDetailsActions extends DispatchAction {
         // multiple submissions" will be false
         Boolean allowOldSubmissions = Boolean.parseBoolean((String) project.getProperty("Allow multiple submissions"));
 
+        UploadManager upMgr = ActionsHelper.createUploadManager();
         upMgr.createUpload(upload, operator);
         upMgr.createSubmission(submission, operator);
         resource.addSubmission(submission.getId());
         ActionsHelper.createResourceManager().updateResource(resource, operator);
+
         log.debug("Allow Multiple Submissions : " + allowOldSubmissions);
         // Now depending on whether the project allows multiple submissions or not mark the old submission
         // and the upload as deleted.
         if (oldSubmissions.length != 0 && !allowOldSubmissions) {
-            SubmissionStatus deleteSubmissionStatus = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Deleted");
-            UploadStatus deleteUploadStatus = ActionsHelper.findUploadStatusByName(uploadStatuses, "Deleted");
+            SubmissionStatus deleteSubmissionStatus = LookupHelper.getSubmissionStatus("Deleted");
+            UploadStatus deleteUploadStatus = LookupHelper.getUploadStatus("Deleted");
             for (Submission oldSubmission : oldSubmissions) {
                 oldSubmission.getUpload().setUploadStatus(deleteUploadStatus);
                 oldSubmission.setSubmissionStatus(deleteSubmissionStatus);

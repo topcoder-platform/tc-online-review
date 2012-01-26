@@ -42,7 +42,7 @@ public class PRAggregationPhaseHandler extends AggregationPhaseHandler {
     }
 
     /**
-     * Provides additional logic to execute a phase. this exetension will update update placed, final_score
+     * Provides additional logic to execute a phase. this extension will update update placed, final_score
      * field of project_result table.</p>
      *
      * @param phase The input phase to check.

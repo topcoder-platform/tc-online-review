@@ -859,7 +859,7 @@ public class LateDeliverablesActions extends DispatchAction {
             }
         }
         // Store the retrieved categories in request
-        request.setAttribute("projectCategories", projectCategoryList.toArray(new ProjectCategory[0]));
+        request.setAttribute("projectCategories", projectCategoryList.toArray(new ProjectCategory[projectCategoryList.size()]));
 
         // Retrieve project statuses
         ProjectStatus[] projectStatuses = projectManager.getAllProjectStatuses();
@@ -883,7 +883,7 @@ public class LateDeliverablesActions extends DispatchAction {
 
         LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager();        
         List<LateDeliverableType> lateDeliverableTypes = lateDeliverableManager.getLateDeliverableTypes();
-        request.setAttribute("lateDeliverableTypes", lateDeliverableTypes.toArray(new LateDeliverableType[0]));
+        request.setAttribute("lateDeliverableTypes", lateDeliverableTypes.toArray(new LateDeliverableType[lateDeliverableTypes.size()]));
     }
 
     /**

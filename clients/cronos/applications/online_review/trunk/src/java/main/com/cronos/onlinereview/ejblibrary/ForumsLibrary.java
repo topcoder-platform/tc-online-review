@@ -323,7 +323,7 @@ public class ForumsLibrary extends BaseEJBLibrary implements Forums {
      *
      * @param userID a <code>long</code> providing the user ID.
      * @param categoryIDs a <code>long</code> array providing forum category IDs.
-     * @return a <code>long</code> arrasy providing the IDs for watches for specified forums.
+     * @return a <code>long</code> array providing the IDs for watches for specified forums.
      * @throws ForumCategoryNotFoundException if requested forum is not found.
      * @throws UnauthorizedException if specified user is not granted permission for accessing the forum.
      * @throws UserNotFoundException if requested user is not found.

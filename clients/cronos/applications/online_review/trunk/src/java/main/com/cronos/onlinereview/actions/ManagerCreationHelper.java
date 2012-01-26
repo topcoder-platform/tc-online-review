@@ -263,39 +263,38 @@ public class ManagerCreationHelper implements ManagersProvider {
         }
         try {
             phaseManager = new DefaultPhaseManager("com.topcoder.management.phase");
-            PhaseType[] phaseTypes = phaseManager.getAllPhaseTypes();
             // Register all the handles.
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRRegistrationPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, new PRRegistrationPhaseHandler(),
                     Constants.REGISTRATION_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRSubmissionPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, new PRSubmissionPhaseHandler(),
                     Constants.SUBMISSION_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRScreeningPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, new PRScreeningPhaseHandler(),
                     Constants.SCREENING_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRReviewPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, new PRReviewPhaseHandler(),
                     Constants.REVIEW_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new AppealsPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, new AppealsPhaseHandler(),
                     Constants.APPEALS_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAppealResponsePhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, new PRAppealResponsePhaseHandler(),
                     Constants.APPEALS_RESPONSE_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAggregationPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, new PRAggregationPhaseHandler(),
                     Constants.AGGREGATION_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRFinalFixPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, new PRFinalFixPhaseHandler(),
                     Constants.FINAL_FIX_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRFinalReviewPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, new PRFinalReviewPhaseHandler(),
                     Constants.FINAL_REVIEW_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRApprovalPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, new PRApprovalPhaseHandler(),
                     Constants.APPROVAL_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRPostMortemPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, new PRPostMortemPhaseHandler(),
                     Constants.POST_MORTEM_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new SpecificationSubmissionPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, new SpecificationSubmissionPhaseHandler(),
                     Constants.SPECIFICATION_SUBMISSION_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new SpecificationReviewPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, new SpecificationReviewPhaseHandler(),
                     Constants.SPECIFICATION_REVIEW_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new MilestoneSubmissionPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, new MilestoneSubmissionPhaseHandler(),
                     Constants.MILESTONE_SUBMISSION_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRMilestoneScreeningPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, new PRMilestoneScreeningPhaseHandler(),
                     Constants.MILESTONE_SCREENING_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRMilestoneReviewPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, new PRMilestoneReviewPhaseHandler(),
                     Constants.MILESTONE_REVIEW_PHASE_NAME);
             return phaseManager;
         } catch (Exception e) {
@@ -600,18 +599,16 @@ public class ManagerCreationHelper implements ManagersProvider {
      *
      * @param manager
      *            the phase manager
-     * @param phaseTypes
-     *            the phase types
      * @param handler
      *            the handler to be registered
      * @param phaseName
      *            the current phase name.
+     * @throws LookupException if phase type entity can not be found
      */
-    private static void registerPhaseHandlerForOperation(PhaseManager manager, PhaseType[] phaseTypes,
-            PhaseHandler handler, String phaseName) {
-        manager.registerHandler(handler, ActionsHelper.findPhaseTypeByName(phaseTypes, phaseName),
-                PhaseOperationEnum.START);
-        manager.registerHandler(handler, ActionsHelper.findPhaseTypeByName(phaseTypes, phaseName),
-                PhaseOperationEnum.END);
+    private static void registerPhaseHandlerForOperation(PhaseManager manager,
+            PhaseHandler handler, String phaseName) throws LookupException {
+        PhaseType phaseType = LookupHelper.getPhaseType(phaseName);
+        manager.registerHandler(handler, phaseType, PhaseOperationEnum.START);
+        manager.registerHandler(handler, phaseType, PhaseOperationEnum.END);
     }
 }

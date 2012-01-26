@@ -125,10 +125,10 @@ public class PhaseGroup {
      * this phase group, or <code>null</code> value if no such array has been assigned to the
      * phase group.
      *
-     * @see #getRegistantsEmails()
-     * @see #setRegistantsEmails(String[])
+     * @see #getRegistrantsEmails
+     * @see #setRegistrantsEmails
      */
-    private String[] registantsEmails = null;
+    private String[] registrantsEmails = null;
 
     /**
      * This member variable holds an array of submitters who made their submissions for the project.
@@ -409,7 +409,7 @@ public class PhaseGroup {
     private Resource milestoneScreener;
 
     /**
-     * <p>A <code>Resource</code> providing the details on milestone reveiwer.</p>
+     * <p>A <code>Resource</code> providing the details on milestone reviewer.</p>
      * 
      * @since 1.4
      */
@@ -548,19 +548,19 @@ public class PhaseGroup {
      * @return an array of registrants' emails, or <code>null</code> if no such array has been
      *         assigned to this phase group.
      */
-    public String[] getRegistantsEmails() {
-        return this.registantsEmails;
+    public String[] getRegistrantsEmails() {
+        return this.registrantsEmails;
     }
 
     /**
      * This method sets a reference to array of registrants' emails that should be assignedto this
      * phase group.
      *
-     * @param registantsEmails
+     * @param registrantsEmails
      *            a reference to array of registrants' emails.
      */
-    public void setRegistantsEmails(String[] registantsEmails) {
-        this.registantsEmails = registantsEmails;
+    public void setRegistrantsEmails(String[] registrantsEmails) {
+        this.registrantsEmails = registrantsEmails;
     }
 
     /**
@@ -1284,9 +1284,9 @@ public class PhaseGroup {
     }
 
     /**
-     * <p>Gets the details on milestone reveiwer.</p>
+     * <p>Gets the details on milestone reviewer.</p>
      *
-     * @return a <code>Resource</code> providing the details on milestone reveiwer.
+     * @return a <code>Resource</code> providing the details on milestone reviewer.
      * @since 1.4
      */
     public Resource getMilestoneReviewer() {
@@ -1294,9 +1294,9 @@ public class PhaseGroup {
     }
 
     /**
-     * <p>Sets the details on milestone reveiwer.</p>
+     * <p>Sets the details on milestone reviewer.</p>
      *
-     * @param milestoneReviewer a <code>Resource</code> providing the details on milestone reveiwer.
+     * @param milestoneReviewer a <code>Resource</code> providing the details on milestone reviewer.
      * @since 1.4
      */
     public void setMilestoneReviewer(Resource milestoneReviewer) {

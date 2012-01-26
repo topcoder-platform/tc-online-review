@@ -99,7 +99,7 @@ public final class MockHandleTag extends TagSupport {
      * This method processes the end tag for this instance.  It does all the output based on the
      * value of the <code>coderId</code> attribute and sometimes <code>context</code> one.
      *
-     * @return EVAL_PAGE to contininue processing of the page.
+     * @return EVAL_PAGE to continue processing of the page.
      * @exception JspException
      *                if a JSP exception has occurred.
      */
@@ -187,7 +187,7 @@ public final class MockHandleTag extends TagSupport {
         }
 
         // Start preparing resulting output
-        StringBuffer results = new StringBuffer("<a href=\"http://www.topcoder.com/tc?module=MemberProfile&cr=");
+        StringBuilder results = new StringBuilder("<a href=\"http://www.topcoder.com/tc?module=MemberProfile&cr=");
         // appending coder's id to the generated link
         results.append(coderId);
         // tab will be specified only if tab local variable is not empty

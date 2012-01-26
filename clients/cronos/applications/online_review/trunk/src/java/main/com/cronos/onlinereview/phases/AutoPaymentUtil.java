@@ -198,9 +198,8 @@ public class AutoPaymentUtil {
         && projectCategoryId != 25    // RIA Component
         && projectCategoryId != 35    // Content Creation
         && projectCategoryId != 36    // Reporting
-        && !isStudio
-        ) {
-                return;
+        && !isStudio) {
+            return;
         }
 
         logger.log(Level.INFO,

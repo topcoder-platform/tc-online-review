@@ -3,15 +3,7 @@
  */
 package com.cronos.onlinereview.actions;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.Property;
@@ -1486,9 +1478,7 @@ public class ConfigHelper {
                     Set<String> phasesSet = new HashSet<String>();
                     phaseGroupPhases.add(phasesSet);
 
-                    for (String strPhase : strPhases) {
-                        phasesSet.add(strPhase);
-                    }
+                    Collections.addAll(phasesSet, strPhases);
                 }
             }
 

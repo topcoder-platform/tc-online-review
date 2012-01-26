@@ -1198,7 +1198,7 @@ public class Constants {
 
     /**
      * This member variable is a string constant that defines the name of the Edit commonly used
-     * action forward. Such an action foward is often used to redirect to Edit Screening or Edit
+     * action forward. Such an action forward is often used to redirect to Edit Screening or Edit
      * Review, etc. page from the corresponding &quot;Create&quot; type of page.
      */
     public static final String EDIT_FORWARD_NAME = "edit";

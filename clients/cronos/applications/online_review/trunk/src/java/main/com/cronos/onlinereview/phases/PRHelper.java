@@ -287,7 +287,7 @@ public class PRHelper {
             if (!toStart) {
                 // if reivew phase is last one and there is at least one active submission complete the project.
                 if (isLastPhase(phase)) {
-                    Submission [] activeSubs = PhasesHelper.searchActiveSubmissions(managerHelper.getUploadManager(),
+                    Submission [] activeSubs = PhasesHelper.getActiveProjectSubmissions(managerHelper.getUploadManager(),
                         projectId, Constants.SUBMISSION_TYPE_CONTEST_SUBMISSION);
                     if (activeSubs.length > 0) {
                         completeProject(managerHelper, phase, operator);

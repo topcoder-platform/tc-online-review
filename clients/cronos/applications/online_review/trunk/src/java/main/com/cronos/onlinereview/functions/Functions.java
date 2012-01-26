@@ -94,7 +94,7 @@ public final class Functions {
             return "";
         }
 
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuffer = new StringBuilder();
 
         for (int i = 0; i < text.length(); ++i) {
             char ch = text.charAt(i);
@@ -309,15 +309,13 @@ public final class Functions {
             return "";
         }
 
-        int mins = minutes;
-
         // Special formatting is needed in case amount of minutes is not zero
-        if (mins % 60 != 0) {
+        if (minutes % 60 != 0) {
             // Compute amount of hours and minutes
-            int hour = mins / 60;
-            int min = mins - (hour * 60);
+            int hour = minutes / 60;
+            int min = minutes - (hour * 60);
 
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
 
             // Append hours value, but only if it is not zero.
             if (hour != 0) {
@@ -343,7 +341,7 @@ public final class Functions {
             return buffer.toString();
         }
 
-        int hours = mins / 60;
+        int hours = minutes / 60;
         return hours + " " + getMessage(pageContext, (hours == 1) ? "global.hour.singular" : "global.hour.plural");
     }
 
@@ -522,7 +520,7 @@ public final class Functions {
             }
         }
 
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         // Build converted date value
         buffer.append(dateFormat.format(date));
