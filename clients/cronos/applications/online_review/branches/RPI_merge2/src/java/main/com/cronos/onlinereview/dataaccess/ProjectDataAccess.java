@@ -105,10 +105,10 @@ public class ProjectDataAccess extends BaseDataAccess {
      * @since 1.1
      */
     public String getCockpitProjectName(long projectId) {
-        Map<String, ResultSetContainer> results = runQuery("cockpit_project", "pj", String.valueOf(projectId));
-        ResultSetContainer result = results.get("cockpit_project");
+        Map<String, ResultSetContainer> results = runQuery("cockpit_project_by_id", "pj", String.valueOf(projectId));
+        ResultSetContainer result = results.get("cockpit_project_by_id");
         if (!result.isEmpty()) {
-            return result.getStringItem(0, "name");
+            return result.getStringItem(0, "tc_direct_project_name");
         } else {
             return null;
         }
