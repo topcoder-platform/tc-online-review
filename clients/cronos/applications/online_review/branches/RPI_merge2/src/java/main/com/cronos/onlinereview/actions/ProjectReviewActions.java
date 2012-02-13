@@ -5466,11 +5466,12 @@ public class ProjectReviewActions extends DispatchAction {
             boolean canPlaceAppealResponse = false;
             boolean isSubmitter = false;
             Resource secondaryReviewerResource = null;
-
+			Resource mySubmitterResource = null;
+System.out.println("-----------------------------------------------------------------------------------");
             // Check if user can place appeals or appeal responses
             if ((activePhases.contains(Constants.APPEALS_PHASE_NAME) || activePhases.contains(Constants.NEW_APPEALS_PHASE_NAME)) &&
                     AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME)) {
-                Resource mySubmitterResource = getMySubmitterResource(request);
+                mySubmitterResource = getMySubmitterResource(request);
                 if (mySubmitterResource != null) {
                     isSubmitter = true;
                     if(verification.getSubmission() != null
@@ -5505,10 +5506,13 @@ public class ProjectReviewActions extends DispatchAction {
                 MessageResources messages = getResources(request);
                 for (int i = 0; i < appealStatuses.length; i++) {
                     List<Comment> appeal;
-                    if (isSubmitter || canPlaceAppealResponse) {
-                        appeal = getCommentAppeal(verification.getReview().getItem(i).getAllComments());
+                    if (canPlaceAppealResponse) {
+                        appeal = getCommentAppeal(verification.getReview().getItem(i).getAllComments()); 
+                    } else if (isSubmitter) {
+                        appeal = getCommentAppealByResource(verification.getReview().getItem(i).getAllComments(), 
+                                                                     mySubmitterResource.getId());
                     } else {
-                        appeal = getCommentAppealBySecondaryReviewer(verification.getReview().getItem(i).getAllComments(), 
+                        appeal = getCommentAppealByResource(verification.getReview().getItem(i).getAllComments(), 
                                                                      secondaryReviewerResource.getId());
                     }
                     List<Comment> response = getCommentAppealResponse(verification.getReview().getItem(i).getAllComments());
@@ -6274,7 +6278,7 @@ public class ProjectReviewActions extends DispatchAction {
      * @param authorId ID of a comment author.
      * @return the appeals in the comments
      */
-    private static List<Comment> getCommentAppealBySecondaryReviewer(Comment[] allComments, long resourceId) {
+    private static List<Comment> getCommentAppealByResource(Comment[] allComments, long resourceId) {
         List<Comment> comments = new ArrayList<Comment>();
         for (int i = 0; i < allComments.length; i++) {
             if (allComments[i].getCommentType().getName().equals("Appeal") 
@@ -6284,6 +6288,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
         return comments;
     }
+	
 
     /**
      * Gets all the appeals response in the specific comments.
