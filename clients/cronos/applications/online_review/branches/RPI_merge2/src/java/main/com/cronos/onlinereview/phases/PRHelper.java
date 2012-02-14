@@ -293,6 +293,55 @@ public class PRHelper {
             close(updateStmt);
         }
     }
+	
+	/**
+     * Pull data to project_result for software competitions; update submitter's payments and complete project for Studio competitions.
+     *
+     * @throws PhaseHandlingException
+     *             if error occurs
+     */
+    static void processPrimaryReviewEvaluationPR(ManagerHelper managerHelper, Phase phase, Connection conn, String operator, boolean toStart) throws PhaseHandlingException, SQLException {
+        PreparedStatement pstmt = null;
+        PreparedStatement updateStmt = null;
+        ResultSet rs = null;
+        long projectId = phase.getProject().getId();
+        try {
+            if (!toStart) {
+           
+				logger.log(Level.INFO,
+					new LoggerMessage("project", new Long(projectId), null, "process review phase."));
+				// Retrieve all
+				pstmt = conn.prepareStatement(REVIEW_SELECT_STMT);
+				pstmt.setLong(1, projectId);
+				rs = pstmt.executeQuery();
+
+				updateStmt = conn.prepareStatement(REVIEW_UPDATE_PROJECT_RESULT_STMT);
+				while (rs.next()) {
+					// Update all raw score
+					double rawScore = rs.getDouble("raw_score");
+					long userId = rs.getLong("user_id");
+					updateStmt.setDouble(1, rawScore);
+					updateStmt.setLong(2, projectId);
+					updateStmt.setLong(3, userId);
+					updateStmt.execute();
+				}
+				
+				Phase appealsResponsePhase = PhasesHelper.locatePhase(phase, "Primary Review Appeals Response", true, false);
+				if (appealsResponsePhase == null) {
+					// populate project result
+					populateProjectResult(projectId, conn);
+				}
+                
+            }
+
+            AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.REVIEW_PHASE);
+        } finally {
+            close(rs);
+            close(pstmt);
+            close(updateStmt);
+        }
+    }
+	
 
     /**
      * Pull data to project_result for while appeal response phase closed.
@@ -303,6 +352,7 @@ public class PRHelper {
      *             if error occurs
      */
     static void processAppealResponsePR(long projectId, Connection conn, boolean toStart) throws SQLException {
+	System.out.println("--------------------processAppealResponsePR-------------------------------------"+toStart);
         if (!toStart) {
             logger.log(Level.INFO,
                 new LoggerMessage("project", new Long(projectId), null, "process Appeal Response phase."));
@@ -319,6 +369,7 @@ public class PRHelper {
      *             if error occurs
      */
     static void processAggregationPR(long projectId, Connection conn, boolean toStart) throws SQLException {
+	System.out.println("--------------------processAggregationPR-------------------------------------"+toStart);
         if (!toStart) {
             logger.log(Level.INFO,
                     new LoggerMessage("project", new Long(projectId), null, "process Aggregation phase."));

@@ -159,6 +159,9 @@ public class AutoPaymentUtil {
      * @since 1.5
      */
     public static final int MILESTONE_SCREENING_PHASE = 16;
+	
+	public static final int SECONDARY_REVIEWER_REVIEW_PHASE = 18;
+	public static final int PRIMARY_REVIEW_EVALUATION_PHASE = 19;
 
     /**
      * Prevent to be created.
@@ -260,7 +263,12 @@ public class AutoPaymentUtil {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getPostMortemCost(), conn);
             } else if (reviewer.isMilestoneScreener() && phaseId == MILESTONE_SCREENING_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), milestoneFPC.getMilestoneScreeningCost(), conn);
+            } else if (reviewer.isSecondaryReviewer() && phaseId == SECONDARY_REVIEWER_REVIEW_PHASE) {
+                updateResourcePayment(reviewer.getResourceId(), fpc.getReviewCost(), conn);
+            } else if (reviewer.isPrimaryReviewEvaluator() && phaseId == PRIMARY_REVIEW_EVALUATION_PHASE) {
+                updateResourcePayment(reviewer.getResourceId(), fpc.getCoreReviewCost(), conn);
             }
+			
 
             // Uncomment this block to pay Post-Mortem reviewers
             // else if (reviewer.isPostMortemReviewer() && phaseId == POST_MORTEM_PHASE) {
@@ -438,7 +446,7 @@ public class AutoPaymentUtil {
             "   resource_info ri" +
             "   where r.resource_id = ri.resource_id" +
             "   and ri.resource_info_type_id = 1" +
-            "   and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9, 16, 18, 19)" +
+            "   and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9, 16, 18, 19, 21, 22)" +
             "   and r.project_id = ? " +
             "   and not exists (select ri1.resource_id from resource_info ri1 " +
             "           where r.resource_id = ri1.resource_id " +
@@ -588,7 +596,7 @@ public class AutoPaymentUtil {
      * @throws SQLException if error occurs
      */
     static void populateSubmitterPayments(long projectId, Connection conn)
-            throws SQLException {
+            throws SQLException {System.out.println("--------------------populateSubmitterPayments-------------------------------------"+projectId);
         if (!isMemberPaymentEligible(projectId, conn)) {
             return;
         }
@@ -618,7 +626,7 @@ public class AutoPaymentUtil {
             rs = pstmt.executeQuery();
 
             Set<Long> resourceIds = new HashSet<Long>();
-            while (rs.next()) {
+            while (rs.next()) {System.out.println("--------------------populateSubmitterPayments------rs.next()-------------------------------");
                 resourceIds.add(rs.getLong(1));
 
                 // Clear payment value.
@@ -630,6 +638,7 @@ public class AutoPaymentUtil {
 
             if (prizesCount == 0) {
 				// Prepare prices for different places.
+				System.out.println("--------------------populateSubmitterPayments----prizesCount-----------------------------");
 				double[] prices = new double[] { price, Math.round(price * 0.5) };
 				long[] places = new long[] { 1, 2 };
 
@@ -642,19 +651,22 @@ public class AutoPaymentUtil {
 						updateResourcePayment(submitterId, prices[i], conn);
 					}
 				}
-			} else {
+			} else {System.out.println("--------------------populateSubmitterPayments------rs.next else----------------------------");
 				// get the payments from the prize table
 				Map<Long, Float> submittersPayment = getSubmittersPayment(
 						projectId, conn);
 				for (Map.Entry<Long, Float> entry : submittersPayment
 						.entrySet()) {
+						System.out.println("--------------------populateSubmitterPayments------entry.getKey()---------------------------"+entry.getKey());
+									System.out.println("--------------------populateSubmitterPayments------ entry.getValue()---------------------------"+ entry.getValue());
 					// Update the payment for given submitter
 					updateResourcePayment(entry.getKey(), entry.getValue(),
 							conn);
 				}
 
 			}
-		} finally {
+		} catch (Exception e) { System.out.println("-------------e-------------------"+e);}
+		finally {
 			PRHelper.close(rs);
 			PRHelper.close(pstmt);
 		}
@@ -1167,5 +1179,23 @@ class Reviewer {
      */
     public boolean isMilestoneScreener() {
         return this.resourceRoleId == 19;
+    }
+	
+	/**
+     * Checks whether the reviewer is Secondary Reviewer
+     * 
+     * @return true if the reviewer is Secondary Reviewer, false otherwise.
+     */
+    public boolean isSecondaryReviewer() {
+        return this.resourceRoleId == 21;
+    }
+	
+	/**
+     * Checks whether the reviewer is Primary Review Evaluator
+     * 
+     * @return true if the reviewer is Primary Review Evaluator, false otherwise.
+     */
+    public boolean isPrimaryReviewEvaluator() {
+        return this.resourceRoleId == 22;
     }
 }
