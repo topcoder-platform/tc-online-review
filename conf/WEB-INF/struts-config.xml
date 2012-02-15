@@ -271,7 +271,7 @@
             <form-property name="project_statuses" type="java.lang.Long[]" />
             <form-property name="deliverable_types" type="java.lang.String[]" />
             <form-property name="late_deliverable_type" type="java.lang.String" />
-            <form-property name="forgiven" type="java.lang.String" />
+            <form-property name="justified" type="java.lang.String" />
             <form-property name="handle" type="java.lang.String" />
 
             <form-property name="searchLDBtn" type="org.apache.struts.util.ImageButtonBean" />
@@ -281,7 +281,7 @@
         <!-- Late Deliverable Edit form -->
         <form-bean name="lateDeliverableEditForm" dynamic="true" type="org.apache.struts.validator.LazyValidatorForm">
             <form-property name="late_deliverable_id" type="java.lang.Long" />
-            <form-property name="forgiven" type="java.lang.Boolean" />
+            <form-property name="justified" type="java.lang.Boolean" />
             <form-property name="explanation" type="java.lang.String" />
             <form-property name="response" type="java.lang.String" />
 

@@ -29,7 +29,7 @@
 			<td class="title"><bean:message key="viewProjectDetails.box.OutstandingDeliverabes" /></td>
 		</tr>
 		<tr class="light">
-			<td class="value" width="33%" align="left">
+			<td class="value" width="36%" align="left">
                 <table style="cellpadding:1">
                     <tr>
                         <th class="value roleHeader" width="30%"><bean:message key="viewProjectDetails.Role"/></th>
@@ -81,7 +81,10 @@
                             <th class="value roleHeader" nowrap="nowrap"><bean:message key="viewProjectDetails.TotalPayment"/></th>
                             <td class="value" colspan=2>
                                 ${"$"}${orfn:displayPaymentAmt(pageContext.request, requestScope.totalPayment)}
-                                <c:if test="${(paymentPenaltyPercentage ne null) and (paymentPenaltyPercentage>0)}">
+                                <c:if test="${(paymentPenaltyPercentage ne null) and (paymentPenaltyPercentage>0) and potentialPenalty}">
+                                    (potentially -${paymentPenaltyPercentage}% due to the delay)
+                                </c:if>
+                                <c:if test="${(paymentPenaltyPercentage ne null) and (paymentPenaltyPercentage>0) and !potentialPenalty}">
                                     (-${paymentPenaltyPercentage}% due to the delay)
                                 </c:if>
                             </td>
@@ -138,7 +141,7 @@
 				</td>
 			</c:if>
 
-			<td class="myRoleValues" width="40%" align="left" nowrap="nowrap">
+			<td class="myRoleValues" width="37%" align="left" nowrap="nowrap">
 				<c:if test="${not empty outstandingDeliverables}">
 					<c:forEach items="${outstandingDeliverables}" var="deliverable" varStatus="deliverableStatus">
 						<c:set var="devrStatus" value="${outstandingDeliverableStatuses[deliverableStatus.index]}" />
