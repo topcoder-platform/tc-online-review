@@ -386,14 +386,22 @@ public class ProjectDetailsActions extends DispatchAction {
 
             List<LateDeliverable> lateDeliverables = lateDeliverableManager.searchAllLateDeliverables(new AndFilter(filters));
             long delay = 0, rejectedFinalFixes = 0;
+            boolean potentialPenalty = false;
             for(LateDeliverable lateDeliverable : lateDeliverables) {
                 if (lateDeliverable.getType().getId() == Constants.MISSED_DEADLINE_ID) {
                     delay += lateDeliverable.getDelay() != null ? lateDeliverable.getDelay() : 0;
                 } else if (lateDeliverable.getType().getId() == Constants.REJECTED_FINAL_FIX_ID) {
                     rejectedFinalFixes++;
                 }
+
+                // Check if the late deliverable can still be set as "Justified".
+                if ((lateDeliverable.getExplanation()!=null && lateDeliverable.getResponse()==null) ||
+                    ActionsHelper.explanationDeadline(lateDeliverable).compareTo(new Date()) > 0) {
+                    potentialPenalty = true;
+                }
             }
             request.setAttribute("myDelay", delay);
+            request.setAttribute("potentialPenalty", potentialPenalty);
 
             long paymentPenaltyPercentage = (delay>0 ? 5 : 0) + (delay/3600) + rejectedFinalFixes * 5;
             if (paymentPenaltyPercentage > 50) {

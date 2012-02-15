@@ -100,9 +100,9 @@ import edu.emory.mathcs.backport.java.util.Collections;
 public class LateDeliverablesActions extends DispatchAction {
 
     /**
-     * Represents the forgiven parameter name.
+     * Represents the justified parameter name.
      */
-    private static final String PARAM_FORGIVEN = "forgiven";
+    private static final String PARAM_JUSTIFIED = "justified";
 
     /**
      * Represents the handle parameter name.
@@ -329,7 +329,7 @@ public class LateDeliverablesActions extends DispatchAction {
             }
 
             // Populate form properties with data from late deliverable
-            lazyForm.set("forgiven", lateDeliverable.isForgiven());
+            lazyForm.set("justified", lateDeliverable.isForgiven());
             lazyForm.set("explanation", lateDeliverable.getExplanation());
             lazyForm.set("response", lateDeliverable.getResponse());
             lazyForm.set("late_deliverable_id", lateDeliverable.getId());
@@ -397,11 +397,11 @@ public class LateDeliverablesActions extends DispatchAction {
             // Validate that desired data is submitted based on user's role
             String newResponse = null;
             String newExplanation = null;
-            boolean newForgiven = false;
+            boolean newJustified = false;
             if (isLateDeliverableOwner) {
                 newExplanation = validateText(request, lazyForm, "explanation");
             } else if (canEditLateDeliverable) {
-                newForgiven = (Boolean) lazyForm.get("forgiven");
+                newJustified = (Boolean) lazyForm.get("justified");
                 // Response may be skipped if it has been already set in DB or if there is no explanation set so far
                 if ((lateDeliverable.getExplanation() != null) && (lateDeliverable.getResponse() == null)) {
                     newResponse = validateText(request, lazyForm, "response");
@@ -415,7 +415,7 @@ public class LateDeliverablesActions extends DispatchAction {
             } else {
                 boolean dataHasBeenChanged = isLateDeliverableOwner
                                              || canEditLateDeliverable
-                                                && ((lateDeliverable.isForgiven() != newForgiven)
+                                                && ((lateDeliverable.isForgiven() != newJustified)
                                                     || (newResponse != null));
 
                 // Re-read the late deliverable from DB again to get most recent data for late deliverable before
@@ -433,8 +433,8 @@ public class LateDeliverablesActions extends DispatchAction {
                         }
                     }
                 } else if (canEditLateDeliverable) {
-                    if (lateDeliverable.isForgiven() != newForgiven) {
-                        lateDeliverable.setForgiven(newForgiven);
+                    if (lateDeliverable.isForgiven() != newJustified) {
+                        lateDeliverable.setForgiven(newJustified);
                     }
                     boolean newResponseSubmitted = (lazyForm.get("response") != null
                                                     && ((String) lazyForm.get("response")).length() > 0);
@@ -501,7 +501,7 @@ public class LateDeliverablesActions extends DispatchAction {
         lateDeliverableSearchForm.set(PARAM_PROJECT_STATUSES, new Long[] {0l});
         lateDeliverableSearchForm.set(PARAM_DELIVERABLE_TYPES, new String[] {"0"});
         lateDeliverableSearchForm.set(PARAM_LATE_DELIVERABLE_TYPE, "");
-        lateDeliverableSearchForm.set(PARAM_FORGIVEN, "Any");
+        lateDeliverableSearchForm.set(PARAM_JUSTIFIED, "Any");
         lateDeliverableSearchForm.set(PARAM_HANDLE, "Any");
     }
 
@@ -732,11 +732,11 @@ public class LateDeliverablesActions extends DispatchAction {
 
         }
 
-        String forgivenStr = (String) lateDeliverableSearchForm.get(PARAM_FORGIVEN);
-        if (forgivenStr != null && forgivenStr.trim().length() != 0) {
-            if ("Forgiven".equalsIgnoreCase(forgivenStr)) {
+        String justifiedStr = (String) lateDeliverableSearchForm.get(PARAM_JUSTIFIED);
+        if (justifiedStr != null && justifiedStr.trim().length() != 0) {
+            if ("Justified".equalsIgnoreCase(justifiedStr)) {
                 filters.add(LateDeliverableFilterBuilder.createForgivenFilter(true));
-            } else if ("Not forgiven".equalsIgnoreCase(forgivenStr)) {
+            } else if ("Not justified".equalsIgnoreCase(justifiedStr)) {
                 filters.add(LateDeliverableFilterBuilder.createForgivenFilter(false));
             }
         }
@@ -928,7 +928,7 @@ public class LateDeliverablesActions extends DispatchAction {
         return parameterMap.containsKey(PARAM_PROJECT_ID) || parameterMap.containsKey(PARAM_PROJECT_CATEGORIES)
                 || parameterMap.containsKey(PARAM_PROJECT_STATUSES)
                 || parameterMap.containsKey(PARAM_DELIVERABLE_TYPES) || parameterMap.containsKey(PARAM_HANDLE)
-                || parameterMap.containsKey(PARAM_FORGIVEN)
+                || parameterMap.containsKey(PARAM_JUSTIFIED)
                 || parameterMap.containsKey(PARAM_COCKPIT_PROJECT_ID)
                 || parameterMap.containsKey(PARAM_EXPLANATION_STATUS)
                 || parameterMap.containsKey(PARAM_RESPONSE_STATUS)
@@ -1028,7 +1028,7 @@ public class LateDeliverablesActions extends DispatchAction {
                              canEditLateDeliverables && !lateDeliverableOwner
                              && (lateDeliverable.getResponse() == null)
                              && (lateDeliverable.getExplanation() != null));
-        request.setAttribute("isForgivenEditable", canEditLateDeliverables && !lateDeliverableOwner);
+        request.setAttribute("isJustifiedEditable", canEditLateDeliverables && !lateDeliverableOwner);
         request.setAttribute("isFormSubmittable",
                              (canEditLateDeliverables && !lateDeliverableOwner) || explanationEditable);
     }
@@ -1078,7 +1078,7 @@ public class LateDeliverablesActions extends DispatchAction {
             return ConfigHelper.getLateDeliverableBaseURL() + lateDeliverable.getId();
         } else if ("OR_LINK".equals(fieldName)) {
             return ConfigHelper.getProjectDetailsBaseURL() + project.getId();
-        } else if ("FORGIVEN".equals(fieldName)) {
+        } else if ("JUSTIFIED".equals(fieldName)) {
             if (lateDeliverable.isForgiven()) {
                 return "Yes";
             } else {

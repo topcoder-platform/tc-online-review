@@ -17,7 +17,7 @@ The late deliverable has been resolved by %CURRENT_USER_HANDLE{Current user hand
     <tr><td>Deadline\:</td><td>%DEADLINE{Deadline}%</td></tr>
   %endif%
 
-  <tr><td>Forgiven\:</td><td>%FORGIVEN{Forgiven status}%</td></tr>
+  <tr><td>Lateness Justified\:</td><td>%JUSTIFIED{Lateness Justified status}%</td></tr>
   <tr><td valign\="top">Explanation\:</td><td>%EXPLANATION{Explanation}%</td></tr>
   <tr><td valign\="top">Response\:</td><td>%RESPONSE{Response}%</td></tr>
 </table>

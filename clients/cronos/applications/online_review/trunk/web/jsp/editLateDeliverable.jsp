@@ -158,12 +158,12 @@
 
                         <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
                             <td nowrap="nowrap" class="valueB">
-                                <bean:message key="editLateDeliverable.Forgiven.label"/>
+                                <bean:message key="editLateDeliverable.Justified.label"/>
                             </td>
                             <td nowrap="nowrap" class="value">
                                 <c:choose>
-                                    <c:when test="${requestScope.isForgivenEditable}">
-                                        <html:select styleClass="inputBox" property="forgiven">
+                                    <c:when test="${requestScope.isJustifiedEditable}">
+                                        <html:select styleClass="inputBox" property="justified">
                                             <html:option value="false"><bean:message key="global.answer.No"/></html:option>
                                             <html:option value="true"><bean:message key="global.answer.Yes"/></html:option>
                                         </html:select>

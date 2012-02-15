@@ -129,13 +129,13 @@
                                     <div id="handle_serverside_validation" class="error"><html:errors property="handle" prefix="" suffix="" /></div>
                                 </td>    
                                 
-                                <td class="value" nowrap="nowrap"><b><bean:message key="viewLateDeliverables.ForgivenStatus.Label" /></b></td>
+                                <td class="value" nowrap="nowrap"><b><bean:message key="viewLateDeliverables.JustifiedStatus.Label" /></b></td>
                                 <td class="value">
-                                    <html:select styleClass="inputBox" property="forgiven" 
+                                    <html:select styleClass="inputBox" property="justified" 
                                                  onkeypress="return submitOnEnter(this, event);">
                                         <html:option value="Any" />
-                                        <html:option value="Forgiven" />
-                                        <html:option value="Not forgiven" />
+                                        <html:option value="Justified" />
+                                        <html:option value="Not justified" />
                                     </html:select>
                                 </td>                                                                                        
                             </tr>
@@ -294,7 +294,7 @@
                                             <td class="header" nowrap="nowrap" width="20%"><bean:message key="viewLateDeliverables.SearchResults.innerTable.column.Deliverable" /></td>
                                             <td class="header" nowrap="nowrap" width="20%"><bean:message key="viewLateDeliverables.SearchResults.innerTable.column.Deadline" /></td>
                                             <td class="header" nowrap="nowrap" width="20%"><bean:message key="viewLateDeliverables.SearchResults.innerTable.column.Delay" /></td>
-                                            <td class="header" nowrap="nowrap" width="15%"><bean:message key="viewLateDeliverables.SearchResults.innerTable.column.Forgiven" /></td>
+                                            <td class="header" nowrap="nowrap" width="15%"><bean:message key="viewLateDeliverables.SearchResults.innerTable.column.Justified" /></td>
                                             <td class="header" nowrap="nowrap" width="5%"><bean:message key="viewLateDeliverables.SearchResults.innerTable.column.Edit"/></td>
                                         </tr>
                                         <c:set var="lateDeliverables" value="${groupedLateDeliverables[projectId]}" />
