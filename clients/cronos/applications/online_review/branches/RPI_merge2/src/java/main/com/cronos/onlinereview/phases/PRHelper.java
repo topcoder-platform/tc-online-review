@@ -334,7 +334,7 @@ public class PRHelper {
                 
             }
 
-            AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.REVIEW_PHASE);
+            AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.PRIMARY_REVIEW_EVALUATION_PHASE);
         } finally {
             close(rs);
             close(pstmt);
@@ -352,7 +352,7 @@ public class PRHelper {
      *             if error occurs
      */
     static void processAppealResponsePR(long projectId, Connection conn, boolean toStart) throws SQLException {
-	System.out.println("--------------------processAppealResponsePR-------------------------------------"+toStart);
+
         if (!toStart) {
             logger.log(Level.INFO,
                 new LoggerMessage("project", new Long(projectId), null, "process Appeal Response phase."));
@@ -369,7 +369,7 @@ public class PRHelper {
      *             if error occurs
      */
     static void processAggregationPR(long projectId, Connection conn, boolean toStart) throws SQLException {
-	System.out.println("--------------------processAggregationPR-------------------------------------"+toStart);
+	
         if (!toStart) {
             logger.log(Level.INFO,
                     new LoggerMessage("project", new Long(projectId), null, "process Aggregation phase."));

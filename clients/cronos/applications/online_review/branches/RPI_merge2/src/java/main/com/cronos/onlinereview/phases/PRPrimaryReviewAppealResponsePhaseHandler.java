@@ -87,7 +87,7 @@ public class PRPrimaryReviewAppealResponsePhaseHandler extends PrimaryReviewAppe
      * @throws IllegalArgumentException
      *             if the input parameters is null or empty string.
      */
-    public void perform(Phase phase, String operator) throws PhaseHandlingException {
+    public void perform(Phase phase, String operator) throws PhaseHandlingException { 
         super.perform(phase, operator);
         long projectId = phase.getProject().getId();
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());

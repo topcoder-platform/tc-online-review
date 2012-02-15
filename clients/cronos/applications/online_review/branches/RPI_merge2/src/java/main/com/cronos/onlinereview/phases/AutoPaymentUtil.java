@@ -263,7 +263,7 @@ public class AutoPaymentUtil {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getPostMortemCost(), conn);
             } else if (reviewer.isMilestoneScreener() && phaseId == MILESTONE_SCREENING_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), milestoneFPC.getMilestoneScreeningCost(), conn);
-            } else if (reviewer.isSecondaryReviewer() && phaseId == SECONDARY_REVIEWER_REVIEW_PHASE) {
+            } else if (reviewer.isSecondaryReviewer() && phaseId == PRIMARY_REVIEW_EVALUATION_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getReviewCost(), conn);
             } else if (reviewer.isPrimaryReviewEvaluator() && phaseId == PRIMARY_REVIEW_EVALUATION_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getCoreReviewCost(), conn);
@@ -596,7 +596,7 @@ public class AutoPaymentUtil {
      * @throws SQLException if error occurs
      */
     static void populateSubmitterPayments(long projectId, Connection conn)
-            throws SQLException {System.out.println("--------------------populateSubmitterPayments-------------------------------------"+projectId);
+            throws SQLException {
         if (!isMemberPaymentEligible(projectId, conn)) {
             return;
         }
@@ -626,7 +626,7 @@ public class AutoPaymentUtil {
             rs = pstmt.executeQuery();
 
             Set<Long> resourceIds = new HashSet<Long>();
-            while (rs.next()) {System.out.println("--------------------populateSubmitterPayments------rs.next()-------------------------------");
+            while (rs.next()) {
                 resourceIds.add(rs.getLong(1));
 
                 // Clear payment value.
@@ -638,7 +638,7 @@ public class AutoPaymentUtil {
 
             if (prizesCount == 0) {
 				// Prepare prices for different places.
-				System.out.println("--------------------populateSubmitterPayments----prizesCount-----------------------------");
+				
 				double[] prices = new double[] { price, Math.round(price * 0.5) };
 				long[] places = new long[] { 1, 2 };
 
@@ -651,22 +651,19 @@ public class AutoPaymentUtil {
 						updateResourcePayment(submitterId, prices[i], conn);
 					}
 				}
-			} else {System.out.println("--------------------populateSubmitterPayments------rs.next else----------------------------");
+			} else {
 				// get the payments from the prize table
 				Map<Long, Float> submittersPayment = getSubmittersPayment(
 						projectId, conn);
 				for (Map.Entry<Long, Float> entry : submittersPayment
 						.entrySet()) {
-						System.out.println("--------------------populateSubmitterPayments------entry.getKey()---------------------------"+entry.getKey());
-									System.out.println("--------------------populateSubmitterPayments------ entry.getValue()---------------------------"+ entry.getValue());
 					// Update the payment for given submitter
 					updateResourcePayment(entry.getKey(), entry.getValue(),
 							conn);
 				}
 
 			}
-		} catch (Exception e) { System.out.println("-------------e-------------------"+e);}
-		finally {
+		} finally {
 			PRHelper.close(rs);
 			PRHelper.close(pstmt);
 		}

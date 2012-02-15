@@ -19,6 +19,7 @@ import com.cronos.onlinereview.phases.PRMilestoneReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRMilestoneScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRPostMortemPhaseHandler;
 import com.cronos.onlinereview.phases.PRPrimaryReviewAppealResponsePhaseHandler;
+import com.cronos.onlinereview.phases.PRPrimaryReviewEvaluationPhaseHandler;
 import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
 import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
@@ -286,7 +287,7 @@ public class ManagerCreationHelper implements ManagersProvider {
                     Constants.REVIEW_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new SecondaryReviewerReviewPhaseHandler(),
                     Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PrimaryReviewEvaluationPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRPrimaryReviewEvaluationPhaseHandler(),
                     Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new AppealsPhaseHandler(),
                     Constants.APPEALS_PHASE_NAME);

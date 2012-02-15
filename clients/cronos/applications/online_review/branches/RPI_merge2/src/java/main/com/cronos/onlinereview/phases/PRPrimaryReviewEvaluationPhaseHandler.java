@@ -65,7 +65,7 @@ public class PRPrimaryReviewEvaluationPhaseHandler extends PrimaryReviewEvaluati
      * @throws PhaseHandlingException if there is any error occurred while processing the phase.
      * @throws IllegalArgumentException if the input parameters is null or empty string.
      */
-    public void perform(Phase phase, String operator) throws PhaseHandlingException {
+    public void perform(Phase phase, String operator) throws PhaseHandlingException { 
     	super.perform(phase, operator);
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
 
