@@ -276,7 +276,7 @@
 
     <component
         name="object_factory_config_api_plugin"
-        svnpath="https://coder.topcoder.com/tcs/catalog/java/object_factory_config_api_plugin/trunk"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/object_factory_configuration_api_plugin/trunk"
         revision="204056" />
 
     <component
