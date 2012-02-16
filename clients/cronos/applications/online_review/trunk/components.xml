@@ -269,4 +269,29 @@
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/user_project_data_store/trunk"
         revision="213159" />
 
+    <component
+        name="object_factory"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/components/object_factory/trunk"
+        revision="204054" />
+
+    <component
+        name="object_factory_config_api_plugin"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/components/object_factory_config_api_plugin/trunk"
+        revision="204056" />
+
+    <component
+        name="object_factory_config_manager_plugin"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/components/object_factory_config_manager_plugin/trunk"
+        revision="204059" />
+
+    <component
+        name="simple_cache"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/components/simple_cache/trunk"
+        revision="107355" />
+
+    <component
+        name="memory_usage"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/components/memory_usage/trunk"
+        revision="107229" />
+
 </components>

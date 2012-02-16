@@ -56,24 +56,6 @@
     <property name="JNDI_Utility.path" value="JNDI_Utility/${JNDI_Utility.version}"/>
     <property name="JNDI_Utility.jar" value="${tcs_libdir}/${JNDI_Utility.path}/${JNDI_Utility.jar.name}"/>
         
-    <property name="object_factory.version" value="2.0.1"/>
-    <property name="object_factory.jar.name" value="object_factory.jar"/>
-    <property name="object_factory.path" value="object_factory/${object_factory.version}"/>
-    <property name="object_factory.jar" value="${tcs_libdir}/${object_factory.path}/${object_factory.jar.name}"/>
-
-    <property name="object_factory_configuration_api_plugin.version" value="1.0.0"/>
-    <property name="object_factory_configuration_api_plugin.jar.name"
-              value="object_factory_configuration_api_plugin.jar"/>
-    <property name="object_factory_configuration_api_plugin.path"
-              value="object_factory_configuration_api_plugin/${object_factory_configuration_api_plugin.version}"/>
-    <property name="object_factory_configuration_api_plugin.jar"
-              value="${tcs_libdir}/${object_factory_configuration_api_plugin.path}/${object_factory_configuration_api_plugin.jar.name}"/>
-
-    <property name="simple_cache.version" value="2.0"/>
-    <property name="simple_cache.jar.name" value="simple_cache.jar"/>
-    <property name="simple_cache.path" value="simple_cache/${simple_cache.version}"/>
-    <property name="simple_cache.jar" value="${tcs_libdir}/${simple_cache.path}/${simple_cache.jar.name}"/>
-
     <!-- TCS Dependencies - non-versioned -->
     <property name="projectEJB.path" value="project_ejb"/>
     <property name="projectEJB.jar.name" value="Project.jar"/>
@@ -183,10 +165,7 @@
         <pathelement location="${job_scheduler.jar}"/>
         <pathelement location="${job_scheduling.jar}"/>
         <pathelement location="${job_processor.jar}"/>
-        <pathelement location="${object_factory.jar}"/>
-        <pathelement location="${object_factory_configuration_api_plugin.jar}"/>
         <pathelement location="${svnkit.jar}"/>
-        <pathelement location="${simple_cache.jar}" />
         <pathelement location="${log4j.jar}" />
         <pathelement location="${ldapjdk.jar}" />
         <pathelement location="${jaf.jar}" />
