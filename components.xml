@@ -271,7 +271,7 @@
 
     <component
         name="object_factory"
-        svnpath="https://coder.topcoder.com/tcs/catalog/java/components/object_factory/trunk"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/object_factory/trunk"
         revision="204054" />
 
     <component
