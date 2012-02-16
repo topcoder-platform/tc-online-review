@@ -74,12 +74,6 @@
     <property name="simple_cache.path" value="simple_cache/${simple_cache.version}"/>
     <property name="simple_cache.jar" value="${tcs_libdir}/${simple_cache.path}/${simple_cache.jar.name}"/>
 
-    <property name="user_project_data_store.version" value="1.0.1"/>
-    <property name="user_project_data_store.jar.name" value="user_project_data_store.jar"/>
-    <property name="user_project_data_store.path" value="user_project_data_store/${user_project_data_store.version}"/>
-    <property name="user_project_data_store.jar"
-              value="${tcs_libdir}/${user_project_data_store.path}/${user_project_data_store.jar.name}"/>
-
     <!-- TCS Dependencies - non-versioned -->
     <property name="projectEJB.path" value="project_ejb"/>
     <property name="projectEJB.jar.name" value="Project.jar"/>
@@ -191,7 +185,6 @@
         <pathelement location="${job_processor.jar}"/>
         <pathelement location="${object_factory.jar}"/>
         <pathelement location="${object_factory_configuration_api_plugin.jar}"/>
-        <pathelement location="${user_project_data_store.jar}"/>
         <pathelement location="${svnkit.jar}"/>
         <pathelement location="${simple_cache.jar}" />
         <pathelement location="${log4j.jar}" />

@@ -264,4 +264,9 @@
         svnpath="https://coder.topcoder.com/tcs/catalog/java/id_generator/trunk"
         revision="71795" />
 
+    <component
+        name="user_project_data_store"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/user_project_data_store/trunk"
+        revision="213159" />
+
 </components>

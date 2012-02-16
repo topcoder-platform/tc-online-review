@@ -148,7 +148,6 @@
       <lib dir="${tcs_libdir}/${object_factory_configuration_api_plugin.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${distribution_tool.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${simple_cache.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${user_project_data_store.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${projectEJB.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${userEJB.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${securityEJB.path}" includes="*.jar"/>
