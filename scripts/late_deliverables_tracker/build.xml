@@ -84,8 +84,6 @@
             <fileset file="${job_scheduling.jar}"/>
             <fileset file="${log4j.jar}"/>
             <fileset file="${javamail.jar}"/>
-            <fileset file="${object_factory.jar}"/>
-            <fileset file="${object_factory_configuration_api_plugin.jar}"/>
             <fileset file="${xerces.jar}"/>
             <fileset dir=".">
                 <include name="build.xml"/>
