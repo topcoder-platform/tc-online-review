@@ -85,7 +85,6 @@
             <fileset file="${job_scheduler.jar}"/>
             <fileset file="${object_factory.jar}"/>
             <fileset file="${simple_cache.jar}"/>
-            <fileset file="${user_project_data_store.jar}"/>
             <fileset file="${ifx-jdbc.jar}"/>
             <fileset file="${javamail.jar}"/>
             <fileset file="${log4j.jar}"/>
