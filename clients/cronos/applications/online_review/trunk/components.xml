@@ -304,4 +304,9 @@
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/contest_eligibility_validation/trunk"
         revision="213207" />
 
+    <component
+        name="jndi_context_utility"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/jndi_context_utility/trunk"
+        revision="109561" />
+
 </components>
