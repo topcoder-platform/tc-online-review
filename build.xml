@@ -141,7 +141,6 @@
       <classes dir="${build_classdir}" includes="**"/>
       <classes dir="${build_conf}" includes="**" excludes="WEB-INF/**, META-INF/**"/>
       <classes dir="${build_conf}/WEB-INF/classes"/>
-      <lib dir="${tcs_libdir}/${JNDI_Utility.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${distribution_tool.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${projectEJB.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${userEJB.path}" includes="*.jar"/>

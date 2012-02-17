@@ -37,11 +37,6 @@
     <property name="job_scheduling.path" value="job_scheduling/${job_scheduling.version}"/>
     <property name="job_scheduling.jar" value="${tcs_libdir}/${job_scheduling.path}/${job_scheduling.jar.name}"/>
     
-    <property name="JNDI_Utility.version" value="1.0"/>
-    <property name="JNDI_Utility.jar.name" value="JNDI_Utility.jar"/>
-    <property name="JNDI_Utility.path" value="JNDI_Utility/${JNDI_Utility.version}"/>
-    <property name="JNDI_Utility.jar" value="${tcs_libdir}/${JNDI_Utility.path}/${JNDI_Utility.jar.name}"/>
-        
     <!-- TCS Dependencies - non-versioned -->
     <property name="projectEJB.path" value="project_ejb"/>
     <property name="projectEJB.jar.name" value="Project.jar"/>
@@ -143,10 +138,7 @@
         <pathelement location="${termsOfUseEJB.jar}"/>
         <pathelement location="${userEJB.jar}"/>
         <pathelement location="${securityEJB.jar}"/>
-        <pathelement location="${JNDI_Utility.jar}"/>
         <pathelement location="${tcIdGenerator.jar}"/>
-        <pathelement location="${contest_eligibility_validation.jar}"/>
-        <pathelement location="${contest_eligibility_persistence.jar}"/>
         <pathelement location="${distribution_tool.jar}"/>
         <pathelement location="${job_scheduler.jar}"/>
         <pathelement location="${job_scheduling.jar}"/>
