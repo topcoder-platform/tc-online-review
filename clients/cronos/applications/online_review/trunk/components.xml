@@ -309,4 +309,9 @@
         svnpath="https://coder.topcoder.com/tcs/catalog/java/jndi_context_utility/trunk"
         revision="109561" />
 
+    <component
+        name="job_processor"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/job_processor/trunk"
+        revision="137583" />
+
 </components>

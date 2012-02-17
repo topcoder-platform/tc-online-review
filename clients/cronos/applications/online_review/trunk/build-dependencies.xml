@@ -27,11 +27,6 @@
     <property name="job_scheduler.path" value="job_scheduler/${job_scheduler.version}" />
     <property name="job_scheduler.jar" value="${tcs_libdir}/${job_scheduler.path}/${job_scheduler.jar.name}" />
 
-    <property name="job_processor.version" value="3.0.1"/>
-    <property name="job_processor.jar.name" value="job_processor.jar"/>
-    <property name="job_processor.path" value="job_processor/${job_processor.version}"/>
-    <property name="job_processor.jar" value="${tcs_libdir}/${job_processor.path}/${job_processor.jar.name}"/>
-    
     <property name="job_scheduling.version" value="3.2.0"/>
     <property name="job_scheduling.jar.name" value="job_scheduling.jar"/>
     <property name="job_scheduling.path" value="job_scheduling/${job_scheduling.version}"/>
@@ -142,7 +137,6 @@
         <pathelement location="${distribution_tool.jar}"/>
         <pathelement location="${job_scheduler.jar}"/>
         <pathelement location="${job_scheduling.jar}"/>
-        <pathelement location="${job_processor.jar}"/>
         <pathelement location="${svnkit.jar}"/>
         <pathelement location="${log4j.jar}" />
         <pathelement location="${ldapjdk.jar}" />
