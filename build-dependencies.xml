@@ -16,20 +16,6 @@
     <property name="shared_libdir" value="${online_review_home}/lib/shared" />
     <property name="token.properties" value="${online_review_home}/token.properties"/>
 
-    <property name="contest_eligibility_persistence.version" value="1.0.1"/>
-    <property name="contest_eligibility_persistence.jar.name" value="contest_eligibility_persistence.jar"/>
-    <property name="contest_eligibility_persistence.path"
-              value="contest_eligibility_persistence/${contest_eligibility_persistence.version}"/>
-    <property name="contest_eligibility_persistence.jar"
-              value="${tcs_libdir}/${contest_eligibility_persistence.path}/${contest_eligibility_persistence.jar.name}"/>
-
-    <property name="contest_eligibility_validation.version" value="1.0.1"/>
-    <property name="contest_eligibility_validation.jar.name" value="contest_eligibility_validation.jar"/>
-    <property name="contest_eligibility_validation.path"
-              value="contest_eligibility_validation/${contest_eligibility_validation.version}"/>
-    <property name="contest_eligibility_validation.jar"
-              value="${tcs_libdir}/${contest_eligibility_validation.path}/${contest_eligibility_validation.jar.name}"/>
-
     <property name="distribution_tool.version" value="1.0.1"/>
     <property name="distribution_tool.jar.name" value="distribution_tool.jar"/>
     <property name="distribution_tool.path" value="distribution_tool/${distribution_tool.version}"/>
