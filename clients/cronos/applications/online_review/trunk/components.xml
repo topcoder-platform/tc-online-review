@@ -294,4 +294,14 @@
         svnpath="https://coder.topcoder.com/tcs/catalog/java/memory_usage/trunk"
         revision="107229" />
 
+    <component
+        name="contest_eligibility_persistence"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/contest_eligibility_persistence/trunk"
+        revision="213207" />
+
+    <component
+        name="contest_eligibility_validation"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/contest_eligibility_validation/trunk"
+        revision="213207" />
+
 </components>
