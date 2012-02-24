@@ -1069,15 +1069,13 @@ public class TestHelper {
      *
      * @throws Exception if any error
      */
-    static void deleteProject(Selenium browser, long projectId)
-        throws Exception {
-        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
-        browser.click("//img[@alt='Edit Project']");
-        browser.waitForPageToLoad(getTimeout());
-        browser.select("//select[@name='status']", "label=Deleted");
-        browser.type("explanation", "Removing project used for testing");
-        browser.click("//input[@name='saveProjectChangesBtn']");
-        browser.waitForPageToLoad(getTimeout());
+    static void deleteProject(Selenium browser, long projectId) throws Exception {
+        Connection con = getConnection();
+        try {
+            executeStatement(con, "UPDATE project SET project_status_id = 3 WHERE project_id = " + projectId);
+        } finally {
+            con.close();    
+        }
     }
 
     /**
