@@ -2889,7 +2889,7 @@ public class ActionsHelper {
                 // component development track for which it corresponds to the failure reviewer).
                 // So, we retrieve all response ids for the specified track ordered by its value.
                 // The first one will be the primary then.
-                ps = conn.prepareStatement("select review_resp_id from review_resp where phase_id = ? order by review_resp_id");
+                ps = conn.prepareStatement("select review_resp_id from review_resp where phase_id = ? and resource_role_id=4 order by review_resp_id");
                 ps.setLong(1, phaseID);
 
                 long primaryResponseId=-1L;
