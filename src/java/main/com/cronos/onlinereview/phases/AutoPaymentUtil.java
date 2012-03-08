@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2012 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -50,8 +50,11 @@ import com.topcoder.web.common.model.SoftwareComponent;
  * <p>Version 1.5 (Content Creation Contest Online Review and TC Site Integration Assembly 1.0) Change notes:
  *  Updated to support content creation project type.</p>
  *
- * @author George1, brain_cn, pulky, Blues, FireIce, VolodymyrK
- * @version 1.5
+ *  <p>Version 1.6 (Release Assembly - TopCoder BugHunt Competition Integration) Change notes:
+  *  Updated to support Bug Hunt project type.</p>
+ *
+ * @author George1, brain_cn, pulky, Blues, FireIce, VolodymyrK, TCSASSEMBLER
+ * @version 1.6
  */
 public class AutoPaymentUtil {
         /**
@@ -187,6 +190,7 @@ public class AutoPaymentUtil {
         && projectCategoryId != 2     // Component Development
         && projectCategoryId != 5     // Component Testing
         && projectCategoryId != 7     // Architecture
+        && projectCategoryId != 9     // Bug Hunt
         && projectCategoryId != 14    // Assembly
         && projectCategoryId != 6     // Specification
         && projectCategoryId != 13    // Test Suites
