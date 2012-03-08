@@ -3586,6 +3586,14 @@
                     <Value>IconQA.gif</Value>
                 </Property>
             </Property>
+            <Property name="Bug Hunt">
+                <Property name="IconSmall">
+                    <Value>IconBHSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconBH.gif</Value>
+                </Property>
+            </Property>
             <Property name="Deployment">
                 <Property name="IconSmall">
                     <Value>IconDeploySm.gif</Value>

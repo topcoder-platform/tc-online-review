@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2006 - 2012 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -257,9 +257,16 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *     <li>Added {@link #getPrizeTypeByName(ProjectManager, String)} method to retrieve prize type by name.</li>
  *   </ol>
  * </p>
+ *
+ * <p>
+  * Version 1.16 (Release Assembly - TopCoder BugHunt Competition Integration) Change notes:
+  *   <ol>
+  *     <li>Update {@link #isProjectResultCategory(long)} method to support Bug Hunt project type..</li>
+  *   </ol>
+  * </p>
  * 
- * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK, rac_, lmmortal, flexme
- * @version 1.15
+ * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK, rac_, lmmortal, flexme, TCSASSEMBLER
+ * @version 1.16
  * @since Online Review Status Validation Assembly 1.0
  */
 public class ActionsHelper {
@@ -336,6 +343,7 @@ public class ActionsHelper {
                 || categoryId == 5    // Component Testing
                 || categoryId == 6    // Application Specification
                 || categoryId == 7    // Application Architecture
+                || categoryId == 9    // Bug Hunt
                 || categoryId == 13   // Test Scenarios
                 || categoryId == 26   // Test Suites
                 || categoryId == 14   // Application Assembly
