@@ -32,8 +32,8 @@
 
     <component
         name="online_review_ajax_support"
-        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_ajax_support/trunk"
-        revision="206269" />
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_ajax_support/branches/rpi3"
+        revision="214993" />
 
     <component
         name="online_review_login"
@@ -42,8 +42,8 @@
 
     <component
         name="online_review_phases"
-        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/trunk"
-        revision="212207" />
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/branches/rpi3"
+        revision="214993" />
 
     <component
         name="online_review_upload_services"
@@ -62,13 +62,13 @@
 
     <component
         name="project_management"
-        svnpath="https://coder.topcoder.com/tcs/catalog/java/project_management/trunk"
-        revision="206269" />
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/project_management/branches/rpi3"
+        revision="214993" />
 
     <component
         name="project_management_persistence"
-        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_management_persistence/trunk"
-        revision="206972" />
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_management_persistence/branches/rpi3"
+        revision="214993" />
 
     <component
         name="project_phase_template"
@@ -77,18 +77,18 @@
 
     <component
         name="review_data_structure"
-        svnpath="https://coder.topcoder.com/tcs/catalog/java/review_data_structure/trunk"
-        revision="206269" />
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/review_data_structure/branches/rpi3"
+        revision="214993" />
 
     <component
         name="review_management"
-        svnpath="https://coder.topcoder.com/tcs/catalog/java/review_management/trunk"
-        revision="207889" />
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/review_management/branches/rpi3"
+        revision="214993" />
 
     <component
         name="review_management_persistence"
-        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_management_persistence/trunk"
-        revision="208113" />
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_management_persistence/branches/rpi3"
+        revision="214993" />
 
     <component
         name="review_score_aggregator"
