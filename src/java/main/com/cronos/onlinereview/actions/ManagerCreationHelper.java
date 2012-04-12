@@ -6,7 +6,20 @@ package com.cronos.onlinereview.actions;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.cronos.onlinereview.deliverables.AggregationDeliverableChecker;
+import com.cronos.onlinereview.deliverables.AppealResponsesDeliverableChecker;
+import com.cronos.onlinereview.deliverables.ApprovalDeliverableChecker;
+import com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker;
+import com.cronos.onlinereview.deliverables.FinalFixesDeliverableChecker;
+import com.cronos.onlinereview.deliverables.FinalReviewDeliverableChecker;
+import com.cronos.onlinereview.deliverables.IndividualReviewDeliverableChecker;
+import com.cronos.onlinereview.deliverables.SpecificationSubmissionDeliverableChecker;
+import com.cronos.onlinereview.deliverables.SubmissionDeliverableChecker;
+import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
+import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
+import com.cronos.onlinereview.phases.GenericAppealPhaseHandler;
+import com.cronos.onlinereview.phases.MilestoneReviewPhaseHandler;
 import com.cronos.onlinereview.phases.MilestoneSubmissionPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
 import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
@@ -16,20 +29,28 @@ import com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRMilestoneReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRMilestoneScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRPostMortemPhaseHandler;
+import com.cronos.onlinereview.phases.PRPrimaryReviewAppealResponsePhaseHandler;
+import com.cronos.onlinereview.phases.PRPrimaryReviewEvaluationPhaseHandler;
 import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
 import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
+import com.cronos.onlinereview.phases.SecondaryReviewerReviewPhaseHandler;
 import com.cronos.onlinereview.phases.SpecificationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.SpecificationSubmissionPhaseHandler;
 import com.cronos.onlinereview.services.uploads.ManagersProvider;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
+import com.topcoder.management.deliverable.DeliverableChecker;
+import com.topcoder.management.deliverable.DeliverableManager;
+import com.topcoder.management.deliverable.PersistenceDeliverableManager;
 import com.topcoder.management.deliverable.PersistenceUploadManager;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.late.LateDeliverableManager;
 import com.topcoder.management.deliverable.late.impl.LateDeliverableManagerImpl;
+import com.topcoder.management.deliverable.persistence.DeliverablePersistence;
 import com.topcoder.management.deliverable.persistence.UploadPersistence;
+import com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersistence;
 import com.topcoder.management.deliverable.persistence.sql.SqlUploadPersistence;
 import com.topcoder.management.phase.DefaultPhaseManager;
 import com.topcoder.management.phase.PhaseHandler;
@@ -47,31 +68,10 @@ import com.topcoder.management.resource.search.NotificationFilterBuilder;
 import com.topcoder.management.resource.search.NotificationTypeFilterBuilder;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.resource.search.ResourceRoleFilterBuilder;
+import com.topcoder.management.review.DefaultReviewManager;
+import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardManagerImpl;
-import com.topcoder.management.review.DefaultReviewManager;
-import com.topcoder.management.review.ReviewManagementException;
-import com.topcoder.management.review.ReviewManager;
-
-import com.topcoder.management.deliverable.DeliverableChecker;
-import com.topcoder.management.deliverable.DeliverableManager;
-import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
-import com.topcoder.management.deliverable.persistence.DeliverablePersistence;
-import com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersistence;
-import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
-import com.topcoder.management.deliverable.PersistenceDeliverableManager;
-import com.cronos.onlinereview.deliverables.AggregationDeliverableChecker;
-import com.cronos.onlinereview.deliverables.AppealResponsesDeliverableChecker;
-import com.cronos.onlinereview.deliverables.ApprovalDeliverableChecker;
-import com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker;
-import com.cronos.onlinereview.deliverables.FinalFixesDeliverableChecker;
-import com.cronos.onlinereview.deliverables.FinalReviewDeliverableChecker;
-import com.cronos.onlinereview.deliverables.IndividualReviewDeliverableChecker;
-import com.cronos.onlinereview.deliverables.SpecificationSubmissionDeliverableChecker;
-import com.cronos.onlinereview.deliverables.SubmissionDeliverableChecker;
-import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
-import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
-
 import com.topcoder.project.phases.PhaseType;
 import com.topcoder.search.builder.SearchBundle;
 import com.topcoder.search.builder.SearchBundleManager;
@@ -147,8 +147,16 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.9 (Online Review Update Review Management Process assembly 2) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #getPhaseManager()} method to set handler for <code>New Appeals</code> and
+ *     <code>Primary Review Appeals Response</code> phases.</li>
+ *   </ol>
+ * </p>
+ * 
  * @author evilisneo, BeBetter, isv, FireIce, VolodymyrK, rac_, flexme, lmmortal
- * @version 1.8
+ * @version 1.9
  */
 public class ManagerCreationHelper implements ManagersProvider {
 
@@ -272,10 +280,18 @@ public class ManagerCreationHelper implements ManagersProvider {
                     Constants.SCREENING_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, new PRReviewPhaseHandler(),
                     Constants.REVIEW_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, new SecondaryReviewerReviewPhaseHandler(),
+                    Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, new PRPrimaryReviewEvaluationPhaseHandler(),
+                    Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, new AppealsPhaseHandler(),
                     Constants.APPEALS_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, new GenericAppealPhaseHandler(),
+                    Constants.NEW_APPEALS_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, new PRAppealResponsePhaseHandler(),
                     Constants.APPEALS_RESPONSE_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, new PRPrimaryReviewAppealResponsePhaseHandler(),
+                    Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, new PRAggregationPhaseHandler(),
                     Constants.AGGREGATION_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, new PRFinalFixPhaseHandler(),
@@ -501,6 +517,7 @@ public class ManagerCreationHelper implements ManagersProvider {
                 checkers.put(Constants.SCREENING_DELIVERABLE_NAME, new IndividualReviewDeliverableChecker(dbconn));
                 checkers.put(Constants.PRIMARY_SCREENING_DELIVERABLE_NAME, committedChecker);
                 checkers.put(Constants.REVIEW_DELIVERABLE_NAME, committedChecker);
+                checkers.put(Constants.NEW_REVIEW_DELIVERABLE_NAME, committedChecker);
                 checkers.put(Constants.ACC_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);
                 checkers.put(Constants.FAIL_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);
                 checkers.put(Constants.STRS_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);

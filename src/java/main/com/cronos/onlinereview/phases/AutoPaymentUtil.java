@@ -9,11 +9,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
 
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
@@ -53,8 +52,14 @@ import com.topcoder.web.common.model.SoftwareComponent;
  *  <p>Version 1.6 (Release Assembly - TopCoder BugHunt Competition Integration) Change notes:
   *  Updated to support Bug Hunt project type.</p>
  *
+ * <p>Version 1.7 (Release Assembly - TopCoder OR Improvements Merge2) Change notes:
+ *   <ol>
+ *     <li>Added {@link #SECONDARY_REVIEWER_REVIEW_PHASE} and {@link #PRIMARY_REVIEW_EVALUATION_PHASE} constants.</li>
+ *     <li>Updated to handle new review process phases.</li>
+ *   </ol>
+ * </p>
  * @author George1, brain_cn, pulky, Blues, FireIce, VolodymyrK, TCSASSEMBLER
- * @version 1.6
+ * @version 1.7
  */
 public class AutoPaymentUtil {
         /**
@@ -164,6 +169,16 @@ public class AutoPaymentUtil {
     public static final int MILESTONE_SCREENING_PHASE = 16;
 
     /**
+     * Represents the secondary reviewer review phase id.
+     */
+    public static final int SECONDARY_REVIEWER_REVIEW_PHASE = 18;
+    
+    /**
+     * Represents the primary review evaluation phase id.
+     */
+    public static final int PRIMARY_REVIEW_EVALUATION_PHASE = 19;
+    
+    /**
      * Prevent to be created.
      */
     private AutoPaymentUtil() {
@@ -255,6 +270,10 @@ public class AutoPaymentUtil {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getPostMortemCost(), conn);
             } else if (reviewer.isMilestoneScreener() && phaseId == MILESTONE_SCREENING_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), milestoneFPC.getMilestoneScreeningCost(), conn);
+            } else if (reviewer.isSecondaryReviewer() && phaseId == PRIMARY_REVIEW_EVALUATION_PHASE) {
+                updateResourcePayment(reviewer.getResourceId(), fpc.getReviewCost(), conn);
+            } else if (reviewer.isPrimaryReviewEvaluator() && phaseId == PRIMARY_REVIEW_EVALUATION_PHASE) {
+                updateResourcePayment(reviewer.getResourceId(), fpc.getCoreReviewCost(), conn);
             }
 
             // Uncomment this block to pay Post-Mortem reviewers
@@ -433,7 +452,7 @@ public class AutoPaymentUtil {
             "   resource_info ri" +
             "   where r.resource_id = ri.resource_id" +
             "   and ri.resource_info_type_id = 1" +
-            "   and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9, 16, 18, 19)" +
+            "   and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9, 16, 18, 19, 21, 22)" +
             "   and r.project_id = ? " +
             "   and not exists (select ri1.resource_id from resource_info ri1 " +
             "           where r.resource_id = ri1.resource_id " +
@@ -1161,5 +1180,23 @@ class Reviewer {
      */
     public boolean isMilestoneScreener() {
         return this.resourceRoleId == 19;
+    }
+    
+    /**
+     * Checks whether the reviewer is Secondary Reviewer
+     * 
+     * @return true if the reviewer is Secondary Reviewer, false otherwise.
+     */
+    public boolean isSecondaryReviewer() {
+        return this.resourceRoleId == 21;
+    }
+    
+    /**
+     * Checks whether the reviewer is Primary Review Evaluator
+     * 
+     * @return true if the reviewer is Primary Review Evaluator, false otherwise.
+     */
+    public boolean isPrimaryReviewEvaluator() {
+        return this.resourceRoleId == 22;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2012 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -104,8 +104,15 @@ import com.topcoder.util.config.UnknownNamespaceException;
  *    </ol>
  * </p>
  *
+ * <p>
+ * Version 1.9 (Release Assembly - TopCoder OR Improvements Merge2) Change notes
+ *    <ol>
+ *      <li>Added {@link #reqSecondaryReviewers} field. Also the getter was added.</li>
+ *    </ol>
+ * </p>
+ * 
  * @author George1, real_vg, pulky, romanoTC, isv, FireIce, lmmortal, flexme
- * @version 1.8
+ * @version 1.9
  */
 public class ConfigHelper {
 
@@ -379,6 +386,14 @@ public class ConfigHelper {
      * @see #DEFAULT_VALUES_PROP
      */
     private static final String REQ_REVIEWERS_PROP = "RequiredReviewers";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * defines the default minimum amount of registered secondary reviewers before Review phase can end.
+     *
+     * @see #DEFAULT_VALUES_PROP
+     */
+    private static final String REQ_SEC_REVIEWERS_PROP = "RequiredSecondaryReviewers";
 
     /**
      * This member variable is a string constant that specifies the name of the property which
@@ -820,6 +835,12 @@ public class ConfigHelper {
      * ending Review phase.
      */
     private static int reqReviewers = -1;
+
+    /**
+     * This member variable holds the default minimum number of registered secondary reviewers required for
+     * ending Review phase.
+     */
+    private static int reqSecondaryReviewers = -1;
 
     /**
      * <p>An <code>int</code> providing the default number of required approvers for Approval phase.</p>
@@ -1324,6 +1345,8 @@ public class ConfigHelper {
             String reqRegistrantsStr = propDefaults.getValue(REQ_REGISTRANTS_PROP);
             // Get the default minimum submissions amount
             String reqReviewersStr = propDefaults.getValue(REQ_REVIEWERS_PROP);
+            // Get the default minimum submissions amount
+            String reqSecondaryReviewersStr = propDefaults.getValue(REQ_SEC_REVIEWERS_PROP);
             // Get the duration of "Deadline Near" status
             String deadlineNearDurationStr = propDefaults.getValue(DEADLINE_NEAR_DURATION_PROP);
 
@@ -1360,6 +1383,13 @@ public class ConfigHelper {
                 int minimum = Integer.parseInt(reqReviewersStr, 10);
                 if (minimum >= 0) {
                     reqReviewers = minimum;
+                }
+            }
+            // Verify that default minimum secondary reviewers is specified, and assign it
+            if (reqSecondaryReviewersStr != null && reqSecondaryReviewersStr.trim().length() != 0) {
+                int minimum = Integer.parseInt(reqSecondaryReviewersStr, 10);
+                if (minimum >= 0) {
+                    reqSecondaryReviewers = minimum;
                 }
             }
             // Parse the number of required reviewers for Post-Mortem phase
@@ -1897,6 +1927,16 @@ public class ConfigHelper {
      */
     public static int getDefaultRequiredReviewers() {
         return reqReviewers;
+    }
+
+    /**
+     * This static method returns default minimum of registered secondary reviewers required before Review
+     * phase can be closed.
+     *
+     * @return default minimum amount, or -1 if there is no default minimum value.
+     */
+    public static int getDefaultRequiredSecondaryReviewers() {
+        return reqSecondaryReviewers;
     }
 
     /**

@@ -100,5 +100,10 @@
         <function-class>com.cronos.onlinereview.functions.Functions</function-class>
         <function-signature>java.lang.String displayDelay(java.lang.Long)</function-signature>
     </function>
+    <function>
+        <name>getAppealTitleForEvaluationReview</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.String getAppealTitleForEvaluationReview(javax.servlet.jsp.PageContext, com.topcoder.management.review.data.Comment)</function-signature>
+    </function>
 
 </taglib>
