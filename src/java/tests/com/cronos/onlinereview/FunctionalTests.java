@@ -53,6 +53,7 @@ public class FunctionalTests extends TestCase {
         
         suite.addTestSuite(NewAppealsTests.class);
         suite.addTestSuite(PrimaryAppealsResponseTests.class);
+        
         return suite;
     }
 }

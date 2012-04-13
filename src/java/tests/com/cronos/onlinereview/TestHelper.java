@@ -1194,25 +1194,25 @@ public class TestHelper {
         insertData(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("secondary_reviewer_review_phase") + ", " + projectId +
-            ", '15', '1', CURRENT+8 UNITS day, CURRENT+8 UNITS day, CURRENT+14 UNITS day, NULL, NULL, '345600000', '132456', CURRENT, '132456', CURRENT)");
+            ", '18', '1', CURRENT+8 UNITS day, CURRENT+8 UNITS day, CURRENT+14 UNITS day, NULL, NULL, '345600000', '132456', CURRENT, '132456', CURRENT)");
         // Primary Review Evaluation
         phaseIds.put("primary_review_evaluation_phase", getProjectPhaseId());
         insertData(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("primary_review_evaluation_phase") + ", " + projectId +
-            ", '16', '1', CURRENT+14 UNITS day, CURRENT+14 UNITS day, CURRENT+15 UNITS day, NULL, NULL, '86400000', '132456', CURRENT, '132456', CURRENT)");
+            ", '19', '1', CURRENT+14 UNITS day, CURRENT+14 UNITS day, CURRENT+15 UNITS day, NULL, NULL, '86400000', '132456', CURRENT, '132456', CURRENT)");
         // New Appeals
         phaseIds.put("new_appeals_phase", getProjectPhaseId());
         insertData(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("new_appeals_phase") + ", " + projectId +
-            ", '17', '1', CURRENT+15 UNITS day, CURRENT+15 UNITS day, CURRENT+16 UNITS day, NULL, NULL, '86400000', '132456', CURRENT, '132456', CURRENT)");
+            ", '20', '1', CURRENT+15 UNITS day, CURRENT+15 UNITS day, CURRENT+16 UNITS day, NULL, NULL, '86400000', '132456', CURRENT, '132456', CURRENT)");
         // Primary Review Appeals Response
         phaseIds.put("primary_review_appeals_response_phase", getProjectPhaseId());
         insertData(con,
             "INSERT INTO project_phase (project_phase_id, project_id, phase_type_id, phase_status_id, fixed_start_time, scheduled_start_time, scheduled_end_time, actual_start_time, actual_end_time, duration, create_user, create_date, modify_user, modify_date) VALUES (" +
             phaseIds.get("primary_review_appeals_response_phase") + ", " + projectId +
-            ", '19', '1', CURRENT+16 UNITS day, CURRENT+16 UNITS day, CURRENT+17 UNITS day, NULL, NULL, '43200000', '132456', CURRENT, '132456', CURRENT)");
+            ", '21', '1', CURRENT+16 UNITS day, CURRENT+16 UNITS day, CURRENT+17 UNITS day, NULL, NULL, '43200000', '132456', CURRENT, '132456', CURRENT)");
         // Aggregation
         phaseIds.put("aggregation_phase", getProjectPhaseId());
         insertData(con,
@@ -1245,9 +1245,9 @@ public class TestHelper {
         // Data for comp_versions
         long versionId = getComponentVersionsId();
         insertData(con,
-            "INSERT INTO comp_versions (comp_vers_id, component_id, version, version_text, create_time, phase_id, phase_time, price, comments, modify_date, suspended_ind, browse, location, issue_tracker_path, revision) VALUES (" +
+            "INSERT INTO comp_versions (comp_vers_id, component_id, version, version_text, create_time, phase_id, phase_time, price, comments, modify_date, suspended_ind) VALUES (" +
             versionId + ", " + componentId +
-            ", '12', '1.0', '2010-05-21 07:20:14.48', '112', CURRENT, '10000.00', 'Cool', CURRENT, '0', NULL, NULL, NULL, NULL)");
+            ", '12', '1.0', '2010-05-21 07:20:14.48', '112', CURRENT, '10000.00', 'Cool', CURRENT, '0')");
         // Data for comp_categories
         insertData(con,
             "INSERT INTO comp_categories (comp_categories_id, component_id, category_id) VALUES (" +
@@ -1441,9 +1441,9 @@ public class TestHelper {
         // Data for comp_versions
         long versionId = getComponentVersionsId();
         insertData(con,
-            "INSERT INTO comp_versions (comp_vers_id, component_id, version, version_text, create_time, phase_id, phase_time, price, comments, modify_date, suspended_ind, browse, location, issue_tracker_path, revision) VALUES (" +
+            "INSERT INTO comp_versions (comp_vers_id, component_id, version, version_text, create_time, phase_id, phase_time, price, comments, modify_date, suspended_ind) VALUES (" +
             versionId + ", " + componentId +
-            ", '12', '1.0', '2010-05-21 07:20:14.48', '112', CURRENT, '10000.00', 'Cool', CURRENT, '0', NULL, NULL, NULL, NULL)");
+            ", '12', '1.0', '2010-05-21 07:20:14.48', '112', CURRENT, '10000.00', 'Cool', CURRENT, '0')");
         // Data for comp_categories
         insertData(con,
             "INSERT INTO comp_categories (comp_categories_id, component_id, category_id) VALUES (" +
@@ -2010,38 +2010,6 @@ public class TestHelper {
     }
 
     /**
-     * Adds submission to the specified project. 
-     * 
-     * @param projectId project id to add submission.
-     * 
-     * @param resourceId submitter's id. 
-     * 
-     * @param submissionTypeId submission type (spec submission of contest submission)
-     * 
-     * @param con connection to use.
-     *
-     * @return id of submission. 
-     * 
-     * @throws Exception if any error occurred. 
-     */
-    static long addSubmission (long projectId, long resourceId, long submissionTypeId, Connection con) throws Exception {
-        long uploadId = getNextUploadId();
-        insertData(con, 
-                "INSERT INTO upload (upload_id, project_id, resource_id, upload_type_id, upload_status_id, parameter, create_user, create_date, modify_user, modify_date) VALUES (" +
-                uploadId + ", " + projectId + ", " + resourceId + ", 1, 1, 'no_file.txt', '" +TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
-        
-        long submissionId = getNextSubmissionId();
-        insertData(con,
-                "INSERT INTO submission (submission_id, upload_id, submission_status_id, screening_score, initial_score, final_score, placement, submission_type_id, create_user, create_date, modify_user, modify_date) VALUES (" +
-                submissionId + ", " + uploadId + ", 1, NULL, NULL, NULL, NULL, " + submissionTypeId + ", '" +TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
-        
-        insertData(con,
-                "INSERT INTO resource_submission (resource_id, submission_id, create_user, create_date, modify_user, modify_date) VALUES (" +
-                resourceId + ", " + submissionId + ", '" +TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
-        return submissionId;
-    }
-
-    /**
      * Adds review to the specified project.
      *
      * @param resourceId submitter's id.
@@ -2100,7 +2068,7 @@ public class TestHelper {
         // login with normal username
         browser.type("userName", username);
         browser.type("password", password);
-        browser.click("//input[@name='']");
+        browser.click("//input[@name='loginBtn']");
         browser.waitForPageToLoad(getTimeout());
     }
     

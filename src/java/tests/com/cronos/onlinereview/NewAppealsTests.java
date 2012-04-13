@@ -21,12 +21,12 @@ public class NewAppealsTests extends ProjectTests {
     /**
      * Represents the primary review evaluator role id.
      */
-    private static String PRIMARY_REVIEW_EVALUATOR_ROLE_ID = "20";
+    private static String PRIMARY_REVIEW_EVALUATOR_ROLE_ID = "22";
 
     /**
      * Represents the secondary reviewer role id.
      */
-    private static String SECONDARY_REVIEWER_ROLE_ID = "19";
+    private static String SECONDARY_REVIEWER_ROLE_ID = "21";
 
     /**
      * Represents the first secondary review id.
@@ -66,7 +66,6 @@ public class NewAppealsTests extends ProjectTests {
      */
     public void setUp() throws Exception {
         super.setUp();
-        phaseIds = TestHelper.createProjectWithNewReviewSystem(projectId, true, true);
 
         Connection con = TestHelper.getConnection();
         // Add a Submitter resource
@@ -82,7 +81,7 @@ public class NewAppealsTests extends ProjectTests {
                 phaseIds.get("secondary_reviewer_review_phase"), 124916, "Yoshi", con);
 
         // Add a submission
-        long submission = TestHelper.addSubmission(projectId, submitter, 1, con);
+        long submission = TestHelper.AddSubmission(projectId, phaseIds.get("submission_phase"), submitter, 1, con);
 
         // Add a review for secondary Reviewer1
         secondaryReview1 = TestHelper.AddReviewRPI(secondaryReviewer1, submission, con)[0];
@@ -275,5 +274,14 @@ public class NewAppealsTests extends ProjectTests {
 
         assertFalse("Can close appeals phse early if all submitter complete appeal",
                 browser.isTextPresent("Cannot close the New Appeals phase"));
+    }
+    
+    /**
+     * Create a new project.
+     * 
+     * @throws Exception if any error occurs.
+     */
+    protected void createProject() throws Exception {
+        phaseIds = TestHelper.createProjectWithNewReviewSystem(projectId, true, true);
     }
 }
