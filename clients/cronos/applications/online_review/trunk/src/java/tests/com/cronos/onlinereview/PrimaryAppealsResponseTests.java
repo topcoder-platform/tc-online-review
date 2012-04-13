@@ -21,12 +21,12 @@ public class PrimaryAppealsResponseTests extends ProjectTests {
     /**
      * Represents the primary review evaluator role id.
      */
-    private static String PRIMARY_REVIEW_EVALUATOR_ROLE_ID = "20";
+    private static String PRIMARY_REVIEW_EVALUATOR_ROLE_ID = "22";
 
     /**
      * Represents the secondary reviewer role id.
      */
-    private static String SECONDARY_REVIEWER_ROLE_ID = "19";
+    private static String SECONDARY_REVIEWER_ROLE_ID = "21";
 
     /**
      * Represents the first secondary review id.
@@ -61,7 +61,6 @@ public class PrimaryAppealsResponseTests extends ProjectTests {
      */
     public void setUp() throws Exception {
         super.setUp();
-        phaseIds = TestHelper.createProjectWithNewReviewSystem(projectId, true, true);
 
         Connection con = TestHelper.getConnection();
         // Add a Submitter resource
@@ -77,7 +76,7 @@ public class PrimaryAppealsResponseTests extends ProjectTests {
                 phaseIds.get("secondary_reviewer_review_phase"), 124916, "Yoshi", con);
 
         // Add a submission
-        long submission = TestHelper.addSubmission(projectId, submitter, 1, con);
+        long submission = TestHelper.AddSubmission(projectId, phaseIds.get("submission_phase"), submitter, 1, con);
 
         // Add a review for secondary Reviewer1
         long[] ids = TestHelper.AddReviewRPI(secondaryReviewer1, submission, con);
@@ -157,7 +156,7 @@ public class PrimaryAppealsResponseTests extends ProjectTests {
         assertTrue("The user should see his review.", text.contains("lightspeed"));
         assertFalse("The user can not see other review.", text.contains("Yoshi"));
         assertTrue("The user should see the review score.", text.contains("100.0"));
-        assertTrue("The user should see the appeal status.", text.contains("1 / 1"));
+        assertTrue("The user should see the appeal status.", text.contains("2 / 2"));
     }
 
     /**
@@ -205,5 +204,14 @@ public class PrimaryAppealsResponseTests extends ProjectTests {
         assertTrue("The review score should be changed.", text.contains("75.0"));
 
         assertNoErrorsOccurred();
+    }
+    
+    /**
+     * Create a new project.
+     * 
+     * @throws Exception if any error occurs.
+     */
+    protected void createProject() throws Exception {
+        phaseIds = TestHelper.createProjectWithNewReviewSystem(projectId, true, true);
     }
 }

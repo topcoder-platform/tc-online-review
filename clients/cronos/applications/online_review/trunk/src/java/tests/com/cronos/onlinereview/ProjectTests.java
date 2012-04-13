@@ -23,7 +23,7 @@ public class ProjectTests extends BaseTests {
     public void setUp() throws Exception {
     	super.setUp();
     	projectId = TestHelper.getNextProjectId();
-    	TestHelper.createProject(projectId, getName(), phaseIds);
+    	createProject();
     }
     
     /**
@@ -43,4 +43,12 @@ public class ProjectTests extends BaseTests {
         super.tearDown();
     }
 
+    /**
+     * Create a new project.
+     * 
+     * @throws Exception if any error occurs.
+     */
+    protected void createProject() throws Exception {
+        TestHelper.createProject(projectId, getName(), phaseIds);
+    }
 }
