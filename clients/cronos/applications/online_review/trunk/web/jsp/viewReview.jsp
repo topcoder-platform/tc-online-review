@@ -48,7 +48,19 @@
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/ajax1.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/util.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript">
-
+        if (dojo.render.html.ie) {
+            // fix document.getElementsByName in IE
+            document.getElementsByName = function(name){
+                var temp = document.all;
+                var matches = [];
+                for (var i = 0;i < temp.length; i++){
+                  if (temp[i].name == name){
+                    matches.push(temp[i]);
+                  }
+                }
+                return matches;
+            };
+        }
         /**
          * TODO: Document it
          */
