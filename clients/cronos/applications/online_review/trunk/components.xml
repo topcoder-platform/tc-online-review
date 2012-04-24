@@ -33,7 +33,7 @@
     <component
         name="online_review_ajax_support"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_ajax_support/trunk"
-        revision="215236" />
+        revision="215631" />
 
     <component
         name="online_review_login"
