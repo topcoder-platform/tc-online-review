@@ -1123,17 +1123,18 @@ public class ProjectReviewActions extends DispatchAction {
                                 }
                             }
                         }
-                        Iterator<String> iterator = comments.keySet().iterator();
-                        while(iterator.hasNext()){
-                            String commentKey = iterator.next();
+                        int currentIdx = item.getNumberOfComments();
+                        while(currentIdx <= item.getNumberOfComments() + comments.size()){
+                            currentIdx++;
+                            String commentKey = itemIdx + "." + currentIdx;
                             String commentValue = comments.get(commentKey);
-                            if (commentKey.startsWith(itemIdx + ".") && commentValue != null && commentValue.trim().length() > 0 ) {
-                                Comment newcomment = new Comment();
-                                newcomment.setComment(commentValue);
-                                newcomment.setCommentType(managerEdit ?  managerCommentType : primaryReviewEvaluatorCommentType);
-                                newcomment.setAuthor(myResource.getId());
-                                item.addComment(newcomment);
-                            }
+                            if (commentValue == null || commentValue.trim().length() == 0) continue;
+                            
+                            Comment newcomment = new Comment();
+                            newcomment.setComment(commentValue);
+                            newcomment.setCommentType(managerEdit ?  managerCommentType : primaryReviewEvaluatorCommentType);
+                            newcomment.setAuthor(myResource.getId());
+                            item.addComment(newcomment);
                         }
                         itemIdx++;
                     }

@@ -26,7 +26,8 @@
 		</c:forEach>
 	</c:if>
 	<c:forEach items="${item.allComments}" var="comment" varStatus="commentStatus">
-		<c:if test="${( (not managerEdit) || ( managerEdit && comment.commentType.name != 'Manager Comment'))}">
+		<c:if test="${( (not managerEdit) || ( managerEdit && comment.commentType.name != 'Manager Comment')) &&
+                      ( (not hideEvaluationComments) || ( hideEvaluationComments && comment.commentType.name != 'Primary Review Evaluation Comment'))}">
 			<tr class="dark">
 				<td class="value" width="100%">
 					<c:choose>
