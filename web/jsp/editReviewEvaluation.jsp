@@ -159,7 +159,7 @@
                                                 	</c:if>
                                                 	<!-- Show only Evaluator comments as editable for evaluator edit  -->
                                                 	<c:if test="${not managerEdit}">
-                                                		<c:if test="${commentType eq 15}" >
+                                                		<c:if test="${commentType eq 15 or commentIdx eq 0}" >
 	                                                		<div name="response" style="${commentIdx eq 0 ? 'display: none;' : ''}">
 	                                                        	<b><bean:message key="editReviewEvaluation.Question.EvaluatorComment.title"/>:</b>
 	                                                        	<span class="error"><html:errors property="comment(${itemIdx}.${commentIdx})" prefix="" suffix="" /></span>
