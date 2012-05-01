@@ -1,0 +1,25 @@
+<p>
+%PHASE_TIMESTAMP{Phase timestamp}%<br/>
+Handle\: %USER_HANDLE{User handle}%<br/>
+Category\: %PROJECT_CATEGORY{Name of the track}%<br/>
+Contest\: <a href\="%OR_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
+This is the notification about %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.<br/>
+</p>
+
+%if:N_SUBMITTERS>'0'%
+<table border\="1">
+<caption style\="white-space\: nowrap">Members submitted for the project</caption>
+<tr>
+<th>Handle<th>Reliability<th>Rating
+%loop:SUBMITTER%
+<tr>
+<td>%SUBMITTER_HANDLE%<td>%SUBMITTER_RELIABILITY%<td>%SUBMITTER_RATING%
+%endloop%
+</table>
+%endif%
+
+%if:N_SUBMITTERS='0'%
+<p>
+<font color\="red"><b>There are no submissions!</b></font>
+</p>
+%endif%
