@@ -4252,11 +4252,8 @@ public class ActionsHelper {
                 if (comment.getCommentType().getName().equals("Appeal") && !myResourceIds.contains(comment.getAuthor())) {
                     item.removeComment(comment);
                 }
-                if (comment.getCommentType().getName().equals("Appeal Response") && comment.getExtraInfo() != null) {
-                    Long appealsCommentId = Long.parseLong(comment.getExtraInfo().toString());
-                    if (!myResourceIds.contains(comments.get(appealsCommentId).getAuthor())) {
-                        item.removeComment(comment);
-                    }
+                if (comment.getCommentType().getName().equals("Appeal Response") && !myResourceIds.contains(comment.getAuthor())) {
+                   item.removeComment(comment);
                 }
             }
         }
