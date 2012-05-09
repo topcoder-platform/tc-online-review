@@ -4239,24 +4239,29 @@ public class ActionsHelper {
     public static void filterOwnAppeals(Review review, Resource[] myResource) {
         // if the contest is not after appeal response phase, and the user has no permission to view all the appeals
         // then he can only view his own appeals
+		
+		
         Set<Long> myResourceIds = new HashSet<Long>();
         for (Resource res : myResource) {
             myResourceIds.add(res.getId());
         }
-        for (Item item : review.getAllItems()) {
-            Map<Long, Comment> comments = new HashMap<Long, Comment>();
-            for (Comment comment : item.getAllComments()) {
-                comments.put(comment.getId(), comment);
-            }
-            for (Comment comment : item.getAllComments()) {
-                if (comment.getCommentType().getName().equals("Appeal") && !myResourceIds.contains(comment.getAuthor())) {
-                    item.removeComment(comment);
-                }
-                if (comment.getCommentType().getName().equals("Appeal Response") && !myResourceIds.contains(comment.getAuthor())) {
-                   item.removeComment(comment);
-                }
-            }
-        }
+		
+		if (review != null && review.getAllItems() != null) {
+			for (Item item : review.getAllItems()) {
+				Map<Long, Comment> comments = new HashMap<Long, Comment>();
+				for (Comment comment : item.getAllComments()) {
+					comments.put(comment.getId(), comment);
+				}
+				for (Comment comment : item.getAllComments()) {
+					if (comment.getCommentType().getName().equals("Appeal") && !myResourceIds.contains(comment.getAuthor())) {
+						item.removeComment(comment);
+					}
+					if (comment.getCommentType().getName().equals("Appeal Response") && !myResourceIds.contains(comment.getAuthor())) {
+					   item.removeComment(comment);
+					}
+				}
+			}
+		}
     }
     
    /**
