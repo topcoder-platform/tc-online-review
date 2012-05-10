@@ -145,7 +145,7 @@
       <lib dir="${tcs_libdir}/${projectEJB.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${userEJB.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}/${securityEJB.path}" includes="*.jar"/>
-      <lib dir="${tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar"/>
+      <lib dir="${tcs_libdir}/${terms_of_use.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}" includes="tc_id_generator.jar"/>
       <lib dir="${tcs_libdir}" includes="tcjive.jar"/>
       <lib dir="${ext_libdir}" includes="*.jar" excludes="ejb-2_0.jar, servlet-api.jar, jsp-api.jar, log4j.jar"/>

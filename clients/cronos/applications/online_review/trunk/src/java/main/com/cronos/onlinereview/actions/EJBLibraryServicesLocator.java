@@ -9,14 +9,18 @@ import com.topcoder.service.contest.eligibility.dao.ContestEligibilityManager;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityService;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidationManager;
 import com.topcoder.web.ejb.forums.Forums;
-import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
-import com.topcoder.web.ejb.termsofuse.TermsOfUse;
 import com.topcoder.web.ejb.user.UserPreference;
-import com.topcoder.web.ejb.user.UserTermsOfUse;
 import org.springframework.context.ApplicationContext;
 
 /**
  * <p>A service locator for classes implementing library-style calls to various EJBs.</p>
+ *
+ * <p>
+ * Version 1.2 (Online Review Terms Of Use Update Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Removed methods for terms of use EJBs retrieval.</li>
+ *   </ol>
+ * </p>
  *
  * @author isv, tangzx
  * @version 1.1 (TopCoder Online Review Switch To Local Calls)
@@ -27,38 +31,6 @@ public class EJBLibraryServicesLocator {
      * <p>Constructs new <code>EJBLibraryServicesLocator</code> instance. This implementation does nothing.</p>
      */
     private EJBLibraryServicesLocator() {
-    }
-
-    /**
-     * <p>Gets the library interface to <code>User Terms Of Use</code> service.</p>
-     *
-     * @return a <code>UserTermsOfUse</code> implementation providing library-style calls to <code>User Terms Of Use EJB
-     *         </code>.
-     */
-    public static UserTermsOfUse getUserTermsOfUseService() {
-        ApplicationContext appContext = SpringContextProvider.getApplicationContext();
-        return (UserTermsOfUse) appContext.getBean("userTermsOfUseLibrary");
-    }
-
-    /**
-     * <p>Gets the library interface to <code>Terms Of Use</code> service.</p>
-     *
-     * @return a <code>TermsOfUse</code> implementation providing library-style calls to <code>Terms Of Use EJB</code>.
-     */
-    public static TermsOfUse getTermsOfUseService() {
-        ApplicationContext appContext = SpringContextProvider.getApplicationContext();
-        return (TermsOfUse) appContext.getBean("termsOfUseLibrary");
-    }
-
-    /**
-     * <p>Gets the library interface to <code>Project Role Terms Of Use</code> service.</p>
-     *
-     * @return a <code>ProjectRoleTermsOfUse</code> implementation providing library-style calls to <code>Project Role
-     *         Terms Of Use EJB</code>.
-     */
-    public static ProjectRoleTermsOfUse getProjectRoleTermsOfUseService() {
-        ApplicationContext appContext = SpringContextProvider.getApplicationContext();
-        return (ProjectRoleTermsOfUse) appContext.getBean("projectRoleTermsOfUseLibrary");
     }
 
     /**

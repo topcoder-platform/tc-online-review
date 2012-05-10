@@ -29,6 +29,12 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
+import com.cronos.onlinereview.ejblibrary.SpringContextProvider;
+import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
+import com.cronos.termsofuse.dao.TermsOfUseDao;
+import com.cronos.termsofuse.dao.UserTermsOfUseDao;
+import com.topcoder.management.deliverable.search.UploadFilterBuilder;
+import com.topcoder.search.builder.filter.*;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForward;
@@ -2319,6 +2325,36 @@ public class ActionsHelper {
      */
     public static ProjectLinkManager createProjectLinkManager() {
         return managerCreationHelper.getProjectLinkManager();
+    }
+
+    /**
+     * Gets the <code>UserTermsOfUseDao</code> instance.
+     *
+     * @return the <code>UserTermsOfUseDao</code> instance.
+     * @since 1.17
+     */
+    protected static UserTermsOfUseDao getUserTermsOfUseDao() {
+        return managerCreationHelper.getUserTermsOfUseDao();
+    }
+
+    /**
+     * Gets the <code>ProjectTermsOfUseDao</code> instance.
+     *
+     * @return the <code>ProjectTermsOfUseDao</code> instance.
+     * @since 1.17
+     */
+    protected static ProjectTermsOfUseDao getProjectTermsOfUseDao() {
+        return managerCreationHelper.getProjectTermsOfUseDao();
+    }
+
+    /**
+     * Gets the <code>ProjectTermsOfUseDao</code> instance.
+     *
+     * @return the <code>ProjectTermsOfUseDao</code> instance.
+     * @since 1.17
+     */
+    protected static TermsOfUseDao getTermsOfUseDao() {
+        return managerCreationHelper.getTermsOfUseDao();
     }
 
     /**
