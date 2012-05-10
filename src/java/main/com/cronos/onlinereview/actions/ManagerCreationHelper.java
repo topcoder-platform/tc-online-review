@@ -3,6 +3,7 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +40,19 @@ import com.cronos.onlinereview.phases.SecondaryReviewerReviewPhaseHandler;
 import com.cronos.onlinereview.phases.SpecificationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.SpecificationSubmissionPhaseHandler;
 import com.cronos.onlinereview.services.uploads.ManagersProvider;
+import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
+import com.cronos.termsofuse.dao.TermsOfUseDao;
+import com.cronos.termsofuse.dao.UserTermsOfUseDao;
+import com.cronos.termsofuse.dao.impl.ProjectTermsOfUseDaoImpl;
+import com.cronos.termsofuse.dao.impl.TermsOfUseDaoImpl;
+import com.cronos.termsofuse.dao.impl.UserTermsOfUseDaoImpl;
+import com.topcoder.configuration.ConfigurationAccessException;
+import com.topcoder.configuration.ConfigurationObject;
+import com.topcoder.configuration.persistence.ConfigurationFileManager;
+import com.topcoder.configuration.persistence.ConfigurationParserException;
+import com.topcoder.configuration.persistence.NamespaceConflictException;
+import com.topcoder.configuration.persistence.UnrecognizedFileTypeException;
+import com.topcoder.configuration.persistence.UnrecognizedNamespaceException;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
 import com.topcoder.management.deliverable.DeliverableChecker;
@@ -236,6 +250,27 @@ public class ManagerCreationHelper implements ManagersProvider {
      */
     private ReviewManager reviewManager = null;
 
+    
+    /**
+     * <p>A <code>UserTermsOfUseDao</code> providing the access to user terms of use persistence.</p>
+     *
+     * @since 1.9
+     */
+    private UserTermsOfUseDao userTermsOfUseDao;
+
+    /**
+     * <p>A <code>ProjectTermsOfUseDao</code> providing the access to project terms of use persistence.</p>
+     *
+     * @since 1.9
+     */
+    private ProjectTermsOfUseDao projectTermsOfUseDao;
+
+    /**
+     * <p>A <code>TermsOfUseDao</code> providing the access to terms of use persistence.</p>
+     *
+     * @since 1.9
+     */
+    private TermsOfUseDao termsOfUseDao;
 
     /**
      * <p>
@@ -575,6 +610,98 @@ public class ManagerCreationHelper implements ManagersProvider {
         }
         return reviewManager;
     }
+
+    /**
+     * <p>Gets the access to user terms of use persistence.</p>
+     *
+     * @return a <code>UserTermsOfUseDao</code> providing the access to user terms of use persistence.
+     * @since 1.9
+     */
+    public UserTermsOfUseDao getUserTermsOfUseDao() {
+        if (this.userTermsOfUseDao == null) {
+            try {
+                String namespace = Constants.USER_TERMS_DAO_NAMESPACE;
+                ConfigurationObject configurationObject =
+                    new ConfigurationFileManager(Constants.CONFIG_MANAGER_FILE).getConfiguration(namespace).getChild(namespace);
+                this.userTermsOfUseDao = new UserTermsOfUseDaoImpl(configurationObject);
+            } catch (ConfigurationAccessException e) {
+                throw new ManagerCreationException("Exception occurred while creating the user terms of use dao.", e);
+            } catch (UnrecognizedNamespaceException e) {
+                throw new ManagerCreationException("Exception occurred while creating the user terms of use dao.", e);
+            } catch (IOException e) {
+                throw new ManagerCreationException("Exception occurred while creating the user terms of use dao.", e);
+            } catch (ConfigurationParserException e) {
+                throw new ManagerCreationException("Exception occurred while creating the user terms of use dao.", e);
+            } catch (NamespaceConflictException e) {
+                throw new ManagerCreationException("Exception occurred while creating the user terms of use dao.", e);
+            } catch (UnrecognizedFileTypeException e) {
+                throw new ManagerCreationException("Exception occurred while creating the user terms of use dao.", e);
+            }
+        }
+        return this.userTermsOfUseDao;
+    }
+
+    /**
+     * <p>Gets the access to project terms of use persistence.</p>
+     *
+     * @return a <code>ProjectTermsOfUseDao</code> providing the access to project terms of use persistence.
+     * @since 1.9
+     */
+    public ProjectTermsOfUseDao getProjectTermsOfUseDao() {
+        if (this.projectTermsOfUseDao == null) {
+            try {
+                String namespace = Constants.PROJECT_TERMS_DAO_NAMESPACE;
+                ConfigurationObject configurationObject =
+                    new ConfigurationFileManager(Constants.CONFIG_MANAGER_FILE).getConfiguration(namespace).getChild(namespace);
+                this.projectTermsOfUseDao = new ProjectTermsOfUseDaoImpl(configurationObject);
+            } catch (ConfigurationAccessException e) {
+                throw new ManagerCreationException("Exception occurred while creating the project terms of use dao.", e);
+            } catch (UnrecognizedNamespaceException e) {
+                throw new ManagerCreationException("Exception occurred while creating the project terms of use dao.", e);
+            } catch (IOException e) {
+                throw new ManagerCreationException("Exception occurred while creating the project terms of use dao.", e);
+            } catch (ConfigurationParserException e) {
+                throw new ManagerCreationException("Exception occurred while creating the project terms of use dao.", e);
+            } catch (NamespaceConflictException e) {
+                throw new ManagerCreationException("Exception occurred while creating the project terms of use dao.", e);
+            } catch (UnrecognizedFileTypeException e) {
+                throw new ManagerCreationException("Exception occurred while creating the project terms of use dao.", e);
+            }
+        }
+        return this.projectTermsOfUseDao;
+    }
+
+    /**
+     * <p>Gets the access to terms of use persistence.</p>
+     *
+     * @return a <code>TermsOfUseDao</code> providing the access to project terms of use persistence.
+     * @since 1.9
+     */
+    public TermsOfUseDao getTermsOfUseDao() {
+        if (this.termsOfUseDao == null) {
+            try {
+                String namespace = Constants.TERMS_DAO_NAMESPACE;
+                ConfigurationObject configurationObject =
+                    new ConfigurationFileManager(Constants.CONFIG_MANAGER_FILE).getConfiguration(namespace)
+                        .getChild(namespace);
+                this.termsOfUseDao = new TermsOfUseDaoImpl(configurationObject);
+            } catch (ConfigurationAccessException e) {
+                throw new ManagerCreationException("Exception occurred while creating the terms of use dao.", e);
+            } catch (UnrecognizedNamespaceException e) {
+                throw new ManagerCreationException("Exception occurred while creating the terms of use dao.", e);
+            } catch (IOException e) {
+                throw new ManagerCreationException("Exception occurred while creating the terms of use dao.", e);
+            } catch (ConfigurationParserException e) {
+                throw new ManagerCreationException("Exception occurred while creating the terms of use dao.", e);
+            } catch (NamespaceConflictException e) {
+                throw new ManagerCreationException("Exception occurred while creating the terms of use dao.", e);
+            } catch (UnrecognizedFileTypeException e) {
+                throw new ManagerCreationException("Exception occurred while creating the terms of use dao.", e);
+            }
+        }
+        return this.termsOfUseDao;
+    }
+    
 
     /**
      * Sets the searchable fields to the search bundle.

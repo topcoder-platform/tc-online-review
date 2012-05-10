@@ -581,6 +581,26 @@
         ========== Configuration for Online Review Phases component ==========
     -->
     <Config name="com.cronos.onlinereview.phases.ManagerHelper">
+        <Property name="ConfigurationManagerFile">
+            <Value>com/topcoder/util/config/ConfigManager.properties</Value>
+        </Property>
+        <Property name="UserTermsOfUseDao">
+            <Property name="ClassName">
+                <Value>com.cronos.termsofuse.dao.impl.UserTermsOfUseDaoImpl</Value>
+            </Property>
+            <Property name="Namespace">
+                <Value>com.cronos.termsofuse.dao.UserTermsOfUseDao</Value>
+            </Property>
+        </Property>
+        <Property name="ProjectTermsOfUseDao">
+            <Property name="ClassName">
+                <Value>com.cronos.termsofuse.dao.impl.ProjectTermsOfUseDaoImpl</Value>
+            </Property>
+            <Property name="Namespace">
+                <Value>com.cronos.termsofuse.dao.ProjectTermsOfUseDao</Value>
+            </Property>
+        </Property>
+
         <Property name="ProjectDetailsURL">
             <Value>https://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
         </Property>

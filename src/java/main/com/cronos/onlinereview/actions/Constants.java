@@ -1456,6 +1456,34 @@ public class Constants {
      */
     public static final String CONTEST_PRIZE_TYPE_NAME = "Contest Prize";
     
+	/**
+ 	 * <p>A <code>String</code> providing the path to configuration file for Config Manager.</p>
+ 	 * 
+ 	 * @since 1.8.3
+ 	 */
+	public static final String CONFIG_MANAGER_FILE = "com/topcoder/util/config/ConfigManager.properties";
+
+    /**
+     * <p>A <code>String</code> providing the configuration namespace for User Terms Of Use DAO.</p>
+     *
+     * @since 1.8.3
+     */
+    public static final String USER_TERMS_DAO_NAMESPACE = "com.cronos.termsofuse.dao.UserTermsOfUseDao";
+
+    /**
+     * <p>A <code>String</code> providing the configuration namespace for Project Terms Of Use DAO.</p>
+     *
+     * @since 1.8.3
+     */
+    public static final String PROJECT_TERMS_DAO_NAMESPACE = "com.cronos.termsofuse.dao.ProjectTermsOfUseDao";
+
+    /**
+     * <p>A <code>String</code> providing the configuration namespace for Terms Of Use DAO.</p>
+     *
+     * @since 1.8.3
+     */
+    public static final String TERMS_DAO_NAMESPACE = "com.cronos.termsofuse.dao.TermsOfUseDao";
+
 
     // Hidden constructor
 

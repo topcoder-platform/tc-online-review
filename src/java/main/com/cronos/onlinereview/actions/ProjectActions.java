@@ -45,6 +45,10 @@ import javax.ejb.EJBException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
+import com.cronos.termsofuse.dao.TermsOfUsePersistenceException;
+import com.cronos.termsofuse.dao.UserTermsOfUseDao;
+import com.cronos.termsofuse.model.TermsOfUse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -102,11 +106,7 @@ import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityVali
 import com.topcoder.shared.util.DBMS;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.web.common.RowNotFoundException;
-import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
-import com.topcoder.web.ejb.termsofuse.TermsOfUse;
-import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
 import com.topcoder.web.ejb.user.UserPreference;
-import com.topcoder.web.ejb.user.UserTermsOfUse;
 
 /**
  * This class contains Struts Actions that are meant to deal with Projects. There are following
@@ -1109,13 +1109,12 @@ public class ProjectActions extends DispatchAction {
      * @since 1.1
      */
     private void generateProjectRoleTermsOfUseAssociations(long projectId, long projectTypeId, boolean categoryChanged)
-        throws RemoteException, EJBException {
+        throws RemoteException, EJBException, TermsOfUsePersistenceException {
 
-        ProjectRoleTermsOfUse projectRoleTermsOfUse = EJBLibraryServicesLocator.getProjectRoleTermsOfUseService();
+        ProjectTermsOfUseDao projectRoleTermsOfUse = ActionsHelper.getProjectTermsOfUseDao();
 
         if (categoryChanged) {
-            projectRoleTermsOfUse.removeAllProjectRoleTermsOfUse(new Long(projectId).intValue(),
-                    DBMS.COMMON_OLTP_DATASOURCE_NAME);
+            projectRoleTermsOfUse.removeAllProjectRoleTermsOfUse((int) projectId);
         }
 
         // get configurations to create the associations
@@ -1124,8 +1123,8 @@ public class ProjectActions extends DispatchAction {
         long reviewerTermsId = ConfigHelper.getReviewerTermsId();
 
         // create ProjectRoleTermsOfUse default associations
-        projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-                submitterRoleId, submitterTermsId, DEFAULT_TERMS_SORT_ORDER, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+        projectRoleTermsOfUse.createProjectRoleTermsOfUse((int) projectId,
+                submitterRoleId, submitterTermsId, DEFAULT_TERMS_SORT_ORDER, 1);
 
         if (projectTypeId == DEVELOPMENT_PROJECT_TYPE_ID) {
             // if it's a development project there are several reviewer roles
@@ -1134,21 +1133,21 @@ public class ProjectActions extends DispatchAction {
             int failureReviewerRoleId = ConfigHelper.getFailureReviewerRoleId();
             int stressReviewerRoleId = ConfigHelper.getStressReviewerRoleId();
 
-            projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-                    accuracyReviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+            projectRoleTermsOfUse.createProjectRoleTermsOfUse((int) projectId,
+                    accuracyReviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, 2);
 
-            projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-                    failureReviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+            projectRoleTermsOfUse.createProjectRoleTermsOfUse((int) projectId,
+                    failureReviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, 3);
 
-            projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-                    stressReviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+            projectRoleTermsOfUse.createProjectRoleTermsOfUse((int) projectId,
+                    stressReviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, 4);
         } else {
             // if it's not development there is a single reviewer role
 
             int reviewerRoleId = ConfigHelper.getReviewerRoleId();
 
-            projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-                    reviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+            projectRoleTermsOfUse.createProjectRoleTermsOfUse((int) projectId,
+                    reviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, 2);
         }
 
         // also add terms for the rest of the reviewer roles
@@ -1156,12 +1155,12 @@ public class ProjectActions extends DispatchAction {
         int aggregatorRoleId = ConfigHelper.getAggregatorRoleId();
         int finalReviewerRoleId = ConfigHelper.getFinalReviewerRoleId();
 
-        projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-                primaryScreenerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, DBMS.COMMON_OLTP_DATASOURCE_NAME);
-        projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-                aggregatorRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, DBMS.COMMON_OLTP_DATASOURCE_NAME);
-        projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-                finalReviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+        projectRoleTermsOfUse.createProjectRoleTermsOfUse((int) projectId,
+                primaryScreenerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, 5);
+        projectRoleTermsOfUse.createProjectRoleTermsOfUse((int) projectId,
+                aggregatorRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, 6);
+        projectRoleTermsOfUse.createProjectRoleTermsOfUse((int) projectId,
+                finalReviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, 7);
     }
 
 
@@ -2499,51 +2498,64 @@ public class ProjectActions extends DispatchAction {
             Project project, UserRetrieval userRetrieval, String[] resourceNames)
             throws RemoteException, EJBException, BaseException {
 
-        boolean allResourcesValid = true;
+		        boolean allResourcesValid = true;
 
-        // get remote services
-        ProjectRoleTermsOfUse projectRoleTermsOfUse
-            = EJBLibraryServicesLocator.getProjectRoleTermsOfUseService();
-        UserTermsOfUse userTermsOfUse = EJBLibraryServicesLocator.getUserTermsOfUseService();
-        TermsOfUse termsOfUse = EJBLibraryServicesLocator.getTermsOfUseService();
+		        // get remote services
+		        // check if the user agreed to all terms of use
+		        ProjectTermsOfUseDao projectTermsOfUseDao = ActionsHelper.getProjectTermsOfUseDao();
+		        UserTermsOfUseDao userTermsOfUseDao = ActionsHelper.getUserTermsOfUseDao();
 
-        // validate that new resources have agreed to the necessary terms of use
-        // 0-index resource is skipped as it is a "dummy" one
-        for (int i = 1; i < resourceNames.length; i++) {
-            if (resourceNames[i] != null && resourceNames[i].trim().length() > 0) {
-                ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
-                String resourceAction = (String) lazyForm.get("resources_action", i);
-                // check for additions or modifications
-                if (!"delete".equals(resourceAction)) {
-                    long roleId = (Long) lazyForm.get("resources_role", i);
-                    long userId = user.getId();
+		        // validate that new resources have agreed to the necessary terms of use
+		        // 0-index resource is skipped as it is a "dummy" one
+		        for (int i = 1; i < resourceNames.length; i++) {
+		            if (resourceNames[i] != null && resourceNames[i].trim().length() > 0) {
+		                ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
+		                String resourceAction = (String) lazyForm.get("resources_action", i);
+		                // check for additions or modifications
+		                if (!"delete".equals(resourceAction)) {
+		                    long roleId = (Long) lazyForm.get("resources_role", i);
+		                    long userId = user.getId();
 
-                    List<Long>[] necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(new Long(project.getId()).intValue(),
-                            new int[] {new Long(roleId).intValue()}, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+		                    Map<Integer, List<TermsOfUse>> necessaryTerms =
+		                        projectTermsOfUseDao.getTermsOfUse((int) project.getId(), (int) roleId, null);
 
-                    for (List<Long> necessaryTerm : necessaryTerms) {
-                        if (necessaryTerm != null) {
-                            for (Long termsId : necessaryTerm) {
-                                // check if the user has this terms
-                                if (!userTermsOfUse.hasTermsOfUse(userId, termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME)) {
-                                    // get missing terms of use title
-                                    TermsOfUseEntity terms = termsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+		                    if (necessaryTerms != null && !necessaryTerms.isEmpty()) {
+		                        boolean hasGroupWithAllTermsAccepted = false;
+		                        StringBuilder b = new StringBuilder();
+		                        for (Integer groupId : necessaryTerms.keySet()) {
+		                            b.append("Group " + groupId + ":<br/>");
+		                            boolean hasNonAcceptedTermsForGroup = false;
+		                            List<TermsOfUse> groupTermsOfUse = necessaryTerms.get(groupId);
+		                            for (TermsOfUse terms : groupTermsOfUse) {
+		                                long termsId = terms.getTermsOfUseId();
+		                                // check if the user has this terms
+		                                if (!userTermsOfUseDao.hasTermsOfUse(userId, termsId)) {
+		                                    hasNonAcceptedTermsForGroup = true;
+		                                    b.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;").append(terms.getTitle()).append("<br/>");
+		                                } else {
+		                                    b.append("&nbsp;&nbsp;<img src='/i/checkmark.jpg'/>").append(terms.getTitle()).append("<br/>");
+		                                }
+		                            }
+		                            if (!hasNonAcceptedTermsForGroup) {
+		                                hasGroupWithAllTermsAccepted = true;
+		                                break; // User has at least one terms group with all terms from that group accepted
+		                                // so there is no need to check other terms of use groups
+		                            }
+		                        }
+		                        if (!hasGroupWithAllTermsAccepted) {
+		                            ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+		                                                            new ActionMessage(
+		                                                                "error.com.cronos.onlinereview.actions.editProject.Resource.MissingGroupTerms",
+		                                                                b.toString()));
+		                            allResourcesValid = false;
 
-                                    // add the error
-                                    ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
-                                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.Resource.MissingTerms",
-                                                    terms.getTitle()));
+		                        }
+		                    }
+		                }
+		            }
+		        }
 
-                                    allResourcesValid = false;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return allResourcesValid;
+		        return allResourcesValid;
     }
 
     /**

@@ -37,6 +37,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.cronos.onlinereview.dataaccess.CatalogDataAccess;
 import com.cronos.onlinereview.ejblibrary.SpringContextProvider;
+import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
+import com.cronos.termsofuse.dao.TermsOfUseDao;
+import com.cronos.termsofuse.dao.TermsOfUsePersistenceException;
+import com.cronos.termsofuse.dao.UserTermsOfUseDao;
+import com.cronos.termsofuse.model.TermsOfUse;
 import com.topcoder.dde.catalog.ComponentVersionInfo;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -62,14 +67,9 @@ import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
-import com.topcoder.shared.util.DBMS;
 import com.topcoder.util.distribution.DistributionTool;
 import com.topcoder.util.distribution.DistributionToolException;
 import com.topcoder.util.errorhandling.BaseException;
-import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
-import com.topcoder.web.ejb.termsofuse.TermsOfUse;
-import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
-import com.topcoder.web.ejb.user.UserTermsOfUse;
 
 /**
  * <p>A <code>Struts</code> action to be used for handling requests related to <code>Project Management Console</code>
@@ -1379,10 +1379,10 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
                         // Verify if resource has accepted all necessary terms of use for project
                         Long userId = users.get(handle).getId();
-                        List<TermsOfUseEntity> pendingTerms
+                        List<TermsOfUse> pendingTerms
                             = validateResourceTermsOfUse(project.getId(), userId, resourceRoleId);
                         if (!pendingTerms.isEmpty()) {
-                            for (TermsOfUseEntity terms : pendingTerms) {
+                            for (TermsOfUse terms : pendingTerms) {
                                 usersWithPendingTerms.get(resourceRoleId).add(handle);
                                 ActionsHelper.addErrorToRequest(request, "resource_handles[" + i + "]",
                                         new ActionMessage("error.com.cronos.onlinereview.actions."
@@ -1664,30 +1664,27 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      *         necessary terms of use are accepted.
      * @throws RemoteException if any errors occur during EJB remote invocation.
      */
-    private List<TermsOfUseEntity> validateResourceTermsOfUse(long projectId, long userId, long roleId)
-        throws RemoteException {
+    private List<TermsOfUse> validateResourceTermsOfUse(long projectId, long userId, long roleId)
+        throws RemoteException, TermsOfUsePersistenceException {
 
-        List<TermsOfUseEntity> unAcceptedTerms = new ArrayList<TermsOfUseEntity>();
+        List<TermsOfUse> unAcceptedTerms = new ArrayList<TermsOfUse>();
 
         // get remote services
-        ProjectRoleTermsOfUse projectRoleTermsOfUse = EJBLibraryServicesLocator.getProjectRoleTermsOfUseService();
-        UserTermsOfUse userTermsOfUse = EJBLibraryServicesLocator.getUserTermsOfUseService();
-        TermsOfUse termsOfUse = EJBLibraryServicesLocator.getTermsOfUseService();
+        ProjectTermsOfUseDao projectRoleTermsOfUse = ActionsHelper.getProjectTermsOfUseDao();
+        UserTermsOfUseDao userTermsOfUse = ActionsHelper.getUserTermsOfUseDao();
+        TermsOfUseDao termsOfUse = ActionsHelper.getTermsOfUseDao();
 
-        List<Long>[] necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(
-            (int) projectId, new int[]{new Long(roleId).intValue()}, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+        Map<Integer, List<TermsOfUse>> necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(
+            (int) projectId, (int) roleId, null);
 
-        for (List<Long> necessaryTerm : necessaryTerms) {
-            if (necessaryTerm != null) {
-                for (Long termsId : necessaryTerm) {
-                    if (!userTermsOfUse.hasTermsOfUse(userId, termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME)) {
-                        TermsOfUseEntity terms = termsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
-                        unAcceptedTerms.add(terms);
-                    }
+        for (List<TermsOfUse> t : necessaryTerms.values()) {
+            for (TermsOfUse necessaryTerm : t) {
+                long termsId = necessaryTerm.getTermsOfUseId();
+                if (!userTermsOfUse.hasTermsOfUse(userId, termsId)) {
+                    unAcceptedTerms.add(necessaryTerm);
                 }
             }
         }
-
         return unAcceptedTerms;
     }
 

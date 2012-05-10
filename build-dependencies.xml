@@ -31,15 +31,16 @@
     <property name="job_scheduling.jar.name" value="job_scheduling.jar"/>
     <property name="job_scheduling.path" value="job_scheduling/${job_scheduling.version}"/>
     <property name="job_scheduling.jar" value="${tcs_libdir}/${job_scheduling.path}/${job_scheduling.jar.name}"/>
-    
+        
+    <property name="terms_of_use.version" value="1.1.0" />
+    <property name="terms_of_use.jar.name" value="terms_of_use.jar" />
+    <property name="terms_of_use.path" value="terms_of_use/${terms_of_use.version}" />
+    <property name="terms_of_use.jar" value="${tcs_libdir}/${terms_of_use.path}/${terms_of_use.jar.name}" />
+
     <!-- TCS Dependencies - non-versioned -->
     <property name="projectEJB.path" value="project_ejb"/>
     <property name="projectEJB.jar.name" value="Project.jar"/>
     <property name="projectEJB.jar" value="${tcs_libdir}/${projectEJB.path}/${projectEJB.jar.name}"/>
-
-    <property name="termsOfUseEJB.path" value="terms_of_use_ejb"/>
-    <property name="termsOfUseEJB.jar.name" value="TermsOfUse.jar"/>
-    <property name="termsOfUseEJB.jar" value="${tcs_libdir}/${termsOfUseEJB.path}/${termsOfUseEJB.jar.name}"/>
 
     <property name="userEJB.path" value="user_ejb"/>
     <property name="userEJB.jar.name" value="User.jar"/>
@@ -130,7 +131,6 @@
         <pathelement location="${shared.jar}"/>
         <pathelement location="${tcwebcommon.jar}"/>
         <pathelement location="${projectEJB.jar}"/>
-        <pathelement location="${termsOfUseEJB.jar}"/>
         <pathelement location="${userEJB.jar}"/>
         <pathelement location="${securityEJB.jar}"/>
         <pathelement location="${tcIdGenerator.jar}"/>
@@ -141,6 +141,7 @@
         <pathelement location="${log4j.jar}" />
         <pathelement location="${ldapjdk.jar}" />
         <pathelement location="${jaf.jar}" />
+        <pathelement location="${terms_of_use.jar}" />
         <path refid="spring_libs"/>
     </path>
 
