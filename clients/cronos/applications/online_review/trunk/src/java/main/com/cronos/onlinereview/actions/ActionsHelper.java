@@ -1344,12 +1344,13 @@ public class ActionsHelper {
                 // Get a name of status of this phase
                 String phaseStatus = phase.getPhaseStatus().getName();
                 // If the phase found that is not yet open, stop the search
-                if (phaseStatus.equals(PhaseStatus.SCHEDULED.getName())) {
+                /*if (phaseFound != null && phaseStatus.equals(PhaseStatus.SCHEDULED.getName())) {
                     break;
-                }
+                }*/
+				
                 // If the name of the current phase matches the one
                 // specified by method's parameter, remember this phase
-                if (phase.getPhaseType().getName().equalsIgnoreCase(phaseName)) {
+                if (!phaseStatus.equals(PhaseStatus.SCHEDULED.getName()) && phase.getPhaseType().getName().equalsIgnoreCase(phaseName)) {
                     phaseFound = phase;
                 }
             }
