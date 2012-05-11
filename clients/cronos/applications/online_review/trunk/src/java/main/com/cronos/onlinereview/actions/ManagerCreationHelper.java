@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007-2012 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
