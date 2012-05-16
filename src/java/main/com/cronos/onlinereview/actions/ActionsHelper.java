@@ -4285,16 +4285,23 @@ public class ActionsHelper {
 		
 		if (review != null && review.getAllItems() != null) {
 			for (Item item : review.getAllItems()) {
-				Map<Long, Comment> comments = new HashMap<Long, Comment>();
+                List<Comment> appeals = new ArrayList<Comment>();
 				for (Comment comment : item.getAllComments()) {
-					comments.put(comment.getId(), comment);
+                    if (comment.getCommentType().getName().equals("Appeal")) {
+                        appeals.add(comment);
+                    }
 				}
+                int ind = 0;
 				for (Comment comment : item.getAllComments()) {
 					if (comment.getCommentType().getName().equals("Appeal") && !myResourceIds.contains(comment.getAuthor())) {
 						item.removeComment(comment);
 					}
-					if (comment.getCommentType().getName().equals("Appeal Response") && !myResourceIds.contains(comment.getAuthor())) {
-					   item.removeComment(comment);
+					if (comment.getCommentType().getName().equals("Appeal Response")) {
+                        Comment correspondingAppeal = appeals.get(ind);
+                        ind++;
+                        if (!myResourceIds.contains(correspondingAppeal.getAuthor())) {
+                            item.removeComment(comment);
+                        }
 					}
 				}
 			}
