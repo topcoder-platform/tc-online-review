@@ -144,29 +144,31 @@
 			<td class="myRoleValues" width="37%" align="left" nowrap="nowrap">
 				<c:if test="${not empty outstandingDeliverables}">
 					<c:forEach items="${outstandingDeliverables}" var="deliverable" varStatus="deliverableStatus">
-						<c:set var="devrStatus" value="${outstandingDeliverableStatuses[deliverableStatus.index]}" />
-						<c:choose>
-							<c:when test="${deliverable.complete}">
-								<html:img src="/i/or/icon_authorization.gif" altKey="global.Completed" styleClass="Outline" />
-							</c:when>
-							<c:when test="${devrStatus == 1}">
-								<html:img src="/i/or/icon_notification.gif" altKey="global.DeadlineNear" styleClass="Outline" />
-							</c:when>
-							<c:when test="${devrStatus == 2}">
-								<html:img src="/i/or/icon_warning.gif" altKey="global.Late" styleClass="Outline" />
-							</c:when>
-						</c:choose>
-						${orfn:displayDate(pageContext.request, outstandingDeliverableDates[deliverableStatus.index])}
-						<c:if test="${not empty outstandingDeliverableUserIds[deliverableStatus.index]}">
-							<tc-webtag:handle coderId="${outstandingDeliverableUserIds[deliverableStatus.index]}" context="${orfn:getHandlerContext(pageContext.request)}" /><b>:</b>
-						</c:if>
-						<b><bean:message key='Deliverable.${fn:replace(deliverable.name, " ", "")}' /></b>
-						<c:if test="${not empty deliverable.submission}">
-							${deliverable.submission}
-							<c:if test="${(isManager) && (not empty outstandingDeliverableSubmissionUserIds[deliverableStatus.index])}">
-								(<tc-webtag:handle coderId="${outstandingDeliverableSubmissionUserIds[deliverableStatus.index]}" context="${orfn:getHandlerContext(pageContext.request)}" />)
+						<c:if test="${deliverable.id != 1}">
+							<c:set var="devrStatus" value="${outstandingDeliverableStatuses[deliverableStatus.index]}" />
+							<c:choose>
+								<c:when test="${deliverable.complete}">
+									<html:img src="/i/or/icon_authorization.gif" altKey="global.Completed" styleClass="Outline" />
+								</c:when>
+								<c:when test="${devrStatus == 1}">
+									<html:img src="/i/or/icon_notification.gif" altKey="global.DeadlineNear" styleClass="Outline" />
+								</c:when>
+								<c:when test="${devrStatus == 2}">
+									<html:img src="/i/or/icon_warning.gif" altKey="global.Late" styleClass="Outline" />
+								</c:when>
+							</c:choose>
+							${orfn:displayDate(pageContext.request, outstandingDeliverableDates[deliverableStatus.index])}
+							<c:if test="${not empty outstandingDeliverableUserIds[deliverableStatus.index]}">
+								<tc-webtag:handle coderId="${outstandingDeliverableUserIds[deliverableStatus.index]}" context="${orfn:getHandlerContext(pageContext.request)}" /><b>:</b>
 							</c:if>
-						</c:if><br />
+							<b><bean:message key='Deliverable.${fn:replace(deliverable.name, " ", "")}' /></b>
+							<c:if test="${not empty deliverable.submission}">
+								${deliverable.submission}
+								<c:if test="${(isManager) && (not empty outstandingDeliverableSubmissionUserIds[deliverableStatus.index])}">
+									(<tc-webtag:handle coderId="${outstandingDeliverableSubmissionUserIds[deliverableStatus.index]}" context="${orfn:getHandlerContext(pageContext.request)}" />)
+							</c:if>
+							</c:if><br />
+						</c:if>
 					</c:forEach>
 					<br/>
 				</c:if>
