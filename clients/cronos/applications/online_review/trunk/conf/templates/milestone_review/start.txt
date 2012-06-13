@@ -2,7 +2,7 @@
 %PHASE_TIMESTAMP{Phase timestamp}%<br/>
 Handle\: %USER_HANDLE{User handle}%<br/>
 Category\: %PROJECT_CATEGORY{Name of the track}%<br/>
-Contest\: <a href\="%OR_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
+Contest\: <a href\="https\://www.topcoder.com/direct/contest/detail?projectId\=%TC_DIRECT_PROJECT_ID%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
 This is the notification about %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.<br/>
 </p>
 
@@ -21,3 +21,7 @@ This is the notification about %PHASE_OPERATION{The phase operation - start/end}
 <td>%SUBMITTER_HANDLE%<td>%SUBMITTER_RELIABILITY%<td>%SUBMITTER_RATING%
 %endloop%
 </table>
+
+<p>
+Click <a href\="https\://www.topcoder.com/direct/dashboardNotifications">here</a> to change your notification settings.
+</p>

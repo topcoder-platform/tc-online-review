@@ -2,13 +2,13 @@
 %PHASE_TIMESTAMP{Phase timestamp}%<br/>
 Handle\: %USER_HANDLE{User handle}%<br/>
 Category\: %PROJECT_CATEGORY{Name of the track}%<br/>
-Contest\: <a href\="%OR_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
+Contest\: <a href\="https\://www.topcoder.com/direct/contest/detail?projectId\=%TC_DIRECT_PROJECT_ID%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
 This is the notification about %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.<br/>
 </p>
 
 %if:N_SUBMITTERS>'0'%
 <table border\="1">
-<caption style\="white-space\: nowrap">Members submitted for the project</caption>
+<caption style\="white-space\: nowrap">Members submitted for the contest</caption>
 <tr>
 <th>Handle<th>Reliability<th>Rating
 %loop:SUBMITTER%
@@ -23,3 +23,7 @@ This is the notification about %PHASE_OPERATION{The phase operation - start/end}
 <font color\="red"><b>There are no submissions!</b></font>
 </p>
 %endif%
+
+<p>
+Click <a href\="https\://www.topcoder.com/direct/dashboardNotifications">here</a> to change your notification settings.
+</p>
