@@ -63,7 +63,7 @@
     <component
         name="project_management"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/project_management/trunk"
-        revision="217560" />
+        revision="217565" />
 
     <component
         name="project_management_persistence"
