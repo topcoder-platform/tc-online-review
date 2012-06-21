@@ -1,13 +1,18 @@
+Hello %USER_HANDLE{User handle}%,
+
 <p>
-%PHASE_TIMESTAMP{Phase timestamp}%<br/>
-Handle\: %USER_HANDLE{User handle}%<br/>
-Category\: %PROJECT_CATEGORY{Name of the track}%<br/>
-Contest\: <a href\="https\://www.topcoder.com/direct/contest/detail?projectId\=%TC_DIRECT_PROJECT_ID%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
-This is the notification about %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.<br/>
+This is the notification about %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.
 </p>
 
 <p>
-The winner of this contest will now begin to work on their final fixes as required by the review board.  To see the details of the final fixes, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%TC_DIRECT_PROJECT_ID%">Cockpit</a> and click on the final fix scorecard. 
+Time\: %PHASE_TIMESTAMP{Phase timestamp}%<br/>
+Contest Type\: %PROJECT_CATEGORY{Name of the track}%<br/>
+Contest\: <a href\="https\://www.topcoder.com/direct/contest/detail?projectId\=%OR_PROJECT_ID%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
+Project\: <a href\="https\://www.topcoder.com/direct/projectOverview?formData.projectId\=%TC_DIRECT_PROJECT_ID%">%TC_DIRECT_PROJECT_NAME%</a><br/>
+</p>
+
+<p>
+The winner of this contest will now begin to work on their final fixes as required by the review board.  To see the details of the final fixes, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Cockpit</a> and click on the final fix scorecard. 
 </p>
 
 <p>
