@@ -1,7 +1,7 @@
 Hello %USER_HANDLE{User handle}%,
 
 <p>
-This is the notification about %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.
+This is the notification about the %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.
 </p>
 
 <p>
