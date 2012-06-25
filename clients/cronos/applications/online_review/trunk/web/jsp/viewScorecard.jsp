@@ -67,6 +67,8 @@
 
                     <h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
 
+                    <p><bean:message key="viewScorecard.MinimumPassingScore" />${orfn:htmlEncode(scorecardTemplate.minScore)}</p>
+
                     <c:set var="itemIdx" value="0" />
                     <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;" id="table2">
                         <c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
