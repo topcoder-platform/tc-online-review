@@ -337,13 +337,19 @@ public class Constants {
     public static final String GLOBAL_PAYMENT_MANAGER_ROLE_NAME = "Global Payment Manager";
 
     /**
+     * This member variable is a string constant that defines the name of the Admin role.
+     * This role is a logical one, i.e. there is no such role defined in the database.
+     */
+    public static final String ADMIN_ROLE_NAME = "Admin";
+
+    /**
      * This member variable is a constant array that holds names of different manager roles.
      *
      * @see #MANAGER_ROLE_NAME
      * @see #GLOBAL_MANAGER_ROLE_NAME
      */
     public static final String[] MANAGER_ROLE_NAMES = new String[] {MANAGER_ROLE_NAME, GLOBAL_MANAGER_ROLE_NAME,
-            COCKPIT_PROJECT_USER_ROLE_NAME};
+            COCKPIT_PROJECT_USER_ROLE_NAME, ADMIN_ROLE_NAME};
 
     /**
      * <p>This member variable is a string constant that defines the name of the <code>Client Manager</code>

@@ -662,6 +662,11 @@ public class ConfigHelper {
     private static final String RESOURCE_TABS_PROP_STRING = "ResourceTabs";
 
     /**
+     * <p>A <code>String</code> providing the name for configuration property listing the admin user IDs.</p>
+     */
+    private static final String ADMIN_USERS_PROP = "AdminUsers";
+
+    /**
      * This member variable holds the name of the session attribute which ID of the currently logged
      * in user will be stored in.
      */
@@ -1037,6 +1042,11 @@ public class ConfigHelper {
      * @since 1.8
      */
     private static Map<String, Set<String>> resourceTabs = new LinkedHashMap<String, Set<String>>();
+
+    /**
+     * <p>A <code>List</code> for the admin user IDs.</p>
+     */
+    private static List<Long> adminUsers = new ArrayList<Long>();
 
     static {
         // Obtaining the instance of Configuration Manager
@@ -1622,6 +1632,20 @@ public class ConfigHelper {
                     resourceTabs.put(strPropName, new HashSet<String>(Arrays.asList(resourceIds)));
                 }
             }
+
+            // Read the admin users property
+            String adminUsersProperty = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, ADMIN_USERS_PROP);
+            if (adminUsersProperty != null && adminUsersProperty.trim().length() != 0) {
+                String[] adminUserIDs = adminUsersProperty.split(",");
+                for(String adminUserID : adminUserIDs) {
+                    try {
+                        adminUsers.add(Long.parseLong(adminUserID.trim()));
+                    } catch (NumberFormatException nfe) {
+                        // don't do anything
+                    }
+                }
+            }
+            
         } catch (UnknownNamespaceException une) {
             // TODO: Add proper logging here
             System.out.println(une.getMessage());
@@ -2421,5 +2445,14 @@ public class ConfigHelper {
      */
     public static Map<String, Set<String>> getResourceTabs() {
         return resourceTabs;
+    }
+
+    /**
+     * Gets the list of the admin user IDs.
+     * 
+     * @return the list of the admin user IDs.
+     */
+    public static List<Long> getAdminUsers() {
+        return adminUsers;
     }
 }

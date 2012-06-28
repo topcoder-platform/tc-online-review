@@ -1389,6 +1389,8 @@ public class ActionsHelper {
      *         associated with the phase.
      * @param phase
      *            a phase to retrieve scorecard template from.
+     * @param useCache
+     *            whether to look for the cached scorecards
      * @throws IllegalArgumentException
      *             if any of the parameters are <code>null</code>.
      * @throws NumberFormatException
@@ -1396,7 +1398,7 @@ public class ActionsHelper {
      * @throws PersistenceException
      *             if an error occurred while accessing the database.
      */
-    public static Scorecard getScorecardTemplateForPhase(Phase phase)
+    public static Scorecard getScorecardTemplateForPhase(Phase phase, boolean useCache)
         throws NumberFormatException, PersistenceException {
         // Validate parameters
         validateParameterNotNull(phase, "phase");
@@ -1409,7 +1411,7 @@ public class ActionsHelper {
         }
 
         Long longScorecardId = Long.parseLong(scorecardId, 10);
-        if (!cachedScorecards.containsKey(longScorecardId)) {
+        if (!useCache || !cachedScorecards.containsKey(longScorecardId)) {
             Scorecard scorecard = createScorecardManager().getScorecard(longScorecardId);
             cachedScorecards.put(longScorecardId, scorecard);
         }

@@ -275,6 +275,13 @@ public class AuthorizationHelper {
 
         }
 
+        // Admin users are the super users that have all possible access.
+        if (ConfigHelper.getAdminUsers().contains(getLoggedInUserId(request))) {
+            roles.add(Constants.ADMIN_ROLE_NAME);
+            roles.add(Constants.GLOBAL_MANAGER_ROLE_NAME);
+            roles.add(Constants.GLOBAL_PAYMENT_MANAGER_ROLE_NAME);
+        }
+
         // Determine some common permissions
         request.setAttribute("isAllowedToCreateProject",
                 hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME));
