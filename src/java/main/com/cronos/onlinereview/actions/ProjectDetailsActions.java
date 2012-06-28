@@ -733,7 +733,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
             String phaseTypeName = phase.getPhaseType().getName();
             // Get a scorecard template associated with this phase if any
-            Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(phase);
+            Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(phase, true);
             // If there is a scorecard template for the phase, store it in the list
             if (scorecardTemplate != null) {
                 // override the previous scorecard, here assume the phases are ordered sequentially.
@@ -1936,9 +1936,9 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Check that user has permissions to delete submission.
         boolean hasPermission = AuthorizationHelper.hasUserPermission(request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME);
-        // For Studio projects only Global Managers are authorized to advance submissions.
+        // For Studio projects only Admins are authorized to advance submissions.
         if (ActionsHelper.isStudioProject(project)) {
-            hasPermission = hasPermission && AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME);
+            hasPermission = hasPermission && AuthorizationHelper.hasUserRole(request, Constants.ADMIN_ROLE_NAME);
         }
 
         if (!hasPermission) {

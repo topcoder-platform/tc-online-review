@@ -5088,6 +5088,10 @@
             </Property>
         </Property>
 
+        <Property name="AdminUsers">
+            <Value>@adminUsers@</Value>
+        </Property>
+
     </Config>
 
     <!--

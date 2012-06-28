@@ -3042,7 +3042,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Retrieve a scorecard template for the Review phase
-        Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(phase);
+        Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(phase, false);
         // Get the count of questions in the current scorecard
         final int questionsCount = ActionsHelper.getScorecardQuestionsCount(scorecardTemplate);
 
@@ -3771,7 +3771,7 @@ public class ProjectReviewActions extends DispatchAction {
             myResource = ActionsHelper.getMyResourceForPhase(request, phase);
         }
         // Retrieve a scorecard template for the appropriate phase
-        Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(phase);
+        Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(phase, false);
 
         /*
          * Verify that the user is not trying to create review that already exists
@@ -4179,7 +4179,7 @@ public class ProjectReviewActions extends DispatchAction {
              */
 
             // Retrieve a scorecard template for the appropriate phase
-            scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(phase);
+            scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(phase, false);
 
             // Prepare filters
             Filter filterResource = new EqualToFilter("reviewer", myResource.getId());
