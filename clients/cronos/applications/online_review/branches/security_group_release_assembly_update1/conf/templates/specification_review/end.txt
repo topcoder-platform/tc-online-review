@@ -1,0 +1,21 @@
+Hello %USER_HANDLE{User handle}%,
+
+<p>
+This is the notification about the %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.
+</p>
+
+<p>
+Time\: %PHASE_TIMESTAMP{Phase timestamp}%<br/>
+Contest Type\: %PROJECT_CATEGORY{Name of the track}%<br/>
+Contest\: <a href\="https\://www.topcoder.com/direct/contest/detail?projectId\=%OR_PROJECT_ID%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
+Project\: <a href\="https\://www.topcoder.com/direct/projectOverview?formData.projectId\=%TC_DIRECT_PROJECT_ID%">%TC_DIRECT_PROJECT_NAME%</a><br/>
+</p>
+
+<p>
+The Specification is %RESULT%!<br/>
+Please return to <a href\="https\://www.topcoder.com/direct/contest/detail?projectId\=%OR_PROJECT_ID%">Cockpit</a> to review details.
+</p>
+
+<p>
+Click <a href\="https\://www.topcoder.com/direct/dashboardNotifications">here</a> to change your notification settings.
+</p>
