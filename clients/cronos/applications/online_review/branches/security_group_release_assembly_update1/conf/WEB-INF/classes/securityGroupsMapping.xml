@@ -51,9 +51,11 @@
     </class>
 
     <class name="DirectProject" table="group_associated_direct_projects">
-    	<id name="id" column="tc_direct_project_id" type="long">
-            <generator class="assigned" />
-    	</id>
+        <id name="id" column="group_direct_project_id" type="long">
+            <generator class="increment"/>
+        </id>
+        <property name="directProjectId" column="tc_direct_project_id" type="long"/>
+        <many-to-one name="group" column="group_id" class="Group" lazy="false"/>
     </class>
 
     <class name="Group" table="security_group">
