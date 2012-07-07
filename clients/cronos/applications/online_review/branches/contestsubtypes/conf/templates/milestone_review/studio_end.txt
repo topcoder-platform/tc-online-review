@@ -1,0 +1,9 @@
+<p>
+%PHASE_TIMESTAMP{Phase timestamp}%<br/>
+Handle\: %USER_HANDLE{User handle}%<br/>
+Category\: %PROJECT_CATEGORY{Name of the track}%<br/>
+Contest\: <a href\="%STUDIO_LINK%">%PROJECT_NAME{Project name}%</a><br/>
+This notification is about %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase Type}% phase. <br/>
+The contest holder has selected milestone winners and has left feedback for Round 2. Please visit the <a href\="%STUDIO_LINK%">Contest Details</a> 
+page and click on the "Milestone" tab to see the results.
+</p>
