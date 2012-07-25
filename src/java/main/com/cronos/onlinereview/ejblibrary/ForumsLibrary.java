@@ -392,4 +392,10 @@ public class ForumsLibrary extends BaseEJBLibrary implements Forums {
                     RemoteException, Exception {
         return bean.createTopCoderDirectProjectForums(projectName, tcDirectProjectTypeId);
     }
+	
+
+    public long postThreadToQuestionForum(long categoryId, String subject, String body, long userId) throws EJBException, RemoteException, Exception
+	{
+		return bean.postThreadToQuestionForum(categoryId, subject, body, userId );
+	}
 }
