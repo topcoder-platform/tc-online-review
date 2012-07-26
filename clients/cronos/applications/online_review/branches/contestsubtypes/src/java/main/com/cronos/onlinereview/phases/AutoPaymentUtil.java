@@ -58,8 +58,17 @@ import com.topcoder.web.common.model.SoftwareComponent;
  *     <li>Updated to handle new review process phases.</li>
  *   </ol>
  * </p>
+ *
+ * <p>
+ * Version 1.8 (Release Assembly - TopCoder Assembly Track Subtypes Integration Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #populateReviewerPayments(long, Connection, int)} method to support newly added assembly track
+ *     subtypes.</li>
+ *   </ol>
+ * </p>
+ * 
  * @author George1, brain_cn, pulky, Blues, FireIce, VolodymyrK, TCSASSEMBLER
- * @version 1.7
+ * @version 1.8
  */
 public class AutoPaymentUtil {
         /**
@@ -206,7 +215,10 @@ public class AutoPaymentUtil {
         && projectCategoryId != 5     // Component Testing
         && projectCategoryId != 7     // Architecture
         && projectCategoryId != 9     // Bug Hunt
-        && projectCategoryId != 14    // Assembly
+        && projectCategoryId != 14    // Module Assembly
+        && projectCategoryId != 38    // Release Assembly
+        && projectCategoryId != 39    // System Assembly
+        && projectCategoryId != 40    // Prototype Assembly
         && projectCategoryId != 6     // Specification
         && projectCategoryId != 13    // Test Suites
         && projectCategoryId != 26    // Test Scenarios

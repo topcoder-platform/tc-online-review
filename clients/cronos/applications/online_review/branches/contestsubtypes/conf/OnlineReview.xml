@@ -828,8 +828,17 @@
         <Property name="Architecture">
             <Value>118</Value>
         </Property>
-        <Property name="Assembly">
+        <Property name="Module Assembly">
             <Value>125</Value>
+        </Property>
+        <Property name="Release Assembly">
+            <Value>149</Value>
+        </Property>
+        <Property name="System Assembly">
+            <Value>150</Value>
+        </Property>
+        <Property name="Prototype Assembly">
+            <Value>151</Value>
         </Property>
         <Property name="Test Suites">
             <Value>124</Value>
@@ -3648,6 +3657,38 @@
                 </Property>
             </Property>
             <Property name="Assembly Competition">
+                <Property name="IconSmall">
+                    <Value>IconAssemblySm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconAssembly.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Module Assembly">
+                <Property name="IconSmall">
+                    <Value>IconAssemblySm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconAssembly.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Release Assembly">
+                <Property name="IconSmall">
+                    <Value>IconAssemblySm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconAssembly.gif</Value>
+                </Property>
+            </Property>
+            <Property name="System Assembly">
+                <Property name="IconSmall">
+                    <Value>IconAssemblySm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconAssembly.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Prototype Assembly">
                 <Property name="IconSmall">
                     <Value>IconAssemblySm.gif</Value>
                 </Property>

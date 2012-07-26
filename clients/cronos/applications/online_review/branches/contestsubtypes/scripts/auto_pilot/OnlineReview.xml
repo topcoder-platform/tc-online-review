@@ -311,8 +311,17 @@
         <Property name="Architecture">
             <Value>118</Value>
         </Property>
-        <Property name="Assembly">
+        <Property name="Module Assembly">
             <Value>125</Value>
+        </Property>
+        <Property name="Release Assembly">
+            <Value>149</Value>
+        </Property>
+        <Property name="System Assembly">
+            <Value>150</Value>
+        </Property>
+        <Property name="Prototype Assembly">
+            <Value>151</Value>
         </Property>
         <Property name="Test Suites">
             <Value>124</Value>
