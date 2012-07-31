@@ -15,6 +15,8 @@ import com.topcoder.web.ejb.forums.ForumsUserComment;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 
 import javax.ejb.EJBException;
 
@@ -397,5 +399,18 @@ public class ForumsLibrary extends BaseEJBLibrary implements Forums {
     public long postThreadToQuestionForum(long categoryId, String subject, String body, long userId) throws EJBException, RemoteException, Exception
 	{
 		return bean.postThreadToQuestionForum(categoryId, subject, body, userId );
+	}
+	
+	
+
+    public long createTopCoderDirectProjectForums(String projectName, Long tcDirectProjectTypeId,
+            Map<String, String> forums) throws EJBException, RemoteException, Exception
+	{
+		return bean.createTopCoderDirectProjectForums(projectName, tcDirectProjectTypeId, forums);
+	}
+	
+	public void updateStudioForumName(long categoryID, String name) throws EJBException, RemoteException,Exception
+	{
+		bean.updateStudioForumName(categoryID, name);
 	}
 }
