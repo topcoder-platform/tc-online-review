@@ -53,7 +53,7 @@ public class TestHelper {
     /**
      * <p>Represents Browser type.</p>
      */
-    private static final String BROWSER = "*firefox /usr/lib64/firefox/firefox";
+    private static final String BROWSER = """*firefox /usr/lib64/firefox/firefox""";
 
     /**
      * <p>Represents base Index URL.</p>
