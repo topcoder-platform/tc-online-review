@@ -72,14 +72,6 @@
                         </ul>
                         <div style="clear:both;"></div>
                         <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
-                        <tr>
-                        <td class="title">
-                            <bean:message key="manageProject.TimelineResources.title"/>
-                        </td>
-                        </tr>
-                        <tr>
-                            <td class="lastRowTD"><!-- @ --></td>
-                        </tr>
                         <tr class="light">
                         <td>
                             <c:if test="${((empty param.activeTabIdx) || (param.activeTabIdx == 1))}">
@@ -233,11 +225,12 @@
 		                            </table><br />
 		                        </div>
 		
-		                        <div class="bottomButtonBar">
+		                        <div align="right">
 		                            <html:image property="savePMCChangesBtn" srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
 		                            <html:link
 		                                    page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
 		                                    srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
+                                            &nbsp;
 		                        </div>
 		                    </html:form>
                         </td>
@@ -258,14 +251,6 @@
 	                        </ul>
 	                        <div style="clear:both;"></div>
 	                        <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
-	                        <tr>
-		                        <td class="title">
-	                                <bean:message key="manageProject.Distributions.title"/>
-	                            </td>
-                            </tr>
-                            <tr>
-	                            <td class="lastRowTD"><!-- @ --></td>
-	                        </tr>
 	                        <tr class="light">
 	                        <td>
 	                           <c:if test="${param.activeTabIdx == 2}">
@@ -466,11 +451,11 @@
 	                                    <td class="lastRowTD" colspan="2"><!-- @ --></td>
 	                                </tr>
 	                            </table><br/>
-                                <div class="bottomButtonBar">
-                                   &nbsp;
+                                <div align="right">
                                    <html:link
                                            page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
                                            srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
+                                   &nbsp;
                                 </div>
 	                            </html:form>
 	                        </td>
