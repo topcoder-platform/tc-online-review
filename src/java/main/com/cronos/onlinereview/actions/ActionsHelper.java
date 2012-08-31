@@ -2185,7 +2185,7 @@ public class ActionsHelper {
 
         boolean anyOtherPhaseFound = false;
 
-        for (; i >= 0; --i) {
+        for (i = phases.length - 1; i >= 0; --i) {
             // Get a phase for the current iteration
             Phase phase = phases[i];
             String phaseName = phase.getPhaseType().getName();
