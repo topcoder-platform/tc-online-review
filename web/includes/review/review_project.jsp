@@ -15,7 +15,7 @@
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
-
+<c:set var="toPDF" value="${param.pdf eq 'true'}"/>
 <c:if test="${param.showFillScorecardLink}">
 <script language="javascript" type="text/javascript">
     <!--
@@ -108,7 +108,7 @@
     </c:if>
 </c:if>
 &#160;<b><bean:message key="editReview.Submission" /></b> ${sid}
-<c:if test="${not empty submitterId and reviewType ne 'Screening' and reviewType ne 'Review' and reviewType ne 'Milestone Screening' and reviewType ne 'Milestone Review' and reviewType ne 'SecondaryReview'}">
+<c:if test="${not empty submitterId and reviewType ne 'Screening' and reviewType ne 'Review' and reviewType ne 'Milestone Screening' and reviewType ne 'Milestone Review' and reviewType ne 'SecondaryReview' and not toPDF}">
 	(<tc-webtag:handle coderId="${submitterId}" context="${orfn:getHandlerContext(pageContext.request)}" />)
 </c:if>
 <br />
