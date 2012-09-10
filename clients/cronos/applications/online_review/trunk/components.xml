@@ -18,7 +18,7 @@
     <component
         name="late_deliverables_tracker"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/late_deliverables_tracker/trunk"
-        revision="209930" />
+        revision="219853" />
 
     <component
         name="late_deliverables_management"
