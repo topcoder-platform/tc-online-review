@@ -33,7 +33,7 @@
     <component
         name="online_review_ajax_support"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_ajax_support/trunk"
-        revision="215631" />
+        revision="219984" />
 
     <component
         name="online_review_login"
@@ -63,12 +63,12 @@
     <component
         name="project_management"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/project_management/trunk"
-        revision="217565" />
+        revision="219982" />
 
     <component
         name="project_management_persistence"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_management_persistence/trunk"
-        revision="217561" />
+        revision="219983" />
 
     <component
         name="project_phase_template"
