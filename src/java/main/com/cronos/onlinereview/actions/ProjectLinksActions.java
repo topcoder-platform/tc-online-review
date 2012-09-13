@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2009-2012 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -8,6 +8,7 @@ import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.topcoder.search.builder.filter.Filter;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -19,8 +20,6 @@ import com.topcoder.management.project.ProjectFilterUtility;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.link.ProjectLink;
 import com.topcoder.management.project.link.ProjectLinkManager;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.search.builder.filter.NotFilter;
 import com.topcoder.util.errorhandling.BaseException;
 
 /**
@@ -49,17 +48,11 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
- * @author BeBetter, isv
+ * @author BeBetter, isv, VolodymyrK
  * @version 1.2
  * @since OR Project Linking Assembly
  */
 public class ProjectLinksActions extends DispatchAction {
-    /**
-     * <p>
-     * Constant for "Deleted" status.
-     * </p>
-     */
-    private static final String STATUS_NAME_DELETED = "Deleted";
 
     /**
      * <p>
@@ -99,6 +92,8 @@ public class ProjectLinksActions extends DispatchAction {
             return verification.getForward();
         }
 
+        Project project = verification.getProject();
+
         // obtains the project link manager
         ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager();
 
@@ -108,11 +103,16 @@ public class ProjectLinksActions extends DispatchAction {
         // Obtain an instance of Project Manager
         ProjectManager manager = ActionsHelper.createProjectManager();
 
-        //Project[] allProjects = manager.searchProjects(filterStatus);
+        Project[] allProjects = null;
+        if (project.getTcDirectProjectId() > 0) {
+            Filter filter = ProjectFilterUtility.buildTCDirectProjectIDEqualFilter(project.getTcDirectProjectId());
+            allProjects = manager.searchProjects(filter);
 
-		Project[] allProjects = manager.getProjectsByCreateDate(90);
-        // Sort fetched projects. Currently sorting is done by projects' names only, in ascending order
-        Arrays.sort(allProjects, new Comparators.ProjectNameComparer());
+            // Sort fetched projects. Currently sorting is done by projects' names only, in ascending order
+            Arrays.sort(allProjects, new Comparators.ProjectNameComparer());
+        } else {
+            allProjects = new Project[0];
+        }
 
         // set up projects except for deleted ones
         request.setAttribute("allProjects", allProjects);
