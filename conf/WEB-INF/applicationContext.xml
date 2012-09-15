@@ -16,15 +16,8 @@
     <bean id="springContextProvider" class="com.cronos.onlinereview.ejblibrary.SpringContextProvider" 
           scope="singleton"/>
 
-    <bean id="userTermsOfUseLibrary" class="com.cronos.onlinereview.ejblibrary.UserTermsOfUseLibrary"
-          scope="singleton"/>
-          
     <bean id="userPreferencelibrary" class="com.cronos.onlinereview.ejblibrary.UserPreferencelibrary"
           scope="singleton"/>          
-
-    <bean id="termsOfUseLibrary" class="com.cronos.onlinereview.ejblibrary.TermsOfUseLibrary"/>
-
-    <bean id="projectRoleTermsOfUseLibrary" class="com.cronos.onlinereview.ejblibrary.ProjectRoleTermsOfUseLibrary"/>
 
     <bean id="loginLibrary" class="com.cronos.onlinereview.ejblibrary.LoginLibrary">
         <constructor-arg type="java.lang.Long" value="28"/>
