@@ -53,7 +53,7 @@ public class TestHelper {
     /**
      * <p>Represents Browser type.</p>
      */
-    private static final String BROWSER = "*firefox";
+    private static final String BROWSER = "browser";
 
     /**
      * <p>Represents base Index URL.</p>
