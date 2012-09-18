@@ -108,7 +108,7 @@
     </c:if>
 </c:if>
 &#160;<b><bean:message key="editReview.Submission" /></b> ${sid}
-<c:if test="${not empty submitterId and reviewType ne 'Screening' and reviewType ne 'Review' and reviewType ne 'Milestone Screening' and reviewType ne 'Milestone Review' and reviewType ne 'SecondaryReview' and not toPDF}">
+<c:if test="${not empty submitterId and reviewType ne 'Screening' and reviewType ne 'Review' and reviewType ne 'Milestone Screening' and reviewType ne 'Milestone Review' and reviewType ne 'SecondaryReview' and not toPDF and reviewType ne 'ReviewEvaluation'}">
 	(<tc-webtag:handle coderId="${submitterId}" context="${orfn:getHandlerContext(pageContext.request)}" />)
 </c:if>
 <br />
