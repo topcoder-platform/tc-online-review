@@ -53,8 +53,10 @@ import com.topcoder.configuration.persistence.ConfigurationParserException;
 import com.topcoder.configuration.persistence.NamespaceConflictException;
 import com.topcoder.configuration.persistence.UnrecognizedFileTypeException;
 import com.topcoder.configuration.persistence.UnrecognizedNamespaceException;
+import com.topcoder.db.connectionfactory.ConfigurationException;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
+import com.topcoder.db.connectionfactory.UnknownConnectionException;
 import com.topcoder.management.deliverable.DeliverableChecker;
 import com.topcoder.management.deliverable.DeliverableManager;
 import com.topcoder.management.deliverable.PersistenceDeliverableManager;
@@ -84,6 +86,9 @@ import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.resource.search.ResourceRoleFilterBuilder;
 import com.topcoder.management.review.DefaultReviewManager;
 import com.topcoder.management.review.ReviewManager;
+import com.topcoder.management.reviewfeedback.ReviewFeedbackManagementConfigurationException;
+import com.topcoder.management.reviewfeedback.ReviewFeedbackManager;
+import com.topcoder.management.reviewfeedback.impl.JDBCReviewFeedbackManager;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardManagerImpl;
 import com.topcoder.project.phases.PhaseType;
@@ -94,6 +99,7 @@ import com.topcoder.util.datavalidator.ObjectValidator;
 import com.topcoder.util.datavalidator.StringValidator;
 import com.topcoder.util.idgenerator.IDGenerator;
 import com.topcoder.util.idgenerator.IDGeneratorFactory;
+import com.topcoder.util.log.LogFactory;
 
 /**
  * <p>
@@ -168,9 +174,17 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  *     <code>Primary Review Appeals Response</code> phases.</li>
  *   </ol>
  * </p>
+ *
+ * <p>
+ * Version 1.10 (Review Feedback Integration Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #reviewFeedbackManager} property.</li>
+ *     <li>Added {@link #getReviewFeedbackManager()} method.</li>
+ *   </ol>
+ * </p>
  * 
  * @author evilisneo, BeBetter, isv, FireIce, VolodymyrK, rac_, flexme, lmmortal
- * @version 1.9
+ * @version 1.10
  */
 public class ManagerCreationHelper implements ManagersProvider {
 
@@ -194,6 +208,13 @@ public class ManagerCreationHelper implements ManagersProvider {
      */
     private static final long SUBMISSION_TYPE_MILESTONE = 3;
 
+    /**
+     * <p>A <code>String</code> providing the name of default connection to dataabase.</p>
+     * 
+     * @since 1.10
+     */
+    private static final String DEFAULT_DB_CONNECTION_NAME = "tcs";
+    
     /**
      * Used for caching the created manager. This instance has no registered phase handlers.
      */
@@ -271,6 +292,13 @@ public class ManagerCreationHelper implements ManagersProvider {
      * @since 1.9
      */
     private TermsOfUseDao termsOfUseDao;
+
+    /**
+     * <p>A <code>ReviewFeedbackManager</code> providing the interface to review feedback management system.</p>
+     * 
+     * @since 1.10
+     */
+    private ReviewFeedbackManager reviewFeedbackManager;
 
     /**
      * <p>
@@ -701,7 +729,32 @@ public class ManagerCreationHelper implements ManagersProvider {
         }
         return this.termsOfUseDao;
     }
-    
+
+    /**
+     * <p>Gets the interface to review feedback management system.</p>
+     *
+     * @return a <code>ReviewFeedbackManager</code> providing the interface to review feedback management system.
+     * @throws ManagerCreationException if any error occurs or obtained configuration object contains invalid 
+     *         configuration.
+     * @since 1.10
+     */
+    public ReviewFeedbackManager getReviewFeedbackManager() {
+        if (this.reviewFeedbackManager == null) {
+            try {
+                DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+                this.reviewFeedbackManager
+                    = new JDBCReviewFeedbackManager(dbconn, DEFAULT_DB_CONNECTION_NAME, 
+                                                    LogFactory.getLog(ReviewFeedbackManager.class.getPackage().getName()));
+            } catch (ReviewFeedbackManagementConfigurationException e) {
+                throw new ManagerCreationException("Exception occurred while creating the review feedback manager.", e);
+            } catch (ConfigurationException e) {
+                throw new ManagerCreationException("Exception occurred while creating the review feedback manager.", e);
+            } catch (UnknownConnectionException e) {
+                throw new ManagerCreationException("Exception occurred while creating the review feedback manager.", e);
+            }
+        }
+        return this.reviewFeedbackManager;
+    }
 
     /**
      * Sets the searchable fields to the search bundle.

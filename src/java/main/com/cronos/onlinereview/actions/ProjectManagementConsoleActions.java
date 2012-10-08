@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010-2012 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,13 +26,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 import java.util.Locale;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import javax.ejb.CreateException;
-import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -43,6 +43,18 @@ import com.cronos.termsofuse.dao.TermsOfUsePersistenceException;
 import com.cronos.termsofuse.dao.UserTermsOfUseDao;
 import com.cronos.termsofuse.model.TermsOfUse;
 import com.topcoder.dde.catalog.ComponentVersionInfo;
+import com.topcoder.management.review.ReviewManagementException;
+import com.topcoder.management.review.ReviewManager;
+import com.topcoder.management.review.data.Review;
+import com.topcoder.management.reviewfeedback.ReviewFeedback;
+import com.topcoder.management.reviewfeedback.ReviewFeedbackManager;
+import com.topcoder.management.scorecard.PersistenceException;
+import com.topcoder.search.builder.SearchBuilderException;
+import com.topcoder.search.builder.filter.AndFilter;
+import com.topcoder.search.builder.filter.EqualToFilter;
+import com.topcoder.search.builder.filter.Filter;
+import com.topcoder.search.builder.filter.InFilter;
+import com.topcoder.search.builder.filter.OrFilter;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -95,10 +107,28 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.3 (Review Feedback Integration Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #manageReviewFeedback(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} 
+ *     method.</li>
+ *     <li>Added {@link #initReviewFeedbackIntegration(HttpServletRequest, Project)} method.</li>
+ *   </ol>
+ * </p>
+ *
  * @author isv, romanoTC, rac_
- * @version 1.2
+ * @version 1.3
  */
 public class ProjectManagementConsoleActions extends DispatchAction {
+    
+    /**
+     * This member variable is a constant array that holds names of different reviewer roles.
+     * 
+     * @since 1.3
+     */
+    private static final String[] REVIEW_FEEDBACK_ELIGIBLE_ROLE_NAMES = new String[]{
+        Constants.REVIEWER_ROLE_NAME, Constants.ACCURACY_REVIEWER_ROLE_NAME, Constants.FAILURE_REVIEWER_ROLE_NAME,
+        Constants.STRESS_REVIEWER_ROLE_NAME};
 
     /**
      * <p>A <code>long</code> providing the constant value for single hour duration in milliseconds.</p>
@@ -1091,6 +1121,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                     distributionScript));
             }
         }
+        
+        // Initialize the Review Feedback area
+        initReviewFeedbackIntegration(request, project);
     }
 
     /**
@@ -1705,6 +1738,267 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         } catch (ContestEligibilityValidatorException e) {
             throw new BaseException(e);
         }
+    }
+
+    /**
+     * <p>Processes the incoming request for saving the review performance feedbacks for requested project.</p>
+     *
+     * @param mapping  an <code>ActionMapping</code> used for mapping the specified request to this action.
+     * @param form     an <code>ActionForm</code> providing the form parameters mapped to specified request.
+     * @param request  an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @param response an <code>HttpServletResponse</code> representing response outgoing to client.
+     * @return an <code>ActionForward</code> referencing the next view to be displayed to user.
+     * @throws Exception if an unexpected error occurs.
+     * @since 1.3
+     */
+    @SuppressWarnings("unchecked")
+    public ActionForward manageReviewFeedback(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                              HttpServletResponse response) throws Exception {
+        LoggingHelper.logAction(request);
+
+        request.setAttribute("activeTabIdx", 3);
+
+        // Gather the roles the user has for current request
+        AuthorizationHelper.gatherUserRoles(request);
+
+        // Check whether the user has the permission to perform this action. If not then redirect the request
+        // to log-in page or report about the lack of permissions. Also check that current user is granted a
+        // permission to access the details for requested project
+        CorrectnessCheckResult verification
+            = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request,
+                                                     PROJECT_MANAGEMENT_PERM_NAME, false);
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        } else {
+            // Validate the forms
+            final Project project = verification.getProject();
+            final Phase[] phases = getProjectPhases(project);
+
+            // Check if project allows review feedback creation
+            String reviewFeedbackFlag = (String) project.getProperty("Review Feedback Flag");
+            boolean reviewFeedbackFlagSet = "true".equalsIgnoreCase(reviewFeedbackFlag);
+
+            // Check if Appeals Response phase or Review phase (if Appeals Response phase is missing) is closed
+            Phase phase = ActionsHelper.findPhaseByTypeName(phases, Constants.APPEALS_RESPONSE_PHASE_NAME);
+            if (phase == null) {
+                phase = ActionsHelper.findPhaseByTypeName(phases, Constants.REVIEW_PHASE_NAME);
+            }
+            final boolean feedbackStopperPhaseIsClosed
+                = phase != null && ActionsHelper.isPhaseClosed(phase.getPhaseStatus());
+            final boolean reviewFeedbackAllowed = reviewFeedbackFlagSet && feedbackStopperPhaseIsClosed;
+
+            long currentUserId = AuthorizationHelper.getLoggedInUserId(request);
+            if (reviewFeedbackAllowed) {
+                // Get the list of reviewers eligible for feedback and convert it to set of respective user IDs
+                List<Resource> reviewerResources = getFeedbackEligibleReviewers(project.getId(), request);
+                Set<Long> eligibleReviewerUserIds = new HashSet<Long>();
+                for (Resource reviewer : reviewerResources) {
+                    String reviewerUserId = (String) reviewer.getProperty("External Reference ID");
+                    eligibleReviewerUserIds.add(Long.parseLong(reviewerUserId));
+                }
+
+                // Validate the input
+                LazyValidatorForm lazyForm = (LazyValidatorForm) form;
+                java.lang.Long[] reviewerUserIds = (java.lang.Long[]) lazyForm.get("reviewerUserId");
+                java.lang.Integer[] reviewerScores = (java.lang.Integer[]) lazyForm.get("reviewerScore");
+                java.lang.String[] reviewerFeedbacks = (java.lang.String[]) lazyForm.get("reviewerFeedback");
+
+                for (int i = 0; i < reviewerUserIds.length; i++) {
+                    if (reviewerScores.length <= i || reviewerScores[i] == null) {
+                        ActionsHelper.addErrorToRequest(request, "reviewerScore[" + i + "]", new ActionMessage(
+                            "error.com.cronos.onlinereview.actions.manageProject.ReviewPerformance.Score.Empty"));
+                    } else if (reviewerScores[i] < 0 || reviewerScores[i] > 2) {
+                        ActionsHelper.addErrorToRequest(request, "reviewerScore[" + i + "]", new ActionMessage(
+                            "error.com.cronos.onlinereview.actions.manageProject.ReviewPerformance.Score.Invalid"));
+                    }
+                    if (reviewerFeedbacks.length <= i || reviewerFeedbacks[i] == null 
+                        || reviewerFeedbacks[i].trim().length() == 0) {
+                        ActionsHelper.addErrorToRequest(request, "reviewerFeedback[" + i + "]", new ActionMessage(
+                            "error.com.cronos.onlinereview.actions.manageProject.ReviewPerformance.Feedback.Empty"));
+                    } else if (reviewerFeedbacks[i].length() > 4096) {
+                        ActionsHelper.addErrorToRequest(request, "reviewerFeedback[" + i + "]", new ActionMessage(
+                            "error.com.cronos.onlinereview.actions.manageProject.ReviewPerformance.Feedback.MaxExceeded"));
+                    }
+                    if (currentUserId == reviewerUserIds[i]) {
+                        ActionsHelper.addErrorToRequest(request, "reviewerFeedback[" + i + "]", new ActionMessage(
+                            "error.com.cronos.onlinereview.actions.manageProject.ReviewPerformance.SelfFeedbackProhibited"));
+                    } else if (!eligibleReviewerUserIds.contains(reviewerUserIds[i])) {
+                        ActionsHelper.addErrorToRequest(request, "reviewerFeedback[" + i + "]", new ActionMessage(
+                            "error.com.cronos.onlinereview.actions.manageProject.ReviewPerformance.WrongReviewer"));
+                    }
+                }
+                if (!ActionsHelper.isErrorsPresent(request)) {
+                    // Save the feedback
+                    ReviewFeedbackManager reviewFeedbackManager = ActionsHelper.createReviewFeedbackManager();
+                    String currentUserIdString = Long.toString(currentUserId);
+                    Date now = new Date();
+                    for (int i = 0; i < reviewerUserIds.length; i++) {
+                        ReviewFeedback feedback = new ReviewFeedback();
+                        feedback.setCreateDate(now);
+                        feedback.setCreateUser(currentUserIdString);
+                        feedback.setFeedbackText(reviewerFeedbacks[i]);
+                        feedback.setProjectId(project.getId());
+                        feedback.setReviewerUserId(reviewerUserIds[i]);
+                        feedback.setScore(reviewerScores[i]);
+
+                        reviewFeedbackManager.create(feedback);
+                    }
+                }
+            } else {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                                                        PROJECT_MANAGEMENT_PERM_NAME,
+                                                        "Error.ReviewFeedbackNotAllowed", Boolean.TRUE);
+            }
+
+            if (ActionsHelper.isErrorsPresent(request)) {
+                initProjectManagementConsole(request, project);
+                return mapping.getInputForward();
+            } else {
+                return ActionsHelper.cloneForwardAndAppendToPath(
+                    mapping.findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
+            }
+        }
+    }
+
+    /**
+     * <p>Retrieves data for displaying by Review Performance tab when Project Management Console page is displayed to 
+     * user.</p>
+     * 
+     * @param request an <code>HttpServletRequest</code> representing incoming request from client. 
+     * @param project a <code>Project</code> providing the data for the project being managed.
+     * @throws BaseException if an unexpected error occurs.
+     * @throws PersistenceException if an unexpected error occurs.
+     * @throws ReviewManagementException if an unexpected error occurs.
+     * @since 1.3
+     */
+    private void initReviewFeedbackIntegration(HttpServletRequest request, Project project) throws BaseException {
+        
+        // Retrieve existing review feedbacks for project
+        ReviewFeedbackManager reviewFeedbackManager = ActionsHelper.createReviewFeedbackManager();
+        List<ReviewFeedback> reviewFeedbacks = reviewFeedbackManager.getForProject(project.getId());
+        
+        // Group feedbacks by user IDs and dates
+        final Map<Long, Map<Date, List<ReviewFeedback>>> feedbacksMap 
+            = new HashMap<Long, Map<Date, List<ReviewFeedback>>>();
+        if (reviewFeedbacks != null) {
+            for (ReviewFeedback feedback : reviewFeedbacks) {
+                long feedbackAuthor = Long.parseLong(feedback.getCreateUser());
+                if (!feedbacksMap.containsKey(feedbackAuthor)) {
+                    feedbacksMap.put(feedbackAuthor, new HashMap<Date, List<ReviewFeedback>>());
+                }
+                Map<Date, List<ReviewFeedback>> dateListMap = feedbacksMap.get(feedbackAuthor);
+                Date feedbackCreateDate = feedback.getCreateDate();
+                if (!dateListMap.containsKey(feedbackCreateDate)) {
+                    dateListMap.put(feedbackCreateDate, new ArrayList<ReviewFeedback>());
+                }
+                dateListMap.get(feedbackCreateDate).add(feedback);
+            }
+        }
+        
+        // Check if project allows review feedback creation
+        String reviewFeedbackFlag = (String) project.getProperty("Review Feedback Flag");
+        boolean reviewFeedbackFlagSet = "true".equalsIgnoreCase(reviewFeedbackFlag);
+        
+        // Check if Appeals Response phase or Review phase (if Appeals Response phase is missing) is closed
+        Phase[] phases = getProjectPhases(project);
+        final Phase reviewPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.REVIEW_PHASE_NAME);
+        Phase phase = ActionsHelper.findPhaseByTypeName(phases, Constants.APPEALS_RESPONSE_PHASE_NAME);
+        if (phase == null) {
+            phase = reviewPhase;
+        }
+        final boolean feedbackStopperPhaseIsClosed 
+            = phase != null && ActionsHelper.isPhaseClosed(phase.getPhaseStatus());
+        final boolean reviewFeedbackAllowed = reviewFeedbackFlagSet && feedbackStopperPhaseIsClosed;
+        final boolean reviewFeedbacksExist = !feedbacksMap.isEmpty();
+        
+        // Get the resources for the reviewers (if necessary)
+        if (reviewFeedbackAllowed && !reviewFeedbacksExist) {
+            List<Resource> reviewerResources = getFeedbackEligibleReviewers(project.getId(), request);
+            Map<String, Resource> reviewerResourcesMap = new TreeMap<String, Resource>();
+            for (Resource reviewer : reviewerResources) {
+                String reviewerUserId = (String) reviewer.getProperty("External Reference ID");
+                reviewerResourcesMap.put(reviewerUserId, reviewer);
+            }
+
+            request.setAttribute("reviewerResourcesMap", reviewerResourcesMap);
+        }
+
+        // Bind data to request
+        request.setAttribute("feedbacksMap", feedbacksMap);
+        request.setAttribute("reviewFeedbackAllowed", reviewFeedbackAllowed);
+        request.setAttribute("reviewFeedbacksExist", reviewFeedbacksExist);
+    }
+
+    /**
+     * <p>Gets the list of reviewers eligible for review feedback for specified project. Such reviewer resources will 
+     * have their reviews committed and resource matching the current user will be excluded from the resulting list.</p>
+     * 
+     * @param projectId a <code>long</code> providing the ID of a project.
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client. 
+     * @return a <code>List</code> of reviewers for specified project which the feedback can be provided for. 
+     * @throws LookupException if an unexpected error occurs.
+     * @throws ResourcePersistenceException if an unexpected error occurs.
+     * @throws SearchBuilderException if an unexpected error occurs.
+     * @since 1.3
+     */
+    private List<Resource> getFeedbackEligibleReviewers(long projectId, HttpServletRequest request)
+        throws LookupException, ResourcePersistenceException, SearchBuilderException, ReviewManagementException {
+        // Build filter for reviewer role names
+        List<Filter> reviewerRoleFilters = new ArrayList<Filter>();
+        for (String reviewerRoleName : REVIEW_FEEDBACK_ELIGIBLE_ROLE_NAMES) {
+            Filter resourceRoleIdFilter = ResourceFilterBuilder
+                .createResourceRoleIdFilter(LookupHelper.getResourceRole(reviewerRoleName).getId());
+            reviewerRoleFilters.add(resourceRoleIdFilter);
+        }
+        OrFilter reviewerRolesFilter = new OrFilter(reviewerRoleFilters);
+
+        // Build filter for searching reviewers for project
+        AndFilter filter = new AndFilter(reviewerRolesFilter, ResourceFilterBuilder.createProjectIdFilter(projectId));
+
+        // Search reviewers for project
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
+        List<Resource> reviewerResources 
+            = new ArrayList<Resource>(Arrays.asList(resourceManager.searchResources(filter)));
+
+        // Build list of reviewer resource IDs
+        List<Long> reviewerResourceIds = new ArrayList<Long>();
+        for (Resource reviewerResource : reviewerResources) {
+            reviewerResourceIds.add(reviewerResource.getId());
+        }
+
+        // Get reviews for project
+        ReviewManager reviewManager = ActionsHelper.createReviewManager();
+        Filter filterProject = new EqualToFilter("project", projectId);
+        InFilter reviewerResourcesFilter = new InFilter("reviewer", reviewerResourceIds);
+        Filter committedReviewFilter = new EqualToFilter("committed", 1);
+        AndFilter reviewFilter = new AndFilter(Arrays.asList(filterProject, reviewerResourcesFilter,
+                                                             committedReviewFilter));
+        Review[] reviews = reviewManager.searchReviews(reviewFilter, false);
+
+        // Collect the IDs of committed review author resources
+        Set<Long> committedReviewAuthors = new HashSet<Long>();
+        for (Review review : reviews) {
+            if (review.isCommitted()) {
+                committedReviewAuthors.add(review.getAuthor());
+            }
+        }
+        
+        // Filter out those reviewer resources who either do not have committed reviews or correspond to current user
+        String currentUserId = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
+        Iterator<Resource> reviewersIterator = reviewerResources.iterator();
+        while (reviewersIterator.hasNext()) {
+            Resource reviewer = reviewersIterator.next();
+            if (committedReviewAuthors.contains(reviewer.getId())) {
+                String reviewerUserId = (String) reviewer.getProperty("External Reference ID");
+                if (currentUserId.equalsIgnoreCase(reviewerUserId)) {
+                    reviewersIterator.remove();
+                }
+            } else {
+                reviewersIterator.remove();
+            }
+        }
+
+        return reviewerResources;
     }
 
     /**

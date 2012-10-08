@@ -34,6 +34,7 @@ import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
 import com.cronos.termsofuse.dao.TermsOfUseDao;
 import com.cronos.termsofuse.dao.UserTermsOfUseDao;
 import com.topcoder.management.deliverable.search.UploadFilterBuilder;
+import com.topcoder.management.reviewfeedback.ReviewFeedbackManager;
 import com.topcoder.search.builder.filter.*;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
@@ -287,9 +288,16 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *     <li>Added {@link #copyReviewItems(Review fromReview, Review toReview, String[] typesToCopy)} method.</li>
  *   </ol>
  * </p>
+ *
+ * <p>
+ * Version 2.3 (Review Feedback Integration Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #createReviewFeedbackManager()} method.</li>
+ *   </ol>
+ * </p>
  * 
- * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK, rac_, lmmortal, flexme, TCSASSEMBLER
- * @version 2.2
+ * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK, rac_, lmmortal, flexme
+ * @version 2.3
  * @since Online Review Status Validation Assembly 1.0
  */
 public class ActionsHelper {
@@ -2358,6 +2366,17 @@ public class ActionsHelper {
      */
     protected static TermsOfUseDao getTermsOfUseDao() {
         return managerCreationHelper.getTermsOfUseDao();
+    }
+
+    /**
+     * This static method helps to create an object of the <code>ReviewFeedbackManager</code> class.
+     *
+     * @return a newly created instance of the class.
+     * @throws BaseRuntimeException if any error occurs.
+     * @since 2.3
+     */
+    public static ReviewFeedbackManager createReviewFeedbackManager() {
+        return managerCreationHelper.getReviewFeedbackManager();
     }
 
     /**
