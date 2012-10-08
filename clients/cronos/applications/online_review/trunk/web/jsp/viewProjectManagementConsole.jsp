@@ -514,7 +514,7 @@
                                         <tr>
                                             <td class="title" colspan="5">
                                                 <bean:message key="manageProject.ReviewPerformance.Feedback.From.title"/>
-                                                <tc-webtag:handle coderId="${feedbackAuthorUserId}" context="component"/>
+                                                <tc-webtag:handle coderId="${feedbackAuthorUserId}" />
                                                 <bean:message key="manageProject.ReviewPerformance.Feedback.From.at"/>
                                                 <fmt:formatDate value="${feedbackDate}" pattern="MM.dd.yyyy HH:mm zzz"/>
                                             </td>
@@ -529,7 +529,7 @@
                                         <c:forEach items="${feedbacks}" var="feedback" varStatus="loop">
                                             <tr class="${loop.index mod 2 eq 0 ? 'dark' : 'light'}">
                                                 <td class="value">
-                                                    <tc-webtag:handle coderId="${feedback.reviewerUserId}" context="component"/>
+                                                    <tc-webtag:handle coderId="${feedback.reviewerUserId}" />
                                                 </td>
                                                 <td class="valueC">
                                                     <input type="radio" disabled="disabled" 
@@ -597,7 +597,7 @@
                                             <c:set var="resourceIdx" value="${loop.index}"/>
                                             <tr class="${(loop.index % 2 == 0) ? 'dark' : 'light'}">
                                                 <td class="value">
-                                                    <tc-webtag:handle coderId="${reviewerUserId}" context="component"/>
+                                                    <tc-webtag:handle coderId="${reviewerUserId}" />
                                                     <html:hidden property="reviewerUserId[${resourceIdx}]" value="${reviewerUserId}"/>
                                                     <div class="error">
                                                         <html:errors property="reviewerScore[${resourceIdx}]"
