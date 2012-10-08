@@ -314,4 +314,9 @@
         svnpath="https://coder.topcoder.com/tcs/catalog/java/job_processor/trunk"
         revision="137583" />
 
+    <component
+        name="review_feedback_management"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_feedback_management/trunk/"
+        revision="219875"/>
+
 </components>

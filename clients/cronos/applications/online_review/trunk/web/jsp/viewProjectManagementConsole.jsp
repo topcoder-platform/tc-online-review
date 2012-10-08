@@ -3,7 +3,9 @@
   - Version: 1.0 (Online Review Project Management Console assembly v1.0)
   - Version: 1.1 (Distribution Auto Generation Assembly v1.0) Change notes: Added support for managing design and 
     development distributions.
-  - Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+  - Version: 1.2 (Review Feedback Integration Assembly v1.0) Change notes: Added Review Performance tab to display and
+  - manage review feedbacks.
+  - Copyright (C) 2010-2012 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page provides a web form for Project Management Console. Such a form includes areas for extending
   - Registration phase, extending Submission phase and adding new resources to target project.
@@ -16,7 +18,9 @@
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
+<%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <c:set var="project" value="${requestScope.project}"/>
+<fmt:setLocale value="en_US"/>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html:html xhtml="true">
@@ -68,6 +72,10 @@
                             <c:if test="${((project.projectCategory.id == 1) || (project.projectCategory.id == 2))}"> <%-- Only show the tab for design and development --%>
                             <li><a href="javascript:void(0)"
                                     onClick="return activateTab('sc2', this)"><bean:message key="manageProject.Distributions.title"/></a></li>
+                            </c:if>
+                            <c:if test="${reviewFeedbacksExist || reviewFeedbackAllowed}">
+                                <li><a href="javascript:void(0)" onClick="return activateTab('sc3', this)">
+                                    <bean:message key="manageProject.ReviewPerformance.title"/></a></li>
                             </c:if>
                         </ul>
                         <div style="clear:both;"></div>
@@ -248,7 +256,11 @@
 	                                onClick="return activateTab('sc1', this)"><bean:message key="manageProject.TimelineResources.title"/></a></li>
 	                            <li id='current'><a href="javascript:void(0)"
 	                                    onClick="return activateTab('sc2', this)"><bean:message key="manageProject.Distributions.title"/></a></li>
-	                        </ul>
+                                <c:if test="${reviewFeedbacksExist || reviewFeedbackAllowed}">
+                                    <li><a href="javascript:void(0)" onClick="return activateTab('sc3', this)">
+                                        <bean:message key="manageProject.ReviewPerformance.title"/></a></li>
+                                </c:if>
+                            </ul>
 	                        <div style="clear:both;"></div>
 	                        <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
 	                        <tr class="light">
@@ -465,7 +477,179 @@
 	                        </tr>
 	                        </table>
 	                    </div>
-                    </c:if> <%-- // Design or Development only --%> 
+                    </c:if> <%-- // Design or Development only --%>
+                    <%-- Review Feedback tab --%>
+                <c:if test="${reviewFeedbacksExist || reviewFeedbackAllowed}">
+                    <div id="sc3" style='display:${(param.activeTabIdx == 3) ? "block" : "none"};'>
+                    <ul id="tablist">
+                        <li><a href="javascript:void(0)"
+                               onClick="return activateTab('sc1', this)"><bean:message
+                                key="manageProject.TimelineResources.title"/></a></li>
+                        <c:if test="${((project.projectCategory.id == 1) || (project.projectCategory.id == 2))}"> 
+                        <%-- Only show the tab for design and development --%>
+                            <li><a href="javascript:void(0)"
+                                   onClick="return activateTab('sc2', this)"><bean:message
+                                    key="manageProject.Distributions.title"/></a></li>
+                        </c:if>
+                        <li id='current'><a href="javascript:void(0)" onClick="return activateTab('sc3', this)">
+                            <bean:message key="manageProject.ReviewPerformance.title"/></a></li>
+                    </ul>
+                    <div style="clear:both;"></div>
+                    <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
+                    <tr class="light">
+                    <td>
+                    
+                        <c:choose>
+                            <c:when test="${reviewFeedbacksExist}">
+                                <%-- If any feedback already exist then just display the existing feedbacks --%>
+                                <c:forEach items="${feedbacksMap}" var="feedbackAuthorEntry">
+                                    <c:set var="feedbackDatesMap" value="${feedbackAuthorEntry.value}"/>
+                                    <c:set var="feedbackAuthorUserId" value="${feedbackAuthorEntry.key}"/>
+                                    
+                                    <c:forEach items="${feedbackDatesMap}" var="feedbackDateEntry">
+                                        <c:set var="feedbacks" value="${feedbackDateEntry.value}"/>
+                                        <c:set var="feedbackDate" value="${feedbackDateEntry.key}"/>
+
+                                        <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
+                                        <tr>
+                                            <td class="title" colspan="5">
+                                                <bean:message key="manageProject.ReviewPerformance.Feedback.From.title"/>
+                                                <tc-webtag:handle coderId="${feedbackAuthorUserId}" context="component"/>
+                                                <bean:message key="manageProject.ReviewPerformance.Feedback.From.at"/>
+                                                <fmt:formatDate value="${feedbackDate}" pattern="MM.dd.yyyy HH:mm zzz"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="value"><b><bean:message key="manageProject.ReviewPerformance.Reviewer.title"/></b></td>
+                                            <td class="valueC"><b><bean:message key="manageProject.ReviewPerformance.Score.Bad"/></b></td>
+                                            <td class="valueC"><b><bean:message key="manageProject.ReviewPerformance.Score.Average"/></b></td>
+                                            <td class="valueC"><b><bean:message key="manageProject.ReviewPerformance.Score.Good"/></b></td>
+                                            <td class="value" width="65%"><b><bean:message key="manageProject.ReviewPerformance.Feedback.title"/></b></td>
+                                        </tr>
+                                        <c:forEach items="${feedbacks}" var="feedback" varStatus="loop">
+                                            <tr class="${loop.index mod 2 eq 0 ? 'dark' : 'light'}">
+                                                <td class="value">
+                                                    <tc-webtag:handle coderId="${feedback.reviewerUserId}" context="component"/>
+                                                </td>
+                                                <td class="valueC">
+                                                    <input type="radio" disabled="disabled" 
+                                                           <c:if test="${feedback.score eq 0}">checked="checked"</c:if>/>
+                                                </td>
+                                                <td class="valueC">
+                                                    <input type="radio" disabled="disabled"
+                                                           <c:if test="${feedback.score eq 1}">checked="checked"</c:if>/>
+                                                </td>
+                                                <td class="valueC">
+                                                    <input type="radio" disabled="disabled"
+                                                           <c:if test="${feedback.score eq 2}">checked="checked"</c:if>/>
+                                                </td>
+                                                <td class="value">
+                                                    <c:out value="${feedback.feedbackText}"/>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+                                    </table>
+                                    </c:forEach>
+                                </c:forEach>
+                            </c:when>
+                            <c:otherwise>
+                                <%-- Otherwise since there are no feedbacks yet then display the form for submitting 
+                                feedbacks --%>
+                                <c:if test="${param.activeTabIdx == 3}">
+                                    <%-- Validation errors area --%>
+                                    <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
+                                        <table cellpadding="0" cellspacing="0" border="0">
+                                            <tr>
+                                                <td colspan="2">
+                                                    <span style="color:red;">
+                                                        <bean:message key="Error.manageProject.ValidationFailed"/>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <html:errors property="org.apache.struts.action.GLOBAL_MESSAGE"/>
+                                        </table>
+                                        <br/>
+                                    </c:if>
+                                </c:if>
+                                <%-- Save Review Feedback form  --%>
+                                <html:form action="/actions/SaveReviewFeedback?activeTabIdx=3" method="POST">
+                                    <html:hidden property="method" value="manageReviewFeedback"/>
+                                    <html:hidden property="postBack" value="y"/>
+                                    <html:hidden property="pid" value="${project.id}"/>
+
+                                    <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
+                                        <tr>
+                                            <td class="title" colspan="5">
+                                                <bean:message key="manageProject.ReviewPerformance.Review.Performance.title"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="value"><b><bean:message
+                                                    key="manageProject.ReviewPerformance.Reviewer.title"/></b></td>
+                                            <td class="valueC"><b><bean:message key="manageProject.ReviewPerformance.Score.Bad"/></b></td>
+                                            <td class="valueC"><b><bean:message key="manageProject.ReviewPerformance.Score.Average"/></b></td>
+                                            <td class="valueC"><b><bean:message key="manageProject.ReviewPerformance.Score.Good"/></b></td>
+                                            <td class="value" width="65%"><b><bean:message key="manageProject.ReviewPerformance.Feedback.title"/></b></td>
+                                        </tr>
+                                        <c:forEach items="${reviewerResourcesMap}" var="reviewerEntry" varStatus="loop">
+                                            <c:set var="reviewerUserId" value="${reviewerEntry.key}"/>
+                                            <c:set var="reviewerResource" value="${reviewerEntry.value}"/>
+                                            <c:set var="resourceIdx" value="${loop.index}"/>
+                                            <tr class="${(loop.index % 2 == 0) ? 'dark' : 'light'}">
+                                                <td class="value">
+                                                    <tc-webtag:handle coderId="${reviewerUserId}" context="component"/>
+                                                    <html:hidden property="reviewerUserId[${resourceIdx}]" value="${reviewerUserId}"/>
+                                                    <div class="error">
+                                                        <html:errors property="reviewerScore[${resourceIdx}]"
+                                                                     prefix="" suffix=""/>
+                                                    </div>
+                                                </td>
+                                                <td class="valueC">
+                                                    <html:radio property="reviewerScore[${resourceIdx}]" value="0"/>
+                                                </td>
+                                                <td class="valueC">
+                                                    <html:radio property="reviewerScore[${resourceIdx}]" value="1"/>
+                                                </td>
+                                                <td class="valueC">
+                                                    <html:radio property="reviewerScore[${resourceIdx}]" value="2"/>
+                                                </td>
+                                                <td class="value">
+                                                    <html:textarea property="reviewerFeedback[${resourceIdx}]" rows="2" 
+                                                                   cols="85"/>
+                                                    <div class="error">
+                                                        <html:errors property="reviewerFeedback[${resourceIdx}]" 
+                                                                     prefix="" suffix=""/>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+                                        <tr>
+                                            <td class="lastRowTD" colspan="5"><!-- @ --></td>
+                                        </tr>
+                                    </table>
+                                    <br/>
+                                    <div align="right">
+                                        <html:image property="saveChangesBtn"
+                                                    srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>
+                                        &nbsp;
+                                        <html:link
+                                                page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
+                                                srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
+                                        &nbsp;
+                                    </div>
+                                </html:form>
+
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
+                    </tr>
+                    <tr>
+                        <td class="lastRowTD"><!-- @ --></td>
+                    </tr>
+                    </table>
+                    </div>
+                    </c:if> <%-- // Review Feedbacks --%>
+
                 </div>
                 <!-- //tabconentcontainer -->
             </div>
