@@ -18,7 +18,7 @@
 
     <div style="float: right; clear: right; margin-left: 6px;">
         <c:if test="${orfn:isUserLoggedIn(pageContext.request)}">
-            Hello, <tc-webtag:handle coderId="${orfn:getLoggedInUserId(pageContext.request)}" context="component" />
+            Hello, <tc-webtag:handle coderId="${orfn:getLoggedInUserId(pageContext.request)}" />
              | <html:link action="/actions/Logout.do?method=logout">Logout</html:link>
         </c:if>
         <c:if test="${not orfn:isUserLoggedIn(pageContext.request)}">
