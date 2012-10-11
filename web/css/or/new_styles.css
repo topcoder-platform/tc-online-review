@@ -533,3 +533,7 @@ table.tabLinks .input {
   vertical-align: top;
   padding: 5px;
 }
+
+.feedback-text {
+    width:100%;
+}
