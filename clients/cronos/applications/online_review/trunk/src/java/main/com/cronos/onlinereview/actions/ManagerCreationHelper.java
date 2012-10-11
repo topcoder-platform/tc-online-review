@@ -744,7 +744,7 @@ public class ManagerCreationHelper implements ManagersProvider {
                 DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
                 this.reviewFeedbackManager
                     = new JDBCReviewFeedbackManager(dbconn, DEFAULT_DB_CONNECTION_NAME, 
-                                                    LogFactory.getLog(ReviewFeedbackManager.class.getPackage().getName()));
+                                                    LogFactory.getLog(JDBCReviewFeedbackManager.class.getName()));
             } catch (ReviewFeedbackManagementConfigurationException e) {
                 throw new ManagerCreationException("Exception occurred while creating the review feedback manager.", e);
             } catch (ConfigurationException e) {

@@ -466,7 +466,7 @@
                                 <div align="right">
                                    <html:link
                                            page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
-                                           srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
+                                           srcKey="btnReturnToProjDet.img" altKey="btnReturnToProjDet.alt" border="0"/></html:link>
                                    &nbsp;
                                 </div>
 	                            </html:form>
@@ -514,7 +514,7 @@
                                         <tr>
                                             <td class="title" colspan="5">
                                                 <bean:message key="manageProject.ReviewPerformance.Feedback.From.title"/>
-                                                <tc-webtag:handle coderId="${feedbackAuthorUserId}" />
+                                                <tc-webtag:handle coderId="${feedbackAuthorUserId}" context="component"/>
                                                 <bean:message key="manageProject.ReviewPerformance.Feedback.From.at"/>
                                                 <fmt:formatDate value="${feedbackDate}" pattern="MM.dd.yyyy HH:mm zzz"/>
                                             </td>
@@ -529,7 +529,7 @@
                                         <c:forEach items="${feedbacks}" var="feedback" varStatus="loop">
                                             <tr class="${loop.index mod 2 eq 0 ? 'dark' : 'light'}">
                                                 <td class="value">
-                                                    <tc-webtag:handle coderId="${feedback.reviewerUserId}" />
+                                                    <tc-webtag:handle coderId="${feedback.reviewerUserId}" context="component"/>
                                                 </td>
                                                 <td class="valueC">
                                                     <input type="radio" disabled="disabled" 
@@ -544,13 +544,22 @@
                                                            <c:if test="${feedback.score eq 2}">checked="checked"</c:if>/>
                                                 </td>
                                                 <td class="value">
-                                                    <c:out value="${feedback.feedbackText}"/>
+                                                    ${orfn:htmlEncode(feedback.feedbackText)}
                                                 </td>
                                             </tr>
                                         </c:forEach>
                                     </table>
                                     </c:forEach>
                                 </c:forEach>
+                                <br/>
+
+                                <div align="right">
+                                    <html:link
+                                            page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
+                                            srcKey="btnReturnToProjDet.img" altKey="btnReturnToProjDet.alt" border="0"/></html:link>&nbsp;&nbsp;
+                                    <br/>
+                                    <br/>
+                                </div>
                             </c:when>
                             <c:otherwise>
                                 <%-- Otherwise since there are no feedbacks yet then display the form for submitting 
@@ -597,7 +606,7 @@
                                             <c:set var="resourceIdx" value="${loop.index}"/>
                                             <tr class="${(loop.index % 2 == 0) ? 'dark' : 'light'}">
                                                 <td class="value">
-                                                    <tc-webtag:handle coderId="${reviewerUserId}" />
+                                                    <tc-webtag:handle coderId="${reviewerUserId}" context="component"/>
                                                     <html:hidden property="reviewerUserId[${resourceIdx}]" value="${reviewerUserId}"/>
                                                     <div class="error">
                                                         <html:errors property="reviewerScore[${resourceIdx}]"
@@ -613,9 +622,9 @@
                                                 <td class="valueC">
                                                     <html:radio property="reviewerScore[${resourceIdx}]" value="2"/>
                                                 </td>
-                                                <td class="value">
-                                                    <html:textarea property="reviewerFeedback[${resourceIdx}]" rows="2" 
-                                                                   cols="85"/>
+                                                <td class="value ffednack-text-wrapper">
+                                                    <html:textarea property="reviewerFeedback[${resourceIdx}]" rows="3" 
+                                                                   styleClass="feedback-text"/>
                                                     <div class="error">
                                                         <html:errors property="reviewerFeedback[${resourceIdx}]" 
                                                                      prefix="" suffix=""/>
@@ -634,8 +643,8 @@
                                         &nbsp;
                                         <html:link
                                                 page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
-                                                srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
-                                        &nbsp;
+                                                srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>&nbsp;&nbsp;
+                                        <br/>
                                     </div>
                                 </html:form>
 
