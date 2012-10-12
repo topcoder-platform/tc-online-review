@@ -80,7 +80,9 @@
 		<c:if test="${not empty requestScope.cockpitProject and requestScope.isAllowedToViewCockpitProjectName}">
 			<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
 				<td class="value" width="15%" nowrap="nowrap"><b><bean:message key="viewProjectDetails.CockpitProject" /></b></td>
-				<td class="value" width="100%">${requestScope.cockpitProject}</td>
+				<td class="value" width="100%">
+                                    <a href="${requestScope.cockpitProjectLink}">${requestScope.cockpitProject}</a>
+                                </td>
 			</tr><c:set var="rowIndex" value="${rowIndex+1}" />
 		</c:if>
 		<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
