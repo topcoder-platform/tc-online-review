@@ -111,8 +111,16 @@
             <Value>http://studio.topcoder.com/?module=ViewContestDetails&amp;ct=</Value>
         </Property>
 
-        <Property name="CopilotPostingProjectDetailsURL">
+        <Property name="DirectContestURL">
+            <Value>https://topcoder.com/direct/contest/detail?projectId=</Value>
+        </Property>
+
+        <Property name="CopilotDirectContestURL">
             <Value>https://topcoder.com/direct/copilot/copilotContestDetails.action?projectId=</Value>
+        </Property>
+
+        <Property name="DirectProjectURL">
+            <Value>https://topcoder.com/direct/projectOverview?formData.projectId=</Value>
         </Property>
 
         <Property name="ProjectManager">

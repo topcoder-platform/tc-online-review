@@ -217,6 +217,11 @@ public class ConfigHelper {
     private static final String PROP_PROJECT_DETAILS_URL = "ProjectDetailsURL";
 
     /**
+     * This constant stores Direct's project page url property name
+     */
+    private static final String PROP_DIRECT_PROJECT_URL = "DirectProjectURL";
+
+    /**
      * This member variable is a string constant that specifies the name of the property which
      * contains definitions of Root Catalogs' IDs, icon filenames, and alternative text keys.
      *
@@ -542,7 +547,6 @@ public class ConfigHelper {
      * gererated.
      *
      * @see #EMAIL_TEMPLATE_NAME_PROP
-     * @see #EMAIL_SUBJECT_PROP
      */
     private static final String CONTACT_MANAGER_EMAIL_PROP = "ContactManagerEmail";
 
@@ -551,7 +555,6 @@ public class ConfigHelper {
      * specifies the name of the file where email teplate can be loaded.
      *
      * @see #CONTACT_MANAGER_EMAIL_PROP
-     * @see #EMAIL_SUBJECT_PROP
      */
     private static final String EMAIL_TEMPLATE_NAME_PROP = "EmailTemplateName";
 
@@ -748,6 +751,11 @@ public class ConfigHelper {
      * @since 1.2
      */
     private static String projectDetailsBaseURL;
+
+    /**
+     * This constant stores base URL for the project page in direct
+     */
+    private static String directProjectBaseURL;
 
     /**
      * This member variable holds the names of small icons (.gif) files that should be displayed
@@ -1184,10 +1192,14 @@ public class ConfigHelper {
 
             // Retrieve the value of the property that contains the project details page base URL
             value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, PROP_PROJECT_DETAILS_URL);
-            // If the value has been retrieved successfully ...
             if (value != null && value.trim().length() != 0) {
-                // ... store it for later use
             	projectDetailsBaseURL = value;
+            }
+
+            // Retrieve the value of the property that contains the direct project page base URL
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, PROP_DIRECT_PROJECT_URL);
+            if (value != null && value.trim().length() != 0) {
+            	directProjectBaseURL = value;
             }
             
             // Retrieve the value of the default distribution script
@@ -1217,7 +1229,7 @@ public class ConfigHelper {
                     continue;
                 }
 
-                // Retieve small icon's filename that should be associated with the ID
+                // Retrieve small icon's filename that should be associated with the ID
                 String strFilenameSm = propRootCatIcons.getValue(strPropName + "." + ROOT_CATALOG_ICON_SM_PROP);
                 // Retrieve Message Resources key for alternative text -- the name of the Root Catalog
                 String strAltTextKey = propRootCatIcons.getValue(strPropName + "." + ROOT_CATALOG_ALT_TEXT_KEY_PROP);
@@ -1771,6 +1783,15 @@ public class ConfigHelper {
      */
     public static String getProjectDetailsBaseURL() {
         return projectDetailsBaseURL;
+    }
+
+    /**
+     * This static method returns the base URL for the direct project page.
+     *
+     * @return the base URL for the direct project page.
+     */
+    public static String getDirectProjectBaseURL() {
+        return directProjectBaseURL;
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2012 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -398,6 +398,7 @@ public class ProjectDetailsActions extends DispatchAction {
         if (isAllowedToViewCockpitProjectName) {
             CockpitProject cp = projectDataAccess.getCockpitProject(project.getTcDirectProjectId());
             request.setAttribute("cockpitProject", cp != null ? cp.getName() : "");
+            request.setAttribute("cockpitProjectLink", ConfigHelper.getDirectProjectBaseURL() + project.getTcDirectProjectId());
         }
 
         // Place a string that represents "my" current role(s) into the request

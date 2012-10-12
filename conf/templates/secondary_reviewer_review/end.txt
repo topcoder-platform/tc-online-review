@@ -7,8 +7,8 @@ This is the notification about the %PHASE_OPERATION{The phase operation - start/
 <p>
 Time\: %PHASE_TIMESTAMP{Phase timestamp}%<br/>
 Contest Type\: %PROJECT_CATEGORY{Name of the track}%<br/>
-Contest\: <a href\="https\://www.topcoder.com/direct/contest/detail?projectId\=%OR_PROJECT_ID%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
-Project\: <a href\="https\://www.topcoder.com/direct/projectOverview?formData.projectId\=%TC_DIRECT_PROJECT_ID%">%TC_DIRECT_PROJECT_NAME%</a><br/>
+Contest\: <a href\="%DIRECT_CONTEST_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
+Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
 </p>
 
 <table border\="1">
