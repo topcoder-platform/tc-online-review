@@ -606,7 +606,7 @@
                                             <c:set var="resourceIdx" value="${loop.index}"/>
                                             <tr class="${(loop.index % 2 == 0) ? 'dark' : 'light'}">
                                                 <td class="value">
-                                                    <tc-webtag:handle coderId="${reviewerUserId}" context="component"/>
+                                                    <tc-webtag:handle coderId="${reviewerUserId}"/>
                                                     <html:hidden property="reviewerUserId[${resourceIdx}]" value="${reviewerUserId}"/>
                                                     <div class="error">
                                                         <html:errors property="reviewerScore[${resourceIdx}]"
