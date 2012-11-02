@@ -22,6 +22,9 @@ public class ProjectTests extends BaseTests {
      */
     public void setUp() throws Exception {
     	super.setUp();
+
+        TestHelper.createTCDirectProject();
+
     	projectId = TestHelper.getNextProjectId();
     	createProject();
     }
@@ -35,6 +38,8 @@ public class ProjectTests extends BaseTests {
     	if (projectId != -1) {
     		TestHelper.deleteProject(browser, projectId);
     	}
+        TestHelper.deleteTCDirectProject();
+
         projectId = -1;
         // logout the user
         browser.click("link=Logout");
