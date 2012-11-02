@@ -180,6 +180,11 @@ public class TestHelper {
      */
     public static final String  SCORECARD_QUESTION_ID = "30001005";
     
+     /**
+     * <p>Represents the default ID for the TC Direct project.</p>
+     */
+    public static final long DEFAULT_TC_DIRECT_PROJECT_ID = 1;
+
     /**
      * <p>Represents date format to use in project name.</p>
      */
@@ -190,7 +195,8 @@ public class TestHelper {
      * <p>Represents date format to use when performing database manipulations.
      */
     private static final SimpleDateFormat DB_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-    
+
+
     /**
      * <p>
      * Default constructor.
@@ -359,6 +365,43 @@ public class TestHelper {
     }
 
     /**
+     * Creates TC Direct project with default ID.
+     * 
+     * @param componentName component name to use. 
+     *  
+     * @throws Exception if any error occurred.
+     */
+    static void createTCDirectProject() throws Exception {
+        Connection con = getConnection();
+        try {
+
+            executeStatement(con,
+                "INSERT INTO tc_direct_project (project_id, name, description, project_status_id, user_id, project_forum_id, create_date, modify_date, " +
+                " direct_project_type_id, direct_project_category_id, completion_date) VALUES ( " +
+                DEFAULT_TC_DIRECT_PROJECT_ID + ", 'Project Name', 'N/A', 1, 1, 0, CURRENT, CURRENT, 1, 10, CURRENT);");
+
+        } finally {
+            con.close();    
+        }
+    }
+
+    /**
+     * Deletes TC Direct project with default ID.
+     * 
+     * @param componentName component name to use. 
+     * 
+     * @throws Exception if any error occurred.
+     */
+    static void deleteTCDirectProject() throws Exception {
+        Connection con = getConnection();
+        try {
+            executeStatement(con, "DELETE FROM tc_direct_project WHERE project_id = " + DEFAULT_TC_DIRECT_PROJECT_ID);
+        } finally {
+            con.close();    
+        }
+    }
+
+    /**
      * Create the project with generated id.
      *
      * @param projectId the project id.
@@ -414,8 +457,8 @@ public class TestHelper {
     static void createProject(long projectId, String componentName, Connection con) throws Exception {
     	// Data for project
         executeStatement(con,
-            "INSERT INTO project (project_id, project_status_id, project_category_id, create_user, create_date, modify_user, modify_date) VALUES (" +
-            projectId + ", '1', '1', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT);");
+            "INSERT INTO project (project_id, project_status_id, project_category_id, create_user, create_date, modify_user, modify_date, tc_direct_project_id) VALUES (" +
+            projectId + ", '1', '1', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT, " + DEFAULT_TC_DIRECT_PROJECT_ID + ");");
         
         // Data for comp_catalog
         long componentId = getNextComponentId();
@@ -507,6 +550,7 @@ public class TestHelper {
             projectId + ", '46', 'true', '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)");
         
     }
+
 
     /**
      * Update project to the specified category.
@@ -1089,8 +1133,8 @@ public class TestHelper {
         Connection con = getConnection();
         // Data for project
         insertData(con,
-            "INSERT INTO project (project_id, project_status_id, project_category_id, create_user, create_date, modify_user, modify_date) VALUES (" +
-            projectId + ", '1', '14', '132456', CURRENT, '132456', CURRENT);");
+            "INSERT INTO project (project_id, project_status_id, project_category_id, create_user, create_date, modify_user, modify_date, tc_direct_project_id) VALUES (" +
+            projectId + ", '1', '14', '132456', CURRENT, '132456', CURRENT, " + DEFAULT_TC_DIRECT_PROJECT_ID + ");");
         // Data for project_info
         insertData(con,
             "INSERT INTO project_info (project_id, project_info_type_id, value, create_user, create_date, modify_user, modify_date) VALUES (" +
@@ -1305,8 +1349,8 @@ public class TestHelper {
         Connection con = factory.createConnection();
         // Data for project
         insertData(con,
-            "INSERT INTO project (project_id, project_status_id, project_category_id, create_user, create_date, modify_user, modify_date) VALUES (" +
-            projectId + ", '1', '1', '132456', CURRENT, '132456', CURRENT);");
+            "INSERT INTO project (project_id, project_status_id, project_category_id, create_user, create_date, modify_user, modify_date, tc_direct_project_id) VALUES (" +
+            projectId + ", '1', '1', '132456', CURRENT, '132456', CURRENT, " + DEFAULT_TC_DIRECT_PROJECT_ID + ");");
         // Data for project_info
         insertData(con,
             "INSERT INTO project_info (project_id, project_info_type_id, value, create_user, create_date, modify_user, modify_date) VALUES (" +
@@ -1474,8 +1518,8 @@ public class TestHelper {
             String componentName2 = "Integration Test Case 1 (project 2)- " + (new Date());
             // Data for project
             insertData(con,
-                "INSERT INTO project (project_id, project_status_id, project_category_id, create_user, create_date, modify_user, modify_date) VALUES (" +
-                projectId2 + ", '1', '1', '132456', CURRENT, '132456', CURRENT);");
+                "INSERT INTO project (project_id, project_status_id, project_category_id, create_user, create_date, modify_user, modify_date, tc_direct_project_id) VALUES (" +
+                projectId2 + ", '1', '1', '132456', CURRENT, '132456', CURRENT, " + DEFAULT_TC_DIRECT_PROJECT_ID + ");");
             // Data for project_info
             insertData(con,
                 "INSERT INTO project_info (project_id, project_info_type_id, value, create_user, create_date, modify_user, modify_date) VALUES (" +
@@ -1559,7 +1603,7 @@ public class TestHelper {
     static void deleteProject(Selenium browser, long projectId) throws Exception {
         Connection con = getConnection();
         try {
-            executeStatement(con, "UPDATE project SET project_status_id = 3 WHERE project_id = " + projectId);
+            //executeStatement(con, "UPDATE project SET project_status_id = 3 WHERE project_id = " + projectId);
         } finally {
             con.close();    
         }
