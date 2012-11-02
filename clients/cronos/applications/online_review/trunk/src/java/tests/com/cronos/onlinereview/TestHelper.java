@@ -1603,7 +1603,7 @@ public class TestHelper {
     static void deleteProject(Selenium browser, long projectId) throws Exception {
         Connection con = getConnection();
         try {
-            //executeStatement(con, "UPDATE project SET project_status_id = 3 WHERE project_id = " + projectId);
+            executeStatement(con, "UPDATE project SET project_status_id = 3 WHERE project_id = " + projectId);
         } finally {
             con.close();    
         }
