@@ -196,7 +196,7 @@ public class TimelineAdvancementTests extends ProjectTests {
         browser.waitForPageToLoad(TIMEOUT);
         assertNoErrorsOccurred();
     }
-    
+
     /**
      * Test Case Number: FTC146 RS10.1 Verify timeline advancement for a successful contest
      *
@@ -274,7 +274,7 @@ public class TimelineAdvancementTests extends ProjectTests {
     */
     private void SubmitApproval(Boolean approval, int round) throws Exception{
         //click submission
-        browser.click("//div[@id='sc" + (8+(round-1)*2) +"']/table/tbody/tr[3]/td[6]/a");
+        browser.click("//div[@id='sc" + (7+(round-1)*2) +"']/table/tbody/tr[3]/td[6]/a");
         browser.waitForPageToLoad(TIMEOUT);
         browser.select("answer[0]","label=4 - Strongly Agree");
         if(!approval) {

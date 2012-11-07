@@ -89,8 +89,6 @@ import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
-import com.topcoder.management.review.data.EvaluationType;
-import com.topcoder.management.review.data.Item;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
@@ -278,16 +276,6 @@ import com.topcoder.web.ejb.forums.ForumsHome;
   *   </ol>
   * </p>
  * 
- * <p>
- * Version 2.0 (Online Review Update Review Management Process assembly 1 version 1.0) Change notes:
- *   <ol>
- *     <li>Added {@link #findEvaluationTypeByName(EvaluationType[] evaluationTypes, String typeName)} method.</li>
- *     <li>Added {@link #findEvaluationTypeById(EvaluationType[] evaluationTypes, Long id)} method.</li>
- *     <li>Added {@link #isEvaluatorComment(Comment comment)} method.</li>
- *     <li>Added {@link #copyComments(Review fromReview, Review toReview, String[] typesToCopy,String extraInfoToCheck)} method.</li>
- *     <li>Added {@link #copyReviewItems(Review fromReview, Review toReview, String[] typesToCopy)} method.</li>
- *   </ol>
- * </p>
  *
  * <p>
  * Version 2.3 (Review Feedback Integration Assembly 1.0) Change notes:
@@ -522,58 +510,6 @@ public class ActionsHelper {
         return obj;
     }
 
-    /**
-     * This static method searches for the comment type with the specified name in a provided array
-     * of comment types. The search is case-insensitive.
-     *
-     * @return found evaluation type, or <code>null</code> if a type with the specified name has not
-     *         been found in the provided array of evaluation types.
-     * @param evaluationTypes
-     *            an array of evaluation types to search for wanted evaluation type among.
-     * @param typeName
-     *            the name of the needed comment type.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or <code>typeName</code>
-     *             parameter is empty string.
-     */
-    public static EvaluationType findEvaluationTypeByName(EvaluationType[] evaluationTypes, String typeName ) {
-        // Validate parameters
-        validateParameterNotNull(evaluationTypes, "evaluationTypes");
-
-        for (int i = 0; i < evaluationTypes.length; ++i) {
-            if ( evaluationTypes[i].getName().equalsIgnoreCase(typeName)) {
-                return evaluationTypes[i];
-            }
-        }
-        return null;
-    }
-    
-    /**
-     * This static method searches for the comment type with the specified name in a provided array
-     * of comment types. The search is case-insensitive.
-     *
-     * @return found evaluation type, or <code>null</code> if a type with the specified name has not
-     *         been found in the provided array of evaluation types.
-     * @param evaluationTypes
-     *            an array of evaluation types to search for wanted evaluation type among.
-     * @param id
-     *            the ID of the needed comment type.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or <code>typeName</code>
-     *             parameter is empty string.
-     */
-    public static EvaluationType findEvaluationTypeById(EvaluationType[] evaluationTypes,Long id ) {
-        // Validate parameters
-        validateParameterNotNull(evaluationTypes, "evaluationTypes");
-
-        for (int i = 0; i < evaluationTypes.length; ++i) {
-            if ( evaluationTypes[i].getId() == id ) {
-                return evaluationTypes[i];
-            }
-        }
-        return null;
-    }
-    
     /**
      * This static method searches for the project phase with the specified ID in a provided array
      * of project phases.
@@ -899,25 +835,6 @@ public class ActionsHelper {
         return (commentType != null && commentType.equalsIgnoreCase("Manager Comment"));
     }
 
-    /**
-     * This static method determines if the specified comment is evaluator's comment.
-     *
-     * @return <code>true</code> if the specifed comment is evaluator's comment, <code>false</code>
-     *         if it is not.
-     * @param comment
-     *            a comment to determine type of.
-     * @throws IllegalArgumentException
-     *             if <code>comment</code> parameter is <code>null</code>.
-     */
-    public static boolean isEvaluatorComment(Comment comment) {
-        // Validate parameter
-        validateParameterNotNull(comment, "comment");
-
-        String commentType = comment.getCommentType().getName();
-
-        return (commentType != null && commentType.equalsIgnoreCase("Primary Review Evaluation Comment"));
-    }
-    
     /**
      * This static method determines if the specified comment is appeal or appeal response.
      *
@@ -1683,33 +1600,6 @@ public class ActionsHelper {
     }
 
     /**
-     * This static method returns the array of resources for all the users in the project associated
-     * with the specified phase. The list of all resources for the project is
-     * retrieved from the <code>HttpServletRequest</code> object specified by <code>request</code>
-     * parameter.
-     *
-     * @return an array of found resources, or emtpy array if no resources for currently logged in user
-     *         found such that those resources would be associated with the specified phase.
-     * @param request
-     *            an <code>HttpServletRequest</code> object containing additional information.
-     * @param phase
-     *            a phase to search the resouces for. This parameter can be <code>null</code>, in
-     *            which case the search is made for resources with no phase assigned.
-     * @throws IllegalArgumentException
-     *             if <code>request</code> parameter is <code>null</code>.
-     */
-    public static Resource[] getResourcesForPhase(HttpServletRequest request, Phase phase) {
-        // Validate parameters
-        validateParameterNotNull(request, "request");
-        validateParameterNotNull(phase, "phase");
-        // Retrieve the list of resources from the request's attribute
-        Resource[] resources = (Resource[]) validateAttributeNotNull(request, "resources");
-
-        // Return the resources using another helper-method
-        return getResourcesForPhase(resources, phase);
-    }
-    
-    /**
      * This static method returns the resource for role for the currently logged in user.
      * The list of all resources for the currently logged in user is
      * retrieved from the <code>HttpServletRequest</code> object specified by <code>request</code>
@@ -2059,38 +1949,6 @@ public class ActionsHelper {
     }
 
     /**
-     * Checks whether the specified phase is opened or closed.
-     *
-     * @param phases all phases
-     * @param phaseIndex the beginning phase index
-     * @param phaseNames the phases containing the specified phase
-     * @return true if the specified phase is opened or closed, false otherwise.
-     * @throws IllegalArgumentException
-     *             if <code>phases</code> parameter is <code>null</code> or if
-     *             <code>phaseIndex</code> parameter is not within valid range of the array
-     *             specified by <code>phases</code> parameter (thus, there is no way to pass an
-     *             empty array to this method) or phase<code>phaseNames</code> is null.
-     */
-    public static boolean isInOrAfterPhase(Phase[] phases, int phaseIndex, String[] phaseNames) {
-        // Validate parameters
-        validateParameterNotNull(phases, "phases");
-        validateParameterInRange(phaseIndex, "phaseIndex", 0, phases.length - 1);
-        validateParameterNotNull(phaseNames, "phaseNames");
-
-        for (int i = phaseIndex; i < phases.length; ++i) {
-            // Get a phase for the current iteration
-            final Phase phase = phases[i];
-
-            for (String phaseName : phaseNames) {
-                if (phase.getPhaseType().getName().equalsIgnoreCase(phaseName)) {
-                    return (!phase.getPhaseStatus().getName().equalsIgnoreCase(Constants.SCHEDULED_PH_STATUS_NAME));
-                }
-            }
-        }
-        return false;
-    }
-    
-    /**
      * This static method // TODO: should be documented
      *
      * @return
@@ -2104,8 +1962,20 @@ public class ActionsHelper {
      *             empty array to this method).
      */
     public static boolean isInOrAfterPhase(Phase[] phases, int phaseIndex, String phaseName) {
+        // Validate parameters
+        validateParameterNotNull(phases, "phases");
+        validateParameterInRange(phaseIndex, "phaseIndex", 0, phases.length - 1);
         validateParameterStringNotEmpty(phaseName, "phaseName");
-        return isInOrAfterPhase(phases, phaseIndex, new String[] {phaseName });
+
+        for (int i = phaseIndex; i < phases.length; ++i) {
+            // Get a phase for the current iteration
+            final Phase phase = phases[i];
+
+            if (phase.getPhaseType().getName().equalsIgnoreCase(phaseName)) {
+                return (!phase.getPhaseStatus().getName().equalsIgnoreCase(Constants.SCHEDULED_PH_STATUS_NAME));
+            }
+        }
+        return false;
     }
 
     /**
@@ -2141,14 +2011,7 @@ public class ActionsHelper {
                 continue;
             }
             prevPhase = true;
-            if (
-                    // new review process
-                    phaseName.equalsIgnoreCase(Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME) ||
-                    phaseName.equalsIgnoreCase(Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME) ||
-                    phaseName.equalsIgnoreCase(Constants.NEW_APPEALS_PHASE_NAME) ||
-                    phaseName.equalsIgnoreCase(Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME) ||
-                    // old review process
-                    phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME) ||
+            if (phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME) ||
                     phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) ||
                     phaseName.equalsIgnoreCase(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
                 if (!phase.getPhaseStatus().getName().equals(PhaseStatus.CLOSED.getName())) {
@@ -2193,7 +2056,7 @@ public class ActionsHelper {
 
         boolean anyOtherPhaseFound = false;
 
-        for (i = phases.length - 1; i >= 0; --i) {
+        for (; i >= 0; --i) {
             // Get a phase for the current iteration
             Phase phase = phases[i];
             String phaseName = phase.getPhaseType().getName();
@@ -2210,25 +2073,17 @@ public class ActionsHelper {
             }
             // If Appeals response is the closed phase,
             // then definetely the project is at after Appeals Response stage
-            if (phaseName.equalsIgnoreCase(Constants.APPEALS_RESPONSE_PHASE_NAME) ||
-                    phaseName.equalsIgnoreCase(Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME)) {
+            if (phaseName.equalsIgnoreCase(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
                 return true;
             }
             // If the phase Review or Appeals is found, but there were other closed phases after them,
             // regard this as after Appeals Response (if Appeals Response is actually absent)
             if (anyOtherPhaseFound &&
                     (phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) ||
-                            phaseName.equalsIgnoreCase(Constants.NEW_APPEALS_PHASE_NAME) ||
-                            phaseName.equalsIgnoreCase(Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME) ||
                             phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME))) {
                 return true;
             }
-            if (!(phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) ||
-                    phaseName.equalsIgnoreCase(Constants.NEW_APPEALS_PHASE_NAME) ||
-                    phaseName.equalsIgnoreCase(Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME) ||
-                    phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME))) {
-                anyOtherPhaseFound = true;
-            }
+            anyOtherPhaseFound = true;
         }
 
         // If i is negative, the needed phase has not been found
@@ -2883,7 +2738,7 @@ public class ActionsHelper {
             resourceResultSet = resourceSelectStmt.executeQuery(
                     "SELECT resource_info.value, resource.resource_role_id, resource.create_date FROM resource, resource_info WHERE " +
                             "resource.project_id = "+projectId+" AND resource.resource_id = resource_info.resource_id AND " +
-                            "resource.resource_role_id in (2,4,5,6,7,8,9,21,22) AND resource_info.resource_info_type_id=1");
+                            "resource.resource_role_id in (2,4,5,6,7,8,9) AND resource_info.resource_info_type_id=1");
 
             Map<Long,Long> roles = new HashMap<Long,Long>();
             Set<Long> primaries = new HashSet<Long>();
@@ -2893,8 +2748,8 @@ public class ActionsHelper {
                 long role = resourceResultSet.getLong(2);
                 java.sql.Timestamp create_date = resourceResultSet.getTimestamp(3);
 
-                // Role 4 for Reviewer, 5 for Accuracy Reviewer, 6 for Failure Reviewer and 7 for Stress Reviewer, 21 for secondary reviewer
-                if (role==4 || role==5 || role==6 || role==7 || role == 21 || role == 22) {
+                // Role 4 for Reviewer, 5 for Accuracy Reviewer, 6 for Failure Reviewer and 7 for Stress Reviewer
+                if (role==4 || role==5 || role==6 || role==7) {
                     roles.put(userID,role);
                     createDates.put(userID,create_date);
                 }
@@ -3096,7 +2951,7 @@ public class ActionsHelper {
         }
 
         // For other projects, response ids all correspond to Reviewer role.
-        if (phaseID != 113 || responseIDs.size() == 0) {
+        if (phaseID != 113) {
             PreparedStatement ps = null;
             ResultSet rs = null;
             try {
@@ -3105,14 +2960,7 @@ public class ActionsHelper {
                 // component development track for which it corresponds to the failure reviewer).
                 // So, we retrieve all response ids for the specified track ordered by its value.
                 // The first one will be the primary then.
-                StringBuffer ids = new StringBuffer();
-                ids.append("0");
-                Set<Long> rids = new HashSet<Long>(roles);
-                for (Long roldId : rids) {
-                    ids.append(",");
-                    ids.append(roldId);
-                }
-                ps = conn.prepareStatement("select review_resp_id from review_resp where phase_id = ? and resource_role_id in (" + ids.toString() + ") order by review_resp_id");
+                ps = conn.prepareStatement("select review_resp_id from review_resp where phase_id = ? and resource_role_id=4 order by review_resp_id");
                 ps.setLong(1, phaseID);
 
                 long primaryResponseId=-1L;
@@ -4170,192 +4018,6 @@ public class ActionsHelper {
         }
     }
 
-    /**
-     * copies the comments from one Review to another. Which comments are copied are
-     * determined by the typesToCopy and extraInfoToCheck parameters.
-     *
-     * @param fromReview
-     *            source review for the comments.
-     * @param toReview
-     *            destination review.
-     * @param typesToCopy
-     *            types of comments to copy.
-     * @param extraInfoToCheck
-     *            extra info to check the comment against.
-     */
-    public static void copyComments(Review fromReview, Review toReview, String[] typesToCopy,
-        String extraInfoToCheck) {
-        Comment[] comments = fromReview.getAllComments();
-
-        // copy all comments with given type and extra info.
-        for (int c = 0; c < comments.length; c++) {
-            Comment comment = comments[c];
-
-            if (isCommentToBeCopied(comment, typesToCopy, extraInfoToCheck)) {
-                toReview.addComment(copyComment(comment));
-            }
-        }
-    }
-    
-    /**
-     * This helper method copies the review items from one review to another. It will
-     * also copy the comments for each review item from one review to another. Which
-     * comments are copied are determined by the typesToCopy.
-     *
-     * @param fromReview
-     *            source review for the comments.
-     * @param toReview
-     *            destination review.
-     * @param typesToCopy
-     *            types of comments to copy.
-     */
-    public static void copyReviewItems(Review fromReview, Review toReview, String[] typesToCopy) {
-        Item[] reviewItems = fromReview.getAllItems();
-
-        for (int r = 0; r < reviewItems.length; r++) {
-            Item item = reviewItems[r];
-
-            // create a new review item and copy all properties
-            Item newItem = new Item(item.getId());
-            newItem.setDocument(item.getDocument());
-            newItem.setQuestion(item.getQuestion());
-            newItem.setAnswer(item.getAnswer());
-
-            // copy all comments with given type and extra info.
-            Comment[] comments = item.getAllComments();
-
-            for (int c = 0; c < comments.length; c++) {
-                Comment comment = comments[c];
-
-                if (isCommentToBeCopied(comment, typesToCopy, null)) {
-                    newItem.addComment(copyComment(comment));
-                }
-            }
-
-            // add the item to the destination review
-            toReview.addItem(newItem);
-        }
-    }
-    
-    /**
-     * Returns a new comment which is a copy of the given comment, only with no extra info
-     * set.
-     *
-     * @param comment
-     *            comment to be copied.
-     * @return a new comment which is a copy of the given comment.
-     */
-    private static Comment copyComment(Comment comment) {
-        Comment newComment = new Comment(comment.getId());
-        newComment.setAuthor(comment.getAuthor());
-        newComment.setComment(comment.getComment());
-        newComment.setCommentType(comment.getCommentType());
-
-        return newComment;
-    }
-
-    /**
-     * checks if the comment is to be copied i.e. is one of the comment types that have to
-     * be copied to the review worksheet.
-     *
-     * @param comment
-     *            comment to check.
-     * @param typesToCopy
-     *            types of comments to copy.
-     * @param extraInfoToCheck
-     *            extra info to check the comment against.
-     * @return true if it is to be copied, false otherwise.
-     */
-    private static boolean isCommentToBeCopied(Comment comment, String[] typesToCopy, String extraInfoToCheck) {
-        String commentType = comment.getCommentType().getName();
-
-        for (int i = 0; i < typesToCopy.length; i++) {
-            if (commentType.equals(typesToCopy[i])) {
-                if (extraInfoToCheck != null) {
-                    if (extraInfoToCheck.equals(comment.getExtraInfo())) {
-                        return true;
-                    }
-                } else {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-    
-    /**
-     * Filter the comments in review board to contain only the appeals submitted by the specific resoruces. The
-     * appeal responses are also filtered. The reason to filter appeals/appeals response is that in new updated review system,
-     * both submitter and secondary reviewer can submit appeals to a review, but they can only see their own appeals/appeals response
-     * if appeal response phase is not closed.
-     *
-     * @param review the <code>Review</code> to filter
-     * @param myResource the specific resources
-     * @since 2.1
-     */
-    public static void filterOwnAppeals(Review review, Resource[] myResource) {
-        // if the contest is not after appeal response phase, and the user has no permission to view all the appeals
-        // then he can only view his own appeals
-		
-		
-        Set<Long> myResourceIds = new HashSet<Long>();
-        for (Resource res : myResource) {
-            myResourceIds.add(res.getId());
-        }
-		
-		if (review != null && review.getAllItems() != null) {
-			for (Item item : review.getAllItems()) {
-                List<Comment> appeals = new ArrayList<Comment>();
-				for (Comment comment : item.getAllComments()) {
-                    if (comment.getCommentType().getName().equals("Appeal")) {
-                        appeals.add(comment);
-                    }
-				}
-                int ind = 0;
-				for (Comment comment : item.getAllComments()) {
-					if (comment.getCommentType().getName().equals("Appeal") && !myResourceIds.contains(comment.getAuthor())) {
-						item.removeComment(comment);
-					}
-					if (comment.getCommentType().getName().equals("Appeal Response")) {
-                        Comment correspondingAppeal = appeals.get(ind);
-                        ind++;
-                        if (!myResourceIds.contains(correspondingAppeal.getAuthor())) {
-                            item.removeComment(comment);
-                        }
-					}
-				}
-			}
-		}
-    }
-    
-   /**
-     * Counts the number of total appeals and un-resolved appeals for a review.
-     * 
-     * @param review the specified review
-     * @return a <code>Array</code> containing two elements, the first element is the number of un-resolved appeals,
-     *         the second element is the number of total appeals.
-     * @since 2.2
-     */
-    public static int[] countAppealsAndResponse(Review review) {
-        int resolvedAppeals = 0;
-        int totalAppeals = 0;
-        for (int itemIdx = 0; itemIdx < review.getNumberOfItems(); ++itemIdx) {
-            Item item = review.getItem(itemIdx);
-            for (int commentIdx = 0; commentIdx < item.getNumberOfComments(); ++commentIdx) {
-                String commentType = item.getComment(commentIdx).getCommentType().getName();
-                if (commentType.equalsIgnoreCase("Appeal")) {
-                    ++totalAppeals;
-                }
-                if (commentType.equalsIgnoreCase("Appeal Response")) {
-                    ++resolvedAppeals;
-                }
-            }
-        }
-        int unresolvedAppeals = totalAppeals - resolvedAppeals;
-        return new int[] {unresolvedAppeals, totalAppeals};
-    }
-    
     /**
      * Delete the Post-Mortem phase of a specified project.
      * 

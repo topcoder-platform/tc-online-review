@@ -33,7 +33,7 @@
     <component
         name="online_review_ajax_support"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_ajax_support/trunk"
-        revision="219984" />
+        revision="222028" />
 
     <component
         name="online_review_login"
@@ -43,7 +43,7 @@
     <component
         name="online_review_phases"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/trunk"
-        revision="220923" />
+        revision="222029" />
 
     <component
         name="online_review_upload_services"
@@ -63,12 +63,12 @@
     <component
         name="project_management"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/project_management/trunk"
-        revision="219982" />
+        revision="222030" />
 
     <component
         name="project_management_persistence"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_management_persistence/trunk"
-        revision="219983" />
+        revision="222033" />
 
     <component
         name="project_phase_template"
@@ -78,17 +78,17 @@
     <component
         name="review_data_structure"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/review_data_structure/trunk"
-        revision="215237" />
+        revision="222034" />
 
     <component
         name="review_management"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/review_management/trunk"
-        revision="215238" />
+        revision="222035" />
 
     <component
         name="review_management_persistence"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_management_persistence/trunk"
-        revision="215269" />
+        revision="222036" />
 
     <component
         name="review_score_aggregator"

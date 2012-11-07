@@ -240,7 +240,7 @@ public class EditProjectFiledsTests extends ProjectTests {
         browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
-        status = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[14]/td[2]");
+        status = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[15]/td[2]");
         assertEquals("Status should be changed to Cancelled - Client Request", "Cancelled - Client Request", status);
 
         assertNoErrorsOccurred();

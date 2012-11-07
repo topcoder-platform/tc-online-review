@@ -19,7 +19,6 @@ import com.cronos.onlinereview.deliverables.SubmissionDeliverableChecker;
 import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
 import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
-import com.cronos.onlinereview.phases.GenericAppealPhaseHandler;
 import com.cronos.onlinereview.phases.MilestoneReviewPhaseHandler;
 import com.cronos.onlinereview.phases.MilestoneSubmissionPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
@@ -30,13 +29,10 @@ import com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRMilestoneReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRMilestoneScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRPostMortemPhaseHandler;
-import com.cronos.onlinereview.phases.PRPrimaryReviewAppealResponsePhaseHandler;
-import com.cronos.onlinereview.phases.PRPrimaryReviewEvaluationPhaseHandler;
 import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
 import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
-import com.cronos.onlinereview.phases.SecondaryReviewerReviewPhaseHandler;
 import com.cronos.onlinereview.phases.SpecificationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.SpecificationSubmissionPhaseHandler;
 import com.cronos.onlinereview.services.uploads.ManagersProvider;
@@ -167,13 +163,6 @@ import com.topcoder.util.log.LogFactory;
  *   </ol>
  * </p>
  *
- * <p>
- * Version 1.9 (Online Review Update Review Management Process assembly 2) Change notes:
- *   <ol>
- *     <li>Updated {@link #getPhaseManager()} method to set handler for <code>New Appeals</code> and
- *     <code>Primary Review Appeals Response</code> phases.</li>
- *   </ol>
- * </p>
  *
  * <p>
  * Version 1.10 (Review Feedback Integration Assembly 1.0) Change notes:
@@ -343,18 +332,10 @@ public class ManagerCreationHelper implements ManagersProvider {
                     Constants.SCREENING_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, new PRReviewPhaseHandler(),
                     Constants.REVIEW_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, new SecondaryReviewerReviewPhaseHandler(),
-                    Constants.SECONDARY_REVIEWER_REVIEW_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, new PRPrimaryReviewEvaluationPhaseHandler(),
-                    Constants.PRIMARY_REVIEW_EVALUATION_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, new AppealsPhaseHandler(),
                     Constants.APPEALS_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, new GenericAppealPhaseHandler(),
-                    Constants.NEW_APPEALS_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, new PRAppealResponsePhaseHandler(),
                     Constants.APPEALS_RESPONSE_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, new PRPrimaryReviewAppealResponsePhaseHandler(),
-                    Constants.PRIMARY_REVIEW_APPEALS_RESPONSE_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, new PRAggregationPhaseHandler(),
                     Constants.AGGREGATION_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, new PRFinalFixPhaseHandler(),
@@ -580,7 +561,6 @@ public class ManagerCreationHelper implements ManagersProvider {
                 checkers.put(Constants.SCREENING_DELIVERABLE_NAME, new IndividualReviewDeliverableChecker(dbconn));
                 checkers.put(Constants.PRIMARY_SCREENING_DELIVERABLE_NAME, committedChecker);
                 checkers.put(Constants.REVIEW_DELIVERABLE_NAME, committedChecker);
-                checkers.put(Constants.NEW_REVIEW_DELIVERABLE_NAME, committedChecker);
                 checkers.put(Constants.ACC_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);
                 checkers.put(Constants.FAIL_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);
                 checkers.put(Constants.STRS_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);
