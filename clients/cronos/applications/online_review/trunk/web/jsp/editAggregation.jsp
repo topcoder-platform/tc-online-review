@@ -1,13 +1,3 @@
-<%--
-  - Author: TCSASSEMBER
-  - Version: 1.1
-  - Copyright (C) 2005 - 2012 TopCoder Inc., All Rights Reserved.
-  -
-  - Description: This page renders the Review Comments for a review item.
-  -
-  - Version 1.1 (Release Assembly - TopCoder OR Improvements Merge2) changes:
-  - - Updates for the new review process system.
---%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -122,8 +112,7 @@
                                                     </c:choose>
                                                     <c:if test='${(isReviewerComment == true) || (commentType == "Manager Comment") ||
                                                         (commentType == "Appeal") || (commentType == "Appeal Response") ||
-                                                        (commentType == "Aggregation Review Comment") || (commentType == "Submitter Comment") ||
-                                                        (commentType == "Primary Review Evaluation Comment")}'>
+                                                        (commentType == "Aggregation Review Comment") || (commentType == "Submitter Comment")}'>
                                                         <tr class="dark">
                                                             <td class="value">
                                                                 <c:if test="${firstTime == true}">
@@ -157,7 +146,7 @@
                                                                         ${orfn:htmlEncode(comment.comment)}
                                                                     </c:when>
                                                                     <c:when test='${(commentType == "Manager Comment") ||
-                                                                        (commentType == "Appeal") || (commentType == "Appeal Response") || (commentType == "Primary Review Evaluation Comment")}'>
+                                                                        (commentType == "Appeal") || (commentType == "Appeal Response")}'>
                                                                         <b><bean:message key='editReview.EditAggregation.${fn:replace(commentType, " ", "")}' /></b>
                                                                         ${orfn:htmlEncode(comment.comment)}
                                                                     </c:when>

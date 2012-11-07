@@ -28,7 +28,6 @@ import com.topcoder.management.project.Project;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.persistence.ResourcePersistenceException;
-import com.topcoder.management.review.data.Comment;
 import com.topcoder.util.errorhandling.BaseException;
 
 /**
@@ -708,36 +707,5 @@ public final class Functions {
         } else {
             return "";
         }
-    }
-    
-    /**
-     * <p>Gets the appeal title for the evaluation review type.</p>
-     * 
-     * @param pageContext
-     *            a <code>PageContext</code> object. Normally, you should write the following:
-     *            &quot;<code>pageContext</code>&quot; in a JSP page when you call this method
-     *            to pass a valid object to it.
-     * @param comment the appeal item comment object
-     * @return the appeal title
-     */
-    public static String getAppealTitleForEvaluationReview(PageContext pageContext, Comment comment) {
-        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        Resource resource = (Resource) request.getAttribute("resource_" + comment.getAuthor());
-        if (resource == null) {
-            try {
-                ResourceManager resourceManager = ActionsHelper.createResourceManager();
-                resource = resourceManager.getResource(comment.getAuthor());
-                request.setAttribute("resource_" + comment.getAuthor(), resource);
-            } catch (ResourcePersistenceException e) {
-                return getMessage(pageContext, "editReview.Question.AppealText.title");
-            }
-        }
-
-        if (resource.getResourceRole().getId() == 1L) {
-            return getMessage(pageContext, "editReview.Question.SubmitterAppealText.title");
-        } else if (resource.getResourceRole().getId() == 21L) {
-            return getMessage(pageContext, "editReview.Question.SecondaryReviewerAppealText.title");
-        }
-        return getMessage(pageContext, "editReview.Question.AppealText.title");
     }
 }

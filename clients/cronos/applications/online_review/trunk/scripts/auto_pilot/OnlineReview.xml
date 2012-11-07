@@ -1350,8 +1350,7 @@
                                review.create_user AS create_user,
                                review.create_date AS create_date,
                                review.modify_user AS modify_user,
-                               review.modify_date AS modify_date,
-                               review.review_evaluation_id as review_evaluation_id
+                               review.modify_date AS modify_date
                         FROM review
                         INNER JOIN scorecard ON review.scorecard_id = scorecard.scorecard_id
                         INNER JOIN resource ON review.resource_id = resource.resource_id
@@ -1375,12 +1374,6 @@
                     </Property>
                     <Property name="project">
                         <Value>resource.project_id</Value>
-                    </Property>
-                    <Property name="review">
-                        <Value>review.review_id</Value>
-                    </Property>
-                    <Property name="reviewevaluation">
-                        <Value>review.review_evaluation_id</Value>
                     </Property>
                 </Property>
 
@@ -1422,18 +1415,6 @@
                         </Property>
                     </Property>
                     <Property name="creation_date">
-                        <Property name="validator">
-                            <Property name="class"><Value>validator</Value></Property>
-                            <Property name="identifier"><Value>default</Value></Property>
-                        </Property>
-                    </Property>
-                    <Property name="review">
-                        <Property name="validator">
-                            <Property name="class"><Value>validator</Value></Property>
-                            <Property name="identifier"><Value>default</Value></Property>
-                        </Property>
-                    </Property>
-                    <Property name="reviewevaluation">
                         <Property name="validator">
                             <Property name="class"><Value>validator</Value></Property>
                             <Property name="identifier"><Value>default</Value></Property>
