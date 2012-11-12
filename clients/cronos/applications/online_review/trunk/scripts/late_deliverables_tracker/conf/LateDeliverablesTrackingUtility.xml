@@ -544,6 +544,9 @@
                                     <Property name="password">
                                         <Value>@database.password@</Value>
                                     </Property>
+                                    <Property name="new_connection_sql">
+                                        <Value>set lock mode to wait 5;</Value>
+                                    </Property>
                                 </Property>
                             </Property>
                         </Property>

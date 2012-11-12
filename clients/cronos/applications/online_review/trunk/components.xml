@@ -199,7 +199,7 @@
     <component
         name="db_connection_factory"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/db_connection_factory/trunk"
-        revision="110583" />
+        revision="222260" />
 
     <component
         name="executable_wrapper"

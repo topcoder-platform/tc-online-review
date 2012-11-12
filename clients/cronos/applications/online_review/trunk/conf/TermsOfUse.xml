@@ -8,20 +8,11 @@
                     </Property>
                     <Property name="InformixJDBCConnection">
                         <Property name="producer">
-                            <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                            <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
                         </Property>
                         <Property name="parameters">
-                            <Property name="jdbc_driver">
-                                <Value>com.informix.jdbc.IfxDriver</Value>
-                            </Property>
-                            <Property name="jdbc_url">
-                                <Value>jdbc:informix-sqli://@database.server@:@database.port@/common_oltp:informixserver=@database.INFORMIXSERVER@</Value>
-                            </Property>
-                            <Property name="user">
-                                <Value>@database.username@</Value>
-                            </Property>
-                            <Property name="password">
-                                <Value>@database.password@</Value>
+                            <Property name="jndi_name">
+                                <Value>java:DS</Value>
                             </Property>
                         </Property>
                     </Property>
@@ -44,20 +35,11 @@
                     </Property>
                     <Property name="InformixJDBCConnection">
                         <Property name="producer">
-                            <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                            <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
                         </Property>
                         <Property name="parameters">
-                            <Property name="jdbc_driver">
-                                <Value>com.informix.jdbc.IfxDriver</Value>
-                            </Property>
-                            <Property name="jdbc_url">
-                                <Value>jdbc:informix-sqli://@database.server@:@database.port@/common_oltp:informixserver=@database.INFORMIXSERVER@</Value>
-                            </Property>
-                            <Property name="user">
-                                <Value>@database.username@</Value>
-                            </Property>
-                            <Property name="password">
-                                <Value>@database.password@</Value>
+                            <Property name="jndi_name">
+                                <Value>java:DS</Value>
                             </Property>
                         </Property>
                     </Property>
@@ -77,20 +59,11 @@
                     </Property>
                     <Property name="InformixJDBCConnection">
                         <Property name="producer">
-                            <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                            <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
                         </Property>
                         <Property name="parameters">
-                            <Property name="jdbc_driver">
-                                <Value>com.informix.jdbc.IfxDriver</Value>
-                            </Property>
-                            <Property name="jdbc_url">
-                                <Value>jdbc:informix-sqli://@database.server@:@database.port@/common_oltp:informixserver=@database.INFORMIXSERVER@</Value>
-                            </Property>
-                            <Property name="user">
-                                <Value>@database.username@</Value>
-                            </Property>
-                            <Property name="password">
-                                <Value>@database.password@</Value>
+                            <Property name="jndi_name">
+                                <Value>java:DS</Value>
                             </Property>
                         </Property>
                     </Property>
