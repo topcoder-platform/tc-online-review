@@ -1039,6 +1039,42 @@
                     </Property>
                 </Property>
             </Property>
+            <Property name="CopilotPostingScheme">
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectCategories">
+                    <Value>29</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>2</Value>
+                </Property>
+                <Property name="StartPhaseEmail">
+                    <Property name="EmailTemplateName">
+                        <Value>&managerNotificationEmailTemplatesBase;/review/copilot_start.txt</Value>
+                    </Property>
+                    <Property name="EmailSubject">
+                        <Value>Phase Start</Value>
+                    </Property>
+                    <Property name="EmailFromAddress">
+                        <Value>&notificationEmailFromAddress;</Value>
+                    </Property>
+                </Property>
+                <Property name="EndPhaseEmail">
+                    <Property name="EmailTemplateName">
+                        <Value>&managerNotificationEmailTemplatesBase;/review/copilot_end.txt</Value>
+                    </Property>
+                    <Property name="EmailSubject">
+                        <Value>Phase End</Value>
+                    </Property>
+                    <Property name="EmailFromAddress">
+                        <Value>&notificationEmailFromAddress;</Value>
+                    </Property>
+                </Property>
+            </Property>
             <Property name="StudioScheme">
                 <Property name="Roles">
                     <Value>*</Value>
@@ -1047,7 +1083,7 @@
                     <Value>3</Value>
                 </Property>
                 <Property name="Priority">
-                    <Value>2</Value>
+                    <Value>3</Value>
                 </Property>
                 <Property name="StartPhaseEmail">
                     <Property name="EmailTemplateName">
