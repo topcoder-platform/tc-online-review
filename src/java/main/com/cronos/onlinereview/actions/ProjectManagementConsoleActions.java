@@ -1788,7 +1788,12 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             final boolean reviewFeedbackAllowed = reviewFeedbackFlagSet && feedbackStopperPhaseIsClosed;
 
             long currentUserId = AuthorizationHelper.getLoggedInUserId(request);
+            String currentUserIdString = Long.toString(currentUserId);
+
             if (reviewFeedbackAllowed) {
+                ReviewFeedbackManager reviewFeedbackManager = ActionsHelper.createReviewFeedbackManager();
+                List<ReviewFeedback> existingReviewFeedbacks = reviewFeedbackManager.getForProject(project.getId());
+
                 // Get the list of reviewers eligible for feedback and convert it to set of respective user IDs
                 List<Resource> reviewerResources = getFeedbackEligibleReviewers(project.getId(), request);
                 Set<Long> eligibleReviewerUserIds = new HashSet<Long>();
@@ -1825,12 +1830,20 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                     } else if (!eligibleReviewerUserIds.contains(reviewerUserIds[i])) {
                         ActionsHelper.addErrorToRequest(request, "reviewerFeedback[" + i + "]", new ActionMessage(
                             "error.com.cronos.onlinereview.actions.manageProject.ReviewPerformance.WrongReviewer"));
+                    } else {
+                        // Verify that feedback from the current user for the reviewer does not exist already
+                        for (ReviewFeedback existingFeedback : existingReviewFeedbacks) {
+                            if (existingFeedback.getReviewerUserId() == reviewerUserIds[i] 
+                                && existingFeedback.getCreateUser().equals(currentUserIdString)) {
+                                ActionsHelper
+                                    .addErrorToRequest(request, "reviewerFeedback[" + i + "]", new ActionMessage(
+                                        "error.com.cronos.onlinereview.actions.manageProject.ReviewPerformance.FeedbackExists"));
+                            }
+                        }
                     }
                 }
                 if (!ActionsHelper.isErrorsPresent(request)) {
                     // Save the feedback
-                    ReviewFeedbackManager reviewFeedbackManager = ActionsHelper.createReviewFeedbackManager();
-                    String currentUserIdString = Long.toString(currentUserId);
                     Date now = new Date();
                     for (int i = 0; i < reviewerUserIds.length; i++) {
                         ReviewFeedback feedback = new ReviewFeedback();
