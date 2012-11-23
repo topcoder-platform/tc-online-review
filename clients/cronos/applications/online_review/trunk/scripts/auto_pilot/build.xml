@@ -88,7 +88,7 @@
             <fileset file="${log4j.jar}"/>
             <fileset file="${jaf.jar}"/>
             <fileset file="${xerces.jar}"/>
-            <fileset file="${terms_of_use.path}"/>
+            <fileset file="${terms_of_use.jar}"/>
             <fileset file="${userEJB.jar}"/>
             <fileset file="${projectEJB.jar}"/>
             <fileset file="${tcwebcommon.jar}"/>
