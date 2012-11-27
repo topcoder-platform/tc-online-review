@@ -1,23 +1,12 @@
 /*
- * Copyright (C) 2006-2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2006-2012 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
-import com.cronos.onlinereview.login.AuthCookieManagementException;
-import com.cronos.onlinereview.login.AuthCookieManager;
-import com.cronos.onlinereview.login.ConfigurationException;
-import com.cronos.onlinereview.login.LoginActions;
-import com.cronos.onlinereview.login.Util;
+import com.cronos.onlinereview.login.*;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.Resource;
@@ -26,7 +15,21 @@ import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
+import com.topcoder.security.groups.model.GroupPermissionType;
+import com.topcoder.security.groups.model.ResourceType;
+import com.topcoder.security.groups.services.AuthorizationService;
+import com.topcoder.shared.dataAccess.DataAccess;
+import com.topcoder.shared.dataAccess.Request;
+import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
+import com.topcoder.shared.util.DBMS;
 import com.topcoder.util.errorhandling.BaseException;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This class provides helper methods that can be used to determine if the user has particular role,
@@ -64,8 +67,20 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, rac_
- * @version 1.4
+ * <p>
+ * Version 1.5 (Module Assembly - Topcoder Security Groups Backend - Online Review Permissions Propagation) Change notes:
+ *   <ol>
+ *     <li>Update gatherUserRoles(HttpServletRequest request) to check security permissions.</li>
+ *     <li>Update gatherUserRoles(HttpServletRequest request, long projectId) to check security permissions.</li>
+ *     <li>Add retrieveAuthorizationService method to get authorization service from spring context.</li>
+ *     <li>Add getUserProjectIdsList to get tc direct project ids for specify user id</li>
+ *     <li>Add getUserClientIds to get client ids for specify user id.</li>
+ *     <li>Add concatenate to concatenate string.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, rac_, tangzx
+ * @version 1.5
  */
 public class AuthorizationHelper {
 
@@ -76,6 +91,8 @@ public class AuthorizationHelper {
     public static final long NO_USER_LOGGED_IN_ID = -1;
 
     public static final String REDIRECT_BACK_URL_ATTRIBUTE = "redirectBackUrl";
+
+    private static final String AUTHORIZATION_SERVICE_NAME = "authorizationService";
 
     /**
      * <p>An <code>AuthCookieManager</code> to be used for user authentication based on cookies.</p>
@@ -282,9 +299,38 @@ public class AuthorizationHelper {
             roles.add(Constants.GLOBAL_PAYMENT_MANAGER_ROLE_NAME);
         }
 
+        // retrieve user id, project ids, and client ids
+        long userId = (Long) request.getSession().getAttribute(ConfigHelper.getUserIdAttributeName());
+        List<Long> projectIds;
+        List<Long> clientIds;
+        try {
+            projectIds = getUserProjectIdsList(userId);
+            clientIds = getUserClientIds(userId);
+        } catch (Exception e) {
+            throw new BaseException("error occurs while retrieving project ids or client ids", e);
+        }
+
+        // check whether user has cockpit project user role
+        AuthorizationService authorizationService = retrieveAuthorizationService(request);
+        for (Long clientId : clientIds) {
+            if (authorizationService.isCustomerAdministrator(userId, clientId)) {
+                roles.add(Constants.COCKPIT_PROJECT_USER_ROLE_NAME);
+                break;
+            }
+        }
+        for (Long projectId : projectIds) {
+            GroupPermissionType permission = authorizationService.checkAuthorization(userId, projectId,
+                    ResourceType.PROJECT);
+            if (null != permission) {
+                roles.add(Constants.COCKPIT_PROJECT_USER_ROLE_NAME);
+                break;
+            }
+        }
+
         // Determine some common permissions
         request.setAttribute("isAllowedToCreateProject",
                 hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME));
+
     }
 
     /**
@@ -352,6 +398,27 @@ public class AuthorizationHelper {
             ResourceRole role = resource.getResourceRole();
             // Add the name of the role to the roles set (gather the role)
             roles.add(role.getName());
+        }
+
+        // retrieve user id and client id
+        long userId = (Long) request.getSession().getAttribute(ConfigHelper.getUserIdAttributeName());
+        long clientId;
+        try {
+            clientId = getProjectClient(project.getTcDirectProjectId());
+        } catch (Exception e) {
+            throw new BaseException("error occurs while retrieving client id", e);
+        }
+
+        // check whether user has cockpit project user role
+        AuthorizationService authorizationService = retrieveAuthorizationService(request);
+        if (authorizationService.isCustomerAdministrator(userId, clientId)) {
+            roles.add(Constants.COCKPIT_PROJECT_USER_ROLE_NAME);
+        } else {
+            GroupPermissionType permission = authorizationService.checkAuthorization(userId,
+                    project.getTcDirectProjectId(), ResourceType.PROJECT);
+            if (null != permission) {
+                roles.add(Constants.COCKPIT_PROJECT_USER_ROLE_NAME);
+            }
         }
     }
 
@@ -475,5 +542,109 @@ public class AuthorizationHelper {
             return (AuthCookieManager) Util.creatObject(className, new Class[] { String.class },
                     new Object[]{namespace }, AuthCookieManager.class);
         }
+    }
+
+    public static long getProjectClient(long directProjectId) throws Exception {
+        DataAccess dataAccess = new DataAccess(DBMS.TCS_DW_DATASOURCE_NAME);
+
+        Request request = new Request();
+        request.setContentHandle("non_admin_client_billing_accounts");
+        request.setProperty("tdpis", String.valueOf(directProjectId));
+
+        ResultSetContainer resultContainer = dataAccess.getData(request).get("non_admin_client_billing_accounts");
+
+        if (resultContainer != null) {
+            if (resultContainer.size() > 0) {
+                return resultContainer.getLongItem(0, "client_id");
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Get authorization service from spring.
+     *
+     * @param request the http servlet request
+     * @return retrieved authorization service
+     * @since 1.5
+     */
+    private static AuthorizationService retrieveAuthorizationService(HttpServletRequest request) {
+        return (AuthorizationService) WebApplicationContextUtils.getWebApplicationContext(
+                request.getSession().getServletContext()).getBean(AUTHORIZATION_SERVICE_NAME);
+    }
+
+    /**
+     * Get tc direct project ids for specify user id.
+     *
+     * @param userId the user id
+     * @return the list of tc direct project ids
+     * @throws Exception if any exception occurs
+     * @since 1.5
+     */
+    public static List<Long> getUserProjectIdsList(long userId) throws Exception {
+        DataAccess dataAccess = new DataAccess(DBMS.TCS_OLTP_DATASOURCE_NAME);
+        Request request = new Request();
+        request.setContentHandle("direct_my_projects");
+        request.setProperty("uid", String.valueOf(userId));
+
+        List<Long> projects = new ArrayList<Long>();
+
+        final ResultSetContainer resultContainer = dataAccess.getData(request).get("direct_my_projects");
+        for (ResultSetContainer.ResultSetRow row : resultContainer) {
+            long tcDirectProjectId = row.getLongItem("tc_direct_project_id");
+            projects.add(tcDirectProjectId);
+        }
+
+        return projects;
+    }
+
+    /**
+     * Get client ids for specify user id.
+     *
+     * @param userId the user id
+     * @return the list of client ids
+     * @throws Exception if any exception occurs
+     * @since 1.5
+     */
+    public static List<Long> getUserClientIds(long userId) throws Exception {
+        DataAccess dataAccess = new DataAccess(DBMS.TCS_DW_DATASOURCE_NAME);
+        Request request = new Request();
+        ResultSetContainer resultContainer = null;
+        List<Long> clients = new ArrayList<Long>();
+
+        List<Long> projectIds = getUserProjectIdsList(userId);
+        if (projectIds.size() > 0) {
+            request.setContentHandle("non_admin_client_billing_accounts");
+            request.setProperty("tdpis", concatenate(projectIds, ", "));
+            resultContainer = dataAccess.getData(request).get("non_admin_client_billing_accounts");
+        }
+
+        if (resultContainer != null) {
+            for (ResultSetContainer.ResultSetRow row : resultContainer) {
+                long clientId = row.getLongItem("client_id");
+                clients.add(clientId);
+            }
+        }
+
+        return clients;
+    }
+
+    /**
+     * <p>Build a string concatenating the specified values separated with specified delimiter.</p>
+     *
+     * @param items a <code>long</code> list providing the values to be concatenated.
+     * @param delimiter a <code>String</code> providing the delimiter to be inserted between concatenated items.
+     * @return a <code>String</code> providing the concatenated item values.
+     * @since 1.5
+     */
+    private static String concatenate(List<Long> items, String delimiter) {
+        StringBuilder b = new StringBuilder();
+        for (Long id : items) {
+            if (b.length() > 0) {
+                b.append(delimiter);
+            }
+            b.append(id);
+        }
+        return b.toString();
     }
 }
