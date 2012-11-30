@@ -16,32 +16,12 @@
     <property name="shared_libdir" value="${online_review_home}/lib/shared" />
     <property name="token.properties" value="${online_review_home}/token.properties"/>
 
-    <property name="distribution_tool.version" value="1.0.1"/>
-    <property name="distribution_tool.jar.name" value="distribution_tool.jar"/>
-    <property name="distribution_tool.path" value="distribution_tool/${distribution_tool.version}"/>
-    <property name="distribution_tool.jar"
-              value="${tcs_libdir}/${distribution_tool.path}/${distribution_tool.jar.name}"/>
-
     <property name="job_scheduler.version" value="1.0" />
     <property name="job_scheduler.jar.name" value="job_scheduler.jar" />
     <property name="job_scheduler.path" value="job_scheduler/${job_scheduler.version}" />
     <property name="job_scheduler.jar" value="${tcs_libdir}/${job_scheduler.path}/${job_scheduler.jar.name}" />
 
-    <property name="job_scheduling.version" value="3.2.0"/>
-    <property name="job_scheduling.jar.name" value="job_scheduling.jar"/>
-    <property name="job_scheduling.path" value="job_scheduling/${job_scheduling.version}"/>
-    <property name="job_scheduling.jar" value="${tcs_libdir}/${job_scheduling.path}/${job_scheduling.jar.name}"/>
-        
-    <property name="terms_of_use.version" value="1.1.0" />
-    <property name="terms_of_use.jar.name" value="terms_of_use.jar" />
-    <property name="terms_of_use.path" value="terms_of_use/${terms_of_use.version}" />
-    <property name="terms_of_use.jar" value="${tcs_libdir}/${terms_of_use.path}/${terms_of_use.jar.name}" />
-
     <!-- TCS Dependencies - non-versioned -->
-    <property name="projectEJB.path" value="project_ejb"/>
-    <property name="projectEJB.jar.name" value="Project.jar"/>
-    <property name="projectEJB.jar" value="${tcs_libdir}/${projectEJB.path}/${projectEJB.jar.name}"/>
-
     <property name="userEJB.path" value="user_ejb"/>
     <property name="userEJB.jar.name" value="User.jar"/>
     <property name="userEJB.jar" value="${tcs_libdir}/${userEJB.path}/${userEJB.jar.name}"/>
@@ -100,6 +80,7 @@
     <property name="xerces.jar" value="${ext_libdir}/xerces.jar" />
     <property name="ejb-2_0.jar" value="${ext_libdir}/ejb-2_0.jar" />
     <property name="svnkit.jar" value="${ext_libdir}/svnkit/svnkit.jar"/>
+    <property name="jodconverter.jar" value="${ext_libdir}/jodconverter-2.2.2.jar"/>
   
     <path id="svnant.lib" >
       <fileset dir="${ext_libdir}/svnant" includes="*.jar" />
@@ -130,18 +111,15 @@
         <pathelement location="${forums.jar}"/>
         <pathelement location="${shared.jar}"/>
         <pathelement location="${tcwebcommon.jar}"/>
-        <pathelement location="${projectEJB.jar}"/>
         <pathelement location="${userEJB.jar}"/>
         <pathelement location="${securityEJB.jar}"/>
         <pathelement location="${tcIdGenerator.jar}"/>
-        <pathelement location="${distribution_tool.jar}"/>
         <pathelement location="${job_scheduler.jar}"/>
-        <pathelement location="${job_scheduling.jar}"/>
         <pathelement location="${svnkit.jar}"/>
+        <pathelement location="${jodconverter.jar}"/>
         <pathelement location="${log4j.jar}" />
         <pathelement location="${ldapjdk.jar}" />
         <pathelement location="${jaf.jar}" />
-        <pathelement location="${terms_of_use.jar}" />
         <path refid="spring_libs"/>
     </path>
 

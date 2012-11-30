@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2011 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2012 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -181,7 +181,7 @@ import com.cronos.onlinereview.phases.OnlineReviewServices;
  * @version 1.4
  */
 public class ProjectReviewActions extends DispatchAction {
-    private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory
+    private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogManager
             .getLog(ProjectReviewActions.class.getName());
 
     /**

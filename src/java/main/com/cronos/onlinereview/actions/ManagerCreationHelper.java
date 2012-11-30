@@ -95,7 +95,7 @@ import com.topcoder.util.datavalidator.ObjectValidator;
 import com.topcoder.util.datavalidator.StringValidator;
 import com.topcoder.util.idgenerator.IDGenerator;
 import com.topcoder.util.idgenerator.IDGeneratorFactory;
-import com.topcoder.util.log.LogFactory;
+import com.topcoder.util.log.LogManager;
 
 /**
  * <p>
@@ -724,7 +724,7 @@ public class ManagerCreationHelper implements ManagersProvider {
                 DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
                 this.reviewFeedbackManager
                     = new JDBCReviewFeedbackManager(dbconn, DEFAULT_DB_CONNECTION_NAME, 
-                                                    LogFactory.getLog(JDBCReviewFeedbackManager.class.getName()));
+                                                    LogManager.getLog(JDBCReviewFeedbackManager.class.getName()));
             } catch (ReviewFeedbackManagementConfigurationException e) {
                 throw new ManagerCreationException("Exception occurred while creating the review feedback manager.", e);
             } catch (ConfigurationException e) {

@@ -11,7 +11,7 @@ import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
 
 public class OnlineReviewProjectPilot extends DefaultProjectPilot {
-    private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory
+    private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogManager
             .getLog(OnlineReviewProjectPilot.class.getName());
     
     /** default namespace to read configuration parameters from  */
@@ -127,13 +127,13 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
     public AutoPilotResult advancePhases(long projectId, String operator) {
         AutoPilotResult result = null;
         try {
-            getLogger().log(Level.DEBUG, "before super.advancePhases");
+            getLog().log(Level.DEBUG, "before super.advancePhases");
             result = super.advancePhases(projectId, operator);
-            getLogger().log(Level.DEBUG, "after super.advancePhases");
+            getLog().log(Level.DEBUG, "after super.advancePhases");
         } catch (Throwable e) {
             ByteArrayOutputStream s = new ByteArrayOutputStream();
             e.printStackTrace(new PrintStream(s));
-            getLogger().log(
+            getLog().log(
                     Level.ERROR,
                     "Error occurs while trying to check Assignment Documents of project with id " + projectId
                             + ", stack trace : " + s.toString());

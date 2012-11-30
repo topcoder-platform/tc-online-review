@@ -44,6 +44,13 @@
         <servlet-class>com.cronos.onlinereview.ajax.AjaxSupportServlet</servlet-class>
     </servlet>
 
+    <!-- Initialization Servlet -->
+    <servlet>
+        <servlet-name>OnlineReviewInitServlet</servlet-name>
+        <servlet-class>com.cronos.onlinereview.OnlineReviewInitServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
     <!-- Axis HTTP transport Servlet -->
     <servlet>
         <display-name>Apache-Axis Servlet</display-name>

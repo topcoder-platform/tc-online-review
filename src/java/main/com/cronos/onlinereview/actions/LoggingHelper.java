@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2011 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2012 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -13,7 +13,7 @@ import com.cronos.onlinereview.external.UserRetrieval;
 
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
-import com.topcoder.util.log.LogFactory;
+import com.topcoder.util.log.LogManager;
 
 
 /**
@@ -29,7 +29,7 @@ import com.topcoder.util.log.LogFactory;
  * @version 1.0
  */
 final class LoggingHelper {
-    private static Log logger = LogFactory.getLog("OnlineReview");
+    private static Log logger = LogManager.getLog("OnlineReview");
     private static java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     // Hidden constructor

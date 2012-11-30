@@ -4,6 +4,9 @@
         <Property name="loggerName">
             <Value>LDTLogger</Value>
         </Property>
+        <Property name="log4jConfigFile">
+            <Value>conf/log4j.properties</Value>
+        </Property>
       
         <Property name="schedulerConfig">
             <Property name="lateDeliverablesTrackingJob">
