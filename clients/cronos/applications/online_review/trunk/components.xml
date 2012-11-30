@@ -3,7 +3,7 @@
     <component
         name="auto_pilot"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/auto_pilot/trunk"
-        revision="223142"/>
+        revision="223144"/>
 
     <component
         name="deliverable_management"
