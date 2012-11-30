@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011-2012 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -41,7 +41,7 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
     */
     private PRHelper prHelper = new PRHelper();
 
-    private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory
+    private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogManager
             .getLog(PRAppealResponsePhaseHandler.class.getName());
 
     /** constant for "Project Name" project info. */

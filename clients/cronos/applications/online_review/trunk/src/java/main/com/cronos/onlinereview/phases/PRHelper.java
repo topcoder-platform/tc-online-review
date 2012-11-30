@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2005 - 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2005 - 2012 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -49,7 +49,7 @@ import com.topcoder.db.connectionfactory.DBConnectionFactory;
  */
 public class PRHelper {
 
-    private static final com.topcoder.util.log.Log logger = com.topcoder.util.log.LogFactory.getLog(PRHelper.class
+    private static final com.topcoder.util.log.Log logger = com.topcoder.util.log.LogManager.getLog(PRHelper.class
             .getName());
     // OrChange : Modified the statement to take the placed and final score from submission table
     private static final String APPEAL_RESPONSE_SELECT_STMT = "select s.final_score as final_score, "
@@ -485,7 +485,7 @@ public class PRHelper {
             pstmt.setLong(1, projectId);
             rs = pstmt.executeQuery();
 
-            logger.log(Level.INFO, new LoggerMessage("Project", projectId, null,
+            logger.log(Level.DEBUG, new LoggerMessage("Project", projectId, null,
                     "update project_result with final scores, placed and passed_review_ind."));
             updateStmt = conn.prepareStatement(APPEAL_RESPONSE_UPDATE_PROJECT_RESULT_STMT);
             while (rs.next()) {
@@ -550,7 +550,7 @@ public class PRHelper {
         if (obj instanceof Connection) {
             try {
                 ((Connection) obj).close();
-                logger.log(Level.INFO, "close the connection");
+                logger.log(Level.DEBUG, "close the connection");
             } catch (Exception e) {
                 // Just ignore
             }

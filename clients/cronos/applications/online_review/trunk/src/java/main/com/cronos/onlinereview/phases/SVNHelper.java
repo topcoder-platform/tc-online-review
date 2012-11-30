@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010-2012 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -8,7 +8,7 @@ import com.topcoder.util.config.Property;
 import com.topcoder.util.config.UnknownNamespaceException;
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
-import com.topcoder.util.log.LogFactory;
+import com.topcoder.util.log.LogManager;
 import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNErrorCode;
@@ -42,7 +42,7 @@ public final class SVNHelper {
     /**
      * <p>A <code>Log</code> to be used for logging the events encountered while helper performs it's job.</p>
      */
-    private static final Log log = LogFactory.getLog(SVNHelper.class.getName());
+    private static final Log log = LogManager.getLog(SVNHelper.class.getName());
 
     /**
      * <p>A <code>String</code> array providing the SVN configuration.</p>
@@ -205,7 +205,7 @@ public final class SVNHelper {
                           false, false, SVNDepth.EMPTY);
             SVNErrorMessage svnErrorMessage = commitInfo.getErrorMessage();
             if (svnErrorMessage != null) {
-                log.log(Level.INFO, "Failed to grant '" + permission + "' permission for SVN module " + svnModule
+                log.log(Level.WARN, "Failed to grant '" + permission + "' permission for SVN module " + svnModule
                                     + " to users " + Arrays.toString(handles) + ". Reason: "
                                     + svnErrorMessage.getMessage());
                 throw new SVNException(svnErrorMessage);

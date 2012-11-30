@@ -119,7 +119,7 @@ import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.util.errorhandling.BaseRuntimeException;
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
-import com.topcoder.util.log.LogFactory;
+import com.topcoder.util.log.LogManager;
 import com.topcoder.web.ejb.forums.Forums;
 import com.topcoder.web.ejb.forums.ForumsHome;
 
@@ -293,7 +293,7 @@ public class ActionsHelper {
     /**
      * The logger instance.
      */
-    private static final Log log = LogFactory.getLog(ActionsHelper.class.getName());
+    private static final Log log = LogManager.getLog(ActionsHelper.class.getName());
 
     /**
      * This member variable is a string constant that defines the name of the configuration
@@ -2590,7 +2590,7 @@ public class ActionsHelper {
             DBConnectionFactory dbconn;
                 dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
             conn = dbconn.createConnection();
-            log.log(Level.INFO,
+            log.log(Level.DEBUG,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
             long projectId = project.getId();
             // retrieve and update component_inquiry_id
@@ -2669,7 +2669,7 @@ public class ActionsHelper {
 
                 // add component_inquiry
                 if (!existCI && componentId > 0) {
-                    log.log(Level.INFO, "adding component_inquiry for projectId: " + projectId + " userId: " + userId);
+                    log.log(Level.DEBUG, "adding component_inquiry for projectId: " + projectId + " userId: " + userId);
                     componentInquiryStmt.setLong(1, componentInquiryId++);
                     componentInquiryStmt.setLong(2, componentId);
                     componentInquiryStmt.setLong(3, userId);
@@ -2720,7 +2720,7 @@ public class ActionsHelper {
         long projectId = project.getId();
         long phaseID = 111 + project.getProjectCategory().getId();
 
-        log.log(Level.INFO,"synchronizeRBoardApplications projectId= " + projectId);
+        log.log(Level.DEBUG,"synchronizeRBoardApplications projectId= " + projectId);
 
         Connection conn = null;
         Statement resourceSelectStmt = null;
@@ -2729,7 +2729,7 @@ public class ActionsHelper {
 
             DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
             conn = dbconn.createConnection();
-            log.log(Level.INFO, "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
+            log.log(Level.DEBUG, "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
 
             resourceSelectStmt = conn.createStatement();
 
@@ -2861,7 +2861,7 @@ public class ActionsHelper {
     private static void clearRBoardApplication(Connection conn, Project project) throws BaseException {
         long projectId = project.getId();
 
-        log.log(Level.INFO,"clearRBoardApplication projectId= " + projectId);
+        log.log(Level.DEBUG,"clearRBoardApplication projectId= " + projectId);
 
         PreparedStatement deleteStmt = null;
         try {
@@ -2893,7 +2893,7 @@ public class ActionsHelper {
         long projectId = project.getId();
         long phaseId = 111 + project.getProjectCategory().getId();
 
-        log.log(Level.INFO,"addRBoardApplication projectId= " + projectId);
+        log.log(Level.DEBUG,"addRBoardApplication projectId= " + projectId);
 
         PreparedStatement addStmt = null;
         try {
@@ -2927,7 +2927,7 @@ public class ActionsHelper {
     private static List<Long> getRespIdFromRoleId(Connection conn, List<Long> roles, List<Long> primaries, long phaseID) throws BaseException {
         List<Long> responseIDs = new ArrayList<Long>();
 
-        log.log(Level.INFO,"getRespIdFromRoleId phaseID= " + phaseID);
+        log.log(Level.DEBUG,"getRespIdFromRoleId phaseID= " + phaseID);
 
         // For component development projects, response ids correspond to accuracy, stress and failure reviewer roles.
         if (phaseID == 113) {
@@ -3023,7 +3023,7 @@ public class ActionsHelper {
         // 1111 is the offset for specification review.
         long specReviewPhaseId = 1111 + project.getProjectCategory().getId();
 
-        log.log(Level.INFO,"addSpecReviewer projectId= " + projectId);
+        log.log(Level.DEBUG,"addSpecReviewer projectId= " + projectId);
 
         PreparedStatement addStmt = null;
         PreparedStatement resourceSelectStmt = null;
@@ -3081,7 +3081,7 @@ public class ActionsHelper {
         try {
             DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
             conn = dbconn.createConnection();
-            log.log(Level.INFO,
+            log.log(Level.DEBUG,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
                     + DB_CONNECTION_NAMESPACE);
             String sqlStr = "select root_category_id " +
@@ -3119,7 +3119,7 @@ public class ActionsHelper {
         try {
             DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
             conn = dbconn.createConnection();
-            log.log(Level.INFO,
+            log.log(Level.DEBUG,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
                     + DB_CONNECTION_NAMESPACE);
             String sqlString = "select ds.*, st.name from default_scorecard ds, scorecard_type_lu st " +
@@ -3199,7 +3199,7 @@ public class ActionsHelper {
                 dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
             conn = dbconn.createConnection();
 
-            log.log(Level.INFO,
+            log.log(Level.DEBUG,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
                     + DB_CONNECTION_NAMESPACE);
 
@@ -3241,7 +3241,7 @@ public class ActionsHelper {
         try {
             DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
             conn = dbconn.createConnection();
-            log.log(Level.INFO,
+            log.log(Level.DEBUG,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
                     + DB_CONNECTION_NAMESPACE);
 
@@ -3273,7 +3273,7 @@ public class ActionsHelper {
         try {
             DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
             conn = dbconn.createConnection();
-            log.log(Level.INFO,
+            log.log(Level.DEBUG,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
                     + DB_CONNECTION_NAMESPACE);
 
@@ -3305,7 +3305,7 @@ public class ActionsHelper {
         try {
             DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
             conn = dbconn.createConnection();
-            log.log(Level.INFO,
+            log.log(Level.DEBUG,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
                     + DB_CONNECTION_NAMESPACE);
 

@@ -11,14 +11,6 @@
        <!ENTITY pactJNDIAddress "@pactJNDIAddress@">
 ]>
 <CMConfig>
-   <Config name="com.topcoder.util.log">
-        <Property name="logClass">
-            <Value>com.topcoder.util.log.log4j.Log4jLog</Value>
-        </Property>
-        <Property name="config.file">
-            <Value>log4j.properties</Value>
-        </Property>
-    </Config>
     <!--
         ==========  Configuration for DB Connection Factory component ==========
     -->

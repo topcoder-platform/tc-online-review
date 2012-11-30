@@ -19,5 +19,5 @@ guard_file=@auto_pilot_guard_file@
 running_file=@auto_pilot_running_file@
 
 
-# An interval (in minutes) between Auto Pilot job executions
+# An interval (in seconds) between Auto Pilot job executions
 poll_interval=@auto_pilot_poll_interval@

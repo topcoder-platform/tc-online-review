@@ -81,16 +81,13 @@
         <delete file="${build_distdir}/auto_pilot_app.jar" failonerror="no"/>
         <jar destfile="${build_distdir}/auto_pilot_app.jar" filesonly="true">
             <fileset file="${auto_pilot.jar}"/>
-            <fileset file="${executable_wrapper.jar}"/>
             <fileset file="${job_scheduler.jar}"/>
             <fileset file="${ifx-jdbc.jar}"/>
             <fileset file="${javamail.jar}"/>
             <fileset file="${log4j.jar}"/>
             <fileset file="${jaf.jar}"/>
             <fileset file="${xerces.jar}"/>
-            <fileset file="${terms_of_use.jar}"/>
             <fileset file="${userEJB.jar}"/>
-            <fileset file="${projectEJB.jar}"/>
             <fileset file="${tcwebcommon.jar}"/>
             <fileset file="${shared.jar}"/>
             <fileset file="${jbossall-client.jar}"/>
@@ -167,7 +164,7 @@
             <echo message="    guardFile   : ${guard_file}"/>
             <echo message="    runningFile : ${running_file}"/>
             <delete file="${guard_file}" failonerror="no"/>
-            <java classname="com.topcoder.management.phase.autopilot.AutoPilotJob" fork="true" spawn="@{background}">
+            <java classname="com.topcoder.management.phase.autopilot.AutoPilotUtility" fork="true" spawn="@{background}">
             <arg value="-config"/>
                 <arg value="auto_pilot.xml"/>
                 <arg value="-namespace"/>
