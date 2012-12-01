@@ -45,6 +45,7 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionRedirect;
 import org.apache.struts.util.MessageResources;
 
+import com.topcoder.web.common.throttle.Throttle;
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.dataaccess.ResourceDataAccess;
 import com.cronos.onlinereview.external.ExternalUser;
@@ -342,6 +343,11 @@ public class ActionsHelper {
     private static final String PHASE_STATUS_CLOSED = "Closed";
 
     /**
+     * <p>Protects from throttling in a short term. Allows for no more than 20 requests per 5 seconds.</p>
+     */
+    protected static final Throttle throttle = new Throttle(20, 5000);
+
+    /**
      * This constructor is declared private to prohibit instantiation of the <code>ActionsHelper</code> class.
      */
     private ActionsHelper() {
@@ -508,6 +514,18 @@ public class ActionsHelper {
                     "' stored in the request scope, or the attrubute stored is null.");
         }
         return obj;
+    }
+
+    public static CorrectnessCheckResult checkThrottle(ActionMapping mapping, HttpServletRequest request,
+                                                       MessageResources resources) throws BaseException {
+        CorrectnessCheckResult result = new CorrectnessCheckResult();
+
+        if (throttle.throttle(request.getRemoteAddr())) {
+            result.setForward(produceErrorReport(
+                    mapping, resources, request, null, "Error.RequestRateExceeded", null));
+        }
+
+        return result;
     }
 
     /**

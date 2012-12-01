@@ -345,6 +345,12 @@ public class ProjectActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
 
@@ -774,8 +780,13 @@ public class ProjectActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+        verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME, false);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
@@ -816,8 +827,13 @@ public class ProjectActions extends DispatchAction {
      */
     public ActionForward saveProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
-
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Cast the form to its actual type
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
 
@@ -826,7 +842,7 @@ public class ProjectActions extends DispatchAction {
         Project project = null;
 
         // Check if the user has the permission to perform this action
-        CorrectnessCheckResult verification = null;
+        verification = null;
         if (newProject) {
             // Gather the roles the user has for current request
             AuthorizationHelper.gatherUserRoles(request);
@@ -2579,10 +2595,16 @@ public class ProjectActions extends DispatchAction {
      */
     public ActionForward listProjects(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
+
         // Remove redirect-after-login attribute (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
 
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
 
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);

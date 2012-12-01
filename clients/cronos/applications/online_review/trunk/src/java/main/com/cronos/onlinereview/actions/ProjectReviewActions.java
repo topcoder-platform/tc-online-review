@@ -532,9 +532,14 @@ public class ProjectReviewActions extends DispatchAction {
                                          HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
-                checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREGATION_PERM_NAME);
+        verification = checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREGATION_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -673,9 +678,14 @@ public class ProjectReviewActions extends DispatchAction {
                                          HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
-            checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREGATION_PERM_NAME);
+        verification = checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREGATION_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -852,9 +862,14 @@ public class ProjectReviewActions extends DispatchAction {
                                          HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
-            checkForCorrectReviewId(mapping, request, Constants.VIEW_AGGREGATION_PERM_NAME);
+        verification = checkForCorrectReviewId(mapping, request, Constants.VIEW_AGGREGATION_PERM_NAME);
 
         // Get message resources
         MessageResources messages = getResources(request);
@@ -986,9 +1001,13 @@ public class ProjectReviewActions extends DispatchAction {
                                                HttpServletRequest request, HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
-                checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME);
+        verification = checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             log.log(Level.DEBUG, "failed checkForCorrectReviewId");
@@ -1182,9 +1201,14 @@ public class ProjectReviewActions extends DispatchAction {
                                                HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
-            checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME);
+        verification = checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -1397,9 +1421,14 @@ public class ProjectReviewActions extends DispatchAction {
                                                HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
-            checkForCorrectReviewId(mapping, request, Constants.VIEW_AGGREG_REVIEW_PERM_NAME);
+        verification = checkForCorrectReviewId(mapping, request, Constants.VIEW_AGGREG_REVIEW_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -1501,9 +1530,14 @@ public class ProjectReviewActions extends DispatchAction {
                                          HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
-                checkForCorrectReviewId(mapping, request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME);
+        verification = checkForCorrectReviewId(mapping, request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -1666,9 +1700,14 @@ public class ProjectReviewActions extends DispatchAction {
                                          HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
-            checkForCorrectReviewId(mapping, request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME);
+        verification = checkForCorrectReviewId(mapping, request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -1869,9 +1908,14 @@ public class ProjectReviewActions extends DispatchAction {
                                          HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
-            checkForCorrectReviewId(mapping, request, Constants.VIEW_FINAL_REVIEW_PERM_NAME);
+        verification = checkForCorrectReviewId(mapping, request, Constants.VIEW_FINAL_REVIEW_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -1962,6 +2006,12 @@ public class ProjectReviewActions extends DispatchAction {
                                         HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         ActionForward genericForward = createGenericReview(mapping, form, request, "Approval");
         if (Constants.SUCCESS_FORWARD_NAME.equals(genericForward.getName())) {
             LazyValidatorForm approvalForm = (LazyValidatorForm) form;
@@ -1998,6 +2048,12 @@ public class ProjectReviewActions extends DispatchAction {
                                       HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         ActionForward genericForward = editGenericReview(mapping, form, request, "Approval");
         if (Constants.SUCCESS_FORWARD_NAME.equals(genericForward.getName())) {
             Boolean fixesRejected = null;
@@ -2102,11 +2158,15 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewCompositeScorecard(ActionMapping mapping, ActionForm form,
                                                 HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        try {
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
-                checkForCorrectSubmissionId(mapping, request, Constants.VIEW_COMPOS_SCORECARD_PERM_NAME);
+        verification = checkForCorrectSubmissionId(mapping, request, Constants.VIEW_COMPOS_SCORECARD_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -2273,12 +2333,6 @@ public class ProjectReviewActions extends DispatchAction {
         request.setAttribute("reviews", reviews);
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
-        } catch (Throwable e) {
-            StringWriter buf = new StringWriter();
-            e.printStackTrace(new PrintWriter(buf));
-            log.log(Level.ERROR, buf);
-            throw new BaseException(e);
-        }
     }
 
     /**
@@ -2734,6 +2788,12 @@ public class ProjectReviewActions extends DispatchAction {
      */
     private ActionForward createGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                               String reviewType) throws BaseException {
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         String permName;
         String phaseName;
         boolean isPostMortemPhase = false;
@@ -2764,7 +2824,6 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that certain requirements are met before proceeding with the Action
         // If any error has occurred, return action forward contained in the result bean
-        CorrectnessCheckResult verification;
         if (isPostMortemPhase) {
             verification = checkForCorrectProjectId(mapping, request, permName);
         } else {
@@ -2890,6 +2949,12 @@ public class ProjectReviewActions extends DispatchAction {
      * @throws BaseException if an unexpected error occurs.
      */
     private ActionForward editGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, String reviewType) throws BaseException {
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         String scorecardTypeName;
         // Determine permission name and phase name from the review type
         boolean isSpecReviewPhase = false;
@@ -2911,7 +2976,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
+        verification =
                 checkForCorrectReviewId(mapping, request, Constants.EDIT_MY_REVIEW_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
@@ -3078,10 +3143,10 @@ public class ProjectReviewActions extends DispatchAction {
      */
     private ActionForward saveGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                             String reviewType) throws BaseException {
-        // FIXME: IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!
-        // FIXME: Check the permissions here and everywhere,
-        // as they where dropped from checkForCorrectReviewId(ActionMapping, HttpServletRequest, String)
-        // FIXME: Also check current phase everywhere
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
 
         String permName;
         String phaseName;
@@ -3124,7 +3189,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification = null;
+        verification = null;
         if (request.getParameter("rid") != null) {
             verification = checkForCorrectReviewId(mapping, request, permName);
         }
@@ -3841,6 +3906,11 @@ public class ProjectReviewActions extends DispatchAction {
         ActionsHelper.validateParameterNotNull(request, "request");
         ActionsHelper.validateParameterStringNotEmpty(reviewType, "reviewType");
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         String permName;
         String phaseName;
         String scorecardTypeName;
@@ -3881,7 +3951,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification = checkForCorrectReviewId(mapping, request, permName);
+        verification = checkForCorrectReviewId(mapping, request, permName);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -4741,62 +4811,67 @@ public class ProjectReviewActions extends DispatchAction {
         throws BaseException {
 
         try {
-               // At this point, redirect-after-login attribute should be removed (if it exists)
+            // At this point, redirect-after-login attribute should be removed (if it exists)
             AuthorizationHelper.removeLoginRedirect(request);
 
-               LoggingHelper.logAction(request);
+            LoggingHelper.logAction(request);
 
-               // Gather the roles the user has for current request
-               AuthorizationHelper.gatherUserRoles(request);
+            CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+            if (!verification.isSuccessful()) {
+                return verification.getForward();
+            }
 
-               // Validate parameters
-               ActionsHelper.validateParameterNotNull(mapping, "mapping");
-               ActionsHelper.validateParameterNotNull(request, "request");
+            // Gather the roles the user has for current request
+            AuthorizationHelper.gatherUserRoles(request);
 
-               // Verify that Scorecard ID was specified and denotes correct scorecard
-               String scidParam = request.getParameter("scid");
-               if (scidParam == null || scidParam.trim().length() == 0) {
-                   return(ActionsHelper.produceErrorReport(
-                       mapping, getResources(request), request, null, "Error.ScorecardIdNotSpecified", null));
-               }
+            // Validate parameters
+            ActionsHelper.validateParameterNotNull(mapping, "mapping");
+            ActionsHelper.validateParameterNotNull(request, "request");
 
-               long scid;
+            // Verify that Scorecard ID was specified and denotes correct scorecard
+            String scidParam = request.getParameter("scid");
+            if (scidParam == null || scidParam.trim().length() == 0) {
+               return(ActionsHelper.produceErrorReport(
+                   mapping, getResources(request), request, null, "Error.ScorecardIdNotSpecified", null));
+            }
 
-               try {
-                   // Try to convert specified scid parameter to its integer representation
-                   scid = Long.parseLong(scidParam, 10);
-               } catch (NumberFormatException e) {
-                   return(ActionsHelper.produceErrorReport(
-                       mapping, getResources(request), request, null, "Error.ScorecardIdInvalid", null));
-               }
+            long scid;
 
-               // Obtain an instance of Scorecard Manager
-               ScorecardManager scrMgr = ActionsHelper.createScorecardManager();
-               Scorecard scorecardTemplate = null;
-               try {
-                   // Get Scorecard by its id
-                   scorecardTemplate = scrMgr.getScorecard(scid);
-               } catch (PersistenceException e) {
-                   // Eat the exception
-               }
+            try {
+               // Try to convert specified scid parameter to its integer representation
+               scid = Long.parseLong(scidParam, 10);
+            } catch (NumberFormatException e) {
+               return(ActionsHelper.produceErrorReport(
+                   mapping, getResources(request), request, null, "Error.ScorecardIdInvalid", null));
+            }
 
-                  // Verify that scorecard with specified ID exists
-               if (scorecardTemplate == null) {
-                   return(ActionsHelper.produceErrorReport(
-                       mapping, getResources(request), request, null, "Error.ScorecardNotFound", null));
-               }
+            // Obtain an instance of Scorecard Manager
+            ScorecardManager scrMgr = ActionsHelper.createScorecardManager();
+            Scorecard scorecardTemplate = null;
+            try {
+               // Get Scorecard by its id
+               scorecardTemplate = scrMgr.getScorecard(scid);
+            } catch (PersistenceException e) {
+               // Eat the exception
+            }
+
+              // Verify that scorecard with specified ID exists
+            if (scorecardTemplate == null) {
+               return(ActionsHelper.produceErrorReport(
+                   mapping, getResources(request), request, null, "Error.ScorecardNotFound", null));
+            }
 
             // Verify the scorecard is active
-               if (scorecardTemplate.getScorecardStatus().getId() != ACTIVE_SCORECARD) {
-                   return(ActionsHelper.produceErrorReport(
-                       mapping, getResources(request), request, null, "Error.ScorecardNotActive", null));
-               }
+            if (scorecardTemplate.getScorecardStatus().getId() != ACTIVE_SCORECARD) {
+               return(ActionsHelper.produceErrorReport(
+                   mapping, getResources(request), request, null, "Error.ScorecardNotActive", null));
+            }
 
-               // Place Scorecard template in the request
-               request.setAttribute("scorecardTemplate", scorecardTemplate);
+            // Place Scorecard template in the request
+            request.setAttribute("scorecardTemplate", scorecardTemplate);
 
-               // Signal about successful execution of the Action
-               return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+            // Signal about successful execution of the Action
+            return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
         } catch (Throwable e) {
             StringWriter buf = new StringWriter();
             e.printStackTrace(new PrintWriter(buf));
