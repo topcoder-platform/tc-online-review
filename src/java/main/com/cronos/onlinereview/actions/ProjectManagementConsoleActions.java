@@ -249,13 +249,17 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                                      HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
 
         // Check whether the user has the permission to perform this action. Also check that current user is granted a
         // permission to access the details for requested project
-        CorrectnessCheckResult verification
-            = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request,
+        verification = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request,
                                                      VIEW_PROJECT_MANAGEMENT_CONSOLE_PERM_NAME, false);
 
         if (!verification.isSuccessful()) {
@@ -289,6 +293,11 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // set the active tab index to able to re-render the page with the correct selected tab in
         // case an error occurs
         request.setAttribute("activeTabIdx", 2);
@@ -299,7 +308,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         // Check whether the user has the permission to perform this action. If not then redirect the request
         // to log-in page or report about the lack of permissions. Also check that current user is granted a
         // permission to access the details for requested project
-        CorrectnessCheckResult verification
+        verification
             = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request,
                                                      PROJECT_MANAGEMENT_PERM_NAME, false);
 
@@ -406,6 +415,11 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // set the active tab index to able to re-render the page with the correct selected tab in
         // case an error occurs
         request.setAttribute("activeTabIdx", 2);
@@ -416,7 +430,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         // Check whether the user has the permission to perform this action. If not then redirect the request
         // to log-in page or report about the lack of permissions. Also check that current user is granted a
         // permission to access the details for requested project
-        CorrectnessCheckResult verification
+        verification
             = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request,
                                                      PROJECT_MANAGEMENT_PERM_NAME, false);
 
@@ -1004,6 +1018,11 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                                        HttpServletResponse response) throws Exception {
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         request.setAttribute("activeTabIdx", 1);
 
         // Gather the roles the user has for current request
@@ -1012,7 +1031,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         // Check whether the user has the permission to perform this action. If not then redirect the request
         // to log-in page or report about the lack of permissions. Also check that current user is granted a
         // permission to access the details for requested project
-        CorrectnessCheckResult verification
+        verification
             = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request,
                                                      PROJECT_MANAGEMENT_PERM_NAME, false);
         if (!verification.isSuccessful()) {
@@ -1756,6 +1775,11 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                                               HttpServletResponse response) throws Exception {
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         request.setAttribute("activeTabIdx", 3);
 
         // Gather the roles the user has for current request
@@ -1764,8 +1788,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         // Check whether the user has the permission to perform this action. If not then redirect the request
         // to log-in page or report about the lack of permissions. Also check that current user is granted a
         // permission to access the details for requested project
-        CorrectnessCheckResult verification
-            = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request,
+        verification = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request,
                                                      PROJECT_MANAGEMENT_PERM_NAME, false);
         if (!verification.isSuccessful()) {
             return verification.getForward();

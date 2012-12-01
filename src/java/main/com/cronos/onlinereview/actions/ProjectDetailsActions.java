@@ -266,8 +266,14 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+        verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME, false);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
@@ -847,11 +853,16 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException, ConfigManagerException {
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Determine if this request is a post back
         boolean postBack = (request.getParameter("postBack") != null);
 
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+        verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, Constants.CONTACT_PM_PERM_NAME, postBack);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
@@ -1040,11 +1051,16 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Determine if this request is a post back
         final boolean postBack = (request.getParameter("postBack") != null);
 
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+        verification = ActionsHelper.checkForCorrectProjectId(
             mapping, getResources(request), request, Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME,
             postBack);
 
@@ -1219,8 +1235,13 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response) throws BaseException, IOException {
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification = checkForCorrectUploadId(mapping, request, "ViewSubmission");
+        verification = checkForCorrectUploadId(mapping, request, "ViewSubmission");
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1316,11 +1337,16 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException {
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Determine if this request is a post back
         boolean postBack = (request.getParameter("postBack") != null);
 
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+        verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, Constants.PERFORM_FINAL_FIX_PERM_NAME, postBack);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
@@ -1410,9 +1436,14 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification =
-            checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME);
+        verification = checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -1513,11 +1544,16 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException {
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Determine if this request is a post back
         boolean postBack = (request.getParameter("postBack") != null);
 
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+        verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, Constants.UPLOAD_TEST_CASES_PERM_NAME, postBack);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
@@ -1623,9 +1659,14 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification =
-            checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME);
+        verification = checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -1748,9 +1789,14 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification =
-            checkForCorrectUploadId(mapping, request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME);
+        verification = checkForCorrectUploadId(mapping, request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -1909,8 +1955,13 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+        verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME, false);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
@@ -2024,8 +2075,13 @@ public class ProjectDetailsActions extends DispatchAction {
         HttpServletRequest request, HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+        verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME, false);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
@@ -2129,9 +2185,14 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadDocument(ActionMapping mapping, ActionForm form,
         HttpServletRequest request, HttpServletResponse response) throws BaseException, IOException {
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification =
-            checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME);
+        verification = checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -3041,8 +3102,13 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException, IOException {
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification = checkForCorrectUploadId(mapping, request, errorMessageKey);
+        verification = checkForCorrectUploadId(mapping, request, errorMessageKey);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -3236,11 +3302,16 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException {
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Determine if this request is a post back
         final boolean postBack = (request.getParameter("postBack") != null);
 
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+        verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, submitPermissionName, postBack);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {

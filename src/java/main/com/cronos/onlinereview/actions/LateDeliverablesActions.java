@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010-2012 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -218,6 +218,11 @@ public class LateDeliverablesActions extends DispatchAction {
             HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // check user login
         if (!AuthorizationHelper.isUserLoggedIn(request)) {
             // set url for login redirect.
@@ -293,6 +298,11 @@ public class LateDeliverablesActions extends DispatchAction {
                                              HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // check user login
         if (!AuthorizationHelper.isUserLoggedIn(request)) {
             AuthorizationHelper.setLoginRedirect(request, false);
@@ -358,6 +368,11 @@ public class LateDeliverablesActions extends DispatchAction {
     public ActionForward saveLateDeliverable(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                              HttpServletResponse response) throws Exception {
         LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
 
         // check user login
         if (!AuthorizationHelper.isUserLoggedIn(request)) {

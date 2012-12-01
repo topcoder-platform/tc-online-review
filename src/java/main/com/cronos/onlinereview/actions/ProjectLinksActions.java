@@ -84,8 +84,13 @@ public class ProjectLinksActions extends DispatchAction {
         HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request),
+        verification = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request),
             request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME, false);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
@@ -171,8 +176,13 @@ public class ProjectLinksActions extends DispatchAction {
         HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request),
+        verification = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request),
             request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME, false);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
