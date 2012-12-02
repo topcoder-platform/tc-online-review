@@ -267,7 +267,7 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -853,7 +853,7 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException, ConfigManagerException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1051,7 +1051,7 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1235,7 +1235,7 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response) throws BaseException, IOException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1337,7 +1337,7 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1437,7 +1437,7 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException, IOException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1544,7 +1544,7 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1660,7 +1660,7 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException, IOException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1790,7 +1790,7 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1955,7 +1955,7 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -2075,7 +2075,7 @@ public class ProjectDetailsActions extends DispatchAction {
         HttpServletRequest request, HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -2186,7 +2186,7 @@ public class ProjectDetailsActions extends DispatchAction {
         HttpServletRequest request, HttpServletResponse response) throws BaseException, IOException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -3102,7 +3102,7 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException, IOException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -3302,7 +3302,7 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }

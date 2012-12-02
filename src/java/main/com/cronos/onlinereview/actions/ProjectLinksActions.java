@@ -84,7 +84,7 @@ public class ProjectLinksActions extends DispatchAction {
         HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -176,7 +176,7 @@ public class ProjectLinksActions extends DispatchAction {
         HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
