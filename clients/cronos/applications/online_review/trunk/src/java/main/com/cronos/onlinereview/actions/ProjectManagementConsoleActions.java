@@ -249,7 +249,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                                      HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -293,7 +293,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -415,7 +415,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1018,7 +1018,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                                        HttpServletResponse response) throws Exception {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1775,7 +1775,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                                               HttpServletResponse response) throws Exception {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }

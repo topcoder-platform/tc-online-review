@@ -345,7 +345,13 @@ public class ActionsHelper {
     /**
      * <p>Protects from throttling in a short term. Allows for no more than 20 requests per 5 seconds.</p>
      */
-    protected static final Throttle throttle = new Throttle(20, 5000);
+    protected static final Throttle shortThrottle = new Throttle(20, 5000);
+
+    /**
+     * <p>Protects the page from throttling in a long term.
+     * Allows for no more than 300 requests per 3000 minutes, which is 1 request per 10 minutes in average.</p>
+     */
+    private static final Throttle longThrottle = new Throttle(300, 300 * (10*60*1000));
 
     /**
      * This constructor is declared private to prohibit instantiation of the <code>ActionsHelper</code> class.
@@ -516,11 +522,17 @@ public class ActionsHelper {
         return obj;
     }
 
-    public static CorrectnessCheckResult checkThrottle(ActionMapping mapping, HttpServletRequest request,
+    public static CorrectnessCheckResult checkThrottle(boolean checkLongThrottle,
+                                                       ActionMapping mapping, HttpServletRequest request,
                                                        MessageResources resources) throws BaseException {
         CorrectnessCheckResult result = new CorrectnessCheckResult();
 
-        if (throttle.throttle(request.getRemoteAddr())) {
+        if (shortThrottle.throttle(request.getRemoteAddr())) {
+            result.setForward(produceErrorReport(
+                    mapping, resources, request, null, "Error.RequestRateExceeded", null));
+        }
+
+        if (checkLongThrottle && longThrottle.throttle(request.getRemoteAddr())) {
             result.setForward(produceErrorReport(
                     mapping, resources, request, null, "Error.RequestRateExceeded", null));
         }

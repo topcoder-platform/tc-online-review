@@ -346,7 +346,7 @@ public class ProjectActions extends DispatchAction {
         throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -780,7 +780,7 @@ public class ProjectActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -829,7 +829,7 @@ public class ProjectActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -2601,7 +2601,7 @@ public class ProjectActions extends DispatchAction {
 
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(mapping, request, getResources(request));
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(true, mapping, request, getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
