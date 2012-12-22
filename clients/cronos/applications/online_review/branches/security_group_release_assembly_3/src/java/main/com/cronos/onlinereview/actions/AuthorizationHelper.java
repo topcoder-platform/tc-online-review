@@ -18,10 +18,6 @@ import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.security.groups.model.GroupPermissionType;
 import com.topcoder.security.groups.model.ResourceType;
 import com.topcoder.security.groups.services.AuthorizationService;
-import com.topcoder.shared.dataAccess.DataAccess;
-import com.topcoder.shared.dataAccess.Request;
-import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
-import com.topcoder.shared.util.DBMS;
 import com.topcoder.util.errorhandling.BaseException;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -79,8 +75,19 @@ import java.util.Set;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.6 (https://apps.topcoder.com/bugs/browse/BUGR-7621) Change notes:
+ *   <ol>
+ *     <li>Update gatherUserRoles(HttpServletRequest request) to remove "Cockpit Project User" permission checking.</li>
+ *     <li>Update gatherUserRoles(HttpServletRequest request, long projectId) to get user id from getLoggedInUserId.</li>
+ *     <li>Remove getUserProjectIdsList since it's not used.</li>
+ *     <li>Move getUserClientIds and getProjectClient to ProjectDataAccess.</li>
+ *     <li>Remove concatenate since it's not used.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, rac_, tangzx
- * @version 1.5
+ * @version 1.6
  */
 public class AuthorizationHelper {
 
@@ -299,34 +306,6 @@ public class AuthorizationHelper {
             roles.add(Constants.GLOBAL_PAYMENT_MANAGER_ROLE_NAME);
         }
 
-        // retrieve user id, project ids, and client ids
-        long userId = (Long) request.getSession().getAttribute(ConfigHelper.getUserIdAttributeName());
-        List<Long> projectIds;
-        List<Long> clientIds;
-        try {
-            projectIds = getUserProjectIdsList(userId);
-            clientIds = getUserClientIds(userId);
-        } catch (Exception e) {
-            throw new BaseException("error occurs while retrieving project ids or client ids", e);
-        }
-
-        // check whether user has cockpit project user role
-        AuthorizationService authorizationService = retrieveAuthorizationService(request);
-        for (Long clientId : clientIds) {
-            if (authorizationService.isCustomerAdministrator(userId, clientId)) {
-                roles.add(Constants.COCKPIT_PROJECT_USER_ROLE_NAME);
-                break;
-            }
-        }
-        for (Long projectId : projectIds) {
-            GroupPermissionType permission = authorizationService.checkAuthorization(userId, projectId,
-                    ResourceType.PROJECT);
-            if (null != permission) {
-                roles.add(Constants.COCKPIT_PROJECT_USER_ROLE_NAME);
-                break;
-            }
-        }
-
         // Determine some common permissions
         request.setAttribute("isAllowedToCreateProject",
                 hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME));
@@ -401,10 +380,10 @@ public class AuthorizationHelper {
         }
 
         // retrieve user id and client id
-        long userId = (Long) request.getSession().getAttribute(ConfigHelper.getUserIdAttributeName());
+        long userId = getLoggedInUserId(request);
         long clientId;
         try {
-            clientId = getProjectClient(project.getTcDirectProjectId());
+            clientId = projectDataAccess.getProjectClient(project.getTcDirectProjectId());
         } catch (Exception e) {
             throw new BaseException("error occurs while retrieving client id", e);
         }
@@ -544,22 +523,6 @@ public class AuthorizationHelper {
         }
     }
 
-    public static long getProjectClient(long directProjectId) throws Exception {
-        DataAccess dataAccess = new DataAccess(DBMS.TCS_DW_DATASOURCE_NAME);
-
-        Request request = new Request();
-        request.setContentHandle("non_admin_client_billing_accounts");
-        request.setProperty("tdpis", String.valueOf(directProjectId));
-
-        ResultSetContainer resultContainer = dataAccess.getData(request).get("non_admin_client_billing_accounts");
-
-        if (resultContainer != null) {
-            if (resultContainer.size() > 0) {
-                return resultContainer.getLongItem(0, "client_id");
-            }
-        }
-        return 0;
-    }
 
     /**
      * Get authorization service from spring.
@@ -573,78 +536,4 @@ public class AuthorizationHelper {
                 request.getSession().getServletContext()).getBean(AUTHORIZATION_SERVICE_NAME);
     }
 
-    /**
-     * Get tc direct project ids for specify user id.
-     *
-     * @param userId the user id
-     * @return the list of tc direct project ids
-     * @throws Exception if any exception occurs
-     * @since 1.5
-     */
-    public static List<Long> getUserProjectIdsList(long userId) throws Exception {
-        DataAccess dataAccess = new DataAccess(DBMS.TCS_OLTP_DATASOURCE_NAME);
-        Request request = new Request();
-        request.setContentHandle("direct_my_projects");
-        request.setProperty("uid", String.valueOf(userId));
-
-        List<Long> projects = new ArrayList<Long>();
-
-        final ResultSetContainer resultContainer = dataAccess.getData(request).get("direct_my_projects");
-        for (ResultSetContainer.ResultSetRow row : resultContainer) {
-            long tcDirectProjectId = row.getLongItem("tc_direct_project_id");
-            projects.add(tcDirectProjectId);
-        }
-
-        return projects;
-    }
-
-    /**
-     * Get client ids for specify user id.
-     *
-     * @param userId the user id
-     * @return the list of client ids
-     * @throws Exception if any exception occurs
-     * @since 1.5
-     */
-    public static List<Long> getUserClientIds(long userId) throws Exception {
-        DataAccess dataAccess = new DataAccess(DBMS.TCS_DW_DATASOURCE_NAME);
-        Request request = new Request();
-        ResultSetContainer resultContainer = null;
-        List<Long> clients = new ArrayList<Long>();
-
-        List<Long> projectIds = getUserProjectIdsList(userId);
-        if (projectIds.size() > 0) {
-            request.setContentHandle("non_admin_client_billing_accounts");
-            request.setProperty("tdpis", concatenate(projectIds, ", "));
-            resultContainer = dataAccess.getData(request).get("non_admin_client_billing_accounts");
-        }
-
-        if (resultContainer != null) {
-            for (ResultSetContainer.ResultSetRow row : resultContainer) {
-                long clientId = row.getLongItem("client_id");
-                clients.add(clientId);
-            }
-        }
-
-        return clients;
-    }
-
-    /**
-     * <p>Build a string concatenating the specified values separated with specified delimiter.</p>
-     *
-     * @param items a <code>long</code> list providing the values to be concatenated.
-     * @param delimiter a <code>String</code> providing the delimiter to be inserted between concatenated items.
-     * @return a <code>String</code> providing the concatenated item values.
-     * @since 1.5
-     */
-    private static String concatenate(List<Long> items, String delimiter) {
-        StringBuilder b = new StringBuilder();
-        for (Long id : items) {
-            if (b.length() > 0) {
-                b.append(delimiter);
-            }
-            b.append(id);
-        }
-        return b.toString();
-    }
 }
