@@ -153,7 +153,7 @@ public class StatusProjectValidator implements com.topcoder.management.project.P
             if("Cancelled - Zero Submissions".equalsIgnoreCase(projectStatusName)) {
                 Phase submissionPhase = ActionsHelper.findPhaseByTypeName(projectPhases, Constants.SUBMISSION_PHASE_NAME);
                 //make sure phase exits and was closed
-                if(submissionPhase == null || !arePhaseStatusesEqual(PhaseStatus.CLOSED, submissionPhase.getPhaseStatus())) {
+                if(submissionPhase == null || arePhaseStatusesEqual(PhaseStatus.SCHEDULED, submissionPhase.getPhaseStatus())) {
                     throw new StatusValidationException(ExcMsgCancelledZeroSubmissionsViol, KeyCancelledZeroSubmissionsViol);
                 }
 
