@@ -943,8 +943,10 @@ public class ProjectActions extends DispatchAction {
                 // Populate project status
                 project.setProjectStatus(newProjectStatus);
 
-                // Set Completion Timestamp once the status is changed to completed, Cancelled - *, or Deleted
-                ActionsHelper.setProjectCompletionDate(project, newProjectStatus, (Format) request.getAttribute("date_format"));
+                if (oldStatusName.equals("Active") && !newStatusName.equals("Draft")) {
+                    // Set Completion Timestamp once the status is changed from Active to Completed, Cancelled - *, or Deleted
+                    ActionsHelper.setProjectCompletionDate(project, newProjectStatus, (Format) request.getAttribute("date_format"));
+                }
             }
         }
 
