@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010-2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -11,8 +11,16 @@ import com.thoughtworks.selenium.Selenium;
 /**
  * Online review functional tests 1, the base test case.
  *
- * @author TCSDEVELOPER
- * @version 1.0
+ * <p>
+ * Version 1.1 Change notes:
+ *   <ol>
+ *     <li>Updated {@link #tearDown()} method to run external (optional) script for stopping the browser if such a 
+ *     script is provided by configuration.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author TCSDEVELOPER, isv
+ * @version 1.1
  */
 public class BaseTests extends TestCase {
 
@@ -56,6 +64,11 @@ public class BaseTests extends TestCase {
      */
     public void tearDown() throws Exception {
         browser.stop();
+        String browserStopperScript = TestHelper.getBrowserStopperScript();
+        if (browserStopperScript != null && browserStopperScript.trim().length() > 0) {
+            Process stopperProcess = Runtime.getRuntime().exec(browserStopperScript);
+            stopperProcess.waitFor();
+        }
         super.tearDown();
     }
     

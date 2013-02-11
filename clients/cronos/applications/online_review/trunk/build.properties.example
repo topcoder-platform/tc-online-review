@@ -50,7 +50,8 @@ online_review_home=<<Path to local dev distribution of Online Review application
 # Properties to run tests #
 ###########################
 selenium_port=5555
-
+selenium_java_cmd=<<Path to java executable to be used for running Selenium sever>>
+selenium_log=<<Path to log file for running Selenium sever>>
 
 #####################################
 # Deployment location of auto tools #
