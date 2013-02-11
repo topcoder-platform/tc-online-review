@@ -10,6 +10,9 @@
         <Property name="port"><!-- The selenium listening port. -->
             <Value>@tests.seleniumport@</Value>
         </Property>
+        <Property name="browser_stopper"><!-- The script for stopping the browser run by selenium. -->
+            <Value>@tests.seleniumbrowser.stopper@</Value>
+        </Property>
         <Property name="project_link">
           <Value>/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
         </Property>

@@ -151,6 +151,7 @@
 @tests.baseurl@=http://localhost:8081/review
 @tests.seleniumport@=5555
 @tests.seleniumbrowser@=*chrome
+@tests.seleniumbrowser.stopper@=<<path to optional OS-specific script which can be used for stopping the browser>>
 @tests.seleniumdomain@=http://localhost:8080
 @tests.filespath@=<<online_review_trunk>>/test_files
 @tests.browserspeed@=0

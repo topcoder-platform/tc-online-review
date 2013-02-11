@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 - 2012 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -26,8 +26,16 @@ import java.util.Calendar;
 /**
  * The Helper class for test.
  *
- * @author TCSDEVELOPER
- * @version 1.0
+ * <p>
+ * Version 1.1 Change notes:
+ *   <ol>
+ *     <li>Added {@link #BROWSER_STOPPER} constant.</li>
+ *     <li>Added {@link #getBrowserStopperScript()} method.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author TCSDEVELOPER, isv
+ * @version 1.1
  */
 public class TestHelper {
     /**
@@ -69,6 +77,13 @@ public class TestHelper {
      * <p>Represents the unregister link.</p>
      */
     private static final String UNREGISTER_URL = "unregister_link";
+
+    /**
+     * <p>Represents the browser_stopper link.</p>
+     * 
+     * @since 1.1
+     */
+    private static final String BROWSER_STOPPER = "browser_stopper";
 
     /**
      * <p>Represents the selenium port.</p>
@@ -287,6 +302,18 @@ public class TestHelper {
     }
 
     /**
+     * To get the script for stopping the browser (optional).
+     *
+     * @return the path to script for stopping the browser.
+     * @throws Exception if any error occurred.
+     * @since 1.1
+     */
+    static String getBrowserStopperScript() throws Exception {
+        ConfigManager cm = ConfigManager.getInstance();
+        return cm.getProperty(TEST_NAMESPACE, BROWSER_STOPPER).toString();
+    }
+
+    /**
      * Get the login Page.
      *
      * @return the index page.
@@ -357,8 +384,6 @@ public class TestHelper {
     /**
      * Creates TC Direct project with default ID.
      * 
-     * @param componentName component name to use. 
-     *  
      * @throws Exception if any error occurred.
      */
     static void createTCDirectProject() throws Exception {
@@ -377,8 +402,6 @@ public class TestHelper {
 
     /**
      * Deletes TC Direct project with default ID.
-     * 
-     * @param componentName component name to use. 
      * 
      * @throws Exception if any error occurred.
      */
