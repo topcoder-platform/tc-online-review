@@ -18,7 +18,7 @@ public class ManageProjectTests extends ProjectTests {
      *
      * @throws Exception if any error occurs
      */
-    public void testManagerPrivileges() throws Exception {
+    public void atestManagerPrivileges() throws Exception {
         // login the user first
         TestHelper.loginUser(browser);
         browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
@@ -52,7 +52,7 @@ public class ManageProjectTests extends ProjectTests {
      *
      * @throws Exception if any error occurs
      */
-    public void testExtensionOfRegistrationPhase() throws Exception {
+    public void atestExtensionOfRegistrationPhase() throws Exception {
     	// login the user first
     	TestHelper.loginUser(browser);
     	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
@@ -74,7 +74,7 @@ public class ManageProjectTests extends ProjectTests {
      * @throws Exception if any error occurs
      * @version 1.1
      */
-    public void testExtensionOfSubmissionPhase() throws Exception {
+    public void atestExtensionOfSubmissionPhase() throws Exception {
     	// login the user first
     	TestHelper.loginUser(browser);
     	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
@@ -97,7 +97,7 @@ public class ManageProjectTests extends ProjectTests {
      * @version 1.1
      * @since 1.0
      */
-    public void testManagementConsoleAddDesigner() throws Exception {
+    public void atestManagementConsoleAddDesigner() throws Exception {
     	openManagePage();
         browser.type("resource_handles[0]", "super");
         browser.click("//input[@name='savePMCChangesBtn']");
@@ -116,7 +116,7 @@ public class ManageProjectTests extends ProjectTests {
      * @throws Exception if any error occurs
      * @version 1.1
      */
-    public void testManagementConsoleAddObserver() throws Exception {
+    public void atestManagementConsoleAddObserver() throws Exception {
     	openManagePage();
         browser.type("resource_handles[1]", "super");
         browser.click("//input[@name='savePMCChangesBtn']");
@@ -135,7 +135,7 @@ public class ManageProjectTests extends ProjectTests {
      * @throws Exception if any error occurs
      * @version 1.1
      */
-    public void testManagementConsoleAddCopilot() throws Exception {
+    public void atestManagementConsoleAddCopilot() throws Exception {
     	openManagePage();
         browser.type("resource_handles[2]", "super");
         browser.click("//input[@name='savePMCChangesBtn']");
@@ -154,7 +154,7 @@ public class ManageProjectTests extends ProjectTests {
      * @throws Exception if any error occurs
      * @version 1.1
      */
-    public void testManagementConsoleAddClientManager() throws Exception {
+    public void atestManagementConsoleAddClientManager() throws Exception {
     	openManagePage();
         browser.type("resource_handles[3]", "super");
         browser.click("//input[@name='savePMCChangesBtn']");
@@ -180,6 +180,8 @@ public class ManageProjectTests extends ProjectTests {
 		browser.type("distribution_rs", TestHelper.getRSLocation());
 		browser.click("//table[@id='distribution_tbl']/tbody/tr[9]/td/input");
         Thread.sleep(new Long(TIMEOUT));
+        System.out.println("***************** testGenerateDesignDistribution *****************");
+        System.out.println(browser.getBodyText());
         assertNoErrorsOccurred();
     }
 
@@ -199,6 +201,8 @@ public class ManageProjectTests extends ProjectTests {
 		browser.type("distribution_additional3", TestHelper.getDocument3());
 		browser.click("//table[@id='distribution_tbl']/tbody/tr[9]/td/input");
         Thread.sleep(new Long(TIMEOUT));
+        System.out.println("***************** testGenerateAdditionalDocument *****************");
+        System.out.println(browser.getBodyText());
         assertNoErrorsOccurred();
     }
 
@@ -208,7 +212,7 @@ public class ManageProjectTests extends ProjectTests {
      * @throws Exception if any error occurs
      * @version 1.1
      */
-    public void testUploadDesignDistribution() throws Exception {
+    public void atestUploadDesignDistribution() throws Exception {
     	openManagePage();
         browser.click("link=Distributions");
         browser.type("distribution_file", TestHelper.getDistributionLocation());
@@ -224,7 +228,7 @@ public class ManageProjectTests extends ProjectTests {
      * @version 1.1
      * @since 1.0
      */
-    public void testUploadDevelopmentDistribution() throws Exception {
+    public void atestUploadDevelopmentDistribution() throws Exception {
     	openManagePage();
         browser.click("link=Distributions");
         browser.type("distribution_file", TestHelper.getDistributionLocation());
