@@ -63,12 +63,12 @@
     <component
         name="project_management"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/project_management/trunk"
-        revision="223133" />
+        revision="224860" />
 
     <component
         name="project_management_persistence"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_management_persistence/trunk"
-        revision="223134" />
+        revision="224861" />
 
     <component
         name="project_phase_template"
