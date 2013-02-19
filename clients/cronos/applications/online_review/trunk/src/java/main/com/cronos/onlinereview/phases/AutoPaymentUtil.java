@@ -988,8 +988,7 @@ public class AutoPaymentUtil {
     private static int getProjectPrizesCount(long projectId, Connection conn) throws SQLException {
         String SELECT_SQL =
             "select count(prize_amount) from prize " +
-            "inner join project_prize_xref on project_prize_xref.prize_id = prize.prize_id " +
-            "and project_prize_xref.project_id = ?";
+            "where project_id = ?";
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
