@@ -1,0 +1,52 @@
+<CMConfig>
+    <Config name="com.topcoder.management.phase.PhaseManager">
+        <Property name="PhasePersistence">
+            <Property name="className">
+                <Value>com.topcoder.management.phase.db.InformixPhasePersistence</Value>
+            </Property>
+        </Property>
+        <Property name="Idgenerator">
+            <Property name="sequenceName">
+                <Value>project_phase_id_seq</Value>
+            </Property>
+            <Property name="className">
+                <Value>com.topcoder.util.idgenerator.IDGeneratorImpl</Value>
+            </Property>
+        </Property>
+        <Property name="connectionName">
+            <Value>informix_connection</Value>
+        </Property>
+        <Property name="ConnectionFactory">
+            <Property name="className">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+        </Property>
+        <Property name="ObjectFactoryNamespace">
+            <Value>com.topcoder.management.phase.ObjectFactory</Value>
+        </Property>
+        <Property name="Handlers">
+            <!-- Handlers are not used by the Review Assignment tool -->
+        </Property>
+        <Property name="ProjectManager">
+            <Property name="className">
+                <Value>com.topcoder.management.project.ProjectManagerImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.management.project</Value>
+            </Property>
+        </Property>
+
+        <Property name="ProjectLinkManager">
+            <Property name="className">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
+            </Property>
+        </Property>
+    </Config>
+
+</CMConfig>

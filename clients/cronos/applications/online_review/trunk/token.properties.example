@@ -181,25 +181,6 @@
 # A path to log file for Auto Pilot
 #@auto_pilot_log_file@=/home/tcs/temp_files/auto_pilot_log.txt
 
-##############################################
-# Parameters specific to Auto Screening Tool #
-##############################################
-# typical Windows configuration
-# A path to file to signal to Auto Screening Tool to stop the job
-@auto_screening_guard_file@=<<path_to_guard_file>>
-# A path to file to signal to Auto Screening Tool that there is another tool instance already running
-@auto_screening_running_file@=<<path to running file>>
-# A path to log file for Auto Screening Tool
-@auto_screening_log_file@=<<path_to_log_file>>
-# A path to Checkstyle executable for production classes
-@auto_screening_checkstyle_main_exec@=<<path_to_checkstyle.bat_file>>
-# A path to Checkstyle executable for test classes
-@auto_screening_checkstyle_tests_exec@=<<path_to_checkstyle_tests.bat_file>>
-# An interval (in milliseconds) between Auto Screening Tool job executions
-@auto_screening_poll_interval@=<<interval between job executions>>
-# An ID for the Auto Screener resource
-@auto_screener_id@=<<ID for resource for Auto Screener>>
-
 # typical VM configuration
 # A path to file to signal to Auto Screening Tool to stop the job
 #@auto_screening_guard_file@=/home/tcs/temp_files/auto_screening_guard.txt
@@ -225,6 +206,20 @@
 @late_deliverables_pm_notification_interval@=<<pm_notification_interval>>
 # A path to log file for Late Deliverables Tracker
 @late_deliverables_tracker_log_file@=<<path_to_log_file>>
+
+####################################################
+# Parameters specific to Review Assignment Tool    #
+####################################################
+# A path to file to signal to Review Assignment tool to stop the job
+@review_assignment_guard_file@=<<path_to_guard_file>>
+# A path to file to signal to Review Assignment Tool that there is another tool instance already running
+@review_assignment_running_file@=<<path_to_file_indicating_on_running_job>>
+# An interval (in seconds) between Review Assignment job executions
+@review_assignment_interval@=<<tracking_interval>>
+# A path to log file for Review Assignment tool
+@review_assignment_log_file@=<<path_to_log_file>>
+# An ID for user account to represent the Review Assignment tool
+@review_assignment_operator@=<<user_id>>
 
 #####################
 # SVN configuration #
