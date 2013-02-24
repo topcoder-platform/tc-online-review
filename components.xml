@@ -339,4 +339,19 @@
         svnpath="https://coder.topcoder.com/tcs/catalog/java/distribution_tool/trunk"
         revision="180902"/>
 
+    <component
+        name="topcoder_commons_utility"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/topcoder_commons_utility/trunk"
+        revision="202080"/>
+
+    <component
+        name="review_application_management"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_application_management/trunk"
+        revision="225624"/>
+    
+    <component
+        name="review_assignment"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_assignment/trunk"
+        revision="225760"/>
+
 </components>
