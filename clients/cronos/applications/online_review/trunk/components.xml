@@ -352,6 +352,6 @@
     <component
         name="review_assignment"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_assignment/trunk"
-        revision="225760"/>
+        revision="225770"/>
 
 </components>
