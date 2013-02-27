@@ -1,14 +1,11 @@
-A message from TopCoder.
-<p>
-Your competition submissions will be reviewed by a TopCoder Community Review Board. Reviewers have been assigned to your competition.
-</p>
-
-<p>
+A message from TopCoder.<br/>
+<br/>
+Your competition submissions will be reviewed by a TopCoder Community Review Board. Reviewers have been assigned to your competition.<br/>
+<br/>
 Project\: <a href\="https\://topcoder.com/direct/projectOverview?formData.projectId\=%TC_DIRECT_PROJECT_ID%">%TC_DIRECT_PROJECT_NAME%</a><br/>
 Contest Type\: %PROJECT_CATEGORY%<br/>
-Contest\: <a href\="https\://topcoder.com/direct/contest/detail?projectId\=%PROJECT_ID%">%PROJECT_NAME% %PROJECT_VERSION%</a>
-</p>
-
+Contest\: <a href\="https\://topcoder.com/direct/contest/detail?projectId\=%PROJECT_ID%">%PROJECT_NAME% %PROJECT_VERSION%</a><br/>
+<br/>
 The following review positions have been assigned.<br/>
 <br/>
 <table border\="1">
@@ -20,15 +17,12 @@ The following review positions have been assigned.<br/>
 <td>%USER_HANDLE%<td>%REVIEW_APPLICATION_ROLE_NAME%
 %endloop%
 </table>
-
+<br/>
 %if:OPEN_POSITIONS>'0'%
-<p>
 <i>%OPEN_POSITIONS% review position%if:OPEN_POSITIONS>'1'%s are%endif% %if:OPEN_POSITIONS='1'%is%endif%
-still open.</i> You will be notified when any remaining positions are filled.
-</p>
+still open.</i> You will be notified when any remaining positions are filled.<br/>
+<br/>
 %endif%
-
-<p>
 --------------------------------------------------------------------<br/>
 <br/>
 If you've explored the links in TopCoder Cockpit and the Help Center but still need assistance with your competition, email support@topcoder.com and we'll be happy to help.<br/>
@@ -40,4 +34,3 @@ Please note\: This e-mail was sent from a notification-only address that cannot 
 Thank you for working with TopCoder.<br/>
 <br/>
 ---------------------------------------------------------------------<br/>
-</p>

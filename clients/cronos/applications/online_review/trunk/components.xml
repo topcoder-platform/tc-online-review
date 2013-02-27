@@ -88,7 +88,7 @@
     <component
         name="review_management_persistence"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_management_persistence/trunk"
-        revision="223137" />
+        revision="225820" />
 
     <component
         name="review_score_aggregator"
@@ -352,6 +352,6 @@
     <component
         name="review_assignment"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_assignment/trunk"
-        revision="225770"/>
+        revision="225849"/>
 
 </components>
