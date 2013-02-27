@@ -1,14 +1,9 @@
-Hi, %USER_HANDLE%
-
-<p>
-Thank you for applying for a competition review position. The system has processed your review application. Unfortunately, you were not assigned to review this contest.
-</p>
-
-<p>
+Hi, %USER_HANDLE%<br/>
+<br/>
+Thank you for applying for a competition review position. The system has processed your review application. Unfortunately, you were not assigned to review this contest.<br/>
+<br/>
 Contest\: <a href\="https\://software.topcoder.com/review/actions/ViewProjectDetails.do?method\=viewProjectDetails&amp;pid\=%PROJECT_ID%">%PROJECT_NAME% %PROJECT_VERSION%</a><br/>
-</p>
-
-<p>
+<br/>
 ---------------------------------------------------------------------<br/>
 <br/>
 Please note\: This e-mail was sent from a notification-only address that cannot accept incoming e-mail. Please do not reply to this message.<br/>
@@ -16,4 +11,3 @@ Please note\: This e-mail was sent from a notification-only address that cannot 
 Thank you for working with TopCoder.<br/>
 <br/>
 ---------------------------------------------------------------------<br/>
-</p>
