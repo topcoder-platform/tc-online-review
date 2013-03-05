@@ -670,8 +670,9 @@
                         ra.review_auction_type_id,
                         ra.project_id,
                         nvl(pp2.actual_end_time,pp2.scheduled_end_time) - 24 units hour as assignment_date,
-                        (case when p.project_status_id = 1 and pp2.phase_status_id in (2,3) and pp4.phase_status_id in
-                        (1,2) then 't' else 'f' end)::boolean as open,
+                        (case when p.project_status_id = 1 and pp2.phase_status_id in (2,3) and pp4.phase_status_id in (1,2)
+                         and not exists (select 1 from project_phase pp12 where pp12.project_id=p.project_id and pp12.phase_type_id=12)
+                         then 't' else 'f' end)::boolean as open,
                         pc.parameter::int - (select count(r.resource_id) from resource r where r.project_id=p.project_id
                         and r.resource_role_id in (4,5,6,7)) as reviewers_required
 
