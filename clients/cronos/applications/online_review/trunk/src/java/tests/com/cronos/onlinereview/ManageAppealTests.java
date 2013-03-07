@@ -43,7 +43,7 @@ public class ManageAppealTests extends ProjectTests {
     		// add contest submission.
     		long submissionId = TestHelper.AddSubmission(projectId, phaseIds.get("submission"), submitterId, 1, con);
 
-            reviewId = TestHelper.AddReview (reviewerId, submissionId, con);
+            reviewId = TestHelper.AddReview (reviewerId, submissionId, phaseIds.get("review"), con);
 
         } finally {
     		con.close();

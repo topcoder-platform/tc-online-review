@@ -951,17 +951,19 @@ public class TestHelper {
      *
      * @param submissionId submission id
      *
+     * @param projectPhaseId project phase id
+     *
      * @param con connection to use.
      *
      * @return id of submission.
      *
      * @throws Exception if any error occurred.
      */
-    static long AddReview ( long resourceId, long submissionId, Connection con) throws Exception {
+    static long AddReview ( long resourceId, long submissionId, long projectPhaseId, Connection con) throws Exception {
     	long reviewId = getNextId("review_id_seq");
     	executeStatement(con,
-    			"INSERT INTO review (review_id, resource_id, submission_id, scorecard_id, committed, score, initial_score, create_user, create_date, modify_user, modify_date) VALUES (" +
-    			reviewId + ", " + resourceId + ", " + submissionId +","+ DESIGN_REVIEW_SCORECARD_ID +", 1 , 100.00 , 100.00 ,'"+TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
+    			"INSERT INTO review (review_id, resource_id, submission_id, project_phase_id, scorecard_id, committed, score, initial_score, create_user, create_date, modify_user, modify_date) VALUES (" +
+    			reviewId + ", " + resourceId + ", " + submissionId + ", " + projectPhaseId +","+ DESIGN_REVIEW_SCORECARD_ID +", 1 , 100.00 , 100.00 ,'"+TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
 
     	long reviewItemId = getNextId("review_item_id_seq");
     	executeStatement(con,

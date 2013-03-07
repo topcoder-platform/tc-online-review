@@ -3706,64 +3706,26 @@ public class ActionsHelper {
     }
 
     /**
-     * <p>Gets the reviews (if any) for specified <code>Approval</code> phase.</p>
-     *
-     * @param reviews a <code>Review</code> array providing the <code>Apporval</code> reviews for project.
-     * @param thisPhase a <code>Phase</code> providing the <code>Approval</code> phases to get reviews for.
-     * @return a <code>Review</code> array listing the reviews (if any) for specified <code>Approval</code> phase.
-     * @since 1.3
-     */
-    static Review[] getApprovalPhaseReviews(Review[] reviews, Phase thisPhase) {
-        List<Review> thisPhaseReviews = new ArrayList<Review>();
-        for (Review review : reviews) {
-            Date reviewCreated = review.getCreationTimestamp();
-            Date phaseActualStart = thisPhase.getActualStartDate();
-            Date phaseActualEnd = thisPhase.getActualEndDate();
-            if (phaseActualStart != null) {
-                if (phaseActualStart.compareTo(reviewCreated) <= 0) {
-                    if ((phaseActualEnd == null) || (phaseActualEnd.compareTo(reviewCreated) >= 0)) {
-                        thisPhaseReviews.add(review);
-                    }
-                }
-            }
-        }
-
-        return thisPhaseReviews.toArray(new Review[thisPhaseReviews.size()]);
-    }
-
-    /**
-     * <p>This static method finds and returns last review of <code>Approval</code> type and made by specified resource.
+     * <p>This static method finds and returns all reviews for the specified phase and resource.
      * </p>
      *
-     * @param phase approval phase.
-     * @param scorecardType a scorecard template type that found review should have.
-     * @param resourceId an ID of the resource who made (created) the review.
-     * @param complete specifies whether retrieved review should have all infomration (like all items and their
+     * @param phaseId Phase ID.
+     * @param resourceId an ID of the resource who made (created) the review. Can be null.
+     * @param complete specifies whether retrieved review should have all information (like all items and their
      *        comments).
      * @return found review or <code>null</code> if no review has been found.
      * @throws ReviewManagementException if any error occurs during review search or retrieval.
-     * @since 1.3
      */
-    static Review findLastApprovalReview(Phase phase, ScorecardType scorecardType,
-                                                 long resourceId, boolean complete) throws ReviewManagementException {
+    static Review[] searchReviews(long phaseId, Long resourceId, boolean complete) throws ReviewManagementException {
+        Filter filter = new EqualToFilter("projectPhase", phaseId);
 
-        Filter filterProject = new EqualToFilter("project", phase.getProject().getId());
-        Filter filterScorecard = new EqualToFilter("scorecardType", scorecardType.getId());
-        Filter filter = new AndFilter(Arrays.asList(filterProject, filterScorecard));
-
-        // Get a review(s) that pass filter
-        Review[] reviews = createReviewManager().searchReviews(filter, complete);
-        if (phase.getPhaseType().getName().equals(Constants.APPROVAL_PHASE_NAME)) {
-            reviews = ActionsHelper.getApprovalPhaseReviews(reviews, phase);
+        if (resourceId != null) {
+            filter = new AndFilter(filter, new EqualToFilter("reviewer", resourceId));
         }
 
-        for (Review review : reviews) {
-            if (review.getAuthor() == resourceId) {
-                return review;
-            }
-        }
-        return null;
+        return createReviewManager().searchReviews(filter, complete);
     }
+
 
     private static Collection<Long> userToUsers(Long user) {
         ArrayList<Long> userCollection = new ArrayList<Long>();
@@ -4065,22 +4027,17 @@ public class ActionsHelper {
         ResourceManager resMgr = createResourceManager();
         PhaseManager phaseManager = createPhaseManager(false);
         
-        // Get all the Post Mortem reviews
-        Filter filterProject = new EqualToFilter("project", project.getId());
-        Filter filterScorecard = new EqualToFilter("scorecardType",
-                LookupHelper.getScorecardType(Constants.POST_MORTEM_SCORECARD_TYPE_NAME).getId());
-        Filter filter = new AndFilter(filterProject, filterScorecard);
-        Review[] reviews = reviewMgr.searchReviews(filter, false);
-        // Delete all the Post Mortem reviews
+        // Get and delete all the Post Mortem reviews
+        Review[] reviews = searchReviews(postMortemPhase.getId(),  null, false);
         for (Review review : reviews) {
             reviewMgr.removeReview(review.getId(), operator);
         }
         
         // Get all the Post Mortem Reviewers
-        filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
+        Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
         long postMortemRoleId = LookupHelper.getResourceRole(Constants.POST_MORTEM_REVIEWER_ROLE_NAME).getId();
         Filter filterResourceRole = ResourceFilterBuilder.createResourceRoleIdFilter(postMortemRoleId);
-        filter = new AndFilter(filterProject, filterResourceRole);
+        Filter filter = new AndFilter(filterProject, filterResourceRole);
         Resource[] resources = resMgr.searchResources(filter);
         
         // Delete the Post Mortem Reviewers

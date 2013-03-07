@@ -2874,28 +2874,26 @@ public class ProjectReviewActions extends DispatchAction {
         // Prepare filters
         Filter filterResource = new EqualToFilter("reviewer", myResource.getId());
         Filter filterScorecard = new EqualToFilter("scorecardType", scorecardTemplate.getScorecardType().getId());
+        Filter filterPhase = new EqualToFilter("projectPhase", phase.getId());
 
         Filter filter;
         if (isPostMortemPhase) {
             // Prepare final combined filter
-            filter = new AndFilter(Arrays.asList(filterResource, filterScorecard));
+            filter = new AndFilter(Arrays.asList(filterResource, filterScorecard, filterPhase));
         } else {
             // Prepare final combined filter
             Filter filterSubmission = new EqualToFilter("submission", verification.getSubmission().getId());
-            filter = new AndFilter(Arrays.asList(filterResource, filterSubmission, filterScorecard));
+            filter = new AndFilter(Arrays.asList(filterResource, filterSubmission, filterScorecard, filterPhase));
         }
 
         // Obtain an instance of Review Manager
         ReviewManager revMgr = ActionsHelper.createReviewManager();
         // Retrieve an array of reviews
         Review[] reviews = revMgr.searchReviews(filter, false);
-        if (phase.getPhaseType().getName().equals(Constants.APPROVAL_PHASE_NAME)) {
-            reviews = ActionsHelper.getApprovalPhaseReviews(reviews, phase);
-        }
 
         // Non-empty array of reviews indicates that user is trying to create review that already exists
         if (reviews.length != 0) {
-            // Forward to Edit Sceeening page
+            // Forward to Edit Screening page
             return ActionsHelper.cloneForwardAndAppendToPath(
                     mapping.findForward(Constants.EDIT_FORWARD_NAME), "&rid=" + reviews[0].getId());
         }
@@ -3262,23 +3260,21 @@ public class ProjectReviewActions extends DispatchAction {
             // Prepare filters
             Filter filterResource = new EqualToFilter("reviewer", myResource.getId());
             Filter filterScorecard = new EqualToFilter("scorecardType", scorecardTemplate.getScorecardType().getId());
+            Filter filterPhase = new EqualToFilter("projectPhase", phase.getId());
 
             Filter filter;
             if (isSubmissionDependentPhase) {
                 Filter filterSubmission = new EqualToFilter("submission", verification.getSubmission().getId());
-                filter = new AndFilter(Arrays.asList(filterResource, filterSubmission, filterScorecard));
+                filter = new AndFilter(Arrays.asList(filterResource, filterSubmission, filterScorecard, filterPhase));
             } else {
                 // Prepare final combined filter
-                filter = new AndFilter(Arrays.asList(filterResource, filterScorecard));
+                filter = new AndFilter(Arrays.asList(filterResource, filterScorecard, filterPhase));
             }
 
             // Obtain an instance of Review Manager
             ReviewManager revMgr = ActionsHelper.createReviewManager();
             // Retrieve an array of reviews
             Review[] reviews = revMgr.searchReviews(filter, false);
-            if (phase.getPhaseType().getName().equals(Constants.APPROVAL_PHASE_NAME)) {
-                reviews = ActionsHelper.getApprovalPhaseReviews(reviews, phase);
-            }
 
             // Non-empty array of reviews indicates that user is trying to create review that already exists
             if (reviews.length != 0) {
@@ -3433,6 +3429,7 @@ public class ProjectReviewActions extends DispatchAction {
 
             // Finally, set required fields of the review
             reviewEditor.setAuthor(myResource.getId());
+            reviewEditor.setProjectPhase(phase.getId());
             // Skip setting submission ID for Post-Mortem phase
             if (isSubmissionDependentPhase) {
                 reviewEditor.setSubmission(verification.getSubmission().getId());
