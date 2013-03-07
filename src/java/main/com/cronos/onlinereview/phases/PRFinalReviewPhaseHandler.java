@@ -334,7 +334,7 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
     private boolean checkFinalReview(Phase phase) throws PhaseHandlingException {
         try {
             ManagerHelper managerHelper = getManagerHelper();
-            Review finalWorksheet = PhasesHelper.getWorksheet(managerHelper, "Final Reviewer", phase.getId());
+            Review finalWorksheet = PhasesHelper.getWorksheet(managerHelper, phase.getId());
 
             // check for approved/rejected comments.
             Comment[] comments = finalWorksheet.getAllComments();

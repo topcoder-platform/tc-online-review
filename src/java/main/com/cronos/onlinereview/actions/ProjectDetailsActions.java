@@ -443,37 +443,6 @@ public class ProjectDetailsActions extends DispatchAction {
 
         Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForPhases(activePhases, allProjectResources);
 
-        // For approval phase
-        Phase approvalPhase = ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME);
-        if (approvalPhase != null) {
-            ScorecardType scorecardType = LookupHelper.getScorecardType("Approval");
-
-            for (int i = 0; i < deliverables.length; i++) {
-                Deliverable deliverable = deliverables[i];
-                if (deliverable.getName().equals(Constants.APPROVAL_DELIVERABLE_NAME)) {
-                    Review review = ActionsHelper.findLastApprovalReview(approvalPhase, scorecardType,
-                                                                         deliverable.getResource(), false);
-                    if ((review == null) || !review.isCommitted()) {
-                        Deliverable newDeliverable
-                            = new Deliverable(deliverable.getProject(), deliverable.getPhase(),
-                                              deliverable.getResource(), deliverable.getSubmission(),
-                                              deliverable.isRequired());
-                        newDeliverable.setId(deliverable.getId());
-                        newDeliverable.setName(deliverable.getName());
-                        newDeliverable.setCreationTimestamp(deliverable.getCreationTimestamp());
-                        newDeliverable.setCreationUser(deliverable.getCreationUser());
-                        newDeliverable.setDescription(deliverable.getDescription());
-                        newDeliverable.setModificationTimestamp(deliverable.getModificationTimestamp());
-                        newDeliverable.setModificationUser(deliverable.getModificationUser());
-
-                        deliverables[i] = newDeliverable;
-                    } else {
-                        deliverable.setCompletionDate(review.getModificationTimestamp());
-                    }
-                }
-            }
-        }
-
         Deliverable[] myDeliverables = ActionsHelper.getMyDeliverables(deliverables, myResources);
         Deliverable[] outstandingDeliverables = ActionsHelper.getOutstandingDeliverables(deliverables);
 
@@ -2582,7 +2551,6 @@ public class ProjectDetailsActions extends DispatchAction {
                     continue;
                 }
 
-
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
                         LookupHelper.getScorecardType("Review"),
                         deliverable.getSubmission(), deliverable.getResource(), false);
@@ -2668,37 +2636,31 @@ public class ProjectDetailsActions extends DispatchAction {
                     }
                 }
             } else if (delivName.equalsIgnoreCase(Constants.APPROVAL_DELIVERABLE_NAME)) {
-                // Skip deliverables with empty Submission ID field,
-                // as no links can be generated for such deliverables
+                // Skip deliverables with empty Submission ID field, as no links can be generated for such deliverables
                 if (deliverable.getSubmission() == null) {
                     continue;
                 }
 
-                Phase[] activePhases = ActionsHelper.getActivePhases(phases);
-                Phase phase = ActionsHelper.getPhaseForDeliverable(activePhases, deliverable);
-                Review review = ActionsHelper.findLastApprovalReview(phase,
-                    LookupHelper.getScorecardType("Approval"), deliverable.getResource(),false);
+                Review[] reviews = ActionsHelper.searchReviews(deliverable.getPhase(), deliverable.getResource(), false);
 
-                if (review == null) {
+                if (reviews.length == 0) {
                     links[i] = "CreateApproval.do?method=createApproval&sid=" +
                             deliverable.getSubmission();
-                } else if (!review.isCommitted()) {
-                    links[i] = "EditApproval.do?method=editApproval&rid=" + review.getId();
+                } else if (!reviews[0].isCommitted()) {
+                    links[i] = "EditApproval.do?method=editApproval&rid=" + reviews[0].getId();
                 } else {
-                    links[i] = "ViewApproval.do?method=viewApproval&rid=" + review.getId();
+                    links[i] = "ViewApproval.do?method=viewApproval&rid=" + reviews[0].getId();
                 }
             } else if (delivName.equalsIgnoreCase(Constants.POST_MORTEM_DELIVERABLE_NAME)) {
+                Review[] reviews = ActionsHelper.searchReviews(deliverable.getPhase(), deliverable.getResource(), false);
 
-                ScorecardType scorecardType = LookupHelper.getScorecardType("Post-Mortem");
-                Review review = findReviewForProject(ActionsHelper.createReviewManager(), scorecardType,
-                                                     deliverable.getProject(), deliverable.getResource(), false);
-                if (review == null) {
+                if (reviews.length == 0) {
                     links[i] = "CreatePostMortem.do?method=createPostMortem&pid=" + deliverable.getProject();
 //                    request.setAttribute("postMortemSubmissionId", deliverable.getSubmission().longValue());
-                } else if (!review.isCommitted()) {
-                    links[i] = "EditPostMortem.do?method=editPostMortem&rid=" + review.getId();
+                } else if (!reviews[0].isCommitted()) {
+                    links[i] = "EditPostMortem.do?method=editPostMortem&rid=" + reviews[0].getId();
                 } else {
-                    links[i] = "ViewPostMortem.do?method=viewPostMortem&rid=" + review.getId();
+                    links[i] = "ViewPostMortem.do?method=viewPostMortem&rid=" + reviews[0].getId();
                 }
             }
         }
@@ -2846,53 +2808,6 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Get a review(s) that pass filter
         Review[] reviews = manager.searchReviews(filter, complete);
-        // Return the first found review if any, or null
-        return (reviews.length != 0) ? reviews[0] : null;
-    }
-
-    /**
-     * This static method finds and returns a review of specified scorecard template type for
-     * specified submission ID and made by specified resource.
-     *
-     * @return found review or <code>null</code> if no review has been found.
-     * @param manager
-     *            an instance of <code>ReviewManager</code> class that retrieves a review from the
-     *            database.
-     * @param scorecardType
-     *            a scorecard template type that found review should have.
-     * @param projectId
-     *            an ID of the project which the review was made for.
-     * @param resourceId
-     *            an ID of the resource who made (created) the review.
-     * @param complete
-     *            specifies whether retrieved review should have all infomration (like all items and
-     *            their comments).
-     * @throws IllegalArgumentException
-     *             if <code>scorecardType</code> or <code>submissionId</code> parameters are
-     *             <code>null</code>, or if <code>submissionId</code> or
-     *             <code>resourceId</code> parameters contain negative value or zero.
-     * @throws ReviewManagementException
-     *             if any error occurs during review search or retrieval.
-     */
-    private static Review findReviewForProject(ReviewManager manager,
-            ScorecardType scorecardType, Long projectId, long resourceId, boolean complete)
-        throws ReviewManagementException {
-        // Validate parameters
-        ActionsHelper.validateParameterNotNull(manager, "manager");
-        ActionsHelper.validateParameterNotNull(scorecardType, "scorecardType");
-        ActionsHelper.validateParameterNotNull(projectId, "projectId");
-        ActionsHelper.validateParameterPositive(projectId, "projectId");
-        ActionsHelper.validateParameterPositive(resourceId, "resourceId");
-
-        Filter filterProject = new EqualToFilter("project", projectId);
-        Filter filterScorecard = new EqualToFilter("scorecardType", scorecardType.getId());
-        Filter filterReviewer = new EqualToFilter("reviewer", resourceId);
-
-        Filter filter = new AndFilter(Arrays.asList(filterProject, filterScorecard, filterReviewer));
-
-        // Get a review(s) that pass filter
-        Review[] reviews = manager.searchReviews(filter, complete);
-
         // Return the first found review if any, or null
         return (reviews.length != 0) ? reviews[0] : null;
     }

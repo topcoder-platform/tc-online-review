@@ -9,7 +9,6 @@ import java.util.Map;
 
 import com.cronos.onlinereview.deliverables.AggregationDeliverableChecker;
 import com.cronos.onlinereview.deliverables.AppealResponsesDeliverableChecker;
-import com.cronos.onlinereview.deliverables.ApprovalDeliverableChecker;
 import com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker;
 import com.cronos.onlinereview.deliverables.FinalFixesDeliverableChecker;
 import com.cronos.onlinereview.deliverables.FinalReviewDeliverableChecker;
@@ -569,7 +568,7 @@ public class ManagerCreationHelper implements ManagersProvider {
                 checkers.put(Constants.FINAL_FIX_DELIVERABLE_NAME, new FinalFixesDeliverableChecker(dbconn));
                 checkers.put(Constants.SCORECARD_COMM_DELIVERABLE_NAME, new SubmitterCommentDeliverableChecker(dbconn));
                 checkers.put(Constants.FINAL_REVIEW_PHASE_NAME, new FinalReviewDeliverableChecker(dbconn));
-                checkers.put(Constants.APPROVAL_DELIVERABLE_NAME, new ApprovalDeliverableChecker(dbconn));
+                checkers.put(Constants.APPROVAL_DELIVERABLE_NAME, committedChecker);
                 checkers.put(Constants.POST_MORTEM_DELIVERABLE_NAME, submissionIndependentReviewChecker);
 
                 // Initialize the PersistenceDeliverableManager

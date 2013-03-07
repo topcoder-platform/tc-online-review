@@ -386,7 +386,6 @@ final class PhasesDetailsServices {
         // Milestone Screening phase
         if (phaseName.equalsIgnoreCase(Constants.MILESTONE_SCREENING_PHASE_NAME)
             && phaseGroup.getMilestoneSubmissions() != null) {
-            Submission[] submissions = phaseGroup.getMilestoneSubmissions();
 
             Resource[] screeners = ActionsHelper.getResourcesForPhase(allProjectResources, phases[phaseIdx]);
             if (screeners != null && screeners.length > 0) {
@@ -394,58 +393,20 @@ final class PhasesDetailsServices {
             }
 
             phaseGroup.setMilestoneScreeningPhaseStatus(phase.getPhaseStatus().getId());
-
-            // No need to fetch auto screening results if there are no submissions
-            if (submissions.length == 0) {
-                return;
-            }
-
-            List<Long> submissionIds = new ArrayList<Long>();
-            for (Submission submission : submissions) {
-                submissionIds.add(submission.getId());
-            }
-
-            Filter filterSubmissions = new InFilter("submission", submissionIds);
-            Filter filterScorecard = new EqualToFilter("scorecardType",
-                    LookupHelper.getScorecardType("Milestone Screening").getId());
-
-            // Obtain an instance of Review Manager
-            ReviewManager revMgr = ActionsHelper.createReviewManager();
-            Review[] reviews = revMgr.searchReviews(new AndFilter(filterSubmissions, filterScorecard), false);
-
-            phaseGroup.setMilestoneScreeningReviews(reviews);
+            phaseGroup.setMilestoneScreeningReviews(ActionsHelper.searchReviews(phase.getId(), null, false));
         }
 
         // Milestone Review phase
         if (phaseName.equalsIgnoreCase(Constants.MILESTONE_REVIEW_PHASE_NAME)
             && phaseGroup.getMilestoneSubmissions() != null) {
 
-            Submission[] submissions = phaseGroup.getMilestoneSubmissions();
-
             Resource[] reviewers = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
             if (reviewers != null && reviewers.length > 0) {
                 phaseGroup.setMilestoneReviewer(reviewers[0]);
             }
 
-            // No need to fetch review results if there are no submissions
-            if (submissions.length == 0) {
-                return;
-            }
-
-            List<Long> submissionIds = new ArrayList<Long>();
-            for (Submission submission : submissions) {
-                submissionIds.add(submission.getId());
-            }
-
-            Filter filterSubmissions = new InFilter("submission", submissionIds);
-            Filter filterScorecard = new EqualToFilter("scorecardType",
-                    LookupHelper.getScorecardType("Milestone Review").getId());
-
             // Obtain an instance of Review Manager
-            ReviewManager revMgr = ActionsHelper.createReviewManager();
-            Review[] reviews = revMgr.searchReviews(new AndFilter(filterSubmissions, filterScorecard), false);
-
-            phaseGroup.setMilestoneReviews(reviews);
+            phaseGroup.setMilestoneReviews(ActionsHelper.searchReviews(phase.getId(), null, false));
         }
     }
 
@@ -641,25 +602,12 @@ final class PhasesDetailsServices {
             phaseGroup.setReviewers(screeners);
             phaseGroup.setScreeningPhaseStatus(phases[phaseIdx].getPhaseStatus().getId());
 
-            // No need to fetch auto screening results if there are no submissions
+            // No need to fetch screening results if there are no submissions
             if (submissions.length == 0) {
                 return;
             }
 
-            List<Long> submissionIds = new ArrayList<Long>();
-            for (Submission submission : submissions) {
-                submissionIds.add(submission.getId());
-            }
-
-            Filter filterSubmissions = new InFilter("submission", submissionIds);
-            Filter filterScorecard = new EqualToFilter("scorecardType",
-                    LookupHelper.getScorecardType("Screening").getId());
-
-            // Obtain an instance of Review Manager
-            ReviewManager revMgr = ActionsHelper.createReviewManager();
-            Review[] reviews = revMgr.searchReviews(new AndFilter(filterSubmissions, filterScorecard), false);
-
-            phaseGroup.setScreenings(reviews);
+            phaseGroup.setScreenings(ActionsHelper.searchReviews(phases[phaseIdx].getId(), null, false));
         }
     }
 
@@ -923,14 +871,7 @@ final class PhasesDetailsServices {
                 return;
             }
 
-            Filter filterResource = new EqualToFilter("reviewer", aggregator[0].getId());
-            Filter filterProject = new EqualToFilter("project", project.getId());
-
-            Filter filter = new AndFilter(filterResource, filterProject);
-
-            // Obtain an instance of Review Manager
-            ReviewManager revMgr = ActionsHelper.createReviewManager();
-            Review[] reviews = revMgr.searchReviews(filter, false);
+            Review[] reviews = ActionsHelper.searchReviews(phase.getId(), aggregator[0].getId(), false);
             if (reviews.length != 0) {
                 phaseGroup.setAggregation(reviews[0]);
             }
@@ -974,20 +915,13 @@ final class PhasesDetailsServices {
         }
 
         if (phaseName.equalsIgnoreCase(Constants.FINAL_REVIEW_PHASE_NAME) && phaseGroup.getSubmitters() != null) {
-            Resource[] reviewer = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
+            Resource[] reviewers = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
 
-            if (reviewer == null || reviewer.length == 0) {
+            if (reviewers == null || reviewers.length == 0) {
                 return;
             }
 
-            Filter filterResource = new EqualToFilter("reviewer", reviewer[0].getId());
-            Filter filterProject = new EqualToFilter("project", project.getId());
-            Filter filter = new AndFilter(filterResource, filterProject);
-
-            // Obtain an instance of Review Manager
-            ReviewManager revMgr = ActionsHelper.createReviewManager();
-            Review[] reviews = revMgr.searchReviews(filter, true);
-
+            Review[] reviews = ActionsHelper.searchReviews(phase.getId(), reviewers[0].getId(), false);
             if (reviews.length != 0) {
                 phaseGroup.setFinalReview(reviews[0]);
             }
@@ -1029,10 +963,7 @@ final class PhasesDetailsServices {
             if ((reviewers == null) || (reviewers.length == 0)) {
                 return;
             }
-            Filter filterResource = new EqualToFilter("reviewer", reviewers[0].getId());
-            Filter filterProject = new EqualToFilter("project", project.getId());
-            ReviewManager revMgr = ActionsHelper.createReviewManager();
-            Review[] reviews = revMgr.searchReviews(new AndFilter(filterResource, filterProject), true);
+            Review[] reviews = ActionsHelper.searchReviews(phase.getId(), reviewers[0].getId(), false);
             if (reviews.length != 0) {
                 phaseGroup.setSpecificationReview(reviews[0]);
             }
@@ -1068,23 +999,8 @@ final class PhasesDetailsServices {
         }
         phaseGroup.setApprovalReviewers(approvers);
 
-        // Build the filter for getting the existing Approval reviews
-        List<Filter> reviewersFilter = new ArrayList<Filter>();
-        for (Resource approver : approvers) {
-            reviewersFilter.add(new EqualToFilter("reviewer", approver.getId()));
-        }
-        Filter filterResource = new OrFilter(reviewersFilter);
-        Filter filterProject = new EqualToFilter("project", project.getId());
-        Filter filterScorecard = new EqualToFilter("scorecardType", LookupHelper.getScorecardType("Approval").getId());
-        Filter filter = new AndFilter(Arrays.asList(filterResource, filterProject, filterScorecard));
-
-        // Obtain an instance of Review Manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager();
-        Review[] reviews = revMgr.searchReviews(filter, true);
-
-        phaseGroup.setApproval(ActionsHelper.getApprovalPhaseReviews(reviews, thisPhase));
+        phaseGroup.setApproval(ActionsHelper.searchReviews(thisPhase.getId(), null, false));
         phaseGroup.setApprovalPhaseStatus(thisPhase.getPhaseStatus().getId());
-
         phaseGroup.setFinalFix(ActionsHelper.getFinalFixForApprovalPhase(thisPhase));
     }
 
@@ -1108,22 +1024,7 @@ final class PhasesDetailsServices {
         }
         phaseGroup.setPostMortemReviewers(postMortemReviewers);
 
-        ScorecardType postMortemScorecardType = LookupHelper.getScorecardType("Post-Mortem");
-
-        // Build the filter for getting the existing Posrt-Mortem reviews
-        List<Filter> reviewersFilter = new ArrayList<Filter>();
-        for (Resource postMortemReviewer : postMortemReviewers) {
-            reviewersFilter.add(new EqualToFilter("reviewer", postMortemReviewer.getId()));
-        }
-        Filter filterResource = new OrFilter(reviewersFilter);
-        Filter filterProject = new EqualToFilter("project", project.getId());
-        Filter filterScorecard = new EqualToFilter("scorecardType", postMortemScorecardType.getId());
-        Filter filter = new AndFilter(Arrays.asList(filterResource, filterProject, filterScorecard));
-
-        // Get existing Post-Mortem reviews and set phase group with them
-        ReviewManager revMgr = ActionsHelper.createReviewManager();
-        Review[] reviews = revMgr.searchReviews(filter, false);
-        phaseGroup.setPostMortemReviews(reviews);
+        phaseGroup.setPostMortemReviews(ActionsHelper.searchReviews(thisPhase.getId(), null, false));
         phaseGroup.setPostMortemPhaseStatus(thisPhase.getPhaseStatus().getId());
     }
 

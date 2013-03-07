@@ -8,7 +8,7 @@
     <component
         name="deliverable_management"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/deliverable_management/trunk"
-        revision="223120"/>
+        revision="226238"/>
 
     <component
         name="deliverable_management_persistence"
@@ -28,7 +28,7 @@
     <component
         name="online_review_deliverables"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_deliverables/trunk"
-        revision="212206" />
+        revision="226237" />
 
     <component
         name="online_review_ajax_support"
@@ -43,7 +43,7 @@
     <component
         name="online_review_phases"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/trunk"
-        revision="224295" />
+        revision="226236" />
 
     <component
         name="online_review_upload_services"
@@ -78,17 +78,17 @@
     <component
         name="review_data_structure"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/review_data_structure/trunk"
-        revision="222034" />
+        revision="226232" />
 
     <component
         name="review_management"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/review_management/trunk"
-        revision="222035" />
+        revision="226233" />
 
     <component
         name="review_management_persistence"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_management_persistence/trunk"
-        revision="225820" />
+        revision="226235" />
 
     <component
         name="review_score_aggregator"

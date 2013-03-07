@@ -2041,6 +2041,7 @@
                         SELECT DISTINCT review_id,
                                review.resource_id AS resource_id,
                                review.submission_id AS submission_id,
+                               review.project_phase_id AS project_phase_id,
                                review.scorecard_id AS scorecard_id,
                                committed,
                                score,
@@ -2067,6 +2068,9 @@
                     <Property name="submission">
                         <Value>review.submission_id</Value>
                     </Property>
+                    <Property name="projectPhase">
+                        <Value>review.project_phase_id</Value>
+                    </Property>
                     <Property name="committed">
                         <Value>review.committed</Value>
                     </Property>
@@ -2089,6 +2093,12 @@
                         </Property>
                     </Property>
                     <Property name="submission">
+                        <Property name="validator">
+                            <Property name="class"><Value>validator</Value></Property>
+                            <Property name="identifier"><Value>default</Value></Property>
+                        </Property>
+                    </Property>
+                    <Property name="projectPhase">
                         <Property name="validator">
                             <Property name="class"><Value>validator</Value></Property>
                             <Property name="identifier"><Value>default</Value></Property>

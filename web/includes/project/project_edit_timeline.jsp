@@ -271,32 +271,20 @@
                 <tr class="highlighted" id="approval_scorecard_row_template" style="display: none;">
             </c:if>
             <c:if test="${phaseIdx ne 0}">
-                <c:if test="${approvalPhaseMet}">
-                    <c:set var="disableApprovalReviewerNumberInput" value="${true}"/>
-                </c:if>
-                <c:set var="approvalPhaseMet" value="${true}"/>
                 <tr class="highlighted">
             </c:if>
                 <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
                 <td class="value" colspan="4">
                     <bean:message key="editProject.Phases.Criteria.ReviewNumber.beforeInput" />
-                    <c:choose>
-                        <c:when test="${disableApprovalReviewerNumberInput}">
-                            <html:text style="width:30px;text-align:right;" styleClass="inputBox" disabled="true"
-                                       size="30" property="phase_required_reviewers[${phaseIdx}]"/>
-                        </c:when>
-                        <c:otherwise>
-                            <c:if test="${phaseIdx eq 0}">
-                                <html:text style="width:30px;text-align:right;" styleClass="inputBox"
-                                           size="30" property="phase_required_reviewers[${phaseIdx}]"
-                                           value="${requestScope.phase_required_reviewers_approval}"/>
-                            </c:if>
-                            <c:if test="${phaseIdx ne 0}">
-                                <html:text style="width:30px;text-align:right;" styleClass="inputBox" disabled="${isPhaseClosed}"
-                                           size="30" property="phase_required_reviewers[${phaseIdx}]"/>
-                            </c:if>
-                        </c:otherwise>
-                    </c:choose>
+                    <c:if test="${phaseIdx eq 0}">
+                        <html:text style="width:30px;text-align:right;" styleClass="inputBox"
+                                   size="30" property="phase_required_reviewers[${phaseIdx}]"
+                                   value="${requestScope.phase_required_reviewers_approval}"/>
+                    </c:if>
+                    <c:if test="${phaseIdx ne 0}">
+                        <html:text style="width:30px;text-align:right;" styleClass="inputBox" disabled="${isPhaseClosed}"
+                                   size="30" property="phase_required_reviewers[${phaseIdx}]"/>
+                    </c:if>
                     &#160;<bean:message key="editProject.Phases.Criteria.ReviewNumber.afterInput" /><br/>
                     <bean:message key="editProject.Phases.Criteria.Scorecard" />
                     <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" disabled="${isPhaseClosed}">

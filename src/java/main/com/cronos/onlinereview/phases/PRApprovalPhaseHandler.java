@@ -90,9 +90,8 @@ public class PRApprovalPhaseHandler extends ApprovalPhaseHandler {
      */
     private boolean checkScorecardsRejected(Phase phase) throws PhaseHandlingException {
         try {
-            Review[] approveReviews = PhasesHelper.searchProjectReviewsForResourceRoles(getManagerHelper(), phase
-                    .getProject().getId(), new String[] {APPROVER}, null);
-            approveReviews = PhasesHelper.getApprovalPhaseReviews(approveReviews, phase);
+            Review[] approveReviews = PhasesHelper.searchReviewsForPhase(getManagerHelper(),
+                    phase.getId(), null);
 
             // check for approved/rejected comments.
             boolean rejected = false;

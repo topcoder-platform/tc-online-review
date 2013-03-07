@@ -41,7 +41,7 @@ public class ScoreCardTests extends ProjectTests {
     		// add contest submission.
     		long submissionId = TestHelper.AddSubmission(projectId, phaseIds.get("submission"), Submitter, 1, con);
 
-            reviewId = TestHelper.AddReview (resourceId, submissionId, con);
+            reviewId = TestHelper.AddReview (resourceId, submissionId, phaseIds.get("review"), con);
 
         } finally {
     		con.close();
