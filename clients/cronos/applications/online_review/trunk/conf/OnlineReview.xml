@@ -3943,6 +3943,12 @@
             </Property>
         </Property>
 
+        <Property name="ProjectPaymentConfig">
+            <Property name="CalculatorClass">
+                <Value>com.topcoder.management.payment.calculator.impl.ProjectPaymentAdjustmentCalculator</Value>
+            </Property>
+        </Property>
+
         <!-- Configure the tabs to be displayed in Resources section in project detail page -->
         <Property name="ResourceTabs">
             <Property name="Submitters">
