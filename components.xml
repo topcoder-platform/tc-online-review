@@ -354,4 +354,9 @@
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_assignment/trunk"
         revision="226128"/>
 
+    <component
+        name="project_payment_calculator"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_payment_calculator/trunk"
+        revision="226259"/>
+
 </components>

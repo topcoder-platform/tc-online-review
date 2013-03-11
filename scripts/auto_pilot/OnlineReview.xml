@@ -1646,6 +1646,13 @@
           <Value>@svn.authz.file.url@</Value>
         </Property>
       </Property>
+
+      <Property name="ProjectPaymentConfig">
+        <Property name="CalculatorClass">
+           <Value>com.topcoder.management.payment.calculator.impl.ProjectPaymentAdjustmentCalculator</Value>
+         </Property>
+      </Property>
+
     </Config>
 
 

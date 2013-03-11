@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2005 - 2012 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2005 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -14,6 +14,7 @@ import java.util.Date;
 
 import com.cronos.onlinereview.phases.logging.LoggerMessage;
 import com.topcoder.management.deliverable.Submission;
+import com.topcoder.management.payment.calculator.ProjectPaymentCalculatorException;
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.management.project.PersistenceException;
 import com.topcoder.management.project.ProjectManager;
@@ -44,8 +45,17 @@ import com.topcoder.db.connectionfactory.DBConnectionFactory;
  *     <li>Added {@link #completeProject(ManagerHelper, Phase, String)} method.</li>
  *   </ol>
  * <p>
- * @author brain_cn, FireIce
- * @version 1.1
+ *
+ * <p>
+ * Version 1.2 Change notes:
+ *   <ol>
+ *     <li>Updated the methods calling {@link AutoPaymentUtil#populateReviewerPayments(long, Connection, int)} method to
+ *     add <code>catch</code> clause for {@link ProjectPaymentCalculatorException}.</li>
+ *   </ol>
+ * </p>
+ *     
+ * @author brain_cn, FireIce, isv
+ * @version 1.2
  */
 public class PRHelper {
 
@@ -185,12 +195,14 @@ public class PRHelper {
         }
     }
 
-    public void populateReviewerPayments(long projectId, int phaseId) throws PhaseHandlingException {
+    public void populateReviewerPayments(long projectId) throws PhaseHandlingException {
         Connection conn = createConnection();
         try {
-            AutoPaymentUtil.populateReviewerPayments(projectId, conn, phaseId);
+            AutoPaymentUtil.populateReviewerPayments(projectId, conn);
         } catch(SQLException e) {
             throw new PhaseHandlingException("Failed to populate reviewer payments.", e);
+        } catch (ProjectPaymentCalculatorException e) {
+            throw new PhaseHandlingException("Failed to calculate reviewer payments", e);
         } finally {
             close(conn);
         }
@@ -262,9 +274,11 @@ public class PRHelper {
                 pstmt.execute();
             }
 
-            AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.SCREENING_PHASE);
+            AutoPaymentUtil.populateReviewerPayments(projectId, conn);
         } catch(SQLException e) {
             throw new PhaseHandlingException("Failed to push data to project_result", e);
+        } catch (ProjectPaymentCalculatorException e) {
+            throw new PhaseHandlingException("Failed to calculate reviewer payments", e);
         } finally {
             close(pstmt);
             close(conn);
@@ -323,9 +337,11 @@ public class PRHelper {
                 }
             }
 
-            AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.REVIEW_PHASE);
+            AutoPaymentUtil.populateReviewerPayments(projectId, conn);
         } catch(SQLException e) {
             throw new PhaseHandlingException("Failed to push data to project_result", e);
+        } catch (ProjectPaymentCalculatorException e) {
+            throw new PhaseHandlingException("Failed to calculate reviewer payments", e);
         } finally {
             close(rs);
             close(pstmt);
@@ -374,9 +390,11 @@ public class PRHelper {
                         new LoggerMessage("project", projectId, null, "process Aggregation phase."));
                 populateProjectResult(projectId, conn);
             }
-            AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.AGGREGATION_PHASE);
+            AutoPaymentUtil.populateReviewerPayments(projectId, conn);
         } catch(SQLException e) {
             throw new PhaseHandlingException("Failed to push data to project_result", e);
+        } catch (ProjectPaymentCalculatorException e) {
+            throw new PhaseHandlingException("Failed to calculate reviewer payments", e);
         } finally {
             close(conn);
         }
@@ -424,9 +442,11 @@ public class PRHelper {
                 logger.log(Level.INFO,
                         new LoggerMessage("project", projectId, null, "start final review phase."));
             }
-            AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.FINAL_REVIEW_PHASE);
+            AutoPaymentUtil.populateReviewerPayments(projectId, conn);
         } catch(SQLException e) {
             throw new PhaseHandlingException("Failed to push data to project_result", e);
+        } catch (ProjectPaymentCalculatorException e) {
+            throw new PhaseHandlingException("Failed to calculate reviewer payments", e);
         } finally {
             close(conn);
         }
@@ -451,12 +471,14 @@ public class PRHelper {
                 logger.log(Level.INFO,
                         new LoggerMessage("project", projectId, null, "start post mortem phase."));
             }
-            AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.POST_MORTEM_PHASE);
+            AutoPaymentUtil.populateReviewerPayments(projectId, conn);
 
             // Copilots aren't getting paid for failed projects.
             AutoPaymentUtil.clearCopilotPayments(projectId, conn);
         } catch(SQLException e) {
             throw new PhaseHandlingException("Failed to push data to project_result", e);
+        } catch (ProjectPaymentCalculatorException e) {
+            throw new PhaseHandlingException("Failed to calculate reviewer payments", e);
         } finally {
             close(conn);
         }

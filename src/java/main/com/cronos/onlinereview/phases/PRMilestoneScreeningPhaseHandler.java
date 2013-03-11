@@ -82,7 +82,7 @@ public class PRMilestoneScreeningPhaseHandler extends MilestoneScreeningPhaseHan
                 throw new PhaseHandlingException("Failed to send email to submitters on Milestone Screening results", e);
             }
                 
-            prHelper.populateReviewerPayments(projectId, AutoPaymentUtil.MILESTONE_SCREENING_PHASE);
+            prHelper.populateReviewerPayments(projectId);
         }
     }
 }
