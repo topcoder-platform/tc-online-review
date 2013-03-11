@@ -164,7 +164,10 @@ public class AutoPaymentUtil {
 
         boolean isStudio = getProjectTypeId(projectId, conn) == 3;
         List<Reviewer> reviewers = getReviewers(projectId, conn);
-        
+        if (reviewers.size() == 0) {
+            return;
+        }        
+
         // Get the default payments for reviewers
         Set<Long> reviewerResourceRoleIds = new HashSet<Long>();
         for (Reviewer reviewer : reviewers) {
