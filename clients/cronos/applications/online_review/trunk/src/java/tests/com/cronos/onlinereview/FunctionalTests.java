@@ -44,7 +44,7 @@ public class FunctionalTests extends TestCase {
 //        suite.addTestSuite(PostmortemReviewerManageScorecardTests.class);
 //        suite.addTestSuite(ScreenerManageScorecardTests.class);
         suite.addTestSuite(AggregatorAddScorecardTests.class);
-        suite.addTestSuite(TimelineAdvancementTests.class);
+//        suite.addTestSuite(TimelineAdvancementTests.class);
         
         return suite;
     }
