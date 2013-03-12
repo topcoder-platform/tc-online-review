@@ -77,6 +77,9 @@ public class AggregatorAddScorecardTests extends ProjectTests {
 
 
         // open review phase
+        System.out.println("START : **********************");
+        System.out.println(browser.getBodyText());
+        System.out.println("END   : **********************");
         TestHelper.OpenPhaseByUI(browser, 6, "review");
         //submit Review Scorecard
         TestHelper.submitScorecard(browser, "4 - Strongly Agree", "Return to Project Details", false);
