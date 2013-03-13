@@ -3279,9 +3279,6 @@ public class ProjectDetailsActions extends DispatchAction {
         // Get my resource
         Resource resource = ActionsHelper.getMyResourceForRole(request, "Submitter");
 
-        Submission[] oldSubmissions = ActionsHelper.getResourceSubmissions(resource.getId(), submissionTypeName,
-                Constants.ACTIVE_SUBMISSION_STATUS_NAME, false);
-
         Submission submission = new Submission();
         Upload upload = new Upload();
 
@@ -3302,6 +3299,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // If the project DOESN'T allow multiple submissions hence its property "Allow
         // multiple submissions" will be false
         Boolean allowOldSubmissions = Boolean.parseBoolean((String) project.getProperty("Allow multiple submissions"));
+        log.debug("Allow Multiple Submissions : " + allowOldSubmissions);
 
         UploadManager upMgr = ActionsHelper.createUploadManager();
         upMgr.createUpload(upload, operator);
@@ -3309,17 +3307,21 @@ public class ProjectDetailsActions extends DispatchAction {
         resource.addSubmission(submission.getId());
         ActionsHelper.createResourceManager().updateResource(resource, operator);
 
-        log.debug("Allow Multiple Submissions : " + allowOldSubmissions);
+        Submission[] activeSubmissions = ActionsHelper.getResourceSubmissions(resource.getId(), submissionTypeName,
+                Constants.ACTIVE_SUBMISSION_STATUS_NAME, false);
+
         // Now depending on whether the project allows multiple submissions or not mark the old submission
         // and the upload as deleted.
-        if (oldSubmissions.length != 0 && !allowOldSubmissions) {
+        if (activeSubmissions.length > 1 && !allowOldSubmissions) {
             SubmissionStatus deleteSubmissionStatus = LookupHelper.getSubmissionStatus("Deleted");
             UploadStatus deleteUploadStatus = LookupHelper.getUploadStatus("Deleted");
-            for (Submission oldSubmission : oldSubmissions) {
-                oldSubmission.getUpload().setUploadStatus(deleteUploadStatus);
-                oldSubmission.setSubmissionStatus(deleteSubmissionStatus);
-                upMgr.updateUpload(oldSubmission.getUpload(), operator);
-                upMgr.updateSubmission(oldSubmission, operator);
+            for (Submission activeSubmission : activeSubmissions) {
+                if (activeSubmission.getId() != submission.getId()) {
+                    activeSubmission.getUpload().setUploadStatus(deleteUploadStatus);
+                    activeSubmission.setSubmissionStatus(deleteSubmissionStatus);
+                    upMgr.updateUpload(activeSubmission.getUpload(), operator);
+                    upMgr.updateSubmission(activeSubmission, operator);
+                }
             }
         }
 
