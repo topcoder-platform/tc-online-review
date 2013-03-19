@@ -930,16 +930,16 @@ public class TestHelper {
     	long uploadId = getNextUploadId();
     	executeStatement(con, 
     			"INSERT INTO upload (upload_id, project_id, project_phase_id, resource_id, upload_type_id, upload_status_id, parameter, create_user, create_date, modify_user, modify_date) VALUES (" +
-    			uploadId + ", " + projectId + ", " + phaseId + ", " + resourceId + ", 1, 1, 'no_file.txt', '" +TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
+    			uploadId + ", " + projectId + ", " + phaseId + ", " + resourceId + ", 1, 1, 'no_file.txt', '" +TESTS_USER_ID + "', CURRENT - 1 UNITS DAY, '" + TESTS_USER_ID + "', CURRENT)" );
     	
     	long submissionId = getNextSubmissionId();
     	executeStatement(con,
     			"INSERT INTO submission (submission_id, upload_id, submission_status_id, screening_score, initial_score, final_score, placement, submission_type_id, create_user, create_date, modify_user, modify_date) VALUES (" +
-    			submissionId + ", " + uploadId + ", 1, NULL, NULL, NULL, NULL, " + submissionTypeId + ", '" +TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
+    			submissionId + ", " + uploadId + ", 1, NULL, NULL, NULL, NULL, " + submissionTypeId + ", '" +TESTS_USER_ID + "', CURRENT - 1 UNITS DAY, '" + TESTS_USER_ID + "', CURRENT)" );
     	
     	executeStatement(con,
     			"INSERT INTO resource_submission (resource_id, submission_id, create_user, create_date, modify_user, modify_date) VALUES (" +
-    			resourceId + ", " + submissionId + ", '" +TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
+    			resourceId + ", " + submissionId + ", '" +TESTS_USER_ID + "', CURRENT - 1 UNITS DAY, '" + TESTS_USER_ID + "', CURRENT)" );
         return submissionId;
     }
 
