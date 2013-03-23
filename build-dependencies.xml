@@ -30,6 +30,19 @@
     <property name="securityEJB.jar.name" value="Security.jar"/>
     <property name="securityEJB.jar" value="${tcs_libdir}/${securityEJB.path}/${securityEJB.jar.name}"/>
 
+    <property name="topcoder_commons_utility.version" value="1.0"/>
+    <property name="topcoder_commons_utility.jar.name" value="topcoder_commons_utility.jar"/>
+    <property name="topcoder_commons_utility.path" value="topcoder_commons_utility/${topcoder_commons_utility.version}"/>
+    <property name="topcoder_commons_utility.jar"
+              value="${tcs_libdir}/${topcoder_commons_utility.path}/${topcoder_commons_utility.jar.name}"/>
+              
+              
+    <property name="topcoder_security_groups.version" value="1.0.0"/>
+    <property name="topcoder_security_groups.jar.name" value="topcoder_security_groups.jar"/>
+    <property name="topcoder_security_groups.path" value="topcoder_security_groups/${topcoder_security_groups.version}"/>
+    <property name="topcoder_security_groups.jar"
+              value="${tcs_libdir}/${topcoder_security_groups.path}/${topcoder_security_groups.jar.name}"/>
+
     <!-- Shared libraries -->
     <property name="catalog.jar.name" value="catalog.jar"/>
     <property name="catalog.jar" value="${shared_libdir}/${catalog.jar.name}"/>
@@ -81,6 +94,21 @@
     <property name="ejb-2_0.jar" value="${ext_libdir}/ejb-2_0.jar" />
     <property name="svnkit.jar" value="${ext_libdir}/svnkit/svnkit.jar"/>
     <property name="jodconverter.jar" value="${ext_libdir}/jodconverter-2.2.2.jar"/>
+	
+	<property name="aopalliance.jar.name" value="aopalliance.jar" />
+	<property name="aopalliance.jar" value="${ext_libdir}/aop/${aopalliance.jar.name}" />
+	
+	<property name="aspectjrt.jar.name" value="aspectjrt.jar" />
+	<property name="aspectjrt.jar" value="${ext_libdir}/aop/${aspectjrt.jar.name}" />
+	
+	<property name="aspectjweaver.jar.name" value="aspectjweaver.jar" />
+	<property name="aspectjweaver.jar" value="${ext_libdir}/aop/${aspectjweaver.jar.name}" />
+	
+	<property name="javax.persistence.jar.name" value="javax.persistence.jar" />
+	<property name="javax.persistence.jar" value="${ext_libdir}/aop/${javax.persistence.jar.name}" />
+	
+	<property name="org.aspectj.matcher.jar.name" value="org.aspectj.matcher.jar" />
+	<property name="org.aspectj.matcher.jar" value="${ext_libdir}/aop/${org.aspectj.matcher.jar.name}" />
   
     <path id="svnant.lib" >
       <fileset dir="${ext_libdir}/svnant" includes="*.jar" />
@@ -120,6 +148,9 @@
         <pathelement location="${log4j.jar}" />
         <pathelement location="${ldapjdk.jar}" />
         <pathelement location="${jaf.jar}" />
+        <pathelement location="${topcoder_commons_utility.jar}"/>
+    	<pathelement location="${topcoder_security_groups.jar}"/>
+    	
         <path refid="spring_libs"/>
     </path>
 

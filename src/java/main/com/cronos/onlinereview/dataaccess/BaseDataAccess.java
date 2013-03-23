@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.dataaccess;
 
@@ -38,8 +38,16 @@ import java.util.Map;
  *   </ol>
  * </p>
  *
- * @author isv
- * @version 1.2
+ * <p>
+ * Version 1.3 (https://apps.topcoder.com/bugs/browse/BUGR-7621) Change notes:
+ *   <ol>
+ *     <li>Added {@link #runQueryInDB} method.</li>
+ *     <li>Updated {@link #runQuery} method to delegate to {@link #runQueryInDB} method.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author isv, tangzx
+ * @version 1.3
  */
 public abstract class BaseDataAccess {
 
@@ -154,17 +162,7 @@ public abstract class BaseDataAccess {
      * @throws DataAccessException if an unexpected error occurs while running the query.
      */
     protected Map<String, ResultSetContainer> runQuery(String queryName, String paramName, String paramValue) {
-        DataAccess dataAccess = new DataAccess(DBMS.TCS_OLTP_DATASOURCE_NAME);
-        Request request = new Request();
-        request.setContentHandle(queryName);
-        if (paramName != null) {
-            request.setProperty(paramName, paramValue);
-        }
-        try {
-            return dataAccess.getData(request);
-        } catch (Exception e) {
-            throw new DataAccessException("Failed to run " + queryName + " query via Query Tool", e);
-        }
+        return runQuery(queryName, new String[] {paramName}, new String[] {paramValue});
     }
 
     /**
@@ -178,11 +176,29 @@ public abstract class BaseDataAccess {
      * @throws DataAccessException if an unexpected error occurs while running the query.
      */
     protected Map<String, ResultSetContainer> runQuery(String queryName, String[] paramNames, String[] paramValues) {
-        DataAccess dataAccess = new DataAccess(DBMS.TCS_OLTP_DATASOURCE_NAME);
+        return runQueryInDB(DBMS.TCS_OLTP_DATASOURCE_NAME, queryName, paramNames, paramValues);
+    }
+
+    /**
+     * <p>Executes the specified query using Query Tool. The query is customized with provided value of specified
+     * parameter.</p>
+     *
+     * @param dbName the name of db.
+     * @param queryName a <code>String</code> providing the name of the query to be run.
+     * @param paramNames a <code>String</code> array providing the names of the query parameters for customization.
+     * @param paramValues a <code>String</code> array providing the values of the query parameters for customization.
+     * @return a <code>Map</code> providing the query results. Maps query names to query results.
+     * @throws DataAccessException if an unexpected error occurs while running the query.
+     * @since 1.3
+     */
+    protected Map<String, ResultSetContainer> runQueryInDB(String dbName, String queryName, String[] paramNames, String[] paramValues) {
+        DataAccess dataAccess = new DataAccess(dbName);
         Request request = new Request();
         request.setContentHandle(queryName);
         for (int i = 0; i < paramNames.length; i++) {
-            request.setProperty(paramNames[i], paramValues[i]);
+            if (paramNames[i] != null) {
+                request.setProperty(paramNames[i], paramValues[i]);
+            }
         }
         try {
             return dataAccess.getData(request);
