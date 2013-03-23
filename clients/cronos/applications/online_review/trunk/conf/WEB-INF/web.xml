@@ -6,6 +6,10 @@
          version="2.4">
 
     <display-name>Online Review</display-name>
+    
+    <listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
 
     <filter>
         <filter-name>set_character_encoding</filter-name>

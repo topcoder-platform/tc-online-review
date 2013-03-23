@@ -49,5 +49,51 @@
         <property name="idGeneratorMaxLowValue" value="1"/>
         <property name="idGeneratorAutoInit" value="false"/>
     </bean>
+    
+    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+    	<property name="jndiName" value="java:TCS_CATALOG" />
+    </bean>
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+    	<property name="dataSource" ref="dataSource"></property>
+    	<property name="configLocation">
+    		<value>classpath:securityGroupsHibernate.cfg.xml</value>
+    	</property>
+    	<property name="hibernateProperties">
+    		<props>
+    			<prop key="hibernate.max_fetch_depth">0</prop>
+    		</props>
+    	</property>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <aop:pointcut id="serviceOperation" expression="execution(* com.topcoder.security.groups.services.hibernate.*.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation"/>
+    </aop:config>
+
+    <bean id="logFactory" class="com.topcoder.util.log.log4j.Log4jLogFactory"/>
+    
+    <bean id="logger" class="com.topcoder.util.log.log4j.Log4jLog" factory-bean="logFactory" factory-method="createLog">
+    	<constructor-arg type="java.lang.String" value="Authorization Service Logger" />
+    </bean>
+
+    <bean id="authorizationService"
+          class="com.topcoder.security.groups.services.hibernate.HibernateAuthorizationService"
+          init-method="afterPropertiesSet">
+
+        <property name="logger" ref="logger" />
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
 </beans>
         

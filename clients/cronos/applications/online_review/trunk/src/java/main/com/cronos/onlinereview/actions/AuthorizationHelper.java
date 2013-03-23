@@ -1,23 +1,12 @@
 /*
- * Copyright (C) 2006-2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2006-2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
-import com.cronos.onlinereview.login.AuthCookieManagementException;
-import com.cronos.onlinereview.login.AuthCookieManager;
-import com.cronos.onlinereview.login.ConfigurationException;
-import com.cronos.onlinereview.login.LoginActions;
-import com.cronos.onlinereview.login.Util;
+import com.cronos.onlinereview.login.*;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.Resource;
@@ -26,7 +15,17 @@ import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
+import com.topcoder.security.groups.model.GroupPermissionType;
+import com.topcoder.security.groups.model.ResourceType;
+import com.topcoder.security.groups.services.AuthorizationService;
 import com.topcoder.util.errorhandling.BaseException;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This class provides helper methods that can be used to determine if the user has particular role,
@@ -64,8 +63,31 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, rac_
- * @version 1.4
+ * <p>
+ * Version 1.5 (Module Assembly - Topcoder Security Groups Backend - Online Review Permissions Propagation) Change notes:
+ *   <ol>
+ *     <li>Update gatherUserRoles(HttpServletRequest request) to check security permissions.</li>
+ *     <li>Update gatherUserRoles(HttpServletRequest request, long projectId) to check security permissions.</li>
+ *     <li>Add retrieveAuthorizationService method to get authorization service from spring context.</li>
+ *     <li>Add getUserProjectIdsList to get tc direct project ids for specify user id</li>
+ *     <li>Add getUserClientIds to get client ids for specify user id.</li>
+ *     <li>Add concatenate to concatenate string.</li>
+ *   </ol>
+ * </p>
+ *
+ * <p>
+ * Version 1.6 (https://apps.topcoder.com/bugs/browse/BUGR-7621) Change notes:
+ *   <ol>
+ *     <li>Update gatherUserRoles(HttpServletRequest request) to remove "Cockpit Project User" permission checking.</li>
+ *     <li>Update gatherUserRoles(HttpServletRequest request, long projectId) to get user id from getLoggedInUserId.</li>
+ *     <li>Remove getUserProjectIdsList since it's not used.</li>
+ *     <li>Move getUserClientIds and getProjectClient to ProjectDataAccess.</li>
+ *     <li>Remove concatenate since it's not used.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, rac_, tangzx
+ * @version 1.6
  */
 public class AuthorizationHelper {
 
@@ -76,6 +98,8 @@ public class AuthorizationHelper {
     public static final long NO_USER_LOGGED_IN_ID = -1;
 
     public static final String REDIRECT_BACK_URL_ATTRIBUTE = "redirectBackUrl";
+
+    private static final String AUTHORIZATION_SERVICE_NAME = "authorizationService";
 
     /**
      * <p>An <code>AuthCookieManager</code> to be used for user authentication based on cookies.</p>
@@ -285,6 +309,7 @@ public class AuthorizationHelper {
         // Determine some common permissions
         request.setAttribute("isAllowedToCreateProject",
                 hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME));
+
     }
 
     /**
@@ -352,6 +377,27 @@ public class AuthorizationHelper {
             ResourceRole role = resource.getResourceRole();
             // Add the name of the role to the roles set (gather the role)
             roles.add(role.getName());
+        }
+
+        // retrieve user id and client id
+        long userId = getLoggedInUserId(request);
+        long clientId;
+        try {
+            clientId = projectDataAccess.getProjectClient(project.getTcDirectProjectId());
+        } catch (Exception e) {
+            throw new BaseException("error occurs while retrieving client id", e);
+        }
+
+        // check whether user has cockpit project user role
+        AuthorizationService authorizationService = retrieveAuthorizationService(request);
+        if (authorizationService.isCustomerAdministrator(userId, clientId)) {
+            roles.add(Constants.COCKPIT_PROJECT_USER_ROLE_NAME);
+        } else {
+            GroupPermissionType permission = authorizationService.checkAuthorization(userId,
+                    project.getTcDirectProjectId(), ResourceType.PROJECT);
+            if (null != permission) {
+                roles.add(Constants.COCKPIT_PROJECT_USER_ROLE_NAME);
+            }
         }
     }
 
@@ -476,4 +522,18 @@ public class AuthorizationHelper {
                     new Object[]{namespace }, AuthCookieManager.class);
         }
     }
+
+
+    /**
+     * Get authorization service from spring.
+     *
+     * @param request the http servlet request
+     * @return retrieved authorization service
+     * @since 1.5
+     */
+    private static AuthorizationService retrieveAuthorizationService(HttpServletRequest request) {
+        return (AuthorizationService) WebApplicationContextUtils.getWebApplicationContext(
+                request.getSession().getServletContext()).getBean(AUTHORIZATION_SERVICE_NAME);
+    }
+
 }
