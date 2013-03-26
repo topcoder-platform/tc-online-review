@@ -135,8 +135,6 @@
         <pathelement location="${log4j.jar}" />
         <pathelement location="${ldapjdk.jar}" />
         <pathelement location="${jaf.jar}" />
-        <pathelement location="${topcoder_commons_utility.jar}"/>
-    	<pathelement location="${topcoder_security_groups.jar}"/>
     	
         <path refid="spring_libs"/>
     </path>
