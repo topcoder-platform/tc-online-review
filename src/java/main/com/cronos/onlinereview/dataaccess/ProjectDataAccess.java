@@ -45,9 +45,7 @@ import java.util.*;
  * <p>
  * Version 1.4 (https://apps.topcoder.com/bugs/browse/BUGR-7621) Change notes:
  *   <ol>
- *     <li>Added getUserClientIds to get client ids for a given user.</li>
  *     <li>Added getProjectClient to get client id for a given project.</li>
- *     <li>Added concatenate to get a combine string of project ids.</li>
  *   </ol>
  * </p>
  *
@@ -321,52 +319,6 @@ public class ProjectDataAccess extends BaseDataAccess {
         }
 
         return resultingProjects;
-    }
-
-    /**
-     * Get client ids for specify user id.
-     *
-     * @param userId the user id
-     * @return the list of client ids
-     * @throws Exception if any exception occurs
-     * @since 1.4
-     */
-    public List<Long> getUserClientIds(long userId) throws Exception {
-        List<Long> clients = new ArrayList<Long>();
-
-        String queryName = "non_admin_client_billing_accounts";
-        List<CockpitProject> projects = getCockpitProjectsForUser(userId);
-        if (projects.size() > 0) {
-            ResultSetContainer resultContainer = runQueryInDB(DBMS.TCS_DW_DATASOURCE_NAME, queryName,
-                    new String[] {"tdpis"}, new String[] {concatenate(projects, ", ")}).get(queryName);
-            if (resultContainer != null) {
-                for (ResultSetContainer.ResultSetRow row : resultContainer) {
-                    long clientId = row.getLongItem("client_id");
-                    clients.add(clientId);
-                }
-            }
-        }
-
-        return clients;
-    }
-
-    /**
-     * <p>Build a string concatenating the specified values separated with specified delimiter.</p>
-     *
-     * @param items a <code>CockpitProject</code> list providing the values to be concatenated.
-     * @param delimiter a <code>String</code> providing the delimiter to be inserted between concatenated items.
-     * @return a <code>String</code> providing the concatenated item values.
-     * @since 1.4
-     */
-    private String concatenate(List<CockpitProject> items, String delimiter) {
-        StringBuilder b = new StringBuilder();
-        for (CockpitProject id : items) {
-            if (b.length() > 0) {
-                b.append(delimiter);
-            }
-            b.append(id.getId());
-        }
-        return b.toString();
     }
 
     /**

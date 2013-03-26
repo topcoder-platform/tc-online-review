@@ -30,19 +30,6 @@
     <property name="securityEJB.jar.name" value="Security.jar"/>
     <property name="securityEJB.jar" value="${tcs_libdir}/${securityEJB.path}/${securityEJB.jar.name}"/>
 
-    <property name="topcoder_commons_utility.version" value="1.0"/>
-    <property name="topcoder_commons_utility.jar.name" value="topcoder_commons_utility.jar"/>
-    <property name="topcoder_commons_utility.path" value="topcoder_commons_utility/${topcoder_commons_utility.version}"/>
-    <property name="topcoder_commons_utility.jar"
-              value="${tcs_libdir}/${topcoder_commons_utility.path}/${topcoder_commons_utility.jar.name}"/>
-              
-              
-    <property name="topcoder_security_groups.version" value="1.0.0"/>
-    <property name="topcoder_security_groups.jar.name" value="topcoder_security_groups.jar"/>
-    <property name="topcoder_security_groups.path" value="topcoder_security_groups/${topcoder_security_groups.version}"/>
-    <property name="topcoder_security_groups.jar"
-              value="${tcs_libdir}/${topcoder_security_groups.path}/${topcoder_security_groups.jar.name}"/>
-
     <!-- Shared libraries -->
     <property name="catalog.jar.name" value="catalog.jar"/>
     <property name="catalog.jar" value="${shared_libdir}/${catalog.jar.name}"/>

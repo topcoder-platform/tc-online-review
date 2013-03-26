@@ -92,7 +92,6 @@ public class LoginLibrary extends BaseEJBLibrary implements LoginRemote {
          *
          * @return a <code>long</code> providing the ID for impersonation role.
          */
-        @Override
         protected Long getImpersonationRoleId() {
             return this.impersonationRoleId;
         }
