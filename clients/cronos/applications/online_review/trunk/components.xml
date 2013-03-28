@@ -13,7 +13,7 @@
     <component
         name="deliverable_management_persistence"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/deliverable_management_persistence/trunk"
-        revision="226838"/>
+        revision="223121"/>
 
     <component
         name="late_deliverables_tracker"
@@ -57,8 +57,8 @@
 
     <component
         name="phase_management_persistence"
-        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/phase_management_persistence/tags/version-1.0.3.1"
-        revision="207643" />
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/phase_management_persistence/tags/version-1.0.4.1"
+        revision="227195" />
 
     <component
         name="project_management"
@@ -224,7 +224,7 @@
     <component
         name="project_phases"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/project_phases/trunk"
-        revision="207105" />
+        revision="227194" />
 
     <component
         name="file_upload"
@@ -359,4 +359,8 @@
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_payment_calculator/trunk"
         revision="226259"/>
 
+    <component
+        name="project_payment_management"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_payment_management/trunk"
+        revision="225994"/>
 </components>

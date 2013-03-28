@@ -1,0 +1,154 @@
+<%--
+  - Author: flexme
+  - Version: 1.0 (Online Review - Project Payments Integration Part 1 v1.0)
+  - Copyright (C) 2013 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page fragment displays the form input elements group for editing the project prizes..
+--%>
+<%@ page language="java" isELIgnored="false" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="html" uri="/tags/struts-html" %>
+<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+
+<div>
+    <ul id="tablist">
+        <li class="current"><a id="contest-prizes-link" onclick="return showPrizeTab('contest-prizes-table', this);" href="javascript:void(0)"><bean:message key="editProject.ProjectDetails.ContestPrizes" /></a></li>
+        <li><a id="milestone-prizes-link" onclick="return showPrizeTab('milestone-prizes-table', this);" href="javascript:void(0)"><bean:message key="editProject.ProjectDetails.MilestonePrizes" /></a></li>
+    </ul>
+    <div style="clear:both;"></div>
+</div>
+
+<c:set var="typeId" value="${projectForm.map['project_type']}"/>
+<c:set var="contestPrizesLength" value="${fn:length(projectForm.map['contest_prizes_amount'])}"/>
+<table id="contest-prizes-table" class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+    <tr>
+        <td class="title" colspan="4"><bean:message key="editProject.ProjectDetails.ProjectPrizes" /></td>
+    </tr>
+    <tr>
+        <td class="header"><b><bean:message key="editProject.ProjectDetails.Prize.Place" /></b></td>
+        <td class="header"><b><bean:message key="editProject.ProjectDetails.Prize.Amount" /></b></td>
+        <td class="header" colspan="2"><b><bean:message key="editProject.ProjectDetails.Prize.NoOfPrizes" /></b></td>
+    </tr>
+    <tr style="display:none;">
+        <td class="value"></td>
+        <td class="value">
+            <label>${"$"}</label>
+            <input class="inputBoxDuration" type="text" name="contest_prizes_amount_dump[]"/>
+            <span name="prize_amount_validation_msg" style="display: none" class="error"></span>
+        </td>
+        <td class="value">
+            <select class="inputBox" <c:if test="${not newProject and typeId ne 3}">disabled="disabled" </c:if> name="contest_prizes_num_dump[]">
+                <c:forEach begin="1" end="10" var="index">
+                    <option value="${index}">${index}</option>
+                </c:forEach>
+            </select>
+        </td>
+        <td class="value">
+            <html:img srcKey="editProject.Prizes.DeletePrize.img" altKey="editProject.Prizes.DeletePrize.alt" onclick="removePrize(this)" style="cursor:hand;" />
+        </td>
+    </tr>
+    <c:if test="${contestPrizesLength > 0}">
+        <c:forEach begin="0" end="${contestPrizesLength - 1}" var="prizeIdx" varStatus="vs">
+            <tr <c:if test="${vs.index % 2 eq 0}">class="light"</c:if> <c:if test="${vs.index % 2 eq 1}">class="dark"</c:if> >
+                <td class="value">${prizeIdx + 1}</td>
+                <td class="value">
+                    <label>${"$"}</label>
+                    <html:text styleClass="inputBoxDuration" property="contest_prizes_amount[${prizeIdx}]" disabled="${not canEditContestPrize}"/>
+                    <span name="prize_amount_validation_msg" style="display: none" class="error"></span>
+                    <div class="error"><html:errors property="contest_prizes_amount[${prizeIdx}]" prefix="" suffix="" /></div>
+                </td>
+                <td class="value">
+                    <html:select styleClass="inputBox" property="contest_prizes_num[${prizeIdx}]" disabled="${not canEditContestPrize or typeId ne 3}">
+                        <c:forEach begin="1" end="10" var="index">
+                            <html:option key="${index}" value="${index}" />
+                        </c:forEach>
+                    </html:select>
+                    <div class="error"><html:errors property="contest_prizes_num[${prizeIdx}]" prefix="" suffix="" /></div>
+                </td>
+                <td class="value">
+                    <c:if test="${prizeIdx eq contestPrizesLength - 1 and canEditContestPrize}">
+                        <html:img srcKey="editProject.Prizes.DeletePrize.img" altKey="editProject.Prizes.DeletePrize.alt" onclick="removePrize(this)" style="cursor:hand;" />
+                    </c:if>
+                </td>
+            </tr>
+        </c:forEach>
+    </c:if>
+    <c:if test="${canEditContestPrize}">
+        <tr <c:if test="${contestPrizesLength % 2 eq 0}">class="light"</c:if><c:if test="${contestPrizesLength % 2 eq 1}">class="dark"</c:if> >
+            <td class="value" colspan="4">
+            <html:img srcKey="editProject.Prizes.AddPrize.img" altKey="editProject.Prizes.AddPrize.alt" onclick="addPrize(this, 'contest_prizes')" style="cursor:hand;" /></tr>
+        </td>
+        </tr>
+    </c:if>
+    <tr>
+        <td class="lastRowTD" colspan="4"><!-- @ --></td>
+    </tr>
+</table>
+<c:set var="milestonePrizesLength" value="${fn:length(projectForm.map['milestone_prizes_amount'])}" />
+<table id="milestone-prizes-table" class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;display:none;">
+    <tr>
+        <td class="title" colspan="4"><bean:message key="editProject.ProjectDetails.ProjectPrizes" /></td>
+    </tr>
+    <tr>
+        <td class="header"><b><bean:message key="editProject.ProjectDetails.Prize.Place" /></b></td>
+        <td class="header"><b><bean:message key="editProject.ProjectDetails.Prize.Amount" /></b></td>
+        <td class="header" colspan="2"><b><bean:message key="editProject.ProjectDetails.Prize.NoOfPrizes" /></b></td>
+    </tr>
+    <tr style="display:none;">
+        <td class="value"></td>
+        <td class="value">
+            <label>${"$"}</label>
+            <input class="inputBoxDuration" type="text" name="milestone_prizes_amount_dump[]"/>
+            <span name="prize_amount_validation_msg" style="display: none" class="error"></span>
+        </td>
+        <td class="value">
+            <select class="inputBox" name="milestone_prizes_num_dump[]">
+                <c:forEach begin="1" end="10" var="index">
+                    <option value="${index}">${index}</option>
+                </c:forEach>
+            </select>
+        </td>
+        <td class="value">
+            <html:img srcKey="editProject.Prizes.DeletePrize.img" altKey="editProject.Prizes.DeletePrize.alt" onclick="removePrize(this)" style="cursor:hand;" />
+        </td>
+    </tr>
+    <c:if test="${milestonePrizesLength > 0}">
+        <c:forEach begin="0" end="${milestonePrizesLength - 1}" var="prizeIdx" varStatus="vs">
+            <tr <c:if test="${vs.index % 2 eq 0}">class="light"</c:if> <c:if test="${vs.index % 2 eq 1}">class="dark"</c:if> >
+                <td class="value">${prizeIdx + 1}</td>
+                <td class="value">
+                    <label>${"$"}</label>
+                    <html:text styleClass="inputBoxDuration" property="milestone_prizes_amount[${prizeIdx}]" disabled="${not canEditMilestonePrize}"/>
+                    <div class="error"><html:errors property="milestone_prizes_amount[${prizeIdx}]" prefix="" suffix="" /></div>
+                    <span name="prize_amount_validation_msg" style="display: none" class="error"></span>
+                </td>
+                <td class="value">
+                    <html:select styleClass="inputBox" property="milestone_prizes_num[${prizeIdx}]" disabled="${not canEditMilestonePrize}">
+                        <c:forEach begin="1" end="10" var="index">
+                            <html:option key="${index}" value="${index}" />
+                        </c:forEach>
+                    </html:select>
+                    <div class="error"><html:errors property="milestone_prizes_num[${prizeIdx}]" prefix="" suffix="" /></div>
+                </td>
+                <td class="value">
+                    <c:if test="${prizeIdx eq milestonePrizesLength - 1 and canEditMilestonePrize}">
+                        <html:img srcKey="editProject.Prizes.DeletePrize.img" altKey="editProject.Prizes.DeletePrize.alt" onclick="removePrize(this)" style="cursor:hand;" />
+                    </c:if>
+                </td>
+            </tr>
+        </c:forEach>
+    </c:if>
+    <c:if test="${canEditMilestonePrize}">
+        <tr <c:if test="${milestonePrizesLength % 2 eq 0}">class="light"</c:if><c:if test="${milestonePrizesLength % 2 eq 1}">class="dark"</c:if> >
+            <td class="value" colspan="4">
+            <html:img srcKey="editProject.Prizes.AddPrize.img" altKey="editProject.Prizes.AddPrize.alt" onclick="addPrize(this, 'milestone_prizes')" style="cursor:hand;" /></tr>
+        </td>
+        </tr>
+    </c:if>
+    <tr>
+        <td class="lastRowTD" colspan="4"><!-- @ --></td>
+    </tr>
+</table>
+<br/>

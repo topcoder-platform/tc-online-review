@@ -1,12 +1,14 @@
 <%--
-  - Author: George1, real_vg, isv
-  - Version: 1.1
-  - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
+  - Author: George1, real_vg, isv, flexme
+  - Version: 1.2
+  - Copyright (C) 2005 - 2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment renders the details on selected project.
   -
   - Version 1.1 (Impersonation Login Release assembly) changes: Turned scorecard titles into links referring to
   - View Scorecard Template for scorecard; added details on associated Cockpit project.
+  -
+  - Version 1.2 (Online Review - Project Payments Integration Part 1 v1.0) changes: Remove the old payments information.
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -34,10 +36,6 @@
 		<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
 				<td class="value" width="15%" nowrap="nowrap"><b>Category:</b></td>
 				<td class="value" width="100%">${projectCategory}</td>
-		</tr><c:set var="rowIndex" value="${rowIndex+1}" />
-		<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
-				<td class="value" width="15%" nowrap="nowrap"><b>Price:</b></td>
-				<td class="value" width="100%">${"$"}${orfn:displayPaymentAmt(pageContext.request, projectPayment)}</td>
 		</tr><c:set var="rowIndex" value="${rowIndex+1}" />
 		<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
 				<td class="value" width="15%" nowrap="nowrap"><b>This contest is part of the Digital Run:</b></td>

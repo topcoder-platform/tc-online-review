@@ -3949,6 +3949,12 @@
             </Property>
         </Property>
 
+        <Property name="DefaultProjectPaymentConfig">
+            <Property name="CalculatorClass">
+                <Value>com.topcoder.management.payment.calculator.impl.DefaultProjectPaymentCalculator</Value>
+            </Property>
+        </Property>
+
         <!-- Configure the tabs to be displayed in Resources section in project detail page -->
         <Property name="ResourceTabs">
             <Property name="Submitters">
@@ -4750,6 +4756,14 @@
                 <Value>Copilot</Value>
                 <Value>Cockpit Project User</Value>
             </Property>
+
+            <Property name="Reopen Scorecard">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Client Manager</Value>
+                <Value>Copilot</Value>
+                <Value>Cockpit Project User</Value>
+            </Property>
         </Property>
 
         <Property name="PhaseGrouping">
@@ -5092,4 +5106,47 @@
           </Property>
       </Property>
   </Config>
+
+    <Config name="com.topcoder.management.payment.impl.ProjectPaymentAdjustmentManagerImpl">
+        <Property name="loggerName">
+            <Value>com.topcoder.management.payment.impl.ProjectPaymentAdjustmentManagerImpl</Value>
+        </Property>
+        <Property name="objectFactoryConfig">
+            <Property name="DatabaseProjectPaymentAdjustmentPersistence">
+                <Property name="type">
+                    <Value>com.topcoder.management.payment.impl.persistence.DatabaseProjectPaymentAdjustmentPersistence</Value>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="projectPaymentAdjustmentPersistenceKey">
+            <Value>DatabaseProjectPaymentAdjustmentPersistence</Value>
+        </Property>
+        <Property name="projectPaymentAdjustmentPersistenceConfig">
+            <Property name="loggerName">
+                <Value>com.topcoder.management.payment.impl.persistence.DatabaseProjectPaymentAdjustmentPersistence</Value>
+            </Property>
+            <Property name="dbConnectionFactoryConfig">
+                <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+                    <Property name="connections">
+                        <Property name="default">
+                            <Value>tcs</Value>
+                        </Property>
+                        <Property name="tcs">
+                            <Property name="producer">
+                                <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+                            </Property>
+                            <Property name="parameters">
+                                <Property name="jndi_name">
+                                    <Value>java:JTS_TCS_CATALOG</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="connectionName">
+                <Value>tcs</Value>
+            </Property>
+        </Property>
+    </Config>
 </CMConfig>

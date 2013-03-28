@@ -1,7 +1,7 @@
 <%--
-  - Author: George1, real_vg, isv
-  - Version: 1.2 (Online Review Project Management Console assembly v1.0)
-  - Copyright (C) 2006 - 2010 TopCoder Inc., All Rights Reserved.
+  - Author: George1, real_vg, isv, flexme
+  - Version: 1.3 (Online Review Project Management Console assembly v1.0)
+  - Copyright (C) 2006 - 2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page provides the view for details for requested project.
   -
@@ -9,6 +9,8 @@
   - linked to Project Management Console view.
   -
   - Version 1.2 (Impersonation Login Release assembly) changes: Removed "Back" button.
+  -
+  - Version 1.3 (Online Review - Project Payments Integration Part 1 v1.0) changes: Added Project Prizes section.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -100,6 +102,7 @@
                     <jsp:include page="/includes/project/project_timeline.jsp" />
                     <jsp:include page="/includes/project/project_phase.jsp" />
                     <jsp:include page="/includes/project/project_detail.jsp" />
+                    <jsp:include page="/includes/project/project_prizes.jsp" />
                     <jsp:include page="/includes/project/project_resource.jsp" />
                     <!-- OR Project Linking Assembly -->
                     <jsp:include page="/includes/project/project_link.jsp" />

@@ -25,6 +25,7 @@
             <form-property name="action_phase" type="java.lang.String" />           
 
             <form-property name="pid" type="java.lang.Long" />
+            <form-property name="last_modification_time" type="java.lang.Long" />
             <form-property name="project_name" type="java.lang.String" />
             <form-property name="project_type" type="java.lang.Long" />
             <form-property name="project_category" type="java.lang.Long" />
@@ -39,7 +40,6 @@
             <form-property name="forum_id" type="java.lang.Long" />
             <form-property name="component_id" type="java.lang.Long" />
             <form-property name="external_reference_id" type="java.lang.Long" />
-            <form-property name="payments" type="java.lang.Double" />
             <form-property name="dr_points" type="java.lang.Double" />
             <form-property name="SVN_module" type="java.lang.String" />
             <form-property name="notes" type="java.lang.String" />
@@ -47,6 +47,11 @@
             <form-property name="status" type="java.lang.Long" />
             <form-property name="status_explanation" type="java.lang.String" />
             <form-property name="billing_project" type="java.lang.Long" />
+
+            <form-property name="contest_prizes_amount" type="java.lang.String[]" />
+            <form-property name="contest_prizes_num" type="java.lang.Integer[]" />
+            <form-property name="milestone_prizes_amount" type="java.lang.String[]" />
+            <form-property name="milestone_prizes_num" type="java.lang.Integer[]" />
             
             <form-property name="resources_role" type="java.lang.Long[]" />
             <form-property name="resources_phase" type="java.lang.String[]" />
@@ -237,6 +242,16 @@
             <form-property name="submission_phase_extension" type="java.lang.String" />
 
             <form-property name="savePMCChangesBtn" type="org.apache.struts.util.ImageButtonBean" />
+        </form-bean>
+
+        <!-- Review Payments form -->
+        <form-bean name="reviewPaymentsForm" type="org.apache.struts.validator.LazyValidatorForm" dynamic="true">
+            <form-property name="pid" type="java.lang.Long" />
+            <form-property name="resources_roles_id" type="java.lang.Long[]" />
+            <form-property name="resource_payments_radio" type="java.lang.String[]" />
+            <form-property name="resource_payments_fixed_amount" type="java.lang.String[]" />
+            <form-property name="resource_payments_percent_amount" type="java.lang.String[]" />
+            <form-property name="saveChangesBtn" type="org.apache.struts.util.ImageButtonBean"/>
         </form-bean>
         
         <!-- Upload Distribution Form -->
@@ -570,6 +585,15 @@
             parameter="method" scope="request"
             input="/jsp/confirmAdvanceFailedScreeningSubmission.jsp">
             <forward name="displayPage" path="/jsp/confirmAdvanceFailedScreeningSubmission.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+
+        <!-- "Advance Failed Milestone Screening Submission" action -->
+        <action path="/actions/AdvanceFailedMilestoneScreeningSubmission" unknown="false"
+                type="com.cronos.onlinereview.actions.ProjectDetailsActions"
+                parameter="method" scope="request"
+                input="/jsp/confirmAdvanceFailedMilestoneScreeningSubmission.jsp">
+            <forward name="displayPage" path="/jsp/confirmAdvanceFailedMilestoneScreeningSubmission.jsp" redirect="false"/>
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
 
@@ -967,6 +991,15 @@
             <forward name="success" path="/jsp/viewSpecificationReview.jsp" redirect="false"/>
         </action>
 
+        <!-- "Reopen Scorecard" action-->
+        <action path="/actions/ReopenScorecard" unknown="false"
+                type="com.cronos.onlinereview.actions.ProjectReviewActions"
+                parameter="method" scope="request"
+                input="/jsp/confirmReopenScorecard.jsp">
+            <forward name="displayPage" path="/jsp/confirmReopenScorecard.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+
     <!--
         =====  Late Deliverables Actions  =====
     -->
@@ -1029,6 +1062,15 @@
                 parameter="method" scope="request" name="reviewFeedbackForm"
                 input="/jsp/viewProjectManagementConsole.jsp">
             <forward name="success" path="/actions/ViewManagementConsole.do?method=viewConsole&amp;activeTabIdx=3"
+                     redirect="true"/>
+        </action>
+        
+        <!-- "Save Review Payments" Action -->
+        <action path="/actions/SaveReviewPayments" unknown="false"
+                type="com.cronos.onlinereview.actions.ProjectManagementConsoleActions"
+                parameter="method" scope="request" name="reviewPaymentsForm"
+                input="/jsp/viewProjectManagementConsole.jsp">
+            <forward name="success" path="/actions/ViewManagementConsole.do?method=viewConsole&amp;activeTabIdx=4"
                      redirect="true"/>
         </action>
 

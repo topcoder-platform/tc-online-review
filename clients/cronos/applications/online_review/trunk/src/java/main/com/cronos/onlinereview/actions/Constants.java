@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2012 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -131,9 +131,20 @@ package com.cronos.onlinereview.actions;
  *     of Primary Review Appeals Reponse deliverable.</li>
  *   </ol>
  * </p>
- * 
+ *
+ * <p>
+ * Version 1.9.1 (Online Review - Project Payments Integration Part 1 v1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #REOPEN_REVIEW_SCORECARD_PERM_NAME} constant to represent the name
+ *     of Reopen Scorecard permission.</li>
+ *     <li>Added {@link #FAILED_MILESTONE_SCREENING_SUBMISSION_STATUS_NAME} constant to represent the name
+ *     of "Failed Milestone Screening" submission status.</li>
+ *     <li>Added {@link #MILESTONE_PRIZE_TYPE_NAME} constant to represent the name of the milestone prize type.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, flexme, VolodymyrK
- * @version 1.8.2
+ * @version 1.9.1
  */
 public class Constants {
 
@@ -902,6 +913,13 @@ public class Constants {
      * @since 1.8
      */
     public static final String ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME = "Advance Submissions That Failed Screening";
+
+    /**
+     * <p>A <code>String</code> providing the <code>Reopen Scorecard</code> permission.</p>
+     *
+     * @since 1.9.1
+     */
+    public static final String REOPEN_REVIEW_SCORECARD_PERM_NAME = "Reopen Scorecard";
     
     // -------------------------------------------------------------------------- Phase names -----
 
@@ -1319,7 +1337,14 @@ public class Constants {
      * @since 1.8
      */
     public static final String FAILED_SCREENING_SUBMISSION_STATUS_NAME = "Failed Screening";
-    
+
+    /**
+     * The constant for the name of the "Failed Milestone Screening" submission status.
+     *
+     * @since 1.9.1
+     */
+    public static final String FAILED_MILESTONE_SCREENING_SUBMISSION_STATUS_NAME = "Failed Milestone Screening";
+
     // ----------------------------------------------------------------- Submission type names -----
     
     /**
@@ -1328,7 +1353,7 @@ public class Constants {
      * @since 1.8.2
      */
     public static final String CONTEST_SUBMISSION_TYPE_NAME = "Contest Submission";
-    
+
     /**
      * The constant for the name of the "Specification" submission type.
      * 
@@ -1374,6 +1399,13 @@ public class Constants {
      * @since 1.8
      */
     public static final String CONTEST_PRIZE_TYPE_NAME = "Contest Prize";
+
+    /**
+     * The constant for the milestone prize type.
+     *
+     * @since 1.9.1
+     */
+    public static final String MILESTONE_PRIZE_TYPE_NAME = "Milestone Prize";
     
 	/**
  	 * <p>A <code>String</code> providing the path to configuration file for Config Manager.</p>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2011 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2013 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -10,6 +10,7 @@ import java.util.Map;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.late.LateDeliverable;
+import com.topcoder.management.project.Prize;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.resource.Resource;
@@ -52,9 +53,16 @@ import com.topcoder.project.phases.PhaseStatus;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.1.3 (Online Review - Project Payments Integration Part 1 v1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link PrizePlaceComparator} class to compare Prize.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1
- * @author real_vg, isv, FireIce
- * @version 1.2
+ * @author real_vg, isv, FireIce, flexme
+ * @version 1.1.3
  */
 final class Comparators {
 
@@ -490,6 +498,28 @@ final class Comparators {
                 }
                 this.submitters.put(submitter.getId(), submitter);
             }
+        }
+    }
+
+    /**
+     * This class implements <code>Comparator</code> interface and is used to sort Prize
+     * in array. It orders Prize by their place, in ascending order.
+     *
+     * @author flexme
+     * @since  1.1.3
+     */
+    static class PrizePlaceComparator implements Comparator<Prize> {
+        /**
+         * <p>This method compares its two arguments for order. This method expects that type of the
+         * objects passed as arguments is <code>Prize</code>.</p>
+         *
+         * @param prize1 the first Prize to be compared.
+         * @param prize2 the second Prize to be compared.
+         * @return a negative integer, zero, or a positive integer as the first argument is less than, equal to, or
+         *         greater than the second respectively.
+         */
+        public int compare(Prize prize1, Prize prize2) {
+            return prize1.getPlace() - prize2.getPlace();
         }
     }
 }

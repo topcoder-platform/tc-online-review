@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2012 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2013 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -177,8 +177,18 @@ import com.cronos.onlinereview.phases.OnlineReviewServices;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, isv, FireIce, rac_
- * @version 1.4
+ * <p>
+ * Version 1.5 (Online Review - Project Payments Integration Part 1 v1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #viewGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} method to set
+ *     the attribute about whether the user can reopen scorecard.</li>
+ *     <li>Added {@link #reopenScorecard(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method to
+ *     handle the requests to reopen a scorecard.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, isv, FireIce, rac_, flexme
+ * @version 1.5
  */
 public class ProjectReviewActions extends DispatchAction {
     private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogManager
@@ -4054,6 +4064,11 @@ public class ProjectReviewActions extends DispatchAction {
             if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
                 request.setAttribute("canEditScorecard", Boolean.TRUE);
             }
+
+            if (AuthorizationHelper.hasUserPermission(request, Constants.REOPEN_REVIEW_SCORECARD_PERM_NAME)
+                    && ActionsHelper.isPhaseOpen(phase.getPhaseStatus())) {
+                request.setAttribute("canReopenScorecard", Boolean.TRUE);
+            }
         }
 
         // Check that the type of the review is Review,
@@ -5305,5 +5320,84 @@ public class ProjectReviewActions extends DispatchAction {
         throws BaseException {
         LoggingHelper.logAction(request);
         return viewGenericReview(mapping, form, request, "Milestone Review");
+    }
+
+    /**
+     * This method is an implementation of &quot;Reopen Scorecard&quot; Struts Action defined for this
+     * assembly, which is supposed to reopen a scorecard..
+     *
+     * @return an action forward to the appropriate page. If no error has occurred and this action
+     *         was called the first time, the forward will be to /jsp/confirmReopenScorecard.jsp page,
+     *         which displays the confirmation dialog where user can confirm his intention to reopen the scorecard.
+     *         If this action was called during the post back (the second time), then this method verifies if
+     *         everything is correct, and process the reopen logic. After this it returns a forward to the
+     *         View Project Details page.
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     * @since 1.5
+     */
+    public ActionForward reopenScorecard(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping,
+                request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Verify that certain requirements are met before proceeding with the Action
+        verification = checkForCorrectReviewId(mapping, request, Constants.REOPEN_REVIEW_SCORECARD_PERM_NAME);
+        // If any error has occurred, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        if (!AuthorizationHelper.hasUserPermission(request, Constants.REOPEN_REVIEW_SCORECARD_PERM_NAME)) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.REOPEN_REVIEW_SCORECARD_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
+        }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
+
+        Review review = verification.getReview();
+        Project project = verification.getProject();
+        if (!review.isCommitted()) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.REOPEN_REVIEW_SCORECARD_PERM_NAME, "Error.ReopenReviewNotCommitted", null);
+        }
+
+        Phase[] allPhases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
+        if (!ActionsHelper.isPhaseOpen(ActionsHelper.findPhaseById(allPhases,
+                review.getProjectPhase()).getPhaseStatus())) {
+            // phase is not open
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.REOPEN_REVIEW_SCORECARD_PERM_NAME, "Error.ReopenReviewPhaseNotOpen", null);
+        }
+
+        // Determine if this request is a post back
+        boolean postBack = (request.getParameter("reopen") != null);
+
+        if (!postBack) {
+            // Retrieve some basic project info (such as icons' names) and place it into request
+            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+            return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
+        }
+
+        String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
+        review.setCommitted(false);
+        ActionsHelper.createReviewManager().updateReview(review, operator);
+
+        return ActionsHelper.cloneForwardAndAppendToPath(
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
     }
 }

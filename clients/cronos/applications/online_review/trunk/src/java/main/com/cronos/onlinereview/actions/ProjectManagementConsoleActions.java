@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2012 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010-2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +44,9 @@ import com.cronos.termsofuse.dao.TermsOfUsePersistenceException;
 import com.cronos.termsofuse.dao.UserTermsOfUseDao;
 import com.cronos.termsofuse.model.TermsOfUse;
 import com.topcoder.dde.catalog.ComponentVersionInfo;
+import com.topcoder.management.payment.ProjectPaymentAdjustment;
+import com.topcoder.management.payment.ProjectPaymentAdjustmentManager;
+import com.topcoder.management.payment.calculator.ProjectPaymentCalculator;
 import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Review;
@@ -55,6 +59,9 @@ import com.topcoder.search.builder.filter.EqualToFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.InFilter;
 import com.topcoder.search.builder.filter.OrFilter;
+import com.topcoder.util.config.ConfigManager;
+import com.topcoder.util.config.Property;
+import com.topcoder.util.errorhandling.BaseRuntimeException;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -116,8 +123,24 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
- * @author isv, romanoTC, rac_
- * @version 1.3
+ * <p>
+ * Version 1.4 (Online Review - Project Payments Integration Part 1 v1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #defaultProjectPaymentCalculator} instance.</li>
+ *     <li>Added {@link #getAvailableReviewerRoles(Project)} method to get the available reviewer roles which we
+ *     can set the reviewer payments.</li>
+ *     <li>Added {@link #setReviewPaymentsRequestAttribute(HttpServletRequest, Project)} method to set the review
+ *     payments data to request attribute.</li>
+ *     <li>Added {@link #manageReviewPayments(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
+ *     method to manage the review payments.</li>
+ *     <li>Updated {@link #initProjectManagementConsole(HttpServletRequest, Project)} method to initialize the
+ *     review payments data.</li>
+ *     <li>Added {@link #createDefaultProjectPaymentCalculator()} method.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author isv, romanoTC, rac_, flexme
+ * @version 1.4
  */
 public class ProjectManagementConsoleActions extends DispatchAction {
     
@@ -226,6 +249,14 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM.dd.yyyy hh:mm a", Locale.US);
 
     /**
+     * The instance of default project payment calculator.
+     *
+     * @since 1.4
+     */
+    private static final ProjectPaymentCalculator defaultProjectPaymentCalculator
+            = createDefaultProjectPaymentCalculator();
+
+    /**
      * <p>Constructs new <code>ProjectManagementConsoleActions</code> instance. This implementation does nothing.</p>
      */
     public ProjectManagementConsoleActions() {
@@ -273,6 +304,126 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
             return mapping.findForward(SUCCESS_FORWARD_NAME);
         }
+    }
+
+    /**
+     * Gets the available reviewer roles which we can set the review payments for a project.
+     *
+     * @param project the project.
+     * @return the list of role ids which we can set the review payments for the project.
+     * @throws BaseException if any error occurs.
+     * @since 1.4
+     */
+    private static List<Long> getAvailableReviewerRoles(Project project) throws BaseException {
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
+        Phase[] phases = ActionsHelper.getPhasesForProject(phaseManager, project);
+        List<Long> roleIds = new ArrayList<Long>();
+        List<String> roleNames = new ArrayList<String>();
+        if (ActionsHelper.findPhaseByTypeName(phases, Constants.SCREENING_PHASE_NAME) != null) {
+            roleNames.add(Constants.PRIMARY_SCREENER_ROLE_NAME);
+        }
+        if (ActionsHelper.findPhaseByTypeName(phases, Constants.REVIEW_PHASE_NAME) != null) {
+            if ( project.getProjectCategory().getName().equals("Development")) {
+                roleNames.add(Constants.ACCURACY_REVIEWER_ROLE_NAME);
+                roleNames.add(Constants.STRESS_REVIEWER_ROLE_NAME);
+                roleNames.add(Constants.FAILURE_REVIEWER_ROLE_NAME);
+            } else {
+                roleNames.add(Constants.REVIEWER_ROLE_NAME);
+            }
+        }
+        if (ActionsHelper.findPhaseByTypeName(phases, Constants.AGGREGATION_PHASE_NAME) != null) {
+            roleNames.add(Constants.AGGREGATOR_ROLE_NAME);
+        }
+        if (ActionsHelper.findPhaseByTypeName(phases, Constants.FINAL_REVIEW_PHASE_NAME) != null) {
+            roleNames.add(Constants.FINAL_REVIEWER_ROLE_NAME);
+        }
+        if (ActionsHelper.findPhaseByTypeName(phases, Constants.SPECIFICATION_REVIEW_PHASE_NAME) != null) {
+            roleNames.add(Constants.SPECIFICATION_REVIEWER_ROLE_NAME);
+        }
+        if (ActionsHelper.findPhaseByTypeName(phases, Constants.MILESTONE_SCREENING_PHASE_NAME) != null) {
+            roleNames.add(Constants.MILESTONE_SCREENER_ROLE_NAME);
+        }
+        if (ActionsHelper.findPhaseByTypeName(phases, Constants.MILESTONE_REVIEW_PHASE_NAME) != null) {
+            roleNames.add(Constants.MILESTONE_REVIEWER_ROLE_NAME);
+        }
+
+        ResourceRole[] allRoles = ActionsHelper.createResourceManager().getAllResourceRoles();
+        for (String roleName : roleNames) {
+            for (ResourceRole role : allRoles) {
+                if (role.getName().equals(roleName)) {
+                    roleIds.add(role.getId());
+                    break;
+                }
+            }
+        }
+        return roleIds;
+    }
+
+    /**
+     * Sets the review payments data of a project into request attribute.
+     *
+     * @param request the HttpServletRequest instance.
+     * @param project the project.
+     * @throws BaseException if any error occurs.
+     * @since 1.4
+     */
+    private static void setReviewPaymentsRequestAttribute(HttpServletRequest request, Project project) throws BaseException {
+        List<Long> resourceRoleIds = getAvailableReviewerRoles(project);
+        ResourceRole[] allRoles = ActionsHelper.createResourceManager().getAllResourceRoles();
+
+        String[] resourceRoles = new String[resourceRoleIds.size()];
+        for (int i = 0; i < resourceRoleIds.size(); i++) {
+            for (ResourceRole role : allRoles) {
+                if (role.getId() == resourceRoleIds.get(i)) {
+                    resourceRoles[i] = role.getName();
+                    break;
+                }
+            }
+        }
+
+        Map<Long, BigDecimal> defaultPayments = defaultProjectPaymentCalculator.getDefaultPayments(project.getId(), resourceRoleIds);
+        List<ProjectPaymentAdjustment> paymentAdjusts = ActionsHelper.createProjectPaymentAdjustmentManager().retrieveByProjectId(project.getId());
+        Map<Long, Double> fixedAmount = new HashMap<Long, Double>();
+        Map<Long, Integer> percentAmount = new HashMap<Long, Integer>();
+        for (ProjectPaymentAdjustment paymentAdjust : paymentAdjusts) {
+            if (paymentAdjust.getFixedAmount() != null) {
+                fixedAmount.put(paymentAdjust.getResourceRoleId(), paymentAdjust.getFixedAmount().doubleValue());
+            } else if (paymentAdjust.getMultiplier() != null) {
+                percentAmount.put(paymentAdjust.getResourceRoleId(), (int) (paymentAdjust.getMultiplier().doubleValue() * 100.0));
+            }
+        }
+
+        List<String> radios = new ArrayList<String>();
+        List<String> fixed = new ArrayList<String>();
+        List<String> percentage = new ArrayList<String>();
+        for (int i = 0; i < resourceRoleIds.size(); i++) {
+            long roleId = resourceRoleIds.get(i);
+            boolean chooseDefault = true;
+            if (fixedAmount.containsKey(roleId)) {
+                radios.add("fixed");
+                fixed.add(fixedAmount.get(roleId).toString());
+                chooseDefault = false;
+            } else {
+                fixed.add(null);
+            }
+            if (percentAmount.containsKey(roleId)) {
+                radios.add("percentage");
+                percentage.add(percentAmount.get(roleId).toString());
+                chooseDefault = false;
+            } else {
+                percentage.add("100");
+            }
+            if (chooseDefault) {
+                radios.add("default");
+            }
+        }
+
+        request.setAttribute("defaultPayments", defaultPayments);
+        request.setAttribute("resourceRoleIds", resourceRoleIds);
+        request.setAttribute("resourceRoleNames", resourceRoles);
+        request.setAttribute("reviewPaymentsRadio", radios);
+        request.setAttribute("reviewPaymentsFixed", fixed);
+        request.setAttribute("reviewPaymentsPercentage", percentage);
     }
 
     /**
@@ -1000,6 +1151,112 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     }
 
     /**
+     * <p>Processes the incoming request which is a request for saving review payments for requested project.</p>
+     *
+     * <p>Verifies that current user is granted access to this functionality and is granted a permission to access the
+     * requested project details.</p>
+     *
+     * @param mapping an <code>ActionMapping</code> used for mapping the specified request to this action.
+     * @param form an <code>ActionForm</code> providing the form parameters mapped to specified request.
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @param response an <code>HttpServletResponse</code> representing response outgoing to client.
+     * @return an <code>ActionForward</code> referencing the next view to be displayed to user.
+     * @throws Exception if an unexpected error occurs.
+     * @since 1.4
+     */
+    public ActionForward manageReviewPayments(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                              HttpServletResponse response) throws Exception {
+        LoggingHelper.logAction(request);
+
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        request.setAttribute("activeTabIdx", 4);
+
+        // Gather the roles the user has for current request
+        AuthorizationHelper.gatherUserRoles(request);
+
+        // Check whether the user has the permission to perform this action. If not then redirect the request
+        // to log-in page or report about the lack of permissions. Also check that current user is granted a
+        // permission to access the details for requested project
+        verification
+                = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request,
+                PROJECT_MANAGEMENT_PERM_NAME, false);
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        } else {
+            // Validate the forms
+            final Project project = verification.getProject();
+            List<Long> availableRoleIds = getAvailableReviewerRoles(project);
+            LazyValidatorForm lazyForm = (LazyValidatorForm) form;
+            Long[] roleIds = (Long[]) lazyForm.get("resources_roles_id");
+            String[] paymentRadios = (String[]) lazyForm.get("resource_payments_radio");
+            String[] fixed = (String[]) lazyForm.get("resource_payments_fixed_amount");
+            String[] percentage = (String[]) lazyForm.get("resource_payments_percent_amount");
+
+            for (int i = 0; i < roleIds.length; i++) {
+                if (!availableRoleIds.contains(roleIds[i])) {
+                    ActionsHelper.addErrorToRequest(request,
+                        "resources_roles_id[" + i + "]",
+                        new ActionMessage(
+                            "error.com.cronos.onlinereview.actions.manageProject.ReviewPayments.ResourceRoleProhibited",
+                            roleIds[i]));
+                } else {
+                    if (paymentRadios[i].equals("fixed")) {
+                        ActionsHelper.checkNonNegDoubleWith2Decimal(fixed[i],
+                            "resource_payments_fixed_amount[" + i + "]",
+                            "error.com.cronos.onlinereview.actions.manageProject.ReviewPayments.FixedAmount.Invalid",
+                            "error.com.cronos.onlinereview.actions.manageProject.ReviewPayments.FixedAmount.PrecisionInvalid",
+                            request, true);
+                    } else if (paymentRadios[i].equals("percentage")) {
+                        Integer numPer = null;
+                        try {
+                            numPer = Integer.valueOf(percentage[i]);
+                        } catch (NumberFormatException e) {}
+                        if (numPer == null || numPer <= 0) {
+                            ActionsHelper.addErrorToRequest(request,
+                                "resource_payments_percent_amount[" + i + "]",
+                                "error.com.cronos.onlinereview.actions.manageProject.ReviewPayments.Percentage.Invalid");
+                        }
+                    }
+                }
+            }
+
+            if (ActionsHelper.isErrorsPresent(request)) {
+                initProjectManagementConsole(request, project);
+                return mapping.getInputForward();
+            } else {
+                ProjectPaymentAdjustmentManager adjustmentManager = ActionsHelper.createProjectPaymentAdjustmentManager();
+                Map<Long, ProjectPaymentAdjustment> existingAdjs = new HashMap<Long, ProjectPaymentAdjustment>();
+                for (ProjectPaymentAdjustment adj : adjustmentManager.retrieveByProjectId(project.getId())) {
+                    existingAdjs.put(adj.getResourceRoleId(), adj);
+                }
+                for (int i = 0; i < roleIds.length; i++) {
+                    ProjectPaymentAdjustment adjustment = new ProjectPaymentAdjustment();
+                    adjustment.setProjectId(project.getId());
+                    adjustment.setResourceRoleId(roleIds[i]);
+                    if (paymentRadios[i].equals("fixed")) {
+                        adjustment.setFixedAmount(new BigDecimal(fixed[i]));
+                    } else if (paymentRadios[i].equals("percentage")) {
+                        adjustment.setMultiplier(Double.valueOf(percentage[i]) / 100.0);
+                    } else {
+                        // default
+                        if (!existingAdjs.containsKey(roleIds[i])) {
+                            adjustment = null;
+                        }
+                    }
+                    if (adjustment != null) {
+                        adjustmentManager.save(adjustment);
+                    }
+                }
+                return ActionsHelper.cloneForwardAndAppendToPath(
+                        mapping.findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
+            }
+        }
+    }
+    /**
      * <p>Processes the incoming request which is a request for viewing the <code>Project Management Console</code> view
      * for requested project.</p>
      *
@@ -1143,6 +1400,8 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         
         // Initialize the Review Feedback area
         initReviewFeedbackIntegration(request, project);
+
+        setReviewPaymentsRequestAttribute(request, project);
     }
 
     /**
@@ -2035,6 +2294,27 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         }
 
         return reviewerResources;
+    }
+
+    /**
+     * This static method helps to create the default project payment calculator.
+     *
+     * @return the instance of default project payment calculator.
+     * @throws com.topcoder.util.errorhandling.BaseRuntimeException if any error occurs
+     * @since  1.4
+     */
+    private static ProjectPaymentCalculator createDefaultProjectPaymentCalculator() throws BaseRuntimeException {
+        String className = null;
+        try {
+            ConfigManager cfgMgr = ConfigManager.getInstance();
+            Property config = cfgMgr.getPropertyObject("com.cronos.OnlineReview", "DefaultProjectPaymentConfig");
+            className = config.getValue("CalculatorClass");
+            Class clazz = Class.forName(className);
+            return (ProjectPaymentCalculator) clazz.newInstance();
+        } catch (Exception e) {
+            throw new BaseRuntimeException("Failed to instantiate the project payment calculator of type: "
+                    + className, e);
+        }
     }
 
     /**

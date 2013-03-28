@@ -1,11 +1,13 @@
 <%--
-  - Author: isv, romanoTC
+  - Author: isv, romanoTC, flexme
   - Version: 1.0 (Online Review Project Management Console assembly v1.0)
   - Version: 1.1 (Distribution Auto Generation Assembly v1.0) Change notes: Added support for managing design and 
     development distributions.
   - Version: 1.2 (Review Feedback Integration Assembly v1.0) Change notes: Added Review Performance tab to display and
   - manage review feedbacks.
-  - Copyright (C) 2010-2012 TopCoder Inc., All Rights Reserved.
+  - Version: 1.3 (Online Review - Project Payments Integration Part 1 v1.0 ) Change notes:
+  - Added Review Payments tab to display and management review payments.
+  - Copyright (C) 2010-2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page provides a web form for Project Management Console. Such a form includes areas for extending
   - Registration phase, extending Submission phase and adding new resources to target project.
@@ -43,7 +45,7 @@
         <script language="JavaScript" type="text/javascript"
                 src="<html:rewrite href='/js/or/util.js' />"><!-- @ --></script>
         <script language="JavaScript" type="text/javascript"
-                src="<html:rewrite href='/js/or/validation_util2.js' />"><!-- @ --></script>
+                src="<html:rewrite href='/js/or/validation_util.js' />"><!-- @ --></script>
         <script language="JavaScript" type="text/javascript"
                 src="<html:rewrite href='/js/or/validation_edit_project_links.js' />"><!-- @ --></script>
     </head>
@@ -77,6 +79,9 @@
                                 <li><a href="javascript:void(0)" onClick="return activateTab('sc3', this)">
                                     <bean:message key="manageProject.ReviewPerformance.title"/></a></li>
                             </c:if>
+                            <li><a href="javascript:void(0)" onclick="return activateTab('sc4', this)">
+                                <bean:message key="manageProject.ReviewPayments.title"/></a></li>
+                            </a></li>
                         </ul>
                         <div style="clear:both;"></div>
                         <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
@@ -260,6 +265,9 @@
                                     <li><a href="javascript:void(0)" onClick="return activateTab('sc3', this)">
                                         <bean:message key="manageProject.ReviewPerformance.title"/></a></li>
                                 </c:if>
+                                <li><a href="javascript:void(0)" onclick="return activateTab('sc4', this)">
+                                    <bean:message key="manageProject.ReviewPayments.title"/></a></li>
+                                </a></li>
                             </ul>
 	                        <div style="clear:both;"></div>
 	                        <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
@@ -493,6 +501,9 @@
                         </c:if>
                         <li id='current'><a href="javascript:void(0)" onClick="return activateTab('sc3', this)">
                             <bean:message key="manageProject.ReviewPerformance.title"/></a></li>
+                        <li><a href="javascript:void(0)" onclick="return activateTab('sc4', this)">
+                            <bean:message key="manageProject.ReviewPayments.title"/></a></li>
+                        </a></li>
                     </ul>
                     <div style="clear:both;"></div>
                     <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
@@ -659,6 +670,133 @@
                     </div>
                     </c:if> <%-- // Review Feedbacks --%>
 
+                    <div id="sc4" style='display:${(param.activeTabIdx == 4) ? "block" : "none"};'>
+                        <ul id="tablist">
+                            <li><a href="javascript:void(0)"
+                                   onClick="return activateTab('sc1', this)"><bean:message
+                                    key="manageProject.TimelineResources.title"/></a></li>
+                            <c:if test="${((project.projectCategory.id == 1) || (project.projectCategory.id == 2))}">
+                                <%-- Only show the tab for design and development --%>
+                                <li><a href="javascript:void(0)"
+                                       onClick="return activateTab('sc2', this)"><bean:message
+                                        key="manageProject.Distributions.title"/></a></li>
+                            </c:if>
+                            <c:if test="${reviewFeedbacksExist || reviewFeedbackAllowed}">
+                                <li><a href="javascript:void(0)" onClick="return activateTab('sc3', this)">
+                                    <bean:message key="manageProject.ReviewPerformance.title"/></a></li>
+                            </c:if>
+                            <li id='current'><a href="javascript:void(0)" onclick="return activateTab('sc4', this)">
+                                <bean:message key="manageProject.ReviewPayments.title"/></a></li>
+                            </a></li>
+                        </ul>
+
+                        <div style="clear:both;"></div>
+                        <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
+                            <tr class="light">
+                                <td>
+                                    <c:if test="${param.activeTabIdx == 4}">
+                                        <%-- Validation errors area --%>
+                                        <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
+                                            <table cellpadding="0" cellspacing="0" border="0">
+                                                <tr>
+                                                    <td colspan="2">
+                                                <span style="color:red;">
+                                                    <bean:message key="Error.manageProject.ValidationFailed"/>
+                                                </span>
+                                                    </td>
+                                                </tr>
+                                                <html:errors property="org.apache.struts.action.GLOBAL_MESSAGE"/>
+                                            </table>
+                                            <br/>
+                                        </c:if>
+                                    </c:if>
+
+                                    <html:form action="/actions/SaveReviewPayments?activeTabIdx=4">
+                                        <html:hidden property="method" value="manageReviewPayments"/>
+                                        <html:hidden property="pid" value="${project.id}" />
+
+                                        <div id="tabNewLinks">
+                                            <table class="scorecard" id="review_payments_tbl" cellpadding="0" width="100%"
+                                                   style="border-collapse: collapse;">
+                                                <tr>
+                                                    <td class="title" colspan="4"><bean:message key="manageProject.ReviewPayments.title"/></a></li></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="title"><bean:message key="manageProject.ReviewPayments.ResourceRole"/></td>
+                                                    <td class="title"><bean:message key="manageProject.ReviewPayments.default"/></td>
+                                                    <td class="title"><bean:message key="manageProject.ReviewPayments.FixedAmount"/></td>
+                                                    <td class="title"><bean:message key="manageProject.ReviewPayments.percent"/></td>
+                                                </tr>
+                                                <c:set var="isSubmitReturn" value="${fn:length(reviewPaymentsForm.map['resources_roles_id']) gt 0}" />
+                                                <c:set var="reviewPaymentsLength" value="${fn:length(resourceRoleIds)}" />
+                                                <c:forEach begin="0" end="${reviewPaymentsLength - 1}" var="reviewPaymentsIdx" varStatus="vs">
+                                                <c:set var="roleId" value="${resourceRoleIds[reviewPaymentsIdx]}" />
+                                                <tr <c:if test="${vs.index % 2 eq 0}">class="light"</c:if> <c:if test="${vs.index % 2 eq 1}">class="dark"</c:if> >
+                                                    <td class="value" nowrap="nowrap">
+                                                            ${resourceRoleNames[reviewPaymentsIdx]}
+                                                        <div class="error"><html:errors property="resources_roles_id[${reviewPaymentsIdx}]" prefix="" suffix="" /></div>
+                                                        <input type="hidden" name="resources_roles_id[${reviewPaymentsIdx}]" value="${roleId}" />
+                                                    </td>
+                                                    <td class="value" nowrap="nowrap">
+                                                        <c:if test="${isSubmitReturn}">
+                                                            <html:radio styleId="resource_payments_radio_default[${reviewPaymentsIdx}]" property="resource_payments_radio[${reviewPaymentsIdx}]" value="default"/>
+                                                        </c:if>
+                                                        <c:if test="${not isSubmitReturn}">
+                                                            <input type="radio" value="default" id="resource_payments_radio_default[${reviewPaymentsIdx}]" name="resource_payments_radio[${reviewPaymentsIdx}]" <c:if test="${reviewPaymentsRadio[reviewPaymentsIdx] eq 'default'}">checked="checked"</c:if> >
+                                                        </c:if>
+                                                        <label for="resource_payments_radio_default[${reviewPaymentsIdx}]">${"$"}<c:choose><c:when test="${empty defaultPayments[roleId]}">0</c:when><c:otherwise>${orfn:displayPaymentAmt(pageContext.request, defaultPayments[roleId])}</c:otherwise></c:choose> *</label>
+                                                    </td>
+                                                    <td class="value" nowrap="nowrap">
+                                                        <c:if test="${isSubmitReturn}">
+                                                            <html:radio styleId="resource_payments_radio_fixed[${reviewPaymentsIdx}]" property="resource_payments_radio[${reviewPaymentsIdx}]" value="fixed"/>
+                                                        </c:if>
+                                                        <c:if test="${not isSubmitReturn}">
+                                                            <input type="radio" value="fixed" id="resource_payments_radio_fixed[${reviewPaymentsIdx}]" name="resource_payments_radio[${reviewPaymentsIdx}]" <c:if test="${reviewPaymentsRadio[reviewPaymentsIdx] eq 'fixed'}">checked="checked"</c:if> >
+                                                        </c:if>
+                                                        <label for="resource_payments_radio_fixed[${reviewPaymentsIdx}]">${"$"}</label>
+                                                        <c:if test="${isSubmitReturn}">
+                                                            <html:text property="resource_payments_fixed_amount[${reviewPaymentsIdx}]" styleClass="inputBoxDuration"/>
+                                                        </c:if>
+                                                        <c:if test="${not isSubmitReturn}">
+                                                            <input type="text" name="resource_payments_fixed_amount[${reviewPaymentsIdx}]" class="inputBoxDuration" value="${reviewPaymentsFixed[reviewPaymentsIdx]}" />
+                                                        </c:if>
+                                                        <div class="error"><html:errors property="resource_payments_fixed_amount[${reviewPaymentsIdx}]" prefix="" suffix="" /></div>
+                                                    </td>
+                                                    <td class="value" nowrap="nowrap">
+                                                        <c:if test="${isSubmitReturn}">
+                                                            <html:radio styleId="resource_payments_radio_percentage[${reviewPaymentsIdx}]" property="resource_payments_radio[${reviewPaymentsIdx}]" value="percentage"/>
+                                                            <html:text property="resource_payments_percent_amount[${reviewPaymentsIdx}]" styleClass="inputBoxDuration"/>
+                                                        </c:if>
+                                                        <c:if test="${not isSubmitReturn}">
+                                                            <input type="radio" value="percentage" id="resource_payments_radio_percentage[${reviewPaymentsIdx}]" name="resource_payments_radio[${reviewPaymentsIdx}]" <c:if test="${reviewPaymentsRadio[reviewPaymentsIdx] eq 'percentage'}">checked="checked"</c:if> >
+                                                            <input type="text" name="resource_payments_percent_amount[${reviewPaymentsIdx}]" class="inputBoxDuration" value="${reviewPaymentsPercentage[reviewPaymentsIdx]}" />
+                                                        </c:if>
+                                                        <label for="resource_payments_radio_percentage[${reviewPaymentsIdx}]">%</label>
+                                                        <div class="error"><html:errors property="resource_payments_percent_amount[${reviewPaymentsIdx}]" prefix="" suffix="" /></div>
+                                                    </td>
+                                                    </c:forEach>
+                                                <tr>
+                                                    <td class="lastRowTD" colspan="4"><!-- @ --></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <br/>
+                                        <div><bean:message key="manageProject.ReviewPayments.desc"/></div>
+                                        <div align="right">
+                                            <html:image property="saveChangesBtn" srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
+                                            <html:link
+                                                    page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
+                                                    srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
+                                            &nbsp;
+                                        </div>
+                                    </html:form>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="lastRowTD"><!-- @ --></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
                 <!-- //tabconentcontainer -->
             </div>

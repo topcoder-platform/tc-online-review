@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2006 - 2012 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2006 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,13 +31,12 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
-import com.cronos.onlinereview.ejblibrary.SpringContextProvider;
 import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
 import com.cronos.termsofuse.dao.TermsOfUseDao;
 import com.cronos.termsofuse.dao.UserTermsOfUseDao;
 import com.topcoder.management.deliverable.search.UploadFilterBuilder;
+import com.topcoder.management.payment.ProjectPaymentAdjustmentManager;
 import com.topcoder.management.reviewfeedback.ReviewFeedbackManager;
-import com.topcoder.search.builder.filter.*;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForward;
@@ -75,7 +76,6 @@ import com.topcoder.management.deliverable.persistence.DeliverableCheckingExcept
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
 import com.topcoder.management.deliverable.search.DeliverableFilterBuilder;
 import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
-import com.topcoder.management.deliverable.search.UploadFilterBuilder;
 import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
@@ -95,7 +95,6 @@ import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.data.Group;
 import com.topcoder.management.scorecard.data.Scorecard;
-import com.topcoder.management.scorecard.data.ScorecardType;
 import com.topcoder.management.scorecard.data.Section;
 import com.topcoder.project.phases.Dependency;
 import com.topcoder.project.phases.Phase;
@@ -284,9 +283,20 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *     <li>Added {@link #createReviewFeedbackManager()} method.</li>
  *   </ol>
  * </p>
- * 
+ *
+ * <p>
+ * Version 2.4 (Online Review - Project Payments Integration Part 1 v1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #createProjectPaymentAdjustmentManager()} method.</li>
+ *     <li>Added {@link #checkNonNegDoubleWith2Decimal(String, String, String,
+ *     String, HttpServletRequest, boolean)} method.</li>
+ *     <li>Added {@link #getLastModificationTime(Project, Phase[])} to get the
+ *     last modification time for a project.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK, rac_, lmmortal, flexme
- * @version 2.3
+ * @version 2.4
  * @since Online Review Status Validation Assembly 1.0
  */
 public class ActionsHelper {
@@ -2143,6 +2153,16 @@ public class ActionsHelper {
     }
 
     /**
+     * This static method helps to create an object of <code>ProjectPaymentAdjustmentManager</code> class.
+     *
+     * @return instance of the class ProjectPaymentAdjustmentManager
+     * @since  2.4
+     */
+    public static ProjectPaymentAdjustmentManager createProjectPaymentAdjustmentManager() {
+        return managerCreationHelper.getProjectPaymentAdjustmentManager();
+    }
+
+    /**
      * This static method helps to create an object of the <code>ProjectManager</code> class.
      *
      * @return a newly created instance of the class.
@@ -3688,5 +3708,61 @@ public class ActionsHelper {
         com.topcoder.project.phases.Project phProject = postMortemPhase.getProject();
         phProject.removePhase(postMortemPhase);
         phaseManager.updatePhases(phProject, operator);
+    }
+
+    /**
+     * Checks whether a string is a non-negative number, the number can only be accurate to 0.01.
+     *
+     * @param value the string value to check.
+     * @param property the form property name of the value.
+     * @param invalidKey the error message key to be used when the string is invalid.
+     * @param precisionKey the error message key to be used when the precision is invalid.
+     * @param request the instance of HttpServletRequest.
+     * @param allowZero true if allowing zero, false otherwise.
+     * @return true if the string value is valid, false otherwise.
+     * @since  2.4
+     */
+    public static boolean checkNonNegDoubleWith2Decimal(String value, String property, String invalidKey,
+                                                        String precisionKey, HttpServletRequest request,
+                                                        boolean allowZero) {
+        BigDecimal bigNum = null;
+        try {
+            bigNum = new BigDecimal(value, MathContext.UNLIMITED);
+        } catch (NumberFormatException e) {}
+        if (bigNum == null) {
+            addErrorToRequest(request, property, invalidKey);
+            return false;
+        }
+        int cmp = bigNum.compareTo(BigDecimal.ZERO);
+        if (cmp < 0 || (!allowZero && cmp == 0)) {
+            addErrorToRequest(request, property, invalidKey);
+            return false;
+        }
+
+        bigNum = bigNum.movePointRight(2);
+        BigDecimal sub = bigNum.subtract(new BigDecimal(bigNum.toBigInteger()));
+        if (sub.compareTo(BigDecimal.ZERO) != 0) {
+            addErrorToRequest(request, property, precisionKey);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Gets the last modification time for a project.
+     *
+     * @param project the project.
+     * @param phases the phases of the project.
+     * @return the last modification time.
+     * @since 2.4
+     */
+    public static Date getLastModificationTime(Project project, Phase[] phases) {
+        Date lastModificationTime = project.getModificationTimestamp();
+        for (Phase phase : phases) {
+            if (phase.getModifyDate().after(lastModificationTime)) {
+                lastModificationTime = phase.getModifyDate();
+            }
+        }
+        return lastModificationTime;
     }
 }

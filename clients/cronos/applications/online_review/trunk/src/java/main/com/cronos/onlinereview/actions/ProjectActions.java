@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -28,6 +28,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -253,15 +255,35 @@ import com.topcoder.web.ejb.user.UserPreference;
  *     <li>Updated {@link #saveProjectPhases()} to handle new StatusValidationException and display its error message.</li>
  *   </ol>
  * </p>
+ *
+ * <p>
  * Version 1.13.1 (Online Review Phases 1.6.1 Integration) Change notes:
  *   <ol>
  *     <li>Removed Manual Screening support</li>
  *     <li>Removed Submission Number support</li>
  *   </ol>
- * <p>
- *    
  * </p>
- * @author George1, real_vg, pulky, isv, FireIce, lmmortal
+ *
+ * <p>
+ * Version 1.14 (Online Review - Project Payments Integration Part 1 v1.0) Change notes:
+ *  <ol>
+ *      <li>Updated {@link #newProject(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
+ *      method to set the last modification timestamp.</li>
+ *      <li>Updated {@link #populateProjectForm(HttpServletRequest, LazyValidatorForm, Project)} method to
+ *      remove the old payments function and add support for the new project prizes management.</li>
+ *      <li>Added {@link #canEditPrize(long)} method to check whether we can edit project prizes.</li>
+ *      <li>Updated {@link #saveProject(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method
+ *      to add support for optimistic concurrency control and project prizes management.</li>
+ *      <li>Added {@link #validateProjectPrizes(HttpServletRequest, String[], Integer[], String)}
+ *      method to validate the project prizes submiited by user.</li>
+ *      <li>Added {@link #getProjectPrizesToBeUpdated(HttpServletRequest, LazyValidatorForm, Project, List,
+ *      List, List)} and
+ *      {@link #getProjectPrizesToBeUpdated(PrizeType, List, List, List, List, String[], Integer[])} method to
+ *      collect user submiited project prizes data and determine which prizes should be created, updated or
+ *      removed.</li>
+ *  </ol>
+ * </p>
+ * @author George1, real_vg, pulky, isv, FireIce, lmmortal, flexme
  * @version 1.14
  */
 public class ProjectActions extends DispatchAction {
@@ -326,6 +348,12 @@ public class ProjectActions extends DispatchAction {
      * assembly, which is supposed to fetch lists of project types and categories from the database
      * and pass it to the JSP page to use it for populating appropriate drop down lists.
      *
+     * <p>
+     * Updated for Online Review - Project Payments Integration Part 1 v1.0
+     *      - Sets the flags indicating whether user can edit contest/milestone prizes to request attribute.
+     *      - Sets last modification time to request attribute.
+     * </p>
+     *
      * @return &quot;success&quot; forward that forwards to the /jsp/editProject.jsp page (as
      *         defined in struts-config.xml file) in the case of successful processing,
      *         &quot;notAuthorized&quot; forward in the case of user not being authorized to perform
@@ -380,12 +408,17 @@ public class ProjectActions extends DispatchAction {
                 || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME);
         request.setAttribute("allowBillingEdit", isAdmin);
         request.setAttribute("allowCockpitProjectEdit", isAdmin);
+        request.setAttribute("canEditContestPrize", true);
+        request.setAttribute("canEditMilestonePrize", true);
 
         // Load the look up data
         loadProjectEditLookups(request);
 
         // Populate the default values of some project form fields
         populateProjectFormDefaults(formNewProject, request);
+        
+        // Populate default last modification timestamp
+        formNewProject.set("last_modification_time", 0L);
 
         // Return the success forward
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
@@ -548,6 +581,12 @@ public class ProjectActions extends DispatchAction {
      *      - Set the isAdmin property.
      * </p>
      *
+     * <p>
+     * Updated for Online Review - Project Payments Integration Part 1 v1.0
+     *      - Remove the old project payment information and set the new project prizes data.
+     *      - Set the last modification timestamp information to the request attribute.
+     * </p>
+     *
      * @param request
      *            the request to be processed
      * @param form
@@ -585,8 +624,6 @@ public class ProjectActions extends DispatchAction {
         populateProjectFormProperty(form, Long.class, "component_id", project, "Component ID");
         // Populate project external reference id
         populateProjectFormProperty(form, Long.class, "external_reference_id", project, "External Reference ID");
-        // Populate project price
-        populateProjectFormProperty(form, Double.class, "payments", project, "Payments");
         // Populate project dr points
         populateProjectFormProperty(form, Double.class, "dr_points", project, "DR points");
 
@@ -649,6 +686,22 @@ public class ProjectActions extends DispatchAction {
             }
         }
 
+        // Populate project prizes to form
+        List<Prize> prizes = project.getPrizes();
+        if (prizes != null) {
+            PrizeType contestPrize = LookupHelper.getPrizeType(Constants.CONTEST_PRIZE_TYPE_NAME);
+            PrizeType milestonePrize = LookupHelper.getPrizeType(Constants.MILESTONE_PRIZE_TYPE_NAME);
+            for (Prize prize : prizes) {
+                if (prize.getPrizeType().getId() == contestPrize.getId()) {
+                    form.set("contest_prizes_amount", prize.getPlace() - 1, String.valueOf(prize.getPrizeAmount()));
+                    form.set("contest_prizes_num", prize.getPlace() - 1, prize.getNumberOfSubmissions());
+                } else if (prize.getPrizeType().getId() == milestonePrize.getId()) {
+                    form.set("milestone_prizes_amount", prize.getPlace() - 1, String.valueOf(prize.getPrizeAmount()));
+                    form.set("milestone_prizes_num", prize.getPlace() - 1, prize.getNumberOfSubmissions());
+                }
+            }
+        }
+
         // Obtain Phase Manager instance
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
 
@@ -659,6 +712,9 @@ public class ProjectActions extends DispatchAction {
 
         setEditProjectPhasesData(form, phases, false);
         setEditProjectRequestAttributes(request, project, resources, externalUsers, phases);
+
+        // Populate last modification timestamp
+        form.set("last_modification_time", ActionsHelper.getLastModificationTime(project, phases).getTime());
 
         // since Online Review Update - Add Project Dropdown v1.0
         boolean isAdmin = AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
@@ -700,6 +756,40 @@ public class ProjectActions extends DispatchAction {
            }
        }
        request.setAttribute("allowCockpitProjectEdit", isAdmin && inList);
+    }
+
+    /**
+     * Checks whether we can edit project prizes for a project.
+     *
+     * @param projectId the id of the project.
+     * @return an array containing two boolean values, the first value indicates whether we
+     *          can edit contest prizes, the second value indicates whether we can edit milestone prizes.
+     * @throws BaseException if any error occurs.
+     * @since  1.14
+     */
+    private static boolean[] canEditPrize(long projectId) throws BaseException {
+        boolean[] ret = {true, true};
+        if (projectId <= 0) {
+            // new project
+            return ret;
+        }
+        Submission[] contestSubmissions = ActionsHelper.getProjectSubmissions(projectId,
+                Constants.CONTEST_SUBMISSION_TYPE_NAME, null, false);
+        Submission[] milestoneSubmissions = ActionsHelper.getProjectSubmissions(projectId,
+                Constants.MILESTONE_SUBMISSION_TYPE_NAME, null, false);
+        for (Submission sub : contestSubmissions) {
+            if (sub.getPrize() != null) {
+                ret[0] = false;
+                break;
+            }
+        }
+        for (Submission sub : milestoneSubmissions) {
+            if (sub.getPrize() != null) {
+                ret[1] = false;
+                break;
+            }
+        }
+        return ret;
     }
 
     /**
@@ -802,7 +892,8 @@ public class ProjectActions extends DispatchAction {
     }
 
     /**
-     * TODO: Write sensible description for method saveProject here
+     * This method is an implementation of &quot;Save Project&quot; Struts Action defined for this
+     * assembly, which is supposed to save the project data submitted by the end user to database.
      *
      * <p>
      * Updated for Online Review Update - Add Project Dropdown v1.0:
@@ -814,7 +905,16 @@ public class ProjectActions extends DispatchAction {
      *      Added Project Role User Terms Of Use association generation
      * </p>
      *
-     * @return TODO: Write sensible description of return value for method saveProject
+     * <p>
+     * Updated for Online Review - Project Payments Integration Part 1 v1.0
+     *      - Save the project prizes.
+     *      - Added the support for concurrency control.
+     * </p>
+     *
+     * @return &quot;success&quot; forward that forwards to view project details page (as
+     *         defined in struts-config.xml file) in the case of successful processing,
+     *         &quot;notAuthorized&quot; forward in the case of user not being authorized to perform
+     *         the action.
      * @param mapping
      *            action mapping.
      * @param form
@@ -823,7 +923,7 @@ public class ProjectActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
-     * @throws BaseException
+     * @throws BaseException if any error occurs.
      */
     public ActionForward saveProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
@@ -866,6 +966,14 @@ public class ProjectActions extends DispatchAction {
 
             project = verification.getProject();
 
+            // Verify that the project hasn't been updated since last modification timestamp
+            if ((Long) lazyForm.get("last_modification_time") <
+                    ActionsHelper.getLastModificationTime(project,
+                            ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false),
+                                    project)).getTime()) {
+                ActionsHelper.addErrorToRequest(request,
+                        "error.com.cronos.onlinereview.actions.editProject.optConcurrency");
+            }
         }
 
         // This variable determines whether status of the project has been changed by this save operation.
@@ -956,18 +1064,6 @@ public class ProjectActions extends DispatchAction {
         project.setProperty("Component ID", lazyForm.get("component_id"));
         // Populate project External Reference ID
         project.setProperty("External Reference ID", lazyForm.get("external_reference_id"));
-        // Populate project price
-        project.setProperty("Payments", lazyForm.get("payments"));
-        PrizeType contestPrizeType = LookupHelper.getPrizeType(Constants.CONTEST_PRIZE_TYPE_NAME);
-        if (project.getPrizes() != null) {
-            for(Prize p : project.getPrizes()) {
-                if(p.getPrizeType().getId() == contestPrizeType.getId() && p.getPlace() == 1) {
-                    p.setPrizeAmount(Double.parseDouble(lazyForm.get("payments").toString()));
-                } else if (!ActionsHelper.isStudioProject(project) && p.getPrizeType().getId() == contestPrizeType.getId() && p.getPlace() == 2) {
-                    p.setPrizeAmount(Double.parseDouble(lazyForm.get("payments").toString())/2.0);
-                }
-            }
-        }
 
         // Populate project dr points
         Double drPoints = (Double)lazyForm.get("dr_points");
@@ -1034,11 +1130,15 @@ public class ProjectActions extends DispatchAction {
         // Create the list to store the phases to be deleted
         List<Phase> phasesToDelete = new ArrayList<Phase>();
 
+        List<Prize> createdPrize = new ArrayList<Prize>();
+        List<Prize> updatedPrize = new ArrayList<Prize>();
+        List<Prize> removedPrize = new ArrayList<Prize>();
+        getProjectPrizesToBeUpdated(request, lazyForm, project, createdPrize, updatedPrize, removedPrize);
+
         // Save the project phases
         // FIXME: the project itself is also saved by the following call. Needs to be refactored
         Phase[] projectPhases =
             saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap, phasesToDelete);
-
 
         if (!ActionsHelper.isErrorsPresent(request) && (newProject || categoryChanged)) {
             // generate new project role terms of use associations for the recently created project.
@@ -1049,6 +1149,12 @@ public class ProjectActions extends DispatchAction {
             } catch (EJBException e) {
                 throw new BaseException(e);
             }
+        }
+        
+        if (!ActionsHelper.isErrorsPresent(request)) {
+            // The project has been saved, so pre-populate last modification timestamp
+            lazyForm.set("last_modification_time",
+                ActionsHelper.getLastModificationTime(project, projectPhases).getTime());
         }
 
         // FIXME: resources must be saved even if there are validation errors to validate resources
@@ -1065,6 +1171,22 @@ public class ProjectActions extends DispatchAction {
         // If needed switch project current phase
         if (!newProject && !ActionsHelper.isErrorsPresent(request)) {
             switchProjectPhase(request, lazyForm, phasesJsMap);
+        }
+
+        // Update the project prizes
+        if (!ActionsHelper.isErrorsPresent(request)) {
+            ProjectManager projectManager = ActionsHelper.createProjectManager();
+            String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
+            for (Prize prize : createdPrize) {
+                prize.setProjectId(project.getId());
+                projectManager.createPrize(prize, operator);
+            }
+            for (Prize prize : updatedPrize) {
+                projectManager.updatePrize(prize, operator);
+            }
+            for (Prize prize : removedPrize) {
+                projectManager.removePrize(prize, operator);
+            }
         }
 
         // Check if there are any validation errors and return appropriate forward
@@ -1180,6 +1302,155 @@ public class ProjectActions extends DispatchAction {
         phaseManager.updatePhases(phProject, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
     }
 
+    /**
+     * Validate the project prizes data.
+     *
+     * @param request the HttpServletRequest instance.
+     * @param amounts an array containing the prizes amount data.
+     * @param nums an array containing the number of prizes data.
+     * @param keyPrefix the prefix of the form property name.
+     * @since 1.14
+     */
+    private static void validateProjectPrizes(HttpServletRequest request, String[] amounts, Integer[] nums,
+                                              String keyPrefix) {
+        for (int i = 0; i < amounts.length; i++) {
+            if (!ActionsHelper.checkNonNegDoubleWith2Decimal(amounts[i],
+                    keyPrefix + "_amount[" + i + "]",
+                    "error.com.cronos.onlinereview.actions.editProject.prize.amount.Invalid",
+                    "error.com.cronos.onlinereview.actions.editProject.prize.amount.PrecisionInvalid",
+                    request, false)) {
+            }
+            if (nums[i] <= 0 || nums[i] > 10) {
+                ActionsHelper.addErrorToRequest(request,
+                        keyPrefix + "_num[" + i + "]",
+                        "error.com.cronos.onlinereview.actions.editProject.prize.number.Invalid");
+            }
+        }
+    }
+
+    /**
+     * This method will check the project prizes submitted by user with the existing project prizes,
+     * and determine which prizes should be created, which prizes should be updated and which prizes
+     * should be removed.
+     *
+     * @param prizeType the prize type.
+     * @param created the prizes which should be created.
+     * @param updated the prizes which should be updated.
+     * @param removed the prizes which should be removed.
+     * @param oldPrizes the existing project prizes.
+     * @param amounts the prizes amount data submitted by user.
+     * @param nums the number of prizes data submitted by user.
+     * @since 1.14
+     */
+    private static void getProjectPrizesToBeUpdated(PrizeType prizeType, List<Prize> created, List<Prize> updated,
+                                                    List<Prize> removed, List<Prize> oldPrizes,
+                                                    String[] amounts, Integer[] nums) {
+        for (int i = 0; i < amounts.length; i++) {
+            Prize prize;
+            double amount = Double.parseDouble(amounts[i]);
+            if (i < oldPrizes.size()) {
+                // prize exists before
+                prize = oldPrizes.get(i);
+                if (prize.getNumberOfSubmissions() != nums[i] || prize.getPrizeAmount() != amount) {
+                    updated.add(prize);
+                }
+            } else {
+                // add a new prize
+                prize = new Prize();
+                prize.setPrizeType(prizeType);
+                prize.setPlace(i + 1);
+                created.add(prize);
+            }
+            prize.setNumberOfSubmissions(nums[i]);
+            prize.setPrizeAmount(amount);
+        }
+        for (int i = amounts.length; i < oldPrizes.size(); i++) {
+            removed.add(oldPrizes.get(i));
+        }
+    }
+
+    /**
+     * This method will check the project prizes submitted by user with the existing project prizes,
+     * and determine which prizes should be created, which prizes should be updated and which prizes
+     * should be removed.
+     *
+     * @param request the HttpServletRequest instance.
+     * @param lazyForm the form containing the prizes data submitted by user.
+     * @param project the project.
+     * @param created the prizes which should be created.
+     * @param updated the prizes which should be updated
+     * @param removed the prizes which should be removed.
+     * @throws BaseException if any error occurs.
+     * @since  1.14
+     */
+    private static void getProjectPrizesToBeUpdated(HttpServletRequest request, LazyValidatorForm lazyForm,
+                                                    Project project, List<Prize> created, List<Prize> updated,
+                                                    List<Prize> removed) throws BaseException {
+        boolean[] canEditPrizes = canEditPrize(project.getId());
+        String[] contestPrizeAmounts = (String[]) lazyForm.get("contest_prizes_amount");
+        Integer[] contestPrizeNums = (Integer[]) lazyForm.get("contest_prizes_num");
+        String[] milestonePrizeAmounts = (String[]) lazyForm.get("milestone_prizes_amount");
+        Integer[] milestonePrizeNums = (Integer[]) lazyForm.get("milestone_prizes_num");
+
+        validateProjectPrizes(request, contestPrizeAmounts, contestPrizeNums, "contest_prizes");
+        validateProjectPrizes(request, milestonePrizeAmounts, milestonePrizeNums, "milestone_prizes");
+
+        List<Prize> prizes = project.getPrizes();
+        PrizeType contestPrizeType  = LookupHelper.getPrizeType(Constants.CONTEST_PRIZE_TYPE_NAME);
+        PrizeType milestonePrizeType = LookupHelper.getPrizeType(Constants.MILESTONE_PRIZE_TYPE_NAME);
+        if (prizes != null) {
+            if (!canEditPrizes[0] && contestPrizeAmounts.length == 0) {
+                for (Prize prize : prizes) {
+                    if (prize.getPrizeType().getId() == contestPrizeType.getId()) {
+                        lazyForm.set("contest_prizes_amount",
+                                prize.getPlace() - 1, String.valueOf(prize.getPrizeAmount()));
+                        lazyForm.set("contest_prizes_num",
+                                prize.getPlace() - 1, prize.getNumberOfSubmissions());
+                    }
+                }
+            }
+            if (!canEditPrizes[1] && milestonePrizeAmounts.length == 0) {
+                for (Prize prize : prizes) {
+                    if (prize.getPrizeType().getId() == milestonePrizeType.getId()) {
+                        lazyForm.set("milestone_prizes_amount",
+                                prize.getPlace() - 1, String.valueOf(prize.getPrizeAmount()));
+                        lazyForm.set("milestone_prizes_num",
+                                prize.getPlace() - 1, prize.getNumberOfSubmissions());
+                    }
+                }
+            }
+        }
+
+        if (ActionsHelper.isErrorsPresent(request)) {
+            return;
+        }
+
+        List<Prize> existingContestPrizes = new ArrayList<Prize>();
+        List<Prize> existingMilestonePrizes = new ArrayList<Prize>();
+
+        if (project.getPrizes() != null) {
+            for (Prize prize : project.getPrizes()) {
+                if (prize.getPrizeType().getId() == contestPrizeType.getId()) {
+                    existingContestPrizes.add(prize);
+                } else if (prize.getPrizeType().getId() == milestonePrizeType.getId()) {
+                    existingMilestonePrizes.add(prize);
+                }
+            }
+        }
+
+        Comparator<Prize> comp = new Comparators.PrizePlaceComparator();
+        Collections.sort(existingContestPrizes, comp);
+        Collections.sort(existingMilestonePrizes, comp);
+
+        if (canEditPrizes[0]) {
+            getProjectPrizesToBeUpdated(contestPrizeType, created, updated, removed,
+                    existingContestPrizes, contestPrizeAmounts, contestPrizeNums);
+        }
+        if (canEditPrizes[1]) {
+            getProjectPrizesToBeUpdated(milestonePrizeType, created, updated, removed,
+                    existingMilestonePrizes, milestonePrizeAmounts, milestonePrizeNums);
+        }
+    }
 
     /**
      * <p>Updates the list of phases associated with the specified project. Optionally the method accepts the list of
@@ -3353,6 +3624,11 @@ public class ProjectActions extends DispatchAction {
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME));
 
         collectTrueSubmittersAndReviewers(project, resources, ActionsHelper.createReviewManager(), request);
+
+        boolean[] canEditPrizes = canEditPrize(project.getId());
+
+        request.setAttribute("canEditContestPrize", canEditPrizes[0]);
+        request.setAttribute("canEditMilestonePrize", canEditPrizes[1]);
     }
 
     /**

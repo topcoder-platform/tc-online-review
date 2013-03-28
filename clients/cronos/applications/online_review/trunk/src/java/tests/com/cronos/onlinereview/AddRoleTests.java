@@ -1,13 +1,20 @@
 /*
- * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
 /**
  * Online review functional tests 3, add roles to a project testing.
  *
+ * <p>
+ *     Version 1.1 (Online Review - Project Payments Integration Part 1 v1.0) change notes:
+ *     <ol>
+ *         <li>Updated tests for assembly Project Payments Integration Part 1 v1.0.</li>
+ *     </ol>
+ * </p>
+ *
  * @author TCSDEVELOPER
- * @version 1.0
+ * @version 1.1
  */
 public class AddRoleTests extends ProjectTests {
 	
@@ -34,8 +41,8 @@ public class AddRoleTests extends ProjectTests {
         browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
-        String role = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[1]");
-        String name = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[2]");
+        String role = browser.getText("//div[@id='mainMiddleContent']/div/table[7]/tbody/tr[3]/td[1]");
+        String name = browser.getText("//div[@id='mainMiddleContent']/div/table[7]/tbody/tr[3]/td[2]");
         assertEquals("Primary Screener should be added", TestHelper.getCompetitorUsername(), name);
         assertEquals("Primary Screener should be added", "Primary Screener", role);
 
@@ -65,8 +72,8 @@ public class AddRoleTests extends ProjectTests {
         browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
-        String role = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[1]");
-        String name = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[2]");
+        String role = browser.getText("//div[@id='mainMiddleContent']/div/table[7]/tbody/tr[3]/td[1]");
+        String name = browser.getText("//div[@id='mainMiddleContent']/div/table[7]/tbody/tr[3]/td[2]");
         assertEquals("Manager should be added", TestHelper.getCompetitorUsername(), name);
         assertEquals("Manager should be added", "Manager", role);
 

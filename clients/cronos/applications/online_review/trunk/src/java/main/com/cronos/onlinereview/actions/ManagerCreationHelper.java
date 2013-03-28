@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2012 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007-2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -63,6 +63,8 @@ import com.topcoder.management.deliverable.persistence.DeliverablePersistence;
 import com.topcoder.management.deliverable.persistence.UploadPersistence;
 import com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersistence;
 import com.topcoder.management.deliverable.persistence.sql.SqlUploadPersistence;
+import com.topcoder.management.payment.ProjectPaymentAdjustmentManager;
+import com.topcoder.management.payment.impl.ProjectPaymentAdjustmentManagerImpl;
 import com.topcoder.management.phase.DefaultPhaseManager;
 import com.topcoder.management.phase.PhaseHandler;
 import com.topcoder.management.phase.PhaseManager;
@@ -170,9 +172,17 @@ import com.topcoder.util.log.LogManager;
  *     <li>Added {@link #getReviewFeedbackManager()} method.</li>
  *   </ol>
  * </p>
- * 
+ *
+ * <p>
+ * Version 1.11 (Online Review - Project Payments Integration Part 1 v1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #projectPaymentAdjustmentManager} property.</li>
+ *     <li>Added {@link #getProjectPaymentAdjustmentManager()} method.</li>
+ *   </ol>
+ * </p>
+ *
  * @author evilisneo, BeBetter, isv, FireIce, VolodymyrK, rac_, flexme, lmmortal
- * @version 1.10
+ * @version 1.11
  */
 public class ManagerCreationHelper implements ManagersProvider {
 
@@ -289,6 +299,14 @@ public class ManagerCreationHelper implements ManagersProvider {
     private ReviewFeedbackManager reviewFeedbackManager;
 
     /**
+     * <p>A <code>ProjectPaymentAdjustmentManager</code> providing the access to project payment
+     * adjustment manager.</p>
+     *
+     * @since 1.11
+     */
+    private ProjectPaymentAdjustmentManager projectPaymentAdjustmentManager;
+
+    /**
      * <p>
      * Returns a <code>PhaseManager</code> instance without registered handlers.
      * </p>
@@ -307,6 +325,26 @@ public class ManagerCreationHelper implements ManagersProvider {
         }
     }
 
+    /**
+     * <p>
+     * Returns a <code>ProjectPaymentAdjustmentManager</code> instance.
+     * </p>
+     *
+     * @return a <code>ProjectPaymentAdjustmentManager</code> instance.
+     * @since 1.11
+     */
+    public ProjectPaymentAdjustmentManager getProjectPaymentAdjustmentManager() {
+        if (projectPaymentAdjustmentManager != null) {
+            return projectPaymentAdjustmentManager;
+        }
+        try {
+            projectPaymentAdjustmentManager = new ProjectPaymentAdjustmentManagerImpl(
+                    Constants.CONFIG_MANAGER_FILE, ProjectPaymentAdjustmentManagerImpl.DEFAULT_CONFIG_NAMESPACE);
+            return projectPaymentAdjustmentManager;
+        } catch (Exception e) {
+            throw new ManagerCreationException("Exception occurred while creating the ProjectPaymentAdjustmentManager.", e);
+        }
+    }
     /**
      * <p>
      * Returns a <code>PhaseManager</code> instance with phase handlers.
