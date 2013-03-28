@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011-2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -72,8 +72,6 @@ public class SubmissionUploadTests extends ProjectTests {
 
         //verify submission is uploaded
         String deliverableString = browser.getText("//table[@id='myRolesTable']/tbody/tr[2]/td[3]");
-        String submissionString = browser.getText("//table[@id='myRolesTable']/tbody/tr[2]/td[2]/a");
-        assertEquals("Submission should be uploaded","Submission" ,submissionString);
         assertEquals("Submission should be uploaded","There are no outstanding deliverables." ,deliverableString);
 
         browser.click("//div[@id='sc2']/ul/li[2]/a");
