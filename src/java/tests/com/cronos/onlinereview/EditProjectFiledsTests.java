@@ -1,27 +1,34 @@
 /*
- * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
 /**
  * Online review functional tests 3, edit project fileds testing
  *
+ * <p>
+ *     Version 1.1 (Online Review - Project Payments Integration Part 1 v1.0) change notes:
+ *     <ol>
+ *         <li>Updated tests for assembly Project Payments Integration Part 1 v1.0.</li>
+ *     </ol>
+ * </p>
+ *
  * @author TCSDEVELOPER
- * @version 1.0
+ * @version 1.1
  */
 public class EditProjectFiledsTests extends ProjectTests {
-	
+
     /**
      * Test Case Number: FTC60 RS5.4 Verify Manager can Turn on AutoPilot
      *
      * @throws Exception if any error occurs
      */
     public void testTurnonAutoPilot() throws Exception {
-    	// login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        // login the user first
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
         // AutoPilot should be off at the beginning
-        String autoPilotStat = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[8]/td[2]");
+        String autoPilotStat = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[7]/td[2]");
         assertEquals("AutoPilot should be turned off", "Off", autoPilotStat);
 
         // Click the 'Edit Project' Link
@@ -34,7 +41,7 @@ public class EditProjectFiledsTests extends ProjectTests {
         browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
-        autoPilotStat = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[8]/td[2]");
+        autoPilotStat = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[7]/td[2]");
         assertEquals("AutoPilot should be turned on", "On", autoPilotStat);
         assertNoErrorsOccurred();
     }
@@ -45,9 +52,9 @@ public class EditProjectFiledsTests extends ProjectTests {
      * @throws Exception if any error occurs
      */
     public void testEditNameField() throws Exception {
-    	// login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        // login the user first
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
         // check the project name at the beginning
         String projectName = browser.getText("//table[@id='table12']/tbody/tr[1]/td[3]/span");
         assertFalse("Project Name should not be 'testEditNameField update name'", "testEditNameField update name".equalsIgnoreCase(projectName));
@@ -74,10 +81,10 @@ public class EditProjectFiledsTests extends ProjectTests {
      * @throws Exception if any error occurs
      */
     public void testEditTypeField() throws Exception {
-    	// login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
-        // check the project type at the beginning 
+        // login the user first
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        // check the project type at the beginning
         String projectType = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[3]/td[2]");
         assertFalse("Project Type Should not be Studio", "Studio".equalsIgnoreCase(projectType));
 
@@ -103,9 +110,9 @@ public class EditProjectFiledsTests extends ProjectTests {
      * @throws Exception if any error occurs
      */
     public void testEditCategoryField() throws Exception {
-    	// login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        // login the user first
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
         // check the project Category at the beginning
         String projectCategory = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[4]/td[2]");
         assertFalse("Project Category should not be Testing Competition", "Testing Competition".equalsIgnoreCase(projectCategory));
@@ -132,26 +139,59 @@ public class EditProjectFiledsTests extends ProjectTests {
      * @throws Exception if any error occurs
      */
     public void testEditPriceField() throws Exception {
-    	// login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        // login the user first
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
 
-        String price = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[5]/td[2]");
+        String price = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[1]");
         // check the price is not $100 at the beginning
-        assertFalse("The price should not be $100", "$100".equals(price));
+        assertTrue("These should be no contest prizes", "There are no prizes.".equals(price));
+
+        price = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[1]");
+        // check the price is not $100 at the beginning
+        assertTrue("These should be no milestone prizes", "There are no prizes.".equals(price));
 
         // Click the 'Edit Project' Link
         browser.click("//img[@alt='Edit Project']");
         browser.waitForPageToLoad(TIMEOUT);
 
-        // input 100$ as payments, no error expected
-        browser.type("payments", "100");
-        browser.type("explanation", "Price field edition");
+        // Add two contest prizes
+        browser.click("//table[@id='contest-prizes-table']//img[@alt='Add Prize']");
+        browser.type("contest_prizes_amount[0]", "1000");
+        browser.click("//table[@id='contest-prizes-table']//img[@alt='Add Prize']");
+        browser.type("contest_prizes_amount[1]", "600");
+
+        // Add a milestone prize
+        browser.click("//table[@id='milestone-prizes-table']//img[@alt='Add Prize']");
+        browser.type("milestone_prizes_amount[0]", "300");
+        browser.select("//select[@name='milestone_prizes_num[0]']", "label=3");
+
         browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
-        price = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[5]/td[2]");
-        assertEquals("Price should be changed to $100", "$100", price);
+        // check first contest prize
+        String place = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[1]");
+        price = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[2]");
+        String noOfPrizes = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[3]");
+        assertEquals("Place of first contest prize should be 1", "1", place);
+        assertEquals("Amount of first contest prize should be $1,000", "$1,000", price);
+        assertEquals("# of Prizes of first contest prize should be 1", "1", noOfPrizes);
+
+        // check second contest prize
+        place = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[4]/td[1]");
+        price = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[4]/td[2]");
+        noOfPrizes = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[4]/td[3]");
+        assertEquals("Place of second contest prize should be 2", "2", place);
+        assertEquals("Amount of second contest prize should be $600", "$600", price);
+        assertEquals("# of Prizes of second contest prize should be 1", "1", noOfPrizes);
+
+        // check first milestone prize
+        place = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[1]");
+        price = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[2]");
+        noOfPrizes = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[3]");
+        assertEquals("Place of first milestone prize should be 1", "1", place);
+        assertEquals("Amount of first milestone prize should be $300", "$300", price);
+        assertEquals("# of Prizes of first milestone prize should be 3", "3", noOfPrizes);
 
         assertNoErrorsOccurred();
     }
@@ -162,9 +202,9 @@ public class EditProjectFiledsTests extends ProjectTests {
      * @throws Exception if any error occurs
      */
     public void testEditDRPointsField() throws Exception {
-    	// login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        // login the user first
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
 
         String point = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[7]/td[2]");
         // check the point is not 100 at the beginning
@@ -180,7 +220,7 @@ public class EditProjectFiledsTests extends ProjectTests {
         browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
-        point = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[7]/td[2]");
+        point = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[6]/td[2]");
         assertEquals("Point should be changed to 100", "100", point);
 
         assertNoErrorsOccurred();
@@ -192,9 +232,9 @@ public class EditProjectFiledsTests extends ProjectTests {
      * @throws Exception if any error occurs
      */
     public void testEditNotesField() throws Exception {
-    	// login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        // login the user first
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
         // check the notes at the beginning
         String notes = browser.getText("//div[@id='mainMiddleContent']/div/table[2]/tbody/tr[2]/td[1]");
         assertFalse("Notes should not be 'testEditNotesField update note'", "testEditNotesField update note".equalsIgnoreCase(notes));
@@ -222,11 +262,11 @@ public class EditProjectFiledsTests extends ProjectTests {
      * @throws Exception if any error occurs
      */
     public void testEditContestStatusField() throws Exception {
-    	// login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        // login the user first
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
         // check the status at the beginning
-        String status = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[10]/td[2]");
+        String status = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[9]/td[2]");
         assertFalse("Status should not be Completed", "Completed".equalsIgnoreCase(status));
 
         // Click the 'Edit Project' Link
@@ -240,7 +280,7 @@ public class EditProjectFiledsTests extends ProjectTests {
         browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
-        status = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[15]/td[2]");
+        status = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[14]/td[2]");
         assertEquals("Status should be changed to Cancelled - Client Request", "Cancelled - Client Request", status);
 
         assertNoErrorsOccurred();
@@ -254,8 +294,8 @@ public class EditProjectFiledsTests extends ProjectTests {
      */
     public void testDisableTimelineNotification() throws Exception {
         // login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
 
         // disable Recieving timeline change notifications
         browser.check("//input[@id='notifCheckbox']");
@@ -273,10 +313,10 @@ public class EditProjectFiledsTests extends ProjectTests {
      * @throws Exception if any error occurs
      */
     public void testEnableTimelineNotification() throws Exception {
-    	// login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
-        
+        // login the user first
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+
         // enable Recieving timeline change notifications
         browser.check("//input[@id='notifCheckbox']");
 
@@ -285,6 +325,4 @@ public class EditProjectFiledsTests extends ProjectTests {
         assertEquals("Recieve timeline change notifications should be enabled", "on", value);
         assertNoErrorsOccurred();
     }
-
-
 }

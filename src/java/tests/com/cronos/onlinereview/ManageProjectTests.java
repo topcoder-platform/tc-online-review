@@ -1,13 +1,20 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
 /**
  * Online review functional tests 1, manage the project.
  *
+ * <p>
+ *     Version 1.1 (Online Review - Project Payments Integration Part 1 v1.0) change notes:
+ *     <ol>
+ *         <li>Updated tests for assembly Project Payments Integration Part 1 v1.0.</li>
+ *     </ol>
+ * </p>
+ *
  * @author TCSDEVELOPER
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 public class ManageProjectTests extends ProjectTests {
@@ -103,8 +110,8 @@ public class ManageProjectTests extends ProjectTests {
         browser.click("//input[@name='savePMCChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
         assertTrue("Resources should be shown", browser.isTextPresent("Resources"));
-        String role = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[1]");
-        String added = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[2]");
+        String role = browser.getText("//div[@id='mainMiddleContent']/div/table[7]/tbody/tr[3]/td[1]");
+        String added = browser.getText("//div[@id='mainMiddleContent']/div/table[7]/tbody/tr[3]/td[2]");
         assertEquals("designer should be added", "super", added);
         assertEquals("designer should be added", "Designer", role);
         assertNoErrorsOccurred();
@@ -122,8 +129,8 @@ public class ManageProjectTests extends ProjectTests {
         browser.click("//input[@name='savePMCChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
         assertTrue("Resources should be shown", browser.isTextPresent("Resources"));
-        String role = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[1]");
-        String added = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[2]");
+        String role = browser.getText("//div[@id='mainMiddleContent']/div/table[7]/tbody/tr[3]/td[1]");
+        String added = browser.getText("//div[@id='mainMiddleContent']/div/table[7]/tbody/tr[3]/td[2]");
         assertEquals("Observer should be added", "super", added);
         assertEquals("Observer should be added", "Observer", role);
         assertNoErrorsOccurred();
@@ -141,8 +148,8 @@ public class ManageProjectTests extends ProjectTests {
         browser.click("//input[@name='savePMCChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
         assertTrue("Resources should be shown", browser.isTextPresent("Resources"));
-        String role = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[1]");
-        String added = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[2]");
+        String role = browser.getText("//div[@id='mainMiddleContent']/div/table[7]/tbody/tr[3]/td[1]");
+        String added = browser.getText("//div[@id='mainMiddleContent']/div/table[7]/tbody/tr[3]/td[2]");
         assertEquals("Copilot should be added", "super", added);
         assertEquals("Copilot should be added", "Copilot", role);
         assertNoErrorsOccurred();
@@ -160,8 +167,8 @@ public class ManageProjectTests extends ProjectTests {
         browser.click("//input[@name='savePMCChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
         assertTrue("Resources should be shown", browser.isTextPresent("Resources"));
-        String role = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[1]");
-        String added = browser.getText("//div[@id='mainMiddleContent']/div/table[5]/tbody/tr[3]/td[2]");
+        String role = browser.getText("//div[@id='mainMiddleContent']/div/table[7]/tbody/tr[3]/td[1]");
+        String added = browser.getText("//div[@id='mainMiddleContent']/div/table[7]/tbody/tr[3]/td[2]");
         assertEquals("Copilot should be added", "super", added);
         assertEquals("Copilot should be added", "Client Manager", role);
         assertNoErrorsOccurred();
@@ -180,8 +187,6 @@ public class ManageProjectTests extends ProjectTests {
 		browser.type("distribution_rs", TestHelper.getRSLocation());
 		browser.click("//table[@id='distribution_tbl']/tbody/tr[9]/td/input");
         Thread.sleep(new Long(TIMEOUT));
-        System.out.println("***************** testGenerateDesignDistribution *****************");
-        System.out.println(browser.getBodyText());
         assertNoErrorsOccurred();
     }
 
@@ -201,8 +206,6 @@ public class ManageProjectTests extends ProjectTests {
 		browser.type("distribution_additional3", TestHelper.getDocument3());
 		browser.click("//table[@id='distribution_tbl']/tbody/tr[9]/td/input");
         Thread.sleep(new Long(TIMEOUT));
-        System.out.println("***************** testGenerateAdditionalDocument *****************");
-        System.out.println(browser.getBodyText());
         assertNoErrorsOccurred();
     }
 

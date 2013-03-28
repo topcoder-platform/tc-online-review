@@ -1,7 +1,7 @@
 <%--
   - Author: isv, rac_, flexme
-  - Version: 1.5
-  - Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
+  - Version: 1.6
+  - Copyright (C) 2004 - 2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment displays the content of tab for single project phase on Project Details screen.
   -
@@ -20,6 +20,9 @@
   - Version 1.4.1 (TCCC-3285) changes: fixed wrong submissions download links for Studio competitions
   -
   - Version 1.5 (Online Review Miscellaneous Improvements) changes: Add advance link for the submissions which failed screening
+  -
+  - Version 1.6 (Online Review - Project Payments Integration Part 1 v1.0) changes: Add advance link for the milestone submissions
+  - which failed milestone screening
 --%>
 <%@page import="com.topcoder.shared.util.ApplicationServer"%>
 <%@ page language="java" isELIgnored="false" %>
@@ -1068,6 +1071,9 @@
                                                         </c:when>
                                                         <c:otherwise>
                                                             <bean:message key="viewProjectDetails.box.Screening.Failed"/>
+                                                            <c:if test="${isAllowedToAdvanceSubmissionWithFailedScreening and submission.submissionStatus.name eq 'Failed Milestone Screening'}">
+                                                                (<html:link page="/actions/AdvanceFailedMilestoneScreeningSubmission.do?method=advanceFailedScreeningSubmission&uid=${submission.upload.id}"><bean:message key="viewProjectDetails.box.Screening.Advance" /></html:link>)
+                                                            </c:if>
                                                         </c:otherwise>
                                                     </c:choose>
                                                 </c:when>

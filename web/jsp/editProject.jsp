@@ -1,7 +1,7 @@
 <%--
-  - Author: pulky, isv, TCSDEVELOPER
-  - Version: 1.3.2
-  - Copyright (C) 2004 - 2011 TopCoder Inc., All Rights Reserved.
+  - Author: pulky, isv, TCSDEVELOPER, flexme
+  - Version: 1.5
+  - Copyright (C) 2004 - 2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays project edition page
   -
@@ -20,6 +20,7 @@
   -
   - Version 1.4 (Online Review Status Validation Assembly 1.0) changes: added error display of validation for status field
   -
+  - Version 1.5 (Online Review - Project Payments Integration Part 1 v1.0) changes: added support for project prizes management.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -53,8 +54,8 @@
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/dojo.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/util.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_util2.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_edit_project3.js' />"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_util.js' />"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_edit_project.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/parseDate.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript">
         var ajaxSupportUrl = "<html:rewrite page='/ajaxSupport' />";
@@ -218,6 +219,23 @@
             }
         }
 
+        /**
+        * Disable or enable the select widget.
+        *
+        * @param prefix the prefix of select widget name.
+        * @param disabled true if to disable, false to enable.
+        * @param canEdit whether we can edit the select widget.
+         */
+        function disableSelect(prefix, disabled, canEdit) {
+            if (!canEdit) return;
+            var eles = getChildrenByNamePrefix(document.body, prefix);
+            for (var i = 0; i < eles.length; i++) {
+                var ori = eles[i].disabled;
+                eles[i].disabled = disabled ? "disabled" : "";
+                if (ori != "disabled" && disabled) eles[i].value = "1";
+            }
+        }
+
         /*
          * TODO: Document it.
          */
@@ -235,6 +253,8 @@
                 }
             }
             onProjectCategoryChange(projectCategoryNode);
+            disableSelect("contest_prizes_num[", projectTypeNode.value != 3, canEditContestPrize);
+            disableSelect("contest_prizes_num_dump[", projectTypeNode.value != 3, canEditContestPrize);
         }
 
         function onProjectCategoryChange(projectCategoryNode) {
@@ -1012,6 +1032,78 @@
             changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, milestoneReviewScorecards, 'Milestone Review');
         }
 
+        /**
+         * Show the prize tab.
+         *
+         * @param id the id of the tab to show.
+         * @param aObject the DOM object of the link which have been clicked.
+         */
+        function showPrizeTab(id, aObject) {
+            var liEles = aObject.parentNode.parentNode.getElementsByTagName("li");
+            for (var i = 0; i < liEles.length; i++) {
+                liEles[i].className = "";
+            }
+            aObject.parentNode.className = "current";
+
+            // Remove focus from the link that triggered the activation
+            if (aObject.blur) {
+                aObject.blur();
+            }
+
+            document.getElementById("contest-prizes-table").style.display = "none";
+            document.getElementById("milestone-prizes-table").style.display = "none";
+            document.getElementById(id).style.display = "table";
+        }
+
+        /**
+         * Add a prize when user clicking Add button..
+         *
+         * @param alink the DOM object of the link which have been clicked.
+         * @param prefix the prefix of the name.
+         */
+        function addPrize(alink, prefix) {
+            var td = alink.parentNode;
+            var tr = td.parentNode;
+            var rows = tr.parentNode.rows;
+            var newRow = cloneInputRow(rows[2]);
+
+            var curId = rows.length - 5;
+            newRow.cells[0].innerHTML = curId + 1;
+            newRow.style.display = "table-row";
+            getChildByNamePrefix(newRow, prefix + "_amount_dump").name = prefix + "_amount[0]";
+            getChildByNamePrefix(newRow, prefix + "_num_dump").name = prefix + "_num[0]";
+            patchAllChildParamIndexes(newRow, curId);
+            getChildByNamePrefix(newRow, prefix + "_amount[").value = "";
+            getChildByNamePrefix(newRow, prefix + "_num[").value = "1";
+            if (rows.length - 5 > 0) {
+                rows[rows.length - 3].cells[3].innerHTML = "";
+            }
+            tr.parentNode.insertBefore(newRow, rows[rows.length - 2]);
+            rows = tr.parentNode.rows;
+            for (var idx = 3; idx < rows.length - 1; idx++) {
+                rows[idx].className = (idx - 3) % 2 == 0 ? "light" : "dark";
+            }
+        }
+
+        /**
+         * Remove a prize when user clicking Delete button..
+         *
+         * @param alink the DOM object of the link which have been clicked.
+         */
+        function removePrize(alink) {
+            var tr = alink.parentNode.parentNode;
+            var tbody = tr.parentNode;
+            tbody.removeChild(tr);
+            var rows = tbody.rows;
+            for (var idx = 3; idx < rows.length - 2; idx++) {
+                rows[idx].cells[0].innerHTML = idx - 2;
+                patchAllChildParamIndexes(rows[idx], idx - 3);
+                rows[idx].className = (idx - 3) % 2 == 0 ? "light" : "dark";
+            }
+            if (rows.length - 5 > 0) {
+                rows[rows.length - 3].cells[3].innerHTML = '<img src="/i/or/bttn_delete.gif" style="cursor: pointer; display: inline; " alt="Delete" onclick="removePrize(this);">';
+            }
+        }
     //--></script>
 </head>
 
@@ -1048,6 +1140,7 @@
                         <html:hidden property="js_current_id" />
                         <html:hidden property="action" />
                         <html:hidden property="action_phase" />
+                        <html:hidden property="last_modification_time" />
 
                         <%-- If creating a new project, show project details table --%>
                         <c:if test="${newProject}">
@@ -1088,15 +1181,6 @@
                                         </html:select>
                                     </td>
                                 </tr>
-                                <tr class="dark">
-                                    <td class="value" nowrap="nowrap">
-                                        <b><bean:message key="editProject.ProjectDetails.Payments" /></b><br />
-                                    </td>
-                                    <td class="value" nowrap="nowrap">
-                                        <html:text styleClass="inputBox" property="payments" style="width: 350px;" />
-                                        <span id="payments_validation_msg" style="display:none;" class="error"></span>
-                                    </td>
-                                </tr>
                                 <tr class="light">
                                     <td class="value" nowrap="nowrap">
                                         <b><bean:message key="editProject.ProjectDetails.DRPoints" /></b><br />
@@ -1118,6 +1202,11 @@
                             <html:hidden property="project_category" />
                         </c:if>
                         --%>
+
+                        <%-- If creating a new project, show the edit prizes section here --%>
+                        <c:if test="${newProject}">
+                            <jsp:include page="/includes/project/project_edit_prizes.jsp" />
+                        </c:if>
 
                         <%-- If editing the existing project, include timeline editor here --%>
                         <c:if test="${not newProject}">
@@ -1208,20 +1297,10 @@
                                 </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
                                 <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
                                     <td class="value" nowrap="nowrap">
-                                        <b><bean:message key="editProject.ProjectDetails.Payments" /></b><br />
-                                    </td>
-                                    <td class="value" nowrap="nowrap">
-                                        <html:text styleClass="inputBox" property="payments" style="width: 350px;" />
-                                        <span id="payments_validation_msg" style="display:none;" class="error"></span>
-                                    </td>
-                                </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
-                                <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
-                                    <td class="value" nowrap="nowrap">
                                         <b><bean:message key="editProject.ProjectDetails.DRPoints" /></b><br />
                                     </td>
                                     <td class="value" nowrap="nowrap">
                                         <html:text styleClass="inputBox" property="dr_points" style="width: 350px;" />
-                                        <b><bean:message key="editProject.ProjectDetails.DRPointsMessage" /></b>
                                         <span id="dr_points_validation_msg" style="display:none;" class="error"></span>
                                     </td>
                                 </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
@@ -1311,6 +1390,11 @@
                             </tr>
                         </table><br />
 
+                        <%-- If edit an existing project, show the edit prizes section here --%>
+                        <c:if test="${not newProject}">
+                            <jsp:include page="/includes/project/project_edit_prizes.jsp" />
+                        </c:if>
+
                         <table class="scorecard" cellpadding="0" cellspacing="0" width="100%"style="border-collapse: collapse;">
                             <tr>
                                 <td class="title"><bean:message key="editProject.Notes.title" /></td>
@@ -1393,4 +1477,13 @@
     </div>
 </div>
 </body>
+<script type="text/javascript">
+    var canEditContestPrize = ${canEditContestPrize};
+    var canEditMilestonePrize = ${canEditMilestonePrize};
+    var studio = document.getElementsByName('project_type')[0].value == 3;
+    disableSelect("contest_prizes_num[", !studio, canEditContestPrize);
+    disableSelect("contest_prizes_num_dump[", !studio, canEditContestPrize);
+    disableSelect("milestone_prizes_num[", false, canEditMilestonePrize);
+    disableSelect("milestone_prizes_num_dump[", false, canEditMilestonePrize);
+</script>
 </html:html>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -8,8 +8,15 @@ import java.sql.Connection;
 /**
  * Online review functional tests 3, change score cored testing
  *
+ * <p>
+ *     Version 1.1 (Online Review - Project Payments Integration Part 1 v1.0) change notes:
+ *     <ol>
+ *         <li>Updated tests for assembly Project Payments Integration Part 1 v1.0.</li>
+ *     </ol>
+ * </p>
+ *
  * @author TCSDEVELOPER
- * @version 1.0
+ * @version 1.1
  */
 public class ChangeScorecardTests extends ProjectTests {
 
@@ -64,7 +71,7 @@ public class ChangeScorecardTests extends ProjectTests {
     	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
     	
     	// Check the created scorecard is used
-    	String scorecard = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[9]/td[2]/a");
+    	String scorecard = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[8]/td[2]/a");
         assertEquals("New Created Scorecard should be used", "Default Spec Review Scorecard v2.0", scorecard);
         
         // Click the 'Edit Project' Link
@@ -77,7 +84,7 @@ public class ChangeScorecardTests extends ProjectTests {
         browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
 
-        scorecard = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[9]/td[2]/a");
+        scorecard = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[8]/td[2]/a");
         assertEquals("Scorecard should be added", "Default Spec Review Scorecard v1.0", scorecard);
 
         assertNoErrorsOccurred();

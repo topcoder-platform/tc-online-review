@@ -78,7 +78,7 @@ function isTimeString(str) {
         var hour = parseInt(result[1], 10);
         var minute = parseInt(result[2], 10);
         
-        return 1 <= hour && hour <= 12 && 0 <= minute && minute < 60;
+        return 0 <= hour && hour <= 23 && 0 <= minute && minute < 60;
     }
     
     return false;

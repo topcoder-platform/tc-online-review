@@ -163,9 +163,6 @@ public class TimelineAdvancementTests extends ProjectTests {
         TestHelper.ClosePhaseByUI(browser, 5, "screening");
 
        // open review phase
-        System.out.println("START : **********************");
-        System.out.println(browser.getBodyText());
-        System.out.println("END   : **********************");
         TestHelper.OpenPhaseByUI(browser, 6, "review");
         //submit Review Scorecard 
         TestHelper.submitScorecard(browser, "2 - Somewhat Agree", "Return to Project Details", false);

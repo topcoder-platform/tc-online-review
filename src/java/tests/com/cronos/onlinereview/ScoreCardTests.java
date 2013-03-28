@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -8,8 +8,15 @@ import java.sql.Connection;
 /**
  * Online review functional tests 3, scordcard managment testing.
  *
+ * <p>
+ *     Version 1.1 (Online Review - Project Payments Integration Part 1 v1.0) change notes:
+ *     <ol>
+ *         <li>Updated tests for assembly Project Payments Integration Part 1 v1.0.</li>
+ *     </ol>
+ * </p>
+ *
  * @author TCSDEVELOPER
- * @version 1.0
+ * @version 1.1
  */
 public class ScoreCardTests extends ProjectTests {
 
@@ -73,7 +80,7 @@ public class ScoreCardTests extends ProjectTests {
         browser.click("//table[@id='myRolesTable']/tbody/tr[2]/td[2]/a");
         browser.waitForPageToLoad(TIMEOUT);
         // click Edit Scorecard
-        browser.click("//div[@id='mainMiddleContent']/div[1]/div[1]/table[1]/tbody/tr[1]/td[2]/a[1]");
+        browser.click("//div[@id='mainMiddleContent']/div[1]/div[1]/table[1]/tbody/tr[1]/td[2]/a[2]");
         browser.waitForPageToLoad(TIMEOUT);
         browser.select("answer[0]","label=1 - Strongly Disagree");
         browser.click("//input[@alt='Save Changes']");

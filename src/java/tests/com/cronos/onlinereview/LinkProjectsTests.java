@@ -1,13 +1,20 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
 /**
  * Online review functional tests 1, link different projects.
  *
+ * <p>
+ *     Version 1.1 (Online Review - Project Payments Integration Part 1 v1.0) change notes:
+ *     <ol>
+ *         <li>Updated tests for assembly Project Payments Integration Part 1 v1.0.</li>
+ *     </ol>
+ * </p>
+ *
  * @author TCSDEVELOPER
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 public class LinkProjectsTests extends ProjectTests {
@@ -61,8 +68,8 @@ public class LinkProjectsTests extends ProjectTests {
 		browser.click("//img[@alt='add']");
 		browser.click("//input[@name='saveProjectLinksBtn']");
 		browser.waitForPageToLoad(TIMEOUT);
-        String type = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[1]");
-        String linkName = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[2]");
+        String type = browser.getText("//div[@id='mainMiddleContent']/div/table[8]/tbody/tr[3]/td[1]");
+        String linkName = browser.getText("//div[@id='mainMiddleContent']/div/table[8]/tbody/tr[3]/td[2]");
         assertTrue("link is added", linkName.startsWith("Test Case " + getName()));
         assertEquals("link is added", "Depends On", type);
     }
@@ -84,8 +91,8 @@ public class LinkProjectsTests extends ProjectTests {
 		browser.click("//img[@alt='add']");
 		browser.click("//input[@name='saveProjectLinksBtn']");
 		browser.waitForPageToLoad(TIMEOUT);
-		String type = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[1]");
-        String linkName = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[2]");
+		String type = browser.getText("//div[@id='mainMiddleContent']/div/table[8]/tbody/tr[3]/td[1]");
+        String linkName = browser.getText("//div[@id='mainMiddleContent']/div/table[8]/tbody/tr[3]/td[2]");
 		assertTrue("link is added", linkName.startsWith("Test Case " + getName()));
 		assertEquals("link is added", "Is Related To", type);
     }
@@ -114,12 +121,12 @@ public class LinkProjectsTests extends ProjectTests {
 			browser.click("//img[@alt='add']");
 			browser.click("//input[@name='saveProjectLinksBtn']");
 			browser.waitForPageToLoad(TIMEOUT);
-	        String type1 = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[1]");
-	        String linkName1 = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[2]");
+	        String type1 = browser.getText("//div[@id='mainMiddleContent']/div/table[8]/tbody/tr[3]/td[1]");
+	        String linkName1 = browser.getText("//div[@id='mainMiddleContent']/div/table[8]/tbody/tr[3]/td[2]");
 	        assertTrue("link is added", linkName1.startsWith("Test Case " + getName()));
 	        assertEquals("link is added", "Repost For", type1);
-	        String type2 = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[4]/td[1]");
-	        String linkName2 = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[4]/td[2]");
+	        String type2 = browser.getText("//div[@id='mainMiddleContent']/div/table[8]/tbody/tr[4]/td[1]");
+	        String linkName2 = browser.getText("//div[@id='mainMiddleContent']/div/table[8]/tbody/tr[4]/td[2]");
 	        assertTrue("link is added", linkName2.startsWith("Test Case " + getName()));
 	        assertEquals("link is added", "Repost For", type2);
     	} 

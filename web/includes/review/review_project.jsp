@@ -1,3 +1,10 @@
+<%--
+  - Author: TCSASSEMBLER, flexme
+  - Version: 1.1
+  - Copyright (C)  - 2013 TopCoder Inc., All Rights Reserved.
+  -
+  - Version 1.1 (Online Review - Project Payments Integration Part 1 v1.0 ) changes: Add "Reopen" link.
+--%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -54,6 +61,9 @@
 			</td>
 			<c:if test="${not noExpandCollapse}" >
 				<td align="right" valign="top">
+                    <c:if test="${canReopenScorecard}">
+                        <html:link page="/actions/ReopenScorecard.do?method=reopenScorecard&rid=${review.id}"><bean:message key="editReview.ReopenScorecard" /></html:link>&#160;|
+                    </c:if>
 					<c:if test="${canEditScorecard}">
 						<html:link page="/actions/Edit${reviewType}.do?method=edit${reviewType}&rid=${review.id}"><bean:message key="editReview.EditScorecard" /></html:link>&#160;|
 					</c:if>

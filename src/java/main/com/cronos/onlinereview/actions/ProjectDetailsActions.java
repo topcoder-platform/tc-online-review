@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2012 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -18,6 +20,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.topcoder.management.project.Prize;
+import com.topcoder.management.project.PrizeType;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -213,8 +217,18 @@ import com.topcoder.util.file.templatesource.FileTemplateSource;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.10 (Online Review - Project Payments Integration Part 1 v1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #viewProjectDetails(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
+ *     method to remove the old payments and add support to the new project prizes.</li>
+ *     <li>Updated {@link #advanceFailedScreeningSubmission(ActionMapping, ActionForm, HttpServletRequest,
+ *     HttpServletResponse)} method to add support to advance failed milestone screening submission.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, FireIce, rac_, flexme
- * @version 1.9
+ * @version 1.10
  */
 public class ProjectDetailsActions extends DispatchAction {
 
@@ -247,6 +261,11 @@ public class ProjectDetailsActions extends DispatchAction {
      *     - if user is a submitter and appeals phase is open, he can:
      *         - mark appeals as complete if his "Appeals Completed Early" flag is "No" or doesn't exist.
      *         - resume appeals if his "Appeals Completed Early" flag is "Yes".
+     * </p>
+     *
+     * <p>
+     * Online Review - Project Payments Integration Part 1 v1.0
+     *      - Remove the old prize information and populate the new project prizes to the request attributes.
      * </p>
      *
      * @return an action forward to the appropriate page. If no error has occurred, the forward will
@@ -305,8 +324,6 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("projectType", projectTypeName);
         request.setAttribute("projectCategory", project.getProjectCategory().getName());
         request.setAttribute("projectStatus", project.getProjectStatus().getName());
-        String paymentStr = project.getProperty("Payments") == null ? "0": project.getProperty("Payments").toString();
-        request.setAttribute("projectPayment", Double.valueOf(paymentStr));
 
         boolean digitalRunFlag = "On".equals(project.getProperty("Digital Run Flag"));
 
@@ -320,14 +337,7 @@ public class ProjectDetailsActions extends DispatchAction {
             {
                 drpoint = Double.parseDouble(drpointStr);
             }
-            if (drpoint < 0.5)
-            {
-                request.setAttribute("projectDRP", Double.valueOf(paymentStr));
-            }
-            else
-            {
-                request.setAttribute("projectDRP", Double.valueOf(drpointStr));
-            }
+            request.setAttribute("projectDRP", drpoint);
         }
 
         ProjectDataAccess projectDataAccess = new ProjectDataAccess();
@@ -594,6 +604,27 @@ public class ProjectDetailsActions extends DispatchAction {
             request.setAttribute("resources", allProjectResources);
             request.setAttribute("users", allProjectExtUsers);
         }
+
+        // Project Prizes
+        List<Prize> contestPrizes = new ArrayList<Prize>();
+        List<Prize> milestonePrizes = new ArrayList<Prize>();
+        if (project.getPrizes() != null) {
+            PrizeType contestPrizeType = LookupHelper.getPrizeType(Constants.CONTEST_PRIZE_TYPE_NAME);
+            PrizeType milestonePrizeType = LookupHelper.getPrizeType(Constants.MILESTONE_PRIZE_TYPE_NAME);
+            for (Prize prize : project.getPrizes()) {
+                if (prize.getPrizeType().getId() == contestPrizeType.getId()) {
+                    contestPrizes.add(prize);
+                } else if (prize.getPrizeType().getId() == milestonePrizeType.getId()) {
+                    milestonePrizes.add(prize);
+                }
+            }
+        }
+        Comparator<Prize> comp = new Comparators.PrizePlaceComparator();
+        Collections.sort(contestPrizes, comp);
+        Collections.sort(milestonePrizes, comp);
+        request.setAttribute("contestPrizes", contestPrizes);
+        request.setAttribute("milestonePrizes", milestonePrizes);
+
         PhasesDetails phasesDetails = PhasesDetailsServices.getPhasesDetails(
                 request, messages, project, phases, allProjectResources, allProjectExtUsers);
 
@@ -1736,11 +1767,16 @@ public class ProjectDetailsActions extends DispatchAction {
      * display the page with the confirmation, and once to process the confirmed advance request to
      * actually advance the submission to pass screening.
      *
+     * <p>
+     *  Online Review - Project Payments Integration Part 1 v1.0
+     *      - Add support to process milestone submission.
+     * </p>
+     *
      * @return an action forward to the appropriate page. If no error has occurred and this action
      *         was called the first time, the forward will be to /jsp/confirmAdvanceFailedScreeningSubmission.jsp
-     *         page, which displays the confirmation dialog where user can confirm his intention to
-     *         advance the submission. If this action was called during the post back (the second
-     *         time), then this method verifies if everything is correct, and process the advance logic.
+     *         or /jsp/confirmAdvanceFailedMilestoneScreeningSubmission.jsp page, which displays the confirmation dialog
+     *         where user can confirm his intention to advance the submission. If this action was called during the post
+     *         back (the second time), then this method verifies if everything is correct, and process the advance logic.
      *         After this it returns a forward to the View Project Details page.
      * @param mapping
      *            action mapping.
@@ -1800,10 +1836,19 @@ public class ProjectDetailsActions extends DispatchAction {
         Submission[] submissions = upMgr.searchSubmissions(SubmissionFilterBuilder.createUploadIdFilter(upload.getId()));
         Submission submission = (submissions.length != 0) ? submissions[0] : null;
 
+        boolean isContestSubmission = submission.getSubmissionType().getName().equalsIgnoreCase(
+                                        Constants.CONTEST_SUBMISSION_TYPE_NAME);
+
         // Check the submission status is Failed Screening
-        if (submission == null || !submission.getSubmissionStatus().getName().equalsIgnoreCase(Constants.FAILED_SCREENING_SUBMISSION_STATUS_NAME)) {
+        String status = submission.getSubmissionStatus().getName();
+        if (submission == null ||
+            (!status.equalsIgnoreCase(Constants.FAILED_SCREENING_SUBMISSION_STATUS_NAME)
+                && !status.equalsIgnoreCase(Constants.FAILED_MILESTONE_SCREENING_SUBMISSION_STATUS_NAME))) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME, "Error.SubmissionNotFailedScreening", null);
+                    request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME,
+                    isContestSubmission ?
+                            "Error.SubmissionNotFailedScreening" :"Error.SubmissionNotFailedMilestoneScreening",
+                    null);
         }
 
         // Check the project status is Active
@@ -1814,10 +1859,13 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Check the Review phase is not closed
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
-        Phase reviewPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.REVIEW_PHASE_NAME);
+        Phase reviewPhase = ActionsHelper.findPhaseByTypeName(phases,
+                isContestSubmission ? Constants.REVIEW_PHASE_NAME : Constants.MILESTONE_REVIEW_PHASE_NAME);
         if (reviewPhase == null || ActionsHelper.isPhaseClosed(reviewPhase.getPhaseStatus())) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME, "Error.ReviewClosed", null);
+                    request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME,
+                    isContestSubmission ? "Error.ReviewClosed" : "Error.MilestoneReviewClosed",
+                    null);
         }
 
         // Determine if this request is a post back
@@ -1840,19 +1888,24 @@ public class ProjectDetailsActions extends DispatchAction {
             projectMgr.updateProject(project, "Turing AP off before advancing failed screening submission", operator);
         }
 
-        Phase postMortemPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.POST_MORTEM_PHASE_NAME);
-        if (postMortemPhase != null) {
-            ActionsHelper.deletePostMortem(project, postMortemPhase, operator);
+        if (isContestSubmission) {
+            Phase postMortemPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.POST_MORTEM_PHASE_NAME);
+            if (postMortemPhase != null) {
+                ActionsHelper.deletePostMortem(project, postMortemPhase, operator);
+            }
         }
         // Set submission status to Active
         SubmissionStatus submissionActiveStatus = LookupHelper.getSubmissionStatus(Constants.ACTIVE_SUBMISSION_STATUS_NAME);
         submission.setSubmissionStatus(submissionActiveStatus);
         upMgr.updateSubmission(submission, operator);
 
-        // Update the project_result table
-        ResourceManager resMgr = ActionsHelper.createResourceManager();
-        Resource uploadOwner = resMgr.getResource(upload.getOwner());
-        ActionsHelper.updateProjectResultForAdvanceScreening(project.getId(), Long.parseLong((String) uploadOwner.getProperty("External Reference ID")));
+        if (isContestSubmission) {
+            // Update the project_result table
+            ResourceManager resMgr = ActionsHelper.createResourceManager();
+            Resource uploadOwner = resMgr.getResource(upload.getOwner());
+            ActionsHelper.updateProjectResultForAdvanceScreening(project.getId(),
+                    Long.parseLong((String) uploadOwner.getProperty("External Reference ID")));
+        }
 
         if (!"Off".equalsIgnoreCase(oldAutoPilotOption)) {
             // Restore the AutoPilot status
