@@ -33,14 +33,14 @@
 			<td class="title" colspan='${(isAllowedToViewAllPayment) ? "6" : "4"}'><bean:message key="viewProjectDetails.box.Resources" /></td>
 		</tr>
 		<tr>
-			<td class="header"><b><bean:message key="viewProjectDetails.Resource.Role" /></b></td>
-			<td class="header"><b><bean:message key="viewProjectDetails.Resource.Handle" /></b></td>
-			<td class="header"><b><bean:message key="viewProjectDetails.Resource.Email" /></b></td>
+			<td class="header"><bean:message key="viewProjectDetails.Resource.Role" /></td>
+			<td class="header"><bean:message key="viewProjectDetails.Resource.Handle" /></td>
+			<td class="header"><bean:message key="viewProjectDetails.Resource.Email" /></td>
 			<c:if test="${isAllowedToViewAllPayment}">
-				<td class="header" nowrap="nowrap"><b><bean:message key="viewProjectDetails.Resource.Payment" /></b></td>
-				<td class="header" nowrap="nowrap"><b><bean:message key="viewProjectDetails.Resource.Paid_qm" /></b></td>
+				<td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.Resource.Payment" /></td>
+				<td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.Resource.Paid_qm" /></td>
 			</c:if>
-			<td class="headerC" nowrap="nowrap"><b><bean:message key="viewProjectDetails.Resource.RegistrationDate" /></b></td>
+			<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.Resource.RegistrationDate" /></td>
 		</tr>
 		<c:forEach items="${resources}" var="resource" varStatus="idxrResource">
 			<tr class='${(idxrResource.index % 2 == 0) ? "light" : "dark"}' rel="${resource.resourceRole.id}">

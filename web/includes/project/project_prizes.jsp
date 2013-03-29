@@ -24,12 +24,12 @@
 
 <table id="contest-prizes-table" class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
     <tr>
-        <td class="title" colspan="3"><bean:message key="editProject.ProjectDetails.ProjectPrizes" /></td>
+        <td class="title" colspan="3"><bean:message key="editProject.ProjectDetails.ContestPrizes" /></td>
     </tr>
     <tr>
-        <td class="header"><b><bean:message key="editProject.ProjectDetails.Prize.Place" /></b></td>
-        <td class="header"><b><bean:message key="editProject.ProjectDetails.Prize.Amount" /></b></td>
-        <td class="header"><b><bean:message key="editProject.ProjectDetails.Prize.NoOfPrizes" /></b></td>
+        <td class="header"><bean:message key="editProject.ProjectDetails.Prize.Place" /></td>
+        <td class="header"><bean:message key="editProject.ProjectDetails.Prize.Amount" /></td>
+        <td class="header"><bean:message key="editProject.ProjectDetails.Prize.NoOfPrizes" /></td>
     </tr>
     <c:forEach items="${contestPrizes}" var="prize" varStatus="vs">
         <tr <c:if test="${vs.index % 2 eq 0}">class="light"</c:if> <c:if test="${vs.index % 2 eq 1}">class="dark"</c:if> >
@@ -48,12 +48,12 @@
 
 <table id="milestone-prizes-table" class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;display: none">
     <tr>
-        <td class="title" colspan="3"><bean:message key="editProject.ProjectDetails.ProjectPrizes" /></td>
+        <td class="title" colspan="3"><bean:message key="editProject.ProjectDetails.MilestonePrizes" /></td>
     </tr>
     <tr>
-        <td class="header"><b><bean:message key="editProject.ProjectDetails.Prize.Place" /></b></td>
-        <td class="header"><b><bean:message key="editProject.ProjectDetails.Prize.Amount" /></b></td>
-        <td class="header"><b><bean:message key="editProject.ProjectDetails.Prize.NoOfPrizes" /></b></td>
+        <td class="header"><bean:message key="editProject.ProjectDetails.Prize.Place" /></td>
+        <td class="header"><bean:message key="editProject.ProjectDetails.Prize.Amount" /></td>
+        <td class="header"><bean:message key="editProject.ProjectDetails.Prize.NoOfPrizes" /></td>
     </tr>
     <c:forEach items="${milestonePrizes}" var="prize" varStatus="vs">
         <tr <c:if test="${vs.index % 2 eq 0}">class="light"</c:if> <c:if test="${vs.index % 2 eq 1}">class="dark"</c:if> >

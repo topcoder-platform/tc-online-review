@@ -1422,7 +1422,7 @@
                         <c:if test="${not newProject}">
                             <table class="scorecard" id="status">
                                 <tr>
-                                    <td class="title"><b><bean:message key="editProject.Status.title" /></b></td>
+                                    <td class="title"><bean:message key="editProject.Status.title" /></td>
                                 </tr>
                                 <tr class="light">
                                     <td class="value">
