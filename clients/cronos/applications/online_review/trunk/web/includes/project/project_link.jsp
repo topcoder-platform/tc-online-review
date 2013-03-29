@@ -6,13 +6,14 @@
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 
+<c:if test="${not empty destProjectLinks}">
 <table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
 		<tr>
 			<td class="title" colspan="2"><bean:message key="viewProjectDetails.box.Links" /></td>
 		</tr>
 		<tr>
-			<td class="header"><b><bean:message key="viewProjectDetails.Link.LinkType" /></b></td>
-			<td class="header"><b><bean:message key="viewProjectDetails.Link.Project" /></b></td>
+			<td class="header"><bean:message key="viewProjectDetails.Link.LinkType" /></td>
+			<td class="header"><bean:message key="viewProjectDetails.Link.Project" /></td>
 			
     </tr>
     <c:forEach var="projectLink" items="${destProjectLinks}" varStatus="linkStatus">
@@ -37,16 +38,17 @@
 		<tr>
 			<td class="lastRowTD" colspan='2'><!-- @ --></td>
 		</tr>
-	</table><br />    	  
-</table>
+	</table><br />
+</c:if>
 
+<c:if test="${not empty srcProjectLinks}">
 <table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
 		<tr>
 			<td class="title" colspan="2"><bean:message key="viewProjectDetails.box.LinkTos" /></td>
 		</tr>
 		<tr>
-			<td class="header"><b><bean:message key="viewProjectDetails.LinkTo.Project" /></b></td>
-			<td class="header"><b><bean:message key="viewProjectDetails.LinkTo.LinkType" /></b></td>
+			<td class="header"><bean:message key="viewProjectDetails.LinkTo.Project" /></td>
+			<td class="header"><bean:message key="viewProjectDetails.LinkTo.LinkType" /></td>
     </tr>
     <c:forEach var="projectLink" items="${srcProjectLinks}" varStatus="linkStatus">
     <tr class='${(linkStatus.index % 2 == 0) ? "light" : "dark"}'>
@@ -59,5 +61,5 @@
 		<tr>
 			<td class="lastRowTD" colspan='2'><!-- @ --></td>
 		</tr>
-	</table><br />    	  
-</table>
+	</table><br />
+</c:if>

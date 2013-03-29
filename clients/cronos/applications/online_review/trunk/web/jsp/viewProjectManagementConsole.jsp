@@ -723,7 +723,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="title"><bean:message key="manageProject.ReviewPayments.ResourceRole"/></td>
-                                                    <td class="title"><bean:message key="manageProject.ReviewPayments.default"/></td>
+                                                    <td class="title"><bean:message key="manageProject.ReviewPayments.default"/> *</td>
                                                     <td class="title"><bean:message key="manageProject.ReviewPayments.FixedAmount"/></td>
                                                     <td class="title"><bean:message key="manageProject.ReviewPayments.percent"/></td>
                                                 </tr>
@@ -744,7 +744,7 @@
                                                         <c:if test="${not isSubmitReturn}">
                                                             <input type="radio" value="default" id="resource_payments_radio_default[${reviewPaymentsIdx}]" name="resource_payments_radio[${reviewPaymentsIdx}]" <c:if test="${reviewPaymentsRadio[reviewPaymentsIdx] eq 'default'}">checked="checked"</c:if> >
                                                         </c:if>
-                                                        <label for="resource_payments_radio_default[${reviewPaymentsIdx}]">${"$"}<c:choose><c:when test="${empty defaultPayments[roleId]}">0</c:when><c:otherwise>${orfn:displayPaymentAmt(pageContext.request, defaultPayments[roleId])}</c:otherwise></c:choose> *</label>
+                                                        <label for="resource_payments_radio_default[${reviewPaymentsIdx}]">${"$"}<c:choose><c:when test="${empty defaultPayments[roleId]}">0</c:when><c:otherwise>${orfn:displayPaymentAmt(pageContext.request, defaultPayments[roleId])}</c:otherwise></c:choose></label>
                                                     </td>
                                                     <td class="value" nowrap="nowrap">
                                                         <c:if test="${isSubmitReturn}">

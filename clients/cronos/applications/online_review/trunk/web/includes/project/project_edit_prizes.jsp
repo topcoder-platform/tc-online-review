@@ -24,12 +24,12 @@
 <c:set var="contestPrizesLength" value="${fn:length(projectForm.map['contest_prizes_amount'])}"/>
 <table id="contest-prizes-table" class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
     <tr>
-        <td class="title" colspan="4"><bean:message key="editProject.ProjectDetails.ProjectPrizes" /></td>
+        <td class="title" colspan="4"><bean:message key="editProject.ProjectDetails.ContestPrizes" /></td>
     </tr>
     <tr>
-        <td class="header"><b><bean:message key="editProject.ProjectDetails.Prize.Place" /></b></td>
-        <td class="header"><b><bean:message key="editProject.ProjectDetails.Prize.Amount" /></b></td>
-        <td class="header" colspan="2"><b><bean:message key="editProject.ProjectDetails.Prize.NoOfPrizes" /></b></td>
+        <td class="header"><bean:message key="editProject.ProjectDetails.Prize.Place" /></td>
+        <td class="header"><bean:message key="editProject.ProjectDetails.Prize.Amount" /></td>
+        <td class="header" colspan="2"><bean:message key="editProject.ProjectDetails.Prize.NoOfPrizes" /></td>
     </tr>
     <tr style="display:none;">
         <td class="value"></td>
@@ -46,7 +46,7 @@
             </select>
         </td>
         <td class="value">
-            <html:img srcKey="editProject.Prizes.DeletePrize.img" altKey="editProject.Prizes.DeletePrize.alt" onclick="removePrize(this)" style="cursor:hand;" />
+            <a href="#" onclick="removePrize(this);return false;"><html:img srcKey="editProject.Prizes.DeletePrize.img" altKey="editProject.Prizes.DeletePrize.alt"/></a>
         </td>
     </tr>
     <c:if test="${contestPrizesLength > 0}">
@@ -69,7 +69,7 @@
                 </td>
                 <td class="value">
                     <c:if test="${prizeIdx eq contestPrizesLength - 1 and canEditContestPrize}">
-                        <html:img srcKey="editProject.Prizes.DeletePrize.img" altKey="editProject.Prizes.DeletePrize.alt" onclick="removePrize(this)" style="cursor:hand;" />
+                        <a href="#" onclick="removePrize(this);return false;"><html:img srcKey="editProject.Prizes.DeletePrize.img" altKey="editProject.Prizes.DeletePrize.alt" /></a>
                     </c:if>
                 </td>
             </tr>
@@ -78,7 +78,7 @@
     <c:if test="${canEditContestPrize}">
         <tr <c:if test="${contestPrizesLength % 2 eq 0}">class="light"</c:if><c:if test="${contestPrizesLength % 2 eq 1}">class="dark"</c:if> >
             <td class="value" colspan="4">
-            <html:img srcKey="editProject.Prizes.AddPrize.img" altKey="editProject.Prizes.AddPrize.alt" onclick="addPrize(this, 'contest_prizes')" style="cursor:hand;" /></tr>
+            <a href="#" onclick="addPrize(this, 'contest_prizes');return false;"><html:img srcKey="editProject.Prizes.AddPrize.img" altKey="editProject.Prizes.AddPrize.alt" /></a>
         </td>
         </tr>
     </c:if>
@@ -89,12 +89,12 @@
 <c:set var="milestonePrizesLength" value="${fn:length(projectForm.map['milestone_prizes_amount'])}" />
 <table id="milestone-prizes-table" class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;display:none;">
     <tr>
-        <td class="title" colspan="4"><bean:message key="editProject.ProjectDetails.ProjectPrizes" /></td>
+        <td class="title" colspan="4"><bean:message key="editProject.ProjectDetails.MilestonePrizes" /></td>
     </tr>
     <tr>
-        <td class="header"><b><bean:message key="editProject.ProjectDetails.Prize.Place" /></b></td>
-        <td class="header"><b><bean:message key="editProject.ProjectDetails.Prize.Amount" /></b></td>
-        <td class="header" colspan="2"><b><bean:message key="editProject.ProjectDetails.Prize.NoOfPrizes" /></b></td>
+        <td class="header"><bean:message key="editProject.ProjectDetails.Prize.Place" /></td>
+        <td class="header"><bean:message key="editProject.ProjectDetails.Prize.Amount" /></td>
+        <td class="header" colspan="2"><bean:message key="editProject.ProjectDetails.Prize.NoOfPrizes" /></td>
     </tr>
     <tr style="display:none;">
         <td class="value"></td>
@@ -111,7 +111,7 @@
             </select>
         </td>
         <td class="value">
-            <html:img srcKey="editProject.Prizes.DeletePrize.img" altKey="editProject.Prizes.DeletePrize.alt" onclick="removePrize(this)" style="cursor:hand;" />
+            <a href="#" onclick="removePrize(this);return false;"><html:img srcKey="editProject.Prizes.DeletePrize.img" altKey="editProject.Prizes.DeletePrize.alt"/></a>
         </td>
     </tr>
     <c:if test="${milestonePrizesLength > 0}">
@@ -134,7 +134,7 @@
                 </td>
                 <td class="value">
                     <c:if test="${prizeIdx eq milestonePrizesLength - 1 and canEditMilestonePrize}">
-                        <html:img srcKey="editProject.Prizes.DeletePrize.img" altKey="editProject.Prizes.DeletePrize.alt" onclick="removePrize(this)" style="cursor:hand;" />
+                        <a href="#" onclick="removePrize(this);return false;"><html:img srcKey="editProject.Prizes.DeletePrize.img" altKey="editProject.Prizes.DeletePrize.alt"/></a>
                     </c:if>
                 </td>
             </tr>
@@ -143,7 +143,7 @@
     <c:if test="${canEditMilestonePrize}">
         <tr <c:if test="${milestonePrizesLength % 2 eq 0}">class="light"</c:if><c:if test="${milestonePrizesLength % 2 eq 1}">class="dark"</c:if> >
             <td class="value" colspan="4">
-            <html:img srcKey="editProject.Prizes.AddPrize.img" altKey="editProject.Prizes.AddPrize.alt" onclick="addPrize(this, 'milestone_prizes')" style="cursor:hand;" /></tr>
+            <a href="#" onclick="addPrize(this, 'milestone_prizes');return false;"><html:img srcKey="editProject.Prizes.AddPrize.img" altKey="editProject.Prizes.AddPrize.alt" /></a>
         </td>
         </tr>
     </c:if>
