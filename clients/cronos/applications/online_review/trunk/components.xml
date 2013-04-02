@@ -347,7 +347,7 @@
     <component
         name="review_application_management"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_application_management/trunk"
-        revision="227305"/>
+        revision="227349"/>
     
     <component
         name="review_assignment"
