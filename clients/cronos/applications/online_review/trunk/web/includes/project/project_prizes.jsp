@@ -42,7 +42,7 @@
         <tr class="light"><td class="value" nowrap="nowrap" colspan="3">There are no prizes.</td></tr>
     </c:if>
     <tr>
-        <td class="lastRowTD" colspan="4"><!-- @ --></td>
+        <td class="lastRowTD" colspan="3"><!-- @ --></td>
     </tr>
 </table>
 
@@ -66,7 +66,7 @@
         <tr class="light"><td class="value" nowrap="nowrap" colspan="3">There are no prizes.</td></tr>
     </c:if>
     <tr>
-        <td class="lastRowTD" colspan="4"><!-- @ --></td>
+        <td class="lastRowTD" colspan="3"><!-- @ --></td>
     </tr>
 </table><br/>
 
