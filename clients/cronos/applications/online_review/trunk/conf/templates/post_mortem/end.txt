@@ -17,5 +17,5 @@ You need to set the proper project status in the <a href\="%OR_LINK%">Online Rev
 </p>
 
 <p>
-Click <a href\="https\://www.topcoder.com/direct/dashboardNotifications">here</a> to change your notification settings.
+Click <a href\="https\://www.topcoder.com/direct/settings/notifications">here</a> to change your notification settings.
 </p>

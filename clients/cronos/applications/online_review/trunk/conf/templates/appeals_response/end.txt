@@ -33,5 +33,5 @@ The appeal process is now over.  The Post-Appeals Scores above are the final sco
 </p>
 
 <p>
-Click <a href\="https\://www.topcoder.com/direct/dashboardNotifications">here</a> to change your notification settings.
+Click <a href\="https\://www.topcoder.com/direct/settings/notifications">here</a> to change your notification settings.
 </p>
