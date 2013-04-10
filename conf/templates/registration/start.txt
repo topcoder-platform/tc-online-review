@@ -13,9 +13,9 @@ Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
 
 <p>
 Registration is now open for your competition.  Competitors will be able to view your competition and register to participate.  As questions are asked by the competitors, you will receive email notifications.  Return to the forum to respond to any questions.
-To make sure you are configured to receive notifications, please check your <a href\="https\://www.topcoder.com/direct/dashboardNotifications">Notification Settings</a>.
+To make sure you are configured to receive notifications, please check your <a href\="https\://www.topcoder.com/direct/direct/settings/notifications">Notification Settings</a>.
 </p>
 
 <p>
-Click <a href\="https\://www.topcoder.com/direct/dashboardNotifications">here</a> to change your notification settings.
+Click <a href\="https\://www.topcoder.com/direct/settings/notifications">here</a> to change your notification settings.
 </p>

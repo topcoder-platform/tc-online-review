@@ -23,5 +23,5 @@ Please return to <a href\="%DIRECT_CONTEST_LINK%">Cockpit</a> to review details.
 </p>
 
 <p>
-Click <a href\="https\://www.topcoder.com/direct/dashboardNotifications">here</a> to change your notification settings.
+Click <a href\="https\://www.topcoder.com/direct/settings/notifications">here</a> to change your notification settings.
 </p>

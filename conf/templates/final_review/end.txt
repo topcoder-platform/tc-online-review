@@ -27,5 +27,5 @@ To download the final deliverables, please return to <a href\="https\://www.topc
 </p>
 
 <p>
-Click <a href\="https\://www.topcoder.com/direct/dashboardNotifications">here</a> to change your notification settings.
+Click <a href\="https\://www.topcoder.com/direct/settings/notifications">here</a> to change your notification settings.
 </p>
