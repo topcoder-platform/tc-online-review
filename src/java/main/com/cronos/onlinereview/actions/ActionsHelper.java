@@ -205,7 +205,7 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  * </p>
  *
  * <p>
- * Version 1.9.1 (Milestone Support Assembly 1.0) Change notes:
+ * Version 1.9.1 (Checkpoint Support Assembly 1.0) Change notes:
  *   <ol>
  *     <li>Updated {@link #getProjectSubmissions} method to introduce new parameter
  *     for submission type.</li>
@@ -2041,9 +2041,9 @@ public class ActionsHelper {
 
             if (phaseName.equalsIgnoreCase(Constants.REGISTRATION_PHASE_NAME)
                 || phaseName.equalsIgnoreCase(Constants.SUBMISSION_PHASE_NAME)
-                || phaseName.equalsIgnoreCase(Constants.MILESTONE_SUBMISSION_PHASE_NAME)
-                || phaseName.equalsIgnoreCase(Constants.MILESTONE_SCREENING_PHASE_NAME)
-                || phaseName.equalsIgnoreCase(Constants.MILESTONE_REVIEW_PHASE_NAME)) {
+                || phaseName.equalsIgnoreCase(Constants.CHECKPOINT_SUBMISSION_PHASE_NAME)
+                || phaseName.equalsIgnoreCase(Constants.CHECKPOINT_SCREENING_PHASE_NAME)
+                || phaseName.equalsIgnoreCase(Constants.CHECKPOINT_REVIEW_PHASE_NAME)) {
                 if (prevPhase) {
                     return true;
                 }

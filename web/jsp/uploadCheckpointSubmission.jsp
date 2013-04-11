@@ -3,7 +3,7 @@
   - Version: 1.0
   - Copyright (C) 2005-2010 TopCoder Inc., All Rights Reserved.
   -
-  - Description: This page renders the form for uploading the milestone submission to project.
+  - Description: This page renders the form for uploading the checkpoint submission to project.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -16,7 +16,7 @@
 
 <head>
     <jsp:include page="/includes/project/project_title.jsp">
-        <jsp:param name="thirdLevelPageKey" value="uploadMilestoneSubmission.title" />
+        <jsp:param name="thirdLevelPageKey" value="uploadCheckpointSubmission.title" />
     </jsp:include>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
@@ -61,29 +61,29 @@
                     </div><br />
 
                     <html:errors />
-                    <html:form action="/actions/UploadMilestoneSubmission" method="POST" enctype="multipart/form-data">
-                        <html:hidden property="method" value="uploadMilestoneSubmission" />
+                    <html:form action="/actions/UploadCheckpointSubmission" method="POST" enctype="multipart/form-data">
+                        <html:hidden property="method" value="uploadCheckpointSubmission" />
                         <html:hidden property="postBack" value="y" />
                         <html:hidden property="pid" value="${project.id}" />
 
                         <table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
                             <tr>
                                 <td class="title">
-                                    <bean:message key="uploadMilestoneSubmission.box.UploadMilestoneSubmission"/>
+                                    <bean:message key="uploadCheckpointSubmission.box.UploadCheckpointSubmission"/>
                                 </td>
                             </tr>
                             <tr class="light">
                                 <td class="value">
-                                    <bean:message key="uploadMilestoneSubmission.HelpLine1" /><br /><br />
-                                    <bean:message key="uploadMilestoneSubmission.UploadMilestoneSubmission" />
+                                    <bean:message key="uploadCheckpointSubmission.HelpLine1" /><br /><br />
+                                    <bean:message key="uploadCheckpointSubmission.UploadCheckpointSubmission" />
                                     <html:file property="file" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
                                     <html:image srcKey="btnUpload.img" altKey="btnUpload.alt" border="0" style="vertical-align:bottom;" /><br /><br />
-                                    <bean:message key="uploadMilestoneSubmission.HelpLine2" />
-                                    <bean:message key="uploadMilestoneSubmission.HelpLine3" />
+                                    <bean:message key="uploadCheckpointSubmission.HelpLine2" />
+                                    <bean:message key="uploadCheckpointSubmission.HelpLine3" />
 
-                                    <a href="http://<%=ApplicationServer.SERVER_NAME%>/wiki/display/tc/Documentation+and+Submission+Guidelines"><bean:message key="uploadMilestoneSubmission.SampleSubmissionAndDocs" /></a>
+                                    <a href="http://<%=ApplicationServer.SERVER_NAME%>/wiki/display/tc/Documentation+and+Submission+Guidelines"><bean:message key="uploadCheckpointSubmission.SampleSubmissionAndDocs" /></a>
 
-                                    <bean:message key="uploadMilestoneSubmission.HelpLine4" />
+                                    <bean:message key="uploadCheckpointSubmission.HelpLine4" />
                                 </td>
                             </tr>
                             <tr>

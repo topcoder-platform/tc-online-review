@@ -50,8 +50,8 @@
 
             <form-property name="contest_prizes_amount" type="java.lang.String[]" />
             <form-property name="contest_prizes_num" type="java.lang.Integer[]" />
-            <form-property name="milestone_prizes_amount" type="java.lang.String[]" />
-            <form-property name="milestone_prizes_num" type="java.lang.Integer[]" />
+            <form-property name="checkpoint_prizes_amount" type="java.lang.String[]" />
+            <form-property name="checkpoint_prizes_num" type="java.lang.Integer[]" />
             
             <form-property name="resources_role" type="java.lang.Long[]" />
             <form-property name="resources_phase" type="java.lang.String[]" />
@@ -490,13 +490,13 @@
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
         </action>
 
-        <!-- "Upload Milestone Submission" action -->
-        <action path="/actions/UploadMilestoneSubmission" unknown="false"
+        <!-- "Upload Checkpoint Submission" action -->
+        <action path="/actions/UploadCheckpointSubmission" unknown="false"
                 type="com.cronos.onlinereview.actions.ProjectDetailsActions"
                 parameter="method" scope="request"
                 name="fileUploadForm"
-                input="/jsp/uploadMilestoneSubmission.jsp">
-            <forward name="displayPage" path="/jsp/uploadMilestoneSubmission.jsp" redirect="false"/>
+                input="/jsp/uploadCheckpointSubmission.jsp">
+            <forward name="displayPage" path="/jsp/uploadCheckpointSubmission.jsp" redirect="false"/>
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
 
@@ -514,8 +514,8 @@
             input="/jsp/viewProjectDetails.jsp">
         </action>
         
-        <!-- "Download Milestone Submission" action -->
-        <action path="/actions/DownloadMilestoneSubmission" unknown="false"
+        <!-- "Download Checkpoint Submission" action -->
+        <action path="/actions/DownloadCheckpointSubmission" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectDetailsActions"
             parameter="method" scope="request"
             input="/jsp/viewProjectDetails.jsp">
@@ -588,12 +588,12 @@
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
 
-        <!-- "Advance Failed Milestone Screening Submission" action -->
-        <action path="/actions/AdvanceFailedMilestoneScreeningSubmission" unknown="false"
+        <!-- "Advance Failed Checkpoint Screening Submission" action -->
+        <action path="/actions/AdvanceFailedCheckpointScreeningSubmission" unknown="false"
                 type="com.cronos.onlinereview.actions.ProjectDetailsActions"
                 parameter="method" scope="request"
-                input="/jsp/confirmAdvanceFailedMilestoneScreeningSubmission.jsp">
-            <forward name="displayPage" path="/jsp/confirmAdvanceFailedMilestoneScreeningSubmission.jsp" redirect="false"/>
+                input="/jsp/confirmAdvanceFailedCheckpointScreeningSubmission.jsp">
+            <forward name="displayPage" path="/jsp/confirmAdvanceFailedCheckpointScreeningSubmission.jsp" redirect="false"/>
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
 
@@ -648,18 +648,18 @@
             <forward name="success" path="/jsp/viewReview.jsp" redirect="false"/>
         </action>
         
-        <!-- "Create Milestone Screening" action -->
-        <action path="/actions/CreateMilestoneScreening" unknown="false"
+        <!-- "Create Checkpoint Screening" action -->
+        <action path="/actions/CreateCheckpointScreening" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
             name="reviewForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
-            <forward name="edit" path="/actions/EditMilestoneScreening.do?method=editMilestoneScreening" redirect="true"/>
+            <forward name="edit" path="/actions/EditCheckpointScreening.do?method=editCheckpointScreening" redirect="true"/>
         </action>
 
-        <!-- "Edit Milestone Screening" action -->
-        <action path="/actions/EditMilestoneScreening" unknown="false"
+        <!-- "Edit Checkpoint Screening" action -->
+        <action path="/actions/EditCheckpointScreening" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
             name="reviewForm"
@@ -667,8 +667,8 @@
             <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
         </action>
 
-        <!-- "Save Milestone Screening" action -->
-        <action path="/actions/SaveMilestoneScreening" unknown="false"
+        <!-- "Save Checkpoint Screening" action -->
+        <action path="/actions/SaveCheckpointScreening" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
             name="reviewForm"
@@ -677,8 +677,8 @@
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
 
-        <!-- "View Milestone Screening" action -->
-        <action path="/actions/ViewMilestoneScreening" unknown="false"
+        <!-- "View Checkpoint Screening" action -->
+        <action path="/actions/ViewCheckpointScreening" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
             name="reviewForm"
@@ -724,18 +724,18 @@
             <forward name="success" path="/jsp/viewReview.jsp" redirect="false"/>
         </action>
 
-        <!-- "Create Milestone Review" action -->
-        <action path="/actions/CreateMilestoneReview" unknown="false"
+        <!-- "Create Checkpoint Review" action -->
+        <action path="/actions/CreateCheckpointReview" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
             name="reviewForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
-            <forward name="edit" path="/actions/EditMilestoneReview.do?method=editMilestoneReview" redirect="true"/>
+            <forward name="edit" path="/actions/EditCheckpointReview.do?method=editCheckpointReview" redirect="true"/>
         </action>
 
         <!-- "Edit Review" action -->
-        <action path="/actions/EditMilestoneReview" unknown="false"
+        <action path="/actions/EditCheckpointReview" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
             name="reviewForm"
@@ -744,7 +744,7 @@
         </action>
 
         <!-- "Save Review" action -->
-        <action path="/actions/SaveMilestoneReview" unknown="false"
+        <action path="/actions/SaveCheckpointReview" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
             name="reviewForm"
@@ -754,7 +754,7 @@
         </action>
 
         <!-- "View Review" action -->
-        <action path="/actions/ViewMilestoneReview" unknown="false"
+        <action path="/actions/ViewCheckpointReview" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
             name="reviewForm"

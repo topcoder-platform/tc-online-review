@@ -8,21 +8,21 @@ import com.topcoder.management.project.ProjectManager;
 import com.topcoder.project.phases.Phase;
 
 /**
- * <p>A handle for <code>Milestone Screening</code> phase implementing the additional phase processing logic specific to
+ * <p>A handle for <code>Checkpoint Screening</code> phase implementing the additional phase processing logic specific to
  * <code>Online Review</code> application.</p>
  *
  * <p>
  * Version 1.1 (Online Review Replatforming Release 2) Change notes:
  *   <ol>
- *     <li>Update {@link #perform(Phase, String)} to populate milestone screener payments after the phase is closed.</li>
+ *     <li>Update {@link #perform(Phase, String)} to populate checkpoint screener payments after the phase is closed.</li>
  *     <li>This class is refactor to use <code>ScreeningResultNotification</code> to send screening result notification emails.</li>
  *   </ol>
  * </p>
  * 
  * @author isv, TCSASSEMBER
- * @version 1.1 (Milestone Support assembly)
+ * @version 1.1 (Checkpoint Support assembly)
  */
-public class PRMilestoneScreeningPhaseHandler extends MilestoneScreeningPhaseHandler {
+public class PRCheckpointScreeningPhaseHandler extends CheckpointScreeningPhaseHandler {
     
     /**
     * Used for pulling data to project_result table and filling payments.
@@ -37,25 +37,25 @@ public class PRMilestoneScreeningPhaseHandler extends MilestoneScreeningPhaseHan
     private final ScreeningResultNotification notification;
 
     /**
-     * <p>Constructs new <code>PRMilestoneScreeningPhaseHandler</code> instance. This implementation does nothing.</p>
+     * <p>Constructs new <code>PRCheckpointScreeningPhaseHandler</code> instance. This implementation does nothing.</p>
      *
      * @throws ConfigurationException if an unexpected error occurs while reading the configuration parameters.
      */
-    public PRMilestoneScreeningPhaseHandler() throws ConfigurationException {
+    public PRCheckpointScreeningPhaseHandler() throws ConfigurationException {
         super();
-        notification = new ScreeningResultNotification(DEFAULT_NAMESPACE, "Milestone Submission", "Milestone Screening", "Failed Milestone Screening");
+        notification = new ScreeningResultNotification(DEFAULT_NAMESPACE, "Checkpoint Submission", "Checkpoint Screening", "Failed Checkpoint Screening");
     }
 
     /**
-     * <p>Constructs new <code>PRMilestoneScreeningPhaseHandler</code> instance initialized based on parameters from
+     * <p>Constructs new <code>PRCheckpointScreeningPhaseHandler</code> instance initialized based on parameters from
      * specified configuration namespace.</p>
      *
      * @param namespace a <code>String</code> referencing the namespace for configuration parameters.
      * @throws ConfigurationException if an unexpected error occurs while reading the configuration parameters.
      */
-    public PRMilestoneScreeningPhaseHandler(String namespace) throws ConfigurationException {
+    public PRCheckpointScreeningPhaseHandler(String namespace) throws ConfigurationException {
         super(namespace);
-        notification = new ScreeningResultNotification(namespace, "Milestone Submission", "Milestone Screening", "Failed Milestone Screening");
+        notification = new ScreeningResultNotification(namespace, "Checkpoint Submission", "Checkpoint Screening", "Failed Checkpoint Screening");
     }
 
     /**
@@ -63,7 +63,7 @@ public class PRMilestoneScreeningPhaseHandler extends MilestoneScreeningPhaseHan
      *
      * @param phase    The input phase to check.
      * @param operator The operator that execute the phase.
-     * @throws PhaseNotSupportedException if the input phase type is not &quot;Milestone Screening&quot; type.
+     * @throws PhaseNotSupportedException if the input phase type is not &quot;Checkpoint Screening&quot; type.
      * @throws PhaseHandlingException if there is any error occurred while processing the phase.
      * @throws IllegalArgumentException if the input parameters is null or empty string.
      */
@@ -79,7 +79,7 @@ public class PRMilestoneScreeningPhaseHandler extends MilestoneScreeningPhaseHan
             try {
                 notification.sendEmailToSubmitters(projectManager.getProject(projectId));
             } catch (Exception e) {
-                throw new PhaseHandlingException("Failed to send email to submitters on Milestone Screening results", e);
+                throw new PhaseHandlingException("Failed to send email to submitters on Checkpoint Screening results", e);
             }
                 
             prHelper.populateReviewerPayments(projectId);

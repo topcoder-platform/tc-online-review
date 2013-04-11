@@ -44,7 +44,7 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
 import com.topcoder.util.file.templatesource.FileTemplateSource;
 
 /**
- * This class is used to send email notification for milestone screening result or screening result.
+ * This class is used to send email notification for checkpoint screening result or screening result.
  * 
  * @author TCSASSEMBER
  * @version 1.0 (Online Review Replatforming Release 2)

@@ -49,9 +49,9 @@ import com.topcoder.project.phases.Phase;
  *   </ol>
  * </p>
  * <p>
- * Version 1.4.1 (Milestone Support Assembly 1.0) Change notes:
+ * Version 1.4.1 (Checkpoint Support Assembly 1.0) Change notes:
  *   <ol>
- *     <li>Added support for <code>Milestone</code> phases.</li>
+ *     <li>Added support for <code>Checkpoint</code> phases.</li>
  *   </ol>
  * </p>
  *
@@ -346,11 +346,11 @@ public class PhaseGroup {
     private long screeningPhaseStatus;
 
     /**
-     * <p>A <code>long</code> referencing the current status of the <code>Milestone Screening</code> phase.</p>
+     * <p>A <code>long</code> referencing the current status of the <code>Checkpoint Screening</code> phase.</p>
      *
      * @since 1.4.3
      */
-    private long milestoneScreeningPhaseStatus;
+    private long checkpointScreeningPhaseStatus;
 
     /**
      * <p>A <code>long</code> referencing the current status of the <code>Approval</code> phase.</p>
@@ -395,54 +395,54 @@ public class PhaseGroup {
     private Resource specificationSubmitter;
 
     /**
-     * <p>A <code>Submission[]</code> providing the list of milestone submissions.</p>
+     * <p>A <code>Submission[]</code> providing the list of checkpoint submissions.</p>
      * 
      * @since 1.4
      */
-    private Submission[] milestoneSubmissions;
+    private Submission[] checkpointSubmissions;
 
     /**
-     * <p>A <code>Resource</code> providing the details on milestone screener.</p>
+     * <p>A <code>Resource</code> providing the details on checkpoint screener.</p>
      * 
      * @since 1.4
      */
-    private Resource milestoneScreener;
+    private Resource checkpointScreener;
 
     /**
-     * <p>A <code>Resource</code> providing the details on milestone reviewer.</p>
+     * <p>A <code>Resource</code> providing the details on checkpoint reviewer.</p>
      * 
      * @since 1.4
      */
-    private Resource milestoneReviewer;
+    private Resource checkpointReviewer;
 
     /**
-     * <p>A <code>Review[]</code> providing the list of milestone screening reviews.</p>
+     * <p>A <code>Review[]</code> providing the list of checkpoint screening reviews.</p>
      * 
      * @since 1.4
      */
-    private Review[] milestoneScreeningReviews;
+    private Review[] checkpointScreeningReviews;
 
     /**
-     * <p>A <code>Review[]</code> providing the list of milestone reviews.</p>
+     * <p>A <code>Review[]</code> providing the list of checkpoint reviews.</p>
      * 
      * @since 1.4
      */
-    private Review[] milestoneReviews;
+    private Review[] checkpointReviews;
 
     /**
-     * <p>A <code>Upload[][]</code> providing the list of past milestone submissions.</p>
+     * <p>A <code>Upload[][]</code> providing the list of past checkpoint submissions.</p>
      * 
      * @since 1.4
      */
-    private Upload[][] pastMilestoneSubmissions;
+    private Upload[][] pastCheckpointSubmissions;
 
     /**
-     * <p>A <code>boolean</code> providing the flag indicating if milestone review phase for project has finished or
+     * <p>A <code>boolean</code> providing the flag indicating if checkpoint review phase for project has finished or
      * not.</p>
      * 
      * @since 1.4
      */
-    private boolean milestoneReviewFinished;
+    private boolean checkpointReviewFinished;
 
     /**
      * Constructs a new instance of the <code>PhaseGroup</code> class setting all fields to their
@@ -1103,23 +1103,23 @@ public class PhaseGroup {
     }
 
     /**
-     * <p>Gets the current <code>Milestone Screening</code> phase status.</p>
+     * <p>Gets the current <code>Checkpoint Screening</code> phase status.</p>
      *
-     * @return a <code>long</code> referencing the current status of the <code>Milestone Screening</code> phase.
+     * @return a <code>long</code> referencing the current status of the <code>Checkpoint Screening</code> phase.
      * @since 1.4.3
      */
-    public long getMilestoneScreeningPhaseStatus() {
-        return milestoneScreeningPhaseStatus;
+    public long getCheckpointScreeningPhaseStatus() {
+        return checkpointScreeningPhaseStatus;
     }
 
     /**
-     * <p>Sets the current <code>Milestone Screening</code> phase status.</p>
+     * <p>Sets the current <code>Checkpoint Screening</code> phase status.</p>
      *
-     * @param milestoneScreeningPhaseStatus a <code>long</code> referencing the current status of the <code>Milestone Screening</code> phase.
+     * @param checkpointScreeningPhaseStatus a <code>long</code> referencing the current status of the <code>Checkpoint Screening</code> phase.
      * @since 1.4.3
      */
-    public void setMilestoneScreeningPhaseStatus(long milestoneScreeningPhaseStatus) {
-        this.milestoneScreeningPhaseStatus = milestoneScreeningPhaseStatus;
+    public void setCheckpointScreeningPhaseStatus(long checkpointScreeningPhaseStatus) {
+        this.checkpointScreeningPhaseStatus = checkpointScreeningPhaseStatus;
     }
 
     /**
@@ -1244,144 +1244,144 @@ public class PhaseGroup {
     }
     
     /**
-     * <p>Gets the list of milestone reviews..</p>
+     * <p>Gets the list of checkpoint reviews..</p>
      *
-     * @return a <code>Review[]</code> providing the list of milestone reviews..
+     * @return a <code>Review[]</code> providing the list of checkpoint reviews..
      * @since 1.4
      */
-    public Review[] getMilestoneReviews() {
-        return this.milestoneReviews;
+    public Review[] getCheckpointReviews() {
+        return this.checkpointReviews;
     }
 
     /**
-     * <p>Sets the list of milestone reviews..</p>
+     * <p>Sets the list of checkpoint reviews..</p>
      *
-     * @param milestoneReviews a <code>Review[]</code> providing the list of milestone reviews..
+     * @param checkpointReviews a <code>Review[]</code> providing the list of checkpoint reviews..
      * @since 1.4
      */
-    public void setMilestoneReviews(Review[] milestoneReviews) {
-        this.milestoneReviews = milestoneReviews;
+    public void setCheckpointReviews(Review[] checkpointReviews) {
+        this.checkpointReviews = checkpointReviews;
     }
 
     /**
-     * <p>Gets the list of milestone screening reviews.</p>
+     * <p>Gets the list of checkpoint screening reviews.</p>
      *
-     * @return a <code>Review[]</code> providing the list of milestone screening reviews.
+     * @return a <code>Review[]</code> providing the list of checkpoint screening reviews.
      * @since 1.4
      */
-    public Review[] getMilestoneScreeningReviews() {
-        return this.milestoneScreeningReviews;
+    public Review[] getCheckpointScreeningReviews() {
+        return this.checkpointScreeningReviews;
     }
 
     /**
-     * <p>Sets the list of milestone screening reviews.</p>
+     * <p>Sets the list of checkpoint screening reviews.</p>
      *
-     * @param milestoneScreeningReviews a <code>Review[]</code> providing the list of milestone screening reviews.
+     * @param checkpointScreeningReviews a <code>Review[]</code> providing the list of checkpoint screening reviews.
      * @since 1.4
      */
-    public void setMilestoneScreeningReviews(Review[] milestoneScreeningReviews) {
-        this.milestoneScreeningReviews = milestoneScreeningReviews;
+    public void setCheckpointScreeningReviews(Review[] checkpointScreeningReviews) {
+        this.checkpointScreeningReviews = checkpointScreeningReviews;
     }
 
     /**
-     * <p>Gets the details on milestone reviewer.</p>
+     * <p>Gets the details on checkpoint reviewer.</p>
      *
-     * @return a <code>Resource</code> providing the details on milestone reviewer.
+     * @return a <code>Resource</code> providing the details on checkpoint reviewer.
      * @since 1.4
      */
-    public Resource getMilestoneReviewer() {
-        return this.milestoneReviewer;
+    public Resource getCheckpointReviewer() {
+        return this.checkpointReviewer;
     }
 
     /**
-     * <p>Sets the details on milestone reviewer.</p>
+     * <p>Sets the details on checkpoint reviewer.</p>
      *
-     * @param milestoneReviewer a <code>Resource</code> providing the details on milestone reviewer.
+     * @param checkpointReviewer a <code>Resource</code> providing the details on checkpoint reviewer.
      * @since 1.4
      */
-    public void setMilestoneReviewer(Resource milestoneReviewer) {
-        this.milestoneReviewer = milestoneReviewer;
+    public void setCheckpointReviewer(Resource checkpointReviewer) {
+        this.checkpointReviewer = checkpointReviewer;
     }
 
     /**
-     * <p>Gets the details on milestone screener.</p>
+     * <p>Gets the details on checkpoint screener.</p>
      *
-     * @return a <code>Resource</code> providing the details on milestone screener.
+     * @return a <code>Resource</code> providing the details on checkpoint screener.
      * @since 1.4
      */
-    public Resource getMilestoneScreener() {
-        return this.milestoneScreener;
+    public Resource getCheckpointScreener() {
+        return this.checkpointScreener;
     }
 
     /**
-     * <p>Sets the details on milestone screener.</p>
+     * <p>Sets the details on checkpoint screener.</p>
      *
-     * @param milestoneScreener a <code>Resource</code> providing the details on milestone screener.
+     * @param checkpointScreener a <code>Resource</code> providing the details on checkpoint screener.
      * @since 1.4
      */
-    public void setMilestoneScreener(Resource milestoneScreener) {
-        this.milestoneScreener = milestoneScreener;
+    public void setCheckpointScreener(Resource checkpointScreener) {
+        this.checkpointScreener = checkpointScreener;
     }
 
     /**
-     * <p>Gets the list of milestone submissions.</p>
+     * <p>Gets the list of checkpoint submissions.</p>
      *
-     * @return a <code>Submission[]</code> providing the list of milestone submissions.
+     * @return a <code>Submission[]</code> providing the list of checkpoint submissions.
      * @since 1.4
      */
-    public Submission[] getMilestoneSubmissions() {
-        return this.milestoneSubmissions;
+    public Submission[] getCheckpointSubmissions() {
+        return this.checkpointSubmissions;
     }
 
     /**
-     * <p>Sets the list of milestone submissions.</p>
+     * <p>Sets the list of checkpoint submissions.</p>
      *
-     * @param milestoneSubmissions a <code>Submission[]</code> providing the list of milestone submissions.
+     * @param checkpointSubmissions a <code>Submission[]</code> providing the list of checkpoint submissions.
      * @since 1.4
      */
-    public void setMilestoneSubmissions(Submission[] milestoneSubmissions) {
-        this.milestoneSubmissions = milestoneSubmissions;
+    public void setCheckpointSubmissions(Submission[] checkpointSubmissions) {
+        this.checkpointSubmissions = checkpointSubmissions;
     }
 
     /**
-     * <p>Gets the list of past milestone submissions.</p>
+     * <p>Gets the list of past checkpoint submissions.</p>
      *
-     * @return a <code>Upload[][]</code> providing the list of past milestone submissions.
+     * @return a <code>Upload[][]</code> providing the list of past checkpoint submissions.
      * @since 1.4
      */
-    public Upload[][] getPastMilestoneSubmissions() {
-        return this.pastMilestoneSubmissions;
+    public Upload[][] getPastCheckpointSubmissions() {
+        return this.pastCheckpointSubmissions;
     }
 
     /**
-     * <p>Sets the list of past milestone submissions.</p>
+     * <p>Sets the list of past checkpoint submissions.</p>
      *
-     * @param pastMilestoneSubmissions a <code>Upload[][]</code> providing the list of past milestone submissions.
+     * @param pastCheckpointSubmissions a <code>Upload[][]</code> providing the list of past checkpoint submissions.
      * @since 1.4
      */
-    public void setPastMilestoneSubmissions(Upload[][] pastMilestoneSubmissions) {
-        this.pastMilestoneSubmissions = pastMilestoneSubmissions;
+    public void setPastCheckpointSubmissions(Upload[][] pastCheckpointSubmissions) {
+        this.pastCheckpointSubmissions = pastCheckpointSubmissions;
     }
 
     /**
-     * <p>Gets the flag indicating if milestone review phase for project has finished or not.</p>
+     * <p>Gets the flag indicating if checkpoint review phase for project has finished or not.</p>
      *
-     * @return a <code>boolean</code> providing the flag indicating if milestone review phase for project has finished
+     * @return a <code>boolean</code> providing the flag indicating if checkpoint review phase for project has finished
      *         or not.
      * @since 1.4
      */
-    public boolean getMilestoneReviewFinished() {
-        return this.milestoneReviewFinished;
+    public boolean getCheckpointReviewFinished() {
+        return this.checkpointReviewFinished;
     }
 
     /**
-     * <p>Sets the flag indicating if milestone review phase for project has finished or not.</p>
+     * <p>Sets the flag indicating if checkpoint review phase for project has finished or not.</p>
      *
-     * @param milestoneReviewFinished a <code>boolean</code> providing the flag indicating if milestone review phase for
+     * @param checkpointReviewFinished a <code>boolean</code> providing the flag indicating if checkpoint review phase for
      *                                project has finished or not.
      * @since 1.4
      */
-    public void setMilestoneReviewFinished(boolean milestoneReviewFinished) {
-        this.milestoneReviewFinished = milestoneReviewFinished;
+    public void setCheckpointReviewFinished(boolean checkpointReviewFinished) {
+        this.checkpointReviewFinished = checkpointReviewFinished;
     }
 }

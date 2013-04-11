@@ -8,7 +8,7 @@
   - Version 1.1 (Impersonation Login Release assembly) changes: Updated link for "Back" button to refer to
   - "View Project Details" screen.
   -
-  - Version 1.2 (Milestone Support assembly) changes: Added support for Milestone phases.
+  - Version 1.2 (Checkpoint Support assembly) changes: Added support for Checkpoint phases.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>

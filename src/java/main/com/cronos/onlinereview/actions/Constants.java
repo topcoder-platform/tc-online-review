@@ -62,14 +62,14 @@ package com.cronos.onlinereview.actions;
  * </p>
  *
  * <p>
- * Version 1.6.1 (Milestone Support Assembly 1.0) Change notes:
+ * Version 1.6.1 (Checkpoint Support Assembly 1.0) Change notes:
  *   <ol>
- *     <li>Added {@link #MILESTONE_SCREENER_ROLE_NAME} constant.</li>
- *     <li>Added {@link #MILESTONE_REVIEWER_ROLE_NAME} constant.</li>
- *     <li>Added {@link #MILESTONE_SUBMISSION_PHASE_NAME} constant.</li>
- *     <li>Added {@link #MILESTONE_SCREENING_PHASE_NAME} constant.</li>
- *     <li>Added {@link #MILESTONE_REVIEW_PHASE_NAME} constant.</li>
- *     <li>Added {@link #VIEW_SCREENER_MILESTONE_SUBMISSION_PERM_NAME} constant and other constants for Milestone.</li>
+ *     <li>Added {@link #CHECKPOINT_SCREENER_ROLE_NAME} constant.</li>
+ *     <li>Added {@link #CHECKPOINT_REVIEWER_ROLE_NAME} constant.</li>
+ *     <li>Added {@link #CHECKPOINT_SUBMISSION_PHASE_NAME} constant.</li>
+ *     <li>Added {@link #CHECKPOINT_SCREENING_PHASE_NAME} constant.</li>
+ *     <li>Added {@link #CHECKPOINT_REVIEW_PHASE_NAME} constant.</li>
+ *     <li>Added {@link #VIEW_SCREENER_CHECKPOINT_SUBMISSION_PERM_NAME} constant and other constants for Checkpoint.</li>
  *   </ol>
  * </p>
  *
@@ -120,7 +120,7 @@ package com.cronos.onlinereview.actions;
  *     <li>Added {@link #ACTIVE_PROJECT_STATUS_NAME} constant.</li>
  *     <li>Added {@link #ACTIVE_SUBMISSION_STATUS_NAME} constant.</li>
  *     <li>Added {@link #FAILED_SCREENING_SUBMISSION_STATUS_NAME} constant.</li>
- *     <li>Added {@link #CANNOT_OPEN_PHASE_STATUS_CODE} constant and other constants for Milestone.</li>
+ *     <li>Added {@link #CANNOT_OPEN_PHASE_STATUS_CODE} constant and other constants for Checkpoint.</li>
  *   </ol>
  * </p>
  *
@@ -137,9 +137,9 @@ package com.cronos.onlinereview.actions;
  *   <ol>
  *     <li>Added {@link #REOPEN_REVIEW_SCORECARD_PERM_NAME} constant to represent the name
  *     of Reopen Scorecard permission.</li>
- *     <li>Added {@link #FAILED_MILESTONE_SCREENING_SUBMISSION_STATUS_NAME} constant to represent the name
- *     of "Failed Milestone Screening" submission status.</li>
- *     <li>Added {@link #MILESTONE_PRIZE_TYPE_NAME} constant to represent the name of the milestone prize type.</li>
+ *     <li>Added {@link #FAILED_CHECKPOINT_SCREENING_SUBMISSION_STATUS_NAME} constant to represent the name
+ *     of "Failed Checkpopint Screening" submission status.</li>
+ *     <li>Added {@link #CHECKPOINT_PRIZE_TYPE_NAME} constant to represent the name of the checkpoint prize type.</li>
  *   </ol>
  * </p>
  *
@@ -372,25 +372,25 @@ public class Constants {
     public static final String COPILOT_ROLE_NAME = "Copilot";
 
     /**
-     * <p>A <code>String</code> providing the name for the <code>Milestone Submitter</code> resource role.</p>
+     * <p>A <code>String</code> providing the name for the <code>Checkpoint Submitter</code> resource role.</p>
      *
      * @since 1.6.1
      */
-//    public static final String MILESTONE_SUBMITTER_ROLE_NAME = "Milestone Submitter";
+//    public static final String CHECKPOINT_SUBMITTER_ROLE_NAME = "Checkpoint Submitter";
 
     /**
-     * <p>A <code>String</code> providing the name for the <code>Milestone Screener</code> resource role.</p>
+     * <p>A <code>String</code> providing the name for the <code>Checkpoint Screener</code> resource role.</p>
      *
      * @since 1.6.1
      */
-    public static final String MILESTONE_SCREENER_ROLE_NAME = "Milestone Screener";
+    public static final String CHECKPOINT_SCREENER_ROLE_NAME = "Checkpoint Screener";
 
     /**
-     * <p>A <code>String</code> providing the name for the <code>Milestone Reviewer</code> resource role.</p>
+     * <p>A <code>String</code> providing the name for the <code>Checkpoint Reviewer</code> resource role.</p>
      *
      * @since 1.6.1
      */
-    public static final String MILESTONE_REVIEWER_ROLE_NAME = "Milestone Reviewer";
+    public static final String CHECKPOINT_REVIEWER_ROLE_NAME = "Checkpoint Reviewer";
 
 
     /**
@@ -505,11 +505,11 @@ public class Constants {
     public static final String PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME = "Perform Specification Submission";
 
     /**
-     * <p>A <code>String</code> providing the name for <code>Perform Milestone Submission</code> permission.</p>
+     * <p>A <code>String</code> providing the name for <code>Perform Checkpoint Submission</code> permission.</p>
      *
      * @since 1.6.1
      */
-    public static final String PERFORM_MILESTONE_SUBMISSION_PERM_NAME = "Perform Milestone Submission";
+    public static final String PERFORM_CHECKPOINT_SUBMISSION_PERM_NAME = "Perform Checkpoint Submission";
 
     /**
      * <p>A <code>String</code> providing the name for <code>Perform Specification Review</code> permission.</p>
@@ -532,11 +532,11 @@ public class Constants {
     public static final String VIEW_ALL_SPECIFICATION_SUBMISSIONS_PERM_NAME = "View All Specification Submissions";
 
     /**
-     * <p>A <code>String</code> providing the name for <code>View All Milestone Submissions</code> permission.</p>
+     * <p>A <code>String</code> providing the name for <code>View All Checkpoint Submissions</code> permission.</p>
      *
      * @since 1.6.1
      */
-    public static final String VIEW_ALL_MILESTONE_SUBMISSIONS_PERM_NAME = "View All Milestone Submissions";
+    public static final String VIEW_ALL_CHECKPOINT_SUBMISSIONS_PERM_NAME = "View All Checkpoint Submissions";
 
     /**
      * This member variable is a string constant that defines the name of the View My Submissions
@@ -552,11 +552,11 @@ public class Constants {
     public static final String VIEW_MY_SPECIFICATION_SUBMISSIONS_PERM_NAME = "View My Specification Submissions";
 
     /**
-     * <p>A <code>String</code> providing the name for <code>View My Milestone Submissions</code> permission.</p>
+     * <p>A <code>String</code> providing the name for <code>View My Checkpoint Submissions</code> permission.</p>
      *
      * @since 1.6.1
      */
-    public static final String VIEW_MY_MILESTONE_SUBMISSIONS_PERM_NAME = "View My Milestone Submissions";
+    public static final String VIEW_MY_CHECKPOINT_SUBMISSIONS_PERM_NAME = "View My Checkpoint Submissions";
 
     /**
      * This member variable is a string constant that defines the name of the
@@ -565,11 +565,11 @@ public class Constants {
     public static final String VIEW_SCREENER_SUBM_PERM_NAME = "View Screener Submission";
 
     /**
-     * <p>A <code>String</code> providing the name for <code>View Screener Milestone Submission</code> permission.</p>
+     * <p>A <code>String</code> providing the name for <code>View Screener Checkpoint Submission</code> permission.</p>
      *
      * @since 1.6.1
      */
-    public static final String VIEW_SCREENER_MILESTONE_SUBMISSION_PERM_NAME = "View Screener Milestone Submission";
+    public static final String VIEW_SCREENER_CHECKPOINT_SUBMISSION_PERM_NAME = "View Screener Checkpoint Submission";
 
     /**
      * This member variable is a string constant that defines the name of the
@@ -587,22 +587,22 @@ public class Constants {
         = "View Most Recent Specification Submissions";
 
     /**
-     * <p>A <code>String</code> providing the name for <code>View Most Recent Milestone Submissions</code> permission.
+     * <p>A <code>String</code> providing the name for <code>View Most Recent Checkpoint Submissions</code> permission.
      * </p>
      *
      * @since 1.6.1
      */
-    public static final String VIEW_RECENT_MILESTONE_SUBMISSIONS_PERM_NAME
-        = "View Most Recent Milestone Submissions";
+    public static final String VIEW_RECENT_CHECKPOINT_SUBMISSIONS_PERM_NAME
+        = "View Most Recent Checkpoint Submissions";
 
     /**
-     * <p>A <code>String</code> providing the name for <code>View Most Recent Milestone Submissions After Review</code>
+     * <p>A <code>String</code> providing the name for <code>View Most Recent Checkpoint Submissions After Review</code>
      * permission.</p>
      *
      * @since 1.6.1
      */
-    public static final String VIEW_RECENT_MILESTONE_SUBMISSIONS_AFTER_REVIEW_PERM_NAME
-        = "View Most Recent Milestone Submissions After Review";
+    public static final String VIEW_RECENT_CHECKPOINT_SUBMISSIONS_AFTER_REVIEW_PERM_NAME
+        = "View Most Recent Checkpoint Submissions After Review";
 
     /**
      * This member variable is a string constant that defines the name of the
@@ -611,11 +611,11 @@ public class Constants {
     public static final String VIEW_WINNING_SUBM_PERM_NAME = "View Winning Submission";
     
     /**
-     * <p>A <code>String</code> providing the name for <code>View Winning Milestone Submission</code> permission.</p>
+     * <p>A <code>String</code> providing the name for <code>View Winning Checkpoint Submission</code> permission.</p>
      *
      * @since 1.6.1
      */
-    public static final String VIEW_WINNING_MILESTONE_SUBMISSION_PERM_NAME = "View Winning Milestone Submission";
+    public static final String VIEW_WINNING_CHECKPOINT_SUBMISSION_PERM_NAME = "View Winning Checkpoint Submission";
 
     /**
      * This member variable is a string constant that defines the name of the
@@ -624,11 +624,11 @@ public class Constants {
     public static final String DOWNLOAD_CUSTOM_SUBM_PERM_NAME = "Download Custom Submission";
     
     /**
-     * <p>A <code>String</code> providing the name for <code>Download Custom Milestone Submission</code> permission.</p>
+     * <p>A <code>String</code> providing the name for <code>Download Custom Checkpoint Submission</code> permission.</p>
      *
      * @since 1.6.1
      */
-    public static final String DOWNLOAD_CUSTOM_MILESTONE_SUBMISSION_PERM_NAME = "Download Custom Milestone Submission";
+    public static final String DOWNLOAD_CUSTOM_CHECKPOINT_SUBMISSION_PERM_NAME = "Download Custom Checkpoint Submission";
 
     /**
      * This member variable is a string constant that defines the name of the
@@ -649,11 +649,11 @@ public class Constants {
     public static final String PERFORM_SCREENING_PERM_NAME = "Perform Screening";
     
     /**
-     * <p>A <code>String</code> providing the name for <code>Perform Milestone Screening</code> permission.</p>
+     * <p>A <code>String</code> providing the name for <code>Perform Checkpoint Screening</code> permission.</p>
      *
      * @since 1.6.1
      */
-    public static final String PERFORM_MILESTONE_SCREENING_PERM_NAME = "Perform Milestone Screening";
+    public static final String PERFORM_CHECKPOINT_SCREENING_PERM_NAME = "Perform Checkpoint Screening";
 
     /**
      * This member variable is a string constant that defines the name of the View Screening
@@ -662,18 +662,18 @@ public class Constants {
     public static final String VIEW_SCREENING_PERM_NAME = "View Screening";
     
     /**
-     * <p>A <code>String</code> providing the name for <code>View Milestone Screening</code> permission.</p>
+     * <p>A <code>String</code> providing the name for <code>View Checkpoint Screening</code> permission.</p>
      *
      * @since 1.6.1
      */
-    public static final String VIEW_MILESTONE_SCREENING_PERM_NAME = "View Milestone Screening";
+    public static final String VIEW_CHECKPOINT_SCREENING_PERM_NAME = "View Checkpoint Screening";
     
     /**
-     * <p>A <code>String</code> providing the name for <code>View Milestone Review</code> permission.</p>
+     * <p>A <code>String</code> providing the name for <code>View Checkpoint Review</code> permission.</p>
      *
      * @since 1.6.1
      */
-    public static final String VIEW_MILESTONE_REVIEW_PERM_NAME = "View Milestone Review";
+    public static final String VIEW_CHECKPOINT_REVIEW_PERM_NAME = "View Checkpoint Review";
 
     /**
      * This member variable is a string constant that defines the name of the Perform Review
@@ -682,11 +682,11 @@ public class Constants {
     public static final String PERFORM_REVIEW_PERM_NAME = "Perform Review";
 
     /**
-     * <p>A <code>String</code> providing the name for <code>View Milestone Review</code> permission.</p>
+     * <p>A <code>String</code> providing the name for <code>View Checkpoint Review</code> permission.</p>
      *
      * @since 1.6.1
      */
-    public static final String PERFORM_MILESTONE_REVIEW_PERM_NAME = "Perform Milestone Review";
+    public static final String PERFORM_CHECKPOINT_REVIEW_PERM_NAME = "Perform Checkpoint Review";
 
     /**
      * This member variable is a string constant that defines the name of the Upload Test Cases
@@ -1002,25 +1002,25 @@ public class Constants {
     public static final String SPECIFICATION_REVIEW_PHASE_NAME = "Specification Review";
 
     /**
-     * <p>A <code>String</code> providing the name for <code>Milestone Submission</code> phase.</p>
+     * <p>A <code>String</code> providing the name for <code>Checkpoint Submission</code> phase.</p>
      *
      * @since 1.6.1
      */
-    public static final String MILESTONE_SUBMISSION_PHASE_NAME = "Milestone Submission";
+    public static final String CHECKPOINT_SUBMISSION_PHASE_NAME = "Checkpoint Submission";
 
     /**
-     * <p>A <code>String</code> providing the name for <code>Milestone Screening</code> phase.</p>
+     * <p>A <code>String</code> providing the name for <code>Checkpoint Screening</code> phase.</p>
      *
      * @since 1.6.1
      */
-    public static final String MILESTONE_SCREENING_PHASE_NAME = "Milestone Screening";
+    public static final String CHECKPOINT_SCREENING_PHASE_NAME = "Checkpoint Screening";
 
     /**
-     * <p>A <code>String</code> providing the name for <code>Milestone Review</code> phase.</p>
+     * <p>A <code>String</code> providing the name for <code>Checkpoint Review</code> phase.</p>
      *
      * @since 1.6.1
      */
-    public static final String MILESTONE_REVIEW_PHASE_NAME = "Milestone Review";
+    public static final String CHECKPOINT_REVIEW_PHASE_NAME = "Checkpoint Review";
 
 
     // ------------------------------------------------------------------- Phase Status names -----
@@ -1088,11 +1088,11 @@ public class Constants {
     public static final String SPEC_REVIEW_APP_FUNC = "SPEC_REVIEW";
     
     /**
-     * <p>A <code>String</code> providing the logical name for phase group for <code>Milestone</code> phases.</p>
+     * <p>A <code>String</code> providing the logical name for phase group for <code>Checkpoint</code> phases.</p>
      *
      * @since 1.6.1
      */
-    public static final String MILESTONE_APP_FUNC = "MILESTONE";
+    public static final String CHECKPOINT_APP_FUNC = "CHECKPOINT";
 
     // -------------------------------------------------------------------- Deliverable names -----
 
@@ -1110,25 +1110,25 @@ public class Constants {
     public static final String SPECIFICATION_SUBMISSION_DELIVERABLE_NAME = "Specification Submission";
 
     /**
-     * <p>A <code>String</code> providing the name for <code>Milestone Submission</code> deliverable.</p>
+     * <p>A <code>String</code> providing the name for <code>Checkpoint Submission</code> deliverable.</p>
      *
      * @since 1.6.1
      */
-    public static final String MILESTONE_SUBMISSION_DELIVERABLE_NAME = "Milestone Submission";
+    public static final String CHECKPOINT_SUBMISSION_DELIVERABLE_NAME = "Checkpoint Submission";
 
     /**
-     * <p>A <code>String</code> providing the name for <code>Milestone Screening Scorecard</code> deliverable.</p>
+     * <p>A <code>String</code> providing the name for <code>Checkpoint Screening Scorecard</code> deliverable.</p>
      *
      * @since 1.6.1
      */
-    public static final String MILESTONE_SCREENING_DELIVERABLE_NAME = "Milestone Screening Scorecard";
+    public static final String CHECKPOINT_SCREENING_DELIVERABLE_NAME = "Checkpoint Screening Scorecard";
 
     /**
-     * <p>A <code>String</code> providing the name for <code>Milestone Review Scorecard</code> deliverable.</p>
+     * <p>A <code>String</code> providing the name for <code>Checkpoint Review Scorecard</code> deliverable.</p>
      *
      * @since 1.6.1
      */
-    public static final String MILESTONE_REVIEW_DELIVERABLE_NAME = "Milestone Review Scorecard";
+    public static final String CHECKPOINT_REVIEW_DELIVERABLE_NAME = "Checkpoint Review Scorecard";
 
     /**
      * <p>A <code>String</code> providing the name for <code>Specification Review</code> deliverable.</p>
@@ -1339,11 +1339,11 @@ public class Constants {
     public static final String FAILED_SCREENING_SUBMISSION_STATUS_NAME = "Failed Screening";
 
     /**
-     * The constant for the name of the "Failed Milestone Screening" submission status.
+     * The constant for the name of the "Failed Checkpoint Screening" submission status.
      *
      * @since 1.9.1
      */
-    public static final String FAILED_MILESTONE_SCREENING_SUBMISSION_STATUS_NAME = "Failed Milestone Screening";
+    public static final String FAILED_CHECKPOINT_SCREENING_SUBMISSION_STATUS_NAME = "Failed Checkpoint Screening";
 
     // ----------------------------------------------------------------- Submission type names -----
     
@@ -1362,11 +1362,11 @@ public class Constants {
     public static final String SPECIFICATION_SUBMISSION_TYPE_NAME = "Specification Submission";
 
     /**
-     * The constant for the name of the "Milestone" submission type.
+     * The constant for the name of the "Checkpoint" submission type.
      * 
      * @since 1.8.2
      */
-    public static final String MILESTONE_SUBMISSION_TYPE_NAME = "Milestone Submission";
+    public static final String CHECKPOINT_SUBMISSION_TYPE_NAME = "Checkpoint Submission";
 
     // ----------------------------------------------------------------- Late Deliverable type names -----
 
@@ -1401,18 +1401,18 @@ public class Constants {
     public static final String CONTEST_PRIZE_TYPE_NAME = "Contest Prize";
 
     /**
-     * The constant for the milestone prize type.
+     * The constant for the checkpoint prize type.
      *
      * @since 1.9.1
      */
-    public static final String MILESTONE_PRIZE_TYPE_NAME = "Milestone Prize";
+    public static final String CHECKPOINT_PRIZE_TYPE_NAME = "Checkpoint Prize";
     
-	/**
- 	 * <p>A <code>String</code> providing the path to configuration file for Config Manager.</p>
- 	 * 
- 	 * @since 1.8.3
- 	 */
-	public static final String CONFIG_MANAGER_FILE = "com/topcoder/util/config/ConfigManager.properties";
+    /**
+     * <p>A <code>String</code> providing the path to configuration file for Config Manager.</p>
+     * 
+     * @since 1.8.3
+    */
+    public static final String CONFIG_MANAGER_FILE = "com/topcoder/util/config/ConfigManager.properties";
 
     /**
      * <p>A <code>String</code> providing the configuration namespace for User Terms Of Use DAO.</p>

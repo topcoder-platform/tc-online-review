@@ -244,10 +244,10 @@ function validate_prizes_amount(table, prefix, msgPrefix, thisForm, msgList) {
 function validate_prizes(thisForm, msgList) {
     var tot = validate_prizes_amount(document.getElementById("contest-prizes-table"), "contest_prizes", "Contest Prize", thisForm, msgList);
     var contestPrizesValid = tot != -1;
-    var milestonePrizesValid = validate_prizes_amount(document.getElementById("milestone-prizes-table"), "milestone_prizes", "Milestone Prize", thisForm, msgList) != -1;
-    if (!contestPrizesValid && milestonePrizesValid) showPrizeTab('contest-prizes-table', document.getElementById("contest-prizes-link"));
-    if (contestPrizesValid && !milestonePrizesValid) showPrizeTab('milestone-prizes-table', document.getElementById("milestone-prizes-link"));
-    return contestPrizesValid && milestonePrizesValid;
+    var checkpointPrizesValid = validate_prizes_amount(document.getElementById("checkpoint-prizes-table"), "checkpoint_prizes", "Checkpoint Prize", thisForm, msgList) != -1;
+    if (!contestPrizesValid && checkpointPrizesValid) showPrizeTab('contest-prizes-table', document.getElementById("contest-prizes-link"));
+    if (contestPrizesValid && !checkpointPrizesValid) showPrizeTab('checkpoint-prizes-table', document.getElementById("checkpoint-prizes-link"));
+    return contestPrizesValid && checkpointPrizesValid;
 }
 
 /**
@@ -567,7 +567,7 @@ function validate_form(thisForm, popup) {
         alert("There have been validation errors:\n\n* " + msgList.join(';\n* ') + ".");
     if (msgList.length == 0) {
         disableSelect("contest_prizes_num[", false, canEditContestPrize);
-        disableSelect("milestone_prizes_num[", false, canEditMilestonePrize);
+        disableSelect("checkpoint_prizes_num[", false, canEditCheckpointPrize);
     }
     return msgList.length == 0;
 }

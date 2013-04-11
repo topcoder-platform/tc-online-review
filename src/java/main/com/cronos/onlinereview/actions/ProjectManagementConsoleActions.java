@@ -340,11 +340,11 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         if (ActionsHelper.findPhaseByTypeName(phases, Constants.SPECIFICATION_REVIEW_PHASE_NAME) != null) {
             roleNames.add(Constants.SPECIFICATION_REVIEWER_ROLE_NAME);
         }
-        if (ActionsHelper.findPhaseByTypeName(phases, Constants.MILESTONE_SCREENING_PHASE_NAME) != null) {
-            roleNames.add(Constants.MILESTONE_SCREENER_ROLE_NAME);
+        if (ActionsHelper.findPhaseByTypeName(phases, Constants.CHECKPOINT_SCREENING_PHASE_NAME) != null) {
+            roleNames.add(Constants.CHECKPOINT_SCREENER_ROLE_NAME);
         }
-        if (ActionsHelper.findPhaseByTypeName(phases, Constants.MILESTONE_REVIEW_PHASE_NAME) != null) {
-            roleNames.add(Constants.MILESTONE_REVIEWER_ROLE_NAME);
+        if (ActionsHelper.findPhaseByTypeName(phases, Constants.CHECKPOINT_REVIEW_PHASE_NAME) != null) {
+            roleNames.add(Constants.CHECKPOINT_REVIEWER_ROLE_NAME);
         }
 
         ResourceRole[] allRoles = ActionsHelper.createResourceManager().getAllResourceRoles();

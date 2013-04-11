@@ -167,9 +167,9 @@ import com.topcoder.util.file.templatesource.FileTemplateSource;
  * </p>
  *
  * <p>
- * Version 1.6.1 (Milestone Support Assembly 1.0) Change notes:
+ * Version 1.6.1 (Checkpoint Support Assembly 1.0) Change notes:
  *   <ol>
- *     <li>Added logic fo downloading, uploading Milestone submissions.</li>
+ *     <li>Added logic fo downloading, uploading Checkpoint submissions.</li>
  *   </ol>
  * </p>
  *
@@ -223,7 +223,7 @@ import com.topcoder.util.file.templatesource.FileTemplateSource;
  *     <li>Updated {@link #viewProjectDetails(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
  *     method to remove the old payments and add support to the new project prizes.</li>
  *     <li>Updated {@link #advanceFailedScreeningSubmission(ActionMapping, ActionForm, HttpServletRequest,
- *     HttpServletResponse)} method to add support to advance failed milestone screening submission.</li>
+ *     HttpServletResponse)} method to add support to advance failed checkpoint screening submission.</li>
  *   </ol>
  * </p>
  *
@@ -607,23 +607,23 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Project Prizes
         List<Prize> contestPrizes = new ArrayList<Prize>();
-        List<Prize> milestonePrizes = new ArrayList<Prize>();
+        List<Prize> checkpointPrizes = new ArrayList<Prize>();
         if (project.getPrizes() != null) {
             PrizeType contestPrizeType = LookupHelper.getPrizeType(Constants.CONTEST_PRIZE_TYPE_NAME);
-            PrizeType milestonePrizeType = LookupHelper.getPrizeType(Constants.MILESTONE_PRIZE_TYPE_NAME);
+            PrizeType checkpointPrizeType = LookupHelper.getPrizeType(Constants.CHECKPOINT_PRIZE_TYPE_NAME);
             for (Prize prize : project.getPrizes()) {
                 if (prize.getPrizeType().getId() == contestPrizeType.getId()) {
                     contestPrizes.add(prize);
-                } else if (prize.getPrizeType().getId() == milestonePrizeType.getId()) {
-                    milestonePrizes.add(prize);
+                } else if (prize.getPrizeType().getId() == checkpointPrizeType.getId()) {
+                    checkpointPrizes.add(prize);
                 }
             }
         }
         Comparator<Prize> comp = new Comparators.PrizePlaceComparator();
         Collections.sort(contestPrizes, comp);
-        Collections.sort(milestonePrizes, comp);
+        Collections.sort(checkpointPrizes, comp);
         request.setAttribute("contestPrizes", contestPrizes);
-        request.setAttribute("milestonePrizes", milestonePrizes);
+        request.setAttribute("checkpointPrizes", checkpointPrizes);
 
         PhasesDetails phasesDetails = PhasesDetailsServices.getPhasesDetails(
                 request, messages, project, phases, allProjectResources, allProjectExtUsers);
@@ -732,18 +732,18 @@ public class ProjectDetailsActions extends DispatchAction {
                         project.getProjectStatus().getName().equals("Active") &&
                         reviewPhase != null && !ActionsHelper.isPhaseClosed(reviewPhase.getPhaseStatus()));
 
-        request.setAttribute("isAllowedToPerformMilestoneScreening",
-                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_MILESTONE_SCREENING_PERM_NAME) &&
-                        ActionsHelper.getPhase(phases, true, Constants.MILESTONE_SCREENING_PHASE_NAME) != null);
-        request.setAttribute("isAllowedToPerformMilestoneReview",
-                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_MILESTONE_REVIEW_PERM_NAME) &&
-                        ActionsHelper.getPhase(phases, true, Constants.MILESTONE_REVIEW_PHASE_NAME) != null);
+        request.setAttribute("isAllowedToPerformCheckpointScreening",
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_CHECKPOINT_SCREENING_PERM_NAME) &&
+                        ActionsHelper.getPhase(phases, true, Constants.CHECKPOINT_SCREENING_PHASE_NAME) != null);
+        request.setAttribute("isAllowedToPerformCheckpointReview",
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_CHECKPOINT_REVIEW_PERM_NAME) &&
+                        ActionsHelper.getPhase(phases, true, Constants.CHECKPOINT_REVIEW_PHASE_NAME) != null);
         request.setAttribute("isAllowedToViewScreening",
                 AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENING_PERM_NAME));
-        request.setAttribute("isAllowedToViewMilestoneScreening",
-                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MILESTONE_SCREENING_PERM_NAME));
-        request.setAttribute("isAllowedToViewMilestoneReview",
-                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MILESTONE_REVIEW_PERM_NAME));
+        request.setAttribute("isAllowedToViewCheckpointScreening",
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_CHECKPOINT_SCREENING_PERM_NAME));
+        request.setAttribute("isAllowedToViewCheckpointReview",
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_CHECKPOINT_REVIEW_PERM_NAME));
         request.setAttribute("isAllowedToEditHisReviews",
                 AuthorizationHelper.hasUserPermission(
                         request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
@@ -1002,8 +1002,8 @@ public class ProjectDetailsActions extends DispatchAction {
     }
 
     /**
-     * <p>This method is an implementation of &quot;Upload Milestone Submission&quot; Struts Action defined for
-     * this assembly, which is supposed to let the user upload his milestone submission to the server. This
+     * <p>This method is an implementation of &quot;Upload Checkpoint Submission&quot; Struts Action defined for
+     * this assembly, which is supposed to let the user upload his checkpoint submission to the server. This
      * action gets executed twice &#x96; once to display the page with the form, and once to process
      * the uploaded file.</p>
      *
@@ -1012,7 +1012,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * @param request an <code>HttpServletRequest</code> providing the details for incoming request.
      * @param response an <code>HttpServletResponse</code> providing the details for outgoing response.
      * @return an <code>ActionForward</code> to the appropriate page. If no error has occurred and this action was called
-     *         the first time, the forward will be to uploadMilestoneSubmission.jsp page, which displays the form where
+     *         the first time, the forward will be to uploadCheckpointSubmission.jsp page, which displays the form where
      *         user can specify the file he/she wants to upload. If this action was called during the post back (the
      *         second time), then the request should contain the file uploaded by user. In this case, this method
      *         verifies if everything is correct, stores the file on file server and returns a forward to the View
@@ -1020,11 +1020,11 @@ public class ProjectDetailsActions extends DispatchAction {
      * @throws BaseException if an unexpected error occurs.
      * @since 1.6.1
      */
-    public ActionForward uploadMilestoneSubmission(ActionMapping mapping, ActionForm form,
+    public ActionForward uploadCheckpointSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
-        return handleUploadSubmission(mapping, form, request, Constants.MILESTONE_SUBMISSION_TYPE_NAME,
-                                      Constants.PERFORM_MILESTONE_SUBMISSION_PERM_NAME,
-                                      Constants.MILESTONE_SUBMISSION_PHASE_NAME);
+        return handleUploadSubmission(mapping, form, request, Constants.CHECKPOINT_SUBMISSION_TYPE_NAME,
+                                      Constants.PERFORM_CHECKPOINT_SUBMISSION_PERM_NAME,
+                                      Constants.CHECKPOINT_SUBMISSION_PHASE_NAME);
     }
 
     /**
@@ -1188,8 +1188,8 @@ public class ProjectDetailsActions extends DispatchAction {
     }
 
     /**
-     * This method is an implementation of &quot;Download Milestone Submission&quot; Struts Action defined for
-     * this assembly, which is supposed to let the user download a milestone submission from the server.
+     * This method is an implementation of &quot;Download Checkpoint Submission&quot; Struts Action defined for
+     * this assembly, which is supposed to let the user download a checkpoint submission from the server.
      *
      * @return a <code>null</code> code if everything went fine, or an action forward to
      *         /jsp/userError.jsp page which will display the information about the cause of error.
@@ -1201,20 +1201,20 @@ public class ProjectDetailsActions extends DispatchAction {
      * @throws IOException if some error occurs during disk input/output operation.
      * @since 1.6.1
      */
-    public ActionForward downloadMilestoneSubmission(ActionMapping mapping, ActionForm form,
+    public ActionForward downloadCheckpointSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
-        return handleDownloadSubmission(mapping, request, response, "ViewMilestoneSubmission",
-                                        Constants.VIEW_ALL_MILESTONE_SUBMISSIONS_PERM_NAME,
-                                        Constants.VIEW_MY_MILESTONE_SUBMISSIONS_PERM_NAME,
-                                        Constants.VIEW_SCREENER_MILESTONE_SUBMISSION_PERM_NAME,
-                                        Constants.VIEW_RECENT_MILESTONE_SUBMISSIONS_PERM_NAME,
-                                        Constants.DOWNLOAD_CUSTOM_MILESTONE_SUBMISSION_PERM_NAME,
-                                        Constants.VIEW_WINNING_MILESTONE_SUBMISSION_PERM_NAME,
-                                        Constants.MILESTONE_SCREENING_PHASE_NAME,
-                                        Constants.MILESTONE_REVIEW_PHASE_NAME,
-                                        new String[] {Constants.MILESTONE_SCREENER_ROLE_NAME},
-                                        new String[] {Constants.MILESTONE_REVIEWER_ROLE_NAME}, 3);
+        return handleDownloadSubmission(mapping, request, response, "ViewCheckpointSubmission",
+                                        Constants.VIEW_ALL_CHECKPOINT_SUBMISSIONS_PERM_NAME,
+                                        Constants.VIEW_MY_CHECKPOINT_SUBMISSIONS_PERM_NAME,
+                                        Constants.VIEW_SCREENER_CHECKPOINT_SUBMISSION_PERM_NAME,
+                                        Constants.VIEW_RECENT_CHECKPOINT_SUBMISSIONS_PERM_NAME,
+                                        Constants.DOWNLOAD_CUSTOM_CHECKPOINT_SUBMISSION_PERM_NAME,
+                                        Constants.VIEW_WINNING_CHECKPOINT_SUBMISSION_PERM_NAME,
+                                        Constants.CHECKPOINT_SCREENING_PHASE_NAME,
+                                        Constants.CHECKPOINT_REVIEW_PHASE_NAME,
+                                        new String[] {Constants.CHECKPOINT_SCREENER_ROLE_NAME},
+                                        new String[] {Constants.CHECKPOINT_REVIEWER_ROLE_NAME}, 3);
     }
 
     /**
@@ -1769,12 +1769,12 @@ public class ProjectDetailsActions extends DispatchAction {
      *
      * <p>
      *  Online Review - Project Payments Integration Part 1 v1.0
-     *      - Add support to process milestone submission.
+     *      - Add support to process checkpoint submission.
      * </p>
      *
      * @return an action forward to the appropriate page. If no error has occurred and this action
      *         was called the first time, the forward will be to /jsp/confirmAdvanceFailedScreeningSubmission.jsp
-     *         or /jsp/confirmAdvanceFailedMilestoneScreeningSubmission.jsp page, which displays the confirmation dialog
+     *         or /jsp/confirmAdvanceFailedCheckpointScreeningSubmission.jsp page, which displays the confirmation dialog
      *         where user can confirm his intention to advance the submission. If this action was called during the post
      *         back (the second time), then this method verifies if everything is correct, and process the advance logic.
      *         After this it returns a forward to the View Project Details page.
@@ -1843,11 +1843,11 @@ public class ProjectDetailsActions extends DispatchAction {
         String status = submission.getSubmissionStatus().getName();
         if (submission == null ||
             (!status.equalsIgnoreCase(Constants.FAILED_SCREENING_SUBMISSION_STATUS_NAME)
-                && !status.equalsIgnoreCase(Constants.FAILED_MILESTONE_SCREENING_SUBMISSION_STATUS_NAME))) {
+                && !status.equalsIgnoreCase(Constants.FAILED_CHECKPOINT_SCREENING_SUBMISSION_STATUS_NAME))) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME,
                     isContestSubmission ?
-                            "Error.SubmissionNotFailedScreening" :"Error.SubmissionNotFailedMilestoneScreening",
+                            "Error.SubmissionNotFailedScreening" :"Error.SubmissionNotFailedCheckpointScreening",
                     null);
         }
 
@@ -1860,11 +1860,11 @@ public class ProjectDetailsActions extends DispatchAction {
         // Check the Review phase is not closed
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
         Phase reviewPhase = ActionsHelper.findPhaseByTypeName(phases,
-                isContestSubmission ? Constants.REVIEW_PHASE_NAME : Constants.MILESTONE_REVIEW_PHASE_NAME);
+                isContestSubmission ? Constants.REVIEW_PHASE_NAME : Constants.CHECKPOINT_REVIEW_PHASE_NAME);
         if (reviewPhase == null || ActionsHelper.isPhaseClosed(reviewPhase.getPhaseStatus())) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME,
-                    isContestSubmission ? "Error.ReviewClosed" : "Error.MilestoneReviewClosed",
+                    isContestSubmission ? "Error.ReviewClosed" : "Error.CheckpointReviewClosed",
                     null);
         }
 
@@ -2491,9 +2491,9 @@ public class ProjectDetailsActions extends DispatchAction {
                 else{
                     links[i] = "http://" + ApplicationServer.STUDIO_SERVER_NAME + "/?module=ViewContestDetails&ct=" + deliverable.getProject();
                 }
-            } else if (delivName.equalsIgnoreCase(Constants.MILESTONE_SUBMISSION_DELIVERABLE_NAME)) {
+            } else if (delivName.equalsIgnoreCase(Constants.CHECKPOINT_SUBMISSION_DELIVERABLE_NAME)) {
                 if (!isStudio) {
-                    links[i] = "UploadMilestoneSubmission.do?method=uploadMilestoneSubmission&pid=" + deliverable.getProject();
+                    links[i] = "UploadCheckpointSubmission.do?method=uploadCheckpointSubmission&pid=" + deliverable.getProject();
                 }
                 else{
                     links[i] = "http://" + ApplicationServer.STUDIO_SERVER_NAME + "/?module=ViewContestDetails&ct=" + deliverable.getProject();
@@ -2540,22 +2540,22 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else {
                     links[i] = "ViewScreening.do?method=viewScreening&rid=" + review.getId();
                 }
-            } else if (delivName.equalsIgnoreCase(Constants.MILESTONE_SCREENING_DELIVERABLE_NAME)) {
+            } else if (delivName.equalsIgnoreCase(Constants.CHECKPOINT_SCREENING_DELIVERABLE_NAME)) {
                 if (deliverable.getSubmission() == null) {
                     continue;
                 }
 
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
-                        LookupHelper.getScorecardType("Milestone Screening"),
+                        LookupHelper.getScorecardType("Checkpoint Screening"),
                         deliverable.getSubmission(), deliverable.getResource(), false);
 
                 if (review == null) {
-                    links[i] = "CreateMilestoneScreening.do?method=createMilestoneScreening&sid=" +
+                    links[i] = "CreateCheckpointScreening.do?method=createCheckpointScreening&sid=" +
                             deliverable.getSubmission();
                 } else if (!review.isCommitted()) {
-                    links[i] = "EditMilestoneScreening.do?method=editMilestoneScreening&rid=" + review.getId();
+                    links[i] = "EditCheckpointScreening.do?method=editCheckpointScreening&rid=" + review.getId();
                 } else {
-                    links[i] = "ViewMilestoneScreening.do?method=viewMilestoneScreening&rid=" + review.getId();
+                    links[i] = "ViewCheckpointScreening.do?method=viewCheckpointScreening&rid=" + review.getId();
                 }
             } else if (delivName.equalsIgnoreCase(Constants.REVIEW_DELIVERABLE_NAME)) {
                 // Skip deliverables with empty Submission ID field,
@@ -2576,22 +2576,22 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else {
                     links[i] = "ViewReview.do?method=viewReview&rid=" + review.getId();
                 }
-            } else if (delivName.equalsIgnoreCase(Constants.MILESTONE_REVIEW_DELIVERABLE_NAME)) {
+            } else if (delivName.equalsIgnoreCase(Constants.CHECKPOINT_REVIEW_DELIVERABLE_NAME)) {
                 if (deliverable.getSubmission() == null) {
                     continue;
                 }
 
                 Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
-                        LookupHelper.getScorecardType("Milestone Review"),
+                        LookupHelper.getScorecardType("Checkpoint Review"),
                         deliverable.getSubmission(), deliverable.getResource(), false);
 
                 if (review == null) {
-                    links[i] = "CreateMilestoneReview.do?method=createMilestoneReview&sid=" +
+                    links[i] = "CreateCheckpointReview.do?method=createCheckpointReview&sid=" +
                             deliverable.getSubmission();
                 } else if (!review.isCommitted()) {
-                    links[i] = "EditMilestoneReview.do?method=editMilestoneReview&rid=" + review.getId();
+                    links[i] = "EditCheckpointReview.do?method=editCheckpointReview&rid=" + review.getId();
                 } else {
-                    links[i] = "ViewMilestoneReview.do?method=viewMilestoneReview&rid=" + review.getId();
+                    links[i] = "ViewCheckpointReview.do?method=viewCheckpointReview&rid=" + review.getId();
                 }
             } else if (delivName.equalsIgnoreCase(Constants.ACC_TEST_CASES_DELIVERABLE_NAME) ||
                     delivName.equalsIgnoreCase(Constants.FAIL_TEST_CASES_DELIVERABLE_NAME) ||
@@ -3209,7 +3209,7 @@ public class ProjectDetailsActions extends DispatchAction {
                                  ||
                                  submissionType == 3
                                  && AuthorizationHelper.hasUserPermission(request,
-                                                                          Constants.VIEW_RECENT_MILESTONE_SUBMISSIONS_AFTER_REVIEW_PERM_NAME)));
+                                                                          Constants.VIEW_RECENT_CHECKPOINT_SUBMISSIONS_AFTER_REVIEW_PERM_NAME)));
 
         if (noRights && mayDownload) {
             // Obtain an instance of Resource Manager
@@ -3297,10 +3297,10 @@ public class ProjectDetailsActions extends DispatchAction {
                     submitPermissionName, "Error.IncorrectPhase", null);
         }
 
-        // We don't allow user to upload contest submissions/milestone submissions for studio contest
+        // We don't allow user to upload contest submissions/checkpoint submissions for studio contest
         if ("Studio".equalsIgnoreCase(project.getProjectCategory().getProjectType().getName())
                 && (submissionTypeName.equals(Constants.CONTEST_SUBMISSION_TYPE_NAME) ||
-                    submissionTypeName.equals(Constants.MILESTONE_SUBMISSION_TYPE_NAME))) {
+                    submissionTypeName.equals(Constants.CHECKPOINT_SUBMISSION_TYPE_NAME))) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     submitPermissionName, "Error.UploadForStudio", null);
         }

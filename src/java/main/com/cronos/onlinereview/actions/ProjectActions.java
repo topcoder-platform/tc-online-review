@@ -10,9 +10,9 @@ import static com.cronos.onlinereview.actions.Constants.APPEALS_RESPONSE_PHASE_N
 import static com.cronos.onlinereview.actions.Constants.APPROVAL_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.FINAL_FIX_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.FINAL_REVIEW_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.MILESTONE_REVIEW_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.MILESTONE_SCREENING_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.MILESTONE_SUBMISSION_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.CHECKPOINT_REVIEW_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.CHECKPOINT_SCREENING_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.CHECKPOINT_SUBMISSION_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.REGISTRATION_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.REVIEW_PHASE_NAME;
@@ -236,9 +236,9 @@ import com.topcoder.web.ejb.user.UserPreference;
  * </p>
  *
  * <p>
- * Version 1.12 (Milestone Support Assembly 1.0) Change notes:
+ * Version 1.12 (Checkpoint Support Assembly 1.0) Change notes:
  *   <ol>
- *     <li>Added support for <code>Milestone</code> phases.</li>
+ *     <li>Added support for <code>Checkpoint</code> phases.</li>
  *   </ol>
  * </p>
  *
@@ -311,8 +311,8 @@ public class ProjectActions extends DispatchAction {
      */
     private static final Set<String> REVIEWER_ROLE_NAMES = new HashSet<String>(Arrays.asList("Reviewer",
         "Accuracy Reviewer", "Failure Reviewer", "Stress Reviewer", "Screener", "Primary Screener", "Aggregator",
-        "Final Reviewer", "Approver", "Post-Mortem Reviewer", "Specification Reviewer", "Milestone Screener", 
-        "Milestone Reviewer"));
+        "Final Reviewer", "Approver", "Post-Mortem Reviewer", "Specification Reviewer", "Checkpoint Screener", 
+        "Checkpoint Reviewer"));
 
     /**
      * <p>A <code>Set</code> holding the IDs for reviewer roles which do not allow duplicate users to be assigned to.
@@ -350,7 +350,7 @@ public class ProjectActions extends DispatchAction {
      *
      * <p>
      * Updated for Online Review - Project Payments Integration Part 1 v1.0
-     *      - Sets the flags indicating whether user can edit contest/milestone prizes to request attribute.
+     *      - Sets the flags indicating whether user can edit contest/checkpoint prizes to request attribute.
      *      - Sets last modification time to request attribute.
      * </p>
      *
@@ -409,7 +409,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("allowBillingEdit", isAdmin);
         request.setAttribute("allowCockpitProjectEdit", isAdmin);
         request.setAttribute("canEditContestPrize", true);
-        request.setAttribute("canEditMilestonePrize", true);
+        request.setAttribute("canEditCheckpointPrize", true);
 
         // Load the look up data
         loadProjectEditLookups(request);
@@ -527,8 +527,8 @@ public class ProjectActions extends DispatchAction {
         Scorecard[] approvalScorecards = searchActiveScorecards(scorecardManager, "Approval");
         Scorecard[] postMortemScorecards = searchActiveScorecards(scorecardManager, "Post-Mortem");
         Scorecard[] specificationReviewScorecards = searchActiveScorecards(scorecardManager, "Specification Review");
-        Scorecard[] milestoneScreeningScorecards = searchActiveScorecards(scorecardManager, "Milestone Screening");
-        Scorecard[] milestoneReviewScorecards = searchActiveScorecards(scorecardManager, "Milestone Review");
+        Scorecard[] checkpointScreeningScorecards = searchActiveScorecards(scorecardManager, "Checkpoint Screening");
+        Scorecard[] checkpointReviewScorecards = searchActiveScorecards(scorecardManager, "Checkpoint Review");
 
         // Store them in the request
         request.setAttribute("screeningScorecards", screeningScorecards);
@@ -536,8 +536,8 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("approvalScorecards", approvalScorecards);
         request.setAttribute("postMortemScorecards", postMortemScorecards);
         request.setAttribute("specificationReviewScorecards", specificationReviewScorecards);
-        request.setAttribute("milestoneScreeningScorecards", milestoneScreeningScorecards);
-        request.setAttribute("milestoneReviewScorecards", milestoneReviewScorecards);
+        request.setAttribute("checkpointScreeningScorecards", checkpointScreeningScorecards);
+        request.setAttribute("checkpointReviewScorecards", checkpointReviewScorecards);
         request.setAttribute("defaultScorecards", ActionsHelper.getDefaultScorecards());
 
         // Load phase template names
@@ -690,14 +690,14 @@ public class ProjectActions extends DispatchAction {
         List<Prize> prizes = project.getPrizes();
         if (prizes != null) {
             PrizeType contestPrize = LookupHelper.getPrizeType(Constants.CONTEST_PRIZE_TYPE_NAME);
-            PrizeType milestonePrize = LookupHelper.getPrizeType(Constants.MILESTONE_PRIZE_TYPE_NAME);
+            PrizeType checkpointPrize = LookupHelper.getPrizeType(Constants.CHECKPOINT_PRIZE_TYPE_NAME);
             for (Prize prize : prizes) {
                 if (prize.getPrizeType().getId() == contestPrize.getId()) {
                     form.set("contest_prizes_amount", prize.getPlace() - 1, String.valueOf(prize.getPrizeAmount()));
                     form.set("contest_prizes_num", prize.getPlace() - 1, prize.getNumberOfSubmissions());
-                } else if (prize.getPrizeType().getId() == milestonePrize.getId()) {
-                    form.set("milestone_prizes_amount", prize.getPlace() - 1, String.valueOf(prize.getPrizeAmount()));
-                    form.set("milestone_prizes_num", prize.getPlace() - 1, prize.getNumberOfSubmissions());
+                } else if (prize.getPrizeType().getId() == checkpointPrize.getId()) {
+                    form.set("checkpoint_prizes_amount", prize.getPlace() - 1, String.valueOf(prize.getPrizeAmount()));
+                    form.set("checkpoint_prizes_num", prize.getPlace() - 1, prize.getNumberOfSubmissions());
                 }
             }
         }
@@ -763,7 +763,7 @@ public class ProjectActions extends DispatchAction {
      *
      * @param projectId the id of the project.
      * @return an array containing two boolean values, the first value indicates whether we
-     *          can edit contest prizes, the second value indicates whether we can edit milestone prizes.
+     *          can edit contest prizes, the second value indicates whether we can edit checkpoint prizes.
      * @throws BaseException if any error occurs.
      * @since  1.14
      */
@@ -775,15 +775,15 @@ public class ProjectActions extends DispatchAction {
         }
         Submission[] contestSubmissions = ActionsHelper.getProjectSubmissions(projectId,
                 Constants.CONTEST_SUBMISSION_TYPE_NAME, null, false);
-        Submission[] milestoneSubmissions = ActionsHelper.getProjectSubmissions(projectId,
-                Constants.MILESTONE_SUBMISSION_TYPE_NAME, null, false);
+        Submission[] checkpointSubmissions = ActionsHelper.getProjectSubmissions(projectId,
+                Constants.CHECKPOINT_SUBMISSION_TYPE_NAME, null, false);
         for (Submission sub : contestSubmissions) {
             if (sub.getPrize() != null) {
                 ret[0] = false;
                 break;
             }
         }
-        for (Submission sub : milestoneSubmissions) {
+        for (Submission sub : checkpointSubmissions) {
             if (sub.getPrize() != null) {
                 ret[1] = false;
                 break;
@@ -1030,7 +1030,7 @@ public class ProjectActions extends DispatchAction {
                 log.debug("setting 'Root Catalog ID' to 26887152");
                 project.setProperty("Root Catalog ID", "26887152");
                 log.debug("Allowing multiple submissions for this project.");
-                // As per Milestone Support assembly multiple submissions are not allowed for Studio projects for now
+                // As per Checkpoint Support assembly multiple submissions are not allowed for Studio projects for now
                 project.setProperty("Allow multiple submissions", false);
             } else {
                 project.setProperty("Root Catalog ID", ActionsHelper.getRootCategoryIdByComponentId(lazyForm.get("component_id")));
@@ -1389,15 +1389,15 @@ public class ProjectActions extends DispatchAction {
         boolean[] canEditPrizes = canEditPrize(project.getId());
         String[] contestPrizeAmounts = (String[]) lazyForm.get("contest_prizes_amount");
         Integer[] contestPrizeNums = (Integer[]) lazyForm.get("contest_prizes_num");
-        String[] milestonePrizeAmounts = (String[]) lazyForm.get("milestone_prizes_amount");
-        Integer[] milestonePrizeNums = (Integer[]) lazyForm.get("milestone_prizes_num");
+        String[] checkpointPrizeAmounts = (String[]) lazyForm.get("checkpoint_prizes_amount");
+        Integer[] checkpointPrizeNums = (Integer[]) lazyForm.get("checkpoint_prizes_num");
 
         validateProjectPrizes(request, contestPrizeAmounts, contestPrizeNums, "contest_prizes");
-        validateProjectPrizes(request, milestonePrizeAmounts, milestonePrizeNums, "milestone_prizes");
+        validateProjectPrizes(request, checkpointPrizeAmounts, checkpointPrizeNums, "checkpoint_prizes");
 
         List<Prize> prizes = project.getPrizes();
         PrizeType contestPrizeType  = LookupHelper.getPrizeType(Constants.CONTEST_PRIZE_TYPE_NAME);
-        PrizeType milestonePrizeType = LookupHelper.getPrizeType(Constants.MILESTONE_PRIZE_TYPE_NAME);
+        PrizeType checkpointPrizeType = LookupHelper.getPrizeType(Constants.CHECKPOINT_PRIZE_TYPE_NAME);
         if (prizes != null) {
             if (!canEditPrizes[0] && contestPrizeAmounts.length == 0) {
                 for (Prize prize : prizes) {
@@ -1409,12 +1409,12 @@ public class ProjectActions extends DispatchAction {
                     }
                 }
             }
-            if (!canEditPrizes[1] && milestonePrizeAmounts.length == 0) {
+            if (!canEditPrizes[1] && checkpointPrizeAmounts.length == 0) {
                 for (Prize prize : prizes) {
-                    if (prize.getPrizeType().getId() == milestonePrizeType.getId()) {
-                        lazyForm.set("milestone_prizes_amount",
+                    if (prize.getPrizeType().getId() == checkpointPrizeType.getId()) {
+                        lazyForm.set("checkpoint_prizes_amount",
                                 prize.getPlace() - 1, String.valueOf(prize.getPrizeAmount()));
-                        lazyForm.set("milestone_prizes_num",
+                        lazyForm.set("checkpoint_prizes_num",
                                 prize.getPlace() - 1, prize.getNumberOfSubmissions());
                     }
                 }
@@ -1426,29 +1426,29 @@ public class ProjectActions extends DispatchAction {
         }
 
         List<Prize> existingContestPrizes = new ArrayList<Prize>();
-        List<Prize> existingMilestonePrizes = new ArrayList<Prize>();
+        List<Prize> existingCheckpointPrizes = new ArrayList<Prize>();
 
         if (project.getPrizes() != null) {
             for (Prize prize : project.getPrizes()) {
                 if (prize.getPrizeType().getId() == contestPrizeType.getId()) {
                     existingContestPrizes.add(prize);
-                } else if (prize.getPrizeType().getId() == milestonePrizeType.getId()) {
-                    existingMilestonePrizes.add(prize);
+                } else if (prize.getPrizeType().getId() == checkpointPrizeType.getId()) {
+                    existingCheckpointPrizes.add(prize);
                 }
             }
         }
 
         Comparator<Prize> comp = new Comparators.PrizePlaceComparator();
         Collections.sort(existingContestPrizes, comp);
-        Collections.sort(existingMilestonePrizes, comp);
+        Collections.sort(existingCheckpointPrizes, comp);
 
         if (canEditPrizes[0]) {
             getProjectPrizesToBeUpdated(contestPrizeType, created, updated, removed,
                     existingContestPrizes, contestPrizeAmounts, contestPrizeNums);
         }
         if (canEditPrizes[1]) {
-            getProjectPrizesToBeUpdated(milestonePrizeType, created, updated, removed,
-                    existingMilestonePrizes, milestonePrizeAmounts, milestonePrizeNums);
+            getProjectPrizesToBeUpdated(checkpointPrizeType, created, updated, removed,
+                    existingCheckpointPrizes, checkpointPrizeAmounts, checkpointPrizeNums);
         }
     }
 
@@ -2019,7 +2019,7 @@ public class ProjectActions extends DispatchAction {
             if (currentPhaseName.equals(SUBMISSION_PHASE_NAME)) {
                 // Submission should follow registration or post-mortem if it exists
                 if (i > 0 && !(previousPhaseName.equals(REGISTRATION_PHASE_NAME)
-                               || previousPhaseName.equals(MILESTONE_REVIEW_PHASE_NAME))
+                               || previousPhaseName.equals(CHECKPOINT_REVIEW_PHASE_NAME))
                     && !postMortemPhaseExists) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.SubmissionMustFollow");
@@ -2032,25 +2032,25 @@ public class ProjectActions extends DispatchAction {
                     // Registration should be followed by submission or post-mortem
                     if (i == projectPhases.length - 1
                         || !(nextPhaseName.equals(SUBMISSION_PHASE_NAME)
-                             || nextPhaseName.equals(MILESTONE_SUBMISSION_PHASE_NAME))
+                             || nextPhaseName.equals(CHECKPOINT_SUBMISSION_PHASE_NAME))
                            && !postMortemPhaseExists) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.RegistrationMustBeFollowed");
                         arePhasesValid = false;
                     }
-                } else if (currentPhaseName.equals(MILESTONE_SUBMISSION_PHASE_NAME)) {
-                    // Milestone Submission should be followed by Milestone Screening or Milestone Review
-                    if (!nextPhaseName.equals(MILESTONE_SCREENING_PHASE_NAME)
-					    && !nextPhaseName.equals(MILESTONE_REVIEW_PHASE_NAME) ) {
+                } else if (currentPhaseName.equals(CHECKPOINT_SUBMISSION_PHASE_NAME)) {
+                    // Checkpoint Submission should be followed by Checkpoint Screening or Checkpoint Review
+                    if (!nextPhaseName.equals(CHECKPOINT_SCREENING_PHASE_NAME)
+					    && !nextPhaseName.equals(CHECKPOINT_REVIEW_PHASE_NAME) ) {
                         ActionsHelper.addErrorToRequest(request,
-                                "error.com.cronos.onlinereview.actions.editProject.MilestoneSubmissionMustBeFollowed");
+                                "error.com.cronos.onlinereview.actions.editProject.CheckpointSubmissionMustBeFollowed");
                         arePhasesValid = false;
                     }
-                } else if (currentPhaseName.equals(MILESTONE_SCREENING_PHASE_NAME)) {
-                    // Milestone Screening should be followed by Milestone Review
-                    if (!nextPhaseName.equals(MILESTONE_REVIEW_PHASE_NAME)) {
+                } else if (currentPhaseName.equals(CHECKPOINT_SCREENING_PHASE_NAME)) {
+                    // Checkpoint Screening should be followed by Checkpoint Review
+                    if (!nextPhaseName.equals(CHECKPOINT_REVIEW_PHASE_NAME)) {
                         ActionsHelper.addErrorToRequest(request,
-                                "error.com.cronos.onlinereview.actions.editProject.MilestoneScreeningMustBeFollowed");
+                                "error.com.cronos.onlinereview.actions.editProject.CheckpointScreeningMustBeFollowed");
                         arePhasesValid = false;
                     }
                 } else if (currentPhaseName.equals(SPECIFICATION_SUBMISSION_PHASE_NAME)) {
@@ -3592,18 +3592,18 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformScreening",
                 AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SCREENING_PERM_NAME) &&
                         ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME) != null);
-        request.setAttribute("isAllowedToPerformMilestoneScreening",
-                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_MILESTONE_SCREENING_PERM_NAME) &&
-                        ActionsHelper.getPhase(phases, true, Constants.MILESTONE_SCREENING_PHASE_NAME) != null);
-        request.setAttribute("isAllowedToPerformMilestoneReview",
-                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_MILESTONE_REVIEW_PERM_NAME) &&
-                        ActionsHelper.getPhase(phases, true, Constants.MILESTONE_REVIEW_PHASE_NAME) != null);
+        request.setAttribute("isAllowedToPerformCheckpointScreening",
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_CHECKPOINT_SCREENING_PERM_NAME) &&
+                        ActionsHelper.getPhase(phases, true, Constants.CHECKPOINT_SCREENING_PHASE_NAME) != null);
+        request.setAttribute("isAllowedToPerformCheckpointReview",
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_CHECKPOINT_REVIEW_PERM_NAME) &&
+                        ActionsHelper.getPhase(phases, true, Constants.CHECKPOINT_REVIEW_PHASE_NAME) != null);
         request.setAttribute("isAllowedToViewScreening",
                 AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENING_PERM_NAME));
-        request.setAttribute("isAllowedToViewMilestoneScreening",
-                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MILESTONE_SCREENING_PERM_NAME));
-        request.setAttribute("isAllowedToViewMilestoneReview",
-                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MILESTONE_REVIEW_PERM_NAME));
+        request.setAttribute("isAllowedToViewCheckpointScreening",
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_CHECKPOINT_SCREENING_PERM_NAME));
+        request.setAttribute("isAllowedToViewCheckpointReview",
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_CHECKPOINT_REVIEW_PERM_NAME));
         request.setAttribute("isAllowedToUploadTC",
                 AuthorizationHelper.hasUserPermission(request, Constants.UPLOAD_TEST_CASES_PERM_NAME));
         request.setAttribute("isAllowedToPerformAggregation",
@@ -3628,7 +3628,7 @@ public class ProjectActions extends DispatchAction {
         boolean[] canEditPrizes = canEditPrize(project.getId());
 
         request.setAttribute("canEditContestPrize", canEditPrizes[0]);
-        request.setAttribute("canEditMilestonePrize", canEditPrizes[1]);
+        request.setAttribute("canEditCheckpointPrize", canEditPrizes[1]);
     }
 
     /**

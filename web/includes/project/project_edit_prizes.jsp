@@ -15,7 +15,7 @@
 <div>
     <ul id="tablist">
         <li class="current"><a id="contest-prizes-link" onclick="return showPrizeTab('contest-prizes-table', this);" href="javascript:void(0)"><bean:message key="editProject.ProjectDetails.ContestPrizes" /></a></li>
-        <li><a id="milestone-prizes-link" onclick="return showPrizeTab('milestone-prizes-table', this);" href="javascript:void(0)"><bean:message key="editProject.ProjectDetails.MilestonePrizes" /></a></li>
+        <li><a id="checkpoint-prizes-link" onclick="return showPrizeTab('checkpoint-prizes-table', this);" href="javascript:void(0)"><bean:message key="editProject.ProjectDetails.CheckpointPrizes" /></a></li>
     </ul>
     <div style="clear:both;"></div>
 </div>
@@ -86,10 +86,10 @@
         <td class="lastRowTD" colspan="4"><!-- @ --></td>
     </tr>
 </table>
-<c:set var="milestonePrizesLength" value="${fn:length(projectForm.map['milestone_prizes_amount'])}" />
-<table id="milestone-prizes-table" class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;display:none;">
+<c:set var="checkpointPrizesLength" value="${fn:length(projectForm.map['checkpoint_prizes_amount'])}" />
+<table id="checkpoint-prizes-table" class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;display:none;">
     <tr>
-        <td class="title" colspan="4"><bean:message key="editProject.ProjectDetails.MilestonePrizes" /></td>
+        <td class="title" colspan="4"><bean:message key="editProject.ProjectDetails.CheckpointPrizes" /></td>
     </tr>
     <tr>
         <td class="header"><bean:message key="editProject.ProjectDetails.Prize.Place" /></td>
@@ -100,11 +100,11 @@
         <td class="value"></td>
         <td class="value">
             <label>${"$"}</label>
-            <input class="inputBoxDuration" type="text" name="milestone_prizes_amount_dump[]"/>
+            <input class="inputBoxDuration" type="text" name="checkpoint_prizes_amount_dump[]"/>
             <span name="prize_amount_validation_msg" style="display: none" class="error"></span>
         </td>
         <td class="value">
-            <select class="inputBox" name="milestone_prizes_num_dump[]">
+            <select class="inputBox" name="checkpoint_prizes_num_dump[]">
                 <c:forEach begin="1" end="10" var="index">
                     <option value="${index}">${index}</option>
                 </c:forEach>
@@ -114,36 +114,36 @@
             <a href="#" onclick="removePrize(this);return false;"><html:img srcKey="editProject.Prizes.DeletePrize.img" altKey="editProject.Prizes.DeletePrize.alt"/></a>
         </td>
     </tr>
-    <c:if test="${milestonePrizesLength > 0}">
-        <c:forEach begin="0" end="${milestonePrizesLength - 1}" var="prizeIdx" varStatus="vs">
+    <c:if test="${checkpointPrizesLength > 0}">
+        <c:forEach begin="0" end="${checkpointPrizesLength - 1}" var="prizeIdx" varStatus="vs">
             <tr <c:if test="${vs.index % 2 eq 0}">class="light"</c:if> <c:if test="${vs.index % 2 eq 1}">class="dark"</c:if> >
                 <td class="value">${prizeIdx + 1}</td>
                 <td class="value">
                     <label>${"$"}</label>
-                    <html:text styleClass="inputBoxDuration" property="milestone_prizes_amount[${prizeIdx}]" disabled="${not canEditMilestonePrize}"/>
-                    <div class="error"><html:errors property="milestone_prizes_amount[${prizeIdx}]" prefix="" suffix="" /></div>
+                    <html:text styleClass="inputBoxDuration" property="checkpoint_prizes_amount[${prizeIdx}]" disabled="${not canEditCheckpointPrize}"/>
+                    <div class="error"><html:errors property="checkpoint_prizes_amount[${prizeIdx}]" prefix="" suffix="" /></div>
                     <span name="prize_amount_validation_msg" style="display: none" class="error"></span>
                 </td>
                 <td class="value">
-                    <html:select styleClass="inputBox" property="milestone_prizes_num[${prizeIdx}]" disabled="${not canEditMilestonePrize}">
+                    <html:select styleClass="inputBox" property="checkpoint_prizes_num[${prizeIdx}]" disabled="${not canEditCheckpointPrize}">
                         <c:forEach begin="1" end="10" var="index">
                             <html:option key="${index}" value="${index}" />
                         </c:forEach>
                     </html:select>
-                    <div class="error"><html:errors property="milestone_prizes_num[${prizeIdx}]" prefix="" suffix="" /></div>
+                    <div class="error"><html:errors property="checkpoint_prizes_num[${prizeIdx}]" prefix="" suffix="" /></div>
                 </td>
                 <td class="value">
-                    <c:if test="${prizeIdx eq milestonePrizesLength - 1 and canEditMilestonePrize}">
+                    <c:if test="${prizeIdx eq checkpointPrizesLength - 1 and canEditCheckpointPrize}">
                         <a href="#" onclick="removePrize(this);return false;"><html:img srcKey="editProject.Prizes.DeletePrize.img" altKey="editProject.Prizes.DeletePrize.alt"/></a>
                     </c:if>
                 </td>
             </tr>
         </c:forEach>
     </c:if>
-    <c:if test="${canEditMilestonePrize}">
-        <tr <c:if test="${milestonePrizesLength % 2 eq 0}">class="light"</c:if><c:if test="${milestonePrizesLength % 2 eq 1}">class="dark"</c:if> >
+    <c:if test="${canEditCheckpointPrize}">
+        <tr <c:if test="${checkpointPrizesLength % 2 eq 0}">class="light"</c:if><c:if test="${checkpointPrizesLength % 2 eq 1}">class="dark"</c:if> >
             <td class="value" colspan="4">
-            <a href="#" onclick="addPrize(this, 'milestone_prizes');return false;"><html:img srcKey="editProject.Prizes.AddPrize.img" altKey="editProject.Prizes.AddPrize.alt" /></a>
+            <a href="#" onclick="addPrize(this, 'checkpoint_prizes');return false;"><html:img srcKey="editProject.Prizes.AddPrize.img" altKey="editProject.Prizes.AddPrize.alt" /></a>
         </td>
         </tr>
     </c:if>

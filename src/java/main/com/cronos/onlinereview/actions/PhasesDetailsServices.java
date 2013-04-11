@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2011 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2013 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -18,7 +18,7 @@ import com.topcoder.search.builder.filter.OrFilter;
 import org.apache.struts.util.MessageResources;
 
 import com.cronos.onlinereview.actions.Comparators.SubmissionComparer;
-import com.cronos.onlinereview.actions.Comparators.MilestoneSubmissionComparator;
+import com.cronos.onlinereview.actions.Comparators.CheckpointSubmissionComparator;
 import com.cronos.onlinereview.external.ConfigException;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.RetrievalException;
@@ -80,9 +80,9 @@ import com.topcoder.util.errorhandling.BaseException;
  * </p>
  *
  * <p>
- * Version 1.4.1 (Milestone Support Assembly 1.0) Change notes:
+ * Version 1.4.1 (Checkpoint Support Assembly 1.0) Change notes:
  *   <ol>
- *     <li>Added support for <code>Milestone</code> phases.</li>
+ *     <li>Added support for <code>Checkpoint</code> phases.</li>
  *   </ol>
  * </p>
  *
@@ -241,7 +241,7 @@ final class PhasesDetailsServices {
             Phase[] activePhases = ActionsHelper.getActivePhases(phases);
             if (ActionsHelper.isStudioProject(project)) {
                 for (Phase p : activePhases) {
-                    if (p.getPhaseType().getName().equals(Constants.SCREENING_PHASE_NAME) || p.getPhaseType().getName().equals(Constants.MILESTONE_SCREENING_PHASE_NAME)) {
+                    if (p.getPhaseType().getName().equals(Constants.SCREENING_PHASE_NAME) || p.getPhaseType().getName().equals(Constants.CHECKPOINT_SCREENING_PHASE_NAME)) {
                         isStudioScreening = true;
                     }
                 }
@@ -283,8 +283,8 @@ final class PhasesDetailsServices {
                 servicePostMortemAppFunc(phaseGroup, project, phase, allProjectResources);
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.SPEC_REVIEW_APP_FUNC)) {
                 serviceSpecReviewAppFunc(phaseGroup, project, phase, allProjectResources);
-            } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.MILESTONE_APP_FUNC)) {
-                serviceMilestoneAppFunc(request, phaseGroup, project, phase, allProjectResources, phases, phaseIdx,
+            } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.CHECKPOINT_APP_FUNC)) {
+                serviceCheckpointAppFunc(request, phaseGroup, project, phase, allProjectResources, phases, phaseIdx,
                                         submitters);
             }
         }
@@ -299,7 +299,7 @@ final class PhasesDetailsServices {
     }
 
     /**
-     * <p>Processes the current phase from <code>Milestone</code> group of phases.</p>
+     * <p>Processes the current phase from <code>Checkpoint</code> group of phases.</p>
      *
      * @param request an <code>HttpServletRequest</code> referencing the incoming request.
      * @param phaseGroup a <code>PhaseGroup</code> providing the collected data for groups of phases.
@@ -311,12 +311,12 @@ final class PhasesDetailsServices {
      * @param submitters a <code>Resource</code> array listing the submitters for project.
      * @throws BaseException if an unexpected error occurs.
      */
-    private static void serviceMilestoneAppFunc(HttpServletRequest request, PhaseGroup phaseGroup, Project project,
+    private static void serviceCheckpointAppFunc(HttpServletRequest request, PhaseGroup phaseGroup, Project project,
                                                 Phase phase, Resource[] allProjectResources, Phase[] phases,
                                                 int phaseIdx, Resource[] submitters) throws BaseException {
-        Phase milestoneReviewPhase = ActionsHelper.getPhase(phases, false, Constants.MILESTONE_REVIEW_PHASE_NAME);
-        if (milestoneReviewPhase != null) {
-            phaseGroup.setMilestoneReviewFinished(milestoneReviewPhase.getPhaseStatus().getId() == 3);
+        Phase checkpointReviewPhase = ActionsHelper.getPhase(phases, false, Constants.CHECKPOINT_REVIEW_PHASE_NAME);
+        if (checkpointReviewPhase != null) {
+            phaseGroup.setCheckpointReviewFinished(checkpointReviewPhase.getPhaseStatus().getId() == 3);
         }
 
         Phase reviewPhase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
@@ -326,29 +326,29 @@ final class PhasesDetailsServices {
 
         boolean mayViewMostRecentAfterReview
             = AuthorizationHelper.hasUserPermission(request,
-                                                    Constants.VIEW_RECENT_MILESTONE_SUBMISSIONS_AFTER_REVIEW_PERM_NAME);
+                                                    Constants.VIEW_RECENT_CHECKPOINT_SUBMISSIONS_AFTER_REVIEW_PERM_NAME);
 
-        // Milestone Submission phase
-        if (phaseName.equalsIgnoreCase(Constants.MILESTONE_SUBMISSION_PHASE_NAME)) {
+        // Checkpoint Submission phase
+        if (phaseName.equalsIgnoreCase(Constants.CHECKPOINT_SUBMISSION_PHASE_NAME)) {
             Submission[] submissions = null;
 
             if (mayViewMostRecentAfterReview && isReviewFinished
-                || AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_MILESTONE_SUBMISSIONS_PERM_NAME)
-                || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_MILESTONE_SUBMISSIONS_PERM_NAME)
-                    && !AuthorizationHelper.hasUserRole(request, Constants.MILESTONE_REVIEWER_ROLE_NAME))
-                || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_MILESTONE_SUBMISSIONS_PERM_NAME)
-                    && AuthorizationHelper.hasUserRole(request, Constants.MILESTONE_REVIEWER_ROLE_NAME)
-                    && ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.MILESTONE_REVIEW_PHASE_NAME))
-                || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_MILESTONE_SUBMISSIONS_AFTER_REVIEW_PERM_NAME)
+                || AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_CHECKPOINT_SUBMISSIONS_PERM_NAME)
+                || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_CHECKPOINT_SUBMISSIONS_PERM_NAME)
+                    && !AuthorizationHelper.hasUserRole(request, Constants.CHECKPOINT_REVIEWER_ROLE_NAME))
+                || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_CHECKPOINT_SUBMISSIONS_PERM_NAME)
+                    && AuthorizationHelper.hasUserRole(request, Constants.CHECKPOINT_REVIEWER_ROLE_NAME)
+                    && ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.CHECKPOINT_REVIEW_PHASE_NAME))
+                || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_CHECKPOINT_SUBMISSIONS_AFTER_REVIEW_PERM_NAME)
                     && ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.FINAL_FIX_PHASE_NAME))
-                || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_MILESTONE_SUBMISSION_PERM_NAME)
-                    && ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.MILESTONE_SCREENING_PHASE_NAME))) {
+                || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_CHECKPOINT_SUBMISSION_PERM_NAME)
+                    && ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.CHECKPOINT_SCREENING_PHASE_NAME))) {
                 submissions = ActionsHelper.getProjectSubmissions(project.getId(),
-                    Constants.MILESTONE_SUBMISSION_TYPE_NAME, null, false);
+                    Constants.CHECKPOINT_SUBMISSION_TYPE_NAME, null, false);
             }
 
             if (submissions == null
-                && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_MILESTONE_SUBMISSIONS_PERM_NAME)) {
+                && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_CHECKPOINT_SUBMISSIONS_PERM_NAME)) {
                 // Get "my" (submitter's) resource
                 Resource myResource = null;
                 Resource[] myResources = ActionsHelper.getMyResourcesForPhase(request, null);
@@ -364,7 +364,7 @@ final class PhasesDetailsServices {
                 }
 
                 submissions = ActionsHelper.getResourceSubmissions(myResource.getId(),
-                        Constants.MILESTONE_SUBMISSION_TYPE_NAME, null, false);
+                        Constants.CHECKPOINT_SUBMISSION_TYPE_NAME, null, false);
             }
 
             if (submissions == null) {
@@ -372,41 +372,41 @@ final class PhasesDetailsServices {
             }
             // Use comparator to sort submissions either by placement
             // or by the time when they were uploaded
-            MilestoneSubmissionComparator comparator = new MilestoneSubmissionComparator();
+            CheckpointSubmissionComparator comparator = new CheckpointSubmissionComparator();
 
             comparator.assignSubmitters(submitters);
             Arrays.sort(submissions, comparator);
 
-            phaseGroup.setPastMilestoneSubmissions(
+            phaseGroup.setPastCheckpointSubmissions(
                 getPreviousUploadsForSubmissions(request, project, submissions,
-                                                 Constants.VIEW_ALL_MILESTONE_SUBMISSIONS_PERM_NAME));
-            phaseGroup.setMilestoneSubmissions(submissions);
+                                                 Constants.VIEW_ALL_CHECKPOINT_SUBMISSIONS_PERM_NAME));
+            phaseGroup.setCheckpointSubmissions(submissions);
         }
 
-        // Milestone Screening phase
-        if (phaseName.equalsIgnoreCase(Constants.MILESTONE_SCREENING_PHASE_NAME)
-            && phaseGroup.getMilestoneSubmissions() != null) {
+        // Checkpoint Screening phase
+        if (phaseName.equalsIgnoreCase(Constants.CHECKPOINT_SCREENING_PHASE_NAME)
+            && phaseGroup.getCheckpointSubmissions() != null) {
 
             Resource[] screeners = ActionsHelper.getResourcesForPhase(allProjectResources, phases[phaseIdx]);
             if (screeners != null && screeners.length > 0) {
-                phaseGroup.setMilestoneScreener(screeners[0]);
+                phaseGroup.setCheckpointScreener(screeners[0]);
             }
 
-            phaseGroup.setMilestoneScreeningPhaseStatus(phase.getPhaseStatus().getId());
-            phaseGroup.setMilestoneScreeningReviews(ActionsHelper.searchReviews(phase.getId(), null, false));
+            phaseGroup.setCheckpointScreeningPhaseStatus(phase.getPhaseStatus().getId());
+            phaseGroup.setCheckpointScreeningReviews(ActionsHelper.searchReviews(phase.getId(), null, false));
         }
 
-        // Milestone Review phase
-        if (phaseName.equalsIgnoreCase(Constants.MILESTONE_REVIEW_PHASE_NAME)
-            && phaseGroup.getMilestoneSubmissions() != null) {
+        // Checkpoint Review phase
+        if (phaseName.equalsIgnoreCase(Constants.CHECKPOINT_REVIEW_PHASE_NAME)
+            && phaseGroup.getCheckpointSubmissions() != null) {
 
             Resource[] reviewers = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
             if (reviewers != null && reviewers.length > 0) {
-                phaseGroup.setMilestoneReviewer(reviewers[0]);
+                phaseGroup.setCheckpointReviewer(reviewers[0]);
             }
 
             // Obtain an instance of Review Manager
-            phaseGroup.setMilestoneReviews(ActionsHelper.searchReviews(phase.getId(), null, false));
+            phaseGroup.setCheckpointReviews(ActionsHelper.searchReviews(phase.getId(), null, false));
         }
     }
 
@@ -1095,7 +1095,7 @@ final class PhasesDetailsServices {
         final boolean canSeeSubmitters = (isAfterAppealsResponse 
                 || AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME) 
                 || (isStudioScreening && (AuthorizationHelper.hasUserRole(request, Constants.SCREENER_ROLE_NAME) || 
-                AuthorizationHelper.hasUserRole(request, Constants.MILESTONE_SCREENER_ROLE_NAME) )));
+                AuthorizationHelper.hasUserRole(request, Constants.CHECKPOINT_SCREENER_ROLE_NAME) )));
 
         if (!canSeeSubmitters) {
             return null;
