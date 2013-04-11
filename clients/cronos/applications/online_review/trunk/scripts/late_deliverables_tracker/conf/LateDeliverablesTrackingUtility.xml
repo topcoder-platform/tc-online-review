@@ -211,7 +211,7 @@
                             </Property>
                         </Property>
                     </Property>
-                    <Property name="milestoneScreeningDeliverableChecker">
+                    <Property name="checkpointScreeningDeliverableChecker">
                         <Property name="type">
                             <Value>com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker</Value>
                         </Property>
@@ -223,7 +223,7 @@
                             </Property>
                         </Property>
                     </Property>
-                    <Property name="milestoneReviewDeliverableChecker">
+                    <Property name="checkpointReviewDeliverableChecker">
                         <Property name="type">
                             <Value>com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker</Value>
                         </Property>
@@ -423,18 +423,18 @@
                 </Property>
                 <Property name="deliverableChecker11">
                     <Property name="deliverableName">
-                        <Value>Milestone Screening</Value>
+                        <Value>Checkpoint Screening</Value>
                     </Property>
                     <Property name="deliverableCheckerKey">
-                        <Value>milestoneScreeningDeliverableChecker</Value>
+                        <Value>checkpointScreeningDeliverableChecker</Value>
                     </Property>
                 </Property>
                 <Property name="deliverableChecker12">
                     <Property name="deliverableName">
-                        <Value>Milestone Review</Value>
+                        <Value>Checkpoint Review</Value>
                     </Property>
                     <Property name="deliverableCheckerKey">
-                        <Value>milestoneReviewDeliverableChecker</Value>
+                        <Value>checkpointReviewDeliverableChecker</Value>
                     </Property>
                 </Property>
                 <Property name="searchBundleManagerNamespace">

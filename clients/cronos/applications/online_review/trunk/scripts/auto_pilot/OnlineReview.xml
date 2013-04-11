@@ -3,7 +3,7 @@
        <!ENTITY phasesEmailTemplate "@exttemplatesdir@/email_template.txt">
        <!ENTITY studioPhasesEmailTemplate "@exttemplatesdir@/studio_email_template.txt">
        <!ENTITY winnersEmailTemplate "@exttemplatesdir@/winners_email_template.txt">
-       <!ENTITY milestoneScreeningResultsEmailTemplate "@exttemplatesdir@/milestone_screening_results_email_template.txt">
+       <!ENTITY checkpointScreeningResultsEmailTemplate "@exttemplatesdir@/checkpoint_screening_results_email_template.txt">
        <!ENTITY screeningResultsEmailTemplate "@exttemplatesdir@/screening_results_email_template.txt">
        <!ENTITY managerNotificationEmailTemplatesBase "@exttemplatesdir@">
        <!ENTITY notificationEmailFromAddress "@notificationEmailFromAddress@">

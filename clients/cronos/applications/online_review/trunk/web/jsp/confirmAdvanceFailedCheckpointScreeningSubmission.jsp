@@ -3,7 +3,7 @@
   - Version: 1.0
   - Copyright (C) 2013 TopCoder Inc., All Rights Reserved.
   -
-  - Description: This page displays advance failed milestone screening submission confirmation page.
+  - Description: This page displays advance failed checkpoint screening submission confirmation page.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -15,7 +15,7 @@
 
 <head>
     <jsp:include page="/includes/project/project_title.jsp">
-        <jsp:param name="thirdLevelPageKey" value="confirmAdvanceFailedMilestoneScreeningSubmission.title" />
+        <jsp:param name="thirdLevelPageKey" value="confirmAdvanceFailedCheckpointScreeningSubmission.title" />
     </jsp:include>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
@@ -61,12 +61,12 @@
 
                     <table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
                         <tr>
-                            <td class="title"><bean:message key="confirmAdvanceFailedMilestoneScreeningSubmission.box.title" /></td>
+                            <td class="title"><bean:message key="confirmAdvanceFailedCheckpointScreeningSubmission.box.title" /></td>
                         </tr>
                         <tr class="light">
                             <td class="valueC">
                                 <br />
-                                <bean:message key="confirmAdvanceFailedMilestoneScreeningSubmission.question" /><br /><br />
+                                <bean:message key="confirmAdvanceFailedCheckpointScreeningSubmission.question" /><br /><br />
                             </td>
                         </tr>
                         <tr>
@@ -75,7 +75,7 @@
                     </table><br />
 
                     <div align="right">
-                        <html:link page="/actions/AdvanceFailedMilestoneScreeningSubmission.do?method=advanceFailedScreeningSubmission&uid=${uid}&advance=y"><html:img srcKey="confirmAdvanceFailedMilestoneScreeningSubmission.btnConfirm.img" altKey="confirmAdvanceFailedMilestoneScreeningSubmission.btnConfirm.alt" border="0" /></html:link>&#160;
+                        <html:link page="/actions/AdvanceFailedCheckpointScreeningSubmission.do?method=advanceFailedScreeningSubmission&uid=${uid}&advance=y"><html:img srcKey="confirmAdvanceFailedCheckpointScreeningSubmission.btnConfirm.img" altKey="confirmAdvanceFailedCheckpointScreeningSubmission.btnConfirm.alt" border="0" /></html:link>&#160;
                         <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}">
                             <html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0" />
                         </html:link>

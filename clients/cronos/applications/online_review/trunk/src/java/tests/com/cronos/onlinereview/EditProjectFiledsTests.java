@@ -149,7 +149,7 @@ public class EditProjectFiledsTests extends ProjectTests {
 
         price = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[1]");
         // check the price is not $100 at the beginning
-        assertTrue("These should be no milestone prizes", "There are no prizes.".equals(price));
+        assertTrue("These should be no checkpoint prizes", "There are no prizes.".equals(price));
 
         // Click the 'Edit Project' Link
         browser.click("//img[@alt='Edit Project']");
@@ -161,10 +161,10 @@ public class EditProjectFiledsTests extends ProjectTests {
         browser.click("//table[@id='contest-prizes-table']//img[@alt='Add Prize']");
         browser.type("contest_prizes_amount[1]", "600");
 
-        // Add a milestone prize
-        browser.click("//table[@id='milestone-prizes-table']//img[@alt='Add Prize']");
-        browser.type("milestone_prizes_amount[0]", "300");
-        browser.select("//select[@name='milestone_prizes_num[0]']", "label=3");
+        // Add a checkpoint prize
+        browser.click("//table[@id='checkpoint-prizes-table']//img[@alt='Add Prize']");
+        browser.type("checkpoint_prizes_amount[0]", "300");
+        browser.select("//select[@name='checkpoint_prizes_num[0]']", "label=3");
 
         browser.click("//input[@name='saveProjectChangesBtn']");
         browser.waitForPageToLoad(TIMEOUT);
@@ -185,13 +185,13 @@ public class EditProjectFiledsTests extends ProjectTests {
         assertEquals("Amount of second contest prize should be $600", "$600", price);
         assertEquals("# of Prizes of second contest prize should be 1", "1", noOfPrizes);
 
-        // check first milestone prize
+        // check first checkpoint prize
         place = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[1]");
         price = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[2]");
         noOfPrizes = browser.getText("//div[@id='mainMiddleContent']/div/table[6]/tbody/tr[3]/td[3]");
-        assertEquals("Place of first milestone prize should be 1", "1", place);
-        assertEquals("Amount of first milestone prize should be $300", "$300", price);
-        assertEquals("# of Prizes of first milestone prize should be 3", "3", noOfPrizes);
+        assertEquals("Place of first checkpoint prize should be 1", "1", place);
+        assertEquals("Amount of first checkpoint prize should be $300", "$300", price);
+        assertEquals("# of Prizes of first checkpoint prize should be 3", "3", noOfPrizes);
 
         assertNoErrorsOccurred();
     }

@@ -40,9 +40,9 @@ import com.topcoder.project.phases.PhaseStatus;
 
  *
  * <p>
- * Version 1.1.1 (Milestone Support Assembly 1.0) Change notes:
+ * Version 1.1.1 (Checkpoint Support Assembly 1.0) Change notes:
  *   <ol>
- *     <li>Added comparison logic for <code>Milestone</code> phases.</li>
+ *     <li>Added comparison logic for <code>Checkpoint</code> phases.</li>
  *   </ol>
  * </p>
  *
@@ -89,8 +89,8 @@ final class Comparators {
          */
         final private static String[] phaseOrder = new String[] {
             Constants.SPECIFICATION_SUBMISSION_PHASE_NAME, Constants.SPECIFICATION_REVIEW_PHASE_NAME,
-            Constants.REGISTRATION_PHASE_NAME, Constants.MILESTONE_SUBMISSION_PHASE_NAME, 
-            Constants.MILESTONE_SCREENING_PHASE_NAME, Constants.MILESTONE_REVIEW_PHASE_NAME, 
+            Constants.REGISTRATION_PHASE_NAME, Constants.CHECKPOINT_SUBMISSION_PHASE_NAME, 
+            Constants.CHECKPOINT_SCREENING_PHASE_NAME, Constants.CHECKPOINT_REVIEW_PHASE_NAME, 
             Constants.SUBMISSION_PHASE_NAME, Constants.SCREENING_PHASE_NAME,
             Constants.REVIEW_PHASE_NAME, Constants.APPEALS_PHASE_NAME, Constants.APPEALS_RESPONSE_PHASE_NAME,
             Constants.AGGREGATION_PHASE_NAME, Constants.AGGREGATION_REVIEW_PHASE_NAME, Constants.FINAL_FIX_PHASE_NAME,
@@ -141,9 +141,9 @@ final class Comparators {
                 }
             }
             
-            boolean isPhase1Milestone = phase1.getPhaseType().getName().startsWith("Milestone");
-            boolean isPhase2Milestone = phase2.getPhaseType().getName().startsWith("Milestone");
-            if ((isPhase1Milestone || isPhase2Milestone) && !(isPhase1Milestone && isPhase2Milestone)) {
+            boolean isPhase1Checkpoint = phase1.getPhaseType().getName().startsWith("Checkpoint");
+            boolean isPhase2Checkpoint = phase2.getPhaseType().getName().startsWith("Checkpoint");
+            if ((isPhase1Checkpoint || isPhase2Checkpoint) && !(isPhase1Checkpoint && isPhase2Checkpoint)) {
                 final int ranking1 = getPhaseRanking((Phase) o1);
                 final int ranking2 = getPhaseRanking((Phase) o2);
                 return ranking1 - ranking2;
@@ -416,14 +416,14 @@ final class Comparators {
     }
 
     /**
-     * This class implements <code>Comparator</code> interface and is used to sort Milestone Submissions in
+     * This class implements <code>Comparator</code> interface and is used to sort Checkpoint Submissions in
      * array. It sorts Submissions either by the time they were submitted (starting from the most
      * recent ones), or by the place submission took up.
      * 
      * @author isv
      * @since 1.1.1
      */
-    static class MilestoneSubmissionComparator implements Comparator<Submission> {
+    static class CheckpointSubmissionComparator implements Comparator<Submission> {
 
         /**
          * This member variable contains resources (submitters) assigned to this comprator class.

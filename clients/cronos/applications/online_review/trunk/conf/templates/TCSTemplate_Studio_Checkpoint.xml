@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Template name="Studio With Milestone">
+<Template name="Studio With Checkpoint">
     <PhaseTypes>
         <PhaseType id="registration" typeId="1" typeName="Registration"/>
         <PhaseType id="submission" typeId="2" typeName="Submission"/>
@@ -7,9 +7,9 @@
         <PhaseType id="review" typeId="4" typeName="Review"/>
         <PhaseType id="final_fixes" typeId="7" typeName="Final Fix"/>
         <PhaseType id="final_review" typeId="8" typeName="Final Review"/>
-        <PhaseType id="milestone_submission" typeId="15" typeName="Milestone Submission"/>
-        <PhaseType id="milestone_screening" typeId="16" typeName="Milestone Screening"/>
-        <PhaseType id="milestone_review" typeId="17" typeName="Milestone Review"/>
+        <PhaseType id="checkpoint_submission" typeId="15" typeName="Checkpoint Submission"/>
+        <PhaseType id="checkpoint_screening" typeId="16" typeName="Checkpoint Screening"/>
+        <PhaseType id="checkpoint_review" typeId="17" typeName="Checkpoint Review"/>
     </PhaseTypes>
 
     <Phases>
@@ -19,16 +19,16 @@
             <Dependency id="registrationPhase" isDependencyStart="true" isDependentStart="true" lagTime="0"/>
         </Phase>
 
-        <Phase id="milestoneSubmissionPhase" length="259200000" type="milestone_submission" phaseId="3">
+        <Phase id="checkpointSubmissionPhase" length="259200000" type="checkpoint_submission" phaseId="3">
             <Dependency id="registrationPhase" isDependencyStart="true" isDependentStart="true" lagTime="300000"/>
         </Phase>
 
-        <Phase id="milestoneScreeningPhase" length="43200000" type="milestone_screening" phaseId="4">
-            <Dependency id="milestoneSubmissionPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
+        <Phase id="checkpointScreeningPhase" length="43200000" type="checkpoint_screening" phaseId="4">
+            <Dependency id="checkpointSubmissionPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
         </Phase>
 
-        <Phase id="milestoneReviewPhase" length="86400000" type="milestone_review" phaseId="5">
-            <Dependency id="milestoneScreeningPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
+        <Phase id="checkpointReviewPhase" length="86400000" type="checkpoint_review" phaseId="5">
+            <Dependency id="checkpointScreeningPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
         </Phase>
 
         <Phase id="screeningPhase" length="43200000" type="screening" phaseId="6">

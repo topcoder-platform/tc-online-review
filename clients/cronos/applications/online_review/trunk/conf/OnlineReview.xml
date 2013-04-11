@@ -7,7 +7,7 @@
        <!ENTITY phasesEmailTemplate "@exttemplatesdir@/email_template.txt">
        <!ENTITY studioPhasesEmailTemplate "@exttemplatesdir@/studio_email_template.txt">
        <!ENTITY winnersEmailTemplate "@exttemplatesdir@/winners_email_template.txt">
-       <!ENTITY milestoneScreeningResultsEmailTemplate "@exttemplatesdir@/milestone_screening_results_email_template.txt">
+       <!ENTITY checkpointScreeningResultsEmailTemplate "@exttemplatesdir@/checkpoint_screening_results_email_template.txt">
        <!ENTITY screeningResultsEmailTemplate "@exttemplatesdir@/screening_results_email_template.txt">
        <!ENTITY timelineTemplateDir "@exttemplatesdir@">
        <!ENTITY contactManagersTemplate "@exttemplatesdir@/contact_manager_template.txt">
@@ -1018,7 +1018,7 @@
             <Value>&timelineTemplateDir;/TCSTemplate_Application.xml</Value>
             <Value>&timelineTemplateDir;/TCSTemplate_Studio.xml</Value>
             <Value>&timelineTemplateDir;/TCSTemplate_Security.xml</Value>
-            <Value>&timelineTemplateDir;/TCSTemplate_Studio_Milestone.xml</Value>
+            <Value>&timelineTemplateDir;/TCSTemplate_Studio_Checkpoint.xml</Value>
         </Property>
     </Config>
 
@@ -3969,8 +3969,8 @@
                 <Value>7</Value> <!-- Stress Reviewer -->
                 <Value>8</Value> <!-- Aggregator -->
                 <Value>9</Value> <!-- Final Reviewer -->
-                <Value>19</Value> <!-- Milestone Screener -->
-                <Value>20</Value> <!-- Milestone Reviewer -->
+                <Value>19</Value> <!-- Checkpoint Screener -->
+                <Value>20</Value> <!-- Checkpoint Reviewer -->
             </Property>
             <Property name="Managers/Copilots/Observers">
                 <Value>13</Value> <!-- Manager -->
@@ -4048,8 +4048,8 @@
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
-                <Value>Milestone Screener</Value>
-                <Value>Milestone Reviewer</Value>
+                <Value>Checkpoint Screener</Value>
+                <Value>Checkpoint Reviewer</Value>
             </Property>
             <Property name="View Projects">
                 <Value>Global Manager</Value>
@@ -4077,8 +4077,8 @@
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
-                <Value>Milestone Screener</Value>
-                <Value>Milestone Reviewer</Value>
+                <Value>Checkpoint Screener</Value>
+                <Value>Checkpoint Reviewer</Value>
             </Property>
             <Property name="View Cockpit Project Name">
                 <Value>Global Manager</Value>
@@ -4109,8 +4109,8 @@
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
-                <Value>Milestone Screener</Value>
-                <Value>Milestone Reviewer</Value>
+                <Value>Checkpoint Screener</Value>
+                <Value>Checkpoint Reviewer</Value>
             </Property>
             <Property name="View Project Resources">
                 <Value>Global Manager</Value>
@@ -4158,8 +4158,8 @@
                 <Value>Final Reviewer</Value>
                 <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
-                <Value>Milestone Screener</Value>
-                <Value>Milestone Reviewer</Value>
+                <Value>Checkpoint Screener</Value>
+                <Value>Checkpoint Reviewer</Value>
             </Property>
             <Property name="Contact Project Managers">
                 <Value>Global Manager</Value>
@@ -4182,8 +4182,8 @@
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
-                <Value>Milestone Screener</Value>
-                <Value>Milestone Reviewer</Value>
+                <Value>Checkpoint Screener</Value>
+                <Value>Checkpoint Reviewer</Value>
             </Property>
             <Property name="View Registrations">
                 <Value>Global Manager</Value>
@@ -4199,14 +4199,14 @@
             <Property name="Perform Specification Submission">
                 <Value>Specification Submitter</Value>
             </Property>
-            <Property name="Perform Milestone Submission">
+            <Property name="Perform Checkpoint Submission">
                 <Value>Submitter</Value>
             </Property>
             <Property name="Perform Specification Review">
                 <Value>Specification Reviewer</Value>
             </Property>
-            <Property name="Perform Milestone Review">
-                <Value>Milestone Reviewer</Value>
+            <Property name="Perform Checkpoint Review">
+                <Value>Checkpoint Reviewer</Value>
             </Property>
             <Property name="View All Submissions">
                 <Value>Global Manager</Value>
@@ -4228,7 +4228,7 @@
                 <Value>Specification Submitter</Value>
                 <Value>Specification Reviewer</Value>
             </Property>
-            <Property name="View All Milestone Submissions">
+            <Property name="View All Checkpoint Submissions">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Cockpit Project User</Value>
@@ -4244,15 +4244,15 @@
             <Property name="View My Specification Submissions">
                 <Value>Specification Submitter</Value>
             </Property>
-            <Property name="View My Milestone Submissions">
+            <Property name="View My Checkpoint Submissions">
                 <Value>Submitter</Value>
             </Property>
             <Property name="View Screener Submission">
                 <Value>Screener</Value>
                 <Value>Primary Screener</Value>
             </Property>
-            <Property name="View Screener Milestone Submission">
-                <Value>Milestone Screener</Value>
+            <Property name="View Screener Checkpoint Submission">
+                <Value>Checkpoint Screener</Value>
             </Property>
             <Property name="View Most Recent Submissions">
                 <Value>Observer</Value>
@@ -4273,16 +4273,16 @@
                 <Value>Manager</Value>
                 <Value>Cockpit Project User</Value>
             </Property>
-            <Property name="View Most Recent Milestone Submissions">
+            <Property name="View Most Recent Checkpoint Submissions">
                 <Value>Observer</Value>
-                <Value>Milestone Reviewer</Value>
+                <Value>Checkpoint Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Cockpit Project User</Value>
             </Property>
-            <Property name="View Most Recent Milestone Submissions After Review">
+            <Property name="View Most Recent Checkpoint Submissions After Review">
                 <Value>Submitter</Value>
             </Property>
             <Property name="View Winning Submission">
@@ -4291,7 +4291,7 @@
                 <Value>Final Reviewer</Value>
                 <Value>Designer</Value>
             </Property>
-            <Property name="View Winning Milestone Submission">
+            <Property name="View Winning Checkpoint Submission">
                 <Value>Submitter</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
@@ -4304,7 +4304,7 @@
             <Property name="Download Custom Submission">
                 <Value>Submitter</Value>
             </Property>
-            <Property name="Download Custom Milestone Submission">
+            <Property name="Download Custom Checkpoint Submission">
                 <Value>Submitter</Value>
             </Property>
             <Property name="Remove Submission">
@@ -4338,10 +4338,10 @@
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
-            <Property name="Perform Milestone Screening">
-                <Value>Milestone Screener</Value>
+            <Property name="Perform Checkpoint Screening">
+                <Value>Checkpoint Screener</Value>
             </Property>
-            <Property name="View Milestone Screening">
+            <Property name="View Checkpoint Screening">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Cockpit Project User</Value>
@@ -4349,8 +4349,8 @@
                 <Value>Submitter</Value>
                 <Value>Screener</Value>
                 <Value>Primary Screener</Value>
-                <Value>Milestone Screener</Value>
-                <Value>Milestone Reviewer</Value>
+                <Value>Checkpoint Screener</Value>
+                <Value>Checkpoint Reviewer</Value>
                 <!-- Note: Reviewers weren't originally allowed to see screenings, but
                     after this issue was raised on forum, they were granted a permission to do so -->
                 <Value>Reviewer</Value>
@@ -4365,7 +4365,7 @@
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
-            <Property name="View Milestone Review">
+            <Property name="View Checkpoint Review">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Cockpit Project User</Value>
@@ -4373,8 +4373,8 @@
                 <Value>Submitter</Value>
                 <Value>Screener</Value>
                 <Value>Primary Screener</Value>
-                <Value>Milestone Screener</Value>
-                <Value>Milestone Reviewer</Value>
+                <Value>Checkpoint Screener</Value>
+                <Value>Checkpoint Reviewer</Value>
                 <Value>Reviewer</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
@@ -4444,7 +4444,7 @@
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Post-Mortem Reviewer</Value>
-                <Value>Milestone Reviewer</Value>
+                <Value>Checkpoint Reviewer</Value>
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
@@ -4488,9 +4488,9 @@
             <Property name="Edit My Review during Review">
                 <Value>Screener</Value>
                 <Value>Primary Screener</Value>
-                <Value>Milestone Screener</Value>
+                <Value>Checkpoint Screener</Value>
                 <Value>Reviewer</Value>
-                <Value>Milestone Reviewer</Value>
+                <Value>Checkpoint Reviewer</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
@@ -4683,8 +4683,8 @@
                 <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
-                <Value>Milestone Screener</Value>
-                <Value>Milestone Reviewer</Value>
+                <Value>Checkpoint Screener</Value>
+                <Value>Checkpoint Reviewer</Value>
                 <Value>Specification Reviewer</Value>
                 <Value>Specification Submitter</Value>
                 <Value>Reviewer</Value>
@@ -4796,20 +4796,20 @@
                     <Value>VIEW_REGISTRANTS</Value>
                 </Property>
             </Property>
-            <Property name="Milestone">
+            <Property name="Checkpoint">
                 <Property name="NameKey">
-                    <Value>ProjectPhaseGroup.Milestone</Value>
+                    <Value>ProjectPhaseGroup.Checkpoint</Value>
                 </Property>
                 <Property name="TableNameKey">
-                    <Value>ProjectPhaseGroup.Milestone.table</Value>
+                    <Value>ProjectPhaseGroup.Checkpoint.table</Value>
                 </Property>
                 <Property name="Phases">
-                    <Value>Milestone Submission</Value>
-                    <Value>Milestone Screening</Value>
-                    <Value>Milestone Review</Value>
+                    <Value>Checkpoint Submission</Value>
+                    <Value>Checkpoint Screening</Value>
+                    <Value>Checkpoint Review</Value>
                 </Property>
                 <Property name="AppFunction">
-                    <Value>MILESTONE</Value>
+                    <Value>CHECKPOINT</Value>
                 </Property>
             </Property>
             <Property name="Submission_Screening">

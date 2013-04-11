@@ -3,7 +3,7 @@
        <!ENTITY phasesEmailTemplate "@exttemplatesdir@/email_template.txt">
        <!ENTITY studioPhasesEmailTemplate "@exttemplatesdir@/studio_email_template.txt">
        <!ENTITY winnersEmailTemplate "@exttemplatesdir@/winners_email_template.txt">
-       <!ENTITY milestoneScreeningResultsEmailTemplate "@exttemplatesdir@/milestone_screening_results_email_template.txt">
+       <!ENTITY checkpointScreeningResultsEmailTemplate "@exttemplatesdir@/checkpoint_screening_results_email_template.txt">
        <!ENTITY screeningResultsEmailTemplate "@exttemplatesdir@/screening_results_email_template.txt">
        <!ENTITY managerNotificationEmailTemplatesBase "@exttemplatesdir@">
        <!ENTITY notificationEmailFromAddress "@notificationEmailFromAddress@">
@@ -13,7 +13,7 @@
         ===== Configuration for Phase Handlers from Online Review Phases component =====
     -->
     <!-- Default namespace for Specification Submission handler -->
-    <Config name="com.cronos.onlinereview.phases.MilestoneSubmissionPhaseHandler">
+    <Config name="com.cronos.onlinereview.phases.CheckpointSubmissionPhaseHandler">
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
@@ -60,7 +60,7 @@
                 </Property>
                 <Property name="StartPhaseEmail">
                     <Property name="EmailTemplateName">
-                        <Value>&managerNotificationEmailTemplatesBase;/milestone_submission/start.txt</Value>
+                        <Value>&managerNotificationEmailTemplatesBase;/checkpoint_submission/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
                         <Value>Phase Start</Value>
@@ -71,7 +71,7 @@
                 </Property>
                 <Property name="EndPhaseEmail">
                     <Property name="EmailTemplateName">
-                        <Value>&managerNotificationEmailTemplatesBase;/milestone_submission/end.txt</Value>
+                        <Value>&managerNotificationEmailTemplatesBase;/checkpoint_submission/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
                         <Value>Phase End</Value>
@@ -118,7 +118,7 @@
     </Config>
         
 
-    <Config name="com.cronos.onlinereview.phases.MilestoneScreeningPhaseHandler">
+    <Config name="com.cronos.onlinereview.phases.CheckpointScreeningPhaseHandler">
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
@@ -165,7 +165,7 @@
                 </Property>
                 <Property name="StartPhaseEmail">
                     <Property name="EmailTemplateName">
-                        <Value>&managerNotificationEmailTemplatesBase;/milestone_screening/start.txt</Value>
+                        <Value>&managerNotificationEmailTemplatesBase;/checkpoint_screening/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
                         <Value>Phase Start</Value>
@@ -176,7 +176,7 @@
                 </Property>
                 <Property name="EndPhaseEmail">
                     <Property name="EmailTemplateName">
-                        <Value>&managerNotificationEmailTemplatesBase;/milestone_screening/end.txt</Value>
+                        <Value>&managerNotificationEmailTemplatesBase;/checkpoint_screening/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
                         <Value>Phase End</Value>
@@ -222,10 +222,10 @@
         </Property>
         <Property name="SubmittersEmail">
             <Property name="EmailTemplateName">
-                <Value>&milestoneScreeningResultsEmailTemplate;</Value>
+                <Value>&checkpointScreeningResultsEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
-                <Value>[{0}] {1} Milestone Screening Results</Value>
+                <Value>[{0}] {1} Checkpoint Screening Results</Value>
             </Property>
             <Property name="ProjectLink">
                 <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
@@ -241,7 +241,7 @@
         </Property>
     </Config>
 
-    <Config name="com.cronos.onlinereview.phases.MilestoneReviewPhaseHandler">
+    <Config name="com.cronos.onlinereview.phases.CheckpointReviewPhaseHandler">
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
@@ -289,7 +289,7 @@
                 </Property>
                 <Property name="StartPhaseEmail">
                     <Property name="EmailTemplateName">
-                        <Value>&managerNotificationEmailTemplatesBase;/milestone_review/start.txt</Value>
+                        <Value>&managerNotificationEmailTemplatesBase;/checkpoint_review/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
                         <Value>Phase Start</Value>
@@ -300,7 +300,7 @@
                 </Property>
                 <Property name="EndPhaseEmail">
                     <Property name="EmailTemplateName">
-                        <Value>&managerNotificationEmailTemplatesBase;/milestone_review/end.txt</Value>
+                        <Value>&managerNotificationEmailTemplatesBase;/checkpoint_review/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
                         <Value>Phase End</Value>

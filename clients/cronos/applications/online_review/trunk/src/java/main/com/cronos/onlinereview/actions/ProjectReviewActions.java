@@ -139,17 +139,17 @@ import com.cronos.onlinereview.phases.OnlineReviewServices;
  *   </ol>
  * </p>
  * <p>
- * Version 1.2.1 (Milestone Support 1 Assembly 1.0) Change notes:
+ * Version 1.2.1 (Checkpoint Support 1 Assembly 1.0) Change notes:
  *   <ol>
- *     <li>Added logic for processing Milestone reviews.</li>
+ *     <li>Added logic for processing Checkpoint reviews.</li>
  *     <li>Updated {@link #saveGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
- *     saving review comments for <code>Milestone</code> phases.</li>
+ *     saving review comments for <code>Checkpoint</code> phases.</li>
  *     <li>Updated {@link #createGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
- *     handling <code>Milestone</code> phases.</li>
+ *     handling <code>Checkpoint</code> phases.</li>
  *     <li>Updated {@link #viewGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
- *     handling <code>Milestone</code> phases.</li>
+ *     handling <code>Checkpoint</code> phases.</li>
  *     <li>Updated {@link #editGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
- *     handling <code>Milestone</code> phases.</li>
+ *     handling <code>Checkpoint</code> phases.</li>
  *   </ol>
  * </p>
  *
@@ -2777,10 +2777,10 @@ public class ProjectReviewActions extends DispatchAction {
             request.setAttribute("reviewType", "PostMortem");
         } else if (reviewType.equals("Specification Review")) {
             request.setAttribute("reviewType", "SpecificationReview");
-        } else if (reviewType.equals("Milestone Screening")) {
-            request.setAttribute("reviewType", "MilestoneScreening");
-        } else if (reviewType.equals("Milestone Review")) {
-            request.setAttribute("reviewType", "MilestoneReview");
+        } else if (reviewType.equals("Checkpoint Screening")) {
+            request.setAttribute("reviewType", "CheckpointScreening");
+        } else if (reviewType.equals("Checkpoint Review")) {
+            request.setAttribute("reviewType", "CheckpointReview");
         } else {
             request.setAttribute("reviewType", reviewType);
         }
@@ -2820,12 +2820,12 @@ public class ProjectReviewActions extends DispatchAction {
         } else if ("Specification Review".equals(reviewType)) {
             permName = Constants.PERFORM_SPECIFICATION_REVIEW_PERM_NAME;
             phaseName = Constants.SPECIFICATION_REVIEW_PHASE_NAME;
-        } else if ("Milestone Screening".equals(reviewType)) {
-            permName = Constants.PERFORM_MILESTONE_SCREENING_PERM_NAME;
-            phaseName = Constants.MILESTONE_SCREENING_PHASE_NAME;
-        } else if ("Milestone Review".equals(reviewType)) {
-            permName = Constants.PERFORM_MILESTONE_REVIEW_PERM_NAME;
-            phaseName = Constants.MILESTONE_REVIEW_PHASE_NAME;
+        } else if ("Checkpoint Screening".equals(reviewType)) {
+            permName = Constants.PERFORM_CHECKPOINT_SCREENING_PERM_NAME;
+            phaseName = Constants.CHECKPOINT_SCREENING_PHASE_NAME;
+        } else if ("Checkpoint Review".equals(reviewType)) {
+            permName = Constants.PERFORM_CHECKPOINT_REVIEW_PERM_NAME;
+            phaseName = Constants.CHECKPOINT_REVIEW_PHASE_NAME;
         } else {
             isPostMortemPhase = true;
             permName = Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME;
@@ -2975,10 +2975,10 @@ public class ProjectReviewActions extends DispatchAction {
         } else if ("Specification Review".equals(reviewType)) {
             scorecardTypeName = "Specification Review";
             isSpecReviewPhase = true;
-        } else if ("Milestone Screening".equals(reviewType)) {
-            scorecardTypeName = "Milestone Screening";
-        } else if ("Milestone Review".equals(reviewType)) {
-            scorecardTypeName = "Milestone Review";
+        } else if ("Checkpoint Screening".equals(reviewType)) {
+            scorecardTypeName = "Checkpoint Screening";
+        } else if ("Checkpoint Review".equals(reviewType)) {
+            scorecardTypeName = "Checkpoint Review";
         } else {
             scorecardTypeName = "Post-Mortem";
         }
@@ -3167,14 +3167,14 @@ public class ProjectReviewActions extends DispatchAction {
             permName = Constants.PERFORM_SCREENING_PERM_NAME;
             phaseName = Constants.SCREENING_PHASE_NAME;
             scorecardTypeName = "Screening";
-        } else if ("Milestone Screening".equals(reviewType)) {
-            permName = Constants.PERFORM_MILESTONE_SCREENING_PERM_NAME;
-            phaseName = Constants.MILESTONE_SCREENING_PHASE_NAME;
-            scorecardTypeName = "Milestone Screening";
-        } else if ("Milestone Review".equals(reviewType)) {
-            permName = Constants.PERFORM_MILESTONE_REVIEW_PERM_NAME;
-            phaseName = Constants.MILESTONE_REVIEW_PHASE_NAME;
-            scorecardTypeName = "Milestone Review";
+        } else if ("Checkpoint Screening".equals(reviewType)) {
+            permName = Constants.PERFORM_CHECKPOINT_SCREENING_PERM_NAME;
+            phaseName = Constants.CHECKPOINT_SCREENING_PHASE_NAME;
+            scorecardTypeName = "Checkpoint Screening";
+        } else if ("Checkpoint Review".equals(reviewType)) {
+            permName = Constants.PERFORM_CHECKPOINT_REVIEW_PERM_NAME;
+            phaseName = Constants.CHECKPOINT_REVIEW_PHASE_NAME;
+            scorecardTypeName = "Checkpoint Review";
         } else if ("Review".equals(reviewType)) {
             permName = Constants.PERFORM_REVIEW_PERM_NAME;
             phaseName = Constants.REVIEW_PHASE_NAME;
@@ -3617,7 +3617,7 @@ public class ProjectReviewActions extends DispatchAction {
             // Compute scorecard's score
             float newScore = scoreCalculator.getScore(scorecardTemplate, review);
             // If score has been updated during Manager Edit, additional actions may need to be taken
-            if ((reviewType.equals("Review") || reviewType.equals("Milestone Review")) &&
+            if ((reviewType.equals("Review") || reviewType.equals("Checkpoint Review")) &&
                     managerEdit && (review.getScore() == null || review.getScore() != newScore)) {
                 possibleFinalScoreUpdate = true;
             }
@@ -3704,7 +3704,7 @@ public class ProjectReviewActions extends DispatchAction {
      * @param project
      *            a project the submission was originally made for.
      * @param reviewPhase
-     *            phase of type &quot;Review&quot; or &quot;Milestone Review&quot; used internally to retrieve
+     *            phase of type &quot;Review&quot; or &quot;Checkpoint Review&quot; used internally to retrieve
      *            reviewers' resources.
      * @param submission
      *            a submission in question, i.e. the one that needs its final score updated.
@@ -3928,14 +3928,14 @@ public class ProjectReviewActions extends DispatchAction {
             permName = Constants.VIEW_SCREENING_PERM_NAME;
             phaseName = Constants.SCREENING_PHASE_NAME;
             scorecardTypeName = "Screening";
-        } else if (reviewType.equals("Milestone Screening")) {
-            permName = Constants.VIEW_MILESTONE_SCREENING_PERM_NAME;
-            phaseName = Constants.MILESTONE_SCREENING_PHASE_NAME;
-            scorecardTypeName = "Milestone Screening";
-        } else if (reviewType.equals("Milestone Review")) {
-            permName = Constants.VIEW_MILESTONE_REVIEW_PERM_NAME;
-            phaseName = Constants.MILESTONE_REVIEW_PHASE_NAME;
-            scorecardTypeName = "Milestone Review";
+        } else if (reviewType.equals("Checkpoint Screening")) {
+            permName = Constants.VIEW_CHECKPOINT_SCREENING_PERM_NAME;
+            phaseName = Constants.CHECKPOINT_SCREENING_PHASE_NAME;
+            scorecardTypeName = "Checkpoint Screening";
+        } else if (reviewType.equals("Checkpoint Review")) {
+            permName = Constants.VIEW_CHECKPOINT_REVIEW_PERM_NAME;
+            phaseName = Constants.CHECKPOINT_REVIEW_PHASE_NAME;
+            scorecardTypeName = "Checkpoint Review";
         } else if (reviewType.equals("Review")) {
             permName = Constants.VIEW_ALL_REVIEWS_PERM_NAME;
             phaseName = Constants.REVIEW_PHASE_NAME;
@@ -5089,10 +5089,10 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * This method is an implementation of &quot;Create Milestone Screening&quot; Struts Action defined for
+     * This method is an implementation of &quot;Create Checkpoint Screening&quot; Struts Action defined for
      * this assembly, which is supposed to gather needed information (scorecard template) and
      * present it to editReview.jsp page, which will fill the required fields and post them to the
-     * &quot;Save Milestone Screening&quot; action. The action implemented by this method is executed to edit
+     * &quot;Save Checkpoint Screening&quot; action. The action implemented by this method is executed to edit
      * screening that does not exist yet, and hence is supposed to be created.
      *
      * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
@@ -5111,18 +5111,18 @@ public class ProjectReviewActions extends DispatchAction {
      * @throws BaseException
      *             if any error occurs.
      */
-    public ActionForward createMilestoneScreening(ActionMapping mapping, ActionForm form,
+    public ActionForward createCheckpointScreening(ActionMapping mapping, ActionForm form,
                                                   HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
-        return createGenericReview(mapping, form, request, "Milestone Screening");
+        return createGenericReview(mapping, form, request, "Checkpoint Screening");
     }
 
     /**
-     * This method is an implementation of &quot;Edit Milestone Screening&quot; Struts Action defined for this
+     * This method is an implementation of &quot;Edit Checkpoint Screening&quot; Struts Action defined for this
      * assembly, which is supposed to gather needed information (screening and scorecard template)
      * and present it to editReview.jsp page, which will fill the required fields and post them to
-     * the &quot;Save Milestone Screening&quot; action. The action implemented by this method is executed to
+     * the &quot;Save Checkpoint Screening&quot; action. The action implemented by this method is executed to
      * edit screening that has already been created, but has not been submitted yet, and hence is
      * supposed to be edited.
      *
@@ -5142,15 +5142,15 @@ public class ProjectReviewActions extends DispatchAction {
      * @throws BaseException
      *             if any error occurs.
      */
-    public ActionForward editMilestoneScreening(ActionMapping mapping, ActionForm form,
+    public ActionForward editCheckpointScreening(ActionMapping mapping, ActionForm form,
                                                 HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
-        return editGenericReview(mapping, form, request, "Milestone Screening");
+        return editGenericReview(mapping, form, request, "Checkpoint Screening");
     }
 
     /**
-     * This method is an implementation of &quot;Save Milestone Screening&quot; Struts Action defined for this
+     * This method is an implementation of &quot;Save Checkpoint Screening&quot; Struts Action defined for this
      * assembly, which is supposed to save information posted from /jsp/editReview.jsp page. This
      * method will either create new screening or update (edit) an existing one depending on which
      * action was called to display /jsp/editReview.jsp page.
@@ -5170,15 +5170,15 @@ public class ProjectReviewActions extends DispatchAction {
      * @throws BaseException
      *             if any error occurs.
      */
-    public ActionForward saveMilestoneScreening(ActionMapping mapping, ActionForm form,
+    public ActionForward saveCheckpointScreening(ActionMapping mapping, ActionForm form,
                                                 HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
-        return saveGenericReview(mapping, form, request, "Milestone Screening");
+        return saveGenericReview(mapping, form, request, "Checkpoint Screening");
     }
 
     /**
-     * This method is an implementation of &quot;View Milestone Screening&quot; Struts Action defined for this
+     * This method is an implementation of &quot;View Checkpoint Screening&quot; Struts Action defined for this
      * assembly, which is supposed to view completed screening.
      *
      * @return &quot;success&quot; forward, which forwards to the /jsp/viewReview.jsp page (as
@@ -5197,20 +5197,20 @@ public class ProjectReviewActions extends DispatchAction {
      * @throws BaseException
      *             if any error occurs.
      */
-    public ActionForward viewMilestoneScreening(ActionMapping mapping, ActionForm form,
+    public ActionForward viewCheckpointScreening(ActionMapping mapping, ActionForm form,
                                                 HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
-        return viewGenericReview(mapping, form, request, "Milestone Screening");
+        return viewGenericReview(mapping, form, request, "Checkpoint Screening");
     }
 
 
 
     /**
-     * This method is an implementation of &quot;Create Milestone Review&quot; Struts Action defined for
+     * This method is an implementation of &quot;Create Checkpoint Review&quot; Struts Action defined for
      * this assembly, which is supposed to gather needed information (scorecard template) and
      * present it to editReview.jsp page, which will fill the required fields and post them to the
-     * &quot;Save Milestone Review&quot; action. The action implemented by this method is executed to edit
+     * &quot;Save Checkpoint Review&quot; action. The action implemented by this method is executed to edit
      * screening that does not exist yet, and hence is supposed to be created.
      *
      * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
@@ -5229,18 +5229,18 @@ public class ProjectReviewActions extends DispatchAction {
      * @throws BaseException
      *             if any error occurs.
      */
-    public ActionForward createMilestoneReview(ActionMapping mapping, ActionForm form,
+    public ActionForward createCheckpointReview(ActionMapping mapping, ActionForm form,
                                                HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
-        return createGenericReview(mapping, form, request, "Milestone Review");
+        return createGenericReview(mapping, form, request, "Checkpoint Review");
     }
 
     /**
-     * This method is an implementation of &quot;Edit Milestone Review&quot; Struts Action defined for this
+     * This method is an implementation of &quot;Edit Checkpoint Review&quot; Struts Action defined for this
      * assembly, which is supposed to gather needed information (screening and scorecard template)
      * and present it to editReview.jsp page, which will fill the required fields and post them to
-     * the &quot;Save Milestone Review&quot; action. The action implemented by this method is executed to
+     * the &quot;Save Checkpoint Review&quot; action. The action implemented by this method is executed to
      * edit screening that has already been created, but has not been submitted yet, and hence is
      * supposed to be edited.
      *
@@ -5260,15 +5260,15 @@ public class ProjectReviewActions extends DispatchAction {
      * @throws BaseException
      *             if any error occurs.
      */
-    public ActionForward editMilestoneReview(ActionMapping mapping, ActionForm form,
+    public ActionForward editCheckpointReview(ActionMapping mapping, ActionForm form,
                                              HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
-        return editGenericReview(mapping, form, request, "Milestone Review");
+        return editGenericReview(mapping, form, request, "Checkpoint Review");
     }
 
     /**
-     * This method is an implementation of &quot;Save Milestone Review&quot; Struts Action defined for this
+     * This method is an implementation of &quot;Save Checkpoint Review&quot; Struts Action defined for this
      * assembly, which is supposed to save information posted from /jsp/editReview.jsp page. This
      * method will either create new screening or update (edit) an existing one depending on which
      * action was called to display /jsp/editReview.jsp page.
@@ -5288,15 +5288,15 @@ public class ProjectReviewActions extends DispatchAction {
      * @throws BaseException
      *             if any error occurs.
      */
-    public ActionForward saveMilestoneReview(ActionMapping mapping, ActionForm form,
+    public ActionForward saveCheckpointReview(ActionMapping mapping, ActionForm form,
                                              HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
-        return saveGenericReview(mapping, form, request, "Milestone Review");
+        return saveGenericReview(mapping, form, request, "Checkpoint Review");
     }
 
     /**
-     * This method is an implementation of &quot;View Milestone Review&quot; Struts Action defined for this
+     * This method is an implementation of &quot;View Checkpoint Review&quot; Struts Action defined for this
      * assembly, which is supposed to view completed screening.
      *
      * @return &quot;success&quot; forward, which forwards to the /jsp/viewReview.jsp page (as
@@ -5315,11 +5315,11 @@ public class ProjectReviewActions extends DispatchAction {
      * @throws BaseException
      *             if any error occurs.
      */
-    public ActionForward viewMilestoneReview(ActionMapping mapping, ActionForm form,
+    public ActionForward viewCheckpointReview(ActionMapping mapping, ActionForm form,
                                              HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
-        return viewGenericReview(mapping, form, request, "Milestone Review");
+        return viewGenericReview(mapping, form, request, "Checkpoint Review");
     }
 
     /**

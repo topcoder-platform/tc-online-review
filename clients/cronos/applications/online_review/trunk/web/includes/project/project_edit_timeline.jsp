@@ -14,7 +14,7 @@
   - Version 1.3 (Specification Review Part 1 assembly) changes: Removed radio buttons for selecting the type of
   - phase start
   -
-  - Version 1.3.1 (Milestone Support assembly) changes: Added support for Milestone phases.
+  - Version 1.3.1 (Checkpoint Support assembly) changes: Added support for Checkpoint phases.
   -
   - Version 1.3.2 (Online Review Phases 1.6.1 integration): removed Manual and Auto Screening support for Submissions phase. 
 --%>
@@ -373,9 +373,9 @@
                 </td>
             </tr>
         </c:if>
-        <c:if test="${(phaseIdx eq 0) or (projectForm.map['phase_name'][phaseIdx] eq 'Milestone Screening')}">
+        <c:if test="${(phaseIdx eq 0) or (projectForm.map['phase_name'][phaseIdx] eq 'Checkpoint Screening')}">
             <c:if test="${phaseIdx eq 0}">
-                <tr class="highlighted" id="milestone_screening_scorecard_row_template" style="display: none;">
+                <tr class="highlighted" id="checkpoint_screening_scorecard_row_template" style="display: none;">
             </c:if>
             <c:if test="${phaseIdx ne 0}">
                 <tr class="highlighted">
@@ -383,7 +383,7 @@
                 <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
                 <td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
                     <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" disabled="${isPhaseClosed}">
-                        <c:forEach items="${milestoneScreeningScorecards}" var="scorecard">
+                        <c:forEach items="${checkpointScreeningScorecards}" var="scorecard">
                             <c:if test="${(newProject && scorecard.category == 1)
                                           || (not newProject && project.projectCategory.id == scorecard.category)
                                           || projectCategoriesMap[scorecard.category].projectType.generic}">
@@ -393,16 +393,16 @@
                     </html:select>
                     <script type="text/javascript">
                         <!--
-                         milestoneScreeningScorecardNodes[milestoneScreeningScorecardNodes.length]
+                         checkpointScreeningScorecardNodes[checkpointScreeningScorecardNodes.length]
                              = document.getElementsByName("phase_scorecard[${phaseIdx}]")[0];
                         -->
                     </script>
                 </td>
             </tr>
         </c:if>
-        <c:if test="${(phaseIdx eq 0) or (projectForm.map['phase_name'][phaseIdx] eq 'Milestone Review')}">
+        <c:if test="${(phaseIdx eq 0) or (projectForm.map['phase_name'][phaseIdx] eq 'Checkpoint Review')}">
             <c:if test="${phaseIdx eq 0}">
-                <tr class="highlighted" id="milestone_review_scorecard_row_template" style="display: none;">
+                <tr class="highlighted" id="checkpoint_review_scorecard_row_template" style="display: none;">
             </c:if>
             <c:if test="${phaseIdx ne 0}">
                 <tr class="highlighted">
@@ -410,7 +410,7 @@
                 <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
                 <td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
                     <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" disabled="${isPhaseClosed}">
-                        <c:forEach items="${milestoneReviewScorecards}" var="scorecard">
+                        <c:forEach items="${checkpointReviewScorecards}" var="scorecard">
                             <c:if test="${(newProject && scorecard.category == 1)
                                           || (not newProject && project.projectCategory.id == scorecard.category)
                                           || projectCategoriesMap[scorecard.category].projectType.generic}">
@@ -420,7 +420,7 @@
                     </html:select>
                     <script type="text/javascript">
                         <!--
-                         milestoneReviewScorecardNodes[milestoneReviewScorecardNodes.length]
+                         checkpointReviewScorecardNodes[checkpointReviewScorecardNodes.length]
                              = document.getElementsByName("phase_scorecard[${phaseIdx}]")[0];
                         -->
                     </script>

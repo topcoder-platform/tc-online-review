@@ -164,12 +164,12 @@
             <Value>handler_specification_submission_end</Value>
             <Value>handler_specification_review_start</Value>
             <Value>handler_specification_review_end</Value>
-            <Value>handler_milestone_submission_start</Value>
-            <Value>handler_milestone_submission_end</Value>
-            <Value>handler_milestone_screening_start</Value>
-            <Value>handler_milestone_screening_end</Value>
-            <Value>handler_milestone_review_start</Value>
-            <Value>handler_milestone_review_end</Value>
+            <Value>handler_checkpoint_submission_start</Value>
+            <Value>handler_checkpoint_submission_end</Value>
+            <Value>handler_checkpoint_screening_start</Value>
+            <Value>handler_checkpoint_screening_end</Value>
+            <Value>handler_checkpoint_review_start</Value>
+            <Value>handler_checkpoint_review_end</Value>
         </Property>
         <!-- The details about each handler -->
         <Property name="handler_final_review_start">
@@ -458,70 +458,70 @@
                 <Value>handler_specification_review_def</Value>
             </Property>
         </Property>
-        <Property name="handler_milestone_submission_start">
+        <Property name="handler_checkpoint_submission_start">
             <Property name="phaseType">
-                <Value>milestone_submission</Value>
+                <Value>checkpoint_submission</Value>
             </Property>
             <Property name="operation">
                 <Value>start</Value>
             </Property>
             <Property name="handler">
-                <Value>handler_milestone_submission_def</Value>
+                <Value>handler_checkpoint_submission_def</Value>
             </Property>
         </Property>
-        <Property name="handler_milestone_submission_end">
+        <Property name="handler_checkpoint_submission_end">
             <Property name="phaseType">
-                <Value>milestone_submission</Value>
+                <Value>checkpoint_submission</Value>
             </Property>
             <Property name="operation">
                 <Value>end</Value>
             </Property>
             <Property name="handler">
-                <Value>handler_milestone_submission_def</Value>
+                <Value>handler_checkpoint_submission_def</Value>
             </Property>
         </Property>
-        <Property name="handler_milestone_screening_start">
+        <Property name="handler_checkpoint_screening_start">
             <Property name="phaseType">
-                <Value>milestone_screening</Value>
+                <Value>checkpoint_screening</Value>
             </Property>
             <Property name="operation">
                 <Value>start</Value>
             </Property>
             <Property name="handler">
-                <Value>handler_milestone_screening_def</Value>
+                <Value>handler_checkpoint_screening_def</Value>
             </Property>
         </Property>
-        <Property name="handler_milestone_screening_end">
+        <Property name="handler_checkpoint_screening_end">
             <Property name="phaseType">
-                <Value>milestone_screening</Value>
+                <Value>checkpoint_screening</Value>
             </Property>
             <Property name="operation">
                 <Value>end</Value>
             </Property>
             <Property name="handler">
-                <Value>handler_milestone_screening_def</Value>
+                <Value>handler_checkpoint_screening_def</Value>
             </Property>
         </Property>
-        <Property name="handler_milestone_review_start">
+        <Property name="handler_checkpoint_review_start">
             <Property name="phaseType">
-                <Value>milestone_review</Value>
+                <Value>checkpoint_review</Value>
             </Property>
             <Property name="operation">
                 <Value>start</Value>
             </Property>
             <Property name="handler">
-                <Value>handler_milestone_review_def</Value>
+                <Value>handler_checkpoint_review_def</Value>
             </Property>
         </Property>
-        <Property name="handler_milestone_review_end">
+        <Property name="handler_checkpoint_review_end">
             <Property name="phaseType">
-                <Value>milestone_review</Value>
+                <Value>checkpoint_review</Value>
             </Property>
             <Property name="operation">
                 <Value>end</Value>
             </Property>
             <Property name="handler">
-                <Value>handler_milestone_review_def</Value>
+                <Value>handler_checkpoint_review_def</Value>
             </Property>
         </Property>
         <!-- The object factory configurations -->
@@ -830,7 +830,7 @@
                 </Property>
             </Property>
         </Property>
-        <Property name="milestone_submission">
+        <Property name="checkpoint_submission">
             <Property name="type">
                 <Value>com.topcoder.project.phases.PhaseType</Value>
             </Property>
@@ -848,12 +848,12 @@
                         <Value>String</Value>
                     </Property>
                     <Property name="value">
-                        <Value>Milestone Submission</Value>
+                        <Value>Checkpoint Submission</Value>
                     </Property>
                 </Property>
             </Property>
         </Property>
-        <Property name="milestone_screening">
+        <Property name="checkpoint_screening">
             <Property name="type">
                 <Value>com.topcoder.project.phases.PhaseType</Value>
             </Property>
@@ -871,12 +871,12 @@
                         <Value>String</Value>
                     </Property>
                     <Property name="value">
-                        <Value>Milestone Screening</Value>
+                        <Value>Checkpoint Screening</Value>
                     </Property>
                 </Property>
             </Property>
         </Property>
-        <Property name="milestone_review">
+        <Property name="checkpoint_review">
             <Property name="type">
                 <Value>com.topcoder.project.phases.PhaseType</Value>
             </Property>
@@ -894,7 +894,7 @@
                         <Value>String</Value>
                     </Property>
                     <Property name="value">
-                        <Value>Milestone Review</Value>
+                        <Value>Checkpoint Review</Value>
                     </Property>
                 </Property>
             </Property>
@@ -965,19 +965,19 @@
                 <Value>com.cronos.onlinereview.phases.SpecificationReviewPhaseHandler</Value>
             </Property>
         </Property>
-        <Property name="handler_milestone_submission_def">
+        <Property name="handler_checkpoint_submission_def">
             <Property name="type">
-                <Value>com.cronos.onlinereview.phases.MilestoneSubmissionPhaseHandler</Value>
+                <Value>com.cronos.onlinereview.phases.CheckpointSubmissionPhaseHandler</Value>
             </Property>
         </Property>
-        <Property name="handler_milestone_screening_def">
+        <Property name="handler_checkpoint_screening_def">
             <Property name="type">
-                <Value>com.cronos.onlinereview.phases.PRMilestoneScreeningPhaseHandler</Value>
+                <Value>com.cronos.onlinereview.phases.PRCheckpointScreeningPhaseHandler</Value>
             </Property>
         </Property>
-        <Property name="handler_milestone_review_def">
+        <Property name="handler_checkpoint_review_def">
             <Property name="type">
-                <Value>com.cronos.onlinereview.phases.PRMilestoneReviewPhaseHandler</Value>
+                <Value>com.cronos.onlinereview.phases.PRCheckpointReviewPhaseHandler</Value>
             </Property>
         </Property>
     </Config>

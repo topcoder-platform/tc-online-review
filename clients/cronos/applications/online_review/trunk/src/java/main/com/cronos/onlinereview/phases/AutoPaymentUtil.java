@@ -42,8 +42,8 @@ import com.topcoder.util.log.LogManager;
  * <p>Version 1.5 (Online Review Replatforming Release 2) Change notes:
  *   <ol>
  *     <li>Update {@link #populateReviewerPayments(long, Connection, int)} method populate reviewer payments for
- *     studio contest and for the new milestone screening phase.</li>
- *     <li>Update {@link #getReviewers(long, Connection)} method to add support for Milestone Screener.</li>
+ *     studio contest and for the new checkpoint screening phase.</li>
+ *     <li>Update {@link #getReviewers(long, Connection)} method to add support for Checkpoint Screener.</li>
  *     <li>Update {@link #populateSubmitterPayments(long, Connection)} method to add support to populate submitter payments
  *     from prize table.</li>
  *   </ol> 
@@ -84,7 +84,7 @@ public class AutoPaymentUtil {
 
     /**
      * The SQL statement to calculate the submitter's payment for a specified contest. The submiiter's payment
-     * including the contest submission payment and milestone contest submission payment.
+     * including the contest submission payment and checkpoint contest submission payment.
      * 
      * @since 1.5
      */
@@ -542,7 +542,7 @@ public class AutoPaymentUtil {
 
     /**
      * Gets the submitter's payment from the prize table for a specified contest. The submitter's payment
-     * includes the conetst submission prize and milestone submission prize.
+     * includes the conetst submission prize and checkpoint submission prize.
      *
      * @param projectId the project id of the specified conetst
      * @param connection SQL connection to use for information retrieving.

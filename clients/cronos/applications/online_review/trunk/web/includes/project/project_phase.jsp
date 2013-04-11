@@ -11,7 +11,7 @@
   - Version 1.3 (Specification Review Part 1 assembly) changes: Added support for Specification Submission/Review
   - phases.
   -
-  - Version 1.3.1 (Milestone Support assembly) changes: Added support for Milestone phases.
+  - Version 1.3.1 (Checkpoint Support assembly) changes: Added support for Checkpoint phases.
   -
   - Version 1.3.2 (Online Review Replatforming Release 2) changes: Change submission.uploads[0] to submission.upload.
   -
@@ -21,8 +21,8 @@
   -
   - Version 1.5 (Online Review Miscellaneous Improvements) changes: Add advance link for the submissions which failed screening
   -
-  - Version 1.6 (Online Review - Project Payments Integration Part 1 v1.0) changes: Add advance link for the milestone submissions
-  - which failed milestone screening
+  - Version 1.6 (Online Review - Project Payments Integration Part 1 v1.0) changes: Add advance link for the checkpoint submissions
+  - which failed checkpoint screening
 --%>
 <%@page import="com.topcoder.shared.util.ApplicationServer"%>
 <%@ page language="java" isELIgnored="false" %>
@@ -893,7 +893,7 @@
                                 </tr>
                             </table>
                         </c:when>
-                        <c:when test='${group.appFunc == "MILESTONE"}'>
+                        <c:when test='${group.appFunc == "CHECKPOINT"}'>
                             <table id="Submissions${submBoxIdx}" class="scorecard" width="100%" cellpadding="0" cellspacing="0" border="0">
                                 <tr>
                                     <td class="title" colspan="11">${group.tableName}</td>
@@ -908,9 +908,9 @@
                                     <td class="headerC" width="12%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ReviewScore" arg0="${group.groupIndex}" /></td>
                                     <td class="headerC" width="12%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ReviewResult" arg0="${group.groupIndex}" /></td>
                                 </tr>
-                                <c:set var="prevMilestoneSubm" value="${group.pastMilestoneSubmissions}" />
-                                <c:set var="prevMilestoneSubmissions" value="" />
-                                <c:forEach items="${group.milestoneSubmissions}" var="submission" varStatus="submissionStatus">
+                                <c:set var="prevCheckpointSubm" value="${group.pastCheckpointSubmissions}" />
+                                <c:set var="prevCheckpointSubmissions" value="" />
+                                <c:forEach items="${group.checkpointSubmissions}" var="submission" varStatus="submissionStatus">
                                     <c:set var="submitter" value="" />
                                     <c:set var="submissionStatusName" value="${submission.submissionStatus.name}" />
                                     <c:forEach items="${group.submitters}" var="curSubmitter">
@@ -918,19 +918,19 @@
                                             <c:set var="submitter" value="${curSubmitter}" />
                                         </c:if>
                                     </c:forEach>
-                                    <c:if test="${not empty prevMilestoneSubm}">
-                                        <c:set var="prevMilestoneSubmissions" value="${prevMilestoneSubm[submissionStatus.index]}" />
+                                    <c:if test="${not empty prevCheckpointSubm}">
+                                        <c:set var="prevCheckpointSubmissions" value="${prevCheckpointSubm[submissionStatus.index]}" />
                                     </c:if>
                                     <tr class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}'>
-                                        <%-- Milestone Submission ID --%>
+                                        <%-- Checkpoint Submission ID --%>
                                         <td class="value" width="10%" nowrap="nowrap">
-                                            <c:if test="${not empty prevMilestoneSubmissions}">
+                                            <c:if test="${not empty prevCheckpointSubmissions}">
                                                 <a id="PrevSubm${submBoxIdx}_${submissionStatus.index}_plus" href="javascript:void(0)" onClick='return expandSubmissions(${submBoxIdx}, ${submissionStatus.index}, this)'><html:img
                                                         styleClass="Outline" border="0" srcKey="viewProjectDetails.box.Submission.icoShowMore.img" altKey="viewProjectDetails.box.Submission.icoShowMore.alt" /></a><a
                                                     id="PrevSubm${submBoxIdx}_${submissionStatus.index}_minus" href="javascript:void(0)" onClick='return collapseSubmissions(${submBoxIdx}, ${submissionStatus.index}, this)' style="display:none;"><html:img
                                                         styleClass="Outline" border="0" srcKey="viewProjectDetails.box.Submission.icoShowLess.img" altKey="viewProjectDetails.box.Submission.icoShowLess.alt" /></a>
                                             </c:if>
-                                            <c:if test="${(empty prevMilestoneSubmissions) and (not empty prevMilestoneSubm)}">
+                                            <c:if test="${(empty prevCheckpointSubmissions) and (not empty prevCheckpointSubm)}">
                                                 <html:img styleClass="Outline" border="0" srcKey="viewProjectDetails.box.Submission.icoShowMore.img" style="visibility:hidden;" />
                                             </c:if>
                                             <c:set var="placement" value="" />
@@ -938,7 +938,7 @@
                                                 <c:set var="placement" value='${submission.placement}' />
                                             </c:if>
                                             <c:set var="failedReview"
-                                                   value="${(submissionStatusName == 'Failed Milestone Screening') or (submissionStatusName == 'Failed Milestone Review')}" />
+                                                   value="${(submissionStatusName == 'Failed Checkpoint Screening') or (submissionStatusName == 'Failed Checkpoint Review')}" />
                                             <c:if test="${(not empty placement) and (not failedReview)}">
                                                 <c:choose>
                                                     <c:when test="${placement == 1}">
@@ -963,7 +963,7 @@
                                                 </c:if>
                                             </c:if>
                                             <c:if test="${project.projectCategory.projectType.id ne 3}">
-                                                <html:link page="/actions/DownloadMilestoneSubmission.do?method=downloadMilestoneSubmission&uid=${submission.upload.id}"
+                                                <html:link page="/actions/DownloadCheckpointSubmission.do?method=downloadCheckpointSubmission&uid=${submission.upload.id}"
                                                        titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
                                             </c:if>
                                             <c:if test="${project.projectCategory.projectType.id eq 3}">
@@ -975,10 +975,10 @@
                                             </c:if>
                                         </td>
 
-                                        <%-- Delete Milestone Submission --%>
-                                        <td class="value" <c:if test="${isManager and not group.milestoneReviewFinished}">width="5%"</c:if>>
+                                        <%-- Delete Checkpoint Submission --%>
+                                        <td class="value" <c:if test="${isManager and not group.checkpointReviewFinished}">width="5%"</c:if>>
                                             <c:choose>
-                                               <c:when test="${isManager and not group.milestoneReviewFinished}">
+                                               <c:when test="${isManager and not group.checkpointReviewFinished}">
                                                    <html:link page="/actions/DeleteSubmission.do?method=deleteSubmission&uid=${submission.upload.id}">
                                                        <html:img srcKey="viewProjectDetails.box.Submission.icoTrash.img"
                                                                  altKey="viewProjectDetails.box.Submission.icoTrash.alt"
@@ -989,29 +989,29 @@
                                             </c:choose>
                                         </td>
 
-                                        <%-- Milestone Submission Date --%>
+                                        <%-- Checkpoint Submission Date --%>
                                         <td class="value" width="12%">
                                             ${orfn:displayDate(pageContext.request, submission.upload.creationTimestamp)}
                                         </td>
 
-                                        <%-- Milestone Screener --%>
+                                        <%-- Checkpoint Screener --%>
                                             <td class="valueC" width="15%">
                                                 <c:choose>
-                                                    <c:when test="${empty group.milestoneScreener}">
+                                                    <c:when test="${empty group.checkpointScreener}">
                                                         <bean:message
                                                                 key="viewProjectDetails.box.Screening.ScreenerNotAssigned"/>
                                                     </c:when>
                                                     <c:otherwise>
                                                         <tc-webtag:handle
-                                                                coderId='${group.milestoneScreener.allProperties["External Reference ID"]}'
+                                                                coderId='${group.checkpointScreener.allProperties["External Reference ID"]}'
                                                                 context="${orfn:getHandlerContext(pageContext.request)}"/>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
 
-                                        <%-- Milestone Screening Score --%>
+                                        <%-- Checkpoint Screening Score --%>
                                         <c:set var="review" value="" />
-                                        <c:forEach items="${group.milestoneScreeningReviews}" var="screening">
+                                        <c:forEach items="${group.checkpointScreeningReviews}" var="screening">
                                             <c:if test="${screening.submission == submission.id}">
                                                 <c:set var="review" value="${screening}" />
                                             </c:if>
@@ -1021,9 +1021,9 @@
                                             <c:choose>
                                                 <c:when test="${empty review}">
                                                     <c:choose>
-                                                        <c:when test="${isAllowedToPerformMilestoneScreening}">
+                                                        <c:when test="${isAllowedToPerformCheckpointScreening}">
                                                             <b><html:link
-                                                                    page="/actions/CreateMilestoneScreening.do?method=createMilestoneScreening&sid=${submission.id}">
+                                                                    page="/actions/CreateCheckpointScreening.do?method=createCheckpointScreening&sid=${submission.id}">
                                                                 <bean:message
                                                                         key="viewProjectDetails.box.Screening.Submit"/></html:link></b>
                                                         </c:when>
@@ -1034,9 +1034,9 @@
                                                     <c:choose>
                                                         <c:when test="${review.committed}">
                                                             <c:choose>
-                                                                <c:when test="${isAllowedToViewMilestoneScreening}">
+                                                                <c:when test="${isAllowedToViewCheckpointScreening}">
                                                                     <html:link
-                                                                            page="/actions/ViewMilestoneScreening.do?method=viewMilestoneScreening&rid=${review.id}">
+                                                                            page="/actions/ViewCheckpointScreening.do?method=viewCheckpointScreening&rid=${review.id}">
                                                                         ${orfn:displayScore(pageContext.request, review.score)}</html:link>
                                                                 </c:when>
                                                                 <c:otherwise>
@@ -1046,9 +1046,9 @@
                                                         </c:when>
                                                         <c:otherwise>
                                                             <c:choose>
-                                                                <c:when test="${isAllowedToPerformMilestoneScreening}">
+                                                                <c:when test="${isAllowedToPerformCheckpointScreening}">
                                                                     <b><html:link
-                                                                            page="/actions/EditMilestoneScreening.do?method=editMilestoneScreening&rid=${review.id}">
+                                                                            page="/actions/EditCheckpointScreening.do?method=editCheckpointScreening&rid=${review.id}">
                                                                         <bean:message
                                                                                 key="viewProjectDetails.box.Screening.Submit"/></html:link></b>
                                                                 </c:when>
@@ -1060,19 +1060,19 @@
                                             </c:choose>
                                         </td>
 
-                                        <c:set var="failedScreening" value="${(submissionStatusName == 'Failed Milestone Screening')}" />
-                                        <%-- Milestone Screening Results --%>
+                                        <c:set var="failedScreening" value="${(submissionStatusName == 'Failed Checkpoint Screening')}" />
+                                        <%-- Checkpoint Screening Results --%>
                                         <td class="valueC">
                                             <c:choose>
-                                                <c:when test="${not empty review and review.committed and group.milestoneScreeningPhaseStatus == 3}">
+                                                <c:when test="${not empty review and review.committed and group.checkpointScreeningPhaseStatus == 3}">
                                                     <c:choose>
                                                         <c:when test="${not failedScreening}">
                                                             <bean:message key="viewProjectDetails.box.Screening.Passed"/>
                                                         </c:when>
                                                         <c:otherwise>
                                                             <bean:message key="viewProjectDetails.box.Screening.Failed"/>
-                                                            <c:if test="${isAllowedToAdvanceSubmissionWithFailedScreening and submission.submissionStatus.name eq 'Failed Milestone Screening'}">
-                                                                (<html:link page="/actions/AdvanceFailedMilestoneScreeningSubmission.do?method=advanceFailedScreeningSubmission&uid=${submission.upload.id}"><bean:message key="viewProjectDetails.box.Screening.Advance" /></html:link>)
+                                                            <c:if test="${isAllowedToAdvanceSubmissionWithFailedScreening and submission.submissionStatus.name eq 'Failed Checkpoint Screening'}">
+                                                                (<html:link page="/actions/AdvanceFailedCheckpointScreeningSubmission.do?method=advanceFailedScreeningSubmission&uid=${submission.upload.id}"><bean:message key="viewProjectDetails.box.Screening.Advance" /></html:link>)
                                                             </c:if>
                                                         </c:otherwise>
                                                     </c:choose>
@@ -1082,26 +1082,26 @@
                                         </td>
                                         
 
-                                            <%-- Milestone Reviewer --%>
+                                            <%-- Checkpoint Reviewer --%>
                                             <td class="valueC" width="12%">
                                                 <c:if test="${not failedScreening}">
                                                     <c:choose>
-                                                        <c:when test="${empty group.milestoneReviewer}">
+                                                        <c:when test="${empty group.checkpointReviewer}">
                                                             <bean:message
-                                                                    key="viewProjectDetails.box.Milestone.ReviewerNotAssigned"/>
+                                                                    key="viewProjectDetails.box.Checkpoint.ReviewerNotAssigned"/>
                                                         </c:when>
                                                         <c:otherwise>
                                                             <tc-webtag:handle
-                                                                    coderId='${group.milestoneReviewer.allProperties["External Reference ID"]}'
+                                                                    coderId='${group.checkpointReviewer.allProperties["External Reference ID"]}'
                                                                     context="${orfn:getHandlerContext(pageContext.request)}"/>
                                                         </c:otherwise>
                                                     </c:choose>
                                                 </c:if>
                                             </td>
 
-                                            <%-- Milestone Review Score --%>
+                                            <%-- Checkpoint Review Score --%>
                                             <c:set var="review" value="" />
-                                            <c:forEach items="${group.milestoneReviews}" var="item">
+                                            <c:forEach items="${group.checkpointReviews}" var="item">
                                                 <c:if test="${item.submission == submission.id}">
                                                     <c:set var="review" value="${item}" />
                                                 </c:if>
@@ -1112,9 +1112,9 @@
                                                 <c:choose>
                                                     <c:when test="${empty review}">
                                                         <c:choose>
-                                                            <c:when test="${isAllowedToPerformMilestoneReview}">
+                                                            <c:when test="${isAllowedToPerformCheckpointReview}">
                                                                 <b><html:link
-                                                                        page="/actions/CreateMilestoneReview.do?method=createMilestoneReview&sid=${submission.id}">
+                                                                        page="/actions/CreateCheckpointReview.do?method=createCheckpointReview&sid=${submission.id}">
                                                                     <bean:message
                                                                             key="viewProjectDetails.box.Screening.Submit"/></html:link></b>
                                                             </c:when>
@@ -1125,12 +1125,12 @@
                                                         <c:choose>
                                                             <c:when test="${review.committed}">
                                                                 <c:choose>
-                                                                    <c:when test="${isSubmitter and not group.milestoneReviewFinished}">
+                                                                    <c:when test="${isSubmitter and not group.checkpointReviewFinished}">
                                                                         <bean:message key="Pending"/>
                                                                     </c:when>
-                                                                    <c:when test="${isAllowedToViewMilestoneReview}">
+                                                                    <c:when test="${isAllowedToViewCheckpointReview}">
                                                                         <html:link
-                                                                                page="/actions/ViewMilestoneReview.do?method=viewMilestoneReview&rid=${review.id}">
+                                                                                page="/actions/ViewCheckpointReview.do?method=viewCheckpointReview&rid=${review.id}">
                                                                             ${orfn:displayScore(pageContext.request, review.score)}</html:link>
                                                                     </c:when>
                                                                     <c:otherwise>
@@ -1140,9 +1140,9 @@
                                                             </c:when>
                                                             <c:otherwise>
                                                                 <c:choose>
-                                                                    <c:when test="${isAllowedToPerformMilestoneReview}">
+                                                                    <c:when test="${isAllowedToPerformCheckpointReview}">
                                                                         <b><html:link
-                                                                                page="/actions/EditMilestoneReview.do?method=editMilestoneReview&rid=${review.id}">
+                                                                                page="/actions/EditCheckpointReview.do?method=editCheckpointReview&rid=${review.id}">
                                                                             <bean:message
                                                                                     key="viewProjectDetails.box.Screening.Submit"/></html:link></b>
                                                                     </c:when>
@@ -1155,21 +1155,21 @@
                                                 </c:if>
                                             </td>
 
-                                            <%-- Milestone Review Results --%>
+                                            <%-- Checkpoint Review Results --%>
                                             <td class="valueC">
                                                 <c:if test="${not failedScreening}">
 
                                                 <c:choose>
                                                     <c:when test="${not empty review and review.committed}">
                                                         <c:choose>
-                                                            <c:when test="${isSubmitter and not group.milestoneReviewFinished}">
+                                                            <c:when test="${isSubmitter and not group.checkpointReviewFinished}">
                                                                 <!--@-->
                                                             </c:when>
                                                             <c:when test="${not failedReview}">
-                                                                <bean:message key="viewProjectDetails.box.MilestoneReview.Passed"/>
+                                                                <bean:message key="viewProjectDetails.box.CheckpointReview.Passed"/>
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <bean:message key="viewProjectDetails.box.MilestoneReview.Failed"/>
+                                                                <bean:message key="viewProjectDetails.box.CheckpointReview.Failed"/>
                                                             </c:otherwise>
                                                         </c:choose>
                                                     </c:when>
@@ -1180,7 +1180,7 @@
                                     </tr>
 
 
-                                    <c:forEach items="${prevMilestoneSubmissions}" var="pastSubmission" varStatus="pastSubmissionStatus">
+                                    <c:forEach items="${prevCheckpointSubmissions}" var="pastSubmission" varStatus="pastSubmissionStatus">
                                         <tr id="PrevSubm${submBoxIdx}_${submissionStatus.index}" class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}' style="display:none;">
                                             <td class="value" colspan="2" nowrap="nowrap">
                                                 <html:img border="0" srcKey="viewProjectDetails.box.Submission.icoShowMore.img" styleClass="Outline" style="visibility:hidden;" />
@@ -1207,7 +1207,7 @@
                                 </tr>
                             </table>
 
-                            <c:if test="${(not empty prevMilestoneSubm) && (submBoxIdx == 0)}">
+                            <c:if test="${(not empty prevCheckpointSubm) && (submBoxIdx == 0)}">
 <script language="JavaScript" type="text/javascript">
     function expandSubmissions(iBoxIdx, iLinkIdx, aObject) {
         return expcollSubmissions(iBoxIdx, iLinkIdx, aObject, "none", "inline", "");

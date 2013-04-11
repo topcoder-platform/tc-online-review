@@ -16,7 +16,7 @@
   - Version 1.3.1 (SVN Automation and Late Deliverables Tracking Assembly 1.0) changes: SVN Module property is no longer
   - editable
   -
-  - Version 1.3.2 (Milestone Support assembly) changes: Added support for Milestone phases.
+  - Version 1.3.2 (Checkpoint Support assembly) changes: Added support for Checkpoint phases.
   -
   - Version 1.4 (Online Review Status Validation Assembly 1.0) changes: added error display of validation for status field
   -
@@ -133,20 +133,20 @@
         specificationReviewScorecards[specificationReviewScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";
         </c:forEach>
 
-        var milestoneScreeningScorecards = [];
-        <c:forEach items="${requestScope.milestoneScreeningScorecards}" var="scorecard">
-        milestoneScreeningScorecards.push({});
-        milestoneScreeningScorecards[milestoneScreeningScorecards.length - 1]["id"] = ${scorecard.id};
-        milestoneScreeningScorecards[milestoneScreeningScorecards.length - 1]["category"] = ${scorecard.category};
-        milestoneScreeningScorecards[milestoneScreeningScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";
+        var checkpointScreeningScorecards = [];
+        <c:forEach items="${requestScope.checkpointScreeningScorecards}" var="scorecard">
+        checkpointScreeningScorecards.push({});
+        checkpointScreeningScorecards[checkpointScreeningScorecards.length - 1]["id"] = ${scorecard.id};
+        checkpointScreeningScorecards[checkpointScreeningScorecards.length - 1]["category"] = ${scorecard.category};
+        checkpointScreeningScorecards[checkpointScreeningScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";
         </c:forEach>
 
-        var milestoneReviewScorecards = [];
-        <c:forEach items="${requestScope.milestoneReviewScorecards}" var="scorecard">
-        milestoneReviewScorecards.push({});
-        milestoneReviewScorecards[milestoneReviewScorecards.length - 1]["id"] = ${scorecard.id};
-        milestoneReviewScorecards[milestoneReviewScorecards.length - 1]["category"] = ${scorecard.category};
-        milestoneReviewScorecards[milestoneReviewScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";
+        var checkpointReviewScorecards = [];
+        <c:forEach items="${requestScope.checkpointReviewScorecards}" var="scorecard">
+        checkpointReviewScorecards.push({});
+        checkpointReviewScorecards[checkpointReviewScorecards.length - 1]["id"] = ${scorecard.id};
+        checkpointReviewScorecards[checkpointReviewScorecards.length - 1]["category"] = ${scorecard.category};
+        checkpointReviewScorecards[checkpointReviewScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";
         </c:forEach>
 
         var defaultScorecards = [];
@@ -190,8 +190,8 @@
         var approvalScorecardNodes = new Array();;
         var postMortemScorecardNodes = new Array();;
         var specReviewScorecardNodes = new Array();;
-        var milestoneScreeningScorecardNodes = new Array();;
-        var milestoneReviewScorecardNodes = new Array();;
+        var checkpointScreeningScorecardNodes = new Array();;
+        var checkpointReviewScorecardNodes = new Array();;
 
         /*
          * TODO: Document it
@@ -273,11 +273,11 @@
             templateRow = document.getElementById("specification_review_scorecard_row_template");
             changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, specificationReviewScorecards, 'Specification Review');
 
-            templateRow = document.getElementById("milestone_review_scorecard_row_template");
-            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, milestoneReviewScorecards, 'Milestone Review');
+            templateRow = document.getElementById("checkpoint_review_scorecard_row_template");
+            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, checkpointReviewScorecards, 'Checkpoint Review');
 
-            templateRow = document.getElementById("milestone_screening_scorecard_row_template");
-            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, milestoneScreeningScorecards, 'Milestone Screening');
+            templateRow = document.getElementById("checkpoint_screening_scorecard_row_template");
+            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, checkpointScreeningScorecards, 'Checkpoint Screening');
 
 
             for (var i = 0; i < screeningScorecardNodes.length; i++) {
@@ -296,11 +296,11 @@
             for (var i = 0; i < specReviewScorecardNodes.length; i++) {
                 changeScorecardByCategory(specReviewScorecardNodes[i], projectCategoryNode.value, specificationReviewScorecards, 'Specification Review');
             }
-            for (var i = 0; i < milestoneScreeningScorecardNodes.length; i++) {
-                changeScorecardByCategory(milestoneScreeningScorecardNodes[i], projectCategoryNode.value, milestoneScreeningScorecards, 'Milestone Screening');
+            for (var i = 0; i < checkpointScreeningScorecardNodes.length; i++) {
+                changeScorecardByCategory(checkpointScreeningScorecardNodes[i], projectCategoryNode.value, checkpointScreeningScorecards, 'Checkpoint Screening');
             }
-            for (var i = 0; i < milestoneReviewScorecardNodes.length; i++) {
-                changeScorecardByCategory(milestoneReviewScorecardNodes[i], projectCategoryNode.value, milestoneReviewScorecards, 'Milestone Review');
+            for (var i = 0; i < checkpointReviewScorecardNodes.length; i++) {
+                changeScorecardByCategory(checkpointReviewScorecardNodes[i], projectCategoryNode.value, checkpointReviewScorecards, 'Checkpoint Review');
             }
 
             //var digitalRunChecked = false;
@@ -520,8 +520,8 @@
             // Check if the phase should have a criterion row and at it if it is needed
             if (phaseName == "Screening" || phaseName == "Specification Review" || phaseName == "Review" || phaseName == "Approval" ||
                     phaseName == "Registration" || phaseName == "Appeals"
-                    || phaseName == "Post-Mortem" || phaseName == "Milestone Screening" 
-                    || phaseName == "Milestone Review") {
+                    || phaseName == "Post-Mortem" || phaseName == "Checkpoint Screening" 
+                    || phaseName == "Checkpoint Review") {
                 var templateRow;
                 if (phaseName == "Screening") {
                       templateRow = document.getElementById("screening_scorecard_row_template");
@@ -537,10 +537,10 @@
                       templateRow = document.getElementById("post_mortem_scorecard_row_template");
                 } else if (phaseName == "Specification Review") {
                       templateRow = document.getElementById("specification_review_scorecard_row_template");
-                } else if (phaseName == "Milestone Screening") {
-                      templateRow = document.getElementById("milestone_screening_scorecard_row_template");
-                } else if (phaseName == "Milestone Review") {
-                      templateRow = document.getElementById("milestone_review_scorecard_row_template");
+                } else if (phaseName == "Checkpoint Screening") {
+                      templateRow = document.getElementById("checkpoint_screening_scorecard_row_template");
+                } else if (phaseName == "Checkpoint Review") {
+                      templateRow = document.getElementById("checkpoint_review_scorecard_row_template");
                 }
 
                  criterionRow = cloneInputRow(templateRow);
@@ -566,10 +566,10 @@
                      postMortemScorecardNodes[postMortemScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
                  } else if (phaseName == "Specification Review") {
                      specReviewScorecardNodes[specReviewScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
-                 } else if (phaseName == "Milestone Screening") {
-                     milestoneScreeningScorecardNodes[milestoneScreeningScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
-                 } else if (phaseName == "Milestone Review") {
-                     milestoneReviewScorecardNodes[milestoneReviewScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
+                 } else if (phaseName == "Checkpoint Screening") {
+                     checkpointScreeningScorecardNodes[checkpointScreeningScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
+                 } else if (phaseName == "Checkpoint Review") {
+                     checkpointReviewScorecardNodes[checkpointReviewScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
                 }
             }
         }
@@ -1025,11 +1025,11 @@
             templateRow = document.getElementById("specification_review_scorecard_row_template");
             changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, specificationReviewScorecards, 'Specification Review');
 
-            templateRow = document.getElementById("milestone_screening_scorecard_row_template");
-            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, milestoneScreeningScorecards, 'Milestone Screening');
+            templateRow = document.getElementById("checkpoint_screening_scorecard_row_template");
+            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, checkpointScreeningScorecards, 'Checkpoint Screening');
 
-            templateRow = document.getElementById("milestone_review_scorecard_row_template");
-            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, milestoneReviewScorecards, 'Milestone Review');
+            templateRow = document.getElementById("checkpoint_review_scorecard_row_template");
+            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, checkpointReviewScorecards, 'Checkpoint Review');
         }
 
         /**
@@ -1051,7 +1051,7 @@
             }
 
             document.getElementById("contest-prizes-table").style.display = "none";
-            document.getElementById("milestone-prizes-table").style.display = "none";
+            document.getElementById("checkpoint-prizes-table").style.display = "none";
             document.getElementById(id).style.display = "table";
         }
 
@@ -1479,11 +1479,11 @@
 </body>
 <script type="text/javascript">
     var canEditContestPrize = ${canEditContestPrize};
-    var canEditMilestonePrize = ${canEditMilestonePrize};
+    var canEditCheckpointPrize = ${canEditCheckpointPrize};
     var studio = document.getElementsByName('project_type')[0].value == 3;
     disableSelect("contest_prizes_num[", !studio, canEditContestPrize);
     disableSelect("contest_prizes_num_dump[", !studio, canEditContestPrize);
-    disableSelect("milestone_prizes_num[", false, canEditMilestonePrize);
-    disableSelect("milestone_prizes_num_dump[", false, canEditMilestonePrize);
+    disableSelect("checkpoint_prizes_num[", false, canEditCheckpointPrize);
+    disableSelect("checkpoint_prizes_num_dump[", false, canEditCheckpointPrize);
 </script>
 </html:html>

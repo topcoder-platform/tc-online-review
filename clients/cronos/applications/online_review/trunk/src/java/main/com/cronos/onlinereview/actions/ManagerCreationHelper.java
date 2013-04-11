@@ -18,15 +18,15 @@ import com.cronos.onlinereview.deliverables.SubmissionDeliverableChecker;
 import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
 import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
-import com.cronos.onlinereview.phases.MilestoneReviewPhaseHandler;
-import com.cronos.onlinereview.phases.MilestoneSubmissionPhaseHandler;
+import com.cronos.onlinereview.phases.CheckpointReviewPhaseHandler;
+import com.cronos.onlinereview.phases.CheckpointSubmissionPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
 import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
 import com.cronos.onlinereview.phases.PRApprovalPhaseHandler;
 import com.cronos.onlinereview.phases.PRFinalFixPhaseHandler;
 import com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler;
-import com.cronos.onlinereview.phases.PRMilestoneReviewPhaseHandler;
-import com.cronos.onlinereview.phases.PRMilestoneScreeningPhaseHandler;
+import com.cronos.onlinereview.phases.PRCheckpointReviewPhaseHandler;
+import com.cronos.onlinereview.phases.PRCheckpointScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRPostMortemPhaseHandler;
 import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
 import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
@@ -124,9 +124,9 @@ import com.topcoder.util.log.LogManager;
  * </p>
  *
  * <p>
- * Version 1.3.1 (Milestone Support Assembly 1.0) Change notes:
+ * Version 1.3.1 (Checkpoint Support Assembly 1.0) Change notes:
  *   <ol>
- *     <li>Added support for <code>Milestone</code> phases.</li>
+ *     <li>Added support for <code>Checkpoint</code> phases.</li>
  *   </ol>
  * </p>
  * <p>
@@ -153,7 +153,7 @@ import com.topcoder.util.log.LogManager;
  * <p>
  * Version 1.7 (BUGR-4778) Change notes:
  *   <ol>
- *     <li>Use {@link PRMilestoneReviewPhaseHandler} instead of {@link MilestoneReviewPhaseHandler}.</li>
+ *     <li>Use {@link PRCheckpointReviewPhaseHandler} instead of {@link CheckpointReviewPhaseHandler}.</li>
  *   </ol> 
  * </p>
  *
@@ -200,11 +200,11 @@ public class ManagerCreationHelper implements ManagersProvider {
     private static final long SUBMISSION_TYPE_CONTEST = 1;
 
     /**
-     * <p>A <code>long</code> providing the ID for <code>Milestone Submission</code> submission type.</p>
+     * <p>A <code>long</code> providing the ID for <code>Checkpoint Submission</code> submission type.</p>
      *
      * @since 1.5
      */
-    private static final long SUBMISSION_TYPE_MILESTONE = 3;
+    private static final long SUBMISSION_TYPE_CHECKPOINT = 3;
 
     /**
      * <p>A <code>String</code> providing the name of default connection to dataabase.</p>
@@ -387,12 +387,12 @@ public class ManagerCreationHelper implements ManagersProvider {
                     Constants.SPECIFICATION_SUBMISSION_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, new SpecificationReviewPhaseHandler(),
                     Constants.SPECIFICATION_REVIEW_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, new MilestoneSubmissionPhaseHandler(),
-                    Constants.MILESTONE_SUBMISSION_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, new PRMilestoneScreeningPhaseHandler(),
-                    Constants.MILESTONE_SCREENING_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, new PRMilestoneReviewPhaseHandler(),
-                    Constants.MILESTONE_REVIEW_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, new CheckpointSubmissionPhaseHandler(),
+                    Constants.CHECKPOINT_SUBMISSION_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, new PRCheckpointScreeningPhaseHandler(),
+                    Constants.CHECKPOINT_SCREENING_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, new PRCheckpointReviewPhaseHandler(),
+                    Constants.CHECKPOINT_REVIEW_PHASE_NAME);
             return phaseManager;
         } catch (Exception e) {
             throw new ManagerCreationException("Exception occurred while creating the PhaseManager.", e);
@@ -588,10 +588,10 @@ public class ManagerCreationHelper implements ManagersProvider {
 
                 checkers.put(Constants.SUBMISSION_DELIVERABLE_NAME, 
                              new SubmissionDeliverableChecker(dbconn, SUBMISSION_TYPE_CONTEST));
-                checkers.put(Constants.MILESTONE_SUBMISSION_DELIVERABLE_NAME, 
-                             new SubmissionDeliverableChecker(dbconn, SUBMISSION_TYPE_MILESTONE));
-                checkers.put(Constants.MILESTONE_SCREENING_DELIVERABLE_NAME, committedChecker);
-                checkers.put(Constants.MILESTONE_REVIEW_DELIVERABLE_NAME, committedChecker);
+                checkers.put(Constants.CHECKPOINT_SUBMISSION_DELIVERABLE_NAME, 
+                             new SubmissionDeliverableChecker(dbconn, SUBMISSION_TYPE_CHECKPOINT));
+                checkers.put(Constants.CHECKPOINT_SCREENING_DELIVERABLE_NAME, committedChecker);
+                checkers.put(Constants.CHECKPOINT_REVIEW_DELIVERABLE_NAME, committedChecker);
                 checkers.put(Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME,
                              new SpecificationSubmissionDeliverableChecker(dbconn));
                 checkers.put(Constants.SPECIFICATION_REVIEW_DELIVERABLE_NAME, committedChecker);
