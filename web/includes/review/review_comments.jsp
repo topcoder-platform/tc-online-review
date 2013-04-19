@@ -57,7 +57,7 @@
 						<br /><html:link page="/actions/DownloadDocument.do?method=downloadDocument&uid=${item.document}"><bean:message key="editReview.Document.Download" /></html:link>
 					</c:if>
 				</td>
-				<td class="value" colspan="${canPlaceAppeal ? 5 : (canPlaceAppealResponse ? 4 : 3)}"><!-- @ --></td>
+				<td class="value" colspan="${canPlaceAppeal ? 4 : (canPlaceAppealResponse ? 3 : 2)}"><!-- @ --></td>
 			</tr>
 		</c:if>
 	</c:forEach>
