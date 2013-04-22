@@ -227,8 +227,16 @@ import com.topcoder.util.file.templatesource.FileTemplateSource;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.11 (Online Review - Project Payments Integration Part 2 v1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #viewProjectDetails(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
+ *     method to set isAllowedToViewPayments to request attribute.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, FireIce, rac_, flexme
- * @version 1.10
+ * @version 1.11
  */
 public class ProjectDetailsActions extends DispatchAction {
 
@@ -725,6 +733,8 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformScreening",
                 AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SCREENING_PERM_NAME) &&
                         ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME) != null);
+        request.setAttribute("isAllowedToViewPayments",
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PAYMENTS_PERM_NAME));
 
         Phase reviewPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.REVIEW_PHASE_NAME);
         request.setAttribute("isAllowedToAdvanceSubmissionWithFailedScreening",

@@ -36,6 +36,7 @@ import com.cronos.termsofuse.dao.TermsOfUseDao;
 import com.cronos.termsofuse.dao.UserTermsOfUseDao;
 import com.topcoder.management.deliverable.search.UploadFilterBuilder;
 import com.topcoder.management.payment.ProjectPaymentAdjustmentManager;
+import com.topcoder.management.payment.ProjectPaymentManager;
 import com.topcoder.management.reviewfeedback.ReviewFeedbackManager;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
@@ -295,8 +296,15 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 2.5 (Online Review - Project Payments Integration Part 2 v1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #createProjectPaymentManager()} method.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK, rac_, lmmortal, flexme
- * @version 2.4
+ * @version 2.5
  * @since Online Review Status Validation Assembly 1.0
  */
 public class ActionsHelper {
@@ -2160,6 +2168,16 @@ public class ActionsHelper {
      */
     public static ProjectPaymentAdjustmentManager createProjectPaymentAdjustmentManager() {
         return managerCreationHelper.getProjectPaymentAdjustmentManager();
+    }
+
+    /**
+     * This static method helps to create an object of <code>ProjectPaymentManager</code> class.
+     *
+     * @return instance of the class ProjectPaymentManager
+     * @since  2.5
+     */
+    public static ProjectPaymentManager createProjectPaymentManager() {
+        return managerCreationHelper.getProjectPaymentManager();
     }
 
     /**

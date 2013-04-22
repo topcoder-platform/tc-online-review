@@ -64,7 +64,9 @@ import com.topcoder.management.deliverable.persistence.UploadPersistence;
 import com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersistence;
 import com.topcoder.management.deliverable.persistence.sql.SqlUploadPersistence;
 import com.topcoder.management.payment.ProjectPaymentAdjustmentManager;
+import com.topcoder.management.payment.ProjectPaymentManager;
 import com.topcoder.management.payment.impl.ProjectPaymentAdjustmentManagerImpl;
+import com.topcoder.management.payment.impl.ProjectPaymentManagerImpl;
 import com.topcoder.management.phase.DefaultPhaseManager;
 import com.topcoder.management.phase.PhaseHandler;
 import com.topcoder.management.phase.PhaseManager;
@@ -181,8 +183,16 @@ import com.topcoder.util.log.LogManager;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.12 (Online Review - Project Payments Integration Part 2 v1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #projectPaymentManager} property.</li>
+ *     <li>Added {@link #getProjectPaymentManager()} method.</li>
+ *   </ol>
+ * </p>
+ *
  * @author evilisneo, BeBetter, isv, FireIce, VolodymyrK, rac_, flexme, lmmortal
- * @version 1.11
+ * @version 1.12
  */
 public class ManagerCreationHelper implements ManagersProvider {
 
@@ -307,6 +317,13 @@ public class ManagerCreationHelper implements ManagersProvider {
     private ProjectPaymentAdjustmentManager projectPaymentAdjustmentManager;
 
     /**
+     * <p>A <code>ProjectPaymentManager</code> providing the access to project payment manager.</p>
+     *
+     * @since 1.12
+     */
+    private ProjectPaymentManager projectPaymentManager;
+
+    /**
      * <p>
      * Returns a <code>PhaseManager</code> instance without registered handlers.
      * </p>
@@ -345,6 +362,29 @@ public class ManagerCreationHelper implements ManagersProvider {
             throw new ManagerCreationException("Exception occurred while creating the ProjectPaymentAdjustmentManager.", e);
         }
     }
+
+    /**
+     * <p>
+     * Returns a <code>ProjectPaymentManager</code> instance.
+     * </p>
+     *
+     * @return a <code>ProjectPaymentManager</code> instance.
+     * @since 1.12
+     */
+    public ProjectPaymentManager getProjectPaymentManager() {
+        if (projectPaymentManager != null) {
+            return projectPaymentManager;
+        }
+        try {
+            projectPaymentManager = new ProjectPaymentManagerImpl(Constants.CONFIG_MANAGER_FILE,
+                    ProjectPaymentManagerImpl.DEFAULT_CONFIG_NAMESPACE);
+            return projectPaymentManager;
+        } catch (Exception e) {
+            throw new ManagerCreationException("Exception occurred while creating the ProjectPaymentManager.", e);
+        }
+
+    }
+
     /**
      * <p>
      * Returns a <code>PhaseManager</code> instance with phase handlers.

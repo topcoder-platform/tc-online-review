@@ -10,6 +10,7 @@ import java.util.Map;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.late.LateDeliverable;
+import com.topcoder.management.payment.ProjectPayment;
 import com.topcoder.management.project.Prize;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectType;
@@ -60,9 +61,16 @@ import com.topcoder.project.phases.PhaseStatus;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.1.3 (Online Review - Project Payments Integration Part 2 v1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link ProjectPaymentComparator} class to compare Prize.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1
  * @author real_vg, isv, FireIce, flexme
- * @version 1.1.3
+ * @version 1.1.4
  */
 final class Comparators {
 
@@ -520,6 +528,29 @@ final class Comparators {
          */
         public int compare(Prize prize1, Prize prize2) {
             return prize1.getPlace() - prize2.getPlace();
+        }
+    }
+
+    /**
+     * This class implements <code>Comparator</code> interface and is used to sort Project Payment
+     * in array. It orders Project Payment by their id, in ascending order.
+     *
+     * @author flexme
+     * @since  1.1.4
+     */
+    static class ProjectPaymentComparator implements Comparator<ProjectPayment> {
+        /**
+         * <p>This method compares its two arguments for order. This method expects that type of the
+         * objects passed as arguments is <code>ProjectPayment</code>.</p>
+         *
+         * @param payment1 the first Project Payment to be compared.
+         * @param payment2 the second Project Payment to be compared.
+         * @return a negative integer, zero, or a positive integer as the first argument is less than, equal to, or
+         *         greater than the second respectively.
+         */
+        public int compare(ProjectPayment payment1, ProjectPayment payment2) {
+            long diff = payment1.getProjectPaymentId() - payment2.getProjectPaymentId();
+            return diff < 0 ? -1 : (diff == 0 ? 0 : 1);
         }
     }
 }
