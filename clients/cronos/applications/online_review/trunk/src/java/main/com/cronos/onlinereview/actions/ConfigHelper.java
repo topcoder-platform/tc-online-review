@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2012 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -110,9 +110,18 @@ import com.topcoder.util.config.UnknownNamespaceException;
  *      <li>Added {@link #reqSecondaryReviewers} field. Also the getter was added.</li>
  *    </ol>
  * </p>
+ *
+ * <p>
+ * Version 1.10 (Online Review - Project Payments Integration Part 2 v1.0) Change notes
+ *    <ol>
+ *      <li>Added {@link #PACTS_PAYMENT_DETAIL_URL_PROP} constant.</li>
+ *      <li>Added {@link #pactsPaymentDetailBaseURL} field. Also the getter was added. Updated static initializer to
+ *      set that field with data read from configuration file.</li>
+ *    </ol>
+ * </p>
  * 
  * @author George1, real_vg, pulky, romanoTC, isv, FireIce, lmmortal, flexme
- * @version 1.9
+ * @version 1.10
  */
 public class ConfigHelper {
 
@@ -208,6 +217,14 @@ public class ConfigHelper {
      * @since 1.1
      */
     private static final String REVIEWER_TERMS_ID_NAME_PROP = "reviewer_terms_id";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains the pacts payment detail URL.
+     *
+     * @since 1.10
+     */
+    private static final String PACTS_PAYMENT_DETAIL_URL_PROP = "pacts_payment_url";
 
     /**
      * This constant stores Online Review's project details page url property name
@@ -750,6 +767,14 @@ public class ConfigHelper {
     private static String directProjectBaseURL;
 
     /**
+     * This constant stores base URL for pacts payment detail page.
+     *
+     * @since 1.10
+     * @see #PACTS_PAYMENT_DETAIL_URL_PROP
+     */
+    private static String pactsPaymentDetailBaseURL;
+
+    /**
      * This member variable holds the names of small icons (.gif) files that should be displayed
      * on the JSP pages for different Root Catalog IDs.
      */
@@ -1186,6 +1211,12 @@ public class ConfigHelper {
             value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, PROP_DIRECT_PROJECT_URL);
             if (value != null && value.trim().length() != 0) {
             	directProjectBaseURL = value;
+            }
+
+            // Retrieve the value of the property that contains the pacts payment detail page base URL
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, PACTS_PAYMENT_DETAIL_URL_PROP);
+            if (value != null && value.trim().length() != 0) {
+                pactsPaymentDetailBaseURL = value;
             }
             
             // Retrieve the value of the default distribution script
@@ -1769,6 +1800,16 @@ public class ConfigHelper {
      */
     public static String getDirectProjectBaseURL() {
         return directProjectBaseURL;
+    }
+
+    /**
+     * This static method returns the base URL for the pacts payment detail page.
+     *
+     * @return the base URL for the pacts payment detail page.
+     * @since 1.10
+     */
+    public static String getPactsPaymentDetailBaseURL() {
+        return pactsPaymentDetailBaseURL;
     }
 
     /**

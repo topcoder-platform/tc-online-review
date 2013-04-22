@@ -1,6 +1,6 @@
 <%--
   - Author: George1, real_vg, isv, flexme
-  - Version: 1.3 (Online Review Project Management Console assembly v1.0)
+  - Version: 1.4 (Online Review Project Management Console assembly v1.0)
   - Copyright (C) 2006 - 2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page provides the view for details for requested project.
@@ -11,6 +11,8 @@
   - Version 1.2 (Impersonation Login Release assembly) changes: Removed "Back" button.
   -
   - Version 1.3 (Online Review - Project Payments Integration Part 1 v1.0) changes: Added Project Prizes section.
+  -
+  - Version 1.4 (Online Review - Project Payments Integration Part 2 v1.0) changes: Added "Payments" button.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -107,6 +109,9 @@
                     <!-- OR Project Linking Assembly -->
                     <jsp:include page="/includes/project/project_link.jsp" />
                     <div align="right">
+                        <c:if test="${isAllowedToViewPayments}">
+                            <a href="ViewProjectPayments.do?method=viewProjectPayments&pid=${project.id}"><html:img srcKey="viewProjectDetails.btnPayments.img" border="0" altKey="viewProjectDetails.btnPayments.alt" /></a>&#160;
+                        </c:if>
                         <c:if test="${isAllowedToPay}">
                             <a href="http://www.topcoder.com/PactsInternalServlet?module=ViewGenerateComponentPayments&project_id=${project.id}&projts=${project.projectStatus.id}"><html:img srcKey="viewProjectDetails.btnPay.img" border="0" altKey="viewProjectDetails.btnPay.alt" /></a>&#160;
                         </c:if>

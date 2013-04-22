@@ -254,6 +254,8 @@
             <form-property name="saveChangesBtn" type="org.apache.struts.util.ImageButtonBean"/>
         </form-bean>
         
+        <form-bean name="paymentsForm" type="com.cronos.onlinereview.forms.ProjectPaymentsForm"/>
+        
         <!-- Upload Distribution Form -->
         <form-bean name="uploadDistributionForm" dynamic="true"
                    type="org.apache.struts.validator.LazyValidatorForm">
@@ -1072,6 +1074,27 @@
                 input="/jsp/viewProjectManagementConsole.jsp">
             <forward name="success" path="/actions/ViewManagementConsole.do?method=viewConsole&amp;activeTabIdx=4"
                      redirect="true"/>
+        </action>
+        
+        <action path="/actions/ViewProjectPayments" unknown="false"
+                type="com.cronos.onlinereview.actions.ProjectPaymentsActions"
+                parameter="method" scope="request"
+                input="/jsp/viewProjectPayments.jsp">
+            <forward name="success" path="/jsp/viewProjectPayments.jsp" redirect="false" />
+        </action>
+
+        <action path="/actions/EditProjectPayments" unknown="false"
+                type="com.cronos.onlinereview.actions.ProjectPaymentsActions"
+                parameter="method" scope="request" name="paymentsForm"
+                input="/jsp/editProjectPayments.jsp">
+            <forward name="success" path="/jsp/editProjectPayments.jsp" redirect="false" />
+        </action>
+
+        <action path="/actions/SaveProjectPayments" unknown="false"
+                type="com.cronos.onlinereview.actions.ProjectPaymentsActions"
+                parameter="method" scope="request" name="paymentsForm"
+                input="/jsp/editProjectPayments.jsp">
+            <forward name="success" path="/actions/ViewProjectPayments.do?method=viewProjectPayments" redirect="true" />
         </action>
 
     </action-mappings>

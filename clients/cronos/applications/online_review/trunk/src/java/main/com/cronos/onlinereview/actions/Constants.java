@@ -143,8 +143,21 @@ package com.cronos.onlinereview.actions;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.9.2 (Online Review - Project Payments Integration Part 2 v1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #VIEW_PAYMENTS_PERM_NAME} constant to represent the name
+ *     of View Payments permission.</li>
+ *     <li>Added {@link #EDIT_PAYMENTS_PERM_NAME} constant to represent the name
+ *     of Edit Payments permission.</li>
+ *     <li>Added {@link #CONTEST_PAYMENT_TYPE_ID}, {@link #CONTEST_CHECKPOINT_PAYMENT_TYPE_ID},
+ *     {@link #REVIEW_PAYMENT_TYPE_ID}, and {@link #COPILOT_PAYMENT_TYPE_ID} constants to represent
+ *     different project payment types.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, flexme, VolodymyrK
- * @version 1.9.1
+ * @version 1.9.2
  */
 public class Constants {
 
@@ -869,6 +882,22 @@ public class Constants {
     public static final String CREATE_PAYMENT_PERM_NAME = "Create Payment";
 
     /**
+     * This member variable is a string constant that defines the name of the
+     * View Payments permission.
+     *
+     * @since 1.9.2
+     */
+    public static final String VIEW_PAYMENTS_PERM_NAME = "View Payments";
+
+    /**
+     * This member variable is a string constant that defines the name of the
+     * Edit Payment permission.
+     *
+     * @since 1.9.2
+     */
+    public static final String EDIT_PAYMENTS_PERM_NAME = "Edit Payments";
+
+    /**
      * <p>This member variable is a string constant that defines the name of the <code>View Project Management Console
      * </code>  permission. Such a permission grants access to <code>Project Management Console</code> view.</p> 
      *
@@ -1383,6 +1412,36 @@ public class Constants {
      * @since 1.8.1
      */
     public static final long REJECTED_FINAL_FIX_ID = 2;
+
+    // ----------------------------------------------------------------- Project Payment Type ID -----
+
+    /**
+     * This constant for the "Contest Payment" project payment type id.
+     *
+     * @since 1.9.2
+     */
+    public static final Long CONTEST_PAYMENT_TYPE_ID = 1L;
+
+    /**
+     * This constant for the "Contest Checkpoint Payment" project payment type id.
+     *
+     * @since 1.9.2
+     */
+    public static final Long CONTEST_CHECKPOINT_PAYMENT_TYPE_ID = 2L;
+
+    /**
+     * This constant for the "Review Payment" project payment type id.
+     *
+     * @since 1.9.2
+     */
+    public static final Long REVIEW_PAYMENT_TYPE_ID = 3L;
+
+    /**
+     * This constant for the "Copilot Payment" project payment type id.
+     *
+     * @since 1.9.2
+     */
+    public static final Long COPILOT_PAYMENT_TYPE_ID = 4L;
 
     // ----------------------------------------------------------------- Other constants -----
 
