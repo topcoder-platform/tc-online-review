@@ -88,6 +88,9 @@
                     <Property name="password">
                         <Value>@database.password@</Value>
                     </Property>
+                    <Property name="IFX_USE_STRENC">
+                        <Value>true</Value>
+                    </Property>
                 </Property>
             </Property>
         </Property>

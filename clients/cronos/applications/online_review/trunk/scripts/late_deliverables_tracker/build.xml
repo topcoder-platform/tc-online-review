@@ -78,7 +78,7 @@
             <fileset file="${late_deliverables_tracker.jar}"/>
             <fileset file="${jaf.jar}"/>
             <fileset file="${id_generator.jar}"/>
-            <fileset file="${ifx-jdbc.jar}"/>
+            <fileset file="${ifxjdbc.jar}"/>
             <fileset file="${log4j.jar}"/>
             <fileset file="${javamail.jar}"/>
             <fileset file="${xerces.jar}"/>

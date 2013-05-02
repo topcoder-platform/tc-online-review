@@ -23,6 +23,9 @@
                             <Property name="password">
                                 <Value>@database.password@</Value>
                             </Property>
+                            <Property name="IFX_USE_STRENC">
+                                <Value>true</Value>
+                            </Property>
                             <Property name="new_connection_sql">
                                 <Value>set lock mode to wait 5;</Value>
                             </Property>
@@ -62,6 +65,9 @@
                             <Property name="password">
                                 <Value>@database.password@</Value>
                             </Property>
+                            <Property name="IFX_USE_STRENC">
+                                <Value>true</Value>
+                            </Property>
                             <Property name="new_connection_sql">
                                 <Value>set lock mode to wait 5;</Value>
                             </Property>
@@ -97,6 +103,9 @@
                             </Property>
                             <Property name="password">
                                 <Value>@database.password@</Value>
+                            </Property>
+                            <Property name="IFX_USE_STRENC">
+                                <Value>true</Value>
                             </Property>
                             <Property name="new_connection_sql">
                                 <Value>set lock mode to wait 5;</Value>
