@@ -48,7 +48,7 @@
 
     <!-- 3rd Party Dependencies  -->
     <property name="ejb3-persistence.jar" value="${ext_libdir}/ejb3-persistence.jar"/>
-    <property name="ifx-jdbc.jar" value="${ext_libdir}/ifx-jdbc.jar"/>
+    <property name="ifxjdbc.jar" value="${ext_libdir}/ifxjdbc.jar"/>
     <property name="jboss-ejb3x.jar" value="${ext_libdir}/jboss/jboss-ejb3x.jar"/>
     <property name="jstl.jar" value="${ext_libdir}/jstl.jar"/>
     <property name="jboss-j2ee.jar" value="${ext_libdir}/jboss/jboss-j2ee.jar"/>

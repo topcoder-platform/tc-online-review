@@ -82,7 +82,7 @@
         <jar destfile="${build_distdir}/auto_pilot_app.jar" filesonly="true">
             <fileset file="${auto_pilot.jar}"/>
             <fileset file="${job_scheduler.jar}"/>
-            <fileset file="${ifx-jdbc.jar}"/>
+            <fileset file="${ifxjdbc.jar}"/>
             <fileset file="${javamail.jar}"/>
             <fileset file="${log4j.jar}"/>
             <fileset file="${jaf.jar}"/>
