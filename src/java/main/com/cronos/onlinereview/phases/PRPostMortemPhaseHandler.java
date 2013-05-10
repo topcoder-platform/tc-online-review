@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -9,8 +9,16 @@ import com.topcoder.project.phases.Phase;
 /**
  * The PRPostMortemPhaseHandler.
  *
- * @author VolodymyrK
- * @version 1.0
+ * <p>
+ * Version 1.1 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #perform(Phase, String)} method to pass <code>operator</code> when calling
+ *     RPHelper.processPostMortemPR.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author VolodymyrK, flexme
+ * @version 1.1
  */
 public class PRPostMortemPhaseHandler extends PostMortemPhaseHandler {
     
@@ -55,6 +63,6 @@ public class PRPostMortemPhaseHandler extends PostMortemPhaseHandler {
         super.perform(phase, operator);
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
 
-        prHelper.processPostMortemPR(phase.getProject().getId(), toStart);
+        prHelper.processPostMortemPR(phase.getProject().getId(), toStart, operator);
     }
 }

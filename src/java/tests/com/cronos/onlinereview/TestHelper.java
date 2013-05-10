@@ -34,8 +34,16 @@ import java.util.Calendar;
  *   </ol>
  * </p>
  *
- * @author TCSDEVELOPER, isv
- * @version 1.1
+ * <p>
+ * Version 1.2 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
+ *   <ol>
+ *       <li>Updated {@link #AddResource(long, long, long, long, String, Connection)} to not inserting resource
+ *       payment related properties.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author TCSDEVELOPER, isv, flexme
+ * @version 1.2
  */
 public class TestHelper {
     /**
@@ -903,9 +911,6 @@ public class TestHelper {
     	executeStatement(con, 
     			"INSERT INTO resource_info (resource_id, resource_info_type_id, value, create_user, create_date, modify_user, modify_date) VALUES (" +
     			resourceId + ", 2, '" + resourceHandle + "', '" +TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
-    	executeStatement(con, 
-    			"INSERT INTO resource_info (resource_id, resource_info_type_id, value, create_user, create_date, modify_user, modify_date) VALUES (" +
-    			resourceId + ", 8, 'N/A', '" +TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
     	return resourceId;
     }
 

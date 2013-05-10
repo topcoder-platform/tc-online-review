@@ -5,6 +5,7 @@ package com.cronos.onlinereview.actions;
 
 import com.cronos.onlinereview.forms.ProjectPaymentsForm;
 import com.cronos.onlinereview.forms.ProjectPaymentsForm.ResourcePayments;
+import com.cronos.onlinereview.phases.PaymentsHelper;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.payment.ProjectPayment;
 import com.topcoder.management.payment.ProjectPaymentManager;
@@ -43,8 +44,17 @@ import java.util.Set;
  * This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
+ * <p>
+ * Version 1.1 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
+ *   <ol>
+ *       <li>Updated {@link #saveProjectPayments(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
+ *       method to call PaymentsHelper.processAutomaticPayments and PaymentsHelper.updateProjectResultPayments to
+ *       process automatic payments.</li>
+ *   </ol>
+ * </p>
+ *
  * @author flexme
- * @version 1.0 (Online Review - Project Payments Integration Part 2 v1.0)
+ * @version 1.1 (Online Review - Project Payments Integration Part 2 v1.0)
  */
 public class ProjectPaymentsActions extends DispatchAction {
     /**
@@ -310,6 +320,9 @@ public class ProjectPaymentsActions extends DispatchAction {
         updateResourceProperties(resourceManager, operator, paymentsForm.getSubmitterPayments(), allResources);
         updateResourceProperties(resourceManager, operator, paymentsForm.getReviewerPayments(), allResources);
         updateResourceProperties(resourceManager, operator, paymentsForm.getCopilotPayments(), allResources);
+
+        PaymentsHelper.processAutomaticPayments(projectId, operator);
+        PaymentsHelper.updateProjectResultPayments(projectId);
 
         // Return success forward
         return ActionsHelper.cloneForwardAndAppendToPath(

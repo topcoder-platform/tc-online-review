@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2005-2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2005-2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -65,9 +65,17 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  *         "Approval Required" project property is not set to "true".</li>
  *   </ol>
  * </p>
-
- * @author brain_cn, isv, FireIce
- * @version 1.1
+ *
+ * <p>
+ * Version 1.2 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #perform(Phase, String)} method to pass <code>operator</code> when calling
+ *     RPHelper.processFinalReviewPR.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author brain_cn, isv, FireIce, flexme
+ * @version 1.2
  */
 public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
     
@@ -125,7 +133,7 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
 
         super.perform(phase, operator);
 
-        prHelper.processFinalReviewPR(phase.getProject().getId(), toStart);
+        prHelper.processFinalReviewPR(phase.getProject().getId(), toStart, operator);
 
         // If stopping phase and final fix is approved.
         if (!toStart && !checkFinalReview(phase)) {

@@ -56,9 +56,6 @@
             <form-property name="resources_role" type="java.lang.Long[]" />
             <form-property name="resources_phase" type="java.lang.String[]" />
             <form-property name="resources_name" type="java.lang.String[]" />
-            <form-property name="resources_payment" type="java.lang.Boolean[]" />
-            <form-property name="resources_payment_amount" type="java.lang.Double[]" />
-            <form-property name="resources_paid" type="java.lang.String[]" />
             <form-property name="resources_action" type="java.lang.String[]" />
             <form-property name="resources_id" type="java.lang.Long[]" />
 

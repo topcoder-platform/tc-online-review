@@ -43,10 +43,14 @@ import javax.ejb.EJBException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cronos.onlinereview.phases.PaymentsHelper;
 import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
 import com.cronos.termsofuse.dao.TermsOfUsePersistenceException;
 import com.cronos.termsofuse.dao.UserTermsOfUseDao;
 import com.cronos.termsofuse.model.TermsOfUse;
+import com.topcoder.management.payment.ProjectPayment;
+import com.topcoder.management.payment.ProjectPaymentManager;
+import com.topcoder.management.payment.search.ProjectPaymentFilterBuilder;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -283,8 +287,25 @@ import com.topcoder.web.ejb.user.UserPreference;
  *      removed.</li>
  *  </ol>
  * </p>
+ *
+ * <p>
+ * Version 1.15 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #populateProjectForm(HttpServletRequest, LazyValidatorForm, Project)} and
+ *     {@link #saveResources(HttpServletRequest, LazyValidatorForm, Project, Phase[], Map)} methods to remove
+ *     the resource payment property related code.</li>
+ *     <li>Updated {@link #saveResources(HttpServletRequest, LazyValidatorForm, Project, Phase[], Map)} method
+ *     to validate that there are no paid payments for the resource when deleting a resource, and delete all
+ *     project payments when deleting a resource.</li>
+ *     <li>Added {@link #setResourcePaidRequestAttribute(Project, HttpServletRequest)} to set the resource paid data
+ *     for a given project to the request attribute.</li>
+ *     <li>Updated {@link #setEditProjectRequestAttributes(HttpServletRequest, Project, Resource[], ExternalUser[],
+ *     Phase[])} method to call {@link #setResourcePaidRequestAttribute(Project, HttpServletRequest)} method.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, FireIce, lmmortal, flexme
- * @version 1.14
+ * @version 1.15
  */
 public class ProjectActions extends DispatchAction {
 
@@ -659,10 +680,6 @@ public class ProjectActions extends DispatchAction {
         ExternalUser[] externalUsers =
             ActionsHelper.getExternalUsersForResources(ActionsHelper.createUserRetrieval(request), resources);
 
-        // The drop-downs for Payment Type and Payment Status for Add Resource area are set to N/A
-        form.set("resources_payment", 0, Boolean.FALSE);
-        form.set("resources_paid", 0, "N/A");
-
         // Populate form with resources data
         for (int i = 0; i < resources.length; ++i) {
             form.set("resources_id", i + 1, resources[i].getId());
@@ -671,19 +688,6 @@ public class ProjectActions extends DispatchAction {
             form.set("resources_role", i + 1, resources[i].getResourceRole().getId());
             form.set("resources_phase", i + 1, "loaded_" + resources[i].getPhase());
             form.set("resources_name", i + 1, externalUsers[i].getHandle());
-
-            if (resources[i].getProperty("Payment") != null) {
-                form.set("resources_payment", i + 1, Boolean.TRUE);
-                form.set("resources_payment_amount", i + 1, Double.valueOf((String) resources[i].getProperty("Payment")));
-            } else {
-                form.set("resources_payment", i + 1, Boolean.FALSE);
-            }
-
-            if (resources[i].getProperty("Payment Status") != null) {
-                form.set("resources_paid", i + 1, resources[i].getProperty("Payment Status"));
-            } else {
-                form.set("resources_paid", i + 1, "N/A");
-            }
         }
 
         // Populate project prizes to form
@@ -1187,6 +1191,7 @@ public class ProjectActions extends DispatchAction {
             for (Prize prize : removedPrize) {
                 projectManager.removePrize(prize, operator);
             }
+            PaymentsHelper.processAutomaticPayments(project.getId(), operator);
         }
 
         // Check if there are any validation errors and return appropriate forward
@@ -2370,6 +2375,11 @@ public class ProjectActions extends DispatchAction {
             }
         }
 
+        setResourcePaidRequestAttribute(project, request);
+        Map<Long, Boolean> resourcePaid = (Map<Long, Boolean>) request.getAttribute("resourcePaid");
+        List<ProjectPayment> allPayments = (List<ProjectPayment>) request.getAttribute("allPayments");
+        ProjectPaymentManager projectPaymentManager = ActionsHelper.createProjectPaymentManager();
+
         // Validate that no submitters who have submitted for project were changed (either by role or handle) or deleted
         // 0-index resource is skipped as it is a "dummy" one
         ReviewManager reviewManager = ActionsHelper.createReviewManager();
@@ -2392,7 +2402,8 @@ public class ProjectActions extends DispatchAction {
                     } else if (REVIEWER_ROLE_NAMES.contains(oldResourceRoleName)) {
                         resourceHasReviews = (reviewResourceIds != null && reviewResourceIds.contains(resourceId));
                     }
-                    boolean resourceUpdateProhibited = resourceHasReviews || resourceHasSubmissions;
+                    boolean paid = resourcePaid.get(resourceId) != null && resourcePaid.get(resourceId);
+                    boolean resourceUpdateProhibited = resourceHasReviews || resourceHasSubmissions || paid;
 
                     if (resourceUpdateProhibited) {
                         if ("delete".equalsIgnoreCase(resourceAction)) {
@@ -2400,10 +2411,14 @@ public class ProjectActions extends DispatchAction {
                                 ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                                                                 "error.com.cronos.onlinereview.actions."
                                                                 + "editProject.Resource.TrueSubmitterDeleted");
-                            } else {
+                            } else if (resourceHasReviews) {
                                 ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                                                                 "error.com.cronos.onlinereview.actions."
                                                                 + "editProject.Resource.TrueReviewerDeleted");
+                            } else {
+                                ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                        "error.com.cronos.onlinereview.actions."
+                                                + "editProject.Resource.PaidDeleted");
                             }
                             allResourcesValid = false;
                         } else {
@@ -2414,10 +2429,14 @@ public class ProjectActions extends DispatchAction {
                                     ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                                                                     "error.com.cronos.onlinereview.actions."
                                                                     + "editProject.Resource.TrueSubmitterHandleChanged");
-                                } else {
+                                } else if (resourceHasReviews) {
                                     ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                                                                     "error.com.cronos.onlinereview.actions."
                                                                     + "editProject.Resource.TrueReviewerHandleChanged");
+                                } else {
+                                    ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                            "error.com.cronos.onlinereview.actions."
+                                                    + "editProject.Resource.PaidHandleChanged");
                                 }
                                 allResourcesValid = false;
                             }
@@ -2427,10 +2446,14 @@ public class ProjectActions extends DispatchAction {
                                     ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                                                                     "error.com.cronos.onlinereview.actions."
                                                                     + "editProject.Resource.TrueSubmitterRoleChanged");
-                                } else {
+                                } else if (resourceHasReviews) {
                                     ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                                                                     "error.com.cronos.onlinereview.actions."
                                                                     + "editProject.Resource.TrueReviewerRoleChanged");
+                                } else {
+                                    ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                            "error.com.cronos.onlinereview.actions."
+                                                    + "editProject.Resource.PaidRoleChanged");
                                 }
                                 allResourcesValid = false;
                             }
@@ -2445,9 +2468,6 @@ public class ProjectActions extends DispatchAction {
         if (!allResourcesValid)
             return;
 
-        // BUGR-2807: A map mapping the IDs for Submitters to their respective payments. Payment may be NULL
-        Map<Long, Double> submitterPayments = new HashMap<Long, Double>();
-
         // 0-index resource is skipped as it is a "dummy" one
         for (int i = 1; i < resourceNames.length; i++) {
 
@@ -2455,12 +2475,6 @@ public class ProjectActions extends DispatchAction {
             ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
 
             Resource resource;
-
-            // BUGR-2807: Parse resource payment
-            Double resourcePayment = null;
-            if (Boolean.TRUE.equals(lazyForm.get("resources_payment", i))) {
-                resourcePayment = (Double) lazyForm.get("resources_payment_amount", i);
-            }
 
             // Check what is the action to be performed with the resource
             // and obtain Resource instance in appropriate way
@@ -2501,6 +2515,12 @@ public class ProjectActions extends DispatchAction {
             if ("delete".equals(resourceAction)) {
                 deletedUsers.add(user.getId());
 
+                // delete project payments
+                for (ProjectPayment payment : allPayments) {
+                    if (resource.getId() == payment.getResourceId()) {
+                        projectPaymentManager.delete(payment.getProjectPaymentId());
+                    }
+                }
                 // delete project_result
                 ActionsHelper.deleteProjectResult(project, user.getId(),
                         (Long) lazyForm.get("resources_role", i));
@@ -2513,8 +2533,6 @@ public class ProjectActions extends DispatchAction {
 
             // Set resource properties
             resource.setProject(project.getId());
-            resource.setProperty("Payment", resourcePayment);
-            resource.setProperty("Payment Status", lazyForm.get("resources_paid", i));
 
             boolean resourceRoleChanged = false;
             ResourceRole role = LookupHelper.getResourceRole((Long) lazyForm.get("resources_role", i));
@@ -2545,11 +2563,6 @@ public class ProjectActions extends DispatchAction {
                 }
             }
             resource.setResourceRole(role);
-
-            // BUGR-2807: For submitters collect the payments to be updated in project_result table later
-            if (isSubmitter(resource)) {
-                submitterPayments.put(user.getId(), resourcePayment);
-            }
 
             resource.setProperty("Handle", resourceNames[i]);
 
@@ -2652,9 +2665,6 @@ public class ProjectActions extends DispatchAction {
 
         // Populate project_result and component_inquiry for new submitters
         ActionsHelper.populateProjectResult(project, newSubmitters);
-
-        // BUGR-2807: Update project_result.payment for submitters
-        ActionsHelper.updateSubmitterPayments(project.getId(), submitterPayments);
 
         // delete timeline notifications
         long[] idsToDeletedForNotification = new long[deletedUsersForNotification.size()];
@@ -3629,6 +3639,35 @@ public class ProjectActions extends DispatchAction {
 
         request.setAttribute("canEditContestPrize", canEditPrizes[0]);
         request.setAttribute("canEditCheckpointPrize", canEditPrizes[1]);
+
+        setResourcePaidRequestAttribute(project, request);
+    }
+
+    /**
+     * Populate the resource paid data of the given project to request attribute.
+     *
+     * @param project the given project.
+     * @param request the HTTP request.
+     * @throws BaseException if any error occurs.
+     * @since 1.15
+     */
+    private static void setResourcePaidRequestAttribute(Project project, HttpServletRequest request)
+            throws BaseException {
+        if (request.getAttribute("resourcePaid") != null) {
+            return;
+        }
+        Map<Long, Boolean> resourcePaid = new HashMap<Long, Boolean>();
+        if (project.getId() > 0) {
+            List<ProjectPayment> allPayments = ActionsHelper.createProjectPaymentManager().search(
+                    ProjectPaymentFilterBuilder.createProjectIdFilter(project.getId()));
+            request.setAttribute("allPayments", allPayments);
+            for (ProjectPayment payment : allPayments) {
+                if (payment.getPactsPaymentId() != null) {
+                    resourcePaid.put(payment.getResourceId(), Boolean.TRUE);
+                }
+            }
+        }
+        request.setAttribute("resourcePaid", resourcePaid);
     }
 
     /**

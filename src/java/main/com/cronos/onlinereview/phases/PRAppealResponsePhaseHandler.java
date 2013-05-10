@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2011-2012 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011-2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -31,8 +31,16 @@ import com.topcoder.util.log.Level;
 /**
  * The extend from AppealsResponsePhaseHandler to add on the logic to push data to project_result.
  *
- * @author brain_cn
- * @version 1.0
+ * <p>
+ * Version 1.1 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #perform(Phase, String)} method to pass <code>operator</code> when calling
+ *     RPHelper.processAppealResponsePR.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author brain_cn, flexme
+ * @version 1.1
  */
 public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
     
@@ -105,7 +113,7 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
         // Only will perform while submission phase is ended
         try {
-            prHelper.processAppealResponsePR(projectId, toStart);
+            prHelper.processAppealResponsePR(projectId, toStart, operator);
             //send winner email as appropriate here
             if (!toStart) {
                 sendMailForWinners(getManagerHelper().getProjectManager().getProject(projectId));

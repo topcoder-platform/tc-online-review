@@ -1,6 +1,6 @@
 <%--
   - Author: pulky, isv, TCSDEVELOPER, flexme
-  - Version: 1.5
+  - Version: 1.6
   - Copyright (C) 2004 - 2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays project edition page
@@ -21,6 +21,9 @@
   - Version 1.4 (Online Review Status Validation Assembly 1.0) changes: added error display of validation for status field
   -
   - Version 1.5 (Online Review - Project Payments Integration Part 1 v1.0) changes: added support for project prizes management.
+  -
+  - Version 1.6 (Online Review - Project Payments Integration Part 3 v1.0) changes: removed "Payment" and "Paid"
+  - columns in resource section.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -398,8 +401,7 @@
             newRow.className = (strLastRowStyle == "dark") ? "light" : "dark";
 
             var allNewCells = newRow.getElementsByTagName("td");
-            var paymentCell = allNewCells[2];
-            var buttonsCell = allNewCells[4];
+            var buttonsCell = allNewCells[2];
 
             // Make delete button visible and hide add button
             var images = buttonsCell.getElementsByTagName("img");
@@ -418,9 +420,6 @@
             // Insert new row into resources table
             resourcesTable.tBodies[0].insertBefore(newRow, resourcesTable.rows[rowCount - 1]);
 
-            // Make labels correspond correct inputs (radio boxes)
-            updateLabelsInCell(paymentCell, lastResourceIndex);
-
             // Get phase parameters input nodes
             var phaseIdNodes = getChildrenByNamePrefix(document.documentElement, "phase_js_id");
             var phaseActionNodes = getChildrenByNamePrefix(document.documentElement, "phase_action");
@@ -437,7 +436,7 @@
          */
         function deleteResource(resourceRowNode) {
             // Retrieve hidden inputs
-            var inputs = resourceRowNode.cells[4].getElementsByTagName("input");
+            var inputs = resourceRowNode.cells[2].getElementsByTagName("input");
             // Check if the resource to be deleted has been persisted
             var id = inputs[1].value;
 

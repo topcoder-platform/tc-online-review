@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.cronos.onlinereview.dataaccess.CatalogDataAccess;
 import com.cronos.onlinereview.ejblibrary.SpringContextProvider;
+import com.cronos.onlinereview.phases.PaymentsHelper;
 import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
 import com.cronos.termsofuse.dao.TermsOfUseDao;
 import com.cronos.termsofuse.dao.TermsOfUsePersistenceException;
@@ -139,8 +140,18 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.5 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
+ *   <ol>
+ *       <li>Updated {@link #handleResourceAddition(Project, HttpServletRequest, ActionForm, Map, Map)} to not setting
+ *       resource payment related properties.</li>
+ *       <li>Updated {@link #manageReviewFeedback(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
+ *       to call {@link PaymentsHelper#processAutomaticPayments(long, String)} to update the resources' payments.</li>
+ *   </ol>
+ * </p>
+ *
  * @author isv, romanoTC, rac_, flexme
- * @version 1.4
+ * @version 1.5
  */
 public class ProjectManagementConsoleActions extends DispatchAction {
     
@@ -1251,6 +1262,8 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                         adjustmentManager.save(adjustment);
                     }
                 }
+                String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
+                PaymentsHelper.processAutomaticPayments(project.getId(), operator);
                 return ActionsHelper.cloneForwardAndAppendToPath(
                         mapping.findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
             }
@@ -1708,8 +1721,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                             // The resource can be added - all necessary terms of use are accepted
                             Resource resource = new Resource();
                             resource.setProject(project.getId());
-                            resource.setProperty("Payment", null);
-                            resource.setProperty("Payment Status", "N/A");
                             resource.setResourceRole(roleMapping.get(resourceRoleId));
                             resource.setProperty("Handle", handle);
                             resource.setProperty("External Reference ID", userId);

@@ -156,8 +156,15 @@ package com.cronos.onlinereview.actions;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.9.3 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
+ *   <ol>
+ *     <li>Removed <code>CREATE_PAYMENT_PERM_NAME</code> constant.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, flexme, VolodymyrK
- * @version 1.9.2
+ * @version 1.9.3
  */
 public class Constants {
 
@@ -874,12 +881,6 @@ public class Constants {
      * Download Review Document permission.
      */
     public static final String DOWNLOAD_DOCUMENT_PERM_NAME = "Download Review Document";
-
-    /**
-     * This member variable is a string constant that defines the name of the
-     * Create Payment permission.
-     */
-    public static final String CREATE_PAYMENT_PERM_NAME = "Create Payment";
 
     /**
      * This member variable is a string constant that defines the name of the

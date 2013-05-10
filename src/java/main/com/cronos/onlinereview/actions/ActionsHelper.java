@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,10 +30,12 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
+import com.cronos.onlinereview.phases.PaymentsHelper;
 import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
 import com.cronos.termsofuse.dao.TermsOfUseDao;
 import com.cronos.termsofuse.dao.UserTermsOfUseDao;
 import com.topcoder.management.deliverable.search.UploadFilterBuilder;
+import com.topcoder.management.payment.ProjectPayment;
 import com.topcoder.management.payment.ProjectPaymentAdjustmentManager;
 import com.topcoder.management.payment.ProjectPaymentManager;
 import com.topcoder.management.reviewfeedback.ReviewFeedbackManager;
@@ -56,7 +57,6 @@ import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.external.impl.DBUserRetrieval;
 import com.cronos.onlinereview.model.ClientProject;
 import com.cronos.onlinereview.model.CockpitProject;
-import com.cronos.onlinereview.phases.AutoPaymentUtil;
 import com.cronos.onlinereview.phases.PRHelper;
 import com.topcoder.date.workdays.DefaultWorkdaysFactory;
 import com.topcoder.date.workdays.Workdays;
@@ -303,8 +303,19 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 2.6 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #getMyPayments(Resource[], List, Map, Map)} method to use the project payments instead of
+ *     the resource payment property. This method will also populate the payments paid status now.</li>
+ *     <li>Updated {@link #resetProjectResultWithChangedScores(Project, String)} method to use the new payments
+ *     processing logic in {@link PaymentsHelper}.</li>
+ *     <li>Updated <code>updateSubmitterPayments</code> method.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK, rac_, lmmortal, flexme
- * @version 2.5
+ * @version 2.6
  * @since Online Review Status Validation Assembly 1.0
  */
 public class ActionsHelper {
@@ -1160,52 +1171,33 @@ public class ActionsHelper {
     }
 
     /**
-     * <p>Gets the list of payments per resource roles assigned to user.</p>
+     * <p>Gets the list of payments and payments paid status per resource roles assigned to user.</p>
      *
      * @param myResources a <code>Resource</code> array listing the resources associated with user.
-     * @return a <code>Map</code> mapping the resource roles to respective payments.
+     * @param allPayments all the project payments.
+     * @param payments the payments per resource roles will be stored in this instance.
+     * @param paymentsPaid the payments paid status per resource roles will be stored in this instance.
      * @since 1.8
      */
-    public static Map<ResourceRole, Double> getMyPayments(Resource[] myResources) {
-        Map<ResourceRole, Double> payments = new LinkedHashMap<ResourceRole, Double>();
-
+    public static void getMyPayments(Resource[] myResources, List<ProjectPayment> allPayments,
+                                     Map<ResourceRole, Double> payments, Map<ResourceRole, Boolean> paymentsPaid) {
+        Map<Long, Resource> resourceLookup = new HashMap<Long, Resource>();
         for (Resource resource : myResources) {
-            ResourceRole role = resource.getResourceRole();
-            String paymentStr = (String) resource.getProperty("Payment");
-            if (paymentStr != null && paymentStr.trim().length() != 0) {
-                double payment = Double.parseDouble(paymentStr);
+            resourceLookup.put(resource.getId(), resource);
+            payments.put(resource.getResourceRole(), null);
+            paymentsPaid.put(resource.getResourceRole(), Boolean.FALSE);
+        }
+
+        for (ProjectPayment payment : allPayments) {
+            if (resourceLookup.containsKey(payment.getResourceId())) {
+                ResourceRole role = resourceLookup.get(payment.getResourceId()).getResourceRole();
                 Double oldPayment = payments.get(role) == null ? 0.0 : payments.get(role);
-
-                payments.put(role, oldPayment + payment);
-            } else {
-                // Insert null if there's no mapping for the role yet otherwise just keep the value.
-                payments.put(role, payments.get(role));
+                payments.put(role, oldPayment + payment.getAmount().doubleValue());
+                if (payment.getPactsPaymentId() != null) {
+                    paymentsPaid.put(role, Boolean.TRUE);
+                }
             }
         }
-
-        return payments;
-    }
-
-    /**
-     * <p>Gets the list of statuses of payments per resource roles assigned to user.</p>
-     *
-     * @param myResources a <code>Resource</code> array listing the resources associated with user.
-     * @return a <code>Map</code> mapping the resource roles to respective payment statuses.
-     * @since 1.8
-     */
-    public static Map<ResourceRole, Boolean> getMyPaymentStatuses(Resource[] myResources) {
-        Map<ResourceRole, Boolean> paymentStatuses = new LinkedHashMap<ResourceRole, Boolean>();
-
-        for (Resource resource : myResources) {
-            String paid = (String) resource.getProperty("Payment Status");
-            if ("Yes".equalsIgnoreCase(paid)) {
-                paymentStatuses.put(resource.getResourceRole(), Boolean.TRUE);
-            } else {
-                paymentStatuses.put(resource.getResourceRole(), Boolean.FALSE);
-            }
-        }
-
-        return paymentStatuses;
     }
 
     /**
@@ -2940,10 +2932,11 @@ public class ActionsHelper {
      * Reset ProjectResult after score change.
      *
      * @param project the Project instance
+     * @param operator the operator
      *
      * @throws BaseException if any error occurs
      */
-    public static void resetProjectResultWithChangedScores(Project project) throws BaseException {
+    public static void resetProjectResultWithChangedScores(Project project, String operator) throws BaseException {
         Connection conn = null;
         try {
             DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
@@ -2953,9 +2946,9 @@ public class ActionsHelper {
                     + DB_CONNECTION_NAMESPACE);
 
             if (isStudioProject(project)) {
-                AutoPaymentUtil.populateSubmitterPayments(project.getId(), conn);
+                PaymentsHelper.processAutomaticPayments(project.getId(), operator);
             } else {
-                PRHelper.populateProjectResult(project.getId(), conn);
+                PRHelper.populateProjectResult(project.getId(), conn, operator);
             }
         } catch (DBConnectionException e) {
             throw new BaseException("Failed to return DBConnection", e);
@@ -3326,45 +3319,6 @@ public class ActionsHelper {
         
         Upload[] uploads = getPhaseUploads(finalFix.getId(), "Final Fix");
         return uploads.length > 0 ? uploads[0] : null;
-    }
-
-    /**
-     * <p>Updates the payments for existing submitters.</p>
-     *
-     * @param projectId a <code>long</code> providing the ID for the project.
-     * @param submitterPayments a <code>Map</code> mapping submitter IDs to submitter payments.
-     * @throws BaseException if an unexpected error occurs.
-     * @since BUGR-2807
-     */
-    static void updateSubmitterPayments(long projectId, Map<Long, Double> submitterPayments)
-        throws BaseException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-            conn = dbconn.createConnection();
-            ps = conn.prepareStatement("UPDATE project_result SET payment = ? WHERE project_id = ? AND user_id = ?");
-            ps.setLong(2, projectId);
-            for (Long userId : submitterPayments.keySet()) {
-                Double payment = submitterPayments.get(userId);
-                if (payment == null) {
-                    ps.setNull(1, Types.DOUBLE);
-                } else {
-                    ps.setDouble(1, payment);
-                }
-                ps.setLong(3, userId);
-                ps.executeUpdate();
-            }
-        } catch (SQLException e) {
-            throw new BaseException("Failed to update project result for payment", e);
-        } catch (UnknownConnectionException e) {
-            throw new BaseException("Failed to return DBConnection", e);
-        } catch (ConfigurationException e) {
-            throw new BaseException("Failed to return DBConnection", e);
-        } finally {
-            close(ps);
-            close(conn);
-        }
     }
 
     /**

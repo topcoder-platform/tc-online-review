@@ -187,8 +187,16 @@ import com.cronos.onlinereview.phases.OnlineReviewServices;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.6 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
+ *   <ol>
+ *       <li>Updated {@link #updateFinalAggregatedScore(HttpServletRequest, Project, Phase, Submission)} to pass
+ *       operator when calling ActionsHelper.resetProjectResultWithChangedScores.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, isv, FireIce, rac_, flexme
- * @version 1.5
+ * @version 1.6
  */
 public class ProjectReviewActions extends DispatchAction {
     private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogManager
@@ -3732,8 +3740,8 @@ public class ProjectReviewActions extends DispatchAction {
         OnlineReviewServices orServices = new OnlineReviewServices();
         orServices.updateSubmissionsResults(reviewPhase,
             String.valueOf(AuthorizationHelper.getLoggedInUserId(request)), false, true);
-
-        ActionsHelper.resetProjectResultWithChangedScores(project);
+        String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
+        ActionsHelper.resetProjectResultWithChangedScores(project, operator);
     }
 
     /**

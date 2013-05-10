@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2005 - 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2005 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -18,8 +18,16 @@ import com.topcoder.project.phases.Phase;
  *   </ol>
  * </p>
  *
- * @author brain_cn, TCSASSEMBER
- * @version 1.1
+ * <p>
+ * Version 1.2 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #perform(Phase, String)} method to pass <code>operator</code> when calling
+ *     RPHelper.processScreeningPR.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author brain_cn, flexme
+ * @version 1.2
  */
 public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
     
@@ -91,7 +99,7 @@ public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
         ProjectManager projectManager = getManagerHelper().getProjectManager();
 
-        prHelper.processScreeningPR(projectId, toStart);
+        prHelper.processScreeningPR(projectId, toStart, operator);
             
         if (!toStart) {
             if (PRHelper.isStudioProject(projectManager, projectId)) {

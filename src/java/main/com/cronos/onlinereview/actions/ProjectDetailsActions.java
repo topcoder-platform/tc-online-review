@@ -11,15 +11,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.topcoder.management.payment.ProjectPayment;
+import com.topcoder.management.payment.search.ProjectPaymentFilterBuilder;
 import com.topcoder.management.project.Prize;
 import com.topcoder.management.project.PrizeType;
 import org.apache.struts.action.ActionForm;
@@ -43,9 +44,7 @@ import com.topcoder.management.deliverable.SubmissionType;
 import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.UploadStatus;
-import com.topcoder.management.deliverable.UploadType;
 import com.topcoder.management.deliverable.late.LateDeliverable;
-import com.topcoder.management.deliverable.late.LateDeliverableManagementException;
 import com.topcoder.management.deliverable.late.LateDeliverableManager;
 import com.topcoder.management.deliverable.late.search.LateDeliverableFilterBuilder;
 import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
@@ -235,8 +234,18 @@ import com.topcoder.util.file.templatesource.FileTemplateSource;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.12 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
+ *   <ol>
+ *       <li>Removed <code>isAllowedToPay</code> method.</li>
+ *       <li>Updated {@link #viewProjectDetails(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
+ *       method to set the resource payments data based on the project payments instead of
+ *       resource payment property.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, FireIce, rac_, flexme
- * @version 1.11
+ * @version 1.12
  */
 public class ProjectDetailsActions extends DispatchAction {
 
@@ -386,8 +395,12 @@ public class ProjectDetailsActions extends DispatchAction {
         ActionsHelper.retrieveAndStoreMyRole(request, messageResources);
         // Obtain an array of "my" resources
         Resource[] myResources = (Resource[]) request.getAttribute("myResources");
+        List<ProjectPayment> allPayments = ActionsHelper.createProjectPaymentManager().search(
+                ProjectPaymentFilterBuilder.createProjectIdFilter(projectId));
         // Place an information about the amount of "my" payment into the request
-        Map<ResourceRole, Double> myPayments = ActionsHelper.getMyPayments(myResources);
+        Map<ResourceRole, Double> myPayments = new HashMap<ResourceRole, Double>();
+        Map<ResourceRole, Boolean> myPaymentsPaid = new HashMap<ResourceRole, Boolean>();
+        ActionsHelper.getMyPayments(myResources, allPayments, myPayments, myPaymentsPaid);
 
         double totalPayment = 0;
         request.setAttribute("myPayment", myPayments);
@@ -398,7 +411,18 @@ public class ProjectDetailsActions extends DispatchAction {
         }
         request.setAttribute("totalPayment", totalPayment);
         // Place an information about my payment status into the request
-        request.setAttribute("wasPaid", ActionsHelper.getMyPaymentStatuses(myResources));
+        request.setAttribute("wasPaid", myPaymentsPaid);
+
+        // calculate resources' payments amount
+        Map<Long, Double> resourcePaymentsAmount = new HashMap<Long, Double>();
+        for (ProjectPayment payment : allPayments) {
+            Double oldPayment = resourcePaymentsAmount.get(payment.getResourceId());
+            if (oldPayment == null) {
+                oldPayment = 0.0;
+            }
+            resourcePaymentsAmount.put(payment.getResourceId(), oldPayment + payment.getAmount().doubleValue());
+        }
+        request.setAttribute("resourcePaymentsAmount", resourcePaymentsAmount);
 
         // Retrieve late records for the current user.
         LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager();
@@ -783,7 +807,6 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformPortMortemReview",
                 ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME));
-        request.setAttribute("isAllowedToPay", isAllowedToPay(request, project, allProjectResources));
 
         // Checking whether some user is allowed to submit his approval or comments for the
         // Aggregation worksheet needs more robust verification since this check includes a test
@@ -2960,76 +2983,6 @@ public class ProjectDetailsActions extends DispatchAction {
                 out.close();
             }
         }
-    }
-
-    /**
-     * Checks whether to show the 'Pay Project' button in OR. The following criteria is used.
-     * <ul>
-     * <li>The user has permissions to pay the project</li>
-     * <li>The project has at least one resource with non-zero Payment amount value and payment status other than
-     * 'Paid'.</li>
-     * </ul>
-     *
-     * @param request
-     *            the http servlet request
-     * @param project
-     *            Project instance
-     * @param allProjectResources
-     *            the array of all resources of this project.
-     * @return true to show the 'Pay Project' button in OR, otherwise false.
-     * @throws LateDeliverableManagementException if an unexpected error occurs during retrieving late deliverables
-     * @since Online Review Payments and Status Automation Assembly 1.0
-     */
-    private static boolean isAllowedToPay(HttpServletRequest request, Project project, Resource[] allProjectResources)
-        throws LateDeliverableManagementException {
-        boolean hasUserPermission = AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PAYMENT_PERM_NAME);
-
-        if (!hasUserPermission) {
-            return false;
-        }
-
-        LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager();
-        List<Filter> filters = new ArrayList<Filter>();
-        filters.add(LateDeliverableFilterBuilder.createProjectIdFilter(project.getId()));
-        filters.add(LateDeliverableFilterBuilder.createForgivenFilter(false));
-        List<LateDeliverable> lateDeliverables = lateDeliverableManager.searchAllLateDeliverables(new AndFilter(filters));
-
-        Set<Long> pendingResources = new HashSet<Long>();
-        for(LateDeliverable lateDeliverable : lateDeliverables) {
-            Date explanationDeadline = ActionsHelper.explanationDeadline(lateDeliverable);
-            boolean pending = (lateDeliverable.getExplanation() != null && lateDeliverable.getResponse() == null) ||
-                (lateDeliverable.getExplanation() == null && explanationDeadline.compareTo(new Date()) > 0);
-
-            if (pending) {
-                pendingResources.add(lateDeliverable.getResourceId());
-            }
-        }
-
-        Set<String> pendingUsers = new HashSet<String>();
-        for (Resource resource : allProjectResources) {
-            if (pendingResources.contains(resource.getId())) {
-                pendingUsers.add((String) resource.getProperty("External Reference ID"));
-            }
-        }
-
-        for (Resource resource : allProjectResources) {
-            try {
-                String paymentStr = (String) resource.getProperty("Payment");
-                if (paymentStr == null || paymentStr.trim().length() == 0 || Double.parseDouble(paymentStr) <= 0) {
-                    continue;
-                }
-
-                String userId = (String) resource.getProperty("External Reference ID");
-                if (!pendingUsers.contains(userId) && !"Yes".equals(resource.getProperty("Payment Status"))) {
-                    return true;
-                }
-            } catch (NumberFormatException e) {
-                // the payment string is not double format, we simply ignore it.
-            }
-
-        }
-
-        return false;
     }
 
     /**
