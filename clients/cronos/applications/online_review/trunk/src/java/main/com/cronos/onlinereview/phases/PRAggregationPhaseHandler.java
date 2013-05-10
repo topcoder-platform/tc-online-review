@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2005 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2005 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -10,8 +10,16 @@ import com.topcoder.project.phases.Phase;
 /**
  * The PRAggregationPhaseHandler.
  *
- * @author brain_cn
- * @version 1.0
+ * <p>
+ * Version 1.1 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #perform(Phase, String)} method to pass <code>operator</code> when calling
+ *     RPHelper.processAggregationPR.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author brain_cn, flexme
+ * @version 1.1
  */
 public class PRAggregationPhaseHandler extends AggregationPhaseHandler {
     
@@ -56,6 +64,6 @@ public class PRAggregationPhaseHandler extends AggregationPhaseHandler {
         super.perform(phase, operator);
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
 
-        prHelper.processAggregationPR(phase.getProject().getId(), toStart);
+        prHelper.processAggregationPR(phase.getProject().getId(), toStart, operator);
     }
 }

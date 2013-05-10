@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 - 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -18,17 +18,20 @@ import com.topcoder.project.phases.Phase;
  *     <li>This class is refactor to use <code>ScreeningResultNotification</code> to send screening result notification emails.</li>
  *   </ol>
  * </p>
+ *
+ * <p>
+ * Version 1.2 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #perform(Phase, String)} method to call PaymentsHelper.processAutomaticPayments to process
+ *     the project payments.</li>
+ *     <li>Removed <code>prHelper</code> field.</li>
+ *   </ol>
+ * </p>
  * 
- * @author isv, TCSASSEMBER
- * @version 1.1 (Checkpoint Support assembly)
+ * @author isv, flexme
+ * @version 1.2 (Checkpoint Support assembly)
  */
 public class PRCheckpointScreeningPhaseHandler extends CheckpointScreeningPhaseHandler {
-    
-    /**
-    * Used for pulling data to project_result table and filling payments.
-    */
-    private PRHelper prHelper = new PRHelper();
-	
     /**
      * Represents the <code>ScreeningResultNotification</code> instance to send notification email.
      * 
@@ -82,7 +85,7 @@ public class PRCheckpointScreeningPhaseHandler extends CheckpointScreeningPhaseH
                 throw new PhaseHandlingException("Failed to send email to submitters on Checkpoint Screening results", e);
             }
                 
-            prHelper.populateReviewerPayments(projectId);
+            PaymentsHelper.processAutomaticPayments(projectId, operator);
         }
     }
 }

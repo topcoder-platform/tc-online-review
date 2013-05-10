@@ -3960,6 +3960,18 @@
             </Property>
         </Property>
 
+        <Property name="ProjectPaymentManager">
+            <Property name="ClassName">
+                <Value>com.topcoder.management.payment.impl.ProjectPaymentManagerImpl</Value>
+            </Property>
+            <Property name="Namespace">
+                <Value>com.topcoder.management.payment.impl.ProjectPaymentManagerImpl</Value>
+            </Property>
+            <Property name="ConfigFile">
+                <Value>com/topcoder/util/config/ConfigManager.properties</Value>
+            </Property>
+        </Property>
+
         <Property name="DeliverableTypes">
             <Property name="Any">
                 <Value>0</Value>
@@ -4825,11 +4837,6 @@
                 <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
-            </Property>
-
-            <Property name="Create Payment">
-                <Value>Global Payment Manager</Value>
-                <Value>Payment Manager</Value>
             </Property>
 
             <Property name="View Payments">

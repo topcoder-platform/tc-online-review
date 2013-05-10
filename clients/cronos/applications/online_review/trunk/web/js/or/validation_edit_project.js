@@ -5,8 +5,11 @@
  * - - Added method validate_prizes and validate_prizes_amount to validate the project prizes.
  * - - Updated method validate_form to validate the project prizes.
  *
+ * - Version 1.2 (Online Review - Project Payments Integration Part 3 v1.0) change notes:
+ * - - Updated method validate_resources because Payment and Paid columns have been removed.
+ *
  * @author TCSASSEMBLER, flexme
- * @version 1.1
+ * @version 1.2
  */
 
 /**
@@ -298,34 +301,6 @@ function validate_resources(thisForm, msgList) {
         var name = thisForm["resources_name[" + i + "]"].value;
         if (emptyString.test(name)) {
             msg = "Name can not be empty";
-            add_error_message(msg, msgPrefix, msgDiv, msgList);
-        }
-
-        // get the message div and hide it
-        msgDiv = getChildByName(tableRow, "payment_validation_msg");
-        msgDiv.innerHTML = "";
-        msgDiv.style.display = "none";
-
-        // validate payment
-        var payment = thisForm["resources_payment[" + i + "]"][0].checked;
-        var payment_amount = thisForm["resources_payment_amount[" + i + "]"].value;
-        if (payment) {
-            // if there is a payment, payment amount should be a float
-            if (!isFloat(payment_amount)) {
-                msg = "Payment Amount should be a currency value";
-                add_error_message(msg, msgPrefix, msgDiv, msgList);
-            }
-        }
-
-        // get the message div and hide it
-        msgDiv = getChildByName(tableRow, "paid_validation_msg");
-        msgDiv.innerHTML = "";
-        msgDiv.style.display = "none";
-
-        // validate paid
-        var paid = thisForm["resources_paid[" + i + "]"].value;
-        if (emptyString.test(paid)) {
-            msg = "Paid should be selected";
             add_error_message(msg, msgPrefix, msgDiv, msgList);
         }
     }

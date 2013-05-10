@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -8,8 +8,16 @@ import java.sql.Connection;
 /**
  * Online review functional tests 3, delete reviewer testing.
  *
- * @author TCSDEVELOPER
- * @version 1.0
+ * <p>
+ * Version 1.1 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #testDeleteReviewerRole()} because "Payment" and "Paid" columns have been removed
+ *     in this assembly.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author TCSDEVELOPER, flexme
+ * @version 1.1
  */
 public class DeleteReviewerTests extends ProjectTests {
 	
@@ -55,7 +63,7 @@ public class DeleteReviewerTests extends ProjectTests {
         browser.waitForPageToLoad(TIMEOUT);
 
         // Delete the reviewer
-        browser.click("//table[@id='resources_tbl']/tbody/tr[4]/td[5]/img[1]");
+        browser.click("//table[@id='resources_tbl']/tbody/tr[4]/td[3]/img[1]");
         // add explanation
         browser.type("explanation", "delete reviewer role");
         browser.click("//input[@name='saveProjectChangesBtn']");
