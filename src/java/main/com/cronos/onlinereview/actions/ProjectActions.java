@@ -1050,8 +1050,14 @@ public class ProjectActions extends DispatchAction {
             statusHasChanged = !oldStatusName.equalsIgnoreCase(newStatusName);
             // If status has changed, update the project
 
-            // OrChange - Do not update if the project type is studio
-            if (statusHasChanged) {
+            // Only admins can cancel Studio contests.
+            if (statusHasChanged && ActionsHelper.isStudioProject(project) && newStatusName.contains("Cancelled")) {
+                if (!AuthorizationHelper.hasUserRole(request, Constants.ADMIN_ROLE_NAME)) {
+                    ActionsHelper.addErrorToRequest(request, "status", "StatusValidation.CancelledStudio");
+                }
+            }
+
+            if (statusHasChanged && !ActionsHelper.isErrorsPresent(request)) {
                 // Populate project status
                 project.setProjectStatus(newProjectStatus);
 
@@ -1125,9 +1131,6 @@ public class ProjectActions extends DispatchAction {
                 }
         }
 
-
-        // TODO: Project status change, includes additional explanation to be concatenated
-
         // Create the map to store the mapping from phase JS ids to phases
         Map<Object, Phase> phasesJsMap = new HashMap<Object, Phase>();
 
@@ -1139,10 +1142,15 @@ public class ProjectActions extends DispatchAction {
         List<Prize> removedPrize = new ArrayList<Prize>();
         getProjectPrizesToBeUpdated(request, lazyForm, project, createdPrize, updatedPrize, removedPrize);
 
-        // Save the project phases
-        // FIXME: the project itself is also saved by the following call. Needs to be refactored
-        Phase[] projectPhases =
-            saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap, phasesToDelete);
+        Phase[] projectPhases = null;
+        if (!ActionsHelper.isErrorsPresent(request)) {
+            // Save the project phases
+            projectPhases = saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap, phasesToDelete);
+        } else {
+            // Retrieve and sort project phases
+            projectPhases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
+            Arrays.sort(projectPhases, new Comparators.ProjectPhaseComparer());
+         }
 
         if (!ActionsHelper.isErrorsPresent(request) && (newProject || categoryChanged)) {
             // generate new project role terms of use associations for the recently created project.
@@ -1910,7 +1918,7 @@ public class ProjectActions extends DispatchAction {
                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
             } catch(StatusValidationException statusValidationException) {
                 ActionsHelper.addErrorToRequest(request, "status", statusValidationException.getStatusViolationKey());
-				return oldPhases;
+                return oldPhases;
             }
         }
 
@@ -1957,8 +1965,8 @@ public class ProjectActions extends DispatchAction {
 
             OperationCheckResult result;
             if ("close_phase".equals(action)) {
-            	result = phaseManager.canEnd(phase);
-            	if (phaseStatus.getName().equals(PhaseStatus.OPEN.getName()) && result.isSuccess()) {
+                result = phaseManager.canEnd(phase);
+                if (phaseStatus.getName().equals(PhaseStatus.OPEN.getName()) && result.isSuccess()) {
                     // Close the phase
                     phaseManager.end(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 } else {
@@ -1967,7 +1975,7 @@ public class ProjectActions extends DispatchAction {
                             phaseType.getName(), result.getMessage()));
                 }
             } else if ("open_phase".equals(action)) {
-            	result = phaseManager.canStart(phase);
+                result = phaseManager.canStart(phase);
                 if (phaseStatus.getName().equals(PhaseStatus.SCHEDULED.getName()) && result.isSuccess()) {
                     // Open the phase
                     phaseManager.start(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
@@ -2046,7 +2054,7 @@ public class ProjectActions extends DispatchAction {
                 } else if (currentPhaseName.equals(CHECKPOINT_SUBMISSION_PHASE_NAME)) {
                     // Checkpoint Submission should be followed by Checkpoint Screening or Checkpoint Review
                     if (!nextPhaseName.equals(CHECKPOINT_SCREENING_PHASE_NAME)
-					    && !nextPhaseName.equals(CHECKPOINT_REVIEW_PHASE_NAME) ) {
+                        && !nextPhaseName.equals(CHECKPOINT_REVIEW_PHASE_NAME) ) {
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.CheckpointSubmissionMustBeFollowed");
                         arePhasesValid = false;
@@ -2142,7 +2150,7 @@ public class ProjectActions extends DispatchAction {
                     if (i == 0 ||
                             (!previousPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME)
                              && !previousPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME)
-							 && !previousPhaseName.equals(AGGREGATION_PHASE_NAME)
+                             && !previousPhaseName.equals(AGGREGATION_PHASE_NAME)
                              && !previousPhaseName.equals(APPROVAL_PHASE_NAME)
                              && !(previousPhaseName.equals(REVIEW_PHASE_NAME) && isStudioProject)
                              && !previousPhaseName.equals(FINAL_REVIEW_PHASE_NAME))
@@ -2350,7 +2358,7 @@ public class ProjectActions extends DispatchAction {
                         primaryReviewerRoles.put(resourceKey, handle);
                     }
                 }
-				// Check if the phase related to resource role exists
+                // Check if the phase related to resource role exists
                 ResourceRole role = LookupHelper.getResourceRole(resourceRoleId);
                 if (role != null) {
                     Long relatedPhaseTypeId = role.getPhaseType();
@@ -2734,64 +2742,64 @@ public class ProjectActions extends DispatchAction {
             Project project, UserRetrieval userRetrieval, String[] resourceNames)
             throws RemoteException, EJBException, BaseException {
 
-		        boolean allResourcesValid = true;
+                boolean allResourcesValid = true;
 
-		        // get remote services
-		        // check if the user agreed to all terms of use
-		        ProjectTermsOfUseDao projectTermsOfUseDao = ActionsHelper.getProjectTermsOfUseDao();
-		        UserTermsOfUseDao userTermsOfUseDao = ActionsHelper.getUserTermsOfUseDao();
+                // get remote services
+                // check if the user agreed to all terms of use
+                ProjectTermsOfUseDao projectTermsOfUseDao = ActionsHelper.getProjectTermsOfUseDao();
+                UserTermsOfUseDao userTermsOfUseDao = ActionsHelper.getUserTermsOfUseDao();
 
-		        // validate that new resources have agreed to the necessary terms of use
-		        // 0-index resource is skipped as it is a "dummy" one
-		        for (int i = 1; i < resourceNames.length; i++) {
-		            if (resourceNames[i] != null && resourceNames[i].trim().length() > 0) {
-		                ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
-		                String resourceAction = (String) lazyForm.get("resources_action", i);
-		                // check for additions or modifications
-		                if (!"delete".equals(resourceAction)) {
-		                    long roleId = (Long) lazyForm.get("resources_role", i);
-		                    long userId = user.getId();
+                // validate that new resources have agreed to the necessary terms of use
+                // 0-index resource is skipped as it is a "dummy" one
+                for (int i = 1; i < resourceNames.length; i++) {
+                    if (resourceNames[i] != null && resourceNames[i].trim().length() > 0) {
+                        ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
+                        String resourceAction = (String) lazyForm.get("resources_action", i);
+                        // check for additions or modifications
+                        if (!"delete".equals(resourceAction)) {
+                            long roleId = (Long) lazyForm.get("resources_role", i);
+                            long userId = user.getId();
 
-		                    Map<Integer, List<TermsOfUse>> necessaryTerms =
-		                        projectTermsOfUseDao.getTermsOfUse((int) project.getId(), (int) roleId, null);
+                            Map<Integer, List<TermsOfUse>> necessaryTerms =
+                                projectTermsOfUseDao.getTermsOfUse((int) project.getId(), (int) roleId, null);
 
-		                    if (necessaryTerms != null && !necessaryTerms.isEmpty()) {
-		                        boolean hasGroupWithAllTermsAccepted = false;
-		                        StringBuilder b = new StringBuilder();
-		                        for (Integer groupId : necessaryTerms.keySet()) {
-		                            b.append("Group " + groupId + ":<br/>");
-		                            boolean hasNonAcceptedTermsForGroup = false;
-		                            List<TermsOfUse> groupTermsOfUse = necessaryTerms.get(groupId);
-		                            for (TermsOfUse terms : groupTermsOfUse) {
-		                                long termsId = terms.getTermsOfUseId();
-		                                // check if the user has this terms
-		                                if (!userTermsOfUseDao.hasTermsOfUse(userId, termsId)) {
-		                                    hasNonAcceptedTermsForGroup = true;
-		                                    b.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;").append(terms.getTitle()).append("<br/>");
-		                                } else {
-		                                    b.append("&nbsp;&nbsp;<img src='/i/checkmark.jpg'/>").append(terms.getTitle()).append("<br/>");
-		                                }
-		                            }
-		                            if (!hasNonAcceptedTermsForGroup) {
-		                                hasGroupWithAllTermsAccepted = true;
-		                                break; // User has at least one terms group with all terms from that group accepted
-		                                // so there is no need to check other terms of use groups
-		                            }
-		                        }
-		                        if (!hasGroupWithAllTermsAccepted) {
-		                            ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
-		                                                            new ActionMessage(
-		                                                                "error.com.cronos.onlinereview.actions.editProject.Resource.MissingGroupTerms",
-		                                                                b.toString()));
-		                            allResourcesValid = false;
+                            if (necessaryTerms != null && !necessaryTerms.isEmpty()) {
+                                boolean hasGroupWithAllTermsAccepted = false;
+                                StringBuilder b = new StringBuilder();
+                                for (Integer groupId : necessaryTerms.keySet()) {
+                                    b.append("Group " + groupId + ":<br/>");
+                                    boolean hasNonAcceptedTermsForGroup = false;
+                                    List<TermsOfUse> groupTermsOfUse = necessaryTerms.get(groupId);
+                                    for (TermsOfUse terms : groupTermsOfUse) {
+                                        long termsId = terms.getTermsOfUseId();
+                                        // check if the user has this terms
+                                        if (!userTermsOfUseDao.hasTermsOfUse(userId, termsId)) {
+                                            hasNonAcceptedTermsForGroup = true;
+                                            b.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;").append(terms.getTitle()).append("<br/>");
+                                        } else {
+                                            b.append("&nbsp;&nbsp;<img src='/i/checkmark.jpg'/>").append(terms.getTitle()).append("<br/>");
+                                        }
+                                    }
+                                    if (!hasNonAcceptedTermsForGroup) {
+                                        hasGroupWithAllTermsAccepted = true;
+                                        break; // User has at least one terms group with all terms from that group accepted
+                                        // so there is no need to check other terms of use groups
+                                    }
+                                }
+                                if (!hasGroupWithAllTermsAccepted) {
+                                    ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                                                    new ActionMessage(
+                                                                        "error.com.cronos.onlinereview.actions.editProject.Resource.MissingGroupTerms",
+                                                                        b.toString()));
+                                    allResourcesValid = false;
 
-		                        }
-		                    }
-		                }
-		            }
-		        }
+                                }
+                            }
+                        }
+                    }
+                }
 
-		        return allResourcesValid;
+                return allResourcesValid;
     }
 
     /**
