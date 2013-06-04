@@ -535,7 +535,7 @@
                                             <td class="valueC"><b><bean:message key="manageProject.ReviewPerformance.Score.Bad"/></b></td>
                                             <td class="valueC"><b><bean:message key="manageProject.ReviewPerformance.Score.Average"/></b></td>
                                             <td class="valueC"><b><bean:message key="manageProject.ReviewPerformance.Score.Good"/></b></td>
-                                            <td class="value" width="65%"><b><bean:message key="manageProject.ReviewPerformance.Feedback.title"/></b></td>
+                                            <td class="valueC" width="65%"><b><bean:message key="manageProject.ReviewPerformance.Feedback.title"/></b></td>
                                         </tr>
                                         <c:forEach items="${feedbacks}" var="feedback" varStatus="loop">
                                             <tr class="${loop.index mod 2 eq 0 ? 'dark' : 'light'}">
@@ -609,7 +609,7 @@
                                             <td class="valueC"><b><bean:message key="manageProject.ReviewPerformance.Score.Bad"/></b></td>
                                             <td class="valueC"><b><bean:message key="manageProject.ReviewPerformance.Score.Average"/></b></td>
                                             <td class="valueC"><b><bean:message key="manageProject.ReviewPerformance.Score.Good"/></b></td>
-                                            <td class="value" width="65%"><b><bean:message key="manageProject.ReviewPerformance.Feedback.title"/></b></td>
+                                            <td class="valueC" width="65%"><b><bean:message key="manageProject.ReviewPerformance.Feedback.title"/></b></td>
                                         </tr>
                                         <c:forEach items="${reviewerResourcesMap}" var="reviewerEntry" varStatus="loop">
                                             <c:set var="reviewerUserId" value="${reviewerEntry.key}"/>
