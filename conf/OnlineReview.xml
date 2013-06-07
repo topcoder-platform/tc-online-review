@@ -4421,6 +4421,10 @@
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Cockpit Project User</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
             </Property>
             <Property name="View Most Recent Checkpoint Submissions After Review">
                 <Value>Submitter</Value>
@@ -4491,8 +4495,6 @@
                 <Value>Primary Screener</Value>
                 <Value>Checkpoint Screener</Value>
                 <Value>Checkpoint Reviewer</Value>
-                <!-- Note: Reviewers weren't originally allowed to see screenings, but
-                    after this issue was raised on forum, they were granted a permission to do so -->
                 <Value>Reviewer</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>

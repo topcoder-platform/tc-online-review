@@ -4020,24 +4020,39 @@ public class ProjectReviewActions extends DispatchAction {
         } else if (isSubmissionDependentPhase && (myResource != null)
                    && (verification.getSubmission().getUpload().getOwner() == myResource.getId())) {
             // User is authorized to view review for his submission (when not in Review phase)
-            if (!reviewType.equals("Review") || !activePhases.contains(Constants.REVIEW_PHASE_NAME)) {
+            if (!reviewType.equals(Constants.REVIEW_PHASE_NAME) || !activePhases.contains(Constants.REVIEW_PHASE_NAME)) {
                 isAllowed = true;
             }
         } else if (AuthorizationHelper.hasUserPermission(request, permName)) {
-            if (reviewType.equals("Review")) {
+            if (reviewType.equals(Constants.REVIEW_PHASE_NAME)) {
                 // User is authorized to view all reviews (when not in Review, Appeals or Appeals Response)
                 if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
                         !activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
                         !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
                     isAllowed = true;
                 }
-            } else if (reviewType.equals("Screening")) {
-                if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
+            } else if (reviewType.equals(Constants.SCREENING_PHASE_NAME)) {
+                if (!activePhases.contains(Constants.SCREENING_PHASE_NAME) &&
+                        !activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
                         !activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
                         !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
                     isAllowed = true;
                 } else {
-                    //if any of those phases are open only, a user can see the screening if he is not a submitter
+                    //if any of those phases are open, a user can see the screening only if he is not a submitter
+                    isAllowed = !AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME);
+                }
+            } else if (reviewType.equals(Constants.CHECKPOINT_SCREENING_PHASE_NAME) ||
+                    reviewType.equals(Constants.CHECKPOINT_REVIEW_PHASE_NAME)) {
+                if (!activePhases.contains(Constants.CHECKPOINT_SCREENING_PHASE_NAME) &&
+                        !activePhases.contains(Constants.CHECKPOINT_REVIEW_PHASE_NAME) &&
+                        !activePhases.contains(Constants.SUBMISSION_PHASE_NAME) &&
+                        !activePhases.contains(Constants.SCREENING_PHASE_NAME) &&
+                        !activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
+                        !activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
+                        !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
+                    isAllowed = true;
+                } else {
+                    //if any of those phases are open, a user can see the checkpoint screening/review only if he is not a submitter
                     isAllowed = !AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME);
                 }
             } else {
