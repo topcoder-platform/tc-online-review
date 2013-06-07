@@ -3098,11 +3098,20 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         if (noRights && AuthorizationHelper.hasUserPermission(request, viewMostRecentSubmissionsPermissionName)) {
-            // Determine whether Review phase has already been opened (does not have Scheduled status)
-            final boolean isReviewOpen = ActionsHelper.isInOrAfterPhase(phases, 0, reviewPhaseName);
             // If reviewer tries to download submission before Review phase opens,
             // notify him about this wrong-doing and do not let perform the action
-            if (AuthorizationHelper.hasUserRole(request, reviewerRoleNames) && !isReviewOpen) {
+            if (AuthorizationHelper.hasUserRole(request, reviewerRoleNames)
+                    && !ActionsHelper.isInOrAfterPhase(phases, 0, reviewPhaseName)) {
+                ActionsHelper.logDownloadAttempt(request, upload, false);
+                return ActionsHelper.produceErrorReport(
+                        mapping, getResources(request), request, errorMessageKey, "Error.IncorrectPhase", null);
+            }
+
+            // Regular reviewers can view checkpoint submissions only after the Review phase has started
+            if (submissionType == 3
+                    && !AuthorizationHelper.hasUserRole(request, Constants.CHECKPOINT_REVIEWER_ROLE_NAME)
+                    && AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES)
+                    && !ActionsHelper.isInOrAfterPhase(phases, 0, Constants.REVIEW_PHASE_NAME)) {
                 ActionsHelper.logDownloadAttempt(request, upload, false);
                 return ActionsHelper.produceErrorReport(
                         mapping, getResources(request), request, errorMessageKey, "Error.IncorrectPhase", null);
@@ -3110,7 +3119,7 @@ public class ProjectDetailsActions extends DispatchAction {
             noRights = false;
         }
 
-        // For the Submitters we only allow to download other's submissions if the user has at least passed screening.
+        // For the Submitters we only allow to download others' submissions if the user has at least passed screening.
         if (noRights && AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) {
             // Get all submissions for this user.
             Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.SUBMITTER_ROLE_NAME);
@@ -3119,7 +3128,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
             // Check that the user has a submission that passed screening.
             // We don't need to check the current phase because if it is still prior to the Appeals Response
-            // the user won't be able to download other's submissions anyway.
+            // the user won't be able to download others' submissions anyway.
             boolean passedScreening = false;
             for (Long id : subIds) {
                 Submission submission = upMgr.getSubmission(id);

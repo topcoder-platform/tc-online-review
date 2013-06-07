@@ -335,12 +335,14 @@ final class PhasesDetailsServices {
             if (mayViewMostRecentAfterReview && isReviewFinished
                 || AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_CHECKPOINT_SUBMISSIONS_PERM_NAME)
                 || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_CHECKPOINT_SUBMISSIONS_PERM_NAME)
-                    && !AuthorizationHelper.hasUserRole(request, Constants.CHECKPOINT_REVIEWER_ROLE_NAME))
+                    && !AuthorizationHelper.hasUserRole(request, Constants.CHECKPOINT_REVIEWER_ROLE_NAME)
+                    && !AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES))
                 || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_CHECKPOINT_SUBMISSIONS_PERM_NAME)
                     && AuthorizationHelper.hasUserRole(request, Constants.CHECKPOINT_REVIEWER_ROLE_NAME)
                     && ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.CHECKPOINT_REVIEW_PHASE_NAME))
-                || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_CHECKPOINT_SUBMISSIONS_AFTER_REVIEW_PERM_NAME)
-                    && ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.FINAL_FIX_PHASE_NAME))
+                || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_CHECKPOINT_SUBMISSIONS_PERM_NAME)
+                    && AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES)
+                    && ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.REVIEW_PHASE_NAME))
                 || (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_CHECKPOINT_SUBMISSION_PERM_NAME)
                     && ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.CHECKPOINT_SCREENING_PHASE_NAME))) {
                 submissions = ActionsHelper.getProjectSubmissions(project.getId(),
