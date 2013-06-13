@@ -33,11 +33,12 @@
   <xs:element name="Phase">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="Dependency"/>
+                <xs:element minOccurs="0" ref="Dependency"/>
       </xs:sequence>
       <xs:attribute name="id" use="required" type="xs:NCName"/>
       <xs:attribute name="length" use="required" type="xs:integer"/>
       <xs:attribute name="type" use="required" type="xs:NCName"/>
+            <xs:attribute name="phaseId" use="optional" type="xs:integer"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="Dependency">
