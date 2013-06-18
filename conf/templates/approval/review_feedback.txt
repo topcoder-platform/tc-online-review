@@ -12,5 +12,5 @@ If you had any complaint against a particular reviewer during the contest or if 
 </p>
 
 <p>
-For more details about the review feedback and how it works, please read <a href\="http\://apps.topcoder.com/wiki/display/training/Generic+Managing+Competitions#GenericManagingCompetitions-ReviewFeedback">here</a>.
+For more details about the review feedback and how it works, please read <a href\="http\://apps.topcoder.com/wiki/display/TCU/Generic+Managing+Competitions#GenericManagingCompetitions-ReviewFeedback">here</a>.
 </p>
