@@ -13,7 +13,7 @@ Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
 
 <p>
 <font color\="red"><b>The contest failed!</b><br/>
-You need to set the proper project status in the <a href\="%OR_LINK%">Online Review</a> now. See the instructions <a href\="http\://topcoder.com/wiki/display/training/Generic+Managing+Competitions#GenericManagingCompetitions-ClosingaFailedContest">here</a>.</font>
+You need to set the proper project status in the <a href\="%OR_LINK%">Online Review</a> now. See the instructions <a href\="http\://topcoder.com/wiki/display/TCU/Generic+Managing+Competitions#GenericManagingCompetitions-ClosingaFailedContest">here</a>.</font>
 </p>
 
 <p>

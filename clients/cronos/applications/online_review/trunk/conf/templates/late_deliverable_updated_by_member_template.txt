@@ -1,5 +1,5 @@
 The late member has explained the late deliverable.<br/>
-Please submit the response and set the "Lateness Justified" status now. See the instructions <a href\="http\://topcoder.com/wiki/display/training/Generic+Managing+Competitions#GenericManagingCompetitions-LateDeliverables">here</a>.<br/>
+Please submit the response and set the "Lateness Justified" status now. See the instructions <a href\="http\://topcoder.com/wiki/display/TCU/Generic+Managing+Competitions#GenericManagingCompetitions-LateDeliverables">here</a>.<br/>
 <br/>
 
 <table border\="1">
