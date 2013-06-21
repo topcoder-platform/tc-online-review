@@ -590,6 +590,14 @@
                 <Value>com.cronos.termsofuse.dao.ProjectTermsOfUseDao</Value>
             </Property>
         </Property>
+        <Property name="ReviewFeedbackManager">
+            <Property name="ClassName">
+                <Value>com.topcoder.management.reviewfeedback.impl.JDBCReviewFeedbackManager</Value>
+            </Property>
+            <Property name="Namespace">
+                <Value>com.topcoder.management.reviewfeedback</Value>
+            </Property>
+        </Property>
 
         <Property name="ProjectDetailsURL">
             <Value>https://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
@@ -5353,6 +5361,35 @@
             </Property>
             <Property name="connectionName">
                 <Value>tcs</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.management.reviewfeedback">
+        <Property name="logName">
+            <Value>com.topcoder.management.reviewfeedback.impl.JDBCReviewFeedbackManager</Value>
+        </Property>
+        <Property name="dbConnectionName">
+            <Value>tcs</Value>
+        </Property>
+
+        <Property name="dbConnectionFactoryConfiguration">
+            <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+                <Property name="connections">
+                    <Property name="default">
+                        <Value>tcs</Value>
+                    </Property>
+                    <Property name="tcs">
+                        <Property name="producer">
+                            <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+                        </Property>
+                        <Property name="parameters">
+                            <Property name="jndi_name">
+                                <Value>java:JTS_TCS_CATALOG</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
             </Property>
         </Property>
     </Config>

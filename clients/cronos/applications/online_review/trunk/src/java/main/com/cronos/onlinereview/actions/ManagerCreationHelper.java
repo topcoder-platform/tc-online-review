@@ -48,10 +48,8 @@ import com.topcoder.configuration.persistence.ConfigurationParserException;
 import com.topcoder.configuration.persistence.NamespaceConflictException;
 import com.topcoder.configuration.persistence.UnrecognizedFileTypeException;
 import com.topcoder.configuration.persistence.UnrecognizedNamespaceException;
-import com.topcoder.db.connectionfactory.ConfigurationException;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
-import com.topcoder.db.connectionfactory.UnknownConnectionException;
 import com.topcoder.management.deliverable.DeliverableChecker;
 import com.topcoder.management.deliverable.DeliverableManager;
 import com.topcoder.management.deliverable.PersistenceDeliverableManager;
@@ -98,7 +96,6 @@ import com.topcoder.util.datavalidator.ObjectValidator;
 import com.topcoder.util.datavalidator.StringValidator;
 import com.topcoder.util.idgenerator.IDGenerator;
 import com.topcoder.util.idgenerator.IDGeneratorFactory;
-import com.topcoder.util.log.LogManager;
 
 /**
  * <p>
@@ -191,8 +188,17 @@ import com.topcoder.util.log.LogManager;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.13 (Module Assembly - Enhanced Review Feedback Integration) Change notes:
+ *   <ol>
+ *     <li>Removed <code>DEFAULT_DB_CONNECTION_NAME</code> property.</li>
+ *     <li>Updated {@link #getReviewFeedbackManager()} to adopt for the new review feedback
+ *     manager component.</li>
+ *   </ol>
+ * </p>
+ *
  * @author evilisneo, BeBetter, isv, FireIce, VolodymyrK, rac_, flexme, lmmortal
- * @version 1.12
+ * @version 1.13
  */
 public class ManagerCreationHelper implements ManagersProvider {
 
@@ -215,13 +221,6 @@ public class ManagerCreationHelper implements ManagersProvider {
      * @since 1.5
      */
     private static final long SUBMISSION_TYPE_CHECKPOINT = 3;
-
-    /**
-     * <p>A <code>String</code> providing the name of default connection to dataabase.</p>
-     * 
-     * @since 1.10
-     */
-    private static final String DEFAULT_DB_CONNECTION_NAME = "tcs";
     
     /**
      * Used for caching the created manager. This instance has no registered phase handlers.
@@ -798,15 +797,10 @@ public class ManagerCreationHelper implements ManagersProvider {
     public ReviewFeedbackManager getReviewFeedbackManager() {
         if (this.reviewFeedbackManager == null) {
             try {
-                DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
                 this.reviewFeedbackManager
-                    = new JDBCReviewFeedbackManager(dbconn, DEFAULT_DB_CONNECTION_NAME, 
-                                                    LogManager.getLog(JDBCReviewFeedbackManager.class.getName()));
+                    = new JDBCReviewFeedbackManager(Constants.CONFIG_MANAGER_FILE,
+                        JDBCReviewFeedbackManager.DEFAULT_CONFIGURATION_NAMESPACE);
             } catch (ReviewFeedbackManagementConfigurationException e) {
-                throw new ManagerCreationException("Exception occurred while creating the review feedback manager.", e);
-            } catch (ConfigurationException e) {
-                throw new ManagerCreationException("Exception occurred while creating the review feedback manager.", e);
-            } catch (UnknownConnectionException e) {
                 throw new ManagerCreationException("Exception occurred while creating the review feedback manager.", e);
             }
         }

@@ -43,7 +43,7 @@
     <component
         name="online_review_phases"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/trunk"
-        revision="229180" />
+        revision="230004" />
 
     <component
         name="online_review_upload_services"
@@ -317,7 +317,7 @@
     <component
         name="review_feedback_management"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_feedback_management/trunk"
-        revision="223136"/>
+        revision="230003"/>
 
     <component
         name="object_formatter"

@@ -7,6 +7,9 @@
   - manage review feedbacks.
   - Version: 1.3 (Online Review - Project Payments Integration Part 1 v1.0 ) Change notes:
   - Added Review Payments tab to display and management review payments.
+  - Version: 1.4 (Module Assembly - Enhanced Review Feedback Integration) Change notes:
+  - Updated review feedback section to adopt for the new review feedback management component.
+  - Update review feedback section to support for editing existing review feedback.
   - Copyright (C) 2010-2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page provides a web form for Project Management Console. Such a form includes areas for extending
@@ -487,7 +490,7 @@
 	                    </div>
                     </c:if> <%-- // Design or Development only --%>
                     <%-- Review Feedback tab --%>
-                <c:if test="${reviewFeedbacksExist || reviewFeedbackAllowed}">
+                <c:if test="${not empty feedback || reviewFeedbackAllowed}">
                     <div id="sc3" style='display:${(param.activeTabIdx == 3) ? "block" : "none"};'>
                     <ul id="tablist">
                         <li><a href="javascript:void(0)"
@@ -511,25 +514,23 @@
                     <td>
                     
                         <c:choose>
-                            <c:when test="${reviewFeedbacksExist}">
-                                <%-- If any feedback already exist then just display the existing feedbacks --%>
-                                <c:forEach items="${feedbacksMap}" var="feedbackAuthorEntry">
-                                    <c:set var="feedbackDatesMap" value="${feedbackAuthorEntry.value}"/>
-                                    <c:set var="feedbackAuthorUserId" value="${feedbackAuthorEntry.key}"/>
-                                    
-                                    <c:forEach items="${feedbackDatesMap}" var="feedbackDateEntry">
-                                        <c:set var="feedbacks" value="${feedbackDateEntry.value}"/>
-                                        <c:set var="feedbackDate" value="${feedbackDateEntry.key}"/>
-
-                                        <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
-                                        <tr>
-                                            <td class="title" colspan="5">
-                                                <bean:message key="manageProject.ReviewPerformance.Feedback.From.title"/>
-                                                <tc-webtag:handle coderId="${feedbackAuthorUserId}"/>
-                                                <bean:message key="manageProject.ReviewPerformance.Feedback.From.at"/>
-                                                <fmt:formatDate value="${feedbackDate}" pattern="MM.dd.yyyy HH:mm zzz"/>
-                                            </td>
-                                        </tr>
+                            <c:when test="${not toEdit and not empty feedback}">
+                                <%-- If any feedback already exist then just display the existing feedback --%>
+                                <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
+                                    <tr>
+                                        <td class="title" colspan="5">
+                                            <bean:message key="manageProject.ReviewPerformance.Feedback.From.title"/>
+                                            <tc-webtag:handle coderId="${feedback.createUser}"/>
+                                            <bean:message key="manageProject.ReviewPerformance.Feedback.From.at"/>
+                                            <fmt:formatDate value="${feedback.createDate}" pattern="MM.dd.yyyy HH:mm zzz"/><c:if test="${not empty feedback.modifyUser and (feedback.modifyUser ne feedback.createUser or feedback.modifyDate ne feedback.createDate)}">,
+                                                <bean:message key="manageProject.ReviewPerformance.Feedback.UpdateBy.title"/>
+                                                <tc-webtag:handle coderId="${feedback.modifyUser}"/>
+                                                <bean:message key="manageProject.ReviewPerformance.Feedback.UpdateBy.at"/>
+                                                <fmt:formatDate value="${feedback.modifyDate}" pattern="MM.dd.yyyy HH:mm zzz"/>
+                                            </c:if>
+                                        </td>
+                                    </tr>
+                                    <c:if test="${empty feedback.comment}">
                                         <tr>
                                             <td class="value"><b><bean:message key="manageProject.ReviewPerformance.Reviewer.title"/></b></td>
                                             <td class="valueC"><b><bean:message key="manageProject.ReviewPerformance.Score.Bad"/></b></td>
@@ -537,34 +538,48 @@
                                             <td class="valueC"><b><bean:message key="manageProject.ReviewPerformance.Score.Good"/></b></td>
                                             <td class="valueC" width="65%"><b><bean:message key="manageProject.ReviewPerformance.Feedback.title"/></b></td>
                                         </tr>
-                                        <c:forEach items="${feedbacks}" var="feedback" varStatus="loop">
+                                        <c:forEach items="${feedback.details}" var="detail" varStatus="loop">
                                             <tr class="${loop.index mod 2 eq 0 ? 'dark' : 'light'}">
                                                 <td class="value">
-                                                    <tc-webtag:handle coderId="${feedback.reviewerUserId}"/>
-                                                </td>
-                                                <td class="valueC">
-                                                    <input type="radio" disabled="disabled" 
-                                                           <c:if test="${feedback.score eq 0}">checked="checked"</c:if>/>
+                                                    <tc-webtag:handle coderId="${detail.reviewerUserId}"/>
                                                 </td>
                                                 <td class="valueC">
                                                     <input type="radio" disabled="disabled"
-                                                           <c:if test="${feedback.score eq 1}">checked="checked"</c:if>/>
+                                                           <c:if test="${detail.score eq 0}">checked="checked"</c:if>/>
                                                 </td>
                                                 <td class="valueC">
                                                     <input type="radio" disabled="disabled"
-                                                           <c:if test="${feedback.score eq 2}">checked="checked"</c:if>/>
+                                                           <c:if test="${detail.score eq 1}">checked="checked"</c:if>/>
+                                                </td>
+                                                <td class="valueC">
+                                                    <input type="radio" disabled="disabled"
+                                                           <c:if test="${detail.score eq 2}">checked="checked"</c:if>/>
                                                 </td>
                                                 <td class="value">
-                                                    ${orfn:htmlEncode(feedback.feedbackText)}
+                                                        ${orfn:htmlEncode(detail.feedbackText)}
                                                 </td>
                                             </tr>
                                         </c:forEach>
-                                    </table>
-                                    </c:forEach>
-                                </c:forEach>
+                                    </c:if>
+                                    <c:if test="${not empty feedback.comment}">
+                                        <tr class="dark">
+                                            <td class="value" colspan="5">
+                                                <strong><bean:message key="manageProject.ReviewPerformance.Feedback.NotAvailable"/></strong>
+                                            </td>
+                                        </tr>
+                                        <tr class="light">
+                                            <td class="value" colspan="5">${orfn:htmlEncode(feedback.comment)}</td>
+                                        </tr>
+                                    </c:if>
+                                </table>
+
                                 <br/>
 
                                 <div align="right">
+                                    <html:link
+                                            page="/actions/EditReviewFeedback.do?method=editReviewFeedback&activeTabIdx=3&pid=${project.id}"><html:img
+                                            srcKey="manageProject.ReviewPerformance.btnEdit.img" altKey="manageProject.ReviewPerformance.btnEdit.alt" border="0"/></html:link>
+                                    &nbsp;
                                     <html:link
                                             page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
                                             srcKey="btnReturnToProjDet.img" altKey="btnReturnToProjDet.alt" border="0"/></html:link>&nbsp;&nbsp;
@@ -591,6 +606,7 @@
                                         <br/>
                                     </c:if>
                                 </c:if>
+                                <c:set var="unavailable" value="${not toEdit or not empty feedback.comment}"/>
                                 <%-- Save Review Feedback form  --%>
                                 <html:form action="/actions/SaveReviewFeedback?activeTabIdx=3" method="POST">
                                     <html:hidden property="method" value="manageReviewFeedback"/>
@@ -601,6 +617,11 @@
                                         <tr>
                                             <td class="title" colspan="5">
                                                 <bean:message key="manageProject.ReviewPerformance.Review.Performance.title"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="value" colspan="5">
+                                                <bean:message key="manageProject.ReviewPerformance.Review.Performance.hint"/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -625,17 +646,17 @@
                                                     </div>
                                                 </td>
                                                 <td class="valueC">
-                                                    <html:radio property="reviewerScore[${resourceIdx}]" value="0"/>
+                                                    <html:radio property="reviewerScore[${resourceIdx}]" value="0" disabled="${unavailable}" />
                                                 </td>
                                                 <td class="valueC">
-                                                    <html:radio property="reviewerScore[${resourceIdx}]" value="1"/>
+                                                    <html:radio property="reviewerScore[${resourceIdx}]" value="1" disabled="${unavailable}" />
                                                 </td>
                                                 <td class="valueC">
-                                                    <html:radio property="reviewerScore[${resourceIdx}]" value="2"/>
+                                                    <html:radio property="reviewerScore[${resourceIdx}]" value="2" disabled="${unavailable}" />
                                                 </td>
                                                 <td class="value ffednack-text-wrapper">
                                                     <html:textarea property="reviewerFeedback[${resourceIdx}]" rows="3" 
-                                                                   styleClass="feedback-text"/>
+                                                                   styleClass="feedback-text" disabled="${unavailable}" />
                                                     <div class="error">
                                                         <html:errors property="reviewerFeedback[${resourceIdx}]" 
                                                                      prefix="" suffix=""/>
@@ -643,6 +664,16 @@
                                                 </td>
                                             </tr>
                                         </c:forEach>
+                                        <tr class="${(fn:length(reviewerResourcesMap) % 2 == 0) ? 'dark' : 'light'}">
+                                            <td colspan="5" class="value">
+                                                <html:checkbox property="unavailable" styleId="unavailable" onclick="javascript:unAvailableFeedbackCheckboxHandler();"/><bean:message key="manageProject.ReviewPerformance.Feedback.NotAvailable.Checkbox"/><br/>
+                                                <html:textarea property="explanation" styleClass="feedback-text" rows="3" disabled="${not unavailable}" />
+                                                <div class="error">
+                                                    <html:errors property="explanation"
+                                                                 prefix="" suffix=""/>
+                                                </div>
+                                            </td>
+                                        </tr>
                                         <tr>
                                             <td class="lastRowTD" colspan="5"><!-- @ --></td>
                                         </tr>
@@ -652,9 +683,16 @@
                                         <html:image property="saveChangesBtn"
                                                     srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>
                                         &nbsp;
-                                        <html:link
-                                                page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
-                                                srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>&nbsp;&nbsp;
+                                        <c:if test="${not toEdit}">
+                                            <html:link
+                                                    page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
+                                                    srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>&nbsp;&nbsp;
+                                        </c:if>
+                                        <c:if test="${toEdit}">
+                                            <html:link
+                                                    page="/actions/ViewManagementConsole.do?method=viewConsole&activeTabIdx=3&pid=${project.id}"><html:img
+                                                    srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>&nbsp;&nbsp;
+                                        </c:if>
                                         <br/>
                                     </div>
                                 </html:form>
@@ -854,10 +892,25 @@
      */
     function clearFileInputField(tagId) { 
         document.getElementById(tagId).innerHTML = document.getElementById(tagId).innerHTML; 
-    } 
+    }
 
-
-    
+    /**
+     * The handler when unavailable review feedback checkbox is clicked.
+     */
+    function unAvailableFeedbackCheckboxHandler() {
+        var ck = document.getElementById("unavailable");
+        if (ck) {
+            var disabled1 = ck.checked ? "disabled" : "";
+            var disabled2 = ck.checked ? "" : "disabled";
+            var eles1 = getChildrenByNamePrefix(document.getElementById('reviewFeedbackForm'), 'reviewerScore[');
+            eles1 = eles1.concat(getChildrenByNamePrefix(document.getElementById('reviewFeedbackForm'), 'reviewerFeedback['));
+            for (var i = 0; i < eles1.length; i++) {
+                eles1[i].disabled = disabled1;
+            }
+            document.getElementsByName('explanation')[0].disabled = disabled2;
+        }
+    }
+    unAvailableFeedbackCheckboxHandler();
 //-->
 </script>
 </html:html>
