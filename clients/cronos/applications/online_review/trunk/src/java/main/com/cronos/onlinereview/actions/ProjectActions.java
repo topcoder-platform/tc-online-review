@@ -1050,10 +1050,10 @@ public class ProjectActions extends DispatchAction {
             statusHasChanged = !oldStatusName.equalsIgnoreCase(newStatusName);
             // If status has changed, update the project
 
-            // Only admins can cancel Studio contests.
-            if (statusHasChanged && ActionsHelper.isStudioProject(project) && newStatusName.contains("Cancelled")) {
+            // Only admins can change status for Studio projects
+            if (statusHasChanged && ActionsHelper.isStudioProject(project)) {
                 if (!AuthorizationHelper.hasUserRole(request, Constants.ADMIN_ROLE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, "status", "StatusValidation.CancelledStudio");
+                    ActionsHelper.addErrorToRequest(request, "status", "StatusValidation.StudioChangedStatus");
                 }
             }
 
