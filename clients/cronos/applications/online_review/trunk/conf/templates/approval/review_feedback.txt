@@ -12,5 +12,6 @@ If you had any complaint against a particular reviewer during the contest or if 
 </p>
 
 <p>
-For more details about the review feedback and how it works, please read <a href\="http\://apps.topcoder.com/wiki/display/TCU/Generic+Managing+Competitions#GenericManagingCompetitions-ReviewFeedback">here</a>.
+Please be advised that Online Review will hold copilot payment until the review feedback is submitted.<br/>
+For more information on how to submit the review feedback, please read the full instructions <a href\="http\://apps.topcoder.com/wiki/display/TCU/Generic+Managing+Competitions#GenericManagingCompetitions-ReviewFeedback">here</a>.
 </p>
