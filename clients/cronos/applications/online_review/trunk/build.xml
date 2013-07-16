@@ -586,7 +586,7 @@
   <target name="tests.setup" >
     <sequential>
           <java jar="${selenium_server.jar}" fork="true" spawn="true" jvm="${selenium_java_cmd}">
-            <arg line="-port ${selenium_port} -log ${selenium_log}"/>
+            <arg line="-port ${selenium_port}"/>
           </java>
           <waitfor maxwait="30" maxwaitunit="second">
             <and>
