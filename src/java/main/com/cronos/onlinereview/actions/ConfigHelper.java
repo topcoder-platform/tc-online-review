@@ -148,14 +148,6 @@ public class ConfigHelper {
 
     /**
      * This member variable is a string constant that specifies the name of the property which
-     * contains the submitter_terms_id.
-     *
-     * @since 1.1
-     */
-    private static final String SUBMITTER_TERMS_ID_NAME_PROP = "submitter_terms_id";
-
-    /**
-     * This member variable is a string constant that specifies the name of the property which
      * contains the reviewer role id.
      *
      * @since 1.1
@@ -209,14 +201,6 @@ public class ConfigHelper {
      * @since 1.1
      */
     private static final String FINAL_REVIEWER_ROLE_ID_NAME_PROP = "final_reviewer_role_id";
-
-    /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains the reviewer terms id.
-     *
-     * @since 1.1
-     */
-    private static final String REVIEWER_TERMS_ID_NAME_PROP = "reviewer_terms_id";
 
     /**
      * This member variable is a string constant that specifies the name of the property which
@@ -692,13 +676,6 @@ public class ConfigHelper {
     private static int submitterRoleId = 1;
 
     /**
-     * This member variable holds the submitter terms id.
-     *
-     * @since 1.1
-     */
-    private static long submitterTermsId = 20623l;
-
-    /**
      * This member variable holds the reviewer role id.
      *
      * @since 1.1
@@ -746,13 +723,6 @@ public class ConfigHelper {
      * @since 1.1
      */
     private static int finalReviewerRoleId = 9;
-
-    /**
-     * This member variable holds the reviewer terms id.
-     *
-     * @since 1.1
-     */
-    private static long reviewerTermsId = 17l;
 
     /**
      * This constant stores Online Review's project details page URL
@@ -1092,18 +1062,6 @@ public class ConfigHelper {
                 }
             }
 
-            // Retrieve the value of the property that contains the submitter_terms_id
-            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, SUBMITTER_TERMS_ID_NAME_PROP);
-            // If the value has been retrieved successfully ...
-            if (value != null && value.trim().length() != 0) {
-                // ... store it for later use
-                try {
-                    submitterTermsId = Long.parseLong(value);
-                } catch (NumberFormatException nfe) {
-                    // don't do anything, keep the default
-                }
-            }
-
             // Retrieve the value of the property that contains the reviewer_role_id
             value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, REVIEWER_ROLE_ID_NAME_PROP);
             // If the value has been retrieved successfully ...
@@ -1184,18 +1142,6 @@ public class ConfigHelper {
                 // ... store it for later use
                 try {
                     finalReviewerRoleId = Integer.parseInt(value);
-                } catch (NumberFormatException nfe) {
-                    // don't do anything, keep the default
-                }
-            }
-
-            // Retrieve the value of the property that contains the reviewer_terms_id
-            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, REVIEWER_TERMS_ID_NAME_PROP);
-            // If the value has been retrieved successfully ...
-            if (value != null && value.trim().length() != 0) {
-                // ... store it for later use
-                try {
-                    reviewerTermsId = Integer.parseInt(value);
                 } catch (NumberFormatException nfe) {
                     // don't do anything, keep the default
                 }
@@ -1694,16 +1640,6 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns the submitter terms id.
-     *
-     * @return the name of the submitter terms id.
-     * @since 1.1
-     */
-    public static long getSubmitterTermsId() {
-        return submitterTermsId;
-    }
-
-    /**
      * This static method returns the reviewer role id.
      *
      * @return the reviewer role id.
@@ -1741,16 +1677,6 @@ public class ConfigHelper {
      */
     public static int getStressReviewerRoleId() {
         return stressReviewerRoleId;
-    }
-
-    /**
-     * This static method returns the reviewer terms id.
-     *
-     * @return the reviewer terms id.
-     * @since 1.1
-     */
-    public static long getReviewerTermsId() {
-        return reviewerTermsId;
     }
 
     /**

@@ -45,7 +45,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.cronos.onlinereview.phases.PaymentsHelper;
 import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
-import com.cronos.termsofuse.dao.TermsOfUsePersistenceException;
 import com.cronos.termsofuse.dao.UserTermsOfUseDao;
 import com.cronos.termsofuse.model.TermsOfUse;
 import com.topcoder.management.payment.ProjectPayment;
@@ -1152,17 +1151,6 @@ public class ProjectActions extends DispatchAction {
             Arrays.sort(projectPhases, new Comparators.ProjectPhaseComparer());
          }
 
-        if (!ActionsHelper.isErrorsPresent(request) && (newProject || categoryChanged)) {
-            // generate new project role terms of use associations for the recently created project.
-            try {
-                generateProjectRoleTermsOfUseAssociations(project.getId(), project.getProjectCategory().getId(), categoryChanged);
-            } catch (RemoteException re) {
-                throw new BaseException(re);
-            } catch (EJBException e) {
-                throw new BaseException(e);
-            }
-        }
-        
         if (!ActionsHelper.isErrorsPresent(request)) {
             // The project has been saved, so pre-populate last modification timestamp
             lazyForm.set("last_modification_time",
@@ -1223,73 +1211,6 @@ public class ProjectActions extends DispatchAction {
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME),"&pid=" + project.getId());
     }
-
-    /**
-     * Private helper method to generate default Project Role Terms of Use associations for a given project.
-     *
-     * @param projectId the project id for the associations
-     * @param projectTypeId the project type id of the provided project id
-     * @param categoryChanged <code>true</code> if category was changed; <code>false</code> otherwise.
-     * @throws RemoteException if any errors occur during EJB remote invocation
-     * @throws EJBException if any other errors occur while invoking EJB services
-     *
-     * @since 1.1
-     */
-    private void generateProjectRoleTermsOfUseAssociations(long projectId, long projectTypeId, boolean categoryChanged)
-        throws RemoteException, EJBException, TermsOfUsePersistenceException {
-
-        ProjectTermsOfUseDao projectRoleTermsOfUse = ActionsHelper.getProjectTermsOfUseDao();
-
-        if (categoryChanged) {
-            projectRoleTermsOfUse.removeAllProjectRoleTermsOfUse((int) projectId);
-        }
-
-        // get configurations to create the associations
-        int submitterRoleId = ConfigHelper.getSubmitterRoleId();
-        long submitterTermsId = ConfigHelper.getSubmitterTermsId();
-        long reviewerTermsId = ConfigHelper.getReviewerTermsId();
-
-        // create ProjectRoleTermsOfUse default associations
-        projectRoleTermsOfUse.createProjectRoleTermsOfUse((int) projectId,
-                submitterRoleId, submitterTermsId, DEFAULT_TERMS_SORT_ORDER, 1);
-
-        if (projectTypeId == DEVELOPMENT_PROJECT_TYPE_ID) {
-            // if it's a development project there are several reviewer roles
-
-            int accuracyReviewerRoleId = ConfigHelper.getAccuracyReviewerRoleId();
-            int failureReviewerRoleId = ConfigHelper.getFailureReviewerRoleId();
-            int stressReviewerRoleId = ConfigHelper.getStressReviewerRoleId();
-
-            projectRoleTermsOfUse.createProjectRoleTermsOfUse((int) projectId,
-                    accuracyReviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, 2);
-
-            projectRoleTermsOfUse.createProjectRoleTermsOfUse((int) projectId,
-                    failureReviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, 3);
-
-            projectRoleTermsOfUse.createProjectRoleTermsOfUse((int) projectId,
-                    stressReviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, 4);
-        } else {
-            // if it's not development there is a single reviewer role
-
-            int reviewerRoleId = ConfigHelper.getReviewerRoleId();
-
-            projectRoleTermsOfUse.createProjectRoleTermsOfUse((int) projectId,
-                    reviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, 2);
-        }
-
-        // also add terms for the rest of the reviewer roles
-        int primaryScreenerRoleId = ConfigHelper.getPrimaryScreenerRoleId();
-        int aggregatorRoleId = ConfigHelper.getAggregatorRoleId();
-        int finalReviewerRoleId = ConfigHelper.getFinalReviewerRoleId();
-
-        projectRoleTermsOfUse.createProjectRoleTermsOfUse((int) projectId,
-                primaryScreenerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, 5);
-        projectRoleTermsOfUse.createProjectRoleTermsOfUse((int) projectId,
-                aggregatorRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, 6);
-        projectRoleTermsOfUse.createProjectRoleTermsOfUse((int) projectId,
-                finalReviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, 7);
-    }
-
 
     /**
      * TODO: Document it
