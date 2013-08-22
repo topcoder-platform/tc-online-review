@@ -3197,12 +3197,6 @@
         <Property name="pacts_payment_url">
             <Value>http://community.topcoder.com/PactsInternalServlet?module=ViewPayment&amp;payment_id=</Value>
         </Property>
-        <Property name="submitter_terms_id">
-            <Value>20703</Value>
-        </Property>
-        <Property name="reviewer_terms_id">
-            <Value>20704</Value>
-        </Property>
         <Property name="submitter_role_id">
             <Value>1</Value>
         </Property>
