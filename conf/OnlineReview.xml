@@ -611,6 +611,14 @@
             <Value>https://topcoder.com/direct/contest/detail?projectId=</Value>
         </Property>
 
+        <Property name="StudioProjectFinalFixURL">
+            <Value>http://studio.topcoder.com/?module=ViewFinalFix&amp;ct=</Value>
+        </Property>
+
+        <Property name="DirectContestFinalFixURL">
+            <Value>https://topcoder.com/direct/contest/viewFinalFix?projectId=</Value>
+        </Property>
+
         <Property name="CopilotDirectContestURL">
             <Value>https://topcoder.com/direct/copilot/copilotContestDetails.action?projectId=</Value>
         </Property>
