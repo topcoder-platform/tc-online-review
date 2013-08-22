@@ -319,7 +319,10 @@ final class PhasesDetailsServices {
             phaseGroup.setCheckpointReviewFinished(checkpointReviewPhase.getPhaseStatus().getId() == 3);
         }
 
-        Phase reviewPhase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
+        Phase reviewPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.APPEALS_RESPONSE_PHASE_NAME);
+        if (reviewPhase == null) {
+            reviewPhase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
+        }
         boolean isReviewFinished = (reviewPhase != null) && (reviewPhase.getPhaseStatus().getId() == 3);
 
         String phaseName = phase.getPhaseType().getName();
