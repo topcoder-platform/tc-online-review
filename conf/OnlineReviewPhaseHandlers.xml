@@ -30,7 +30,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -41,7 +41,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -63,7 +63,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/checkpoint_submission/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -74,7 +74,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/checkpoint_submission/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -96,7 +96,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -107,7 +107,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -135,7 +135,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -146,7 +146,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -168,7 +168,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/checkpoint_screening/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -179,7 +179,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/checkpoint_screening/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -201,7 +201,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -212,7 +212,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -259,7 +259,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -270,7 +270,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -292,7 +292,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/checkpoint_review/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -303,7 +303,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/checkpoint_review/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -325,7 +325,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -336,7 +336,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -363,7 +363,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -374,7 +374,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -396,7 +396,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/specification_submission/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -407,7 +407,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/specification_submission/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -429,7 +429,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -440,7 +440,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -507,7 +507,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -518,7 +518,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -540,7 +540,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/specification_review/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -551,7 +551,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/specification_review/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -573,7 +573,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -584,7 +584,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -606,7 +606,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/specification_review/studio_start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -617,7 +617,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/specification_review/studio_end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -645,7 +645,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -656,7 +656,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -678,7 +678,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/registration/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -689,7 +689,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/registration/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -756,7 +756,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -767,7 +767,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -789,7 +789,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/submission/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -800,7 +800,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/submission/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -822,7 +822,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -833,7 +833,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -861,7 +861,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -872,7 +872,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -894,7 +894,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/screening/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -905,7 +905,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/screening/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -927,7 +927,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -938,7 +938,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -988,7 +988,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -999,7 +999,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1021,7 +1021,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/review/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1032,7 +1032,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/review/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1057,7 +1057,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/review/copilot_start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1068,7 +1068,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/review/copilot_end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1090,7 +1090,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1101,7 +1101,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1129,7 +1129,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1140,7 +1140,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1162,7 +1162,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/appeals/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1173,7 +1173,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/appeals/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1201,7 +1201,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1212,7 +1212,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1234,7 +1234,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/appeals_response/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1245,7 +1245,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/appeals_response/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1289,7 +1289,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1300,7 +1300,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1322,7 +1322,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/aggregation/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1333,7 +1333,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/aggregation/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1364,7 +1364,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1375,7 +1375,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1397,7 +1397,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/final_fix/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1408,7 +1408,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/final_fix/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1433,7 +1433,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1444,7 +1444,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/final_fix/end_studio_cockpit_user.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1473,7 +1473,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1484,7 +1484,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1506,7 +1506,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/final_review/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1517,7 +1517,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/final_review/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1539,7 +1539,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1550,7 +1550,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/final_review/end_studio_winner.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1575,7 +1575,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1586,7 +1586,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/final_review/end_studio_cockpit_user.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1624,7 +1624,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1635,7 +1635,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1657,7 +1657,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/approval/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1668,7 +1668,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/approval/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1690,7 +1690,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1701,7 +1701,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/approval/end_studio_winner.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1726,7 +1726,7 @@
                         <Value>&studioPhasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1737,7 +1737,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/approval/end_studio_cockpit_user.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1797,7 +1797,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1808,7 +1808,7 @@
                         <Value>&phasesEmailTemplate;</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1830,7 +1830,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/post_mortem/start.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase Start</Value>
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
@@ -1841,7 +1841,7 @@
                         <Value>&managerNotificationEmailTemplatesBase;/post_mortem/end.txt</Value>
                     </Property>
                     <Property name="EmailSubject">
-                        <Value>Phase End</Value>
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
                     </Property>
                     <Property name="EmailFromAddress">
                         <Value>&notificationEmailFromAddress;</Value>
