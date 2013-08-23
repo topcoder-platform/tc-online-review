@@ -1415,6 +1415,43 @@
                     </Property>
                 </Property>
             </Property>
+            <Property name="StudioCockpitUserScheme">
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>3</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>2</Value>
+                </Property>
+                <Property name="StartPhaseEmail">
+                    <Property name="EmailTemplateName">
+                        <Value>&studioPhasesEmailTemplate;</Value>
+                    </Property>
+                    <Property name="EmailSubject">
+                        <Value>Phase Start</Value>
+                    </Property>
+                    <Property name="EmailFromAddress">
+                        <Value>&notificationEmailFromAddress;</Value>
+                    </Property>
+                </Property>
+                <Property name="EndPhaseEmail">
+                    <Property name="EmailTemplateName">
+                        <Value>&managerNotificationEmailTemplatesBase;/final_fix/end_studio_cockpit_user.txt</Value>
+                    </Property>
+                    <Property name="EmailSubject">
+                        <Value>Phase End</Value>
+                    </Property>
+                    <Property name="EmailFromAddress">
+                        <Value>&notificationEmailFromAddress;</Value>
+                    </Property>
+                </Property>
+            </Property>
+
         </Property>
     </Config>
 
@@ -1487,6 +1524,76 @@
                     </Property>
                 </Property>
             </Property>
+            <Property name="StudioWinnerScheme">
+                <Property name="Roles">
+                    <Value>Submitter</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>3</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>2</Value>
+                </Property>
+                <Property name="StartPhaseEmail">
+                    <Property name="EmailTemplateName">
+                        <Value>&studioPhasesEmailTemplate;</Value>
+                    </Property>
+                    <Property name="EmailSubject">
+                        <Value>Phase Start</Value>
+                    </Property>
+                    <Property name="EmailFromAddress">
+                        <Value>&notificationEmailFromAddress;</Value>
+                    </Property>
+                </Property>
+                <Property name="EndPhaseEmail">
+                    <Property name="EmailTemplateName">
+                        <Value>&managerNotificationEmailTemplatesBase;/final_review/end_studio_winner.txt</Value>
+                    </Property>
+                    <Property name="EmailSubject">
+                        <Value>Phase End</Value>
+                    </Property>
+                    <Property name="EmailFromAddress">
+                        <Value>&notificationEmailFromAddress;</Value>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="StudioCockpitUserScheme">
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>3</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>2</Value>
+                </Property>
+                <Property name="StartPhaseEmail">
+                    <Property name="EmailTemplateName">
+                        <Value>&studioPhasesEmailTemplate;</Value>
+                    </Property>
+                    <Property name="EmailSubject">
+                        <Value>Phase Start</Value>
+                    </Property>
+                    <Property name="EmailFromAddress">
+                        <Value>&notificationEmailFromAddress;</Value>
+                    </Property>
+                </Property>
+                <Property name="EndPhaseEmail">
+                    <Property name="EmailTemplateName">
+                        <Value>&managerNotificationEmailTemplatesBase;/final_review/end_studio_cockpit_user.txt</Value>
+                    </Property>
+                    <Property name="EmailSubject">
+                        <Value>Phase End</Value>
+                    </Property>
+                    <Property name="EmailFromAddress">
+                        <Value>&notificationEmailFromAddress;</Value>
+                    </Property>
+                </Property>
+            </Property>
+
         </Property>
     </Config>
 
@@ -1568,6 +1675,76 @@
                     </Property>
                 </Property>
             </Property>
+            <Property name="StudioWinnerScheme">
+                <Property name="Roles">
+                    <Value>Submitter</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>3</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>2</Value>
+                </Property>
+                <Property name="StartPhaseEmail">
+                    <Property name="EmailTemplateName">
+                        <Value>&studioPhasesEmailTemplate;</Value>
+                    </Property>
+                    <Property name="EmailSubject">
+                        <Value>Phase Start</Value>
+                    </Property>
+                    <Property name="EmailFromAddress">
+                        <Value>&notificationEmailFromAddress;</Value>
+                    </Property>
+                </Property>
+                <Property name="EndPhaseEmail">
+                    <Property name="EmailTemplateName">
+                        <Value>&managerNotificationEmailTemplatesBase;/approval/end_studio_winner.txt</Value>
+                    </Property>
+                    <Property name="EmailSubject">
+                        <Value>Phase End</Value>
+                    </Property>
+                    <Property name="EmailFromAddress">
+                        <Value>&notificationEmailFromAddress;</Value>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="StudioCockpitUserScheme">
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="ProjectTypes">
+                    <Value>3</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>2</Value>
+                </Property>
+                <Property name="StartPhaseEmail">
+                    <Property name="EmailTemplateName">
+                        <Value>&studioPhasesEmailTemplate;</Value>
+                    </Property>
+                    <Property name="EmailSubject">
+                        <Value>Phase Start</Value>
+                    </Property>
+                    <Property name="EmailFromAddress">
+                        <Value>&notificationEmailFromAddress;</Value>
+                    </Property>
+                </Property>
+                <Property name="EndPhaseEmail">
+                    <Property name="EmailTemplateName">
+                        <Value>&managerNotificationEmailTemplatesBase;/approval/end_studio_cockpit_user.txt</Value>
+                    </Property>
+                    <Property name="EmailSubject">
+                        <Value>Phase End</Value>
+                    </Property>
+                    <Property name="EmailFromAddress">
+                        <Value>&notificationEmailFromAddress;</Value>
+                    </Property>
+                </Property>
+            </Property>
+
         </Property>
 
         <Property name="ReviewFeedbackScheme">
