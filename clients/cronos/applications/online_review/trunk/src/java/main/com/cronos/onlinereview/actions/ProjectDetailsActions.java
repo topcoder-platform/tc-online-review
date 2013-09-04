@@ -1333,7 +1333,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (noRights) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request, "ViewSubmission",
-                "Error.NoPermission", Boolean.TRUE);
+                "Error.NoPermission", Boolean.FALSE);
         }
 
         processSubmissionDownload(upload, request, response);
@@ -1526,7 +1526,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
             } else {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                        request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
+                        request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
             }
         }
 
@@ -1766,7 +1766,7 @@ public class ProjectDetailsActions extends DispatchAction {
         if (!canDownload) {
             ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
+                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
         }
         // At this point, redirect-after-login attribute should be removed (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
@@ -2029,7 +2029,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (!isSubmitter) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, "Unregistration", "Error.NoPermission", Boolean.TRUE);
+                    request, "Unregistration", "Error.NoPermission", Boolean.FALSE);
         }
 
         PhaseManager phaseMgr = ActionsHelper.createPhaseManager(false);
@@ -2049,7 +2049,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (!registrationOpen) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, "Unregistration", "Error.RegistrationClosed", Boolean.TRUE);
+                    request, "Unregistration", "Error.RegistrationClosed", null);
         }
 
         // At this point, redirect-after-login attribute should be removed (if it exists)
@@ -2149,7 +2149,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (!isSubmitter) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, "Early Appeals", "Error.NoPermission", Boolean.TRUE);
+                    request, "Early Appeals", "Error.NoPermission", Boolean.FALSE);
         }
 
         PhaseManager phaseMgr = ActionsHelper.createPhaseManager(false);
@@ -2169,7 +2169,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (!appealsOpen) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, "Early Appeals", "Error.AppealsClosed", Boolean.TRUE);
+                    request, "Early Appeals", "Error.AppealsClosed", null);
         }
 
         // At this point, redirect-after-login attribute should be removed (if it exists)
@@ -2260,7 +2260,7 @@ public class ProjectDetailsActions extends DispatchAction {
         if (!AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME)) {
             ActionsHelper.logDownloadAttempt(request, upload, false);
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
+                    request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
         }
         // At this point, redirect-after-login attribute should be removed (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
@@ -3217,7 +3217,7 @@ public class ProjectDetailsActions extends DispatchAction {
         
         if (noRights) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    errorMessageKey, "Error.NoPermission", Boolean.TRUE);
+                    errorMessageKey, "Error.NoPermission", Boolean.FALSE);
         }
 
         processSubmissionDownload(upload, request, response);
