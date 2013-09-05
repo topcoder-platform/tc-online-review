@@ -78,6 +78,15 @@
 	</table>
 </div>
 <c:if test="${reviewType ne 'AutoScreening' and reviewType ne 'CompositeReview'}">
+	<c:if test="${reviewType eq 'SpecificationReview'}">
+		&#160;<b><bean:message key="editReview.SpecificationReviewer" /></b>
+	</c:if>
+	<c:if test="${reviewType eq 'CheckpointScreening'}">
+		&#160;<b><bean:message key="editReview.CheckpointScreener" /></b>
+	</c:if>
+	<c:if test="${reviewType eq 'CheckpointReview'}">
+		&#160;<b><bean:message key="editReview.CheckpointReviewer" /></b>
+	</c:if>
 	<c:if test="${reviewType eq 'Screening'}">
 		&#160;<b><bean:message key="editReview.Screener" /></b>
 	</c:if>
@@ -87,19 +96,28 @@
 	<c:if test="${reviewType eq 'Approval'}">
 		&#160;<b><bean:message key="editReview.Approver" /></b>
 	</c:if>
-	<c:if test="${reviewType eq 'Aggregation' or reviewType eq 'AggregationReview' or reviewType eq 'FinalReview'}">
+	<c:if test="${reviewType eq 'Aggregation' or reviewType eq 'AggregationReview'}">
 		&#160;<b><bean:message key="editReview.Aggregator" /></b>
+	</c:if>
+	<c:if test="${reviewType eq 'FinalReview'}">
+		&#160;<b><bean:message key="editReview.FinalReviewer" /></b>
+	</c:if>
+	<c:if test="${reviewType eq 'PostMortem'}">
+		&#160;<b><bean:message key="editReview.Post-MortemReviewer" /></b>
 	</c:if>
 	<c:if test="${not empty authorId}">
 		<tc-webtag:handle coderId="${authorId}" context="${orfn:getHandlerContext(pageContext.request)}" />
 	</c:if>
 	<br />
 </c:if>
-&#160;<b><bean:message key="editReview.Submission" /></b> ${sid}
-<c:if test="${not empty submitterId and reviewType ne 'Screening' and reviewType ne 'Review' and reviewType ne 'Checkpoint Screening' and reviewType ne 'Checkpoint Review' and not toPDF}">
-	(<tc-webtag:handle coderId="${submitterId}" context="${orfn:getHandlerContext(pageContext.request)}" />)
+
+<c:if test="${not empty sid}">
+    &#160;<b><bean:message key="editReview.Submission" /></b> ${sid}
+    <c:if test="${not empty submitterId and reviewType ne 'Screening' and reviewType ne 'Review' and reviewType ne 'CheckpointScreening' and reviewType ne 'CheckpointReview' and not toPDF}">
+    	(<tc-webtag:handle coderId="${submitterId}" context="${orfn:getHandlerContext(pageContext.request)}" />)
+    </c:if>
+    <br />
 </c:if>
-<br />
 
 <c:if test="${not empty modificationDate}">
 	&#160;<b><bean:message key="editReview.ModificationDate" /></b>
