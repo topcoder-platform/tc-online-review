@@ -1,0 +1,46 @@
+<!-- Default project payment calculator -->
+<CMConfig>
+    <Config name="com.topcoder.management.payment.calculator.impl.DefaultProjectPaymentCalculator">
+        <Property name="logger_name">
+            <Value>DefaultProjectPaymentCalculator</Value>
+        </Property>
+        <Property name="connection_name">
+            <Value>TCS_CATALOG</Value>
+        </Property>
+        <!-- configuration for DBConnectionFactoryImpl -->
+        <Property name="db_connection_factory_config">
+            <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+                <Property name="connections">
+                    <Property name="default">
+                        <Value>TCS_CATALOG</Value>
+                    </Property>
+                    <Property name="TCS_CATALOG">
+                        <Property name="producer">
+                            <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                        </Property>
+                        <Property name="parameters">
+                            <Property name="jdbc_driver">
+                                <Value>com.informix.jdbc.IfxDriver</Value>
+                            </Property>
+                            <Property name="jdbc_url">
+                                <Value>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:informixserver=@database.INFORMIXSERVER@</Value>
+                            </Property>
+                            <Property name="user">
+                                <Value>@database.username@</Value>
+                            </Property>
+                            <Property name="password">
+                                <Value>@database.password@</Value>
+                            </Property>
+                            <Property name="IFX_USE_STRENC">
+                                <Value>true</Value>
+                            </Property>
+                            <Property name="new_connection_sql">
+                                <Value>set lock mode to wait 5;</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+</CMConfig>

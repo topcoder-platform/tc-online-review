@@ -1,0 +1,20 @@
+#define macroses
+define         : comp_dir  = %{output_dir}/%{component_name}
+
+#create distribution directories
+create_folder  : %{comp_dir}/docs
+create_folder  : %{comp_dir}/src
+
+#convert to PDF and copy Requirements Specification to the docs directory of the distribution
+convert_to_pdf : %{rs} -> %{comp_dir}/docs/%{Component_Name}_Requirements_Specification.pdf
+
+#copy additional documents if specified
+ifdef(additional_doc1) copy_file : %{additional_doc1} -> %{comp_dir}/docs/{FILENAME}.{EXT}
+ifdef(additional_doc2) copy_file : %{additional_doc2} -> %{comp_dir}/docs/{FILENAME}.{EXT}
+ifdef(additional_doc3) copy_file : %{additional_doc3} -> %{comp_dir}/docs/{FILENAME}.{EXT}
+
+#prepare design distribution and move it to the parent directory
+execute        : zip -r ./../%{component_name}_%{version.major}.%{version.minor}.%{version.micro}_design_dist.zip . :: %{comp_dir}
+
+#clean the temp directory
+execute        : rm -r ./%{component_name} :: %{output_dir}

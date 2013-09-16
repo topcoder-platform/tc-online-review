@@ -1,0 +1,24 @@
+The late member has explained the late deliverable.<br/>
+Please submit the response and set the "Lateness Justified" status now. See the instructions <a href\="http\://topcoder.com/wiki/display/TCU/Generic+Managing+Competitions#GenericManagingCompetitions-LateDeliverables">here</a>.<br/>
+<br/>
+
+<table border\="1">
+  <tr><td valign\="top">Contest\:</td><td><a href\="%OR_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a></td></tr>
+
+  %if:LATE_DELIVERABLE_TYPE='Missed Deadline'%
+    <tr><td nowrap\="nowrap">Late deliverable\:</td><td><a href\="%LATE_DELIVERABLE_LINK%">%DELIVERABLE_TYPE{Deliverable type}%</a></td></tr>
+  %endif%
+  %if:LATE_DELIVERABLE_TYPE='Rejected Final Fix'%
+    <tr><td nowrap\="nowrap">Late deliverable\:</td><td><a href\="%LATE_DELIVERABLE_LINK%">Rejected Final Fix</a></td></tr>
+  %endif%
+
+  <tr><td>Late member\:</td><td>%LATE_MEMBER_HANDLE{Late member handle}%</td></tr>
+
+  %if:LATE_DELIVERABLE_TYPE='Missed Deadline'%
+    <tr><td>Deadline\:</td><td>%DEADLINE{Deadline}%</td></tr>
+  %endif%
+
+  <tr><td>Lateness Justified\:</td><td>%JUSTIFIED{Lateness Justified status}%</td></tr>
+  <tr><td valign\="top">Explanation\:</td><td>%EXPLANATION{Explanation}%</td></tr>
+  <tr><td valign\="top">Response\:</td><td>%RESPONSE{Response}%</td></tr>
+</table>

@@ -1,0 +1,19 @@
+@page {
+    margin: 5px;
+}
+
+.scorecard td.pdf_section {
+    width: 50%;
+}
+
+.scorecard td.pdf_weight {
+    width: 5%;
+}
+
+.scorecard td.pdf_average {
+    width: 5%;
+}
+
+.scorecard td.pdf_review {
+    width: 13%;
+}
