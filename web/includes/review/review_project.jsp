@@ -1,9 +1,13 @@
 <%--
-  - Author: TCSASSEMBLER, flexme
-  - Version: 1.1
+  - Author: TCSASSEMBLER, flexme, duxiaoyang
+  - Version: 1.2
   - Copyright (C)  - 2013 TopCoder Inc., All Rights Reserved.
   -
   - Version 1.1 (Online Review - Project Payments Integration Part 1 v1.0 ) changes: Add "Reopen" link.
+  -
+  - Version 1.2 (Online Review - Review Export) changes:
+  - Added Export to Excel link.
+  - Removed expand and collapse links.
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -59,21 +63,29 @@
 					</tr>
 				</table>
 			</td>
-			<c:if test="${not noExpandCollapse}" >
-				<td align="right" valign="top">
-                    <c:if test="${canReopenScorecard}">
-                        <html:link page="/actions/ReopenScorecard.do?method=reopenScorecard&rid=${review.id}"><bean:message key="editReview.ReopenScorecard" /></html:link>&#160;|
-                    </c:if>
-					<c:if test="${canEditScorecard}">
-						<html:link page="/actions/Edit${reviewType}.do?method=edit${reviewType}&rid=${review.id}"><bean:message key="editReview.EditScorecard" /></html:link>&#160;|
+			<td align="right" valign="top">
+				<c:if test="${canExport}">
+					<html:link page="/actions/ExportReview.do?method=exportReview&reviewType=${reviewType}&rid=${param.rid}"><bean:message key="exportReview.ExportToExcel" /></html:link>
+				</c:if>
+				<c:if test="${canReopenScorecard}">
+					<c:if test="${canExport}">
+						|
 					</c:if>
-					<c:if test="${param.showFillScorecardLink}">
-						<a href="javascript:fillScorecard();"><bean:message key="global.fillScorecard" /></a> |
+					<html:link page="/actions/ReopenScorecard.do?method=reopenScorecard&rid=${review.id}"><bean:message key="editReview.ReopenScorecard" /></html:link>
+				</c:if>
+				<c:if test="${canEditScorecard}">
+					<c:if test="${canExport or canReopenScorecard}">
+						|
 					</c:if>
-					<a href="javascript:showAll();"><bean:message key="global.expandAll" /></a> |
-					<a href="javascript:hideAll();"><bean:message key="global.collapseAll" /></a>
-				</td>
-			</c:if>
+					<html:link page="/actions/Edit${reviewType}.do?method=edit${reviewType}&rid=${review.id}"><bean:message key="editReview.EditScorecard" /></html:link>
+				</c:if>
+				<c:if test="${param.showFillScorecardLink}">
+					<c:if test="${canExport or canReopenScorecard or canEditScorecard}">
+						|
+					</c:if>
+					<a href="javascript:fillScorecard();"><bean:message key="global.fillScorecard" /></a>
+				</c:if>
+			</td>
 		</tr>
 	</table>
 </div>

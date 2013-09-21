@@ -1,12 +1,15 @@
 <%--
-  - Author: George1, real_vg, isv
-  - Version: 1.1
-  - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
+  - Author: George1, real_vg, isv, duxiaoyang
+  - Version: 1.2
+  - Copyright (C) 2005 - 2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page renders the Aggregation scorecard.
   -
   - Version 1.1 (Impersonation Login Release assembly) changes: Updated link for "Back" button to refer to
   - "View Project Details" screen.
+  -
+  - Version 1.2 (Online Review - Review Export ) changes:
+  - Moved expand and collapse link to just above the table.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -49,8 +52,7 @@
                 <div style="position: relative; width: 100%;">
 
                     <jsp:include page="/includes/review/review_project.jsp" />
-                    
-                    <h3><bean:message key="viewAggregation.AggregationWorksheet" /></h3>
+                    <jsp:include page="/includes/review/review_table_title.jsp" />
 
                     <c:set var="itemIdx" value="0" />
 

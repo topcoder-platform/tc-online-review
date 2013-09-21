@@ -1,7 +1,7 @@
 <%--
-  - Author: George1, real_vg, isv
-  - Version: 1.2
-  - Copyright (C) 2005 - 2012 TopCoder Inc., All Rights Reserved.
+  - Author: George1, real_vg, isv, duxiaoyang
+  - Version: 1.3
+  - Copyright (C) 2005 - 2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page renders the composite scorecard.
   -
@@ -10,6 +10,9 @@
   -
   - Version 1.2 (Contest Results Export 2 assembly) changes: Updated the page to display differently in case conversion
   - to PDF is requested
+  -
+  - Version 1.3 (Online Review - Review Export ) changes:
+  - Moved expand and collapse link to just above the table.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -58,8 +61,7 @@
                 <div style="position: relative; width: 100%;">
 
                     <jsp:include page="/includes/review/review_project.jsp" />
-                    
-                    <h3><bean:message key="editReview.CompositeScorecard.title" /><br /></h3>
+                    <jsp:include page="/includes/review/review_table_title.jsp" />
 
                     <c:set var="itemIdx" value="0" />
                     <c:set var="colSpan" value="${3 + fn:length(reviews)}" />

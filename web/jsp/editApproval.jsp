@@ -1,9 +1,12 @@
 <%--
-  - Author: isv
-  - Version: 1.0 (Online Review End of Project Analysis v1.0)
-  - Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+  - Author: isv, duxiaoyang
+  - Version: 1.1
+  - Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays edition page for Approval scorecard
+  -
+  - Version 1.1 (Online Review - Review Export) changes:
+  - Moved expand and collapse link to just above the table.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -155,7 +158,7 @@
                     <jsp:include page="/includes/review/review_project.jsp">
 						<jsp:param name="showFillScorecardLink" value="true" />
 					</jsp:include>
-                    <h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
+                    <jsp:include page="/includes/review/review_table_title.jsp" />
 
                     <html:form action="/actions/Save${reviewType}" method="POST" enctype="multipart/form-data">
                         <html:hidden property="method" value="save${reviewType}" />
