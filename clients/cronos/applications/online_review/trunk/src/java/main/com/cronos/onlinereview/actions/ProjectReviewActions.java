@@ -3,6 +3,9 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.awt.Color;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -16,6 +19,18 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -27,12 +42,9 @@ import org.apache.struts.validator.LazyValidatorForm;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.UploadManager;
-import com.topcoder.management.deliverable.UploadStatus;
-import com.topcoder.management.deliverable.UploadType;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.review.ReviewEntityNotFoundException;
 import com.topcoder.management.review.ReviewManager;
@@ -195,8 +207,18 @@ import com.cronos.onlinereview.phases.OnlineReviewServices;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, isv, FireIce, rac_, flexme
- * @version 1.6
+ * <p>
+ * Version 1.7 (Online Review - Review Export) Change notes:
+ *   <ol>
+ *       <li>Added method {@link #exportReviewResult(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
+ *       and related private methods for exporting review result as xlsx file.</li>
+ *       <li>Extracted the logic for viewing aggregation review and final fix review and add corresponding exporting
+ *       logic.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, isv, FireIce, rac_, flexme, duxiaoyang
+ * @version 1.7
  */
 public class ProjectReviewActions extends DispatchAction {
     private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogManager
@@ -227,6 +249,30 @@ public class ProjectReviewActions extends DispatchAction {
      */
     private static final Map<String, Set<String>> correctAnswers = new HashMap<String, Set<String>>();
 
+    /**
+     * Represents the mapping between comment type and the cell color when exporting the comment.
+     * @since 1.7
+     */
+    private static final Map<String, Integer> commentExportColor = new HashMap<String, Integer>();
+
+    /**
+     * Represents the review comment types.
+     * @since 1.7
+     */
+    private static final Set<String> reviewerCommentTypes = new HashSet<String>();
+
+    /**
+     * Represents the comment types which are exported for final review.
+     * @since 1.7
+     */
+    private static final Set<String> finalReviewCommentTypes = new HashSet<String>();
+
+    /**
+     * Represents the comment types which are exported for aggregation.
+     * @since 1.7
+     */
+    private static final Set<String> aggregationCommentTypes = new HashSet<String>();
+
     // Initialize the above map
     static {
         String scale1_4 = "Scale (1-4)";
@@ -256,6 +302,43 @@ public class ProjectReviewActions extends DispatchAction {
                 correctAnswers.get(scale0_9).add(i + "/9");
             }
         }
+
+        commentExportColor.put("Group", 0xA6A6A6);
+        commentExportColor.put("Section", 0xD9D9D9);
+        commentExportColor.put("Question", 0xFFFFFF);
+        commentExportColor.put("Attachment", 0xDCE6F1);
+        commentExportColor.put("Comment", 0xDCE6F1);
+        commentExportColor.put("Recommended", 0xDCE6F1);
+        commentExportColor.put("Required", 0xDCE6F1);
+        commentExportColor.put("Appeal", 0xF2DCDB);
+        commentExportColor.put("Appeal Response", 0xB8CCE4);
+        commentExportColor.put("Aggregation Comment", 0xDCE6F1);
+        commentExportColor.put("Aggregation Review Comment", 0xDCE6F1);
+        commentExportColor.put("Submitter Comment", 0xDCE6F1);
+        commentExportColor.put("Final Fix Comment", 0xDCE6F1);
+        commentExportColor.put("Final Review Comment", 0xDCE6F1);
+        commentExportColor.put("Manager Comment", 0xFFC000);
+        commentExportColor.put("Approval Review Comment", 0xDCE6F1);
+        commentExportColor.put("Approval Review Comment - Other Fixes", 0xDCE6F1);
+        commentExportColor.put("Specification Review Comment", 0xDCE6F1);
+
+        reviewerCommentTypes.add("Required");
+        reviewerCommentTypes.add("Recommended");
+        reviewerCommentTypes.add("Comment");
+
+        finalReviewCommentTypes.addAll(reviewerCommentTypes);
+        finalReviewCommentTypes.add("Appeal");
+        finalReviewCommentTypes.add("Appeal Response");
+        finalReviewCommentTypes.add("Aggregation Comment");
+        finalReviewCommentTypes.add("Final Review Comment");
+        finalReviewCommentTypes.add("Manager Comment");
+        finalReviewCommentTypes.add("Submitter Comment");
+
+        aggregationCommentTypes.addAll(reviewerCommentTypes);
+        aggregationCommentTypes.add("Appeal");
+        aggregationCommentTypes.add("Appeal Response");
+        aggregationCommentTypes.add("Aggregation Comment");
+        aggregationCommentTypes.add("Manager Comment");
     }
 
     /**
@@ -377,7 +460,7 @@ public class ProjectReviewActions extends DispatchAction {
                                        HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
-        return viewGenericReview(mapping, form, request, "Screening");
+        return viewOrExportGenericReview(mapping, form, request, response, "Screening", false);
     }
 
     /**
@@ -493,7 +576,7 @@ public class ProjectReviewActions extends DispatchAction {
                                     HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
-        return viewGenericReview(mapping, form, request, "Review");
+        return viewOrExportGenericReview(mapping, form, request, response, "Review", false);
     }
 
     /**
@@ -668,6 +751,8 @@ public class ProjectReviewActions extends DispatchAction {
         aggregationForm.set("aggregator_response", aggregatorResponses);
         aggregationForm.set("aggregate_function", aggregateFunctions);
         aggregationForm.set("aggregator_response_type", responseTypeIds);
+
+        request.setAttribute("tableTitle", messages.getMessage("editReview.EditAggregation.title"));
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
@@ -881,7 +966,35 @@ public class ProjectReviewActions extends DispatchAction {
         throws BaseException{
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
+        ActionForward actionForward = viewOrExportAggregation(mapping, request, response, false);
+        if (actionForward != null) {
+            return actionForward;
+        } else {
+            return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+        }
+    }
+
+    /**
+     * <p>
+     * Handles the request for viewing or exporting the aggregation details.
+     * </p>
+     * @param mapping
+     *            an <code>ActionMapping</code> used to map the request to this method.
+     * @param request
+     *            an <code>HttpServletRequest</code> representing the incoming request from the client.
+     * @param response
+     *            an <code>HttpServletResponse</code> representing the response to be written to the client.
+     * @param export
+     *            true if the review details are to be exported; or false if they are to be viewed only.
+     * @return an <code>ActionForward</code> referencing the next view to be used for processing the request, or null if
+     *         <code>export</code> is true (because the result is written to response directly).
+     * @throws BaseException
+     *             if an unexpected error occurs.
+     */
+    private ActionForward viewOrExportAggregation(ActionMapping mapping, HttpServletRequest request,
+            HttpServletResponse response, boolean export) throws BaseException {
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request,
+                getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -987,7 +1100,13 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve some basic aggregation info and store it into the request
         retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "Aggregation");
 
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+        if (export) {
+            exportGenericReview(request, response, "Aggregation");
+        } else {
+            request.setAttribute("tableTitle", messages.getMessage("viewAggregation.AggregationWorksheet"));
+            request.setAttribute("canExport", true);
+        }
+        return null;
     }
 
     /**
@@ -1691,6 +1810,8 @@ public class ProjectReviewActions extends DispatchAction {
         finalReviewForm.set("final_comment", finalComments);
         finalReviewForm.set("approve_fixes", approveFixes);
 
+        request.setAttribute("tableTitle", messages.getMessage("editFinalReview.Scorecard.title"));
+
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
@@ -1927,7 +2048,35 @@ public class ProjectReviewActions extends DispatchAction {
         throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request, getResources(request));
+        ActionForward actionForward = viewOrExportFinalReview(mapping, request, response, false);
+        if (actionForward != null) {
+            return actionForward;
+        } else {
+            return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+        }
+    }
+
+    /**
+     * <p>
+     * Handles the request for viewing or exporting the final review details.
+     * </p>
+     * @param mapping
+     *            an <code>ActionMapping</code> used to map the request to this method.
+     * @param request
+     *            an <code>HttpServletRequest</code> representing the incoming request from the client.
+     * @param response
+     *            an <code>HttpServletResponse</code> representing the response to be written to the client.
+     * @param export
+     *            true if the review details are to be exported; or false if they are to be viewed only.
+     * @return an <code>ActionForward</code> referencing the next view to be used for processing the request, or null if
+     *         <code>export</code> is true (because the result is written to response directly).
+     * @throws BaseException
+     *             if an unexpected error occurs.
+     */
+    private ActionForward viewOrExportFinalReview(ActionMapping mapping, HttpServletRequest request,
+            HttpServletResponse response, boolean export) throws BaseException {
+        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, mapping, request,
+                getResources(request));
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1994,7 +2143,13 @@ public class ProjectReviewActions extends DispatchAction {
 
         request.setAttribute("lastCommentIdxs", lastCommentIdxs);
 
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+        if (export) {
+            exportGenericReview(request, response, "Final Review");
+        } else {
+            request.setAttribute("tableTitle", messages.getMessage("editFinalReview.Scorecard.title"));
+            request.setAttribute("canExport", true);
+        }
+        return null;
     }
 
     /**
@@ -2148,7 +2303,7 @@ public class ProjectReviewActions extends DispatchAction {
                                       HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
-        return viewGenericReview(mapping, form, request, "Approval");
+        return viewOrExportGenericReview(mapping, form, request, response, "Approval", false);
     }
 
     /**
@@ -2349,6 +2504,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Store reviews in the request
         request.setAttribute("reviews", reviews);
+
+        request.setAttribute("tableTitle", messages.getMessage("editReview.CompositeScorecard.title"));
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
@@ -2951,6 +3108,8 @@ public class ProjectReviewActions extends DispatchAction {
             }
         }
 
+        request.setAttribute("tableTitle", scorecardTemplate.getName());
+
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
@@ -3109,6 +3268,8 @@ public class ProjectReviewActions extends DispatchAction {
             }
             reviewForm.set("approve_specification", specReviewApproved);
         }
+
+        request.setAttribute("tableTitle", scorecardTemplate.getName());
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
@@ -3905,17 +4066,28 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * <p>Handles the request for viewing the generic review details.</p>
-     *
-     * @param mapping an <code>ActionMapping</code> used to map the request to this method.
-     * @param form an <code>ActionForm</code> mapped to this request.
-     * @param request an <code>HttpServletRequest</code> representing the incoming request from the client.
-     * @param reviewType a <code>String</code> referencing the type of the review.
-     * @return an <code>ActionForward</code> referencing the next view to be used for processing the request.
-     * @throws BaseException if an unexpected error occurs.
+     * <p>
+     * Handles the request for viewing or exporting the generic review details.
+     * </p>
+     * @param mapping
+     *            an <code>ActionMapping</code> used to map the request to this method.
+     * @param form
+     *            an <code>ActionForm</code> mapped to this request.
+     * @param request
+     *            an <code>HttpServletRequest</code> representing the incoming request from the client.
+     * @param response
+     *            an <code>HttpServletResponse</code> representing the response to be written to the client.
+     * @param reviewType
+     *            a <code>String</code> referencing the type of the review.
+     * @param export
+     *            true if the review details are to be exported; or false if they are to be viewed only.
+     * @return an <code>ActionForward</code> referencing the next view to be used for processing the request, or null if
+     *         <code>export</code> is true (because the result is written to response directly).
+     * @throws BaseException
+     *             if an unexpected error occurs.
      */
-    private ActionForward viewGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            String reviewType) throws BaseException {
+    private ActionForward viewOrExportGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response, String reviewType, boolean export) throws BaseException {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(mapping, "mapping");
         ActionsHelper.validateParameterNotNull(request, "request");
@@ -3936,14 +4108,16 @@ public class ProjectReviewActions extends DispatchAction {
             permName = Constants.VIEW_SCREENING_PERM_NAME;
             phaseName = Constants.SCREENING_PHASE_NAME;
             scorecardTypeName = "Screening";
-        } else if (reviewType.equals("Checkpoint Screening")) {
+        } else if (reviewType.equals("Checkpoint Screening") || reviewType.equals("CheckpointScreening")) {
             permName = Constants.VIEW_CHECKPOINT_SCREENING_PERM_NAME;
             phaseName = Constants.CHECKPOINT_SCREENING_PHASE_NAME;
             scorecardTypeName = "Checkpoint Screening";
-        } else if (reviewType.equals("Checkpoint Review")) {
+            reviewType = "Checkpoint Screening";
+        } else if (reviewType.equals("Checkpoint Review") || reviewType.equals("CheckpointReview")) {
             permName = Constants.VIEW_CHECKPOINT_REVIEW_PERM_NAME;
             phaseName = Constants.CHECKPOINT_REVIEW_PHASE_NAME;
             scorecardTypeName = "Checkpoint Review";
+            reviewType = "Checkpoint Review";
         } else if (reviewType.equals("Review")) {
             permName = Constants.VIEW_ALL_REVIEWS_PERM_NAME;
             phaseName = Constants.REVIEW_PHASE_NAME;
@@ -3952,15 +4126,17 @@ public class ProjectReviewActions extends DispatchAction {
             permName = Constants.VIEW_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
             scorecardTypeName = "Approval";
-        } else if (reviewType.equals("Specification Review")) {
+        } else if (reviewType.equals("Specification Review") || reviewType.equals("SpecificationReview")) {
             permName = Constants.VIEW_SPECIFICATION_REVIEW_PERM_NAME;
             phaseName = Constants.SPECIFICATION_REVIEW_PHASE_NAME;
             scorecardTypeName = "Specification Review";
-        } else if (reviewType.equals("Post-Mortem")) {
+            reviewType = "Specification Review";
+        } else if (reviewType.equals("Post-Mortem") || reviewType.equals("PostMortem")) {
             isSubmissionDependentPhase = false;
             permName = Constants.VIEW_POST_MORTEM_PERM_NAME;
             phaseName = Constants.POST_MORTEM_PHASE_NAME;
             scorecardTypeName = "Post-Mortem";
+            reviewType = "Post-Mortem";
         } else {
             throw new IllegalArgumentException("Incorrect review type specified: " + reviewType + ".");
         }
@@ -4125,8 +4301,8 @@ public class ProjectReviewActions extends DispatchAction {
                 MessageResources messages = getResources(request);
                 for (int i = 0; i < appealStatuses.length; i++) {
                     Comment appeal = getCommentAppeal(verification.getReview().getItem(i).getAllComments());
-                    Comment response = getCommentAppealResponse(verification.getReview().getItem(i).getAllComments());
-                    if (appeal != null && response == null) {
+                    Comment appealResponse = getCommentAppealResponse(verification.getReview().getItem(i).getAllComments());
+                    if (appeal != null && appealResponse == null) {
                         appealStatuses[i] = messages.getMessage("editReview.Appeal.Unresolved");
                     } else if (appeal != null) {
                         appealStatuses[i] = messages.getMessage("editReview.Appeal.Resolved." + appeal.getExtraInfo());
@@ -4137,7 +4313,9 @@ public class ProjectReviewActions extends DispatchAction {
                     answers[i] = verification.getReview().getItem(i).getAnswer().toString();
                 }
                 // Set review item answers form property
-                ((LazyValidatorForm) form).set("answer", answers);
+                if (!export) {
+                    ((LazyValidatorForm) form).set("answer", answers);
+                }
                 // Place appeal statuses to request
                 request.setAttribute("appealStatuses", appealStatuses);
 
@@ -4149,7 +4327,522 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve some basic review info and store it in the request
         retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
 
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+        // Now all the information regarding the review is stored in request. We can forward to the view or export
+        if (!export) {
+            request.setAttribute("canExport", true);
+            request.setAttribute("tableTitle", scorecardTemplate.getName());
+            return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+        } else {
+            exportGenericReview(request, response, reviewType);
+            return null;
+        }
+    }
+
+    /**
+     * Exports generic review result into xlsx file.
+     * @param request
+     *            the HTTP request.
+     * @param response
+     *            the HTTP response.
+     * @param reviewType
+     *            the review type.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    private void exportGenericReview(HttpServletRequest request, HttpServletResponse response, String reviewType)
+            throws BaseException {
+        MessageResources messages = getResources(request);
+        String fileName = reviewType.toLowerCase().replace(' ', '_').replace('-', '_') + "_"
+                + request.getParameter("rid");
+        // create workbook and sheet
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Sheet1");
+        sheet.setRowSumsBelow(false);
+        // create font, color, and cell style
+        XSSFFont boldFont = workbook.createFont();
+        boldFont.setBold(true);
+        XSSFCellStyle boldStyle = workbook.createCellStyle();
+        boldStyle.setFont(boldFont);
+        XSSFCellStyle borderStyle = workbook.createCellStyle();
+        borderStyle.setBorderTop(BorderStyle.THIN);
+        borderStyle.setTopBorderColor(new XSSFColor(Color.BLACK));
+        borderStyle.setBorderBottom(BorderStyle.THIN);
+        borderStyle.setBottomBorderColor(new XSSFColor(Color.BLACK));
+        borderStyle.setBorderLeft(BorderStyle.THIN);
+        borderStyle.setLeftBorderColor(new XSSFColor(Color.BLACK));
+        borderStyle.setBorderRight(BorderStyle.THIN);
+        borderStyle.setRightBorderColor(new XSSFColor(Color.BLACK));
+        XSSFCellStyle boldBorderStyle = (XSSFCellStyle) borderStyle.clone();
+        boldBorderStyle.setFont(boldFont);
+
+        // get review related objects
+        Project project = (Project) request.getAttribute("project");
+        Review review = (Review) request.getAttribute("review");
+        Resource reviewer = (Resource) request.getAttribute("authorResource");
+        Scorecard scorecard = (Scorecard) request.getAttribute("scorecardTemplate");
+
+        int rowNum = 0;
+        // header
+        rowNum = exportHeader(sheet, rowNum, request, reviewType, project, review, reviewer, messages, boldStyle);
+
+        // table header
+        rowNum += 2;
+        rowNum = exportTableHeader(sheet, rowNum, reviewType, boldBorderStyle, messages);
+
+        // table content
+        exportTableContent(sheet, rowNum, request, reviewType, scorecard, review, borderStyle, boldBorderStyle,
+                messages);
+
+        sheet.autoSizeColumn(0);
+        sheet.setColumnWidth(1, (int) (12.5 * sheet.getColumnWidth(1)));
+        sheet.autoSizeColumn(2);
+        sheet.autoSizeColumn(3);
+        sheet.autoSizeColumn(4);
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ".xlsx");
+        OutputStream stream = null;
+        try {
+            stream = response.getOutputStream();
+            workbook.write(stream);
+            stream.flush();
+        } catch (IOException e) {
+            throw new BaseException("Error occurs while exporting Excel sheet.", e);
+        }
+    }
+
+    /**
+     * Exports the header for the Excel sheet.
+     * @param sheet
+     *            the Excel sheet.
+     * @param rowNum
+     *            the starting row number.
+     * @param request
+     *            the HTTP request.
+     * @param reviewType
+     *            the review type.
+     * @param project
+     *            the project.
+     * @param review
+     *            the review.
+     * @param reviewer
+     *            the reviewer resource.
+     * @param messages
+     *            the message resources.
+     * @param boldStyle
+     *            the style with bold text.
+     * @return the finishing row number.
+     */
+    private int exportHeader(Sheet sheet, int rowNum, HttpServletRequest request, String reviewType, Project project,
+            Review review, Resource reviewer, MessageResources messages, XSSFCellStyle boldStyle) {
+        Row row = null;
+        XSSFCellStyle leftAlignCellStyle = (XSSFCellStyle) sheet.getWorkbook().createCellStyle();
+        leftAlignCellStyle.setAlignment(HorizontalAlignment.LEFT);
+        // header - project name
+        row = sheet.createRow(rowNum++);
+        fillCell(row, 0, boldStyle, null, messages.getMessage("exportReview.Header.Project"));
+        fillCell(row, 1, null, null, (String) project.getProperty("Project Name"));
+        // header - review id
+        row = sheet.createRow(rowNum++);
+        fillCell(row, 0, boldStyle, null, messages.getMessage("exportReview.Header.ReviewID"));
+        fillCell(row, 1, leftAlignCellStyle, null, Long.parseLong(request.getParameter("rid")));
+        // header - review type
+        row = sheet.createRow(rowNum++);
+        fillCell(row, 0, boldStyle, null, messages.getMessage("exportReview.Header.ReviewType"));
+        fillCell(row, 1, null, null, reviewType);
+        // header - author
+        row = sheet.createRow(rowNum++);
+        fillCell(row, 0, boldStyle, null, messages.getMessage("exportReview.Header.Author"));
+        fillCell(row, 1, null, null, (String) reviewer.getProperty("Handle"));
+        // header - submission
+        if (request.getAttribute("sid") != null) {
+            row = sheet.createRow(rowNum++);
+            fillCell(row, 0, boldStyle, null, messages.getMessage("exportReview.Header.Submission"));
+            fillCell(row, 1, leftAlignCellStyle, null, (Long) request.getAttribute("sid"));
+        }
+        // header - total score
+        if (!reviewType.equals("Aggregation") && !reviewType.equals("Final Review")) {
+            row = sheet.createRow(rowNum++);
+            fillCell(row, 0, boldStyle, null, messages.getMessage("exportReview.Header.TotalScore"));
+            fillCell(row, 1, leftAlignCellStyle, null, (double) review.getScore());
+        }
+        // header - status
+        if (reviewType.equals("Specification Review") || reviewType.equals("Final Review")
+                || reviewType.equals("Approval")) {
+            row = sheet.createRow(rowNum++);
+            fillCell(row, 0, boldStyle, null, messages.getMessage("exportReview.Header.Status"));
+            if (reviewType.equals("Specification Review")) {
+                fillCell(row, 1, null, null, getReviewStatus(review, "Specification Review Comment", messages));
+            } else if (reviewType.equals("Final Review")) {
+                fillCell(row, 1, null, null, getReviewStatus(review, "Final Review Comment", messages));
+            } else if (reviewType.equals("Approval")) {
+                fillCell(row, 1, null, null, getReviewStatus(review, "Approval Review Comment", messages));
+            }
+        }
+        return rowNum;
+    }
+
+    /**
+     * Gets the review status. It is ether approved or rejected.
+     * @param review
+     *            the review.
+     * @param commentType
+     *            the comment type.
+     * @param messages
+     *            the message resources.
+     * @return the review status.
+     */
+    private String getReviewStatus(Review review, String commentType, MessageResources messages) {
+        for (Comment comment : review.getAllComments()) {
+            if (comment.getCommentType().getName().equals(commentType)) {
+                if (comment.getExtraInfo() != null && comment.getExtraInfo().toString().length() > 0) {
+                    if (comment.getExtraInfo().equals("Rejected")) {
+                        return messages.getMessage("exportReview.TableHeader.Rejected");
+                    } else {
+                        return messages.getMessage("exportReview.TableHeader.Approved");
+                    }
+                }
+                break;
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Exports the table header for the Excel sheet.
+     * @param sheet
+     *            the Excel sheet.
+     * @param rowNum
+     *            the starting row number.
+     * @param reviewType
+     *            the review type.
+     * @param boldBorderStyle
+     *            the style with bold text and border.
+     * @param messages
+     *            the message resources.
+     * @return the finishing row number.
+     */
+    private int exportTableHeader(Sheet sheet, int rowNum, String reviewType, XSSFCellStyle boldBorderStyle,
+            MessageResources messages) {
+        Row row = sheet.createRow(rowNum++);
+        fillCell(row, 0, boldBorderStyle, null, messages.getMessage("exportReview.TableHeader.Name"));
+        fillCell(row, 1, boldBorderStyle, null, messages.getMessage("exportReview.TableHeader.Description"));
+        if (reviewType.equals("Aggregation") || reviewType.equals("Final Review")) {
+            fillCell(row, 2, boldBorderStyle, null, messages.getMessage("exportReview.TableHeader.Reviewer"));
+        } else {
+            fillCell(row, 2, boldBorderStyle, null, messages.getMessage("exportReview.TableHeader.Weight"));
+        }
+        fillCell(row, 3, boldBorderStyle, null, messages.getMessage("exportReview.TableHeader.ResponseType"));
+        if (reviewType.equals("Aggregation") || reviewType.equals("Final Review")) {
+            fillCell(row, 4, boldBorderStyle, null, messages.getMessage("exportReview.TableHeader.Status"));
+        } else {
+            fillCell(row, 4, boldBorderStyle, null, messages.getMessage("exportReview.TableHeader.Score"));
+        }
+        return rowNum;
+    }
+
+    /**
+     * Exports the table content for the Excel sheet.
+     * @param sheet
+     *            the Excel sheet.
+     * @param rowNum
+     *            the starting row number.
+     * @param request
+     *            the HTTP request.
+     * @param reviewType
+     *            the review type.
+     * @param scorecard
+     *            the scorecard.
+     * @param review
+     *            the review.
+     * @param borderStyle
+     *            the style with border.
+     * @param boldBorderStyle
+     *            the style with bold text and border.
+     * @param messages
+     *            the message resources.
+     */
+    private void exportTableContent(Sheet sheet, int rowNum, HttpServletRequest request, String reviewType,
+            Scorecard scorecard, Review review, XSSFCellStyle borderStyle, XSSFCellStyle boldBorderStyle,
+            MessageResources messages) {
+        XSSFColor groupColor = new XSSFColor(new Color(commentExportColor.get("Group")));
+        XSSFColor sectionColor = new XSSFColor(new Color(commentExportColor.get("Section")));
+        XSSFColor questionColor = new XSSFColor(new Color(commentExportColor.get("Question")));
+        XSSFColor attachmentColor = new XSSFColor(new Color(commentExportColor.get("Attachment")));
+
+        Row row = null;
+        int groupIdx = 0;
+        for (Group group : scorecard.getAllGroups()) {
+            row = sheet.createRow(rowNum++);
+            groupIdx++;
+            fillCell(row, 0, boldBorderStyle, groupColor, messages.getMessage("exportReview.Table.Group", groupIdx));
+            fillCell(row, 1, borderStyle, groupColor, group.getName());
+            if (reviewType.equals("Aggregation") || reviewType.equals("Final Review")) {
+                fillCell(row, 2, borderStyle, groupColor, "");
+            } else {
+                fillCell(row, 2, borderStyle, groupColor, group.getWeight());
+            }
+            fillCell(row, 3, borderStyle, groupColor, "");
+            fillCell(row, 4, borderStyle, groupColor, "");
+            int sectionIdx = 0;
+            for (Section section : group.getAllSections()) {
+                row = sheet.createRow(rowNum++);
+                sectionIdx++;
+                fillCell(row, 0, boldBorderStyle, sectionColor,
+                        messages.getMessage("exportReview.Table.Section", new Object[] { groupIdx, sectionIdx }));
+                fillCell(row, 1, borderStyle, sectionColor, section.getName());
+                if (reviewType.equals("Aggregation") || reviewType.equals("Final Review")) {
+                    fillCell(row, 2, borderStyle, sectionColor, "");
+                } else {
+                    fillCell(row, 2, borderStyle, sectionColor, section.getWeight());
+                }
+                fillCell(row, 3, borderStyle, sectionColor, "");
+                fillCell(row, 4, borderStyle, sectionColor, "");
+                int questionIdx = 0;
+                for (Question question : section.getAllQuestions()) {
+                    int startRow = rowNum;
+                    if (reviewType.equals("Aggregation") || reviewType.equals("Final Review")) {
+                        row = sheet.createRow(rowNum++);
+                        questionIdx++;
+                        fillCell(
+                                row,
+                                0,
+                                boldBorderStyle,
+                                questionColor,
+                                messages.getMessage("exportReview.Table.Question", new Object[] { groupIdx, sectionIdx,
+                                        questionIdx }));
+                        fillCell(row, 1, borderStyle, questionColor, question.getDescription());
+                        fillCell(row, 2, borderStyle, questionColor, "");
+                        fillCell(row, 3, borderStyle, questionColor, "");
+                        fillCell(row, 4, borderStyle, questionColor, "");
+                    }
+                    for (Item item : review.getAllItems()) {
+                        if (item.getQuestion() == question.getId()) {
+                            if (!reviewType.equals("Aggregation") && !reviewType.equals("Final Review")) {
+                                row = sheet.createRow(rowNum++);
+                                questionIdx++;
+                                fillCell(
+                                        row,
+                                        0,
+                                        boldBorderStyle,
+                                        questionColor,
+                                        messages.getMessage("exportReview.Table.Question", new Object[] { groupIdx,
+                                                sectionIdx, questionIdx }));
+                                fillCell(row, 1, borderStyle, questionColor, question.getDescription());
+                                fillCell(row, 2, borderStyle, questionColor, question.getWeight());
+                                fillCell(row, 3, borderStyle, questionColor, "");
+                                fillCell(row, 4, borderStyle, questionColor, getReviewAnswer(question, item, messages));
+                                // attached document
+                                if (item.getDocument() != null) {
+                                    row = sheet.createRow(rowNum++);
+                                    fillCell(row, 0, boldBorderStyle, attachmentColor,
+                                            messages.getMessage("exportReview.Table.AttachedDocument"));
+                                    String url = request.getRequestURL().toString();
+                                    fillCell(
+                                            row,
+                                            1,
+                                            borderStyle,
+                                            attachmentColor,
+                                            url.substring(0, url.lastIndexOf("/"))
+                                                    + messages.getMessage("exportReview.Table.DownloadDocumentURL")
+                                                    + item.getDocument());
+                                    fillCell(row, 2, borderStyle, attachmentColor, "");
+                                    fillCell(row, 3, borderStyle, attachmentColor, "");
+                                    fillCell(row, 4, borderStyle, attachmentColor, "");
+                                }
+                            }
+                            // comments
+                            rowNum = exportComments(sheet, rowNum, request, reviewType, item, borderStyle,
+                                    boldBorderStyle, messages);
+                        }
+                    }
+                    // grouping
+                    sheet.groupRow(startRow + 1, rowNum - 1);
+                }
+            }
+        }
+    }
+
+    /**
+     * Exports comments for one review item.
+     * @param sheet
+     *            the Excel sheet.
+     * @param rowNum
+     *            the starting row number.
+     * @param request
+     *            the HTTP request.
+     * @param reviewType
+     *            the review type.
+     * @param item
+     *            the review item.
+     * @param boldBorderStyle
+     *            the style with bold text and border.
+     * @param borderStyle
+     *            the style with border.
+     * @param messages
+     *            the message resources.
+     * @return the finishing row number.
+     */
+    private int exportComments(Sheet sheet, int rowNum, HttpServletRequest request, String reviewType, Item item,
+            XSSFCellStyle borderStyle, XSSFCellStyle boldBorderStyle, MessageResources messages) {
+        int commentIdx = 1;
+        Resource reviewer = null;
+        Row row = null;
+        XSSFCellStyle commentStyle = (XSSFCellStyle) borderStyle.clone();
+        commentStyle.setWrapText(true);
+        for (Comment comment : item.getAllComments()) {
+            // skip empty comment
+            if (comment.getComment().length() == 0) {
+                continue;
+            }
+            String commentType = comment.getCommentType().getName();
+            if ((reviewType.equals("Aggregation") && !aggregationCommentTypes.contains(commentType))
+                    || (reviewType.equals("Final Review") && !finalReviewCommentTypes.contains(commentType))) {
+                continue;
+            }
+            row = sheet.createRow(rowNum++);
+            XSSFColor color = new XSSFColor(new Color(commentExportColor.get(comment.getCommentType().getName())));
+            if (reviewerCommentTypes.contains(commentType)) {
+                fillCell(row, 0, boldBorderStyle, color,
+                        messages.getMessage("exportReview.Table.ReviewerResponse", commentIdx));
+                commentIdx++;
+            } else {
+                fillCell(row, 0, boldBorderStyle, color, commentType);
+            }
+            fillCell(row, 1, commentStyle, color, comment.getComment());
+            if (reviewType.equals("Aggregation") || reviewType.equals("Final Review")) {
+                Resource[] reviewers = (Resource[]) request.getAttribute("reviewResources");
+                boolean resourceFound = false;
+                for (Resource resource : reviewers) {
+                    if (resource.getId() == comment.getAuthor()) {
+                        if (reviewer != null && reviewer != resource) {
+                            commentIdx = 1;
+                        }
+                        reviewer = resource;
+                        resourceFound = true;
+                        fillCell(row, 2, borderStyle, color, (String) resource.getProperty("Handle"));
+                        break;
+                    }
+                }
+                if (!resourceFound) {
+                    fillCell(row, 2, borderStyle, color, "");
+                }
+            } else {
+                fillCell(row, 2, borderStyle, color, "");
+            }
+            fillCell(row, 3, borderStyle, color, commentType);
+            if (reviewType.equals("Aggregation")) {
+                if (reviewerCommentTypes.contains(commentType)) {
+                    if (comment.getExtraInfo() != null && comment.getExtraInfo().toString().length() > 0) {
+                        fillCell(row, 4, borderStyle, color,
+                                messages.getMessage("AggregationItemStatus." + comment.getExtraInfo()));
+                    }
+                } else {
+                    fillCell(row, 4, borderStyle, color, "");
+                }
+            } else if (reviewType.equals("Final Review")) {
+                if (reviewerCommentTypes.contains(commentType)) {
+                    if (comment.getExtraInfo() != null && comment.getExtraInfo().toString().length() > 0) {
+                        if (comment.getExtraInfo().equals("Fixed")) {
+                            fillCell(row, 4, borderStyle, color, messages.getMessage("FinalReviewItemStatus.Fixed"));
+                        } else {
+                            fillCell(row, 4, borderStyle, color, messages.getMessage("FinalReviewItemStatus.NotFixed"));
+                        }
+                    }
+                } else {
+                    fillCell(row, 4, borderStyle, color, "");
+                }
+            } else {
+                fillCell(row, 4, borderStyle, color, "");
+            }
+        }
+        return rowNum;
+    }
+
+    /**
+     * Fills a spreadsheet cell using the given style and value.
+     * @param row
+     *            the row.
+     * @param column
+     *            the column number.
+     * @param cellStyle
+     *            the cell style.
+     * @param fillColor
+     *            the fill background color.
+     * @param value
+     *            the cell value.
+     */
+    private void fillCell(Row row, int column, XSSFCellStyle cellStyle, XSSFColor fillColor, Object value) {
+        Cell cell = row.createCell(column);
+        if (cellStyle != null) {
+            if (fillColor != null) {
+                cellStyle = (XSSFCellStyle) cellStyle.clone();
+                cellStyle.setFillForegroundColor(fillColor);
+                cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+            }
+            cell.setCellStyle(cellStyle);
+        } else {
+            cellStyle = (XSSFCellStyle) row.getSheet().getWorkbook().createCellStyle();
+        }
+        cellStyle.setVerticalAlignment(VerticalAlignment.TOP);
+        cell.setCellStyle(cellStyle);
+        if (value instanceof String) {
+            cell.setCellValue((String) value);
+        } else if (value instanceof Long) {
+            cell.setCellValue((Long) value);
+        } else if (value instanceof Double) {
+            cell.setCellValue((Double) value);
+            XSSFCellStyle numberCellStyle = (XSSFCellStyle) cellStyle.clone();
+            DataFormat dataFormat = row.getSheet().getWorkbook().createDataFormat();
+            numberCellStyle.setDataFormat(dataFormat.getFormat("0.00"));
+        } else if (value instanceof Float) {
+            cell.setCellValue((Float) value);
+        }
+    }
+
+    /**
+     * Gets review answer.
+     * @param question
+     *            the review question.
+     * @param item
+     *            the review item.
+     * @param messages
+     *            the message resources.
+     * @return the review answer.
+     */
+    private String getReviewAnswer(Question question, Item item, MessageResources messages) {
+        String questionType = question.getQuestionType().getName();
+        String answer = item.getAnswer().toString();
+        if (questionType.equals("Yes/No")) {
+            return answer.equals("1") ? messages.getMessage("global.answer.Yes") : messages
+                    .getMessage("global.answer.No");
+        } else if (questionType.equals("Scale (1-4)")) {
+            answer = answer.replace("/4", "");
+            if (answer.length() > 0) {
+                return messages.getMessage("Answer.Score4.ans" + answer);
+            }
+        } else if (questionType.equals("Scale (1-10)")) {
+            answer = answer.replace("/10", "");
+            return messages.getMessage("Answer.Score10.Rating.title") + " " + answer;
+        } else if (questionType.equals("Test Case")) {
+            return answer.replace("/", messages.getMessage("editReview.Question.Response.TestCase.of"));
+        } else if (questionType.equals("Scale (0-3)")) {
+            answer = answer.replace("/3", "");
+            if (answer.length() > 0) {
+                return messages.getMessage("Answer.Score3.ans" + answer);
+            }
+        } else if (questionType.equals("Scale (0-9)")) {
+            answer = answer.replace("/9", "");
+            return messages.getMessage("Answer.Score9.Rating.title") + " " + answer;
+        } else if (questionType.equals("Scale (0-4)")) {
+            answer = answer.replace("/4", "");
+            if (answer.length() > 0) {
+                return messages.getMessage("Answer.Score0_4.ans" + answer);
+            }
+        } else {
+            return answer;
+        }
+        return "";
     }
 
     /**
@@ -5012,7 +5705,7 @@ public class ProjectReviewActions extends DispatchAction {
                                         HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
-        return viewGenericReview(mapping, form, request, "Post-Mortem");
+        return viewOrExportGenericReview(mapping, form, request, response, "Post-Mortem", false);
     }
 
     /**
@@ -5108,7 +5801,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewSpecificationReview(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                                  HttpServletResponse response) throws BaseException {
         LoggingHelper.logAction(request);
-        return viewGenericReview(mapping, form, request, "Specification Review");
+        return viewOrExportGenericReview(mapping, form, request, response, "Specification Review", false);
     }
 
     /**
@@ -5224,7 +5917,7 @@ public class ProjectReviewActions extends DispatchAction {
                                                 HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
-        return viewGenericReview(mapping, form, request, "Checkpoint Screening");
+        return viewOrExportGenericReview(mapping, form, request, response, "Checkpoint Screening", false);
     }
 
 
@@ -5342,7 +6035,7 @@ public class ProjectReviewActions extends DispatchAction {
                                              HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
-        return viewGenericReview(mapping, form, request, "Checkpoint Review");
+        return viewOrExportGenericReview(mapping, form, request, response, "Checkpoint Review", false);
     }
 
     /**
@@ -5422,5 +6115,32 @@ public class ProjectReviewActions extends DispatchAction {
 
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
+    }
+
+    /**
+     * This method is supposed to export completed review result into xlsx file.
+     * @return always null because the resulting file is expected to be written to response directly.
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward exportReview(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws BaseException {
+        LoggingHelper.logAction(request);
+        String reviewType = request.getParameter("reviewType");
+        if (reviewType.equals("Aggregation")) {
+            return viewOrExportAggregation(mapping, request, response, true);
+        } else if (reviewType.equals("FinalReview")) {
+            return viewOrExportFinalReview(mapping, request, response, true);
+        } else {
+            return viewOrExportGenericReview(mapping, form, request, response, reviewType, true);
+        }
     }
 }

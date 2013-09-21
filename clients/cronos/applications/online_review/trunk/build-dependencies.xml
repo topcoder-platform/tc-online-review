@@ -101,7 +101,6 @@
       <fileset dir="${ext_libdir}/svnant" includes="*.jar" />
     </path>
 
-
     <path id="spring_libs">
         <fileset dir="${ext_libdir}/spring">
             <include name="spring-beans.jar"/>
@@ -110,6 +109,10 @@
             <include name="spring-web.jar"/>
             <include name="spring-webmvc-struts.jar"/>
         </fileset>
+    </path>
+
+    <path id="poi_libs">
+        <fileset dir="${ext_libdir}/poi" includes="*.jar"/>
     </path>
 
     <path id="buildlibs">
@@ -137,6 +140,7 @@
         <pathelement location="${jaf.jar}" />
     	
         <path refid="spring_libs"/>
+        <path refid="poi_libs"/>
     </path>
 
     <macrodef name="scp_windows">

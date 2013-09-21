@@ -1,12 +1,15 @@
 <%--
-  - Author: isv
-  - Version: 1.1
-  - Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+  - Author: isv, duxiaoyang
+  - Version: 1.2
+  - Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays view page for Approval scorecard
   -
   - Version 1.1 (Impersonation Login Release assembly) changes: Updated link for "Back" button to refer to
   - "View Project Details" screen.
+  -
+  - Version 1.2 (Online Review - Review Export ) changes:
+  - Moved expand and collapse link to just above the table.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -246,7 +249,7 @@
                 <div style="position: relative; width: 100%;">
 
                     <jsp:include page="/includes/review/review_project.jsp" />
-                    <h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
+                    <jsp:include page="/includes/review/review_table_title.jsp" />
 
                     <%-- Note, that the form is a "dummy" one, only needed to support Struts tags inside of it --%>
                     <html:form action="/actions/View${reviewType}.do?method=view${reviewType}&rid=${review.id}">

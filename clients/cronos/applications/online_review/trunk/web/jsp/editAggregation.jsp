@@ -1,3 +1,14 @@
+<%--
+  - Author: duxiaoyang
+  - Version: 1.1
+  - Copyright (C)  - 2013 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page renders the editing aggregation scorecard.
+  -
+  - Version 1.1 (Online Review - Review Export) changes:
+  - Moved expand and collapse link to just above the table.
+--%>
+
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -42,8 +53,7 @@
                     <jsp:include page="/includes/review/review_project.jsp">
 						<jsp:param name="showFillScorecardLink" value="false" />
 					</jsp:include>
-
-                    <h3><bean:message key="editReview.EditAggregation.title" /></h3>
+					<jsp:include page="/includes/review/review_table_title.jsp" />
 
                     <html:form action="/actions/SaveAggregation">
                         <html:hidden property="method" value="saveAggregation" />

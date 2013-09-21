@@ -1,9 +1,12 @@
 <%--
-  - Author: isv
-  - Version: 1.0 (Specification Review Part 1 Assembly)
+  - Author: isv, duxiaoyang
+  - Version: 1.1
   - Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page renders the Specification Review scorecard for editing.
+  -
+  - Version 1.1 (Online Review - Review Export) changes:
+  - Moved expand and collapse link to just above the table.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -143,7 +146,7 @@
                     <jsp:include page="/includes/review/review_project.jsp">
 						<jsp:param name="showFillScorecardLink" value="true" />
 					</jsp:include>
-                    <h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
+                    <jsp:include page="/includes/review/review_table_title.jsp" />
 
                     <html:form action="/actions/SaveSpecificationReview" method="POST" enctype="multipart/form-data">
                         <html:hidden property="method" value="saveSpecificationReview" />

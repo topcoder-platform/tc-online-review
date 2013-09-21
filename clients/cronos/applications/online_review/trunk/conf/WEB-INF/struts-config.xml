@@ -1001,6 +1001,11 @@
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
 
+        <!-- "Export Review" action -->
+        <action path="/actions/ExportReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request">
+        </action>
     <!--
         =====  Late Deliverables Actions  =====
     -->
