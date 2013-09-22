@@ -4569,6 +4569,8 @@ public class ProjectReviewActions extends DispatchAction {
         XSSFColor sectionColor = new XSSFColor(new Color(commentExportColor.get("Section")));
         XSSFColor questionColor = new XSSFColor(new Color(commentExportColor.get("Question")));
         XSSFColor attachmentColor = new XSSFColor(new Color(commentExportColor.get("Attachment")));
+        XSSFCellStyle wrapTextStyle = (XSSFCellStyle) borderStyle.clone();
+        wrapTextStyle.setWrapText(true);
 
         Row row = null;
         int groupIdx = 0;
@@ -4576,7 +4578,7 @@ public class ProjectReviewActions extends DispatchAction {
             row = sheet.createRow(rowNum++);
             groupIdx++;
             fillCell(row, 0, boldBorderStyle, groupColor, messages.getMessage("exportReview.Table.Group", groupIdx));
-            fillCell(row, 1, borderStyle, groupColor, group.getName());
+            fillCell(row, 1, wrapTextStyle, groupColor, group.getName());
             if (reviewType.equals("Aggregation") || reviewType.equals("Final Review")) {
                 fillCell(row, 2, borderStyle, groupColor, "");
             } else {
@@ -4590,7 +4592,7 @@ public class ProjectReviewActions extends DispatchAction {
                 sectionIdx++;
                 fillCell(row, 0, boldBorderStyle, sectionColor,
                         messages.getMessage("exportReview.Table.Section", new Object[] { groupIdx, sectionIdx }));
-                fillCell(row, 1, borderStyle, sectionColor, section.getName());
+                fillCell(row, 1, wrapTextStyle, sectionColor, section.getName());
                 if (reviewType.equals("Aggregation") || reviewType.equals("Final Review")) {
                     fillCell(row, 2, borderStyle, sectionColor, "");
                 } else {
@@ -4611,7 +4613,7 @@ public class ProjectReviewActions extends DispatchAction {
                                 questionColor,
                                 messages.getMessage("exportReview.Table.Question", new Object[] { groupIdx, sectionIdx,
                                         questionIdx }));
-                        fillCell(row, 1, borderStyle, questionColor, question.getDescription());
+                        fillCell(row, 1, wrapTextStyle, questionColor, question.getDescription());
                         fillCell(row, 2, borderStyle, questionColor, "");
                         fillCell(row, 3, borderStyle, questionColor, "");
                         fillCell(row, 4, borderStyle, questionColor, "");
@@ -4628,11 +4630,13 @@ public class ProjectReviewActions extends DispatchAction {
                                         questionColor,
                                         messages.getMessage("exportReview.Table.Question", new Object[] { groupIdx,
                                                 sectionIdx, questionIdx }));
-                                fillCell(row, 1, borderStyle, questionColor, question.getDescription());
+                                fillCell(row, 1, wrapTextStyle, questionColor, question.getDescription());
                                 fillCell(row, 2, borderStyle, questionColor, question.getWeight());
                                 fillCell(row, 3, borderStyle, questionColor, "");
                                 fillCell(row, 4, borderStyle, questionColor, getReviewAnswer(question, item, messages));
-                                // attached document
+                            }
+                            // attached document
+                            if (!reviewType.equals("Aggregation") && !reviewType.equals("Final Review")) {
                                 if (item.getDocument() != null) {
                                     row = sheet.createRow(rowNum++);
                                     fillCell(row, 0, boldBorderStyle, attachmentColor,
@@ -4825,7 +4829,7 @@ public class ProjectReviewActions extends DispatchAction {
             answer = answer.replace("/10", "");
             return messages.getMessage("Answer.Score10.Rating.title") + " " + answer;
         } else if (questionType.equals("Test Case")) {
-            return answer.replace("/", messages.getMessage("editReview.Question.Response.TestCase.of"));
+            return answer.replace("/", " " + messages.getMessage("editReview.Question.Response.TestCase.of") + " ");
         } else if (questionType.equals("Scale (0-3)")) {
             answer = answer.replace("/3", "");
             if (answer.length() > 0) {
