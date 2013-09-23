@@ -5,6 +5,7 @@ package com.cronos.onlinereview.dataaccess;
 
 import com.cronos.onlinereview.model.CockpitProject;
 import com.cronos.onlinereview.model.ClientProject;
+import com.topcoder.contest.entities.ProjectSubCategory;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectPropertyType;
@@ -49,8 +50,17 @@ import java.util.*;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.5 (TC Contest SubTypes OR Updates Assembly v1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #searchProjectsByQueryTool(String, String,
+ *     String, String, ProjectStatus[], ProjectCategory[], ProjectPropertyType[])}
+ *     method to set sub category if it exists.</li>
+ *   </ol>
+ * </p>
+ *
  * @author isv, VolodymyrK, tangzx
- * @version 1.4
+ * @version 1.5
  */
 public class ProjectDataAccess extends BaseDataAccess {
 
@@ -300,6 +310,16 @@ public class ProjectDataAccess extends BaseDataAccess {
             project.setCreationTimestamp(createDate);
             project.setModificationUser(modifyUser);
             project.setModificationTimestamp(modifyDate);
+
+            String subCategoryName = projectsData.getStringItem(i, "contest_sub_type_name");
+            if (subCategoryName != null) {
+                Long subCategoryId = projectsData.getLongItem(i, "project_sub_category_id");
+                ProjectSubCategory subCategory = new ProjectSubCategory();
+                subCategory.setId(subCategoryId);
+                subCategory.setName(subCategoryName);
+
+                project.setSubCategory(subCategory);
+            }
 
             resultingProjects[i] = project;
             projects.put(projectId, project);

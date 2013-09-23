@@ -30,10 +30,12 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
+import com.cronos.onlinereview.ejblibrary.SpringContextProvider;
 import com.cronos.onlinereview.phases.PaymentsHelper;
 import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
 import com.cronos.termsofuse.dao.TermsOfUseDao;
 import com.cronos.termsofuse.dao.UserTermsOfUseDao;
+import com.topcoder.contest.management.ProjectCategoryService;
 import com.topcoder.management.deliverable.search.UploadFilterBuilder;
 import com.topcoder.management.payment.ProjectPayment;
 import com.topcoder.management.payment.ProjectPaymentAdjustmentManager;
@@ -123,6 +125,7 @@ import com.topcoder.util.log.Log;
 import com.topcoder.util.log.LogManager;
 import com.topcoder.web.ejb.forums.Forums;
 import com.topcoder.web.ejb.forums.ForumsHome;
+import org.springframework.context.ApplicationContext;
 
 /**
  * <p>
@@ -314,8 +317,16 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK, rac_, lmmortal, flexme
- * @version 2.6
+ * <p>
+ * Version 2.7 (TC Contest SubTypes OR Updates Assembly v1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #PROJECT_CATEGORY_SERVICE_NAME} field.</li>
+ *     <li>Added {@link #getProjectCategoryService()} method.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK, rac_, lmmortal, flexme, tangzx
+ * @version 2.7
  * @since Online Review Status Validation Assembly 1.0
  */
 public class ActionsHelper {
@@ -382,6 +393,13 @@ public class ActionsHelper {
      */
     private static final Throttle longThrottle = new Throttle(300, 300 * (10*60*1000));
 
+    /**
+     * The name of project category service.
+     *
+     * @since 2.5
+     */
+    private static final String PROJECT_CATEGORY_SERVICE_NAME = "projectCategoryService";
+    
     /**
      * This constructor is declared private to prohibit instantiation of the <code>ActionsHelper</code> class.
      */
@@ -3737,4 +3755,15 @@ public class ActionsHelper {
         }
         return lastModificationTime;
     }
+
+    /**
+     * Get project category service.
+     *
+     * @return the project category service
+     * @since 2.5
+     */
+    public static ProjectCategoryService getProjectCategoryService() {
+        ApplicationContext appContext = SpringContextProvider.getApplicationContext();
+        return (ProjectCategoryService) appContext.getBean(PROJECT_CATEGORY_SERVICE_NAME);
+    }    
 }

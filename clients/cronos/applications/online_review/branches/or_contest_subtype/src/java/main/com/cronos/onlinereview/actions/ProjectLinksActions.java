@@ -8,7 +8,6 @@ import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.topcoder.search.builder.filter.Filter;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -16,7 +15,6 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.validator.LazyValidatorForm;
 
 import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectFilterUtility;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.link.ProjectLink;
 import com.topcoder.management.project.link.ProjectLinkManager;
@@ -48,8 +46,16 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
- * @author BeBetter, isv, VolodymyrK
- * @version 1.2
+ * <p>
+ * Version 1.3 (TC Contest SubTypes OR Updates Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Update {@link #editProjectLinks(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
+ *     to fetch projects associated to tc direct project directly by manager.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author BeBetter, isv, VolodymyrK, tangzx
+ * @version 1.3
  * @since OR Project Linking Assembly
  */
 public class ProjectLinksActions extends DispatchAction {
@@ -110,8 +116,7 @@ public class ProjectLinksActions extends DispatchAction {
 
         Project[] allProjects = null;
         if (project.getTcDirectProjectId() > 0) {
-            Filter filter = ProjectFilterUtility.buildTCDirectProjectIDEqualFilter(project.getTcDirectProjectId());
-            allProjects = manager.searchProjects(filter);
+            allProjects = manager.getProjectsByDirectProjectId(project.getTcDirectProjectId());
 
             // Sort fetched projects. Currently sorting is done by projects' names only, in ascending order
             Arrays.sort(allProjects, new Comparators.ProjectNameComparer());

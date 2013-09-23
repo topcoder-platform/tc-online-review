@@ -1,3 +1,12 @@
+<%--
+  - Author: tangzx
+  - Version: 1.1
+  - Copyright (C) 2013 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page fragment renders the list of projects links.
+  -
+  - Version 1.1 (TC Contest SubTypes OR Updates Assembly) changes: Changed to show sub category if exists.
+--%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -31,7 +40,7 @@
            </c:otherwise>
         </c:choose>    	  
     	  </td>
-    	  <td class="value" nowrap="nowrap"><html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]} (${projectElement.projectCategory.name}) (${projectElement.projectStatus.name})</html:link></td>    	  
+    	  <td class="value" nowrap="nowrap"><html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]} (${projectElement.subCategory != null ? projectElement.subCategory.name : projectElement.projectCategory.name}) (${projectElement.projectStatus.name})</html:link></td>    	  
     	  
     </tr>
     </c:forEach>    
@@ -54,7 +63,7 @@
     <tr class='${(linkStatus.index % 2 == 0) ? "light" : "dark"}'>
         <c:set var="projectElement" value="${projectLink.sourceProject}" />
         <c:set var="linkTypeElement" value="${projectLink.type}" />    	  
-    	  <td class="value" nowrap="nowrap"><html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]} (${projectElement.projectCategory.name}) (${projectElement.projectStatus.name})</html:link></td>
+    	  <td class="value" nowrap="nowrap"><html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]} (${projectElement.subCategory != null ? projectElement.subCategory.name : projectElement.projectCategory.name}) (${projectElement.projectStatus.name})</html:link></td>
     	  <td class="value" nowrap="nowrap">${linkTypeElement.name}</td>
     </tr>
     </c:forEach>    

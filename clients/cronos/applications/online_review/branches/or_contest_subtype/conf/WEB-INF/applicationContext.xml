@@ -1,7 +1,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context" 
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
   http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
   http://www.springframework.org/schema/aop
@@ -11,7 +14,9 @@
   http://www.springframework.org/schema/tx
   http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
   http://www.springframework.org/schema/security
-  http://www.springframework.org/schema/security/spring-security-2.0.xsd">
+  http://www.springframework.org/schema/security/spring-security-2.0.xsd
+  http://cxf.apache.org/jaxrs
+  http://cxf.apache.org/schemas/jaxrs.xsd">
 
     <bean id="springContextProvider" class="com.cronos.onlinereview.ejblibrary.SpringContextProvider" 
           scope="singleton"/>
@@ -94,6 +99,52 @@
 
         <property name="logger" ref="logger" />
         <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+	<jaxrs:server id="restContainer" address="/">
+		<jaxrs:serviceBeans>
+		  <ref bean="projectCategoryRestService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+		  <entry key="json" value="application/json" />
+		  <entry key="xml" value="application/xml" />
+		  <entry key="html" value="text/html" />
+		</jaxrs:extensionMappings>
+		<jaxrs:features>
+		</jaxrs:features>
+	</jaxrs:server>
+
+    <context:annotation-config/>
+
+    <bean id="projectCategoryRestService"
+        class="com.topcoder.contest.management.rest.impl.ProjectCategoryRestServiceImpl">
+        <property name="log" ref="projectCategoryLogger"/>
+        <property name="projectCategoryService" ref="projectCategoryService"/>
+    </bean>
+
+    <bean id="projectCategoryService"
+        class="com.topcoder.contest.management.impl.ProjectCategoryServiceImpl">
+        <property name="log" ref="projectCategoryLogger"/>
+        <property name="projectCategoryDao" ref="projectCategoryDao"/>
+    </bean>
+    
+    <bean id="projectCategoryDao"
+        class="com.topcoder.contest.management.dao.impl.ProjectCategoryDaoImpl">
+        <property name="log" ref="projectCategoryLogger"/>
+        <property name="dbConnectionFactory" ref="dbConnectionFactory"/>
+        <property name="connectionName" value="TCS_CATALOG"/>
+    </bean>
+    
+    <!-- DB Connection Factory -->
+    <bean id="dbConnectionFactory"
+        class="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+		<constructor-arg type="java.lang.String" value="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl" />
+    </bean>
+    
+    <!-- Log -->
+    <bean id="projectCategoryLogger" class="com.topcoder.util.log.LogManager"
+        factory-method="getLog">
+        <constructor-arg value="projectCategoryLogger" />
     </bean>
 </beans>
         

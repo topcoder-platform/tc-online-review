@@ -97,6 +97,11 @@
 	<property name="org.aspectj.matcher.jar.name" value="org.aspectj.matcher.jar" />
 	<property name="org.aspectj.matcher.jar" value="${ext_libdir}/aop/${org.aspectj.matcher.jar.name}" />
   
+    <property name="jackson.dir" value="${ext_libdir}/jackson/1.9.7"/>
+    <property name="cxf.dir" value="${ext_libdir}/cxf/2.4.3"/>
+    <property name="mockito.jar" value="${ext_libdir}/mockito/1.9.5/mockito-all-1.9.5.jar"/>	  
+    <property name="jaxws.jar" value="${ext_libdir}/jaxws/1.1.1/jsr311-api-1.1.1.jar"/>
+    
     <path id="svnant.lib" >
       <fileset dir="${ext_libdir}/svnant" includes="*.jar" />
     </path>
@@ -137,6 +142,15 @@
         <pathelement location="${jaf.jar}" />
     	
         <path refid="spring_libs"/>
+        
+        <pathelement location="${mockito.jar}" />
+        <pathelement location="${jaxws.jar}" />
+        <fileset dir="${jackson.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${cxf.dir}">
+            <include name="**/*.jar"/>
+        </fileset>               
     </path>
 
     <macrodef name="scp_windows">

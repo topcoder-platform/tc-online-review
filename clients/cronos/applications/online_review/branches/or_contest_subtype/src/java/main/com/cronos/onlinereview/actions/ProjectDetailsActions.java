@@ -244,8 +244,16 @@ import com.topcoder.util.file.templatesource.FileTemplateSource;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, FireIce, rac_, flexme
- * @version 1.12
+ * <p>
+ * Version 1.13 (TC Contest SubTypes OR Updates Assembly v1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #viewProjectDetails(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
+ *     method to use sub category instead of category if it exists.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, FireIce, rac_, flexme, tangzx
+ * @version 1.13
  */
 public class ProjectDetailsActions extends DispatchAction {
 
@@ -339,7 +347,8 @@ public class ProjectDetailsActions extends DispatchAction {
                 ConfigHelper.getProjectTypeViewContestLink(projectTypeName, projectId));
         request.setAttribute("forumLink", ConfigHelper.getProjectTypeForumLink(projectTypeName, forumId));
         request.setAttribute("projectType", projectTypeName);
-        request.setAttribute("projectCategory", project.getProjectCategory().getName());
+        request.setAttribute("projectCategory", project.getSubCategory() != null ?
+                project.getSubCategory().getName() : project.getProjectCategory().getName());
         request.setAttribute("projectStatus", project.getProjectStatus().getName());
 
         boolean digitalRunFlag = "On".equals(project.getProperty("Digital Run Flag"));

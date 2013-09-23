@@ -1,3 +1,12 @@
+<%--
+  - Author: tangzx
+  - Version: 1.1
+  - Copyright (C) 2013 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page fragment renders the list of projects links when editing.
+  -
+  - Version 1.1 (TC Contest SubTypes OR Updates Assembly) changes: Changed to show sub category if exists.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -38,7 +47,7 @@
     	   // Initiates option values
     	   projectOptions.push(new Option('${orfn:getMessage(pageContext, "editProjectLinks.projectTypes.SelectProject")}','-1'));
          <c:forEach items="${allProjects}" var="projectElement">
-         <c:set var="str" value="${projectElement.allProperties[\"Project Name\"]} v${projectElement.allProperties[\"Project Version\"]} (${projectElement.projectCategory.name}) (${projectElement.projectStatus.name})"/>
+         <c:set var="str" value="${projectElement.allProperties[\"Project Name\"]} v${projectElement.allProperties[\"Project Version\"]} (${projectElement.subCategory != null ? projectElement.subCategory.name : projectElement.projectCategory.name}) (${projectElement.projectStatus.name})"/>
          <c:set var="repl" value="${fn:replace(str, \"'\", \"\")}"/>
             <c:if test="${projectElement.id ne project.id}">
                 projectOptions.push(new Option('${repl}','${projectElement.id}'));
@@ -116,7 +125,8 @@
                                     <html:option key="editProjectLinks.projectTypes.SelectProject" value="-1" />
                           <c:forEach items="${allProjects}" var="projectElement">
                                 <c:if test="${projectElement.id ne project.id}">
-                                <html:option value="${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]} (${projectElement.projectCategory.name})</html:option>
+                                <html:option value="${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]} 
+                                (${projectElement.subCategory != null ? projectElement.subCategory.name : projectElement.projectCategory.name})</html:option>
                                 </c:if>
                           </c:forEach>
 				               </html:select>
@@ -152,11 +162,15 @@
 			     </html:form>    
            </div> <!-- //tabconentcontainer -->
         </div><!-- //mainMiddleContent -->
-            
+        
+    
         <jsp:include page="/includes/inc_footer.jsp" />  
-        	  
+        	
+  
      </div><!-- //maxWidthBody -->
-</div>      
-</body>     
-            
+</div>
+      
+</body>
+     
+            
 </html:html> 

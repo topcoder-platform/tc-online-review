@@ -1,6 +1,6 @@
 <%--
-  - Author: pulky, isv, TCSDEVELOPER, flexme
-  - Version: 1.6
+  - Author: pulky, isv, TCSDEVELOPER, flexme, tangzx
+  - Version: 1.7
   - Copyright (C) 2004 - 2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays project edition page
@@ -24,6 +24,8 @@
   -
   - Version 1.6 (Online Review - Project Payments Integration Part 3 v1.0) changes: removed "Payment" and "Paid"
   - columns in resource section.
+  -
+  - Version 1.7 (TC Contest SubTypes OR Updates Assembly) changes: Changed to show sub category when creating/editing.  
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -95,6 +97,22 @@
                 </c:otherwise>
             </c:choose>
         </c:forEach>
+        
+        var projectSubCategories = {};
+        var cId;
+        var cPos;
+        <c:forEach items="${projectSubCategories}" var="subCategory">
+            cId = "${subCategory.projectCategoryId}";
+            
+            if (!(cId in projectSubCategories)) {
+                projectSubCategories[cId] = [];
+            }
+            projectSubCategories[cId].push({});
+            
+            cPos = projectSubCategories[cId].length - 1;
+            projectSubCategories[cId][cPos]["id"] = ${subCategory.id};
+            projectSubCategories[cId][cPos]["name"] = "${subCategory.name}";
+        </c:forEach>        
 
         var screeningScorecards = [];
         <c:forEach items="${screeningScorecards}" var="scorecard">
@@ -323,6 +341,39 @@
 
             //document.getElementById("digitalRunCheckBox").checked = digitalRunChecked;
             //document.getElementById("public").checked = publicChecked;
+            
+            // set sub categories
+            var projectSubCategoryNode = document.getElementsByName("project_sub_category")[0];
+            
+            var categoryValue = projectCategoryNode.value;
+            var subValue = projectSubCategoryNode.value;
+            var resetSub = true;
+            
+            if (categoryValue in projectSubCategories) {
+                for (var i = 0; i < projectSubCategories[categoryValue].length; i++) {
+                    if (projectSubCategories[categoryValue][i]["id"] == subValue) {
+                        resetSub = false;
+                        break;
+                    }
+                }
+            }
+            
+            if (resetSub) {            
+                // clear combo options
+                while (projectSubCategoryNode.length > 0) {
+                    projectSubCategoryNode.remove(projectSubCategoryNode.length - 1);
+                }
+                // add new combo options
+                addComboOption(projectSubCategoryNode, projectSubCategories["-1"][0]["name"], projectSubCategories["-1"][0]["id"]);
+                
+                if (categoryValue in projectSubCategories) {
+                    for (var i = 0; i < projectSubCategories[categoryValue].length; i++) {
+                        addComboOption(projectSubCategoryNode, projectSubCategories[categoryValue][i]["name"], projectSubCategories[categoryValue][i]["id"]);
+                    }
+                }
+                
+                disableSelect("project_sub_category", projectSubCategoryNode.length == 1, true);
+            }            
         }
 
         function changeScorecardByCategory(scorecardNode, category, scorecards, scorecardName) {
@@ -1144,7 +1195,7 @@
                         <%-- If creating a new project, show project details table --%>
                         <c:if test="${newProject}">
                             <table class="scorecard" cellpadding="0" width="100%" style="border-collapse:collapse;">
-                                    <tr>
+                                <tr>
                                     <td class="title" colspan="2"><bean:message key="editProject.ProjectDetails.title" /></td>
                                 </tr>
                                 <tr>
@@ -1180,6 +1231,18 @@
                                         </html:select>
                                     </td>
                                 </tr>
+                                <tr class="dark">
+                                    <td class="valueB"><bean:message key="editProject.ProjectDetails.SubCategory" /></td>
+                                    <td class="value" nowrap="nowrap">
+                                        <html:select styleClass="inputBox" property="project_sub_category" style="width:150px;">
+                                            <c:forEach items="${projectSubCategories}" var="subCategory">
+                                                <c:if test="${subCategory.projectCategoryId eq projectForm.map['project_category'] or subCategory.projectCategoryId eq -1}">
+                                                    <html:option key='ProjectSubCategory.${fn:replace(subCategory.name, " ", "")}' value="${subCategory.id}">${subCategory.name}</html:option>
+                                                </c:if>
+                                            </c:forEach>
+                                        </html:select>
+                                    </td>
+                                </tr>                                 
                                 <tr class="light">
                                     <td class="value" nowrap="nowrap">
                                         <b><bean:message key="editProject.ProjectDetails.DRPoints" /></b><br />
@@ -1294,6 +1357,18 @@
                                         </html:select>
                                     </td>
                                 </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+                                <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
+                                    <td class="valueB"><bean:message key="editProject.ProjectDetails.SubCategory" /></td>
+                                    <td class="value" nowrap="nowrap">
+                                        <html:select styleClass="inputBox" property="project_sub_category" style="width:150px;">
+                                            <c:forEach items="${projectSubCategories}" var="subCategory">
+                                                <c:if test="${subCategory.projectCategoryId eq projectForm.map['project_category'] or subCategory.projectCategoryId eq -1}">
+                                                    <html:option key='ProjectSubCategory.${fn:replace(subCategory.name, " ", "")}' value="${subCategory.id}">${subCategory.name}</html:option>
+                                                </c:if>
+                                            </c:forEach>
+                                        </html:select>
+                                    </td>
+                                </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />                                
                                 <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
                                     <td class="value" nowrap="nowrap">
                                         <b><bean:message key="editProject.ProjectDetails.DRPoints" /></b><br />

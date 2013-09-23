@@ -363,4 +363,9 @@
         name="project_payment_management"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_payment_management/trunk"
         revision="227396"/>
+        
+    <component
+        name="project_subtypes_management_services"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_subtypes_management_services/trunk/"
+        revision="229286"/>          
 </components>

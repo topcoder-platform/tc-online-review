@@ -1,13 +1,15 @@
 <%--
-  - Author: FireIce, isv
-  - Version: 1.1
+  - Author: FireIce, isv, tangzx
+  - Version: 1.2
   - Since: Online Review Late Deliverables Search Assembly 1.0
-  - Copyright (C) 2010-2011 TopCoder Inc., All Rights Reserved.
+  - Copyright (C) 2010-2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays late deliverables page
   -
   - Version 1.1 (Online Review Late Deliverables Edit assembly): Added "Advanced Search Parameters" area; added "Edit"
   - button for each of listed late deliverables records and linked them to respective Edit Late Deliverable page.
+  -
+  - Version 1.2 (TC Contest SubTypes OR Updates Assembly) changes: Changed to show sub category if exists.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -282,7 +284,7 @@
                                     </html:link>
                                 </td>
 
-                                <td class="value">${project.projectCategory.name}</td>
+                                <td class="value">${project.subCategory != null ? project.subCategory.name : project.projectCategory.name}</td>
                                 <td class="value">${project.projectStatus.name}</td>
                             </tr>
 

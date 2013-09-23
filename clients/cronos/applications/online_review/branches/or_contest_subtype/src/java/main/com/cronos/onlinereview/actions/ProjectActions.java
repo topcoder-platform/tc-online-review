@@ -47,6 +47,7 @@ import com.cronos.onlinereview.phases.PaymentsHelper;
 import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
 import com.cronos.termsofuse.dao.UserTermsOfUseDao;
 import com.cronos.termsofuse.model.TermsOfUse;
+import com.topcoder.contest.entities.ProjectSubCategory;
 import com.topcoder.management.payment.ProjectPayment;
 import com.topcoder.management.payment.ProjectPaymentManager;
 import com.topcoder.management.payment.search.ProjectPaymentFilterBuilder;
@@ -303,8 +304,24 @@ import com.topcoder.web.ejb.user.UserPreference;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, FireIce, lmmortal, flexme
- * @version 1.15
+ * <p>
+ * Version 1.16 (TC Contest SubTypes OR Updates Assembly v1.0) Change notes:
+ *  <ol>
+ *      <li>Updated {@link #populateProjectForm(HttpServletRequest, LazyValidatorForm, Project)} method
+ *      to add project_sub_category field.</li>
+ *      <li>Updated {@link #populateProjectFormDefaults(LazyValidatorForm, HttpServletRequest)} method
+ *      to add project_sub_category field.</li>
+ *      <li>Updated {@link #loadProjectEditLookups(HttpServletRequest)} method to set
+ *      project sub categories.</li>
+ *      <li>Updated {@link #saveProject(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
+ *      method to save project sub category</li>
+ *      <li>Added {@link #listProjects(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
+ *      method to aggregate projects by sub categories if exists.</li>
+ *  </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, FireIce, lmmortal, flexme, tangzx
+ * @version 1.16
  */
 public class ProjectActions extends DispatchAction {
 
@@ -486,6 +503,9 @@ public class ProjectActions extends DispatchAction {
 
         // Populate default phase duration
         lazyForm.set("addphase_duration", String.valueOf(ConfigHelper.getDefaultPhaseDuration()));
+
+        // set default sub category
+        lazyForm.set("project_sub_category", -1l);        
     }
 
     /**
@@ -512,6 +532,16 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("projectTypes", projectTypes);
         request.setAttribute("projectCategories", projectCategories);
         request.setAttribute("projectCategoriesMap", buildProjectCategoriesLookupMap(projectCategories));
+        
+        List<ProjectSubCategory> subCategories = new ArrayList<ProjectSubCategory>();
+        ProjectSubCategory noSelect = new ProjectSubCategory();
+        noSelect.setId(-1);
+        noSelect.setProjectCategoryId(-1);
+        noSelect.setName("-------------");
+        subCategories.add(noSelect);
+        subCategories.addAll(ActionsHelper.getProjectCategoryService().getAllProjectSubCategories());
+
+        request.setAttribute("projectSubCategories", subCategories);
 
         // Obtain an instance of Resource Manager
         ResourceManager resourceManager = ActionsHelper.createResourceManager();
@@ -633,7 +663,11 @@ public class ProjectActions extends DispatchAction {
         Long projectCategoryId = project.getProjectCategory().getId();
         form.set("project_category", projectCategoryId);
 
-        // Populate project category
+        // Populate project sub category
+        Long projectSubCategoryId = project.getSubCategory() != null ? project.getSubCategory().getId() : -1;
+        form.set("project_sub_category", projectSubCategoryId);
+
+        // Populate project status
         Long projectStatusId = project.getProjectStatus().getId();
         form.set("status", projectStatusId);
 
@@ -1015,6 +1049,18 @@ public class ProjectActions extends DispatchAction {
             project.setProjectCategory(projectCategory);
 
         }
+
+        long subCategoryId = -1;
+        if (lazyForm.get("project_sub_category") != null) {
+            subCategoryId = (Long) lazyForm.get("project_sub_category");
+        }
+        if (subCategoryId == -1) {
+            project.setSubCategory(null);
+        } else {
+            ProjectSubCategory subCategory = new ProjectSubCategory();
+            subCategory.setId(subCategoryId);
+            project.setSubCategory(subCategory);
+        }        
 
         /*
          * Populate the properties of the project
@@ -2857,10 +2903,29 @@ public class ProjectActions extends DispatchAction {
         Arrays.sort(projectTypes, new Comparators.ProjectTypeComparer());
 
         // Get all project categories defined in the database (e.g. Design, Security, etc.)
-        ProjectCategory[] projectCategories = manager.getAllProjectCategories();
+        ProjectCategory[] originalProjectCategories = manager.getAllProjectCategories();
+
+        List<ProjectSubCategory> projectSubCategories =
+                ActionsHelper.getProjectCategoryService().getAllProjectSubCategories();
+
+        Object[] projectCategories = new Object[originalProjectCategories.length + projectSubCategories.size()];
+        Map<Long, ProjectCategory> categoryMap = new HashMap<Long, ProjectCategory>();
+        for (ProjectCategory projectCategory : originalProjectCategories) {
+            categoryMap.put(projectCategory.getId(), projectCategory);
+        }
+
+        boolean[] isSubCategories = new boolean[projectCategories.length];
+        int k = 0;
+        for (ProjectCategory projectCategory : originalProjectCategories) {
+            projectCategories[k] = projectCategory;
+            isSubCategories[k++] = false;
+        }
+        for (ProjectSubCategory subCategory : projectSubCategories) {
+            projectCategories[k] = subCategory;
+            isSubCategories[k++] = true;
+        }
 
         request.setAttribute("projectTypes", projectTypes);
-        request.setAttribute("projectCategories", projectCategories);
 
         ProjectPropertyType[] projectInfoTypes = manager.getAllProjectPropertyTypes();
 
@@ -2893,15 +2958,15 @@ public class ProjectActions extends DispatchAction {
         ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
         if (activeTab != 1) {
             if (activeTab == 4) {
-                ungroupedProjects = projectDataAccess.searchDraftProjects(projectStatuses, projectCategories,
+                ungroupedProjects = projectDataAccess.searchDraftProjects(projectStatuses, originalProjectCategories,
                                                                           projectInfoTypes);
             } else {
-                ungroupedProjects = projectDataAccess.searchActiveProjects(projectStatuses, projectCategories,
+                ungroupedProjects = projectDataAccess.searchActiveProjects(projectStatuses, originalProjectCategories,
                                                                            projectInfoTypes);
             }
         } else {
             // user projects
-            ungroupedProjects = projectDataAccess.searchUserActiveProjects(userId, projectStatuses, projectCategories,
+            ungroupedProjects = projectDataAccess.searchUserActiveProjects(userId, projectStatuses, originalProjectCategories,
                                                                            projectInfoTypes);
         }
 
@@ -2960,8 +3025,18 @@ public class ProjectActions extends DispatchAction {
         for (int i = 0; i < projectCategories.length; ++i) {
             // Count number of projects in this category
             for (Project ungroupedProject : ungroupedProjects) {
-                if (ungroupedProject.getProjectCategory().getId() == projectCategories[i].getId()) {
-                    ++categoryCounts[i];
+                if (ungroupedProject.getSubCategory() == null) {
+                    if (projectCategories[i] instanceof ProjectCategory &&
+                            ungroupedProject.getProjectCategory().getId() ==
+                                    ((ProjectCategory) projectCategories[i]).getId()) {
+                        ++categoryCounts[i];
+                    }
+                } else {
+                    if (projectCategories[i] instanceof ProjectSubCategory &&
+                            ungroupedProject.getSubCategory().getId() ==
+                                    ((ProjectSubCategory) projectCategories[i]).getId()) {
+                        ++categoryCounts[i];
+                    }
                 }
             }
 
@@ -2988,8 +3063,18 @@ public class ProjectActions extends DispatchAction {
                 for (Project ungroupedProject : ungroupedProjects) {
                     // Skip projects that are not in this category
                     // (they'll be processed later, or have already been processed)
-                    if (ungroupedProject.getProjectCategory().getId() != projectCategories[i].getId()) {
-                        continue;
+                    if (ungroupedProject.getSubCategory() == null) {
+                        if (!(projectCategories[i] instanceof ProjectCategory) ||
+                                ungroupedProject.getProjectCategory().getId() !=
+                                        ((ProjectCategory) projectCategories[i]).getId()) {
+                            continue;
+                        }
+                    } else {
+                        if (!(projectCategories[i] instanceof ProjectSubCategory) ||
+                                ungroupedProject.getSubCategory().getId() !=
+                                        ((ProjectSubCategory) projectCategories[i]).getId()) {
+                            continue;
+                        }
                     }
 
                     // Get a project to store in current group
@@ -3046,7 +3131,16 @@ public class ProjectActions extends DispatchAction {
             }
 
             // Fetch Project Category icon's filename depending on the name of the current category
-            categoryIconNames[i] = ConfigHelper.getProjectCategoryIconNameSm(projectCategories[i].getName());
+            String categoryName;
+
+            if (projectCategories[i] instanceof ProjectCategory) {
+                categoryName = ((ProjectCategory) projectCategories[i]).getName();
+            } else {
+                categoryName = categoryMap.get(((ProjectSubCategory) projectCategories[i]).getProjectCategoryId())
+                                .getName();
+            }
+
+            categoryIconNames[i] = ConfigHelper.getProjectCategoryIconNameSm(categoryName);
         }
 
         if (ungroupedProjects.length != 0 && myProjects) {
@@ -3071,10 +3165,24 @@ public class ProjectActions extends DispatchAction {
 
         int totalProjectsCount = 0;
 
+        ProjectCategory[] finalCategories = new ProjectCategory[projectCategories.length];
+        k = 0;
+        for (ProjectCategory projectCategory : originalProjectCategories) {
+            finalCategories[k++] = projectCategory;
+        }
+        for (ProjectSubCategory subCategory : projectSubCategories) {
+            // note here we fill sub category's name into category for rendering purpose
+            ProjectCategory category = new ProjectCategory(
+                    subCategory.getProjectCategoryId(),
+                    subCategory.getName(),
+                    categoryMap.get(subCategory.getProjectCategoryId()).getProjectType());
+            finalCategories[k++] = category;
+        }
+
         // Count projects in every type group now
         for (int i = 0; i < projectTypes.length; ++i) {
-            for (int j = 0; j < projectCategories.length; ++j) {
-                if (projectCategories[j].getProjectType().getId() == projectTypes[i].getId()) {
+            for (int j = 0; j < finalCategories.length; ++j) {
+                if (finalCategories[j].getProjectType().getId() == projectTypes[i].getId()) {
                     typeCounts[i] += categoryCounts[j];
                 }
             }
@@ -3092,6 +3200,8 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("categoryCounts", categoryCounts);
         request.setAttribute("totalProjectsCount", totalProjectsCount);
         request.setAttribute("categoryIconNames", categoryIconNames);
+        request.setAttribute("projectCategories", finalCategories);
+        request.setAttribute("isSubCategories", isSubCategories);
 
         // If the currently displayed list is a list of "My" Projects, add some more attributes
         if (myProjects) {

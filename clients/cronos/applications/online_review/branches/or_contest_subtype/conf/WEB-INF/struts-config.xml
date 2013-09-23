@@ -29,6 +29,7 @@
             <form-property name="project_name" type="java.lang.String" />
             <form-property name="project_type" type="java.lang.Long" />
             <form-property name="project_category" type="java.lang.Long" />
+            <form-property name="project_sub_category" type="java.lang.Long" />
             <form-property name="autopilot" type="java.lang.Boolean" initial="true" />
             <form-property name="email_notifications" type="java.lang.Boolean" />
             <form-property name="no_rate_project" type="java.lang.Boolean" />

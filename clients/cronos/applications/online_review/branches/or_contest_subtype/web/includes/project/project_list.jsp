@@ -1,11 +1,13 @@
 <%--
-  - Author: George1, real_vg, isv
-  - Version: 1.1
-  - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
+  - Author: George1, real_vg, isv, tangzx
+  - Version: 1.2
+  - Copyright (C) 2005 - 2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment renders the list of projects of selected status.
   -
   - Version 1.1 (Impersonation Login Release assembly) changes: Changed project status from Inactive to Draft.
+  -
+  - Version 1.2 (TC Contest SubTypes OR Updates Assembly) changes: Changed to show sub category if needed.
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -28,7 +30,17 @@
     						<img src="/i/${categoryIconNames[idxrCategory.index]}" alt="" width="25" height="17" border="0" align="right"/>
     						<a onclick="return expcollHandler(this)" href="javascript:void(0)" id="Out${idxrCategory.index}" class="Outline"><img
     							id="Out${idxrCategory.index}i" class="Outline" border="0" src="/i/or/plus.gif" width="9" height="9" style="margin-right:5px;" />
-    							<bean:message key="ProjectCategory.${fn:replace(category.name, ' ', '')}" /></a>
+                                
+                                <c:choose>
+                                    <c:when test="${!isSubCategories[idxrCategory.index]}">
+                                        <bean:message key="ProjectCategory.${fn:replace(category.name, ' ', '')}" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <bean:message key="ProjectSubCategory.${fn:replace(category.name, ' ', '')}" />
+                                    </c:otherwise>
+                                </c:choose>
+                                
+                                </a>
     						(${fn:length(projects[idxrCategory.index])})
     					</td>
 						</tr>
