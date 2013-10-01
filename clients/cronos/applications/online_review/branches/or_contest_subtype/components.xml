@@ -62,13 +62,13 @@
 
     <component
         name="project_management"
-        svnpath="https://coder.topcoder.com/tcs/catalog/java/project_management/trunk"
-        revision="224860" />
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/project_management/branches/or_contest_subtype/"
+        revision="235146" />
 
     <component
         name="project_management_persistence"
-        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_management_persistence/trunk"
-        revision="224861" />
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_management_persistence/branches/or_contest_subtype/"
+        revision="235146" />
 
     <component
         name="project_phase_template"
@@ -366,6 +366,6 @@
         
     <component
         name="project_subtypes_management_services"
-        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_subtypes_management_services/trunk/"
-        revision="229286"/>          
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_subtypes_management_services/branches/or_contest_subtype/"
+        revision="235146"/>          
 </components>
