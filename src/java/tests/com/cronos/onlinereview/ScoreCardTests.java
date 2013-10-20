@@ -80,7 +80,7 @@ public class ScoreCardTests extends ProjectTests {
         browser.click("//table[@id='myRolesTable']/tbody/tr[2]/td[2]/a");
         browser.waitForPageToLoad(TIMEOUT);
         // click Edit Scorecard
-        browser.click("//div[@id='mainMiddleContent']/div[1]/div[1]/table[1]/tbody/tr[1]/td[2]/a[2]");
+        browser.click("//div[@id='mainMiddleContent']/div[1]/div[1]/table[1]/tbody/tr[1]/td[2]/a[3]");
         browser.waitForPageToLoad(TIMEOUT);
         browser.select("answer[0]","label=1 - Strongly Disagree");
         browser.click("//input[@alt='Save Changes']");

@@ -559,6 +559,7 @@
     <pathelement location="${ifxjdbc.jar}"/>
     <pathelement location="${junit.jar}"/>
     <pathelement location="${selenium_client.jar}"/>
+    <pathelement location="${guava.jar}"/>
     <path path="${build_testconfdir}"/>
   </path>
 
