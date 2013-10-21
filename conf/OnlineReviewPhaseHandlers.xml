@@ -1348,6 +1348,9 @@
         <Property name="FinalFixPhaseDuration">
             <Value>24</Value>
         </Property>
+        <Property name="StudioFinalFixPhaseDuration">
+            <Value>72</Value>
+        </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
