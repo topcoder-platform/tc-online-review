@@ -126,7 +126,7 @@ public class PRHelper {
             + "and upload_type_id = 1 "
             + "and u.upload_id = s.upload_id " + " and r.project_id = ? ";
 
-    private static final String REVIEW_UPDATE_PROJECT_RESULT_STMT = "update project_result set raw_score = ?  "
+    private static final String REVIEW_UPDATE_PROJECT_RESULT_STMT = "update project_result set valid_submission_ind = 1, rating_ind = 1, raw_score = ?  "
             + "where project_id = ? and user_id = ? ";
 
     private static final String FAILED_PASS_SCREENING_STMT = "update project_result set valid_submission_ind = 0, rating_ind = 0 "
