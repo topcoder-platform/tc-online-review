@@ -18,7 +18,7 @@
 
 
     <path id="script.path">
-        <pathelement location="${tools.components.basedir}/lib/third_party/groovy-all-1.5.7.jar"/>
+        <pathelement location="${tools.components.basedir}/lib/third_party/groovy-all-2.1.9.jar"/>
     </path>
 
     <path id="svn.path">
