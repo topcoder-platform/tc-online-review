@@ -96,6 +96,7 @@
                    includes="**/*.java"
                    debug="true"
                    verbose="${verbose}"
+                   includeantruntime="false"
                    source="1.5"
                    target="1.5">
               <classpath refid="buildlibs"/>
@@ -540,6 +541,7 @@
                    includes="**/*.java"
                    debug="true"
                    verbose="${verbose}"
+                   includeantruntime="false"
                    source="1.5"
                    target="1.5">
               <classpath refid="test.build.classpath"/>

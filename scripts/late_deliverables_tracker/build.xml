@@ -6,7 +6,10 @@
 
     <!-- Import the dependencies of this build file -->
     <import file="${online_review_home}/build-dependencies.xml" optional="yes"/>
-    
+
+    <!-- include ant contrib tasks -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${ant-contrib.jar}"/>
+
     <!--Import the build-components.xml -->
     <property name="components.conf" value="${online_review_home}/components.xml" />
     <property name="components_dir" value="${online_review_home}/components" />
@@ -34,6 +37,7 @@
                 <mkdir dir="${build_classdir}"/>
                 <javac srcdir="${components_src}" destdir="${build_classdir}" includes="**/*.java"
                        debug="${debug}" verbose="${verbose}"
+                       includeantruntime="false"
                        source="1.5" target="1.5">
                     <classpath refid="buildlibs"/>
                 </javac>
