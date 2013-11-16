@@ -134,7 +134,13 @@
           <input addproperty="build.svn.password" message="Please enter svn password: "/>
         </else>
       </if>
-      <svn javahl="false" username="${build.svn.username}" password="${build.svn.password}">
+      <svnSetting
+        id="svn.settings"
+        javahl="false"
+        username="${build.svn.username}"
+        password="${build.svn.password}"
+      />
+      <svn refid="svn.settings">
         <operation />
       </svn>
     </sequential>
