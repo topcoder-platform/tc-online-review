@@ -95,7 +95,8 @@
             <fileset file="${tcwebcommon.jar}"/>
             <fileset file="${shared.jar}"/>
             <fileset file="${jbossall-client.jar}"/>
-            <fileset file="${svnkit.jar}"/>
+            <fileset dir="${ext_libdir}/svnkit" includes="*.jar"/>
+
             <fileset dir=".">
                 <include name="build.xml"/>
             </fileset>
