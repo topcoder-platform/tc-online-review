@@ -80,7 +80,7 @@
     <property name="ant-contrib.jar" value="${ext_libdir}/ant-contrib-1.0b3.jar"/>
     <property name="xerces.jar" value="${ext_libdir}/xerces.jar" />
     <property name="ejb-2_0.jar" value="${ext_libdir}/ejb-2_0.jar" />
-    <property name="svnkit.jar" value="${ext_libdir}/svnkit/svnkit.jar"/>
+    <property name="svnkit.jar" value="${ext_libdir}/svnkit/svnkit-1.8.0-rc1.jar"/>
     <property name="jodconverter.jar" value="${ext_libdir}/jodconverter-2.2.2.jar"/>
 	
 	<property name="aopalliance.jar.name" value="aopalliance.jar" />
@@ -100,6 +100,7 @@
   
     <path id="svnant.lib" >
       <fileset dir="${ext_libdir}/svnant" includes="*.jar" />
+      <fileset dir="${ext_libdir}/svnkit" includes="*.jar" />
     </path>
 
     <path id="spring_libs">

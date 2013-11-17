@@ -137,6 +137,7 @@
       <svnSetting
         id="svn.settings"
         javahl="false"
+        svnkit="true"
         username="${build.svn.username}"
         password="${build.svn.password}"
       />
