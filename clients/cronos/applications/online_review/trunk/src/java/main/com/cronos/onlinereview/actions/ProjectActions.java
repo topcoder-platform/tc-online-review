@@ -303,8 +303,18 @@ import com.topcoder.web.ejb.user.UserPreference;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, FireIce, lmmortal, flexme
- * @version 1.15
+ * <p>
+ * Version 1.16 (Online Review - Iterative Review v1.0) Change notes:
+ *   <ol>
+ *     <li>Added iterative review scorecards.</li>
+ *     <li>Added logic to handle duplicate iterative reviewers.</li>
+ *     <li>Fixed the bug when validation failed during creating new project.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, FireIce, lmmortal, flexme, duxiaoyang
+ * @version 1.16
+ * @since 1.0
  */
 public class ProjectActions extends DispatchAction {
 
@@ -332,7 +342,7 @@ public class ProjectActions extends DispatchAction {
     private static final Set<String> REVIEWER_ROLE_NAMES = new HashSet<String>(Arrays.asList("Reviewer",
         "Accuracy Reviewer", "Failure Reviewer", "Stress Reviewer", "Screener", "Primary Screener", "Aggregator",
         "Final Reviewer", "Approver", "Post-Mortem Reviewer", "Specification Reviewer", "Checkpoint Screener", 
-        "Checkpoint Reviewer"));
+        "Checkpoint Reviewer", "Iterative Reviewer"));
 
     /**
      * <p>A <code>Set</code> holding the IDs for reviewer roles which do not allow duplicate users to be assigned to.
@@ -341,6 +351,13 @@ public class ProjectActions extends DispatchAction {
      * @since 1.8
      */
     private static final Set<Long> NODUPLICATE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(4L, 5L, 6L, 7L));
+
+    /**
+     * <p>A long number holding the ID for iterative reviewer role.</p>
+     *
+     * @since 1.16
+     */
+    private static final long ITERATIVE_REVIEWER_ROLE_ID = 21L;
 
     /**
      * <p>A <code>Set</code> holding the IDs for reviewer roles which do not allow more than one user to be assigned to.
@@ -549,6 +566,7 @@ public class ProjectActions extends DispatchAction {
         Scorecard[] specificationReviewScorecards = searchActiveScorecards(scorecardManager, "Specification Review");
         Scorecard[] checkpointScreeningScorecards = searchActiveScorecards(scorecardManager, "Checkpoint Screening");
         Scorecard[] checkpointReviewScorecards = searchActiveScorecards(scorecardManager, "Checkpoint Review");
+        Scorecard[] iterativeReviewScorecards = searchActiveScorecards(scorecardManager, "Iterative Review");
 
         // Store them in the request
         request.setAttribute("screeningScorecards", screeningScorecards);
@@ -558,6 +576,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("specificationReviewScorecards", specificationReviewScorecards);
         request.setAttribute("checkpointScreeningScorecards", checkpointScreeningScorecards);
         request.setAttribute("checkpointReviewScorecards", checkpointReviewScorecards);
+        request.setAttribute("iterativeReviewScorecards", iterativeReviewScorecards);
         request.setAttribute("defaultScorecards", ActionsHelper.getDefaultScorecards());
 
         // Load phase template names
@@ -1193,6 +1212,10 @@ public class ProjectActions extends DispatchAction {
         // Check if there are any validation errors and return appropriate forward
         if (ActionsHelper.isErrorsPresent(request)) {
             // TODO: Check if the form is really for new project
+            if (verification == null) {
+                verification = new CorrectnessCheckResult();
+                verification.setProject(project);
+            }
             setEditProjectFormData(request, verification, lazyForm);
             setEditProjectPhasesData(lazyForm, projectPhases, true);
             ResourceManager resourceManager = ActionsHelper.createResourceManager();
@@ -2226,6 +2249,7 @@ public class ProjectActions extends DispatchAction {
         // Check for duplicate reviewers and disallowed resource roles
         Set<String> disabledResourceRoles = new HashSet<String>(Arrays.asList(ConfigHelper.getDisabledResourceRoles()));
         Set<String> reviewerHandles = new HashSet<String>();
+        Set<String> iterativeReviewerHandles = new HashSet<String>();
         Map<String, String> primaryReviewerRoles = new HashMap<String, String>();
 
         // Obtain the instance of the Resource Manager
@@ -2277,6 +2301,15 @@ public class ProjectActions extends DispatchAction {
                         }
                     } else {
                         primaryReviewerRoles.put(resourceKey, handle);
+                    }
+                } else if (ITERATIVE_REVIEWER_ROLE_ID == resourceRoleId) {
+                    if (iterativeReviewerHandles.contains(handle)) {
+                        ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                "error.com.cronos.onlinereview.actions."
+                                        + "editProject.Resource.DuplicateIterativeReviewerRole");
+                        allResourcesValid = false;
+                    } else {
+                        iterativeReviewerHandles.add(handle);
                     }
                 }
                 // Check if the phase related to resource role exists

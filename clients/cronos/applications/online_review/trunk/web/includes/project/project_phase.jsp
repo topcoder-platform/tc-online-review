@@ -1,6 +1,6 @@
 <%--
-  - Author: isv, rac_, flexme
-  - Version: 1.6
+  - Author: isv, rac_, flexme, duxiaoyang
+  - Version: 1.7
   - Copyright (C) 2004 - 2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment displays the content of tab for single project phase on Project Details screen.
@@ -23,6 +23,9 @@
   -
   - Version 1.6 (Online Review - Project Payments Integration Part 1 v1.0) changes: Add advance link for the checkpoint submissions
   - which failed checkpoint screening
+  -
+  - Version 1.7 (Online Review - Iterative Review v1.0) changes:
+  - - Added iterative review tab and its content.
 --%>
 <%@page import="com.topcoder.shared.util.ApplicationServer"%>
 <%@ page language="java" isELIgnored="false" %>
@@ -128,6 +131,12 @@
                                 <c:set var="prevSubm" value="${group.pastSubmissions}" />
                                 <c:set var="prevSubmissions" value="" />
                                 <c:forEach items="${group.submissions}" var="submission" varStatus="submissionStatus">
+                                    <c:set var="underIterativeReview" value="false"/>
+                                    <c:forEach items="${phaseGroups}" var="grp">
+                                        <c:if test='${grp.appFunc == "ITERATIVEREVIEW" and grp.iterativeReviewSubmission.id eq submission.id}'>
+                                            <c:set var="underIterativeReview" value="true"/>
+                                        </c:if>
+                                    </c:forEach>
                                     <c:set var="submitter" value="" />
                                     <c:set var="submissionStatusName" value="${submission.submissionStatus.name}" />
                                     <c:forEach items="${group.submitters}" var="curSubmitter">
@@ -177,22 +186,34 @@
                                                     <html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" alt="${placeStr}" border="0" />
                                                 </c:if>
                                             </c:if>
-                                            <c:if test="${project.projectCategory.projectType.id ne 3}">
-                                                <html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
+                                            <c:if test="${not downloadCurrentIterativeReview || underIterativeReview}">
+	                                            <c:if test="${project.projectCategory.projectType.id ne 3}">
+	                                                <html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
+	                                            </c:if>
+	                                            <c:if test="${project.projectCategory.projectType.id eq 3}">
+	                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<bean:message key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+	                                            </c:if>
+	                                            <c:if test="${not empty submitter}">
+	                                                (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
+	                                            </c:if>
                                             </c:if>
-                                            <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<bean:message key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
-                                            </c:if>
-                                            <c:if test="${not empty submitter}">
-                                                (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
+                                            <c:if test="${downloadCurrentIterativeReview && not underIterativeReview}">
+                                                ${submission.id}
+                                                <c:if test="${not empty submitter}">
+                                                    (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
+                                                </c:if>
                                             </c:if>
                                         </td>
+                                        <%--
                                         <c:if test="${isManager}">
                                             <td class="value" width="5%"><html:link page="/actions/DeleteSubmission.do?method=deleteSubmission&uid=${submission.upload.id}"><html:img srcKey="viewProjectDetails.box.Submission.icoTrash.img" altKey="viewProjectDetails.box.Submission.icoTrash.alt" border="0" styleClass="Outline" /></html:link></td>
                                         </c:if>
                                         <c:if test="${not isManager}">
+                                        --%>
                                             <td class="value"><!-- @ --></td>
+                                        <%--
                                         </c:if>
+                                        --%>
                                         <td class="value" width="22%">${orfn:displayDate(pageContext.request, submission.upload.creationTimestamp)}</td>
                                         <c:set var="screener" value="" />
                                         <c:forEach items="${group.reviewers}" var="reviewer">
@@ -1246,6 +1267,127 @@
 </script>
                             </c:if>
                             <c:set var="submBoxIdx" value="${submBoxIdx + 1}" />
+                        </c:when>
+                        <c:when test='${group.appFunc == "ITERATIVEREVIEW"}'>
+                            <table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+                                <c:set var="colSpan" value="${fn:length(group.iterativeReviewers) + 2}" />
+
+                                <c:set var="canEditIterativeReviewForThisPhase" value="${isAllowedToEditHisIterativeReview}" />
+                                <c:if test="${group.iterativeReviewPhase.phaseStatus.name eq 'Closed'}">
+                                    <c:set var="canEditIterativeReviewForThisPhase" value="false" />
+                                </c:if>
+
+                                <c:if test="${not canEditIterativeReviewForThisPhase}">
+                                    <c:set var="colSpan" value="${colSpan + 1}" />
+                                </c:if>
+                                <tr>
+                                    <td class="title" colspan="${colSpan}">${group.tableName}</td>
+                                </tr>
+                                <tr>
+                                    <td class="value" colspan="${(canEditIterativeReviewForThisPhase) ? 2 : 3}"><!-- @ --></td>
+                                    <c:forEach items="${group.iterativeReviewers}" var="reviewer">
+                                        <td class="valueC" nowrap="nowrap">
+                                            <b><bean:message key='ResourceRole.${fn:replace(reviewer.resourceRole.name, " ", "")}' />:</b>
+                                            <tc-webtag:handle coderId='${reviewer.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />
+                                        </td>
+                                    </c:forEach>
+                                </tr>
+                                <tr>
+                                    <td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
+                                    <td class="headerC" width="12%"><bean:message key="viewProjectDetails.box.Review.Date" arg0="${group.groupIndex}" /></td>
+                                    <c:if test="${canEditIterativeReviewForThisPhase != true}">
+                                        <td class="headerC" width="12%"><bean:message key="viewProjectDetails.box.Review.Score" arg0="${group.groupIndex}" /></td>
+                                    </c:if>
+                                    <c:forEach items="${group.iterativeReviewers}" var="reviewer">
+                                        <td class="headerC" width="12%"><bean:message key="viewProjectDetails.box.Review.Score.short" /></td>
+                                    </c:forEach>
+                                </tr>
+                                <c:if test="${group.iterativeReviewSubmission ne null}">
+                                    <c:set var="submission" value="${group.iterativeReviewSubmission}"/>
+                                    <c:set var="submissionStatusName" value="${submission.submissionStatus.name}" />
+                                    <tr class='light'>
+                                        <td class="value" nowrap="nowrap">
+                                            <c:set var="placement" value="${submission.placement}" />
+                                            <c:set var="failedReview" value="${(submissionStatusName == 'Failed Screening') or (submissionStatusName == 'Failed Review')}" />
+                                            <c:if test="${(not empty placement) and (not failedReview)}">
+                                                <c:choose>
+                                                    <c:when test="${placement == 1}">
+                                                        <html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" styleClass="Outline" border="0" />
+                                                    </c:when>
+                                                    <c:when test="${placement == 2}">
+                                                        <html:img srcKey="viewProjectDetails.Submitter.icoRunnerUp.img" altKey="viewProjectDetails.Submitter.icoRunnerUp.alt" styleClass="Outline" border="0" />
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <html:img srcKey="viewProjectDetails.Submitter.icoOther.img" alt="${placement} Place" styleClass="Outline" border="0" />
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:if>
+                                            <c:if test="${failedReview}">
+                                                <c:set var="failureKeyName" value='SubmissionStatus.${fn:replace(submissionStatusName, " ", "")}' />
+                                                <c:if test="${empty placement}">
+                                                    <html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" altKey="${failureKeyName}" border="0" />
+                                                </c:if>
+                                                <c:if test="${not empty placement}">
+                                                    <c:set var="placeStr" value="${orfn:getMessage(pageContext, failureKeyName)} (Place ${placement})" />
+                                                    <html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" alt="${placeStr}" border="0" />
+                                                </c:if>
+                                            </c:if>                                   
+                                            <c:if test="${project.projectCategory.projectType.id ne 3}">
+                                                <html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
+                                            </c:if>
+                                            <c:if test="${project.projectCategory.projectType.id eq 3}">
+                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<bean:message key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                            </c:if>                  
+                                            <c:if test="${isManager || group.iterativeReviewPhase.phaseStatus.name eq 'Closed'}">                              
+                                                (<tc-webtag:handle coderId='${group.iterativeReviewSubmitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
+                                            </c:if>
+                                        </td>
+                                        <td class="valueC" width="12%">${orfn:displayDateBr(pageContext.request, group.reviewDates[0])}</td>
+                                        <c:if test="${not canEditIterativeReviewForThisPhase}">
+                                            <c:if test="${not empty submission}">
+                                                <c:set var="finalScore" value='${submission.finalScore}' />
+                                            </c:if>
+                                            <c:if test="${not empty finalScore}">
+                                                <td class="valueC" width="12%"><html:link page="/actions/ViewCompositeScorecard.do?method=viewCompositeScorecard&sid=${submission.id}&phid=${group.iterativeReviewPhase.id}">${orfn:displayScore(pageContext.request, finalScore)}</html:link></td>
+                                            </c:if>
+                                            <c:if test="${empty finalScore}">
+                                                <td class="valueC" width="12%"><bean:message key="Incomplete" /></td>
+                                            </c:if>
+                                        </c:if>
+                                        <c:forEach items="${group.iterativeReviewReviews}" var="review" varStatus="reviewStatus">
+                                            <c:if test="${(empty review) or (not group.displayReviewLinks)}">
+                                                <c:if test="${canEditIterativeReviewForThisPhase && group.displayReviewLinks}">
+                                                    <td class="valueC" width="12%" nowrap="nowrap"><html:link
+                                                        page="/actions/CreateIterativeReview.do?method=createIterativeReview&sid=${submission.id}"><b><bean:message
+                                                        key="viewProjectDetails.box.IterativeReview.Submit" /></b></html:link></td>
+                                                </c:if>
+                                                <c:if test="${(not canEditIterativeReviewForThisPhase) || (not group.displayReviewLinks)}">
+                                                    <td class="valueC" width="12%"><bean:message key="NotAvailable" /></td>
+                                                </c:if>
+                                            </c:if>
+                                            <c:if test="${(not empty review) && group.displayReviewLinks}">
+                                                <c:if test="${review.committed}">
+                                                    <td class="valueC" width="12%"><html:link
+                                                        page="/actions/ViewIterativeReview.do?method=viewIterativeReview&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
+                                                </c:if>
+                                                <c:if test="${not review.committed}">
+                                                    <c:if test="${canEditIterativeReviewForThisPhase}">
+                                                        <td class="valueC" width="12%"><html:link
+                                                            page="/actions/EditIterativeReview.do?method=editIterativeReview&rid=${review.id}"><b><bean:message
+                                                            key="viewProjectDetails.box.Review.Submit" /></b></html:link></td>
+                                                    </c:if>
+                                                    <c:if test="${not canEditIterativeReviewForThisPhase}">
+                                                        <td class="valueC" width="12%"><bean:message key="Pending" /></td>
+                                                    </c:if>
+                                                </c:if>
+                                            </c:if>
+                                        </c:forEach>
+                                    </tr>
+                                </c:if>
+                                <tr>
+                                    <td class="lastRowTD" colspan="${colSpan}"><!-- @ --></td>
+                                </tr>
+                            </table>
                         </c:when>
                     </c:choose>
                 </c:if>

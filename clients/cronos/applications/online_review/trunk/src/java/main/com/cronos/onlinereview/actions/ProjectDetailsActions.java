@@ -23,6 +23,7 @@ import com.topcoder.management.payment.ProjectPayment;
 import com.topcoder.management.payment.search.ProjectPaymentFilterBuilder;
 import com.topcoder.management.project.Prize;
 import com.topcoder.management.project.PrizeType;
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -244,8 +245,17 @@ import com.topcoder.util.file.templatesource.FileTemplateSource;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, FireIce, rac_, flexme
- * @version 1.12
+ * <p>
+ * Version 1.13 (Online Review - Iterative Review v1.0) Change notes:
+ *   <ol>
+ *       <li>Added logic to handle iterative review deliverables.</li>
+ *       <li>Modified handleDownloadSubmission method to handle download submission with iterative review phase.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, FireIce, rac_, flexme, duxiaoyang
+ * @version 1.13
+ * @since 1.0
  */
 public class ProjectDetailsActions extends DispatchAction {
 
@@ -786,6 +796,9 @@ public class ProjectDetailsActions extends DispatchAction {
                                 ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null ||
                                 ActionsHelper.getPhase(phases, true, Constants.APPEALS_PHASE_NAME) != null ||
                                 ActionsHelper.getPhase(phases, true, Constants.APPEALS_RESPONSE_PHASE_NAME) != null));
+        request.setAttribute("isAllowedToEditHisIterativeReview",
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ITERATIVE_REVIEWER_REVIEWS_PERM_NAME)
+                        && ActionsHelper.getPhase(phases, true, Constants.ITERATIVE_REVIEW_PHASE_NAME) != null);
         request.setAttribute("isAllowedToUploadTC",
                 AuthorizationHelper.hasUserPermission(request, Constants.UPLOAD_TEST_CASES_PERM_NAME));
         request.setAttribute("isAllowedToPerformAggregation",
@@ -2609,6 +2622,25 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else {
                     links[i] = "ViewReview.do?method=viewReview&rid=" + review.getId();
                 }
+            } else if (delivName.equalsIgnoreCase(Constants.ITERATIVE_REVIEW_DELIVERABLE_NAME)) {
+                // Skip deliverables with empty Submission ID field,
+                // as no links can be generated for such deliverables
+                if (deliverable.getSubmission() == null) {
+                    continue;
+                }
+
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(),
+                        LookupHelper.getScorecardType("Iterative Review"),
+                        deliverable.getSubmission(), deliverable.getResource(), false);
+
+                if (review == null) {
+                    links[i] = "CreateIterativeReview.do?method=createIterativeReview&sid=" +
+                            deliverable.getSubmission();
+                } else if (!review.isCommitted()) {
+                    links[i] = "EditIterativeReview.do?method=editIterativeReview&rid=" + review.getId();
+                } else {
+                    links[i] = "ViewIterativeReview.do?method=viewIterativeReview&rid=" + review.getId();
+                }
             } else if (delivName.equalsIgnoreCase(Constants.CHECKPOINT_REVIEW_DELIVERABLE_NAME)) {
                 if (deliverable.getSubmission() == null) {
                     continue;
@@ -3144,72 +3176,57 @@ public class ProjectDetailsActions extends DispatchAction {
                 return ActionsHelper.produceErrorReport(
                         mapping, getResources(request), request, "ViewSubmission", "Error.NoScreeningPassed", null);
             }
-        }
-
-        // the download validation for custom components is different
-        String rootCatalogId = (String)((verification.getProject()).getProperty("Root Catalog ID"));
-        boolean custom = ConfigHelper.isCustomRootCatalog(rootCatalogId);
-
-        boolean mayDownload = (custom ?
-            AuthorizationHelper.hasUserPermission(request, downloadCustomSubmissionPermissionName) :
-            AuthorizationHelper.hasUserPermission(request, viewWinningSubmissionPermissionName));
-
-        if (noRights && mayDownload) {
-            // Obtain an instance of Resource Manager
-            ResourceManager resMgr = ActionsHelper.createResourceManager();
-            Resource submitter = resMgr.getResource(upload.getOwner());
-            UploadManager upMgr = ActionsHelper.createUploadManager();
-            Long[] subIds = submitter.getSubmissions();
-            Submission submission = null;
-            for (Long subId : subIds) {
-                submission = upMgr.getSubmission(subId);
-                if (submission.getUpload().getId() == upload.getId()) {
-                    break;
+            
+            // Submitters can download others' contest submissions and checkpoint submissions only
+            // after the Appeals Response phase (or Review phase if Appeals Response phase is not present)
+            // is closed. This also takes care of contests with Iterative Review phase, for which submitters
+            // can't download others' submissions at all.
+            if (submissionType == 1 || submissionType == 3) {
+                Phase reviewPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.APPEALS_RESPONSE_PHASE_NAME);
+                if (reviewPhase == null) {
+                    reviewPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.REVIEW_PHASE_NAME);
                 }
-            }
-
-            // OrChange - Placement is retrieved from submission instead of resource
-            if (submission.getPlacement() != null && submission.getPlacement() == 1) {
-                noRights = false;
-            }
-        }
-
-        mayDownload = (custom ? AuthorizationHelper.hasUserPermission(request, downloadCustomSubmissionPermissionName)
-                              : (submissionType == 1
-                                 && AuthorizationHelper.hasUserPermission(request,
-                                                                          Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME)
-                                 ||
-                                 submissionType == 3
-                                 && AuthorizationHelper.hasUserPermission(request,
-                                                                          Constants.VIEW_RECENT_CHECKPOINT_SUBMISSIONS_AFTER_REVIEW_PERM_NAME)));
-
-        if (noRights && mayDownload) {
-            // Obtain an instance of Resource Manager
-            ResourceManager resMgr = ActionsHelper.createResourceManager();
-            Resource submitter = resMgr.getResource(upload.getOwner());
-            UploadManager upMgr = ActionsHelper.createUploadManager();
-            Long[] subIds = submitter.getSubmissions();
-            Submission submission = null;
-            for (Long subId : subIds) {
-                submission = upMgr.getSubmission(subId);
-                if (submission.getUpload().getId() == upload.getId()) {
-                    break;
-                }
-            }
-            //          OrChange - Placement is retrieved from submission instead of resource
-            if (submission.getPlacement() != null && submission.getPlacement() > 0) {
-                if (submissionType == 3) {
-                    Phase reviewPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.APPEALS_RESPONSE_PHASE_NAME);
-                    if (reviewPhase == null) {
-                        reviewPhase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
-                    }
-                    boolean isReviewFinished = (reviewPhase != null) && (reviewPhase.getPhaseStatus().getId() == 3);
-                    if (isReviewFinished) {
-                        noRights = false;
-                    }
-                } else {
+                boolean isReviewFinished = (reviewPhase != null) && (reviewPhase.getPhaseStatus().getId() == 3);
+                if (isReviewFinished) {
                     noRights = false;
                 }
+            }
+        }
+
+        if (noRights && submissionType == 1
+                && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_CURRENT_ITERATIVE_REVIEW_SUBMISSION)) {
+            Submission[] submissions = ActionsHelper.getProjectSubmissions(upload.getProject(),
+                    Constants.CONTEST_SUBMISSION_TYPE_NAME, null, false);
+            Submission earliestSubmission = null;
+            Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.ITERATIVE_REVIEWER_ROLE_NAME);
+            List<Filter> filters = new ArrayList<Filter>();
+            Filter filterScorecard = new EqualToFilter("scorecardType", LookupHelper.getScorecardType("Iterative Review").getId());
+            Filter filterReviewer = new EqualToFilter("reviewer", resource.getId());
+            filters.add(filterScorecard);
+            filters.add(filterReviewer);
+            Filter filterForReviews = new AndFilter(filters);
+            ReviewManager revMgr = ActionsHelper.createReviewManager();
+            Review[] reviews = revMgr.searchReviews(filterForReviews, false);
+            for (Submission submission : submissions) {
+                // Find the earliest active submission, i.e. the next one in the queue.
+                if (submission.getSubmissionStatus().getName().equals("Active") && (earliestSubmission == null
+                        || earliestSubmission.getCreationTimestamp().compareTo(submission.getCreationTimestamp()) > 0)) {
+                    earliestSubmission = submission;
+                }
+                // If this reviewer already has a review scorecard submitted for this submission, that reviewer can
+                // download the submission.
+                if (submission.getUpload().getId() == upload.getId()) {
+                    for (Review review : reviews) {
+                        if (review.getSubmission() == submission.getId()) {
+                            noRights = false;
+                        }
+                    }
+                }
+            }
+            
+            // If it's the "current" submission (i.e. the next one in the queue), the reviewer can download the submission.
+            if (earliestSubmission != null && earliestSubmission.getUpload().getId() == upload.getId()) {
+                noRights = false;
             }
         }
 

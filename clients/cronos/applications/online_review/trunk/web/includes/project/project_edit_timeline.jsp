@@ -1,7 +1,7 @@
 <%--
-  - Author: isv, TCSDEVELOPER
-  - Version: 1.3.1
-  - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
+  - Author: isv, TCSDEVELOPER, duxiaoyang
+  - Version: 1.3.3
+  - Copyright (C) 2004 - 2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment displays the form input elements group for editing the timeline and other
   - parameters for single project phase.
@@ -16,7 +16,10 @@
   -
   - Version 1.3.1 (Checkpoint Support assembly) changes: Added support for Checkpoint phases.
   -
-  - Version 1.3.2 (Online Review Phases 1.6.1 integration): removed Manual and Auto Screening support for Submissions phase. 
+  - Version 1.3.2 (Online Review Phases 1.6.1 integration): removed Manual and Auto Screening support for Submissions phase.
+  -
+  - Version 1.3.3 (Online Review - Iterative Review v1.0) changes:
+  - - Added iterative review scorecard list.
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -421,6 +424,34 @@
                     <script type="text/javascript">
                         <!--
                          checkpointReviewScorecardNodes[checkpointReviewScorecardNodes.length]
+                             = document.getElementsByName("phase_scorecard[${phaseIdx}]")[0];
+                        -->
+                    </script>
+                </td>
+            </tr>
+        </c:if>
+        <c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_scorecard'][phaseIdx] and projectForm.map['phase_name'][phaseIdx] eq 'Iterative Review')}">
+            <tr class="highlighted" ${(phaseIdx eq 0) ? 'id="iterative_review_scorecard_row_template" style="display:none;"' : ''}>
+                <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
+                <td class="value" colspan="4">
+                    <bean:message key="editProject.Phases.Criteria.ReviewNumber.beforeInput" />
+                    <html:text style="width:30px;text-align:right;" styleClass="inputBox" disabled="${isPhaseClosed}"
+                        size="30" property="phase_required_reviewers[${phaseIdx}]" />
+                    &#160;<bean:message key="editProject.Phases.Criteria.ReviewNumber.afterInput" /><br />
+                    <bean:message key="editProject.Phases.Criteria.Scorecard" />
+                    <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" disabled="${isPhaseClosed}">
+
+                        <c:forEach items="${iterativeReviewScorecards}" var="scorecard">
+                            <c:if test="${(newProject && scorecard.category == 1)
+                                          or (not newProject && project.projectCategory.id == scorecard.category)
+                                          or projectCategoriesMap[scorecard.category].projectType.generic}">
+                            <html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>
+                            </c:if>
+                        </c:forEach>
+                    </html:select>
+                    <script type="text/javascript">
+                        <!--
+                         iterativeReviewScorecardNodes[iterativeReviewScorecardNodes.length]
                              = document.getElementsByName("phase_scorecard[${phaseIdx}]")[0];
                         -->
                     </script>

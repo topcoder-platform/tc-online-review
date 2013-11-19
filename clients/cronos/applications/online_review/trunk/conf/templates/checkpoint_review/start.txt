@@ -13,7 +13,7 @@ Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
 
 %if:NEED_REVIEWER='1'%
 <p>
-<font color\="red"><b>The project has only %N_REVIEWERS% of %N_REQUIRED_REVIEWERS% required reviewers assigned!</b></font>
+<font color\="red"><b>The contest has only %N_REVIEWERS% of %N_REQUIRED_REVIEWERS% required reviewers assigned!</b></font>
 </p>
 %endif%
 

@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.late.LateDeliverable;
 import com.topcoder.management.payment.ProjectPayment;
 import com.topcoder.management.project.Prize;
@@ -62,15 +61,23 @@ import com.topcoder.project.phases.PhaseStatus;
  * </p>
  *
  * <p>
- * Version 1.1.3 (Online Review - Project Payments Integration Part 2 v1.0) Change notes:
+ * Version 1.1.4 (Online Review - Project Payments Integration Part 2 v1.0) Change notes:
  *   <ol>
  *     <li>Added {@link ProjectPaymentComparator} class to compare Prize.</li>
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.1.5 (Online Review - Iterative Review v1.0) Change notes:
+ *   <ol>
+ *     <li>Modified {@link ProjectPhaseComparer} class to compare iterative review phase.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1
- * @author real_vg, isv, FireIce, flexme
- * @version 1.1.4
+ * @author real_vg, isv, FireIce, flexme, duxiaoyang
+ * @version 1.1.5
+ * @since 1.0
  */
 final class Comparators {
 
@@ -99,7 +106,7 @@ final class Comparators {
             Constants.SPECIFICATION_SUBMISSION_PHASE_NAME, Constants.SPECIFICATION_REVIEW_PHASE_NAME,
             Constants.REGISTRATION_PHASE_NAME, Constants.CHECKPOINT_SUBMISSION_PHASE_NAME, 
             Constants.CHECKPOINT_SCREENING_PHASE_NAME, Constants.CHECKPOINT_REVIEW_PHASE_NAME, 
-            Constants.SUBMISSION_PHASE_NAME, Constants.SCREENING_PHASE_NAME,
+            Constants.SUBMISSION_PHASE_NAME, Constants.ITERATIVE_REVIEW_PHASE_NAME, Constants.SCREENING_PHASE_NAME,
             Constants.REVIEW_PHASE_NAME, Constants.APPEALS_PHASE_NAME, Constants.APPEALS_RESPONSE_PHASE_NAME,
             Constants.AGGREGATION_PHASE_NAME, Constants.AGGREGATION_REVIEW_PHASE_NAME, Constants.FINAL_FIX_PHASE_NAME,
             Constants.FINAL_REVIEW_PHASE_NAME, Constants.APPROVAL_PHASE_NAME
@@ -156,6 +163,18 @@ final class Comparators {
                 final int ranking2 = getPhaseRanking((Phase) o2);
                 return ranking1 - ranking2;
             }
+
+			// iterative review phase is always listed after submission phase
+			boolean isPhase1IterativeReview = phase1.getPhaseType().getName()
+					.equalsIgnoreCase(Constants.ITERATIVE_REVIEW_PHASE_NAME);
+			boolean isPhase2IterativeReview = phase2.getPhaseType().getName()
+					.equalsIgnoreCase(Constants.ITERATIVE_REVIEW_PHASE_NAME);
+			if ((isPhase1IterativeReview || isPhase2IterativeReview)
+					&& !(isPhase1IterativeReview && isPhase2IterativeReview)) {
+				final int ranking1 = getPhaseRanking(phase1);
+				final int ranking2 = getPhaseRanking(phase2);
+				return ranking1 - ranking2;
+			}
 
             int comparison = super.compare(o1, o2);
             if (comparison != 0) {
@@ -296,8 +315,8 @@ final class Comparators {
 
     /**
      * This class implements <code>Comparator</code> interface and is used to sort Submissions in
-     * array. It sorts Submissions either by the time they were submitted (starting from the most
-     * recent ones), or by the place submission took up.
+     * array. It sorts Submissions either by the time they were submitted,
+     * or by the place submission took up.
      */
     static class SubmissionComparer implements Comparator<Submission> {
 
@@ -335,8 +354,8 @@ final class Comparators {
             // or by their upload times, which are the creation times of their respective uploads
             return ((finalScore1.compareTo(finalScore2) != 0)
             		? finalScore2.compareTo(finalScore1)
-            		: submission2.getUpload().getCreationTimestamp().compareTo(
-            				submission1.getUpload().getCreationTimestamp()));
+            		: submission1.getUpload().getCreationTimestamp().compareTo(
+            				submission2.getUpload().getCreationTimestamp()));
         }
 
         /**

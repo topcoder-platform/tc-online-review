@@ -48,13 +48,20 @@ import java.util.Set;
  * <p>
  * This class is the helper class used to process the payments for the resources in automatic payments mode.
  * </p>
+ * <p>
+ * Changes in version 1.1 (Online Review - Iterative Review v1.0):
+ * <ul>
+ * <li>Added payment calculation for iterative reviewer role.</li>
+ * </ul>
+ * </p>
  *
  * <p>
  * Thread-safety: This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
- * @author flexme
- * @version 1.0 (Online Review - Project Payments Integration Part 3 v1.0)
+ * @author flexme, duxiaoyang
+ * @version 1.1
+ * @since 1.0
  */
 public final class PaymentsHelper {
     /**
@@ -75,7 +82,8 @@ public final class PaymentsHelper {
             Constants.ROLE_STRESS_REVIEWER,
             Constants.ROLE_AGGREGATOR,
             Constants.ROLE_FINAL_REVIEWER,
-            Constants.ROLE_POST_MORTEM_REVIEWER));
+            Constants.ROLE_POST_MORTEM_REVIEWER,
+            Constants.ROLE_ITERATIVE_REVIEWER));
     /**
      * The copilot resource roles.
      */
@@ -97,7 +105,8 @@ public final class PaymentsHelper {
             Constants.ROLE_STRESS_REVIEWER,
             Constants.ROLE_AGGREGATOR,
             Constants.ROLE_POST_MORTEM_REVIEWER,
-            Constants.ROLE_COPILOT
+            Constants.ROLE_COPILOT,
+            Constants.ROLE_ITERATIVE_REVIEWER
     ));
     /**
      * The resource roles which belongs to resource role domain.

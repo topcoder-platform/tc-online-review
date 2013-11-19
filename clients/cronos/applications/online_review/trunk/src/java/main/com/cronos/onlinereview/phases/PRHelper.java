@@ -90,8 +90,16 @@ import com.topcoder.db.connectionfactory.DBConnectionFactory;
  *   </ol>
  * </p>
  *
- * @author brain_cn, FireIce, isv, flexme
- * @version 1.3
+ * <p>
+ * Version 1.4 (Online Review - Iterative Review v1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #processIterativeReviewPR(ManagerHelper, Phase, String, boolean)} method to process iterative
+ *     review phase.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author brain_cn, FireIce, isv, flexme, duxiaoyang
+ * @version 1.4
  */
 public class PRHelper {
 
@@ -327,7 +335,7 @@ public class PRHelper {
         boolean paymentsProcessed = false;
         try {
             if (!toStart) {
-                // if reivew phase is last one and there is at least one active submission complete the project.
+                // if review phase is last one and there is at least one active submission complete the project.
                 if (isLastPhase(phase)) {
                     Submission [] activeSubs = PhasesHelper.getActiveProjectSubmissions(managerHelper.getUploadManager(),
                         projectId, Constants.SUBMISSION_TYPE_CONTEST_SUBMISSION);
@@ -374,6 +382,32 @@ public class PRHelper {
             close(pstmt);
             close(updateStmt);
             close(conn);
+        }
+    }
+
+    /**
+     * Processes iterative review phase. Calculates payments and completes project if it is the last phase.
+     *
+     * @param managerHelper
+     *            the <code>ManagerHelper</code> instance.
+     * @param phase
+     *            the corresponding iterative review phase.
+     * @param operator
+     *            the operator.
+     * @param toStart
+     *            whether the phase is to start or not.
+     * @throws PhaseHandlingException
+     *             if error occurs
+     */
+    void processIterativeReviewPR(ManagerHelper managerHelper, Phase phase, String operator, boolean toStart) throws PhaseHandlingException {
+        long projectId = phase.getProject().getId();
+        if (!toStart) {
+            // if reivew phase is last one, complete the project.
+            if (isLastPhase(phase)) {
+                completeProject(managerHelper, phase, operator);
+            }
+
+            PaymentsHelper.processAutomaticPayments(projectId, operator);
         }
     }
 

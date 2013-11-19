@@ -4010,6 +4010,9 @@
             <Property name="Specification Review">
                 <Value>26</Value>
             </Property>
+            <Property name="Iterative Review">
+                <Value>30</Value>
+            </Property>
         </Property>
 
         <Property name="Defaults">
@@ -4029,6 +4032,9 @@
             </Property>
             <Property name="RequiredReviewers">
                 <Value>3</Value>
+            </Property>
+            <Property name="RequiredIterativeReviewers">
+                <Value>1</Value>
             </Property>
             <Property name="DeadlineNearDuration">
                 <Value>2</Value>
@@ -4121,6 +4127,7 @@
                 <Value>9</Value> <!-- Final Reviewer -->
                 <Value>19</Value> <!-- Checkpoint Screener -->
                 <Value>20</Value> <!-- Checkpoint Reviewer -->
+                <Value>21</Value> <!-- Iterative Reviewer -->
             </Property>
             <Property name="Managers/Copilots/Observers">
                 <Value>13</Value> <!-- Manager -->
@@ -4200,6 +4207,7 @@
                 <Value>Client Manager</Value>
                 <Value>Checkpoint Screener</Value>
                 <Value>Checkpoint Reviewer</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="View Projects">
                 <Value>Global Manager</Value>
@@ -4229,6 +4237,7 @@
                 <Value>Client Manager</Value>
                 <Value>Checkpoint Screener</Value>
                 <Value>Checkpoint Reviewer</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="View Cockpit Project Name">
                 <Value>Global Manager</Value>
@@ -4261,6 +4270,7 @@
                 <Value>Client Manager</Value>
                 <Value>Checkpoint Screener</Value>
                 <Value>Checkpoint Reviewer</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="View Project Resources">
                 <Value>Global Manager</Value>
@@ -4310,6 +4320,7 @@
                 <Value>Copilot</Value>
                 <Value>Checkpoint Screener</Value>
                 <Value>Checkpoint Reviewer</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="Contact Project Managers">
                 <Value>Global Manager</Value>
@@ -4334,6 +4345,7 @@
                 <Value>Client Manager</Value>
                 <Value>Checkpoint Screener</Value>
                 <Value>Checkpoint Reviewer</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="View Registrations">
                 <Value>Global Manager</Value>
@@ -4413,6 +4425,9 @@
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
+            <Property name="View Current Iterative Review Submission">
+                <Value>Iterative Reviewer</Value>
+            </Property>
             <Property name="View Most Recent Specification Submissions">
                 <Value>Observer</Value>
                 <Value>Specification Reviewer</Value>
@@ -4435,6 +4450,7 @@
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="View Most Recent Checkpoint Submissions After Review">
                 <Value>Submitter</Value>
@@ -4491,6 +4507,7 @@
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="Perform Checkpoint Screening">
                 <Value>Checkpoint Screener</Value>
@@ -4516,6 +4533,7 @@
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="View Checkpoint Review">
                 <Value>Global Manager</Value>
@@ -4538,12 +4556,39 @@
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="Perform Review">
                 <Value>Reviewer</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
+            </Property>
+            <Property name="View Iterative Review">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
+                <Value>Observer</Value>
+                <Value>Designer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+                <Value>Submitter</Value>
+                <Value>Screener</Value>
+                <Value>Primary Screener</Value>
+                <Value>Checkpoint Screener</Value>
+                <Value>Checkpoint Reviewer</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Aggregator</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
+                <Value>Iterative Reviewer</Value>
+            </Property>
+            <Property name="Perform Iterative Review">
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="Upload Test Cases">
                 <Value>Accuracy Reviewer</Value>
@@ -4600,6 +4645,7 @@
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="View Specification Review">
                 <Value>Global Manager</Value>
@@ -4620,12 +4666,16 @@
                 <Value>Client Manager</Value>
                 <Value>Specification Submitter</Value>
                 <Value>Specification Reviewer</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="View Reviewer Reviews">
                 <Value>Reviewer</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
+            </Property>
+            <Property name="View Iterative Reviewer Reviews">
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="View Composite Scorecard">
                 <Value>Global Manager</Value>
@@ -4636,6 +4686,11 @@
                 <Value>Aggregator</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="Edit My Review during Review">
                 <Value>Screener</Value>
@@ -4649,6 +4704,7 @@
                 <Value>Approver</Value>
                 <Value>Post-Mortem Reviewer</Value>
                 <Value>Specification Reviewer</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="Perform Appeal">
                 <Value>Submitter</Value>
@@ -4722,15 +4778,10 @@
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="Perform Aggregation Review">
-                <!-- Note: originally this permission had been granted to Aggregator, but it
-                    was changed later to match the logic of the application -->
-                <Value>Submitter</Value>
-                <Value>Reviewer</Value>
-                <Value>Accuracy Reviewer</Value>
-                <Value>Failure Reviewer</Value>
-                <Value>Stress Reviewer</Value>
+                <!-- Note: Aggregation Review is not supported anymore -->
             </Property>
             <Property name="View Aggregation Review">
                 <Value>Global Manager</Value>
@@ -4747,6 +4798,7 @@
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="Perform Final Fix">
                 <Value>Submitter</Value>
@@ -4767,6 +4819,7 @@
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="Perform Final Review">
                 <Value>Final Reviewer</Value>
@@ -4787,6 +4840,7 @@
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="Submit Scorecard Comment">
                 <Value>Submitter</Value>
@@ -4808,6 +4862,7 @@
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
                 <Value>Final Reviewer</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
             <Property name="Perform Post-Mortem Review">
                 <Value>Post-Mortem Reviewer</Value>
@@ -4849,6 +4904,7 @@
                 <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
+                <Value>Iterative Reviewer</Value>
             </Property>
 
             <Property name="View Payments">
@@ -5067,6 +5123,20 @@
                 </Property>
                 <Property name="AppFunction">
                     <Value>POSTMORTEM</Value>
+                </Property>
+            </Property>
+            <Property name="IterativeReview">
+                <Property name="NameKey">
+                    <Value>ProjectPhaseGroup.IterativeReview</Value>
+                </Property>
+                <Property name="TableNameKey">
+                    <Value>ProjectPhaseGroup.IterativeReview.table</Value>
+                </Property>
+                <Property name="Phases">
+                    <Value>Iterative Review</Value>
+                </Property>
+                <Property name="AppFunction">
+                    <Value>ITERATIVEREVIEW</Value>
                 </Property>
             </Property>
         </Property>

@@ -53,8 +53,16 @@ import java.util.Set;
  *   </ol>
  * </p>
  *
- * @author flexme
- * @version 1.1 (Online Review - Project Payments Integration Part 2 v1.0)
+ * <p>
+ * Version 1.2 (Online Review - Iterative Review v1.0) Change notes:
+ *   <ol>
+ *       <li>Added iterative reviewer to reviewer list.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author flexme, duxiaoyang
+ * @version 1.2
+ * @since 1.0
  */
 public class ProjectPaymentsActions extends DispatchAction {
     /**
@@ -75,7 +83,8 @@ public class ProjectPaymentsActions extends DispatchAction {
             Constants.STRESS_REVIEWER_ROLE_NAME,
             Constants.AGGREGATOR_ROLE_NAME,
             Constants.FINAL_REVIEWER_ROLE_NAME,
-            Constants.POST_MORTEM_REVIEWER_ROLE_NAME));
+            Constants.POST_MORTEM_REVIEWER_ROLE_NAME,
+            Constants.ITERATIVE_REVIEWER_ROLE_NAME));
     /**
      * The copilot resource roles.
      */

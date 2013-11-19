@@ -217,8 +217,15 @@ import com.cronos.onlinereview.phases.OnlineReviewServices;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.8 (Online Review - Iterative Review v1.0) Change notes:
+ *   <ol>
+ *       <li>Added methods to create/view/edit/export iterative review scorecard.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, isv, FireIce, rac_, flexme, duxiaoyang
- * @version 1.7
+ * @version 1.8
  */
 public class ProjectReviewActions extends DispatchAction {
     private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogManager
@@ -2359,25 +2366,55 @@ public class ProjectReviewActions extends DispatchAction {
         // Get an array of all phases for the project
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
 
-        if (!ActionsHelper.isAfterAppealsResponse(phases)) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.CompositeScorecardWrongStage", null);
-        }
+        Resource[] reviewers = null;
+        Phase phase = null;
 
-        // Get the Review phase
-        Phase phase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
+        if (request.getParameter("phid") != null && request.getParameter("phid").trim().length() > 0) {
+            // this is for iterative review phase
+            Resource submitter = getMySubmitterResource(request);
+            if (submitter != null && verification.getSubmission().getUpload().getOwner() != submitter.getId()) {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.NoPermission", null);
+            }
+            long phaseId = Long.parseLong(request.getParameter("phid"));
+            for (Phase ph : phases) {
+                if (ph.getId() == phaseId) {
+                    phase = ph;
+                    break;
+                }
+            }
+            Resource[] allResources = ActionsHelper.getAllResourcesForProject(project);
+            List<Resource> iterativeReviewers = new ArrayList<Resource>();
+            for (Resource resource : allResources) {
+                if (resource.getResourceRole().getName().equals(Constants.ITERATIVE_REVIEWER_ROLE_NAME)) {
+                    iterativeReviewers.add(resource);
+                }
+            }
+            reviewers = iterativeReviewers.toArray(new Resource[iterativeReviewers.size()]);
+        } else {
+            // this is for review phase
+            if (!ActionsHelper.isAfterAppealsResponse(phases)) {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.CompositeScorecardWrongStage", null);
+            }
+
+            // Get the Review phase
+            phase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
+
+            // Build a filter to select resources (i.e. reviewers) for Review phase
+            Filter filterPhase = ResourceFilterBuilder.createPhaseIdFilter(phase.getId());
+            // Obtain an instance of Resource Manager
+            ResourceManager resMgr = ActionsHelper.createResourceManager();
+            // Retrieve reviewers that did the reviews
+            reviewers = resMgr.searchResources(filterPhase);
+        }
 
         // Retrieve a scorecard template for the Review phase
         Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(phase, false);
+
         // Get the count of questions in the current scorecard
         final int questionsCount = ActionsHelper.getScorecardQuestionsCount(scorecardTemplate);
 
-        // Build a filter to select resources (i.e. reviewers) for Review phase
-        Filter filterPhase = ResourceFilterBuilder.createPhaseIdFilter(phase.getId());
-        // Obtain an instance of Resource Manager
-        ResourceManager resMgr = ActionsHelper.createResourceManager();
-        // Retrieve reviewers that did the reviews
-        Resource[] reviewers = resMgr.searchResources(filterPhase);
         for (Resource reviewer : reviewers) {
             ActionsHelper.populateEmailProperty(request, reviewer);
         }
@@ -2946,6 +2983,8 @@ public class ProjectReviewActions extends DispatchAction {
             request.setAttribute("reviewType", "CheckpointScreening");
         } else if (reviewType.equals("Checkpoint Review")) {
             request.setAttribute("reviewType", "CheckpointReview");
+        } else if (reviewType.equals("Iterative Review")) {
+            request.setAttribute("reviewType", "IterativeReview");
         } else {
             request.setAttribute("reviewType", reviewType);
         }
@@ -2991,6 +3030,9 @@ public class ProjectReviewActions extends DispatchAction {
         } else if ("Checkpoint Review".equals(reviewType)) {
             permName = Constants.PERFORM_CHECKPOINT_REVIEW_PERM_NAME;
             phaseName = Constants.CHECKPOINT_REVIEW_PHASE_NAME;
+        } else if ("Iterative Review".equals(reviewType)) {
+            permName = Constants.PERFORM_ITERATIVE_REVIEW_PERM_NAME;
+            phaseName = Constants.ITERATIVE_REVIEW_PHASE_NAME;
         } else {
             isPostMortemPhase = true;
             permName = Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME;
@@ -3037,6 +3079,8 @@ public class ProjectReviewActions extends DispatchAction {
             myResource = ActionsHelper.getMyResourceForRole(request, Constants.POST_MORTEM_REVIEWER_ROLE_NAME);
         } else if (phase.getPhaseType().getName().equals(Constants.APPROVAL_PHASE_NAME)) {
             myResource = ActionsHelper.getMyResourceForRole(request, Constants.APPROVER_ROLE_NAME);
+        } else if (phase.getPhaseType().getName().equals(Constants.ITERATIVE_REVIEW_PHASE_NAME)) {
+            myResource = ActionsHelper.getMyResourceForRole(request, Constants.ITERATIVE_REVIEWER_ROLE_NAME);
         } else {
             myResource = ActionsHelper.getMyResourceForPhase(request, phase);
         }
@@ -3146,6 +3190,8 @@ public class ProjectReviewActions extends DispatchAction {
             scorecardTypeName = "Checkpoint Screening";
         } else if ("Checkpoint Review".equals(reviewType)) {
             scorecardTypeName = "Checkpoint Review";
+        } else if ("Iterative Review".equals(reviewType)) {
+            scorecardTypeName = "Iterative Review";
         } else {
             scorecardTypeName = "Post-Mortem";
         }
@@ -3177,7 +3223,8 @@ public class ProjectReviewActions extends DispatchAction {
         if (review.isCommitted()) {
             // If user has a Manager or Global Manager role, put special flag to the request
             // indicating that we need "Manager Edit"
-            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
+        	// Nobody is allowed to edit committed iterative review scorecard
+            if (!scorecardTypeName.equals("Iterative Review") && AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
                 request.setAttribute("managerEdit", Boolean.TRUE);
                 managerEdit = true;
             } else {
@@ -3358,6 +3405,10 @@ public class ProjectReviewActions extends DispatchAction {
             permName = Constants.PERFORM_SPECIFICATION_REVIEW_PERM_NAME;
             phaseName = Constants.SPECIFICATION_REVIEW_PHASE_NAME;
             scorecardTypeName = "Specification Review";
+        } else if ("Iterative Review".equals(reviewType)) {
+            permName = Constants.PERFORM_ITERATIVE_REVIEW_PERM_NAME;
+            phaseName = Constants.ITERATIVE_REVIEW_PHASE_NAME;
+            scorecardTypeName = "Iterative Review";
         } else {
             isSubmissionDependentPhase = false;
             permName = Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME;
@@ -3397,8 +3448,8 @@ public class ProjectReviewActions extends DispatchAction {
         Phase phase = ActionsHelper.getPhase(phases, true, phaseName);
         // Check that the phase in question is really active (open)
         if (phase == null) {
-            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
-                // Managers can edit reviews in any phase
+            if (!scorecardTypeName.equals("Iterative Review") && AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
+                // Managers can edit reviews in any phase, except iterative review
                 phase = ActionsHelper.getPhase(phases, false, phaseName);
             } else {
                 return ActionsHelper.produceErrorReport(
@@ -3493,7 +3544,7 @@ public class ProjectReviewActions extends DispatchAction {
         if (review != null && review.isCommitted()) {
             // If user has a Manager role, put special flag to the request,
             // indicating that we need "Manager Edit"
-            if(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
+            if(!scorecardTypeName.equals("Iterative Review") && AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
                 request.setAttribute("managerEdit", Boolean.TRUE);
                 managerEdit = true;
             } else {
@@ -4131,6 +4182,11 @@ public class ProjectReviewActions extends DispatchAction {
             phaseName = Constants.SPECIFICATION_REVIEW_PHASE_NAME;
             scorecardTypeName = "Specification Review";
             reviewType = "Specification Review";
+        } else if (reviewType.equals("Iterative Review") || reviewType.equals("IterativeReview")) {
+            permName = Constants.VIEW_ITERATIVE_REVIEW_PERM_NAME;
+            phaseName = Constants.ITERATIVE_REVIEW_PHASE_NAME;
+            scorecardTypeName = "Iterative Review";
+            reviewType = "Iterative Review";
         } else if (reviewType.equals("Post-Mortem") || reviewType.equals("PostMortem")) {
             isSubmissionDependentPhase = false;
             permName = Constants.VIEW_POST_MORTEM_PERM_NAME;
@@ -4162,21 +4218,25 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Get a phase with the specified name
-        Phase phase = ActionsHelper.getPhase(phases, false, phaseName);
+        Phase phase = null;
+        if (reviewType.equals(Constants.ITERATIVE_REVIEW_PHASE_NAME)) {
+            long phaseId = verification.getReview().getProjectPhase();
+            for (Phase ph : phases) {
+                if (phaseId == ph.getId()) {
+                    phase = ph;
+                    break;
+                }
+            }
+        } else {
+            phase = ActionsHelper.getPhase(phases, false, phaseName);
+        }
 
         // Get "My" resource for the appropriate phase (for reviewers actually)
         Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
-
-        // If no resource found and Appeals phase is opened then try to find Submitter role
-        if (myResource == null) {
-            if (activePhases.contains(Constants.APPEALS_PHASE_NAME)) {
-                myResource = getMySubmitterResource(request);
-            }
-        }
-
         if (myResource == null) {
             myResource = ActionsHelper.getMyResourceForPhase(request, null);
         }
+        Resource mySubmitterResource = getMySubmitterResource(request);
 
         /*
          *  Verify that user has the permission to view the review
@@ -4189,14 +4249,13 @@ public class ProjectReviewActions extends DispatchAction {
                 AuthorizationHelper.hasUserRole(request, Constants.OBSERVER_ROLE_NAME)) {
             // User is manager or observer
             isAllowed = true;
-        } else if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
-                    myResource != null && verification.getReview().getAuthor() == myResource.getId()) {
+        } else if (myResource != null && verification.getReview().getAuthor() == myResource.getId()) {
             // User is authorized to view review authored by him
             isAllowed = true;
-        } else if (isSubmissionDependentPhase && (myResource != null)
-                   && (verification.getSubmission().getUpload().getOwner() == myResource.getId())) {
-            // User is authorized to view review for his submission (when not in Review phase)
-            if (!reviewType.equals(Constants.REVIEW_PHASE_NAME) || !activePhases.contains(Constants.REVIEW_PHASE_NAME)) {
+        } else if (isSubmissionDependentPhase && mySubmitterResource != null &&
+                   verification.getSubmission().getUpload().getOwner() == mySubmitterResource.getId()) {
+            // User is authorized to view review for his own submission after the phase has closed
+            if (phase.getPhaseStatus().getName().equals(Constants.CLOSED_PH_STATUS_NAME)) {
                 isAllowed = true;
             }
         } else if (AuthorizationHelper.hasUserPermission(request, permName)) {
@@ -4231,6 +4290,15 @@ public class ProjectReviewActions extends DispatchAction {
                     //if any of those phases are open, a user can see the checkpoint screening/review only if he is not a submitter
                     isAllowed = !AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME);
                 }
+            } else if (reviewType.equals(Constants.ITERATIVE_REVIEW_PHASE_NAME)) {
+                // For Iterative Reviews, submitters can view reviews only for their own submissions.
+                if (mySubmitterResource == null ||
+                        verification.getSubmission().getUpload().getOwner() == mySubmitterResource.getId()) {
+                    // User is authorized to view all reviews after the phase has closed.
+                    if (phase.getPhaseStatus().getName().equals(Constants.CLOSED_PH_STATUS_NAME)) {
+                        isAllowed = true;
+                    }
+                }
             } else {
                 isAllowed = true;
             }
@@ -4260,7 +4328,9 @@ public class ProjectReviewActions extends DispatchAction {
         } else {
             // If user has a Manager role, put special flag to the request,
             // indicating that we can edit the review
-            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
+            // But for iterative review, no one can edit it once it is committed
+            if (!reviewType.equals(Constants.ITERATIVE_REVIEW_PHASE_NAME)
+                    && AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
                 request.setAttribute("canEditScorecard", Boolean.TRUE);
             }
 
@@ -4279,7 +4349,6 @@ public class ProjectReviewActions extends DispatchAction {
             // Check if user can place appeals or appeal responses
             if (activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
                     AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME)) {
-                Resource mySubmitterResource = getMySubmitterResource(request);
                 if(mySubmitterResource != null && verification.getSubmission() != null &&
                     verification.getSubmission().getUpload().getOwner() == mySubmitterResource.getId()) {
                     // Can place appeal, put an appropriate flag to request
@@ -6146,5 +6215,121 @@ public class ProjectReviewActions extends DispatchAction {
         } else {
             return viewOrExportGenericReview(mapping, form, request, response, reviewType, true);
         }
+    }
+
+    /**
+     * This method is an implementation of &quot;Create Iterative Review&quot; Struts Action defined
+     * for this assembly, which is supposed to gather needed information (scorecard template) and
+     * present it to editReview.jsp page, which will fill the required fields and post them to the
+     * &quot;Save Iterative Review&quot; Action. The action implemented by this method is executed
+     * to edit iterative review that does not exist yet, and hence is supposed to be created.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent submission id, or the lack of
+     *         permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward createIterativeReview(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return createGenericReview(mapping, form, request, "Iterative Review");
+    }
+
+    /**
+     * This method is an implementation of &quot;Edit Iterative Review&quot; Struts Action defined
+     * for this assembly, which is supposed to gather needed information (review and scorecard
+     * template) and present it to editReview.jsp page, which will fill the required fields and
+     * post them to the &quot;Save Iterative Review&quot; action. The action implemented by this
+     * method is executed to edit iterative review that has already been created, but has not been
+     * submitted yet, and hence is supposed to be edited.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward editIterativeReview(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return editGenericReview(mapping, form, request, "Iterative Review");
+    }
+
+    /**
+     * This method is an implementation of &quot;Save Iterative Review&quot; Struts Action defined
+     * for this assembly, which is supposed to save information posted from /jsp/editReview.jsp
+     * page. This method will either create new review or update (edit) an existing one depending
+     * on which action was called to display /jsp/editReview.jsp page.
+     *
+     * @return &quot;success&quot; forward, which forwards to the &quot;View Project Details&quot;
+     *         action, or &quot;userError&quot; forward, which forwards to the /jsp/userError.jsp
+     *         page, which displays information about an error that is usually caused by incorrect
+     *         user input (such as absent submission id, or the lack of permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward saveIterativeReview(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return saveGenericReview(mapping, form, request, "Iterative Review");
+    }
+
+    /**
+     * This method is an implementation of &quot;View Iterative Review&quot; Struts Action defined
+     * for this assembly, which is supposed to view completed review.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/viewReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public ActionForward viewIterativeReview(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return viewOrExportGenericReview(mapping, form, request, response, "Iterative Review", false);
     }
 }

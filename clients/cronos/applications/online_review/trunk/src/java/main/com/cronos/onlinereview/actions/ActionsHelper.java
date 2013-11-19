@@ -314,8 +314,15 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK, rac_, lmmortal, flexme
- * @version 2.6
+ * <p>
+ * Version 2.7 (Online Review - Iterative Reviews Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #getResourcesForPhase(Resource[], Phase)} method to support Iterative Review phases.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, FireIce, VolodymyrK, rac_, lmmortal, flexme, duxiaoyang
+ * @version 2.7
  * @since Online Review Status Validation Assembly 1.0
  */
 public class ActionsHelper {
@@ -1458,14 +1465,18 @@ public class ActionsHelper {
                     foundResources.add(resource);
                 }
             } else {
-                // Handle Post-Mortem and Approval phases differently. Those resources are not mapped to phase type
-                // so they must be discovered based on resource role name
+                // Handle Post-Mortem, Approval, Iterative Review phases differently. Those resources are not mapped 
+                // to phase type so they must be discovered based on resource role name
                 if (phase.getPhaseType().getName().equals(Constants.POST_MORTEM_PHASE_NAME)) {
                     if (resource.getResourceRole().getName().equals(Constants.POST_MORTEM_REVIEWER_ROLE_NAME)) {
                         foundResources.add(resource);
                     }
                 } else if (phase.getPhaseType().getName().equals(Constants.APPROVAL_PHASE_NAME)) {
                     if (resource.getResourceRole().getName().equals(Constants.APPROVER_ROLE_NAME)) {
+                        foundResources.add(resource);
+                    }
+                } else if (phase.getPhaseType().getName().equals(Constants.ITERATIVE_REVIEW_PHASE_NAME)) {
+                    if (resource.getResourceRole().getName().equals(Constants.ITERATIVE_REVIEWER_ROLE_NAME)) {
                         foundResources.add(resource);
                     }
                 } else {
@@ -2052,6 +2063,7 @@ public class ActionsHelper {
             }
             prevPhase = true;
             if (phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME) ||
+                    phaseName.equalsIgnoreCase(Constants.ITERATIVE_REVIEW_PHASE_NAME) ||
                     phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) ||
                     phaseName.equalsIgnoreCase(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
                 if (!phase.getPhaseStatus().getName().equals(PhaseStatus.CLOSED.getName())) {
