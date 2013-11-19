@@ -725,6 +725,44 @@
             <forward name="success" path="/jsp/viewReview.jsp" redirect="false"/>
         </action>
 
+        <!-- "Create Iterative Review" action -->
+        <action path="/actions/CreateIterativeReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
+            <forward name="edit" path="/actions/EditIterativeReview.do?method=editIterativeReview" redirect="true"/>
+        </action>
+
+        <!-- "Edit Review" action -->
+        <action path="/actions/EditIterativeReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Save Review" action -->
+        <action path="/actions/SaveIterativeReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/editReview.jsp">
+            <forward name="preview" path="/jsp/viewReview.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+
+        <!-- "View Review" action -->
+        <action path="/actions/ViewIterativeReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/viewReview.jsp" redirect="false"/>
+        </action>
+
         <!-- "Create Checkpoint Review" action -->
         <action path="/actions/CreateCheckpointReview" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"

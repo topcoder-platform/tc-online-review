@@ -13,7 +13,7 @@ Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
 
 %if:N_AGGREGATOR='0'%
 <p>
-<font color\="red"><b>The project has no Aggregator assigned!</b></font><br/>
+<font color\="red"><b>The contest has no Aggregator assigned!</b></font><br/>
 If an aggregator does not register shortly, please contact <a href\="mailto\:support@topcoder.com?subject\=Need Aggregator.">TopCoder Support</a>.
 </p>
 %endif%

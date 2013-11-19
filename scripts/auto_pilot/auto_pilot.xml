@@ -170,6 +170,8 @@
             <Value>handler_checkpoint_screening_end</Value>
             <Value>handler_checkpoint_review_start</Value>
             <Value>handler_checkpoint_review_end</Value>
+            <Value>handler_iterative_review_start</Value>
+            <Value>handler_iterative_review_end</Value>
         </Property>
         <!-- The details about each handler -->
         <Property name="handler_final_review_start">
@@ -522,6 +524,28 @@
             </Property>
             <Property name="handler">
                 <Value>handler_checkpoint_review_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_iterative_review_start">
+            <Property name="phaseType">
+                <Value>iterative_review</Value>
+            </Property>
+            <Property name="operation">
+                <Value>start</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_iterative_review_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_iterative_review_end">
+            <Property name="phaseType">
+                <Value>iterative_review</Value>
+            </Property>
+            <Property name="operation">
+                <Value>end</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_iterative_review_def</Value>
             </Property>
         </Property>
         <!-- The object factory configurations -->
@@ -899,6 +923,29 @@
                 </Property>
             </Property>
         </Property>
+        <Property name="iterative_review">
+            <Property name="type">
+                <Value>com.topcoder.project.phases.PhaseType</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>long</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>18</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>Iterative Review</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
         <!-- The defination for handler -->
         <Property name="handler_registration_def">
             <Property name="type">
@@ -978,6 +1025,11 @@
         <Property name="handler_checkpoint_review_def">
             <Property name="type">
                 <Value>com.cronos.onlinereview.phases.PRCheckpointReviewPhaseHandler</Value>
+            </Property>
+        </Property>
+        <Property name="handler_iterative_review_def">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.phases.PRIterativeReviewPhaseHandler</Value>
             </Property>
         </Property>
     </Config>

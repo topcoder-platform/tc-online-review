@@ -163,8 +163,22 @@ package com.cronos.onlinereview.actions;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, flexme, VolodymyrK
- * @version 1.9.3
+ * <p>
+ * Version 1.9.4 (Online Review - Iterative Review v1.0) Change notes:
+ *   <ol>
+ *     <li>Added <code>ITERATIVE_REVIEW_PHASE_NAME</code> constant.</li>
+ *     <li>Added <code>PERFORM_ITERATIVE_REVIEW_PERM_NAME</code> constant.</li>
+ *     <li>Added <code>ITERATIVE_REVIEWER_ROLE_NAME</code> constant.</li>
+ *     <li>Added <code>VIEW_ITERATIVE_REVIEWER_REVIEWS_PERM_NAME</code> constant.</li>
+ *     <li>Added <code>VIEW_ITERATIVE_REVIEW_PERM_NAME</code> constant.</li>
+ *     <li>Added <code>ITERATIVEREVIEW_APP_FUNC</code> constant.</li>
+ *     <li>Added <code>ITERATIVE_REVIEW_DELIVERABLE_NAME</code> constant.</li>
+ *     <li>Added <code>VIEW_CURRENT_ITERATIVE_REVIEW_SUBMISSION</code> constant.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, flexme, VolodymyrK, duxiaoyang
+ * @version 1.9.4
  */
 public class Constants {
 
@@ -392,6 +406,13 @@ public class Constants {
     public static final String COPILOT_ROLE_NAME = "Copilot";
 
     /**
+     * <p>A <code>String</code> providing the name for <code>Iterative Reviewer</code> role.</p>
+     *
+     * @since 1.9.4
+     */
+    public static final String ITERATIVE_REVIEWER_ROLE_NAME = "Iterative Reviewer";
+
+    /**
      * <p>A <code>String</code> providing the name for the <code>Checkpoint Submitter</code> resource role.</p>
      *
      * @since 1.6.1
@@ -598,6 +619,13 @@ public class Constants {
     public static final String VIEW_RECENT_SUBM_PERM_NAME = "View Most Recent Submissions";
 
     /**
+     * <p>A <code>String</code> providing the name for <code>View Current Iterative Review Submission</code>
+     * permission.</p>
+     *
+     * @since 1.9.4
+     */
+    public static final String VIEW_CURRENT_ITERATIVE_REVIEW_SUBMISSION = "View Current Iterative Review Submission";
+    /**
      * <p>A <code>String</code> providing the name for <code>VIEW_RECENT_SPECIFICATION_SUBMISSIONS_PERM_NAME</code>
      * permission.</p>
      *
@@ -737,6 +765,14 @@ public class Constants {
      * permission.
      */
     public static final String VIEW_REVIEWER_REVIEWS_PERM_NAME = "View Reviewer Reviews";
+
+    /**
+     * This member variable is a string constant that defines the name of the View Iterative Reviewer Reviews
+     * permission.
+     *
+     * @since 1.9.4
+     */
+    public static final String VIEW_ITERATIVE_REVIEWER_REVIEWS_PERM_NAME = "View Iterative Reviewer Reviews";
 
     /**
      * This member variable is a string constant that defines the name of the
@@ -950,7 +986,19 @@ public class Constants {
      * @since 1.9.1
      */
     public static final String REOPEN_REVIEW_SCORECARD_PERM_NAME = "Reopen Scorecard";
-    
+
+    /**
+     * This member variable is a string constant that defines the name of the View Iterative Review permission.
+     * @since 1.9.4
+     */
+    public static final String VIEW_ITERATIVE_REVIEW_PERM_NAME = "View Iterative Review";
+
+    /**
+     * This member variable is a string constant that defines the name of the Perform Iterative Review permission.
+     * @since 1.9.4
+     */
+    public static final String PERFORM_ITERATIVE_REVIEW_PERM_NAME = "Perform Iterative Review";
+
     // -------------------------------------------------------------------------- Phase names -----
 
     /**
@@ -1052,6 +1100,12 @@ public class Constants {
      */
     public static final String CHECKPOINT_REVIEW_PHASE_NAME = "Checkpoint Review";
 
+    /**
+     * <p>A <code>String</code> providing the name for <code>Iterative Review</code> phase.</p>
+     *
+     * @since 1.9.4
+     */
+    public static final String ITERATIVE_REVIEW_PHASE_NAME = "Iterative Review";
 
     // ------------------------------------------------------------------- Phase Status names -----
 
@@ -1123,6 +1177,13 @@ public class Constants {
      * @since 1.6.1
      */
     public static final String CHECKPOINT_APP_FUNC = "CHECKPOINT";
+
+    /**
+     * <p>A <code>String</code> providing the logical name for phase group for <code>Iterative Review</code> phases.</p>
+     *
+     * @since 1.9.4
+     */
+    public static final String ITERATIVEREVIEW_APP_FUNC = "ITERATIVEREVIEW";
 
     // -------------------------------------------------------------------- Deliverable names -----
 
@@ -1249,6 +1310,14 @@ public class Constants {
      * @since 1.3
      */
     public static final String POST_MORTEM_DELIVERABLE_NAME = "Post-Mortem Review";
+
+    /**
+     * This member variable is a string constant that defines the name of the Iterative Review Scorecard
+     * deliverable.
+     *
+     * @since 1.9.4
+     */
+    public static final String ITERATIVE_REVIEW_DELIVERABLE_NAME = "Iterative Review Scorecard";
 
     // ----------------------------------------------------------------- Action Forward names -----
 

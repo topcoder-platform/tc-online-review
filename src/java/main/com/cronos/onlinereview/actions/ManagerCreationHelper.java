@@ -27,6 +27,7 @@ import com.cronos.onlinereview.phases.PRFinalFixPhaseHandler;
 import com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRCheckpointReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRCheckpointScreeningPhaseHandler;
+import com.cronos.onlinereview.phases.PRIterativeReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRPostMortemPhaseHandler;
 import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
 import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
@@ -197,8 +198,16 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  *   </ol>
  * </p>
  *
- * @author evilisneo, BeBetter, isv, FireIce, VolodymyrK, rac_, flexme, lmmortal
- * @version 1.13
+ * <p>
+ * Version 1.14 (Online Review - Iterative Review v1.0) Change notes:
+ *   <ol>
+ *     <li>Registered iterative review phase handler to phase manager.</li>
+ *     <li>Registered iterative review deliverable checker to deliverable manager.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author evilisneo, BeBetter, isv, FireIce, VolodymyrK, rac_, flexme, lmmortal, duxiaoyang
+ * @version 1.14
  */
 public class ManagerCreationHelper implements ManagersProvider {
 
@@ -432,6 +441,8 @@ public class ManagerCreationHelper implements ManagersProvider {
                     Constants.CHECKPOINT_SCREENING_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, new PRCheckpointReviewPhaseHandler(),
                     Constants.CHECKPOINT_REVIEW_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, new PRIterativeReviewPhaseHandler(),
+                    Constants.ITERATIVE_REVIEW_PHASE_NAME);
             return phaseManager;
         } catch (Exception e) {
             throw new ManagerCreationException("Exception occurred while creating the PhaseManager.", e);
@@ -647,6 +658,7 @@ public class ManagerCreationHelper implements ManagersProvider {
                 checkers.put(Constants.FINAL_REVIEW_PHASE_NAME, new FinalReviewDeliverableChecker(dbconn));
                 checkers.put(Constants.APPROVAL_DELIVERABLE_NAME, committedChecker);
                 checkers.put(Constants.POST_MORTEM_DELIVERABLE_NAME, submissionIndependentReviewChecker);
+                checkers.put(Constants.ITERATIVE_REVIEW_DELIVERABLE_NAME, committedChecker);
 
                 // Initialize the PersistenceDeliverableManager
                 deliverableManager = new PersistenceDeliverableManager(deliverablePersistence, checkers,

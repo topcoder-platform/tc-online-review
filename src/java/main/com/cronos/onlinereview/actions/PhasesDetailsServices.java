@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.topcoder.management.deliverable.SubmissionType;
 import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.search.builder.filter.OrFilter;
 import org.apache.struts.util.MessageResources;
 
 import com.cronos.onlinereview.actions.Comparators.SubmissionComparer;
@@ -32,7 +31,6 @@ import com.topcoder.management.resource.Resource;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Item;
 import com.topcoder.management.review.data.Review;
-import com.topcoder.management.scorecard.data.ScorecardType;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.EqualToFilter;
@@ -100,8 +98,16 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
- * @author George1, isv, rac_
- * @version 1.5
+ * <p>
+ * Version 1.6 (Online Review - Iterative Review v1.0) Change notes:
+ *   <ol>
+ *     <li>Added service method to populating phase group information for iterative review phase.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, isv, rac_, duxiaoyang
+ * @version 1.6
+ * @since 1.0
  */
 final class PhasesDetailsServices {
 
@@ -230,7 +236,8 @@ final class PhasesDetailsServices {
             String phaseStatus = phase.getPhaseStatus().getName();
 
             if (phaseStatus.equalsIgnoreCase("Closed") || phaseStatus.equalsIgnoreCase("Open")) {
-                if (activeTabIdx == -1 && phaseStatus.equalsIgnoreCase("Open") && phaseGroupIdx != -1) {
+                if (phaseStatus.equalsIgnoreCase("Open") && phaseGroupIdx != -1) {
+                    // If there are multiple open phases, only the last one's tab will be "active", i.e. open by defaul
                     activeTabIdx = phaseGroups.size() - 1;
                 }
                 phaseGroup.setPhaseOpen(true);
@@ -286,6 +293,9 @@ final class PhasesDetailsServices {
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.CHECKPOINT_APP_FUNC)) {
                 serviceCheckpointAppFunc(request, phaseGroup, project, phase, allProjectResources, phases, phaseIdx,
                                         submitters);
+            } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.ITERATIVEREVIEW_APP_FUNC)) {
+                serviceIterativeReviewsAppFunc(request, phaseGroup, project, phase, allProjectResources, submitters,
+                        mostRecentContestSubmissions);
             }
         }
 
@@ -565,6 +575,12 @@ final class PhasesDetailsServices {
                 submissions = ActionsHelper.getResourceSubmissions(myResource.getId(),
                         Constants.CONTEST_SUBMISSION_TYPE_NAME, null, false);
             }
+            if (submissions == null
+                    && AuthorizationHelper.hasUserPermission(request,
+                            Constants.VIEW_CURRENT_ITERATIVE_REVIEW_SUBMISSION)) {
+                submissions = mostRecentContestSubmissions;
+                request.setAttribute("downloadCurrentIterativeReview", true);
+            }
 
             if (submissions == null) {
                 submissions = new Submission[0];
@@ -664,6 +680,11 @@ final class PhasesDetailsServices {
                         myResource = resource;
                         break;
                     }
+                }
+				
+                if (myResource == null) {
+                    throw new BaseException("Unable to find the Submitter resource " +
+                            "associated with the current user for project " + project.getId());
                 }
 
                 submissions = ActionsHelper.getResourceSubmissions(myResource.getId(),
@@ -1031,6 +1052,181 @@ final class PhasesDetailsServices {
 
         phaseGroup.setPostMortemReviews(ActionsHelper.searchReviews(thisPhase.getId(), null, false));
         phaseGroup.setPostMortemPhaseStatus(thisPhase.getPhaseStatus().getId());
+    }
+
+    /**
+     * <p>Sets the specified phase group with details for <code>Iterative Review</code> phase.</p>
+     *
+     * @param request an <code>HttpServletRequest</code> providing incoming request from the client.
+     * @param phaseGroup a <code>PhaseGroup</code> providing the details for group of phase the current phase belongs
+     *        to.
+     * @param project a <code>Project</code> providing the details for current project.
+     * @param phase a <code>Phase</code> providing the details for <code>Iterative Review</code> phase.
+     * @param allProjectResources a <code>Resource</code> array listing all existing resources for specified project.
+     * @param submitters a <code>Resource</code> array listing all submitters for specified project.
+     * @param mostRecentContestSubmissions a <code>Submission</code> array listing all active contest submissions.
+     * @throws BaseException if an unexpected error occurs.
+     */
+    private static void serviceIterativeReviewsAppFunc(HttpServletRequest request, PhaseGroup phaseGroup,
+            Project project, Phase phase, Resource[] allProjectResources, Resource[] submitters,
+            Submission[] mostRecentContestSubmissions) throws BaseException {
+        String phaseName = phase.getPhaseType().getName();
+
+        Submission associatedSubmission = null;
+
+        Review[] ungroupedReviews = null;
+        Filter filterPhase = new EqualToFilter("projectPhase", phase.getId());
+        Filter filterScorecard = new EqualToFilter("scorecardType", LookupHelper.getScorecardType("Iterative Review")
+                .getId());
+        List<Filter> reviewFilters = new ArrayList<Filter>();
+        reviewFilters.add(filterScorecard);
+        reviewFilters.add(filterPhase);
+        // Create final filter
+        Filter filterForReviews = new AndFilter(reviewFilters);
+        // Obtain an instance of Review Manager
+        ReviewManager revMgr = ActionsHelper.createReviewManager();
+        // Get the reviews from every individual reviewer
+        ungroupedReviews = revMgr.searchReviews(filterForReviews, false);
+
+        if (mostRecentContestSubmissions != null) {
+            if (ungroupedReviews != null && ungroupedReviews.length > 0) {
+                long submissionId = ungroupedReviews[0].getSubmission();
+                for (Submission submission : mostRecentContestSubmissions) {
+                    if (submissionId == submission.getId()) {
+                        associatedSubmission = submission;
+                    }
+                }
+            } else {
+                Date earliestDate = null;
+                for (Submission submission : mostRecentContestSubmissions) {
+                    if (submission.getSubmissionStatus().getName().equalsIgnoreCase("Active")
+                            && (earliestDate == null || earliestDate.compareTo(submission.getCreationTimestamp()) > 0)) {
+                        earliestDate = submission.getCreationTimestamp();
+                        associatedSubmission = submission;
+                    }
+                }
+            }
+        }
+
+        if (phaseName.equalsIgnoreCase(Constants.ITERATIVE_REVIEW_PHASE_NAME)) {
+            if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
+                phaseGroup.setIterativeReviewSubmission(associatedSubmission);
+            }
+
+            if (AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_ITERATIVE_REVIEW_PERM_NAME)) {
+                phaseGroup.setIterativeReviewSubmission(associatedSubmission);
+            }
+
+            if (phaseGroup.getIterativeReviewSubmission() == null
+                    && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
+                // Get "my" (submitter's) resource
+                Resource myResource = null;
+                Resource[] myResources = ActionsHelper.getMyResourcesForPhase(request, null);
+                for (Resource resource : myResources) {
+                    if (resource.getResourceRole().getName().equals("Submitter")) {
+                        myResource = resource;
+                        break;
+                    }
+                }
+				
+                if (myResource == null) {
+                    throw new BaseException("Unable to find the Submitter resource " +
+                            "associated with the current user for project " + project.getId());
+                }
+
+                Submission[] mySubmissions = ActionsHelper.getResourceSubmissions(myResource.getId(),
+                        Constants.CONTEST_SUBMISSION_TYPE_NAME, null, false);
+                if (mySubmissions != null) {
+                    for (Submission submission : mySubmissions) {
+                        if (submission.getId() == associatedSubmission.getId()) {
+                            phaseGroup.setIterativeReviewSubmission(associatedSubmission);
+                        }
+                    }
+                }
+            }
+
+            for (Resource resource : allProjectResources) {
+                if (resource.getId() == associatedSubmission.getUpload().getOwner()) {
+                    phaseGroup.setIterativeReviewSubmitter(resource);
+                    break;
+                }
+            }
+
+            // Some resource roles can always see links to reviews (if there are any).
+            // There is no corresponding permission, so the list of roles is hard-coded
+            boolean allowedToSeeReviewLink = AuthorizationHelper.hasUserRole(request, new String[] {
+                    Constants.MANAGER_ROLE_NAME, Constants.GLOBAL_MANAGER_ROLE_NAME,
+                    Constants.COCKPIT_PROJECT_USER_ROLE_NAME, Constants.ITERATIVE_REVIEWER_ROLE_NAME,
+                    Constants.CLIENT_MANAGER_ROLE_NAME, Constants.COPILOT_ROLE_NAME, Constants.OBSERVER_ROLE_NAME });
+            // Determine if the Iterative Review phase is closed
+            boolean isReviewClosed = phase.getPhaseStatus().getName().equalsIgnoreCase(Constants.CLOSED_PH_STATUS_NAME);
+
+            if (isReviewClosed) {
+                allowedToSeeReviewLink = true;
+            }
+
+            phaseGroup.setDisplayReviewLinks(allowedToSeeReviewLink);
+
+            Resource[] reviewers = null;
+
+            if (phase.getPhaseStatus().getName().equalsIgnoreCase("Open")
+                    && AuthorizationHelper.hasUserPermission(request,
+                            Constants.VIEW_ITERATIVE_REVIEWER_REVIEWS_PERM_NAME)
+                    && AuthorizationHelper.hasUserRole(request, Constants.ITERATIVE_REVIEWER_ROLE_NAME)) {
+                // Get "my" (reviewer's) resource
+                reviewers = new Resource[1];
+                reviewers[0] = ActionsHelper.getMyResourceForRole(request, Constants.ITERATIVE_REVIEWER_ROLE_NAME);
+            }
+
+            if (reviewers == null) {
+                List<Resource> resources = new ArrayList<Resource>();
+                for (Resource resource : allProjectResources) {
+                    if (resource.getResourceRole().getName().equals(Constants.ITERATIVE_REVIEWER_ROLE_NAME)) {
+                        resources.add(resource);
+                    }
+                }
+                reviewers = resources.toArray(new Resource[resources.size()]);
+            }
+
+            // Put collected reviewers into the phase group
+            phaseGroup.setIterativeReviewers(reviewers);
+            // A safety check: create an empty array in case reviewers is null
+            if (reviewers == null) {
+                phaseGroup.setIterativeReviewers(new Resource[0]);
+            }
+
+            List<Long> reviewerIds = new ArrayList<Long>();
+            for (Resource reviewer : reviewers) {
+                reviewerIds.add(reviewer.getId());
+            }
+
+            if (ungroupedReviews == null) {
+                ungroupedReviews = new Review[0];
+            }
+
+            Review[] reviews = new Review[reviewerIds.size()];
+            Date[] reviewDates = new Date[1];
+
+            Date latestDate = null;
+            for (int k = 0; k < reviewerIds.size(); ++k) {
+                for (Review ungrouped : ungroupedReviews) {
+                    if (ungrouped.getAuthor() == reviewers[k].getId()) {
+                        reviews[k] = ungrouped;
+                        if (!ungrouped.isCommitted()) {
+                            continue;
+                        }
+                        if (latestDate == null || latestDate.before(ungrouped.getModificationTimestamp())) {
+                            latestDate = ungrouped.getModificationTimestamp();
+                        }
+                    }
+                }
+            }
+
+            reviewDates[0] = latestDate;
+            phaseGroup.setIterativeReviewReviews(reviews);
+            phaseGroup.setReviewDates(reviewDates);
+            phaseGroup.setIterativeReviewPhase(phase);
+        }
     }
 
     /**

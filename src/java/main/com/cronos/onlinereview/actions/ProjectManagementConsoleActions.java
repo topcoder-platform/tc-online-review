@@ -165,8 +165,16 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
- * @author isv, romanoTC, rac_, flexme
- * @version 1.6
+ * <p>
+ * Version 1.7 (Online Review - Iterative Review v1.0) Change notes:
+ *   <ol>
+ *       <li>Added iterative reviewer to role list.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author isv, romanoTC, rac_, flexme, duxiaoyang
+ * @version 1.7
+ * @since 1.0
  */
 public class ProjectManagementConsoleActions extends DispatchAction {
     
@@ -177,7 +185,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      */
     private static final String[] REVIEW_FEEDBACK_ELIGIBLE_ROLE_NAMES = new String[]{
         Constants.REVIEWER_ROLE_NAME, Constants.ACCURACY_REVIEWER_ROLE_NAME, Constants.FAILURE_REVIEWER_ROLE_NAME,
-        Constants.STRESS_REVIEWER_ROLE_NAME};
+        Constants.STRESS_REVIEWER_ROLE_NAME, Constants.ITERATIVE_REVIEWER_ROLE_NAME};
 
     /**
      * <p>A <code>long</code> providing the constant value for single hour duration in milliseconds.</p>
@@ -470,6 +478,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         }
         if (ActionsHelper.findPhaseByTypeName(phases, Constants.CHECKPOINT_REVIEW_PHASE_NAME) != null) {
             roleNames.add(Constants.CHECKPOINT_REVIEWER_ROLE_NAME);
+        }
+        if (ActionsHelper.findPhaseByTypeName(phases, Constants.ITERATIVE_REVIEW_PHASE_NAME) != null) {
+            roleNames.add(Constants.ITERATIVE_REVIEWER_ROLE_NAME);
         }
 
         ResourceRole[] allRoles = ActionsHelper.createResourceManager().getAllResourceRoles();

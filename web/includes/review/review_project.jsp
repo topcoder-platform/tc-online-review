@@ -1,14 +1,17 @@
 <%--
   - Author: TCSASSEMBLER, flexme, duxiaoyang
-  - Version: 1.2
+  - Version: 1.3
   - Copyright (C)  - 2013 TopCoder Inc., All Rights Reserved.
   -
   - Version 1.1 (Online Review - Project Payments Integration Part 1 v1.0 ) changes: Add "Reopen" link.
   -
-  - Version 1.2 (Online Review - Review Export) changes:
+  - Version 1.2 (Online Review - Iterative Review v1.0) changes:
   - Added Export to Excel link.
   - Removed expand and collapse links.
---%>
+  -
+  - Version 1.3 (Online Review - Review Export) changes:
+  - Added iterative reviewer name.
+ --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -117,6 +120,9 @@
 	<c:if test="${reviewType eq 'PostMortem'}">
 		&#160;<b><bean:message key="editReview.Post-MortemReviewer" /></b>
 	</c:if>
+	<c:if test="${reviewType eq 'IterativeReview'}">
+        &#160;<b><bean:message key="editReview.IterativeReviewer" /></b>
+    </c:if>
 	<c:if test="${not empty authorId}">
 		<tc-webtag:handle coderId="${authorId}" context="${orfn:getHandlerContext(pageContext.request)}" />
 	</c:if>
@@ -125,7 +131,7 @@
 
 <c:if test="${not empty sid}">
     &#160;<b><bean:message key="editReview.Submission" /></b> ${sid}
-    <c:if test="${not empty submitterId and reviewType ne 'Screening' and reviewType ne 'Review' and reviewType ne 'CheckpointScreening' and reviewType ne 'CheckpointReview' and not toPDF}">
+    <c:if test="${not empty submitterId and reviewType ne 'Screening' and reviewType ne 'Review' and reviewType ne 'CheckpointScreening' and reviewType ne 'CheckpointReview' and reviewType ne 'IterativeReview' and not toPDF}">
     	(<tc-webtag:handle coderId="${submitterId}" context="${orfn:getHandlerContext(pageContext.request)}" />)
     </c:if>
     <br />

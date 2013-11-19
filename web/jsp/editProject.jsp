@@ -1,6 +1,6 @@
 <%--
-  - Author: pulky, isv, TCSDEVELOPER, flexme
-  - Version: 1.6
+  - Author: pulky, isv, TCSDEVELOPER, flexme, duxiaoyang
+  - Version: 1.7
   - Copyright (C) 2004 - 2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays project edition page
@@ -24,6 +24,10 @@
   -
   - Version 1.6 (Online Review - Project Payments Integration Part 3 v1.0) changes: removed "Payment" and "Paid"
   - columns in resource section.
+  -
+  - Version 1.7 (Online Review - Iterative Review v1.0) changes:
+  - - Added iterative review phase options.
+  - - Updated onProjectCategoryChange, addPhaseCriterion, and onLoad JavaScript functions to include iterative review phase.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -152,6 +156,15 @@
         checkpointReviewScorecards[checkpointReviewScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";
         </c:forEach>
 
+        // List of iterative review scorecard
+        var iterativeReviewScorecards = [];
+        <c:forEach items="${iterativeReviewScorecards}" var="scorecard">
+        iterativeReviewScorecards.push({});
+        iterativeReviewScorecards[iterativeReviewScorecards.length - 1]["id"] = ${scorecard.id};
+        iterativeReviewScorecards[iterativeReviewScorecards.length - 1]["category"] = ${scorecard.category};
+        iterativeReviewScorecards[iterativeReviewScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";
+        </c:forEach>
+
         var defaultScorecards = [];
         <c:forEach items="${defaultScorecards}" var="scorecard">
             defaultScorecards.push({});
@@ -188,13 +201,14 @@
             phaseTypeIdsMap["${phaseType.name}"] = "${phaseType.id}";
         </c:forEach>
 
-        var screeningScorecardNodes = new Array();;
-        var reviewScorecardNodes = new Array();;
-        var approvalScorecardNodes = new Array();;
-        var postMortemScorecardNodes = new Array();;
-        var specReviewScorecardNodes = new Array();;
-        var checkpointScreeningScorecardNodes = new Array();;
-        var checkpointReviewScorecardNodes = new Array();;
+        var screeningScorecardNodes = new Array();
+        var reviewScorecardNodes = new Array();
+        var approvalScorecardNodes = new Array();
+        var postMortemScorecardNodes = new Array();
+        var specReviewScorecardNodes = new Array();
+        var checkpointScreeningScorecardNodes = new Array();
+        var checkpointReviewScorecardNodes = new Array();
+        var iterativeReviewScorecardNodes = new Array(); // Iterative review scorecard nodes
 
         /*
          * TODO: Document it
@@ -282,6 +296,9 @@
             templateRow = document.getElementById("checkpoint_screening_scorecard_row_template");
             changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, checkpointScreeningScorecards, 'Checkpoint Screening');
 
+            // Populate iterative review scorecards
+            templateRow = document.getElementById("iterative_review_scorecard_row_template");
+            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, iterativeReviewScorecards, 'Iterative Review');
 
             for (var i = 0; i < screeningScorecardNodes.length; i++) {
                 changeScorecardByCategory(screeningScorecardNodes[i], projectCategoryNode.value, screeningScorecards, 'Screening');
@@ -520,7 +537,7 @@
             if (phaseName == "Screening" || phaseName == "Specification Review" || phaseName == "Review" || phaseName == "Approval" ||
                     phaseName == "Registration" || phaseName == "Appeals"
                     || phaseName == "Post-Mortem" || phaseName == "Checkpoint Screening" 
-                    || phaseName == "Checkpoint Review") {
+                    || phaseName == "Checkpoint Review" || phaseName == "Iterative Review") {
                 var templateRow;
                 if (phaseName == "Screening") {
                       templateRow = document.getElementById("screening_scorecard_row_template");
@@ -540,6 +557,8 @@
                       templateRow = document.getElementById("checkpoint_screening_scorecard_row_template");
                 } else if (phaseName == "Checkpoint Review") {
                       templateRow = document.getElementById("checkpoint_review_scorecard_row_template");
+                } else if (phaseName == "Iterative Review") {
+                      templateRow = document.getElementById("iterative_review_scorecard_row_template");
                 }
 
                  criterionRow = cloneInputRow(templateRow);
@@ -1029,6 +1048,10 @@
 
             templateRow = document.getElementById("checkpoint_review_scorecard_row_template");
             changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, checkpointReviewScorecards, 'Checkpoint Review');
+
+            // Populate iterative review scorecard on page load
+            templateRow = document.getElementById("iterative_review_scorecard_row_template");
+            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, iterativeReviewScorecards, 'Iterative Review');
         }
 
         /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2011 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2013 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -62,8 +62,16 @@ import com.topcoder.project.phases.Phase;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, isv, lmmortal
+ * <p>
+ * Version 1.4.3 (Online Review - Iterative Review v1.0) Change notes:
+ *   <ol>
+ *     <li>Added fields related to iterative review phase.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, isv, lmmortal, duxiaoyang
  * @version 1.4.3
+ * @since 1.0
  */
 public class PhaseGroup {
 
@@ -443,6 +451,41 @@ public class PhaseGroup {
      * @since 1.4
      */
     private boolean checkpointReviewFinished;
+
+    /**
+     * <p>A <code>Phase</code> providing the iterative review phase.</p>
+     *
+     * @since 1.4.3
+     */
+    private Phase iterativeReviewPhase;
+
+    /**
+     * <p>A <code>Review[]</code> providing the details for iterative Reviews.</p>
+     *
+     * @since 1.4.3
+     */
+    private Review[] iterativeReviewReviews;
+
+    /**
+     * <p>A <code>Resource[]</code> providing the details on iterative reviewers.</p>
+     *
+     * @since 1.4.3
+     */
+    private Resource[] iterativeReviewers;
+
+    /**
+     * <p>A <code>Submission</code> providing the details on iterative review submission.</p>
+     *
+     * @since 1.4.3
+     */
+    private Submission iterativeReviewSubmission;
+
+    /**
+     * <p>A <code>Resource</code> providing the details for iterative review submitter.</p>
+     *
+     * @since 1.4.3
+     */
+    private Resource iterativeReviewSubmitter;
 
     /**
      * Constructs a new instance of the <code>PhaseGroup</code> class setting all fields to their
@@ -1383,5 +1426,105 @@ public class PhaseGroup {
      */
     public void setCheckpointReviewFinished(boolean checkpointReviewFinished) {
         this.checkpointReviewFinished = checkpointReviewFinished;
+    }
+
+    /**
+     * <p>Gets the iterative review phase.</p>
+     *
+     * @return a <code>Phase</code> providing the iterative review phase.
+     * @since 1.4.3
+     */
+    public Phase getIterativeReviewPhase() {
+        return this.iterativeReviewPhase;
+    }
+
+    /**
+     * <p>Sets the iterative review phase.</p>
+     *
+     * @param iterativeReviewPhase a <code>Phase</code> providing the iterative review phase.
+     * @since 1.4.3
+     */
+    public void setIterativeReviewPhase(Phase iterativeReviewPhase) {
+        this.iterativeReviewPhase = iterativeReviewPhase;
+    }
+
+    /**
+     * <p>Gets the details on iterative review submission.</p>
+     *
+     * @return a <code>Submission</code> providing the details on iterative review submission.
+     * @since 1.4.3
+     */
+    public Submission getIterativeReviewSubmission() {
+        return this.iterativeReviewSubmission;
+    }
+
+    /**
+     * <p>Sets the details on iterative review submission.</p>
+     *
+     * @param iterativeReviewSubmission a <code>Submission</code> providing the details on iterative review submission.
+     * @since 1.4.3
+     */
+    public void setIterativeReviewSubmission(Submission iterativeReviewSubmission) {
+        this.iterativeReviewSubmission = iterativeReviewSubmission;
+    }
+
+    /**
+     * <p>Gets the details on iterative reviewers.</p>
+     *
+     * @return a <code>Resource[]</code> providing the details on iterative reviewers.
+     * @since 1.4.3
+     */
+    public Resource[] getIterativeReviewers() {
+        return this.iterativeReviewers;
+    }
+
+    /**
+     * <p>Sets the details on iterative reviewers.</p>
+     *
+     * @param iterativeReviewer a <code>Resource[]</code> providing the details on iterative reviewers.
+     * @since 1.4.3
+     */
+    public void setIterativeReviewers(Resource[] iterativeReviewers) {
+        this.iterativeReviewers = iterativeReviewers;
+    }
+
+    /**
+     * <p>Gets the details for Iterative Reviews.</p>
+     *
+     * @return a <code>Review[]</code> providing the details for Iterative Reviews.
+     * @since 1.4.3
+     */
+    public Review[] getIterativeReviewReviews() {
+        return this.iterativeReviewReviews;
+    }
+
+    /**
+     * <p>Sets the details for Iterative Reviews.</p>
+     *
+     * @param iterativeReview a <code>Review[]</code> providing the details for Iterative Reviews.
+     * @since 1.4.3
+     */
+    public void setIterativeReviewReviews(Review[] iterativeReviewReviews) {
+        this.iterativeReviewReviews = iterativeReviewReviews;
+    }
+
+    /**
+     * <p>Gets the details for iterative review submitter.</p>
+     *
+     * @return a <code>Resource</code> providing the details for iterative review submitter.
+     * @since 1.4.3
+     */
+    public Resource getIterativeReviewSubmitter() {
+        return this.iterativeReviewSubmitter;
+    }
+
+    /**
+     * <p>Sets the details for iterative review submitter.</p>
+     *
+     * @param iterativeReviewSubmitter a <code>Resource</code> providing the details for iterative review submitter.
+     * @since 1.4.3
+     */
+    public void setIterativeReviewSubmitter(Resource iterativeReviewSubmitter) {
+        this.iterativeReviewSubmitter = iterativeReviewSubmitter;
     }
 }

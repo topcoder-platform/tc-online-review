@@ -1111,6 +1111,78 @@
         </Property>
     </Config>
 
+    <!-- Default namespace for Iterative Review handler -->
+    <Config name="com.cronos.onlinereview.phases.IterativeReviewPhaseHandler">
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Property name="Roles">
+                    <Value>*</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>
+                <Property name="StartPhaseEmail">
+                    <Property name="EmailTemplateName">
+                        <Value>&phasesEmailTemplate;</Value>
+                    </Property>
+                    <Property name="EmailSubject">
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
+                    </Property>
+                    <Property name="EmailFromAddress">
+                        <Value>&notificationEmailFromAddress;</Value>
+                    </Property>
+                </Property>
+                <Property name="EndPhaseEmail">
+                    <Property name="EmailTemplateName">
+                        <Value>&phasesEmailTemplate;</Value>
+                    </Property>
+                    <Property name="EmailSubject">
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
+                    </Property>
+                    <Property name="EmailFromAddress">
+                        <Value>&notificationEmailFromAddress;</Value>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Property name="Roles">
+                    <Value>Manager</Value>
+                    <Value>Observer</Value>
+                    <Value>Copilot</Value>
+                    <Value>Client Manager</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+                <Property name="StartPhaseEmail">
+                    <Property name="EmailTemplateName">
+                        <Value>&managerNotificationEmailTemplatesBase;/iterative_review/start.txt</Value>
+                    </Property>
+                    <Property name="EmailSubject">
+                        <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
+                    </Property>
+                    <Property name="EmailFromAddress">
+                        <Value>&notificationEmailFromAddress;</Value>
+                    </Property>
+                </Property>
+                <Property name="EndPhaseEmail">
+                    <Property name="EmailTemplateName">
+                        <Value>&managerNotificationEmailTemplatesBase;/iterative_review/end.txt</Value>
+                    </Property>
+                    <Property name="EmailSubject">
+                        <Value>%PHASE_TYPE% End\\: %PROJECT_NAME%</Value>
+                    </Property>
+                    <Property name="EmailFromAddress">
+                        <Value>&notificationEmailFromAddress;</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
     <!-- Default namespace for Appeals handler -->
     <Config name="com.cronos.onlinereview.phases.AppealsPhaseHandler">
         <Property name="ManagerHelperNamespace">
