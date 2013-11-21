@@ -129,6 +129,7 @@
 @distributionScriptsBase@=<<path_to_online_review_trunk>>/conf/distribution_scripts/windows
 @exttemplatesdir@=<<path_to_online_review_trunk>>/conf/templates
 @pactJNDIAddress@=jnp://localhost:1099
+@adminUsers@=<<comma separated list of user IDs, that have the ADMIN role>>
 
 # typical VM configuration
 #@login.authenticator@=ORAuthenticator
