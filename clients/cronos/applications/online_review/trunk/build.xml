@@ -361,6 +361,14 @@
          target="start_ldt" inheritall="false" inheritrefs="true"/>
       </then>
     </if>
+
+    <if>
+      <available file="${ra_deploy_dir}/build.xml" />
+      <then>
+        <ant antfile="${ra_deploy_dir}/build.xml" dir="${ra_deploy_dir}"
+             target="start_ra" inheritall="false" inheritrefs="true"/>
+      </then>
+    </if>
   </target>
 
   <!-- Stops all tools -->
@@ -380,6 +388,14 @@
       <then>
         <ant antfile="${ldt_deploy_dir}/build.xml" dir="${ldt_deploy_dir}"
          target="stop_ldt" inheritall="false" inheritrefs="true"/>
+      </then>
+    </if>
+
+    <if>
+      <available file="${ra_deploy_dir}/build.xml" />
+      <then>
+        <ant antfile="${ra_deploy_dir}/build.xml" dir="${ra_deploy_dir}"
+         target="stop_ra" inheritall="false" inheritrefs="true"/>
       </then>
     </if>
 

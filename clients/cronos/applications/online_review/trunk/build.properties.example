@@ -58,3 +58,4 @@ selenium_log=<<Path to log file for running Selenium sever>>
 #####################################
 auto_pilot_deploy_dir=<<path to auto pilot deployment directory>>
 ldt_deploy_dir=<<path to late deliverable tracker deployment directory >>
+ra_deploy_dir=<<path to review assignment deployment directory >>
