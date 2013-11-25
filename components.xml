@@ -352,7 +352,7 @@
     <component
         name="review_assignment"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_assignment/trunk"
-        revision="229537"/>
+        revision="238080"/>
 
     <component
         name="project_payment_calculator"

@@ -94,7 +94,7 @@
             <Property name="objectFactoryConfig">
                 <Property name="reviewAssignmentAlgorithmObjectFactoryKey">
                     <Property name="type">
-                        <Value>com.topcoder.management.review.assignment.algorithm.CollisionPreventionReviewAssignmentAlgorithm</Value>
+                        <Value>com.topcoder.management.review.assignment.algorithm.RandomizedRatingBasedReviewAssignmentAlgorithm</Value>
                     </Property>
                 </Property>
                 <Property name="reviewAssignmentProjectManagerObjectFactoryKey">
@@ -265,6 +265,14 @@
             </Property>
 
             <Property name="reviewAssignmentAlgorithmConfig">
+                <Property name="defaultRating">
+                    <Value>100</Value>
+                </Property>
+
+                <Property name="expBase">
+                    <Value>1.35</Value>
+                </Property>
+
                 <Property name="loggerName">
                     <Value>ReviewAssignmentLogger</Value>
                 </Property>
@@ -310,68 +318,6 @@
                     </Property>
                 </Property>
 
-                <Property name="baseReviewAssignmentAlgorithmKey">
-                    <Value>baseReviewAssignmentAlgorithmObjectFactoryKey</Value>
-                </Property>
-
-                <Property name="objectFactoryConfig">
-                    <Property name="baseReviewAssignmentAlgorithmObjectFactoryKey">
-                        <Property name="type">
-                            <Value>com.topcoder.management.review.assignment.algorithm.MaxSumOfRatingReviewAssignmentAlgorithm</Value>
-                        </Property>
-                    </Property>
-                </Property>
-
-                <Property name="baseReviewAssignmentAlgorithmConfig">
-                    <Property name="defaultRating">
-                        <Value>100</Value>
-                    </Property>
-
-                    <Property name="loggerName">
-                        <Value>ReviewAssignmentLogger</Value>
-                    </Property>
-
-                    <Property name="connectionName">
-                        <Value>informix_connection</Value>
-                    </Property>
-
-                    <!-- the DB Connection Factory configuration can be here as well -->
-                    <Property name="dbConnectionFactoryConfig">
-                        <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
-                            <Property name="connections">
-                                <!-- the "default" property refers to a configured connection -->
-                                <Property name="default">
-                                    <Value>informix_connection</Value>
-                                </Property>
-                                <Property name="informix_connection">
-                                    <Property name="producer">
-                                        <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
-                                    </Property>
-                                    <Property name="parameters">
-                                        <Property name="jdbc_driver">
-                                            <Value>com.informix.jdbc.IfxDriver</Value>
-                                        </Property>
-                                        <Property name="jdbc_url">
-                                            <Value>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:informixserver=informixoltp_tcp</Value>
-                                        </Property>
-                                        <Property name="user">
-                                            <Value>@database.username@</Value>
-                                        </Property>
-                                        <Property name="password">
-                                            <Value>@database.password@</Value>
-                                        </Property>
-                                        <Property name="IFX_USE_STRENC">
-                                            <Value>true</Value>
-                                        </Property>
-                                        <Property name="new_connection_sql">
-                                            <Value>set lock mode to wait 5;</Value>
-                                        </Property>
-                                    </Property>
-                                </Property>
-                            </Property>
-                        </Property>
-                    </Property>
-                </Property>
             </Property>
 
             <Property name="reviewAssignmentProjectManagerConfig">
