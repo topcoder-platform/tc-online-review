@@ -19,7 +19,7 @@ If the required number of iterative reviewers do not register to review your con
 %endif%
 
 <table border\="1">
-<caption style\="white-space\: nowrap">Member submitted for the contest</caption>
+<caption style\="white-space\: nowrap">Contest Submission</caption>
 <tr>
 <th>Handle<th>Reliability<th>Rating
 %loop:SUBMITTER%
@@ -29,7 +29,9 @@ If the required number of iterative reviewers do not register to review your con
 </table>
 
 <p>
-The current submission will now be thoroughly reviewed by the TopCoder Member Review Board.  To follow the review process, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Cockpit</a>.
+This challenge uses the "First to Finish" review format. Submissions will be reviewed one at a time based on the order of the submissions.<br/>
+The first submission to win will end the review process and complete the challenge. You will receive an email like this for each submission that requires a review.<br/>
+To follow the review process, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Cockpit</a>.
 </p>
 
 <p>
