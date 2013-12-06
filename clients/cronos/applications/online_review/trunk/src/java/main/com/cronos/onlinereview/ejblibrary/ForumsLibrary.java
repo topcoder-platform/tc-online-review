@@ -8,6 +8,7 @@ import com.jivesoftware.base.UserNotFoundException;
 import com.jivesoftware.forum.ForumCategoryNotFoundException;
 import com.topcoder.web.ejb.forums.Forums;
 import com.topcoder.web.ejb.forums.ForumsBean;
+import com.topcoder.web.ejb.forums.ForumThreadData;
 import com.topcoder.web.ejb.forums.ForumsException;
 import com.topcoder.web.ejb.forums.ForumsSpecReviewComment;
 import com.topcoder.web.ejb.forums.ForumsUserComment;
@@ -445,5 +446,28 @@ public class ForumsLibrary extends BaseEJBLibrary implements Forums {
     public void deleteTopCoderDirectProjectForum(long forumCategoryId, long forumId) throws EJBException, Exception
 	{
 		bean.deleteTopCoderDirectProjectForum(forumCategoryId, forumId);
+	}
+	
+	/**
+     * Migrate the CloudSpokes Challenge discussions data to TopCoder forum. It creates a software forum and inserts
+     * the given forum data into the software forum and assign permission for the contest users and admins. Finally
+     * it updates the contest info (project_info) to link the created forum to the contest.
+     *
+     * @param contestId the id of the TopCoder contest
+     * @param compVersionId the component version id
+     * @param contestName the contest name
+     * @param forumData the forum data
+     * @param userIds the user ids to give the forum user permission
+     * @param adminIds the user ids to give the forum admin permission
+     * @param postUserId the user id to post the thread
+     * @throws ForumsException if there is any error
+     * @return the forum category id created
+     * @since 1.5
+     */
+    public long migrateCloudSpokesForumData(long contestId, long compVersionId, String contestName,
+                                            ForumThreadData forumData, Long[] userIds,
+                                            Long[] adminIds, long postUserId) throws ForumsException {
+		return bean.migrateCloudSpokesForumData(contestId, compVersionId, contestName, forumData, userIds, adminIds, postUserId);
+											
 	}
 }
