@@ -11,6 +11,24 @@ Contest\: <a href\="%DIRECT_CONTEST_LINK%">%PROJECT_NAME{Project name}% %PROJECT
 Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
 </p>
 
+%if:N_SUBMITTERS>'0'%
+<table border\="1">
+<caption style\="white-space\: nowrap">Member submissions</caption>
+<tr>
+<th>Handle
+%loop:SUBMITTER%
+<tr>
+<td>%SUBMITTER_HANDLE%
+%endloop%
+</table>
+%endif%
+
+%if:N_SUBMITTERS='0'%
 <p>
-Click <a href\="https\://www.topcoder.com/direct/settings/dashboardNotifications">here</a> to change your notification settings.
+<font color\="red"><b>There are no submissions!</b></font>
+</p>
+%endif%
+
+<p>
+Click <a href\="https\://www.topcoder.com/direct/settings/notifications">here</a> to change your notification settings.
 </p>
