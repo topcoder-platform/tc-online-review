@@ -11,6 +11,16 @@ Contest\: <a href\="%DIRECT_CONTEST_LINK%">%PROJECT_NAME{Project name}% %PROJECT
 Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
 </p>
 
+<table border\="1">
+<caption style\="white-space\: nowrap">Screening results</caption>
+<tr>
+<th>Handle<th>Result
+%loop:SUBMITTER%
+<tr>
+<td>%SUBMITTER_HANDLE%<td>%SUBMITTER_RESULT%
+%endloop%
+</table>
+
 <p>
-Click <a href\="https\://www.topcoder.com/direct/settings/dashboardNotifications">here</a> to change your notification settings.
+Click <a href\="https\://www.topcoder.com/direct/settings/notifications">here</a> to change your notification settings.
 </p>

@@ -12,5 +12,9 @@ Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
 </p>
 
 <p>
-Click <a href\="https\://www.topcoder.com/direct/settings/dashboardNotifications">here</a> to change your notification settings.
+The winner of this contest will now begin to work on their final fixes as required.  To see the details of the final fixes, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Cockpit</a> and click on the final fix scorecard. 
+</p>
+
+<p>
+Click <a href\="https\://www.topcoder.com/direct/settings/notifications">here</a> to change your notification settings.
 </p>

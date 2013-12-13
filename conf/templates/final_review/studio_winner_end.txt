@@ -1,7 +1,5 @@
 Hello %USER_HANDLE{User handle}%,
 
-<span width\="%IS_WINNER%"></span>
-
 <p>
 %PHASE_TIMESTAMP{Phase timestamp}%<br/>
 Handle\: %USER_HANDLE{User handle}%<br/>
