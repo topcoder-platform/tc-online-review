@@ -86,6 +86,15 @@
 @STUDIO_SERVICES_PASSWORD@=password
 @STUDIO_SERVICES_PROTOCOL@=cockpitDomain
 @COCKPIT_PROVIDER_URL@=jnp://184.73.115.186:1399
+@TERMS_OF_USE_HOST_URL@=jnp://localhost:1099
+@SSO_COOKIE_KEY@=tcsso
+@SSO_HASH_SECRET@=GKDKJF80dbdc541fe829898aa01d9e30118bab5d6b9fe94fd052a40069385f5628
+
+#for local deployment, you'll need to add 127.0.0.1 local.host mapping to your hosts file
+@SSO_DOMAIN@=local.host
+@CLIENT_ID_AUTH0@ = CMaBuwSnY0Vu68PLrWatvvu3iIiGPh7t
+@REDIRECT_URL_AUTH0@ = /reg2/callback.action
+@REG_SERVER_NAME@ = tc.cloud.topcoder.com
 
 # typical VM configuration
 #@SERVER_NAME@=tcs.cloud.topcoder.com
@@ -116,6 +125,12 @@
 #@STUDIO_SERVICES_PROTOCOL@=cockpitDomain
 #@COCKPIT_PROVIDER_URL@=jnp://184.73.115.186:1399
 #@TERMS_OF_USE_HOST_URL@=jnp://localhost:1199
+#@SSO_COOKIE_KEY@=tcsso_vm
+#@SSO_HASH_SECRET@=GKDKJF80dbdc541fe829898aa01d9e30118bab5d6b9fe94fd052a40069385f5628
+#@SSO_DOMAIN@=topcoder.com
+#@CLIENT_ID_AUTH0@ = CMaBuwSnY0Vu68PLrWatvvu3iIiGPh7t
+#@REDIRECT_URL_AUTH0@ = /reg2/callback.action
+#@REG_SERVER_NAME@ = tc.cloud.topcoder.com
 
 ########################################
 ## Parameters used by OnlineReview.xml #
@@ -172,26 +187,6 @@
 @auto_pilot_log_file@=<<path_to_log_file>>
 # An interval (in seconds) between Auto Pilot job executions
 @auto_pilot_poll_interval@=<<interval between job executions>>
-
-# typical VM configuration
-# A path to file to signal to Auto Pilot to stop the job
-#@auto_pilot_guard_file@=/home/tcs/temp_files/auto_pilot_guard.txt
-# A path to file to signal to Auto Pilot that there is another tool instance already running
-#@auto_pilot_running_file@=/home/tcs/temp_files/auto_pilot_running.txt
-# A path to log file for Auto Pilot
-#@auto_pilot_log_file@=/home/tcs/temp_files/auto_pilot_log.txt
-
-# typical VM configuration
-# A path to file to signal to Auto Screening Tool to stop the job
-#@auto_screening_guard_file@=/home/tcs/temp_files/auto_screening_guard.txt
-# A path to file to signal to Auto Screening Tool that there is another tool instance already running
-#@auto_screening_running_file@=/home/tcs/temp_files/auto_screening_running.txt
-# A path to log file for Auto Screening Tool
-#@auto_screening_log_file@=/home/tcs/temp_files/auto_screening_log.txt
-# A path to Checkstyle executable for production classes
-#@auto_screening_checkstyle_main_exec@=/home/apps/auto_screening/checkstyle.sh
-# A path to Checkstyle executable for test classes
-#@auto_screening_checkstyle_tests_exec@=/home/apps/auto_screening/checkstyle_test.sh
 
 ####################################################
 # Parameters specific to Late Deliverables Tracker #
