@@ -70,7 +70,7 @@
     <Config name="com.cronos.onlinereview.login.LoginActions">
         <Property name="auth_response_parser">
             <Property name="class">
-                <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthResponseParser</Value>
+                <Value>com.cronos.onlinereview.login.authenticator.SSOCookieAuthResponseParser</Value>
             </Property>
             <Property name="namespace">
                 <Value>com.cronos.OnlineReview</Value>
@@ -80,15 +80,9 @@
             </Property>
         </Property>
 
-        <Property name="auth_cookie_manager">
+        <Property name="sso_cookie_service">
             <Property name="class">
-                <Value>com.cronos.onlinereview.login.cookies.AuthCookieManagerImpl</Value>
-            </Property>
-            <Property name="namespace">
-                <Value>com.cronos.OnlineReview</Value>
-            </Property>
-            <Property name="logger_name">
-                <Value>LoginActions</Value>
+                <Value>com.topcoder.web.common.security.SSOCookieServiceImpl</Value>
             </Property>
         </Property>
 
@@ -158,9 +152,9 @@
         ==========  Configuration for Online Review Ajax Support component  ==========
     -->
     <Config name="com.cronos.onlinereview.ajax">
-        <!-- User ID attribute name -->
-        <Property name="UserIdAttributeName">
-            <Value>userId</Value>
+        <!-- SSO Cookie Service Key for object factory -->
+        <Property name="SSOCookieServiceKey">
+            <Value>SSOCookieService</Value>
         </Property>
 
         <!-- The names of the Ajax request handlers -->
@@ -174,6 +168,13 @@
     </Config>
 
     <Config name="com.cronos.onlinereview.ajax.factory">
+        <!-- Defining the "SSOCookieService" concrete implementation -->
+        <Property name="SSOCookieService">
+            <Property name="type">
+                <Value>com.topcoder.web.common.security.SSOCookieServiceImpl</Value>
+            </Property>
+        </Property>
+    
         <!-- Defining the "SetScorecardStatus" handler concrete implementation -->
         <Property name="SetScorecardStatus">
             <Property name="type">
@@ -3176,15 +3177,6 @@
         =====  Configuration for the Online Review Application itself  =====
     -->
     <Config name="com.cronos.OnlineReview">
-        <Property name="user_identifer_key">
-            <Value>userId</Value>
-        </Property>
-        <Property name="user_identifier_key">
-            <Value>userId</Value>
-        </Property>
-        <Property name="cookie_name">
-            <Value>or_user</Value>
-        </Property>
         <Property name="connection_name">
             <Value>tcs</Value>
         </Property>

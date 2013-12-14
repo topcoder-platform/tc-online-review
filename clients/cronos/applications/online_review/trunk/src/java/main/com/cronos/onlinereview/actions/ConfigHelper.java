@@ -133,13 +133,6 @@ public class ConfigHelper {
 
     /**
      * This member variable is a string constant that specifies the name of the property which
-     * contains the name of the session attribute which the ID of the currently logged in user
-     * will be stored in.
-     */
-    private static final String USER_ID_ATTR_NAME_PROP = "user_identifer_key";
-
-    /**
-     * This member variable is a string constant that specifies the name of the property which
      * contains the submitter role id.
      *
      * @since 1.1
@@ -663,12 +656,6 @@ public class ConfigHelper {
     private static final String ADMIN_USERS_PROP = "AdminUsers";
 
     /**
-     * This member variable holds the name of the session attribute which ID of the currently logged
-     * in user will be stored in.
-     */
-    private static String userIdAttributeName = "";
-
-    /**
      * This member variable holds the submitter role id.
      *
      * @since 1.1
@@ -1042,14 +1029,6 @@ public class ConfigHelper {
         ConfigManager cfgMgr = ConfigManager.getInstance();
 
         try {
-            // Retrieve the value of the property that contains the name of User ID session attribute
-            String userIdAttr = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, USER_ID_ATTR_NAME_PROP);
-            // If the value has been retrieved successfully ...
-            if (userIdAttr != null && userIdAttr.trim().length() != 0) {
-                // ... store it for later use
-                userIdAttributeName = userIdAttr;
-            }
-
             // Retrieve the value of the property that contains the submitter_role_id
             String value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, SUBMITTER_ROLE_ID_NAME_PROP);
             // If the value has been retrieved successfully ...
@@ -1617,16 +1596,6 @@ public class ConfigHelper {
             System.out.println(une.getMessage());
             une.printStackTrace();
         }
-    }
-
-    /**
-     * This static method returns the name of the session attribute which the ID of the currently
-     * logged in user will be stored in.
-     *
-     * @return the name of the sessin attribute.
-     */
-    public static String getUserIdAttributeName() {
-        return userIdAttributeName;
     }
 
     /**

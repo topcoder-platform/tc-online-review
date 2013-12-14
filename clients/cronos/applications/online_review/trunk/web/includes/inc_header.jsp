@@ -1,5 +1,19 @@
+ <%--
+ *
+ * Copyright (C) 2004 - 2013 TopCoder Inc., All Rights Reserved.
+ *
+ * <p>
+ *   1.1 (TCCC-5802) change log:
+ *   <ol>
+ *    Add a social account login link.
+ *   </ol>
+ * </p>
+ * Version 1.1
+ * Author: TCSASSEMBLER, ecnu_haozi
+ --%>
 <%@ page language="java" isELIgnored="false" %>
-<%@ page import="java.text.DecimalFormat,com.topcoder.shared.util.ApplicationServer" %>
+<%@ page import="java.text.DecimalFormat,
+                 com.topcoder.shared.util.ApplicationServer" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
@@ -22,7 +36,11 @@
              | <html:link action="/actions/Logout.do?method=logout">Logout</html:link>
         </c:if>
         <c:if test="${not orfn:isUserLoggedIn(pageContext.request)}">
-            <html:link page="/jsp/login.jsp">Login</html:link>
+            
+            <script id="auth0" src="https://sdk.auth0.com/auth0.js#client=<%=ApplicationServer.CLIENT_ID_AUTH0%>&amp;state=http://<%=ApplicationServer.SOFTWARE_SERVER_NAME%>/review/actions/ListProjects.do?method=listProjects&amp;redirect_uri=https://<%=ApplicationServer.REG_SERVER_NAME%><%=ApplicationServer.REDIRECT_URL_AUTH0%>"></script>
+
+            <a href="javascript:window.Auth0.signIn({ onestep: true, title: 'TopCoder/CloudSpokes', icon: 'http://www.topcoder.com/i/24x24_brackets.png', showIcon: true});">Social login</a>
+             | <html:link page="/jsp/login.jsp">Login</html:link>
              | <a href="http://<%=ApplicationServer.SERVER_NAME%>/reg/">Register</a>
              | <a href="http://<%=ApplicationServer.SERVER_NAME%>/">Home</a>
         </c:if>

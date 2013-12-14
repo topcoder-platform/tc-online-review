@@ -19,12 +19,11 @@ import com.topcoder.security.groups.model.GroupPermissionType;
 import com.topcoder.security.groups.model.ResourceType;
 import com.topcoder.security.groups.services.AuthorizationService;
 import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.web.common.security.SSOCookieService;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -86,8 +85,15 @@ import java.util.Set;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, rac_, tangzx
- * @version 1.6
+ * <p>
+ * Version 1.7 (https://apps.topcoder.com/bugs/browse/TCCC-5802) Change notes:
+ *   <ol>
+ *     <li>Modify method getLoggedInUserId to support SSO login.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, rac_, tangzx, ecnu_haozi
+ * @version 1.7
  */
 public class AuthorizationHelper {
 
@@ -102,15 +108,15 @@ public class AuthorizationHelper {
     private static final String AUTHORIZATION_SERVICE_NAME = "authorizationService";
 
     /**
-     * <p>An <code>AuthCookieManager</code> to be used for user authentication based on cookies.</p>
+     * <p>An <code>SSOCookieService</code> to be used for user authentication based on cookies.</p>
      *
-     * @since 1.3
+     * @since 1.7
      */
-    private static final AuthCookieManager authCookieManager;
+    private static final SSOCookieService ssoCookieService;
 
     static {
         try {
-            authCookieManager = createAuthCookieManager();
+            ssoCookieService = createSSOCookieService();
         } catch (ConfigurationException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -189,34 +195,13 @@ public class AuthorizationHelper {
      *            the user possibly logged in.
      */
     public static long getLoggedInUserId(HttpServletRequest request) {
-        Long userId = (Long) request.getSession().getAttribute(ConfigHelper.getUserIdAttributeName());
-        if (userId == null) {
-            try {
-                userId = getAuthCookieManager().checkAuthCookie(request);
-                if (userId != null) {
-                    request.getSession().setAttribute(ConfigHelper.getUserIdAttributeName(), userId);
-                }
-            } catch (AuthCookieManagementException e) {
-                e.printStackTrace();
-            }
+        Long userId = null;
+        try {
+            userId = getSSOCookieService().getUserIdFromSSOCookie(request);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return (userId != null) ? (userId) : NO_USER_LOGGED_IN_ID;
-    }
-
-    /**
-     * This static method sets (stores into session attribute) the ID of the user currently logged
-     * in.
-     *
-     * @param request
-     *            an <code>HttpServletRequest</code> object which the information about the logged
-     *            in user will be stored to.
-     * @param userId
-     *            the ID of the user that should be logged into the application, or
-     *            <code>NO_USER_LOGGED_IN_ID</code> if no user should be logged in.
-     */
-    public static void setLoggedInUserId(HttpServletRequest request, long userId) {
-        request.getSession().setAttribute(ConfigHelper.getUserIdAttributeName(),
-                (userId != NO_USER_LOGGED_IN_ID) ? userId : null);
     }
 
     /**
@@ -494,11 +479,11 @@ public class AuthorizationHelper {
     /**
      * <p>Gets the cookie manager to be used for authenticating users based on cookie.</p>
      *
-     * @return a a <code>AuthCookieManager</code> to be used for user authentication based on cookie.
+     * @return a a <code>SSOCookieService</code> to be used for user authentication based on cookie.
      * @since 1.3
      */
-    public static AuthCookieManager getAuthCookieManager() {
-        return authCookieManager;
+    public static SSOCookieService getSSOCookieService() {
+        return ssoCookieService;
     }
 
     /**
@@ -508,18 +493,18 @@ public class AuthorizationHelper {
      * @throws ConfigurationException if an unexpected error occurs while accessing the configuration.
      * @since 1.3
      */
-    private static AuthCookieManager createAuthCookieManager() throws ConfigurationException {
+    private static SSOCookieService createSSOCookieService() throws ConfigurationException {
         // instantiate the cookie manager instance via reflection
         String defaultNamespace = LoginActions.class.getName();
-        String className = Util.getRequiredPropertyString(defaultNamespace, "auth_cookie_manager.class");
-        String namespace = Util.getOptionalPropertyString(defaultNamespace, "auth_cookie_manager.namespace");
+        String className = Util.getRequiredPropertyString(defaultNamespace, "sso_cookie_service.class");
+        String namespace = Util.getOptionalPropertyString(defaultNamespace, "sso_cookie_service.namespace");
 
         if ((namespace == null) || (namespace.trim().length() == 0)) {
-            return (AuthCookieManager) Util.creatObject(className, new Class[] {}, new Object[] {},
-                    AuthCookieManager.class);
+            return (SSOCookieService) Util.createObject(className, new Class[] {}, new Object[] {},
+                    SSOCookieService.class);
         } else {
-            return (AuthCookieManager) Util.creatObject(className, new Class[] { String.class },
-                    new Object[]{namespace }, AuthCookieManager.class);
+            return (SSOCookieService) Util.createObject(className, new Class[] { String.class },
+                    new Object[]{namespace }, SSOCookieService.class);
         }
     }
 
