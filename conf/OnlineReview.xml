@@ -3733,6 +3733,22 @@
                     <Value>IconBH.gif</Value>
                 </Property>
             </Property>
+            <Property name="First2Finish">
+                <Property name="IconSmall">
+                    <Value>IconFirst2FinishSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconFirst2Finish.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Code">
+                <Property name="IconSmall">
+                    <Value>IconCodeSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconCode.gif</Value>
+                </Property>
+            </Property>
             <Property name="Deployment">
                 <Property name="IconSmall">
                     <Value>IconDeploySm.gif</Value>
