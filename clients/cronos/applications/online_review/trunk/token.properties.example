@@ -145,6 +145,9 @@
 @exttemplatesdir@=<<path_to_online_review_trunk>>/conf/templates
 @pactJNDIAddress@=jnp://localhost:1099
 @adminUsers@=<<comma separated list of user IDs, that have the ADMIN role>>
+@thurgood.api.key@=12345678901234567890
+@thurgood.username@=Thurgood
+@thurgood.password@=password
 
 # typical VM configuration
 #@login.authenticator@=ORAuthenticator

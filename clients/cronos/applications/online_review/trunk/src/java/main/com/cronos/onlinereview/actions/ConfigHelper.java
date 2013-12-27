@@ -120,8 +120,8 @@ import com.topcoder.util.config.UnknownNamespaceException;
  *    </ol>
  * </p>
  * 
- * @author George1, real_vg, pulky, romanoTC, isv, FireIce, lmmortal, flexme
- * @version 1.10
+ * @author George1, real_vg, pulky, romanoTC, isv, FireIce, lmmortal, flexme, gjw99
+ * @version 1.11
  */
 public class ConfigHelper {
 
@@ -656,6 +656,55 @@ public class ConfigHelper {
     private static final String ADMIN_USERS_PROP = "AdminUsers";
 
     /**
+     * <p>A <code>String</code> providing the name for thurgood api url property.</p>
+     *
+     * @since 1.11
+     */
+	private static final String THURGOOD_API_URL_PROP = "thurgood_api_url";
+
+    /**
+     * <p>A <code>String</code> providing the name for thurgood api key property.</p>
+     *
+     * @since 1.11
+     */
+	private static final String THURGOOD_API_KEY_PROP = "thurgood_api_key";
+
+    /**
+     * <p>A <code>String</code> providing the name for thurgood timeout property.</p>
+     *
+     * @since 1.11
+     */
+	private static final String THURGOOD_TIMEOUT_PROP = "thurgood_timeout";
+
+    /**
+     * <p>A <code>String</code> providing the name for thurgood code url property.</p>
+     *
+     * @since 1.11
+     */
+	private static final String THURGOOD_CODE_URL_PROP = "thurgood_code_url";
+
+    /**
+     * <p>A <code>String</code> providing the name for thurgood job base UI url property.</p>
+     *
+     * @since 1.11
+     */
+	private static final String THURGOOD_JOB_BASE_UI_URL_PROP = "thurgood_job_base_ui_url";
+
+    /**
+     * <p>A <code>String</code> providing the name for thurgood username property.</p>
+     *
+     * @since 1.11
+     */
+    private static final String THURGOOD_USERNAME_PROP = "thurgood_username";
+
+    /**
+     * <p>A <code>String</code> providing the name for thurgood password property.</p>
+     *
+     * @since 1.11
+     */
+    private static final String THURGOOD_PASSWORD_PROP = "thurgood_password";
+
+    /**
      * This member variable holds the submitter role id.
      *
      * @since 1.1
@@ -1023,6 +1072,54 @@ public class ConfigHelper {
      * <p>A <code>List</code> for the admin user IDs.</p>
      */
     private static List<Long> adminUsers = new ArrayList<Long>();
+
+    /**
+     * <p>Represents the Thurgood URL for creating and submitting the Thurgood job.</p>
+     * @since 1.11
+     */
+	private static String thurgoodApiURL;
+
+    /**
+     * <p>Represents the API Key for creating and submitting the Thurgood job.</p>
+     *
+     * @since 1.11
+     */
+	private static String thurgoodApiKey;
+
+    /**
+     * <p>Represents the timeout for creating and submitting the Thurgood job.</p>
+     *
+     * @since 1.11
+     */
+	private static int thurgoodTimeout = 5000;
+
+    /**
+     * <p>Represents the submission's code url for creating and submitting the Thurgood job.</p>
+     *
+     * @since 1.11
+     */
+	private static String thurgoodCodeURL;
+
+    /**
+     * <p>Represents the job base UI url of the submitted the Thurgood job.</p>
+     *
+     * @since 1.11
+     */
+	private static String thurgoodJobBaseUIURL;
+
+    /**
+     * <p>Represents the username of the Thurgood user.</p>
+     *
+     * @since 1.11
+     */
+    private static String thurgoodUsername;
+
+    /**
+     * <p>Represents the password of the Thurgood user.</p>
+     *
+     * @since 1.11
+     */
+    private static String thurgoodPassword;
 
     static {
         // Obtaining the instance of Configuration Manager
@@ -1589,6 +1686,41 @@ public class ConfigHelper {
                         // don't do anything
                     }
                 }
+            }
+
+            // Get the configuration for Thurgood
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, THURGOOD_API_URL_PROP);
+            if (value != null && value.trim().length() != 0) {
+            	thurgoodApiURL = value;
+            }
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, THURGOOD_API_KEY_PROP);
+            if (value != null && value.trim().length() != 0) {
+            	thurgoodApiKey = value;
+            }
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, THURGOOD_TIMEOUT_PROP);
+            if (value != null && value.trim().length() != 0) {
+                // ... store it for later use
+                try {
+                	thurgoodTimeout = Integer.parseInt(value);
+                } catch (NumberFormatException nfe) {
+                    // don't do anything, keep the default
+                }
+            }
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, THURGOOD_CODE_URL_PROP);
+            if (value != null && value.trim().length() != 0) {
+            	thurgoodCodeURL = value;
+            }
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, THURGOOD_JOB_BASE_UI_URL_PROP);
+            if (value != null && value.trim().length() != 0) {
+            	thurgoodJobBaseUIURL = value;
+            }
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, THURGOOD_USERNAME_PROP);
+            if (value != null && value.trim().length() != 0) {
+                thurgoodUsername = value;
+            }
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, THURGOOD_PASSWORD_PROP);
+            if (value != null && value.trim().length() != 0) {
+                thurgoodPassword = value;
             }
             
         } catch (UnknownNamespaceException une) {
@@ -2378,5 +2510,68 @@ public class ConfigHelper {
      */
     public static List<Long> getAdminUsers() {
         return adminUsers;
+    }
+
+	/**
+	 * Getter of the thurgood API URL.
+	 * @return the thurgood API URL
+	 * @since 1.11
+	 */
+	public static String getThurgoodApiURL() {
+		return thurgoodApiURL;
+	}
+
+	/**
+	 * Getter of thurgood API key.
+	 * @return the thurgood API key
+	 * @since 1.11
+	 */
+	public static String getThurgoodApiKey() {
+		return thurgoodApiKey;
+	}
+
+	/**
+	 * Getter of thurgood timeout.
+	 * @return the thurgood timeout
+	 * @since 1.11
+	 */
+	public static int getThurgoodTimeout() {
+		return thurgoodTimeout;
+	}
+
+	/**
+	 * Getter of thurgood code URL.
+	 * @return the thurgood code URL
+	 * @since 1.11
+	 */
+	public static String getThurgoodCodeURL() {
+		return thurgoodCodeURL;
+	}
+
+	/**
+	 * Getter of thurgood job base UI URL.
+	 * @return the thurgood job base UI URL
+	 * @since 1.11
+	 */
+	public static String getThurgoodJobBaseUIURL() {
+		return thurgoodJobBaseUIURL;
+	}
+
+    /**
+     * Getter of Thurgood user username.
+     * @return the Thurgood user username.
+     * @since 1.11
+     */
+    public static String getThurgoodUsername() {
+        return thurgoodUsername;
+    }
+
+    /**
+     * Getter of Thurgood user password.
+     * @return the Thurgood user password.
+     * @since 1.11
+     */
+    public static String getThurgoodPassword() {
+        return thurgoodPassword;
     }
 }

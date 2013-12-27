@@ -1593,6 +1593,7 @@
                                submission.placement,
                                submission.user_rank,
                                submission.mark_for_purchase,
+                               submission.thurgood_job_id AS thurgood_job_id,
                                prize.prize_id,
                                prize.place,
                                prize.prize_amount,
@@ -5201,6 +5202,28 @@
             <Value>@adminUsers@</Value>
         </Property>
 
+        <!-- Added for thurgood api -->
+        <Property name="thurgood_api_url">
+            <Value>https://thurgood-production.herokuapp.com/api/1/jobs</Value>
+        </Property>
+        <Property name="thurgood_api_key">
+            <Value>@thurgood.api.key@</Value>
+        </Property>
+        <Property name="thurgood_timeout">
+            <Value>5000</Value>
+        </Property>
+        <Property name="thurgood_code_url">
+            <Value>https://software.topcoder.com/review/actions/DownloadContestSubmission.do?method=downloadContestSubmission%26uid=</Value>
+        </Property>
+        <Property name="thurgood_job_base_ui_url">
+            <Value>https://thurgood-production.herokuapp.com/#/jobs/{job_id}/events</Value>
+        </Property>
+        <Property name="thurgood_username">
+            <Value>@thurgood.username@</Value>
+        </Property>
+        <Property name="thurgood_password">
+            <Value>@thurgood.password@</Value>
+        </Property>
     </Config>
 
     <!--

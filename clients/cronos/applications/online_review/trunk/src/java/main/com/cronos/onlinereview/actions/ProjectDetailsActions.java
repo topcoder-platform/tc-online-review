@@ -3,9 +3,16 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,6 +45,9 @@ import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.functions.Functions;
 import com.cronos.onlinereview.model.ClientProject;
 import com.cronos.onlinereview.model.CockpitProject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.SubmissionStatus;
@@ -253,8 +263,16 @@ import com.topcoder.util.file.templatesource.FileTemplateSource;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, FireIce, rac_, flexme, duxiaoyang
- * @version 1.13
+ * <p>
+ * Version 1.14 (Online Review - Thurgood Integration v1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #handleUploadSubmission(ActionMapping, ActionForm, HttpServletRequest, String, String, String)}
+ *     to support Thurgood job.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, FireIce, rac_, flexme, duxiaoyang, gjw99
+ * @version 1.14
  * @since 1.0
  */
 public class ProjectDetailsActions extends DispatchAction {
@@ -293,6 +311,11 @@ public class ProjectDetailsActions extends DispatchAction {
      * <p>
      * Online Review - Project Payments Integration Part 1 v1.0
      *      - Remove the old prize information and populate the new project prizes to the request attributes.
+     * </p>
+     *
+     * <p>
+     * Online Review - Thurgood Integration v1.0
+     *      - Add Thurgood logic to the request attributes.
      * </p>
      *
      * @return an action forward to the appropriate page. If no error has occurred, the forward will
@@ -351,6 +374,12 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("projectType", projectTypeName);
         request.setAttribute("projectCategory", project.getProjectCategory().getName());
         request.setAttribute("projectStatus", project.getProjectStatus().getName());
+        
+        // check if this project uses Thurgood
+        if (!isEmptyOrNull(project.getProperty("Thurgood Platform")) && !isEmptyOrNull(project.getProperty("Thurgood Language")) ) {
+            request.setAttribute("isThurgood", true);
+            request.setAttribute("thurgoodBaseUIURL", ConfigHelper.getThurgoodJobBaseUIURL());
+        }
 
         boolean digitalRunFlag = "On".equals(project.getProperty("Digital Run Flag"));
 
@@ -3096,10 +3125,22 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         // Get all phases for the current project (needed to do permission checks)
+        Project project = verification.getProject(); 
         Phase[] phases = ActionsHelper.getPhasesForProject(
                 ActionsHelper.createPhaseManager(false), verification.getProject());
 
         boolean noRights = true;
+
+        // Check if it is the Thurgood server trying to get the submission.
+        // If it's Thurgood, authorize the request.
+        boolean useThurgood = !isEmptyOrNull(project.getProperty("Thurgood Platform")) &&
+                !isEmptyOrNull(project.getProperty("Thurgood Language"));
+        if (useThurgood && !AuthorizationHelper.isUserLoggedIn(request)) {
+            if (ConfigHelper.getThurgoodUsername().equals(request.getParameter("username")) &&
+                ConfigHelper.getThurgoodPassword().equals(request.getParameter("password"))) {
+                noRights = false;
+            }
+        }
 
         if (AuthorizationHelper.hasUserPermission(request, viewAllSubmissionsPermName)) {
             noRights = false;
@@ -3244,6 +3285,9 @@ public class ProjectDetailsActions extends DispatchAction {
 
     /**
      * <p>Handles the request for uploading a submission to project.</p>
+     * <p>
+     * Change in 1.14: The method is updated to support thurgoodJobId property of Submission.
+     * </p>
      *
      * @param mapping an <code>ActionMapping</code> used to map the request to this action.
      * @param form an <code>ActionForm</code> providing the form submitted by user.
@@ -3348,6 +3392,22 @@ public class ProjectDetailsActions extends DispatchAction {
 
         UploadManager upMgr = ActionsHelper.createUploadManager();
         upMgr.createUpload(upload, operator);
+
+        // set the Thurgood job id if the contest is from CloudSpokes
+        String thurgoodPlatform = (String) project.getProperty("Thurgood Platform");
+        String thurgoodLanguage = (String) project.getProperty("Thurgood Language");
+        // Thurgood will be used only for Contest Submissions
+        if (!isEmptyOrNull(thurgoodPlatform) && !isEmptyOrNull(thurgoodLanguage)
+                && submissionTypeName.equals(Constants.CONTEST_SUBMISSION_TYPE_NAME)) {
+
+            Map<String, String> parameters =
+                buildCreateThurgoodParameters(project, thurgoodPlatform, thurgoodLanguage, upload.getId(), request);
+            if (parameters != null) {
+                String thurgoodJobId = submitThurgoodJob(createThurgoodJob(parameters));
+                submission.setThurgoodJobId(thurgoodJobId);
+            }
+        }
+
         upMgr.createSubmission(submission, operator);
         resource.addSubmission(submission.getId());
         ActionsHelper.createResourceManager().updateResource(resource, operator);
@@ -3372,6 +3432,200 @@ public class ProjectDetailsActions extends DispatchAction {
 
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
+    }
+
+    /**
+     * Build the parameters for creating Thurgood job.
+     * @param project the current project
+     * @param thurgoodPlatform the Thurgood platform
+     * @param thurgoodLanguage the Thurgood language
+     * @param uploadId the upload id
+     * @param request the http servlet request
+     * @return the parameters map
+     * @throws BaseException if any error
+     * @since 1.14
+     */
+    private Map<String, String> buildCreateThurgoodParameters(Project project, String thurgoodPlatform,
+        String thurgoodLanguage, long uploadId, HttpServletRequest request) throws BaseException {
+
+        // Get the ID of the sender
+        long senderId = AuthorizationHelper.getLoggedInUserId(request);
+
+        // Obtain an instance of User Retrieval
+        UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
+        // Retrieve information about an external user by its ID
+        ExternalUser user = userRetrieval.retrieveUser(senderId);
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put("email", user.getEmail());
+        parameters.put("language", thurgoodLanguage);
+        parameters.put("userId", user.getHandle());
+        parameters.put("codeUrl", ConfigHelper.getThurgoodCodeURL() + uploadId);
+        parameters.put("platform", thurgoodPlatform);
+        StringBuilder options = new StringBuilder();
+        options.append("[{\"challenge_id\":\"").append(project.getId());
+        options.append("\",\"participant_id\":\"").append(user.getId()).append("\"}]");
+        parameters.put("options", options.toString());
+        return parameters;
+    }
+
+    /**
+     * Check if the given object is a null or empty string.
+     * As it is called, it is guaranteed that the value is of string type.
+     * @param value the value to be checked.
+     * @return true if the string object is null or empty.
+     * @since 1.14
+     */
+    private boolean isEmptyOrNull(Object value) {
+        return value == null || ((String) value).trim().length() == 0;
+    }
+
+    /**
+     * Submit the Thurgood job.
+     * @param id the Thurgood job id.
+     * @return the submitted job id, null if submitting fails
+     * @since 1.14
+     */
+    private static String submitThurgoodJob(String id) {
+        String authHeader = "Token token=\"%s\"";
+        if (id != null) {
+            HttpURLConnection con = null;
+            BufferedReader in = null;
+            try {
+                URL obj = new URL(ConfigHelper.getThurgoodApiURL() + "/" + id + "/submit");
+                con = (HttpURLConnection) obj.openConnection();
+                // set connection timeout
+                con.setConnectTimeout(ConfigHelper.getThurgoodTimeout());
+
+                // optional default is GET
+                con.setRequestMethod("PUT");
+
+                //add request header
+                con.setRequestProperty("Authorization", String.format(authHeader, ConfigHelper.getThurgoodApiKey()));
+                int responseCode = con.getResponseCode();
+
+                in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                StringBuilder response = new StringBuilder();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                if (responseCode != HttpURLConnection.HTTP_OK) {
+                    LoggingHelper.logError("Server backend error happened with response " + response);
+                    return null;
+                }
+                ObjectMapper mapper = new ObjectMapper();
+                ObjectNode root = (ObjectNode) mapper.readTree(response.toString());
+                if (root.get("success") == null || !"true".equalsIgnoreCase(root.get("success").asText())) {
+                    LoggingHelper.logError("Submitting Thurgood job failed with response " + response);
+                    return null;
+                }
+                return id;
+            } catch (MalformedURLException e) {
+                LoggingHelper.logException("The requested url is malformed", e);
+            } catch (IOException e) {
+                LoggingHelper.logException("IO error while submitting the Thurgood job", e);
+            } catch (Exception e) {
+                LoggingHelper.logException("Error occurs while submitting the Thurgood job", e);
+            } finally {
+                if (con != null) {
+                    con.disconnect();
+                }
+                closeResource(in);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Create the Thurgood Job.
+     * @param parameters the submitted parameters
+     * @return the created job id, null if creation fails
+     * @since 1.14
+     */
+    private static String createThurgoodJob(Map<String, String> parameters) {
+        String authHeader = "Token token=\"%s\"";
+        HttpURLConnection con = null;
+        DataOutputStream wr = null;
+        BufferedReader in = null;
+        try {
+            URL obj = new URL(ConfigHelper.getThurgoodApiURL());
+            con = (HttpURLConnection) obj.openConnection();
+            // set connection timeout
+            con.setConnectTimeout(ConfigHelper.getThurgoodTimeout());
+
+            //set header
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Authorization", String.format(authHeader, ConfigHelper.getThurgoodApiKey()));
+
+            StringBuilder urlParameters = new StringBuilder();
+            for (Map.Entry<String, String> entry : parameters.entrySet()) {
+                urlParameters.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+            }
+
+            // Send post request
+            con.setDoOutput(true);
+            wr = new DataOutputStream(con.getOutputStream());
+            wr.writeBytes(urlParameters.toString());
+            wr.flush();
+
+            in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+            int responseCode = con.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                LoggingHelper.logError("Server backend error happened with response " + response);
+                return null;
+            }
+
+            //get the job id.
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode root = (ObjectNode) mapper.readTree(response.toString());
+            if (root.get("success") == null || !"true".equalsIgnoreCase(root.get("success").asText())
+                    || root.get("data") == null) {
+                LoggingHelper.logError("Creating Thurgood job failed with response " + response);
+                return null;
+            }
+            JsonNode idNode = root.get("data").get("_id");
+            if (idNode == null || idNode.asText().trim().length() == 0) {
+                LoggingHelper.logError("No Created Job ID returned with response " + response);
+                return null;
+            }
+            return idNode.asText();
+        } catch (MalformedURLException e) {
+            LoggingHelper.logException("The requested url is malformed", e);
+        } catch (IOException e) {
+            LoggingHelper.logException("IO error while creating the Thurgood job", e);
+        } catch (Exception e) {
+            LoggingHelper.logException("Error occurs while creating the Thurgood job", e);
+        } finally {
+            if (con != null) {
+                con.disconnect();
+            }
+            closeResource(wr);
+            closeResource(in);
+        }
+        return null;
+    }
+
+    /**
+     * Close the resource if it is not null.
+     * @param resource the resource to be closed.
+     * @since 1.14
+     */
+    private static void closeResource(Closeable resource) {
+        if (resource != null) {
+            try {
+                resource.close();
+            } catch (IOException e) {
+                LoggingHelper.logException("IO error while closing the resource", e);
+            }
+        }
     }
 }
 
