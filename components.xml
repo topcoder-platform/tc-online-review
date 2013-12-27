@@ -8,12 +8,12 @@
     <component
         name="deliverable_management"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/deliverable_management/trunk"
-        revision="226238"/>
+        revision="239324"/>
 
     <component
         name="deliverable_management_persistence"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/deliverable_management_persistence/trunk"
-        revision="237892"/>
+        revision="239325"/>
 
     <component
         name="late_deliverables_tracker"

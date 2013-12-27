@@ -1,6 +1,6 @@
 <%--
-  - Author: isv, rac_, flexme, duxiaoyang
-  - Version: 1.7
+  - Author: isv, rac_, flexme, duxiaoyang, gjw99
+  - Version: 1.8
   - Copyright (C) 2004 - 2013 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment displays the content of tab for single project phase on Project Details screen.
@@ -26,6 +26,9 @@
   -
   - Version 1.7 (Online Review - Iterative Review v1.0) changes:
   - - Added iterative review tab and its content.
+  -
+  - Version 1.8 (Online Review - Thurgood Integration v1.0) changes:
+  - - Added Thurgood column if it is a Thurgood contest.
 --%>
 <%@page import="com.topcoder.shared.util.ApplicationServer"%>
 <%@ page language="java" isELIgnored="false" %>
@@ -119,11 +122,14 @@
                         <c:when test='${group.appFunc == "VIEW_SUBMISSIONS"}'>
                             <table id="Submissions${submBoxIdx}" class="scorecard" width="100%" cellpadding="0" cellspacing="0" border="0">
                                 <tr>
-                                    <td class="title" colspan="6">${group.tableName}</td>
+                                    <td class="title" colspan="<c:out value="${isThurgood ? 7: 6}"/>">${group.tableName}</td>
                                 </tr>
                                 <tr>
                                     <td class="header" colspan="2" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
                                     <td class="header" width="22%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.Date" arg0="${group.groupIndex}" /></td>
+                                    <c:if test="${isThurgood}">
+                                    	<td class="headerC" width="15%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.Thurgood" /></td>
+                                    </c:if>
                                     <td class="header" width="15%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.Screener" /></td>
                                     <td class="headerC" width="14%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ScreeningScore" arg0="${group.groupIndex}" /></td>
                                     <td class="headerC" width="15%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ScreeningResult" arg0="${group.groupIndex}" /></td>
@@ -215,6 +221,16 @@
                                         </c:if>
                                         --%>
                                         <td class="value" width="22%">${orfn:displayDate(pageContext.request, submission.upload.creationTimestamp)}</td>
+                                        <c:if test="${isThurgood}">
+	                                        <td class="valueC" width="15%">
+	                                        	<c:if test="${not empty submission.thurgoodJobId}">
+	                                        		<a href="${fn:replace(thurgoodBaseUIURL, '{job_id}', submission.thurgoodJobId)}"><bean:message key="viewProjectDetails.box.Submission.ThurgoodLink" /></a>
+	                                        	</c:if>
+	                                        	<c:if test="${empty submission.thurgoodJobId}">
+	                                        		<bean:message key="viewProjectDetails.box.Submission.ThurgoodNotAvailable" />
+	                                        	</c:if>
+	                                        </td>
+                                        </c:if>
                                         <c:set var="screener" value="" />
                                         <c:forEach items="${group.reviewers}" var="reviewer">
                                             <c:if test="${(empty reviewer.submissions) and (empty screener)}">
@@ -298,6 +314,10 @@
                                                     </c:if>
                                             </td>
                                             <td class="value" width="22%">${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
+	                                        <c:if test="${isThurgood}">
+		                                        <td class="value" width="15%"><!-- @ -->
+		                                        </td>
+	                                        </c:if>
                                             <td class="value" width="15%"><!-- @ --></td>
                                             <td class="value" width="14%"><!-- @ --></td>
                                             <td class="value" width="15%"><!-- @ --></td>
@@ -305,7 +325,7 @@
                                     </c:forEach>
                                 </c:forEach>
                                 <tr>
-                                    <td class="lastRowTD" colspan="6"><!-- @ --></td>
+                                    <td class="lastRowTD" colspan="<c:out value="${isThurgood ? 7: 6}"/>"><!-- @ --></td>
                                 </tr>
                             </table>
 

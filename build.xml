@@ -148,6 +148,7 @@
       <lib dir="${tcs_libdir}" includes="tcjive.jar"/>
       
       <lib dir="${ext_libdir}" includes="*.jar" excludes="ejb-2_0.jar, servlet-api.jar, jsp-api.jar, log4j.jar"/>
+      <lib dir="${ext_libdir}/jackson" includes="*.jar"/>
       <lib dir="${ext_libdir}/spring" includes="*.jar"/>
       <lib dir="${ext_libdir}/hibernate" includes="*.jar"/>
       <lib dir="${ext_libdir}/svnkit" includes="*.jar"/>

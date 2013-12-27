@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2012 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2013 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -8,9 +8,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.external.ExternalUser;
-import com.cronos.onlinereview.external.RetrievalException;
 import com.cronos.onlinereview.external.UserRetrieval;
-
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
 import com.topcoder.util.log.LogManager;
@@ -24,9 +22,8 @@ import com.topcoder.util.log.LogManager;
  * This class is thread safe as it contains only static methods and no inner state.
  * </p>
  * 
- * @author George1
- * @author real_vg
- * @version 1.0
+ * @author George1, real_vg, gjw99
+ * @version 1.1
  */
 final class LoggingHelper {
     private static Log logger = LogManager.getLog("OnlineReview");
@@ -117,11 +114,23 @@ final class LoggingHelper {
     /**
      * This static method logs the information about the exception.
      * TODO: determine is the exception should be rethrown from logException static method
-     * 
+     *
+     * @param message
+     *            the error message to be logged
      * @param e
      *            exception containing the information to be logged
      */
-    public static void logException(Exception e) {
-    	logger.log(Level.ERROR, e);
+    public static void logException(String message, Exception e) {
+    	logger.log(Level.ERROR, e, message);
+    }
+    
+    /**
+     * This static method logs the information about the error.
+     * 
+     * @param error the error message to be logged
+     * @since 1.1
+     */
+    public static void logError(String error) {
+    	logger.log(Level.ERROR, error);
     }
 }
