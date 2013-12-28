@@ -92,9 +92,11 @@
 
 #for local deployment, you'll need to add 127.0.0.1 local.host mapping to your hosts file
 @SSO_DOMAIN@=local.host
+
 @CLIENT_ID_AUTH0@ = CMaBuwSnY0Vu68PLrWatvvu3iIiGPh7t
 @REDIRECT_URL_AUTH0@ = /reg2/callback.action
 @REG_SERVER_NAME@ = tc.cloud.topcoder.com
+@DOMAIN_AUTH0@ = topcoder.auth0.com
 
 # typical VM configuration
 #@SERVER_NAME@=tcs.cloud.topcoder.com
