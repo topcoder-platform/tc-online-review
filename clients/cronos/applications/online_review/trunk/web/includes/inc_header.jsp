@@ -20,6 +20,36 @@
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <jsp:useBean id="sessionInfo" class="com.topcoder.web.common.SessionInfo" scope="request" />
 <script language="JavaScript" type="text/javascript" src="/js/tcscript.js"><!-- @ --></script>
+<script language="JavaScript" type="text/javascript" src="/js/jquery-1.10.2.min.js"><!-- @ --></script>
+<script src="//d19p4zemcycm7a.cloudfront.net/w2/auth0-widget-2.3.6.min.js"></script>
+
+<script>
+    var widget = new Auth0Widget({
+        domain: '<%=ApplicationServer.DOMAIN_AUTH0%>',
+        clientID: '<%=ApplicationServer.CLIENT_ID_AUTH0%>',
+        callbackURL: 'https://<%=ApplicationServer.REG_SERVER_NAME%><%=ApplicationServer.REDIRECT_URL_AUTH0%>'
+    });
+
+    function showAuth0Widget(){
+        widget.signin({
+            state: 'https://<%=ApplicationServer.SOFTWARE_SERVER_NAME%>/review/actions/ListProjects.do?method=listProjects',
+            icon: 'http://www.topcoder.com/i/24x24_brackets.png', 
+            showIcon: true}).on('signin_ready', function() {
+            $('.a0-email input').each(function() {
+                $(this)
+                .clone()
+                .attr('type','text')
+                .attr('placeholder', 'Username')
+                .attr('title', 'Username')
+                .insertAfter($(this)).prev().remove();
+            });
+        });  
+    }       
+
+    $(function () {
+        $('.social-login').click(function () { showAuth0Widget(); });
+    });
+</script>    
 
 <div style="margin: 10px 0px 40px 0px;">
 
@@ -36,10 +66,7 @@
              | <html:link action="/actions/Logout.do?method=logout">Logout</html:link>
         </c:if>
         <c:if test="${not orfn:isUserLoggedIn(pageContext.request)}">
-            
-            <script id="auth0" src="https://sdk.auth0.com/auth0.js#client=<%=ApplicationServer.CLIENT_ID_AUTH0%>&amp;state=http://<%=ApplicationServer.SOFTWARE_SERVER_NAME%>/review/actions/ListProjects.do?method=listProjects&amp;redirect_uri=https://<%=ApplicationServer.REG_SERVER_NAME%><%=ApplicationServer.REDIRECT_URL_AUTH0%>"></script>
-
-            <a href="javascript:window.Auth0.signIn({ onestep: true, title: 'TopCoder/CloudSpokes', icon: 'http://www.topcoder.com/i/24x24_brackets.png', showIcon: true});">Social login</a>
+            <a href="javascript:;" class="social-login">Social login</a>
              | <html:link page="/jsp/login.jsp">Login</html:link>
              | <a href="http://<%=ApplicationServer.SERVER_NAME%>/reg/">Register</a>
              | <a href="http://<%=ApplicationServer.SERVER_NAME%>/">Home</a>
