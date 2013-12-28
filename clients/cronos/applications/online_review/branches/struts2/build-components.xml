@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     Aug 9, 2011
+
+     Build Components (based on direct scripts)
+                        
+     lmmortal                                                                
+     ====================================================================== -->
+<project name="tools.components">
+    <description>
+        The components build scripts defines useful targets and tasks to manage multiple components.
+    </description>
+
+    <dirname file="${ant.file.tools.components}" property="tools.components.basedir"/>
+
+    <property name="components_src" value="" />
+    <property name="comp_src_dir" value="src/java/main" />
+
+
+    <path id="script.path">
+        <pathelement location="${tools.components.basedir}/lib/third_party/groovy-all-2.1.9.jar"/>
+    </path>
+
+    <path id="svn.path">
+        <fileset dir="${tools.components.basedir}/lib/third_party/svnant/">
+            <include name="svn*.jar"/>
+        </fileset>
+    </path>
+
+    <import file="${tools.components.basedir}/build-components-tasks.xml"/>
+    <import file="${tools.components.basedir}/build-configuration.xml"/>
+        
+
+    <!-- =================================
+         target: checkout-components
+    ================================= -->
+    <target name="checkout-components" description="Checks out all components">
+        <execute-all prefix="component.current">
+            <sequential>
+                <echo message="-------------------- Checking for: ${component.current.basedir}"/>
+                <!-- check if directory exist -->
+                <!-- if yes check the svn path -->
+                <!-- if matches simply update -->
+                <!-- else delete and checkout -->
+                <if>
+                    <available file="${component.current.basedir}"/>
+                    <then>
+                        <svnex>
+                            <info target="${component.current.basedir}"/>
+                        </svnex>
+                        <if>
+                            <not>
+                                <equals arg1="${svn.info.url}" arg2="${component.current.svnpath}"/>
+                            </not>
+                            <then>
+                                <echo message="-------------------- Deleting ${component.current.basedir}"/>
+                                <delete dir="${component.current.basedir}" />
+                                <echo message="-------------------- Checking out: ${component.current.basedir} to revision ${component.current.revision}"/>
+                                <svnex>
+                                    <checkout destPath="${component.current.basedir}" url="${component.current.svnpath}" revision="${component.current.revision}" />
+                                </svnex>
+                            </then>
+                            <else>
+                                <echo message="-------------------- Updating: ${component.current.basedir} to revision ${component.current.revision}" />
+                                <svnex>
+                                    <update dir="${component.current.basedir}" revision="${component.current.revision}" />
+                                </svnex>
+                            </else>
+                        </if>
+                    </then>
+                    <!-- if not checkout the component -->
+                    <else>
+                        <echo message="-------------------- Checking out: ${component.current.basedir} to revision ${component.current.revision}"/>
+                        <svnex>
+                            <checkout destPath="${component.current.basedir}" url="${component.current.svnpath}" revision="${component.current.revision}" />
+                        </svnex>
+                    </else>
+                </if>
+            </sequential>
+        </execute-all>
+    </target>
+
+    <!-- =================================
+         target: get-components-src
+    ================================= -->
+
+    <macrodef name="get-components-src" description="Generates path to components sources" >
+        <sequential>
+            <execute-all prefix="component.current">
+                <sequential>
+                    <source-path prefix="component.current" property="components_src" />
+                </sequential>
+            </execute-all>
+        </sequential>
+    </macrodef>
+</project>

@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+<CMConfig>
+
+    <!-- Definition of the values for RatingType enum -->
+    <Config name="com.cronos.onlinereview.external.RatingType">
+        <Property name="Design">
+            <Value>112</Value>
+        </Property>
+        <Property name="Development">
+            <Value>113</Value>
+        </Property>
+        <Property name="Conceptualization">
+            <Value>134</Value>
+        </Property>
+        <Property name="Specification">
+            <Value>117</Value>
+        </Property>
+        <Property name="Architecture">
+            <Value>118</Value>
+        </Property>
+        <Property name="Assembly">
+            <Value>125</Value>
+        </Property>
+        <Property name="Test Suites">
+            <Value>124</Value>
+        </Property>
+        <Property name="Test Scenarios">
+            <Value>137</Value>
+        </Property>
+        <Property name="UI Prototypes">
+            <Value>130</Value>
+        </Property>
+        <Property name="RIA Builds">
+            <Value>135</Value>
+        </Property>
+        <Property name="Copilot Posting">
+            <Value>140</Value>
+        </Property>
+        <Property name="Content Creation">
+            <Value>146</Value>
+        </Property>
+    </Config>
+
+</CMConfig>

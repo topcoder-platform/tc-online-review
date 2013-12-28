@@ -1,0 +1,17 @@
+Hello %USER_HANDLE{User handle}%,
+
+<p>
+%PHASE_TIMESTAMP{Phase timestamp}%<br/>
+Handle\: %USER_HANDLE{User handle}%<br/>
+Category\: %PROJECT_CATEGORY{Name of the track}%<br/>
+Contest\: <a href\="%STUDIO_LINK%">%PROJECT_NAME{Project name}%</a><br/>
+This is the notification about %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.<br/>
+</p>
+
+%if:RESULT='rejected'%
+
+<p>
+Your Final Fixes have been submitted to the member. The Final Fix Phase is now in progress and will end once the member uploads their fixes to Studio.
+</p>
+
+%endif%
