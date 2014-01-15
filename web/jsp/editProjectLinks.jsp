@@ -58,6 +58,7 @@
     	}
     </script>
 
+</head>
 <body onload="onLoad();">
 <div align="center">
     <div class="maxWidthBody" align="left">
@@ -66,7 +67,7 @@
         <jsp:include page="/includes/project/project_tabs.jsp" />
 
         <div id="mainMiddleContent">
-           <div class="clearfix"/>
+           <div class="clearfix"></div>
            <div id="tabcontentcontainer"> 	
            	 <html:form action="/actions/SaveProjectLinks" onsubmit="return validate_form(this, true);">
            	  <html:hidden property="method" value="saveProjectLinks" />
