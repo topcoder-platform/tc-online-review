@@ -1109,10 +1109,6 @@
             <Property name="EmailSubject">
                 <Value>[{0}] {1} place </Value>
             </Property>
-            <Property name="AssignmentDocumentLink">
-                <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
-                <Value>http://www.topcoder.com/PactsMemberServlet?module=AssignmentDocumentDetails&amp;amp;assignment_document_id={0,number,#}</Value>
-            </Property>
             <Property name="EmailFromAddress">
                 <Value>&notificationEmailFromAddress;</Value>
             </Property>
