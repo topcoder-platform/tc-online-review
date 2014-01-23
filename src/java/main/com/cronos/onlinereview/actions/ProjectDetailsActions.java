@@ -3459,12 +3459,9 @@ public class ProjectDetailsActions extends DispatchAction {
         parameters.put("email", user.getEmail());
         parameters.put("language", thurgoodLanguage);
         parameters.put("userId", user.getHandle());
+        parameters.put("notification", "email");
         parameters.put("codeUrl", ConfigHelper.getThurgoodCodeURL() + uploadId);
         parameters.put("platform", thurgoodPlatform);
-        StringBuilder options = new StringBuilder();
-        options.append("[{\"challenge_id\":\"").append(project.getId());
-        options.append("\",\"participant_id\":\"").append(user.getId()).append("\"}]");
-        parameters.put("options", options.toString());
         return parameters;
     }
 

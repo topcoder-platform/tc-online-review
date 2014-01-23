@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,8 +59,6 @@ import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.util.errorhandling.BaseException;
-
-import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * <p>
