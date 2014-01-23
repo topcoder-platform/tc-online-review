@@ -421,6 +421,8 @@ public class ActionsHelper {
                 || categoryId == 29   // Copilot Posting
                 || categoryId == 35   // Content Creation
                 || categoryId == 36   // Reporting
+                || categoryId == 38   // First2Finish
+                || categoryId == 39   // Code
         );
     }
 
