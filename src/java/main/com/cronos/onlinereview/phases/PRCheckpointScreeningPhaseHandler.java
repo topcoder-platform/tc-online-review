@@ -12,30 +12,15 @@ import com.topcoder.project.phases.Phase;
  * <code>Online Review</code> application.</p>
  *
  * <p>
- * Version 1.1 (Online Review Replatforming Release 2) Change notes:
- *   <ol>
- *     <li>Update {@link #perform(Phase, String)} to populate checkpoint screener payments after the phase is closed.</li>
- *     <li>This class is refactor to use <code>ScreeningResultNotification</code> to send screening result notification emails.</li>
- *   </ol>
+ * Thread-safety: This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
- * <p>
- * Version 1.2 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
- *   <ol>
- *     <li>Updated {@link #perform(Phase, String)} method to call PaymentsHelper.processAutomaticPayments to process
- *     the project payments.</li>
- *     <li>Removed <code>prHelper</code> field.</li>
- *   </ol>
- * </p>
- * 
- * @author isv, flexme
- * @version 1.2 (Checkpoint Support assembly)
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class PRCheckpointScreeningPhaseHandler extends CheckpointScreeningPhaseHandler {
     /**
      * Represents the <code>ScreeningResultNotification</code> instance to send notification email.
-     * 
-     * @since 1.1
      */
     private final ScreeningResultNotification notification;
 

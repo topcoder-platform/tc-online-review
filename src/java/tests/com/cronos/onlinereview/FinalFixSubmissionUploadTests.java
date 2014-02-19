@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011-2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -7,10 +7,10 @@ import java.sql.Connection;
 
 
 /**
- * Online review functional tests 3,  competitor upload a submission while in final fix testing
+ * Online review functional tests 3,  competitor upload a submission while in final fix testing.
  *
- * @author TCSDEVELOPER
- * @version 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class FinalFixSubmissionUploadTests extends ProjectTests {
 
@@ -20,7 +20,7 @@ public class FinalFixSubmissionUploadTests extends ProjectTests {
      * @throws Exception if any error occurs.
      */
     public void setUp() throws Exception {
-    	super.setUp();
+        super.setUp();
         Connection con = TestHelper.getConnection();
         try {
             // close all the phase before final fix
@@ -53,7 +53,7 @@ public class FinalFixSubmissionUploadTests extends ProjectTests {
         projectId = -1;
         super.tearDown();
     }
-	
+    
     /**
      * Test Case Number: FTC113 RS7.2 Verify Competitor can upload a submission while in final fix
      *
@@ -71,7 +71,7 @@ public class FinalFixSubmissionUploadTests extends ProjectTests {
         browser.click("//table[@id='myRolesTable']/tbody/tr[2]/td[2]/a");
         browser.waitForPageToLoad(TIMEOUT);
         browser.type("file", TestHelper.getUploadFilePath());
-        browser.click("//input[@name='uploadBtn']");
+        browser.click("//input[@alt='Upload']");
         Thread.sleep(2*(new Long(TIMEOUT)));
         assertNoErrorsOccurred();
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.dataaccess;
 
@@ -11,8 +11,8 @@ import java.util.Map;
 /**
  * <p>A simple DAO for deliverables backed up by Query Tool.</p>
  *
- * @author isv
- * @version 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class DeliverableDataAccess extends BaseDataAccess {
 

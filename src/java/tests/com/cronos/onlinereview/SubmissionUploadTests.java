@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2013 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011-2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -7,10 +7,10 @@ import java.sql.Connection;
 
 
 /**
- * Online review functional tests 3,competitor upload a submission  testing
+ * Online review functional tests 3,competitor upload a submission  testing.
  *
- * @author TCSDEVELOPER
- * @version 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class SubmissionUploadTests extends ProjectTests {
 
@@ -20,7 +20,7 @@ public class SubmissionUploadTests extends ProjectTests {
      * @throws Exception if any error occurs.
      */
     public void setUp() throws Exception {
-    	super.setUp();
+        super.setUp();
         Connection con = TestHelper.getConnection();
         try {
 
@@ -44,11 +44,11 @@ public class SubmissionUploadTests extends ProjectTests {
      * @throws Exception if any error occurs.
      */
     public void tearDown() throws Exception {
-    	TestHelper.reloginAndDeleteProject(browser, projectId);
+        TestHelper.reloginAndDeleteProject(browser, projectId);
         projectId = -1;
         super.tearDown();
     }
-	
+    
     /**
      * Test Case Number: FTC112 RS7.1 Verify Competitor can upload a submission
      *
@@ -66,7 +66,7 @@ public class SubmissionUploadTests extends ProjectTests {
         browser.click("//table[@id='myRolesTable']/tbody/tr[2]/td[2]/a");
         browser.waitForPageToLoad(TIMEOUT);
         browser.type("file", TestHelper.getUploadFilePath());
-        browser.click("//input[@name='uploadBtn']");
+        browser.click("//input[@alt='Upload']");
         Thread.sleep(2*(new Long(TIMEOUT)));
         assertNoErrorsOccurred();
 

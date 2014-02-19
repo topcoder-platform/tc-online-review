@@ -1,10 +1,16 @@
  /*
- * Copyright (C) 2010-2013 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.dataaccess;
 
-import com.cronos.onlinereview.model.CockpitProject;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.cronos.onlinereview.model.ClientProject;
+import com.cronos.onlinereview.model.CockpitProject;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectPropertyType;
@@ -12,45 +18,11 @@ import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
 import com.topcoder.shared.util.DBMS;
 
-import java.sql.Timestamp;
-import java.util.*;
-
 /**
  * <p>A simple DAO for projects backed up by Query Tool.</p>
  *
- * <p>
- * Version 1.1 (Impersonation Login Assembly 1.0) Change notes:
- *   <ol>
- *     <li>Added {@link #getCockpitProjectName(long)} method.</li>
- *     <li>Added {@link #isCockpitProjectUser(long, long)} method.</li>
- *     <li>Renamed <code>searchInactiveProjects</code> method to <code>searchDraftProjects</code> method.</li>
- *   </ol>
- * </p>
- *
- * <p>
- * Version 1.2 (Online Review Late Deliverables Edit Assembly 1.0) Change notes:
- *   <ol>
- *     <li>Added {@link #getAllCockpitProjects()} method.</li>
- *     <li>Added {@link #getCockpitProjectsForUser(long)} method.</li>
- *   </ol>
- * </p>
- *
- * <p>
- * Version 1.3 Change notes:
- *   <ol>
- *     <li>Added methods to retrieve client projects (billings).</li>
- *   </ol>
- * </p>
- *
- * <p>
- * Version 1.4 (https://apps.topcoder.com/bugs/browse/BUGR-7621) Change notes:
- *   <ol>
- *     <li>Added getProjectClient to get client id for a given project.</li>
- *   </ol>
- * </p>
- *
- * @author isv, VolodymyrK, tangzx
- * @version 1.4
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class ProjectDataAccess extends BaseDataAccess {
 
@@ -117,7 +89,6 @@ public class ProjectDataAccess extends BaseDataAccess {
      * @param userId a <code>long</code> providing the ID of a user.
      * @return <code>true</code> if specified user is granted <code>Cockpit Project User</code> role for specified
      *         project; <code>false</code> otherwise.
-     * @since 1.1
      */
     public boolean isCockpitProjectUser(long projectId, long userId) {
         Map<String, ResultSetContainer> results = runQuery("cockpit_project_user",
@@ -129,9 +100,8 @@ public class ProjectDataAccess extends BaseDataAccess {
     /**
      * <p>Gets the <code>CockpitProject</code> by the ID.</p>
      *
-     * @param projectId a <code>long</code> providing the ID of the cockpit project.
+     * @param cockpitProjectId a <code>long</code> providing the ID of the cockpit project.
      * @return a <code>CockpitProject</code> or null if not found.
-     * @since 1.1
      */
     public CockpitProject getCockpitProject(long cockpitProjectId) {
         Map<String, ResultSetContainer> results = runQuery("cockpit_project_by_id", "pj", String.valueOf(cockpitProjectId));
@@ -150,7 +120,6 @@ public class ProjectDataAccess extends BaseDataAccess {
      * <p>Gets the list of all existing <code>CockpitProject</code> projects.</p>
      * 
      * @return a <code>List</code> of all existing <code>CockpitProject</code> projects.
-     * @since 1.2 
      */
     public List<CockpitProject> getAllCockpitProjects() {
         Map<String, ResultSetContainer> results = runQuery("cockpit_projects", (String) null, (String) null);
@@ -173,7 +142,6 @@ public class ProjectDataAccess extends BaseDataAccess {
      * @param userId a <code>long</code> providing the ID of a user to get the list of accessible <code>CockpitProject</code> 
      *        projects for. 
      * @return a <code>List</code> of all existing <code>CockpitProject</code> projects accessible by the specified user.
-     * @since 1.2
      */
     public List<CockpitProject> getCockpitProjectsForUser(long userId) {
         Map<String, ResultSetContainer> results = runQuery("direct_my_projects", "uid", String.valueOf(userId));
@@ -194,7 +162,6 @@ public class ProjectDataAccess extends BaseDataAccess {
      *
      * @param clientProjectId a <code>long</code> providing the ID of the client project.
      * @return a <code>ClientProject</code> or null if not found.
-     * @since 1.3
      */
     public ClientProject getClientProject(long clientProjectId) {
         Map<String, ResultSetContainer> results = runQuery("client_project_by_id", "pj", String.valueOf(clientProjectId));
@@ -213,7 +180,6 @@ public class ProjectDataAccess extends BaseDataAccess {
      * <p>Gets the list of all existing <code>ClientProject</code> projects.</p>
      * 
      * @return a <code>List</code> of all existing <code>ClientProject</code> projects.
-     * @since 1.3
      */
     public List<ClientProject> getAllClientProjects() {
         Map<String, ResultSetContainer> results = runQuery("client_projects", (String) null, (String) null);
@@ -236,7 +202,6 @@ public class ProjectDataAccess extends BaseDataAccess {
      * @param userId a <code>long</code> providing the ID of a user to get the list of accessible <code>ClientProject</code> 
      *        projects for. 
      * @return a <code>List</code> of all existing <code>ClientProject</code> projects accessible by the specified user.
-     * @since 1.3
      */
     public List<ClientProject> getClientProjectsForUser(long userId) {
         Map<String, ResultSetContainer> results = runQuery("client_projects_by_user", "uid", String.valueOf(userId));
@@ -266,7 +231,6 @@ public class ProjectDataAccess extends BaseDataAccess {
      * @param projectInfoTypes a <code>ProjectPropertyType</code> listing available project info types.
      * @return a <code>Project</code> array listing the projects of specified status.
      * @throws DataAccessException if an unexpected error occurs while running the query via Query Tool.
-     * @since 1.7
      */
     private Project[] searchProjectsByQueryTool(String projectQuery, String projectInfoQuery, String paramName,
                                                 String paramValue, ProjectStatus[] projectStatuses,
@@ -327,9 +291,8 @@ public class ProjectDataAccess extends BaseDataAccess {
      * @param directProjectId the id of tc direct project
      * @return the client id
      * @throws Exception if any exception occurs
-     * @since 1.4
      */
-    public long getProjectClient(long directProjectId) throws Exception {
+    public long getProjectClient(long directProjectId) {
         String queryName = "non_admin_client_billing_accounts";
 
         ResultSetContainer resultContainer = runQueryInDB(DBMS.TCS_DW_DATASOURCE_NAME, queryName,

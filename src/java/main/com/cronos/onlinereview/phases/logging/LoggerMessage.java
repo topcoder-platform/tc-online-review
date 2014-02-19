@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases.logging;
 
@@ -9,22 +9,28 @@ import java.io.PrintStream;
 
 /**
  * Encapsulates the entry log data and generates consistent log messages.
+ * <p>
+ * Thread safety: This class is not thread safe.
+ * </p>
+ *
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class LoggerMessage {
     /** id for the log message */
-    private Long id;
+    private final Long id;
 
     /** Operator doing the action */
-    private String operator;
+    private final String operator;
 
     /** type of the action. */
-    private String type;
+    private final String type;
 
     /** free text message to log */
-    private String message;
+    private final String message;
 
     /** exception to append to the log message */
-    private Throwable error;
+    private final Throwable error;
 
     /** generated log message */
     private String logMessage = null;

@@ -8,7 +8,7 @@ Contest\: <a href\="%OR_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Pro
 Now that your contest has succeeded, please evaluate how well the reviewers did their job. Your feedback will help improve quality of the future reviews.<br/>
 If you had any complaint against a particular reviewer during the contest or if you noticed a reviewer who did a great review, make sure to submit your feedback and rate the reviewers now!<br/>
 <br/>
-<a href\="https\://software.topcoder.com/review/actions/ViewManagementConsole.do?method\=viewConsole&amp;activeTabIdx\=3&amp;pid\=%OR_PROJECT_ID%">Rate reviewers</a>
+<a href\="https\://software.topcoder.com/review/actions/ViewManagementConsole?activeTabIdx\=3&amp;pid\=%OR_PROJECT_ID%">Rate reviewers</a>
 </p>
 
 <p>

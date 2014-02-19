@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2013 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -11,16 +11,8 @@ import com.thoughtworks.selenium.Selenium;
 /**
  * Online review functional tests 1, the base test case.
  *
- * <p>
- * Version 1.1 Change notes:
- *   <ol>
- *     <li>Updated {@link #tearDown()} method to run external (optional) script for stopping the browser if such a 
- *     script is provided by configuration.</li>
- *   </ol>
- * </p>
- *
- * @author TCSDEVELOPER, isv
- * @version 1.1
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class BaseTests extends TestCase {
 
@@ -73,8 +65,8 @@ public class BaseTests extends TestCase {
     }
     
     protected void assertNoErrorsOccurred() {
-    	assertFalse("No validation errors should exist", browser.isTextPresent(TestHelper.VALIDATION_ERROR));
-	    assertFalse("Error page shouldn't be displayed", browser.isTextPresent(TestHelper.ERROR_TEXT));
+        assertFalse("No validation errors should exist", browser.isTextPresent(TestHelper.VALIDATION_ERROR));
+        assertFalse("Error page shouldn't be displayed", browser.isTextPresent(TestHelper.ERROR_TEXT));
     }
 
 }

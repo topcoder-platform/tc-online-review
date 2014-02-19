@@ -211,10 +211,10 @@ function getDayIndex(name){
 }
 
 function checkDateValues(day, month, year){
-	var intYear = parseInt(year, 10);
-	if (intYear >= 0 && intYear <= 99) {
-		intYear = intYear + 2000;
-	}
+    var intYear = parseInt(year, 10);
+    if (intYear >= 0 && intYear <= 99) {
+        intYear = intYear + 2000;
+    }
     var d = new Date(intYear, month-1, day);
     var returnMonth = ""+(d.getMonth()+1);
     if (d.getMonth()+1 != month || d.getDate()!=day)

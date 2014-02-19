@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2005 TopCoder Inc., All Rights Reserved.
+/*
+ * Copyright (C) 2005 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -10,16 +10,20 @@ import com.topcoder.project.phases.Phase;
 /**
  * The extend from submissionPhaseHandler to add on the logic to push data to project_result.
  *
- * @author brain_cn
- * @version 1.0
+ * <p>
+ * Thread-safety: This class is thread-safe as it does not contain any mutable inner state.
+ * </p>
+ *
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class PRSubmissionPhaseHandler extends SubmissionPhaseHandler {
 
     /**
     * Used for pulling data to project_result table and filling payments.
     */
-    private PRHelper prHelper = new PRHelper();
-	
+    private final PRHelper prHelper = new PRHelper();
+    
     /**
      * Create a new instance of SubmissionPhaseHandler using the default namespace for loading configuration settings.
      *

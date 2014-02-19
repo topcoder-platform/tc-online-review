@@ -8,34 +8,26 @@ import java.sql.Connection;
 /**
  * Online review functional tests 3, delete reviewer testing.
  *
- * <p>
- * Version 1.1 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
- *   <ol>
- *     <li>Updated {@link #testDeleteReviewerRole()} because "Payment" and "Paid" columns have been removed
- *     in this assembly.</li>
- *   </ol>
- * </p>
- *
- * @author TCSDEVELOPER, flexme
- * @version 1.1
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class DeleteReviewerTests extends ProjectTests {
-	
+    
     /**
      * Sets up the testing environment.
      *
      * @throws Exception if any error occurs.
      */
     public void setUp() throws Exception {
-    	super.setUp();
-    	Connection con = TestHelper.getConnection();
-    	try {
-    		// add reviewer.
-    		TestHelper.AddResource(projectId, 4, phaseIds.get("review"), Long.parseLong(TestHelper.getCompetitiorUserId()), TestHelper.getCompetitorUsername(), con);
-    	}
-    	finally {
-    		con.close();
-    	}
+        super.setUp();
+        Connection con = TestHelper.getConnection();
+        try {
+            // add reviewer.
+            TestHelper.AddResource(projectId, 4, phaseIds.get("review"), Long.parseLong(TestHelper.getCompetitiorUserId()), TestHelper.getCompetitorUsername(), con);
+        }
+        finally {
+            con.close();
+        }
     }
 
     /**
@@ -44,7 +36,7 @@ public class DeleteReviewerTests extends ProjectTests {
      * @throws Exception if any error occurs.
      */
     public void tearDown() throws Exception {
-    	TestHelper.reloginAndDeleteProject(browser, projectId);
+        TestHelper.reloginAndDeleteProject(browser, projectId);
         projectId = -1;
         super.tearDown();
     }
@@ -55,18 +47,17 @@ public class DeleteReviewerTests extends ProjectTests {
      * @throws Exception if any error occurs
      */
     public void testDeleteReviewerRole() throws Exception {
-    	// login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        // login the user first
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
         // Click the 'Edit Project' Link
-        browser.click("//img[@alt='Edit Project']");
-        browser.waitForPageToLoad(TIMEOUT);
+        TestHelper.clickEditProjectLink(browser);
 
         // Delete the reviewer
         browser.click("//table[@id='resources_tbl']/tbody/tr[4]/td[3]/img[1]");
         // add explanation
         browser.type("explanation", "delete reviewer role");
-        browser.click("//input[@name='saveProjectChangesBtn']");
+        browser.click("//input[@alt='Save Changes']");
         browser.waitForPageToLoad(TIMEOUT);
 
         // logout the user

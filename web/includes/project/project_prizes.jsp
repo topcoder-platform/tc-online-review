@@ -1,7 +1,7 @@
 <%--
-  - Author: flexme
-  - Version: 1.0
-  - Copyright (C) 2013 TopCoder Inc., All Rights Reserved.
+  - Author: TCSASSEMBLER
+  - Version: 2.0
+  - Copyright (C) 2013 - 2014 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment displays the content of prizes on Project Details screen.
 --%>
@@ -9,27 +9,27 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="html" uri="/tags/struts-html" %>
-<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 
 <div>
     <ul id="tablist">
-        <li class="current"><a onclick="return showPrizeTab('contest-prizes-table', this);" href="javascript:void(0)"><bean:message key="editProject.ProjectDetails.ContestPrizes" /></a></li>
-        <li><a onclick="return showPrizeTab('checkpoint-prizes-table', this);" href="javascript:void(0)"><bean:message key="editProject.ProjectDetails.CheckpointPrizes" /></a></li>
+        <li class="current"><a onclick="return showPrizeTab('contest-prizes-table', this);" href="javascript:void(0)"><or:text key="editProject.ProjectDetails.ContestPrizes" /></a></li>
+        <li><a onclick="return showPrizeTab('checkpoint-prizes-table', this);" href="javascript:void(0)"><or:text key="editProject.ProjectDetails.CheckpointPrizes" /></a></li>
     </ul>
     <div style="clear:both;"></div>
 </div>
 
 <table id="contest-prizes-table" class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
     <tr>
-        <td class="title" colspan="3"><bean:message key="editProject.ProjectDetails.ContestPrizes" /></td>
+        <td class="title" colspan="3"><or:text key="editProject.ProjectDetails.ContestPrizes" /></td>
     </tr>
     <tr>
-        <td class="header"><bean:message key="editProject.ProjectDetails.Prize.Place" /></td>
-        <td class="header"><bean:message key="editProject.ProjectDetails.Prize.Amount" /></td>
-        <td class="header"><bean:message key="editProject.ProjectDetails.Prize.NoOfPrizes" /></td>
+        <td class="header"><or:text key="editProject.ProjectDetails.Prize.Place" /></td>
+        <td class="header"><or:text key="editProject.ProjectDetails.Prize.Amount" /></td>
+        <td class="header"><or:text key="editProject.ProjectDetails.Prize.NoOfPrizes" /></td>
     </tr>
     <c:forEach items="${contestPrizes}" var="prize" varStatus="vs">
         <tr <c:if test="${vs.index % 2 eq 0}">class="light"</c:if> <c:if test="${vs.index % 2 eq 1}">class="dark"</c:if> >
@@ -48,12 +48,12 @@
 
 <table id="checkpoint-prizes-table" class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;display: none">
     <tr>
-        <td class="title" colspan="3"><bean:message key="editProject.ProjectDetails.CheckpointPrizes" /></td>
+        <td class="title" colspan="3"><or:text key="editProject.ProjectDetails.CheckpointPrizes" /></td>
     </tr>
     <tr>
-        <td class="header"><bean:message key="editProject.ProjectDetails.Prize.Place" /></td>
-        <td class="header"><bean:message key="editProject.ProjectDetails.Prize.Amount" /></td>
-        <td class="header"><bean:message key="editProject.ProjectDetails.Prize.NoOfPrizes" /></td>
+        <td class="header"><or:text key="editProject.ProjectDetails.Prize.Place" /></td>
+        <td class="header"><or:text key="editProject.ProjectDetails.Prize.Amount" /></td>
+        <td class="header"><or:text key="editProject.ProjectDetails.Prize.NoOfPrizes" /></td>
     </tr>
     <c:forEach items="${checkpointPrizes}" var="prize" varStatus="vs">
         <tr <c:if test="${vs.index % 2 eq 0}">class="light"</c:if> <c:if test="${vs.index % 2 eq 1}">class="dark"</c:if> >

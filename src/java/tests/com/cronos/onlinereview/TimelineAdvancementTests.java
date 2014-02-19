@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011-2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -7,10 +7,10 @@ import java.sql.Connection;
 
 
 /**
- * Online review functional tests 4, testing timeline advancement
+ * Online review functional tests 4, testing timeline advancement.
  *
- * @author TCSDEVELOPER
- * @version 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class TimelineAdvancementTests extends ProjectTests {
 
@@ -20,26 +20,26 @@ public class TimelineAdvancementTests extends ProjectTests {
      * @throws Exception if any error occurs.
      */
     public void setUp() throws Exception {
-    	super.setUp();
+        super.setUp();
         Connection con = TestHelper.getConnection();
         try {
             // add  submitter.
-    		long Submitter = TestHelper.AddResource(projectId, 1, phaseIds.get("registration") , Long.parseLong(TestHelper.getCompetitiorUserId()), TestHelper.getCompetitorUsername(), con);
+            long Submitter = TestHelper.AddResource(projectId, 1, phaseIds.get("registration") , Long.parseLong(TestHelper.getCompetitiorUserId()), TestHelper.getCompetitorUsername(), con);
             // add screener.
-    		TestHelper.AddResource(projectId, 2, phaseIds.get("screening") , Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
+            TestHelper.AddResource(projectId, 2, phaseIds.get("screening") , Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
             // add reviewer.
-    		TestHelper.AddResource(projectId, 4, phaseIds.get("review") , Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
+            TestHelper.AddResource(projectId, 4, phaseIds.get("review") , Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
             // add aggregator.
-    		TestHelper.AddResource(projectId, 8, phaseIds.get("aggregation") , Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
+            TestHelper.AddResource(projectId, 8, phaseIds.get("aggregation") , Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
             // add final reviewer.
-    		TestHelper.AddResource(projectId, 9, phaseIds.get("final_review") , Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
+            TestHelper.AddResource(projectId, 9, phaseIds.get("final_review") , Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
             // add approver.
-    		TestHelper.AddResource(projectId, 10, phaseIds.get("approval") , Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
-    		// add contest submission.
-    		TestHelper.AddSubmission(projectId, phaseIds.get("submission"), Submitter, 1, con);
+            TestHelper.AddResource(projectId, 10, phaseIds.get("approval") , Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
+            // add contest submission.
+            TestHelper.AddSubmission(projectId, phaseIds.get("submission"), Submitter, 1, con);
         } finally {
-    		con.close();
-    	}
+            con.close();
+        }
     }
 
     /**
@@ -63,7 +63,7 @@ public class TimelineAdvancementTests extends ProjectTests {
         browser.click("//table[@id='myRolesTable']/tbody/tr[2]/td[2]/a/b");
         browser.waitForPageToLoad(TIMEOUT);
         browser.type("file", TestHelper.getUploadFilePath());
-        browser.click("//input[@name='uploadSpecBtn']");
+        browser.click("//input[@alt='Upload']");
         browser.waitForPageToLoad(TIMEOUT);
         // close spec submission phase
         TestHelper.ClosePhaseByUI(browser, 1, "Specification Submission");
@@ -133,7 +133,7 @@ public class TimelineAdvancementTests extends ProjectTests {
         browser.click("//table[@id='myRolesTable']/tbody/tr[2]/td[2]/a/b");
         browser.waitForPageToLoad(TIMEOUT);
         browser.type("file", TestHelper.getUploadFilePath());
-        browser.click("//input[@name='uploadSpecBtn']");
+        browser.click("//input[@alt='Upload']");
         browser.waitForPageToLoad(TIMEOUT);
         // close spec submission phase
         TestHelper.ClosePhaseByUI(browser, 1, "Specification Submission");
@@ -234,7 +234,7 @@ public class TimelineAdvancementTests extends ProjectTests {
         browser.click("//table[@id='myRolesTable']/tbody/tr[2]/td[2]/a");
         browser.waitForPageToLoad(TIMEOUT);
         browser.type("file", TestHelper.getUploadFilePath());
-        browser.click("//input[@name='uploadBtn']");
+        browser.click("//input[@alt='Upload']");
         Thread.sleep(2*(new Long(TIMEOUT)));
         assertNoErrorsOccurred();
 
@@ -302,8 +302,7 @@ public class TimelineAdvancementTests extends ProjectTests {
     */
     private void SetFinalReviewer(int round) throws Exception{
          // Click the 'Edit Project' Link
-        browser.click("//img[@alt='Edit Project']");
-        browser.waitForPageToLoad(TIMEOUT);
+        TestHelper.clickEditProjectLink(browser);
         
         // select the "Final Reviewer" role, no error expected
         browser.select("resources_role[0]", "label=Final Reviewer");
@@ -338,7 +337,7 @@ public class TimelineAdvancementTests extends ProjectTests {
         browser.click("//table[@id='myRolesTable']/tbody/tr[2]/td[2]/a/b");
         browser.waitForPageToLoad(TIMEOUT);
         browser.type("file", TestHelper.getUploadFilePath());
-        browser.click("//input[@name='uploadSpecBtn']");
+        browser.click("//input[@alt='Upload']");
         browser.waitForPageToLoad(TIMEOUT);
         // close spec submission phase
         TestHelper.ClosePhaseByUI(browser, 1, "Specification Submission");

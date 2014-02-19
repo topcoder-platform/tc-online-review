@@ -8,15 +8,8 @@ import java.sql.Connection;
 /**
  * Online review functional tests 3, scordcard managment testing.
  *
- * <p>
- *     Version 1.1 (Online Review - Project Payments Integration Part 1 v1.0) change notes:
- *     <ol>
- *         <li>Updated tests for assembly Project Payments Integration Part 1 v1.0.</li>
- *     </ol>
- * </p>
- *
- * @author TCSDEVELOPER
- * @version 1.1
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class ScoreCardTests extends ProjectTests {
 
@@ -30,10 +23,10 @@ public class ScoreCardTests extends ProjectTests {
      * @throws Exception if any error occurs.
      */
     public void setUp() throws Exception {
-    	super.setUp();
+        super.setUp();
         Connection con = TestHelper.getConnection();
         try {
-    	    // close all the phase before review phase
+            // close all the phase before review phase
             TestHelper.ClosePhase(phaseIds.get("spec_submission"), con);
             TestHelper.ClosePhase(phaseIds.get("spec_review"), con);
             TestHelper.ClosePhase(phaseIds.get("registration"), con);
@@ -42,17 +35,17 @@ public class ScoreCardTests extends ProjectTests {
             // open review phase
             TestHelper.OpenPhase(phaseIds.get("review"), con);
             // add  submitter.
-    		long Submitter = TestHelper.AddResource(projectId, 1, phaseIds.get("registration"), Long.parseLong(TestHelper.getCompetitiorUserId()), TestHelper.getCompetitorUsername(), con);
+            long Submitter = TestHelper.AddResource(projectId, 1, phaseIds.get("registration"), Long.parseLong(TestHelper.getCompetitiorUserId()), TestHelper.getCompetitorUsername(), con);
             // add reviewer.
-    		long resourceId = TestHelper.AddResource(projectId, 4, phaseIds.get("review"), Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
-    		// add contest submission.
-    		long submissionId = TestHelper.AddSubmission(projectId, phaseIds.get("submission"), Submitter, 1, con);
+            long resourceId = TestHelper.AddResource(projectId, 4, phaseIds.get("review"), Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
+            // add contest submission.
+            long submissionId = TestHelper.AddSubmission(projectId, phaseIds.get("submission"), Submitter, 1, con);
 
             reviewId = TestHelper.AddReview (resourceId, submissionId, phaseIds.get("review"), con);
 
         } finally {
-    		con.close();
-    	}
+            con.close();
+        }
     }
 
     /**
@@ -61,20 +54,20 @@ public class ScoreCardTests extends ProjectTests {
      * @throws Exception if any error occurs.
      */
     public void tearDown() throws Exception {
-    	TestHelper.reloginAndDeleteProject(browser, projectId);
+        TestHelper.reloginAndDeleteProject(browser, projectId);
         projectId = -1;
         super.tearDown();
     }
-	
+    
     /**
      * Test Case Number: FTC97 RS5.7 Verify Manager can Edit a scorecard
      *
      * @throws Exception if any error occurs
      */
     public void testEditScoreCard() throws Exception {
-    	// login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        // login the user first
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
 
         //click Reivew Scorecard
         browser.click("//table[@id='myRolesTable']/tbody/tr[2]/td[2]/a");
@@ -99,9 +92,9 @@ public class ScoreCardTests extends ProjectTests {
      * @throws Exception if any error occurs
      */
     public void testAccessScorecard() throws Exception {
-    	// login the user first
-    	TestHelper.loginAsCompetitor(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getReviewURL() + reviewId);
+        // login the user first
+        TestHelper.loginAsCompetitor(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getReviewURL() + reviewId);
 
         //Competitor have no permission to access the scorecard
         assertTrue("error occurs, access is denied", browser.isTextPresent("Attention!"));

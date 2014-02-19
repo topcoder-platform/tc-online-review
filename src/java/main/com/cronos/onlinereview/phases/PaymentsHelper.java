@@ -3,6 +3,22 @@
  */
 package com.cronos.onlinereview.phases;
 
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.topcoder.db.connectionfactory.DBConnectionException;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.management.deliverable.Submission;
@@ -28,40 +44,17 @@ import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.Property;
 
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * <p>
  * This class is the helper class used to process the payments for the resources in automatic payments mode.
- * </p>
- * <p>
- * Changes in version 1.1 (Online Review - Iterative Review v1.0):
- * <ul>
- * <li>Added payment calculation for iterative reviewer role.</li>
- * </ul>
  * </p>
  *
  * <p>
  * Thread-safety: This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
- * @author flexme, duxiaoyang
- * @version 1.1
- * @since 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public final class PaymentsHelper {
     /**
@@ -652,14 +645,14 @@ public final class PaymentsHelper {
      * only one payment. Currently there are 3 domains: Submission domain, Resource domain and Resource Role domain.
      *
      * @author TCSASSEMBLER
-     * @version 1.0
+     * @version 2.0
      */
     static abstract class Domain {
         /**
          * Represents the identifier of the domain. Two domains with the same identifier will be considered
          * to be equal.
          */
-        private String key;
+        private final String key;
 
         /**
          * Create a <code>Domain</code> instance with the identifier.
@@ -773,7 +766,7 @@ public final class PaymentsHelper {
      * resource. Every Submitter resource can have at most one payment per submission. So the domain is the submission.
      *
      * @author TCSASSEMBLER
-     * @version 1.0
+     * @version 2.0
      */
     static class SubmissionDomain extends Domain {
         /**
@@ -791,7 +784,7 @@ public final class PaymentsHelper {
      * who can have at most payment per resource. So the domain is the resource.
      *
      * @author TCSASSEMBLER
-     * @version 1.0
+     * @version 2.0
      */
     static class ResourceDomain extends Domain {
         /**
@@ -810,13 +803,13 @@ public final class PaymentsHelper {
      * role.
      *
      * @author TCSASSEMBLER
-     * @version 1.0
+     * @version 2.0
      */
     static class ResourceRoleDomain extends Domain {
         /**
          * Represents the map from resource id to <code>Resource</code> instance.
          */
-        private Map<Long, Resource> resourceLookup;
+        private final Map<Long, Resource> resourceLookup;
 
         /**
          * Create a new <code>ResourceRoleDomain</code> with the resource role name and

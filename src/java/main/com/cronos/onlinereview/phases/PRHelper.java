@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2005 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.Date;
 
 import com.cronos.onlinereview.phases.logging.LoggerMessage;
+import com.topcoder.db.connectionfactory.DBConnectionException;
+import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
@@ -36,70 +38,15 @@ import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.util.log.Level;
 
-import com.topcoder.db.connectionfactory.DBConnectionException;
-import com.topcoder.db.connectionfactory.DBConnectionFactory;
-
 /**
  * The PRHelper which is used to provide helper method for Phase Handler.
- * 
+ *
  * <p>
- * Version 1.1 (Online Review Replatforming Release 2) Change notes:
- *   <ol>
- *     <li>Update {@link #processReviewPR(long, Connection, boolean)} to populate
- *     the project result if the contest is studio contest.</li>
- *   </ol>
+ * Thread-safety: This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
- * <p>
- * Version 1.1 (Online Review Payments and Status Automation Assembly 1.0) Change notes:
- * <ol>
- *     <li>Added {@link #findProjectStatusByName(ProjectManager, String)} method.</li>
- *     <li>Added {@link #completeProject(ManagerHelper, Phase, String)} method.</li>
- *   </ol>
- * <p>
- *
- * <p>
- * Version 1.2 Change notes:
- *   <ol>
- *     <li>Updated the methods calling {@link AutoPaymentUtil#populateReviewerPayments(long, Connection, int)} method to
- *     add <code>catch</code> clause for {@link ProjectPaymentCalculatorException}.</li>
- *   </ol>
- * </p>
- *
- * <p>
- * Version 1.3 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
- *   <ol>
- *     <li>Updated SQL query {@link #APPEAL_RESPONSE_SELECT_STMT} to remove populating payment.</li>
- *     <li>Updated SQL query {@link #REVIEW_UPDATE_PROJECT_RESULT_STMT} to not setting payment.</li>
- *     <li>Removed <code>populateSubmitterPayments</code> and <code>populateReviewerPayments</code> methods.</li>
- *     <li>Updated {@link #processScreeningPR(long, boolean, String)},
- *     {@link #processReviewPR(ManagerHelper, Phase, String, boolean)} methods to call
- *     PaymentsHelper.processAutomaticPayments to process project payments.</li>
- *     <li>Updated {@link #processReviewPR(ManagerHelper, Phase, String, boolean)},
- *     {@link #processAppealResponsePR(long, boolean, String)},
- *     {@link #processAggregationPR(long, boolean, String)}, {@link #processFinalFixPR(long, boolean, String)},
- *     {@link #processFinalReviewPR(long, boolean, String)}, {@link #processPostMortemPR(long, boolean, String)}
- *     methods to pass operator when calling {@link #populateProjectResult(long, Connection, String)}.</li>
- *     <li>Updated {@link #populateProjectResult(long, Connection, String)} method to call
- *     {@link PaymentsHelper#updateProjectResultPayments(long)} to populate submitters' payment to project_result
- *     table.</li>
- *     <li>Added {@link #searchReviewsForProject(ManagerHelper, long, boolean)} method to search
- *     reviews for a given project.</li>
- *     <li>Added {@link #getNonDeletedProjectSubmitterSubmissions(UploadManager, long)} method to search non-deleted
- *     submissions for a given project.</li>
- *   </ol>
- * </p>
- *
- * <p>
- * Version 1.4 (Online Review - Iterative Review v1.0) Change notes:
- *   <ol>
- *     <li>Added {@link #processIterativeReviewPR(ManagerHelper, Phase, String, boolean)} method to process iterative
- *     review phase.</li>
- *   </ol>
- * </p>
- *
- * @author brain_cn, FireIce, isv, flexme, duxiaoyang
- * @version 1.4
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class PRHelper {
 
@@ -169,7 +116,7 @@ public class PRHelper {
     /**
      * This member variable holds the formatting string used to format dates.
      */
-    private static String dateFormat = "MM.dd.yyyy HH:mm z";
+    private static final String dateFormat = "MM.dd.yyyy HH:mm z";
 
     /** Property name constant for connection factory namespace. */
     private static final String PROP_CONNECTION_FACTORY_NS = "ConnectionFactoryNS";
@@ -402,7 +349,7 @@ public class PRHelper {
     void processIterativeReviewPR(ManagerHelper managerHelper, Phase phase, String operator, boolean toStart) throws PhaseHandlingException {
         long projectId = phase.getProject().getId();
         if (!toStart) {
-            // if reivew phase is last one, complete the project.
+            // if review phase is last one, complete the project.
             if (isLastPhase(phase)) {
                 completeProject(managerHelper, phase, operator);
             }
@@ -699,7 +646,6 @@ public class PRHelper {
      * @return the matched project status
      * @throws PhaseHandlingException
      *             If any problem to find the project status
-     * @since Online Review Payments and Status Automation Assembly 1.0
      */
     static ProjectStatus findProjectStatusByName(ProjectManager projectManager, String statusName)
         throws PhaseHandlingException {
@@ -735,7 +681,6 @@ public class PRHelper {
      *            the operator
      * @throws PhaseHandlingException
      *             If any error occurs while updating the project status.
-     * @since Online Review Payments and Status Automation Assembly 1.0
      */
     static void completeProject(ManagerHelper managerHelper, Phase phase, String operator)
         throws PhaseHandlingException {
@@ -764,7 +709,6 @@ public class PRHelper {
      * @param complete true if to retrieve complete review data structure, false otherwise.
      * @return all the reviews of the given project.
      * @throws PhaseHandlingException if there was an error during retrieval.
-     * @since 1.3
      */
     static Review[] searchReviewsForProject(ManagerHelper managerHelper, long projectId, boolean complete)
             throws PhaseHandlingException {
@@ -785,7 +729,6 @@ public class PRHelper {
      * @return all non-deleted submissions for the given project id.
      * @throws PhaseHandlingException
      *             if an error occurs during retrieval.
-     * @since 1.3
      */
     static Submission[] getNonDeletedProjectSubmitterSubmissions(UploadManager uploadManager, long projectId)
             throws PhaseHandlingException {

@@ -38,7 +38,7 @@
     <component
         name="online_review_login"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_login/trunk"
-        revision="238896" />
+        revision="241234" />
 
     <component
         name="online_review_phases"

@@ -1,56 +1,40 @@
+<%--
+  - Author: TCSASSEMBLER
+  - Version: 2.0
+  - Copyright (C) - 2014 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page renders the scorecard.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="/tags/struts-html" %>
-<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html:html xhtml="true">
+<html>
 
 <head>
     <title>Online Review - View Scorecard</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
     <!-- TopCoder CSS -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/style.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/coders.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/stats.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/tcStyles.css' />" />
+    <link type="text/css" rel="stylesheet" href="/css/style.css" />
+    <link type="text/css" rel="stylesheet" href="/css/coders.css" />
+    <link type="text/css" rel="stylesheet" href="/css/stats.css" />
+    <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
 
     <!-- CSS and JS by Petar -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/dojo.js' />"><!-- @ --></script>
+    <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
+    <script language="JavaScript" type="text/javascript" src="/js/or/rollovers2.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/dojo.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript">
-        var ajaxSupportUrl = "<html:rewrite page='/ajaxSupport' />";
+        var ajaxSupportUrl = "<or:url value='/ajaxSupport' />";
     </script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/ajax1.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/util.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript">
-
-        /**
-         * TODO: Document it
-         */
-        function hideRow(rowId) {
-            if (document != null && document.getElementById != null) {
-                var row = document.getElementById(rowId);
-                if (row != null) row.style.display = "none";
-            }
-        }
-
-        /**
-         * TODO: Document it
-         */
-        function focusControl(ctrlId) {
-            if (document != null && document.getElementById != null) {
-                var ctrl = document.getElementById(ctrlId);
-                if (ctrl != null && ctrl.focus != null) ctrl.focus();
-            }
-        }
-    </script>
-
+    <script language="JavaScript" type="text/javascript" src="/js/or/ajax1.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/util.js"><!-- @ --></script>
 </head>
 
 <body onload="showAll()">
@@ -67,7 +51,7 @@
 
                     <h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
 
-                    <p><bean:message key="viewScorecard.MinimumPassingScore" />${orfn:htmlEncode(scorecardTemplate.minScore)}</p>
+                    <p><or:text key="viewScorecard.MinimumPassingScore" />${orfn:htmlEncode(scorecardTemplate.minScore)}</p>
 
                     <c:set var="itemIdx" value="0" />
                     <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;" id="table2">
@@ -82,8 +66,8 @@
                                     <td class="subheader" width="100%">
                                         ${orfn:htmlEncode(section.name)} &#xA0;
                                         (${orfn:displayScore(pageContext.request, section.weight)})</td>
-                                    <td class="subheader" align="center" width="49%"><bean:message key="editReview.SectionHeader.Weight" /></td>
-                                    <td class="subheader" align="center" width="1%"><bean:message key="editReview.SectionHeader.Response" /></td>
+                                    <td class="subheader" align="center" width="49%"><or:text key="editReview.SectionHeader.Weight" /></td>
+                                    <td class="subheader" align="center" width="1%"><or:text key="editReview.SectionHeader.Response" /></td>
                                 </tr>
                                 <c:forEach items="${section.allQuestions}" var="question" varStatus="questionStatus">
                                     <c:set var="item" value="${review.allItems[itemIdx]}" />
@@ -99,7 +83,7 @@
                             </c:forEach>
                             <c:if test="${groupStatus.index == scorecardTemplate.numberOfGroups - 1}">
                                 <tr>
-                                    <td class="lastRowTD" colspan="${canPlaceAppeal ? 5 : (canPlaceAppealResponse ? 4 : 3)}"><!-- @ --></td>
+                                    <td class="lastRowTD" colspan="3"><!-- @ --></td>
                                 </tr>
                             </c:if>
                         </c:forEach>
@@ -115,4 +99,4 @@
 </div>
 
 </body>
-</html:html>
+</html>

@@ -4,17 +4,10 @@
 package com.cronos.onlinereview;
 
 /**
- * Online review functional tests 3, edit project fileds testing
+ * Online review functional tests 3, edit project fields testing.
  *
- * <p>
- *     Version 1.1 (Online Review - Project Payments Integration Part 1 v1.0) change notes:
- *     <ol>
- *         <li>Updated tests for assembly Project Payments Integration Part 1 v1.0.</li>
- *     </ol>
- * </p>
- *
- * @author TCSDEVELOPER
- * @version 1.1
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class EditProjectFiledsTests extends ProjectTests {
 
@@ -32,13 +25,12 @@ public class EditProjectFiledsTests extends ProjectTests {
         assertEquals("AutoPilot should be turned off", "Off", autoPilotStat);
 
         // Click the 'Edit Project' Link
-        browser.click("//img[@alt='Edit Project']");
-        browser.waitForPageToLoad(TIMEOUT);
+        TestHelper.clickEditProjectLink(browser);
 
         // Turn on AutoPilot, no error expected
         browser.check("//input[@id='autopilotOnRadioBox']");
         browser.type("explanation", "auto pilot turn on");
-        browser.click("//input[@name='saveProjectChangesBtn']");
+        browser.click("//input[@alt='Save Changes']");
         browser.waitForPageToLoad(TIMEOUT);
 
         autoPilotStat = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[7]/td[2]");
@@ -60,13 +52,12 @@ public class EditProjectFiledsTests extends ProjectTests {
         assertFalse("Project Name should not be 'testEditNameField update name'", "testEditNameField update name".equalsIgnoreCase(projectName));
 
         // Click the 'Edit Project' Link
-        browser.click("//img[@alt='Edit Project']");
-        browser.waitForPageToLoad(TIMEOUT);
+        TestHelper.clickEditProjectLink(browser);
 
         // edit the project name
         browser.type("project_name", "testEditNameField update name");
         browser.type("explanation", "Name field edition");
-        browser.click("//input[@name='saveProjectChangesBtn']");
+        browser.click("//input[@alt='Save Changes']");
         browser.waitForPageToLoad(TIMEOUT);
 
         projectName = browser.getText("//table[@id='table12']/tbody/tr[1]/td[3]/span");
@@ -89,13 +80,12 @@ public class EditProjectFiledsTests extends ProjectTests {
         assertFalse("Project Type Should not be Studio", "Studio".equalsIgnoreCase(projectType));
 
         // Click the 'Edit Project' Link
-        browser.click("//img[@alt='Edit Project']");
-        browser.waitForPageToLoad(TIMEOUT);
+        TestHelper.clickEditProjectLink(browser);
 
         // select the "studio" type, no error expected
         browser.select("project_type", "label=Studio");
         browser.type("explanation", "type field edition");
-        browser.click("//input[@name='saveProjectChangesBtn']");
+        browser.click("//input[@alt='Save Changes']");
         browser.waitForPageToLoad(TIMEOUT);
 
         projectType = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[3]/td[2]");
@@ -118,13 +108,12 @@ public class EditProjectFiledsTests extends ProjectTests {
         assertFalse("Project Category should not be Testing Competition", "Testing Competition".equalsIgnoreCase(projectCategory));
 
         // Click the 'Edit Project' Link
-        browser.click("//img[@alt='Edit Project']");
-        browser.waitForPageToLoad(TIMEOUT);
+        TestHelper.clickEditProjectLink(browser);
 
         // select the "Testing Competition" category, no error expected
         browser.select("project_category", "label=Testing Competition");
         browser.type("explanation", "Category field edition");
-        browser.click("//input[@name='saveProjectChangesBtn']");
+        browser.click("//input[@alt='Save Changes']");
         browser.waitForPageToLoad(TIMEOUT);
 
         projectCategory = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[4]/td[2]");
@@ -152,8 +141,7 @@ public class EditProjectFiledsTests extends ProjectTests {
         assertTrue("These should be no checkpoint prizes", "There are no prizes.".equals(price));
 
         // Click the 'Edit Project' Link
-        browser.click("//img[@alt='Edit Project']");
-        browser.waitForPageToLoad(TIMEOUT);
+        TestHelper.clickEditProjectLink(browser);
 
         // Add two contest prizes
         browser.click("//table[@id='contest-prizes-table']//img[@alt='Add Prize']");
@@ -166,7 +154,7 @@ public class EditProjectFiledsTests extends ProjectTests {
         browser.type("checkpoint_prizes_amount[0]", "300");
         browser.select("//select[@name='checkpoint_prizes_num[0]']", "label=3");
 
-        browser.click("//input[@name='saveProjectChangesBtn']");
+        browser.click("//input[@alt='Save Changes']");
         browser.waitForPageToLoad(TIMEOUT);
 
         // check first contest prize
@@ -211,13 +199,12 @@ public class EditProjectFiledsTests extends ProjectTests {
         assertFalse("The point should not be 100", "100".equals(point));
 
         // Click the 'Edit Project' Link
-        browser.click("//img[@alt='Edit Project']");
-        browser.waitForPageToLoad(TIMEOUT);
+        TestHelper.clickEditProjectLink(browser);
 
         // input 100 as point, no error expected
         browser.type("dr_points", "100");
         browser.type("explanation", "DR Points field edition");
-        browser.click("//input[@name='saveProjectChangesBtn']");
+        browser.click("//input[@alt='Save Changes']");
         browser.waitForPageToLoad(TIMEOUT);
 
         point = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[6]/td[2]");
@@ -240,14 +227,13 @@ public class EditProjectFiledsTests extends ProjectTests {
         assertFalse("Notes should not be 'testEditNotesField update note'", "testEditNotesField update note".equalsIgnoreCase(notes));
 
         // Click the 'Edit Project' Link
-        browser.click("//img[@alt='Edit Project']");
-        browser.waitForPageToLoad(TIMEOUT);
+        TestHelper.clickEditProjectLink(browser);
 
 
         // input notes, no error expected
         browser.type("notes", "testEditNotesField update note");
         browser.type("explanation", "Notes field edition");
-        browser.click("//input[@name='saveProjectChangesBtn']");
+        browser.click("//input[@alt='Save Changes']");
         browser.waitForPageToLoad(TIMEOUT);
 
         notes = browser.getText("//div[@id='mainMiddleContent']/div/table[2]/tbody/tr[2]/td[1]");
@@ -270,14 +256,13 @@ public class EditProjectFiledsTests extends ProjectTests {
         assertFalse("Status should not be Completed", "Completed".equalsIgnoreCase(status));
 
         // Click the 'Edit Project' Link
-        browser.click("//img[@alt='Edit Project']");
-        browser.waitForPageToLoad(TIMEOUT);
+        TestHelper.clickEditProjectLink(browser);
 
         // select 'Cancelled - Client Request' as status, no error expected
         browser.select("//select[@name='status']", "label=Cancelled - Client Request");
         browser.type("explanation", "Contest Status field edition");
         browser.type("status_explanation", "Contest Status changed to Cancelled - Client Request");
-        browser.click("//input[@name='saveProjectChangesBtn']");
+        browser.click("//input[@alt='Save Changes']");
         browser.waitForPageToLoad(TIMEOUT);
 
         status = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[14]/td[2]");

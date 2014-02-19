@@ -1,14 +1,14 @@
 /*
- * Copyright (C) 2010-2012 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
-import com.topcoder.util.config.ConfigManager;
-import com.topcoder.util.config.Property;
-import com.topcoder.util.config.UnknownNamespaceException;
-import com.topcoder.util.log.Level;
-import com.topcoder.util.log.Log;
-import com.topcoder.util.log.LogManager;
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.Arrays;
+import java.util.Random;
+
 import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNErrorCode;
@@ -24,18 +24,23 @@ import org.tmatesoft.svn.core.wc.SVNCommitClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.Arrays;
-import java.util.Random;
+import com.topcoder.util.config.ConfigManager;
+import com.topcoder.util.config.Property;
+import com.topcoder.util.config.UnknownNamespaceException;
+import com.topcoder.util.log.Level;
+import com.topcoder.util.log.Log;
+import com.topcoder.util.log.LogManager;
 
 /**
  * <p>A helper utility class providing various method useful for accessing and managing the SVN repository for project.
  * </p>
  *
- * @author isv
- * @version 1.0 (SVN Automation and Late Deliverables Tracking Assembly 1.0)
+ * <p>
+ * Thread-safety: This class is thread-safe as it does not contain any mutable inner state.
+ * </p>
+ *
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public final class SVNHelper {
 
@@ -46,10 +51,8 @@ public final class SVNHelper {
 
     /**
      * <p>A <code>String</code> array providing the SVN configuration.</p>
-     *
-     * @since 1.6.1
      */
-    private static String[] svnConfig;
+    private static final String[] svnConfig;
 
     /**
      * <p>This static initializer sets up the SVN repository factories for <code>svn://</code> and <code>http://</code>/
@@ -97,7 +100,7 @@ public final class SVNHelper {
         SVNClientManager svnClientManager = getSVNClientManager();
 
         // Create directory in SVN repository
-        SVNURL dirURL = SVNURL.parseURIDecoded(path);
+        SVNURL dirURL = SVNURL.parseURIEncoded(path);
         SVNCommitClient commitClient = svnClientManager.getCommitClient();
         try {
             commitClient.doMkDir(new SVNURL[]{dirURL}, getSVNCommitMessage(), null, true);
@@ -185,7 +188,7 @@ public final class SVNHelper {
             String dirURL = permissionsFileURL.substring(0, pos);
 
             // Checkout the path-based permissions file to temporary location
-            SVNURL permissionsFileDirURL = SVNURL.parseURIDecoded(dirURL);
+            SVNURL permissionsFileDirURL = SVNURL.parseURIEncoded(dirURL);
             updateClient.doCheckout(permissionsFileDirURL, tempDir, SVNRevision.HEAD, SVNRevision.HEAD, SVNDepth.FILES,
                                     false);
             authzFileLocalCopy = new File(tempDir, fileName);
@@ -286,7 +289,6 @@ public final class SVNHelper {
      * <p>Gets the URL for SVN repository.</p>
      *
      * @return a <code>String</code> providing the URL for SVN repository.
-     * @since 1.6.1
      */
     public static String getSVNRoot() {
         return svnConfig[0];
@@ -296,7 +298,6 @@ public final class SVNHelper {
      * <p>Gets the username for authentication to SVN repository.</p>
      *
      * @return a <code>String</code> providing the username to be used for authenticating to SVN repository.
-     * @since 1.6.1
      */
     public static String getSVNAuthnUsername() {
         return svnConfig[1];
@@ -306,7 +307,6 @@ public final class SVNHelper {
      * <p>Gets the password for authentication to SVN repository.</p>
      *
      * @return a <code>String</code> providing the password to be used for authenticating to SVN repository.
-     * @since 1.6.1
      */
     public static String getSVNAuthnPassword() {
         return svnConfig[2];
@@ -316,7 +316,6 @@ public final class SVNHelper {
      * <p>Gets the message for committing the new directories to SVN repository.</p>
      *
      * @return a <code>String</code> providing message for committing the new directories to SVN repository.
-     * @since 1.6.1
      */
     public static String getSVNCommitMessage() {
         return svnConfig[3];
@@ -327,7 +326,6 @@ public final class SVNHelper {
      *
      * @return a <code>String</code> providing the path to local directory where the SVN files can be temporarily
      *         checked to.
-     * @since 1.6.1
      */
     public static String getSVNTemporaryFilesBaseDir() {
         return svnConfig[4];
@@ -337,7 +335,6 @@ public final class SVNHelper {
      * <p>Gets the URL for path-based permissions file in SVN repository.</p>
      *
      * @return a <code>String</code> providing the URL for path-based permissions file in SVN repository.
-     * @since 1.6.1
      */
     public static String getSVNPathBasedPermissionsFileURL() {
         return svnConfig[5];

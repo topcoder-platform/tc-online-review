@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.ejblibrary;
 
@@ -9,23 +9,21 @@ import com.topcoder.security.login.AuthenticationException;
 import com.topcoder.security.login.LoginBean;
 import com.topcoder.security.login.LoginRemote;
 
-import javax.naming.NamingException;
-
 /**
  * <p>An implementation of {@link LoginRemote} interface which provides the library-call style for API of <code>Login
  * EJB</code>.</p>
  *
  * <p><b>Thread safety:</b> This class is thread-safe.</p>
  *
- * @author isv
- * @version 1.0 (TopCoder Online Review Switch To Local Calls)
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class LoginLibrary extends BaseEJBLibrary implements LoginRemote {
 
     /**
      * <p>A <code>LoginBean</code> which is delegated the processing of the calls to methods of this class.</p>
      */
-    private LoginBean bean;
+    private final LoginBean bean;
 
     /**
      * <p>Constructs new <code>LoginLibrary</code> instance.</p>
@@ -68,15 +66,15 @@ public class LoginLibrary extends BaseEJBLibrary implements LoginRemote {
     /**
      * <p>An extension to wrapped bean class providing access to it's protected methods.</p>
      *
-     * @author isv
-     * @version 1.0
+     * @author TCSASSEMBLER
+     * @version 2.0
      */
     private static class Extender extends LoginBean {
 
         /**
          * <p>A <code>long</code> providing the ID for impersonation role.</p>
          */
-        private Long impersonationRoleId;
+        private final Long impersonationRoleId;
 
         /**
          * <p>Constructs new <code>Extender</code> instance. This implementation does nothing.</p>

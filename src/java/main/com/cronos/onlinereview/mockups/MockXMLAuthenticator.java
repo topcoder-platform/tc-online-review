@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.mockups;
 
@@ -32,9 +32,9 @@ import com.topcoder.util.config.UnknownNamespaceException;
  * <p>
  * It is implemented for testing purpose. It read login handles from an XML file.
  * </p>
- * 
+ *
  * @author TCSASSEMBLER
- * @version 1.0
+ * @version 2.0
  */
 public class MockXMLAuthenticator extends AbstractAuthenticator {
 

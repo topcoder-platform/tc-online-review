@@ -16,7 +16,7 @@ public class PRIterativeReviewPhaseHandler extends IterativeReviewPhaseHandler {
     /**
      * Used for pulling data to project_result table and filling payments.
      */
-    private PRHelper prHelper = new PRHelper();
+    private final PRHelper prHelper = new PRHelper();
 
     /**
      * Create a new instance of this class using the default namespace for loading configuration settings.

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2005 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
@@ -8,25 +8,21 @@ import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.project.phases.Phase;
 
 /**
- * The PRAggregationPhaseHandler.
+ * The extend from AggregationPhaseHandler to add on the logic to push data to project_result.
  *
  * <p>
- * Version 1.1 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
- *   <ol>
- *     <li>Updated {@link #perform(Phase, String)} method to pass <code>operator</code> when calling
- *     RPHelper.processAggregationPR.</li>
- *   </ol>
+ * Thread-safety: This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
- * @author brain_cn, flexme
- * @version 1.1
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class PRAggregationPhaseHandler extends AggregationPhaseHandler {
     
     /**
     * Used for pulling data to project_result table and filling payments.
     */
-    private PRHelper prHelper = new PRHelper();
+    private final PRHelper prHelper = new PRHelper();
     
     /**
      * Create a new instance of AggregationPhaseHandler using the default namespace for loading configuration settings.

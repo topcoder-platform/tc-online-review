@@ -6,30 +6,21 @@ package com.cronos.onlinereview;
 /**
  * Online review functional tests 3, add roles to a project testing.
  *
- * <p>
- *     Version 1.1 (Online Review - Project Payments Integration Part 1 v1.0) change notes:
- *     <ol>
- *         <li>Updated tests for assembly Project Payments Integration Part 1 v1.0.</li>
- *     </ol>
- * </p>
- *
- * @author TCSDEVELOPER
- * @version 1.1
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class AddRoleTests extends ProjectTests {
-	
+    
     /**
      * Test Case Number: FTC61 RS5.5 Verify Manager can add a Primary Screener Role to a project
      *
      * @throws Exception if any error occurs
      */
     public void testAddPrimaryScreenerRole() throws Exception {
-    	// login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
-        // Click the 'Edit Project' Link
-        browser.click("//img[@alt='Edit Project']");
-        browser.waitForPageToLoad(TIMEOUT);
+        // login the user first
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        TestHelper.clickEditProjectLink(browser);
 
         // select the "Primary Screener" role, no error expected
         browser.select("resources_role[0]", "label=Primary Screener");
@@ -38,7 +29,7 @@ public class AddRoleTests extends ProjectTests {
         browser.click("//img[@alt='Add']");
         // add explanation
         browser.type("explanation", "add primary screener role");
-        browser.click("//input[@name='saveProjectChangesBtn']");
+        browser.click("//input[@alt='Save Changes']");
         browser.waitForPageToLoad(TIMEOUT);
 
         String role = browser.getText("//div[@id='mainMiddleContent']/div/table[7]/tbody/tr[3]/td[1]");
@@ -55,12 +46,11 @@ public class AddRoleTests extends ProjectTests {
      * @throws Exception if any error occurs
      */
     public void testAddManagerRole() throws Exception {
-    	// login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        // login the user first
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
         // Click the 'Edit Project' Link
-        browser.click("//img[@alt='Edit Project']");
-        browser.waitForPageToLoad(TIMEOUT);
+        TestHelper.clickEditProjectLink(browser);
 
         // select the "Manager" role, no error expected
         browser.select("resources_role[0]", "label=Manager");
@@ -69,7 +59,7 @@ public class AddRoleTests extends ProjectTests {
         browser.click("//img[@alt='Add']");
         // add explanation
         browser.type("explanation", "add manager role");
-        browser.click("//input[@name='saveProjectChangesBtn']");
+        browser.click("//input[@alt='Save Changes']");
         browser.waitForPageToLoad(TIMEOUT);
 
         String role = browser.getText("//div[@id='mainMiddleContent']/div/table[7]/tbody/tr[3]/td[1]");

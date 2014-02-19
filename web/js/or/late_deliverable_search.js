@@ -8,21 +8,21 @@ var submitForm = true;
  * @param msgList the list of error messages
  */
 function add_error_message(msg, msgPrefix, msgDiv, msgList) {
-	if (emptyString.test(msgDiv.innerHTML)) {
-		msgDiv.innerHTML = "&#160;*" + msg;
-	} else {
-		msgDiv.innerHTML += ";&#160; " + msg;
-	}
+    if (emptyString.test(msgDiv.innerHTML)) {
+        msgDiv.innerHTML = "&#160;*" + msg;
+    } else {
+        msgDiv.innerHTML += ";&#160; " + msg;
+    }
 
-	if (msgDiv.tagName.toLowerCase() == "div") {
-		msgDiv.style.display = "block";
-	} else {
-		msgDiv.style.display = "inline";
-	}
+    if (msgDiv.tagName.toLowerCase() == "div") {
+        msgDiv.style.display = "block";
+    } else {
+        msgDiv.style.display = "inline";
+    }
 
-	if (msgList != null) {
-		msgList.push(msgPrefix + msg);
-	}
+    if (msgList != null) {
+        msgList.push(msgPrefix + msg);
+    }
 }
 
 /**
@@ -189,18 +189,18 @@ function colorFormFields() {
  * @return true if there is no failure, otherwise false.
  */
 function validate_project_categories(thisForm, msgList) {
-	var msg = null;
-	var msgDiv = document.getElementById("project_categories_validation_msg");
+    var msg = null;
+    var msgDiv = document.getElementById("project_categories_validation_msg");
 
-	msgDiv.innerHTML = "";
-	msgDiv.style.display = "none";
+    msgDiv.innerHTML = "";
+    msgDiv.style.display = "none";
 
-	if (!selectAny(thisForm["project_categories"])) {
-		msg = "at least one category option should be selected";
-		add_error_message(msg, "", msgDiv, msgList);
-	}
+    if (!selectAny(thisForm["project_categories"])) {
+        msg = "at least one category option should be selected";
+        add_error_message(msg, "", msgDiv, msgList);
+    }
 
-	return msg == null;
+    return msg == null;
 }
 
 /**
@@ -210,18 +210,18 @@ function validate_project_categories(thisForm, msgList) {
  * @return true if there is no failure, otherwise false.
  */
 function validate_project_statuses(thisForm, msgList) {
-	var msg = null;
-	var msgDiv = document.getElementById("project_statuses_validation_msg");
+    var msg = null;
+    var msgDiv = document.getElementById("project_statuses_validation_msg");
 
-	msgDiv.innerHTML = "";
-	msgDiv.style.display = "none";
+    msgDiv.innerHTML = "";
+    msgDiv.style.display = "none";
 
-	if (!selectAny(thisForm["project_statuses"])) {
-		msg = "at least one status option should be selected";
-		add_error_message(msg, "", msgDiv, msgList);
-	}
+    if (!selectAny(thisForm["project_statuses"])) {
+        msg = "at least one status option should be selected";
+        add_error_message(msg, "", msgDiv, msgList);
+    }
 
-	return msg == null;
+    return msg == null;
 }
 
 /**
@@ -231,18 +231,18 @@ function validate_project_statuses(thisForm, msgList) {
  * @return true if there is no failure, otherwise false.
  */
 function validate_deliverable_types(thisForm, msgList) {
-	var msg = null;
-	var msgDiv = document.getElementById("deliverable_types_validation_msg");
+    var msg = null;
+    var msgDiv = document.getElementById("deliverable_types_validation_msg");
 
-	msgDiv.innerHTML = "";
-	msgDiv.style.display = "none";
+    msgDiv.innerHTML = "";
+    msgDiv.style.display = "none";
 
-	if (!selectAny(thisForm["deliverable_types"])) {
-		msg = "at least one deliverable type option should be selected";
-		add_error_message(msg, "", msgDiv, msgList);
-	}
+    if (!selectAny(thisForm["deliverable_types"])) {
+        msg = "at least one deliverable type option should be selected";
+        add_error_message(msg, "", msgDiv, msgList);
+    }
 
-	return msg == null;
+    return msg == null;
 }
 
 

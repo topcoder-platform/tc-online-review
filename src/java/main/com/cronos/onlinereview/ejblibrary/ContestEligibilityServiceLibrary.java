@@ -1,16 +1,16 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.ejblibrary;
 
-import com.cronos.onlinereview.actions.EJBLibraryServicesLocator;
+import java.util.Set;
+
+import com.cronos.onlinereview.util.EJBLibraryServicesLocator;
 import com.topcoder.service.contest.eligibility.dao.ContestEligibilityManager;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityService;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityServiceBean;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidationManager;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
-
-import java.util.Set;
 
 /**
  * <p>An implementation of {@link ContestEligibilityService} interface which provides the library-call style for API of
@@ -18,8 +18,8 @@ import java.util.Set;
  *
  * <p><b>Thread safety:</b> This class is thread-safe.</p>
  *
- * @author isv
- * @version 1.0 (TopCoder Online Review Switch To Local Calls)
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class ContestEligibilityServiceLibrary implements ContestEligibilityService {
 
@@ -27,7 +27,7 @@ public class ContestEligibilityServiceLibrary implements ContestEligibilityServi
      * <p>A <code>ContestEligibilityServiceBean</code> which is delegated the processing of the calls to methods of this
      * class.</p>
      */
-    private ContestEligibilityServiceBean bean;
+    private final ContestEligibilityServiceBean bean;
 
     /**
      * <p>Constructs new <code>ContestEligibilityServiceLibrary</code> instance. This implementation does nothing.</p>
@@ -81,8 +81,8 @@ public class ContestEligibilityServiceLibrary implements ContestEligibilityServi
     /**
      * <p>An extension to wrapped bean class providing access to it's protected methods.</p>
      *
-     * @author isv
-     * @version 1.0
+     * @author TCSASSEMBLER
+     * @version 2.0
      */
     private static class Extender extends ContestEligibilityServiceBean {
 

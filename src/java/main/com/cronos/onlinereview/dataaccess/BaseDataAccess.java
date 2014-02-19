@@ -23,31 +23,8 @@ import java.util.Map;
 /**
  * <p>A base class for DAO implementations backed up by Query Tool.</p>
  *
- * <p>
- * Version 1.1 (Impersonation Login Assembly 1.0) Change notes:
- *   <ol>
- *     <li>Renamed <code>PROJECT_STATUS_INACTIVE_ID</code> constant to <code>PROJECT_STATUS_DRAFT_ID</code> constant.
- *     </li>
- *   </ol>
- * </p>
- *
- * <p>
- * Version 1.2 (TopCoder Online Review Switch To Local Calls Assembly 1.0) Change notes:
- *   <ol>
- *     <li>Added {@link #getTCSCatalogDBConnection()} method.</li>
- *   </ol>
- * </p>
- *
- * <p>
- * Version 1.3 (https://apps.topcoder.com/bugs/browse/BUGR-7621) Change notes:
- *   <ol>
- *     <li>Added {@link #runQueryInDB} method.</li>
- *     <li>Updated {@link #runQuery} method to delegate to {@link #runQueryInDB} method.</li>
- *   </ol>
- * </p>
- *
- * @author isv, tangzx
- * @version 1.3
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public abstract class BaseDataAccess {
 
@@ -189,7 +166,6 @@ public abstract class BaseDataAccess {
      * @param paramValues a <code>String</code> array providing the values of the query parameters for customization.
      * @return a <code>Map</code> providing the query results. Maps query names to query results.
      * @throws DataAccessException if an unexpected error occurs while running the query.
-     * @since 1.3
      */
     protected Map<String, ResultSetContainer> runQueryInDB(String dbName, String queryName, String[] paramNames, String[] paramValues) {
         DataAccess dataAccess = new DataAccess(dbName);
@@ -212,7 +188,6 @@ public abstract class BaseDataAccess {
      *
      * @return a <code>Connection</code> providing the connection to TCS Catalog database.
      * @throws DataAccessException if an SQL error occurs while establishing connection to TCS Catalog database.
-     * @since 1.2
      */
     protected Connection getTCSCatalogDBConnection() {
         try {

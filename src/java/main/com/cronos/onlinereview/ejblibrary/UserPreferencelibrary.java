@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.ejblibrary;
 
@@ -18,8 +18,8 @@ import com.topcoder.web.ejb.user.UserPreferenceBean;
  *
  * <p><b>Thread safety:</b> This class is thread-safe.</p>
  *
- * @author tangzx
- * @version 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class UserPreferencelibrary extends BaseEJBLibrary implements
         UserPreference {
@@ -29,7 +29,7 @@ public class UserPreferencelibrary extends BaseEJBLibrary implements
      * the calls to methods of this class.
      * </p>
      */
-    private UserPreferenceBean bean;
+    private final UserPreferenceBean bean;
 
     /**
      * <p>

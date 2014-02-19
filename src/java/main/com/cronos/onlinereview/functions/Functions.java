@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2011 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006 - 2013 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.functions;
 
@@ -14,16 +14,14 @@ import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.struts.Globals;
-import org.apache.struts.taglib.TagUtils;
-import org.apache.struts.util.MessageResources;
+import org.apache.struts2.util.TextProviderHelper;
 
-import com.cronos.onlinereview.actions.ActionsHelper;
-import com.cronos.onlinereview.actions.AuthorizationHelper;
-import com.cronos.onlinereview.actions.ConfigHelper;
+import com.cronos.onlinereview.util.ActionsHelper;
+import com.cronos.onlinereview.util.AuthorizationHelper;
+import com.cronos.onlinereview.util.ConfigHelper;
+import com.opensymphony.xwork2.ActionContext;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
@@ -36,33 +34,8 @@ import com.topcoder.util.errorhandling.BaseException;
  * This class is thread-safe, as it contains only static methods and has no inner state.
  * </p>
  *
- * <p>
- * Version 1.1 (Impersonation Login Assembly 1.0) Change notes:
- *   <ol>
- *     <li>Added {@link #contains(Collection, Object)} method.</li>
- *   </ol>
- * </p>
- *
- * <p>
- * Version 1.2 (Online Review Late Deliverables Search Assembly 1.0) Change notes:
- *   <ol>
- *     <li>Added {@link #getDeliverableName(long)} method.</li>
- *     <li>Added {@link #getUserId(HttpServletRequest, long)} method.</li>
- *     <li>Added {@link #displayDelay(Long)} method.</li>
- *     <li>Added {@link #getHandlerContext(long)} method.</li>
- *     <li>Updated {@link #getHandlerContext(HttpServletRequest)} method to reuse
- *     {@link #getHandlerContext(long)} method.</li>
- *   </ol>
- * </p>
- *
- * Version 1.3 (Online Review Status Validation Assembly 1.0) Change notes:
- *   <ol>
- *     <li>Method adjusted for new signatures of create managers methods from ActionsHelper</li>
- *   </ol>
- * </p>
- * @author George1
- * @author real_vg, isv, FireIce, rac_
- * @version 1.3
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public final class Functions {
 
@@ -80,7 +53,7 @@ public final class Functions {
      * character sequence: <code>&lt;br /&gt;</code>. The line terminators are the ones specified
      * in the description of the class <code>java.util.regex.Pattern</code>.
      * <p>
-     * This method is an implementeation of <code>htmlEncode</code> function used from EL
+     * This method is an implementation of <code>htmlEncode</code> function used from EL
      * expressions in JSP pages.
      * </p>
      *
@@ -136,7 +109,7 @@ public final class Functions {
     /**
      * This static method determines if the user is logged in.
      * <p>
-     * This method is an implementeation of <code>isUserLoggedIn</code> function used from EL
+     * This method is an implementation of <code>isUserLoggedIn</code> function used from EL
      * expressions in JSP pages.
      * </p>
      *
@@ -155,7 +128,7 @@ public final class Functions {
      * This static method returns the External ID of the currently logged in user. The ID is
      * returned as a <code>String</code> (in text form).
      * <p>
-     * This method is an implementeation of <code>getLoggedInUserId</code> function used from EL
+     * This method is an implementation of <code>getLoggedInUserId</code> function used from EL
      * expressions in JSP pages.
      * </p>
      *
@@ -179,7 +152,7 @@ public final class Functions {
      * This static method returns context of handler base projectCategory.
      *
      * <p>
-     * This method is an implementeation of <code>getHandlerContext</code> function used from EL
+     * This method is an implementation of <code>getHandlerContext</code> function used from EL
      * expressions in JSP pages.
      * </p>
      *
@@ -203,10 +176,10 @@ public final class Functions {
     }
 
     /**
-     * This static method determines whether standar errors bean from Sytruts framework has been
+     * This static method determines whether standard errors bean from Struts framework has been
      * created and stored in the request specified by <code>request</code> parameter.
      * <p>
-     * This method is an implementeation of <code>isErrorsPresent</code> function used from EL
+     * This method is an implementation of <code>isErrorsPresent</code> function used from EL
      * expressions in JSP pages.
      * </p>
      *
@@ -229,7 +202,7 @@ public final class Functions {
      * for this session or for entire application. If a message with the specified key was not found
      * in message resources, this method returns empty string.
      * <p>
-     * This method is an implementeation of <code>getMessage</code> function used from EL
+     * This method is an implementation of <code>getMessage</code> function used from EL
      * expressions in JSP pages.
      * </p>
      *
@@ -242,35 +215,18 @@ public final class Functions {
      *            a key that the string to retrieve is stored under.
      */
     public static String getMessage(PageContext pageContext, String key) {
-        // Check that parameters are correct, and return empty string if that's not the case
-        if (pageContext == null || key == null) {
-            return null;
-        }
 
-        MessageResources messages;
-
-        try {
-            // Use a helper method from Struts framework to obtain Message Resources
-            messages = TagUtils.getInstance().retrieveMessageResources(pageContext, Globals.MESSAGES_KEY, false);
-        } catch (JspException e) {
+        if (key == null) {
             return "";
         }
-
-        if (messages == null) {
-            return "";
-        }
-
-        // Retrieve message string from Message Resources
-        String message = messages.getMessage(key);
-        // If the specified key exists, return a string for it, or return empty string otherwise
-        return (message != null) ? message : "";
+        return TextProviderHelper.getText(key, "", ActionContext.getContext().getValueStack());
     }
 
     /**
      * This static method computes the amount of pixels to display for the specified time duration
      * in minutes.
      * <p>
-     * This method is an implementeation of <code>getGanttLen</code> function used from EL
+     * This method is an implementation of <code>getGanttLen</code> function used from EL
      * expressions in JSP pages.
      * </p>
      *
@@ -291,7 +247,7 @@ public final class Functions {
     /**
      * This static method returns string to display time duration, specified in minutes, in hours-minutes format.
      * <p>
-     * This method is an implementeation of <code>getGanttHours</code> function used from EL
+     * This method is an implementation of <code>getGanttHours</code> function used from EL
      * expressions in JSP pages.
      * </p>
      *
@@ -350,11 +306,11 @@ public final class Functions {
      * fractional part to two digits. This method is used to correctly display scorecard scores on
      * JSP pages.
      * <p>
-     * This method is an implementeation of <code>displayScore</code> function used from EL
+     * This method is an implementation of <code>displayScore</code> function used from EL
      * expressions in JSP pages.
      * </p>
      *
-     * @return string repesentation of the score.
+     * @return string representation of the score.
      * @param request
      *            an <code>HttpServletRequest</code> object, where pre-built formatting object
      *            could be stored for later reuse. Normally, you should write the following:
@@ -389,7 +345,7 @@ public final class Functions {
      * fractional part to two digits. This method is used to correctly display payment amounts on
      * JSP pages.
      * <p>
-     * This method is an implementeation of <code>displayPaymentAmt</code> function used from EL
+     * This method is an implementation of <code>displayPaymentAmt</code> function used from EL
      * expressions in JSP pages.
      * </p>
      *
@@ -442,7 +398,7 @@ public final class Functions {
      * format set in application's configuration file. This method is used to correctly display
      * date/time values on JSP pages.
      * <p>
-     * This method is an implementeation of <code>displayDate</code> function used from EL
+     * This method is an implementation of <code>displayDate</code> function used from EL
      * expressions in JSP pages.
      * </p>
      *
@@ -481,7 +437,7 @@ public final class Functions {
      * date and time parts of the date, so that dates appear to be displayed on two lines. This
      * method is used to correctly display date/time values on JSP pages.
      * <p>
-     * This method is an implementeation of <code>displayDateBr</code> function used from EL
+     * This method is an implementation of <code>displayDateBr</code> function used from EL
      * expressions in JSP pages.
      * </p>
      *
@@ -536,7 +492,7 @@ public final class Functions {
      * "safe" referer, i.e. it returns an address if the host part matches exactly to the host of
      * the current request, otherwise the return value is <code>null</code>.
      * <p>
-     * This method is an implementeation of <code>getSafeRedirect</code> function used from EL
+     * This method is an implementation of <code>getSafeRedirect</code> function used from EL
      * expressions in JSP pages.
      * </p>
      *
@@ -572,8 +528,8 @@ public final class Functions {
         }
 
         final String requestedUri = request.getRequestURI();
-        final int servelPathPos = requestedUri.indexOf(request.getServletPath());
-        final String moduleName = requestedUri.substring(0, servelPathPos);
+        final int servletPathPos = requestedUri.indexOf(request.getServletPath());
+        final String moduleName = requestedUri.substring(0, servletPathPos);
         final int refererPort = (refererURL.getPort() >= 0) ? refererURL.getPort() : request.getServerPort();
 
         if (refererURL.getHost().compareToIgnoreCase(request.getServerName()) != 0 ||
@@ -584,8 +540,8 @@ public final class Functions {
             return null;
         }
 
-        if (refererURL.getPath().indexOf("/jsp/login.jsp") == servelPathPos ||
-                refererURL.getPath().indexOf("/actions/Login.do") == servelPathPos) {
+        if (refererURL.getPath().indexOf("/jsp/login.jsp") == servletPathPos ||
+                refererURL.getPath().indexOf("/actions/Login.do") == servletPathPos) {
             // Don't allow redirects to the Login form
             return null;
         }
@@ -607,10 +563,9 @@ public final class Functions {
 
     /**
      * <p>Gets the configured Deliverable Name for the given deliverable id.</p>
-     *
+     * @param request the http request
      * @param deliverableId the deliverable id.
      * @return the specified deliverable name.
-     * @since 1.2
      */
     public static String getDeliverableName(HttpServletRequest request, long deliverableId) {
         try {
@@ -630,7 +585,6 @@ public final class Functions {
      * @param resourceId
      *            the resource id.
      * @return the corresponding user id, or -1 if any problem occurs.
-     * @since 1.2
      */
     public static long getUserId(long resourceId) {
         ResourceManager resourceManager = ActionsHelper.createResourceManager();
@@ -654,7 +608,6 @@ public final class Functions {
      * @param delay
      *            the delay in seconds
      * @return the formatted string of delay.
-     * @since 1.2
      */
     public static String displayDelay(Long delay) {
         long diff[] = new long[] {0, 0, 0};
@@ -681,7 +634,6 @@ public final class Functions {
      * @param projectCategoryId
      *            the project category id.
      * @return context of handler based on the project category.
-     * @since 1.2
      */
     public static String getHandlerContext(long projectCategoryId) {
         if (projectCategoryId == 1) {

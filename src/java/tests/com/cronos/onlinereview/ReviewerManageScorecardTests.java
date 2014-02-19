@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -7,10 +7,10 @@ import java.sql.Connection;
 
 
 /**
- * Online review functional tests 4, testing reviewer manage the scorecard
+ * Online review functional tests 4, testing reviewer manage the scorecard.
  *
- * @author TCSDEVELOPER
- * @version 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class ReviewerManageScorecardTests extends ProjectTests {
 
@@ -20,7 +20,7 @@ public class ReviewerManageScorecardTests extends ProjectTests {
      * @throws Exception if any error occurs.
      */
     public void setUp() throws Exception {
-    	super.setUp();
+        super.setUp();
         Connection con = TestHelper.getConnection();
         try {
 
@@ -33,17 +33,17 @@ public class ReviewerManageScorecardTests extends ProjectTests {
             // open review phase
             TestHelper.OpenPhase(phaseIds.get("review"), con);
             // add  submitter.
-    		long submitterId = TestHelper.AddResource(projectId, 1, phaseIds.get("registration") , Long.parseLong(TestHelper.getCompetitiorUserId()), TestHelper.getCompetitorUsername(), con);
+            long submitterId = TestHelper.AddResource(projectId, 1, phaseIds.get("registration") , Long.parseLong(TestHelper.getCompetitiorUserId()), TestHelper.getCompetitorUsername(), con);
             // add reviewer.
-    	    TestHelper.AddResource(projectId, 4, phaseIds.get("review"), Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
-    		// add contest submission.
-    		TestHelper.AddSubmission(projectId, phaseIds.get("submission"), submitterId, 1, con);
+            TestHelper.AddResource(projectId, 4, phaseIds.get("review"), Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
+            // add contest submission.
+            TestHelper.AddSubmission(projectId, phaseIds.get("submission"), submitterId, 1, con);
         } finally {
-    		con.close();
-    	}
+            con.close();
+        }
     }
 
-	
+    
     /**
      * Test Case Number: FTC128 RS8.2 Verify Reviewer can submit a scorecard
      *

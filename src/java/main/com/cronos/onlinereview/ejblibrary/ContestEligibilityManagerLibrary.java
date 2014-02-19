@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.ejblibrary;
 
@@ -19,8 +19,8 @@ import java.util.Set;
  *
  * <p><b>Thread safety:</b> This class is thread-safe.</p>
  *
- * @author isv
- * @version 1.0 (TopCoder Online Review Switch To Local Calls)
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class ContestEligibilityManagerLibrary implements ContestEligibilityManager {
 
@@ -28,7 +28,7 @@ public class ContestEligibilityManagerLibrary implements ContestEligibilityManag
      * <p>A <code>ContestEligibilityManagerBean</code> which is delegated the processing of the calls to methods of this
      * class.</p>
      */
-    private ContestEligibilityManagerBean bean;
+    private final ContestEligibilityManagerBean bean;
 
     /**
      * <p>Constructs new <code>ContestEligibilityManagerLibrary</code> instance.</p>
@@ -101,8 +101,8 @@ public class ContestEligibilityManagerLibrary implements ContestEligibilityManag
     /**
      * <p>An extension to wrapped bean class providing access to it's protected methods.</p>
      *
-     * @author isv
-     * @version 1.0
+     * @author TCSASSEMBLER
+     * @version 2.0
      */
     private static class Extender extends ContestEligibilityManagerBean {
 

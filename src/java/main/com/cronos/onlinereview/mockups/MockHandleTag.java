@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006 - 2013 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.mockups;
 
@@ -19,11 +19,10 @@ import com.topcoder.util.errorhandling.BaseException;
 
 /**
  * This class defines a mock up for real TopCoder's <tc-webtag:handle> tag, which displays members'
- * handles using diffferent color schemas based on the users' rating.
+ * handles using different color schemas based on the users' rating.
  *
- * @author George1
- * @author real_vg
- * @version 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public final class MockHandleTag extends TagSupport {
 
@@ -92,7 +91,7 @@ public final class MockHandleTag extends TagSupport {
      * @see #doEndTag
      */
     public int doStartTag() throws JspException {
-	   return (SKIP_BODY);
+       return (SKIP_BODY);
     }
 
     /**
@@ -204,7 +203,7 @@ public final class MockHandleTag extends TagSupport {
         results.append("</a>");
 
         // Write prepared output to the output stream
-    	JspWriter writer = pageContext.getOut();
+        JspWriter writer = pageContext.getOut();
         try {
             writer.print(results.toString());
         } catch (IOException ioe) {

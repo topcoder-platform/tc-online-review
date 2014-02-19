@@ -1,21 +1,17 @@
 <%--
-  - Author: FireIce, isv
-  - Version: 1.1
-  - Since: Online Review Late Deliverables Search Assembly 1.0
-  - Copyright (C) 2010-2011 TopCoder Inc., All Rights Reserved.
+  - Author: TCSASSEMBLER
+  - Version: 2.0
+  - Copyright (C) 2010 - 2014 TopCoder Inc., All Rights Reserved.
   -
-  - Description: This page displays late deliverables page
-  -
-  - Version 1.1 (Online Review Late Deliverables Edit assembly): Added "Advanced Search Parameters" area; added "Edit"
-  - button for each of listed late deliverables records and linked them to respective Edit Late Deliverable page.
+  - Description: This page displays late deliverables page.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ page import="java.util.Date" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="/tags/struts-html" %>
-<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -24,30 +20,30 @@
 <fmt:formatDate value="${now}" pattern="z" var="currentTimezoneLabel"/>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html:html xhtml="true">
+<html>
 <head>
     <title>Online Review - Late Deliverables</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
     <!-- TopCoder CSS -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/style.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/coders.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/tcStyles.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/stats.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/phasetabs.css' />" />
+    <link type="text/css" rel="stylesheet" href="/css/style.css" />
+    <link type="text/css" rel="stylesheet" href="/css/coders.css" />
+    <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
+    <link type="text/css" rel="stylesheet" href="/css/stats.css" />
+    <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
+    <link type="text/css" rel="stylesheet" href="/css/or/phasetabs.css" />
 
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/dojo.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/util.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_util.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/parseDate.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/late_deliverable_search.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/expand_collapse.js' />"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/rollovers2.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/dojo.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/util.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/validation_util.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/parseDate.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/late_deliverable_search.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/expand_collapse.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript">
-        var ajaxSupportUrl = "<html:rewrite page='/ajaxSupport' />";
+        var ajaxSupportUrl = "<or:url value='/ajaxSupport' />";
     </script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/ajax1.js' />"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/ajax1.js"><!-- @ --></script>
 </head>
 <body onload="colorFormFields();">
 <div align="center">
@@ -58,85 +54,84 @@
 
         <div id="mainMiddleContent">
             <div style="position: relative; width: 100%;">
-                <html:form action="/actions/ViewLateDeliverables" onsubmit="return submit_form(this, true);" 
-                           method="GET" styleId="ViewLateDeliverablesForm">
-                    <html:hidden property="method" value="viewLateDeliverables" />
+                <s:form action="ViewLateDeliverables" onsubmit="return submit_form(this, true);" 
+                           method="GET" id="ViewLateDeliverablesForm" namespace="/actions">
                         <div id="globalMesssage" 
                              style="display:${orfn:isErrorsPresent(pageContext.request) ? 'block' : 'none'}">
                             <div style="color:red;">
-                                <bean:message key="viewLateDeliverables.ValidationFailed" />
+                                <or:text key="viewLateDeliverables.ValidationFailed" />
                             </div>
-                            <html:errors property="org.apache.struts.action.GLOBAL_MESSAGE" />
+                            <s:actionerror escape="false" />
                         </div>
                     <table class="scorecard" style="border-collapse: collapse;" cellpadding="0" cellspacing="0" width="100%">
                         <tbody>
                             <tr>
-                                <td class="title" colspan="6"><bean:message key="viewLateDeliverables.SearchForm.title" /></td>
+                                <td class="title" colspan="6"><or:text key="viewLateDeliverables.SearchForm.title" /></td>
                             </tr>
 
                             <tr class="light">
-                                <td class="value" nowrap="nowrap"><b><bean:message key="viewLateDeliverables.ProjectCategory.Label" /></b></td>
+                                <td class="value" nowrap="nowrap"><b><or:text key="viewLateDeliverables.ProjectCategory.Label" /></b></td>
                                 <td class="value">
-                                        <html:select styleClass="inputBox" property="project_categories" multiple="true" 
-                                                     size="5" onkeypress="return submitOnEnter(this, event);">
-                                            <html:option key='global.any' value="0" />
+                                        <select class="inputBox" name="project_categories" multiple="multiple" 
+                                                     size="5" onkeypress="return submitOnEnter(this, event);"><c:set var="OR_FIELD_TO_SELECT" value="project_categories"/>
+                                            <option  value="0" <or:selected value="0"/>><or:text key="global.any" def="0"/></option>
                                             <c:forEach items="${projectCategories}" var="category">
-                                                <html:option key='ProjectCategory.${fn:replace(category.name, " ", "")}' value="${category.id}" />
+                                                <option  value="${category.id}"  <or:selected value="${category.id}"/>><or:text key="ProjectCategory.${fn:replace(category.name, ' ', '')}"  def="${category.id}"/></option>
                                             </c:forEach>
-                                        </html:select>
+                                        </select>
                                         <div id="project_categories_validation_msg" style="display:none;" class="error"></div>
                                 </td>
 
-                                <td class="value" nowrap="nowrap"><b><bean:message key="viewLateDeliverables.ProjectStatus.Label" /></b></td>
+                                <td class="value" nowrap="nowrap"><b><or:text key="viewLateDeliverables.ProjectStatus.Label" /></b></td>
                                 <td class="value">
-                                        <html:select styleClass="inputBox" property="project_statuses" multiple="true" 
-                                                     size="5" onkeypress="return submitOnEnter(this, event);">
-                                        <html:option key='global.any' value="0" />
+                                        <select class="inputBox" name="project_statuses" multiple="multiple" 
+                                                     size="5" onkeypress="return submitOnEnter(this, event);"><c:set var="OR_FIELD_TO_SELECT" value="project_statuses"/>
+                                        <option  value="0" <or:selected value="0"/>><or:text key="global.any" def="0"/></option>
                                             <c:forEach var="status" items="${projectStatuses}">
-                                                <html:option key='ProjectStatus.${fn:replace(status.name, " ", "")}' value="${status.id}" />
+                                                <option  value="${status.id}" <or:selected value="${status.id}"/>><or:text key="ProjectStatus.${fn:replace(status.name, ' ', '')}" def="${status.id}"/></option>
                                             </c:forEach>
-                                        </html:select>
+                                        </select>
                                         <div id="project_statuses_validation_msg" style="display:none;" class="error"></div>
                                     </td>
                                 
-                                <td class="value" nowrap="nowrap"><b><bean:message key="viewLateDeliverables.DeliverableType.Label" /></b></td>
+                                <td class="value" nowrap="nowrap"><b><or:text key="viewLateDeliverables.DeliverableType.Label" /></b></td>
                                 <td class="value">
-                                    <html:select styleClass="inputBox" property="deliverable_types" multiple="true" 
-                                                 size="5" onkeypress="return submitOnEnter(this, event);">
+                                    <select class="inputBox" name="deliverable_types" multiple="multiple" 
+                                                 size="5" onkeypress="return submitOnEnter(this, event);"><c:set var="OR_FIELD_TO_SELECT" value="deliverable_types"/>
                                         <c:forEach var="entry" items="${deliverableTypes}">
-                                            <html:option key='DeliverableType.${fn:replace(entry.key, " ", "")}' value="${entry.value}" />
+                                            <option  value="${entry.value}"  <or:selected value="${entry.value}"/>><or:text key="DeliverableType.${fn:replace(entry.key, ' ', '')}" def="${entry.key}"/></option>
                                         </c:forEach>
-                                    </html:select>
+                                    </select>
                                     <div id="deliverable_types_validation_msg" style="display:none;" class="error"></div>
                                 </td>                                
                             </tr>
 
                             <tr class="dark">
-                                <td class="value" nowrap="nowrap"><b><bean:message key="viewLateDeliverables.ProjectID.Label" /></b></td>
+                                <td class="value" nowrap="nowrap"><b><or:text key="viewLateDeliverables.ProjectID.Label" /></b></td>
                                 <td class="value" >
-                                    <html:text property="project_id" styleClass="inputBox" style="width: 100px;" 
+                                    <input type="text" name="project_id" class="inputBox" style="width: 100px;" 
                                                onfocus="this.value = getTextValueOnFocus(this, true);" 
-                                               onblur="this.value = getTextValueOnFocus(this, false);"/>
+                                               onblur="this.value = getTextValueOnFocus(this, false);" value="<or:fieldvalue field='project_id' />" />
                                     <div id="project_id_validation_msg" style="display:none;" class="error"></div>
-                                    <div id="project_id_serverside_validation" class="error"><html:errors property="project_id" prefix="" suffix="" /></div>
+                                    <div id="project_id_serverside_validation" class="error"><s:fielderror escape="false"><s:param>project_id</s:param></s:fielderror></div>
                                 </td>
                                                                     
-                                <td class="value" style="width: 100px;"><b><bean:message key="viewLateDeliverables.LateMemberHandle.Label" /></b></td>
+                                <td class="value" style="width: 100px;"><b><or:text key="viewLateDeliverables.LateMemberHandle.Label" /></b></td>
                                 <td class="value">
-                                    <html:text property="handle" styleClass="inputBox" style="width: 100px;"
+                                    <input type="text" name="handle" class="inputBox" style="width: 100px;"
                                                onfocus="this.value = getTextValueOnFocus(this, true);" 
-                                               onblur="this.value = getTextValueOnFocus(this, false);"/>
-                                    <div id="handle_serverside_validation" class="error"><html:errors property="handle" prefix="" suffix="" /></div>
+                                               onblur="this.value = getTextValueOnFocus(this, false);" value="<or:fieldvalue field='handle' />" />
+                                    <div id="handle_serverside_validation" class="error"><s:fielderror escape="false"><s:param>handle</s:param></s:fielderror></div>
                                 </td>    
                                 
-                                <td class="value" nowrap="nowrap"><b><bean:message key="viewLateDeliverables.JustifiedStatus.Label" /></b></td>
+                                <td class="value" nowrap="nowrap"><b><or:text key="viewLateDeliverables.JustifiedStatus.Label" /></b></td>
                                 <td class="value">
-                                    <html:select styleClass="inputBox" property="justified" 
-                                                 onkeypress="return submitOnEnter(this, event);">
-                                        <html:option value="Any" />
-                                        <html:option value="Justified" />
-                                        <html:option value="Not justified" />
-                                    </html:select>
+                                    <select class="inputBox" name="justified" 
+                                                 onkeypress="return submitOnEnter(this, event);"><c:set var="OR_FIELD_TO_SELECT" value="justified"/>
+                                        <option value="Any" <or:selected value="Any"/>>Any</option>
+                                        <option value="Justified" <or:selected value="Justified"/>>Justified</option>
+                                        <option value="Not justified" <or:selected value="Not justified"/>>Not justified</option>
+                                    </select>
                                 </td>                                                                                        
                             </tr>
                         </tbody>
@@ -151,87 +146,87 @@
                                     <img id="Outai" class="Outline" border="0" 
                                          src="/i/or/${requestScope.hasAnyAdvancedSearchParameter ? 'minus' : 'plus'}.gif" 
                                          width="9" height="9" style="margin-right:5px;" />
-                                    <bean:message key="viewLateDeliverables.AdvancedSearchParameters"/></a></td>
+                                    <or:text key="viewLateDeliverables.AdvancedSearchParameters"/></a></td>
                             </tr>
                         </tbody>
                         <tbody ID="Outar" <c:if test="${not requestScope.hasAnyAdvancedSearchParameter}">style="display:none"</c:if>>
                             <tr class="light">
                                 <td class="value" nowrap="nowrap">
-                                    <b><bean:message key="viewLateDeliverables.CockpitProject.Label"/></b>
+                                    <b><or:text key="viewLateDeliverables.CockpitProject.Label"/></b>
                                 </td>
                                 <td class="value">
-                                    <html:select property="tcd_project_id" style="width:150px;" styleClass="inputBox" 
-                                                 onkeypress="return submitOnEnter(this, event);">
-                                        <html:option key='global.any' value=""/>
+                                    <select name="tcd_project_id" style="width:150px;" class="inputBox" 
+                                                 onkeypress="return submitOnEnter(this, event);"><c:set var="OR_FIELD_TO_SELECT" value="tcd_project_id"/>
+                                        <option  value="" <or:selected value=""/>><or:text key="global.any" def=""/></option>
                                         <c:forEach var="entry" items="${requestScope.cockpitProjects}">
-                                            <html:option value="${entry.id}">
+                                            <option value="${entry.id}" <or:selected value="${entry.id}"/>>
                                                 <c:out value="${entry.name}"/>
-                                            </html:option>
+                                            </option>
                                         </c:forEach>
-                                    </html:select>
+                                    </select>
                                 </td>
 
                                 <td class="value" nowrap="nowrap">
-                                    <b><bean:message key="viewLateDeliverables.ExplanationStatus.Label"/></b>
+                                    <b><or:text key="viewLateDeliverables.ExplanationStatus.Label"/></b>
                                 </td>
                                 <td class="value">
-                                    <html:select property="explanation_status" styleClass="inputBox" 
-                                                 onkeypress="return submitOnEnter(this, event);">
-                                        <html:option key='global.any' value=""/>
-                                        <html:option key='global.explained' value="true"/>
-                                        <html:option key='global.notExplained' value="false"/>
-                                    </html:select>
+                                    <select name="explanation_status" class="inputBox" 
+                                                 onkeypress="return submitOnEnter(this, event);"><c:set var="OR_FIELD_TO_SELECT" value="explanation_status"/>
+                                        <option  value="" <or:selected value=""/>><or:text key="global.any" def=""/></option>
+                                        <option  value="true" <or:selected value="true"/>><or:text key="global.explained" def="true"/></option>
+                                        <option  value="false" <or:selected value="false"/>><or:text key="global.notExplained" def="false"/></option>
+                                    </select>
                                 </td> 
                                                                                        
                                 <td class="value" nowrap="nowrap">
-                                    <b><bean:message key="viewLateDeliverables.ResponseStatus.Label"/></b>
+                                    <b><or:text key="viewLateDeliverables.ResponseStatus.Label"/></b>
                                 </td>
                                 <td class="value">
-                                    <html:select property="response_status" styleClass="inputBox"
-                                                 onkeypress="return submitOnEnter(this, event);">
-                                        <html:option key='global.any' value=""/>
-                                        <html:option key='global.responded' value="true"/>
-                                        <html:option key='global.notResponded' value="false"/>
-                                    </html:select>
+                                    <select name="response_status" class="inputBox"
+                                                 onkeypress="return submitOnEnter(this, event);"><c:set var="OR_FIELD_TO_SELECT" value="response_status"/>
+                                        <option  value="" <or:selected value=""/>><or:text key="global.any" def=""/></option>
+                                        <option  value="true" <or:selected value="true"/>><or:text key="global.responded" def="true"/></option>
+                                        <option  value="false" <or:selected value="false"/>><or:text key="global.notResponded" def="false"/></option>
+                                    </select>
                                 </td>
                             </tr>
                             <tr class="dark">
                                 <td class="value" nowrap="nowrap">
-                                    <b><bean:message key="viewLateDeliverables.DeadlineMinDate.Label"/></b>
+                                    <b><or:text key="viewLateDeliverables.DeadlineMinDate.Label"/></b>
                                 </td>
                                 <td class="value">
-                                    <html:text style="width: 75px;"  
+                                    <input type="text" style="width: 75px;" name="min_deadline"
+                                               class="inputBoxDate"
                                                onfocus="this.value = getDateValueOnFocus(this, true);" 
-                                               onblur="this.value = getDateValueOnFocus(this, false);"
-                                               property="min_deadline" styleClass="inputBoxDate"/>
+                                               onblur="this.value = getDateValueOnFocus(this, false);" value="<or:fieldvalue field='min_deadline' />" />
                                     <c:out value="${currentTimezoneLabel}"/>
                                     <div id="min_deadline_validation_msg" style="display:none;" class="error"></div>
                                 </td>
 
                                 <td class="value" nowrap="nowrap">
-                                    <b><bean:message key="viewLateDeliverables.DeadlineMaxDate.Label"/></b>
+                                    <b><or:text key="viewLateDeliverables.DeadlineMaxDate.Label"/></b>
                                 </td>
                                 <td class="value" nowrap="nowrap">
-                                    <html:text style="width: 75px;" property="max_deadline"
-                                               styleClass="inputBoxDate"
+                                    <input type="text" style="width: 75px;" name="max_deadline"
+                                               class="inputBoxDate"
                                                onfocus="this.value = getDateValueOnFocus(this, true);" 
-                                               onblur="this.value = getDateValueOnFocus(this, false);"/>
+                                               onblur="this.value = getDateValueOnFocus(this, false);" value="<or:fieldvalue field='max_deadline' />" />
                                     <c:out value="${currentTimezoneLabel}"/>
                                     <div id="max_deadline_validation_msg" style="display:none;" class="error"></div>
                                     <div id="deadline_serverside_validation" class="error">
-                                        <html:errors property="max_deadline" prefix="" suffix="" /></div>
+                                        <s:fielderror escape="false"><s:param>max_deadline</s:param></s:fielderror></div>
                                 </td>
                                 <td class="value" nowrap="nowrap">
-                                    <b><bean:message key="viewLateDeliverables.LateDeliverableType.Label"/></b>
+                                    <b><or:text key="viewLateDeliverables.LateDeliverableType.Label"/></b>
                                 </td>
                                 <td class="value">
-                                    <html:select property="late_deliverable_type" styleClass="inputBox"
-                                                 onkeypress="return submitOnEnter(this, event);">
-                                        <html:option key='global.any' value="" />
+                                    <select name="late_deliverable_type" class="inputBox"
+                                                 onkeypress="return submitOnEnter(this, event);"><c:set var="OR_FIELD_TO_SELECT" value="late_deliverable_type"/>
+                                        <option  value="" <or:selected value=""/>><or:text key="global.any" def=""/></option>
                                         <c:forEach items="${lateDeliverableTypes}" var="entry">
-                                            <html:option key='LateDeliverableType.${fn:replace(entry.name, " ", "")}' value="${entry.id}" />
+                                            <option value="${entry.id}" <or:selected value="${entry.id}"/>><or:text key="LateDeliverableType.${fn:replace(entry.name, ' ', '')}" def="${entry.id}"/></option>
                                         </c:forEach>
-                                    </html:select>
+                                    </select>
 
                                 </td>
                             </tr>
@@ -239,34 +234,34 @@
                     </table>
                     <br/>
                     <div align="center">
-                        <html:image property="searchLDBtn" srcKey="btnSearch.img" altKey="btnSearch.alt" border="0" onclick="submitForm=true;"/>
+                        <input type="image"  src="<or:text key='btnSearch.img' />" alt="<or:text key='btnSearch.alt' />" border="0" onclick="submitForm=true;"/>
                         &nbsp;&nbsp;
-                        <html:image property="clearSearchLDBtn" srcKey="btnClear.img" altKey="btnClear.alt" border="0" onclick="submitForm=false;"/>
+                        <input type="image"  src="<or:text key='btnClear.img' />" alt="<or:text key='btnClear.alt' />" border="0" onclick="submitForm=false;"/>
                     </div>
-                </html:form>
+                </s:form>
 
                 <c:if test="${not empty showSearchResultsSection}">
                 <c:choose>
                     <c:when test="${empty projectMap}">
                         <div align="center">
-                            <bean:message key="viewLateDeliverables.SearchResults.NoMatch" />
+                            <or:text key="viewLateDeliverables.SearchResults.NoMatch" />
                         </div>
                     </c:when>
                     <c:otherwise>
                         <div align="right">
-                        [ <a href="javascript:void(0)" onclick="return expandAll()"><bean:message key="global.expandAll" /></a> | <a href="javascript:void(0)" onclick="return collapseAll()"><bean:message key="global.collapseAll" /></a> ]
+                        [ <a href="javascript:void(0)" onclick="return expandAll()"><or:text key="global.expandAll" /></a> | <a href="javascript:void(0)" onclick="return collapseAll()"><or:text key="global.collapseAll" /></a> ]
                         </div><br/>
 
                         <table class="scorecard" style="border-collapse: collapse;" cellpadding="0" cellspacing="0" width="100%">
                             <tbody>
                             <tr>
-                                <td class="title" colspan="3"><bean:message key="viewLateDeliverables.SearchResults.title" /></td>
+                                <td class="title" colspan="3"><or:text key="viewLateDeliverables.SearchResults.title" /></td>
                             </tr>
 
                             <tr>
-                                <td class="header" width="580"><bean:message key="viewLateDeliverables.SearchResults.column.ProjectName" /></td>
-                                <td class="header" nowrap="nowrap"><bean:message key="viewLateDeliverables.SearchResults.column.ProjectCategory" /></td>
-                                <td class="header" nowrap="nowrap"><bean:message key="viewLateDeliverables.SearchResults.column.ProjectStatus" /></td>
+                                <td class="header" width="580"><or:text key="viewLateDeliverables.SearchResults.column.ProjectName" /></td>
+                                <td class="header" nowrap="nowrap"><or:text key="viewLateDeliverables.SearchResults.column.ProjectCategory" /></td>
+                                <td class="header" nowrap="nowrap"><or:text key="viewLateDeliverables.SearchResults.column.ProjectStatus" /></td>
                             </tr>
 
                             <c:forEach items="${projectMap}" var="entry" varStatus="idxProj">
@@ -277,9 +272,9 @@
                                     <a onclick="return expcollHandler(this)" href="javascript:void(0)" id="Out${idxProj.index}" class="Outline">
                                     <img id="Out${idxProj.index}i" class="Outline" border="0" src="/i/or/plus.gif" width="9" height="9" style="margin-right:5px;" />
                                     </a>
-                                    <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=${projectId}">
+                                    <a href="<or:url value='/actions/ViewProjectDetails?pid=${projectId}' />">
                                         <strong>${project.allProperties['Project Name']}</strong> version ${project.allProperties['Project Version']}
-                                    </html:link>
+                                    </a>
                                 </td>
 
                                 <td class="value">${project.projectCategory.name}</td>
@@ -290,12 +285,12 @@
                                 <td colspan="3" class="value">
                                     <table border="1" cellpadding="0" cellspacing="0" width="100%">
                                         <tr>
-                                            <td class="header" nowrap="nowrap" width="20%"><bean:message key="viewLateDeliverables.SearchResults.innerTable.column.Handle" /></td>
-                                            <td class="header" nowrap="nowrap" width="20%"><bean:message key="viewLateDeliverables.SearchResults.innerTable.column.Deliverable" /></td>
-                                            <td class="header" nowrap="nowrap" width="20%"><bean:message key="viewLateDeliverables.SearchResults.innerTable.column.Deadline" /></td>
-                                            <td class="header" nowrap="nowrap" width="20%"><bean:message key="viewLateDeliverables.SearchResults.innerTable.column.Delay" /></td>
-                                            <td class="header" nowrap="nowrap" width="15%"><bean:message key="viewLateDeliverables.SearchResults.innerTable.column.Justified" /></td>
-                                            <td class="header" nowrap="nowrap" width="5%"><bean:message key="viewLateDeliverables.SearchResults.innerTable.column.Edit"/></td>
+                                            <td class="header" nowrap="nowrap" width="20%"><or:text key="viewLateDeliverables.SearchResults.innerTable.column.Handle" /></td>
+                                            <td class="header" nowrap="nowrap" width="20%"><or:text key="viewLateDeliverables.SearchResults.innerTable.column.Deliverable" /></td>
+                                            <td class="header" nowrap="nowrap" width="20%"><or:text key="viewLateDeliverables.SearchResults.innerTable.column.Deadline" /></td>
+                                            <td class="header" nowrap="nowrap" width="20%"><or:text key="viewLateDeliverables.SearchResults.innerTable.column.Delay" /></td>
+                                            <td class="header" nowrap="nowrap" width="15%"><or:text key="viewLateDeliverables.SearchResults.innerTable.column.Justified" /></td>
+                                            <td class="header" nowrap="nowrap" width="5%"><or:text key="viewLateDeliverables.SearchResults.innerTable.column.Edit"/></td>
                                         </tr>
                                         <c:set var="lateDeliverables" value="${groupedLateDeliverables[projectId]}" />
                                         <c:forEach items="${lateDeliverables}" var="lateDeliverable" varStatus="status">
@@ -306,7 +301,7 @@
                                                     <td class="value" width="20%">${orfn:getDeliverableName(pageContext.request, lateDeliverable.deliverableId)}</td>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <td class="value" width="20%"><bean:message key="LateDeliverableType.RejectedFinalFix" /></td>
+                                                    <td class="value" width="20%"><or:text key="LateDeliverableType.RejectedFinalFix" /></td>
                                                 </c:otherwise>
                                             </c:choose>
                                             <c:choose>
@@ -327,8 +322,8 @@
                                             </c:choose>
                                             <td class="value" width="15%">${lateDeliverable.forgiven ? 'Yes' : 'No'}</td>
                                             <td class="value" width="5%">
-                                                <html:link page="/actions/EditLateDeliverable.do?method=editLateDeliverable&amp;late_deliverable_id=${lateDeliverable.id}">
-                                                    <bean:message key="global.Edit"/></html:link>
+                                                <a href="<or:url value='/actions/EditLateDeliverable?late_deliverable_id=${lateDeliverable.id}' />">
+                                                    <or:text key="global.Edit"/></a>
                                             </td>
                                         </tr>
                                         </c:forEach>
@@ -350,4 +345,4 @@
     </div>
 </div>
 </body>
-</html:html>
+</html>

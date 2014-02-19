@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2005-2013 TopCoder Inc., All Rights Reserved.
+/*
+ * Copyright (C) 2005 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -47,48 +47,25 @@ import com.topcoder.util.idgenerator.IDGenerator;
 import com.topcoder.util.idgenerator.IDGeneratorFactory;
 
 /**
- * The PRFinalReviewPhaseHandler.
+ * The extend from FinalReviewPhaseHandler to add on the logic to push data to project_result.
  *
  * <p>
- * Version 1.0.1 (SVN Automation and Late Deliverables Tracker Integration Assembly 1.0) Change notes:
- *   <ol>
- *     <li>Implemented the logic for initializing the SVN module and granting access permissions to intended resources
- *     in case Final Review phase starts and project has SVN module specified by settings.</li>
- *   </ol>
+ * Thread-safety: This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
- * <p>
- * Version 1.1 (Online Review Payments and Status Automation Assembly 1.0) Change notes:
- *   <ol>
- *     <li>Update {@link #perform(Phase, String)} to set the the project status to "Completed" when the project ends
- *         and the final fix is approved, and there's no Approval phase in Scheduled or Open status and that
- *         "Approval Required" project property is not set to "true".</li>
- *   </ol>
- * </p>
- *
- * <p>
- * Version 1.2 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
- *   <ol>
- *     <li>Updated {@link #perform(Phase, String)} method to pass <code>operator</code> when calling
- *     RPHelper.processFinalReviewPR.</li>
- *   </ol>
- * </p>
- *
- * @author brain_cn, isv, FireIce, flexme
- * @version 1.2
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
     
     /**
     * Used for pulling data to project_result table and filling payments.
     */
-    private PRHelper prHelper = new PRHelper();
-	
+    private final PRHelper prHelper = new PRHelper();
+    
     /**
      * <p>A <code>String</code> providing the name of resource property providing the flag indicating whether the
      * resource has permission for accessing the project's SVN module set or not.</p>
-     *
-     * @since 1.0.1
      */
     private static final String SVN_PERMISSION_ADDED_RESOURCE_INFO = "SVN Permission Added";
 

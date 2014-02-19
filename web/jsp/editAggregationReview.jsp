@@ -1,13 +1,20 @@
+<%--
+  - Author: TCSASSEMBLER
+  - Version: 2.0
+  - Copyright (C)  - 2014 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page renders the editing aggregation review.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="/tags/struts-html" %>
-<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html:html xhtml="true">
+<html>
 
 <head>
     <jsp:include page="/includes/project/project_title.jsp">
@@ -16,15 +23,15 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
     <!-- TopCoder CSS -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/style.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/coders.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/stats.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/tcStyles.css' />" />
+    <link type="text/css" rel="stylesheet" href="/css/style.css" />
+    <link type="text/css" rel="stylesheet" href="/css/coders.css" />
+    <link type="text/css" rel="stylesheet" href="/css/stats.css" />
+    <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
 
     <!-- CSS and JS by Petar -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
+    <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
     <script language="JavaScript" type="text/javascript"
-        src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
+        src="/js/or/rollovers2.js"><!-- @ --></script>
 
     <script language="JavaScript" type="text/javascript">
 function OnCompleteScorecardClick() {
@@ -42,7 +49,7 @@ function OnCompleteScorecardClick() {
         }
     }
 
-    return (isRejected) ? confirm("<bean:message key='editAggregationReview.BeforeReject' />") : true;
+    return (isRejected) ? confirm("<or:text key='editAggregationReview.BeforeReject' />") : true;
 }
     </script>
 </head>
@@ -60,13 +67,12 @@ function OnCompleteScorecardClick() {
                 <div style="position: relative; width: 100%;">
 
                     <jsp:include page="/includes/review/review_project.jsp">
-						<jsp:param name="showFillScorecardLink" value="false" />
-					</jsp:include>
-                    <h3><bean:message key="editAggregationReview.Scorecard.title" /></h3>
+                        <jsp:param name="showFillScorecardLink" value="false" />
+                    </jsp:include>
+                    <h3><or:text key="editAggregationReview.Scorecard.title" /></h3>
 
-                    <html:form action="/actions/SaveAggregationReview">
-                        <html:hidden property="method" value="saveAggregationReview" />
-                        <html:hidden property="rid" value="${review.id}" />
+                    <s:form action="SaveAggregationReview" namespace="/actions">
+                        <input type="hidden" name="rid" value="${review.id}" />
 
                         <c:set var="itemIdx" value="0" />
                         <c:set var="globalItemIndex" value="0" />
@@ -84,13 +90,13 @@ function OnCompleteScorecardClick() {
                                         <tr class="light">
                                             <td class="value" width="100%" colspan="5">
                                                 <div class="showText" id="shortQ_${itemIdx}">
-                                                    <a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
-                                                    <b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
+                                                    <a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><img src="/i/or/plus.gif" alt="<or:text key='global.plus.alt' />" border="0" /></a>
+                                                    <b><or:text key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
                                                     ${orfn:htmlEncode(question.description)}
                                                 </div>
                                                 <div class="hideText" id="longQ_${itemIdx}">
-                                                    <a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
-                                                    <b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
+                                                    <a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><img src="/i/or/minus.gif" alt="<or:text key='global.minus.alt' />" border="0" /></a>
+                                                    <b><or:text key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
                                                     ${orfn:htmlEncode(question.description)}<br />
                                                     ${orfn:htmlEncode(question.guideline)}
                                                 </div>
@@ -98,11 +104,11 @@ function OnCompleteScorecardClick() {
                                             <c:set var="itemIdx" value="${itemIdx + 1}" />
                                         </tr>
                                         <tr>
-                                            <td class="header"><bean:message key="editReview.EditAggregation.Reviewer" /></td>
-                                            <td class="headerC"><bean:message key="editReview.EditAggregation.CommentNumber" /></td>
-                                            <td class="header"><bean:message key="editReview.EditAggregation.Response" /></td>
-                                            <td class="header"><bean:message key="editReview.EditAggregation.Type" /></td>
-                                            <td class="header"><bean:message key="editReview.EditAggregation.Status" /></td>
+                                            <td class="header"><or:text key="editReview.EditAggregation.Reviewer" /></td>
+                                            <td class="headerC"><or:text key="editReview.EditAggregation.CommentNumber" /></td>
+                                            <td class="header"><or:text key="editReview.EditAggregation.Response" /></td>
+                                            <td class="header"><or:text key="editReview.EditAggregation.Type" /></td>
+                                            <td class="header"><or:text key="editReview.EditAggregation.Status" /></td>
                                         </tr>
 
                                         <c:forEach items="${review.allItems}" var="item" varStatus="itemStatus">
@@ -133,11 +139,11 @@ function OnCompleteScorecardClick() {
                                                                     </c:forEach>
                                                                     <c:forEach items="${reviews}" var="subReview">
                                                                         <c:if test="${subReview.author == comment.author}">
-                                                                            <html:link page="/actions/ViewReview.do?method=viewReview&rid=${subReview.id}"><bean:message key="editReview.EditAggregation.ViewReview" /></html:link>
+                                                                            <a href="<or:url value='/actions/ViewReview?rid=${subReview.id}' />"><or:text key="editReview.EditAggregation.ViewReview" /></a>
                                                                         </c:if>
                                                                     </c:forEach>
                                                                     <c:if test="${not empty item.document}">
-                                                                        <br /><html:link page="/actions/DownloadDocument.do?method=downloadDocument&uid=${item.document}"><bean:message key="editReview.Document.Download" /></html:link>
+                                                                        <br /><a href="<or:url value='/actions/DownloadDocument?uid=${item.document}' />"><or:text key="editReview.Document.Download" /></a>
                                                                     </c:if>
                                                                     <c:set var="firstTime" value="${false}" />
                                                                 </c:if>
@@ -152,19 +158,19 @@ function OnCompleteScorecardClick() {
                                                             <td class="value">
                                                                 <c:choose>
                                                                     <c:when test="${isReviewerComment}">
-                                                                        <b><bean:message key="editReview.EditAggregation.ReviewerResponse" /></b>
+                                                                        <b><or:text key="editReview.EditAggregation.ReviewerResponse" /></b>
                                                                     </c:when>
                                                                     <c:when test='${(commentType == "Manager Comment") ||
                                                                             (commentType == "Appeal") || (commentType == "Appeal Response") ||
                                                                             (commentType == "Aggregation Comment") || (commentType == "Submitter Comment")}'>
-                                                                        <b><bean:message key='editReview.EditAggregation.${fn:replace(commentType, " ", "")}' /></b>
+                                                                        <b><or:text key='editReview.EditAggregation.${fn:replace(commentType, " ", "")}' /></b>
                                                                     </c:when>
                                                                 </c:choose>
                                                                 ${orfn:htmlEncode(comment.comment)}
                                                             </td>
                                                             <c:if test="${isReviewerComment}">
-                                                                <td class="value"><bean:message key="CommentType.${commentType}" /></td>
-                                                                <td class="value"><bean:message key="AggregationItemStatus.${comment.extraInfo}" /></td>
+                                                                <td class="value"><or:text key="CommentType.${commentType}" /></td>
+                                                                <td class="value"><or:text key="AggregationItemStatus.${comment.extraInfo}" /></td>
                                                             </c:if>
                                                             <c:if test="${not isReviewerComment}">
                                                                 <td class="value"><!-- @ --></td>
@@ -179,17 +185,17 @@ function OnCompleteScorecardClick() {
                                                         <c:choose>
                                                             <c:when test="${isSubmitter}">
                                                                 <input type="hidden" name="review_function[${globalItemIndex}]" value="Accept" />
-                                                                <bean:message key="editAggregationReview.EnterComment" /><br />
+                                                                <or:text key="editAggregationReview.EnterComment" /><br />
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <html:radio styleId="functionAcceptCheckbox${globalItemIndex}" property="review_function[${globalItemIndex}]" value="Accept" /><label
-                                                                    for="functionAcceptCheckbox${globalItemIndex}"><bean:message key="editAggregationReview.Function.Accept" /></label>
-                                                                <html:radio styleId="functionRejectCheckbox${globalItemIndex}" property="review_function[${globalItemIndex}]" value="Reject" /><label
-                                                                    for="functionRejectCheckbox${globalItemIndex}"><bean:message key="editAggregationReview.Function.Reject" /></label> &#160;
-                                                                <span class="error"><html:errors property="reject_reason[${globalItemIndex}]" prefix="" suffix="" /></span><br />
+                                                                <input type="radio" id="functionAcceptCheckbox${globalItemIndex}" name="review_function[${globalItemIndex}]" value="Accept"  <or:checked name='review_function[${globalItemIndex}]' value='Accept' />/><label
+                                                                    for="functionAcceptCheckbox${globalItemIndex}"><or:text key="editAggregationReview.Function.Accept" /></label>
+                                                                <input type="radio" id="functionRejectCheckbox${globalItemIndex}" name="review_function[${globalItemIndex}]" value="Reject"  <or:checked name='review_function[${globalItemIndex}]' value='Reject' />/><label
+                                                                    for="functionRejectCheckbox${globalItemIndex}"><or:text key="editAggregationReview.Function.Reject" /></label> &#160;
+                                                                <span class="error"><s:fielderror escape="false"><s:param>reject_reason[${globalItemIndex}]</s:param></s:fielderror></span><br />
                                                             </c:otherwise>
                                                         </c:choose>
-                                                        <html:textarea rows="3" property="reject_reason[${globalItemIndex}]" cols="20" styleClass="inputTextBox" />
+                                                        <textarea rows="3" name="reject_reason[${globalItemIndex}]" cols="20" class="inputTextBox" ><or:fieldvalue field="reject_reason[${globalItemIndex}]" /></textarea>
                                                     </td>
                                                 </tr>
                                                 <c:set var="globalItemIndex" value="${globalItemIndex + 1}" />
@@ -204,11 +210,11 @@ function OnCompleteScorecardClick() {
                         </c:forEach>
 
                         <div align="right">
-                            <html:hidden property="save" value="" />
-                            <html:image property="submitAggReviewBtn" onclick="javascript:this.form.save.value='submit';return OnCompleteScorecardClick();" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0" />&#160;
-                            <html:image property="saveAggReviewBtn" onclick="javascript:this.form.save.value='save';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0" />
+                            <input type="hidden" name="save" value="" />
+                            <input type="image"  onclick="javascript:this.form.save.value='submit';return OnCompleteScorecardClick();" src="<or:text key='editReview.Button.SaveAndCommit.img' />" alt="<or:text key='editReview.Button.SaveAndCommit.alt' />" border="0" />&#160;
+                            <input type="image"  onclick="javascript:this.form.save.value='save';" src="<or:text key='editReview.Button.SaveForLater.img' />" alt="<or:text key='editReview.Button.SaveForLater.alt' />" border="0" />
                         </div>
-                    </html:form>
+                    </s:form>
 
                 </div>
             </div>
@@ -220,4 +226,4 @@ function OnCompleteScorecardClick() {
 </div>
 
 </body>
-</html:html>
+</html>

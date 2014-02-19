@@ -1,28 +1,24 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.dataaccess;
+
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.persistence.ResourcePersistenceException;
-import com.topcoder.shared.dataAccess.DataAccess;
-import com.topcoder.shared.dataAccess.Request;
 import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
-import com.topcoder.shared.util.DBMS;
-import com.topcoder.util.errorhandling.BaseException;
-
-import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * <p>A simple DAO for project resources backed up by Query Tool.</p>
  *
- * @author isv
- * @version 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class ResourceDataAccess extends BaseDataAccess {
 
@@ -41,9 +37,8 @@ public class ResourceDataAccess extends BaseDataAccess {
      * @param status a <code>ProjectStatus</code> specifying the status of the projects.
      * @param resourceManager a <code>ResourceManager</code> to be used for searching.
      * @return a <code>Resource</code> array providing the details for found resources.
-     * @throws ResourcePersistenceException if an error occurs while retrieveing resource roles.
+     * @throws ResourcePersistenceException if an error occurs while retrieving resource roles.
      * @throws DataAccessException if an unexpected error occurs.
-     * @since 1.6
      */
     public Resource[] searchUserResources(long userId, ProjectStatus status, ResourceManager resourceManager)
         throws ResourcePersistenceException {

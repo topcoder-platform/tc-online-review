@@ -1,21 +1,15 @@
- <%--
- *
- * Copyright (C) 2004 - 2013 TopCoder Inc., All Rights Reserved.
- *
- * <p>
- *   1.1 (TCCC-5802) change log:
- *   <ol>
- *    Add a social account login link.
- *   </ol>
- * </p>
- * Version 1.1
- * Author: TCSASSEMBLER, ecnu_haozi
- --%>
+<%--
+  - Author: TCSASSEMBLER
+  - Version: 2.0
+  - Copyright (C) 2004 - 2013 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page displays header for all pages used in online review application.
+--%>
 <%@ page language="java" isELIgnored="false" %>
-<%@ page import="java.text.DecimalFormat,
-                 com.topcoder.shared.util.ApplicationServer" %>
+<%@ page import="java.text.DecimalFormat,com.topcoder.shared.util.ApplicationServer" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="/tags/struts-html" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <jsp:useBean id="sessionInfo" class="com.topcoder.web.common.SessionInfo" scope="request" />
@@ -32,7 +26,7 @@
 
     function showAuth0Widget(){
         widget.signin({
-            state: 'https://<%=ApplicationServer.SOFTWARE_SERVER_NAME%>/review/actions/ListProjects.do?method=listProjects',
+            state: 'https://<%=ApplicationServer.SOFTWARE_SERVER_NAME%>/review/actions/ListProjects',
             icon: 'http://www.topcoder.com/i/24x24_brackets.png', 
             showIcon: true}).on('signin_ready', function() {
             $('.a0-email input').each(function() {
@@ -63,11 +57,11 @@
     <div style="float: right; clear: right; margin-left: 6px;">
         <c:if test="${orfn:isUserLoggedIn(pageContext.request)}">
             Hello, <tc-webtag:handle coderId="${orfn:getLoggedInUserId(pageContext.request)}" />
-             | <html:link action="/actions/Logout.do?method=logout">Logout</html:link>
+             | <a href="<or:url value='/actions/Logout' />">Logout</a>
         </c:if>
         <c:if test="${not orfn:isUserLoggedIn(pageContext.request)}">
             <a href="javascript:;" class="social-login">Social login</a>
-             | <html:link page="/jsp/login.jsp">Login</html:link>
+             | <a href="<or:url value='/actions/Login' />">Login</a>
              | <a href="http://<%=ApplicationServer.SERVER_NAME%>/reg/">Register</a>
              | <a href="http://<%=ApplicationServer.SERVER_NAME%>/">Home</a>
         </c:if>

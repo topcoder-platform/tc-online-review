@@ -1,24 +1,19 @@
 <%--
-  - Author: flexme
-  - Version: 1.2
-  - Copyright (C) 2011 - 2013 TopCoder Inc., All Rights Reserved.
+  - Author: TCSASSEMBLER
+  - Version: 2.0
+  - Copyright (C) 2011 - 2014 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment displays the content of resources on Project Details screen.
-  -
-  - Version 1.1 (Online Review Miscellaneous Improvements) changes: Add tabs to Resource section and add javascript codes
-  - to filter the resources when user click on the tabs.
-  -
-  - Version 1.2 (Online Review - Project Payments Integration Part 3 v1.0) changes: removed "Paid" column.
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="html" uri="/tags/struts-html" %>
-<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
-<c:set var="resourceTabs" value="<%=com.cronos.onlinereview.actions.ConfigHelper.getResourceTabs()%>" />
+<c:set var="resourceTabs" value="<%=com.cronos.onlinereview.util.ConfigHelper.getResourceTabs()%>" />
 <c:if test="${isAllowedToViewResources}">
     <div>
         <ul id="tablist">
@@ -30,47 +25,47 @@
         <div style="clear:both;"></div>
     </div>
 
-		<table id="resources" class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
-		<tr>
-			<td class="title" colspan='${(isAllowedToViewAllPayment) ? "5" : "4"}'><bean:message key="viewProjectDetails.box.Resources" /></td>
-		</tr>
-		<tr>
-			<td class="header"><bean:message key="viewProjectDetails.Resource.Role" /></td>
-			<td class="header"><bean:message key="viewProjectDetails.Resource.Handle" /></td>
-			<td class="header"><bean:message key="viewProjectDetails.Resource.Email" /></td>
-			<c:if test="${isAllowedToViewAllPayment}">
-				<td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.Resource.Payment" /></td>
-			</c:if>
-			<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.Resource.RegistrationDate" /></td>
-		</tr>
-		<c:forEach items="${resources}" var="resource" varStatus="idxrResource">
-			<tr class='${(idxrResource.index % 2 == 0) ? "light" : "dark"}' rel="${resource.resourceRole.id}">
-				<td class="value" nowrap="nowrap"><bean:message key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}.bold' /></td>
-				<td class="value" nowrap="nowrap">
-					<tc-webtag:handle coderId="${users[idxrResource.index].id}" context="${orfn:getHandlerContext(pageContext.request)}" />
-				</td>
-                                <td class="value" nowrap="nowrap"> <html:link href="mailto:${users[idxrResource.index].email}">${users[idxrResource.index].email}</html:link> </td>
-				<c:if test="${isAllowedToViewAllPayment}">
-					<c:choose>
-						<c:when test='${not empty resourcePaymentsAmount[resource.id]}'>
-							<td class="value" nowrap="nowrap">${"$"}${orfn:displayPaymentAmt(pageContext.request, resourcePaymentsAmount[resource.id])}</td>
-						</c:when>
-						<c:otherwise>
-							<td class="value" nowrap="nowrap"><bean:message key="NotAvailable" /></td>
-						</c:otherwise>
-					</c:choose>
-				</c:if>
-				<td class="valueC" nowrap="nowrap">
-					<fmt:parseDate pattern="MM.dd.yyyy hh:mm a" parseLocale="en_US" value="${resource.allProperties['Registration Date']}"
-					var="registrationDate"/>
-					<fmt:formatDate pattern="MM.dd.yyyy HH:mm z" value="${registrationDate}"/>
-				</td>
-			</tr>
-		</c:forEach>
-		<tr>
-			<td class="lastRowTD" colspan='${(isAllowedToViewAllPayment) ? "5" : "4"}'><!-- @ --></td>
-		</tr>
-	</table><br />
+        <table id="resources" class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+        <tr>
+            <td class="title" colspan='${(isAllowedToViewAllPayment) ? "5" : "4"}'><or:text key="viewProjectDetails.box.Resources" /></td>
+        </tr>
+        <tr>
+            <td class="header"><or:text key="viewProjectDetails.Resource.Role" /></td>
+            <td class="header"><or:text key="viewProjectDetails.Resource.Handle" /></td>
+            <td class="header"><or:text key="viewProjectDetails.Resource.Email" /></td>
+            <c:if test="${isAllowedToViewAllPayment}">
+                <td class="header" nowrap="nowrap"><or:text key="viewProjectDetails.Resource.Payment" /></td>
+            </c:if>
+            <td class="headerC" nowrap="nowrap"><or:text key="viewProjectDetails.Resource.RegistrationDate" /></td>
+        </tr>
+        <c:forEach items="${resources}" var="resource" varStatus="idxrResource">
+            <tr class='${(idxrResource.index % 2 == 0) ? "light" : "dark"}' rel="${resource.resourceRole.id}">
+                <td class="value" nowrap="nowrap"><or:text key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}.bold' /></td>
+                <td class="value" nowrap="nowrap">
+                    <tc-webtag:handle coderId="${users[idxrResource.index].id}" context="${orfn:getHandlerContext(pageContext.request)}" />
+                </td>
+                                <td class="value" nowrap="nowrap"> <a href="mailto:${users[idxrResource.index].email}">${users[idxrResource.index].email}</a> </td>
+                <c:if test="${isAllowedToViewAllPayment}">
+                    <c:choose>
+                        <c:when test='${not empty resourcePaymentsAmount[resource.id]}'>
+                            <td class="value" nowrap="nowrap">${"$"}${orfn:displayPaymentAmt(pageContext.request, resourcePaymentsAmount[resource.id])}</td>
+                        </c:when>
+                        <c:otherwise>
+                            <td class="value" nowrap="nowrap"><or:text key="NotAvailable" /></td>
+                        </c:otherwise>
+                    </c:choose>
+                </c:if>
+                <td class="valueC" nowrap="nowrap">
+                    <fmt:parseDate pattern="MM.dd.yyyy hh:mm a" parseLocale="en_US" value="${resource.allProperties['Registration Date']}"
+                    var="registrationDate"/>
+                    <fmt:formatDate pattern="MM.dd.yyyy HH:mm z" value="${registrationDate}"/>
+                </td>
+            </tr>
+        </c:forEach>
+        <tr>
+            <td class="lastRowTD" colspan='${(isAllowedToViewAllPayment) ? "5" : "4"}'><!-- @ --></td>
+        </tr>
+    </table><br />
 
     <script language="JavaScript" type="text/javascript">
     <!--

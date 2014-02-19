@@ -1,54 +1,43 @@
 <%--
-  - Author: George1, real_vg, isv, flexme
-  - Version: 1.5 (Online Review Project Management Console assembly v1.0)
-  - Copyright (C) 2006 - 2013 TopCoder Inc., All Rights Reserved.
+  - Author: TCSASSEMBLER
+  - Version: 2.0
+  - Copyright (C) 2006 - 2014 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page provides the view for details for requested project.
-  -
-  - Version 1.1 (Online Review Project Management Console assembly v1.0) changes: added Manage Project button
-  - linked to Project Management Console view.
-  -
-  - Version 1.2 (Impersonation Login Release assembly) changes: Removed "Back" button.
-  -
-  - Version 1.3 (Online Review - Project Payments Integration Part 1 v1.0) changes: Added Project Prizes section.
-  -
-  - Version 1.4 (Online Review - Project Payments Integration Part 2 v1.0) changes: Added "Payments" button.
-  -
-  - Version 1.5 (Online Review - Project Payments Integration Part 3 v1.0) changes: Removed "Pay Project" button.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="/tags/struts-html" %>
-<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html:html xhtml="true">
+<html>
 
 <head>
     <jsp:include page="/includes/project/project_title.jsp" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
     <!-- TopCoder CSS -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/style.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/coders.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/stats.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/tcStyles.css' />" />
+    <link type="text/css" rel="stylesheet" href="/css/style.css" />
+    <link type="text/css" rel="stylesheet" href="/css/coders.css" />
+    <link type="text/css" rel="stylesheet" href="/css/stats.css" />
+    <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
 
     <!-- CSS and JS by Petar -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/phasetabs.css' />" />
+    <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
+    <link type="text/css" rel="stylesheet" href="/css/or/phasetabs.css" />
     <script language="JavaScript" type="text/javascript"
-        src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
+        src="/js/or/rollovers2.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript"
-        src="<html:rewrite href='/js/or/dojo.js' />"><!-- @ --></script>
+        src="/js/or/dojo.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript">
-        var ajaxSupportUrl = "<html:rewrite page='/ajaxSupport' />";
+        var ajaxSupportUrl = "<or:url value='/ajaxSupport' />";
     </script>
     <script language="JavaScript" type="text/javascript"
-        src="<html:rewrite href='/js/or/ajax1.js' />"><!-- @ --></script>
+        src="/js/or/ajax1.js"><!-- @ --></script>
 
 <script language="JavaScript" type="text/javascript">
     /**
@@ -112,16 +101,16 @@
                     <jsp:include page="/includes/project/project_link.jsp" />
                     <div align="right">
                         <c:if test="${isAllowedToViewPayments}">
-                            <a href="ViewProjectPayments.do?method=viewProjectPayments&pid=${project.id}"><html:img srcKey="viewProjectDetails.btnPayments.img" border="0" altKey="viewProjectDetails.btnPayments.alt" /></a>&#160;
+                            <a href="ViewProjectPayments?pid=${project.id}"><img src="<or:text key='viewProjectDetails.btnPayments.img' />" border="0" alt="<or:text key='viewProjectDetails.btnPayments.alt' />" /></a>&#160;
                         </c:if>
                         <c:if test="${requestScope.isAllowedToManageProjects}">
-                            <a href="ViewManagementConsole.do?method=viewConsole&pid=${project.id}"><html:img srcKey="viewProjectDetails.btnManagementConsoleLink.img" border="0" altKey="viewProjectDetails.btnManagementConsoleLink.alt" /></a>&#160;
+                            <a href="ViewManagementConsole?pid=${project.id}"><img src="<or:text key='viewProjectDetails.btnManagementConsoleLink.img' />" border="0" alt="<or:text key='viewProjectDetails.btnManagementConsoleLink.alt' />" /></a>&#160;
                         </c:if>
                         <c:if test="${isAllowedToEditProjects}">
-                            <a href="EditProjectLinks.do?method=editProjectLinks&pid=${project.id}"><html:img srcKey="viewProjectDetails.btnEditLink.img" border="0" altKey="viewProjectDetails.btnEditLink.alt" /></a>&#160;
+                            <a href="EditProjectLinks?pid=${project.id}"><img src="<or:text key='viewProjectDetails.btnEditLink.img' />" border="0" alt="<or:text key='viewProjectDetails.btnEditLink.alt' />" /></a>&#160;
                         </c:if>
                         <c:if test="${isAllowedToEditProjects}">
-                            <a href="EditProject.do?method=editProject&pid=${project.id}"><html:img srcKey="viewProjectDetails.btnEdit.img" border="0" altKey="viewProjectDetails.btnEdit.alt" /></a>&#160;
+                            <a href="EditProject?pid=${project.id}"><img src="<or:text key='viewProjectDetails.btnEdit.img' />" border="0" alt="<or:text key='viewProjectDetails.btnEdit.alt' />" /></a>&#160;
                         </c:if>
                     </div>
                 </div>
@@ -134,4 +123,4 @@
 </div>
 
 </body>
-</html:html>
+</html>

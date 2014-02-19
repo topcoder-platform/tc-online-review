@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2005 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
@@ -12,34 +12,21 @@ import com.topcoder.project.phases.Phase;
  * The extend from ScreeningPhaseHandler to add on the logic to push data to project_result.
  *
  * <p>
- * Version 1.1 (Online Review Replatforming Release 2) Change notes:
- *   <ol>
- *     <li>Update {@link #perform(Phase, String)} to send screening result notification emails for studio contest.</li>
- *   </ol>
+ * Thread-safety: This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
- * <p>
- * Version 1.2 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
- *   <ol>
- *     <li>Updated {@link #perform(Phase, String)} method to pass <code>operator</code> when calling
- *     RPHelper.processScreeningPR.</li>
- *   </ol>
- * </p>
- *
- * @author brain_cn, flexme
- * @version 1.2
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
     
     /**
     * Used for pulling data to project_result table and filling payments.
     */
-    private PRHelper prHelper = new PRHelper();
+    private final PRHelper prHelper = new PRHelper();
     
     /**
      * Represents the <code>ScreeningResultNotification</code> instance to send notification email.
-     * 
-     * @since 1.1
      */
     private final ScreeningResultNotification notification;
     
