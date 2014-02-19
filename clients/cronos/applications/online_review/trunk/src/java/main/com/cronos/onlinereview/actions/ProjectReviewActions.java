@@ -3835,7 +3835,7 @@ public class ProjectReviewActions extends DispatchAction {
             // Obtain an instance of CalculationManager
             CalculationManager scoreCalculator = new CalculationManager();
             // Compute scorecard's score
-            float newScore = scoreCalculator.getScore(scorecardTemplate, review);
+            double newScore = scoreCalculator.getScore(scorecardTemplate, review);
             // If score has been updated during Manager Edit, additional actions may need to be taken
             if ((reviewType.equals("Review") || reviewType.equals("Checkpoint Review")) &&
                     managerEdit && (review.getScore() == null || review.getScore() != newScore)) {
