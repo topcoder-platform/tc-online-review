@@ -33,7 +33,7 @@
     <component
         name="online_review_ajax_support"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_ajax_support/trunk"
-        revision="238897" />
+        revision="241231" />
 
     <component
         name="online_review_login"
@@ -43,7 +43,7 @@
     <component
         name="online_review_phases"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/trunk"
-        revision="238975" />
+        revision="241232" />
 
     <component
         name="online_review_upload_services"
@@ -78,7 +78,7 @@
     <component
         name="review_data_structure"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/review_data_structure/trunk"
-        revision="226232" />
+        revision="241227" />
 
     <component
         name="review_management"
@@ -88,17 +88,17 @@
     <component
         name="review_management_persistence"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_management_persistence/trunk"
-        revision="226235" />
+        revision="241228" />
 
     <component
         name="review_score_aggregator"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/review_score_aggregator/trunk"
-        revision="206269" />
+        revision="241229" />
 
     <component
         name="review_score_calculator"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/review_score_calculator/trunk"
-        revision="223138" />
+        revision="241230" />
 
     <component
         name="scorecard_data_structure"
