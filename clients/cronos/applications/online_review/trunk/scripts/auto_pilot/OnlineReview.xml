@@ -110,9 +110,11 @@
                 <Value>com.topcoder.management.reviewfeedback</Value>
             </Property>
         </Property>
+
         <Property name="ProjectDetailsURL">
-            <Value>https://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
+            <Value>https://software.topcoder.com/review/actions/ViewProjectDetails?pid=</Value>
         </Property>
+
         <Property name="StudioProjectDetailsURL">
             <Value>http://studio.topcoder.com/?module=ViewContestDetails&amp;ct=</Value>
         </Property>
@@ -124,7 +126,7 @@
         <Property name="StudioProjectFinalFixURL">
             <Value>http://studio.topcoder.com/?module=ViewFinalFix&amp;ct=</Value>
         </Property>
-        
+
         <Property name="DirectContestFinalFixURL">
             <Value>https://topcoder.com/direct/contest/viewFinalFix?projectId=</Value>
         </Property>
@@ -892,6 +894,7 @@
                                submission.placement,
                                submission.user_rank,
                                submission.mark_for_purchase,
+                               submission.thurgood_job_id AS thurgood_job_id,
                                prize.prize_id,
                                prize.place,
                                prize.prize_amount,
