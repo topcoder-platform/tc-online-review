@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.dataaccess;
 
@@ -9,8 +9,8 @@ import com.topcoder.util.errorhandling.BaseRuntimeException;
  * <p>A runtime unchecked exception to be thrown in case there is an unexpected error encountered while running the
  * data access queries.</p>
  *
- * @author isv
- * @version 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class DataAccessException extends BaseRuntimeException {
 

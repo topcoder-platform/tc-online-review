@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.ejblibrary;
+
+import java.util.List;
 
 import com.topcoder.service.contest.eligibility.ContestEligibility;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidationManager;
@@ -9,16 +11,14 @@ import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityVali
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidationManagerConfigurationException;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidationManagerException;
 
-import java.util.List;
-
 /**
  * <p>An implementation of {@link ContestEligibilityValidationManager} interface which provides the library-call style
  * for API of <code>Contest Eligibility Validation EJB</code>.</p>
  *
  * <p><b>Thread safety:</b> This class is thread-safe.</p>
  *
- * @author isv
- * @version 1.0 (TopCoder Online Review Switch To Local Calls)
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class ContestEligibilityValidationManagerLibrary implements ContestEligibilityValidationManager {
 
@@ -26,7 +26,7 @@ public class ContestEligibilityValidationManagerLibrary implements ContestEligib
      * <p>A <code>ContestEligibilityValidationManagerBean</code> which is delegated the processing of the calls to methods of this
      * class.</p>
      */
-    private ContestEligibilityValidationManagerBean bean;
+    private final ContestEligibilityValidationManagerBean bean;
 
     /**
      * <p>Constructs new <code>ContestEligibilityValidationManagerLibrary</code> instance.</p>
@@ -53,8 +53,8 @@ public class ContestEligibilityValidationManagerLibrary implements ContestEligib
     /**
      * <p>An extension to wrapped bean class providing access to it's protected methods.</p>
      *
-     * @author isv
-     * @version 1.0
+     * @author TCSASSEMBLER
+     * @version 2.0
      */
     private static class Extender extends ContestEligibilityValidationManagerBean {
 

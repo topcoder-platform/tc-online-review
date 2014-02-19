@@ -1,23 +1,20 @@
 <%--
-  - Author: isv, duxiaoyang
-  - Version: 1.1
-  - Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
+  - Author: TCSASSEMBLER
+  - Version: 2.0
+  - Copyright (C) 2010 - 2014 TopCoder Inc., All Rights Reserved.
   -
-  - Description: This page displays edition page for Approval scorecard
-  -
-  - Version 1.1 (Online Review - Review Export) changes:
-  - Moved expand and collapse link to just above the table.
+  - Description: This page displays edition page for Approval scorecard.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="/tags/struts-html" %>
-<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html:html xhtml="true">
+<html>
 
 <head>
     <jsp:include page="/includes/project/project_title.jsp">
@@ -26,16 +23,16 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
     <!-- TopCoder CSS -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/style.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/coders.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/stats.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/tcStyles.css' />" />
+    <link type="text/css" rel="stylesheet" href="/css/style.css" />
+    <link type="text/css" rel="stylesheet" href="/css/coders.css" />
+    <link type="text/css" rel="stylesheet" href="/css/stats.css" />
+    <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
 
     <!-- CSS and JS by Petar -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/dojo.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/util.js' />"><!-- @ --></script>
+    <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
+    <script language="JavaScript" type="text/javascript" src="/js/or/rollovers2.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/dojo.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/util.js"><!-- @ --></script>
 
     <script language="javascript" type="text/javascript">
     <!--
@@ -137,7 +134,7 @@
                 }
             }
 
-            return (isRejected) ? confirm("<bean:message key='editApproval.BeforeReject' />") : true;
+            return (isRejected) ? confirm("<or:text key='editApproval.BeforeReject' />") : true;
         }
     </script>
 
@@ -156,24 +153,24 @@
                 <div style="position: relative; width: 100%;">
 
                     <jsp:include page="/includes/review/review_project.jsp">
-						<jsp:param name="showFillScorecardLink" value="true" />
-					</jsp:include>
+                        <jsp:param name="showFillScorecardLink" value="true" />
+                    </jsp:include>
                     <jsp:include page="/includes/review/review_table_title.jsp" />
 
-                    <html:form action="/actions/Save${reviewType}" method="POST" enctype="multipart/form-data">
-                        <html:hidden property="method" value="save${reviewType}" />
+                    <s:set var="actionName">Save${reviewType}</s:set>
+                    <s:form action="%{#actionName}" method="POST" enctype="multipart/form-data" namespace="/actions">
                         <c:choose>
                             <c:when test="${review.id > -1}">
-                                <html:hidden property="rid" value="${review.id}" />
+                                <input type="hidden" name="rid" value="${review.id}" />
                             </c:when>
                             <c:otherwise>
-                                <html:hidden property="sid" value="${sid}" />
+                                <input type="hidden" name="sid" value="${sid}" />
                             </c:otherwise>
                         </c:choose>
 
                         <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
                             <table cellpadding="0" cellspacing="0" border="0">
-                                <tr><td class="errorText"><bean:message key="Error.saveReview.ValidationFailed" /></td></tr>
+                                <tr><td class="errorText"><or:text key="Error.saveReview.ValidationFailed" /></td></tr>
                             </table><br />
                         </c:if>
 
@@ -192,8 +189,8 @@
                                         <td class="subheader" width="100%">
                                             ${orfn:htmlEncode(section.name)} &#xA0;
                                             (${orfn:displayScore(pageContext.request, section.weight)})</td>
-                                        <td class="subheader" width="49%" align="center"><bean:message key="editReview.SectionHeader.Weight" /></td>
-                                        <td class="subheader" width="1%" align="center"><bean:message key="editReview.SectionHeader.Response" /></td>
+                                        <td class="subheader" width="49%" align="center"><or:text key="editReview.SectionHeader.Weight" /></td>
+                                        <td class="subheader" width="1%" align="center"><or:text key="editReview.SectionHeader.Response" /></td>
                                     </tr>
                                     <c:forEach items="${section.allQuestions}" var="question" varStatus="questionStatus">
                                         <c:if test="${managerEdit}">
@@ -205,7 +202,7 @@
                                             <c:if test="${not managerEdit}">
                                                 <td class="valueC" nowrap="nowrap">
                                                     <%@ include file="../includes/review/review_answer.jsp" %>
-                                                    <div class="error"><html:errors property="answer[${itemIdx}]" prefix="" suffix="" /></div>
+                                                    <div class="error"><s:fielderror escape="false"><s:param>answer[${itemIdx}]</s:param></s:fielderror></div>
                                                 </td>
                                             </c:if>
                                             <c:if test="${managerEdit}">
@@ -217,53 +214,53 @@
                                         </c:if>
                                         <tr class="highlighted">
                                             <td class="value" colspan="${managerEdit ? 2 : 3}">
-                                                <html:hidden property="comment_count[${itemIdx}]" />
+                                                <input type="hidden" name="comment_count[${itemIdx}]"  value="<or:fieldvalue field='comment_count[${itemIdx}]' />" />
 
                                                 <c:forEach var="commentIdx" begin="0" end="${approvalForm.map['comment_count'][itemIdx]}">
                                                     <div name="response" style="${commentIdx eq 0 ? 'display: none;' : ''}">
                                                         <c:if test="${not managerEdit}">
-                                                            <b><bean:message key="editReview.Question.Response.title"/>
+                                                            <b><or:text key="editReview.Question.Response.title"/>
                                                                 <span name="comment_number">${commentIdx}</span>:
                                                             </b>
-                                                            <html:select property="comment_type(${itemIdx}.${commentIdx})" styleClass="inputBox">
+                                                            <select name="comment_type(${itemIdx}.${commentIdx})" class="inputBox"><c:set var="OR_FIELD_TO_SELECT" value="comment_type(${itemIdx}.${commentIdx})"/>
                                                                 <c:forEach items="${allCommentTypes}" var="commentType" >
-                                                                    <html:option value="${commentType.id}" key="CommentType.${fn:replace(commentType.name, ' ', '')}" />
+                                                                    <option  value="${commentType.id}" <or:selected value="${commentType.id}"/>><or:text key="CommentType.${fn:replace(commentType.name, ' ', '')}" def="${commentType.id}" /></option>
                                                                 </c:forEach>
-                                                            </html:select>
+                                                            </select>
                                                         </c:if>
                                                         <c:if test="${managerEdit}">
-                                                            <b><bean:message key="editReview.Question.ManagerComment.title"/>:</b>
+                                                            <b><or:text key="editReview.Question.ManagerComment.title"/>:</b>
                                                         </c:if>
-                                                        <span class="error"><html:errors property="comment(${itemIdx}.${commentIdx})" prefix="" suffix="" /></span>
-                                                        <html:textarea rows="2" property="comment(${itemIdx}.${commentIdx})" cols="20" styleClass="inputTextBox" />
+                                                        <span class="error"><s:fielderror escape="false"><s:param>comment(${itemIdx}.${commentIdx})</s:param></s:fielderror></span>
+                                                        <textarea rows="2" name="comment(${itemIdx}.${commentIdx})" cols="20" class="inputTextBox" ><or:fieldvalue field="comment(${itemIdx}.${commentIdx})" /></textarea>
                                                     </div>
                                                 </c:forEach>
-                                                <html:img srcKey="editReview.Button.AddResponse.img" altKey="editReview.Button.AddResponse.alt"
+                                                <img src="<or:text key='editReview.Button.AddResponse.img' />" alt="<or:text key='editReview.Button.AddResponse.alt' />"
                                                     onclick="addReviewResponse(${itemIdx}, this.parentNode);" style="cursor:hand;" /><br />
                                                 <c:if test="${(not managerEdit) and question.uploadDocument}">
                                                     <c:if test="${empty uploadedFileIds[fileIdx]}">
-                                                        <b><bean:message key="editReview.Document.Upload"/>
+                                                        <b><or:text key="editReview.Document.Upload"/>
                                                         <c:if test="${question.uploadRequired}">
-                                                            <font color="#CC0000"><bean:message key="global.required.paren"/></font>:
+                                                            <font color="#CC0000"><or:text key="global.required.paren"/></font>:
                                                         </c:if>
                                                         <c:if test="${not question.uploadRequired}">
-                                                            <span style="font-weight:normal;"><bean:message key="global.optional.paren"/></span>:
+                                                            <span style="font-weight:normal;"><or:text key="global.optional.paren"/></span>:
                                                         </c:if></b>
                                                     </c:if>
                                                     <c:if test="${not empty uploadedFileIds[fileIdx]}">
-                                                        <html:link page="/actions/DownloadDocument.do?method=downloadDocument&uid=${uploadedFileIds[fileIdx]}"><bean:message key="editReview.Document.Download"/></html:link>
-                                                        <b>&#160; <bean:message key="editReview.Document.Update"/>
-                                                        <span style="font-weight:normal;"><bean:message key="global.optional.paren"/></span>:</b>
+                                                        <a href="<or:url value='/actions/DownloadDocument?uid=${uploadedFileIds[fileIdx]}' />"><or:text key="editReview.Document.Download"/></a>
+                                                        <b>&#160; <or:text key="editReview.Document.Update"/>
+                                                        <span style="font-weight:normal;"><or:text key="global.optional.paren"/></span>:</b>
                                                     </c:if>
-                                                    &#160;<html:file property="file[${fileIdx}]" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;"/>
-                                                    &#160; <span class="error"><html:errors property="file[${fileIdx}]" prefix="" suffix=""/></span>
+                                                    &#160;<input type="file" name="file[${fileIdx}]" size="20" class="inputBox" style="width:350px;vertical-align:middle;" value="<or:fieldvalue field='file[${fileIdx}]' />" />
+                                                    &#160; <span class="error"><s:fielderror escape="false"><s:param>file[${fileIdx}]</s:param></s:fielderror></span>
                                                     <c:set var="fileIdx" value="${fileIdx + 1}" />
                                                 </c:if><br/>
                                             </td>
                                             <c:if test="${managerEdit}">
                                                 <td class="valueC" nowrap="nowrap">
                                                     <%@ include file="../includes/review/review_answer.jsp" %>
-                                                    <div class="error"><html:errors property="answer[${itemIdx}]" prefix="" suffix="" /></div>
+                                                    <div class="error"><s:fielderror escape="false"><s:param>answer[${itemIdx}]</s:param></s:fielderror></div>
                                                 </td>
                                             </c:if>
                                         </tr>
@@ -280,22 +277,22 @@
                         <table class="scorecard" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;">
                             <tr>
                                 <td class="title"><label for="approveFixes">
-				    <bean:message key="editApproval.box.Approval" /></label>
-				    <span class="error"><html:errors property="approve_status" prefix="" suffix="" /></span>
-				</td>
+                    <or:text key="editApproval.box.Approval" /></label>
+                    <span class="error"><s:fielderror escape="false"><s:param>approve_status</s:param></s:fielderror></span>
+                </td>
                             </tr>
                             <tr class="highlighted">
                                 <td class="value">
-                                    <html:radio styleId="approveFixes" property="approve_fixes" value="true"/>
-                                    <b><bean:message key="editApproval.ApproveFinalFixes" /></b><br/>
-                                    <html:radio styleId="approveFixes" property="approve_fixes" value="false"/>
-                                    <b><bean:message key="editApproval.RejectFinalFixes" /></b><br/>
-				    </td>
+                                    <input type="radio" id="approveFixes" name="approve_fixes" value="true" <or:checked name='approve_fixes' value='true' />/>
+                                    <b><or:text key="editApproval.ApproveFinalFixes" /></b><br/>
+                                    <input type="radio" id="approveFixes" name="approve_fixes" value="false" <or:checked name='approve_fixes' value='false' />/>
+                                    <b><or:text key="editApproval.RejectFinalFixes" /></b><br/>
+                    </td>
                             </tr>
                             <tr class="highlighted">
                                 <td class="value">
-                                    <html:checkbox styleId="approveButRequireFixes" property="accept_but_require_fixes" />
-                                    <b><bean:message key="editApproval.AcceptButRequireFixes" /></b></td>
+                                    <input type="checkbox" id="approveButRequireFixes" name="accept_but_require_fixes"  <or:checked name='accept_but_require_fixes' value='on|yes|true' /> />
+                                    <b><or:text key="editApproval.AcceptButRequireFixes" /></b></td>
                             </tr>
                             <tr>
                                 <td class="lastRowTD"><!-- @ --></td>
@@ -304,17 +301,17 @@
                         <br/>
 
                         <div align="right">
-                            <html:hidden property="save" value="" />
+                            <input type="hidden" name="save" value="" />
                             <c:if test="${not managerEdit}">
-                                <html:image property="submitApprovalBtn" onclick="javascript:this.form.save.value='submit'; this.parentNode.parentNode.target='_self';return OnCompleteScorecardClick();" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0"/>&#160;
-                                <html:image property="saveApprovalBtn" onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0"/>&#160;
-                                <html:image property="previewApprovalBtn" onclick="javascript:this.form.save.value='preview'; this.parentNode.parentNode.target='_blank';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0"/>
+                                <input type="image"  onclick="javascript:this.form.save.value='submit'; this.parentNode.parentNode.target='_self';return OnCompleteScorecardClick();" src="<or:text key='editReview.Button.SaveAndCommit.img' />" alt="<or:text key='editReview.Button.SaveAndCommit.alt' />" border="0"/>&#160;
+                                <input type="image"  onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" src="<or:text key='editReview.Button.SaveForLater.img' />" alt="<or:text key='editReview.Button.SaveForLater.alt' />" border="0"/>&#160;
+                                <input type="image"  onclick="javascript:this.form.save.value='preview'; this.parentNode.parentNode.target='_blank';" src="<or:text key='editReview.Button.Preview.img' />" alt="<or:text key='editReview.Button.Preview.alt' />" border="0"/>
                             </c:if>
                             <c:if test="${managerEdit}">
-                                <html:image property="saveApprovalByManagerBtn" onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
+                                <input type="image"  onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" src="<or:text key='btnSaveChanges.img' />" alt="<or:text key='btnSaveChanges.alt' />" border="0"/>&#160;
                             </c:if>
                         </div>
-                    </html:form>
+                    </s:form>
 
                 </div>
             </div>
@@ -326,4 +323,4 @@
 </div>
 
 </body>
-</html:html>
+</html>

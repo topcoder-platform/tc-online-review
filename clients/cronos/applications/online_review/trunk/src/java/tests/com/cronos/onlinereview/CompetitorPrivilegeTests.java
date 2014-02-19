@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -9,8 +9,8 @@ import java.sql.Connection;
 /**
  * Online review functional tests 3, competitor privilege testing.
  *
- * @author TCSDEVELOPER
- * @version 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class CompetitorPrivilegeTests extends ProjectTests {
 
@@ -20,18 +20,18 @@ public class CompetitorPrivilegeTests extends ProjectTests {
      * @throws Exception if any error occurs.
      */
     public void setUp() throws Exception {
-    	super.setUp();
+        super.setUp();
         Connection con = TestHelper.getConnection();
-    	try {
-    		// open register phase
+        try {
+            // open register phase
             TestHelper.OpenPhase(phaseIds.get("registration"), con);
             // competitor register the project
             TestHelper.AddResource(projectId, 1, phaseIds.get("registration"), Long.parseLong(TestHelper.getCompetitiorUserId()), TestHelper.getCompetitorUsername(), con);
 
-    	}
-    	finally {
-    		con.close();
-    	}
+        }
+        finally {
+            con.close();
+        }
     }
 
     /**
@@ -40,11 +40,11 @@ public class CompetitorPrivilegeTests extends ProjectTests {
      * @throws Exception if any error occurs.
      */
     public void tearDown() throws Exception {
-    	TestHelper.reloginAndDeleteProject(browser, projectId);
+        TestHelper.reloginAndDeleteProject(browser, projectId);
         projectId = -1;
         super.tearDown();
     }
-	
+    
     /**
      * Test Case Number: FTC110 RS7.1 Verify Competitor can not access a project if he is not registered in it
      *

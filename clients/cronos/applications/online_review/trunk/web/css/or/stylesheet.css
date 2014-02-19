@@ -22,62 +22,62 @@ A:hover { color:#000;text-decoration:underline; }
 
 .buttonMain
 {
-	font-size: 11px;
-	font-family: Arial,Verdana;
-	font-weight: bold;
-	color: #fff;
-	background-color: #c00;
-	border-style: solid;
-	border-width: 1px;
-	border-color: #ccc;
+    font-size: 11px;
+    font-family: Arial,Verdana;
+    font-weight: bold;
+    color: #fff;
+    background-color: #c00;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #ccc;
 }
 
 .buttonMain2
 {
-	font-size: 11px;
-	font-family: Arial,Verdana;
-	font-weight: bold;
-	color: #fff;
-	background-image:url(../../i/or/bck_button.gif);
-	background-color: #c00;
-	border-style: solid;
-	border-width: 1px;
-	border-color: #ccc;
+    font-size: 11px;
+    font-family: Arial,Verdana;
+    font-weight: bold;
+    color: #fff;
+    background-image:url(../../i/or/bck_button.gif);
+    background-color: #c00;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #ccc;
 }
 
 .inputBox
 {
-	font-size: 10px;
-	height: 18px;
-	font-family: Arial,Verdana;
-	color: #666;
-	border-style: solid;
-	border-width: 1px;
-	border-color: #cccccc;
+    font-size: 10px;
+    height: 18px;
+    font-family: Arial,Verdana;
+    color: #666;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #cccccc;
 }
 
 .rateRed
 {
- 	font-color: #ddcc00;
+     font-color: #ddcc00;
 }
 
 .rateYellow
 {
-	font-color: #00a900;
+    font-color: #00a900;
 }
 .rateBlue
 { 
-	font-color: #ff9900;
+    font-color: #ff9900;
 }
 .rateGreen
 { 
-	font-color: #6666ff;
+    font-color: #6666ff;
 }
 .rateGrey
 { 
-	font-color: #ee0000;
+    font-color: #ee0000;
 }
 .noRate
 {
-	font-color:  #999999;
+    font-color:  #999999;
 }

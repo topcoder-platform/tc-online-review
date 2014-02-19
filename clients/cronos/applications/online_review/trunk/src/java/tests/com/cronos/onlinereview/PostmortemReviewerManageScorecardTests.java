@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -7,10 +7,10 @@ import java.sql.Connection;
 
 
 /**
- * Online review functional tests 4,testing Post-mortem Reviewer can submit a scorecard
+ * Online review functional tests 4,testing Post-mortem Reviewer can submit a scorecard.
  *
- * @author TCSDEVELOPER
- * @version 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class PostmortemReviewerManageScorecardTests extends ProjectTests {
 
@@ -20,7 +20,7 @@ public class PostmortemReviewerManageScorecardTests extends ProjectTests {
      * @throws Exception if any error occurs.
      */
     public void setUp() throws Exception {
-    	super.setUp();
+        super.setUp();
         Connection con = TestHelper.getConnection();
         try {
              //add post-moterm phase
@@ -35,11 +35,11 @@ public class PostmortemReviewerManageScorecardTests extends ProjectTests {
             // open review phase
             TestHelper.OpenPhase(phaseIds.get("post_mortem"), con);
             // add post-mortem reviewer.
-    	    TestHelper.AddResource(projectId, 16, phaseIds.get("post_mortem"), Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
-    		
+            TestHelper.AddResource(projectId, 16, phaseIds.get("post_mortem"), Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
+            
         } finally {
-    		con.close();
-    	}
+            con.close();
+        }
     }
 
     /**

@@ -39,7 +39,7 @@
             <fail>Unsupported environment</fail>
           </then>
           <else>
-			<echo message="------------${base_url}" />
+            <echo message="------------${base_url}" />
             <checkout_properties url="${base_url}/${env}" />
             <antcall target="move_properties" />
           </else>

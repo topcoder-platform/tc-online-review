@@ -718,8 +718,8 @@ function validateFloat(form) {
 
     oFloat = eval('new ' + formName.value + '_FloatValidations()');
     for (x in oFloat) {
-    	var field = form[oFloat[x][0]];
-    	
+        var field = form[oFloat[x][0]];
+        
         if ((field.type == 'hidden' ||
             field.type == 'text' ||
             field.type == 'textarea' ||
@@ -727,7 +727,7 @@ function validateFloat(form) {
             field.type == 'radio') &&
             field.disabled == false) {
     
-        	var value = '';
+            var value = '';
             // get field's value
             if (field.type == "select-one") {
                 var si = field.selectedIndex;
@@ -893,7 +893,7 @@ function validateMask(form) {
         if ((field.type == 'hidden' ||
             field.type == 'text' ||
              field.type == 'textarea' ||
-    			 field.type == 'file') &&
+                 field.type == 'file') &&
              (field.value.length > 0) &&
              field.disabled == false) {
 

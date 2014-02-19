@@ -1,7 +1,13 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.dataaccess;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.topcoder.date.workdays.DefaultWorkdaysFactory;
 import com.topcoder.date.workdays.Workdays;
@@ -12,25 +18,11 @@ import com.topcoder.project.phases.PhaseType;
 import com.topcoder.project.phases.Project;
 import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 /**
  * <p>A simple DAO for project phases backed up by Query Tool.</p>
  *
- * <p>
- * Version 1.1 (Impersonation Login Assembly 1.0) Change notes:
- *   <ol>
- *     <li>Renamed <code>searchInactiveProjectPhases</code> method to <code>searchDraftProjectPhases</code> method.</li>
- *   </ol>
- * </p>
- * 
- * @author isv
- * @version 1.1
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class ProjectPhaseDataAccess extends BaseDataAccess {
 
@@ -88,7 +80,6 @@ public class ProjectPhaseDataAccess extends BaseDataAccess {
      * @param phaseTypes a <code>PhaseType</code> array listing the available phase types.
      * @return a <code>Project</code> array listing the project phases.
      * @throws DataAccessException if an unexpected error occurs while running the query via Query Tool.
-     * @since 1.7
      */
     private Map<Long, Project> searchProjectPhasesByQueryTool(String queryName, String paramName, String paramValue,
                                                               PhaseStatus[] phaseStatuses, PhaseType[] phaseTypes) {

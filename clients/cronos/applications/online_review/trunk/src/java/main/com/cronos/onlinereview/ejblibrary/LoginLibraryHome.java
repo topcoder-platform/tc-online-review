@@ -1,16 +1,17 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.ejblibrary;
 
-import com.cronos.onlinereview.actions.EJBLibraryServicesLocator;
-import com.topcoder.security.login.LoginRemote;
-import com.topcoder.security.login.LoginRemoteHome;
+import java.io.Serializable;
 
 import javax.ejb.EJBMetaData;
 import javax.ejb.Handle;
 import javax.ejb.HomeHandle;
-import java.io.Serializable;
+
+import com.cronos.onlinereview.util.EJBLibraryServicesLocator;
+import com.topcoder.security.login.LoginRemote;
+import com.topcoder.security.login.LoginRemoteHome;
 
 /**
  * <p>An implementation of {@link LoginRemoteHome} interface to be used for injecting {@link LoginLibrary} class into
@@ -21,8 +22,8 @@ import java.io.Serializable;
  *
  * <p><b>Thread safety:</b> This class is thread-safe.</p>
  *
- * @author isv
- * @version 1.0 (TopCoder Online Review Switch To Local Calls)
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class LoginLibraryHome implements LoginRemoteHome, Serializable {
 

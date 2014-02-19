@@ -1,4 +1,12 @@
-<%@ taglib prefix="html" uri="/tags/struts-html" %>
+<%--
+  - Author: TCSASSEMBLER
+  - Version: 2.0
+  - Copyright (C) 2004 - 2014 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page displays footer for all pages in online review application.
+--%>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="or" uri="/or-tags" %>
 <%@ page import="com.topcoder.shared.util.ApplicationServer" %>
 
 <div align="center" style="margin: 20px;">
@@ -17,8 +25,7 @@
 
             <a href="http://<%=ApplicationServer.SERVER_NAME%>/tc" class="footerLinks">Developer Center</a>&#160;&#160;|&#160;&#160;<a
                 href="http://<%=ApplicationServer.CORP_SERVER_NAME%>/?module=Static&#x26;d1=corp&#x26;d2=index" class="footerLinks">Corporate
-                    Services</a>&#160;&#160;|&#160;&#160;<html:link
-                page="/jsp/credits.jsp" styleClass="footerLinks">Credits</html:link>
+                    Services</a>&#160;&#160;|&#160;&#160;<a href="<or:url value='/actions/Credits' />" class="footerLinks">Credits</a>
 
             <br /><br />
 

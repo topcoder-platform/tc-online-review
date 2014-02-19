@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2011-2013 TopCoder Inc., All Rights Reserved.
+/*
+ * Copyright (C) 2011 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -32,22 +32,18 @@ import com.topcoder.util.log.Level;
  * The extend from AppealsResponsePhaseHandler to add on the logic to push data to project_result.
  *
  * <p>
- * Version 1.1 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
- *   <ol>
- *     <li>Updated {@link #perform(Phase, String)} method to pass <code>operator</code> when calling
- *     RPHelper.processAppealResponsePR.</li>
- *   </ol>
+ * Thread-safety: This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
- * @author brain_cn, flexme
- * @version 1.1
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
     
     /**
     * Used for pulling data to project_result table and filling payments.
     */
-    private PRHelper prHelper = new PRHelper();
+    private final PRHelper prHelper = new PRHelper();
 
     private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogManager
             .getLog(PRAppealResponsePhaseHandler.class.getName());
@@ -86,11 +82,11 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
      */
     public PRAppealResponsePhaseHandler(String namespace) throws ConfigurationException {
         super(namespace);
-        obtainWinnnersEmailConfigProperties(namespace);
+        obtainWinnersEmailConfigProperties(namespace);
         managerHelper = new ManagerHelper();
     }
     
-    private void obtainWinnnersEmailConfigProperties(String namespace) throws ConfigurationException {
+    private void obtainWinnersEmailConfigProperties(String namespace) throws ConfigurationException {
         this.winnersEmailTemplateName = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailTemplateName",  true);
         this.winnersEmailSubject = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailSubject", true);
         this.winnersEmailFromAddress = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailFromAddress", true);

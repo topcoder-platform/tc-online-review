@@ -1,26 +1,20 @@
 <%--
-  - Author: George1, real_vg, isv, duxiaoyang
-  - Version: 1.2
-  - Copyright (C) 2005 - 2013 TopCoder Inc., All Rights Reserved.
+  - Author: TCSASSEMBLER
+  - Version: 2.0
+  - Copyright (C) 2005 - 2014 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page renders the Final Review scorecard.
-  -
-  - Version 1.1 (Impersonation Login Release assembly) changes: Updated link for "Back" button to refer to
-  - "View Project Details" screen.
-  -
-  - Version 1.2 (Online Review - Review Export ) changes:
-  - Moved expand and collapse link to just above the table.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="/tags/struts-html" %>
-<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html:html xhtml="true">
+<html>
 
 <head>
     <jsp:include page="/includes/project/project_title.jsp">
@@ -29,15 +23,15 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
     <!-- TopCoder CSS -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/style.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/coders.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/stats.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/tcStyles.css' />" />
+    <link type="text/css" rel="stylesheet" href="/css/style.css" />
+    <link type="text/css" rel="stylesheet" href="/css/coders.css" />
+    <link type="text/css" rel="stylesheet" href="/css/stats.css" />
+    <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
 
     <!-- CSS and JS by Petar -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
+    <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
     <script language="JavaScript" type="text/javascript"
-        src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
+        src="/js/or/rollovers2.js"><!-- @ --></script>
 </head>
 
 <body>
@@ -70,13 +64,13 @@
                                     <tr class="light">
                                         <td class="value" colspan="6">
                                             <div class="showText" id="shortQ_${itemIdx}">
-                                                <a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
-                                                <b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
+                                                <a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><img src="/i/or/plus.gif" alt="<or:text key='global.plus.alt' />" border="0" /></a>
+                                                <b><or:text key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
                                                 ${orfn:htmlEncode(question.description)}
                                             </div>
                                             <div class="hideText" id="longQ_${itemIdx}">
-                                                <a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
-                                                <b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
+                                                <a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><img src="/i/or/minus.gif" alt="<or:text key='global.minus.alt' />" border="0" /></a>
+                                                <b><or:text key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
                                                 ${orfn:htmlEncode(question.description)}<br />
                                                 ${orfn:htmlEncode(question.guideline)}
                                             </div>
@@ -86,13 +80,13 @@
 
                                     <tr>
                                         <c:if test="${not approvalBased}">
-                                            <td class="header"><bean:message key="editReview.EditAggregation.Reviewer" /></td>
+                                            <td class="header"><or:text key="editReview.EditAggregation.Reviewer" /></td>
                                         </c:if>
-                                        <td class="headerC"><bean:message key="editReview.EditAggregation.CommentNumber" /></td>
-                                        <td class="header" width="100%"><bean:message key="editReview.EditAggregation.Response" /></td>
-                                        <td class="header"><bean:message key="editReview.EditAggregation.Type" /></td>
-                                        <td class="headerC"><bean:message key="FinalReviewItemStatus.Fixed" /></td>
-                                        <td class="headerC"><bean:message key="FinalReviewItemStatus.NotFixed" /></td>
+                                        <td class="headerC"><or:text key="editReview.EditAggregation.CommentNumber" /></td>
+                                        <td class="header" width="100%"><or:text key="editReview.EditAggregation.Response" /></td>
+                                        <td class="header"><or:text key="editReview.EditAggregation.Type" /></td>
+                                        <td class="headerC"><or:text key="FinalReviewItemStatus.Fixed" /></td>
+                                        <td class="headerC"><or:text key="FinalReviewItemStatus.NotFixed" /></td>
                                     </tr>
 
                                     <c:forEach items="${review.allItems}" var="item" varStatus="itemStatus">
@@ -126,7 +120,7 @@
                                                                 </c:forEach>
                                                                 <c:forEach items="${reviews}" var="subReview">
                                                                     <c:if test="${subReview.author == comment.author}">
-                                                                        <html:link page="/actions/ViewReview.do?method=viewReview&rid=${subReview.id}"><bean:message key="editReview.EditAggregation.ViewReview" /></html:link>
+                                                                        <a href="<or:url value='/actions/ViewReview?rid=${subReview.id}' />"><or:text key="editReview.EditAggregation.ViewReview" /></a>
                                                                     </c:if>
                                                                 </c:forEach>
                                                             </td>
@@ -142,20 +136,20 @@
                                                         <td class="${rowClass}" width="100%">
                                                             <c:choose>
                                                                 <c:when test="${isReviewerComment == true}">
-                                                                    <b><bean:message key="editReview.EditAggregation.ReviewerResponse" /></b>
+                                                                    <b><or:text key="editReview.EditAggregation.ReviewerResponse" /></b>
                                                                 </c:when>
                                                                 <c:when test='${(commentType == "Manager Comment") ||
                                                                         (commentType == "Appeal") || (commentType == "Appeal Response") ||
                                                                         (commentType == "Aggregation Comment") || (commentType == "Submitter Comment") ||
                                                                         (commentType == "Final Review Comment")}'>
-                                                                    <b><bean:message key='editReview.EditAggregation.${fn:replace(commentType, " ", "")}' /></b>
+                                                                    <b><or:text key='editReview.EditAggregation.${fn:replace(commentType, " ", "")}' /></b>
                                                                 </c:when>
                                                                 <c:when test='${commentType == "Aggregation Review Comment"}'>
                                                                     <c:forEach items="${reviewResources}" var="resource">
                                                                         <c:if test="${resource.id == comment.author}">
-                                                                            <b><bean:message key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}' />
+                                                                            <b><or:text key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}' />
                                                                             (<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
-                                                                            <bean:message key="viewAggregationReview.Response" /></b>
+                                                                            <or:text key="viewAggregationReview.Response" /></b>
                                                                         </c:if>
                                                                     </c:forEach>
                                                                 </c:when>
@@ -164,7 +158,7 @@
                                                         </td>
                                                         <c:if test="${isReviewerComment == true}">
                                                             <td class="${rowClass}">
-                                                                <bean:message key='CommentType.${fn:replace(commentType, " ", "")}' /></td>
+                                                                <or:text key='CommentType.${fn:replace(commentType, " ", "")}' /></td>
                                                             <td class="${rowClass}C">
                                                                 <input type="radio" disabled="disabled" ${(comment.extraInfo == "Fixed") ? "checked='checked'" : ""} /></td>
                                                             <td class="${rowClass}C">
@@ -196,15 +190,15 @@
 
                     <table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
                         <tr>
-                            <td class="title"><bean:message key="editFinalReview.box.Approval" /></td>
+                            <td class="title"><or:text key="editFinalReview.box.Approval" /></td>
                         </tr>
                         <tr class="highlighted">
                             <c:choose>
                                 <c:when test='${!(empty finalComment) && (finalComment.extraInfo == "Approved")}'>
-                                    <td class="value"><bean:message key="FinalReviewApprovalStatus.Approved" /></td>
+                                    <td class="value"><or:text key="FinalReviewApprovalStatus.Approved" /></td>
                                 </c:when>
                                 <c:otherwise>
-                                    <td class="value"><bean:message key="FinalReviewApprovalStatus.Rejected" /></td>
+                                    <td class="value"><or:text key="FinalReviewApprovalStatus.Rejected" /></td>
                                 </c:otherwise>
                             </c:choose>
                         </tr>
@@ -215,11 +209,11 @@
 
                     <div align="right">
                         <c:if test="${isPreview}">
-                            <a href="javascript:window.close();"><html:img srcKey="btnClose.img" altKey="btnClose.alt" border="0" /></a>
+                            <a href="javascript:window.close();"><img src="<or:text key='btnClose.img' />" alt="<or:text key='btnClose.alt' />" border="0" /></a>
                         </c:if>
                         <c:if test="${not isPreview}">
-                            <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}">
-                                <html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></html:link>
+                            <a href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />">
+                                <img src="<or:text key='btnBack.img' />" alt="<or:text key='btnBack.alt' />" border="0" /></a>
                         </c:if>
                         <br/>
                     </div><br />
@@ -234,4 +228,4 @@
 </div>
 
 </body>
-</html:html>
+</html>

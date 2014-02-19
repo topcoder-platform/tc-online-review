@@ -6,17 +6,10 @@ package com.cronos.onlinereview;
 import java.sql.Connection;
 
 /**
- * Online review functional tests 3, change score cored testing
+ * Online review functional tests 3, change score cored testing.
  *
- * <p>
- *     Version 1.1 (Online Review - Project Payments Integration Part 1 v1.0) change notes:
- *     <ol>
- *         <li>Updated tests for assembly Project Payments Integration Part 1 v1.0.</li>
- *     </ol>
- * </p>
- *
- * @author TCSDEVELOPER
- * @version 1.1
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class ChangeScorecardTests extends ProjectTests {
 
@@ -31,7 +24,7 @@ public class ChangeScorecardTests extends ProjectTests {
      * @throws Exception if any error occurs.
      */
     public void setUp() throws Exception {
-    	super.setUp();
+        super.setUp();
         Connection con = TestHelper.getConnection();
         try {
             // add new spec review scorecard for FTC98 testing  
@@ -67,21 +60,20 @@ public class ChangeScorecardTests extends ProjectTests {
      */
     public void testAddScorecard() throws Exception {
         // login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
-    	
-    	// Check the created scorecard is used
-    	String scorecard = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[8]/td[2]/a");
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        
+        // Check the created scorecard is used
+        String scorecard = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[8]/td[2]/a");
         assertEquals("New Created Scorecard should be used", "Default Spec Review Scorecard v2.0", scorecard);
         
         // Click the 'Edit Project' Link
-        browser.click("//img[@alt='Edit Project']");
-        browser.waitForPageToLoad(TIMEOUT);
+        TestHelper.clickEditProjectLink(browser);
         
         // select 'Default Spec Review Scorecard 1.0' as scorecard, no error expected
         browser.select("//select[@name='phase_scorecard[2]']", "label=Default Spec Review Scorecard 1.0");
         browser.type("explanation", "Scorecard add");
-        browser.click("//input[@name='saveProjectChangesBtn']");
+        browser.click("//input[@alt='Save Changes']");
         browser.waitForPageToLoad(TIMEOUT);
 
         scorecard = browser.getText("//div[@id='mainMiddleContent']/div/table[4]/tbody/tr[8]/td[2]/a");

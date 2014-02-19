@@ -1,24 +1,21 @@
 <%--
-  - Author: duxiaoyang
-  - Version: 1.1
-  - Copyright (C)  - 2013 TopCoder Inc., All Rights Reserved.
+  - Author: TCSASSEMBLER
+  - Version: 2.0
+  - Copyright (C)  - 2014 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page renders the editing aggregation scorecard.
-  -
-  - Version 1.1 (Online Review - Review Export) changes:
-  - Moved expand and collapse link to just above the table.
 --%>
 
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="/tags/struts-html" %>
-<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html:html>
+<html>
 
 <head>
     <jsp:include page="/includes/project/project_title.jsp">
@@ -27,15 +24,15 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
     <!-- TopCoder CSS -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/style.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/coders.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/stats.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/tcStyles.css' />" />
+    <link type="text/css" rel="stylesheet" href="/css/style.css" />
+    <link type="text/css" rel="stylesheet" href="/css/coders.css" />
+    <link type="text/css" rel="stylesheet" href="/css/stats.css" />
+    <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
 
     <!-- CSS and JS by Petar -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
+    <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
     <script language="JavaScript" type="text/javascript"
-        src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
+        src="/js/or/rollovers2.js"><!-- @ --></script>
 </head>
 
 <body>
@@ -51,17 +48,16 @@
                 <div style="position: relative; width: 100%;">
 
                     <jsp:include page="/includes/review/review_project.jsp">
-						<jsp:param name="showFillScorecardLink" value="false" />
-					</jsp:include>
-					<jsp:include page="/includes/review/review_table_title.jsp" />
+                        <jsp:param name="showFillScorecardLink" value="false" />
+                    </jsp:include>
+                    <jsp:include page="/includes/review/review_table_title.jsp" />
 
-                    <html:form action="/actions/SaveAggregation">
-                        <html:hidden property="method" value="saveAggregation" />
-                        <html:hidden property="rid" value="${review.id}" />
+                    <s:form action="SaveAggregation" namespace="/actions">
+                        <input type="hidden" name="rid" value="${review.id}" />
 
                         <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
                             <table cellpadding="0" cellspacing="0" border="0">
-                                <tr><td class="errorText"><bean:message key="Error.saveReview.ValidationFailed" /></td></tr>
+                                <tr><td class="errorText"><or:text key="Error.saveReview.ValidationFailed" /></td></tr>
                             </table><br />
                         </c:if>
 
@@ -83,13 +79,13 @@
                                         <tr class="light">
                                             <td class="value" colspan="7">
                                                 <div class="showText" id="shortQ_${itemIdx}">
-                                                    <a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
-                                                    <b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
+                                                    <a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><img src="/i/or/plus.gif" alt="<or:text key='global.plus.alt' />" border="0" /></a>
+                                                    <b><or:text key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
                                                     ${orfn:htmlEncode(question.description)}
                                                 </div>
                                                 <div class="hideText" id="longQ_${itemIdx}">
-                                                    <a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
-                                                    <b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
+                                                    <a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><img src="/i/or/minus.gif" alt="<or:text key='global.minus.alt' />" border="0" /></a>
+                                                    <b><or:text key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
                                                     ${orfn:htmlEncode(question.description)}<br />
                                                     ${orfn:htmlEncode(question.guideline)}
                                                 </div>
@@ -97,13 +93,13 @@
                                             <c:set var="itemIdx" value="${itemIdx + 1}" />
                                         </tr>
                                         <tr>
-                                            <td class="header"><bean:message key="editReview.EditAggregation.Reviewer" /></td>
-                                            <td class="headerC"><bean:message key="editReview.EditAggregation.CommentNumber" /></td>
-                                            <td class="header"><bean:message key="editReview.EditAggregation.Response" /></td>
-                                            <td class="header"><bean:message key="editReview.EditAggregation.Type" /></td>
-                                            <td class="header"><bean:message key="AggregationItemStatus.Rejected" /></td>
-                                            <td class="header"><bean:message key="AggregationItemStatus.Accepted" /></td>
-                                            <td class="header"><bean:message key="AggregationItemStatus.Duplicate" /></td>
+                                            <td class="header"><or:text key="editReview.EditAggregation.Reviewer" /></td>
+                                            <td class="headerC"><or:text key="editReview.EditAggregation.CommentNumber" /></td>
+                                            <td class="header"><or:text key="editReview.EditAggregation.Response" /></td>
+                                            <td class="header"><or:text key="editReview.EditAggregation.Type" /></td>
+                                            <td class="header"><or:text key="AggregationItemStatus.Rejected" /></td>
+                                            <td class="header"><or:text key="AggregationItemStatus.Accepted" /></td>
+                                            <td class="header"><or:text key="AggregationItemStatus.Duplicate" /></td>
                                         </tr>
 
                                         <c:forEach items="${review.allItems}" var="item" varStatus="itemStatus">
@@ -133,11 +129,11 @@
                                                                     </c:forEach>
                                                                     <c:forEach items="${reviews}" var="subReview">
                                                                         <c:if test="${subReview.author == comment.author}">
-                                                                            <html:link page="/actions/ViewReview.do?method=viewReview&rid=${subReview.id}"><bean:message key="editReview.EditAggregation.ViewReview" /></html:link>
+                                                                            <a href="<or:url value='/actions/ViewReview?rid=${subReview.id}' />"><or:text key="editReview.EditAggregation.ViewReview" /></a>
                                                                         </c:if>
                                                                     </c:forEach>
                                                                     <c:if test="${not empty item.document}">
-                                                                        <html:link page="/actions/DownloadDocument.do?method=downloadDocument&uid=${item.document}"><bean:message key="editReview.Document.Download" /></html:link>
+                                                                        <a href="<or:url value='/actions/DownloadDocument?uid=${item.document}' />"><or:text key="editReview.Document.Download" /></a>
                                                                     </c:if>
                                                                     <c:set var="firstTime" value="${false}" />
                                                                 </c:if>
@@ -152,12 +148,12 @@
                                                             <td class="value" width="85%">
                                                                 <c:choose>
                                                                     <c:when test="${isReviewerComment == true}">
-                                                                        <b><bean:message key="editReview.EditAggregation.ReviewerResponse" /></b>
+                                                                        <b><or:text key="editReview.EditAggregation.ReviewerResponse" /></b>
                                                                         ${orfn:htmlEncode(comment.comment)}
                                                                     </c:when>
                                                                     <c:when test='${(commentType == "Manager Comment") ||
                                                                         (commentType == "Appeal") || (commentType == "Appeal Response")}'>
-                                                                        <b><bean:message key='editReview.EditAggregation.${fn:replace(commentType, " ", "")}' /></b>
+                                                                        <b><or:text key='editReview.EditAggregation.${fn:replace(commentType, " ", "")}' /></b>
                                                                         ${orfn:htmlEncode(comment.comment)}
                                                                     </c:when>
                                                                     <c:when test='${commentType == "Aggregation Review Comment"}'>
@@ -165,20 +161,20 @@
                                                                             <c:if test="${resource.id == comment.author}">
                                                                                 <div class="showText" id="shortR_${respIdx}">
                                                                                     <c:if test="${not empty comment.comment}">
-                                                                                        <a href="javascript:void(0)" onclick="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');return false;" class="statLink"><html:img src="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
+                                                                                        <a href="javascript:void(0)" onclick="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');return false;" class="statLink"><img src="/i/or/plus.gif" alt="<or:text key='global.plus.alt' />" border="0" /></a>
                                                                                     </c:if>
-                                                                                    <b><bean:message key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}' />
+                                                                                    <b><or:text key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}' />
                                                                                     (<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
-                                                                                    <bean:message key="viewAggregationReview.Response" /></b>
-                                                                                    <bean:message key='AggregationItemStatus.${fn:replace(comment.extraInfo, " ", "")}' />
+                                                                                    <or:text key="viewAggregationReview.Response" /></b>
+                                                                                    <or:text key='AggregationItemStatus.${fn:replace(comment.extraInfo, " ", "")}' />
                                                                                 </div>
                                                                                 <c:if test="${not empty comment.comment}">
                                                                                     <div class="hideText" id="longR_${respIdx}">
-                                                                                        <a href="javascript:void(0)" onclick="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');return false;" class="statLink"><html:img src="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
-                                                                                        <b><bean:message key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}' />
+                                                                                        <a href="javascript:void(0)" onclick="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');return false;" class="statLink"><img src="/i/or/minus.gif" alt="<or:text key='global.minus.alt' />" border="0" /></a>
+                                                                                        <b><or:text key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}' />
                                                                                         (<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
-                                                                                        <bean:message key="viewAggregationReview.Response" /></b>
-                                                                                        <bean:message key='AggregationItemStatus.${fn:replace(comment.extraInfo, " ", "")}' /><br />
+                                                                                        <or:text key="viewAggregationReview.Response" /></b>
+                                                                                        <or:text key='AggregationItemStatus.${fn:replace(comment.extraInfo, " ", "")}' /><br />
                                                                                         ${orfn:htmlEncode(comment.comment)}
                                                                                     </div>
                                                                                 </c:if>
@@ -189,18 +185,18 @@
                                                                     <c:when test='${(submitterResource.id == comment.author) && (commentType == "Submitter Comment")}'>
                                                                         <div class="showText" id="shortR_${respIdx}">
                                                                             <c:if test="${not empty comment.comment}">
-                                                                                <a href="javascript:void(0)" onclick="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');return false;" class="statLink"><html:img src="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
+                                                                                <a href="javascript:void(0)" onclick="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');return false;" class="statLink"><img src="/i/or/plus.gif" alt="<or:text key='global.plus.alt' />" border="0" /></a>
                                                                             </c:if>
-                                                                            <b><bean:message key='ResourceRole.${fn:replace(submitterResource.resourceRole.name, " ", "")}' />
-                                                                            <bean:message key="viewAggregationReview.Response" /></b>
-                                                                            <bean:message key='AggregationItemStatus.${fn:replace(comment.extraInfo, " ", "")}' />
+                                                                            <b><or:text key='ResourceRole.${fn:replace(submitterResource.resourceRole.name, " ", "")}' />
+                                                                            <or:text key="viewAggregationReview.Response" /></b>
+                                                                            <or:text key='AggregationItemStatus.${fn:replace(comment.extraInfo, " ", "")}' />
                                                                         </div>
                                                                         <c:if test="${not empty comment.comment}">
                                                                             <div class="hideText" id="longR_${respIdx}">
-                                                                                <a href="javascript:void(0)" onclick="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');return false;" class="statLink"><html:img src="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
-                                                                                <b><bean:message key='ResourceRole.${fn:replace(submitterResource.resourceRole.name, " ", "")}' />
-                                                                                <bean:message key="viewAggregationReview.Response" /></b>
-                                                                                <bean:message key='AggregationItemStatus.${fn:replace(comment.extraInfo, " ", "")}' /><br />
+                                                                                <a href="javascript:void(0)" onclick="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');return false;" class="statLink"><img src="/i/or/minus.gif" alt="<or:text key='global.minus.alt' />" border="0" /></a>
+                                                                                <b><or:text key='ResourceRole.${fn:replace(submitterResource.resourceRole.name, " ", "")}' />
+                                                                                <or:text key="viewAggregationReview.Response" /></b>
+                                                                                <or:text key='AggregationItemStatus.${fn:replace(comment.extraInfo, " ", "")}' /><br />
                                                                                 ${orfn:htmlEncode(comment.comment)}
                                                                             </div>
                                                                         </c:if>
@@ -209,9 +205,9 @@
                                                                 </c:choose>
                                                                 <c:if test="${commentStatus.index == lastCommentIdxs[itemStatus.index]}">
                                                                     <div style="padding-top:4px;">
-                                                                        <b><bean:message key="editReview.EditAggregation.ResponseText" /></b> &#160;
-                                                                        <span class="error"><html:errors property="aggregator_response[${globalResponseIdx}]" prefix="" suffix="" /></span><br />
-                                                                        <html:textarea rows="2" property="aggregator_response[${globalResponseIdx}]" cols="20" styleClass="inputTextBox" />
+                                                                        <b><or:text key="editReview.EditAggregation.ResponseText" /></b> &#160;
+                                                                        <span class="error"><s:fielderror escape="false"><s:param>aggregator_response[${globalResponseIdx}]</s:param></s:fielderror></span><br />
+                                                                        <textarea rows="2" name="aggregator_response[${globalResponseIdx}]" cols="20" class="inputTextBox" ><or:fieldvalue field="aggregator_response[${globalResponseIdx}]" /></textarea>
                                                                     </div>
                                                                     <c:set var="globalResponseIdx" value="${globalResponseIdx + 1}" />
                                                                 </c:if>
@@ -219,16 +215,16 @@
 
                                                             <c:if test="${isReviewerComment == true}">
                                                                 <td class="value">
-                                                                    <html:select size="1" property="aggregator_response_type[${globalCommentIdx}]" styleClass="inputBox">
+                                                                    <select size="1" name="aggregator_response_type[${globalCommentIdx}]" class="inputBox"><c:set var="OR_FIELD_TO_SELECT" value="aggregator_response_type[${globalCommentIdx}]"/>
                                                                         <c:forEach items="${allCommentTypes}" var="commentType2">
-                                                                            <html:option value="${commentType2.id}">${commentType2.name}</html:option>
+                                                                            <option value="${commentType2.id}" <or:selected value="${commentType2.id}"/>>${commentType2.name}</option>
                                                                         </c:forEach>
-                                                                    </html:select>
-                                                                    <div class="error" align="right"><html:errors property="aggregate_function[${globalCommentIdx}]" prefix="" suffix="" /></div>
+                                                                    </select>
+                                                                    <div class="error" align="right"><s:fielderror escape="false"><s:param>aggregate_function[${globalCommentIdx}]</s:param></s:fielderror></div>
                                                                 </td>
-                                                                <td class="valueC"><html:radio value="Reject" property="aggregate_function[${globalCommentIdx}]" /></td>
-                                                                <td class="valueC"><html:radio value="Accept" property="aggregate_function[${globalCommentIdx}]" /></td>
-                                                                <td class="valueC"><html:radio value="Duplicate" property="aggregate_function[${globalCommentIdx}]" /></td>
+                                                                <td class="valueC"><input type="radio" value="Reject" name="aggregate_function[${globalCommentIdx}]"  <or:checked name='aggregate_function[${globalCommentIdx}]' value='Reject' />/></td>
+                                                                <td class="valueC"><input type="radio" value="Accept" name="aggregate_function[${globalCommentIdx}]"  <or:checked name='aggregate_function[${globalCommentIdx}]' value='Accept' />/></td>
+                                                                <td class="valueC"><input type="radio" value="Duplicate" name="aggregate_function[${globalCommentIdx}]"  <or:checked name='aggregate_function[${globalCommentIdx}]' value='Duplicate' />/></td>
                                                                 <c:set var="globalCommentIdx" value="${globalCommentIdx + 1}" />
                                                             </c:if>
                                                             <c:if test="${isReviewerComment != true}">
@@ -251,12 +247,12 @@
                         </c:forEach>
 
                         <div align="right">
-                            <html:hidden property="save" value="" />
-                            <html:image property="submitAggBtn" onclick="javascript:this.form.save.value='submit'; this.parentNode.parentNode.target='_self';" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0" />&#160;
-                            <html:image property="saveAggBtn" onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0" />&#160;
-                            <html:image property="previewAggBtn" onclick="javascript:this.form.save.value='preview'; this.parentNode.parentNode.target='_blank';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0" />
+                            <input type="hidden" name="save" value="" />
+                            <input type="image"  onclick="javascript:this.form.save.value='submit'; this.parentNode.parentNode.target='_self';" src="<or:text key='editReview.Button.SaveAndCommit.img' />" alt="<or:text key='editReview.Button.SaveAndCommit.alt' />" border="0" />&#160;
+                            <input type="image"  onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" src="<or:text key='editReview.Button.SaveForLater.img' />" alt="<or:text key='editReview.Button.SaveForLater.alt' />" border="0" />&#160;
+                            <input type="image"  onclick="javascript:this.form.save.value='preview'; this.parentNode.parentNode.target='_blank';" src="<or:text key='editReview.Button.Preview.img' />" alt="<or:text key='editReview.Button.Preview.alt' />" border="0" />
                         </div>
-                    </html:form>
+                    </s:form>
 
 
                 </div>
@@ -269,4 +265,4 @@
 </div>
 
 </body>
-</html:html>
+</html>

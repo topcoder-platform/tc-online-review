@@ -1,40 +1,38 @@
 <%--
-  - Author: George1, real_vg, isv
-  - Version: 1.1
-  - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
+  - Author: TCSASSEMBLER
+  - Version: 2.0
+  - Copyright: Copyright (C) 2005 - 2014 TopCoder Inc., All Rights Reserved.
   -
-  - Description: This page renders the Login form for Online Review application.
-  -
-  - Version 1.1 (Impersonation Login Release assembly) changes: Added "Remember me" checkbox.
+  - Description: The login page for the online review application.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="/tags/struts-html" %>
-<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ page import="com.topcoder.shared.util.ApplicationServer" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html:html xhtml="true">
+<html>
 
 <head>
-    <title><bean:message key="global.title.level2"
+    <title><or:text key="global.title.level2"
         arg0='${orfn:getMessage(pageContext, "OnlineReviewApp.title")}'
         arg1='${orfn:getMessage(pageContext, "login.title")}' /></title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
     <!-- TopCoder CSS -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/style.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/coders.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/stats.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/tcStyles.css' />" />
+    <link type="text/css" rel="stylesheet" href="/css/style.css" />
+    <link type="text/css" rel="stylesheet" href="/css/coders.css" />
+    <link type="text/css" rel="stylesheet" href="/css/stats.css" />
+    <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
 
     <!-- CSS and JS from wireframes -->
-    <script language="javascript" type="text/javascript" src="<html:rewrite href='/js/or/expand_collapse.js' />"><!-- @ --></script>
+    <script language="javascript" type="text/javascript" src="/js/or/expand_collapse.js"><!-- @ --></script>
 
     <!-- CSS and JS by Petar -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
+    <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
+    <script language="JavaScript" type="text/javascript" src="/js/or/rollovers2.js"><!-- @ --></script>
 </head>
 <body>
 
@@ -50,59 +48,59 @@
 
                     <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
                         <div align="center">
-                            <bean:message key="error.com.cronos.onlinereview.Errors" />
-                            <br /><span class="bigRed"><html:errors suffix="errors.suffix.login"/></span>
+                            <or:text key="error.com.cronos.onlinereview.Errors" />
+                            <br /><span class="bigRed"><s:actionerror /></span>
                         </div>
                     </c:if>
 
                     <br />
 
-                    <html:form action="/actions/Login" focus="userName">
-                        <html:hidden property="method" value="login" />
+                    <s:form action="Login" focus="userName" namespace="/actions">
+                        <input type="hidden" name="postBack" value="true"/>
 
                         <c:set var="referer" value="${orfn:getSafeRedirect(pageContext.request)}" />
                         <c:if test="${not empty referer}">
-                            <html:hidden property="forwardUrl" value="${referer}" />
+                            <input type="hidden" name="forwardUrl" value="${referer}" />
                         </c:if>
 
                         <table class="stat" cellpadding="0" cellspacing="0" width="400">
                             <tr>
-                                <td class="title" colspan="2"><bean:message key="login.formLogin.title" /></td>
+                                <td class="title" colspan="2"><or:text key="login.formLogin.title" /></td>
                             </tr>
                             <tr>
                                 <td class="value" colspan="2">&#160;</td>
                             </tr>
                             <tr>
-                                <td class="value"><div align="right"><bean:message key="login.formLogin.userName" /> </div></td>
-                                <td class="value"><html:text property="userName" /></td>
+                                <td class="value"><div align="right"><or:text key="login.formLogin.userName" /> </div></td>
+                                <td class="value"><input type="text" name="userName"  value="<or:fieldvalue field='userName' />" /></td>
                             </tr>
                             <tr>
-                                <td class="value"><div align="right"><bean:message key="login.formLogin.password" /> </div></td>
+                                <td class="value"><div align="right"><or:text key="login.formLogin.password" /> </div></td>
                                 <td class="value"><input type="password" name="password" /></td>
                             </tr>
                             <tr>
                                 <td class="value" colspan="2">
                                     <div class="rememberMe">
-                                        <html:checkbox property="rememberMe" value="on"/>
-                                        <bean:message key="login.formLogin.rememberMe"/>
+                                         <input type="checkbox" name="rememberMe" <c:if test="${not empty rememberMe}"> checked="on"</c:if> />
+                                        <or:text key="login.formLogin.rememberMe"/>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="valueLast">&#160;</td>
-                                <td class="valueLast"><html:image property="loginBtn" altKey="login.formLogin.btnLogin.alt"
-                                        srcKey="login.formLogin.btnLogin.img" border="0" styleClass="imgLogin" /></td>
+                                <td class="valueLast"><input type="image" alt="<or:text key='login.formLogin.btnLogin.alt' />"
+                                        src="<or:text key='login.formLogin.btnLogin.img' />" border="0" class="imgLogin" /></td>
                             </tr>
                             <tr>
                                 <td class="lastRowTD" colspan="2"><!-- @ --></td>
                             </tr>
                         </table><br />
-                    </html:form>
+                    </s:form>
                     <p align="left" style="width: 400px;">
-                    <strong><bean:message key="login.forgotPassword" /></strong><br/>
-                    <bean:message key="login.cannotRememberPassword1" /> <a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?&module=RecoverPassword"><bean:message key="clickHere" /></a> <bean:message key="login.cannotRememberPassword2" /><br /><br />
-                    <strong><bean:message key="login.newToTopCoder" /></strong><br/>
-                    <a href="https://<%=ApplicationServer.SERVER_NAME%>/reg/"><bean:message key="login.registerNow" /></a> <bean:message key="login.afterYouCompleteTheRegProcess" />
+                    <strong><or:text key="login.forgotPassword" /></strong><br/>
+                    <or:text key="login.cannotRememberPassword1" /> <a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?&module=RecoverPassword"><or:text key="clickHere" /></a> <or:text key="login.cannotRememberPassword2" /><br /><br />
+                    <strong><or:text key="login.newToTopCoder" /></strong><br/>
+                    <a href="https://<%=ApplicationServer.SERVER_NAME%>/reg/"><or:text key="login.registerNow" /></a> <or:text key="login.afterYouCompleteTheRegProcess" />
                     </p>
 
                 </div>
@@ -115,4 +113,4 @@
 </div>
 
 </body>
-</html:html>
+</html>

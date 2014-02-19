@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011-2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -7,10 +7,10 @@ import java.sql.Connection;
 
 
 /**
- * Online review functional tests 4, testing reviewer upload test case
+ * Online review functional tests 4, testing reviewer upload test case.
  *
- * @author TCSDEVELOPER
- * @version 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class ReviewerUploadTestCaseTests extends ProjectTests {
 
@@ -20,7 +20,7 @@ public class ReviewerUploadTestCaseTests extends ProjectTests {
      * @throws Exception if any error occurs.
      */
     public void setUp() throws Exception {
-    	super.setUp();
+        super.setUp();
         Connection con = TestHelper.getConnection();
         try {
             // update to dev project
@@ -34,14 +34,14 @@ public class ReviewerUploadTestCaseTests extends ProjectTests {
             // open review phase
             TestHelper.OpenPhase(phaseIds.get("review"), con);
             // add  submitter.
-    		long submitterId = TestHelper.AddResource(projectId, 1, phaseIds.get("registration") , Long.parseLong(TestHelper.getCompetitiorUserId()), TestHelper.getCompetitorUsername(), con);
+            long submitterId = TestHelper.AddResource(projectId, 1, phaseIds.get("registration") , Long.parseLong(TestHelper.getCompetitiorUserId()), TestHelper.getCompetitorUsername(), con);
             // add Accuracy reviewer.
-    	    TestHelper.AddResource(projectId, 5, phaseIds.get("review"), Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
-    		// add contest submission.
-    		TestHelper.AddSubmission(projectId, phaseIds.get("submission"), submitterId, 1, con);
+            TestHelper.AddResource(projectId, 5, phaseIds.get("review"), Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
+            // add contest submission.
+            TestHelper.AddSubmission(projectId, phaseIds.get("submission"), submitterId, 1, con);
         } finally {
-    		con.close();
-    	}
+            con.close();
+        }
     }
 
 
@@ -62,7 +62,7 @@ public class ReviewerUploadTestCaseTests extends ProjectTests {
 
         //upload test cases
         browser.type("file", TestHelper.getUploadFilePath()); 
-        browser.click("//input[@name='uploadBtn']");
+        browser.click("//input[@alt='Upload']");
         browser.waitForPageToLoad(TIMEOUT);
 
         //Check test cases have been uploaded

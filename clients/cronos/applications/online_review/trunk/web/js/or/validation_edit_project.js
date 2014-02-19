@@ -1,15 +1,10 @@
 /**
- * Copyright (C)  - 2013 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2013 TopCoder Inc., All Rights Reserved.
  *
- * - Version 1.1 (Online Review - Project Payments Integration Part 1 v1.0) change notes:
- * - - Added method validate_prizes and validate_prizes_amount to validate the project prizes.
- * - - Updated method validate_form to validate the project prizes.
+ * Provides the validation functions for the editing project forms.
  *
- * - Version 1.2 (Online Review - Project Payments Integration Part 3 v1.0) change notes:
- * - - Updated method validate_resources because Payment and Paid columns have been removed.
- *
- * @author TCSASSEMBLER, flexme
- * @version 1.2
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 
 /**
@@ -350,8 +345,7 @@ function validate_timeline(thisForm, msgList) {
             // validate start date
             var startDateInput = thisForm["phase_start_date[" + i + "]"];
             var isPhaseStartTimeEnabled = startDateInput
-                && (startDateInput.getAttribute("disabled") != "disabled")
-                && (startDateInput.getAttribute("disabled") != true);
+                && (startDateInput.getAttribute("disabled") == null);
 
             if (isPhaseStartTimeEnabled) {
                 startByFixedTime = true;

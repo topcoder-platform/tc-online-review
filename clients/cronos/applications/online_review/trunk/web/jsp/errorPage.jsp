@@ -1,19 +1,26 @@
+<%--
+  - Author: TCSASSEMBLER
+  - Version: 2.0
+  - Copyright: Copyright (C) 2013 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: The error page for the online review application.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" session="true" isErrorPage="true" %>
 <%@ page import="java.util.Date"%>
-<%@ taglib uri="/tags/struts-html" prefix="html" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html:html xhtml="true">
+<html>
 <head>
     <title>Online Review - Error</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link type="image/x-icon" rel="shortcut icon" href="<html:rewrite href='/i/favicon.ico' />" />
+    <link type="image/x-icon" rel="shortcut icon" href="/i/favicon.ico" />
 
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/style.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/coders.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/stats.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/tcStyles.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
+    <link type="text/css" rel="stylesheet" href="/css/style.css" />
+    <link type="text/css" rel="stylesheet" href="/css/coders.css" />
+    <link type="text/css" rel="stylesheet" href="/css/stats.css" />
+    <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
+    <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
 
 <style TYPE="text/css">
 <!--
@@ -48,6 +55,7 @@ padding: 0px;
 
 <%
     org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger("com.cronos.onlinereview");
+    exception = (Exception) request.getAttribute("exception");
     if (exception == null) {
         log.error("exception is null");
     } else {
@@ -79,4 +87,4 @@ padding: 0px;
 </div>
 
 </body>
-</html:html>
+</html>

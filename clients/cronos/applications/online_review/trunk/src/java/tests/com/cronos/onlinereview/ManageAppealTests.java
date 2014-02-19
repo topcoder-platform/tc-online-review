@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -7,10 +7,10 @@ import java.sql.Connection;
 
 
 /**
- * Online review functional tests 4, testing competitor managing the appeals
+ * Online review functional tests 4, testing competitor managing the appeals.
  *
- * @author TCSDEVELOPER
- * @version 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class ManageAppealTests extends ProjectTests {
 
@@ -24,7 +24,7 @@ public class ManageAppealTests extends ProjectTests {
      * @throws Exception if any error occurs.
      */
     public void setUp() throws Exception {
-    	super.setUp();
+        super.setUp();
         Connection con = TestHelper.getConnection();
         try {
             // close all the phase before appeal phase
@@ -37,17 +37,17 @@ public class ManageAppealTests extends ProjectTests {
             // open appeal phase
             TestHelper.OpenPhase(phaseIds.get("appeals"), con);
             // add  submitter.
-    		long submitterId = TestHelper.AddResource(projectId, 1, -1 , Long.parseLong(TestHelper.getCompetitiorUserId()), TestHelper.getCompetitorUsername(), con);
+            long submitterId = TestHelper.AddResource(projectId, 1, -1 , Long.parseLong(TestHelper.getCompetitiorUserId()), TestHelper.getCompetitorUsername(), con);
             // add reviewer.
-    		long reviewerId = TestHelper.AddResource(projectId, 4, phaseIds.get("review"), Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
-    		// add contest submission.
-    		long submissionId = TestHelper.AddSubmission(projectId, phaseIds.get("submission"), submitterId, 1, con);
+            long reviewerId = TestHelper.AddResource(projectId, 4, phaseIds.get("review"), Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
+            // add contest submission.
+            long submissionId = TestHelper.AddSubmission(projectId, phaseIds.get("submission"), submitterId, 1, con);
 
             reviewId = TestHelper.AddReview (reviewerId, submissionId, phaseIds.get("review"), con);
 
         } finally {
-    		con.close();
-    	}
+            con.close();
+        }
     }
 
     /**
@@ -56,11 +56,11 @@ public class ManageAppealTests extends ProjectTests {
      * @throws Exception if any error occurs.
      */
     public void tearDown() throws Exception {
-    	TestHelper.reloginAndDeleteProject(browser, projectId);
+        TestHelper.reloginAndDeleteProject(browser, projectId);
         projectId = -1;
         super.tearDown(); 
     }
-	
+    
     /**
      * Test Case Number: FTC116 RS7.4 Verify Competitor can write appeals
      *

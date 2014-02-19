@@ -10,7 +10,7 @@ function expcollHandler(srcElement) {
     document.getElementById(iconId).src = "/i/or/plus.gif";
   }
   if (srcElement.blur) {
-  	srcElement.blur();
+    srcElement.blur();
   }
   return false;
 }

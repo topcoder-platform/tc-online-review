@@ -1,18 +1,15 @@
 <%--
-  - Author: George1, real_vg, isv, FireIce
-  - Version: 1.2
-  - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
+  - Author: TCSASSEMBLER
+  - Version: 2.0
+  - Copyright (C) 2005 - 2014 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment renders the tabs for all pages from Online Review application.
-  -
-  - Version 1.1 (Impersonation Login Release assembly) changes: Changed project status from Inactive to Draft.
-  - Version 1.2 (Online Review Late Deliverables Search Assembly 1.0) changes:
-  - Added 'Late Deliverables' tab.
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ page import="java.text.DecimalFormat,com.topcoder.shared.util.ApplicationServer" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="/tags/struts-html" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 
 <%-- We need to have no spaces between tabs, that's why the formatting is weird --%>
@@ -20,60 +17,60 @@
     <div style="float: left;">
     <c:if test="${orfn:isUserLoggedIn(pageContext.request)}">
         <c:if test="${(not empty projectTabIndex) and (projectTabIndex == 1)}">
-            <html:img src="/i/or/tab_my_open_projects_on.gif" width="119" height="36" border="0" imageName="tab1" />
+            <img src="/i/or/tab_my_open_projects_on.gif" width="119" height="36" border="0" name="tab1" />
         </c:if>
         <c:if test="${(empty projectTabIndex) or (projectTabIndex != 1)}">
-            <html:link page="/actions/ListProjects.do?method=listProjects&amp;scope=my" onmouseover="img_act('tab1')" onmouseout="img_inact('tab1')">
-                <html:img src="/i/or/tab_my_open_projects.gif" width="119" height="36" border="0" imageName="tab1" />
-            </html:link>
+            <a href="<or:url value='/actions/ListProjects?scope=my' />" onmouseover="img_act('tab1')" onmouseout="img_inact('tab1')">
+                <img src="/i/or/tab_my_open_projects.gif" width="119" height="36" border="0" name="tab1" />
+            </a>
         </c:if>
     </c:if>
     </div>
     <div style="float: left;">
     <c:if test="${(not empty projectTabIndex) and (projectTabIndex == 2)}">
-        <html:img src="/i/or/tab_all_open_projects_on.gif" width="119" height="36" imageName="tab2" />
+        <img src="/i/or/tab_all_open_projects_on.gif" width="119" height="36" name="tab2" />
     </c:if>
     </div>
     <div style="float: left;">
     <c:if test="${(empty projectTabIndex) or (projectTabIndex != 2)}">
-        <html:link page="/actions/ListProjects.do?method=listProjects&amp;scope=all" onmouseover="img_act('tab2')" onmouseout="img_inact('tab2')">
-            <html:img src="/i/or/tab_all_open_projects.gif" width="119"height="36" border="0" imageName="tab2" />
-        </html:link>
+        <a href="<or:url value='/actions/ListProjects?scope=all' />" onmouseover="img_act('tab2')" onmouseout="img_inact('tab2')">
+            <img src="/i/or/tab_all_open_projects.gif" width="119"height="36" border="0" name="tab2" />
+        </a>
     </c:if>
     </div>
     <div style="float: left;">
         <c:if test="${(not empty projectTabIndex) and (projectTabIndex == 4)}">
-            <html:img src="/i/or/tab_draft_projects_on.gif" width="119" height="36" border="0" imageName="tab4"/>
+            <img src="/i/or/tab_draft_projects_on.gif" width="119" height="36" border="0" name="tab4"/>
         </c:if>
         <c:if test="${(empty projectTabIndex) or (projectTabIndex != 4)}">
-            <html:link page="/actions/ListProjects.do?method=listProjects&amp;scope=draft" onmouseover="img_act('tab4')"
+            <a href="<or:url value='/actions/ListProjects?scope=draft' />" onmouseover="img_act('tab4')"
                        onmouseout="img_inact('tab4')">
-                <html:img src="/i/or/tab_draft_projects.gif" width="119" height="36" border="0" imageName="tab4"/>
-            </html:link>
+                <img src="/i/or/tab_draft_projects.gif" width="119" height="36" border="0" name="tab4"/>
+            </a>
         </c:if>
     </div>
     <div style="float: left;">
     <c:if test="${orfn:isUserLoggedIn(pageContext.request)}">
         <c:if test="${(not empty projectTabIndex) and (projectTabIndex == 5)}">
-            <html:img src="/i/or/tab_late_deliverables_on.gif" width="119" height="36" border="0" imageName="tab5"/>
+            <img src="/i/or/tab_late_deliverables_on.gif" width="119" height="36" border="0" name="tab5"/>
         </c:if>
         <c:if test="${(empty projectTabIndex) or (projectTabIndex != 5)}">
-            <html:link page="/actions/ViewLateDeliverables.do?method=viewLateDeliverables" onmouseover="img_act('tab5')"
+            <a href="<or:url value='/actions/ViewLateDeliverables' />" onmouseover="img_act('tab5')"
                        onmouseout="img_inact('tab5')">
-                <html:img src="/i/or/tab_late_deliverables.gif" width="119" height="36" border="0" imageName="tab5"/>
-            </html:link>
+                <img src="/i/or/tab_late_deliverables.gif" width="119" height="36" border="0" name="tab5"/>
+            </a>
         </c:if>
     </c:if>
     </div>
     <div style="float: left;">
     <c:if test="${isAllowedToCreateProject}">
         <c:if test="${(not empty projectTabIndex) and (projectTabIndex == 3)}">
-            <html:img src="/i/or/tab_create_project_on.gif" width="119" height="36" border="0" imageName="tab3" />
+            <img src="/i/or/tab_create_project_on.gif" width="119" height="36" border="0" name="tab3" />
         </c:if>
         <c:if test="${(empty projectTabIndex) or (projectTabIndex != 3)}">
-            <html:link page="/actions/NewProject.do?method=newProject" onmouseover="img_act('tab3')" onmouseout="img_inact('tab3')">
-                <html:img src="/i/or/tab_create_project.gif" width="119" height="36" border="0" imageName="tab3" />
-            </html:link>
+            <a href="<or:url value='/actions/NewProject' />" onmouseover="img_act('tab3')" onmouseout="img_inact('tab3')">
+                <img src="/i/or/tab_create_project.gif" width="119" height="36" border="0" name="tab3" />
+            </a>
         </c:if>
     </c:if>
     </div>

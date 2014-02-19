@@ -31,10 +31,10 @@ function move(fbox, tbox) {
           fbox[c] = no;
      }
      for(c=0; c<arrTbox.length; c++) {
-     	var no = new Option();
-     	no.value = arrLookup[arrTbox[c]];
-     	no.text = arrTbox[c];
-     	tbox[c] = no;
+        var no = new Option();
+        no.value = arrLookup[arrTbox[c]];
+        no.text = arrTbox[c];
+        tbox[c] = no;
      }
 }
 

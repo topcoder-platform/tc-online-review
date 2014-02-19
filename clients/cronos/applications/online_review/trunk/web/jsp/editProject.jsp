@@ -1,47 +1,23 @@
 <%--
-  - Author: pulky, isv, TCSDEVELOPER, flexme, duxiaoyang
-  - Version: 1.7
-  - Copyright (C) 2004 - 2013 TopCoder Inc., All Rights Reserved.
+  - Author: TCSASSEMBLER
+  - Version: 2.0
+  - Copyright (C) 2004 - 2014 TopCoder Inc., All Rights Reserved.
   -
-  - Description: This page displays project edition page
-  -
-  - Version 1.1 (Competition Registration Eligibility v1.0) changes: Removed old "Public" and "Eligibility" project
-  - info code. Public projects are now determined by contest eligibility service.
-  -
-  - Version 1.2 (Online Review End of Project Analysis v1.0) changes: Integrated newly defined Generic project types,
-  - categories and scorecards.
-  -
-  - Version 1.3 (Specification Review Part 1 assembly) changes: Added support for Specification Review phase.
-  -
-  - Version 1.3.1 (SVN Automation and Late Deliverables Tracking Assembly 1.0) changes: SVN Module property is no longer
-  - editable
-  -
-  - Version 1.3.2 (Checkpoint Support assembly) changes: Added support for Checkpoint phases.
-  -
-  - Version 1.4 (Online Review Status Validation Assembly 1.0) changes: added error display of validation for status field
-  -
-  - Version 1.5 (Online Review - Project Payments Integration Part 1 v1.0) changes: added support for project prizes management.
-  -
-  - Version 1.6 (Online Review - Project Payments Integration Part 3 v1.0) changes: removed "Payment" and "Paid"
-  - columns in resource section.
-  -
-  - Version 1.7 (Online Review - Iterative Review v1.0) changes:
-  - - Added iterative review phase options.
-  - - Updated onProjectCategoryChange, addPhaseCriterion, and onLoad JavaScript functions to include iterative review phase.
+  - Description: This page displays project edition page.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="/tags/struts-html" %>
-<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html:html xhtml="true">
+<html>
 
 <head>
     <c:if test="${empty project}">
-        <title><bean:message key="global.title.level2"
+        <title><or:text key="global.title.level2"
             arg0='${orfn:getMessage(pageContext, "OnlineReviewApp.title")}'
             arg1='${orfn:getMessage(pageContext, "editProject.title.CreateNew")}' /></title>
     </c:if>
@@ -51,23 +27,23 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
     <!-- TopCoder CSS -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/style.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/coders.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/tcStyles.css' />" />
+    <link type="text/css" rel="stylesheet" href="/css/style.css" />
+    <link type="text/css" rel="stylesheet" href="/css/coders.css" />
+    <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
 
     <!-- CSS and JS by Petar -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/phasetabs.css' />" />
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/dojo.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/util.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_util.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_edit_project.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/parseDate.js' />"><!-- @ --></script>
+    <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
+    <link type="text/css" rel="stylesheet" href="/css/or/phasetabs.css" />
+    <script language="JavaScript" type="text/javascript" src="/js/or/rollovers2.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/dojo.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/util.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/validation_util.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/validation_edit_project.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/parseDate.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript">
-        var ajaxSupportUrl = "<html:rewrite page='/ajaxSupport' />";
+        var ajaxSupportUrl = "<or:url value='/ajaxSupport' />";
     </script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/ajax1.js' />"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/ajax1.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript"><!--
         // TODO: Write docs for following vars
         var lastResourceIndex = ${fn:length(projectForm.map['resources_id']) - 1};
@@ -299,6 +275,7 @@
             // Populate iterative review scorecards
             templateRow = document.getElementById("iterative_review_scorecard_row_template");
             changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, iterativeReviewScorecards, 'Iterative Review');
+
 
             for (var i = 0; i < screeningScorecardNodes.length; i++) {
                 changeScorecardByCategory(screeningScorecardNodes[i], projectCategoryNode.value, screeningScorecards, 'Screening');
@@ -1140,76 +1117,75 @@
 
             <div id="mainMiddleContent">
                 <div style="position: relative; width: 100%;">
-                    <html:form action="/actions/SaveProject" onsubmit="return validate_form(this, true);">
-                        <html:hidden property="method" value="saveProject" />
+                    <s:form action="SaveProject" onsubmit="return validate_form(this, true);" namespace="/actions">
 
                         <%-- TODO: Validation errors display should be much more than is here --%>
                         <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
                             <table cellpadding="0" cellspacing="0" border="0">
                                 <tr><td><!-- @ --></td><td width="400"><!-- @ --></td></tr>
                                 <tr>
-                                    <td colspan="2"><span style="color:red;"><bean:message key="Error.saveReview.ValidationFailed" /></span></td>
+                                    <td colspan="2"><span style="color:red;"><or:text key="Error.saveReview.ValidationFailed" /></span></td>
                                 </tr>
-                                <html:errors property="org.apache.struts.action.GLOBAL_MESSAGE" />
+                                <tr><td><!-- @ --></td><td class="errorText"><s:actionerror escape="false"/></td></tr>
                             </table><br />
                         </c:if>
 
                         <%-- If editing the existing project, render its pid --%>
                         <c:if test="${not newProject}">
-                            <html:hidden property="pid" />
+                            <input type="hidden" name="pid"  value="<or:fieldvalue field='pid' />" />
                         </c:if>
 
-                        <html:hidden property="js_current_id" />
-                        <html:hidden property="action" />
-                        <html:hidden property="action_phase" />
-                        <html:hidden property="last_modification_time" />
+                        <input type="hidden" name="js_current_id"  value="<or:fieldvalue field='js_current_id' />" />
+                        <input type="hidden" name="action"  value="<or:fieldvalue field='action' />" />
+                        <input type="hidden" name="action_phase"  value="<or:fieldvalue field='action_phase' />" />
+                        <input type="hidden" name="last_modification_time"  value="<or:fieldvalue field='last_modification_time' />" />
 
                         <%-- If creating a new project, show project details table --%>
                         <c:if test="${newProject}">
                             <table class="scorecard" cellpadding="0" width="100%" style="border-collapse:collapse;">
                                     <tr>
-                                    <td class="title" colspan="2"><bean:message key="editProject.ProjectDetails.title" /></td>
+                                    <td class="title" colspan="2"><or:text key="editProject.ProjectDetails.title" /></td>
                                 </tr>
                                 <tr>
-                                    <td class="valueB"><bean:message key="editProject.ProjectDetails.Name" /></td>
+                                    <td class="valueB"><or:text key="editProject.ProjectDetails.Name" /></td>
                                     <td class="value" nowrap="nowrap">
-                                        <html:text styleClass="inputBox" property="project_name" style="width:350px;" />
+                                        <input type="text" class="inputBox" name="project_name" style="width:350px;"  value="<or:fieldvalue field='project_name' />" />
                                         <span id="project_name_validation_msg" style="display:none;" class="error"></span>
                                     </td>
                                 </tr>
                                 <tr class="dark">
-                                    <td width="9%" class="valueB"><bean:message key="editProject.ProjectDetails.Type" /></td>
+                                    <td width="9%" class="valueB"><or:text key="editProject.ProjectDetails.Type" /></td>
                                     <td width="91%" class="value" nowrap="nowrap">
-                                        <html:select styleClass="inputBox" property="project_type" style="width:150px;"
-                                                onchange="onProjectTypeChange(this);">
+                                        <select class="inputBox" name="project_type" style="width:150px;"
+                                                onchange="onProjectTypeChange(this);"><c:set var="OR_FIELD_TO_SELECT" value="project_type"/>
                                             <c:forEach items="${projectTypes}" var="type">
                                                 <c:if test="${not type.generic}">
-                                                    <html:option key='ProjectType.${fn:replace(type.name, " ", "")}.plural' value="${type.id}" />
+                                                    <option  value="${type.id}"  <or:selected value="${type.id}"/>><or:text key='ProjectType.${fn:replace(type.name, " ", "")}.plural' def="${type.name}" /></option>
                                                 </c:if>
                                             </c:forEach>
-                                        </html:select>
+                                        </select>
                                     </td>
                                 </tr>
                                 <tr class="light">
-                                    <td class="valueB"><bean:message key="editProject.ProjectDetails.Category" /></td>
+                                    <td class="valueB"><or:text key="editProject.ProjectDetails.Category" /></td>
                                     <td class="value" nowrap="nowrap">
-                                        <html:select styleClass="inputBox" property="project_category" style="width:150px;"
-                                                onchange="onProjectCategoryChange(this);">
+                                        <select class="inputBox" name="project_category" style="width:150px;"
+                                                onchange="onProjectCategoryChange(this);"><c:set var="OR_FIELD_TO_SELECT" value="project_category"/>
                                             <c:forEach items="${projectCategories}" var="category">
                                                 <c:if test="${category.projectType.id eq projectForm.map['project_type']}">
-                                                    <html:option key='ProjectCategory.${fn:replace(category.name, " ", "")}' value="${category.id}" />
+                                                    <option  value="${category.id}"  <or:selected value="${category.id}"/>><or:text key="ProjectCategory.${fn:replace(category.name, ' ', '')}" def="${category.name}" /></option>
                                                 </c:if>
                                             </c:forEach>
-                                        </html:select>
+                                        </select>
                                     </td>
                                 </tr>
                                 <tr class="light">
                                     <td class="value" nowrap="nowrap">
-                                        <b><bean:message key="editProject.ProjectDetails.DRPoints" /></b><br />
+                                        <b><or:text key="editProject.ProjectDetails.DRPoints" /></b><br />
                                     </td>
                                     <td class="value" nowrap="nowrap">
-                                        <html:text styleClass="inputBox" property="dr_points" style="width: 350px;" />
-                                        <!-- <b><bean:message key="editProject.ProjectDetails.DRPointsMessage" /></b> -->
+                                        <input type="text" class="inputBox" name="dr_points" style="width: 350px;"  value="<or:fieldvalue field='dr_points' />" />
+                                        <!-- <b><or:text key="editProject.ProjectDetails.DRPointsMessage" /></b> -->
                                         <span id="dr_points_validation_msg" style="display:none;" class="error"></span>
                                     </td>
                                 </tr>
@@ -1218,12 +1194,6 @@
                                 </tr>
                             </table><br />
                         </c:if>
-                        <%--
-                        <c:if test="${not newProject}">
-                            <html:hidden property="project_type" />
-                            <html:hidden property="project_category" />
-                        </c:if>
-                        --%>
 
                         <%-- If creating a new project, show the edit prizes section here --%>
                         <c:if test="${newProject}">
@@ -1242,28 +1212,28 @@
 
                         <table class="scorecard" id="preferences">
                             <tr>
-                                <td class="title" colspan="2"><bean:message key="editProject.Preferences.title" /></td>
+                                <td class="title" colspan="2"><or:text key="editProject.Preferences.title" /></td>
                             </tr>
                             <tr class="light">
-                                <td class="valueB" width="1%"><bean:message key="editProject.Preferences.Autopilot" /></td>
+                                <td class="valueB" width="1%"><or:text key="editProject.Preferences.Autopilot" /></td>
                                 <td class="value">
-                                    <html:radio styleId="autopilotOnRadioBox" property="autopilot" value="true" /><label
-                                        for="autopilotOnRadioBox"><b><bean:message key="editProject.Preferences.Autopilot.Completion" /></b></label>
-                                    <bean:message key="editProject.Preferences.Autopilot.Completion.Desc" /><br/>
-                                    <html:radio styleId="autopilotOffRadioBox" property="autopilot" value="false" /><label
-                                        for="autopilotOffRadioBox"><b><bean:message key="editProject.Preferences.Autopilot.TurnOff" /></b></label></td>
+                                    <input type="radio" id="autopilotOnRadioBox" name="autopilot" value="true"  <or:checked name='autopilot' value='true' />/><label
+                                        for="autopilotOnRadioBox"><b><or:text key="editProject.Preferences.Autopilot.Completion" /></b></label>
+                                    <or:text key="editProject.Preferences.Autopilot.Completion.Desc" /><br/>
+                                    <input type="radio" id="autopilotOffRadioBox" name="autopilot" value="false"  <or:checked name='autopilot' value='false' />/><label
+                                        for="autopilotOffRadioBox"><b><or:text key="editProject.Preferences.Autopilot.TurnOff" /></b></label></td>
                             </tr>
                             <tr class="dark">
                                 <td class="value" colspan="2">
-                                    <html:checkbox styleId="emailNotificationsCheckBox" property="email_notifications" /><label
-                                        for="emailNotificationsCheckBox"><b><bean:message key="editProject.Preferences.SendEmails" /></b></label>
-                                    <bean:message key="editProject.Preferences.SendEmails.Desc" /><br />
-                                    <html:checkbox styleId="noRateProjectCheckBox" property="no_rate_project" /><label
-                                        for="noRateProjectCheckBox"><b><bean:message key="editProject.Preferences.DoNotRate" /></b></label><br />
-                                    <html:checkbox styleId="timelineNotificationsCheckBox" property="timeline_notifications" /><label
-                                        for="timelineNotificationsCheckBox"><b><bean:message key="editProject.Preferences.ReceiveTimeline" /></b></label><br />
-                                    <html:checkbox styleId="digitalRunCheckBox" property="digital_run_flag" /><label
-                                        for="digitalRunCheckBox"><b><bean:message key="editProject.Preferences.DigitalRun" /></b></label></td>
+                                    <input type="checkbox" id="emailNotificationsCheckBox" name="email_notifications"  <or:checked name='email_notifications' value='on|yes|true' /> /><label
+                                        for="emailNotificationsCheckBox"><b><or:text key="editProject.Preferences.SendEmails" /></b></label>
+                                    <or:text key="editProject.Preferences.SendEmails.Desc" /><br />
+                                    <input type="checkbox" id="noRateProjectCheckBox" name="no_rate_project"  <or:checked name='no_rate_project' value='on|yes|true' /> /><label
+                                        for="noRateProjectCheckBox"><b><or:text key="editProject.Preferences.DoNotRate" /></b></label><br />
+                                    <input type="checkbox" id="timelineNotificationsCheckBox" name="timeline_notifications"  <or:checked name='timeline_notifications' value='on|yes|true' /> /><label
+                                        for="timelineNotificationsCheckBox"><b><or:text key="editProject.Preferences.ReceiveTimeline" /></b></label><br />
+                                    <input type="checkbox" id="digitalRunCheckBox" name="digital_run_flag"  <or:checked name='digital_run_flag' value='on|yes|true' /> /><label
+                                        for="digitalRunCheckBox"><b><or:text key="editProject.Preferences.DigitalRun" /></b></label></td>
                             </tr>
                             <tr>
                                 <td class="lastRowTD" colspan="2"><!-- @ --></td>
@@ -1275,54 +1245,54 @@
                             <tr>
                                 <%-- If creating a new project, name this table as "References" --%>
                                 <c:if test="${newProject}">
-                                    <td class="title" colspan="2"><bean:message key="editProject.References.title" /></td>
+                                    <td class="title" colspan="2"><or:text key="editProject.References.title" /></td>
                                 </c:if>
                                 <%-- If editing the existing project, name this table as "Project Details" --%>
                                 <c:if test="${not newProject}">
-                                    <td class="title" colspan="2"><bean:message key="editProject.ProjectDetails.title" /></td>
+                                    <td class="title" colspan="2"><or:text key="editProject.ProjectDetails.title" /></td>
                                 </c:if>
                             </tr>
                             <%-- If editing the existing project, should have project name edited here --%>
                             <c:if test="${not newProject}">
                                 <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
-                                    <td class="valueB"><bean:message key="editProject.ProjectDetails.Name" /></td>
+                                    <td class="valueB"><or:text key="editProject.ProjectDetails.Name" /></td>
                                     <td class="value" nowrap="nowrap">
-                                        <html:text styleClass="inputBox" property="project_name" style="width: 350px;" />
+                                        <input type="text" class="inputBox" name="project_name" style="width: 350px;"  value="<or:fieldvalue field='project_name' />" />
                                         <span id="project_name_validation_msg" style="display:none;" class="error"></span>
                                     </td>
                                 </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
                                 <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
-                                    <td width="9%" class="valueB"><bean:message key="editProject.ProjectDetails.Type" /></td>
+                                    <td width="9%" class="valueB"><or:text key="editProject.ProjectDetails.Type" /></td>
                                     <td width="91%" class="value" nowrap="nowrap">
-                                        <html:select styleClass="inputBox" property="project_type" style="width:150px;"
-                                                onchange="onProjectTypeChange(this);">
+                                        <select class="inputBox" name="project_type" style="width:150px;"
+                                                onchange="onProjectTypeChange(this);"><c:set var="OR_FIELD_TO_SELECT" value="project_type"/>
                                             <c:forEach items="${projectTypes}" var="type">
                                                 <c:if test="${not type.generic}">
-                                                    <html:option key='ProjectType.${fn:replace(type.name, " ", "")}.plural' value="${type.id}" />
+                                                    <option  value="${type.id}"  <or:selected value="${type.id}"/>><or:text key="ProjectType.${fn:replace(type.name, ' ', '')}.plural" def="${type.name}" /></option>
                                                 </c:if>
                                             </c:forEach>
-                                        </html:select>
+                                        </select>
                                     </td>
                                 </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
                                 <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
-                                    <td class="valueB"><bean:message key="editProject.ProjectDetails.Category" /></td>
+                                    <td class="valueB"><or:text key="editProject.ProjectDetails.Category" /></td>
                                     <td class="value" nowrap="nowrap">
-                                        <html:select styleClass="inputBox" property="project_category" style="width:150px;"
-                                                onchange="onProjectCategoryChange(this);">
+                                        <select class="inputBox" name="project_category" style="width:150px;"
+                                                onchange="onProjectCategoryChange(this);"><c:set var="OR_FIELD_TO_SELECT" value="project_category"/>
                                             <c:forEach items="${projectCategories}" var="category">
                                                 <c:if test="${category.projectType.id eq projectForm.map['project_type']}">
-                                                    <html:option key='ProjectCategory.${fn:replace(category.name, " ", "")}' value="${category.id}" />
+                                                    <option  value="${category.id}"  <or:selected value="${category.id}"/>><or:text key="ProjectCategory.${fn:replace(category.name, ' ', '')}" def="${category.name}" /></option>
                                                 </c:if>
                                             </c:forEach>
-                                        </html:select>
+                                        </select>
                                     </td>
                                 </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
                                 <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
                                     <td class="value" nowrap="nowrap">
-                                        <b><bean:message key="editProject.ProjectDetails.DRPoints" /></b><br />
+                                        <b><or:text key="editProject.ProjectDetails.DRPoints" /></b><br />
                                     </td>
                                     <td class="value" nowrap="nowrap">
-                                        <html:text styleClass="inputBox" property="dr_points" style="width: 350px;" />
+                                        <input type="text" class="inputBox" name="dr_points" style="width: 350px;"  value="<or:fieldvalue field='dr_points' />" />
                                         <span id="dr_points_validation_msg" style="display:none;" class="error"></span>
                                     </td>
                                 </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
@@ -1330,34 +1300,34 @@
 
                             <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
                                 <td class="value" nowrap="nowrap">
-                                    <b><bean:message key="editProject.References.ForumId" /></b><br />
+                                    <b><or:text key="editProject.References.ForumId" /></b><br />
                                 </td>
                                 <td class="value" nowrap="nowrap">
-                                    <html:text styleClass="inputBox" property="forum_id" style="width: 350px;" />
+                                    <input type="text" class="inputBox" name="forum_id" style="width: 350px;"  value="<or:fieldvalue field='forum_id' />" />
                                     <span id="forum_id_validation_msg" style="display:none;" class="error"></span>
                                 </td>
                             </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
                             <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
                                 <td class="value" nowrap="nowrap">
-                                    <b><bean:message key="editProject.References.ComponentId" /></b><br />
+                                    <b><or:text key="editProject.References.ComponentId" /></b><br />
                                 </td>
                                 <td class="value" nowrap="nowrap">
-                                    <html:text styleClass="inputBox" property="component_id" style="width: 350px;" />
+                                    <input type="text" class="inputBox" name="component_id" style="width: 350px;"  value="<or:fieldvalue field='component_id' />" />
                                     <span id="component_id_validation_msg" style="display:none;" class="error"></span>
                                 </td>
                             </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
                             <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
                                 <td class="value" nowrap="nowrap">
-                                    <b><bean:message key="editProject.References.ExternalReferenceId" /></b><br />
+                                    <b><or:text key="editProject.References.ExternalReferenceId" /></b><br />
                                 </td>
                                 <td class="value" nowrap="nowrap">
-                                    <html:text styleClass="inputBox" property="external_reference_id" style="width: 350px;" />
+                                    <input type="text" class="inputBox" name="external_reference_id" style="width: 350px;"  value="<or:fieldvalue field='external_reference_id' />" />
                                     <span id="external_reference_id_validation_msg" style="display:none;" class="error"></span>
                                 </td>
                             </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
                             <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
                                 <td class="value" nowrap="nowrap">
-                                    <b><bean:message key="editProject.References.SVNModule" /></b><br />
+                                    <b><or:text key="editProject.References.SVNModule" /></b><br />
                                 </td>
                                 <td class="value" nowrap="nowrap">
                                     <c:out value="${projectForm.map['SVN_module']}"/>
@@ -1366,45 +1336,45 @@
                             <!-- since: Online Review Update - Add Project Dropdown v1.0 -->
 
                             <c:choose>
-	                            <c:when test="${allowBillingEdit}">
-	                                <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
-	                                    <td class="value" nowrap="nowrap">
-	                                        <b><bean:message key="editProject.ProjectDetails.BillingProject" /></b><br />
-	                                    </td>
-	                                    <td class="value" nowrap="nowrap">
-	                                        <html:select styleClass="inputBox" property="billing_project" style="width:150px;">
-	                                            <c:forEach var="billingProject" items="${billingProjects}">
-	                                                <html:option key='BillingProject.${fn:replace(billingProject.name, " ", "")}' value="${billingProject.id}">${billingProject.name}</html:option>
-	                                            </c:forEach>
-	                                        </html:select>
-	                                        <span id="billing_project_validation_msg" style="display:none;" class="error"></span>
-	                                    </td>
-	                                </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
-	                            </c:when>
-	                            <c:otherwise>
-	                            	<html:hidden property="billing_project"/>
-	                            </c:otherwise>
+                                <c:when test="${allowBillingEdit}">
+                                    <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
+                                        <td class="value" nowrap="nowrap">
+                                            <b><or:text key="editProject.ProjectDetails.BillingProject" /></b><br />
+                                        </td>
+                                        <td class="value" nowrap="nowrap">
+                                            <select class="inputBox" name="billing_project" style="width:150px;"><c:set var="OR_FIELD_TO_SELECT" value="billing_project"/>
+                                                <c:forEach var="billingProject" items="${billingProjects}">
+                                                    <option value="${billingProject.id}" <or:selected value="${billingProject.id}"/>>${billingProject.name}</option>
+                                                </c:forEach>
+                                            </select>
+                                            <span id="billing_project_validation_msg" style="display:none;" class="error"></span>
+                                        </td>
+                                    </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+                                </c:when>
+                                <c:otherwise>
+                                    <input type="hidden" name="billing_project" value="<or:fieldvalue field='billing_project' />" />
+                                </c:otherwise>
                             </c:choose><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
 
                             <c:choose>
-	                            <c:when test="${allowCockpitProjectEdit}">
-	                                <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
-	                                    <td class="value" nowrap="nowrap">
-	                                        <b><bean:message key="editProject.ProjectDetails.CockpitProject" /></b><br />
-	                                    </td>
-	                                    <td class="value" nowrap="nowrap">
-	                                        <html:select styleClass="inputBox" property="cockpit_project" style="width:150px;">
-	                                            <c:forEach var="cockpitProject" items="${cockpitProjects}">
-	                                                <html:option key='CockpitProject.${fn:replace(cockpitProject.name, " ", "")}' value="${cockpitProject.id}">${cockpitProject.name}</html:option>
-	                                            </c:forEach>
-	                                        </html:select>
-	                                        <span id="cockpit_project_validation_msg" style="display:none;" class="error"></span>
-	                                    </td>
-	                                </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
-	                            </c:when>
-	                            <c:otherwise>
-	                            	<html:hidden property="cockpit_project"/>
-	                            </c:otherwise>
+                                <c:when test="${allowCockpitProjectEdit}">
+                                    <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
+                                        <td class="value" nowrap="nowrap">
+                                            <b><or:text key="editProject.ProjectDetails.CockpitProject" /></b><br />
+                                        </td>
+                                        <td class="value" nowrap="nowrap">
+                                            <select class="inputBox" name="cockpit_project" style="width:150px;"><c:set var="OR_FIELD_TO_SELECT" value="cockpit_project"/>
+                                                <c:forEach var="cockpitProject" items="${cockpitProjects}">
+                                                    <option value="${cockpitProject.id}" <or:selected value="${cockpitProject.id}"/>>${cockpitProject.name}</option>
+                                                </c:forEach>
+                                            </select>
+                                            <span id="cockpit_project_validation_msg" style="display:none;" class="error"></span>
+                                        </td>
+                                    </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+                                </c:when>
+                                <c:otherwise>
+                                    <input type="hidden" name="cockpit_project" value="<or:fieldvalue field='cockpit_project' />" />
+                                </c:otherwise>
                             </c:choose><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
 
                             <tr>
@@ -1419,12 +1389,12 @@
 
                         <table class="scorecard" cellpadding="0" cellspacing="0" width="100%"style="border-collapse: collapse;">
                             <tr>
-                                <td class="title"><bean:message key="editProject.Notes.title" /></td>
+                                <td class="title"><or:text key="editProject.Notes.title" /></td>
                             </tr>
                             <tr class="light">
                                 <td class="value">
-                                    <span class="error"><html:errors property="notes" prefix="" suffix="" /></span><br />
-                                    <html:textarea styleClass="inputTextBox" property="notes" />
+                                    <span class="error"><s:fielderror escape="false"><s:param>notes</s:param></s:fielderror></span><br />
+                                    <textarea class="inputTextBox" name="notes" ><or:fieldvalue field="notes" /></textarea>
                                     <div id="notes_validation_msg" style="display:none;" class="error"></div>
                                 </td>
                             </tr>
@@ -1444,20 +1414,20 @@
                         <c:if test="${not newProject}">
                             <table class="scorecard" id="status">
                                 <tr>
-                                    <td class="title"><bean:message key="editProject.Status.title" /></td>
+                                    <td class="title"><or:text key="editProject.Status.title" /></td>
                                 </tr>
                                 <tr class="light">
                                     <td class="value">
-                                        <p align="left"><b>&#160;<bean:message key="editProject.Status.CurrentStatus" />&#160; </b>
-                                          <html:select styleClass="inputBox" property="status">
+                                        <p align="left"><b>&#160;<or:text key="editProject.Status.CurrentStatus" />&#160; </b>
+                                          <select class="inputBox" name="status"><c:set var="OR_FIELD_TO_SELECT" value="status"/>
                                             <c:forEach var="status" items="${projectStatuses}">
-                                                <html:option key='ProjectStatus.${fn:replace(status.name, " ", "")}' value="${status.id}" />
+                                                <option  value="${status.id}"  <or:selected value="${status.id}"/>><or:text key="ProjectStatus.${fn:replace(status.name, ' ', '')}" def="${status.name}" /></option>
                                             </c:forEach>
-                                          </html:select><br />
-                                          <span class="errorText"><html:errors property="status" prefix="" suffix="" /></span>
+                                          </select><br />
+                                          <span class="errorText"><s:fielderror escape="false"><s:param>status</s:param></s:fielderror></span>
                                         </p>
-                                        <bean:message key="editProject.Status.Explanation.description" /><br />
-                                        <html:textarea styleClass="inputTextBox" property="status_explanation" />
+                                        <or:text key="editProject.Status.Explanation.description" /><br />
+                                        <textarea class="inputTextBox" name="status_explanation" ><or:fieldvalue field="status_explanation" /></textarea>
                                     </td>
                                 </tr>
                                 <tr>
@@ -1467,13 +1437,13 @@
 
                             <table class="scorecard" id="Explanation">
                                 <tr>
-                                    <td class="title"><bean:message key="editProject.Explanation.title" /></td>
+                                    <td class="title"><or:text key="editProject.Explanation.title" /></td>
                                 </tr>
                                 <tr class="light">
                                     <td class="Value">
-                                        <bean:message key="editProject.Explanation.description" /> &#160;
-                                        <span id="explanation_validation_msg" class="error"><html:errors property="explanation" prefix="" suffix="" /></span><br />
-                                        <html:textarea styleClass="inputTextBox" property="explanation" />
+                                        <or:text key="editProject.Explanation.description" /> &#160;
+                                        <span id="explanation_validation_msg" class="error"><s:fielderror escape="false"><s:param>explanation</s:param></s:fielderror></span><br />
+                                        <textarea class="inputTextBox" name="explanation" ><or:fieldvalue field="explanation" /></textarea>
                                     </td>
                                 </tr>
                                 <tr>
@@ -1484,15 +1454,15 @@
 
                         <div align="right">
                             <c:if test="${newProject}">
-                                <html:image property="saveProjectBtn" srcKey="btnSave.img" altKey="btnSave.alt" border="0"/>&#160;
-                                <html:link page="/actions/ListProjects.do?method=listProjects"><html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
+                                <input type="image"  src="<or:text key='btnSave.img' />" alt="<or:text key='btnSave.alt' />" border="0" />&#160;
+                                <a href="<or:url value='/actions/ListProjects?scope=my' />"><img src="<or:text key='btnCancel.img' />" alt="<or:text key='btnCancel.alt' />" border="0" /></a>
                             </c:if>
                             <c:if test="${not newProject}">
-                                <html:image property="saveProjectChangesBtn" srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
-                                <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
+                                <input type="image"  src="<or:text key='btnSaveChanges.img' />" alt="<or:text key='btnSaveChanges.alt' />" border="0"/>&#160;
+                                <a href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />"><img src="<or:text key='btnCancel.img' />" alt="<or:text key='btnCancel.alt' />" border="0"/></a>
                             </c:if>
                         </div>
-                    </html:form>
+                    </s:form>
                 </div>
             </div>
         <jsp:include page="/includes/inc_footer.jsp" />
@@ -1508,4 +1478,4 @@
     disableSelect("checkpoint_prizes_num[", false, canEditCheckpointPrize);
     disableSelect("checkpoint_prizes_num_dump[", false, canEditCheckpointPrize);
 </script>
-</html:html>
+</html>

@@ -1,33 +1,40 @@
+<%--
+  - Author: TCSASSEMBLER
+  - Version: 2.0
+  - Copyright (C) 2014 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page displays the credits page.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="/tags/struts-html" %>
-<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ page import="com.topcoder.shared.util.ApplicationServer"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html:html xhtml="true">
+<html>
 
 <head>
-    <title><bean:message key="global.title.level2.noDash"
+    <title><or:text key="global.title.level2.noDash"
         arg0='${orfn:getMessage(pageContext, "OnlineReviewApp.title")}'
         arg1='${orfn:getMessage(pageContext, "credits.title")}' /></title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
     <!-- TopCoder CSS -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/style.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/coders.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/stats.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/tcStyles.css' />" />
+    <link type="text/css" rel="stylesheet" href="/css/style.css" />
+    <link type="text/css" rel="stylesheet" href="/css/coders.css" />
+    <link type="text/css" rel="stylesheet" href="/css/stats.css" />
+    <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
 
     <!-- CSS and JS from wireframes -->
-    <script language="javascript" type="text/javascript" src="<html:rewrite href='/js/or/expand_collapse.js' />"><!-- @ --></script>
-    <link rel="stylesheet" type="text/css" href="<html:rewrite href='/css/or/stylesheet.css' />" />
+    <script language="javascript" type="text/javascript" src="/js/or/expand_collapse.js"><!-- @ --></script>
+    <link rel="stylesheet" type="text/css" href="/css/or/stylesheet.css" />
 
     <!-- CSS and JS by Petar -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
+    <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
+    <script language="JavaScript" type="text/javascript" src="/js/or/rollovers2.js"><!-- @ --></script>
 
 <style type="text/css">
 <!--
@@ -89,13 +96,13 @@
 
                 <table class="stat" width="100%" cellpadding="0" cellspacing="0">
                     <tr>
-                        <td class="creditsHeader" colspan="3"><bean:message key="credits.SubTitle" /></td>
+                        <td class="creditsHeader" colspan="3"><or:text key="credits.SubTitle" /></td>
                     </tr>
                     <tr style="background-image:url(/i/or/credits_bk.gif);background-repeat:repeat-x;">
                         <td valign="top">
                             <table width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
-                                    <td class="creditsTitle"><br /><bean:message key="credits.QA" /></td>
+                                    <td class="creditsTitle"><br /><or:text key="credits.QA" /></td>
                                 </tr>
                                 <tr>
                                     <td class="creditsSub">
@@ -110,7 +117,7 @@
                         <td valign="top">
                             <table width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
-                                    <td class="creditsTitle"><br /><bean:message key="credits.Architect" /></td>
+                                    <td class="creditsTitle"><br /><or:text key="credits.Architect" /></td>
                                 </tr>
                                 <tr>
                                     <td class="creditsSub"><tc-webtag:handle coderId="286907" /><%-- WishingBone --%></td>
@@ -120,7 +127,7 @@
                         <td valign="top">
                             <table width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
-                                    <td class="creditsTitle" colspan="4"><br /><bean:message key="credits.Assemblers" /></td>
+                                    <td class="creditsTitle" colspan="4"><br /><or:text key="credits.Assemblers" /></td>
                                 </tr>
                                 <tr>
                                     <td class="creditsSub">
@@ -137,10 +144,10 @@
                         <td valign="top" colspan="3">
                             <table width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
-                                    <td class="creditsTitle" colspan="5"><br /><br /><bean:message key="credits.Des_Dev_Review" /></td>
+                                    <td class="creditsTitle" colspan="5"><br /><br /><or:text key="credits.Des_Dev_Review" /></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="5" class="creditsText" style="padding:5px 15px 16px 15px;"><bean:message key="credits.MebersExplanatory" /></td>
+                                    <td colspan="5" class="creditsText" style="padding:5px 15px 16px 15px;"><or:text key="credits.MebersExplanatory" /></td>
                                 </tr>
                                 <tr>
                                     <td class="creditsName" style="padding-left:15px;"><tc-webtag:handle coderId="251989" /><%-- AdamSelene --%></td>
@@ -351,10 +358,10 @@
                         <td valign="top" colspan="3" style="border-bottom: 1px solid #999999;">
                             <table width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
-                                    <td class="creditsTitle" colspan="3"><br /><br /><bean:message key="credits.Components" /></td>
+                                    <td class="creditsTitle" colspan="3"><br /><br /><or:text key="credits.Components" /></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="3" class="creditsText" style="padding:5px 15px 16px 15px;"><bean:message key="credits.ComponentsExplanatory" /></td>
+                                    <td colspan="3" class="creditsText" style="padding:5px 15px 16px 15px;"><or:text key="credits.ComponentsExplanatory" /></td>
                                 </tr>
                                 <tr>
                                     <td class="creditsName2" style="padding-left:15px;">Auto Screening Management 1.0</td>
@@ -482,4 +489,4 @@
 </div>
 
 </body>
-</html:html>
+</html>

@@ -3,7 +3,7 @@ var float_test = /^\d*\.{0,1}\d*$/;
 
 function trim(str)
 {
-	return str.replace(/^\s+|\s+$/g, '');
+    return str.replace(/^\s+|\s+$/g, '');
 };
 
 function isAllDigits(argvalue) {
@@ -35,8 +35,8 @@ function isInteger(argvalue) {
     
     var iValue = parseInt(argvalue, 10);
     if (isNaN(iValue) || !(iValue >= -2147483648 && iValue <= 2147483647)) {
-	    return false;
-	}
+        return false;
+    }
 
     return true;
 }
@@ -50,20 +50,20 @@ function isDateString(str) {
     // for mm.dd.yy
     expression = /^(\d{1,2})\.(\d{1,2})\.((\d{2})|(\d{4}))$/;
     if (result = expression.exec(str)) {
-    	if (result[3].length == 4) {
-    		year = parseInt(result[3], 10);
-    	} else {
-    		year = 2000 + parseInt(result[3], 10);
-    	}
-    	month = parseInt(result[1], 10) - 1;
-    	day = parseInt(result[2], 10);
-    	
-    	var d = new Date();
-		d.setFullYear(year, month, day);
-    	return d.getFullYear() == year && d.getMonth() == month && d.getDate() == day;
+        if (result[3].length == 4) {
+            year = parseInt(result[3], 10);
+        } else {
+            year = 2000 + parseInt(result[3], 10);
+        }
+        month = parseInt(result[1], 10) - 1;
+        day = parseInt(result[2], 10);
+        
+        var d = new Date();
+        d.setFullYear(year, month, day);
+        return d.getFullYear() == year && d.getMonth() == month && d.getDate() == day;
     }
     
-	return false;
+    return false;
 }
 
 function isTimeString(str) {

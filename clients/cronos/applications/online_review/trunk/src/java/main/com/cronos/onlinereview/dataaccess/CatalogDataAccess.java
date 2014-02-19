@@ -1,7 +1,19 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.dataaccess;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Map;
+
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 import com.topcoder.dde.catalog.ComponentVersionInfo;
 import com.topcoder.dde.catalog.Document;
@@ -11,23 +23,11 @@ import com.topcoder.util.config.ConfigManagerException;
 import com.topcoder.util.idgenerator.IdGenerator;
 import com.topcoder.util.idgenerator.sql.DB;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Map;
-
 /**
  * <p>A simple DAO for component catalog backed up by Query Tool.</p>
  *
- * @author isv
- * @version 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class CatalogDataAccess extends BaseDataAccess {
 

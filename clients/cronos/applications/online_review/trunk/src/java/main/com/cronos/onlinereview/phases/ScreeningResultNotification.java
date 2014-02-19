@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2011 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -21,7 +21,6 @@ import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.management.review.ReviewManager;
-import com.topcoder.management.review.data.Comment;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
@@ -45,9 +44,13 @@ import com.topcoder.util.file.templatesource.FileTemplateSource;
 
 /**
  * This class is used to send email notification for checkpoint screening result or screening result.
- * 
- * @author TCSASSEMBER
- * @version 1.0 (Online Review Replatforming Release 2)
+ *
+ * <p>
+ * Thread-safety: This class is thread-safe as it does not contain any mutable inner state.
+ * </p>
+ *
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class ScreeningResultNotification {
 

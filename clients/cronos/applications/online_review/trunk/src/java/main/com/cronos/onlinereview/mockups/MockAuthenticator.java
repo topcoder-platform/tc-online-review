@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.mockups;
 
@@ -21,9 +21,8 @@ import com.topcoder.util.errorhandling.BaseException;
  * It is implemented for testing purpose.
  * </p>
  *
- * @author George1
- * @author real_vg
- * @version 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class MockAuthenticator extends AbstractAuthenticator {
 

@@ -11,16 +11,11 @@ import com.topcoder.project.phases.Phase;
  * <code>Online Review</code> application.</p>
  *
  * <p>
- * Version 1.1 (Online Review - Project Payments Integration Part 3 v1.0) Change notes:
- *   <ol>
- *     <li>Updated {@link #perform(Phase, String)} method to call PaymentsHelper.processAutomaticPayments to process
- *     the project payments.</li>
- *     <li>Removed <code>prHelper</code> field.</li>
- *   </ol>
+ * Thread-safety: This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
- * @author flexme, flexme
- * @version 1.1 (BUGR-4778)
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class PRCheckpointReviewPhaseHandler extends CheckpointReviewPhaseHandler {
     /**

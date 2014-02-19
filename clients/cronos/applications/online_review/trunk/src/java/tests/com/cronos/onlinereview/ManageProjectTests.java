@@ -1,21 +1,13 @@
 /*
- * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010-2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
 /**
  * Online review functional tests 1, manage the project.
  *
- * <p>
- *     Version 1.1 (Online Review - Project Payments Integration Part 1 v1.0) change notes:
- *     <ol>
- *         <li>Updated tests for assembly Project Payments Integration Part 1 v1.0.</li>
- *     </ol>
- * </p>
- *
- * @author TCSDEVELOPER
- * @version 1.2
- * @since 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class ManageProjectTests extends ProjectTests {
 
@@ -49,8 +41,7 @@ public class ManageProjectTests extends ProjectTests {
         browser.click("//img[@alt='Cancel']");
         browser.waitForPageToLoad(TIMEOUT);
         // check if the edit project link works
-        browser.click("//img[@alt='Edit Project']");
-        browser.waitForPageToLoad(TIMEOUT);
+        TestHelper.clickEditProjectLink(browser);
         assertNoErrorsOccurred();
     }
 
@@ -60,15 +51,15 @@ public class ManageProjectTests extends ProjectTests {
      * @throws Exception if any error occurs
      */
     public void testExtensionOfRegistrationPhase() throws Exception {
-    	// login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        // login the user first
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
         String status = browser.getText("//div[@id='mainMiddleContent']/div/table[3]/tbody/tr[2]/td[2]/div/table/tbody");
         assertTrue("registration period is 48 hrs at first", status.contains("Registration 48 h"));
         browser.click("//img[@alt='Manage Project']");
         browser.waitForPageToLoad(TIMEOUT);
         browser.type("registration_phase_extension", "2");
-        browser.click("//input[@name='savePMCChangesBtn']");
+        browser.click("//input[@alt='Save Changes']");
         browser.waitForPageToLoad(TIMEOUT);
         status = browser.getText("//div[@id='mainMiddleContent']/div/table[3]/tbody/tr[2]/td[2]/div/table/tbody");
         assertTrue("registration period is 96 hrs after extending", status.contains("Registration 96 h"));
@@ -79,35 +70,32 @@ public class ManageProjectTests extends ProjectTests {
      * Test Case Number: FTC16 RS3.1 Verify Manager can extend Submission phase.
      *
      * @throws Exception if any error occurs
-     * @version 1.1
      */
     public void testExtensionOfSubmissionPhase() throws Exception {
-    	// login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        // login the user first
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
         String status = browser.getText("//div[@id='mainMiddleContent']/div/table[3]/tbody/tr[2]/td[2]/div/table/tbody");
         assertTrue("submission period is 168 hrs at first", status.contains("Submission 168 hrs"));
         browser.click("//img[@alt='Manage Project']");
         browser.waitForPageToLoad(TIMEOUT);
         browser.type("submission_phase_extension", "2");
-        browser.click("//input[@name='savePMCChangesBtn']");
+        browser.click("//input[@alt='Save Changes']");
         browser.waitForPageToLoad(TIMEOUT);
         status = browser.getText("//div[@id='mainMiddleContent']/div/table[3]/tbody/tr[2]/td[2]/div/table/tbody");
         assertTrue("submission period is 216 hrs after extending", status.contains("Submission 216 hrs"));
         assertNoErrorsOccurred();
     }
 
-	/**
+    /**
      * Test Case Number: FTC17 RS3.2 Verify Manager can add resources to the project (Designers).
      *
      * @throws Exception if any error occurs
-     * @version 1.1
-     * @since 1.0
      */
     public void testManagementConsoleAddDesigner() throws Exception {
-    	openManagePage();
+        openManagePage();
         browser.type("resource_handles[0]", "super");
-        browser.click("//input[@name='savePMCChangesBtn']");
+        browser.click("//input[@alt='Save Changes']");
         browser.waitForPageToLoad(TIMEOUT);
         assertTrue("Resources should be shown", browser.isTextPresent("Resources"));
         String role = browser.getText("//div[@id='mainMiddleContent']/div/table[7]/tbody/tr[3]/td[1]");
@@ -117,16 +105,15 @@ public class ManageProjectTests extends ProjectTests {
         assertNoErrorsOccurred();
     }
 
-	/**
+    /**
      * Test Case Number: FTC18 RS3.2 Verify Manager can add resources to the project (Observers).
      *
      * @throws Exception if any error occurs
-     * @version 1.1
      */
     public void testManagementConsoleAddObserver() throws Exception {
-    	openManagePage();
+        openManagePage();
         browser.type("resource_handles[1]", "super");
-        browser.click("//input[@name='savePMCChangesBtn']");
+        browser.click("//input[@alt='Save Changes']");
         browser.waitForPageToLoad(TIMEOUT);
         assertTrue("Resources should be shown", browser.isTextPresent("Resources"));
         String role = browser.getText("//div[@id='mainMiddleContent']/div/table[7]/tbody/tr[3]/td[1]");
@@ -136,16 +123,15 @@ public class ManageProjectTests extends ProjectTests {
         assertNoErrorsOccurred();
     }
 
-	/**
+    /**
      * Test Case Number: FTC19 RS3.2 Verify Manager can add resources to the project (Copilots).
      *
      * @throws Exception if any error occurs
-     * @version 1.1
      */
     public void testManagementConsoleAddCopilot() throws Exception {
-    	openManagePage();
+        openManagePage();
         browser.type("resource_handles[2]", "super");
-        browser.click("//input[@name='savePMCChangesBtn']");
+        browser.click("//input[@alt='Save Changes']");
         browser.waitForPageToLoad(TIMEOUT);
         assertTrue("Resources should be shown", browser.isTextPresent("Resources"));
         String role = browser.getText("//div[@id='mainMiddleContent']/div/table[7]/tbody/tr[3]/td[1]");
@@ -155,16 +141,15 @@ public class ManageProjectTests extends ProjectTests {
         assertNoErrorsOccurred();
     }
 
-	/**
+    /**
      * Test Case Number: FTC20 RS3.2 Verify Manager can add resources to the project (Client Managers).
      *
      * @throws Exception if any error occurs
-     * @version 1.1
      */
     public void testManagementConsoleAddClientManager() throws Exception {
-    	openManagePage();
+        openManagePage();
         browser.type("resource_handles[3]", "super");
-        browser.click("//input[@name='savePMCChangesBtn']");
+        browser.click("//input[@alt='Save Changes']");
         browser.waitForPageToLoad(TIMEOUT);
         assertTrue("Resources should be shown", browser.isTextPresent("Resources"));
         String role = browser.getText("//div[@id='mainMiddleContent']/div/table[7]/tbody/tr[3]/td[1]");
@@ -178,14 +163,13 @@ public class ManageProjectTests extends ProjectTests {
      * Test Case Number: FTC21 RS3.3 Verify Manager can generate design distribution.
      *
      * @throws Exception if any error occurs
-     * @version 1.1
      */
     public void testGenerateDesignDistribution() throws Exception {
-    	openManagePage();
+        openManagePage();
         browser.click("link=Distributions");
         browser.type("distribution_package_name", "mypackage");
-		browser.type("distribution_rs", TestHelper.getRSLocation());
-		browser.click("//table[@id='distribution_tbl']/tbody/tr[9]/td/input");
+        browser.type("distribution_rs", TestHelper.getRSLocation());
+        browser.click("//table[@id='distribution_tbl']/tbody/tr[9]/td/input");
         Thread.sleep(new Long(TIMEOUT));
         assertNoErrorsOccurred();
     }
@@ -194,17 +178,16 @@ public class ManageProjectTests extends ProjectTests {
      * Test Case Number: FTC22 RS3.3 Verify Manager can generate design distribution with additional documents.
      *
      * @throws Exception if any error occurs
-     * @version 1.1
      */
     public void testGenerateAdditionalDocument() throws Exception {
-    	openManagePage();
+        openManagePage();
         browser.click("link=Distributions");
         browser.type("distribution_package_name", "mypackage");
-		browser.type("distribution_rs", TestHelper.getRSLocation());
-		browser.type("distribution_additional1", TestHelper.getDocument1());
-		browser.type("distribution_additional2", TestHelper.getDocument2());
-		browser.type("distribution_additional3", TestHelper.getDocument3());
-		browser.click("//table[@id='distribution_tbl']/tbody/tr[9]/td/input");
+        browser.type("distribution_rs", TestHelper.getRSLocation());
+        browser.type("distribution_additional1", TestHelper.getDocument1());
+        browser.type("distribution_additional2", TestHelper.getDocument2());
+        browser.type("distribution_additional3", TestHelper.getDocument3());
+        browser.click("//table[@id='distribution_tbl']/tbody/tr[9]/td/input");
         Thread.sleep(new Long(TIMEOUT));
         assertNoErrorsOccurred();
     }
@@ -213,12 +196,11 @@ public class ManageProjectTests extends ProjectTests {
      * Test Case Number: FTC23 RS3.3 Verify Manager can upload design distribution.
      *
      * @throws Exception if any error occurs
-     * @version 1.1
      */
     public void testUploadDesignDistribution() throws Exception {
-    	openManagePage();
+        openManagePage();
         browser.click("link=Distributions");
-        browser.type("distribution_file", TestHelper.getDistributionLocation());
+        browser.type("name=distribution_file", TestHelper.getDistributionLocation());
         browser.click("//table[@id='upload_distribution_tbl']/tbody/tr[2]/td[2]/input[2]");
         Thread.sleep(new Long(TIMEOUT));
         assertNoErrorsOccurred();
@@ -228,11 +210,9 @@ public class ManageProjectTests extends ProjectTests {
      * Test Case Number: FTC24 RS3.4 Verify Manager can upload development distribution.
      *
      * @throws Exception if any error occurs
-     * @version 1.1
-     * @since 1.0
      */
     public void testUploadDevelopmentDistribution() throws Exception {
-    	openManagePage();
+        openManagePage();
         browser.click("link=Distributions");
         browser.type("distribution_file", TestHelper.getDistributionLocation());
         browser.click("//table[@id='upload_distribution_tbl']/tbody/tr[2]/td[2]/input[2]");
@@ -245,9 +225,9 @@ public class ManageProjectTests extends ProjectTests {
      * @throws Exception if error
      */
     private void openManagePage() throws Exception {
-    	// login the user first
-    	TestHelper.loginUser(browser);
-    	browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
+        // login the user first
+        TestHelper.loginUser(browser);
+        browser.open(TestHelper.getBaseURL() + TestHelper.getProjectURL() + projectId);
         browser.click("//img[@alt='Manage Project']");
         browser.waitForPageToLoad(TIMEOUT);
     }

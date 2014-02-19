@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2009 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.model;
 
@@ -13,8 +13,12 @@ import java.io.Serializable;
  * invocation interface). In that class all other code except the one which is retrieving the client projects would
  * remain unchanged.
  * </p>
- * 
- * @author ywu
+ * <p>
+ * Thread safety: This class is not thread safe.
+ * </p>
+ *
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class CockpitProject implements Serializable {
     /**
@@ -43,7 +47,7 @@ public class CockpitProject implements Serializable {
      * <p>
      * Gets the id of the cockpit project.
      * </p>
-     * 
+     *
      * @return the id of the cockpit project.
      */
     public long getId() {
@@ -54,7 +58,7 @@ public class CockpitProject implements Serializable {
      * <p>
      * Sets the id of the cockpit project.
      * </p>
-     * 
+     *
      * @param id
      *            the id of the cockpit project.
      */
@@ -66,7 +70,7 @@ public class CockpitProject implements Serializable {
      * <p>
      * Gets the name of the cockpit project.
      * </p>
-     * 
+     *
      * @return the name of the cockpit project.
      */
     public String getName() {
@@ -77,7 +81,7 @@ public class CockpitProject implements Serializable {
      * <p>
      * Sets the name of the cockpit project.
      * </p>
-     * 
+     *
      * @param name
      *            the name of the cockpit project.
      */

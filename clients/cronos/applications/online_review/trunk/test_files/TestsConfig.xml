@@ -2,11 +2,11 @@
 <CMConfig>
     <Config name="com.cronos.onlinereview">
         <Property name="domain">
-    	    <Value>@tests.seleniumdomain@</Value>
+            <Value>@tests.seleniumdomain@</Value>
         </Property>
-	      <Property name="browser">
-	    	  <Value>@tests.seleniumbrowser@</Value><!-- you can use *iexplore here for testing using IE-->
-	      </Property>
+          <Property name="browser">
+              <Value>@tests.seleniumbrowser@</Value><!-- you can use *iexplore here for testing using IE-->
+          </Property>
         <Property name="port"><!-- The selenium listening port. -->
             <Value>@tests.seleniumport@</Value>
         </Property>
@@ -14,13 +14,13 @@
             <Value>@tests.seleniumbrowser.stopper@</Value>
         </Property>
         <Property name="project_link">
-          <Value>/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
+          <Value>/actions/ViewProjectDetails?pid=</Value>
         </Property>
         <Property name="review_link">
-          <Value>/actions/ViewReview.do?method=viewReview&amp;rid=</Value>
+          <Value>/actions/ViewReview?rid=</Value>
         </Property>
         <Property name="unregister_link">
-          <Value>/actions/Unregister.do?method=unregister&amp;pid=</Value>
+          <Value>/actions/Unregister?pid=</Value>
         </Property>
         <Property name="base_url">
             <Value>@tests.baseurl@</Value>

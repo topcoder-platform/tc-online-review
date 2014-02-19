@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -7,10 +7,10 @@ import java.sql.Connection;
 
 
 /**
- * Online review functional tests 4, Competitor can not Unregister from the Contest after registration phase ending
+ * Online review functional tests 4, Competitor can not Unregister from the Contest after registration phase ending.
  *
- * @author TCSDEVELOPER
- * @version 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class UnregisterProjectTests extends ProjectTests {
 
@@ -20,7 +20,7 @@ public class UnregisterProjectTests extends ProjectTests {
      * @throws Exception if any error occurs.
      */
     public void setUp() throws Exception {//need to merge with SubmissionUploadTests.setUp()
-    	super.setUp();
+        super.setUp();
         Connection con = TestHelper.getConnection();
         try {
 
@@ -44,11 +44,11 @@ public class UnregisterProjectTests extends ProjectTests {
      * @throws Exception if any error occurs.
      */
     public void tearDown() throws Exception {
-    	TestHelper.reloginAndDeleteProject(browser, projectId);
+        TestHelper.reloginAndDeleteProject(browser, projectId);
         projectId = -1;
         super.tearDown(); 
     }
-	
+    
     /**
      * Test Case Number: FTC114 RS7.3 Verify Competitor can not Unregister from the Contest after registration phase ending
      *

@@ -1,8 +1,7 @@
 <%--
-  - Author: isv
-  - Version: 1.0
-  - Since: Online Review Late Deliverables Edit Assembly 1.0
-  - Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
+  - Author: TCSASSEMBLER
+  - Version: 2.0
+  - Copyright (C) 2011 - 2014 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays form for editing a single selected late deliverable
 --%>
@@ -11,8 +10,8 @@
 <%@ page import="java.util.Date" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="/tags/struts-html" %>
-<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -21,29 +20,29 @@
 <fmt:formatDate value="${now}" pattern="z" var="currentTimezoneLabel"/>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html:html xhtml="true">
+<html>
 <head>
     <title>Online Review - Late Deliverables</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
     <!-- TopCoder CSS -->
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/style.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/coders.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/tcStyles.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/stats.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
-    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/phasetabs.css' />" />
+    <link type="text/css" rel="stylesheet" href="/css/style.css" />
+    <link type="text/css" rel="stylesheet" href="/css/coders.css" />
+    <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
+    <link type="text/css" rel="stylesheet" href="/css/stats.css" />
+    <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
+    <link type="text/css" rel="stylesheet" href="/css/or/phasetabs.css" />
 
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/dojo.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/util.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_util.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/late_deliverable_search.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/expand_collapse.js' />"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/rollovers2.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/dojo.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/util.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/validation_util.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/late_deliverable_search.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/expand_collapse.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript">
-        var ajaxSupportUrl = "<html:rewrite page='/ajaxSupport' />";
+        var ajaxSupportUrl = "<or:url value='/ajaxSupport' />";
     </script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/ajax1.js' />"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/ajax1.js"><!-- @ --></script>
 </head>
 <body>
 <div align="center">
@@ -54,18 +53,17 @@
 
         <div id="mainMiddleContent">
             <div style="position: relative; width: 100%;">
-                <html:form action="/actions/SaveLateDeliverable" 
+                <s:form action="SaveLateDeliverable" 
                            onsubmit="return submitEditLateDeliverableForm(this);" 
-                           method="post" styleId="EditLateDeliverableForm">
-                    <html:hidden property="method" value="saveLateDeliverable" />
-                    <html:hidden property="late_deliverable_id" />
+                           method="post" namespace="/actions">
+                    <input type="hidden" name="late_deliverable_id"  value="<or:fieldvalue field='late_deliverable_id' />" />
                     
                         <div id="globalMesssage"
                              style="display:${orfn:isErrorsPresent(pageContext.request) ? 'block' : 'none'}">
                             <div style="color:red;">
-                                <bean:message key="viewLateDeliverables.ValidationFailed" />
+                                <or:text key="viewLateDeliverables.ValidationFailed" />
                             </div>
-                            <html:errors property="org.apache.struts.action.GLOBAL_MESSAGE" />
+                            <s:actionerror escape="false" />
                         </div>
                     
                     <c:set var="lateDeliverable" value="${requestScope.lateDeliverable}"/>
@@ -76,37 +74,37 @@
                            class="scorecard">
                         <tbody>
                         <tr>
-                            <td colspan="2" class="title"><bean:message key="editLateDeliverable.title"/></td>
+                            <td colspan="2" class="title"><or:text key="editLateDeliverable.title"/></td>
                         </tr>
 
                         <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
-                            <td class="valueB"><bean:message key="editLateDeliverable.LateDeliverableId.label"/></td>
+                            <td class="valueB"><or:text key="editLateDeliverable.LateDeliverableId.label"/></td>
                             <td width="100%" nowrap="nowrap" class="value"><c:out value="${lateDeliverable.id}"/></td>
                         </tr>
                         <c:set var="rowCount" value="${rowCount + 1}" />
 
                         <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
-                            <td class="valueB"><bean:message key="editLateDeliverable.LateDeliverableType.label"/></td>
+                            <td class="valueB"><or:text key="editLateDeliverable.LateDeliverableType.label"/></td>
                             <td width="100%" nowrap="nowrap" class="value"><c:out value="${lateDeliverable.type.name}"/></td>
                         </tr>
                         <c:set var="rowCount" value="${rowCount + 1}" />
 
                         <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
                             <td width="9%" class="valueB">
-                                <bean:message key="editLateDeliverable.ProjectName.label"/>
+                                <or:text key="editLateDeliverable.ProjectName.label"/>
                             </td>
                             <td width="91%" nowrap="nowrap" class="value">
-                                <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=${project.id}">
+                                <a href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />">
                                     <strong><c:out value="${project.allProperties['Project Name']}"/></strong> 
-                                    <bean:message key="global.version"/> 
+                                    <or:text key="global.version"/> 
                                     <c:out value="${project.allProperties['Project Version']}"/>
-                                </html:link>
+                                </a>
                             </td>
                         </tr>
                         <c:set var="rowCount" value="${rowCount + 1}" />
 
                         <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
-                            <td class="valueB"><bean:message key="editLateDeliverable.DeliverableType.label"/></td>
+                            <td class="valueB"><or:text key="editLateDeliverable.DeliverableType.label"/></td>
                             <td nowrap="nowrap" class="value">
                                 <c:out value="${orfn:getDeliverableName(pageContext.request, lateDeliverable.deliverableId)}"/>
                             </td>
@@ -115,7 +113,7 @@
 
                         <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
                             <td nowrap="nowrap" class="valueB">
-                                <bean:message key="editLateDeliverable.LateMember.label"/>
+                                <or:text key="editLateDeliverable.LateMember.label"/>
                             </td>
                             <td nowrap="nowrap" class="value">
                                 <tc-webtag:handle coderId="${orfn:getUserId(lateDeliverable.resourceId)}" 
@@ -127,7 +125,7 @@
                         <c:if test='${lateDeliverable.deadline ne null}'>
                             <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
                                 <td nowrap="nowrap" class="valueB">
-                                    <bean:message key="editLateDeliverable.Deadline.label"/>
+                                    <or:text key="editLateDeliverable.Deadline.label"/>
                                 </td>
                                 <td nowrap="nowrap" class="value">
                                     <c:choose>
@@ -147,7 +145,7 @@
                         <c:if test='${lateDeliverable.delay ne null}'>
                             <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
                                 <td nowrap="nowrap" class="valueB">
-                                    <bean:message key="editLateDeliverable.Delay.label"/>
+                                    <or:text key="editLateDeliverable.Delay.label"/>
                                 </td>
                                 <td nowrap="nowrap" class="value">
                                     <c:out value="${orfn:displayDelay(lateDeliverable.delay)}"/>
@@ -158,22 +156,22 @@
 
                         <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
                             <td nowrap="nowrap" class="valueB">
-                                <bean:message key="editLateDeliverable.Justified.label"/>
+                                <or:text key="editLateDeliverable.Justified.label"/>
                             </td>
                             <td nowrap="nowrap" class="value">
                                 <c:choose>
                                     <c:when test="${requestScope.isJustifiedEditable}">
-                                        <html:select styleClass="inputBox" property="justified">
-                                            <html:option value="false"><bean:message key="global.answer.No"/></html:option>
-                                            <html:option value="true"><bean:message key="global.answer.Yes"/></html:option>
-                                        </html:select>
+                                        <select class="inputBox" name="justified"><c:set var="OR_FIELD_TO_SELECT" value="justified"/>
+                                            <option value="false" <or:selected value="false"/>><or:text key="global.answer.No"/></option>
+                                            <option value="true" <or:selected value="true"/>><or:text key="global.answer.Yes"/></option>
+                                        </select>
                                     </c:when>
                                     <c:otherwise>
                                         <c:choose>
                                             <c:when test="${lateDeliverable.forgiven}">
-                                                <bean:message key="global.answer.Yes"/>
+                                                <or:text key="global.answer.Yes"/>
                                             </c:when>
-                                            <c:otherwise><bean:message key="global.answer.No"/></c:otherwise>
+                                            <c:otherwise><or:text key="global.answer.No"/></c:otherwise>
                                         </c:choose>
                                     </c:otherwise>
                                 </c:choose>
@@ -183,14 +181,14 @@
 
                         <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
                             <td nowrap="nowrap" class="valueB">
-                                <bean:message key="editLateDeliverable.Explanation.label"/>
+                                <or:text key="editLateDeliverable.Explanation.label"/>
                             </td>
                             <td class="value">
                                 <c:choose>
                                     <c:when test="${requestScope.isExplanationEditable}">
-                                        <html:textarea rows="5" styleClass="inputTextBox" property="explanation"/>
+                                        <textarea rows="5" class="inputTextBox" name="explanation"><or:fieldvalue field="explanation" /></textarea>
                                         <div id="explanation_serverside_validation" class="error">
-                                            <html:errors property="explanation" prefix="" suffix="" />
+                                            <s:fielderror escape="false"><s:param>explanation</s:param></s:fielderror>
                                         </div>
                                         <div id="explanation_validation_msg" style="display:none;" class="error"></div>
                                     </c:when>
@@ -205,7 +203,7 @@
                                         </c:choose>
                                         ${orfn:htmlEncode(lateDeliverable.explanation)}
                                     </c:when>
-                                    <c:otherwise><bean:message key="NotAvailable"/></c:otherwise>
+                                    <c:otherwise><or:text key="NotAvailable"/></c:otherwise>
                                 </c:choose>
                             </td>
                         </tr>
@@ -213,14 +211,14 @@
 
                         <tr class="${(rowCount % 2 == 0) ? 'light' : 'dark'}">
                             <td nowrap="nowrap" class="valueB">
-                                <bean:message key="editLateDeliverable.Response.label"/>
+                                <or:text key="editLateDeliverable.Response.label"/>
                             </td>
                             <td class="value">
                                 <c:choose>
                                     <c:when test="${requestScope.isResponseEditable}">
-                                        <html:textarea rows="5" styleClass="inputTextBox" property="response"/>
+                                        <textarea rows="5" class="inputTextBox" name="response"><or:fieldvalue field="response" /></textarea>
                                         <div id="response_serverside_validation" class="error">
-                                            <html:errors property="response" prefix="" suffix="" />
+                                            <s:fielderror escape="false"><s:param>response</s:param></s:fielderror>
                                         </div>
                                         <div id="response_validation_msg" style="display:none;" class="error"></div>
                                     </c:when>
@@ -235,7 +233,7 @@
                                         </c:choose>
                                         ${orfn:htmlEncode(lateDeliverable.response)}
                                     </c:when>
-                                    <c:otherwise><bean:message key="NotAvailable"/></c:otherwise>
+                                    <c:otherwise><or:text key="NotAvailable"/></c:otherwise>
                                 </c:choose>
                             </td>
                         </tr>
@@ -249,14 +247,14 @@
                     <br/>
                     <c:if test="${requestScope.isFormSubmittable}">
                         <div align="right">
-                            <html:image property="saveLateDeliverableBtn" srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>
+                            <input type="image" property="saveLateDeliverableBtn" src="<or:text key='btnSaveChanges.img' />" alt="<or:text key='btnSaveChanges.alt' />" border="0"/>
                         </div>
                     </c:if>
-                </html:form>
+                </s:form>
             </div>
         </div>
         <jsp:include page="/includes/inc_footer.jsp" />
     </div>
 </div>
 </body>
-</html:html>
+</html>

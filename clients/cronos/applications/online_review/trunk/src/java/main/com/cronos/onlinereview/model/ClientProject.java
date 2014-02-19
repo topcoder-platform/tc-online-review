@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2009 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.model;
 
@@ -8,14 +8,17 @@ import java.io.Serializable;
 /**
  * <p>
  * A simple bean class that holds client/billing project id and name.
- * 
+ *
  * This class has been created, in case client project retrieval shifts to webservice we might use DII (dynamic
  * invocation interface). In that class all other code except the one which is retrieving the client projects would
  * remain unchanged.
  * </p>
- * 
+ * <p>
+ * Thread safety: This class is not thread safe.
+ * </p>
+ *
  * @author TCSASSEMBLER
- * @since Online Review Update - Add Project Dropdown v1.0
+ * @version 2.0
  */
 public class ClientProject implements Serializable {
     /**
@@ -44,7 +47,7 @@ public class ClientProject implements Serializable {
      * <p>
      * Gets the id of the client project.
      * </p>
-     * 
+     *
      * @return the id of the client project.
      */
     public long getId() {
@@ -55,7 +58,7 @@ public class ClientProject implements Serializable {
      * <p>
      * Sets the id of the client project.
      * </p>
-     * 
+     *
      * @param id
      *            the id of the client project.
      */
@@ -67,7 +70,7 @@ public class ClientProject implements Serializable {
      * <p>
      * Gets the name of the client project.
      * </p>
-     * 
+     *
      * @return the name of the client project.
      */
     public String getName() {
@@ -78,7 +81,7 @@ public class ClientProject implements Serializable {
      * <p>
      * Sets the name of the client project.
      * </p>
-     * 
+     *
      * @param name
      *            the name of the client project.
      */

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -13,15 +13,14 @@ import com.topcoder.project.phases.Phase;
  * This class is the customized phase handler for Approval phase, it will automatically complete the project, if the
  * approval phase is approved.
  *
- * @author FireIce
- * @version 1.0
- * @since Online Review Payments and Status Automation Assembly 1.0
+ * <p>
+ * Thread-safety: This class is thread-safe as it does not contain any mutable inner state.
+ * </p>
+ *
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class PRApprovalPhaseHandler extends ApprovalPhaseHandler {
-    /**
-     * Constant for Approver resource role name.
-     */
-    private static final String APPROVER = "Approver";
 
     /**
      * Create a new instance of PRApprovalPhaseHandler using the default namespace for loading configuration settings.

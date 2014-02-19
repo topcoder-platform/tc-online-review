@@ -1,7 +1,14 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.ejblibrary;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.EJBException;
 
 import com.jivesoftware.base.UnauthorizedException;
 import com.jivesoftware.base.UserNotFoundException;
@@ -13,29 +20,21 @@ import com.topcoder.web.ejb.forums.ForumsException;
 import com.topcoder.web.ejb.forums.ForumsSpecReviewComment;
 import com.topcoder.web.ejb.forums.ForumsUserComment;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-
-import javax.ejb.EJBException;
-
 /**
  * <p>An implementation of {@link Forums} interface which provides the library-call style for API of <code>Forums EJB
  * </code>.</p>
  *
  * <p><b>Thread safety:</b> This class is thread-safe.</p>
  *
- * @author isv
- * @version 1.0 (TopCoder Online Review Switch To Local Calls)
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class ForumsLibrary extends BaseEJBLibrary implements Forums {
 
     /**
      * <p>A <code>ForumsBean</code> which is delegated the processing of the calls to methods of this class.</p>
      */
-    private ForumsBean bean;
+    private final ForumsBean bean;
 
     /**
      * <p>Constructs new <code>ForumsLibrary</code> instance. This implementation does nothing.</p>
@@ -371,51 +370,51 @@ public class ForumsLibrary extends BaseEJBLibrary implements Forums {
         bean.updateSpecReviewComment(categoryId, userId, questionId, comment);
     }
 
-    public long[] areForumsWatched(long userID, long[] forumIDs) throws EJBException, RemoteException, Exception {
+    public long[] areForumsWatched(long userID, long[] forumIDs) throws Exception {
         return bean.areForumsWatched(userID, forumIDs);
     }
 
-    public void deleteForumWatches(long userID, long[] forumIDs) throws EJBException, RemoteException, Exception {
+    public void deleteForumWatches(long userID, long[] forumIDs) throws Exception {
         bean.deleteForumWatches(userID, forumIDs);
     }
 
-    public void createForumWatches(long userID, long[] forumIDs) throws EJBException, RemoteException, Exception {
+    public void createForumWatches(long userID, long[] forumIDs) throws Exception {
         bean.createForumWatches(userID, forumIDs);
     }
 
-    public void deleteForumWatch(long userID, long forumID) throws EJBException, RemoteException, Exception {
+    public void deleteForumWatch(long userID, long forumID) throws Exception {
         bean.deleteForumWatch(userID, forumID);
     }
 
-    public void removeUserPermission(long userID, long forumCategoryID) throws EJBException, Exception {
+    public void removeUserPermission(long userID, long forumCategoryID) throws Exception {
         bean.removeUserPermission(userID, forumCategoryID);
     }
 
-    public long createTopCoderDirectProjectForums(String projectName, Long tcDirectProjectTypeId) throws EJBException,
-                    RemoteException, Exception {
+    public long createTopCoderDirectProjectForums(String projectName, Long tcDirectProjectTypeId) throws
+            Exception {
         return bean.createTopCoderDirectProjectForums(projectName, tcDirectProjectTypeId);
     }
-	
+    
 
-    public long postThreadToQuestionForum(long categoryId, String subject, String body, long userId) throws EJBException, RemoteException, Exception
-	{
-		return bean.postThreadToQuestionForum(categoryId, subject, body, userId );
-	}
-	
-	
+    public long postThreadToQuestionForum(long categoryId, String subject, String body, long userId) throws Exception
+    {
+        return bean.postThreadToQuestionForum(categoryId, subject, body, userId );
+    }
+    
+    
 
     public long createTopCoderDirectProjectForums(String projectName, Long tcDirectProjectTypeId,
-            Map<String, String> forums) throws EJBException, RemoteException, Exception
-	{
-		return bean.createTopCoderDirectProjectForums(projectName, tcDirectProjectTypeId, forums);
-	}
-	
-	public void updateStudioForumName(long categoryID, String name) throws EJBException, RemoteException,Exception
-	{
-		bean.updateStudioForumName(categoryID, name);
-	}
-	
-	    /**
+            Map<String, String> forums) throws Exception
+    {
+        return bean.createTopCoderDirectProjectForums(projectName, tcDirectProjectTypeId, forums);
+    }
+    
+    public void updateStudioForumName(long categoryID, String name) throws Exception
+    {
+        bean.updateStudioForumName(categoryID, name);
+    }
+    
+        /**
      * <p>
      * Adds a forum to the existing TopCoder Direct project forum category.
      * </p>
@@ -425,13 +424,12 @@ public class ForumsLibrary extends BaseEJBLibrary implements Forums {
      * @return the id of the added forum.
      * @throws EJBException if an unexpected error occurs.
      * @throws Exception if an unexpected error occurs.
-     * @since 1.2
      */
     public long addTopCoderDirectProjectForum(long forumCategoryId, String forumName, String forumDescription)
-            throws EJBException, Exception
-	{
-		return bean.addTopCoderDirectProjectForum(forumCategoryId, forumName, forumDescription);
-	}
+            throws Exception
+    {
+        return bean.addTopCoderDirectProjectForum(forumCategoryId, forumName, forumDescription);
+    }
 
     /**
      * <p>
@@ -441,14 +439,13 @@ public class ForumsLibrary extends BaseEJBLibrary implements Forums {
      * @param forumId the id of the forum to be deleted.
      * @throws EJBException if an unexpected error occurs.
      * @throws Exception if an unexpected error occurs.
-     * @since 1.2
      */
-    public void deleteTopCoderDirectProjectForum(long forumCategoryId, long forumId) throws EJBException, Exception
-	{
-		bean.deleteTopCoderDirectProjectForum(forumCategoryId, forumId);
-	}
-	
-	/**
+    public void deleteTopCoderDirectProjectForum(long forumCategoryId, long forumId) throws Exception
+    {
+        bean.deleteTopCoderDirectProjectForum(forumCategoryId, forumId);
+    }
+    
+    /**
      * Migrate the CloudSpokes Challenge discussions data to TopCoder forum. It creates a software forum and inserts
      * the given forum data into the software forum and assign permission for the contest users and admins. Finally
      * it updates the contest info (project_info) to link the created forum to the contest.
@@ -462,12 +459,11 @@ public class ForumsLibrary extends BaseEJBLibrary implements Forums {
      * @param postUserId the user id to post the thread
      * @throws ForumsException if there is any error
      * @return the forum category id created
-     * @since 1.5
      */
     public long migrateCloudSpokesForumData(long contestId, long compVersionId, String contestName,
                                             ForumThreadData forumData, Long[] userIds,
                                             Long[] adminIds, long postUserId) throws ForumsException {
-		return bean.migrateCloudSpokesForumData(contestId, compVersionId, contestName, forumData, userIds, adminIds, postUserId);
-											
-	}
+        return bean.migrateCloudSpokesForumData(contestId, compVersionId, contestName, forumData, userIds, adminIds, postUserId);
+                                            
+    }
 }

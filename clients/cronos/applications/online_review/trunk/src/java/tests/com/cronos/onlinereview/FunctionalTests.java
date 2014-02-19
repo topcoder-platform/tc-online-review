@@ -1,6 +1,5 @@
-/**
- *
- * Copyright (c) 2010, TopCoder, Inc. All rights reserved
+/*
+ * Copyright (C) 2010-2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -11,9 +10,8 @@ import junit.framework.TestSuite;
 /**
  * <p>This test case aggregates all functional test cases.</p>
  *
- * @author TopCoder
- * @version 1.1
- * @since 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class FunctionalTests extends TestCase {
 
@@ -35,7 +33,6 @@ public class FunctionalTests extends TestCase {
         suite.addTestSuite(ScoreCardTests.class);
         suite.addTestSuite(DeleteReviewerTests.class);
         suite.addTestSuite(ChangeScorecardTests.class);
-
         suite.addTestSuite(ReviewerManageScorecardTests.class);
         suite.addTestSuite(ReviewerUploadTestCaseTests.class);
         suite.addTestSuite(ManageAppealTests.class);

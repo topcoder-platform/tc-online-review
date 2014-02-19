@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2010 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.ejblibrary;
 
@@ -15,8 +15,8 @@ import javax.persistence.EntityManagerFactory;
  * bean instance of this class must be defined in <code>Spring</code> context to be set with application context which
  * then can be accessed throughout the <code>Online Review</code> application.</p>
  *
- * @author isv
- * @version 1.0 (TopCoder Online Review Switch To Local Calls Assembly)
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class SpringContextProvider implements ApplicationContextAware {
 

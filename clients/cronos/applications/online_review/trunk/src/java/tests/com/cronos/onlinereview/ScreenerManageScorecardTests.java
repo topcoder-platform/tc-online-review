@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011 - 2013 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -7,10 +7,10 @@ import java.sql.Connection;
 
 
 /**
- * Online review functional tests 4, testing screener manage the scorecard
+ * Online review functional tests 4, testing screener manage the scorecard.
  *
- * @author TCSDEVELOPER
- * @version 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class ScreenerManageScorecardTests extends ProjectTests {
 
@@ -20,7 +20,7 @@ public class ScreenerManageScorecardTests extends ProjectTests {
      * @throws Exception if any error occurs.
      */
     public void setUp() throws Exception {
-    	super.setUp();
+        super.setUp();
         Connection con = TestHelper.getConnection();
         try {
             // close all the phase before screen phase
@@ -31,19 +31,19 @@ public class ScreenerManageScorecardTests extends ProjectTests {
             // open screen phase
             TestHelper.OpenPhase(phaseIds.get("screening"), con);
             // add  submitter.
-    		long Submitter = TestHelper.AddResource(projectId, 1, phaseIds.get("registration") , Long.parseLong(TestHelper.getCompetitiorUserId()), TestHelper.getCompetitorUsername(), con);
+            long Submitter = TestHelper.AddResource(projectId, 1, phaseIds.get("registration") , Long.parseLong(TestHelper.getCompetitiorUserId()), TestHelper.getCompetitorUsername(), con);
             // add screener.
-    		TestHelper.AddResource(projectId, 2, phaseIds.get("screening") , Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
+            TestHelper.AddResource(projectId, 2, phaseIds.get("screening") , Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
             // add reviewer.
-    		TestHelper.AddResource(projectId, 4, phaseIds.get("review"), Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
-    		// add contest submission.
-    		TestHelper.AddSubmission(projectId, phaseIds.get("submission"), Submitter, 1, con);
+            TestHelper.AddResource(projectId, 4, phaseIds.get("review"), Long.parseLong(TestHelper.TESTS_USER_ID), TestHelper.getUsername(), con);
+            // add contest submission.
+            TestHelper.AddSubmission(projectId, phaseIds.get("submission"), Submitter, 1, con);
         } finally {
-    		con.close();
-    	}
+            con.close();
+        }
     }
    
-	
+    
     /**
      * Test Case Number: FTC130 RS8.2 Verify Screener can submit a scorecard
      *
