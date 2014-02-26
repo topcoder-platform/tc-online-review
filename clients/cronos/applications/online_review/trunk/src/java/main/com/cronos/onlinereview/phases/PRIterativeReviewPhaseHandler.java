@@ -1,22 +1,18 @@
 /**
- * Copyright (C) 2013 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2013 - 2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
+import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.project.phases.Phase;
 
 /**
  * The iterative review phase handler.
- * @author duxiaoyang
- * @version 1.0
+ * @author TCSASSEMBLER
+ * @version 2.0
  */
 public class PRIterativeReviewPhaseHandler extends IterativeReviewPhaseHandler {
-
-    /**
-     * Used for pulling data to project_result table and filling payments.
-     */
-    private final PRHelper prHelper = new PRHelper();
 
     /**
      * Create a new instance of this class using the default namespace for loading configuration settings.
@@ -57,6 +53,38 @@ public class PRIterativeReviewPhaseHandler extends IterativeReviewPhaseHandler {
         super.perform(phase, operator);
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
 
-        prHelper.processIterativeReviewPR(getManagerHelper(), phase, operator, toStart);
+        long projectId = phase.getProject().getId();
+        if (!toStart) {
+            // check if the submission has passed review
+            boolean passedReview = checkPassedReview(phase.getProject().getId());
+
+            if (passedReview) {
+                PRHelper.completeProject(getManagerHelper(), phase, operator);
+            }
+
+            PaymentsHelper.processAutomaticPayments(projectId, operator);
+        }
+    }
+
+    /**
+     * Checks whether any submission has passed Iterative Review.
+     *
+     * @param projectId
+     *            the project ID.
+     * @return true if any submission has passed review.
+     * @throws PhaseHandlingException
+     *             if any error occurs
+     */
+    public boolean checkPassedReview(long projectId) throws PhaseHandlingException {
+        // Search all "Active" submissions for current project with contest submission type
+        Submission[] submissions = PhasesHelper.getActiveProjectSubmissions(getManagerHelper().getUploadManager(),
+                projectId, Constants.SUBMISSION_TYPE_CONTEST_SUBMISSION);
+        for (Submission sub : submissions) {
+            if (sub.getSubmissionStatus().getName().equals(Constants.SUBMISSION_STATUS_ACTIVE) &&
+                    sub.getPlacement() == 1 && sub.getFinalScore() != null) {
+                return true;
+            }
+        }
+        return false;
     }
 }
