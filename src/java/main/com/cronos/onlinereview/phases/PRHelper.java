@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 - 2013 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2005 - 2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -329,32 +329,6 @@ public class PRHelper {
             close(pstmt);
             close(updateStmt);
             close(conn);
-        }
-    }
-
-    /**
-     * Processes iterative review phase. Calculates payments and completes project if it is the last phase.
-     *
-     * @param managerHelper
-     *            the <code>ManagerHelper</code> instance.
-     * @param phase
-     *            the corresponding iterative review phase.
-     * @param operator
-     *            the operator.
-     * @param toStart
-     *            whether the phase is to start or not.
-     * @throws PhaseHandlingException
-     *             if error occurs
-     */
-    void processIterativeReviewPR(ManagerHelper managerHelper, Phase phase, String operator, boolean toStart) throws PhaseHandlingException {
-        long projectId = phase.getProject().getId();
-        if (!toStart) {
-            // if review phase is last one, complete the project.
-            if (isLastPhase(phase)) {
-                completeProject(managerHelper, phase, operator);
-            }
-
-            PaymentsHelper.processAutomaticPayments(projectId, operator);
         }
     }
 
