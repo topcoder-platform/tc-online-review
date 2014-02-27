@@ -1132,7 +1132,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
 
             // Collect uploaded files and add them to adapter
             for (FormFile file : files) {
-                if (file != null && file.getFileName().trim().length() != 0) {
+                if (file != null && file.getFileName() != null && file.getFileName().trim().length() != 0) {
                     parser.AddFile(file);
                 }
             }
@@ -1187,6 +1187,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
                         // Handle uploads
                         if (!previewRequested && question.isUploadDocument()) {
                             if (fileIdx < files.length && files[fileIdx] != null &&
+                                    files[fileIdx].getFileName() != null &&
                                     files[fileIdx].getFileName().trim().length() != 0) {
                                 Upload upload = new Upload();
 
@@ -1245,6 +1246,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
                         // Handle uploads
                         if (!previewRequested && !managerEdit && section.getQuestion(questionIdx).isUploadDocument()) {
                             if (fileIdx < files.length && files[fileIdx] != null &&
+                                    files[fileIdx].getFileName() != null &&
                                     files[fileIdx].getFileName().trim().length() != 0) {
                                 Upload oldUpload = null;
                                 // If this item has already had uploaded file,
