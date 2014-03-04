@@ -876,8 +876,8 @@ public class TestHelper {
         long resourceId = getNextResourceId();
         
         executeStatement(con, 
-                "INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, create_user, create_date, modify_user, modify_date) VALUES (" +
-                resourceId + ", " + roleId + ", " + projectId + ", " + (projectPhaseId<=0? "NULL": projectPhaseId)+ ", '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
+                "INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, user_id, create_user, create_date, modify_user, modify_date) VALUES (" +
+                resourceId + ", " + roleId + ", " + projectId + ", " + (projectPhaseId<=0? "NULL": projectPhaseId) + ", " + userId + ", '" + TESTS_USER_ID + "', CURRENT, '" + TESTS_USER_ID + "', CURRENT)" );
         
         executeStatement(con, 
                 "INSERT INTO resource_info (resource_id, resource_info_type_id, value, create_user, create_date, modify_user, modify_date) VALUES (" +

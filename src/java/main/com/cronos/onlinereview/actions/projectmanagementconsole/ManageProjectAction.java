@@ -441,6 +441,7 @@ public class ManageProjectAction extends BaseProjectManagementConsoleAction {
                             Resource resource = new Resource();
                             resource.setProject(project.getId());
                             resource.setResourceRole(roleMapping.get(resourceRoleId));
+                            resource.setUserId(userId);
                             resource.setProperty("Handle", handle);
                             resource.setProperty("External Reference ID", userId);
                             resource.setProperty("Registration Date", DATE_FORMAT.format(new Date()));

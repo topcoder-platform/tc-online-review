@@ -1737,6 +1737,16 @@
                             </Property>
                         </Property>
                     </Property>
+                    <Property name="user_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
                     <Property name="submission_id">
                         <Property name="validator">
                             <Property name="class">
@@ -1792,6 +1802,7 @@
                                resource_role_id,
                                project_id,
                                project_phase_id,
+                               user_id,
                                resource.create_user AS create_user,
                                resource.create_date AS create_date,
                                resource.modify_user AS modify_user,
@@ -2274,10 +2285,8 @@
             FROM late_deliverable lt
               INNER JOIN project_phase pp ON pp.project_phase_id = lt.project_phase_id
               INNER JOIN project p ON p.project_id = pp.project_id
-              INNER JOIN resource_info ri ON ri.resource_id = lt.resource_id AND
-                ri.resource_info_type_id = 2
-              INNER JOIN late_deliverable_type_lu ldt
-                ON ldt.late_deliverable_type_id = lt.late_deliverable_type_id
+              INNER JOIN resource_info ri ON ri.resource_id = lt.resource_id AND ri.resource_info_type_id = 2
+              INNER JOIN late_deliverable_type_lu ldt ON ldt.late_deliverable_type_id = lt.late_deliverable_type_id
             WHERE
           </Value>
         </Property>
