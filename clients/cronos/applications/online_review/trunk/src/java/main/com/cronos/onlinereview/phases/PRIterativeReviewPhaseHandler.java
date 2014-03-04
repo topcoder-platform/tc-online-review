@@ -79,9 +79,11 @@ public class PRIterativeReviewPhaseHandler extends IterativeReviewPhaseHandler {
         // Search all "Active" submissions for current project with contest submission type
         Submission[] submissions = PhasesHelper.getActiveProjectSubmissions(getManagerHelper().getUploadManager(),
                 projectId, Constants.SUBMISSION_TYPE_CONTEST_SUBMISSION);
+
+        // Check if there's a winning active submission
         for (Submission sub : submissions) {
             if (sub.getSubmissionStatus().getName().equals(Constants.SUBMISSION_STATUS_ACTIVE) &&
-                    sub.getPlacement() == 1 && sub.getFinalScore() != null) {
+                    sub.getPlacement() != null && sub.getPlacement() == 1 && sub.getFinalScore() != null) {
                 return true;
             }
         }

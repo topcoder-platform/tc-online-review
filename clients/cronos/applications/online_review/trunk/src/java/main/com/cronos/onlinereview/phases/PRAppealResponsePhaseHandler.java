@@ -105,14 +105,13 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
      */
     public void perform(Phase phase, String operator) throws PhaseHandlingException {
         super.perform(phase, operator);
-        long projectId = phase.getProject().getId();
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
         // Only will perform while submission phase is ended
         try {
-            prHelper.processAppealResponsePR(projectId, toStart, operator);
+            prHelper.processAppealResponsePR(getManagerHelper(), phase, toStart, operator);
             //send winner email as appropriate here
             if (!toStart) {
-                sendMailForWinners(getManagerHelper().getProjectManager().getProject(projectId));
+                sendMailForWinners(getManagerHelper().getProjectManager().getProject(phase.getProject().getId()));
             }
         } catch (Throwable e) {
             throw new PhaseHandlingException(e.getMessage(), e);

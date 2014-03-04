@@ -1706,6 +1706,7 @@ public class SaveProjectAction extends BaseProjectAction {
                 }
             }
             resource.setResourceRole(role);
+            resource.setUserId(user.getId());
 
             resource.setProperty("Handle", resourceNames[i]);
 

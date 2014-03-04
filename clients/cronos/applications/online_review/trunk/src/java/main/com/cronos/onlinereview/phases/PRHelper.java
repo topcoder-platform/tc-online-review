@@ -282,6 +282,9 @@ public class PRHelper {
         boolean paymentsProcessed = false;
         try {
             if (!toStart) {
+                logger.log(Level.INFO,
+                        new LoggerMessage("project", projectId, null, "process review phase."));
+
                 // if review phase is last one and there is at least one active submission complete the project.
                 if (isLastPhase(phase)) {
                     Submission [] activeSubs = PhasesHelper.getActiveProjectSubmissions(managerHelper.getUploadManager(),
@@ -292,8 +295,6 @@ public class PRHelper {
                 }
 
                 if (!isStudioProject(managerHelper.getProjectManager(), projectId)) {
-                    logger.log(Level.INFO,
-                        new LoggerMessage("project", projectId, null, "process review phase."));
                     // Retrieve all
                     pstmt = conn.prepareStatement(REVIEW_SELECT_STMT);
                     pstmt.setLong(1, projectId);
@@ -335,8 +336,10 @@ public class PRHelper {
     /**
      * Pull data to project_result for while appeal response phase closed.
      *
-     * @param projectId
-     *            the projectId
+     * @param managerHelper
+     *            the <code>ManagerHelper</code> instance.
+     * @param phase
+     *            the corresponding review phase.
      * @param toStart
      *            whether the phase is to start or not.
      * @param operator
@@ -344,13 +347,24 @@ public class PRHelper {
      * @throws PhaseHandlingException
      *             if error occurs
      */
-    void processAppealResponsePR(long projectId, boolean toStart, String operator) throws PhaseHandlingException {
+    void processAppealResponsePR(ManagerHelper managerHelper, Phase phase, boolean toStart, String operator) throws PhaseHandlingException {
         Connection conn = createConnection();
+        long projectId = phase.getProject().getId();
 
         try {
             if (!toStart) {
                 logger.log(Level.INFO,
                     new LoggerMessage("project", projectId, null, "process Appeal Response phase."));
+
+                // if appeals response phase is last one and there is at least one active submission complete the project.
+                if (isLastPhase(phase)) {
+                    Submission [] activeSubs = PhasesHelper.getActiveProjectSubmissions(managerHelper.getUploadManager(),
+                            projectId, Constants.SUBMISSION_TYPE_CONTEST_SUBMISSION);
+                    if (activeSubs.length > 0) {
+                        completeProject(managerHelper, phase, operator);
+                    }
+                }
+
                 populateProjectResult(projectId, conn, operator);
             }
         } catch(SQLException e) {
