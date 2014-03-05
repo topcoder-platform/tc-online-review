@@ -43,7 +43,7 @@
     <component
         name="online_review_phases"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/trunk"
-        revision="241635" />
+        revision="241730" />
 
     <component
         name="online_review_upload_services"
