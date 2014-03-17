@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 - 2013 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006 - 2014 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.util;
 
@@ -728,21 +728,10 @@ public final class PhasesDetailsServices {
                 // Create final filter
                 Filter filterForReviews = new AndFilter(reviewFilters);
 
-                boolean needFullReviews = false;
-
-                // If next phase is Appeals and that phase is not scheduled, ...
-                if (nextPhase != null &&
-                        nextPhase.getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME)) {
-                    // ... indicate that full review (with all comments) must be retrieved
-                    if (!nextPhase.getPhaseStatus().getName().equalsIgnoreCase("Scheduled")) {
-                        needFullReviews = true;
-                    }
-                }
-
                 // Obtain an instance of Review Manager
                 ReviewManager revMgr = ActionsHelper.createReviewManager();
                 // Get the reviews from every individual reviewer
-                ungroupedReviews = revMgr.searchReviews(filterForReviews, needFullReviews);
+                ungroupedReviews = revMgr.searchReviews(filterForReviews, false);
             }
             if (ungroupedReviews == null) {
                 ungroupedReviews = new Review[0];
