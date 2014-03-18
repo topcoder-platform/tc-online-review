@@ -26,13 +26,8 @@ import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.model.DynamicModel;
 import com.cronos.onlinereview.model.FormFile;
-import com.cronos.onlinereview.util.ActionsHelper;
-import com.cronos.onlinereview.util.AuthorizationHelper;
-import com.cronos.onlinereview.util.ConfigHelper;
-import com.cronos.onlinereview.util.CorrectnessCheckResult;
-import com.cronos.onlinereview.util.LoggingHelper;
-import com.cronos.onlinereview.util.LookupHelper;
-import com.cronos.onlinereview.util.StrutsRequestParser;
+import com.cronos.onlinereview.phases.AmazonSNSHelper;
+import com.cronos.onlinereview.util.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -615,6 +610,8 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
                 }
             }
         }
+
+        AmazonSNSHelper.publishProjectUpdateEvent(project);
 
         this.pid = project.getId();
         return Constants.SUCCESS_FORWARD_NAME;

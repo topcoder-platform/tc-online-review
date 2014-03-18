@@ -45,16 +45,9 @@ import javax.servlet.http.HttpServletRequest;
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
+import com.cronos.onlinereview.phases.AmazonSNSHelper;
 import com.cronos.onlinereview.phases.PaymentsHelper;
-import com.cronos.onlinereview.util.ActionsHelper;
-import com.cronos.onlinereview.util.AuthorizationHelper;
-import com.cronos.onlinereview.util.Comparators;
-import com.cronos.onlinereview.util.ConfigHelper;
-import com.cronos.onlinereview.util.CorrectnessCheckResult;
-import com.cronos.onlinereview.util.EJBLibraryServicesLocator;
-import com.cronos.onlinereview.util.LoggingHelper;
-import com.cronos.onlinereview.util.LookupHelper;
-import com.cronos.onlinereview.util.StatusValidationException;
+import com.cronos.onlinereview.util.*;
 import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
 import com.cronos.termsofuse.dao.UserTermsOfUseDao;
 import com.cronos.termsofuse.model.TermsOfUse;
@@ -429,6 +422,8 @@ public class SaveProjectAction extends BaseProjectAction {
 
             return INPUT;
         }
+
+        AmazonSNSHelper.publishProjectUpdateEvent(project);
 
         this.pid = project.getId();
         // Return success forward

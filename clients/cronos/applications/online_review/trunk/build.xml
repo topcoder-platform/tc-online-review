@@ -157,6 +157,9 @@
       <lib dir="${ext_libdir}/svnkit" includes="*.jar"/>
       <lib dir="${ext_libdir}/aop" includes="*.jar" />
       <lib dir="${ext_libdir}/poi" includes="*.jar" />
+      <lib dir="${ext_libdir}/aws" includes="*.jar" />
+      <lib dir="${ext_libdir}/httpcomponents" includes="*.jar" />
+      <lib dir="${ext_libdir}/joda-time" includes="*.jar" />
       
       <lib file="${jaf.jar}" />
       <lib dir="${shared_libdir}" includes="${catalog.jar.name}"/>

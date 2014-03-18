@@ -150,6 +150,10 @@
 @thurgood.api.key@=12345678901234567890
 @thurgood.username@=Thurgood
 @thurgood.password@=password
+@topcoder_api_base_url@=http://api.topcoder.com/v2/develop/challenges
+@amazon_sns_arn@=
+@amazonSNSAccessKey@=
+@amazonSNSSecretKey@=
 
 # typical VM configuration
 #@login.authenticator@=ORAuthenticator
