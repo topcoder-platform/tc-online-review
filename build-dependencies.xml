@@ -109,6 +109,9 @@
     
     <property name="org.aspectj.matcher.jar.name" value="org.aspectj.matcher.jar" />
     <property name="org.aspectj.matcher.jar" value="${ext_libdir}/aop/${org.aspectj.matcher.jar.name}" />
+
+    <property name="aws.jar.name" value="aws-java-sdk-1.7.3.jar" />
+    <property name="aws.jar" value="${ext_libdir}/aws/${aws.jar.name}" />
   
     <path id="svnant.lib" >
       <fileset dir="${ext_libdir}/svnant" includes="*.jar" />
@@ -160,6 +163,7 @@
         <pathelement location="${jackson-databind.jar}" />
         <pathelement location="${jackson-annotations.jar}" />
         <pathelement location="${commons.beanutils.jar}" />
+        <pathelement location="${aws.jar}" />
         
         <path refid="spring_libs"/>
         <path refid="poi_libs"/>

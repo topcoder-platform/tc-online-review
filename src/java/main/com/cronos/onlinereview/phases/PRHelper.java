@@ -20,7 +20,6 @@ import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
 import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
-import com.topcoder.management.payment.calculator.ProjectPaymentCalculatorException;
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.management.project.PersistenceException;
 import com.topcoder.management.project.ProjectManager;
@@ -682,6 +681,8 @@ public class PRHelper {
             ProjectStatus completedStatus = PRHelper.findProjectStatusByName(projectManager, "Completed");
             project.setProjectStatus(completedStatus);
             projectManager.updateProject(project, "Setting the project status to Completed automatically", operator);
+
+            AmazonSNSHelper.publishProjectUpdateEvent(project);
         } catch (PersistenceException e) {
             throw new PhaseHandlingException("Problem when updating project", e);
         } catch (ValidationException e) {

@@ -4,6 +4,8 @@
 package com.cronos.onlinereview.phases;
 
 import com.topcoder.management.phase.PhaseHandlingException;
+import com.topcoder.management.project.PersistenceException;
+import com.topcoder.management.project.ProjectManager;
 import com.topcoder.project.phases.Phase;
 
 /**
@@ -59,5 +61,14 @@ public class PRRegistrationPhaseHandler extends RegistrationPhaseHandler {
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
 
         prHelper.processRegistrationPR(phase.getProject().getId(), toStart);
+
+        try {
+            ProjectManager projectManager = getManagerHelper().getProjectManager();
+            com.topcoder.management.project.Project project = projectManager.getProject(phase.getProject().getId());
+            AmazonSNSHelper.publishProjectUpdateEvent(project);
+        } catch (PersistenceException e) {
+            System.out.println(e);
+            throw new PhaseHandlingException("Problem when retrieving project", e);
+        }
     }
 }

@@ -5192,6 +5192,19 @@
         <Property name="thurgood_password">
             <Value>@thurgood.password@</Value>
         </Property>
+
+        <Property name="amazon_sns_arn">
+            <Value>@amazon_sns_arn@</Value>
+        </Property>
+        <Property name="amazon_sns_message_subject">
+            <Value>cmc challenge contest change</Value>
+        </Property>
+        <Property name="amazon_sns_message_template">
+            <Value>{"challengeId": "%CHALLENGE_ID%","cmcTaskId": "%CMC_TASK_ID%", "apiUrl": "%API_URL%"}</Value>
+        </Property>
+        <Property name="topcoder_api_base_url">
+            <Value>@topcoder_api_base_url@</Value>
+        </Property>
     </Config>
 
     <!--

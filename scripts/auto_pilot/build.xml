@@ -96,6 +96,11 @@
             <fileset file="${shared.jar}"/>
             <fileset file="${jbossall-client.jar}"/>
             <fileset dir="${ext_libdir}/svnkit" includes="*.jar"/>
+            <fileset dir="${ext_libdir}/aws" includes="*.jar" />
+            <fileset dir="${ext_libdir}/httpcomponents" includes="*.jar" />
+            <fileset dir="${ext_libdir}/joda-time" includes="*.jar" />
+            <fileset dir="${ext_libdir}/commons" includes="*.jar"/>
+            <fileset dir="${ext_libdir}/jackson" includes="*.jar"/>
 
             <fileset dir=".">
                 <include name="build.xml"/>
