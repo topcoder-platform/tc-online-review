@@ -659,16 +659,15 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         // Prepare filters
         Filter filterResource = new EqualToFilter("reviewer", myResource.getId());
         Filter filterScorecard = new EqualToFilter("scorecardType", scorecardTemplate.getScorecardType().getId());
-        Filter filterPhase = new EqualToFilter("projectPhase", phase.getId());
 
         Filter filter;
         if (isPostMortemPhase) {
             // Prepare final combined filter
-            filter = new AndFilter(Arrays.asList(filterResource, filterScorecard, filterPhase));
+            filter = new AndFilter(Arrays.asList(filterResource, filterScorecard));
         } else {
             // Prepare final combined filter
             Filter filterSubmission = new EqualToFilter("submission", verification.getSubmission().getId());
-            filter = new AndFilter(Arrays.asList(filterResource, filterSubmission, filterScorecard, filterPhase));
+            filter = new AndFilter(Arrays.asList(filterResource, filterSubmission, filterScorecard));
         }
 
         // Obtain an instance of Review Manager

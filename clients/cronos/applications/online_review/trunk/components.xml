@@ -129,7 +129,7 @@
     <component
         name="resource_management"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/resource_management/trunk"
-        revision="241637" />
+        revision="243314" />
 
     <component
         name="resource_management_persistence"
