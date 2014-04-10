@@ -154,6 +154,7 @@
 @amazon_sns_arn@=
 @amazonSNSAccessKey@=
 @amazonSNSSecretKey@=
+@contactPMEmailFromAddress@ = applications@topcoder.com
 
 # typical VM configuration
 #@login.authenticator@=ORAuthenticator
