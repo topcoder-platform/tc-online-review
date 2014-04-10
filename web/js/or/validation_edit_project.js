@@ -294,10 +294,11 @@ function validate_resources(thisForm, msgList) {
 
         // validate name
         var name = thisForm["resources_name[" + i + "]"].value;
-        if (emptyString.test(name)) {
-            msg = "Name can not be empty";
-            add_error_message(msg, msgPrefix, msgDiv, msgList);
-        }
+
+//        if (emptyString.test(name)) {
+//            msg = "Name can not be empty";
+//            add_error_message(msg, msgPrefix, msgDiv, msgList);
+//        }
     }
 
     return msg == null;
