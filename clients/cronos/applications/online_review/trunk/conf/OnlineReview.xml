@@ -5123,7 +5123,7 @@
                 <Value>&contactManagersTemplate;</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
+                <Value>@contactPMEmailFromAddress@</Value>
             </Property>
         </Property>
 
