@@ -171,7 +171,7 @@ public class ContactManagerAction extends BaseProjectDetailsAction {
         message.addToAddress(sender.getEmail(), TCSEmailMessage.CC);
 
         // Add 'From' address
-        message.setFromAddress(sender.getEmail());
+        message.setFromAddress(ConfigHelper.getContactManagerEmailFromAddress());
         // Set message's subject
         message.setSubject(project.getProperty("Project Name") + " - " + sender.getHandle());
         // Insert a body into the message
