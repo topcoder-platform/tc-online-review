@@ -422,6 +422,14 @@ public class ConfigHelper {
     private static final String EMAIL_TEMPLATE_NAME_PROP = "EmailTemplateName";
 
     /**
+     * This member variable is a string constant that specifies the name of the property which
+     * specifies the email address of the email sender.
+     *
+     * @see #CONTACT_MANAGER_EMAIL_PROP
+     */
+    private static final String EMAIL_FROM_ADDRESS_PROP = "EmailFromAddress";
+
+    /**
      * <p>This member variable is a string constant that specifies the name of the property which contains the
      * maximum number of days to extend the <code>Registration</code> phase.</p>
      */
@@ -772,6 +780,11 @@ public class ConfigHelper {
      * to project's manager.
      */
     private static String contactManagerEmailTemplate = "";
+
+    /**
+     * This member variable holds the "from" address for the messages to project's manager.
+     */
+    private static String contactManagerEmailFromAddress = "";
 
     /**
      * <p>An <code>Integer</code> providing the maximum number of days which <code>Registration</code> phase can be
@@ -1324,6 +1337,7 @@ public class ConfigHelper {
 
             if (propContactManagerEmail != null) {
                 contactManagerEmailTemplate = propContactManagerEmail.getValue(EMAIL_TEMPLATE_NAME_PROP);
+                contactManagerEmailFromAddress = propContactManagerEmail.getValue(EMAIL_FROM_ADDRESS_PROP);
             }
 
             // Get the configurable maximum values for extension days for registration and submission phases
@@ -1932,6 +1946,15 @@ public class ConfigHelper {
      */
     public static String getContactManagerEmailTemplate() {
         return contactManagerEmailTemplate;
+    }
+
+    /**
+     * This static method returns the "from" address for the messages to project's manager.
+     *
+     * @return a string containing the "from" address.
+     */
+    public static String getContactManagerEmailFromAddress() {
+        return contactManagerEmailFromAddress;
     }
 
     /**
