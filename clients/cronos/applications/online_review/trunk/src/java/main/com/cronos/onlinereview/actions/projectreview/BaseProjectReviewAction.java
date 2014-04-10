@@ -576,7 +576,6 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
 
         String permName;
         String phaseName;
-        boolean isPostMortemPhase = false;
         // Determine permission name and phase name from the review type
         if ("Screening".equals(reviewType)) {
             permName = Constants.PERFORM_SCREENING_PERM_NAME;
@@ -599,15 +598,16 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         } else if ("Iterative Review".equals(reviewType)) {
             permName = Constants.PERFORM_ITERATIVE_REVIEW_PERM_NAME;
             phaseName = Constants.ITERATIVE_REVIEW_PHASE_NAME;
-        } else {
-            isPostMortemPhase = true;
+        } else if ("Post-Mortem".equals(reviewType)) {
             permName = Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME;
             phaseName = Constants.POST_MORTEM_PHASE_NAME;
+        } else {
+            throw new IllegalArgumentException("Unknown review type : " + reviewType);
         }
 
         // Verify that certain requirements are met before proceeding with the Action
         // If any error has occurred, return action forward contained in the result bean
-        if (isPostMortemPhase) {
+        if (phaseName.equals(Constants.POST_MORTEM_PHASE_NAME)) {
             verification = checkForCorrectProjectId(request, permName);
         } else {
             verification = checkForCorrectSubmissionId(request, permName);
@@ -659,15 +659,19 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         // Prepare filters
         Filter filterResource = new EqualToFilter("reviewer", myResource.getId());
         Filter filterScorecard = new EqualToFilter("scorecardType", scorecardTemplate.getScorecardType().getId());
+        Filter filterPhase = new EqualToFilter("projectPhase", phase.getId());
 
         Filter filter;
-        if (isPostMortemPhase) {
+        if (phaseName.equals(Constants.POST_MORTEM_PHASE_NAME)) {
             // Prepare final combined filter
-            filter = new AndFilter(Arrays.asList(filterResource, filterScorecard));
+            filter = new AndFilter(Arrays.asList(filterResource, filterScorecard, filterPhase));
+        } else if (phaseName.equals(Constants.ITERATIVE_REVIEW_PHASE_NAME)) {
+            Filter filterSubmission = new EqualToFilter("submission", verification.getSubmission().getId());
+            filter = new AndFilter(Arrays.asList(filterResource, filterSubmission, filterScorecard));
         } else {
             // Prepare final combined filter
             Filter filterSubmission = new EqualToFilter("submission", verification.getSubmission().getId());
-            filter = new AndFilter(Arrays.asList(filterResource, filterSubmission, filterScorecard));
+            filter = new AndFilter(Arrays.asList(filterResource, filterSubmission, filterScorecard, filterPhase));
         }
 
         // Obtain an instance of Review Manager
