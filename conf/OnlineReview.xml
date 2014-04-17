@@ -3856,6 +3856,14 @@
                     <Value>IconWebDesign.gif</Value>
                 </Property>
             </Property>
+            <Property name="Design First2Finish">
+                <Property name="IconSmall">
+                    <Value>IconDesignFirst2FinishSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconDesignFirst2Finish.gif</Value>
+                </Property>
+            </Property>
             <Property name="Wireframes">
                 <Property name="IconSmall">
                     <Value>IconWireframesSm.gif</Value>
