@@ -1,0 +1,13 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<PropertyGroup>
+    <!-- Component Name and Version Information -->
+    <ComponentName>%{Component Name}</ComponentName>
+    <ComponentDistFileName>%{component_name}</ComponentDistFileName>
+    <ComponentPackage>%{package.name}</ComponentPackage>
+    <ComponentPackageDir>%{package\name}</ComponentPackageDir>
+    <ComponentVersionMajor>%{version.major}</ComponentVersionMajor>
+    <ComponentVersionMinor>%{version.minor}</ComponentVersionMinor>
+    <ComponentVersionMicro>%{version.micro}</ComponentVersionMicro>
+    <ComponentVersionBuild>%{version.build}</ComponentVersionBuild>
+  </PropertyGroup>
+</Project>

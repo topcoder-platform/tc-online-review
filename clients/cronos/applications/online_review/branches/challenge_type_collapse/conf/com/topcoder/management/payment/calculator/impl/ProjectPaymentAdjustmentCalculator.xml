@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<CMConfig>
+    <!-- Project payment adjustment calculator -->
+    <Config name="com.topcoder.management.payment.calculator.impl.ProjectPaymentAdjustmentCalculator">
+        <!-- configuration for ObjectFactory -->
+        <Property name="object_factory_config">
+            <Property name="DefaultProjectPaymentCalculator">
+                <Property name="type">
+                    <Value>com.topcoder.management.payment.calculator.impl.DefaultProjectPaymentCalculator</Value>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="project_payment_calculator_key">
+            <Value>DefaultProjectPaymentCalculator</Value>
+        </Property>
+        <Property name="logger_name">
+            <Value>ProjectPaymentAdjustmentCalculator</Value>
+        </Property>
+        <Property name="connection_name">
+            <Value>TCS_CATALOG</Value>
+        </Property>
+        <!-- configuration for DBConnectionFactoryImpl -->
+        <Property name="db_connection_factory_config">
+            <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+                <Property name="connections">
+                    <Property name="default">
+                        <Value>TCS_CATALOG</Value>
+                    </Property>
+
+                    <Property name="TCS_CATALOG">
+                        <Property name="producer">
+                            <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+                        </Property>
+                        <Property name="parameters">
+                            <Property name="jndi_name">
+                                <Value>java:TCS_CATALOG</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+</CMConfig>

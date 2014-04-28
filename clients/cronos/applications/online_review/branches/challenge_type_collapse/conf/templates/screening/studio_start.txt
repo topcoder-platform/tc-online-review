@@ -1,0 +1,33 @@
+Hello %USER_HANDLE{User handle}%,
+
+<p>
+This is the notification about the %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.
+</p>
+
+<p>
+Time\: %PHASE_TIMESTAMP{Phase timestamp}%<br/>
+Contest Type\: %PROJECT_CATEGORY{Name of the track}%<br/>
+Contest\: <a href\="%DIRECT_CONTEST_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
+Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
+</p>
+
+%if:NEED_PRIMARY_SCREENER='1'%
+<p>
+<font color\="red"><b>The contest has no Primary Screener assigned!</b></font><br/>
+If a screener does not register to screen your contest shortly, please contact <a href\="mailto\:support@topcoder.com?subject\=Need Studio Screener.">TopCoder Support</a>.
+</p>
+%endif%
+
+<table border\="1">
+<caption style\="white-space\: nowrap">Member submissions</caption>
+<tr>
+<th>Handle
+%loop:SUBMITTER%
+<tr>
+<td>%SUBMITTER_HANDLE%
+%endloop%
+</table>
+
+<p>
+Click <a href\="https\://www.topcoder.com/direct/settings/notifications">here</a> to change your notification settings.
+</p>

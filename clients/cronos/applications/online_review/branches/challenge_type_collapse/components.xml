@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<components>
+    <component
+        name="auto_pilot"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/auto_pilot/trunk"
+        revision="223144"/>
+
+    <component
+        name="deliverable_management"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/deliverable_management/trunk"
+        revision="239324"/>
+
+    <component
+        name="deliverable_management_persistence"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/deliverable_management_persistence/trunk"
+        revision="239325"/>
+
+    <component
+        name="late_deliverables_tracker"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/late_deliverables_tracker/trunk"
+        revision="223126" />
+
+    <component
+        name="late_deliverables_management"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/late_deliverables_management/trunk"
+        revision="223125" />
+
+    <component
+        name="online_review_deliverables"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_deliverables/trunk"
+        revision="226237" />
+
+    <component
+        name="online_review_ajax_support"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_ajax_support/trunk"
+        revision="241231" />
+
+    <component
+        name="online_review_login"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_login/trunk"
+        revision="241234" />
+
+    <component
+        name="online_review_phases"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/trunk"
+        revision="241730" />
+
+    <component
+        name="online_review_upload_services"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_upload_services/trunk"
+        revision="241638" />
+
+    <component
+        name="phase_management"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/phase_management/trunk"
+        revision="206513" />
+
+    <component
+        name="phase_management_persistence"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/phase_management_persistence/tags/version-1.0.4.1"
+        revision="227195" />
+
+    <component
+        name="project_management"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/project_management/trunk"
+        revision="224860" />
+
+    <component
+        name="project_management_persistence"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_management_persistence/trunk"
+        revision="224861" />
+
+    <component
+        name="project_phase_template"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/project_phase_template/trunk"
+        revision="206512" />
+
+    <component
+        name="review_data_structure"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/review_data_structure/trunk"
+        revision="241227" />
+
+    <component
+        name="review_management"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/review_management/trunk"
+        revision="226233" />
+
+    <component
+        name="review_management_persistence"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_management_persistence/trunk"
+        revision="242277" />
+
+    <component
+        name="review_score_aggregator"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/review_score_aggregator/trunk"
+        revision="241229" />
+
+    <component
+        name="review_score_calculator"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/review_score_calculator/trunk"
+        revision="241230" />
+
+    <component
+        name="scorecard_data_structure"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/scorecard_data_structure/trunk"
+        revision="206269" />
+
+    <component
+        name="authentication_factory"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/authentication_factory/trunk"
+        revision="206507" />
+
+    <component
+        name="logging_wrapper"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/logging_wrapper/trunk"
+        revision="106288" />
+
+    <component
+        name="search_builder"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/search_builder/trunk"
+        revision="66715" />
+
+    <!-- ldap_sdk_interface is a dependency of the search_builder -->
+    <component
+        name="ldap_sdk_interface"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/ldap_sdk_interface/trunk"
+        revision="130310" />
+
+    <component
+        name="resource_management"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/resource_management/trunk"
+        revision="243314" />
+
+    <component
+        name="resource_management_persistence"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/resource_management_persistence/trunk"
+        revision="241639" />
+
+    <component
+        name="email_engine"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/email_engine/trunk"
+        revision="223122" />
+
+    <component
+        name="document_generator"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/document_generator/trunk"
+        revision="206522" />
+
+    <component
+        name="base_exception"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/base_exception/trunk"
+        revision="106287" />
+
+    <component
+        name="class_associations"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/class_associations/trunk"
+        revision="207028" />
+
+    <component
+        name="command_line_utility"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/command_line_utility/trunk"
+        revision="109082" />
+
+    <component
+        name="compression_utility"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/compression_utility/trunk"
+        revision="206534" />
+
+    <component
+        name="configuration_api"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/configuration_api/trunk"
+        revision="202162" />
+
+    <component
+        name="configuration_persistence"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/configuration_persistence/trunk"
+        revision="151229" />
+
+    <component
+        name="data_validation"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/data_validation/trunk"
+        revision="106974" />
+
+    <component
+        name="database_abstraction"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/database_abstraction/trunk"
+        revision="204004" />
+
+    <component
+        name="scorecard_management"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/scorecard_management/trunk"
+        revision="112924" />
+
+    <component
+        name="scorecard_management_persistence"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/scorecard_management_persistence/trunk"
+        revision="223139" />
+
+    <component
+        name="db_connection_factory"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/db_connection_factory/trunk"
+        revision="224896" />
+
+    <component
+        name="executable_wrapper"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/executable_wrapper/trunk"
+        revision="207027" />
+
+    <component
+        name="workdays"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/workdays/trunk"
+        revision="196056" />
+
+    <component
+        name="weighted_calculator"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/weighted_calculator/trunk"
+        revision="107671" />
+
+    <component
+        name="type_safe_enum"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/type_safe_enum/trunk"
+        revision="106290" />
+
+    <component
+        name="project_phases"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/project_phases/trunk"
+        revision="227194" />
+
+    <component
+        name="file_upload"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/file_upload/trunk"
+        revision="32579" />
+
+    <!-- file_system_server is a dependency of the file_upload -->
+    <component
+        name="file_system_server"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/file_system_server/trunk"
+        revision="211649" />
+
+    <!-- ip_server is a dependency of the file_upload -->
+    <component
+        name="ip_server"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/ip_server/trunk"
+        revision="109478" />
+
+    <!-- heartbeat is a dependency of the ip_server -->
+    <component
+        name="heartbeat"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/heartbeat/trunk"
+        revision="107400" />
+
+    <component
+        name="configuration_manager"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/configuration_manager/trunk"
+        revision="211653" />
+
+    <component
+        name="guid_generator"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/guid_generator/trunk"
+        revision="211658" />
+
+    <component
+        name="id_generator"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/id_generator/trunk"
+        revision="71795" />
+
+    <component
+        name="user_project_data_store"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/user_project_data_store/trunk"
+        revision="213159" />
+
+    <component
+        name="object_factory"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/object_factory/trunk"
+        revision="204054" />
+
+    <component
+        name="object_factory_config_api_plugin"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/object_factory_configuration_api_plugin/trunk"
+        revision="204056" />
+
+    <component
+        name="object_factory_config_manager_plugin"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/object_factory_config_manager_plugin/trunk"
+        revision="204059" />
+
+    <component
+        name="simple_cache"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/simple_cache/trunk"
+        revision="107355" />
+
+    <component
+        name="memory_usage"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/memory_usage/trunk"
+        revision="107229" />
+
+    <component
+        name="contest_eligibility_persistence"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/contest_eligibility_persistence/trunk"
+        revision="223118" />
+
+    <component
+        name="contest_eligibility_validation"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/contest_eligibility_validation/trunk"
+        revision="223119" />
+
+    <component
+        name="jndi_context_utility"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/jndi_context_utility/trunk"
+        revision="109561" />
+
+    <component
+        name="job_processor"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/job_processor/trunk"
+        revision="137583" />
+
+    <component
+        name="review_feedback_management"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_feedback_management/trunk"
+        revision="230003"/>
+
+    <component
+        name="object_formatter"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/object_formatter/trunk"
+        revision="223127"/>
+
+    <component
+        name="job_scheduling"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/job_scheduling/trunk"
+        revision="223123"/>
+
+    <component
+        name="terms_of_use"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/terms_of_use/trunk"
+        revision="211675"/>
+
+    <component
+        name="distribution_tool"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/distribution_tool/trunk"
+        revision="180902"/>
+
+    <component
+        name="topcoder_commons_utility"
+        svnpath="https://coder.topcoder.com/tcs/catalog/java/topcoder_commons_utility/trunk"
+        revision="202080"/>
+
+    <component
+        name="review_application_management"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_application_management/trunk"
+        revision="238984"/>
+    
+    <component
+        name="review_assignment"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_assignment/trunk"
+        revision="241640"/>
+
+    <component
+        name="project_payment_calculator"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_payment_calculator/trunk"
+        revision="237894"/>
+
+    <component
+        name="project_payment_management"
+        svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/project_payment_management/trunk"
+        revision="227396"/>
+</components>

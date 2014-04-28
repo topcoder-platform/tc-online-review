@@ -1,0 +1,22 @@
+<p>
+Contest\: <a href\="https\://software.topcoder.com/review/actions/ViewProjectDetails?pid\=%PROJECT_ID%">%PROJECT_NAME% %PROJECT_VERSION%</a><br/>
+Deliverable\: <a href\="https\://software.topcoder.com/review/actions/EditLateDeliverable?late_deliverable_id\=%LATE_DELIVERABLE_ID%">%DELIVERABLE_NAME%</a><br/>
+Deadline\: %COMPENSATED_DEADLINE%
+%if:COMPENSATED_AND_REAL_DEADLINES_DIFFER='true'%(compensated due to the premature end of the previous phase)%endif%<br/>
+Current delay\: %DELAY%<br/>
+</p>
+<p>
+The %DELIVERABLE_NAME% is late, please submit it as soon as possible.<br/>
+You can view the details of the late deliverable and explain it <a href\="https\://software.topcoder.com/review/actions/EditLateDeliverable?late_deliverable_id\=%LATE_DELIVERABLE_ID%">here</a>.
+%if:EXPLANATION_CAN_BE_SENT='true'%
+You have time to explain the late deliverable by %EXPLANATION_DEADLINE%.
+%endif%
+</p>
+<p>
+You are getting this email because you have missed the current deadline for the Online Review project.
+If you have any question, please read the <a href\="http\://www.topcoder.com/wiki/x/UwBSAw">Late Deliverables Tracking</a> wiki page or contact us at support@topcoder.com.
+</p>
+<p>
+Thank you,<br/>
+TopCoder Software.
+</p>

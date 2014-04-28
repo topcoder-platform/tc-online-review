@@ -1,0 +1,17 @@
+Hello %USER_HANDLE{User handle}%,
+
+<p>
+Contest\: <a href\="%OR_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
+</p>
+
+<p>
+Now that your contest has succeeded, please evaluate how well the reviewers did their job. Your feedback will help improve quality of the future reviews.<br/>
+If you had any complaint against a particular reviewer during the contest or if you noticed a reviewer who did a great review, make sure to submit your feedback and rate the reviewers now!<br/>
+<br/>
+<a href\="https\://software.topcoder.com/review/actions/ViewManagementConsole?activeTabIdx\=3&amp;pid\=%OR_PROJECT_ID%">Rate reviewers</a>
+</p>
+
+<p>
+Please be advised that Online Review will hold copilot payment until the review feedback is submitted.<br/>
+For more information on how to submit the review feedback, please read the full instructions <a href\="http\://apps.topcoder.com/wiki/display/TCU/Generic+Managing+Competitions#GenericManagingCompetitions-ReviewFeedback">here</a>.
+</p>

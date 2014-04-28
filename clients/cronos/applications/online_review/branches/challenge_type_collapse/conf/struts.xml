@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+  <constant name="struts.action.extension" value="" />
+  <constant name="struts.enable.DynamicMethodInvocation" value="false" />
+  <constant name="struts.devMode" value="false" />
+  <constant name="struts.objectFactory" value="spring" />
+  <constant name="struts.custom.i18n.resources" value="MessageResources" />
+  <constant name="struts.multipart.maxSize" value="209715200"/>
+
+  <package name="default" extends="struts-default" namespace="/actions">
+        <interceptors>
+           <interceptor name="DynamicModelPopulationInterceptor" class="DynamicModelPopulationInterceptor"/>
+           <interceptor-stack name="orStack">
+               <interceptor-ref name="defaultStack"/>
+               <interceptor-ref name="DynamicModelPopulationInterceptor"/>
+           </interceptor-stack>
+        </interceptors>
+        <default-interceptor-ref name="orStack" />
+
+        <global-results>
+           <result name="notAuthorized" type="redirect">/actions/Login</result>
+           <result name="Login">/actions/Login</result>
+           <result name="userError">/jsp/userError.jsp</result>
+           <result name="reviewCommitted">/jsp/reviewCommitted.jsp</result>
+           <result name="listMyProjects">/actions/ListProjects</result>
+           <result name="errorPage">/jsp/errorPage.jsp</result>
+        </global-results>
+
+        <global-exception-mappings>
+             <exception-mapping exception="java.lang.Throwable" result="errorPage" />
+        </global-exception-mappings>
+
+        <action name="Credits">
+            <result>/jsp/credits.jsp</result>
+        </action>
+
+        <action name="Login" class="loginAction">
+           <result name="input">/jsp/login.jsp</result>
+           <result name="success" type="redirect">/actions/ListProjects</result>
+           <result name="failure">/jsp/login.jsp</result>
+           <result name="dynamic" type="redirect">${url}</result>
+           <exception-mapping result="notAuthorized" exception="com.topcoder.security.authenticationfactory.AuthenticateException" />
+           <exception-mapping result="notAuthorized" exception="com.topcoder.security.authenticationfactory.MissingPrincipalKeyException" />
+           <exception-mapping result="notAuthorized" exception="com.topcoder.security.authenticationfactory.InvalidPrincipalException" />
+           <exception-mapping result="notAuthorized" exception="com.cronos.onlinereview.login.LoginActions.AuthResponseParserException" />
+        </action>
+
+        <action name="Logout" class="logoutAction">
+           <result name="input">/jsp/login.jsp</result>
+           <result name="logout" type="redirect">/actions/Login</result>
+           <exception-mapping result="logout" exception="com.cronos.onlinereview.login.LoginActions.AuthResponseParserException" />
+        </action>
+
+        <!-- "List Projects" action -->
+        <action name="ListProjects" class="listProjectsAction">
+            <result name="success">/jsp/listProjects.jsp</result>
+            <result name="all" type="redirect">/actions/ListProjects?scope=all</result>
+        </action>
+
+        <!-- "New Project" action -->
+        <action name="NewProject" class="newProjectAction">
+            <result name="success">/jsp/editProject.jsp</result>
+        </action>
+
+        <!-- "Edit Project" action -->
+        <action name="EditProject" class="editProjectAction">
+            <result name="success">/jsp/editProject.jsp</result>
+        </action>
+
+        <!-- "Save Project" action -->
+        <action name="SaveProject" class="saveProjectAction">
+            <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+            <result name="input">/jsp/editProject.jsp</result>
+        </action>
+
+        <!-- "View Project Details" action -->
+        <action name="ViewProjectDetails" class="viewProjectDetailsAction">
+            <result name="success">/jsp/viewProjectDetails.jsp</result>
+        </action>
+
+        <!-- "Contact Manager" action -->
+        <action name="ContactManager" class="contactManagerAction">
+            <result name="displayPage">/jsp/contactManager.jsp</result>
+            <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+        </action>
+
+        <!-- "Delete Submission" action -->
+        <action name="DeleteSubmission" class="deleteSubmissionAction">
+            <result name="displayPage">/jsp/confirmDeleteSubmission.jsp</result>
+            <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+        </action>
+
+        <!-- "Download Contest Submission" action -->
+        <action name="DownloadContestSubmission" class="downloadContestSubmissionAction">
+        </action>
+
+        <!-- "Download Checkpoint Submission" action -->
+        <action name="DownloadCheckpointSubmission" class="downloadCheckpointSubmissionAction">
+        </action>
+
+        <!-- "Download Document" action -->
+        <action name="DownloadDocument" class="downloadDocumentAction" />
+
+        <!-- "Download FinalFix" action -->
+        <action name="DownloadFinalFix" class="downloadFinalFixAction">
+        </action>
+
+        <!-- "Download Specification Submission" action -->
+        <action name="DownloadSpecificationSubmission" class="downloadSpecificationSubmissionAction">
+        </action>
+
+        <!-- "Download Test case" action -->
+        <action name="DownloadTestCase" class="downloadTestCaseAction">
+        </action>
+
+        <!-- "EarlyAppeals" action -->
+        <action name="EarlyAppeals" class="earlyAppealsAction">
+           <result name="displayPage">/jsp/confirmEarlyAppeals.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+        </action>
+
+        <!-- "Upload Specification Submission" action -->
+        <action name="UploadSpecificationSubmission" class="uploadSpecificationSubmissionAction">
+           <result name="displayPage">/jsp/uploadSpecification.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+        </action>
+
+        <!-- "Upload Checkpoint Submission" action -->
+        <action name="UploadCheckpointSubmission" class="uploadCheckpointSubmissionAction">
+           <result name="displayPage">/jsp/uploadCheckpointSubmission.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}
+           </result>
+        </action>
+
+        <!-- "Upload Contest Submission" action -->
+        <action name="UploadContestSubmission" class="uploadContestSubmissionAction">
+           <result name="displayPage">/jsp/uploadSubmission.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}
+           </result>
+        </action>
+
+        <!-- "Upload Test Case" action -->
+        <action name="UploadTestCase" class="uploadTestCaseAction">
+           <result name="displayPage">/jsp/uploadTestCase.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}
+           </result>
+        </action>
+
+        <!-- "Upload Final Fix" action -->
+        <action name="UploadFinalFix" class="uploadFinalFixAction">
+           <result name="displayPage">/jsp/uploadFinalFix.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}
+           </result>
+        </action>
+
+        <!-- "Unregister" action -->
+        <action name="Unregister" class="unregisterAction">
+           <result name="displayPage">/jsp/confirmUnregistration.jsp</result>
+           <result name="success" type="redirect">/actions/ListProjects</result>
+        </action>
+
+        <!-- "Advance Failed Screening Submission" action -->
+        <action name="AdvanceFailedScreeningSubmission" class="advanceFailedScreeningSubmissionAction">
+            <result name="displayPage">/jsp/confirmAdvanceFailedScreeningSubmission.jsp</result>
+            <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+        </action>
+
+        <!-- "Advance Failed Checkpoint Screening Submission" action -->
+        <action name="AdvanceFailedCheckpointScreeningSubmission" class="advanceFailedScreeningSubmissionAction">
+            <result name="displayPage">/jsp/confirmAdvanceFailedCheckpointScreeningSubmission.jsp</result>
+            <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+        </action>
+
+        <!-- "View Management Console" action -->
+        <action name="ViewManagementConsole" class="viewManagementConsoleAction">
+           <result name="success">/jsp/viewProjectManagementConsole.jsp</result>
+        </action>
+
+        <action name="ManageProject" class="manageProjectAction">
+           <result name="input">/jsp/viewProjectManagementConsole.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+        </action>
+
+        <!-- "Upload Distribution" action -->
+        <action name="UploadDistribution" class="uploadDistributionAction">
+           <result name="input">/jsp/viewProjectManagementConsole.jsp</result>
+           <result name="success" type="redirect">/actions/ViewManagementConsole?pid=${pid}&amp;activeTabIdx=2</result>
+        </action>
+
+        <!-- "Manage Distribution" action -->
+        <action name="ManageDistribution" class="manageDistributionAction">
+           <result name="input">/jsp/viewProjectManagementConsole.jsp</result>
+           <result name="success" type="redirect">/actions/ViewManagementConsole?pid=${pid}&amp;activeTabIdx=2</result>
+        </action>
+
+        <!-- "Save Review Payments" action -->
+        <action name="SaveReviewPayments" class="saveReviewPaymentsAction">
+           <result name="input">/jsp/viewProjectManagementConsole.jsp</result>
+           <result name="success" type="redirect">/actions/ViewManagementConsole?pid=${pid}&amp;activeTabIdx=4</result>
+        </action>
+
+        <!-- "Save Review Feedback" action -->
+        <action name="SaveReviewFeedback" class="saveReviewFeedbackAction">
+           <result name="input">/jsp/viewProjectManagementConsole.jsp</result>
+           <result name="success" type="redirect">/actions/ViewManagementConsole?pid=${pid}&amp;activeTabIdx=3</result>
+        </action>
+
+        <!-- "Edit Review Feedback" action -->
+        <action name="EditReviewFeedback" class="editReviewFeedbackAction">
+           <result name="success">/jsp/viewProjectManagementConsole.jsp</result>
+        </action>
+
+        <!-- "Edit Late Deliverable" action -->
+        <action name="EditLateDeliverable" class="editLateDeliverableAction">
+           <result name="success">/jsp/editLateDeliverable.jsp</result>
+        </action>
+
+        <!-- "Save Late Deliverable" action -->
+        <action name="SaveLateDeliverable" class="saveLateDeliverableAction">
+           <result name="input">/jsp/editLateDeliverable.jsp</result>
+           <result name="success" type="redirect">/actions/EditLateDeliverable?late_deliverable_id=${id}</result>
+        </action>
+
+        <!-- "View Late Deliverables" action -->
+        <action name="ViewLateDeliverables" class="viewLateDeliverablesAction">
+           <result name="input">/jsp/viewLateDeliverables.jsp</result>
+           <result name="success">/jsp/viewLateDeliverables.jsp</result>
+        </action>
+
+        <!-- "Edit Project Links" action -->
+        <action name="EditProjectLinks" class="editProjectLinksAction">
+            <result name="success">/jsp/editProjectLinks.jsp</result>
+        </action>
+
+        <!-- "Save Project Links" action -->
+        <action name="SaveProjectLinks" class="saveProjectLinksAction">
+            <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+        </action>
+
+        <!-- "Edit Project Payments" action -->
+        <action name="EditProjectPayments" class="editProjectPaymentsAction">
+           <result name="success">/jsp/editProjectPayments.jsp</result>
+        </action>
+
+        <!-- "View Project Payments" action -->
+        <action name="ViewProjectPayments" class="viewProjectPaymentsAction">
+           <result name="success">/jsp/viewProjectPayments.jsp</result>
+        </action>
+
+        <!-- "Save Project Payments" action -->
+        <action name="SaveProjectPayments" class="saveProjectPaymentsAction">
+           <result name="input">/jsp/editProjectPayments.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectPayments?pid=${pid}</result>
+        </action>
+
+        <!-- "Create Screening" action -->
+        <action name="CreateScreening" class="createScreeningAction">
+           <result name="success">/jsp/editReview.jsp</result>
+           <result name="edit" type="redirect">/actions/EditScreening?rid=${rid}</result>
+        </action>
+
+        <!-- "Edit Screening" action -->
+        <action name="EditScreening" class="editScreeningAction">
+           <result name="success">/jsp/editReview.jsp</result>
+        </action>
+
+        <!-- "Save Screening" action -->
+        <action name="SaveScreening" class="saveScreeningAction">
+           <result name="input">/jsp/editReview.jsp</result>
+           <result name="preview">/jsp/viewReview.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+        </action>
+
+        <!-- "View Screening" action -->
+        <action name="ViewScreening" class="viewScreeningAction">
+           <result name="success">/jsp/viewReview.jsp</result>
+        </action>
+
+        <!-- "Create CheckpointScreening" action -->
+        <action name="CreateCheckpointScreening" class="createCheckpointScreeningAction">
+           <result name="success">/jsp/editReview.jsp</result>
+           <result name="edit" type="redirect">/actions/EditCheckpointScreening?rid=${rid}</result>
+        </action>
+
+        <!-- "Edit CheckpointScreening" action -->
+        <action name="EditCheckpointScreening" class="editCheckpointScreeningAction">
+           <result name="success">/jsp/editReview.jsp</result>
+        </action>
+
+        <!-- "Save CheckpointScreening" action -->
+        <action name="SaveCheckpointScreening" class="saveCheckpointScreeningAction">
+           <result name="input">/jsp/editReview.jsp</result>
+           <result name="preview">/jsp/viewReview.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+        </action>
+
+        <!-- "View CheckpointScreening" action -->
+        <action name="ViewCheckpointScreening" class="viewCheckpointScreeningAction">
+           <result name="success">/jsp/viewReview.jsp</result>
+        </action>
+
+        <!-- "Create Review" action -->
+        <action name="CreateReview" class="createReviewAction">
+           <result name="success">/jsp/editReview.jsp</result>
+           <result name="edit" type="redirect">/actions/EditReview?rid=${rid}</result>
+        </action>
+
+        <!-- "Edit Review" action -->
+        <action name="EditReview" class="editReviewAction">
+           <result name="success">/jsp/editReview.jsp</result>
+        </action>
+
+        <!-- "Save Review" action -->
+        <action name="SaveReview" class="saveReviewAction">
+           <result name="input">/jsp/editReview.jsp</result>
+           <result name="preview">/jsp/viewReview.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+        </action>
+
+        <!-- "View Review" action -->
+        <action name="ViewReview" class="viewReviewAction">
+           <result name="success">/jsp/viewReview.jsp</result>
+        </action>
+
+        <!-- "Create IterativeReview" action -->
+        <action name="CreateIterativeReview" class="createIterativeReviewAction">
+           <result name="success">/jsp/editReview.jsp</result>
+           <result name="edit" type="redirect">/actions/EditIterativeReview?rid=${rid}</result>
+        </action>
+
+        <!-- "Edit IterativeReview" action -->
+        <action name="EditIterativeReview" class="editIterativeReviewAction">
+           <result name="success">/jsp/editReview.jsp</result>
+        </action>
+
+        <!-- "Save IterativeReview" action -->
+        <action name="SaveIterativeReview" class="saveIterativeReviewAction">
+           <result name="input">/jsp/editReview.jsp</result>
+           <result name="preview">/jsp/viewReview.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+        </action>
+
+        <!-- "View IterativeReview" action -->
+        <action name="ViewIterativeReview" class="viewIterativeReviewAction">
+           <result name="success">/jsp/viewReview.jsp</result>
+        </action>
+
+        <!-- "Create CheckpointReview" action -->
+        <action name="CreateCheckpointReview" class="createCheckpointReviewAction">
+           <result name="success">/jsp/editReview.jsp</result>
+           <result name="edit" type="redirect">/actions/EditCheckpointReview?rid=${rid}</result>
+        </action>
+
+        <!-- "Edit CheckpointReview" action -->
+        <action name="EditCheckpointReview" class="editCheckpointReviewAction">
+           <result name="success">/jsp/editReview.jsp</result>
+        </action>
+
+        <!-- "Save CheckpointReview" action -->
+        <action name="SaveCheckpointReview" class="saveCheckpointReviewAction">
+           <result name="input">/jsp/editReview.jsp</result>
+           <result name="preview">/jsp/viewReview.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+        </action>
+
+        <!-- "View CheckpointReview" action -->
+        <action name="ViewCheckpointReview" class="viewCheckpointReviewAction">
+           <result name="success">/jsp/viewReview.jsp</result>
+        </action>
+
+        <!-- "View Scorecard" action -->
+        <action name="ViewScorecard" class="viewScorecardAction">
+           <result name="success">/jsp/viewScorecard.jsp</result>
+        </action>
+
+        <!-- "Edit Aggregation" action -->
+        <action name="EditAggregation" class="editAggregationAction">
+           <result name="success">/jsp/editAggregation.jsp</result>
+        </action>
+
+        <!-- "Save Aggregation" action -->
+        <action name="SaveAggregation" class="saveAggregationAction">
+           <result name="input">/jsp/editAggregation.jsp</result>
+           <result name="preview">/jsp/viewAggregation.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+        </action>
+
+        <!-- "View Aggregation" action -->
+        <action name="ViewAggregation" class="viewAggregationAction">
+           <result name="success">/jsp/viewAggregation.jsp</result>
+        </action>
+
+        <!-- "View AggregationReview" action -->
+        <action name="ViewAggregationReview" class="viewAggregationReviewAction">
+           <result name="success">/jsp/viewAggregationReview.jsp</result>
+        </action>
+
+        <!-- "Edit FinalReview" action -->
+        <action name="EditFinalReview" class="editFinalReviewAction">
+           <result name="success">/jsp/editFinalReview.jsp</result>
+        </action>
+
+        <!-- "Save FinalReview" action -->
+        <action name="SaveFinalReview" class="saveFinalReviewAction">
+           <result name="input">/jsp/editFinalReview.jsp</result>
+           <result name="preview">/jsp/viewFinalReview.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+        </action>
+
+        <!-- "View FinalReview" action -->
+        <action name="ViewFinalReview" class="viewFinalReviewAction">
+           <result name="success">/jsp/viewFinalReview.jsp</result>
+        </action>
+
+        <!-- "Create Approval" action -->
+        <action name="CreateApproval" class="createApprovalAction">
+           <result name="success">/jsp/editApproval.jsp</result>
+           <result name="edit" type="redirect">/actions/EditApproval?rid=${rid}</result>
+        </action>
+
+        <!-- "Edit Approval" action -->
+        <action name="EditApproval" class="editApprovalAction">
+           <result name="success">/jsp/editApproval.jsp</result>
+        </action>
+
+        <!-- "Save Approval" action -->
+        <action name="SaveApproval" class="saveApprovalAction">
+           <result name="input">/jsp/editApproval.jsp</result>
+           <result name="preview">/jsp/viewApproval.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result> 
+        </action>
+
+        <!-- "View Approval" action -->
+        <action name="ViewApproval" class="viewApprovalAction">
+           <result name="success">/jsp/viewApproval.jsp</result>
+        </action>
+
+        <!-- "Create PostMortem" action -->
+        <action name="CreatePostMortem" class="createPostMortemAction">
+           <result name="success">/jsp/editReview.jsp</result>
+           <result name="edit" type="redirect">/actions/EditPostMortem?rid=${rid}</result>
+        </action>
+
+        <!-- "Edit PostMortem" action -->
+        <action name="EditPostMortem" class="editPostMortemAction">
+           <result name="success">/jsp/editReview.jsp</result>
+        </action>
+
+        <!-- "Save PostMortem" action -->
+        <action name="SavePostMortem" class="savePostMortemAction">
+           <result name="input">/jsp/editReview.jsp</result>
+           <result name="preview">/jsp/viewReview.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+        </action>
+
+        <!-- "View PostMortem" action -->
+        <action name="ViewPostMortem" class="viewPostMortemAction">
+           <result name="success">/jsp/viewReview.jsp</result>
+        </action>
+
+        <!-- "View Composite Scorecard" action -->
+        <action name="ViewCompositeScorecard" class="viewCompositeScorecardAction">
+           <result name="success">/jsp/viewCompositeScorecard.jsp</result>
+        </action>
+
+        <!-- "Create SpecificationReview" action -->
+        <action name="CreateSpecificationReview" class="createSpecificationReviewAction">
+           <result name="success">/jsp/editSpecificationReview.jsp</result>
+           <result name="edit" type="redirect">/actions/EditSpecificationReview?rid=${rid}</result>
+        </action>
+
+        <!-- "Edit SpecificationReview" action -->
+        <action name="EditSpecificationReview" class="editSpecificationReviewAction">
+           <result name="success">/jsp/editSpecificationReview.jsp</result>
+        </action>
+
+        <!-- "Save SpecificationReview" action -->
+        <action name="SaveSpecificationReview" class="saveSpecificationReviewAction">
+           <result name="input">/jsp/editSpecificationReview.jsp</result>
+           <result name="preview">/jsp/viewSpecificationReview.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+        </action>
+
+        <!-- "View SpecificationReview" action -->
+        <action name="ViewSpecificationReview" class="viewSpecificationReviewAction">
+           <result name="success">/jsp/viewSpecificationReview.jsp</result>
+        </action>
+
+        <!-- "Reopen Scorecard" action -->
+        <action name="ReopenScorecard" class="reopenScorecardAction">
+           <result name="input">/jsp/confirmReopenScorecard.jsp</result>
+           <result name="displayPage">/jsp/confirmReopenScorecard.jsp</result>
+           <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
+        </action>
+
+        <!-- "Export Review" action -->
+        <action name="ExportReview" class="exportReviewAction">
+        </action>
+
+        <!-- Redirect for old-style Struts1 requests -->
+        <action name="*.do" class="struts1MappingAction">
+           <result name="dynamic" type="redirect">${url}</result>
+        </action>
+  </package>
+
+</struts>
