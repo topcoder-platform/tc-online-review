@@ -215,7 +215,7 @@ public class ViewCompositeScorecardAction extends BaseViewOrExportGenericReviewA
                         Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.InternalError", null);
             }
 
-            authors[i] = Long.parseLong((String) reviewer.getProperty("External Reference ID"));
+            authors[i] = reviewer.getUserId();
             avgScore += (review.getScore() != null) ? review.getScore() : 0;
             scores[i] = new double[questionsCount];
             int itemIdx = 0;

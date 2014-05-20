@@ -18,7 +18,7 @@
     <component
         name="late_deliverables_tracker"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/late_deliverables_tracker/trunk"
-        revision="223126" />
+        revision="244703" />
 
     <component
         name="late_deliverables_management"
@@ -33,7 +33,7 @@
     <component
         name="online_review_ajax_support"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_ajax_support/trunk"
-        revision="241231" />
+        revision="244704" />
 
     <component
         name="online_review_login"
@@ -43,12 +43,12 @@
     <component
         name="online_review_phases"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_phases/trunk"
-        revision="241730" />
+        revision="244705" />
 
     <component
         name="online_review_upload_services"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/online_review_upload_services/trunk"
-        revision="241638" />
+        revision="244706" />
 
     <component
         name="phase_management"
@@ -129,12 +129,12 @@
     <component
         name="resource_management"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/resource_management/trunk"
-        revision="243314" />
+        revision="244707" />
 
     <component
         name="resource_management_persistence"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/resource_management_persistence/trunk"
-        revision="241639" />
+        revision="244708" />
 
     <component
         name="email_engine"
@@ -352,7 +352,7 @@
     <component
         name="review_assignment"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_assignment/trunk"
-        revision="241640"/>
+        revision="244709"/>
 
     <component
         name="project_payment_calculator"

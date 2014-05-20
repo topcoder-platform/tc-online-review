@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 - 2013 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2006 - 2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.util;
 
@@ -838,7 +838,7 @@ public class ActionsHelper {
         populateEmailProperty(request, submitter);
 
         // Place submitter's user ID into the request
-        request.setAttribute("submitterId", submitter.getProperty("External Reference ID"));
+        request.setAttribute("submitterId", submitter.getUserId());
         // Place submitter's resource into the request
         request.setAttribute("submitterResource", submitter);
     }
@@ -864,11 +864,11 @@ public class ActionsHelper {
     public static void populateEmailProperty(HttpServletRequest request, Resource[] resources) throws BaseException {
         long[] userIDs = new long[resources.length];
         for (int i = 0; i < resources.length; i++) {
-            String userID = (String) resources[i].getProperty("External Reference ID");
-            if (userID == null || userID.trim().length() == 0) {
+            Long userID = resources[i].getUserId();
+            if (userID == null) {
                 throw new BaseException("the resourceId: " + resources[i].getId() + " doesn't refer a valid user");
             }
-            userIDs[i] = Long.parseLong(userID);
+            userIDs[i] = userID;
         }
 
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
@@ -1306,17 +1306,20 @@ public class ActionsHelper {
         ResourceManager resourceManager = createResourceManager();
 
         Project project = projectManager.getProject(projectId);
-        String winnerId = (String) project.getProperty("Winner External Reference ID");
+        Long winnerId;
+        try {
+            winnerId = Long.parseLong((String) project.getProperty("Winner External Reference ID"));
+        } catch (NumberFormatException nfe) {
+            winnerId = null;
+        }
+        
         if (winnerId != null) {
-
             long submitterRoleId = LookupHelper.getResourceRole("Submitter").getId();
-            ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
 
             AndFilter fullFilter = new AndFilter(Arrays.asList(
                     ResourceFilterBuilder.createResourceRoleIdFilter(submitterRoleId),
                     ResourceFilterBuilder.createProjectIdFilter(projectId),
-                    ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID"),
-                    ResourceFilterBuilder.createExtensionPropertyValueFilter(winnerId)));
+                    ResourceFilterBuilder.createUserIdFilter(winnerId)));
 
 
             Resource[] submitters = resourceManager.searchResources(fullFilter);
@@ -1617,8 +1620,7 @@ public class ActionsHelper {
         long[] extUserIds = new long[resources.length];
         // Fill the array with user IDs retrieved from resource properties
         for (int i = 0; i < resources.length; ++i) {
-            String userID = (String) resources[i].getProperty("External Reference ID");
-            extUserIds[i] = Long.parseLong(userID, 10);
+            extUserIds[i] = resources[i].getUserId();
         }
 
         // Retrieve external users to the temporary array
@@ -3341,8 +3343,6 @@ public class ActionsHelper {
      * @throws BaseException if an unexpected error occurs.
      */
     public static List<Long> getUserIDsByRoleNames(String[] roleNames, long projectID) throws BaseException {
-        List<Long> userIds = new ArrayList<Long>();
-
         if ((roleNames != null) && (roleNames.length > 0)) {
             // Build filters
             List<Filter> roleFilters = new ArrayList<Filter>();
@@ -3357,18 +3357,15 @@ public class ActionsHelper {
             Resource[] resources = createResourceManager().searchResources(filter);
 
             // Collect unique external user IDs first as there may exist multiple resources for the same user
-            Set<String> stringUserIDs = new HashSet<String>();
+            Set<Long> userIDs = new HashSet<Long>();
             for (Resource resource : resources) {
-                String stringUserID = ((String) resource.getProperty("External Reference ID")).trim();
-                stringUserIDs.add(stringUserID);
+                userIDs.add(resource.getUserId());
             }
 
-            for (String stringUserID : stringUserIDs) {
-                userIds.add(Long.parseLong(stringUserID));
-            }
+            return new ArrayList<Long>(userIDs);
         }
 
-        return userIds;
+        return new ArrayList<Long>();
     }
 
     /**

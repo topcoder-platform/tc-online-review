@@ -338,8 +338,8 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         }
 
         String[] myDeliverableLinks = generateDeliverableLinks(request, myDeliverables, phases);
-        String[] outstandingDeliverableUserIds = getDeliverableUserIds(outstandingDeliverables, allProjectResources);
-        String[] outstandingDeliverableSubmissionUserIds = getDeliverableSubmissionUserIds(outstandingDeliverables);
+        Long[] outstandingDeliverableUserIds = getDeliverableUserIds(outstandingDeliverables, allProjectResources);
+        Long[] outstandingDeliverableSubmissionUserIds = getDeliverableSubmissionUserIds(outstandingDeliverables);
 
         request.setAttribute("myDeliverableDates", myDeliverableDates);
         request.setAttribute("outstandingDeliverableDates", outstandingDeliverableDates);
@@ -620,7 +620,12 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         }
 
         if (allowedToReviewAggregation && AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) {
-            final String winnerExtId = (String) project.getProperty("Winner External Reference ID");
+            Long winnerId;
+            try {
+                winnerId = Long.parseLong((String)project.getProperty("Winner External Reference ID"));
+            } catch (NumberFormatException nfe) {
+                winnerId = null;
+            }
 
             // Set 'allowed' status to false temporarily.
             // If current user is a winning submitter, this variable will be reset back to true
@@ -635,7 +640,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
                 }
                 // This resource is a submitter;
                 // compare its external user ID to the official project's winner's one
-                if (resource.getProperty("External Reference ID").equals(winnerExtId)) {
+                if (winnerId != null && winnerId.equals(resource.getUserId())) {
                     allowedToReviewAggregation = true;
                     break;
                 }
@@ -1057,18 +1062,18 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
      * @param resources the resources
      * @throws BaseException if any error
      */
-    private static String[] getDeliverableUserIds(Deliverable[] deliverables, Resource[] resources) {
+    private static Long[] getDeliverableUserIds(Deliverable[] deliverables, Resource[] resources) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(deliverables, "deliverables");
         ActionsHelper.validateParameterNotNull(resources, "resources");
 
-        String[] ids = new String[deliverables.length];
+        Long[] ids = new Long[deliverables.length];
 
         for (int i = 0; i < deliverables.length; ++i) {
             final long deliverableResourceId = deliverables[i].getResource();
             for (Resource resource : resources) {
                 if (resource.getId() == deliverableResourceId) {
-                    ids[i] = (String) resource.getProperty("External Reference ID");
+                    ids[i] = resource.getUserId();
                     break;
                 }
             }
@@ -1084,7 +1089,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
      * @param deliverables the deliverables array
      * @throws BaseException if any error
      */
-    private static String[] getDeliverableSubmissionUserIds(Deliverable[] deliverables)
+    private static Long[] getDeliverableSubmissionUserIds(Deliverable[] deliverables)
             throws BaseException {
 
         List<Long> submissionIds = new ArrayList<Long>();
@@ -1096,7 +1101,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         }
 
         if (submissionIds.isEmpty()) {
-            return new String[0];
+            return new Long[0];
         }
 
         Filter filterSubmissions = new InFilter("submission_id", submissionIds);
@@ -1117,7 +1122,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         ResourceManager resMgr = ActionsHelper.createResourceManager();
         Resource[] resources = resMgr.searchResources(filterResources);
 
-        String[] ids = new String[deliverables.length];
+        Long[] ids = new Long[deliverables.length];
 
         for (int i = 0; i < deliverables.length; ++i) {
             if (deliverables[i].getSubmission() == null) {
@@ -1131,7 +1136,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
                 long submissionOwnerId = submission.getUpload().getOwner();
                 for (Resource resource : resources) {
                     if (resource.getId() == submissionOwnerId) {
-                        ids[i] = (String) resource.getProperty("External Reference ID");
+                        ids[i] = resource.getUserId();
                         break;
                     }
                 }

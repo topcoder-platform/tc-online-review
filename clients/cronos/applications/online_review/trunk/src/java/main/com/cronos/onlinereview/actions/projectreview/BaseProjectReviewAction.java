@@ -505,7 +505,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         ActionsHelper.populateEmailProperty(request, author);
 
         // Place submitter's user ID into the request
-        request.setAttribute("authorId", author.getProperty("External Reference ID"));
+        request.setAttribute("authorId", author.getUserId());
         // Place submitter's resource into the request
         request.setAttribute("authorResource", author);
     }

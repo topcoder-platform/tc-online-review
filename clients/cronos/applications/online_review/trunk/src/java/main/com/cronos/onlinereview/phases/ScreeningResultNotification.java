@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 - 2013 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011 - 2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -150,8 +150,7 @@ public class ScreeningResultNotification {
         for (Submission submission : submissions) {
             long submitterResourceId = submission.getUpload().getOwner();
             Resource submitterResource = resourceManager.getResource(submitterResourceId);
-            long submitterUserId = Long
-                    .parseLong(String.valueOf(submitterResource.getProperty("External Reference ID")));
+            long submitterUserId = submitterResource.getUserId();
             ExternalUser submitterUser = userRetrieval.retrieveUser(submitterUserId);
             for (Review review : reviews) {
                 if (review.getSubmission() == submission.getId()) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 - 2013 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2006 - 2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.util;
 
@@ -276,21 +276,24 @@ public class AuthorizationHelper {
             return;
         }
 
-        // Prepare filter to select resources by the External ID of currently logged in user
-        Filter filterExtIDname = ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
-        Filter filterExtIDvalue = ResourceFilterBuilder.createExtensionPropertyValueFilter(
-                String.valueOf(getLoggedInUserId(request)));
-        Filter filterExtID = new AndFilter(filterExtIDname, filterExtIDvalue);
+        long userId = getLoggedInUserId(request);
 
-        // Create filter to filter only the resources for the project in question
-        Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(projectId);
-        // Create combined final filter
-        Filter filter = new AndFilter(filterExtID, filterProject);
+        Resource[] resources;
+        if (userId != NO_USER_LOGGED_IN_ID) {
+            // Create filter to filter only the resources for the currently logged user
+            Filter filterUserID = ResourceFilterBuilder.createUserIdFilter(userId);
 
-        // Obtain an instance of Resource Manager
-        ResourceManager resMgr = ActionsHelper.createResourceManager();
-        // Perform search for resources
-        Resource[] resources = resMgr.searchResources(filter);
+            // Create filter to filter only the resources for the project in question
+            Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(projectId);
+            // Create combined final filter
+            Filter filter = new AndFilter(filterUserID, filterProject);
+
+            // Obtain an instance of Resource Manager and run the search
+            resources = ActionsHelper.createResourceManager().searchResources(filter);
+        } else {
+            resources = new Resource[0];
+        }
+
         for (Resource resource : resources) {
             ActionsHelper.populateEmailProperty(request, resource);
         }
@@ -306,7 +309,6 @@ public class AuthorizationHelper {
         }
 
         // retrieve user id and client id
-        long userId = getLoggedInUserId(request);
         long clientId;
         try {
             clientId = projectDataAccess.getProjectClient(project.getTcDirectProjectId());

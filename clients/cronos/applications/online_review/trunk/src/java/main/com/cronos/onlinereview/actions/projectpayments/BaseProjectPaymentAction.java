@@ -201,7 +201,7 @@ public abstract class BaseProjectPaymentAction extends BaseServletAwareAction im
         Map<Long, Long> resourceUserIds = new HashMap<Long, Long>();
         for (Resource resource : resources) {
             resourceRoles.put(resource.getId(), resource.getResourceRole().getName());
-            resourceUserIds.put(resource.getId(), Long.valueOf((String) resource.getProperty("External Reference ID")));
+            resourceUserIds.put(resource.getId(), resource.getUserId());
         }
         request.setAttribute("resourceRoles", resourceRoles);
         request.setAttribute("resourceUserIds", resourceUserIds);

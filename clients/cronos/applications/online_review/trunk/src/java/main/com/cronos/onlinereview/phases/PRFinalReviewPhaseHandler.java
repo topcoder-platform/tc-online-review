@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 - 2013 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2005 - 2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -167,16 +167,22 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
                 Filter resourceRolesFilter = new OrFilter(resourceRoleFilters);
                 Filter projectIdFilter = ResourceFilterBuilder.createProjectIdFilter(projectId);
                 Filter filter = new AndFilter(resourceRolesFilter, projectIdFilter);
-                ResourceManager resourceManager = getResourceManager();
+                ResourceManager resourceManager = getManagerHelper().getResourceManager();
                 Resource[] resources = resourceManager.searchResources(filter);
 
                 // Collect the list of resources which indeed need to have permission granted
-                String winnerId = (String) project.getProperty("Winner External Reference ID");
+                Long winnerId;
+                try {
+                    winnerId = Long.parseLong((String) project.getProperty("Winner External Reference ID"));
+                } catch (NumberFormatException nfe) {
+                    winnerId = null;
+                }
+
                 Map<String, List<Resource>> candidates = new HashMap<String, List<Resource>>();
                 for (Resource resource : resources) {
                     // Of resources with Submitter role only a winning Submitter is to be granted a permission
                     if (resource.getResourceRole().getId() == 1) {
-                        if ((winnerId == null) || !(winnerId.equals(resource.getProperty("External Reference ID")))) {
+                        if (winnerId == null || !winnerId.equals(resource.getUserId())) {
                             continue;
                         }
                     }
@@ -219,91 +225,6 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
         } catch (com.topcoder.management.project.ConfigurationException e) {
             throw new PhaseHandlingException("Failed to create ProjectManager", e);
         }
-    }
-
-    /**
-     * <p>
-     * Returns a <code>ResourceManager</code> instance. This is used in <code>UploadServices</code> to retrieve this
-     * manager and perform all its operations.
-     * </p>
-     *
-     * @return a <code>ResourceManager</code> instance
-     * @throws PhaseHandlingException if an unexpected error occurs.
-     */
-    private static ResourceManager getResourceManager() throws PhaseHandlingException {
-        try {
-            // get connection factory
-            DBConnectionFactory dbconn
-                = new DBConnectionFactoryImpl("com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
-
-            // get the persistence
-            ResourcePersistence persistence = new SqlResourcePersistence(dbconn);
-            // get the id generators
-            IDGenerator resourceIdGenerator = IDGeneratorFactory
-                    .getIDGenerator(PersistenceResourceManager.RESOURCE_ID_GENERATOR_NAME);
-            IDGenerator resourceRoleIdGenerator = IDGeneratorFactory
-                    .getIDGenerator(PersistenceResourceManager.RESOURCE_ROLE_ID_GENERATOR_NAME);
-            IDGenerator notificationTypeIdGenerator = IDGeneratorFactory
-                    .getIDGenerator(PersistenceResourceManager.NOTIFICATION_TYPE_ID_GENERATOR_NAME);
-            // get the search bundles
-            SearchBundleManager searchBundleManager = new SearchBundleManager("com.topcoder.searchbuilder.common");
-            SearchBundle resourceSearchBundle = searchBundleManager
-                    .getSearchBundle(PersistenceResourceManager.RESOURCE_SEARCH_BUNDLE_NAME);
-            // set it searchable
-            setAllFieldsSearchable(resourceSearchBundle);
-            SearchBundle resourceRoleSearchBundle = searchBundleManager
-                    .getSearchBundle(PersistenceResourceManager.RESOURCE_ROLE_SEARCH_BUNDLE_NAME);
-            // set it searchable
-            setAllFieldsSearchable(resourceRoleSearchBundle);
-            SearchBundle notificationSearchBundle = searchBundleManager
-                    .getSearchBundle(PersistenceResourceManager.NOTIFICATION_SEARCH_BUNDLE_NAME);
-            // set it searchable
-            setAllFieldsSearchable(notificationSearchBundle);
-            SearchBundle notificationTypeSearchBundle = searchBundleManager
-                    .getSearchBundle(PersistenceResourceManager.NOTIFICATION_TYPE_SEARCH_BUNDLE_NAME);
-            // set it searchable
-            setAllFieldsSearchable(notificationTypeSearchBundle);
-            // initialize the PersistenceResourceManager
-            return new PersistenceResourceManager(persistence, resourceSearchBundle, resourceRoleSearchBundle,
-                    notificationSearchBundle, notificationTypeSearchBundle, resourceIdGenerator,
-                    resourceRoleIdGenerator, notificationTypeIdGenerator);
-        } catch (Exception e) {
-            throw new PhaseHandlingException("Exception occurred while creating the resource manager.", e);
-        }
-    }
-
-    /**
-     * Sets the searchable fields to the search bundle.
-     *
-     * @param searchBundle the search bundle to set.
-     */
-    private static void setAllFieldsSearchable(SearchBundle searchBundle) {
-        Map<String, ObjectValidator> fields = new HashMap<String, ObjectValidator>();
-
-        // set the resource filter fields
-        fields.put(ResourceFilterBuilder.RESOURCE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.PHASE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.PROJECT_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.SUBMISSION_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.RESOURCE_ROLE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.EXTENSION_PROPERTY_NAME_FIELD_NAME, StringValidator.startsWith(""));
-        fields.put(ResourceFilterBuilder.EXTENSION_PROPERTY_VALUE_FIELD_NAME, StringValidator.startsWith(""));
-
-        // set the resource role filter fields
-        fields.put(ResourceRoleFilterBuilder.NAME_FIELD_NAME, StringValidator.startsWith(""));
-        fields.put(ResourceRoleFilterBuilder.PHASE_TYPE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceRoleFilterBuilder.RESOURCE_ROLE_ID_FIELD_NAME, LongValidator.isPositive());
-
-        // set the notification filter fields
-        fields.put(NotificationFilterBuilder.EXTERNAL_REF_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(NotificationFilterBuilder.NOTIFICATION_TYPE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(NotificationFilterBuilder.PROJECT_ID_FIELD_NAME, LongValidator.isPositive());
-
-        // set the notification type filter fields
-        fields.put(NotificationTypeFilterBuilder.NOTIFICATION_TYPE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(NotificationTypeFilterBuilder.NAME_FIELD_NAME, StringValidator.startsWith(""));
-
-        searchBundle.setSearchableFields(fields);
     }
 
     /**

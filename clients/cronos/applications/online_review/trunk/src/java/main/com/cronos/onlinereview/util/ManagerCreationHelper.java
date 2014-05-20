@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 - 2013 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007 - 2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.util;
 
@@ -696,6 +696,7 @@ public class ManagerCreationHelper implements ManagersProvider {
         fields.put(ResourceFilterBuilder.PHASE_ID_FIELD_NAME, LongValidator.isPositive());
         fields.put(ResourceFilterBuilder.PROJECT_ID_FIELD_NAME, LongValidator.isPositive());
         fields.put(ResourceFilterBuilder.SUBMISSION_ID_FIELD_NAME, LongValidator.isPositive());
+        fields.put(ResourceFilterBuilder.USER_ID_FIELD_NAME, LongValidator.isPositive());
         fields.put(ResourceFilterBuilder.RESOURCE_ROLE_ID_FIELD_NAME, LongValidator.isPositive());
         fields.put(ResourceFilterBuilder.EXTENSION_PROPERTY_NAME_FIELD_NAME, StringValidator.startsWith(""));
         fields.put(ResourceFilterBuilder.EXTENSION_PROPERTY_VALUE_FIELD_NAME, StringValidator.startsWith(""));

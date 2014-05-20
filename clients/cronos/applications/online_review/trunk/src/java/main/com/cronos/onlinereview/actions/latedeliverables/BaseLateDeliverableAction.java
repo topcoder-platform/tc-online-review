@@ -57,7 +57,7 @@ public abstract class BaseLateDeliverableAction extends DynamicModelDrivenAction
         throws ResourcePersistenceException {
         ResourceManager resourceManager = ActionsHelper.createResourceManager();
         Resource lateDeliverableResource = resourceManager.getResource(lateDeliverable.getResourceId());
-        return Long.parseLong(String.valueOf(lateDeliverableResource.getProperty("External Reference ID")));
+        return lateDeliverableResource.getUserId();
     }
 
     /**

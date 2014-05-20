@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2013-2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions.project;
 
@@ -345,13 +345,15 @@ public class ListProjectsAction extends BaseProjectAction {
                 String[] deliverables = new String[projects[i].length];
 
                 for (int j = 0; j < projects[i].length; ++j) {
-                    String winnerIdStr = (String) projects[i][j].getProperty("Winner External Reference ID");
-                    if (winnerIdStr != null && winnerIdStr.trim().length() == 0) {
-                        winnerIdStr = null;
+                    Long winnerId;
+                    try {
+                        winnerId = Long.parseLong((String) projects[i][j].getProperty("Winner External Reference ID"));
+                    } catch (NumberFormatException nfe) {
+                        winnerId = null;
                     }
 
                     deliverables[j] = getMyDeliverablesForPhases(
-                            this, allMyDeliverables, phases[i][j], myResources[i][j], winnerIdStr);
+                            this, allMyDeliverables, phases[i][j], myResources[i][j], winnerId);
                 }
 
                 myDeliverables[i] = deliverables;
@@ -623,15 +625,15 @@ public class ListProjectsAction extends BaseProjectAction {
      *            an array of phases to look up the deliverables for.
      * @param resources
      *            an array of resources to look up the deliverables for.
-     * @param winnerExtUserId
-     *            an External User ID of the winning user for the project, if any. If there is no
+     * @param winnerUserId
+     *            User ID of the winning user for the project, if any. If there is no
      *            winner for the project, this parameter must be <code>null</code>.
      * @throws IllegalArgumentException
      *             if parameter <code>messages</code> is <code>null</code>.
      * @throws BaseException if an unexpected error occurs.
      */
     private static String getMyDeliverablesForPhases(TextProvider textProvider,
-        Deliverable[] deliverables, Phase[] phases, Resource[] resources, String winnerExtUserId)
+        Deliverable[] deliverables, Phase[] phases, Resource[] resources, Long winnerUserId)
         throws BaseException {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(textProvider, "textProvider");
@@ -687,9 +689,9 @@ public class ListProjectsAction extends BaseProjectAction {
             }
 
             // Skip deliverables that are not for winning submitter
-            if (winnerExtUserId != null) {
+            if (winnerUserId != null) {
                 if (forResource.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME) &&
-                        !winnerExtUserId.equals(resources[j].getProperty("External Reference ID"))) {
+                        !winnerUserId.equals(resources[j].getUserId())) {
                     continue;
                 }
             }
