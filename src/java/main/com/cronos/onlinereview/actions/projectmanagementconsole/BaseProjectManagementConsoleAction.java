@@ -830,10 +830,9 @@ public abstract class BaseProjectManagementConsoleAction extends DynamicModelDri
         toEdit = toEdit != null && toEdit;
         if (reviewFeedbackAllowed && (reviewFeedbacks.size() == 0 || toEdit)) {
             List<Resource> reviewerResources = getFeedbackEligibleReviewers(project.getId(), request);
-            Map<String, Resource> reviewerResourcesMap = new TreeMap<String, Resource>();
+            Map<Long, Resource> reviewerResourcesMap = new TreeMap<Long, Resource>();
             for (Resource reviewer : reviewerResources) {
-                String reviewerUserId = (String) reviewer.getProperty("External Reference ID");
-                reviewerResourcesMap.put(reviewerUserId, reviewer);
+                reviewerResourcesMap.put(reviewer.getUserId(), reviewer);
             }
 
             request.setAttribute("reviewerResourcesMap", reviewerResourcesMap);
@@ -899,13 +898,12 @@ public abstract class BaseProjectManagementConsoleAction extends DynamicModelDri
         }
 
         // Filter out those reviewer resources who either do not have committed reviews or correspond to current user
-        String currentUserId = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
+        Long currentUserId = AuthorizationHelper.getLoggedInUserId(request);
         Iterator<Resource> reviewersIterator = reviewerResources.iterator();
         while (reviewersIterator.hasNext()) {
             Resource reviewer = reviewersIterator.next();
             if (committedReviewAuthors.contains(reviewer.getId())) {
-                String reviewerUserId = (String) reviewer.getProperty("External Reference ID");
-                if (currentUserId.equalsIgnoreCase(reviewerUserId)) {
+                if (currentUserId != null && currentUserId.equals(reviewer.getUserId())) {
                     reviewersIterator.remove();
                 }
             } else {

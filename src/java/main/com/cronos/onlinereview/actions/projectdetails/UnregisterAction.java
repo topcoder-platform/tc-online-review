@@ -114,9 +114,9 @@ public class UnregisterAction extends BaseProjectDetailsAction {
         boolean found = false;
         boolean hasOtherRoles = false;
         for (int i = 0; i < allProjectResources.length && (!found || !hasOtherRoles); i++) {
-            long userId = Long.parseLong(((String) allProjectResources[i].getProperty("External Reference ID")).trim());
+            Long userId = allProjectResources[i].getUserId();
 
-            if (userId == AuthorizationHelper.getLoggedInUserId(request)) {
+            if (userId != null && userId.equals(AuthorizationHelper.getLoggedInUserId(request))) {
                 if (allProjectResources[i].getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
                     ActionsHelper.deleteProjectResult(verification.getProject(), userId, allProjectResources[i].getResourceRole().getId());
                     ActionsHelper.createResourceManager().removeResource(allProjectResources[i],

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 - 2013 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006 - 2014 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.functions;
 
@@ -591,10 +591,7 @@ public final class Functions {
 
         try {
             Resource resource = resourceManager.getResource(resourceId);
-
-            String userId = (String) resource.getProperty("External Reference ID");
-
-            return Long.parseLong(userId);
+            return resource.getUserId();
         } catch (ResourcePersistenceException e) {
             return -1;
         }

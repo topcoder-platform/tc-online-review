@@ -1787,8 +1787,8 @@ public class SaveProjectAction extends BaseProjectAction {
         Set<Long> usersToKeep = new HashSet<Long>();
         for (Long id : deletedUsers) {
             for (Resource projectResource : allProjectResources) {
-                long userId = Long.parseLong(((String) projectResource.getProperty("External Reference ID")).trim());
-                if (userId == id) {
+                Long userId = projectResource.getUserId();
+                if (userId != null && userId.equals(id)) {
                     // still have other roles
                     usersToKeep.add(userId);
                     break;

@@ -1421,21 +1421,17 @@
                                                  resource.project_id = project_phase.project_id
                           LEFT OUTER JOIN project_info ON project_info.project_id = project_phase.project_id AND
                                                           project_info.project_info_type_id = 23
-                          INNER JOIN resource_info ON resource_info.resource_id = resource.resource_id AND
-                                                      resource_info.resource_info_type_id = 1
                         WHERE
                           (deliverable_lu.deliverable_id NOT IN (15,22,26) OR resource.project_phase_id = project_phase.project_phase_id) AND
-                          (project_info.value is null OR resource.resource_role_id != 1 OR resource_info.value = project_info.value) AND
+                          (project_info.value is null OR resource.resource_role_id != 1 OR resource.user_id = project_info.value) AND
                           (deliverable_id NOT IN (16,17,18,19) OR NOT EXISTS(
                             SELECT r.resource_id
                             FROM
                               resource r
-                              INNER JOIN resource_info ri ON ri.resource_id = r.resource_id AND
-                                                             ri.resource_info_type_id = 1 AND
-                                                             ri.value = resource_info.value
                             WHERE
                               r.project_id = project_phase.project_id AND
-                              r.resource_role_id = 8
+                              r.resource_role_id = 8 AND
+                              r.user_id = resource.user_id
                           )) AND 
                     </Value>
                 </Property>
@@ -2613,20 +2609,13 @@
               ldt.name,
               ldt.description
             FROM late_deliverable lt
-              INNER JOIN project_phase pp
-                ON pp.project_phase_id = lt.project_phase_id
+              INNER JOIN project_phase pp ON pp.project_phase_id = lt.project_phase_id
               INNER JOIN project p ON p.project_id = pp.project_id
               LEFT OUTER JOIN resource r ON r.project_id = p.project_id and r.resource_role_id IN (12, 13, 14, 15)
-              LEFT OUTER JOIN resource_info ri ON ri.resource_id = r.resource_id and ri.resource_info_type_id = 1
-              INNER JOIN resource_info ri2 ON ri2.resource_id = lt.resource_id and ri2.resource_info_type_id = 1
-              LEFT OUTER JOIN corporate_oltp:tc_direct_project d
-                ON d.project_id = p.tc_direct_project_id
-              LEFT OUTER JOIN corporate_oltp:user_permission_grant g
-                ON g.resource_id = d.project_id
-              INNER JOIN resource_info ri3 ON ri3.resource_id = lt.resource_id AND
-                ri3.resource_info_type_id = 2
-              INNER JOIN late_deliverable_type_lu ldt
-                ON ldt.late_deliverable_type_id = lt.late_deliverable_type_id
+              LEFT OUTER JOIN corporate_oltp:tc_direct_project d ON d.project_id = p.tc_direct_project_id
+              LEFT OUTER JOIN corporate_oltp:user_permission_grant g ON g.resource_id = d.project_id
+              INNER JOIN resource_info ri ON ri.resource_id = lt.resource_id AND ri.resource_info_type_id = 2
+              INNER JOIN late_deliverable_type_lu ldt ON ldt.late_deliverable_type_id = lt.late_deliverable_type_id
             WHERE
           </Value>
         </Property>
@@ -2938,16 +2927,16 @@
             <Value>p.project_category_id</Value>
           </Property>
           <Property name="managerUserId">
-            <Value>ri.value</Value>
+            <Value>r.user_id</Value>
           </Property>
           <Property name="lateUserId">
-            <Value>ri2.value</Value>
+            <Value>lt.user_id</Value>
           </Property>
           <Property name="tcDirectUserId">
             <Value>g.user_id</Value>
           </Property>
           <Property name="userHandle">
-            <Value>ri3.value</Value>
+            <Value>ri.value</Value>
           </Property>
           <Property name="tcDirectProjectId">
             <Value>p.tc_direct_project_id</Value>

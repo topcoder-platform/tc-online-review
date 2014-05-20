@@ -170,8 +170,7 @@ public class AdvanceFailedScreeningSubmissionAction extends BaseProjectDetailsAc
             // Update the project_result table
             ResourceManager resMgr = ActionsHelper.createResourceManager();
             Resource uploadOwner = resMgr.getResource(upload.getOwner());
-            ActionsHelper.updateProjectResultForAdvanceScreening(project.getId(),
-                    Long.parseLong((String) uploadOwner.getProperty("External Reference ID")));
+            ActionsHelper.updateProjectResultForAdvanceScreening(project.getId(), uploadOwner.getUserId());
         }
 
         if (!"Off".equalsIgnoreCase(oldAutoPilotOption)) {

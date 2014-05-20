@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2013-2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -358,7 +358,7 @@ public final class PaymentsHelper {
                 } else {
                     ps.setDouble(1, totalPayment);
                 }
-                ps.setLong(3, Long.parseLong((String) resource.getProperty("External Reference ID")));
+                ps.setLong(3, resource.getUserId());
                 ps.executeUpdate();
             }
         } catch (SearchBuilderConfigurationException e) {

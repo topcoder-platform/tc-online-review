@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 - 2013 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2011 - 2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -59,9 +59,6 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
     
     /** sender address of the winners email */
     private String winnersEmailFromAddress;
-    
-    /** helper class for obtaining several managers */
-    private ManagerHelper managerHelper;
 
     /**
      * Create a new instance of AppealsResponsePhaseHandler using the default namespace for loading configuration settings.
@@ -83,7 +80,6 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
     public PRAppealResponsePhaseHandler(String namespace) throws ConfigurationException {
         super(namespace);
         obtainWinnersEmailConfigProperties(namespace);
-        managerHelper = new ManagerHelper();
     }
     
     private void obtainWinnersEmailConfigProperties(String namespace) throws ConfigurationException {
@@ -132,11 +128,11 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 
         if (winnerId!=null) {
             sendWinnersEmailForUser(project,
-                    managerHelper.getUserRetrieval().retrieveUser(Long.parseLong(winnerId)), "1st");
+                    getManagerHelper().getUserRetrieval().retrieveUser(Long.parseLong(winnerId)), "1st");
         }
         if (runnerUpId!=null) {
             sendWinnersEmailForUser(project,
-                    managerHelper.getUserRetrieval().retrieveUser(Long.parseLong(runnerUpId)), "2nd");
+                    getManagerHelper().getUserRetrieval().retrieveUser(Long.parseLong(runnerUpId)), "2nd");
         }
     }
 
@@ -155,10 +151,10 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
         EmailEngine.send(message);
     }
     
-    private Resource getResourceForProjectAndUser(Project project, String userId) throws PhaseManagementException {
+    private Resource getResourceForProjectAndUser(Project project, Long userId) throws PhaseManagementException {
         try {
             ResourceRole submitterRole = null;
-            ResourceRole[] roles = managerHelper.getResourceManager().getAllResourceRoles();
+            ResourceRole[] roles = getManagerHelper().getResourceManager().getAllResourceRoles();
             log.log(Level.DEBUG, "roles size: " + roles.length);
             for (ResourceRole role : roles) {
                 log.log(Level.DEBUG, "roles id: " + role.getId() + ", name: " + role.getName());
@@ -177,9 +173,9 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
             Filter filter = new AndFilter(filterProject, filterManager);
 
             // Perform search for resources
-            Resource[] submitters = managerHelper.getResourceManager().searchResources(filter);
+            Resource[] submitters = getManagerHelper().getResourceManager().searchResources(filter);
             for (Resource resource : submitters) {
-                if (userId.equals(resource.getProperty("External Reference ID"))) {
+                if (userId != null && userId.equals(resource.getUserId())) {
                     return resource;
                 }
             }
@@ -202,10 +198,9 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
                     field.setValue((String) project.getProperty(PROJECT_NAME));
                 } else if ("SCORE".equals(field.getName())) {
                     // get all the submissions for the user in the project
-                    Long[] submissions = getResourceForProjectAndUser(project,
-                            String.valueOf(user.getId())).getSubmissions();
+                    Long[] submissions = getResourceForProjectAndUser(project, user.getId()).getSubmissions();
                     int placement = position.equals("1st") ? 1 : 2;
-                    UploadManager uploadManager = managerHelper.getUploadManager();
+                    UploadManager uploadManager = getManagerHelper().getUploadManager();
                     for (Long submissionId : submissions) {
                         // get the score for the placement depending on the position
                         Submission submission = uploadManager.getSubmission(submissionId);

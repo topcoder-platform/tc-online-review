@@ -103,8 +103,7 @@ public class SaveReviewFeedbackAction extends BaseProjectManagementConsoleAction
                 List<Resource> reviewerResources = getFeedbackEligibleReviewers(project.getId(), request);
                 Set<Long> eligibleReviewerUserIds = new HashSet<Long>();
                 for (Resource reviewer : reviewerResources) {
-                    String reviewerUserId = (String) reviewer.getProperty("External Reference ID");
-                    eligibleReviewerUserIds.add(Long.parseLong(reviewerUserId));
+                    eligibleReviewerUserIds.add(reviewer.getUserId());
                 }
 
                 // Validate the input
