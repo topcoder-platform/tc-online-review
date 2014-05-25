@@ -2614,6 +2614,7 @@
               LEFT OUTER JOIN resource r ON r.project_id = p.project_id and r.resource_role_id IN (12, 13, 14, 15)
               LEFT OUTER JOIN corporate_oltp:tc_direct_project d ON d.project_id = p.tc_direct_project_id
               LEFT OUTER JOIN corporate_oltp:user_permission_grant g ON g.resource_id = d.project_id
+              INNER JOIN resource ltr ON ltr.resource_id = lt.resource_id
               INNER JOIN resource_info ri ON ri.resource_id = lt.resource_id AND ri.resource_info_type_id = 2
               INNER JOIN late_deliverable_type_lu ldt ON ldt.late_deliverable_type_id = lt.late_deliverable_type_id
             WHERE
@@ -2930,7 +2931,7 @@
             <Value>r.user_id</Value>
           </Property>
           <Property name="lateUserId">
-            <Value>lt.user_id</Value>
+            <Value>ltr.user_id</Value>
           </Property>
           <Property name="tcDirectUserId">
             <Value>g.user_id</Value>
