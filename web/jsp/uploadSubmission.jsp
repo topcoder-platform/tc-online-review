@@ -80,6 +80,9 @@
                                     <a href="http://<%=ApplicationServer.SERVER_NAME%>/wiki/display/tc/Documentation+and+Submission+Guidelines"><or:text key="uploadSubmission.SampleSubmissionAndDocs" /></a>
 
                                     <or:text key="uploadSubmission.HelpLine3" />
+                                    <c:if test="${showMultipleSubmissionsWarning == true}">
+                                        <br/><br/><span class="error"><or:text key="uploadSubmission.MultipleSubmissionsWarning" /></span>
+                                    </c:if>
                                 </td>
                             </tr>
                             <tr>
