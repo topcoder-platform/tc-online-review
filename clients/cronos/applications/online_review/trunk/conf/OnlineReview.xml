@@ -17,6 +17,7 @@
        <!ENTITY pactJNDIAddress "@pactJNDIAddress@">
        <!ENTITY lateDeliverableUpdatedByManagerTemplate "@exttemplatesdir@/late_deliverable_updated_by_manager_template.txt">
        <!ENTITY lateDeliverableUpdatedByMemberTemplate "@exttemplatesdir@/late_deliverable_updated_by_member_template.txt">
+       <!ENTITY F2FSubmissionReuploadedTemplate "@exttemplatesdir@/f2f_submission_reuploaded_template.txt">
 ]>
 <CMConfig>
 <!-- [OR-584] don't need this anymore
@@ -5161,6 +5162,18 @@
                 <Property name="Roles">
                     <Value>Manager,Copilot</Value>
                 </Property>
+            </Property>
+        </Property>
+
+        <Property name="F2FSubmissionReuploadNotificationEmail">
+            <Property name="EmailTemplateName">
+                <Value>&F2FSubmissionReuploadedTemplate;</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>F2F submission re-uploaded: {0} {1}</Value>
             </Property>
         </Property>
 

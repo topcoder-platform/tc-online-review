@@ -1654,7 +1654,6 @@ public class ActionsHelper {
      * @param includeDeleted true if the Deleted status should be included and false otherwise.
      * @return a <code>Submission</code> array listing the submissions of specified type for project.
      * @throws BaseException if an unexpected error occurs.
-     * @throws IllegalArgumentException if any of the parameters are <code>null</code>.
      */
     public static Submission[] getProjectSubmissions(long projectId, String submissionTypeName,
         String submissionStatusName, boolean includeDeleted) throws BaseException {
@@ -1692,7 +1691,6 @@ public class ActionsHelper {
      * @param includeDeleted true if the Deleted status should be included and false otherwise.
      * @return a <code>Submission</code> array listing the submissions of specified type for project.
      * @throws BaseException if an unexpected error occurs.
-     * @throws IllegalArgumentException if any of the parameters are <code>null</code>.
      */
     public static Submission[] getResourceSubmissions(long resourceID, String submissionTypeName,
         String submissionStatusName, boolean includeDeleted) throws BaseException {
@@ -1717,6 +1715,30 @@ public class ActionsHelper {
         }
 
         return createUploadManager().searchSubmissions(new AndFilter(filters));
+    }
+
+    /**
+     * <p>Gets the earliest (i.e. with the earliest upload time) active submission of specified type for the
+     * specified project.</p>
+     *
+     * @param projectId ID of the project.
+     * @param submissionTypeName a <code>String</code> providing the name of desired submission type.
+     *                           If null, all submission types will be considered.
+     * @return <code>Submission</code> of the specified type for project with earliest possible upload time.
+     * @throws BaseException if an unexpected error occurs.
+     */
+    public static Submission getEarliestActiveSubmission(long projectId,
+                                                         String submissionTypeName) throws BaseException {
+        Submission[] submissions = getProjectSubmissions(projectId, submissionTypeName,
+                Constants.ACTIVE_SUBMISSION_STATUS_NAME, false);
+        Submission earliestSubmission = null;
+        for (Submission submission : submissions) {
+            if (earliestSubmission == null
+                    || earliestSubmission.getCreationTimestamp().compareTo(submission.getCreationTimestamp()) > 0) {
+                earliestSubmission = submission;
+            }
+        }
+        return earliestSubmission;
     }
 
     /**

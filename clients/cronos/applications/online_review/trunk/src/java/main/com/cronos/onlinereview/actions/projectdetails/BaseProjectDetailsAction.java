@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +44,8 @@ import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Review;
+import com.topcoder.message.email.EmailEngine;
+import com.topcoder.message.email.TCSEmailMessage;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.filter.AndFilter;
@@ -55,7 +58,15 @@ import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.FileUploadResult;
 import com.topcoder.servlet.request.PersistenceException;
 import com.topcoder.servlet.request.UploadedFile;
+import com.topcoder.util.config.ConfigManagerException;
 import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.util.file.DocumentGenerator;
+import com.topcoder.util.file.Template;
+import com.topcoder.util.file.fieldconfig.Condition;
+import com.topcoder.util.file.fieldconfig.Field;
+import com.topcoder.util.file.fieldconfig.Node;
+import com.topcoder.util.file.fieldconfig.TemplateFields;
+import com.topcoder.util.file.templatesource.FileTemplateSource;
 
 /**
  * This is the base class for project details actions classes.
@@ -426,7 +437,6 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
                 && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_CURRENT_ITERATIVE_REVIEW_SUBMISSION)) {
             Submission[] submissions = ActionsHelper.getProjectSubmissions(upload.getProject(),
                     Constants.CONTEST_SUBMISSION_TYPE_NAME, null, false);
-            Submission earliestSubmission = null;
             Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.ITERATIVE_REVIEWER_ROLE_NAME);
             List<Filter> filters = new ArrayList<Filter>();
             Filter filterScorecard = new EqualToFilter("scorecardType", LookupHelper.getScorecardType("Iterative Review").getId());
@@ -437,11 +447,6 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             ReviewManager revMgr = ActionsHelper.createReviewManager();
             Review[] reviews = revMgr.searchReviews(filterForReviews, false);
             for (Submission submission : submissions) {
-                // Find the earliest active submission, i.e. the next one in the queue.
-                if (submission.getSubmissionStatus().getName().equals("Active") && (earliestSubmission == null
-                        || earliestSubmission.getCreationTimestamp().compareTo(submission.getCreationTimestamp()) > 0)) {
-                    earliestSubmission = submission;
-                }
                 // If this reviewer already has a review scorecard submitted for this submission, that reviewer can
                 // download the submission.
                 if (submission.getUpload().getId() == upload.getId()) {
@@ -454,6 +459,8 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             }
 
             // If it's the "current" submission (i.e. the next one in the queue), the reviewer can download the submission.
+            Submission earliestSubmission = ActionsHelper.getEarliestActiveSubmission(
+                    upload.getProject(), Constants.CONTEST_SUBMISSION_TYPE_NAME);
             if (earliestSubmission != null && earliestSubmission.getUpload().getId() == upload.getId()) {
                 noRights = false;
             }
@@ -524,9 +531,20 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
                     submitPermissionName, "Error.UploadForStudio", null);
         }
 
+        // Get my resource
+        Resource resource = ActionsHelper.getMyResourceForRole(request, "Submitter");
+        Submission[] activeSubmissions = ActionsHelper.getResourceSubmissions(resource.getId(), submissionTypeName,
+                Constants.ACTIVE_SUBMISSION_STATUS_NAME, false);
+
+        Boolean allowMultipleSubmissions = Boolean.parseBoolean((String) project.getProperty("Allow multiple submissions"));
+
         if (!postBack) {
             // Retrieve some basic project info (such as icons' names) and place it into request
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), this);
+
+            if (activeSubmissions.length > 0 && !allowMultipleSubmissions) {
+                request.setAttribute("showMultipleSubmissionsWarning", true);
+            }
             return Constants.DISPLAY_PAGE_FORWARD_NAME;
         }
 
@@ -547,9 +565,6 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
         UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
 
-        // Get my resource
-        Resource resource = ActionsHelper.getMyResourceForRole(request, "Submitter");
-
         Submission submission = new Submission();
         Upload upload = new Upload();
 
@@ -566,10 +581,6 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
 
         // Get the name (id) of the user performing the operations
         String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
-
-        // If the project DOESN'T allow multiple submissions hence its property "Allow
-        // multiple submissions" will be false
-        Boolean allowOldSubmissions = Boolean.parseBoolean((String) project.getProperty("Allow multiple submissions"));
 
         UploadManager upMgr = ActionsHelper.createUploadManager();
         upMgr.createUpload(upload, operator);
@@ -593,20 +604,35 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         resource.addSubmission(submission.getId());
         ActionsHelper.createResourceManager().updateResource(resource, operator);
 
-        Submission[] activeSubmissions = ActionsHelper.getResourceSubmissions(resource.getId(), submissionTypeName,
-                Constants.ACTIVE_SUBMISSION_STATUS_NAME, false);
-
         // Now depending on whether the project allows multiple submissions or not mark the old submission
         // and the upload as deleted.
-        if (activeSubmissions.length > 1 && !allowOldSubmissions) {
+        if (activeSubmissions.length > 0 && !allowMultipleSubmissions) {
+            Submission earliestSubmission = ActionsHelper.getEarliestActiveSubmission(project.getId(),
+                    submissionTypeName);
+
+            boolean deletedEarliestSubmission = false;
             SubmissionStatus deleteSubmissionStatus = LookupHelper.getSubmissionStatus("Deleted");
             UploadStatus deleteUploadStatus = LookupHelper.getUploadStatus("Deleted");
             for (Submission activeSubmission : activeSubmissions) {
-                if (activeSubmission.getId() != submission.getId()) {
-                    activeSubmission.getUpload().setUploadStatus(deleteUploadStatus);
-                    activeSubmission.setSubmissionStatus(deleteSubmissionStatus);
-                    upMgr.updateUpload(activeSubmission.getUpload(), operator);
-                    upMgr.updateSubmission(activeSubmission, operator);
+                activeSubmission.getUpload().setUploadStatus(deleteUploadStatus);
+                activeSubmission.setSubmissionStatus(deleteSubmissionStatus);
+                upMgr.updateUpload(activeSubmission.getUpload(), operator);
+                upMgr.updateSubmission(activeSubmission, operator);
+
+                if (earliestSubmission != null && earliestSubmission.getId() == activeSubmission.getId()) {
+                    deletedEarliestSubmission = true;
+                }
+            }
+
+            if (deletedEarliestSubmission) {
+                Submission nextEarliestSubmission = ActionsHelper.getEarliestActiveSubmission(project.getId(),
+                        submissionTypeName);
+                try {
+                    notifyIterativeReviewers(project, earliestSubmission.getId(),
+                            (String) resource.getProperty("Handle"), nextEarliestSubmission);
+                } catch (Exception e) {
+                    // log and swallow the exception
+                    LoggingHelper.logException("Error when sending email to iterative reviewers.", e);
                 }
             }
         }
@@ -615,6 +641,72 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
 
         this.pid = project.getId();
         return Constants.SUCCESS_FORWARD_NAME;
+    }
+
+    /**
+     * <p>Sends email to Iterative Reviewers to notify them about re-uploaded submission, which was in review.</p>
+     *
+     * @param project a <code>Project</code> providing details for project.
+     * @param submissionId a <code>ID</code> of the deleted submission.
+     * @param handle a <code>String</code> providing the handle of the member who re-uploaded his submission.
+     * @param nextEarliestSubmission next active earliest submission in the queue.
+     * @throws BaseException if an unexpected error occurs.
+     * @throws ConfigManagerException if there is a problem with configuration.
+     */
+    private void notifyIterativeReviewers(Project project, long submissionId, String handle,
+                                          Submission nextEarliestSubmission)
+            throws BaseException, ConfigManagerException {
+        List<Long> reviewerUserIds = ActionsHelper.getUserIDsByRoleNames(
+                new String[] {Constants.ITERATIVE_REVIEWER_ROLE_NAME}, project.getId());
+
+        if (reviewerUserIds.size() == 0) {
+            return;
+        }
+        
+        Resource nextSubmitter = ActionsHelper.createResourceManager().getResource(
+                nextEarliestSubmission.getUpload().getOwner());
+        String nextSubmitterHandle = (String) nextSubmitter.getProperty("Handle");
+
+        List<String> reviewerEmails = ActionsHelper.getEmailsByUserIDs(request, reviewerUserIds);
+
+        DocumentGenerator docGenerator = new DocumentGenerator();
+        docGenerator.setDefaultTemplateSource(new FileTemplateSource());
+        Template template = docGenerator.getTemplate(ConfigHelper.getF2FSubmissionReuploadedEmailTemplateName());
+        TemplateFields root = docGenerator.getFields(template);
+
+        for (Node node : root.getNodes()) {
+            if (node instanceof Field) {
+                Field field = (Field) node;
+                if ("PROJECT_NAME".equals(field.getName())) {
+                    field.setValue("" + project.getProperty("Project Name"));
+                } else if ("PROJECT_VERSION".equals(field.getName())) {
+                    field.setValue("" + project.getProperty("Project Version"));
+                } else if ("OR_LINK".equals(field.getName())) {
+                    field.setValue(ConfigHelper.getProjectDetailsBaseURL() + project.getId());
+                } else if ("MEMBER_HANDLE".equals(field.getName())) {
+                    field.setValue(handle);
+                } else if ("SUBMISSION_ID".equals(field.getName())) {
+                    field.setValue("" + submissionId);
+                } else if ("NEXT_MEMBER_HANDLE".equals(field.getName())) {
+                    field.setValue(nextSubmitterHandle);
+                } else if ("NEXT_SUBMISSION_ID".equals(field.getName())) {
+                    field.setValue("" + nextEarliestSubmission.getId());
+                }
+            }
+        }
+
+        String emailContent = docGenerator.applyTemplate(root);
+        TCSEmailMessage message = new TCSEmailMessage();
+        message.setSubject(MessageFormat.format(ConfigHelper.getF2FSubmissionReuploadedEmailTemplateSubject(),
+                project.getProperty("Project Name"),
+                project.getProperty("Project Version")));
+        message.setBody(emailContent);
+        message.setFromAddress(ConfigHelper.getF2FSubmissionReuploadedEmailFromAddress());
+        for (String recipient : reviewerEmails) {
+            message.addToAddress(recipient, TCSEmailMessage.TO);
+        }
+        message.setContentType("text/html");
+        EmailEngine.send(message);
     }
 
     /**

@@ -859,6 +859,12 @@ public class ConfigHelper {
     private static String lateDeliverableBaseURL;
 
     /**
+     * <p>A <code>String</code> array providing the configuration for email message to be sent when a member
+     * reuploads submission for an F2F project.</p>
+     */
+    private static String[] f2fSubmissionReuploadedNotificationConfig;
+
+    /**
      * <p>A <code>Map</code> providing the Resources tabs to be displayed in the Resource section in project detail page.
      * The key is the tab name, the value is a <code>Set</code> of resource role IDs.</p>
      */
@@ -1429,6 +1435,14 @@ public class ConfigHelper {
                 lateDeliverableEmailConfig.getValue("ByMember.Roles")};
 
             lateDeliverableBaseURL = lateDeliverableEmailConfig.getValue("EditLateDeliverablePageBaseURL");
+
+            Property f2fSubmissionReuploadedConfig
+                    = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "F2FSubmissionReuploadNotificationEmail");
+
+            f2fSubmissionReuploadedNotificationConfig = new String[] {
+                    f2fSubmissionReuploadedConfig.getValue("EmailTemplateName"),
+                    f2fSubmissionReuploadedConfig.getValue("EmailFromAddress"),
+                    f2fSubmissionReuploadedConfig.getValue("EmailSubject")};
 
             // Retrieve the property that contains the definitions of resource tabs to be displayed in Resource section
             Property propResourceTabs = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, RESOURCE_TABS_PROP_STRING);
@@ -2216,6 +2230,36 @@ public class ConfigHelper {
     }
 
     /**
+     * <p>Gets the name for template for email to be sent to iterative reviewers when a member reuploads submission
+     * for an F2F project.</p>
+     *
+     * @return a <code>String</code> referencing the email template.
+     */
+    public static String getF2FSubmissionReuploadedEmailTemplateName() {
+        return f2fSubmissionReuploadedNotificationConfig[0];
+    }
+
+    /**
+     * <p>Gets the FROM address for email message to be sent to iterative reviewers when a member reuploads submission
+     * for an F2F project.</p>
+     *
+     * @return a <code>String</code> providing the FROM address for email message.
+     */
+    public static String getF2FSubmissionReuploadedEmailFromAddress() {
+        return f2fSubmissionReuploadedNotificationConfig[1];
+    }
+
+    /**
+     * <p>Gets the subject for email message to be sent to iterative reviewers when a member reuploads submission
+     * for an F2F project.</p>
+     *
+     * @return a <code>String</code> providing the subject for email message.
+     */
+    public static String getF2FSubmissionReuploadedEmailTemplateSubject() {
+        return f2fSubmissionReuploadedNotificationConfig[2];
+    }
+
+    /**
      * Gets the Resources tabs to be displayed in the Resource section in project detail page.
      *
      * @return the Resources tabs to be displayed in the Resource section in project detail page.
@@ -2288,4 +2332,5 @@ public class ConfigHelper {
     public static String getThurgoodPassword() {
         return thurgoodPassword;
     }
+
 }
