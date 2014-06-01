@@ -3943,6 +3943,9 @@
             <Property name="Studio">
                 <Value>http://studio.topcoder.com/forums?module=ThreadList&amp;forumID=&lt;FORUM_ID&gt;</Value>
             </Property>
+            <Property name="NewStudio">
+                <Value>http://forums.topcoder.com/?module=ThreadList&amp;forumID=&lt;FORUM_ID&gt;</Value>
+            </Property>
         </Property>
 
         <Property name="ProjectPaymentManager">

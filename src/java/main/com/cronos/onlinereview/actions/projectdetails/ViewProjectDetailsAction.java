@@ -121,6 +121,8 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
 
         final String projectTypeName = project.getProjectCategory().getProjectType().getName();
 
+        boolean hasForumType = project.getAllProperties().containsKey("Forum Type");
+
         long projectId = project.getId();
         long forumId = -1;
         String tempStr;
@@ -132,7 +134,14 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
 
         request.setAttribute("viewContestLink",
                 ConfigHelper.getProjectTypeViewContestLink(projectTypeName, projectId));
-        request.setAttribute("forumLink", ConfigHelper.getProjectTypeForumLink(projectTypeName, forumId));
+
+
+
+        request.setAttribute("forumLink",
+                ConfigHelper.getProjectTypeForumLink( (projectTypeName.equalsIgnoreCase("studio")
+                        && hasForumType) ? "NewStudio" : projectTypeName, forumId));
+
+
         request.setAttribute("projectType", projectTypeName);
         request.setAttribute("projectCategory", project.getProjectCategory().getName());
         request.setAttribute("projectStatus", project.getProjectStatus().getName());
