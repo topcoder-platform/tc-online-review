@@ -476,7 +476,7 @@ public class ForumsLibrary extends BaseEJBLibrary implements Forums {
      * @throws java.rmi.RemoteException
      * @since 1.6
      */
-    public long createStudioForumV2(long studioForumRootCategoryId, String forumName) throws Exception {
+    public long createStudioForumV2(long studioForumRootCategoryId, String forumName) {
 		return bean.createStudioForumV2(studioForumRootCategoryId, forumName);
 	}
 }
