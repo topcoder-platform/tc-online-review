@@ -466,4 +466,17 @@ public class ForumsLibrary extends BaseEJBLibrary implements Forums {
         return bean.migrateCloudSpokesForumData(contestId, compVersionId, contestName, forumData, userIds, adminIds, postUserId);
                                             
     }
+	 /**
+     * Creates the studio forum
+     *
+     * @param studioForumRootCategoryId the root category id the studio contest forum created in
+     * @param forumName the name of the forum
+     * @return the created forum id.
+     * @throws javax.ejb.EJBException
+     * @throws java.rmi.RemoteException
+     * @since 1.6
+     */
+    public long createStudioForumV2(long studioForumRootCategoryId, String forumName) throws Exception {
+		return bean.createStudioForumV2(studioForumRootCategoryId, forumName);
+	}
 }
