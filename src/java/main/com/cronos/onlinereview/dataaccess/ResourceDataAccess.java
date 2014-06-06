@@ -88,6 +88,7 @@ public class ResourceDataAccess extends BaseDataAccess {
             Resource resource = new Resource(resourceId, cachedRoles.get(resourceRoleId));
             resource.setProject(projectId);
             resource.setPhase(phaseId);
+            resource.setUserId(userId);
             resource.setCreationUser(createUser);
             resource.setCreationTimestamp(createDate);
             resource.setModificationUser(modifyUser);
