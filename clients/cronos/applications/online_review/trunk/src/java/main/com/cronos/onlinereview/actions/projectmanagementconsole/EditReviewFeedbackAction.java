@@ -105,16 +105,16 @@ public class EditReviewFeedbackAction extends BaseProjectManagementConsoleAction
                 getModel().set("unavailable", Boolean.TRUE);
             }
             getModel().set("explanation", feedback.getComment());
-            Map<String, Resource> reviewerResourcesMap =
-                    (Map<String, Resource>) request.getAttribute("reviewerResourcesMap");
-            Map<String, ReviewFeedbackDetail> reviewerFeedbackDetail = new HashMap<String, ReviewFeedbackDetail>();
+            Map<Long, Resource> reviewerResourcesMap =
+                    (Map<Long, Resource>) request.getAttribute("reviewerResourcesMap");
+            Map<Long, ReviewFeedbackDetail> reviewerFeedbackDetail = new HashMap<Long, ReviewFeedbackDetail>();
             for (ReviewFeedbackDetail detail : feedback.getDetails()) {
-                reviewerFeedbackDetail.put(String.valueOf(detail.getReviewerUserId()), detail);
+                reviewerFeedbackDetail.put(detail.getReviewerUserId(), detail);
             }
             int idx = -1;
-            for (Map.Entry<String, Resource> entry : reviewerResourcesMap.entrySet()) {
+            for (Map.Entry<Long, Resource> entry : reviewerResourcesMap.entrySet()) {
                 idx++;
-                getModel().set("reviewerUserId", idx, Long.parseLong(entry.getKey()));
+                getModel().set("reviewerUserId", idx, entry.getKey());
                 ReviewFeedbackDetail detail = reviewerFeedbackDetail.get(entry.getKey());
                 if (detail == null) {
                     continue;
