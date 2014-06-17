@@ -589,8 +589,6 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
                 AuthorizationHelper.hasUserPermission(
                         request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
                         (ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME) != null ||
-                                ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null ||
-                                ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null ||
                                 ActionsHelper.getPhase(phases, true, Constants.APPEALS_PHASE_NAME) != null ||
                                 ActionsHelper.getPhase(phases, true, Constants.APPEALS_RESPONSE_PHASE_NAME) != null));
         request.setAttribute("isAllowedToEditHisIterativeReview",
