@@ -615,7 +615,14 @@ public class PRHelper {
 
         Date endDate = phases[phaseIndex].calcEndDate();
         for (int i=0; i < phases.length; i++) {
-            if (i != phaseIndex && (phases[i].calcEndDate().after(endDate))) {
+            // Dirty fix for Studio F2F contests - Review phase should be considered as "last" even if the
+            // Registration and Submission phases are still open and scheduled to close after Review.
+            String phaseType = phases[i].getPhaseType().getName();
+            if (Constants.PHASE_REGISTRATION.equals(phaseType) || Constants.PHASE_SUBMISSION.equals(phaseType)) {
+                continue;
+            }
+            
+            if (i != phaseIndex && phases[i].calcEndDate().after(endDate)) {
                 return false;
             }
         }
