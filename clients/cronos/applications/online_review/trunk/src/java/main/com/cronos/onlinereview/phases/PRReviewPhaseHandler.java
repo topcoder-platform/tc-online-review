@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 - 2013 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2005 - 2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -25,12 +25,17 @@ public class PRReviewPhaseHandler extends ReviewPhaseHandler {
     private final PRHelper prHelper = new PRHelper();
 
     /**
+     * Represents the <code>ReviewResultNotification</code> instance to send notification email.
+     */
+    private final ReviewResultNotification notification;
+
+    /**
      * Create a new instance of ReviewPhaseHandler using the default namespace for loading configuration settings.
      *
      * @throws ConfigurationException if errors occurred while loading configuration settings.
      */
     public PRReviewPhaseHandler() throws ConfigurationException {
-        super();
+        this(DEFAULT_NAMESPACE);
     }
 
     /**
@@ -43,6 +48,7 @@ public class PRReviewPhaseHandler extends ReviewPhaseHandler {
      */
     public PRReviewPhaseHandler(String namespace) throws ConfigurationException {
         super(namespace);
+        notification = new ReviewResultNotification(namespace);
     }
 
     /**
@@ -76,6 +82,17 @@ public class PRReviewPhaseHandler extends ReviewPhaseHandler {
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
 
         prHelper.processReviewPR(getManagerHelper(), phase, operator, toStart);
+        try {
+            if (!toStart)
+            {
+                Phase appealsResponsePhase = PhasesHelper.locatePhase(phase, "Appeals Response", true, false);
+                if (appealsResponsePhase == null) {
+                    notification.sendMailForWinners(getManagerHelper().getProjectManager().getProject(phase.getProject().getId()));
+                }
+            }
+        } catch (Throwable e) {
+            throw new PhaseHandlingException(e.getMessage(), e);
+        }
     }
 
 }
