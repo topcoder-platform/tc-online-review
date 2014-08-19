@@ -945,6 +945,18 @@
                 </Property>
             </Property>
         </Property>
+
+        <Property name="WinnersEmail">
+            <Property name="EmailTemplateName">
+                <Value>&winnersEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>[{0}] {1} place </Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+        </Property>
     </Config>
 
     <!-- Default namespace for Iterative Review handler -->
