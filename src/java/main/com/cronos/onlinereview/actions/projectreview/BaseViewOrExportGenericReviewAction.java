@@ -464,7 +464,9 @@ public abstract class BaseViewOrExportGenericReviewAction extends BaseProjectRev
         } else if (isSubmissionDependentPhase && mySubmitterResource != null &&
                    verification.getSubmission().getUpload().getOwner() == mySubmitterResource.getId()) {
             // User is authorized to view review for his own submission after the phase has closed
-            if (phase.getPhaseStatus().getName().equals(Constants.CLOSED_PH_STATUS_NAME)) {
+            // or if the "View Reviews During Review" phase property is set to "Yes"
+            if ("Yes".equals(phase.getAttribute("View Reviews During Review")) || 
+                    phase.getPhaseStatus().getName().equals(Constants.CLOSED_PH_STATUS_NAME)) {
                 isAllowed = true;
             }
         } else if (AuthorizationHelper.hasUserPermission(request, permName)) {

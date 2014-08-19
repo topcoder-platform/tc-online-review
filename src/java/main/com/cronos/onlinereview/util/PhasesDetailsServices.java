@@ -674,8 +674,10 @@ public final class PhasesDetailsServices {
                     nextPhase.getPhaseStatus().getName().equalsIgnoreCase(Constants.OPEN_PH_STATUS_NAME));
 
             if (!allowedToSeeReviewLink) {
+                boolean canViewReviewsDuringReview = "Yes".equals(phase.getAttribute("View Reviews During Review"));
+
                 // Determine if the user is allowed to place appeals and Appeals phase is open
-                if (isReviewClosed || (isAppealsOpen &&
+                if (isReviewClosed || canViewReviewsDuringReview || (isAppealsOpen &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME))) {
                     allowedToSeeReviewLink = true;
                 }
