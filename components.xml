@@ -13,7 +13,7 @@
     <component
         name="deliverable_management_persistence"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/deliverable_management_persistence/trunk"
-        revision="239325"/>
+        revision="247135"/>
 
     <component
         name="late_deliverables_tracker"
