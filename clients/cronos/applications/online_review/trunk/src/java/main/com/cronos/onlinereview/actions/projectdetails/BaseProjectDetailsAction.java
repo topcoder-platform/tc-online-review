@@ -419,7 +419,8 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
 
             // Submitters can download others' contest submissions and checkpoint submissions only
             // after the Appeals Response phase (or Review phase if Appeals Response phase is not present)
-            // is closed. This also takes care of contests with Iterative Review phase, for which submitters
+            // is closed and only if at least one submission passed review.
+            // This also takes care of contests with Iterative Review phase, for which submitters
             // can't download others' submissions at all.
             if (submissionType == 1 || submissionType == 3) {
                 Phase reviewPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.APPEALS_RESPONSE_PHASE_NAME);
@@ -428,7 +429,10 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
                 }
                 boolean isReviewFinished = (reviewPhase != null) && (reviewPhase.getPhaseStatus().getId() == 3);
                 if (isReviewFinished) {
-                    noRights = false;
+                    // Check that at least one submission passed review
+                    Submission[] activeSubmissions = ActionsHelper.getProjectSubmissions(project.getId(),
+                            Constants.CONTEST_SUBMISSION_TYPE_NAME, Constants.ACTIVE_SUBMISSION_STATUS_NAME, false);
+                    noRights = (activeSubmissions.length == 0);
                 }
             }
         }
