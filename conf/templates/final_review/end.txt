@@ -23,7 +23,7 @@ You may assign yourself to be the approver, or defer it to a copilot if you have
 %endif%
 
 <p>
-To download the final deliverables, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Cockpit</a> and click on the download icon. 
+To download the final deliverables, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Direct</a> and click on the download icon. 
 </p>
 
 <p>

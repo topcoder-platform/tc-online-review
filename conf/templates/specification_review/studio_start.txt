@@ -16,7 +16,7 @@ Your Specification Review has started. This process will help ensure your contes
 You will be notified when your spec reviewer has completed the scorecard. <br/>
 <br/>
 Next Steps\:<br/>
-1. Open the contest in <a href\="%DIRECT_CONTEST_LINK%">Cockpit</a>.<br/>
+1. Open the contest in <a href\="%DIRECT_CONTEST_LINK%">Direct</a>.<br/>
 2. Click the "Spec Review" tab and review the scorecard.<br/>
 3. Edit your contest according to the recommendations within the scorecard. <br/>
 If you have any questions for your spec reviewer, you can discuss them on the forum (linked at the bottom of the Spec Review tab). <br/>

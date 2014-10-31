@@ -22,7 +22,7 @@ Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
 </table>
 
 <p>
-All appeals have now been submitted by the submitters.  To see the details of the appeals, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Cockpit</a> and click on each of the scores to view the scorecards.  Appeals will be reviewed by the review board for consideration of score changes.
+All appeals have now been submitted by the submitters.  To see the details of the appeals, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Direct</a> and click on each of the scores to view the scorecards.  Appeals will be reviewed by the review board for consideration of score changes.
 </p>
 
 <p>

@@ -22,7 +22,7 @@ Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
 </table>
 
 <p>
-The review board will now consider all appeals that were made from the submitters.  To see the details of the appeals, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Cockpit</a> and click on each of the scores to view the scorecards.  If a reviewer agrees with an appeal they will make the adjustment to the submitters scorecard and their score will automatically update.
+The review board will now consider all appeals that were made from the submitters.  To see the details of the appeals, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Direct</a> and click on each of the scores to view the scorecards.  If a reviewer agrees with an appeal they will make the adjustment to the submitters scorecard and their score will automatically update.
 </p>
 
 <p>
