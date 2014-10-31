@@ -29,7 +29,7 @@ If an aggregator does not register shortly, please contact <a href\="mailto\:sup
 </table>
 
 <p>
-The appeal process is now over.  The Post-Appeals Scores above are the final scores.  The TopCoder Member Review Board will now aggregate all of the reviewer responses into a final single scorecard that will act as a list of requirements the winner will need to address.  To see the details of the appeals, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Cockpit</a> and click on each of the scores to view the scorecards. 
+The appeal process is now over.  The Post-Appeals Scores above are the final scores.  The TopCoder Member Review Board will now aggregate all of the reviewer responses into a final single scorecard that will act as a list of requirements the winner will need to address.  To see the details of the appeals, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Direct</a> and click on each of the scores to view the scorecards. 
 </p>
 
 <p>

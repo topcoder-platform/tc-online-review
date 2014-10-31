@@ -7,7 +7,7 @@ This is the notification about the %PHASE_OPERATION{The phase operation - start/
 %if:NO_REVIEW_PASS='1'%
 <p>
 You have opted to not choose any Copilots for this <a href\="%DIRECT_CONTEST_LINK%">Copilot Opportunity</a>.
-If you would like to run another Copilot Opportunity for this project, please return to <a href\="%DIRECT_PROJECT_LINK%">Cockpit</a> and click "Get a Copilot".
+If you would like to run another Copilot Opportunity for this project, please return to <a href\="%DIRECT_PROJECT_LINK%">Direct</a> and click "Get a Copilot".
 </p>
 %endif%
 

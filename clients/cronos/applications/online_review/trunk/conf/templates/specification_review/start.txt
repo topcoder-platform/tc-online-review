@@ -19,7 +19,7 @@ A reviewer will be automatically assigned shortly when they apply to review your
 %endif%
 
 <p>
-Please return to <a href\="%DIRECT_CONTEST_LINK%">Cockpit</a> to review details.
+Please return to <a href\="%DIRECT_CONTEST_LINK%">Direct</a> to review details.
 </p>
 
 <p>

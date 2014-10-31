@@ -13,7 +13,7 @@ Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
 
 <p>
 The Specification is %RESULT%!<br/>
-Please return to <a href\="%DIRECT_CONTEST_LINK%">Cockpit</a> to review details.
+Please return to <a href\="%DIRECT_CONTEST_LINK%">Direct</a> to review details.
 </p>
 
 <p>

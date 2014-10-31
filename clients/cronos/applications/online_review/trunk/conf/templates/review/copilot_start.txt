@@ -5,7 +5,7 @@ This is the notification about the %PHASE_OPERATION{The phase operation - start/
 </p>
 
 <p>
-Please return to <a href\="%DIRECT_CONTEST_LINK%">Cockpit</a> to view submissions from TopCoder Copilots. You will
+Please return to <a href\="%DIRECT_CONTEST_LINK%">Direct</a> to view submissions from TopCoder Copilots. You will
 also find more information about each Copilot to help you choose the best Copilot(s) for your project. 
 </p>
 

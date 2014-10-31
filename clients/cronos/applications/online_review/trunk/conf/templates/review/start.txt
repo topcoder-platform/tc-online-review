@@ -29,7 +29,7 @@ If the required number of reviewers do not register to review your contest short
 </table>
 
 <p>
-All submissions that passed screening will now be thoroughly reviewed by the TopCoder Member Review Board.  To follow the review process, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Cockpit</a>.
+All submissions that passed screening will now be thoroughly reviewed by the TopCoder Member Review Board.  To follow the review process, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Direct</a>.
 </p>
 
 <p>

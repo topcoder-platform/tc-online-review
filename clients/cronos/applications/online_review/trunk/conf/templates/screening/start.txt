@@ -29,7 +29,7 @@ If a screener does not register to screen your contest shortly, please contact <
 </table>
 
 <p>
-Your contest submissions will now be screened by the TopCoder Member Review Board.  All passing submissions will then be thoroughly reviewed by the TopCoder Member Review Board.  To follow the review process, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Cockpit</a>.
+Your contest submissions will now be screened by the TopCoder Member Review Board.  All passing submissions will then be thoroughly reviewed by the TopCoder Member Review Board.  To follow the review process, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Direct</a>.
 </p>
 
 <p>

@@ -31,7 +31,7 @@ If the required number of iterative reviewers do not register to review your con
 <p>
 This challenge uses the "First to Finish" review format. Submissions will be reviewed one at a time based on the order of the submissions.<br/>
 The first submission to win will end the review process and complete the challenge. You will receive an email like this for each submission that requires a review.<br/>
-To follow the review process, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Cockpit</a>.
+To follow the review process, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Direct</a>.
 </p>
 
 <p>

@@ -12,7 +12,7 @@ Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
 </p>
 
 <p>
-The winner has uploaded their final fixes and you may now review them in <a href\="%DIRECT_CONTEST_FINAL_FIX_LINK%">Cockpit</a>. 
+The winner has uploaded their final fixes and you may now review them in <a href\="%DIRECT_CONTEST_FINAL_FIX_LINK%">Direct</a>. 
 </p>
 
 <p>
