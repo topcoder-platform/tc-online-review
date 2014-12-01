@@ -377,7 +377,7 @@ public class ActionsHelper {
             remoteAddr = request.getRemoteAddr();
         }
 
-        if (shortThrottle.throttle(remoteAddr) {
+        if (shortThrottle.throttle(remoteAddr)) {
             result.setResult(produceErrorReport(
                     textProvider, request, null, "Error.RequestRateExceeded", false));
         }
