@@ -370,12 +370,19 @@ public class ActionsHelper {
                                                        TextProvider textProvider) throws BaseException {
         CorrectnessCheckResult result = new CorrectnessCheckResult();
 
-        if (shortThrottle.throttle(request.getRemoteAddr())) {
+        //I-137967(https://appirio.my.salesforce.com/a3v50000000D2Lt)
+        //loginfo.append(request.getRemoteAddr());
+        String remoteAddr = request.getHeader("X-Forwarded-For");
+        if(remoteAddr == null || remoteAddr.trim().length()==0) {
+            remoteAddr = request.getRemoteAddr();
+        }
+
+        if (shortThrottle.throttle(remoteAddr) {
             result.setResult(produceErrorReport(
                     textProvider, request, null, "Error.RequestRateExceeded", false));
         }
 
-        if (checkLongThrottle && longThrottle.throttle(request.getRemoteAddr())) {
+        if (checkLongThrottle && longThrottle.throttle(remoteAddr)) {
             result.setResult(produceErrorReport(
                     textProvider, request, null, "Error.RequestRateExceeded", false));
         }
