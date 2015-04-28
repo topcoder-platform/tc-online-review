@@ -11,5 +11,5 @@ Contest\: <a href\="%OR_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Pro
 </p>
 
 <p>
-Your 30 second feedback helps us build a better Topcoder when you answer two simple questions here\: <a href\="https://appirio.getfeedback.com/r/4HBuMzSN">https://appirio.getfeedback.com/r/4HBuMzSN</a>
+Your 30 second feedback helps us build a better Topcoder when you answer two simple questions here\: <a href\="https\://appirio.getfeedback.com/r/4HBuMzSN">https\://appirio.getfeedback.com/r/4HBuMzSN</a>
 </p>
