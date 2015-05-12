@@ -1,0 +1,37 @@
+Hello %USER_HANDLE{User handle}%,
+
+<p>
+This is the notification about the %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.
+</p>
+
+<p>
+Time\: %PHASE_TIMESTAMP{Phase timestamp}%<br/>
+Contest Type\: %PROJECT_CATEGORY{Name of the track}%<br/>
+Contest\: <a href\="%DIRECT_CONTEST_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
+Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
+</p>
+
+<table border\="1">
+<caption style\="white-space\: nowrap">Review results</caption>
+<tr>
+<th>Handle<th>Score
+%loop:SUBMITTER%
+<tr>
+<td>%SUBMITTER_HANDLE%<td>%SUBMITTER_SCORE%
+%endloop%
+</table>
+
+<p>
+The current submission has now been reviewed by the TopCoder Member Review Board.  To see the detailed results of the review process, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Direct</a>.<br/>
+%if:PASSED='1'%
+The current submission has passed review for this "First to Finish" challenge.  To see the detailed results of the review process, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Direct</a>.<br/>
+The challenge will now conclude. 
+%endif%
+%if:PASSED='0'%
+The current submission has failed review for this "First to Finish" challenge.  The TopCoder Member Review Board will now start reviewing the next submission in the queue.  To follow the review process, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Direct</a>.
+%endif%
+</p>
+
+<p>
+Click <a href\="https\://www.topcoder.com/direct/settings/notifications">here</a> to change your notification settings.
+</p>

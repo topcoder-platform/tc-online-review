@@ -1,0 +1,77 @@
+<CMConfig>
+    <Config name="com.cronos.termsofuse.dao.TermsOfUseDao">
+        <Property name="dbConnectionFactoryConfig">
+            <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+                <Property name="connections">
+                    <Property name="default">
+                        <Value>InformixJDBCConnection</Value>
+                    </Property>
+                    <Property name="InformixJDBCConnection">
+                        <Property name="producer">
+                            <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+                        </Property>
+                        <Property name="parameters">
+                            <Property name="jndi_name">
+                                <Value>java:DS</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="loggerName">
+            <Value>com.cronos.termsofuse.dao.impl.TermsOfUseDaoImpl</Value>
+        </Property>
+        <Property name="idGeneratorName">
+            <Value>TERMS_OF_USE_SEQ</Value>
+        </Property>
+    </Config>
+    <Config name="com.cronos.termsofuse.dao.UserTermsOfUseDao">
+        <Property name="dbConnectionFactoryConfig">
+            <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+                <Property name="connections">
+                    <Property name="default">
+                        <Value>InformixJDBCConnection</Value>
+                    </Property>
+                    <Property name="InformixJDBCConnection">
+                        <Property name="producer">
+                            <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+                        </Property>
+                        <Property name="parameters">
+                            <Property name="jndi_name">
+                                <Value>java:DS</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="loggerName">
+            <Value>com.cronos.termsofuse.dao.impl.UserTermsOfUseDaoImpl</Value>
+        </Property>
+    </Config>
+    <Config name="com.cronos.termsofuse.dao.ProjectTermsOfUseDao">
+        <Property name="dbConnectionFactoryConfig">
+            <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+                <Property name="connections">
+                    <Property name="default">
+                        <Value>InformixJDBCConnection</Value>
+                    </Property>
+                    <Property name="InformixJDBCConnection">
+                        <Property name="producer">
+                            <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+                        </Property>
+                        <Property name="parameters">
+                            <Property name="jndi_name">
+                                <Value>java:DS</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="loggerName">
+            <Value>com.cronos.termsofuse.dao.impl.ProjectTermsOfUseDaoImpl</Value>
+        </Property>
+    </Config>
+</CMConfig>

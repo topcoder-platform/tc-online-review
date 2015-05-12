@@ -1,0 +1,669 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+  <bean id="authenticationFactory" class="com.topcoder.security.authenticationfactory.AuthenticationFactory" factory-method="getInstance">
+  </bean>
+
+  <bean id="authResponseParser" class="com.cronos.onlinereview.login.authenticator.SSOCookieAuthResponseParser">
+      <constructor-arg index="0" value="com.cronos.OnlineReview">
+      </constructor-arg>
+  </bean>
+
+  <bean id="ssoCookieService" class="com.topcoder.web.common.security.SSOCookieServiceImpl">
+  </bean>
+
+  <bean id="projectForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">
+      <property name="name" value="projectForm"/>
+      <property name="config">
+        <props>
+                <prop key="js_current_id">java.lang.Long</prop>
+                <prop key="action">java.lang.String</prop>
+                <prop key="action_phase">java.lang.String</prop>
+                <prop key="pid">java.lang.Long</prop>
+                <prop key="last_modification_time">java.lang.Long</prop>
+                <prop key="project_name">java.lang.String</prop>
+                <prop key="project_type">java.lang.Long</prop>
+                <prop key="project_category">java.lang.Long</prop>
+                <prop key="autopilot">java.lang.Boolean,true</prop>
+                <prop key="email_notifications">java.lang.Boolean</prop>
+                <prop key="no_rate_project">java.lang.Boolean</prop>
+                <prop key="timeline_notifications">java.lang.Boolean</prop>
+                <prop key="digital_run_flag">java.lang.Boolean</prop>
+                <prop key="scorecard_screening">java.lang.Long</prop>
+                <prop key="scorecard_review">java.lang.Long</prop>
+                <prop key="scorecard_approval">java.lang.Long</prop>
+                <prop key="forum_id">java.lang.Long</prop>
+                <prop key="component_id">java.lang.Long</prop>
+                <prop key="external_reference_id">java.lang.Long</prop>
+                <prop key="dr_points">java.lang.Double</prop>
+                <prop key="SVN_module">java.lang.String</prop>
+                <prop key="notes">java.lang.String</prop>
+                <prop key="explanation">java.lang.String</prop>
+                <prop key="status">java.lang.Long</prop>
+                <prop key="status_explanation">java.lang.String</prop>
+                <prop key="billing_project">java.lang.Long</prop>
+                <prop key="contest_prizes_amount">java.lang.String[]</prop>
+                <prop key="contest_prizes_num">java.lang.Integer[]</prop>
+                <prop key="checkpoint_prizes_amount">java.lang.String[]</prop>
+                <prop key="checkpoint_prizes_num">java.lang.Integer[]</prop>
+                <prop key="resources_role">java.lang.Long[]</prop>
+                <prop key="resources_phase">java.lang.String[]</prop>
+                <prop key="resources_name">java.lang.String[]</prop>
+                <prop key="resources_action">java.lang.String[]</prop>
+                <prop key="resources_id">java.lang.Long[]</prop>
+                <prop key="phase_can_open">java.lang.Boolean[]</prop>
+                <prop key="phase_can_close">java.lang.Boolean[]</prop>
+                <prop key="phase_type">java.lang.Long[]</prop>
+                <prop key="phase_id">java.lang.Long[]</prop>
+                <prop key="phase_name">java.lang.String[]</prop>
+                <prop key="phase_number">java.lang.Integer[]</prop>
+                <prop key="phase_js_id">java.lang.String[]</prop>
+                <prop key="phase_action">java.lang.String[]</prop>
+                <prop key="phase_start_by_phase">java.lang.Boolean[]</prop>
+                <prop key="phase_start_by_fixed_time">java.lang.Boolean[]</prop>
+                <prop key="phase_start_date">java.lang.String[]</prop>
+                <prop key="phase_start_time">java.lang.String[]</prop>
+                <prop key="phase_start_phase">java.lang.String[]</prop>
+                <prop key="phase_start_when">java.lang.String[]</prop>
+                <prop key="phase_start_plusminus">java.lang.String[]</prop>
+                <prop key="phase_start_amount">java.lang.Integer[]</prop>
+                <prop key="phase_start_dayshrs">java.lang.String[]</prop>
+                <prop key="phase_end_date">java.lang.String[]</prop>
+                <prop key="phase_end_time">java.lang.String[]</prop>
+                <prop key="phase_use_duration">java.lang.Boolean[]</prop>
+                <prop key="phase_duration">java.lang.String[]</prop>
+                <prop key="phase_required_registrations">java.lang.Integer[]</prop>
+                <prop key="phase_required_submissions">java.lang.Integer[]</prop>
+                <prop key="phase_required_reviewers">java.lang.Integer[]</prop>
+                <prop key="phase_required_secondary_reviewers">java.lang.Integer[]</prop>
+                <prop key="phase_manual_screening">java.lang.Boolean[]</prop>
+                <prop key="phase_view_appeal_responses">java.lang.Boolean[]</prop>
+                <prop key="phase_scorecard">java.lang.Long[]</prop>
+        </props>
+      </property>
+  </bean>
+
+  <bean id="authorizationHelper" class="com.cronos.onlinereview.util.AuthorizationHelper">
+    <property name="ssoCookieService" ref="ssoCookieService"/>
+  </bean>
+
+  <bean id="baseLoginAction" class="com.cronos.onlinereview.actions.login.BaseLoginAction" abstract="true" init-method="init">
+    <property name="authenticationFactory" ref="authenticationFactory"/>
+    <property name="authenticatorName" value="@login.authenticator@"/>
+    <property name="loggerName" value="LoginActions"/>
+    <property name="authResponseParser" ref="authResponseParser"/>
+    <property name="ssoCookieService" ref="ssoCookieService"/>
+  </bean>
+
+  <bean id="loginAction" class="com.cronos.onlinereview.actions.login.LoginAction" parent="baseLoginAction" scope="request">
+  </bean>
+
+  <bean id="logoutAction" class="com.cronos.onlinereview.actions.login.LogoutAction" parent="baseLoginAction" scope="request">
+  </bean>
+
+  <bean id="DynamicModelPopulationInterceptor" class="com.cronos.onlinereview.interceptors.DynamicModelPopulationInterceptor">
+  </bean>
+
+<!-- Project actions -->
+  <bean id="baseProjectAction" class="com.cronos.onlinereview.actions.project.BaseProjectAction" abstract="true" init-method="init">
+      <property name="model" ref="projectForm"/>
+  </bean>
+
+  <bean id="listProjectsAction" class="com.cronos.onlinereview.actions.project.ListProjectsAction" parent="baseProjectAction" scope="request">
+  </bean>
+
+  <bean id="newProjectAction" class="com.cronos.onlinereview.actions.project.NewProjectAction" parent="baseProjectAction" scope="request">
+  </bean>
+
+  <bean id="editProjectAction" class="com.cronos.onlinereview.actions.project.EditProjectAction" parent="baseProjectAction" scope="request">
+  </bean>
+
+  <bean id="saveProjectAction" class="com.cronos.onlinereview.actions.project.SaveProjectAction" parent="baseProjectAction" scope="request">
+  </bean>
+  
+  <!-- Project details actions -->
+  <bean id="baseProjectDetailsAction" class="com.cronos.onlinereview.actions.projectdetails.BaseProjectDetailsAction" abstract="true">
+  </bean>
+
+  <bean id="viewProjectDetailsAction" class="com.cronos.onlinereview.actions.projectdetails.ViewProjectDetailsAction" parent="baseProjectDetailsAction" scope="request">
+  </bean>
+
+  <bean id="contactManagerForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">
+      <property name="name" value="contactManagerForm"/>
+      <property name="config">
+        <props>
+            <prop key="cat">java.lang.String</prop>
+            <prop key="msg">java.lang.String</prop>
+        </props>
+      </property>
+  </bean>
+
+  <bean id="contactManagerAction" class="com.cronos.onlinereview.actions.projectdetails.ContactManagerAction" parent="baseProjectDetailsAction" scope="request">
+      <property name="model" ref="contactManagerForm"/>
+  </bean>
+
+  <bean id="deleteSubmissionAction" class="com.cronos.onlinereview.actions.projectdetails.DeleteSubmissionAction" parent="baseProjectDetailsAction" scope="request">
+  </bean>
+
+  <bean id="downloadContestSubmissionAction" class="com.cronos.onlinereview.actions.projectdetails.DownloadContestSubmissionAction" parent="baseProjectDetailsAction" scope="request">
+  </bean>
+
+  <bean id="downloadCheckpointSubmissionAction" class="com.cronos.onlinereview.actions.projectdetails.DownloadCheckpointSubmissionAction" parent="baseProjectDetailsAction" scope="request">
+  </bean>
+
+  <bean id="downloadDocumentAction" class="com.cronos.onlinereview.actions.projectdetails.DownloadDocumentAction" parent="baseProjectDetailsAction" scope="request">
+  </bean>
+
+  <bean id="downloadFinalFixAction" class="com.cronos.onlinereview.actions.projectdetails.DownloadFinalFixAction" parent="baseProjectDetailsAction" scope="request">
+  </bean>
+
+  <bean id="downloadSpecificationSubmissionAction" class="com.cronos.onlinereview.actions.projectdetails.DownloadSpecificationSubmissionAction" parent="baseProjectDetailsAction" scope="request">
+  </bean>
+
+  <bean id="downloadTestCaseAction" class="com.cronos.onlinereview.actions.projectdetails.DownloadTestCaseAction" parent="baseProjectDetailsAction" scope="request">
+  </bean>
+
+  <bean id="earlyAppealsAction" class="com.cronos.onlinereview.actions.projectdetails.EarlyAppealsAction" parent="baseProjectDetailsAction" scope="request">
+  </bean>
+
+  <bean id="fileUploadForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">
+      <property name="name" value="fileUploadForm"/>
+      <property name="config">
+        <props>
+            <prop key="file">com.cronos.onlinereview.model.FormFile</prop>
+        </props>
+      </property>
+  </bean>
+
+  <bean id="specificationUploadForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">
+      <property name="name" value="specificationUploadForm"/>
+      <property name="config">
+        <props>
+            <prop key="file">com.cronos.onlinereview.model.FormFile</prop>
+            <prop key="specificationType">java.lang.String</prop>
+            <prop key="specificationText">java.lang.String</prop>
+        </props>
+      </property>
+  </bean>
+
+  <bean id="uploadSpecificationSubmissionAction" class="com.cronos.onlinereview.actions.projectdetails.UploadSpecificationSubmissionAction" parent="baseProjectDetailsAction" scope="request">
+      <property name="model" ref="specificationUploadForm"/>
+  </bean>
+
+  <bean id="uploadCheckpointSubmissionAction" class="com.cronos.onlinereview.actions.projectdetails.UploadCheckpointSubmissionAction" parent="baseProjectDetailsAction" scope="request">
+      <property name="model" ref="fileUploadForm"/>
+  </bean>
+
+  <bean id="uploadContestSubmissionAction" class="com.cronos.onlinereview.actions.projectdetails.UploadContestSubmissionAction" parent="baseProjectDetailsAction" scope="request">
+      <property name="model" ref="fileUploadForm"/>
+  </bean>
+
+  <bean id="uploadTestCaseAction" class="com.cronos.onlinereview.actions.projectdetails.UploadTestCaseAction" parent="baseProjectDetailsAction" scope="request">
+      <property name="model" ref="fileUploadForm"/>
+  </bean>
+
+  <bean id="uploadFinalFixAction" class="com.cronos.onlinereview.actions.projectdetails.UploadFinalFixAction" parent="baseProjectDetailsAction" scope="request">
+      <property name="model" ref="fileUploadForm"/>
+  </bean>
+
+  <bean id="unregisterAction" class="com.cronos.onlinereview.actions.projectdetails.UnregisterAction" parent="baseProjectDetailsAction" scope="request">
+  </bean>
+
+  <bean id="advanceFailedScreeningSubmissionAction" class="com.cronos.onlinereview.actions.projectdetails.AdvanceFailedScreeningSubmissionAction" parent="baseProjectDetailsAction" scope="request">
+  </bean>
+
+  <!-- project manage console -->
+  <bean id="baseProjectManagementConsoleAction" class="com.cronos.onlinereview.actions.projectmanagementconsole.BaseProjectManagementConsoleAction" abstract="true">
+  </bean>
+
+  <bean id="projectManagementConsoleForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">
+      <property name="name" value="projectManagementConsoleForm"/>
+      <property name="config">
+        <props>
+            <prop key="pid">java.lang.Long</prop>
+            <prop key="resource_role_id">java.lang.Long[]</prop>
+            <prop key="resource_handles">java.lang.String[]</prop>
+            <prop key="registration_phase_extension">java.lang.String</prop>
+            <prop key="submission_phase_extension">java.lang.String</prop>
+        </props>
+      </property>
+  </bean>
+
+  <bean id="viewManagementConsoleAction" class="com.cronos.onlinereview.actions.projectmanagementconsole.ViewManagementConsoleAction" parent="baseProjectManagementConsoleAction" scope="request">
+      <property name="model" ref="projectManagementConsoleForm"/>
+  </bean>
+
+  <bean id="manageProjectAction" class="com.cronos.onlinereview.actions.projectmanagementconsole.ManageProjectAction" parent="baseProjectManagementConsoleAction" scope="request">
+      <property name="model" ref="projectManagementConsoleForm"/>
+  </bean>
+
+  <bean id="uploadDistributionForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">
+      <property name="name" value="uploadDistributionForm"/>
+      <property name="config">
+        <props>
+            <prop key="pid">java.lang.Long</prop>
+            
+            <prop key="distribution_component_name">java.lang.String</prop>
+            <prop key="distribution_package_name">java.lang.String</prop>
+            <prop key="distribution_version">java.lang.String</prop>
+
+            <prop key="distribution_rs">com.cronos.onlinereview.model.FormFile</prop>
+            <prop key="distribution_additional1">com.cronos.onlinereview.model.FormFile</prop>
+            <prop key="distribution_additional2">com.cronos.onlinereview.model.FormFile</prop>
+            <prop key="distribution_additional3">com.cronos.onlinereview.model.FormFile</prop>
+
+            <prop key="upload_to_server">java.lang.Boolean</prop>
+            <prop key="return_distribution">java.lang.Boolean</prop>
+            <prop key="distribution_file">com.cronos.onlinereview.model.FormFile</prop>
+        </props>
+      </property>
+  </bean>
+
+  <bean id="uploadDistributionAction" class="com.cronos.onlinereview.actions.projectmanagementconsole.UploadDistributionAction" parent="baseProjectManagementConsoleAction" scope="request">
+      <property name="model" ref="uploadDistributionForm"/>
+  </bean>
+
+  <bean id="manageDistributionAction" class="com.cronos.onlinereview.actions.projectmanagementconsole.ManageDistributionAction" parent="baseProjectManagementConsoleAction" scope="request">
+      <property name="model" ref="uploadDistributionForm"/>
+  </bean>
+
+  <bean id="reviewPaymentsForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">
+      <property name="name" value="reviewPaymentsForm"/>
+      <property name="config">
+        <props>
+            <prop key="pid">java.lang.Long</prop>
+            <prop key="resources_roles_id">java.lang.Long[]</prop>
+            <prop key="resource_payments_radio">java.lang.String[]</prop>
+            <prop key="resource_payments_fixed_amount">java.lang.String[]</prop>
+            <prop key="resource_payments_percent_amount">java.lang.String[]</prop>
+        </props>
+      </property>
+  </bean>
+
+  <bean id="saveReviewPaymentsAction" class="com.cronos.onlinereview.actions.projectmanagementconsole.SaveReviewPaymentsAction" parent="baseProjectManagementConsoleAction" scope="request">
+      <property name="model" ref="reviewPaymentsForm"/>
+  </bean>
+
+  <bean id="reviewFeedbackForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">
+      <property name="name" value="reviewFeedbackForm"/>
+      <property name="config">
+        <props>
+            <prop key="pid">java.lang.Long</prop>
+
+            <prop key="reviewerUserId">java.lang.Long[]</prop>
+            <prop key="reviewerScore">java.lang.Integer[]</prop>
+            <prop key="reviewerFeedback">java.lang.String[]</prop>
+            <prop key="unavailable">java.lang.Boolean</prop>
+            <prop key="explanation">java.lang.String</prop>
+        </props>
+      </property>
+  </bean>
+
+  <bean id="saveReviewFeedbackAction" class="com.cronos.onlinereview.actions.projectmanagementconsole.SaveReviewFeedbackAction" parent="baseProjectManagementConsoleAction" scope="request">
+      <property name="model" ref="reviewFeedbackForm"/>
+  </bean>
+
+  <bean id="editReviewFeedbackAction" class="com.cronos.onlinereview.actions.projectmanagementconsole.EditReviewFeedbackAction" parent="baseProjectManagementConsoleAction" scope="request">
+      <property name="model" ref="reviewFeedbackForm"/>
+  </bean>
+  
+  <!-- late deliverables -->
+  <bean id="lateDeliverableEditForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">
+      <property name="name" value="lateDeliverableEditForm"/>
+      <property name="config">
+        <props>
+            <prop key="late_deliverable_id">java.lang.Long</prop>
+            <prop key="justified">java.lang.Boolean</prop>
+            <prop key="explanation">java.lang.String</prop>
+            <prop key="response">java.lang.String</prop>
+        </props>
+      </property>
+  </bean>
+
+  <bean id="lateDeliverableSearchForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">
+      <property name="name" value="lateDeliverableSearchForm"/>
+      <property name="config">
+        <props>
+            <prop key="project_id">java.lang.String</prop>
+            <prop key="tcd_project_id">java.lang.String</prop>
+            <prop key="explanation_status">java.lang.String</prop>
+            <prop key="response_status">java.lang.String</prop>
+            <prop key="min_deadline">java.lang.String</prop>
+            <prop key="max_deadline">java.lang.String</prop>
+            <prop key="project_categories">java.lang.Long[]</prop>
+            <prop key="project_statuses">java.lang.Long[]</prop>
+            <prop key="deliverable_types">java.lang.String[]</prop>
+            <prop key="late_deliverable_type">java.lang.String</prop>
+            <prop key="justified">java.lang.String</prop>
+            <prop key="handle">java.lang.String</prop>
+        </props>
+      </property>
+  </bean>
+
+  <bean id="baseLateDeliverableAction" class="com.cronos.onlinereview.actions.latedeliverables.BaseLateDeliverableAction" abstract="true">
+  </bean>
+
+  <bean id="editLateDeliverableAction" class="com.cronos.onlinereview.actions.latedeliverables.EditLateDeliverableAction" parent="baseLateDeliverableAction" scope="request">
+      <property name="model" ref="lateDeliverableEditForm"/>
+  </bean>
+
+  <bean id="saveLateDeliverableAction" class="com.cronos.onlinereview.actions.latedeliverables.SaveLateDeliverableAction" parent="baseLateDeliverableAction" scope="request">
+      <property name="model" ref="lateDeliverableEditForm"/>
+  </bean>
+
+  <bean id="viewLateDeliverablesAction" class="com.cronos.onlinereview.actions.latedeliverables.ViewLateDeliverablesAction" parent="baseLateDeliverableAction" scope="request">
+      <property name="model" ref="lateDeliverableSearchForm"/>
+  </bean>
+  
+  <!-- project links -->
+  <bean id="projectLinkForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">
+      <property name="name" value="projectLinkForm"/>
+      <property name="config">
+        <props>
+            <prop key="pid">java.lang.Long</prop>
+            
+            <!-- new links -->
+            <prop key="link_dest_id_text">java.lang.String[]</prop>
+            <!-- it should be identical to link_dest_id_text in values -->
+            <prop key="link_dest_id">java.lang.Long[]</prop>
+            <prop key="link_type_id">java.lang.Long[]</prop>
+            <prop key="link_action">java.lang.String[]</prop>
+        </props>
+      </property>
+  </bean>
+  <bean id="editProjectLinksAction" class="com.cronos.onlinereview.actions.projectlinks.EditProjectLinksAction" scope="request">
+      <property name="model" ref="projectLinkForm"/>
+  </bean>
+
+  <bean id="saveProjectLinksAction" class="com.cronos.onlinereview.actions.projectlinks.SaveProjectLinksAction" scope="request">
+      <property name="model" ref="projectLinkForm"/>
+  </bean>
+  
+  <!-- project payments -->
+  <bean id="paymentsForm" class="com.cronos.onlinereview.model.ProjectPaymentsForm" scope="request"/>
+
+  <bean id="baseProjectPaymentAction" class="com.cronos.onlinereview.actions.projectpayments.BaseProjectPaymentAction" abstract="true">
+  </bean>
+
+  <bean id="editProjectPaymentsAction" class="com.cronos.onlinereview.actions.projectpayments.EditProjectPaymentsAction" parent="baseProjectPaymentAction" scope="request">
+      <property name="model" ref="paymentsForm"/>
+  </bean>
+
+  <bean id="viewProjectPaymentsAction" class="com.cronos.onlinereview.actions.projectpayments.ViewProjectPaymentsAction" parent="baseProjectPaymentAction" scope="request">
+  </bean>
+
+  <bean id="saveProjectPaymentsAction" class="com.cronos.onlinereview.actions.projectpayments.SaveProjectPaymentsAction" parent="baseProjectPaymentAction" scope="request">
+      <property name="model" ref="paymentsForm"/>
+  </bean>
+
+  <!-- Review forms -->
+  <bean id="reviewForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">
+      <property name="name" value="reviewForm"/>
+      <property name="config">
+        <props>
+            <prop key="rid">java.lang.Long</prop>
+            <prop key="sid">java.lang.Long</prop>
+            <prop key="save">java.lang.String</prop>
+            <prop key="answer">java.lang.String[]</prop>
+            <prop key="comment_count">java.lang.Integer[]</prop>
+            <prop key="comment_type">java.util.HashMap</prop>
+            <prop key="comment">java.util.HashMap</prop>
+            <prop key="file">com.cronos.onlinereview.model.FormFile[]</prop>
+        </props>
+      </property>
+  </bean>
+
+  <bean id="approvalForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">
+      <property name="name" value="approvalForm"/>
+      <property name="config">
+        <props>
+            <prop key="rid">java.lang.Long</prop>
+            <prop key="sid">java.lang.Long</prop>
+            <prop key="save">java.lang.String</prop>
+            <prop key="answer">java.lang.String[]</prop>
+            <prop key="comment_count">java.lang.Integer[]</prop>
+            <prop key="comment_type">java.util.HashMap</prop>
+            <prop key="comment">java.util.HashMap</prop>
+            <prop key="file">com.cronos.onlinereview.model.FormFile[]</prop>
+            <prop key="approve_fixes">java.lang.Boolean</prop>
+            <prop key="accept_but_require_fixes">java.lang.Boolean</prop>
+        </props>
+      </property>
+  </bean>
+
+  <bean id="aggregationForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">
+      <property name="name" value="aggregationForm"/>
+      <property name="config">
+        <props>
+            <prop key="rid">java.lang.Long</prop>
+            <prop key="save">java.lang.String</prop>
+            <prop key="aggregator_response">java.lang.String[]</prop>
+            <prop key="aggregator_response_type">java.lang.Long[]</prop>
+            <prop key="aggregate_function">java.lang.String[]</prop>
+        </props>
+      </property>
+  </bean>
+
+  <bean id="finalReviewForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">
+      <property name="name" value="finalReviewForm"/>
+      <property name="config">
+        <props>
+            <prop key="rid">java.lang.Long</prop>
+            <prop key="save">java.lang.String</prop>
+            <prop key="fix_status">java.lang.String[]</prop>
+            <prop key="final_comment">java.lang.String[]</prop>
+            <prop key="approve_fixes">java.lang.Boolean</prop>
+        </props>
+      </property>
+  </bean>
+
+  <bean id="specificationReviewForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">
+      <property name="name" value="specificationReviewForm"/>
+      <property name="config">
+        <props>
+            <prop key="rid">java.lang.Long</prop>
+            <prop key="sid">java.lang.Long</prop>
+            <prop key="save">java.lang.String</prop>
+            <prop key="answer">java.lang.String[]</prop>
+            <prop key="comment_count">java.lang.Integer[]</prop>
+            <prop key="comment_type">java.util.HashMap</prop>
+            <prop key="comment">java.util.HashMap</prop>
+            <prop key="file">com.cronos.onlinereview.model.FormFile[]</prop>
+            <prop key="approve_specification">java.lang.Boolean</prop>
+        </props>
+      </property>
+  </bean>
+
+  <bean id="baseProjectReviewAction" class="com.cronos.onlinereview.actions.projectreview.BaseProjectReviewAction" abstract="true">
+  </bean>
+
+  <bean id="baseViewOrExportGenericReviewAction" class="com.cronos.onlinereview.actions.projectreview.BaseViewOrExportGenericReviewAction" parent="baseProjectReviewAction" abstract="true">
+  </bean>
+
+  <!-- Screening actions -->
+  <bean id="createScreeningAction" class="com.cronos.onlinereview.actions.projectreview.CreateScreeningAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <bean id="editScreeningAction" class="com.cronos.onlinereview.actions.projectreview.EditScreeningAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <bean id="saveScreeningAction" class="com.cronos.onlinereview.actions.projectreview.SaveScreeningAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <bean id="viewScreeningAction" class="com.cronos.onlinereview.actions.projectreview.ViewScreeningAction" parent="baseViewOrExportGenericReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <!-- Checkpoint Screening actions -->
+  <bean id="createCheckpointScreeningAction" class="com.cronos.onlinereview.actions.projectreview.CreateCheckpointScreeningAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <bean id="editCheckpointScreeningAction" class="com.cronos.onlinereview.actions.projectreview.EditCheckpointScreeningAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <bean id="saveCheckpointScreeningAction" class="com.cronos.onlinereview.actions.projectreview.SaveCheckpointScreeningAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <bean id="viewCheckpointScreeningAction" class="com.cronos.onlinereview.actions.projectreview.ViewCheckpointScreeningAction" parent="baseViewOrExportGenericReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <!-- Review actions -->
+  <bean id="createReviewAction" class="com.cronos.onlinereview.actions.projectreview.CreateReviewAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <bean id="editReviewAction" class="com.cronos.onlinereview.actions.projectreview.EditReviewAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <bean id="saveReviewAction" class="com.cronos.onlinereview.actions.projectreview.SaveReviewAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <bean id="viewReviewAction" class="com.cronos.onlinereview.actions.projectreview.ViewReviewAction" parent="baseViewOrExportGenericReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <!-- Iterative Review actions -->
+  <bean id="createIterativeReviewAction" class="com.cronos.onlinereview.actions.projectreview.CreateIterativeReviewAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <bean id="editIterativeReviewAction" class="com.cronos.onlinereview.actions.projectreview.EditIterativeReviewAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <bean id="saveIterativeReviewAction" class="com.cronos.onlinereview.actions.projectreview.SaveIterativeReviewAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <bean id="viewIterativeReviewAction" class="com.cronos.onlinereview.actions.projectreview.ViewIterativeReviewAction" parent="baseViewOrExportGenericReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <!-- Checkpoint Review actions -->
+  <bean id="createCheckpointReviewAction" class="com.cronos.onlinereview.actions.projectreview.CreateCheckpointReviewAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <bean id="editCheckpointReviewAction" class="com.cronos.onlinereview.actions.projectreview.EditCheckpointReviewAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <bean id="saveCheckpointReviewAction" class="com.cronos.onlinereview.actions.projectreview.SaveCheckpointReviewAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <bean id="viewCheckpointReviewAction" class="com.cronos.onlinereview.actions.projectreview.ViewCheckpointReviewAction" parent="baseViewOrExportGenericReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <!-- Aggregation actions -->
+  <bean id="editAggregationAction" class="com.cronos.onlinereview.actions.projectreview.EditAggregationAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="aggregationForm"/>
+  </bean>
+
+  <bean id="saveAggregationAction" class="com.cronos.onlinereview.actions.projectreview.SaveAggregationAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="aggregationForm"/>
+  </bean>
+
+  <bean id="viewAggregationAction" class="com.cronos.onlinereview.actions.projectreview.ViewAggregationAction" parent="baseViewOrExportGenericReviewAction" scope="request">
+  </bean>
+
+  <!-- Aggregation Review actions -->
+  <bean id="viewAggregationReviewAction" class="com.cronos.onlinereview.actions.projectreview.ViewAggregationReviewAction" parent="baseViewOrExportGenericReviewAction" scope="request">
+  </bean>
+
+  <!-- Final Review actions -->
+  <bean id="editFinalReviewAction" class="com.cronos.onlinereview.actions.projectreview.EditFinalReviewAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="finalReviewForm"/>
+  </bean>
+
+  <bean id="saveFinalReviewAction" class="com.cronos.onlinereview.actions.projectreview.SaveFinalReviewAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="finalReviewForm"/>
+  </bean>
+
+  <bean id="viewFinalReviewAction" class="com.cronos.onlinereview.actions.projectreview.ViewFinalReviewAction" parent="baseViewOrExportGenericReviewAction" scope="request">
+  </bean>
+
+  <!-- Approval actions -->
+  <bean id="createApprovalAction" class="com.cronos.onlinereview.actions.projectreview.CreateApprovalAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="approvalForm"/>
+  </bean>
+
+  <bean id="editApprovalAction" class="com.cronos.onlinereview.actions.projectreview.EditApprovalAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="approvalForm"/>
+  </bean>
+
+  <bean id="saveApprovalAction" class="com.cronos.onlinereview.actions.projectreview.SaveApprovalAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="approvalForm"/>
+  </bean>
+
+  <bean id="viewApprovalAction" class="com.cronos.onlinereview.actions.projectreview.ViewApprovalAction" parent="baseViewOrExportGenericReviewAction" scope="request">
+      <property name="model" ref="approvalForm"/>
+  </bean>
+
+  <!-- Post-Mortem actions -->
+  <bean id="createPostMortemAction" class="com.cronos.onlinereview.actions.projectreview.CreatePostMortemAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <bean id="editPostMortemAction" class="com.cronos.onlinereview.actions.projectreview.EditPostMortemAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <bean id="savePostMortemAction" class="com.cronos.onlinereview.actions.projectreview.SavePostMortemAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <bean id="viewPostMortemAction" class="com.cronos.onlinereview.actions.projectreview.ViewPostMortemAction" parent="baseViewOrExportGenericReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+
+  <!-- Specification Review actions -->
+  <bean id="createSpecificationReviewAction" class="com.cronos.onlinereview.actions.projectreview.CreateSpecificationReviewAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="specificationReviewForm"/>
+  </bean>
+
+  <bean id="editSpecificationReviewAction" class="com.cronos.onlinereview.actions.projectreview.EditSpecificationReviewAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="specificationReviewForm"/>
+  </bean>
+
+  <bean id="saveSpecificationReviewAction" class="com.cronos.onlinereview.actions.projectreview.SaveSpecificationReviewAction" parent="baseProjectReviewAction" scope="request">
+      <property name="model" ref="specificationReviewForm"/>
+  </bean>
+
+  <bean id="viewSpecificationReviewAction" class="com.cronos.onlinereview.actions.projectreview.ViewSpecificationReviewAction" parent="baseViewOrExportGenericReviewAction" scope="request">
+      <property name="model" ref="specificationReviewForm"/>
+  </bean>
+
+  <!-- "Reopen Scorecard" action -->
+  <bean id="reopenScorecardAction" class="com.cronos.onlinereview.actions.projectreview.ReopenScorecardAction" parent="baseProjectReviewAction" scope="request">
+  </bean>
+
+  <!-- "Export Review" action -->
+  <bean id="exportReviewAction" class="com.cronos.onlinereview.actions.projectreview.ExportReviewAction" parent="baseViewOrExportGenericReviewAction" scope="request">
+  </bean>
+
+  <!-- "View CompositeScorecard" action -->
+  <bean id="viewCompositeScorecardAction" class="com.cronos.onlinereview.actions.projectreview.ViewCompositeScorecardAction" parent="baseViewOrExportGenericReviewAction" scope="request">
+      <property name="model" ref="reviewForm"/>
+  </bean>
+  
+  <!-- "View Scorecard" action -->
+  <bean id="viewScorecardAction" class="com.cronos.onlinereview.actions.projectreview.ViewScorecardAction" parent="baseViewOrExportGenericReviewAction" scope="request">
+  </bean>
+
+  <!-- Struts1MappingAction action -->
+  <bean id="struts1MappingAction" class="com.cronos.onlinereview.actions.Struts1MappingAction" scope="request">
+  </bean>
+</beans>

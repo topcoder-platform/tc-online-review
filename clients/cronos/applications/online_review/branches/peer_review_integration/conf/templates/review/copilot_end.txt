@@ -1,0 +1,40 @@
+Hello %USER_HANDLE{User handle}%,
+
+<p>
+This is the notification about the %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.
+</p>
+
+%if:NO_REVIEW_PASS='1'%
+<p>
+You have opted to not choose any Copilots for this <a href\="%DIRECT_CONTEST_LINK%">Copilot Opportunity</a>.
+If you would like to run another Copilot Opportunity for this project, please return to <a href\="%DIRECT_PROJECT_LINK%">Direct</a> and click "Get a Copilot".
+</p>
+%endif%
+
+%if:NO_REVIEW_PASS='0'%
+<p>
+Your Copilot has been assigned to your %TC_DIRECT_PROJECT_NAME% project. Return to your
+<a href\="%DIRECT_PROJECT_LINK%">project</a> to begin communicating with your Copilot in your Project Forum.
+</p>
+
+<p>
+Time\: %PHASE_TIMESTAMP{Phase timestamp}%<br/>
+Contest Type\: %PROJECT_CATEGORY{Name of the track}%<br/>
+Contest\: <a href\="%DIRECT_CONTEST_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
+Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
+</p>
+
+<table border\="1">
+<caption style\="white-space\: nowrap">Review results (top scorer is your Copilot)</caption>
+<tr>
+<th>Handle<th>Score
+%loop:SUBMITTER%
+<tr>
+<td>%SUBMITTER_HANDLE%<td>%SUBMITTER_SCORE%
+%endloop%
+</table>
+%endif%
+
+<p>
+Click <a href\="https\://www.topcoder.com/direct/settings/notifications">here</a> to change your notification settings.
+</p>

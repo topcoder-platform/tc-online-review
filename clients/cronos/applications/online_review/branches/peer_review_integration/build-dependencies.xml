@@ -1,0 +1,255 @@
+<project name="Online Review and Tools Dependency Import" basedir=".">
+    <condition property="is_windows">
+        <and>
+            <os family="windows"/>
+        </and>
+    </condition>
+
+    <condition property="is_unix">
+        <and>
+            <os family="unix"/>
+        </and>
+    </condition>
+
+    <property name="tcs_libdir" value="${online_review_home}/lib/tcs" />
+    <property name="ext_libdir" value="${online_review_home}/lib/third_party" />
+    <property name="shared_libdir" value="${online_review_home}/lib/shared" />
+    <property name="token.properties" value="${online_review_home}/token.properties"/>
+
+    <property name="job_scheduler.version" value="1.0" />
+    <property name="job_scheduler.jar.name" value="job_scheduler.jar" />
+    <property name="job_scheduler.path" value="job_scheduler/${job_scheduler.version}" />
+    <property name="job_scheduler.jar" value="${tcs_libdir}/${job_scheduler.path}/${job_scheduler.jar.name}" />
+
+    <!-- TCS Dependencies - non-versioned -->
+    <property name="userEJB.path" value="user_ejb"/>
+    <property name="userEJB.jar.name" value="User.jar"/>
+    <property name="userEJB.jar" value="${tcs_libdir}/${userEJB.path}/${userEJB.jar.name}"/>
+
+    <property name="securityEJB.path" value="security_ejb"/>
+    <property name="securityEJB.jar.name" value="Security.jar"/>
+    <property name="securityEJB.jar" value="${tcs_libdir}/${securityEJB.path}/${securityEJB.jar.name}"/>
+
+    <!-- Shared libraries -->
+    <property name="catalog.jar.name" value="catalog.jar"/>
+    <property name="catalog.jar" value="${shared_libdir}/${catalog.jar.name}"/>
+
+    <property name="forums.jar.name" value="forums.jar"/>
+    <property name="forums.jar" value="${shared_libdir}/${forums.jar.name}"/>
+
+    <property name="shared.jar.name" value="shared.jar"/>
+    <property name="shared.jar" value="${shared_libdir}/${shared.jar.name}"/>
+
+    <property name="tcIdGenerator.jar.name" value="tc_id_generator.jar"/>
+    <property name="tcIdGenerator.jar" value="${tcs_libdir}/${tcIdGenerator.jar.name}"/>
+
+    <property name="tcwebcommon.jar.name" value="tcwebcommon.jar"/>
+    <property name="tcwebcommon.jar" value="${shared_libdir}/${tcwebcommon.jar.name}"/>
+
+    <!-- 3rd Party Dependencies  -->
+    <property name="ejb3-persistence.jar" value="${ext_libdir}/ejb3-persistence.jar"/>
+    <property name="ifxjdbc.jar" value="${ext_libdir}/ifxjdbc.jar"/>
+    <property name="jboss-ejb3x.jar" value="${ext_libdir}/jboss/jboss-ejb3x.jar"/>
+    <property name="jstl.jar" value="${ext_libdir}/jstl.jar"/>
+    <property name="jboss-j2ee.jar" value="${ext_libdir}/jboss/jboss-j2ee.jar"/>
+    <property name="servlet.jar" value="${cactus.home.tomcat5x}/common/lib/servlet-api.jar"/>
+    <property name="jbossall-client.jar" value="${ext_libdir}/jboss/jbossall-client.jar"/>
+    <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar"/>
+    <property name="jiveforums.jar" value="${ext_libdir}/jive/jiveforums.jar"/>
+    <property name="jsp-api.jar" value="${ext_libdir}/jsp-api.jar"/>
+    <property name="servlet-api.jar" value="${ext_libdir}/servlet-api.jar"/>
+    <property name="axis.jar" value="${ext_libdir}/axis-dok.jar"/>
+    <property name="commons.beanutils.jar" value="${ext_libdir}/commons/commons-beanutils.jar"/>
+    <property name="log4j.jar" value="${ext_libdir}/log4j.jar"/>
+    <property name="ldapjdk.jar" value="${ext_libdir}/ldapjdk.jar"/>
+    <property name="jaf.jar" value="${ext_libdir}/jaf/1.1.1/activation.jar"/>
+    <property name="javamail.jar" value="${ext_libdir}/javamail/1.3.3/mail.jar"/>
+    <property name="jackson-core.jar" value="${ext_libdir}/jackson/jackson-core-2.1.5.jar"/>
+    <property name="jackson-databind.jar" value="${ext_libdir}/jackson/jackson-databind-2.1.5.jar"/>
+    <property name="jackson-annotations.jar" value="${ext_libdir}/jackson/jackson-annotations-2.1.5.jar"/>
+
+    <property name="struts2-core.jar" value="${ext_libdir}/struts/struts2-core-2.3.15.3.jar"/>
+    <property name="struts2-json-plugin.jar" value="${ext_libdir}/struts/struts2-json-plugin-2.3.15.3.jar"/>
+    <property name="struts2-spring-plugin.jar" value="${ext_libdir}/struts/struts2-spring-plugin-2.3.15.3.jar"/>
+    <property name="xwork-core.jar" value="${ext_libdir}/struts/xwork-core-2.3.15.3.jar"/>
+    <!-- xwork 1 is used by jive-->
+    <property name="xwork.jar" value="${ext_libdir}/struts/xwork-1.2.3.jar"/>
+
+    <property name="ognl.jar" value="${ext_libdir}/ognl-3.0.6.jar"/>
+    <property name="antlr.jar" value="${ext_libdir}/antlr-2.7.2.jar"/>
+
+    <property name="junit.jar" value="${ext_libdir}/testing/junit-3.8.1.jar"/>
+    <property name="selenium_client.jar" value="${ext_libdir}/testing/selenium-java-client-driver.jar" />
+    <property name="selenium_server.jar" value="${ext_libdir}/testing/selenium-server.jar" />
+    <property name="guava.jar" value="${ext_libdir}/testing/guava-15.0.jar" />
+
+    <property name="jiveforums.jar.name" value="jiveforums.jar"/>
+    <property name="jiveforums.jar" value="${ext_libdir}/jive/${jiveforums.jar.name}"/>
+
+    <property name="jivebase.jar.name" value="jivebase.jar"/>
+    <property name="jivebase.jar" value="${ext_libdir}/jive/${jivebase.jar.name}"/>
+    <property name="checkstyle.jar" value="${ext_libdir}/checkstyle-all-4.2.jar"/>
+    <property name="ant-contrib.jar" value="${ext_libdir}/ant-contrib-1.0b3.jar"/>
+    <property name="xerces.jar" value="${ext_libdir}/xerces.jar" />
+    <property name="ejb-2_0.jar" value="${ext_libdir}/ejb-2_0.jar" />
+    <property name="svnkit.jar" value="${ext_libdir}/svnkit/svnkit-1.8.1.jar"/>
+    <property name="jodconverter.jar" value="${ext_libdir}/jodconverter-2.2.2.jar"/>
+    
+    <property name="aopalliance.jar.name" value="aopalliance.jar" />
+    <property name="aopalliance.jar" value="${ext_libdir}/aop/${aopalliance.jar.name}" />
+    
+    <property name="aspectjrt.jar.name" value="aspectjrt.jar" />
+    <property name="aspectjrt.jar" value="${ext_libdir}/aop/${aspectjrt.jar.name}" />
+    
+    <property name="aspectjweaver.jar.name" value="aspectjweaver.jar" />
+    <property name="aspectjweaver.jar" value="${ext_libdir}/aop/${aspectjweaver.jar.name}" />
+    
+    <property name="javax.persistence.jar.name" value="javax.persistence.jar" />
+    <property name="javax.persistence.jar" value="${ext_libdir}/aop/${javax.persistence.jar.name}" />
+    
+    <property name="org.aspectj.matcher.jar.name" value="org.aspectj.matcher.jar" />
+    <property name="org.aspectj.matcher.jar" value="${ext_libdir}/aop/${org.aspectj.matcher.jar.name}" />
+
+    <property name="aws.jar.name" value="aws-java-sdk-1.7.3.jar" />
+    <property name="aws.jar" value="${ext_libdir}/aws/${aws.jar.name}" />
+  
+    <path id="svnant.lib" >
+      <fileset dir="${ext_libdir}/svnant" includes="*.jar" />
+      <fileset dir="${ext_libdir}/svnkit" includes="*.jar" />
+    </path>
+
+    <path id="spring_libs">
+        <fileset dir="${ext_libdir}/spring">
+            <include name="spring-beans.jar"/>
+            <include name="spring-core.jar"/>
+            <include name="spring-context.jar"/>
+            <include name="spring-web.jar"/>
+            <include name="spring-webmvc-struts.jar"/>
+        </fileset>
+    </path>
+
+    <path id="poi_libs">
+        <fileset dir="${ext_libdir}/poi" includes="*.jar"/>
+    </path>
+
+    <path id="buildlibs">
+        <pathelement location="${ejb3-persistence.jar}"/>
+        <pathelement location="${jboss-ejb3x.jar}"/>
+        <pathelement location="${jbossall-client.jar}"/>
+        <pathelement location="${jboss-j2ee.jar}"/>
+        <pathelement location="${jiveforums.jar}"/>
+        <pathelement location="${jsp-api.jar}"/>
+        <pathelement location="${javamail.jar}"/>
+        <pathelement location="${servlet-api.jar}"/>
+        <pathelement location="${struts2-core.jar}"/>
+        <pathelement location="${struts2-json-plugin.jar}"/>
+        <pathelement location="${struts2-spring-plugin.jar}"/>
+        <pathelement location="${xwork-core.jar}"/>
+        <pathelement location="${ognl.jar}"/>
+        <pathelement location="${catalog.jar}"/>
+        <pathelement location="${forums.jar}"/>
+        <pathelement location="${shared.jar}"/>
+        <pathelement location="${tcwebcommon.jar}"/>
+        <pathelement location="${userEJB.jar}"/>
+        <pathelement location="${securityEJB.jar}"/>
+        <pathelement location="${tcIdGenerator.jar}"/>
+        <pathelement location="${job_scheduler.jar}"/>
+        <pathelement location="${svnkit.jar}"/>
+        <pathelement location="${jodconverter.jar}"/>
+        <pathelement location="${log4j.jar}" />
+        <pathelement location="${ldapjdk.jar}" />
+        <pathelement location="${jaf.jar}" />
+        <pathelement location="${jackson-core.jar}" />
+        <pathelement location="${jackson-databind.jar}" />
+        <pathelement location="${jackson-annotations.jar}" />
+        <pathelement location="${commons.beanutils.jar}" />
+        <pathelement location="${aws.jar}" />
+        
+        <path refid="spring_libs"/>
+        <path refid="poi_libs"/>
+    </path>
+
+    <macrodef name="scp_windows">
+        <attribute name="id"/>
+        <attribute name="file"/>
+        <attribute name="remotefile"/>
+        <attribute name="isdir"/>
+
+        <sequential>
+            <condition property="@{id}0" value="-r" else="">
+                <and>
+                    <istrue value="@{isdir}"/>
+                </and>
+            </condition>
+
+            <!-- if defined a key file add to command line -->
+            <condition property="@{id}1" value="${@{id}0} -i ${scp_keyfile}" else="${@{id}0}">
+                <and>
+                    <isset property="scp_keyfile"/>
+                </and>
+            </condition>
+
+            <!-- if defined user add to command line -->
+            <condition property="@{id}2" value="${@{id}1} -l ${scp_username}" else="${@{id}1}">
+                <and>
+                    <isset property="scp_username"/>
+                </and>
+            </condition>
+
+            <!-- if defined password add to command line-->
+            <condition property="@{id}3" value="${@{id}2} -pw ${scp_password}" else="${@{id}2}">
+                <and>
+                    <isset property="scp_password"/>
+                </and>
+            </condition>
+
+            <property name="scp_commandline@{id}" value="${@{id}3} @{file} ${scp_remoteserver}:@{remotefile}"/>
+
+            <echo message="scp_commandline: ${scp_commandline@{id}}"/>
+
+            <exec executable="${scp_path}">
+                <arg line="${scp_commandline@{id}}"/>
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="scp_unix">
+        <attribute name="id"/>
+        <attribute name="file"/>
+        <attribute name="remotefile"/>
+        <attribute name="isdir"/>
+
+        <sequential>
+            <!-- Unix has to run in 'batch mode' and you must previously setup the remote box to not need password prompt -->
+            <condition property="@{id}0" value="-B -r" else="-B">
+                <and>
+                    <istrue value="@{isdir}"/>
+                </and>
+            </condition>
+
+            <!-- if defined a key file add to command line -->
+            <condition property="@{id}1" value="${@{id}0} -i ${scp_keyfile}" else="${@{id}0}">
+                <and>
+                    <isset property="scp_keyfile"/>
+                </and>
+            </condition>
+
+            <!-- if defined user add to command line -->
+            <condition property="scp_commandline@{id}"
+                       value="${@{id}1} @{file} ${scp_username}@${scp_remoteserver}:@{remotefile}"
+                       else="${@{id}1} @{file} ${scp_remoteserver}:@{remotefile}">
+                <and>
+                    <isset property="scp_username"/>
+                </and>
+            </condition>
+
+            <property name="" value="${@{id}3} @{file} ${scp_remoteserver}:@{remotefile}"/>
+
+            <echo message="scp_commandline: ${scp_commandline@{id}}"/>
+
+            <exec executable="${scp_path}">
+                <arg line="${scp_commandline@{id}}"/>
+            </exec>
+        </sequential>
+    </macrodef>
+</project>

@@ -1,0 +1,9 @@
+<p>
+I am %USER_FIRST_NAME{User first name}% %USER_LAST_NAME{User last name}%<br/>
+TopCoder Handle\: %USER_HANDLE{User handle}%<br/>
+Contest\: <a href\="%OR_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
+My role\: %LIST_OF_ROLES%<br/>
+Question Type\: %QUESTION_TYPE%<br/>
+TEXT\:<br/>
+%TEXT%
+</p>

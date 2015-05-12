@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+<CMConfig>
+
+    <!-- Namespace for ProjectManagerImpl class -->
+    <Config name="com.topcoder.management.project.ProjectManagerImpl">
+        <Property name="SearchBuilderNamespace">
+            <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+        </Property>
+        <Property name="PersistenceClass">
+            <Value>com.topcoder.management.project.persistence.InformixProjectPersistence</Value>
+        </Property>
+        <Property name="PersistenceNamespace">
+            <Value>com.topcoder.management.project.persistence.InformixProjectPersistence</Value>
+        </Property>
+        <Property name="ValidatorClass">
+            <Value>com.topcoder.management.project.validation.DefaultProjectValidator</Value>
+        </Property>
+        <Property name="ValidatorNamespace">
+            <Value>com.topcoder.management.project.validation.DefaultProjectValidator</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.management.project">
+        <Property name="SearchBuilderNamespace">
+            <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+        </Property>
+        <Property name="PersistenceClass">
+            <Value>com.topcoder.management.project.persistence.InformixProjectPersistence</Value>
+        </Property>
+        <Property name="PersistenceNamespace">
+            <Value>com.topcoder.management.project.persistence.InformixProjectPersistence</Value>
+        </Property>
+        <Property name="ValidatorClass">
+            <Value>com.topcoder.management.project.validation.DefaultProjectValidator</Value>
+        </Property>
+        <Property name="ValidatorNamespace">
+            <Value>com.topcoder.management.project.validation.DefaultProjectValidator</Value>
+        </Property>
+    </Config>
+
+    <!-- Namespace for InformixProjectPersistence class -->
+    <Config name="com.topcoder.management.project.persistence.InformixProjectPersistence">
+        <!-- The DBConnectionFactory class name used to create DB Connection Factory, required -->
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <!-- the connection name to retrieve connection in DB Connection Factory, required -->
+        <Property name="ConnectionName">
+            <Value>informix_connection</Value>
+        </Property>
+        <Property name="ProjectIdSequenceName">
+            <Value>project_id_seq</Value>
+        </Property>
+        <Property name="ProjectAuditIdSequenceName">
+            <Value>project_audit_id_seq</Value>
+        </Property>
+    </Config>
+
+</CMConfig>

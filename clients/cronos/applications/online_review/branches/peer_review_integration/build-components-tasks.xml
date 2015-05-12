@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     Aug 9, 2011
+
+     Build Components (based on direct scripts)
+                        
+     lmmortal                                                                
+     ====================================================================== -->
+<project name="tools.components.tasks">
+    <description>
+        Defines tasks that execute ant scripts or build targets on all the components.
+    </description>
+
+    <!-- = = = = = = = = = = = = = = = = =
+         scriptdef: execute-all
+
+         Runs any ant-script sequence on all components.
+         = = = = = = = = = = = = = = = = = -->
+    <scriptdef name="execute-all" language="groovy" description="Runs a sequence of ant script on all the components." classpathref="script.path">
+
+        <!-- the prefix of the exported properties -->
+        <attribute name="prefix" />
+
+        <!-- the ant-script to run on each of the projects -->
+        <element name="sequential" type="sequential" />
+
+        <![CDATA[
+        import groovy.util.XmlParser
+
+        def prefix = attributes.prefix
+        def components = new XmlParser().parse(new File(project.getProperty("components.conf")))
+
+        components.component.each { component ->
+            [[name : 'name', required : true ],
+                    [name : 'svnpath', required : true ],
+                    [name : 'basedir', required : false, defaultValue : project.getProperty("components_dir")+'/'+ component.'@name'],
+                    [name : 'revision', required : false, defaultValue : 'HEAD']].each {
+
+                        def value = component."@${it.name}"
+
+                        if (value == null || value.trim().length() == 0) {
+                            if (it.required) {
+                                self.fail("The ${it.name} attribute of a component is required.")
+                            }
+
+                            value = it.defaultValue
+                        }
+
+                        value = project.replaceProperties(value)
+                        project.setProperty("${prefix}.${it.name}", value)
+                    }
+            elements.sequential.each { it.execute() }
+        }
+        ]]>
+    </scriptdef> 
+
+    <!-- = = = = = = = = = = = = = = = = =
+           scriptdef: source path
+
+           Gets the path to sources of a component and append it to property with passed name.
+
+           This task is only used within the 'execute-all' task.
+          = = = = = = = = = = = = = = = = = = = = -->
+    <scriptdef name="source-path" language="groovy" classpathref="script.path"
+        description="Gets the path to sources of a specific component.">
+
+        <!-- prefix of the properties containing the component information -->
+        <attribute name="prefix" />
+
+        <!-- the property which holds the paths to components sources-->
+        <attribute name="property" />
+        
+        <![CDATA[
+        def prefix = attributes.prefix
+        def name = project.getProperty("${prefix}.name")
+        def src = project.getProperty("comp_src_dir")
+        def dir = project.getProperty("components_dir")
+
+        project.setProperty("${attributes.property}", "${dir}" + '/' + "${name}" + '/' + "${src}"+ ';' +
+                    project.getProperty("${attributes.property}") )
+        ]]>
+    </scriptdef>
+</project>

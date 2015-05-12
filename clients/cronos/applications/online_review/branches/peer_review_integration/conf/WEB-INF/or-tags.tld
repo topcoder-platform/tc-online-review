@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    version="2.0"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+    <description><![CDATA["Online Review Tags"]]></description>
+    <display-name>Online Review Tags</display-name>
+    <tlib-version>1.0</tlib-version>
+    <short-name>or</short-name>
+    <uri>/or-tags</uri>
+
+
+    <tag>
+        <name>fieldvalue</name>
+        <tag-class>com.cronos.onlinereview.web.tags.FieldValueTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Tag for the field value.</description>
+        <attribute>
+            <description><![CDATA[Key]]></description>
+            <name>field</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>def</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>text</name>
+        <tag-class>com.cronos.onlinereview.web.tags.TextTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <description><![CDATA[Key]]></description>
+            <name>key</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description><![CDATA[Key]]></description>
+            <name>arg0</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description><![CDATA[Key]]></description>
+            <name>arg1</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description><![CDATA[Key]]></description>
+            <name>arg2</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description><![CDATA[Key]]></description>
+            <name>arg3</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description><![CDATA[Key]]></description>
+            <name>arg4</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description><![CDATA[Key]]></description>
+            <name>def</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>url</name>
+        <tag-class>com.cronos.onlinereview.web.tags.URLTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <description><![CDATA[Key]]></description>
+            <name>value</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>checked</name>
+        <tag-class>com.cronos.onlinereview.web.tags.CheckedTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <description><![CDATA[Key]]></description>
+            <name>name</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>value</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>def</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>selected</name>
+        <tag-class>com.cronos.onlinereview.web.tags.SelectedTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <description><![CDATA[Key]]></description>
+            <name>value</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+</taglib>

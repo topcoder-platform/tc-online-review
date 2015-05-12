@@ -1,0 +1,1 @@
+Since validators.xml in jiveforums.jar has nothing to do with Struts-2 validator, the validators.xml is removed from this jar file.
