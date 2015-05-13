@@ -828,6 +828,9 @@
 
     <!-- Default namespace for Review handler -->
     <Config name="com.cronos.onlinereview.phases.ReviewPhaseHandler">
+        <Property name="MinPeerReviews">
+            <Value>5</Value>
+        </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>

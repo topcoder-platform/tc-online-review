@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 - 2013 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006 - 2015 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.model;
 
@@ -69,6 +69,16 @@ public class PhaseGroup {
      * @see #setAppFunc(String)
      */
     private String applicationFunction = "";
+
+    /**
+     * This member variable holds whether the phase group should be displayed to user.
+     * This member variable is initialized in the constructor and can be accessed and changed via
+     * corresponding get/set methods. The default value of this variable is true.
+     *
+     * @see #isVisible()
+     * @see #setVisible(boolean)
+     */
+    private boolean visible = true;
 
     /**
      * This member variable is a set that lets the user determine whether some phase has been
@@ -487,6 +497,25 @@ public class PhaseGroup {
         ActionsHelper.validateParameterNotNull(appFunc, "appFunc");
 
         this.applicationFunction = appFunc;
+    }
+
+    /**
+     * This method returns whether the group is visible.
+     *
+     * @return true if the group is visible.
+     */
+    public boolean isVisible() {
+        return this.visible;
+    }
+
+    /**
+     * This method sets whether the group is visible.
+     *
+     * @param visible
+     *            boolean variable indicating whether the group should be visible
+     */
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
     /**

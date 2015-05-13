@@ -11,19 +11,27 @@ Contest\: <a href\="%DIRECT_CONTEST_LINK%">%PROJECT_NAME{Project name}% %PROJECT
 Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
 </p>
 
-<table border\="1">
-<caption style\="white-space\: nowrap">Review results</caption>
-<tr>
-<th>Handle<th>Score
-%loop:SUBMITTER%
-<tr>
-<td>%SUBMITTER_HANDLE%<td>%SUBMITTER_SCORE%
-%endloop%
-</table>
+%if:PEER_REVIEW='1'%
+  <p>
+  Put your template content for peer review email here.
+  </p>
+%endif%
 
-<p>
-All submissions have now been reviewed by the TopCoder Member Review Board.  To see the detailed results of the review process, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Direct</a>.  Each submitter will now have an opportunity to appeal their review scores.  Appeals will be handled by the review board.
-</p>
+%if:PEER_REVIEW='0'%
+  <table border\="1">
+  <caption style\="white-space\: nowrap">Review results</caption>
+  <tr>
+  <th>Handle<th>Score
+  %loop:SUBMITTER%
+  <tr>
+  <td>%SUBMITTER_HANDLE%<td>%SUBMITTER_SCORE%
+  %endloop%
+  </table>
+
+  <p>
+  All submissions have now been reviewed by the TopCoder Member Review Board.  To see the detailed results of the review process, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Direct</a>.  Each submitter will now have an opportunity to appeal their review scores.  Appeals will be handled by the review board.
+  </p>
+%endif%
 
 <p>
 Click <a href\="https\://www.topcoder.com/direct/settings/notifications">here</a> to change your notification settings.

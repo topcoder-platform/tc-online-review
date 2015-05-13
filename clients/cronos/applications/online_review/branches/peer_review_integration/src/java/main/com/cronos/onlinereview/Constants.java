@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2013 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2015 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview;
 
@@ -1246,6 +1246,10 @@ public class Constants {
      */
     public static final String TERMS_DAO_NAMESPACE = "com.cronos.termsofuse.dao.TermsOfUseDao";
 
+    /**
+     * <p>A <code>String</code> providing the name of the PEER review type.</p>
+     */
+    public static final String PEER_REVIEW_TYPE = "PEER";
 
     // Hidden constructor
 
