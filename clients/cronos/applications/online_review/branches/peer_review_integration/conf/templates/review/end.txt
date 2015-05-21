@@ -15,6 +15,16 @@ Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
   <p>
   Put your template content for peer review email here.
   </p>
+
+   <table border\="1">
+    <caption style\="white-space\: nowrap">Review results</caption>
+    <tr>
+    <th>Handle<th>Score
+    %loop:SUBMITTER%
+    <tr>
+    <td>%SUBMITTER_HANDLE%<td>%SUBMITTER_SCORE%
+    %endloop%
+    </table>
 %endif%
 
 %if:PEER_REVIEW='0'%

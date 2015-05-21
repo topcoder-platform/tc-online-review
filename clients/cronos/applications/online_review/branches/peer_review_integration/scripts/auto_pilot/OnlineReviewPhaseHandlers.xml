@@ -831,6 +831,9 @@
         <Property name="MinPeerReviews">
             <Value>5</Value>
         </Property>
+        <Property name="PeerReviewScoreAggregationAPI">
+            <Value>http://localhost:8090/v3/challenges/{challengeId}/aggregateScores</Value>
+        </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
