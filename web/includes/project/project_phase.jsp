@@ -21,8 +21,10 @@
             <div id="sc${groupStatus.index + 1}" style='display:${(groupStatus.index == activeTabIdx) ? "block" : "none"};'>
                 <ul id="tablist">
                     <c:forEach items="${phaseGroups}" var="innerGroup" varStatus="innerGroupStatus">
+                      <c:if test="${innerGroup.visible == true}">
                         <li ${(groupStatus.index == innerGroupStatus.index) ? "id='current'" : ""}><a href="javascript:void(0)"
                             onClick="return activateTab('sc${innerGroupStatus.index + 1}', this)">${innerGroup.name}</a></li>
+                      </c:if>
                     </c:forEach>
                 </ul>
                 <div style="clear:both;"></div>
@@ -344,7 +346,7 @@
                             </c:if>
                             <c:set var="submBoxIdx" value="${submBoxIdx + 1}" />
                         </c:when>
-                        <c:when test='${group.appFunc == "VIEW_REVIEWS"}'>
+                        <c:when test='${(group.appFunc == "VIEW_REVIEWS") and (group.visible == true)}'>
                             <table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
                                 <c:set var="colSpan" value="${(fn:length(group.reviewers) * 2) + 2}" />
                                 <c:if test="${not isAllowedToEditHisReviews}">

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 - 2014 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006 - 2015 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.util;
 
@@ -183,12 +183,23 @@ public final class PhasesDetailsServices {
 
             phaseGroup.addPhase(phase);
 
+            // Hide Review/Appeals tab for peer review projects
+            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.VIEW_REVIEWS_APP_FUNC)) {
+                Object reviewType = project.getProperty("Review Type");
+                if (reviewType != null && Constants.PEER_REVIEW_TYPE.equals(reviewType.toString())) {
+                    phaseGroup.setVisible(false);
+                }
+            }
+
             String phaseStatus = phase.getPhaseStatus().getName();
 
             if (phaseStatus.equalsIgnoreCase("Closed") || phaseStatus.equalsIgnoreCase("Open")) {
                 if (phaseStatus.equalsIgnoreCase("Open") && phaseGroupIdx != -1) {
-                    // If there are multiple open phases, only the last one's tab will be "active", i.e. open by default
-                    activeTabIdx = phaseGroups.size() - 1;
+                    // Consider only visible phase groups
+                    if (phaseGroups.get(phaseGroups.size()-1).isVisible()) {
+                        // If there are multiple open phases, only the last one's tab will be "active", i.e. open by default
+                        activeTabIdx = phaseGroups.size() - 1;
+                    }
                 }
                 phaseGroup.setPhaseOpen(true);
             }
@@ -211,7 +222,8 @@ public final class PhasesDetailsServices {
             for (int i = 0; i < originalPhases.length; i++) {
                 Phase originalPhase = originalPhases[i];
                 if (originalPhase.getId() == phase.getId()) {
-                    phaseGroupIndexes[i] = phaseGroups.size() - 1;
+                    int index = phaseGroups.size() - 1;
+                    phaseGroupIndexes[i] = phaseGroups.get(index).isVisible() ? index : -1;
                 }
             }
 
