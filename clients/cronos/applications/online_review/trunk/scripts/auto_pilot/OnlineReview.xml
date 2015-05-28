@@ -107,6 +107,10 @@
             <Value>https://software.topcoder.com/review/actions/ViewProjectDetails?pid=</Value>
         </Property>
 
+        <Property name="ChallengePageURL">
+            <Value>https://www.topcoder.com/challenge-details/</Value>
+        </Property>
+
         <Property name="StudioProjectDetailsURL">
             <Value>http://studio.topcoder.com/?module=ViewContestDetails&amp;ct=</Value>
         </Property>
