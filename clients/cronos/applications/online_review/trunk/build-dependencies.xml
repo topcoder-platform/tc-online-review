@@ -112,6 +112,12 @@
 
     <property name="aws.jar.name" value="aws-java-sdk-1.7.3.jar" />
     <property name="aws.jar" value="${ext_libdir}/aws/${aws.jar.name}" />
+
+    <property name="httpclient.jar.name" value="httpclient-4.2.3.jar" />
+    <property name="httpclient.jar" value="${ext_libdir}/httpcomponents/${httpclient.jar.name}" />
+
+    <property name="httpcore.jar.name" value="httpcore-4.2.jar" />
+    <property name="httpcore.jar" value="${ext_libdir}/httpcomponents/${httpcore.jar.name}" />
   
     <path id="svnant.lib" >
       <fileset dir="${ext_libdir}/svnant" includes="*.jar" />
@@ -164,7 +170,9 @@
         <pathelement location="${jackson-annotations.jar}" />
         <pathelement location="${commons.beanutils.jar}" />
         <pathelement location="${aws.jar}" />
-        
+        <pathelement location="${httpclient.jar}" />
+        <pathelement location="${httpcore.jar}" />
+
         <path refid="spring_libs"/>
         <path refid="poi_libs"/>
     </path>
