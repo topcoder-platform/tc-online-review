@@ -1,0 +1,5 @@
+The results are in from the %PROJECT_TYPE{project type design,developmnet}% Review Board for the %PROJECT_NAME{project name}%.
+Your submission received a score of %SCORE{submission final score}% points which put you in %PLACE{1st,2nd place}% place.
+The Review Scorecards from the Review Board are available in the Online Review application for your reference.
+If you have any questions, please feel free to send them to support@topcoder.com. In addition, we would like to thank you for participating and hope you will continue to submit solutions for future challenges.
+

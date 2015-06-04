@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<CMConfig>
+    <Config name="com.topcoder.management.deliverable.late.impl.LateDeliverableManagerImpl">
+        <Property name="loggerName">
+            <Value>LDTLogger</Value>
+        </Property>
+        <Property name="objectFactoryConfig">
+            <Property name="DatabaseLateDeliverablePersistence">
+                <Property name="type">
+                   <Value>com.topcoder.management.deliverable.late.impl.persistence.DatabaseLateDeliverablePersistence</Value>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="searchBundleManagerNamespace">
+            <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+        </Property>
+        <Property name="nonRestrictedSearchBundleName">
+           <Value>Non-restricted Late Deliverable Search Bundle</Value>
+        </Property>
+        <Property name="restrictedSearchBundleName">
+            <Value>Restricted Late Deliverable Search Bundle</Value>
+        </Property>
+        <Property name="persistenceKey">
+            <Value>DatabaseLateDeliverablePersistence</Value>
+        </Property>
+        <Property name="persistenceConfig">
+            <Property name="loggerName">
+                <Value>LDTLogger</Value>
+            </Property>
+            <Property name="dbConnectionFactoryConfig">
+                <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+                    <Property name="connections">
+                        <Property name="default">
+                            <Value>informix_connection</Value>
+                        </Property>
+                        <Property name="informix_connection">
+                            <Property name="producer">
+                                <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                            </Property>
+                            <Property name="parameters">
+                                <Property name="jdbc_driver">
+                                    <Value>com.informix.jdbc.IfxDriver</Value>
+                                </Property>
+                                <Property name="jdbc_url">
+                                    <Value>jdbc:informix-sqli://@database.server@:@database.port@/tcs_catalog:INFORMIXSERVER=@database.INFORMIXSERVER@</Value>
+                                </Property>
+                                <Property name="user">
+                                    <Value>@database.username@</Value>
+                                </Property>
+                                <Property name="password">
+                                    <Value>@database.password@</Value>
+                                </Property>
+                                <Property name="IFX_USE_STRENC">
+                                    <Value>true</Value>
+                                </Property>
+                                <Property name="new_connection_sql">
+                                    <Value>set lock mode to wait 5;</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="connectionName">
+                <Value>informix_connection</Value>
+            </Property>
+        </Property>
+    </Config>
+</CMConfig>
