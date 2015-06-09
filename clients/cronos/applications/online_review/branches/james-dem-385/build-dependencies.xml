@@ -119,6 +119,8 @@
     <property name="httpcore.jar.name" value="httpcore-4.2.jar" />
     <property name="httpcore.jar" value="${ext_libdir}/httpcomponents/${httpcore.jar.name}" />
   
+    <property name="events-autopilot.jar" value="${ext_libdir}/events-autopilot-component-0.0.1-SNAPSHOT.jar" />
+
     <path id="svnant.lib" >
       <fileset dir="${ext_libdir}/svnant" includes="*.jar" />
       <fileset dir="${ext_libdir}/svnkit" includes="*.jar" />
@@ -172,6 +174,7 @@
         <pathelement location="${aws.jar}" />
         <pathelement location="${httpclient.jar}" />
         <pathelement location="${httpcore.jar}" />
+        <pathelement location="${events-autopilot.jar}" />
 
         <path refid="spring_libs"/>
         <path refid="poi_libs"/>
