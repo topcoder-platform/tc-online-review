@@ -26,10 +26,10 @@
     </Config>
     <Config name="AutoPilotJob">
         <Property name="AutoPilotJob">
-            <Value>StartDTG:October 12, 2010 12:00:00 AM</Value>
+            <Value>StartDTG:June 10, 2015 12:00:00 AM</Value>
             <Value>EndDTG:</Value>
-            <Value>IntervalValue:1</Value>
-            <Value>IntervalUnit:MINUTE</Value>
+            <Value>IntervalValue:20</Value>
+            <Value>IntervalUnit:SECOND</Value>
             <Value>JobType:JOB_TYPE_JAVA_CLASS</Value>
             <Value>JobCmd:com.topcoder.management.phase.autopilot.AutoPilotJob</Value>
         </Property>
