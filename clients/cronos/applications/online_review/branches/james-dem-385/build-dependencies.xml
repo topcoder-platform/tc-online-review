@@ -67,6 +67,7 @@
     <property name="jackson-core.jar" value="${ext_libdir}/jackson/jackson-core-2.1.5.jar"/>
     <property name="jackson-databind.jar" value="${ext_libdir}/jackson/jackson-databind-2.1.5.jar"/>
     <property name="jackson-annotations.jar" value="${ext_libdir}/jackson/jackson-annotations-2.1.5.jar"/>
+    <property name="jackson-datatype-joda.jar" value="${ext_libdir}/jackson/jackson-datatype-joda-2.1.5.jar"/>
 
     <property name="struts2-core.jar" value="${ext_libdir}/struts/struts2-core-2.3.15.3.jar"/>
     <property name="struts2-json-plugin.jar" value="${ext_libdir}/struts/struts2-json-plugin-2.3.15.3.jar"/>
@@ -120,6 +121,7 @@
     <property name="httpcore.jar" value="${ext_libdir}/httpcomponents/${httpcore.jar.name}" />
   
     <property name="events-autopilot.jar" value="${ext_libdir}/events-autopilot-component-0.0.1-SNAPSHOT.jar" />
+    <property name="ap-events-client.jar" value="${ext_libdir}/ap-events-client-0.0.1-SNAPSHOT.jar" />
 
     <path id="svnant.lib" >
       <fileset dir="${ext_libdir}/svnant" includes="*.jar" />
@@ -170,11 +172,13 @@
         <pathelement location="${jackson-core.jar}" />
         <pathelement location="${jackson-databind.jar}" />
         <pathelement location="${jackson-annotations.jar}" />
+        <pathelement location="${jackson-datatype-joda.jar}" />
         <pathelement location="${commons.beanutils.jar}" />
         <pathelement location="${aws.jar}" />
         <pathelement location="${httpclient.jar}" />
         <pathelement location="${httpcore.jar}" />
         <pathelement location="${events-autopilot.jar}" />
+        <pathelement location="${ap-events-client.jar}" />
 
         <path refid="spring_libs"/>
         <path refid="poi_libs"/>
