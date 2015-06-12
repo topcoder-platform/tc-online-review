@@ -95,6 +95,8 @@
             <fileset file="${tcwebcommon.jar}"/>
             <fileset file="${shared.jar}"/>
             <fileset file="${jbossall-client.jar}"/>
+            <fileset file="${events-autopilot.jar}"/>
+            <fileset file="${ap-events-client.jar}"/>
             <fileset dir="${ext_libdir}/svnkit" includes="*.jar"/>
             <fileset dir="${ext_libdir}/aws" includes="*.jar" />
             <fileset dir="${ext_libdir}/httpcomponents" includes="*.jar" />
