@@ -139,7 +139,7 @@
                 <Value>com.topcoder.web.common.security.SSOCookieServiceImpl</Value>
             </Property>
         </Property>
-    
+
         <!-- Defining the "SetScorecardStatus" handler concrete implementation -->
         <Property name="SetScorecardStatus">
             <Property name="type">
@@ -1431,7 +1431,7 @@
                               r.project_id = project_phase.project_id AND
                               r.resource_role_id = 8 AND
                               r.user_id = resource.user_id
-                          )) AND 
+                          )) AND
                     </Value>
                 </Property>
                 <Property name="alias">
@@ -1584,8 +1584,8 @@
                         INNER JOIN upload_status_lu ON upload.upload_status_id = upload_status_lu.upload_status_id
                         LEFT JOIN prize ON submission.prize_id = prize.prize_id
                         LEFT JOIN prize_type_lu ON prize.prize_type_id = prize_type_lu.prize_type_id
-                       WHERE 1=1 
-                         AND 
+                       WHERE 1=1
+                         AND
                     </Value>
                 </Property>
                 <Property name="alias">
@@ -3921,13 +3921,13 @@
 
         <Property name="ProjectTypeViewContestLinks">
             <Property name="Application">
-                <Value>http://www.topcoder.com/tc?module=ProjectDetail&amp;pj=&lt;PROJECT_ID&gt;</Value>
+                <Value>http://www.topcoder.com/challenge-details/&lt;PROJECT_ID&gt;/?type=develop</Value>
             </Property>
             <Property name="Component">
-                <Value>http://www.topcoder.com/tc?module=ProjectDetail&amp;pj=&lt;PROJECT_ID&gt;</Value>
+                <Value>http://www.topcoder.com/challenge-details/&lt;PROJECT_ID&gt;/?type=develop</Value>
             </Property>
             <Property name="Studio">
-                <Value>http://studio.topcoder.com/?module=ViewContestDetails&amp;ct=&lt;PROJECT_ID&gt;</Value>
+                <Value>http://www.topcoder.com/challenge-details/&lt;PROJECT_ID&gt;/?type=design</Value>
             </Property>
         </Property>
 
