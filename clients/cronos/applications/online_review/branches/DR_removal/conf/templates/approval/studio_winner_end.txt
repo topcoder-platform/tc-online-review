@@ -1,0 +1,27 @@
+Hello %USER_HANDLE{User handle}%,
+
+<p>
+%PHASE_TIMESTAMP{Phase timestamp}%<br/>
+Handle\: %USER_HANDLE{User handle}%<br/>
+Category\: %PROJECT_CATEGORY{Name of the track}%<br/>
+Contest\: <a href\="%STUDIO_LINK%">%PROJECT_NAME{Project name}%</a><br/>
+This is the notification about %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.<br/>
+</p>
+
+%if:RESULT='rejected'%
+
+%if:IS_WINNER='1'%
+
+<p>
+Your submission has won, but there are still final fixes that need to be completed. The contest holder has entered those 
+fixes into the system and you can now begin working on them. You will find the list of fixes  
+<a href\="%STUDIO_CONTEST_FINAL_FIX_LINK%">here</a>.
+</p>
+
+<p>You have 72 hours to complete the fixes. Please see this <a href\="http\://community.topcoder.com/studio/help/final-fixes/">Help Center</a> page for more details. 
+</p>
+
+%endif%
+
+%endif%
+
