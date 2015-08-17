@@ -1,0 +1,99 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  http://www.springframework.org/schema/aop
+  http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context-2.5.xsd
+  http://www.springframework.org/schema/tx
+  http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+  http://www.springframework.org/schema/security
+  http://www.springframework.org/schema/security/spring-security-2.0.xsd">
+
+    <bean id="springContextProvider" class="com.cronos.onlinereview.ejblibrary.SpringContextProvider" 
+          scope="singleton"/>
+
+    <bean id="userPreferencelibrary" class="com.cronos.onlinereview.ejblibrary.UserPreferencelibrary"
+          scope="singleton"/>          
+
+    <bean id="loginLibrary" class="com.cronos.onlinereview.ejblibrary.LoginLibrary">
+        <constructor-arg type="java.lang.Long" value="28"/>
+    </bean>
+
+    <bean id="contestEligibilityServiceLibrary"
+          class="com.cronos.onlinereview.ejblibrary.ContestEligibilityServiceLibrary"/>
+
+    <bean id="entityManagerFactory" class="javax.persistence.Persistence" factory-method="createEntityManagerFactory">
+        <constructor-arg type="java.lang.String" value="ContestEligibilityPersistence"/>
+    </bean>
+
+    <bean id="contestEligibilityManagerLibrary"
+          class="com.cronos.onlinereview.ejblibrary.ContestEligibilityManagerLibrary"/>
+
+    <bean id="contestEligibilityValidationManagerLibrary"
+          class="com.cronos.onlinereview.ejblibrary.ContestEligibilityValidationManagerLibrary"/>
+
+    <!-- Component catalog ID generator settings -->
+    <bean id="catalogIdGeneratorDB" class="com.topcoder.util.idgenerator.sql.SimpleDB"/>
+
+    <bean id="catalogDataAccess" class="com.cronos.onlinereview.dataaccess.CatalogDataAccess">
+        <property name="idGeneratorDB" ref="catalogIdGeneratorDB"/>
+        <property name="idGeneratorDataSourceName" value="java:TCS_CATALOG"/>
+        <property name="idGeneratorTableName" value="sequence_object"/>
+        <property name="idGeneratorUserDefColumnName" value="name"/>
+        <property name="idGeneratorHighValueColumnName" value="current_value"/>
+        <property name="idGeneratorMaxHighValue" value="9999999999"/>
+        <property name="idGeneratorMaxLowValue" value="1"/>
+        <property name="idGeneratorAutoInit" value="false"/>
+    </bean>
+    
+    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:TCS_CATALOG" />
+    </bean>
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="configLocation">
+            <value>classpath:securityGroupsHibernate.cfg.xml</value>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.max_fetch_depth">0</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <aop:pointcut id="serviceOperation" expression="execution(* com.topcoder.security.groups.services.hibernate.*.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation"/>
+    </aop:config>
+
+    <bean id="logFactory" class="com.topcoder.util.log.log4j.Log4jLogFactory"/>
+    
+    <bean id="logger" class="com.topcoder.util.log.log4j.Log4jLog" factory-bean="logFactory" factory-method="createLog">
+        <constructor-arg type="java.lang.String" value="Authorization Service Logger" />
+    </bean>
+
+    <bean id="authorizationService"
+          class="com.topcoder.security.groups.services.hibernate.HibernateAuthorizationService"
+          init-method="afterPropertiesSet">
+
+        <property name="logger" ref="logger" />
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+</beans>
+        

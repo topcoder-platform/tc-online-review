@@ -1,0 +1,39 @@
+Hello %USER_HANDLE{User handle}%,
+
+<p>
+This is the notification about the %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.
+</p>
+
+<p>
+Time\: %PHASE_TIMESTAMP{Phase timestamp}%<br/>
+Contest Type\: %PROJECT_CATEGORY{Name of the track}%<br/>
+Contest\: <a href\="%DIRECT_CONTEST_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
+Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
+</p>
+
+%if:NEED_REVIEWER='1'%
+<p>
+<font color\="red"><b>The contest has only %N_REVIEWERS% of %N_REQUIRED_REVIEWERS% required iterative reviewers assigned!</b></font><br/>
+If the required number of iterative reviewers do not register to review your contest shortly, please contact <a href\="mailto\:support@topcoder.com?subject\=Need Reviewer.">TopCoder Support</a>.
+</p>
+%endif%
+
+<table border\="1">
+<caption style\="white-space\: nowrap">Contest Submission</caption>
+<tr>
+<th>Handle<th>Reliability<th>Rating
+%loop:SUBMITTER%
+<tr>
+<td>%SUBMITTER_HANDLE%<td>%SUBMITTER_RELIABILITY%<td>%SUBMITTER_RATING%
+%endloop%
+</table>
+
+<p>
+This challenge uses the "First to Finish" review format. Submissions will be reviewed one at a time based on the order of the submissions.<br/>
+The first submission to win will end the review process and complete the challenge. You will receive an email like this for each submission that requires a review.<br/>
+To follow the review process, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Direct</a>.
+</p>
+
+<p>
+Click <a href\="https\://www.topcoder.com/direct/settings/notifications">here</a> to change your notification settings.
+</p>

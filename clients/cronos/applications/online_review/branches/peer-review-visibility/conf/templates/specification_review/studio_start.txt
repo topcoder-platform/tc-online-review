@@ -1,0 +1,34 @@
+Hello %USER_HANDLE{User handle}%,
+
+<p>
+This is the notification about the %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.
+</p>
+
+<p>
+Time\: %PHASE_TIMESTAMP{Phase timestamp}%<br/>
+Contest Type\: %PROJECT_CATEGORY{Name of the track}%<br/>
+Contest\: <a href\="%DIRECT_CONTEST_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
+Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
+</p>
+
+<p>
+Your Specification Review has started. This process will help ensure your contest will receive quality submissions. <br/>
+You will be notified when your spec reviewer has completed the scorecard. <br/>
+<br/>
+Next Steps\:<br/>
+1. Open the contest in <a href\="%DIRECT_CONTEST_LINK%">Direct</a>.<br/>
+2. Click the "Spec Review" tab and review the scorecard.<br/>
+3. Edit your contest according to the recommendations within the scorecard. <br/>
+If you have any questions for your spec reviewer, you can discuss them on the forum (linked at the bottom of the Spec Review tab). <br/>
+NOTE\: The forum is also visible to the competitors of your contest both before and after the contest launches.
+4. Save your edits and resubmit for spec review.<br/>
+5. Repeat the process above until you and your reviewer are satisfied with the contest specification.<br/>
+<br/>
+Once your spec reviewer approves the spec, your contest will launch on the date and time you designated.<br/>
+If that time has passed, it will launch immediately.
+Learn more about Spec Review here\: <a href\="http\://apps.topcoder.com/wiki/display/tcstudio/Contest+Spec+Review">http\://apps.topcoder.com/wiki/display/tcstudio/Contest+Spec+Review</a>
+</p>
+
+<p>
+Click <a href\="https\://www.topcoder.com/direct/settings/notifications">here</a> to change your notification settings.
+</p>
