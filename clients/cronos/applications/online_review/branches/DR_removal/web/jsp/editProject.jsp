@@ -1179,7 +1179,7 @@
                                         </select>
                                     </td>
                                 </tr>
-                                <tr class="light">
+                                <tr class="light" style="display:none">
                                     <td class="value" nowrap="nowrap">
                                         <b><or:text key="editProject.ProjectDetails.DRPoints" /></b><br />
                                     </td>
@@ -1232,7 +1232,7 @@
                                         for="noRateProjectCheckBox"><b><or:text key="editProject.Preferences.DoNotRate" /></b></label><br />
                                     <input type="checkbox" id="timelineNotificationsCheckBox" name="timeline_notifications"  <or:checked name='timeline_notifications' value='on|yes|true' /> /><label
                                         for="timelineNotificationsCheckBox"><b><or:text key="editProject.Preferences.ReceiveTimeline" /></b></label><br />
-                                    <input type="checkbox" id="digitalRunCheckBox" name="digital_run_flag"  <or:checked name='digital_run_flag' value='on|yes|true' /> /><label
+                                    <input type="checkbox" id="digitalRunCheckBox" style="display:none" name="digital_run_flag"  <or:checked name='digital_run_flag' value='on|yes|true' /> /><label style="display:none"
                                         for="digitalRunCheckBox"><b><or:text key="editProject.Preferences.DigitalRun" /></b></label></td>
                             </tr>
                             <tr>
@@ -1287,7 +1287,7 @@
                                         </select>
                                     </td>
                                 </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
-                                <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
+                                <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}" style="display:none">
                                     <td class="value" nowrap="nowrap">
                                         <b><or:text key="editProject.ProjectDetails.DRPoints" /></b><br />
                                     </td>
