@@ -33,14 +33,15 @@
                 <td class="value" width="15%" nowrap="nowrap"><b>Category:</b></td>
                 <td class="value" width="100%">${projectCategory}</td>
         </tr><c:set var="rowIndex" value="${rowIndex+1}" />
-        <tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
-                <td class="value" width="15%" nowrap="nowrap"><b>This contest is part of the Digital Run:</b></td>
-                <td class="value" width="100%">${projectDRFlag}</td>
-        </tr><c:set var="rowIndex" value="${rowIndex+1}" />
-        <tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
-                <td class="value" width="15%" nowrap="nowrap"><b>DR Points:</b></td>
-                <td class="value" width="100%">${projectDRFlag=="Yes"?orfn:displayPaymentAmt(pageContext.request, projectDRP):""}</td>
-        </tr><c:set var="rowIndex" value="${rowIndex+1}" />
+        <%--<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>--%>
+                <%--<td class="value" width="15%" nowrap="nowrap"><b>This contest is part of the Digital Run:</b></td>--%>
+                <%--<td class="value" width="100%">${projectDRFlag}</td>--%>
+        <%--</tr><c:set var="rowIndex" value="${rowIndex+1}" />--%>
+        <%--<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>--%>
+                <%--<td class="value" width="15%" nowrap="nowrap"><b>DR Points:</b></td>--%>
+                <%--<td class="value" width="100%">${projectDRFlag=="Yes"?orfn:displayPaymentAmt(pageContext.request, projectDRP):""}</td>--%>
+        <%--</tr>--%>
+        <c:set var="rowIndex" value="${rowIndex+1}" />
         <c:if test="${isAllowedToViewAutopilotStatus}">
             <c:set var="autopilotStatus" value="${project.allProperties['Autopilot Option']}" />
             <c:if test='${autopilotStatus != "On" and autopilotStatus != "Off"}'>
