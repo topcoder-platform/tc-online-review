@@ -1,0 +1,15 @@
+Your submission has been screened and the results are detailed below. Learn more about screening (and common reasons for failure) by visiting this page\:<br/>
+<a href\="http\://community.topcoder.com/studio/the-process/screening/">http\://community.topcoder.com/studio/the-process/screening/</a><br/><br/>
+
+If your submission passes screening, it will be presented to the client and is eligible for prize placement.
+If your submission fails screening, your scorecard will note the reasons for failure.
+IMPORTANT\: Even if your submission passed screening, you should review your scorecard to see if the screener has issued any warnings or important comments.<br/><br/>
+
+%if:SCREENING_FAILED='0'%
+Your Submission %SUBMISSION_ID% which was uploaded on %SUBMISSION_DATE% for the contest <a href\="%STUDIO_LINK%">%PROJECT_NAME{Project name}%</a> has PASSED Screening.<br/><br/>
+%endif%
+%if:SCREENING_FAILED='1'%
+Your Submission %SUBMISSION_ID% which was uploaded on %SUBMISSION_DATE% for the contest <a href\="%STUDIO_LINK%">%PROJECT_NAME{Project name}%</a> has FAILED Screening.<br/><br/>
+%endif%
+
+Your Screening scorecard results\: <a href\="%SCORECARD_LINK%">%SCORECARD_LINK%</a>

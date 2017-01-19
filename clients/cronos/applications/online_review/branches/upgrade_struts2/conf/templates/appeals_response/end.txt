@@ -1,0 +1,37 @@
+Hello %USER_HANDLE{User handle}%,
+
+<p>
+This is the notification about the %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.
+</p>
+
+<p>
+Time\: %PHASE_TIMESTAMP{Phase timestamp}%<br/>
+Contest Type\: %PROJECT_CATEGORY{Name of the track}%<br/>
+Contest\: <a href\="%DIRECT_CONTEST_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
+Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
+</p>
+
+%if:NEED_AGGREGATOR='1'%
+<p>
+<font color\="red"><b>The contest has no Aggregator assigned!</b></font><br/>
+If an aggregator does not register shortly, please contact <a href\="mailto\:support@topcoder.com?subject\=Need Aggregator.">TopCoder Support</a>.
+</p>
+%endif%
+
+<table border\="1">
+<caption style\="white-space\: nowrap">Appeals Response results</caption>
+<tr>
+<th>Handle<th>Pre-Appeals Score<th>Post-Appeals Score<th>Placement
+%loop:SUBMITTER%
+<tr>
+<td>%SUBMITTER_HANDLE%<td>%SUBMITTER_PRE_APPEALS_SCORE%<td>%SUBMITTER_POST_APPEALS_SCORE%<td>%SUBMITTER_RESULT%
+%endloop%
+</table>
+
+<p>
+The appeal process is now over.  The Post-Appeals Scores above are the final scores.  The TopCoder Member Review Board will now aggregate all of the reviewer responses into a final single scorecard that will act as a list of requirements the winner will need to address.  To see the details of the appeals, please return to <a href\="https\://www.topcoder.com/direct/contest/softwareSubmissions?projectId\=%OR_PROJECT_ID%">Direct</a> and click on each of the scores to view the scorecards. 
+</p>
+
+<p>
+Click <a href\="https\://www.topcoder.com/direct/settings/notifications">here</a> to change your notification settings.
+</p>

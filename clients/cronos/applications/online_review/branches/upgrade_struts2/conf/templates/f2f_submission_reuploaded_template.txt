@@ -1,0 +1,9 @@
+<p>
+Contest\: <a href\="%OR_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
+</p>
+
+<p>
+Member %MEMBER_HANDLE%, whose previous submission #%SUBMISSION_ID% was in review, has re-submitted and his previous submission was deleted.<br/>
+The next submission in the queue is #%NEXT_SUBMISSION_ID% from member %NEXT_MEMBER_HANDLE%.<br/>
+Please download the next submission before completing your review.
+</p>

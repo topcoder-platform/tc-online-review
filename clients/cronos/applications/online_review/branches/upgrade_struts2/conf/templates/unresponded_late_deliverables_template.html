@@ -1,0 +1,16 @@
+<p>
+The following late deliverable records are waiting for your resolution in the Online Review.
+</p>
+<p>
+<table border\="1">
+<tr>
+<th>Contest<th>Deliverable<th>Late Member
+</tr>
+%loop:RECORDS%
+<tr>
+<td><a href\="https\://software.topcoder.com/review/actions/ViewProjectDetails?pid\=%PROJECT_ID%">%PROJECT_NAME% %PROJECT_VERSION%</a>
+<td><a href\="https\://software.topcoder.com/review/actions/EditLateDeliverable?late_deliverable_id\=%LATE_DELIVERABLE_ID%">%DELIVERABLE_NAME%</a>
+<td>%LATE_MEMBER_HANDLE%
+</tr>
+%endloop%
+</table>
