@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 - 2014 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2013 - 2017 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions.project;
 
@@ -85,9 +85,16 @@ import com.topcoder.web.common.RowNotFoundException;
  * <p>
  * Struts 2 Action objects are instantiated for each request, so there are no thread-safety issues.
  * </p>
+ * 
+ * <p>
+ * Version 2.1 (TOPCODER DIRECT - SUPPORT CHALLENGES WITH ZERO PRIZE):
+ * <ul>
+ *     <li>Updated validateProjectPrizes method to accept zero prize</li>
+ * </ul>
+ * </p>
  *
- * @author TCSASSEMBLER
- * @version 2.0
+ * @author TCSCODER
+ * @version 2.1
  */
 public class SaveProjectAction extends BaseProjectAction {
 
@@ -469,7 +476,7 @@ public class SaveProjectAction extends BaseProjectAction {
                     keyPrefix + "_amount[" + i + "]",
                     "error.com.cronos.onlinereview.actions.editProject.prize.amount.Invalid",
                     "error.com.cronos.onlinereview.actions.editProject.prize.amount.PrecisionInvalid",
-                    request, false)) {
+                    request, true)) {
             }
             if (nums[i] <= 0 || nums[i] > 10) {
                 ActionsHelper.addErrorToRequest(request,
