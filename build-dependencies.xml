@@ -68,14 +68,14 @@
     <property name="jackson-databind.jar" value="${ext_libdir}/jackson/jackson-databind-2.1.5.jar"/>
     <property name="jackson-annotations.jar" value="${ext_libdir}/jackson/jackson-annotations-2.1.5.jar"/>
 
-    <property name="struts2-core.jar" value="${ext_libdir}/struts/struts2-core-2.3.15.3.jar"/>
-    <property name="struts2-json-plugin.jar" value="${ext_libdir}/struts/struts2-json-plugin-2.3.15.3.jar"/>
-    <property name="struts2-spring-plugin.jar" value="${ext_libdir}/struts/struts2-spring-plugin-2.3.15.3.jar"/>
-    <property name="xwork-core.jar" value="${ext_libdir}/struts/xwork-core-2.3.15.3.jar"/>
+    <property name="struts2-core.jar" value="${ext_libdir}/struts/struts2-core-2.3.31.jar"/>
+    <property name="struts2-json-plugin.jar" value="${ext_libdir}/struts/struts2-json-plugin-2.3.31.jar"/>
+    <property name="struts2-spring-plugin.jar" value="${ext_libdir}/struts/struts2-spring-plugin-2.3.31.jar"/>
+    <property name="xwork-core.jar" value="${ext_libdir}/struts/xwork-core-2.3.31.jar"/>
     <!-- xwork 1 is used by jive-->
     <property name="xwork.jar" value="${ext_libdir}/struts/xwork-1.2.3.jar"/>
 
-    <property name="ognl.jar" value="${ext_libdir}/ognl-3.0.6.jar"/>
+    <property name="ognl.jar" value="${ext_libdir}/struts/ognl-3.0.19.jar"/>
     <property name="antlr.jar" value="${ext_libdir}/antlr-2.7.2.jar"/>
 
     <property name="junit.jar" value="${ext_libdir}/testing/junit-3.8.1.jar"/>
