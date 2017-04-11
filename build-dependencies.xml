@@ -68,10 +68,10 @@
     <property name="jackson-databind.jar" value="${ext_libdir}/jackson/jackson-databind-2.1.5.jar"/>
     <property name="jackson-annotations.jar" value="${ext_libdir}/jackson/jackson-annotations-2.1.5.jar"/>
 
-    <property name="struts2-core.jar" value="${ext_libdir}/struts/struts2-core-2.3.31.jar"/>
-    <property name="struts2-json-plugin.jar" value="${ext_libdir}/struts/struts2-json-plugin-2.3.31.jar"/>
-    <property name="struts2-spring-plugin.jar" value="${ext_libdir}/struts/struts2-spring-plugin-2.3.31.jar"/>
-    <property name="xwork-core.jar" value="${ext_libdir}/struts/xwork-core-2.3.31.jar"/>
+    <property name="struts2-core.jar" value="${ext_libdir}/struts/struts2-core-2.3.32.jar"/>
+    <property name="struts2-json-plugin.jar" value="${ext_libdir}/struts/struts2-json-plugin-2.3.32.jar"/>
+    <property name="struts2-spring-plugin.jar" value="${ext_libdir}/struts/struts2-spring-plugin-2.3.32.jar"/>
+    <property name="xwork-core.jar" value="${ext_libdir}/struts/xwork-core-2.3.32.jar"/>
     <!-- xwork 1 is used by jive-->
     <property name="xwork.jar" value="${ext_libdir}/struts/xwork-1.2.3.jar"/>
 
