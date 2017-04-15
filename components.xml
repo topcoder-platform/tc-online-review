@@ -147,11 +147,6 @@
         revision="206522" />
 
     <component
-        name="base_exception"
-        svnpath="https://coder.topcoder.com/tcs/catalog/java/base_exception/trunk"
-        revision="106287" />
-
-    <component
         name="class_associations"
         svnpath="https://coder.topcoder.com/tcs/catalog/java/class_associations/trunk"
         revision="207028" />
@@ -348,7 +343,7 @@
         name="review_application_management"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_application_management/trunk"
         revision="238984"/>
-    
+
     <component
         name="review_assignment"
         svnpath="https://coder.topcoder.com/tcs/clients/cronos/components/review_assignment/trunk"
