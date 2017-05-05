@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 - 2014 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2013 - 2017 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.interceptors;
 
@@ -18,6 +18,10 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.ModelDriven;
 import com.opensymphony.xwork2.interceptor.Interceptor;
+import org.apache.struts2.dispatcher.HttpParameters;
+import org.apache.struts2.dispatcher.Parameter;
+import org.apache.struts2.dispatcher.multipart.StrutsUploadedFile;
+
 
 
 /**
@@ -27,8 +31,13 @@ import com.opensymphony.xwork2.interceptor.Interceptor;
  * This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
+ * <p>
+ * v2.1 - Changed in Migrate Struts 2.3 to 2.5 For Online Review
+ * - the uploaded file in intercept method is instance of StrutsUploadedFile now.
+ * </p>
+ *
  * @author TCSASSEMBLER
- * @version 2.0
+ * @version 2.1
  */
 public class DynamicModelPopulationInterceptor implements Interceptor {
     /**
@@ -72,27 +81,31 @@ public class DynamicModelPopulationInterceptor implements Interceptor {
         if (action instanceof ModelDriven
                 && ((ModelDriven<?>) action).getModel() instanceof DynamicModel) {
             // Populate the parameters:
-            Map<String, Object> params = ActionContext.getContext()
+            HttpParameters params = ActionContext.getContext()
                                                       .getParameters();
             Map<String, Object> filteredParams = new HashMap<String, Object>();
 
             for (String key : params.keySet()) {
                 if (!key.contains(".") || key.matches("^.*[(].+\\..+[)]*$")) {
-                    Object value = ((Object[]) params.get(key))[0];
+                    Object value = params.get(key).getObject();
+                    if (value != null && value.getClass().isArray()) {
+                        Object[] values = (Object[]) value;
+                        if (values.length > 0) {
+                            value = values[0];
+                        }
+                    }
 
-                    if (value instanceof File) {
-                        String fileName = (String) ((Object[]) params.get(key
-                                + "FileName"))[0];
-                        String contentType = (String) ((Object[]) params.get(key
-                                + "ContentType"))[0];
+                    if (value instanceof StrutsUploadedFile) {
+                        String fileName = params.get(key + "FileName").getValue();
+                        String contentType = params.get(key + "ContentType").getValue();
 
                         FormFile formFile = new FormFile(fileName,
-                                (File) value, contentType);
+                                 ((StrutsUploadedFile) value).getContent(), contentType);
 
                         filteredParams.put(key, formFile);
                     } else {
                         if (!key.contains("FileName") && !key.contains("ContentType")) {
-                            filteredParams.put(key, params.get(key));
+                            filteredParams.put(key, params.get(key).getObject());
                         }
                     }
                 }
