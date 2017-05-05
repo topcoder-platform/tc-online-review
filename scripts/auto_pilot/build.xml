@@ -94,6 +94,7 @@
             <fileset file="${userEJB.jar}"/>
             <fileset file="${tcwebcommon.jar}"/>
             <fileset file="${shared.jar}"/>
+            <fileset file="${base_exception.jar}"/>
             <fileset file="${jbossall-client.jar}"/>
             <fileset dir="${ext_libdir}/svnkit" includes="*.jar"/>
             <fileset dir="${ext_libdir}/aws" includes="*.jar" />
