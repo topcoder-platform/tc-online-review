@@ -81,6 +81,29 @@
     </target>
 
     <!-- =================================
+         target: compare-components
+    ================================= -->
+    <target name="compare-components" description="Compare components with remote repositories">
+        <execute-all prefix="component.current">
+            <sequential>
+                <echo message="-------------------- Checking for: ${component.current.basedir}"/>
+                <svnex>
+                    <info target="${component.current.svnpath}"/>
+                </svnex>
+                <if>
+                    <equals arg1="${svn.info.lastRev}" arg2="${component.current.revision}"/>
+                    <then>
+                        <echo message="Component is using the latest revision: ${svn.info.lastRev}"/>
+                    </then>
+                    <else>
+                        <echo message="Component is not using the latest revision. Component revision is ${component.current.revision}, respository revision is ${svn.info.lastRev}"/>
+                    </else>
+                </if>
+            </sequential>
+        </execute-all>
+    </target>
+
+    <!-- =================================
          target: get-components-src
     ================================= -->
 
@@ -94,3 +117,4 @@
         </sequential>
     </macrodef>
 </project>
+
