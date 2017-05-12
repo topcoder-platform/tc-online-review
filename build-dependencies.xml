@@ -26,6 +26,176 @@
     <property name="base_exception.path" value="base_exception/${base_exception.version}" />
     <property name="base_exception.jar" value="${tcs_libdir}/${base_exception.path}/${base_exception.jar.name}" />
 
+    <property name="topcoder_commons_utility.version" value="1.0.0" />
+    <property name="topcoder_commons_utility.jar.name" value="topcoder_commons_utility.jar" />
+    <property name="topcoder_commons_utility.path" value="topcoder_commons_utility/${topcoder_commons_utility.version}" />
+    <property name="topcoder_commons_utility.jar" value="${tcs_libdir}/${topcoder_commons_utility.path}/${topcoder_commons_utility.jar.name}" />
+
+    <property name="simple_cache.version" value="2.0.2" />
+    <property name="simple_cache.jar.name" value="simple_cache.jar" />
+    <property name="simple_cache.path" value="simple_cache/${simple_cache.version}" />
+    <property name="simple_cache.jar" value="${tcs_libdir}/${simple_cache.path}/${simple_cache.jar.name}" />
+
+    <property name="configuration_manager.version" value="2.2.1" />
+    <property name="configuration_manager.jar.name" value="configuration_manager.jar" />
+    <property name="configuration_manager.path" value="configuration_manager/${configuration_manager.version}" />
+    <property name="configuration_manager.jar" value="${tcs_libdir}/${configuration_manager.path}/${configuration_manager.jar.name}" />
+
+    <property name="typesafe_enum.version" value="1.1.0" />
+    <property name="typesafe_enum.jar.name" value="typesafe_enum.jar" />
+    <property name="typesafe_enum.path" value="typesafe_enum/${typesafe_enum.version}" />
+    <property name="typesafe_enum.jar" value="${tcs_libdir}/${typesafe_enum.path}/${typesafe_enum.jar.name}" />
+    
+    <property name="workdays.version" value="1.1.0" />
+    <property name="workdays.jar.name" value="workdays.jar" />
+    <property name="workdays.path" value="workdays/${workdays.version}" />
+    <property name="workdays.jar" value="${tcs_libdir}/${workdays.path}/${workdays.jar.name}" />
+    
+    <property name="db_connection_factory.version" value="1.1.1" />
+    <property name="db_connection_factory.jar.name" value="db_connection_factory.jar" />
+    <property name="db_connection_factory.path" value="db_connection_factory/${db_connection_factory.version}" />
+    <property name="db_connection_factory.jar" value="${tcs_libdir}/${db_connection_factory.path}/${db_connection_factory.jar.name}" />
+    
+    <property name="data_validation.version" value="1.1.1" />
+    <property name="data_validation.jar.name" value="data_validation.jar" />
+    <property name="data_validation.path" value="data_validation/${data_validation.version}" />
+    <property name="data_validation.jar" value="${tcs_libdir}/${data_validation.path}/${data_validation.jar.name}" />
+
+    <property name="logging_wrapper.version" value="2.0.0" />
+    <property name="logging_wrapper.jar.name" value="logging_wrapper.jar" />
+    <property name="logging_wrapper.path" value="logging_wrapper/${logging_wrapper.version}" />
+    <property name="logging_wrapper.jar" value="${tcs_libdir}/${logging_wrapper.path}/${logging_wrapper.jar.name}" />
+    
+    <property name="ldap_sdk_interface.version" value="1.0.2" />
+    <property name="ldap_sdk_interface.jar.name" value="ldap_sdk_interface.jar" />
+    <property name="ldap_sdk_interface.path" value="ldap_sdk_interface/${ldap_sdk_interface.version}" />
+    <property name="ldap_sdk_interface.jar" value="${tcs_libdir}/${ldap_sdk_interface.path}/${ldap_sdk_interface.jar.name}" />
+    
+    <property name="email_engine.version" value="3.2.1" />
+    <property name="email_engine.jar.name" value="email_engine.jar" />
+    <property name="email_engine.path" value="email_engine/${email_engine.version}" />
+    <property name="email_engine.jar" value="${tcs_libdir}/${email_engine.path}/${email_engine.jar.name}" />
+    
+    <property name="document_generator.version" value="3.1.1" />
+    <property name="document_generator.jar.name" value="document_generator.jar" />
+    <property name="document_generator.path" value="document_generator/${document_generator.version}" />
+    <property name="document_generator.jar" value="${tcs_libdir}/${document_generator.path}/${document_generator.jar.name}" />
+    
+    <property name="class_associations.version" value="1.0.0" />
+    <property name="class_associations.jar.name" value="class_associations.jar" />
+    <property name="class_associations.path" value="class_associations/${class_associations.version}" />
+    <property name="class_associations.jar" value="${tcs_libdir}/${class_associations.path}/${class_associations.jar.name}" />
+    
+    <property name="command_line_utility.version" value="1.0.0" />
+    <property name="command_line_utility.jar.name" value="command_line_utility.jar" />
+    <property name="command_line_utility.path" value="command_line_utility/${command_line_utility.version}" />
+    <property name="command_line_utility.jar" value="${tcs_libdir}/${command_line_utility.path}/${command_line_utility.jar.name}" />
+    
+    <property name="compression_utility.version" value="2.0.2" />
+    <property name="compression_utility.jar.name" value="compression_utility.jar" />
+    <property name="compression_utility.path" value="compression_utility/${compression_utility.version}" />
+    <property name="compression_utility.jar" value="${tcs_libdir}/${compression_utility.path}/${compression_utility.jar.name}" />
+    
+    <property name="configuration_api.version" value="1.1.0" />
+    <property name="configuration_api.jar.name" value="configuration_api.jar" />
+    <property name="configuration_api.path" value="configuration_api/${configuration_api.version}" />
+    <property name="configuration_api.jar" value="${tcs_libdir}/${configuration_api.path}/${configuration_api.jar.name}" />
+    
+    <property name="configuration_persistence.version" value="1.0.2" />
+    <property name="configuration_persistence.jar.name" value="configuration_persistence.jar" />
+    <property name="configuration_persistence.path" value="configuration_persistence/${configuration_persistence.version}" />
+    <property name="configuration_persistence.jar" value="${tcs_libdir}/${configuration_persistence.path}/${configuration_persistence.jar.name}" />
+    
+    <property name="executable_wrapper.version" value="1.0.1" />
+    <property name="executable_wrapper.jar.name" value="executable_wrapper.jar" />
+    <property name="executable_wrapper.path" value="executable_wrapper/${executable_wrapper.version}" />
+    <property name="executable_wrapper.jar" value="${tcs_libdir}/${executable_wrapper.path}/${executable_wrapper.jar.name}" />
+    
+    <property name="file_system_server.version" value="1.1.1" />
+    <property name="file_system_server.jar.name" value="file_system_server.jar" />
+    <property name="file_system_server.path" value="file_system_server/${file_system_server.version}" />
+    <property name="file_system_server.jar" value="${tcs_libdir}/${file_system_server.path}/${file_system_server.jar.name}" />
+    
+    <property name="ip_server.version" value="2.0.1" />
+    <property name="ip_server.jar.name" value="ip_server.jar" />
+    <property name="ip_server.path" value="ip_server/${ip_server.version}" />
+    <property name="ip_server.jar" value="${tcs_libdir}/${ip_server.path}/${ip_server.jar.name}" />
+    
+    <property name="heartbeat.version" value="1.0.0" />
+    <property name="heartbeat.jar.name" value="heartbeat.jar" />
+    <property name="heartbeat.path" value="heartbeat/${heartbeat.version}" />
+    <property name="heartbeat.jar" value="${tcs_libdir}/${heartbeat.path}/${heartbeat.jar.name}" />
+
+    <property name="guid_generator.version" value="1.0.1" />
+    <property name="guid_generator.jar.name" value="guid_generator.jar" />
+    <property name="guid_generator.path" value="guid_generator/${guid_generator.version}" />
+    <property name="guid_generator.jar" value="${tcs_libdir}/${guid_generator.path}/${guid_generator.jar.name}" />
+    
+    <property name="object_factory.version" value="2.2.0" />
+    <property name="object_factory.jar.name" value="object_factory.jar" />
+    <property name="object_factory.path" value="object_factory/${object_factory.version}" />
+    <property name="object_factory.jar" value="${tcs_libdir}/${object_factory.path}/${object_factory.jar.name}" />
+    
+    <property name="object_factory.version" value="2.2.0" />
+    <property name="object_factory.jar.name" value="object_factory.jar" />
+    <property name="object_factory.path" value="object_factory/${object_factory.version}" />
+    <property name="object_factory.jar" value="${tcs_libdir}/${object_factory.path}/${object_factory.jar.name}" />
+    
+    <property name="object_factory_configuration_api_plugin.version" value="1.1.0" />
+    <property name="object_factory_configuration_api_plugin.jar.name" value="object_factory_configuration_api_plugin.jar" />
+    <property name="object_factory_configuration_api_plugin.path" value="object_factory_configuration_api_plugin/${object_factory_configuration_api_plugin.version}" />
+    <property name="object_factory_configuration_api_plugin.jar" value="${tcs_libdir}/${object_factory_configuration_api_plugin.path}/${object_factory_configuration_api_plugin.jar.name}" />
+    
+    <property name="object_factory_config_manager_plugin.version" value="1.1.0" />
+    <property name="object_factory_config_manager_plugin.jar.name" value="object_factory_config_manager_plugin.jar" />
+    <property name="object_factory_config_manager_plugin.path" value="object_factory_config_manager_plugin/${object_factory_config_manager_plugin.version}" />
+    <property name="object_factory_config_manager_plugin.jar" value="${tcs_libdir}/${object_factory_config_manager_plugin.path}/${object_factory_config_manager_plugin.jar.name}" />
+    
+    <property name="memory_usage.version" value="2.0.0" />
+    <property name="memory_usage.jar.name" value="memory_usage.jar" />
+    <property name="memory_usage.path" value="memory_usage/${memory_usage.version}" />
+    <property name="memory_usage.jar" value="${tcs_libdir}/${memory_usage.path}/${memory_usage.jar.name}" />
+    
+    <property name="jndi_context_utility.version" value="2.0.0" />
+    <property name="jndi_context_utility.jar.name" value="jndi_context_utility.jar" />
+    <property name="jndi_context_utility.path" value="jndi_context_utility/${jndi_context_utility.version}" />
+    <property name="jndi_context_utility.jar" value="${tcs_libdir}/${jndi_context_utility.path}/${jndi_context_utility.jar.name}" />
+    
+    <property name="job_processor.version" value="3.0.1" />
+    <property name="job_processor.jar.name" value="job_processor.jar" />
+    <property name="job_processor.path" value="job_processor/${job_processor.version}" />
+    <property name="job_processor.jar" value="${tcs_libdir}/${job_processor.path}/${job_processor.jar.name}" />
+    
+    <property name="object_formatter.version" value="1.0.0" />
+    <property name="object_formatter.jar.name" value="object_formatter.jar" />
+    <property name="object_formatter.path" value="object_formatter/${object_formatter.version}" />
+    <property name="object_formatter.jar" value="${tcs_libdir}/${object_formatter.path}/${object_formatter.jar.name}" />
+    
+    <property name="job_scheduling.version" value="3.2.1" />
+    <property name="job_scheduling.jar.name" value="job_scheduling.jar" />
+    <property name="job_scheduling.path" value="job_scheduling/${job_scheduling.version}" />
+    <property name="job_scheduling.jar" value="${tcs_libdir}/${job_scheduling.path}/${job_scheduling.jar.name}" />
+    
+    <property name="terms_of_use.version" value="1.1.0" />
+    <property name="terms_of_use.jar.name" value="terms_of_use.jar" />
+    <property name="terms_of_use.path" value="terms_of_use/${terms_of_use.version}" />
+    <property name="terms_of_use.jar" value="${tcs_libdir}/${terms_of_use.path}/${terms_of_use.jar.name}" />
+    
+    <property name="distribution_tool.version" value="1.0.1" />
+    <property name="distribution_tool.jar.name" value="distribution_tool.jar" />
+    <property name="distribution_tool.path" value="distribution_tool/${distribution_tool.version}" />
+    <property name="distribution_tool.jar" value="${tcs_libdir}/${distribution_tool.path}/${distribution_tool.jar.name}" />
+    
+    <property name="weighted_calculator.version" value="1.0.0" />
+    <property name="weighted_calculator.jar.name" value="weighted_calculator.jar" />
+    <property name="weighted_calculator.path" value="weighted_calculator/${weighted_calculator.version}" />
+    <property name="weighted_calculator.jar" value="${tcs_libdir}/${weighted_calculator.path}/${weighted_calculator.jar.name}" />
+    
+    <property name="authentication_factory.version" value="2.0.1" />
+    <property name="authentication_factory.jar.name" value="authentication_factory.jar" />
+    <property name="authentication_factory.path" value="authentication_factory/${authentication_factory.version}" />
+    <property name="authentication_factory.jar" value="${tcs_libdir}/${authentication_factory.path}/${authentication_factory.jar.name}" />
+
     <!-- TCS Dependencies - non-versioned -->
     <property name="userEJB.path" value="user_ejb"/>
     <property name="userEJB.jar.name" value="User.jar"/>
@@ -142,6 +312,44 @@
     <path id="poi_libs">
         <fileset dir="${ext_libdir}/poi" includes="*.jar"/>
     </path>
+    
+    <path id="tcs_dependencies">
+        <pathelement location="${job_scheduler.jar}"/>
+        <pathelement location="${base_exception.jar}"/>
+        <pathelement location="${topcoder_commons_utility.jar}"/>
+        <pathelement location="${simple_cache.jar}"/>
+        <pathelement location="${configuration_manager.jar}"/>
+        <pathelement location="${typesafe_enum.jar}"/>
+        <pathelement location="${workdays.jar}"/>
+        <pathelement location="${db_connection_factory.jar}"/>
+        <pathelement location="${data_validation.jar}"/>
+        <pathelement location="${logging_wrapper.jar}"/>
+        <pathelement location="${ldap_sdk_interface.jar}"/>
+        <pathelement location="${email_engine.jar}"/>
+        <pathelement location="${document_generator.jar}"/>
+        <pathelement location="${class_associations.jar}"/>
+        <pathelement location="${command_line_utility.jar}"/>
+        <pathelement location="${compression_utility.jar}"/>
+        <pathelement location="${configuration_api.jar}"/>
+        <pathelement location="${configuration_persistence.jar}"/>
+        <pathelement location="${executable_wrapper.jar}"/>
+        <pathelement location="${file_system_server.jar}"/>
+        <pathelement location="${ip_server.jar}"/>
+        <pathelement location="${heartbeat.jar}"/>
+        <pathelement location="${guid_generator.jar}"/>
+        <pathelement location="${object_factory.jar}"/>
+        <pathelement location="${object_factory_configuration_api_plugin.jar}"/>
+        <pathelement location="${object_factory_config_manager_plugin.jar}"/>
+        <pathelement location="${memory_usage.jar}"/>
+        <pathelement location="${jndi_context_utility.jar}"/>
+        <pathelement location="${job_processor.jar}"/>
+        <pathelement location="${object_formatter.jar}"/>
+        <pathelement location="${job_scheduling.jar}"/>
+        <pathelement location="${terms_of_use.jar}"/>
+        <pathelement location="${distribution_tool.jar}"/>
+        <pathelement location="${weighted_calculator.jar}"/>
+        <pathelement location="${authentication_factory.jar}"/>
+    </path>
 
     <path id="buildlibs">
         <pathelement location="${ejb3-persistence.jar}"/>
@@ -163,9 +371,7 @@
         <pathelement location="${tcwebcommon.jar}"/>
         <pathelement location="${userEJB.jar}"/>
         <pathelement location="${securityEJB.jar}"/>
-        <pathelement location="${tcIdGenerator.jar}"/>
-        <pathelement location="${job_scheduler.jar}"/>
-        <pathelement location="${base_exception.jar}"/>
+        <pathelement location="${tcIdGenerator.jar}"/>        
         <pathelement location="${svnkit.jar}"/>
         <pathelement location="${jodconverter.jar}"/>
         <pathelement location="${log4j.jar}" />
@@ -179,6 +385,7 @@
         <pathelement location="${httpclient.jar}" />
         <pathelement location="${httpcore.jar}" />
 
+        <path refid="tcs_dependencies"/>
         <path refid="spring_libs"/>
         <path refid="poi_libs"/>
     </path>
