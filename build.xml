@@ -146,6 +146,42 @@
       <lib dir="${tcs_libdir}/${securityEJB.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}" includes="tc_id_generator.jar"/>
       <lib dir="${tcs_libdir}" includes="tcjive.jar"/>
+
+      <lib file="${job_scheduler.jar}"/>
+      <lib file="${base_exception.jar}"/>
+      <lib file="${topcoder_commons_utility.jar}"/>
+      <lib file="${simple_cache.jar}"/>
+      <lib file="${configuration_manager.jar}"/>
+      <lib file="${typesafe_enum.jar}"/>
+      <lib file="${workdays.jar}"/>
+      <lib file="${db_connection_factory.jar}"/>
+      <lib file="${data_validation.jar}"/>
+      <lib file="${logging_wrapper.jar}"/>
+      <lib file="${ldap_sdk_interface.jar}"/>
+      <lib file="${email_engine.jar}"/>
+      <lib file="${document_generator.jar}"/>
+      <lib file="${class_associations.jar}"/>
+      <lib file="${command_line_utility.jar}"/>
+      <lib file="${compression_utility.jar}"/>
+      <lib file="${configuration_api.jar}"/>
+      <lib file="${configuration_persistence.jar}"/>
+      <lib file="${executable_wrapper.jar}"/>
+      <lib file="${file_system_server.jar}"/>
+      <lib file="${ip_server.jar}"/>
+      <lib file="${heartbeat.jar}"/>
+      <lib file="${guid_generator.jar}"/>
+      <lib file="${object_factory.jar}"/>
+      <lib file="${object_factory_configuration_api_plugin.jar}"/>
+      <lib file="${object_factory_config_manager_plugin.jar}"/>
+      <lib file="${memory_usage.jar}"/>
+      <lib file="${jndi_context_utility.jar}"/>
+      <lib file="${job_processor.jar}"/>
+      <lib file="${object_formatter.jar}"/>
+      <lib file="${job_scheduling.jar}"/>
+      <lib file="${terms_of_use.jar}"/>
+      <lib file="${distribution_tool.jar}"/>
+      <lib file="${weighted_calculator.jar}"/>
+      <lib file="${authentication_factory.jar}"/>
       
       <lib dir="${ext_libdir}" includes="*.jar" excludes="ejb-2_0.jar, servlet-api.jar, jsp-api.jar, log4j.jar"/>
       <lib dir="${ext_libdir}/struts" includes="*.jar"/>
