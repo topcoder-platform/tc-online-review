@@ -1,10 +1,17 @@
 /**
- * Copyright (C) 2013 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2013 - 2017 TopCoder Inc., All Rights Reserved.
  *
  * Provides the validation functions for the editing project forms.
+ * 
+ * <p>
+ * Version 2.1 (TOPCODER DIRECT - SUPPORT CHALLENGES WITH ZERO PRIZE):
+ * <ul>
+ *     <li>Updated validate_prizes_amount function to accept zero prize</li>
+ * </ul>
+ * </p>
  *
- * @author TCSASSEMBLER
- * @version 2.0
+ * @author TCSCODER
+ * @version 2.1
  */
 
 /**
@@ -214,8 +221,8 @@ function validate_prizes_amount(table, prefix, msgPrefix, thisForm, msgList) {
         msgDiv.style.display = "none";
 
         amount = trimString(amount);
-        if (amount.length == 0 || !isFloat(amount) || parseFloat(amount) <= 0) {
-            msg = "Prize Amount should be positive number";
+        if (amount.length == 0 || !isFloat(amount) || parseFloat(amount) < 0) {
+            msg = "Prize Amount should not be negative number";
             add_error_message(msg, msgPrefix + " " + (idx - 2) + ": ", msgDiv, msgList);
         } else {
             if (!checkDoubleWith2Decimal(amount)) {
