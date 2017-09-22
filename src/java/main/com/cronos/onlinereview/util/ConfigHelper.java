@@ -26,9 +26,13 @@ import com.topcoder.util.config.UnknownNamespaceException;
  * This class is thread-safe as its inner state is initialized only once and
  * is not changed afterwards.
  * </p>
+ * 
+ * Changes in version 2.1 Topcoder - Add Group Permission Check For Adding Resources v1.0
+ * - add the userGroupMemebershipUrl, v3jwtCookieName, v2jwtCookieName, v3jwtAuthorizationUrl,
+ * ssoDomainForV3jwtCookie configuration values
  *
  * @author TCSASSEMBLER
- * @version 2.0
+ * @version 2.1
  */
 public class ConfigHelper {
 
@@ -554,6 +558,31 @@ public class ConfigHelper {
     private static final String THURGOOD_PASSWORD_PROP = "thurgood_password";
 
     /**
+     * <p>A <code>String</code> providing the name for v3 jwt cookie name property.</p>
+     */
+    private static final String V3_JWT_COOKIE_NAME = "v3jwt_cookie_name";
+    
+    /**
+     * <p>A <code>String</code> providing the name for user group memeber ship url property.</p>
+     */
+    private static final String USER_GROUP_MEMBERSHIP_URL = "user_group_membership_url";
+    
+    /**
+     * <p>A <code>String</code> providing the name for v2 jwt cookie name property.</p>
+     */
+    private static final String V2_JWT_COOKIE_NAME = "v2jwt_cookie_name";
+    
+    /**
+     * <p>A <code>String</code> providing the name for sso domain for v3 jwt cookie property.</p>
+     */
+    private static final String SSO_DOMAIN_FOR_V3_JWT_COOKIE = "sso_domain_for_v3jwt_cookie";
+    
+    /**
+     * <p>A <code>String</code> providing the name for v3 jwt authorization url property.</p>
+     */
+    private static final String V3_JWT_AUTHORIZATION_URL = "v3jwt_authorization_url";
+    
+    /**
      * This member variable holds the submitter role id.
      */
     private static int submitterRoleId = 1;
@@ -909,6 +938,31 @@ public class ConfigHelper {
      * <p>Represents the password of the Thurgood user.</p>
      */
     private static String thurgoodPassword;
+    
+    /**
+     * <p>Represents the userGroupMembershipUrl.</p> 
+     */
+    private static String userGroupMembershipUrl;
+    
+    /**
+     * <p>Represents the v3jwtCookieBame.</p> 
+     */
+    private static String v3jwtCookieName;
+    
+    /**
+     * <p>Represents the v2jwtCookieBame.</p> 
+     */
+    private static String v2jwtCookieName;
+    
+    /**
+     * <p>Represents the v3jwtAuthorizationUrl.</p> 
+     */
+    private static String v3jwtAuthorizationUrl;
+    
+    /**
+     * <p>Represents the ssoDomainForV3jwtCookie.</p> 
+     */
+    private static String ssoDomainForV3jwtCookie;
 
     static {
         // Obtaining the instance of Configuration Manager
@@ -1505,6 +1559,11 @@ public class ConfigHelper {
                 thurgoodPassword = value;
             }
 
+            userGroupMembershipUrl = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, USER_GROUP_MEMBERSHIP_URL);
+            v3jwtCookieName = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, V3_JWT_COOKIE_NAME);
+            v2jwtCookieName = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, V2_JWT_COOKIE_NAME);
+            ssoDomainForV3jwtCookie = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, SSO_DOMAIN_FOR_V3_JWT_COOKIE);
+            v3jwtAuthorizationUrl = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, V3_JWT_AUTHORIZATION_URL);
         } catch (UnknownNamespaceException une) {
             System.out.println(une.getMessage());
             une.printStackTrace();
@@ -2332,5 +2391,47 @@ public class ConfigHelper {
     public static String getThurgoodPassword() {
         return thurgoodPassword;
     }
+    
+    /**
+     * Get user group membership url
+     *
+     * @return the userGroupMembershipUrl
+     */
+    public static String getUserGroupMembershipUrl() {
+    	return userGroupMembershipUrl;
+    }
 
+    /**
+     * Get v3jwt cookie name
+     *
+     * @return the v3jwtCookieName
+     */
+    public static String getV3jwtCookieName() {
+    	return v3jwtCookieName;
+    }
+
+    /**
+     * Get v2jwtCookieName.
+     * @return the v2jwtCookieName. 
+     */
+    public static String getV2jwtCookieName() {
+        return v2jwtCookieName;
+    }
+
+    /**
+     * Get v3jwtAuthorizationUrl.
+     * @return the v3jwtAuthorizationUrl. 
+     */
+    public static String getV3jwtAuthorizationUrl() {
+        return v3jwtAuthorizationUrl;
+    }
+
+    /**
+     * Get ssoDomainForV3jwtCookie.
+     * @return the ssoDomainForV3jwtCookie. 
+     */
+    public static String getSsoDomainForV3jwtCookie() {
+        return ssoDomainForV3jwtCookie;
+    }
+    
 }

@@ -5213,6 +5213,22 @@
         <Property name="topcoder_api_base_url">
             <Value>@topcoder_api_base_url@</Value>
         </Property>
+        
+        <Property name="user_group_membership_url">
+            <Value>http://192.168.31.105:8084/v3/groups?memberId=%samp;membershipType=User-Group</Value>
+        </Property>
+        <Property name="v3jwt_cookie_name">
+            <Value>v3jwt</Value>
+        </Property>
+        <Property name="v2jwt_cookie_name">
+            <Value>tcjwt</Value>
+        </Property>
+        <Property name="v3jwt_authorization_url">
+            <Value>https://api.login.yahoo.com/oauth/v2/request_auth?oauth_token=</Value>
+        </Property>
+        <Property name="sso_domain_for_v3jwt_cookie">
+            <Value>.topcoder.com</Value>
+        </Property>
     </Config>
 
     <!--
