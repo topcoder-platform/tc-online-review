@@ -5215,7 +5215,7 @@
         </Property>
         
         <Property name="user_group_membership_url">
-            <Value>http://192.168.31.105:8084/v3/groups?memberId=%samp;membershipType=User-Group</Value>
+            <Value>@topcoder_api_base_url_v3@groups?memberId=%samp;membershipType=User-Group</Value>
         </Property>
         <Property name="v3jwt_cookie_name">
             <Value>v3jwt</Value>
