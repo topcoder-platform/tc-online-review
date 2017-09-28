@@ -16,13 +16,17 @@ import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectPropertyType;
 import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
+import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer.ResultSetRow;
 import com.topcoder.shared.util.DBMS;
 
 /**
  * <p>A simple DAO for projects backed up by Query Tool.</p>
+ * 
+ * Changes in version 2.1 Topcoder - Add Group Permission Check For Adding Resources v1.0
+ * - add the checkUserChallengeEligibility method to check user group permission
  *
  * @author TCSASSEMBLER
- * @version 2.0
+ * @version 2.1
  */
 public class ProjectDataAccess extends BaseDataAccess {
 
@@ -304,5 +308,40 @@ public class ProjectDataAccess extends BaseDataAccess {
             }
         }
         return 0;
+    }
+    
+
+    /**
+     * Check user challenge eligibility
+     *
+     * @param userId the userId to use
+     * @param challengeId the challengeId to use
+     * @return the Map<String,Long> result contains the group and challenge info
+     */
+    public Map<String, Long> checkUserChallengeEligibility(long userId, long challengeId) {
+    	String queryName = "get_challenge_accessibility_and_groups";
+    	ResultSetContainer resultContainer = runQueryInDB(DBMS.OLTP_DATASOURCE_NAME, queryName,
+                new String[] {"userId", "challengeId"}, new String[] {userId + "", challengeId + ""}).get(queryName);
+    	
+    	if (resultContainer != null && resultContainer.getRowCount() > 0) {
+    		Map<String, Long> map = new HashMap<String, Long>();
+    		ResultSetRow row = resultContainer.getRow(0);
+    		
+    		Object obj = row.getItem("user_group_xref_found").getResultData();
+    		if (obj != null) {
+    			map.put("user_group_xref_found", Long.parseLong(obj.toString()));
+    		}
+    		obj = row.getItem("challenge_group_ind").getResultData();
+    		if (obj != null) {
+    			map.put("challenge_group_ind", Long.parseLong(obj.toString()));
+    		}
+    		obj = row.getItem("group_id").getResultData();
+    		if (obj != null) {
+    			map.put("group_id", Long.parseLong(obj.toString()));
+    		}
+    		return map;
+    	}
+    	
+    	return null;
     }
 }

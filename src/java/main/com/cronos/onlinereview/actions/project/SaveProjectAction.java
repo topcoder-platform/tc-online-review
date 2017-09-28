@@ -21,6 +21,7 @@ import static com.cronos.onlinereview.Constants.SPECIFICATION_REVIEW_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.SPECIFICATION_SUBMISSION_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.SUBMISSION_PHASE_NAME;
 
+import java.net.URI;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.Format;
@@ -40,9 +41,21 @@ import java.util.Set;
 import java.util.Stack;
 
 import javax.ejb.EJBException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
 import com.cronos.onlinereview.Constants;
+import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.phases.AmazonSNSHelper;
@@ -51,6 +64,8 @@ import com.cronos.onlinereview.util.*;
 import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
 import com.cronos.termsofuse.dao.UserTermsOfUseDao;
 import com.cronos.termsofuse.model.TermsOfUse;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.topcoder.date.workdays.DefaultWorkdaysFactory;
 import com.topcoder.date.workdays.Workdays;
 import com.topcoder.date.workdays.WorkdaysUnitOfTime;
@@ -92,9 +107,14 @@ import com.topcoder.web.common.RowNotFoundException;
  *     <li>Updated validateProjectPrizes method to accept zero prize</li>
  * </ul>
  * </p>
- *
+ * 
+ * <p>
+ * Changes in version 2.2 Topcoder - Add Group Permission Check For Adding Resources v1.0
+ * <ul>- check user group permission before add resource</ul>
+ * </p>
+ * 
  * @author TCSCODER
- * @version 2.1
+ * @version 2.2
  */
 public class SaveProjectAction extends BaseProjectAction {
 
@@ -140,6 +160,19 @@ public class SaveProjectAction extends BaseProjectAction {
      * <p>A long number holding the ID for submitter role.</p>
      */
     private static final long SUBMITTER_ROLE_ID = 1L;
+    
+    /**
+     * The jackson object mapping which is used to deserialize json return from API to domain model.
+     */
+    protected static final ObjectMapper objectMapper;
+    static {
+        objectMapper = new ObjectMapper();
+    }
+
+    /**
+     * URI params for refresh token
+     */
+    private static final String AUTHORIZATION_PARAMS = "{\"param\": {\"externalToken\": \"%s\"}}";
 
     /**
      * Represents the project id which is used for viewing project details.
@@ -1357,6 +1390,104 @@ public class SaveProjectAction extends BaseProjectAction {
     }
 
     /**
+     * Get refresh token from api
+     *
+     * @param oldToken the oldToken to use
+     * @throws BaseException if any error occurs
+     * @return the String result
+     */
+    public String getRefreshTokenFromApi(String oldToken) throws BaseException {
+    	try {
+	        DefaultHttpClient httpClient = new DefaultHttpClient();
+	
+	        String authUrl = ConfigHelper.getV3jwtAuthorizationUrl();
+	        URI authorizationUri = new URI(authUrl);
+	        HttpPost httpPost = new HttpPost(authorizationUri);
+	        httpPost.addHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+	
+	        StringEntity body = new StringEntity(String.format(AUTHORIZATION_PARAMS, oldToken));
+	        httpPost.setEntity(body);
+	        HttpResponse response = httpClient.execute(httpPost);
+	        HttpEntity entity = response.getEntity();
+	        if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+	            throw new BaseException("Failed to get the token:" + response.getStatusLine().getReasonPhrase());
+	        }
+	        String data = EntityUtils.toString(entity);
+	        JsonNode result = objectMapper.readTree(data);
+	
+	        return result.path("result").path("content").path("token").asText();
+    	} catch (BaseException be) {
+    		throw be;
+    	} catch (Exception exp) {
+    		throw new BaseException("Failed to refresh the token", exp);
+    	}
+    }
+    
+    /**
+     * Get groups for the login user
+     *
+     * @param request the request to use
+     * @throws BaseException if any error occurs
+     * @return the Set<Long> result contains the group ids
+     */
+    private Set<Long> getGroups(HttpServletRequest request) throws BaseException {
+    	try {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            String groupEndPoint = String.format(ConfigHelper.getUserGroupMembershipUrl(), AuthorizationHelper.getLoggedInUserId(request));
+            HttpGet getRequest = new HttpGet(groupEndPoint);
+
+            Cookie[] cookies = request.getCookies();
+
+            Cookie jwtCookieV3 = null;
+            Cookie jwtCookeV2 = null;
+            String jwtCookieName = ConfigHelper.getV3jwtCookieName();
+            if (cookies != null) {
+                for (Cookie c : cookies) {
+                    if (c.getName().equals(jwtCookieName)) {
+                    	jwtCookieV3 = c;
+                    } else if (c.getName().equals(ConfigHelper.getV2jwtCookieName())) {
+                    	jwtCookeV2 = c;
+                    }  
+                }
+            }
+
+            if (jwtCookieV3 == null) {
+            	String newToken = getRefreshTokenFromApi(jwtCookeV2.getValue());
+            	Cookie cookie = new Cookie(jwtCookieName, newToken);
+            	cookie.setMaxAge(-1);
+                cookie.setDomain(ConfigHelper.getSsoDomainForV3jwtCookie());
+                cookie.setPath("/");
+                response.addCookie(cookie);
+                jwtCookieV3 = cookie;
+            }
+            
+            getRequest.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + jwtCookieV3.getValue());
+
+            getRequest.addHeader(HttpHeaders.ACCEPT, "application/json");
+            HttpResponse httpResponse = httpClient.execute(getRequest);
+            
+            HttpEntity entity = httpResponse.getEntity();
+
+            if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                throw new BaseException("Unable to get groups from the API:" + httpResponse.getStatusLine().getReasonPhrase());
+            }
+
+            JsonNode result = objectMapper.readTree(entity.getContent());
+            
+            JsonNode groups = result.path("result").path("content");        
+            Set<Long> groupIds = new HashSet<Long>();
+            for (JsonNode group : groups) {            
+                groupIds.add(group.path("id").asLong());
+            }
+            
+            return groupIds;
+    	} catch (Exception exp) {
+    		throw new BaseException(exp.getMessage(), exp);
+    	}
+    	
+    }
+    
+    /**
      * Private helper method to save resources.
      *
      * @param request the HttpServletRequest
@@ -1367,6 +1498,47 @@ public class SaveProjectAction extends BaseProjectAction {
      */
     private void saveResources(HttpServletRequest request,
                                Project project, Phase[] projectPhases, Map<Object, Phase> phasesJsMap) throws BaseException {
+    	// check the user group permission first before add the resources
+    	boolean groupPermissionPassed = false;
+        try {
+        	if (AuthorizationHelper.hasUserRole(request, Constants.ADMIN_ROLE_NAME)) {
+        		groupPermissionPassed = true;
+        	} else {
+        		// check user group before save the resource
+    	        Map<String, Long> groups = new ProjectDataAccess().checkUserChallengeEligibility(
+    	        		AuthorizationHelper.getLoggedInUserId(request), project.getId());
+    	        
+    	        // If there's no corresponding record in group_contest_eligibility
+    	        // then the challenge is available to all users
+    	        if (groups == null || groups.entrySet().size() == 0) {
+    	        	groupPermissionPassed = true;
+    	        } else if (groups.get("challenge_group_ind") != null) {
+    	        	Long groupInd = groups.get("challenge_group_ind");
+    		        if (groupInd == null) {
+    		        	groupPermissionPassed = true;
+    		        } else if (groupInd == 0) {// if the groupInd is 0, indicate it's public
+    		            if (groups.get("user_group_xref_found") != null) {
+    		            	groupPermissionPassed = true;
+    		            }
+    		        } else {
+    		           Set<Long> ids = this.getGroups(request);
+    		           if (ids.contains(groupInd)) {
+    		        	   groupPermissionPassed = true;
+    		           }
+    		        }
+    	        }
+        	} 
+        } catch (BaseException be) {
+        	throw be;
+        } catch (Exception exp) {
+        	throw new BaseException(exp.getMessage(), exp);
+        }
+
+        if (!groupPermissionPassed) {
+        	ActionsHelper.addErrorToRequest(request, "resources_name[0]",
+                    "error.com.cronos.onlinereview.actions.editProject.Resource.GroupPermissionDenied");
+        	return;
+        }
 
         // Obtain the instance of the User Retrieval
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
