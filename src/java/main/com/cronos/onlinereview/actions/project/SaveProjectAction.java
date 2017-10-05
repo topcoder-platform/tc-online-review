@@ -22,6 +22,7 @@ import static com.cronos.onlinereview.Constants.SPECIFICATION_SUBMISSION_PHASE_N
 import static com.cronos.onlinereview.Constants.SUBMISSION_PHASE_NAME;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.Format;
@@ -53,6 +54,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.apache.xerces.utils.Base64;
 
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
@@ -1388,40 +1390,6 @@ public class SaveProjectAction extends BaseProjectAction {
         // Returned parsed Date
         return calendar.getTime();
     }
-
-    /**
-     * Get refresh token from api
-     *
-     * @param oldToken the oldToken to use
-     * @throws BaseException if any error occurs
-     * @return the String result
-     */
-    public String getRefreshTokenFromApi(String oldToken) throws BaseException {
-    	try {
-	        DefaultHttpClient httpClient = new DefaultHttpClient();
-	
-	        String authUrl = ConfigHelper.getV3jwtAuthorizationUrl();
-	        URI authorizationUri = new URI(authUrl);
-	        HttpPost httpPost = new HttpPost(authorizationUri);
-	        httpPost.addHeader(HttpHeaders.CONTENT_TYPE, "application/json");
-	
-	        StringEntity body = new StringEntity(String.format(AUTHORIZATION_PARAMS, oldToken));
-	        httpPost.setEntity(body);
-	        HttpResponse response = httpClient.execute(httpPost);
-	        HttpEntity entity = response.getEntity();
-	        if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-	            throw new BaseException("Failed to get the token:" + response.getStatusLine().getReasonPhrase());
-	        }
-	        String data = EntityUtils.toString(entity);
-	        JsonNode result = objectMapper.readTree(data);
-	
-	        return result.path("result").path("content").path("token").asText();
-    	} catch (BaseException be) {
-    		throw be;
-    	} catch (Exception exp) {
-    		throw new BaseException("Failed to refresh the token", exp);
-    	}
-    }
     
     /**
      * Get groups for the login user
@@ -1437,32 +1405,9 @@ public class SaveProjectAction extends BaseProjectAction {
             String groupEndPoint = String.format(ConfigHelper.getUserGroupMembershipUrl(), userId);
             HttpGet getRequest = new HttpGet(groupEndPoint);
 
-            Cookie[] cookies = request.getCookies();
-
-            Cookie jwtCookieV3 = null;
-            Cookie jwtCookeV2 = null;
-            String jwtCookieName = ConfigHelper.getV3jwtCookieName();
-            if (cookies != null) {
-                for (Cookie c : cookies) {
-                    if (c.getName().equals(jwtCookieName)) {
-                    	jwtCookieV3 = c;
-                    } else if (c.getName().equals(ConfigHelper.getV2jwtCookieName())) {
-                    	jwtCookeV2 = c;
-                    }  
-                }
-            }
-
-            if (jwtCookieV3 == null) {
-            	String newToken = getRefreshTokenFromApi(jwtCookeV2.getValue());
-            	Cookie cookie = new Cookie(jwtCookieName, newToken);
-            	cookie.setMaxAge(-1);
-                cookie.setDomain(ConfigHelper.getSsoDomainForV3jwtCookie());
-                cookie.setPath("/");
-                response.addCookie(cookie);
-                jwtCookieV3 = cookie;
-            }
+            String v3Token = new JwtTokenUpdater().check().getToken();
             
-            getRequest.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + jwtCookieV3.getValue());
+            getRequest.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + v3Token);
 
             getRequest.addHeader(HttpHeaders.ACCEPT, "application/json");
             HttpResponse httpResponse = httpClient.execute(getRequest);
