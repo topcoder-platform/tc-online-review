@@ -1427,13 +1427,14 @@ public class SaveProjectAction extends BaseProjectAction {
      * Get groups for the login user
      *
      * @param request the request to use
+     * @param userId the user id to use
      * @throws BaseException if any error occurs
      * @return the Set<Long> result contains the group ids
      */
-    private Set<Long> getGroups(HttpServletRequest request) throws BaseException {
+    private Set<Long> getGroups(HttpServletRequest request, long userId) throws BaseException {
     	try {
             DefaultHttpClient httpClient = new DefaultHttpClient();
-            String groupEndPoint = String.format(ConfigHelper.getUserGroupMembershipUrl(), AuthorizationHelper.getLoggedInUserId(request));
+            String groupEndPoint = String.format(ConfigHelper.getUserGroupMembershipUrl(), userId);
             HttpGet getRequest = new HttpGet(groupEndPoint);
 
             Cookie[] cookies = request.getCookies();
@@ -1488,25 +1489,24 @@ public class SaveProjectAction extends BaseProjectAction {
     }
     
     /**
-     * Private helper method to save resources.
+     * Check group permission
      *
-     * @param request the HttpServletRequest
-     * @param project the project being saved
-     * @param projectPhases the project phases being saved
-     * @param phasesJsMap the phasesJsMap
+     * @param request the request to use
+     * @param projectId the projectId to use
+     * @param userId the userId to use
      * @throws BaseException if any error occurs
+     * @return the true if pass
      */
-    private void saveResources(HttpServletRequest request,
-                               Project project, Phase[] projectPhases, Map<Object, Phase> phasesJsMap) throws BaseException {
+    private boolean checkGroupPermission(HttpServletRequest request, long projectId, long userId) throws BaseException {
     	// check the user group permission first before add the resources
     	boolean groupPermissionPassed = false;
         try {
-        	if (AuthorizationHelper.hasUserRole(request, Constants.ADMIN_ROLE_NAME)) {
+        	if (ConfigHelper.getAdminUsers().contains(userId)) {
         		groupPermissionPassed = true;
         	} else {
         		// check user group before save the resource
     	        Map<String, Long> groups = new ProjectDataAccess().checkUserChallengeEligibility(
-    	        		AuthorizationHelper.getLoggedInUserId(request), project.getId());
+    	        		userId, projectId);
     	        
     	        // If there's no corresponding record in group_contest_eligibility
     	        // then the challenge is available to all users
@@ -1521,7 +1521,7 @@ public class SaveProjectAction extends BaseProjectAction {
     		            	groupPermissionPassed = true;
     		            }
     		        } else {
-    		           Set<Long> ids = this.getGroups(request);
+    		           Set<Long> ids = this.getGroups(request, userId);
     		           if (ids.contains(groupInd)) {
     		        	   groupPermissionPassed = true;
     		           }
@@ -1533,13 +1533,21 @@ public class SaveProjectAction extends BaseProjectAction {
         } catch (Exception exp) {
         	throw new BaseException(exp.getMessage(), exp);
         }
-
-        if (!groupPermissionPassed) {
-        	ActionsHelper.addErrorToRequest(request, "resources_name[0]",
-                    "error.com.cronos.onlinereview.actions.editProject.Resource.GroupPermissionDenied");
-        	return;
-        }
-
+        
+        return groupPermissionPassed;
+    }
+    
+    /**
+     * Private helper method to save resources.
+     *
+     * @param request the HttpServletRequest
+     * @param project the project being saved
+     * @param projectPhases the project phases being saved
+     * @param phasesJsMap the phasesJsMap
+     * @throws BaseException if any error occurs
+     */
+    private void saveResources(HttpServletRequest request,
+                               Project project, Phase[] projectPhases, Map<Object, Phase> phasesJsMap) throws BaseException {
         // Obtain the instance of the User Retrieval
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
 
@@ -2160,6 +2168,13 @@ public class SaveProjectAction extends BaseProjectAction {
                         ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                                         "error.com.cronos.onlinereview.actions.editProject.Resource.NotEligible");
 
+                        allResourcesValid = false;
+                    }
+                    
+                    boolean groupPermission = this.checkGroupPermission(request, project.getId(), userId);
+                    if (!groupPermission) {
+                        	ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                    "error.com.cronos.onlinereview.actions.editProject.Resource.GroupPermissionDenied");
                         allResourcesValid = false;
                     }
                 }
