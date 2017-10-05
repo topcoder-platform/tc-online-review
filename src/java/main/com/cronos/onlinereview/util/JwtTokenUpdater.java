@@ -92,6 +92,9 @@ public class JwtTokenUpdater {
             }
         }
 
+        if (jwtCookieV2 == null) {
+        	throw new BaseException("Please re-login");
+        }
         boolean valid = true;
         if (jwtCookieV3 != null) {
         	String[] tokenSplit = jwtCookieV3.getValue().split("\\.");
@@ -125,11 +128,7 @@ public class JwtTokenUpdater {
         }
         
         this.token = jwtCookieV3.getValue();
-        if (jwtCookieV2 != null) {
-        	this.v2Token = jwtCookieV2.getValue();
-        } else {
-        	this.v2Token = null;
-        }
+        this.v2Token = jwtCookieV2.getValue();
         
         return this;
     }
