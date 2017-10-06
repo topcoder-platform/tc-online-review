@@ -1449,22 +1449,24 @@ public class SaveProjectAction extends BaseProjectAction {
     	        // If there's no corresponding record in group_contest_eligibility
     	        // then the challenge is available to all users
     	        if (groups != null && groups.entrySet().size() > 0) {
-                    Long challengeGroupInd = groups.get("challenge_group_ind")
-                    if (challengeGroupInd != null || challengeGroupInd > 0) {
-                        Long groupId = groups.get("group_id");
-                        Set<Long> ids = this.getGroups(request, userId);
-                        if (!ids.contains(groupInd)) {
-                            ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
-                                    "error.com.cronos.onlinereview.actions.editProject.Resource.GroupPermissionDenied");
+                    Long challengeGroupInd = groups.get("challenge_group_ind");
+                    if (challengeGroupInd != null) {
+                        if (challengeGroupInd > 0) {
+                            Long groupId = groups.get("group_id");
+                            Set<Long> ids = this.getGroups(request, userId);
+                            if (!ids.contains(groupId)) {
+                                ActionsHelper.addErrorToRequest(request, "resources_name[" + resourceIdx + "]",
+                                        "error.com.cronos.onlinereview.actions.editProject.Resource.GroupPermissionDenied");
 
-                            return false;
-                        }
-                    } else {
-                        if (groups.get("user_group_xref_found") == null) {
-                            ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
-                                    "error.com.cronos.onlinereview.actions.editProject.Resource.NotEligible");
+                                return false;
+                            }
+                        } else {
+                            if (groups.get("user_group_xref_found") == null) {
+                                ActionsHelper.addErrorToRequest(request, "resources_name[" + resourceIdx + "]",
+                                        "error.com.cronos.onlinereview.actions.editProject.Resource.NotEligible");
 
-                            return false;
+                                return false;
+                            }
                         }
                     }
                 }
