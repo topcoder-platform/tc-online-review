@@ -21,8 +21,6 @@ import static com.cronos.onlinereview.Constants.SPECIFICATION_REVIEW_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.SPECIFICATION_SUBMISSION_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.SUBMISSION_PHASE_NAME;
 
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.Format;
@@ -54,7 +52,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.apache.xerces.utils.Base64;
 
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
@@ -1442,44 +1439,43 @@ public class SaveProjectAction extends BaseProjectAction {
      * @throws BaseException if any error occurs
      * @return the true if pass
      */
-    private boolean checkGroupPermission(HttpServletRequest request, long projectId, long userId) throws BaseException {
-    	// check the user group permission first before add the resources
-    	boolean groupPermissionPassed = false;
+    private boolean checkUserChallengeEligibility(HttpServletRequest request, int resourceIdx, long projectId, long userId) throws BaseException {
         try {
-        	if (ConfigHelper.getAdminUsers().contains(userId)) {
-        		groupPermissionPassed = true;
-        	} else {
+        	if (!ConfigHelper.getAdminUsers().contains(userId)) {
         		// check user group before save the resource
     	        Map<String, Long> groups = new ProjectDataAccess().checkUserChallengeEligibility(
     	        		userId, projectId);
     	        
     	        // If there's no corresponding record in group_contest_eligibility
     	        // then the challenge is available to all users
-    	        if (groups == null || groups.entrySet().size() == 0) {
-    	        	groupPermissionPassed = true;
-    	        } else if (groups.get("challenge_group_ind") != null) {
-    	        	Long groupInd = groups.get("challenge_group_ind");
-    		        if (groupInd == null) {
-    		        	groupPermissionPassed = true;
-    		        } else if (groupInd == 0) {// if the groupInd is 0, indicate it's public
-    		            if (groups.get("user_group_xref_found") != null) {
-    		            	groupPermissionPassed = true;
-    		            }
-    		        } else {
-    		           Set<Long> ids = this.getGroups(request, userId);
-    		           if (ids.contains(groupInd)) {
-    		        	   groupPermissionPassed = true;
-    		           }
-    		        }
-    	        }
-        	} 
+    	        if (groups != null && groups.entrySet().size() > 0) {
+                    Long challengeGroupInd = groups.get("challenge_group_ind")
+                    if (challengeGroupInd != null || challengeGroupInd > 0) {
+                        Long groupId = groups.get("group_id");
+                        Set<Long> ids = this.getGroups(request, userId);
+                        if (!ids.contains(groupInd)) {
+                            ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                    "error.com.cronos.onlinereview.actions.editProject.Resource.GroupPermissionDenied");
+
+                            return false;
+                        }
+                    } else {
+                        if (groups.get("user_group_xref_found") == null) {
+                            ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                    "error.com.cronos.onlinereview.actions.editProject.Resource.NotEligible");
+
+                            return false;
+                        }
+                    }
+                }
+        	}
         } catch (BaseException be) {
         	throw be;
         } catch (Exception exp) {
         	throw new BaseException(exp.getMessage(), exp);
         }
         
-        return groupPermissionPassed;
+        return true;
     }
     
     /**
@@ -2106,20 +2102,9 @@ public class SaveProjectAction extends BaseProjectAction {
                     {
                         continue;
                     }
-
-                    if (!EJBLibraryServicesLocator.getContestEligibilityService().isEligible(userId, project.getId(),
-                                                                                             false))
-                    {
-                        ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
-                                        "error.com.cronos.onlinereview.actions.editProject.Resource.NotEligible");
-
-                        allResourcesValid = false;
-                    }
                     
-                    boolean groupPermission = this.checkGroupPermission(request, project.getId(), userId);
+                    boolean groupPermission = this.checkUserChallengeEligibility(request, i, project.getId(), userId);
                     if (!groupPermission) {
-                        	ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
-                                    "error.com.cronos.onlinereview.actions.editProject.Resource.GroupPermissionDenied");
                         allResourcesValid = false;
                     }
                 }
