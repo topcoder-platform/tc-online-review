@@ -171,6 +171,7 @@
         <pathelement location="${aws.jar}" />
         <pathelement location="${httpclient.jar}" />
         <pathelement location="${httpcore.jar}" />
+        <pathelement location="${xerces.jar}" />
 
         <path refid="spring_libs"/>
         <path refid="poi_libs"/>

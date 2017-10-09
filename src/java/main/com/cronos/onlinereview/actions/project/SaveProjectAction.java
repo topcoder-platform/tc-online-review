@@ -40,9 +40,21 @@ import java.util.Set;
 import java.util.Stack;
 
 import javax.ejb.EJBException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
 import com.cronos.onlinereview.Constants;
+import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.phases.AmazonSNSHelper;
@@ -51,6 +63,8 @@ import com.cronos.onlinereview.util.*;
 import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
 import com.cronos.termsofuse.dao.UserTermsOfUseDao;
 import com.cronos.termsofuse.model.TermsOfUse;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.topcoder.date.workdays.DefaultWorkdaysFactory;
 import com.topcoder.date.workdays.Workdays;
 import com.topcoder.date.workdays.WorkdaysUnitOfTime;
@@ -92,9 +106,14 @@ import com.topcoder.web.common.RowNotFoundException;
  *     <li>Updated validateProjectPrizes method to accept zero prize</li>
  * </ul>
  * </p>
- *
+ * 
+ * <p>
+ * Changes in version 2.2 Topcoder - Add Group Permission Check For Adding Resources v1.0
+ * <ul>- check user group permission before add resource</ul>
+ * </p>
+ * 
  * @author TCSCODER
- * @version 2.1
+ * @version 2.2
  */
 public class SaveProjectAction extends BaseProjectAction {
 
@@ -140,6 +159,19 @@ public class SaveProjectAction extends BaseProjectAction {
      * <p>A long number holding the ID for submitter role.</p>
      */
     private static final long SUBMITTER_ROLE_ID = 1L;
+    
+    /**
+     * The jackson object mapping which is used to deserialize json return from API to domain model.
+     */
+    protected static final ObjectMapper objectMapper;
+    static {
+        objectMapper = new ObjectMapper();
+    }
+
+    /**
+     * URI params for refresh token
+     */
+    private static final String AUTHORIZATION_PARAMS = "{\"param\": {\"externalToken\": \"%s\"}}";
 
     /**
      * Represents the project id which is used for viewing project details.
@@ -1355,7 +1387,99 @@ public class SaveProjectAction extends BaseProjectAction {
         // Returned parsed Date
         return calendar.getTime();
     }
+    
+    /**
+     * Get groups for the login user
+     *
+     * @param request the request to use
+     * @param userId the user id to use
+     * @throws BaseException if any error occurs
+     * @return the Set<Long> result contains the group ids
+     */
+    private Set<Long> getGroups(HttpServletRequest request, long userId) throws BaseException {
+    	try {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            String groupEndPoint = String.format(ConfigHelper.getUserGroupMembershipUrl(), userId);
+            HttpGet getRequest = new HttpGet(groupEndPoint);
 
+            String v3Token = new JwtTokenUpdater().check().getToken();
+            
+            getRequest.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + v3Token);
+
+            getRequest.addHeader(HttpHeaders.ACCEPT, "application/json");
+            HttpResponse httpResponse = httpClient.execute(getRequest);
+            
+            HttpEntity entity = httpResponse.getEntity();
+
+            if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                throw new BaseException("Unable to get groups from the API:" + httpResponse.getStatusLine().getReasonPhrase());
+            }
+
+            JsonNode result = objectMapper.readTree(entity.getContent());
+            
+            JsonNode groups = result.path("result").path("content");        
+            Set<Long> groupIds = new HashSet<Long>();
+            for (JsonNode group : groups) {            
+                groupIds.add(group.path("id").asLong());
+            }
+            
+            return groupIds;
+    	} catch (Exception exp) {
+    		throw new BaseException(exp.getMessage(), exp);
+    	}
+    	
+    }
+    
+    /**
+     * Check group permission
+     *
+     * @param request the request to use
+     * @param projectId the projectId to use
+     * @param userId the userId to use
+     * @throws BaseException if any error occurs
+     * @return the true if pass
+     */
+    private boolean checkUserChallengeEligibility(HttpServletRequest request, int resourceIdx, long projectId, long userId) throws BaseException {
+        try {
+        	if (!ConfigHelper.getAdminUsers().contains(userId)) {
+        		// check user group before save the resource
+    	        Map<String, Long> groups = new ProjectDataAccess().checkUserChallengeEligibility(
+    	        		userId, projectId);
+    	        
+    	        // If there's no corresponding record in group_contest_eligibility
+    	        // then the challenge is available to all users
+    	        if (groups != null && groups.entrySet().size() > 0) {
+                    Long challengeGroupInd = groups.get("challenge_group_ind");
+                    if (challengeGroupInd != null) {
+                        if (challengeGroupInd > 0) {
+                            Long groupId = groups.get("group_id");
+                            Set<Long> ids = this.getGroups(request, userId);
+                            if (!ids.contains(groupId)) {
+                                ActionsHelper.addErrorToRequest(request, "resources_name[" + resourceIdx + "]",
+                                        "error.com.cronos.onlinereview.actions.editProject.Resource.GroupPermissionDenied");
+
+                                return false;
+                            }
+                        } else {
+                            if (groups.get("user_group_xref_found") == null) {
+                                ActionsHelper.addErrorToRequest(request, "resources_name[" + resourceIdx + "]",
+                                        "error.com.cronos.onlinereview.actions.editProject.Resource.NotEligible");
+
+                                return false;
+                            }
+                        }
+                    }
+                }
+        	}
+        } catch (BaseException be) {
+        	throw be;
+        } catch (Exception exp) {
+        	throw new BaseException(exp.getMessage(), exp);
+        }
+        
+        return true;
+    }
+    
     /**
      * Private helper method to save resources.
      *
@@ -1367,7 +1491,6 @@ public class SaveProjectAction extends BaseProjectAction {
      */
     private void saveResources(HttpServletRequest request,
                                Project project, Phase[] projectPhases, Map<Object, Phase> phasesJsMap) throws BaseException {
-
         // Obtain the instance of the User Retrieval
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
 
@@ -1981,13 +2104,9 @@ public class SaveProjectAction extends BaseProjectAction {
                     {
                         continue;
                     }
-
-                    if (!EJBLibraryServicesLocator.getContestEligibilityService().isEligible(userId, project.getId(),
-                                                                                             false))
-                    {
-                        ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
-                                        "error.com.cronos.onlinereview.actions.editProject.Resource.NotEligible");
-
+                    
+                    boolean groupPermission = this.checkUserChallengeEligibility(request, i, project.getId(), userId);
+                    if (!groupPermission) {
                         allResourcesValid = false;
                     }
                 }
