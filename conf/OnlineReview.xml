@@ -5224,7 +5224,7 @@
             <Value>tcjwt</Value>
         </Property>
         <Property name="v3jwt_authorization_url">
-            <Value>http://api.topcoder-dev.com/v3/authorizations</Value>
+            <Value>@topcoder_api_base_url_v3@/authorizations</Value>
         </Property>
         <Property name="sso_domain_for_v3jwt_cookie">
             <Value>.topcoder.com</Value>
