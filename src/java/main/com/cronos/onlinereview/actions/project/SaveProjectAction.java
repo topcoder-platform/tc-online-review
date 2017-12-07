@@ -1478,7 +1478,7 @@ public class SaveProjectAction extends BaseProjectAction {
      * @return the group
      */
     private Set<Long> parseGroup(JsonNode groupNode) {
-        Set<Long> parentGroupIds = new HashSet<>();
+        Set<Long> parentGroupIds = new HashSet<Long>();
         Long parentGroupId = groupNode.path("id").asLong();
         if (parentGroupId != 0) {
             // exclude null node
