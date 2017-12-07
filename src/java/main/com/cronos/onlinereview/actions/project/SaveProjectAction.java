@@ -1396,7 +1396,7 @@ public class SaveProjectAction extends BaseProjectAction {
      * @throws BaseException if any error occurs
      * @return the Set<Long> result contains the group ids
      */
-    private Set<Long> getGroups(HttpServletRequest request, long userId) throws BaseException {
+    private Set<Long> getGroups(long userId) throws BaseException {
     	try {
             DefaultHttpClient httpClient = new DefaultHttpClient();
             String groupEndPoint = String.format(ConfigHelper.getUserGroupMembershipUrl(), userId);
@@ -1422,12 +1422,57 @@ public class SaveProjectAction extends BaseProjectAction {
             for (JsonNode group : groups) {            
                 groupIds.add(group.path("id").asLong());
             }
+
+            Set<Long> allGroupIds = new HashSet<Long>(groupIds);
+            for (Long groupId : groupIds) {
+                allGroupIds.addAll(getParentGroups(groupId));
+            }
             
-            return groupIds;
+            return allGroupIds;
     	} catch (Exception exp) {
     		throw new BaseException(exp.getMessage(), exp);
     	}
-    	
+    }
+
+    /**
+     * Get parent groups for the given group id
+     *
+     * @param request the request to use
+     * @param groupId the user id to use
+     * @throws BaseException if any error occurs
+     * @return the Set<Long> result contains the group ids
+     */
+    private Set<Long> getParentGroups(long groupId) throws BaseException {
+        try {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            String parentGroupsEndPoint = String.format(ConfigHelper.getParentGroupsUrl(), groupId);
+            HttpGet getRequest = new HttpGet(parentGroupsEndPoint);
+
+            String v3Token = new JwtTokenUpdater().check().getToken();
+
+            getRequest.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + v3Token);
+
+            getRequest.addHeader(HttpHeaders.ACCEPT, "application/json");
+            HttpResponse httpResponse = httpClient.execute(getRequest);
+
+            HttpEntity entity = httpResponse.getEntity();
+
+            if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                throw new BaseException("Unable to get groups from the API:" + httpResponse.getStatusLine().getReasonPhrase());
+            }
+
+            JsonNode result = objectMapper.readTree(entity.getContent());
+
+            JsonNode groups = result.path("result").path("content");
+            Set<Long> groupIds = new HashSet<Long>();
+            for (JsonNode group : groups) {
+                groupIds.add(group.path("id").asLong());
+            }
+
+            return groupIds;
+        } catch (Exception exp) {
+            throw new BaseException(exp.getMessage(), exp);
+        }
     }
     
     /**
@@ -1453,7 +1498,7 @@ public class SaveProjectAction extends BaseProjectAction {
                     if (challengeGroupInd != null) {
                         if (challengeGroupInd > 0) {
                             Long groupId = groups.get("group_id");
-                            Set<Long> ids = this.getGroups(request, userId);
+                            Set<Long> ids = this.getGroups(userId);
                             if (!ids.contains(groupId)) {
                                 ActionsHelper.addErrorToRequest(request, "resources_name[" + resourceIdx + "]",
                                         "error.com.cronos.onlinereview.actions.editProject.Resource.GroupPermissionDenied");
