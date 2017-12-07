@@ -1463,16 +1463,33 @@ public class SaveProjectAction extends BaseProjectAction {
 
             JsonNode result = objectMapper.readTree(entity.getContent());
 
-            JsonNode groups = result.path("result").path("content");
-            Set<Long> groupIds = new HashSet<Long>();
-            for (JsonNode group : groups) {
-                groupIds.add(group.path("id").asLong());
-            }
+            JsonNode groupNode = result.path("result").path("content");
+            Set<Long> groupIds = parseGroup(groupNode);
 
             return groupIds;
         } catch (Exception exp) {
             throw new BaseException(exp.getMessage(), exp);
         }
+    }
+
+    /**
+     * Parse the group from the JSON node
+     * @param groupNode the JSON node
+     * @return the group
+     */
+    private Set<Long> parseGroup(JsonNode groupNode) {
+        Set<Long> parentGroupIds = new HashSet<>();
+        Long parentGroupId = groupNode.path("id").asLong();
+        if (parentGroupId != 0) {
+            // exclude null node
+            parentGroupIds.add(groupNode.path("id").asLong());
+        }
+
+        if (groupNode.has("parentGroup")) {
+            parentGroupIds.addAll(parseGroup(groupNode.path("parentGroup")));
+        }
+
+        return parentGroupIds;
     }
     
     /**
