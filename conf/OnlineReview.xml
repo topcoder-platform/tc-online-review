@@ -5217,6 +5217,9 @@
         <Property name="user_group_membership_url">
             <Value>@topcoder_api_base_url_v3@/groups?memberId=%s&amp;membershipType=User</Value>
         </Property>
+        <Property name="parent_groups_url">
+            <Value>@topcoder_api_base_url_v3@/groups/%s/getParentGroup?oneLevel=false</Value>
+        </Property>
         <Property name="v3jwt_cookie_name">
             <Value>v3jwt</Value>
         </Property>

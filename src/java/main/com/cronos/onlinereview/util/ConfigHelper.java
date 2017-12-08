@@ -566,6 +566,11 @@ public class ConfigHelper {
      * <p>A <code>String</code> providing the name for user group memeber ship url property.</p>
      */
     private static final String USER_GROUP_MEMBERSHIP_URL = "user_group_membership_url";
+
+    /**
+     * <p>A <code>String</code> providing the name for parent groups url property.</p>
+     */
+    private static final String PARENT_GROUPS_URL = "parent_groups_url";
     
     /**
      * <p>A <code>String</code> providing the name for v2 jwt cookie name property.</p>
@@ -943,6 +948,11 @@ public class ConfigHelper {
      * <p>Represents the userGroupMembershipUrl.</p> 
      */
     private static String userGroupMembershipUrl;
+
+    /**
+     * <p>Represents the parentGroupsUrl.</p>
+     */
+    private static String parentGroupsUrl;
     
     /**
      * <p>Represents the v3jwtCookieBame.</p> 
@@ -1560,6 +1570,7 @@ public class ConfigHelper {
             }
 
             userGroupMembershipUrl = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, USER_GROUP_MEMBERSHIP_URL);
+            parentGroupsUrl = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, PARENT_GROUPS_URL);
             v3jwtCookieName = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, V3_JWT_COOKIE_NAME);
             v2jwtCookieName = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, V2_JWT_COOKIE_NAME);
             ssoDomainForV3jwtCookie = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, SSO_DOMAIN_FOR_V3_JWT_COOKIE);
@@ -2399,6 +2410,15 @@ public class ConfigHelper {
      */
     public static String getUserGroupMembershipUrl() {
     	return userGroupMembershipUrl;
+    }
+
+    /**
+     * Get parent groups url
+     *
+     * @return the parent groups url
+     */
+    public static String getParentGroupsUrl() {
+        return parentGroupsUrl;
     }
 
     /**
