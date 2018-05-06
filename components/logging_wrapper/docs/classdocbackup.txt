@@ -1,0 +1,257 @@
+BasicLog
+
+<p>This is the basic implementation of the <tt>Log</tt> interface that
+will write the logging message to the specified print stream</p>
+<p><b>Changes for version 2.0</b>The following changes have been made:
+<ol>
+<li>Class inherits from AbstractLog now</li>
+<li>Configuration 'stuff' was removed</li>
+<li>Removed the prior static fields (no longer needed)</li>
+<li>Basic log was changed to write to any type of PrintStream</li>
+<li>Constructor changed to package private with additional arguments</li>
+<li>Constructor calls super constructor to store name and then 
+will store the passed print stream to an instance variable</li>
+<li>The log method was changed to package private and it's method signature
+changed to match the new abstract method from AbstractLog</li>
+<li>The log method will first write the error message then print the stack
+trace</li>
+</ol>
+</p>
+<p><b>Implementation notes: </b>This Log implementation can be used
+to print logging information to any PrintStream source (whether it be
+a file, the console, whatever).  Please note that the level is always
+ignored.  This class can only be created by the BasicLogFactory</p>
+<p><b>Thread Safety: </b>This class is thread safe by having no mutable
+state information.  However, the underlying PrintStream may or may not
+be thread safe and is dependent upon what the application has specified
+</p>
+
+BasicLogFactory
+<p>This is the implementation of the <tt>LogFactory</tt> interface that
+will create BasicLog instances based on the print stream given</p>
+<p><b>Changes for version 2.0</b>This is a new class</p>
+<p><b>Implementation notes: </b>This LogFactory implementation will be
+used by the application to produce Log(s) that will write the logging
+information to a print stream.  This LogFactory implementation is used,
+by default, in the LogManager or can be specified in the LogManager.configure
+method.  The LogManager will then call the createLog method to create a 
+log (in this case, a BasicLog) when a Log implementation is needed.</p>
+<p><b>Thread Safety: </b>This class is thread safe by having no mutable
+state information.</p>
+
+
+Jdk14Log
+<p>This is the implementation of the <tt>Log</tt> interface that
+will write the logging messages to the specified java logging
+system.</p>
+<p><b>Changes for version 2.0</b>The following changes have been made:
+<ol>
+<li>Class inherits from AbstractLog now</li>
+<li>Configuration 'stuff' was removed</li>
+<li>Removed the currentLevel variable and it's usage</li>
+<li>Removed the prior static fields (no longer needed)</li>
+<li>Constructor changed to package private</li>
+<li>Constructor calls super constructor to store name and was simplified</li>
+<li>The log method was changed to package private and it's method signature
+changed to match the new abstract method from AbstractLog</li>
+<li>The log method calls the appropriate logging method based on 
+whether an exception was passed or not</li>
+<li>Overrides the message formatting method in abstract log to provide
+an implementation specific version</li>
+<li>Made the logger variable final</li>
+</ol>
+</p>
+<p><b>Implementation notes: </b>This Log implementation can be used
+to log information to the java logging system.  This class can only be 
+created by the Jdk14LogFactory</p>
+<p><b>Thread Safety: </b>This class is thread safe by having no mutable
+state information.  However, the underlying java logger may or may not
+be thread safe and is dependent upon what the application has specified
+</p>
+
+Jdk14LogFactory
+<p>This is the implementation of the <tt>LogFactory</tt> interface that
+will create Jdk14Log instances based on the java logger for the given name</p>
+<p><b>Changes for version 2.0</b>This is a new class</p>
+<p><b>Implementation notes: </b>This LogFactory implementation will be
+used by the application to produce Log(s) that will write the logging
+information to the java logging system.  This LogFactory implementation can be 
+specified in the LogManager.configure method.  The LogManager will then call 
+the createLog method to create a log (in this case, a Jdk14Log) when a 
+Log implementation is needed.</p>
+<p><b>Thread Safety: </b>This class is thread safe by having no mutable
+state information.</p>
+
+Log4jLog
+<p>This is the implementation of the <tt>Log</tt> interface that
+will write the logging messages to the specified log4j logging
+system.</p>
+<p><b>Changes for version 2.0</b>The following changes have been made:
+<ol>
+<li>Class inherits from AbstractLog now</li>
+<li>Configuration 'stuff' was removed</li>
+<li>Removed the currentLevel variable and it's usage</li>
+<li>Removed the prior static fields (no longer needed)</li>
+<li>Constructor changed to package private</li>
+<li>Constructor calls super constructor to store name and was simplified</li>
+<li>The log method was changed to package private and it's method signature
+changed to match the new abstract method from AbstractLog</li>
+<li>The log method calls the appropriate logging method based on 
+whether an exception was passed or not</li>
+<li>Overrides the log message object method in abstract log to provide
+an implementation specific version if we are using log4j object formatting</li>
+<li>Made the logger variable final</li>
+<li>Fixed error in level mapping (finest/trace not mapped to trace)</li>
+</ol>
+</p>
+<p><b>Implementation notes: </b>This Log implementation can be used
+to log information to the java logging system.  This class can only be 
+created by the Log4jLogFactory.  Log4j has the native ability to format the passed
+message object via the log4j layout implementation.  A flag has been included 
+to allow this Log implementation to use the log4j Layout rather than the
+the object formatter component in this case.  Please note
+that this flag only affects the log calls that do not explicitly specify
+an object formatter to use (in which case, the explicit formatter will be
+override this flag).</p>
+<p><b>Thread Safety: </b>This class is thread safe by having no mutable
+state information.  However, the underlying log4j logger may or may not
+be thread safe and is dependent upon what the application has specified
+</p>
+
+
+LogException
+<p>Exception class for all logging exceptions thrown from this API. It provides 
+the ability to reference the underlying exception via the <tt>getCause</tt> 
+method, inherited from BaseException. </p>
+<p><b>Changes from v2.0: </b>As per forum, new loggers may throw this
+exception so new constructors were added to allow unknown loggers to effectively
+use this exception</p>
+<p><b>Implementation notes: </b>This exception will be created by a LogFactory
+implementation if it encounters an exception creating a log.  Currently, no
+implementation throws this exception</p>
+<p><b>Thread safety: </b>This exception is thread safe by having no mutable state</p>
+Log4jLogFactory
+<p>This is the implementation of the <tt>LogFactory</tt> interface that
+will create Log4jLog instances based on the log4j logger for the given name</p>
+<p><b>Changes for version 2.0</b>This is a new class</p>
+<p><b>Implementation notes: </b>This LogFactory implementation will be
+used by the application to produce Log(s) that will write the logging
+information to the log4j logging system.  This LogFactory implementation can be 
+specified in the LogManager.configure method.  The LogManager will then call 
+the createLog method to create a log (in this case, a Log4jLog) when a 
+Log implementation is needed.</p>
+<p><b>Thread Safety: </b>This class is thread safe by having no mutable
+state information.</p>
+
+
+Level
+<p>The Level class maintains the list of acceptable logging levels. 
+It provides the user this easy access to predefined logging levels 
+though the constants defined in this class.</p> 
+<p><b>Changes from v2.0: </b>Added a convienence parsing method and made
+the integer final</p>
+<p><b>Implementation notes: </b>Extends the Enum class from the Typesafe Enumeration component 
+to emulate an enumeration.  This class will be used directly by the application
+when specifying a logging level</p>
+<p><b>Thread Safety: </b>This enumeration is thread safe from being immutable</p>
+
+LogFactory
+<p>This interface defines the contract for implementations that will
+produce Log instances.  The LogFactory will implement the createLog method
+that takes the name to assing to the Log and return a Log instance for it.</p>
+<p><b>Changes for v2.0: </b>This is a new interface</p>
+<p><b>Implementation notes: </b>The implementations of this interface is
+either created by the application or by the LogManager directly.  The LogManager
+will then store the implementation in a field and call the createLog method when
+a Log is needed,/p>
+<p><b>Thread Safety: </b>Implementations of this interface should be thread safe</p>
+
+Log
+<p>The Log interface should be extended by classes that wish to provide a custom 
+logging implementation. The various <tt>log</tt> method(s) are used to log a 
+message using the underlying implementation, and the <tt>isEnabled</tt> method 
+is used to determine if a specific logging level is currently being logged. This
+class has various overridden methods to allow flexible logging. All log methods
+will attempt to delay the formatting of the logging message to the latest possible
+moment (which may be in the underlying logging mechanism if supported).  At the
+highest level, the message will not be formatted if the logging level is not
+enabled.  Beyond that level, it's entirely dependent upon the underlying logger.
+Example: the java logger can delay message format processing until the last
+possible moment natively and the log4j logger could delay message object formatting
+until the last possible moment.</p>
+<p><b>Changes to v2.0: </b>This interface was extended extensively to add in a 
+number of new logging methods that deal with the object formatting or with 
+string message formatting.</p>
+<p><b>Implementation notes: </b>Implementations of this interface will be created
+by the LogFactory and will be used by the application directly for logging
+</p>
+<p><b>Thread Safety: </b>Implementations of this interface should be thread safe
+themselves but this interface does not attempt to guarentee the thread safety
+of the underlying logging system.
+</p>
+
+AbstractLog
+<p> This is an abstract implementation of the Log interface that can provide common services 
+to Log implementations. This abstract base, currently, provides services to store and retrieve 
+the name assigned to the logger and provides default implementations to the various log
+methods in the Log interface.  This abstract base will be responsible for converting
+the message into a string form and then calling an abstract method (that the subclass
+will provide) to log the message.  Please note that subclasses may 
+override any of these methods to provide specific functionality from the 
+underlying implementation</p> 
+<p><b>Changes to v2.0</b>This is a new abstract class</p>
+<p><b>Implementation notes: </b> The developer should strongly recommend that 
+future implementations of the Log interface inherit from this class to allow 
+common services to be implemented more easily. Classes that inherit from this
+abstract base will need to implement the protected log(level,throwable,message) method and
+the isEnabled(level) (from Log).  The subclass will not need to check if the 
+level is enabled in the log(level,throwable,message) method since that will be done
+by the various methods in this class</p> 
+<p><b>Thread safety: </b> This abstract class is thread safe by having immutable 
+variables</p>
+
+LogManager
+<p>This is the main class for the Logging Wrapper component.  The Logging Wrapper 
+component provides a standard logging API with a plugable back-end logging 
+implementation. Utilization of the Logging Wrapper insures that components are 
+not tied to a specific logging solution. More importantly, a change to the 
+back-end logging solution does not require a code change to existing, tested 
+components. Support exists for the console, log4j and java1.4 Logger as 
+back-end logging implementations.  This class will default to the console
+logger unless a new one is specified.  Additionally, logging a message object can
+be generically formatted via the Object Formatter component prior to logging.</p>
+<p><b>Changes for v2.0: </b>The following changes have been made:
+<ol>
+<li>The class was renamed to LogManager</li>
+<li>The configuration manager was eliminated</li>
+<li>CM associated fields and methods were eliminated</li>
+<li>Support for a logging factory and object formatter were introduced</li>
+<li>The console was made as the default logging implementation</li>
+<li>The DEFAULT_NAME was changed to a public final constant</li>
+</ol>
+</p>
+<p><b>Implementation notes: </b>
+The LogManager will be used by the application to initially configure it (which 
+includes not only specification of the underlying logging factory but also the
+various formatters to use for message objects [if used]).  The application can
+then use the LogManager to retrieve logging implementations throughout the application.
+Please note that setLogFactory method should only be called once.  Calling it after Log 
+implementations have been created will not affect the existing logging implementations 
+(only any new ones produced).  Additionally formatters can be added after Log implementations
+have been created (and those formatters will be available to the existing Log 
+implementations), however - this is discouraged since the component assumes all
+the configuration work as been done up front (see thread safety section).
+</p>
+<p><b>Thread Safety: </b>This class is reasonably thread safe.  This means that
+the component is generally thread safe but relies on two things that can affect the
+thread safety:
+<ol>
+<li>The underlying logger implementation may or may not be thread safe</li>
+<li>It is assumed all the configuration (both log factory and formatting) will
+be done before a Log implementation is created</li>
+</ol>
+Point 1 is in the hands of the application developer based on the logging system 
+they choose.  Point 2 is more of a performance aid.  Since both the factory being
+used and the formats of any objects to log are fairly static, to avoid synchornization
+overhead - it will be assumed this is all done prior to usage
+</p>

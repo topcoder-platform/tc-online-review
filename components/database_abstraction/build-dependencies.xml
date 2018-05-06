@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="dist" name="Dependency Import">
+    <!-- property file defining the component's dependencies -->
+
+    <!-- Properties used in compile_targets ANT target for JDK version x -->
+    <property name="component.target" value="1.5" />
+    <property name="component.bootclasspath" value="${java_1_5_bootclasspath}" />
+
+    <!-- TCS Dependencies -->
+    <property name="base_exception.jar" value="${tcs_libdir}/base_exception/2.0.0/base_exception.jar" />
+    <property name="configuration_api.jar" value="${tcs_libdir}/configuration_api/1.0.0/configuration_api.jar" />
+    <property name="configuration_manager.jar" value="${tcs_libdir}/configuration_manager/2.2.0/configuration_manager.jar" />
+    <property name="db_connection_factory.jar" value="${tcs_libdir}/db_connection_factory/1.1.0/db_connection_factory.jar" />
+
+    <!-- 3rd party dependencies -->
+    <property name="junit.jar" value="${ext_libdir}/junit/4.6/junit-4.6.jar" />
+    <property name="ifxjdbc.jar" value="${ext_libdir}/informix/ifxjdbc.jar" />
+
+    <!-- the required path elements must be defined even if empty -->
+    <path id="component.tcs-dependencies">
+        <pathelement location="${base_exception.jar}" />
+        <pathelement location="${configuration_api.jar}" />
+        <pathelement location="${configuration_manager.jar}" />
+        <pathelement location="${db_connection_factory.jar}" />
+    </path>
+    <path id="component.3rdParty-dependencies" />
+    <path id="component.test.3rdParty-dependencies">
+        <pathelement location="${junit.jar}" />
+        <pathelement location="${ifxjdbc.jar}" />
+    </path>
+</project>

@@ -1,0 +1,32 @@
+<CMConfig>  
+  <Config name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+    <Property name="connections">
+        <!-- The default should not be oracle, the db should be in the scope of the DBs which are allowed in IDGenerator 2.0 -->
+        <Property name="default">
+            <Value>OracleSequence</Value>
+        </Property>
+        
+       
+<!-- The user should keep the name : OracleIDGenerator for using oracle db -->
+        <Property name="OracleSequence">
+           <Property name="producer">
+                <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+            </Property>
+            <Property name="parameters">
+                <Property name="jdbc_driver">
+                    <Value>oracle.jdbc.driver.OracleDriver</Value>
+                </Property>
+                <Property name="jdbc_url">
+                    <Value>jdbc:oracle:thin:@127.</Value>
+                </Property>
+                <Property name="user">
+                    <Value></Value>
+                </Property>
+                <Property name="password">
+                    <Value>1234KFC</Value>
+                </Property>
+            </Property>
+        </Property>
+    </Property>
+</Config>
+</CMConfig> 

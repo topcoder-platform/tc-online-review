@@ -1,0 +1,22 @@
+<project name="Dependency Import" default="dist" basedir=".">
+
+	<!-- TCS dependencies -->
+	<property name="flex_widget_base_services.swc" value="${tcs_libdir}/flex_widget_base_services/1.0.0/flex_widget_base_services.swc"/>
+
+	<!-- 3rd party dependencies -->
+	<property name="flexunit" value="${flexunitdir}/bin/FlexUnit.swc" />
+	<property name="flexunitoptional" value="${flexunitdir}/bin/FlexUnitOptional.swc" />
+
+	<!-- Path elements required in the master buiild file (they MUST be defined even if empty). -->
+	<path id="component.tcs-dependencies">
+		<pathelement location="${flex_widget_base_services.swc}"/>
+	</path>
+
+	<path id="component.3rdParty-dependencies"/>
+
+	<path id="component.test.3rdParty-dependencies">
+		<pathelement location="${flexunit}" />
+		<pathelement location="${flexunitoptional}" />
+	</path>
+
+</project>

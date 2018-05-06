@@ -1,0 +1,9 @@
+#property file defining the component's information
+component.name=Review Score Aggregator
+component.distfilename=review_score_aggregator
+component.package=com.topcoder.management.review.scoreaggregator
+component.packagedir=com/topcoder/management/review/scoreaggregator
+component.version.major=1
+component.version.minor=0
+component.version.micro=1
+component.version.build=1

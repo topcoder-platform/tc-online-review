@@ -1,0 +1,9 @@
+#property file defining the components information
+component.name=DB Connection Factory
+component.distfilename=db_connection_factory
+component.package=com.topcoder.db.connectionfactory
+component.packagedir=com/topcoder/db/connectionfactory
+component.version.major=1
+component.version.minor=1
+component.version.micro=1
+component.version.build=1

@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<CMConfig>
+    <Config name="com.topcoder.management.deliverable.latetracker.retrievers.LateDeliverablesRetrieverImpl">
+		<Property name="loggerName">
+			<Value>myLogger</Value>
+		</Property>
+		<Property name="resourceManagerKey">
+          <Value>resourceManager</Value>
+        </Property>
+		<Property name="missedDeadlineTrackingDeliverableIds">
+			<Value>3,4</Value>
+		</Property>
+		<Property name="objectFactoryConfig">
+		  <Property name="resourceManager">
+            <Property name="type">
+              <Value>com.topcoder.management.resource.persistence.PersistenceResourceManager</Value>
+            </Property>
+            <Property name="params">
+              <Property name="param1">
+                <Property name="name">
+                  <Value>ResourcePersistence</Value>
+                </Property>
+              </Property>
+              <Property name="param2">
+                <Property name="name">
+                  <Value>SearchBundleManager</Value>
+                </Property>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="ResourcePersistence">
+            <Property name="type">
+              <Value>com.topcoder.management.resource.persistence.sql.SqlResourcePersistence</Value>
+            </Property>
+            <Property name="params">
+              <Property name="param1">
+                <Property name="name">
+                  <Value>DBConnectionFactory</Value>
+                </Property>
+              </Property>
+            </Property>
+          </Property>
+          <Property name="SearchBundleManager">
+            <Property name="type">
+              <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+            </Property>
+            <Property name="params">
+              <Property name="param1">
+                <Property name="type">
+                  <Value>String</Value>
+                </Property>
+                <Property name="value">
+                  <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+                </Property>
+              </Property>
+            </Property>
+          </Property>
+		    <Property name="projectManager">
+				<Property name="type">
+	            	<Value>com.topcoder.management.project.ProjectManagerImpl</Value>
+	        	</Property>
+		    </Property>
+		    <Property name="phaseManager">
+				<Property name="type">
+	            	<Value>com.topcoder.management.phase.DefaultPhaseManager</Value>
+	        	</Property>
+	        	<Property name="params">
+				    <Property name="param1">
+					    <Property name="type">
+						    <Value>String</Value>
+					    </Property>
+					    <Property name="value">
+						    <Value>com.topcoder.management.phase.DefaultPhaseManager</Value>
+					    </Property>
+				    </Property>
+			    </Property>
+		    </Property>
+		    <Property name="deliverablePersistence">
+				<Property name="type">
+	            	<Value>com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersistence</Value>
+	        	</Property>
+	        	<Property name="params">
+				    <Property name="param1">
+					    <Property name="name">
+						    <Value>DBConnectionFactory</Value>
+					    </Property>
+				    </Property>
+			    </Property>
+		    </Property>
+		    <Property name="DBConnectionFactory">
+				<Property name="type">
+	            	<Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+	        	</Property>
+	        	<Property name="params">
+				    <Property name="param1">
+					    <Property name="type">
+						    <Value>String</Value>
+					    </Property>
+					    <Property name="value">
+						    <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+					    </Property>
+				    </Property>
+			    </Property>
+		    </Property>
+		    <Property name="screeningDeliverableChecker">
+				<Property name="type">
+	            	<Value>com.topcoder.management.deliverable.latetracker.MockDeliverableChecker</Value>
+	        	</Property>
+		    </Property>
+		    <Property name="reviewDeliverableChecker">
+				<Property name="type">
+	            	<Value>com.topcoder.management.deliverable.latetracker.MockDeliverableChecker</Value>
+	        	</Property>
+		    </Property>
+		</Property>
+		<Property name="projectManagerKey">
+			<Value>projectManager</Value>
+		</Property>
+		<Property name="phaseManagerKey">
+			<Value>phaseManager</Value>
+		</Property>
+		<Property name="deliverablePersistenceKey">
+			<Value>deliverablePersistence</Value>
+		</Property>
+		<Property name="deliverableChecker1">
+			<Property name="deliverableName">
+			    <Value>Screening Scorecard</Value>
+			</Property>
+			<Property name="deliverableCheckerKey">
+			    <Value>screeningDeliverableChecker</Value>
+			</Property>
+		</Property>
+		<Property name="deliverableChecker2">
+			<Property name="deliverableName">
+			    <Value>Review Scorecard</Value>
+			</Property>
+			<Property name="deliverableCheckerKey">
+			    <Value>reviewDeliverableChecker</Value>
+			</Property>
+		</Property>
+		<Property name="searchBundleManagerNamespace">
+			<Value>com.topcoder.search.builder.SearchBundleManager</Value>
+		</Property>
+    </Config>
+</CMConfig>

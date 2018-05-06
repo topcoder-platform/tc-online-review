@@ -1,0 +1,9 @@
+#property file defining the components information
+component.name=Base Exception
+component.distfilename=base_exception
+component.package=com.topcoder.util.errorhandling
+component.packagedir=com/topcoder/util/errorhandling
+component.version.major=2
+component.version.minor=0
+component.version.micro=0
+component.version.build=1

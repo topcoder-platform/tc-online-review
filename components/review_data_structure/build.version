@@ -1,0 +1,9 @@
+#property file defining the components information
+component.name=Review Data Structure
+component.distfilename=review_data_structure
+component.package=com.topcoder.management.review.data
+component.packagedir=com/topcoder/management/review/data
+component.version.major=1
+component.version.minor=0
+component.version.micro=2
+component.version.build=1

@@ -1,0 +1,14 @@
+# Property file defining the component's information.
+component.name=Late Deliverables Tracker
+component.distfilename=late_deliverables_tracker
+component.package=com.topcoder.management.deliverable.latetracker
+component.packagedir=com/topcoder/management/deliverable/latetracker
+component.version.major=1
+component.version.minor=3
+component.version.micro=3
+component.version.build=1
+
+# Defines the Main-Class property for the manifest file (e.g. com.topcoder.utility.SomeClass)
+# This property is only used for components that can be run from command line.
+# Leave the property value empty if not applicable.
+component.mainclass=

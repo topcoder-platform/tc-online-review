@@ -1,0 +1,42 @@
+Here is the explaination of my test cases:
+
+1. The 'commands.txt' are used to test huge scripts input, to make sure the commands can be parsed correctly
+(It contains 60000 commands, 10000 for each type of the command)
+
+2. The 'template.txt' are used to test CopyFileTemplateCommand, it contains 10000 different variables
+needed to replace.
+
+3. The 'conditions.txt' are used to test the parsing of command conditions. It contains one command
+with 1000 conditions (500 for VariableDefinedCondition and VariableNotDefinedCondition respectively)
+
+4. For testing PDF conversion, have tested converting a source file (.rft) to 1000 differnt dest files.
+Checked each of them is pdf format or not. This will consume about 700M disk space temperarily
+(will be cleaned at tearDown(). If it's not accepttable, just decreate the number, say, to 100)
+
+5. All other commands classes are tested with heavy load in the similar way.
+
+6. Doesn't have a standalone test for ExecuteProcessCommand in the stress test suite currently. As for
+the impl, there are no output and no check for the status. Alough we can execute some commands which
+have expected actions (say, create some files in the file system for us to check), however, I don't
+think this has too much meaning. Anyway, the api of this class will be covered in the test for
+createDistribution(), so I guess this is fine.
+
+7. For testing the usage of this component in multiple threads environment. I created 3 threads to
+create the distributions for flex, java, and javascript respectively with the same DistributionTool
+instance(As the test is performed under linux, no "MSBuild" command supported). As said in the class
+doc of DistributionTool:
+
+"This class is immutable and thread safe. It uses DistributionScript instances in thread safe manner
+(and assumes that the caller uses them in thread safe manner too when these instances are provided
+by the caller). DistributionScriptCommand instances used by this class are thread safe."
+
+So, I think this test is reasonable.
+
+8. For testing the createDistribution() with heavy load, I just run it 10 times and generate the distribution
+at different output dir, and check each of them (verify that the files and directory structures are correct).
+(As so many i/o operations during this, it's time consuming, so just run 10 times)
+
+9. As the check for so many generated files, so in some test case, the main thread may need to sleep a little while
+waiting for the files to generate. You may adjust the sleeping time in your platform.
+
+

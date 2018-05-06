@@ -1,0 +1,27 @@
+<CMConfig name="com.topcoder.security.authenticationfactory.failuretests">
+
+    <Config name="MissingTimeout">
+        <Property name="no_timeout">
+            <Value>3323</Value>
+        </Property>
+    </Config>
+
+    <Config name="NegativeTimeout">
+        <Property name="timeout">
+            <Value>-1</Value>
+        </Property>
+    </Config>
+
+    <Config name="TooLargeTimeout">
+        <Property name="timeout">
+            <Value>9223372036854775807l9999999999999999999999999999999999999999999999999999999999999999999999999</Value>
+        </Property>
+    </Config>
+
+    <Config name="UnparsableTimeout">
+        <Property name="timeout">
+            <Value>This should be a number</Value>
+        </Property>
+    </Config>
+    
+</CMConfig>

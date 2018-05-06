@@ -1,0 +1,85 @@
+<?xml version="1.0" ?>  
+<CMConfig>
+
+<Config name="com.topcoder.security.authenticationfactory.AuthenticationFactory">
+ <Property name="authenticators">
+
+  <Property name="a0">
+   <Property name="class">
+    <Value>com.topcoder.security.authenticationfactory.stresstests.DummyAuthenticator</Value>
+   </Property>
+   <Property name="namespace"><Value>com.topcoder.security.authenticationfactory.AuthenticationFactory</Value></Property>
+  </Property>
+
+  <Property name="a1">
+   <Property name="class">
+    <Value>com.topcoder.security.authenticationfactory.stresstests.DummyAuthenticator</Value>
+   </Property>
+   <Property name="namespace"><Value>com.topcoder.security.authenticationfactory.AuthenticationFactory</Value></Property>
+  </Property>
+
+  <Property name="a2">
+   <Property name="class">
+    <Value>com.topcoder.security.authenticationfactory.stresstests.DummyAuthenticator</Value>
+   </Property>
+   <Property name="namespace"><Value>com.topcoder.security.authenticationfactory.AuthenticationFactory</Value></Property>
+  </Property>
+
+  <Property name="a3">
+   <Property name="class">
+    <Value>com.topcoder.security.authenticationfactory.stresstests.DummyAuthenticator</Value>
+   </Property>
+   <Property name="namespace"><Value>com.topcoder.security.authenticationfactory.AuthenticationFactory</Value></Property>
+  </Property>
+
+  <Property name="a4">
+   <Property name="class">
+    <Value>com.topcoder.security.authenticationfactory.stresstests.DummyAuthenticator</Value>
+   </Property>
+   <Property name="namespace"><Value>com.topcoder.security.authenticationfactory.AuthenticationFactory</Value></Property>
+  </Property>
+
+  <Property name="a5">
+   <Property name="class">
+    <Value>com.topcoder.security.authenticationfactory.stresstests.DummyAuthenticator</Value>
+   </Property>
+   <Property name="namespace"><Value>com.topcoder.security.authenticationfactory.AuthenticationFactory</Value></Property>
+  </Property>
+
+  <Property name="a6">
+   <Property name="class">
+    <Value>com.topcoder.security.authenticationfactory.stresstests.DummyAuthenticator</Value>
+   </Property>
+   <Property name="namespace"><Value>com.topcoder.security.authenticationfactory.AuthenticationFactory</Value></Property>
+  </Property>
+
+  <Property name="a7">
+   <Property name="class">
+    <Value>com.topcoder.security.authenticationfactory.stresstests.DummyAuthenticator</Value>
+   </Property>
+   <Property name="namespace"><Value>com.topcoder.security.authenticationfactory.AuthenticationFactory</Value></Property>
+  </Property>
+
+  <Property name="a8">
+   <Property name="class">
+    <Value>com.topcoder.security.authenticationfactory.stresstests.DummyAuthenticator</Value>
+   </Property>
+   <Property name="namespace"><Value>com.topcoder.security.authenticationfactory.AuthenticationFactory</Value></Property>
+  </Property>
+
+  <Property name="a9">
+   <Property name="class">
+    <Value>com.topcoder.security.authenticationfactory.stresstests.DummyAuthenticator</Value>
+   </Property>
+   <Property name="namespace"><Value>com.topcoder.security.authenticationfactory.AuthenticationFactory</Value></Property>
+  </Property>
+
+ </Property>
+</Config>
+
+  <Config name="com.topcoder.security.authenticationfactory.DefaultKeyConverter">
+    <Property name="mappings">
+    </Property>
+  </Config>
+
+</CMConfig>

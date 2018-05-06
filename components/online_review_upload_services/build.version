@@ -1,0 +1,9 @@
+#property file defining the component's information
+component.name=Online Review Upload Services
+component.distfilename=online_review_upload_services
+component.package=com.cronos.onlinereview.services.uploads
+component.packagedir=com/cronos/onlinereview/services/uploads
+component.version.major=1
+component.version.minor=1
+component.version.micro=3
+component.version.build=1

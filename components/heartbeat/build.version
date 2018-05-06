@@ -1,0 +1,9 @@
+#property file defining the components information
+component.name=Heartbeat
+component.distfilename=heartbeat
+component.package=com.topcoder.util.heartbeat
+component.packagedir=com/topcoder/util/heartbeat
+component.version.major=1
+component.version.minor=0
+component.version.micro=0
+component.version.build=1

@@ -1,0 +1,3 @@
+<Properties>
+	<Property name="context.default.factory">com.sun.jndi.fscontext.RefFSContextFactory</Property>
+</Properties>

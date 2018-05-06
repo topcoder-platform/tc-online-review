@@ -1,0 +1,9 @@
+#property file defining the component's information
+component.name=IP Server
+component.distfilename=ip_server
+component.package=com.topcoder.processor.ipserver
+component.packagedir=com/topcoder/processor/ipserver
+component.version.major=2
+component.version.minor=0
+component.version.micro=1
+component.version.build=1

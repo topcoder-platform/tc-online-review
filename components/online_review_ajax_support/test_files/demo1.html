@@ -1,0 +1,51 @@
+<html>
+<script type="text/javascript">
+
+var request;
+
+function sendRequest() {
+
+	// creating the request object in other browsers
+	if (window.XMLHttpRequest){
+		request = new XMLHttpRequest();
+	}
+	// creating the request object in IE
+	else if (window.ActiveXObject){
+		request = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+
+	request.onreadystatechange = onReadyStateChange;
+
+	var requestString = '<?xml version="1.0" ?>'+
+					'<request type="LoadTimelineTemplate">'+
+					'<parameters>'+
+     			'<parameter name="TemplateName">Review</parameter>'+
+					'</parameters>'+
+					'</request>';
+
+	request.open("POST", "http://localhost:8080/online_review_ajax_support-test/servlet/DemoServlet", true);
+
+	request.setRequestHeader('Content-Type', 'text/xml');
+
+	request.send(requestString);
+
+}
+
+	function onReadyStateChange(){
+		if( request.readyState == 4 && request.status == 200){
+
+			var response = request.responseText;
+
+			if (response) {
+				// the Ajax request content could be accessd now 
+				// using the responseDom object
+	      alert(response);
+			}
+	}
+
+}
+
+
+</script>
+<input type="button" onclick="sendRequest();" value="Send Request"></input>
+</html>

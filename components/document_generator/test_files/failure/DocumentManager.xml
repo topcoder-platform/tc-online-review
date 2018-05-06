@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<CMConfig>
+<Property name="myconfig">
+<Value>failure/config.xml</Value>
+</Property>
+<Property name="bad">
+<Value>failure/config.xml</Value>
+</Property>
+</CMConfig>

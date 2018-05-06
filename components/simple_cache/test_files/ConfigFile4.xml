@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+
+<!-- 	This is a configuration file for SimpleCache component ver 2.0
+	CacheInstantiationException should be thrown.
+-->
+
+
+<CMConfig>
+<Config name="com.topcoder.util.cache.ConfigFile4">
+
+	<!-- 	Which strategy class shoudl be used.
+ 	     	This is a fully qualified java class name.
+		Optional. Defaults to com.topcoder.util.cache.FIFOCacheEvoctionStrategy 
+	-->
+    	<Property name="CacheEvictionStrategy">
+      	<Value>wrong parameter</Value>
+    	</Property>
+ </Config>
+</CMConfig>

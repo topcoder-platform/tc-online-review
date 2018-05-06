@@ -1,0 +1,9 @@
+#property file defining the component's information
+component.name=Project Management Persistence
+component.distfilename=project_management_persistence
+component.package=com.topcoder.management.project.persistence
+component.packagedir=com/topcoder/management/project/persistence
+component.version.major=1
+component.version.minor=2
+component.version.micro=4
+component.version.build=1

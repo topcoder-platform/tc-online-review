@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<Error>
+    <property name="a">
+        <value>valuea</value>
+    </property>
+    <property name="b">
+        <property name="c">
+            <value>valuec</value>
+        </property>
+        <value>valueb</value>
+    </property>
+    <Config name="com.topcoder.xxx">
+        <property name="e">
+            <value>valuee1</value>
+            <value>valuee2</value>
+        </property>
+        <property name="f">
+            <property name="g">
+                <value>valueg</value>
+            </property>
+            <value>valuef</value>
+        </property>
+    </Config>
+    <Config name="com.topcoder.yyy">
+        <property name="h">
+            <value>valueh</value>
+        </property>
+        <property name="i">
+            <property name="j">
+                <value>valuej</value>
+            </property>
+        </property>
+    </Config>
+<CMConfig>

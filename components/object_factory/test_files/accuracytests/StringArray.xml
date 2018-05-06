@@ -1,0 +1,13 @@
+<CMConfig>
+	<Property name="StringArray">
+		<Property name="arrayType">
+			<Value>String</Value>
+		</Property>
+		<Property name="dimension">
+			<Value>3</Value>
+		</Property>
+		<Property name="values">
+			<Value>{{{"'[/\\]'",","},{"{","}"}},{{".","'"},{"","8"}}}</Value>
+		</Property>
+	</Property>
+</CMConfig>

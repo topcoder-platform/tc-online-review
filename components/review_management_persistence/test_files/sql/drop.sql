@@ -1,0 +1,12 @@
+DROP TABLE id_sequences;
+DROP TABLE review_item_comment;
+DROP TABLE review_comment;
+DROP TABLE review_item;
+DROP TABLE review;
+DROP TABLE comment_type_lu;
+DROP TABLE submission;
+DROP TABLE upload;
+DROP TABLE resource;
+DROP TABLE scorecard_question;
+DROP TABLE scorecard;
+DROP TABLE scorecard_type_lu;

@@ -1,0 +1,16 @@
+<CMConfig>
+	<Config name="com.cronos.onlinereview.ajax">
+		<!-- defining the user id attribute name -->
+		<Property name="UserIdAttributeName">
+			<Value>UserId</Value>
+		</Property>
+		<!-- defining the Ajax request handlers names -->
+		<Property name="Handlers">
+			<Value>SetScorecardStatus</Value>
+			<Value>LoadTimelineTemplate</Value>
+			<Value>SetTimelineNotification</Value>
+			<Value>PlaceAppeal</Value>
+			<Value>ResolveAppeal</Value>
+		</Property>
+	</Config>
+</CMConfig>

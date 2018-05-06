@@ -1,0 +1,42 @@
+<project name="Dependency Import" default="dist" basedir=".">
+    <!-- property file defining the component's dependencies -->
+
+    <!-- Properties used in compile_targets ANT target for JDK version x -->
+    <property name="component.target" value="1.5"/>
+    <property name="component.bootclasspath" value="${java_1_5_bootclasspath}"/>
+
+    <!-- TCS dependencies -->
+    <property name="base_exception.jar" value="${tcs_libdir}/base_exception/1.0/base_exception.jar"/>
+    <property name="configuration_manager.jar" value="${tcs_libdir}/configuration_manager/2.1.4/configuration_manager.jar"/>
+    <property name="db_connection_factory.jar" value="${tcs_libdir}/db_connection_factory/1.0/db_connection_factory.jar"/>
+    <property name="id_generator.jar" value="${tcs_libdir}/id_generator/3.0/id_generator.jar"/>
+    <property name="project_phases.jar" value="${tcs_libdir}/project_phases/2.0/project_phases.jar"/>
+    <property name="typesafe_enum.jar" value="${tcs_libdir}/typesafe_enum/1.0/typesafe_enum.jar"/>
+    <property name="workdays.jar" value="${tcs_libdir}/workdays/1.0/workdays.jar"/>
+    <property name="phase_management.jar" value="${tcs_libdir}/phase_management/1.0.4/phase_management.jar"/>
+    
+    <!-- 3rd party dependencies -->
+    <property name="junit.jar" value="${ext_libdir}/junit/3.8.2/junit.jar"/>
+    <property name="ifxjdbc.jar" value="${ext_libdir}/informix/3.0/ifxjdbc.jar"/>
+
+    
+    <path id="component.tcs-dependencies">    	
+        <pathelement location="${workdays.jar}" />
+        <pathelement location="${configuration_manager.jar}" />
+        <pathelement location="${id_generator.jar}" />
+        <pathelement location="${db_connection_factory.jar}" />
+        <pathelement location="${typesafe_enum.jar}" />
+        <pathelement location="${project_phases.jar}" />		
+        <pathelement location="${base_exception.jar}" />
+        <pathelement location="${phase_management.jar}" />
+	</path>
+
+    <path id="component.3rdParty-dependencies">
+        <pathelement location="${ifxjdbc.jar}" />
+    </path>
+    
+    <path id="component.test.3rdParty-dependencies">
+        <pathelement location="${junit.jar}"/>
+    </path>
+
+</project>

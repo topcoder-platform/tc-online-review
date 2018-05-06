@@ -1,0 +1,9 @@
+#property file defining the component's information
+component.name=JNDI Context Utility
+component.distfilename=jndi_context_utility
+component.package=com.topcoder.naming.jndiutility
+component.packagedir=com/topcoder/naming/jndiutility
+component.version.major=2
+component.version.minor=0
+component.version.micro=0
+component.version.build=1

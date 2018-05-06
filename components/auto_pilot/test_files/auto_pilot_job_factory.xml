@@ -1,0 +1,9 @@
+<CMConfig>
+    <Property name="com/topcoder/management/phase/autopilot/AutoPilotJob">
+        <Property name="type">
+            <Value>com.topcoder.management.phase.autopilot.AutoPilotJob</Value>
+        </Property>
+        <Property name="params">
+        </Property>
+    </Property>
+</CMConfig>

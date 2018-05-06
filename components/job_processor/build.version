@@ -1,0 +1,9 @@
+#property file defining the component's information
+component.name=Job Processor
+component.distfilename=job_processor
+component.package=com.topcoder.util.scheduler.processor
+component.packagedir=com/topcoder/util/scheduler/processor
+component.version.major=3
+component.version.minor=0
+component.version.micro=1
+component.version.build=1

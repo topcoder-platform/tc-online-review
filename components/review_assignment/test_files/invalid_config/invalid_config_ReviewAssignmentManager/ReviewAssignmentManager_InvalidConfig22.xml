@@ -1,0 +1,301 @@
+<?xml version="1.0"?>
+<CMConfig>
+  <Config name="com.topcoder.management.review.assignment.ReviewAssignmentManager">
+    <Property name="loggerName">
+      <Value>myLogger</Value>
+    </Property>
+	<Property name="reviewApplicationManagerKey">
+          <Value>reviewApplicationManager</Value>
+    </Property>
+
+	<Property name="reviewAuctionManagerKey">
+          <Value>reviewAuctionManager</Value>
+   </Property>
+   	<Property name="projectManagerKey">
+          <Value>projectManager</Value>
+   </Property>
+   	<Property name="reviewAssignmentAlgorithmKey">
+          <Value>reviewAssignmentAlgorithm</Value>
+   </Property>
+   	<Property name="reviewAssignmentProjectManagerKey">
+          <Value>reviewAssignmentProjectManager</Value>
+   </Property>
+   <Property name="reviewAssignmentNotificationManagerKey">
+          <Value>reviewAssignmentNotificationManager</Value>
+   </Property>
+   
+    <Property name="objectFactoryConfig">
+      <Property name="reviewApplicationManager">
+        <Property name="type">
+          <Value></Value>
+        </Property>
+      </Property>
+	  
+	  <Property name="reviewAuctionManager">
+        <Property name="type">
+          <Value>com.topcoder.management.review.assignment.MockReviewAuctionManager</Value>
+        </Property>
+      </Property>
+	  
+	  <Property name="projectManager">
+        <Property name="type">
+          <Value>com.topcoder.management.review.assignment.MockProjectManager</Value>
+        </Property>
+      </Property>
+	  
+	 <Property name="reviewAssignmentAlgorithm">
+        <Property name="type">
+          <Value>com.topcoder.management.review.assignment.algorithm.MaxSumOfRatingReviewAssignmentAlgorithm</Value>
+        </Property>
+      </Property>
+	  
+	 <Property name="reviewAssignmentProjectManager">
+        <Property name="type">
+          <Value>com.topcoder.management.review.assignment.project.DefaultReviewAssignmentProjectManager</Value>
+        </Property>
+      </Property>
+	 <Property name="reviewAssignmentNotificationManager">
+        <Property name="type">
+          <Value>com.topcoder.management.review.assignment.notification.EmailBasedReviewAssignmentNotificationManager</Value>
+        </Property>
+      </Property>
+
+    </Property>
+	
+	<!-- Configuration for MaxSumOfRatingReviewAssignmentAlgorithm -->	
+	<Property name="reviewAssignmentAlgorithmConfig">
+				<Property name="loggerName">
+					<Value>myLogger</Value>
+				</Property>
+				<Property name="connectionName">
+					<Value>informix_connection</Value>
+				</Property>
+				
+				<Property name="dbConnectionFactoryConfig">
+					<Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+						<Property name="connections">
+							<Property name="informix_connection">
+								<Property name="producer">
+									<Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+								</Property>
+								<Property name="parameters">
+										<Property name="jdbc_driver">
+											<Value>com.informix.jdbc.IfxDriver</Value>
+										</Property>
+										<Property name="jdbc_url">
+											<Value>jdbc:informix-sqli://10.120.33.158:9088/tcs_catalog:informixserver=ol_informix1170</Value>
+										</Property>
+										<Property name="user">
+											<Value>informix</Value>
+										</Property>
+										<Property name="password">
+											<Value>1nf0rm1x</Value>
+										</Property>
+								</Property>
+							</Property>
+						</Property>
+					</Property>
+				</Property>
+
+				<Property name="defaultRating">
+				  <Value>1.0</Value>
+				</Property>
+				<Property name="minimumFeedbacks">
+				  <Value>3</Value>
+				</Property>
+      </Property>
+	  
+	  <!-- Configuration for ReviewAssignmentProjectManager -->
+	  <Property name="reviewAssignmentProjectManagerConfig">
+			       <Property name="loggerName">
+						<Value>myLogger</Value>
+					</Property>
+
+					<Property name="objectFactoryConfig">
+						<property name="userRetrieval">
+							<property name="type">
+								<value>com.topcoder.management.review.assignment.MockUserRetrieval</value>
+							</property>
+						</property>
+						<property name="phaseManager">
+							<property name="type">
+								<value>com.topcoder.management.review.assignment.MockPhaseManager</value>
+							</property>
+						</property>
+						<property name="resourceManager">
+							<property name="type">
+								<value>com.topcoder.management.review.assignment.MockResourceManager</value>
+							</property>
+						</property>		
+					</Property>
+					
+					<Property name="registrationDateFormatString">
+						<Value>MM.dd.yyyy hh:mm</Value>
+					</Property>
+					
+					<Property name="forumsBeanUrl">
+						<Value>http://www.topcoder.com/tc</Value>
+					</Property>
+					<Property name="forumsBeanFactory">
+						<Value>com.topcoder.management.review.assignment.MockInitialContextFactory</Value>
+					</Property>
+					<Property name="forumsBeanName">
+						<Value>ForumsBean</Value>
+					</Property>	
+
+					<Property name="phaseTypeExtensionRules">
+					   <Property name="1">
+						<Value>36000</Value>
+					   </Property>
+					   <Property name="2">
+						<Value>72000</Value>
+					   </Property>
+					</Property>		
+					
+					<Property name="operator">
+						<Value>plus</Value>
+					</Property>
+
+					<Property name="userRetrievalKey">
+						<Value>userRetrieval</Value>
+					</Property>		
+					<Property name="phaseManagerKey">
+						<Value>phaseManager</Value>
+					</Property>
+					<Property name="resourceManagerKey">
+						<Value>resourceManager</Value>
+					</Property>
+		</Property>
+	  
+	  <!-- Configuration for ReviewApplicationManagerImpl -->	  
+	  <Property name="reviewAssignmentNotificationManagerConfig">
+		        <Property name="loggerName">
+					<Value>myLogger</Value>
+				</Property>
+				<Property name="connectionName">
+					<Value>informix_connection</Value>
+				</Property>
+				
+				
+				<Property name="objectFactoryConfig">
+					<property name="resourceManager">
+						<property name="type">
+							<value>com.topcoder.management.review.assignment.MockResourceManager</value>
+						</property>
+					</property>
+					<property name="DBConnectionFactory">
+						<property name="type">
+							<value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</value>
+						</property>
+						<Property name="params">
+							<Property name="param1">
+								<Property name="type">
+									<Value>String</Value>
+								</Property>
+								<Property name="value">
+									<Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+								</Property>
+							</Property>
+						</Property>
+					</property>
+					<property name="SearchBundleManager">
+						<property name="type">
+							<value>com.topcoder.search.builder.SearchBundleManager</value>
+						</property>
+						<Property name="params">
+							<Property name="param1">
+								<Property name="type">
+									<Value>String</Value>
+								</Property>
+								<Property name="value">
+									<Value>com.topcoder.search.builder.SearchBundleManager</Value>
+								</Property>
+							</Property>
+						</Property>
+					</property>
+					
+					<property name="userRetrieval">
+						<property name="type">
+							<value>com.topcoder.management.review.assignment.MockUserRetrieval</value>
+						</property>
+					</property>
+					
+				</Property>
+				
+				
+				<Property name="dbConnectionFactoryConfig">
+					<Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+						<Property name="connections">
+							<Property name="informix_connection">
+								<Property name="producer">
+									<Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+								</Property>
+								<Property name="parameters">
+										<Property name="jdbc_driver">
+											<Value>com.informix.jdbc.IfxDriver</Value>
+										</Property>
+										<Property name="jdbc_url">
+											<Value>jdbc:informix-sqli://127.0.0.1:9088/tcs:informixserver=ol_svr_custom</Value>
+										</Property>
+										<Property name="user">
+											<Value>informix</Value>
+										</Property>
+										<Property name="password">
+											<Value>123456</Value>
+										</Property>
+								</Property>
+							</Property>
+						</Property>
+					</Property>
+				</Property>
+				
+				
+				<Property name="approvedApplicantEmailSubjectTemplateText">
+					<Value>WARNING\: You are late when providing a deliverable for %PROJECT_NAME%</Value>
+				</Property>
+				<Property name="approvedApplicantEmailBodyTemplatePath">
+					<Value>test_files/warn_email_template.html</Value>
+				</Property>
+				<Property name="rejectedApplicantEmailSubjectTemplateText">
+					<Value>4</Value>
+				</Property>
+				<Property name="rejectedApplicantEmailBodyTemplatePath">
+					<Value>WARNING\: You are late when providing a deliverable for %PROJECT_NAME%</Value>
+				</Property>
+				<Property name="managerEmailSubjectTemplateText">
+					<Value>test_files/warn_email_template.html</Value>
+				</Property>
+				<Property name="managerApplicantEmailBodyTemplatePath">
+				  <Value>WARNING\: You need to explain why your Final Fix for %PROJECT_NAME% was rejected</Value>
+				</Property>
+				<Property name="managerResourceRoleIds">
+				  <Value>1</Value>
+				  <Value>2</Value>
+				  <Value>3</Value>
+				</Property>
+				<Property name="emailSender">
+					<Value>service@topcoder.com</Value>
+				</Property>
+				
+				<Property name="userRetrievalKey">
+					<Value>userRetrieval</Value>
+				</Property>
+				<Property name="resourceManagerKey">
+					<Value>resourceManager</Value>
+				</Property>
+      </Property>
+	  
+      <Property name="pendingReviewApplicationStatusId">
+          <Value>1</Value>
+      </Property>
+	  <Property name="approvedReviewApplicationStatusId">
+          <Value>2</Value>
+      </Property>
+	  <Property name="rejectedReviewApplicationStatusId">
+          <Value>3</Value>
+      </Property>
+
+	 
+
+  </Config>
+</CMConfig>

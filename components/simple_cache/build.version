@@ -1,0 +1,9 @@
+#property file defining the components information
+component.name=Simple Cache
+component.distfilename=simple_cache
+component.package=com.topcoder.util.cache
+component.packagedir=com/topcoder/util/cache
+component.version.major=2
+component.version.minor=0
+component.version.micro=2
+component.version.build=1

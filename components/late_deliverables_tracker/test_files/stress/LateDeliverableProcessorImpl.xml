@@ -1,0 +1,159 @@
+<?xml version = "1.0"?>
+<CMConfig>
+	<Config name="com.topcoder.management.deliverable.latetracker.processors.LateDeliverableProcessorImpl">
+		<Property name="loggerName">
+			<Value>stress_tests_logger</Value>
+		</Property>
+		<Property name="connectionName">
+			<Value>informix_connection</Value>
+		</Property>
+		<Property name="objectFactoryConfig">
+			<property name="resourceManager">
+				<property name="type">
+					<value>com.topcoder.management.resource.persistence.PersistenceResourceManager</value>
+				</property>
+				<Property name="params">
+					<Property name="param1">
+						<Property name="name">
+							<Value>ResourcePersistence</Value>
+						</Property>
+					</Property>
+					<Property name="param2">
+						<Property name="name">
+							<Value>SearchBundleManager</Value>
+						</Property>
+					</Property>
+				</Property>
+			</property>
+			<property name="ResourcePersistence">
+				<property name="type">
+					<value>com.topcoder.management.resource.persistence.sql.SqlResourcePersistence</value>
+				</property>
+				<Property name="params">
+					<Property name="param1">
+						<Property name="name">
+							<Value>DBConnectionFactory</Value>
+						</Property>
+					</Property>
+				</Property>
+			</property>
+			<property name="DBConnectionFactory">
+				<property name="type">
+					<value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</value>
+				</property>
+				<Property name="params">
+					<Property name="param1">
+						<Property name="type">
+							<Value>String</Value>
+						</Property>
+						<Property name="value">
+							<Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+						</Property>
+					</Property>
+				</Property>
+			</property>
+			<property name="SearchBundleManager">
+				<property name="type">
+					<value>com.topcoder.search.builder.SearchBundleManager</value>
+				</property>
+				<Property name="params">
+					<Property name="param1">
+						<Property name="type">
+							<Value>String</Value>
+						</Property>
+						<Property name="value">
+							<Value>com.topcoder.search.builder.SearchBundleManager</Value>
+						</Property>
+					</Property>
+				</Property>
+			</property>
+			<property name="userRetrieval">
+				<property name="type">
+					<value>com.cronos.onlinereview.external.impl.DBUserRetrieval</value>
+				</property>
+				<Property name="params">
+					<Property name="param1">
+						<Property name="type">
+							<Value>String</Value>
+						</Property>
+						<Property name="value">
+							<Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+						</Property>
+					</Property>
+				</Property>
+			</property>
+		</Property>
+
+		<Property name="dbConnectionFactoryConfig">
+			<Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+				<Property name="connections">
+					<Property name="informix_connection">
+						<Property name="producer">
+							<Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+						</Property>
+						<Property name="parameters">
+							<Property name="jdbc_driver">
+								<Value>com.informix.jdbc.IfxDriver</Value>
+							</Property>
+							<Property name="jdbc_url">
+								<Value>jdbc:informix-sqli://127.0.0.1:9088/tcs:informixserver=ol_svr_custom</Value>
+							</Property>
+							<Property name="user">
+								<Value>informix</Value>
+							</Property>
+							<Property name="password">
+								<Value>123456</Value>
+							</Property>
+						</Property>
+					</Property>
+				</Property>
+			</Property>
+		</Property>
+
+		<Property name="missedDeadlineEmailSubjectForDeliverable3">
+			<Value>You are late for %PROJECT_NAME%</Value>
+		</Property>
+		<Property name="missedDeadlineEmailBodyForDeliverable3">
+			<Value>test_files/stress/email_template.html</Value>
+		</Property>
+		<Property name="missedDeadlineNotificationDeliverableIds">
+			<Value>4</Value>
+		</Property>
+		<Property name="defaultMissedDeadlineEmailSubjectTemplateText">
+			<Value>You are late for %PROJECT_NAME%</Value>
+		</Property>
+		<Property name="defaultMissedDeadlineEmailBodyTemplatePath">
+			<Value>test_files/stress/email_template.html</Value>
+		</Property>
+        <Property name="rejectedFinalFixEmailSubjectTemplateText">
+          <Value>WARNING\: You need to explain why your Final Fix for %PROJECT_NAME% was rejected</Value>
+        </Property>
+        <Property name="rejectedFinalFixEmailBodyTemplatePath">
+          <Value>test_files/stress/rejected_ff_email_template.html</Value>
+        </Property>
+		<Property name="emailSender">
+			<Value>service@topcoder.com</Value>
+		</Property>
+		<Property name="resourceManagerKey">
+			<Value>resourceManager</Value>
+		</Property>
+		<Property name="userRetrievalKey">
+			<Value>userRetrieval</Value>
+		</Property>
+		<Property name="timestampFormat">
+			<Value>yyyy-MM-dd HH:mm:ss</Value>
+		</Property>
+		<Property name="notificationInterval">
+			<Value>10</Value>
+		</Property>
+        <Property name="explanationDeadlineIntervalInHours">
+          <Value>24</Value>
+        </Property>
+        <Property name="lateDeliverableTypeIds">
+          <Value>Missed Deadline=1,Rejected Final Fix=2</Value>
+        </Property>
+        <Property name="sendRejectedFinalFixNotifications">
+          <Value>true</Value>
+        </Property>
+    </Config>
+</CMConfig>

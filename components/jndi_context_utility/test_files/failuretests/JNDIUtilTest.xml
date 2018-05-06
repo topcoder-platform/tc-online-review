@@ -1,0 +1,18 @@
+<CMConfig>
+	<Config name="com.topcoder.naming.jndiutility.JNDIUtilTest.failure">
+		<Property name="context.default.factory">
+			<Value>com.sun.jndi.fscontext.RefFSContextFactory</Value>
+		</Property>
+		<Property name="context.default.url">
+			<Value>file:test_files/failuretests/test_root</Value>
+		</Property>
+	</Config>
+	<Config name="com.topcoder.naming.jndiutility.JNDIUtilTest.failure.Invalid1">
+		<Property name="context.default.factory">
+			<Value>com.sun.jndi.fscontext.RefFSContextFactory</Value>
+		</Property>
+		<Property name="context.default.url">
+			<Value>file:test_files/inexistent_folder</Value>
+		</Property>
+	</Config>
+</CMConfig>

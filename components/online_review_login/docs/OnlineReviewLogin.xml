@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>  
+<CMConfig>
+
+<Config name="com.cronos.onlinereview.login.LoginActions">
+  <Property name="auth_response_parser">
+     <Property name="class">
+        <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthResponseParser</Value>
+     </Property>
+     <Property name="namespace">
+	    <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthResponseParser</Value>
+	 </Property>
+  </Property>
+
+  <Property name="authenticator_name">
+	<Value>SecurityManagerAuthenticator</Value>
+  </Property>
+
+  <Property name="logger_name">
+	<Value>loginActionsLoggerName</Value>
+  </Property>
+
+</Config>
+
+
+<Config name="com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator">
+  <Property name="context_name">
+	<Value>someContextName</Value>
+  </Property>
+
+  <Property name="login_bean_name">
+	<Value>loginBeanName</Value>
+  </Property>
+
+</Config>
+
+<Config name="com.cronos.onlinereview.login.authenticator.SecurityManagerAuthResponseParser">
+  <Property name="user_identifer_key">
+     <Value>user_identifier_key</Value>
+  </Property>
+</Config>
+
+</CMConfig>

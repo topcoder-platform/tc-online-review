@@ -1,0 +1,77 @@
+<CMConfig>
+<Config name="Complex">
+    <Property name="mock1">
+        <Property name="type">
+            <Value>com.topcoder.util.objectfactory.impl.accuracytests.MockClass1</Value>
+        </Property>
+        <Property name="params">
+            <Property name="param1">
+                <Property name="type">
+                    <Value>int</Value>
+                </Property>
+                <Property name="value">
+                    <Value>7</Value>
+                </Property>
+            </Property>
+            <Property name="param2">
+                <Property name="type">
+                    <Value>String</Value>
+                </Property>
+                <Property name="value">
+                    <Value>TEST</Value>
+                </Property>
+            </Property>
+            <Property name="param3">
+                <Property name="name">
+                    <Value>mock2</Value>
+                </Property>
+            </Property>
+        </Property>
+    </Property>
+    
+    <Property name="mock2">
+		<Property name="type">
+			<Value>com.topcoder.util.objectfactory.impl.accuracytests.MockClass2</Value>
+		</Property>
+		<Property name="params">
+			<Property name="param1">
+				<Property name="name">
+					<Value>StringBuffer</Value>
+				</Property>
+			</Property>
+			<Property name="param2">
+				<Property name="type">
+					<Value>java.util.ArrayList</Value>
+				</Property>				
+			</Property>
+			<Property name="param3">
+				<Property name="name">
+					<Value>array list</Value>
+				</Property>				
+			</Property>	
+		</Property>
+	</Property>
+	
+	<Property name="StringBuffer">
+		<Property name="type">
+			<Value>java.lang.StringBuffer</Value>
+		</Property>
+		<Property name="params">
+			<Property name="param1">
+				<Property name="type">
+					<Value>String</Value>
+				</Property>
+				<Property name="value">
+                    <Value>StringBuffer</Value>
+                </Property>
+			</Property>			
+		</Property>
+	</Property>
+	
+	<Property name="array list">
+		<Property name="type">
+			<Value>java.util.ArrayList</Value>
+		</Property>		
+	</Property>
+</Config>
+</CMConfig>

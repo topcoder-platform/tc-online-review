@@ -1,0 +1,9 @@
+#property file defining the components information
+component.name=Test JavaScript Component4
+component.distfilename=test_javascript_component4
+component.package=com.topcoder.test
+component.packagedir=com/topcoder/test
+component.version.major=2
+component.version.minor=1
+component.version.micro=0
+component.version.build=1

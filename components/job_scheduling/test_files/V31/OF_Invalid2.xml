@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CMConfig>
+	<Config name="OF_Invalid">
+		<Property name="ObjectFactoryNamespace">
+			<Value>
+				Class_Invalid.of
+			</Value>
+		</Property>
+		<Property name="ScheduledEnableObjectKey">
+			<Value>key</Value>
+		</Property>
+	</Config>
+	<Config
+		name="OF_Invalid.of">
+		<Property name="key">
+			<Property name="type">
+				<Value>com.topcoder.util.scheduler.scheduling.ScheduledEnable</Value>
+			</Property>
+		</Property>
+	</Config>
+</CMConfig>

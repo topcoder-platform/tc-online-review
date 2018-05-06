@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<CMConfig>
+  <!-- valid configuration -->
+  <Config name="com.topcoder.processor.ipserver.message.DefaultMessageFactory.DeveloperTest">
+    <Property name="MessageTypes">
+      <Property name="simple">
+        <Value>com.topcoder.processor.ipserver.message.serializable.SimpleSerializableMessage</Value>
+      </Property>
+      <Property name="KeepAlive">
+        <Value>com.topcoder.processor.ipserver.message.serializable.SimpleSerializableMessage</Value>
+      </Property>
+    </Property>
+  </Config>
+
+  <!-- Missing "MessageTypes" property -->
+  <Config name="com.topcoder.processor.ipserver.message.DefaultMessageFactory.DeveloperTest.Failure1">
+  </Config>
+
+  <!-- no message types -->
+  <Config name="com.topcoder.processor.ipserver.message.DefaultMessageFactory.DeveloperTest.Failure2">
+    <Property name="MessageTypes">
+    </Property>
+  </Config>
+
+  <!-- missing value for a message type property -->
+  <Config name="com.topcoder.processor.ipserver.message.DefaultMessageFactory.DeveloperTest.Failure3">
+    <Property name="MessageTypes">
+      <Property name="simple">
+      </Property>
+    </Property>
+  </Config>
+
+  <!-- value for a message type property should not be empty -->
+  <Config name="com.topcoder.processor.ipserver.message.DefaultMessageFactory.DeveloperTest.Failure4">
+    <Property name="MessageTypes">
+      <Property name="simple">
+        <Value>       </Value>
+      </Property>
+    </Property>
+  </Config>
+
+  <!-- value for a message type property is not a valid class -->
+  <Config name="com.topcoder.processor.ipserver.message.DefaultMessageFactory.DeveloperTest.Failure5">
+    <Property name="MessageTypes">
+      <Property name="simple">
+        <Value>no.such.class</Value>
+      </Property>
+    </Property>
+  </Config>
+
+  <!-- value for a message type property is not a class implementing Message interface -->
+  <Config name="com.topcoder.processor.ipserver.message.DefaultMessageFactory.DeveloperTest.Failure6">
+    <Property name="MessageTypes">
+      <Property name="simple">
+        <Value>com.topcoder.processor.ipserver.message.serializable.SerializableMessageSerializer</Value>
+      </Property>
+    </Property>
+  </Config>
+
+  <!-- value for a message type property is not a class implementing Message interface -->
+  <Config name="com.topcoder.processor.ipserver.message.DefaultMessageFactory.DeveloperTest.Failure7">
+    <Property name="MessageTypes">
+      <Property name="simple">
+        <Value>com.topcoder.processor.ipserver.message.Message</Value>
+      </Property>
+    </Property>
+  </Config>
+
+</CMConfig>

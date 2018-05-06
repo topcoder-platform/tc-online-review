@@ -1,0 +1,37 @@
+<CMConfig>  
+  <Config name="invalid_property">
+  
+		<Property name="invalid_jdbc_driver">
+				<Property name="jdbc_driver">
+				    <!--should be set to invalid value-->
+						<Value>invalid</Value>
+				</Property>
+			  <Property name="jdbc_url">
+			       <Value>jdbc:mysql://localhost:3306/test</Value>
+		     </Property>
+		</Property>
+	
+	  <Property name="invalid_jdbc_url">
+				<Property name="jdbc_driver">
+						<Value>com.mysql.jdbc.Driver</Value>
+				</Property>
+			  <Property name="jdbc_url">
+			       <Value>  </Value>
+		     </Property>
+		</Property>
+     
+   <Property name="invalid_username">
+   				    <!--should be set to invalid value-->
+						<Value>invalid</Value>
+		</Property>
+		<Property name="invalid_password">
+						    <!--should be set to invalid value-->
+						<Value>invalid</Value>
+		</Property>
+	  <Property name="invalid_jdbc_url">
+	  				    <!--should be set to invalid value-->
+						<Value>invalid</Value>
+		</Property>
+		
+  </Config>
+</CMConfig> 

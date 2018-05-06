@@ -1,0 +1,47 @@
+<?xml version ="1.0" ?>
+<CMConfig>
+	<Config name="valid">
+		<Property name="default_scale">
+			<Value>4</Value>
+		</Property>
+	</Config>
+
+	<Config name="valid.missing">
+	</Config>
+
+	<Config name="empty.default.scale">
+		<Property name="default_scale">
+			<Value></Value>
+		</Property>
+	</Config>
+
+	<Config name="blank.default.scale">
+		<Property name="default_scale">
+			<Value> </Value>
+		</Property>
+	</Config>
+
+	<Config name="invalid.default.scale">
+		<Property name="default_scale">
+			<Value>TopCoder</Value>
+		</Property>
+	</Config>
+
+	<Config name="negative.default.scale">
+		<Property name="default_scale">
+			<Value>-1</Value>
+		</Property>
+	</Config>
+
+	<Config name="zero.default.scale">
+		<Property name="default_scale">
+			<Value>0</Value>
+		</Property>
+	</Config>
+
+	<Config name="too.large.default.scale">
+		<Property name="default_scale">
+			<Value>9223372036854775808</Value>
+		</Property>
+	</Config>
+</CMConfig>

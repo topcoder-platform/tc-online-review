@@ -1,0 +1,59 @@
+<CMConfig>
+    <Config name="com.topcoder.util.objectfactory.stresstests">
+        <Property name="frac:default">
+            <Property name="type">
+                <Value>com.topcoder.util.objectfactory.stresstests.testclasses.Frac</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>int</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>2</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>Strong</Value>
+                    </Property>
+                </Property>
+                <Property name="param3">
+                    <Property name="name">
+                        <Value>bar</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+
+        <Property name="bar">
+            <Property name="type">
+                <Value>com.topcoder.util.objectfactory.stresstests.testclasses.Bar</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>float</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>2.5F</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="name">
+                        <Value>buffer:default</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+
+        <Property name="buffer:default">
+            <Property name="type">
+                <Value>java.lang.StringBuffer</Value>
+            </Property>
+        </Property>
+    </Config>
+</CMConfig>

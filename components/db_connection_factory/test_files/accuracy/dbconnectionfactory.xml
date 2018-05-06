@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+<CMConfig>
+    <Property name="connections">
+        <!--
+            The "default" property refers to a configured connection.
+        -->
+        <Property name="default">
+            <Value>reflecting</Value>
+        </Property>
+
+        <!--
+            The following property configures the ConnectionProducer obtaining the Connections
+            from a JDBC URL. The JDBC driver is customized being provided driver-specific properties.
+        -->
+        <Property name="jdbc">
+            <Property name="producer">
+                <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+            </Property>
+            <Property name="parameters">
+                <Property name="jdbc_driver">
+                    <Value>com.mysql.jdbc.Driver</Value>
+                </Property>
+                <Property name="jdbc_url">
+                    <Value>jdbc:mysql://localhost/test</Value>
+                </Property>
+                <Property name="user">
+                    <Value>root</Value>
+                </Property>
+                <Property name="password">
+                    <Value>19820127</Value>
+                </Property>
+                <Property name="defaultRowPrefetch">
+                    <Value>15</Value>
+                </Property>
+                <Property name="defaultExecuteBatch">
+                    <Value>30</Value>
+                </Property>
+                <Property name="processEscapes">
+                    <Value>false</Value>
+                </Property>
+            </Property>
+        </Property>
+
+        <!--
+            The following property configures the ConnectionProducer obtaining the Connections from a DataSource
+            object located through JNDI. This producer is provided with a JNDI name to be used to lookup for the
+            DataSource along with a set of initial parameters to be used to configure the JNDI context to be used to
+            locate the requested DataSource. The names of such initial parameters represent the names of context
+            parameters specified by the JNDI specification having the '.' character replaced with '_' character. This is
+            caused by a restriction applied by Configuration Manager for the property names.
+        -->
+        <Property name="jndi">
+            <Property name="producer">
+                <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+            </Property>
+            <Property name="parameters">
+                <Property name="jndi_name">
+                    <Value>jdbc/ProductionDB</Value>
+                </Property>
+                <Property name="java_naming_factory_initial">
+                    <Value>com.topcoder.db.connectionfactory.accuracytests.MockInitialContextFactory</Value>
+                </Property>
+            </Property>
+        </Property>
+
+	    <Property name="reflecting">
+	      <Property name="producer">
+	        <Value>com.topcoder.db.connectionfactory.producers.ReflectingConnectionProducer</Value>
+	      </Property>
+	      <Property name="parameters">
+	        <Property name="datasource_class">
+	          <Value>com.topcoder.db.connectionfactory.accuracytests.MockDataSource</Value>
+	        </Property>
+	      </Property>
+	    </Property>
+
+    </Property>
+</CMConfig>

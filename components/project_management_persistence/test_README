@@ -1,0 +1,9 @@
+1.Modify the "build.xml" to update the value of "junit", maybe you also need to configure the path for dependencies.
+2.Modify
+test_files\dbfactory.xml
+test_files\accuracytests\cofig.xml
+test_files\failure\config.xml
+test_fiels\stresstests\dbfactory.xml
+
+accroding your database setting.
+3.Then you can run the test.

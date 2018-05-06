@@ -1,0 +1,606 @@
+{\rtf1\ansi\ansicpg936\deff0\deflang1033\deflangfe2052{\fonttbl{\f0\fswiss\fprq2\fcharset0 Arial;}{\f1\froman\fprq2\fcharset0 Times New Roman;}{\f2\fmodern\fprq1\fcharset0 Courier;}{\f3\fmodern\fprq1\fcharset0 Courier New;}{\f4\froman\fprq2\fcharset2 Symbol;}}
+{\colortbl ;\red255\green0\blue0;\red31\green73\blue125;\red0\green112\blue192;\red0\green0\blue0;\red0\green0\blue255;\red0\green128\blue0;\red153\green51\blue0;}
+{\stylesheet{ Normal;}{\s1 heading 1;}{\s2 heading 2;}{\s3 heading 3;}{\s4 heading 4;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx720\ul\b\f0\fs28 User Project Data Store \cf1 1.1\cf0  Component Specification\par
+\pard\li720\sa120\ulnone\b0\f1\fs20\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b\f0 1.\tab Design\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0 1.1\tab Overview\par
+\pard\b0 The User/Project Data Store component provides data structure and read-only access to a database of component designers, developers, and actual projects.  This is for access by an \ldblquote external\rdblquote  system, hence the name \ldblquote external\rdblquote  in the interface names.\par
+\par
+There are interfaces to represent the data structures and data access objects (DAOs), as defined in the Requirements Specification.  Concrete implementation classes are provided for the data structure interfaces and for the DAOs.  The implementation of the DAO interfaces provide the required retrieval methods, and some new retrieval methods were added, such as \ldblquote find by name\rdblquote  and \ldblquote find by handle, case insensitively\rdblquote  in anticipation of more complex uses of the component.\f1\par
+\par
+\f0 Also, information about a user\rquote s rating is encapsulated into a new data \cf2 structure\cf0  and the \ldblquote rating type\rdblquote  (i.e. design or development) is represented as a type-safe enumeration\f1 .\par
+\par
+\cf1\f0 Version 1.1 of the User/Project Data Store adds more (optional) information to the Projects - a short version of the description, a functional description, and a list of technologies related to the project. The new fields have associated get/set methods added, and the information is loaded in an identical way to how Version 1.0 fields were loaded. The component maintains backwards compatibility with Version 1.0, and is J2EE compliant to be used within an EJB context. \line     - All Version 1.1 updates to this document are shown in red.\f1\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\cf0\b\f0 1.2\tab Design Patterns \f1\par
+\pard\li720\ul\b0\f0 Template method\ulnone  \endash  The \f2\fs18 retrieveObjects\f0\fs20  method of the abstract class \f2\fs18 BaseDBRetrieval\f0\fs20  uses the template method.  It relies on an abstract method (\f2\fs18 createObject\f0\fs20 ), implemented by a concrete subclass, to \ldblquote fill in\rdblquote  the template.\f1\par
+\par
+\ul\f0 Type\f1 -\f0 safe enumeration \ulnone\endash  The Typesafe Enum Component was utilized to distinguish between design and development ratings, representing the type\f1 -\f0 safe enumeration pattern.\f1\par
+\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0 1.3\tab Industry Standards\f1\par
+\pard\li720\b0\f0 JDBC\par
+\f1\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0 1.4\tab Required Algorithms\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\b0\i 1.4.1\tab Retrieve objects\f1\par
+\pard\i0\f0 There is a generic method, \f2\fs18 BaseDBRetrieval.retrieveObjects(ps)\f0\fs20  which iterates through a prepared statement\rquote s result set and creates a map of \f2\fs18 ExternalObjects\f0\fs20 .  The pseudocode is:\par
+\par
+\f2\fs18\tab Map objects = new HashMap();\par
+\tab ResultSet rs = ps.executeQuery();\par
+\tab while rs.next\par
+\tab\tab // call the abstract method which creates an object of the \par
+\pard\fi720\li720 // appropriate type from the columns in the RS\par
+\pard\tab\tab ExternalObject o = createObject(rs)\par
+\tab\tab objects.put(new Long(o.getId()), o)\par
+\tab rs.close()\par
+\tab return objects\par
+\f1\fs20\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0 1.4.2\tab Retrieve users\par
+\pard\i0 All of the \f2\fs18 retrieveUsers\f0\fs20  methods (which return more than one record) in the \f2\fs18 DBUserRetrieval\f0\fs20  class implement their functionality based on this pseudocode.  The type of parameter to set in the prepared statement depends on the query and will be either a long or a String.\par
+\f1\par
+\pard\li720\f3\fs18 conn = super.getConnection()\par
+\pard //construct the query string (see Section 1.4.2)\par
+query = \ldblquote select * from . . .\rdblquote\par
+// prepare the statement \par
+ps = conn.prepareStatement(query)\par
+// set parameters (note that there may not be an array, e.g., for \par
+// retrieveUsersByName)\par
+for i = 0 to number of parameters\par
+\tab // will be either setLong or setString\par
+\pard\fi720\li720 ps.setXXX(i, parameter[i]);\par
+\pard\li720\par
+// call super method which calls this.createObject\par
+Map objects = super.retrieveObjects(ps);\par
+\par
+\pard // Prepare the email query (Section 1.4.3.1)\par
+emailQuery = \ldblquote select * from . . .\rdblquote\par
+ps2 = conn.prepareStatement(emailQuery)\par
+\pard\li720 // set parameters (see above)\par
+for i = 0 to number of parameters\par
+\tab // will be either setLong or setString\par
+\pard\fi720\li720 ps2.setXXX(i, parameter[i]);\par
+\pard\tab // call private method\par
+\pard\li720 updateEmails(objects, ps2)\par
+\par
+\pard // Prepare the ratings query (Section 1.4.3.2)\par
+ratingsQuery = \ldblquote select * from . . .\rdblquote\par
+ps3 = conn.prepareStatement(ratingsQuery)\par
+\pard\li720 // set parameters (see above)\par
+for i = 0 to number of parameters\par
+\tab // will be either setLong or setString\par
+\pard\fi720\li720 ps3.setXXX(i, parameter[i]);\par
+\pard\li720 // call private method\par
+updateRatings(objects, ps3)\par
+\par
+// close the Prepared Statements and connection\par
+ps2.close();\par
+ps3.close();\par
+super.close(ps, conn); \par
+\par
+// convert the map to an array.\par
+ExternalUser [] users = (ExternalUser []) \par
+\pard\fi720\li720 new LinkedList(map.values()).toArray(new ExternalUser[0]);\par
+\pard\li720 return users;\par
+\pard\f1\fs20\par
+\pard\keepn\nowidctlpar\s4\sb120\sa60\sl240\slmult0\tx0\f0 1.4.2.1\tab Retrieve users by handles\f1\par
+\pard\f0 This functionality is used by \f2\fs18 DBUserRetrieval.retrieveUsers(String[] handle)\f0\fs20 .  The query to construct as needed in Section 1.4.1 is:\par
+\par
+\pard\li720\f2\fs18 select u.user_id id, first_name, last_name, handle, address\par
+from user u, email\par
+where u.user_id = email.user_id\par
+  and email.primary_ind = 1\par
+  and handle in (?,?,?,. . . ?) \par
+\pard\f1\fs20\par
+\f0 Note that if a primary email address is not found, the user is considered not found.\par
+\f1\par
+\f0 The query for retrieve user by lower case (case insensitive) is similar, except that the \f2\fs18 handle_lower\f0\fs20  column is used instead.  The input is first converted to lower case so it will actually match the \f2\fs18 handle_lower\f0\fs20  column.\f1\par
+\par
+\pard\keepn\nowidctlpar\s4\sb120\sa60\sl240\slmult0\tx0\f0 1.4.2.2\tab Retrieve users by ids\f1\par
+\pard\f0 This functionality is used by \f2\fs18 DBUserRetrieval.retrieveUsers(long[] ids)\f0\fs20 .  The query to construct as needed in Section 1.4.1 is:\f1\par
+\par
+\pard\li720\f2\fs18 select u.user_id id, first_name, last_name, handle, address\par
+from user u, email\par
+where u.user_id = email.user_id\par
+  and email.primary_ind = 1\par
+  and u.user_id in (?,?,?,. . . ?) \par
+\pard\f1\fs20\par
+\f0 Note that if a primary email address is not found, the user is considered not found.\par
+\f1\par
+\pard\keepn\nowidctlpar\s4\sb120\sa60\sl240\slmult0\tx0\f0 1.4.2.3\tab Retrieve users by name\par
+\pard This functionality is used by \f2\fs18 DBUserRetrieval.retrieveUsersByName(String firstName, \cf2 String\cf0  lastName)\f0\fs20 .  Before populating the two query parameters, append a percent (\ldblquote %\rdblquote ) character, so that it acts as a \ldblquote starts with\rdblquote  query.  The query to construct as needed in Section 1.4.1 is:\par
+\f1\par
+\pard\li720\f2\fs18 select u.user_id id, first_name, last_name, handle, address\par
+from user u, email\par
+where u.user_id = email.user_id\par
+  and email.primary_ind = 1\par
+  and u.first_name like ?\par
+  and u.last_name like ?\par
+\pard\f1\fs20\par
+\f0 Note that if a primary email address is not found, the user is considered not found.\par
+\f1\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0 1.4.3\tab Secondary user queries\par
+\pard\i0\f1\par
+\f0 Each of the \f2\fs18 DBUserRetrieval.findUsers*\f0\fs20  methods actually performs \ul three\ulnone  queries: one set was described in Section 1.4.2.  Those methods must prepare two more queries.  These retrieve the alternative email address and the rating information.  \i Each of these queries repeats the same \f2\fs18 where\f0\fs20  clause as the above three sections, except it \b also\b0  joins on the \f2\fs18 email\f0\fs20  or \f2\fs18 user_rating\f0\fs20  table.\i0   Depending on which query was performed in the first step (Section 1.4.2) the query performed in these secondary queries should be constructed accordingly.   See the next two sections for details.\f1\par
+\par
+\pard\keepn\nowidctlpar\s4\sb120\sa60\sl240\slmult0\tx0\f0 1.4.3.1\tab Retrieve alternative email addresses\f1\par
+\pard\f0 To retrieve the alternative email addresses, the query is:\f1\par
+\pard\li720\f2\fs18\par
+select u.user_id id, address\par
+from user u, email\par
+where u.user_id = email.user_id\par
+  and email.primary_ind = 0\par
+  and <see Table>\par
+\par
+\trowd\trgaph108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1765\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6649\pard\intbl\b\f0\fs20 Query type\cell Where clause\cell\row\trowd\trgaph108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1765\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6649\pard\intbl\b0 Users by ids\cell\f2\fs18 u.user_id in (?,?,? . . .)\cell\row\trowd\trgaph108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1765\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6649\pard\intbl\f0\fs20 Users by handles\cell\f2\fs18 u.handle in (?,?,?,. . . ?)\cell\row\trowd\trgaph108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1765\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6649\pard\intbl\f0\fs20 Users by name\cell\f2\fs18 u.first_name like ? and u.last_name like ?\cell\row\pard\li720  \par
+\pard\f0\fs20 Note that it is acceptable for a user to have no alternative addresses.\f1\par
+\par
+\f0 The \f2\fs18 DBUserRetrieval.updateEmails\f0\fs20  method performs this pseudocode to add each alternative email to the users already retrieved in the map.\par
+\f2\fs18\tab rs = ps.executeQuery()\par
+\tab while rs.next() \{\par
+\tab\tab long id = rs.getLong(\ldblquote id\rdblquote )\par
+\tab\tab ExternalUserImpl user = map.get(new Long(id))\par
+\tab\tab If (user != null)\par
+\tab\tab\tab user.addAlternativeEmail(rs.getString(\ldblquote address\rdblquote ))\par
+\tab\}\par
+\f1\fs20\par
+\pard\keepn\nowidctlpar\s4\sb120\sa60\sl240\slmult0\tx0\f0 1.4.3.2\tab Retrieve rating information\par
+\pard To retrieve the rating information, the query is:\f1\par
+\pard\li720\f2\fs18\par
+select u.user_id id, \par
+\pard\fi720\li720 r.rating, \par
+r.phase_id, \par
+vol volatility, \par
+num_ratings, \par
+ur.rating reliability\par
+\pard\li720 from user u, user_rating r, OUTER user_reliability ur\par
+where u.user_id = r.user_id\par
+  and u.user_id = ur.user_id\par
+  and r.phase_id = ur.phase_id\par
+  and <see Table>\par
+\par
+\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1765\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6649\pard\intbl\b\f0\fs20 Query type\cell Where clause\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1765\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6649\pard\intbl\b0 Users by ids\cell\f2\fs18 u.id in (?,?,? . . .)\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1765\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6649\pard\intbl\f0\fs20 Users by handles\cell\f2\fs18 u.handle in (?,?,?,. . . ?)\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1765\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6649\pard\intbl\f0\fs20 Users by name\cell\f2\fs18 u.first_name like ? and u.last_name like ?\cell\row\pard\f1\fs20\par
+\f0 Note this is an inner join for rating, since it is acceptable for a user to have no rating, but an outer join for reliability, since theoretically a user could have a rating but no reliability.\f1\par
+\par
+\f0 The \f2\fs18 updateRatings\f0\fs20  method performs this pseudocode to add each alternative email to the users already retrieved in the map.\par
+\f2\fs18\tab rs = ps.executeQuery()\par
+\tab while rs.next() \{\par
+\tab\tab long id = rs.getLong(\ldblquote id\rdblquote )\par
+\tab\tab ExternalUserImpl user = map.get(new Long(id))\par
+\tab\tab if (user != null) \{\par
+\tab\tab\tab RatingType rt;\par
+\pard\fi720\li1440 rt = RatingType.getRatingType(rs.getLong(\ldblquote phase_id\rdblquote ))\par
+RatingInfo ri;\par
+double reliability = rs.getDouble(\ldblquote reliability\rdblquote )\par
+if (rs.wasNull())\par
+\tab // no reliability \endash  use 4-arg ctor\par
+\pard\fi720\li2160 ri = new RatingInfo(rt,\par
+\pard                                              \tab rs.getInt(\ldblquote rating\rdblquote ),\par
+                             \tab\tab\tab rs.getInt(\ldblquote num_ratings\rdblquote ),\par
+                                              \tab rs.getInt(\ldblquote volatility\rdblquote ));\par
+\tab\tab\tab else\par
+\tab\tab\tab\tab // reliability existed \endash  use 5-arg ctor\par
+\pard\fi720\li2160 ri = new RatingInfo(rt,\par
+\pard                                              \tab rs.getInt(\ldblquote rating\rdblquote ),\par
+                             \tab\tab\tab rs.getInt(\ldblquote num_ratings\rdblquote ),\par
+                                              \tab rs.getInt(\ldblquote volatility\rdblquote ),\par
+\tab\tab\tab\tab\tab\tab\tab reliability);\par
+\pard\fi720\li1440 user.addRatingInfo(ri)\par
+\pard\tab\tab\}\par
+\tab\}\par
+\f1\fs20\par
+\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0 1.4.4\tab Retrieve projects\par
+\pard\i0 All of the \ldblquote retrieve\rdblquote  methods in \f2\fs18 DBProjectRetrieval\f0\fs20  (which return more than one record) implement code based on this pseudocode.  The type of parameter to set depends on the query and will be either long or String.\par
+\f1\par
+\pard\li720\f3\fs18 conn = super.getConnection()\par
+\pard //construct the query string (see Section 1.4.2 and 1.4.4)\par
+query = \ldblquote select * from . . .\rdblquote\par
+// prepare the statement \par
+ps = conn.prepareStatement(query)\par
+// set parameters\par
+for i = 1 to number of parameters\par
+\tab // will be either setLong or setString\par
+\pard\fi720\li720 ps.setXXX(i, parameter[i-1]);\par
+\pard\li720\par
+// call template method\par
+Map objects = super.retrieveObjects(ps);\par
+\pard\par
+\pard\li720\cf2 super.close(ps, null); \par
+// Prepare the technologies query (Section 1.4.4.3)\ul\b\i\par
+\ulnone\b0\i0 techQuery = \ldblquote select * from . . .\rdblquote\par
+ps = conn.prepareStatement(techQuery)\par
+\par
+// set parameters (see above)\par
+for i = 1 to number of parameters\par
+\pard\fi720\li720 ps.setXXX(i, parameter[i-1]); // will be either setLong or setString\par
+\pard\par
+\pard\li720 updateTechnologies(objects, ps);  // call private method\par
+\par
+// close the Prepared Statements and connection\par
+super.close(ps, conn);\cf3  \par
+\pard\cf1  \cf0\par
+\pard\li720 // convert the map to an array.\par
+ExternalProject [] projects = (ExternalProject[]) \par
+\pard\fi720\li720 new LinkedList(map.values()).toArray(new ExternalProject[0]);\line\par
+\pard\li720 return projects;\par
+\pard\f1\fs20\par
+\pard\keepn\nowidctlpar\s4\sb120\sa60\sl240\slmult0\tx0\f0 1.4.4.1\tab Retrieve projects by ids\f1\par
+\pard\f0 This functionality is used by \f2\fs18 DBProjectRetrieval.retrieveProjects(long[] ids)\f0\fs20 .  The query to construct as needed in Section 1.4.1 is:\par
+\f1\par
+\pard\li720\f2\fs18 select cv.comp_vers_id, \par
+\pard\fi720\li720 cv.component_id, \par
+version, \par
+version_text, \par
+comments, \par
+component_name, \par
+description, \par
+cc.root_category_id category_id, \par
+forum_id,\line\cf1\tab cc.short_desc short_desc,\line\tab cc.function_desc function_desc\cf0\par
+\pard\li720 from comp_versions cv, comp_catalog cc, OUTER comp_forum_xref f\par
+where cv.component_id = cc.component_id\par
+and cv.comp_vers_id = f.comp_vers_id\par
+and f.forum_type = ?\par
+and cv.comp_vers_id in (?,?,?,. . . ?) \par
+\pard\f1\fs20\par
+\f0 Note the outer join syntax with the \f2\fs18 comp_forum_xref\f0\fs20  table (not every component will have a forum).  The \f2\fs18 forum_type\f0\fs20  is retrieved from the \f2\fs18 forumType\f0\fs20  property in the given Config Manager namespace, or defaults to 2 if it is not set. \cf1 Also, the short and functional descriptions may return nulls - if this is the case, an empty string should be used for the project object, rather than null - this is the same for 1.4.4.2.\cf0\f1\par
+\par
+\pard\keepn\nowidctlpar\s4\sb120\sa60\sl240\slmult0\tx0\f0 1.4.4.2\tab Retrieve projects by name and version\par
+\pard This functionality is used by \f2\fs18 DBProjectRetrieval.retrieveProjects(String[] names, String[] versions)\f0\fs20 .  The query to construct as needed in Section 1.4.1 is:\par
+\f1\par
+\pard\li720\f2\fs18 select cv.comp_vers_id, \par
+\pard\fi720\li720 cv.component_id, \par
+version, \par
+version_text, \par
+comments, \par
+component_name, \par
+description, \par
+cc.root_category_id category_id, \par
+forum_id\line\cf1\tab cc.short_desc short_desc,\line\tab cc.function_desc function_desc\cf0\par
+\pard\li720 from comp_versions cv, comp_catalog cc, OUTER comp_forum_xref f\par
+where cv.component_id = cc.component_id\par
+and cv.comp_vers_id = f.comp_vers_id\par
+and f.forum_type = ?\par
+and cc.component_name || cv.version_text in (?,?,?,. . .?)\par
+\pard\f1\fs20\par
+\f0 In order to properly find both the name and version simultaneously, we must use a concatenation of the two strings.  The query parameters must be accordingly concatenated before calling \f2\fs18 ps.setString().\f1\fs20\par
+\par
+\f0 Note also that the join to \f2\fs18 comp_catalog\f0\fs20  is an inner join, but the join with \f2\fs18 comp_forum_xref\f0\fs20  is still outer.  The \f2\fs18 forum_type\f0\fs20  is retrieved from the \f2\fs18 forumType\f0\fs20  property in the given Config Manager namespace, or defaults to 2.\par
+\pard\keepn\nowidctlpar\s4\sb120\sa60\sl240\slmult0\tx0\cf1 1.4.4.3\tab Retrieve project technologies\par
+\pard To retrieve the technologies for projects, the query is: \par
+\pard\li720\f2\fs18\par
+select cv.comp_vers_id \cf3 comp_vers_id\cf1 , tt.technology_name technology\par
+from comp_versions cv, comp_catalog cc, technology_types tt, comp_technology ct\line   OUTER comp_forum_xref f\par
+where cv.component_id = cc.component_id\cf0\par
+\cf1   and cv.comp_vers_id = ct.comp_vers_id\par
+  and ct.\cf3 technology_type_id\cf1  = tt.technology_type_id \par
+  and cv.comp_vers_id = f.comp_vers_id\par
+  and f.forum_type = ?\par
+  and <see Table>\par
+\par
+\trowd\trgaph108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1765\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8222\pard\intbl\b\f0\fs20 Query type\cell Where clause\cell\row\trowd\trgaph108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1765\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8222\pard\intbl\b0 Projects by ids\cell\f2\fs18 cv.comp_vers_id in (?,?,?,. . . ?) \cell\row\trowd\trgaph108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1765\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8222\pard\intbl\f0\fs20 Projects by name\f1\cell\f2\fs18 cc.component_name || cv.version_text in (?,?,?,. . .?)\cell\row\pard\li720  \par
+\pard\f0\fs20 Note that it is acceptable for a project to have no related technologies, and that if projects are being retrieved by ID, the comp_catalog table is not required.\f1\par
+\par
+\f0 The \f2\fs18 DBUserRetrieval.updateTechnologies\f0\fs20  method performs this pseudocode to add each technology to the users already retrieved in the map.\par
+\f2\fs18\tab rs = ps.executeQuery()\par
+\tab while rs.next() \{\par
+\tab\tab long id = rs.getLong(\ldblquote\cf3 comp_vers_id\cf1\rdblquote )\par
+\tab\tab ExternalProjectImpl proj  = objects.get(new Long(id))\par
+\tab\tab If (proj != null)\par
+\tab\tab\tab proj.addTechnology(rs.getString(\ldblquote technology\rdblquote ))\par
+\tab\}\par
+\cf0\f1\fs20\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0 1.4.5\tab RatingType configuration\par
+\pard\i0 The \f2\fs18 RatingType\f0\fs20  type-safe enum uses the Config Manager component to determine which \ldblquote phase number\rdblquote  (phase_id column in certain tables) corresponds to which component phase, design or development.  The private \f2\fs18 RatingType.configure()\f0\fs20  method was added to the class to determine this mapping.  As described in Section 3.2, there are two optional parameters, \ldblquote Design\rdblquote  and \ldblquote Development\rdblquote  whose values map to the phase numbers. \f1\par
+\line\f0 When the public static enumerated type values \f2\fs18 DESIGN\f0\fs20  or \f2\fs18 DEVELOPMENT\f0\fs20  are accessed for the first time, or any time one of the \f2\fs18 getRatingType\f0\fs20  methods is called, the configure() method is called, to make sure the Config Manager is referenced to determine the mapping.\par
+\par
+In order to make this configuration transparent to the user, the \f2\fs18 getRatingType\f0\fs20  methods and the \f2\fs18 configure()\f0\fs20  method silently ignore any Config manager exceptions that might occur, and instead just default to Design mapping to phase id 112 and Development to phase id 113.  As a result, however, the namespace that the class uses is fixed (see Section 3.2).\par
+\f1\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0 1.5\tab Component Class Overview\par
+\pard\b0\f1\par
+\pard\li720\b\f0 interface ExternalObject extends Serializable\par
+\pard\li1440\b0 This simple interface merely captures common information (the id) for the other two entities, namely \f2\fs18 ExternalUser\f0\fs20  and \f2\fs18 ExternalProject\f0\fs20 . It also implements \f2\fs18 Serializable\f0\fs20  so that when subclasses are used in a web application, they can be serialized for session replication.\par
+\pard\f1\par
+\b\tab\f0 interface ExternalUser extends ExternalObject\par
+\pard\li1440\b0 This interface represents a user in this component. It stores the user\rquote s first and last name, handle, email address(es) and design and development rating information. The unique id (user id) is described by the super interface.\par
+\pard\fi720\li720\f1\par
+\pard\b\tab\f0 interface ExternalProject extends ExternalObject\par
+\pard\li1440\b0 This interface describes a project within the User Project Data Store component. The component id, version id, forum id and catalog id are all included, as well as textual descriptions of the project and the component itself. The unique id (project id) is described by the super interface. \cf1 Added fields in version 1.1 include another optional shorter description, a functional description, and a collection of technologies related to the project.\cf0\f1\par
+\pard\par
+\b\tab\f0 interface UserRetrieval\par
+\pard\li1440\b0 This is the interface which describes the various ways that users can be retrieved from persistent storage.  There are two methods to retrieve individual users (by id or handle), and additional methods that retrieve sets of users in bulk (e.g., by name or by a set of ids or handles).\f1\par
+\pard\tab\par
+\b\tab\f0 interface ProjectRetrieval\par
+\pard\li1440\b0 This is the interface for the User Project Data Store component which describes the various ways that projects can be retrieved from persistent storage. There is a method to retrieve individual projects by their id and additional methods that retrieve sets of projects in bulk, by a set of ids or by name and version.\f1\par
+\pard\par
+\b\tab\f0 class RatingInfo implements Serializable\par
+\pard\li1440\b0 This class encapsulates information about ratings for a particular rating type for a user. It includes the actual rating, the reliability, number of ratings and volatility, for a specific rating type (design or development.) This class is immutable and thread-safe.\par
+\pard\f1\par
+\b\tab\f0 class RatingType extends Enum implements Serializable\par
+\b0 This typesafe enum represents the various ratings types (phases) that the User Project Data Store component supports, namely, \ul design\ulnone  and \ul development\ulnone . The Config Manager is used to retrieve the id number of each phase (See Section 1.4.5\f1 .\f0 ) The required namespace is defined in this class, along with a method to retrieve the appropriate id number for the rating type. This class is immutable and thread-safe.\par
+\f1\par
+\b\tab\f0 class ExternalObjectImpl implements ExternalObject\par
+\pard\li1440\b0 Basic implementation of the \f2\fs18 ExternalObject\f0\fs20  interface; merely maintains the id field as a final long. This class is thread-safe, but subclasses are not guaranteed to be.\par
+\pard\f1\par
+\b\tab\f0 class ExternalUserImpl extends ExternalObjectImpl implements ExternalUser\par
+\pard\li1440\b0 Basic implementation of the \f2\fs18 ExternalUser\f0\fs20  interface.  Most of the fields of this class are immutable, aiding in thread-safety; the rest are only modifiable within this package.  The outside world should never create instances of or modify objects of this class; only methods within this package should and so the constructor and mutator methods are all package-scope.\f1\par
+\pard\par
+\b\tab\f0 class ExternalProjectImpl extends ExternalObjectImpl implements ExternalProject\par
+\pard\li1440\b0 Basic implementation of the \f2\fs18 ExternalProject\f0\fs20  interface. Some of the fields of this class are immutable, aiding in thread-safety; the rest are only modifiable within this package. The \ldblquote outside world\rdblquote  should never create instances or modify objects of this class; only methods within this package should and so the constructor and mutator methods are all package-scope.   If any field is already set and the calling program attempts to set them again, an exception will be thrown. \cf1 Added in 1.1: added short/functional description plus technologies members, and their related get/set methods.\cf0\f1\par
+\pard\par
+\b\tab\f0 abstract class BaseDBRetrieval\par
+\pard\li1440\b0 Abstract base class for implementing the database (JDBC) versions of the "retrieval" interfaces.  Utility methods are provided to get and close a connection, and to bulk create objects from a result set (via a \f2\fs18 PreparedStatement\f0\fs20 .) This class is immutable and therefore thread-safe.\par
+\pard\f1\par
+\b\tab\f0 class DBUserRetrieval extends BaseDBRetrieval implements UserRetrieval\par
+\pard\li1440\b0 This is the database (JDBC) implementation of the \f2\fs18 UserRetrieval\f0\fs20  interface. All the methods (except \f2\fs18 retrieveUser(long)\f0\fs20  and \f2\fs18 retrieveUser(String)\f0\fs20 ) call \f2\fs18 super.getConnection\f0\fs20  to get a connection from the DBConnectionFactory, and then call to \f2\fs18 super.retrieveObjects\f0\fs20 , which calls \f2\fs18 this.createObject\f0\fs20 . Then, they call \f2\fs18 updateEmails\f0\fs20  and \f2\fs18 updateRatings\f0\fs20 . Afterwards, the prepared statement and connections are all closed using \f2\fs18 super.close()\f0\fs20 . All \f2\fs18 SQLExceptions\f0\fs20  in all methods should be wrapped in a \f2\fs18 RetrievalException\f0\fs20 . This class is immutable and therefore thread-safe.\par
+\pard\f1\par
+\b\tab\f0 class DBProjectRetrieval extends BaseDBRetrieval implements ProjectRetrieval\par
+\pard\li1440\b0 This is the database (JDBC) implementation of the \f2\fs18 ProjectRetrieval\f0\fs20  interface. All the methods (except \f2\fs18 retrieveProject(long)\f0\fs20 ) call \f2\fs18 super.getConnection\f0\fs20  to get a connection from the \f2\fs18 DBConnectionFactory\f0\fs20 , and then call to \f2\fs18 super.retrieveObjects\f0\fs20 , which calls \f2\fs18 this.createObject\f0\fs20 . Afterwards, the prepared statement, result set and connections are all closed using \f2\fs18 super.close().\f0\fs20  All \f2\fs18 SQLExceptions\f0\fs20  in all methods should be wrapped in \f2\fs18 RetrievalException\f0\fs20 . This class is immutable and therefore thread-safe. \cf1 Added in 1.1: Changed SQL to load descriptions, plus technologies added for each project read.\cf0\f1\par
+\pard\par
+\pard\fi720\b\f0 class UserProjectDataStoreHelper\f1\par
+\pard\li1440\b0\f0 This is a final class which just contains some helper method for the component\f1 .\f0  Like\f1 ,\f0  some parameter validation methods, some pre- processing methods and so on.\f1\par
+\pard\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0 1.6\tab Component Exception Definitions\par
+\pard\fi720\f1\par
+\f0 UserProjectDataStoreException extends BaseException\par
+\pard\fi-720\li1440\f1\tab\b0\f0 This is the base exception for all exceptions in the User Project Data Store component.  It can be used with or without a message, and with or without an underlying cause.\f1\par
+\par
+\b\f0 ConfigException extends UserProjectDataStoreException\f1\par
+\pard\li1440\b0\f0 This exception represents a problem with the configuration in the User Project Data Store component. It is thrown by the \f2\fs18 UserRetrieval\f0\fs20  and \f2\fs18 ProjectRetrieval\f0\fs20  interfaces (and their implementing and base classes.) It can be used with a message, and with or without an underlying cause.  Usually it wraps a \f2\fs18 ConfigManagerException\f0\fs20  that has occurred.\par
+\pard\f1\par
+\pard\fi-720\li1440\b\f0 RetrievalException extends UserProjectDataStoreException\par
+\pard\li1440\b0 This exception represents a problem with retrieving data from persistent storage in the User Project Data Store component. It is thrown by the \f2\fs18 UserRetrieval\f0\fs20  and \f2\fs18 ProjectRetrieval\f0\fs20  interfaces (and their implementing and base classes.) It can be used with a message, and with or without an underlying cause.\par
+\pard\fi-720\li1440\f1\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0 1.7\tab Thread Safety\par
+\pard\b0 All classes except for \f2\fs18 ExternalUserImpl\f0\fs20  and \f2\fs18 ExternalProjectImpl\f0\fs20  are designed to be completely thread-safe.  These last two classes are not inherently thread-safe, because of their unsynchronized setters.  However, they are only created or modified by the \f2\fs18 DBUserRetrieval\f0\fs20  and \f2\fs18 DBProjectRetrieval\f0\fs20  classes, which themselves are thread-safe.  The \f2\fs18 *Retrieval\f0\fs20  classes return arrays of the corresponding interface, which do not have the setter methods that the implementations do.  An outside user would have to explicitly cast a returned value to a (non-thread-safe) \f2\fs18 *Impl\f0\fs20  class to access the setter methods.   It seems impractical to require thread-safety of the \f2\fs18 *Impl\f0\fs20  classes because they should only be created or modified by the implementation-specific \f2\fs18 *retrieval\f0\fs20  classes via a single calling thread anyway.\f1\line\cf1\f0 Version 1.1 maintains the same thread-safety status as 1.0 - the new fields added to \f2\fs18 ExternalProjectImpl\f0\fs20  are treated in the same way as existing fields, so this class is not thread-safe but it is assumed it is handled in a thread-safe manner. The only other implementation change, \f2\fs18 DBProjectRetrieval#updateTechnologies \f0\fs20 echoes the logic of updateEmails inside the user retrieval, so is thread safe.\i\f1\par
+\cf0\i0\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b\f0 2.\tab\f1\page\f0 Environment Requirements\tab\tab\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0 2.1\tab Environment\par
+\pard\fi-360\li1080\tx1080\b0\f4\'b7\tab\f0 At minimum, Java 1.4 is required for compilation and executing test cases.\f1\par
+\pard\fi-360\li1080\f4\'b7\tab\f0 Informix 10.0\f1\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0 2.2\tab TopCoder Software Components\par
+\pard\fi-360\li1080\sa120\tx1080\b0\f4\'b7\tab\ul\f0 Base Exception 1.0\ulnone : The base class for all custom exceptions in this component.\par
+\pard\fi-360\li1080\sa120\f4\'b7\tab\ul\f0 DB Connection Factory 1.0\ulnone : This is used by the \f2\fs18 BaseDBRetrieval\f0\fs20  class to create a connection to the database.\f1\par
+\f4\'b7\tab\ul\f0 Typesafe enum 1\f1 .0\ulnone\f0 : The base class for \f2\fs18 RatingType\f1\fs20 .\par
+\f4\'b7\tab\ul\f0 Configuration Manager 2.1\cf1\f1 .\f0 5\ulnone :\cf0  Used by DB Connection Factory for configuration.  Also, the \f2\fs18 BaseDBRetrieval\f0\fs20  class obtains the connection name from this component, and the \f2\fs18 RatingType\f0\fs20  class retrieves the id numbers of the Design and Development phases as well.\f1\par
+\pard\li720\i\f0 NOTE: The default location for TopCoder Software component jars is../lib/tcs/COMPONENT_NAME/COMPONENT_VERSION relative to the component installation.\cf4   Setting the tcs_libdir property in topcoder_global.properties will overwrite this default location.\cf0\i0\f1\par
+\pard\li720\sa120\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0 2.3\tab Third Party Components\par
+\pard\fi-360\li1080\sa120\tx1080\b0\f4\'b7\tab\f0 Informix JDBC driver must be added to the runtime classpath.\f1\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b\f0 3.\tab Installation and Configuration\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0 3.1\tab Package Name\par
+\pard\fi720\sa120\b0 com.cronos.onlinereview.external\f1\par
+\f0 com.cronos.onlinereview.external.impl\f1\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0 3.2\tab Configuration Parameters\par
+\pard\b0\f1\par
+\f0 A sample xml file, Sample.xml, is included in the conf directory, to demonstrate how to configure this component. \par
+\par
+The following two optional parameters can be defined in the namespace as given to the constructor of one of the DB* classes.\f1\par
+\par
+\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2365\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6534\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8748\pard\intbl\b\f0 Parameter\cell Description\cell Values\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2365\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6534\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8748\pard\intbl\b0\f2\fs18 connName\cell\f0\fs20 The name of the connection from the DB connection factory to use. (Optional; defaults to using the default connection\f1\cell\f0 User-defined\f1\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2365\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6534\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8748\pard\intbl\f2\fs18 forumType\cell\f0\fs20 The id number of the forum type code to use when retrieving the forum for a component\rquote s project. (Optional; defaults to 2)\cell 2\cell\row\pard\f1\par
+\f0 The following two parameters, if defined, must be in the \f2\fs18 com.cronos.onlienreview. external.RatingType\f0\fs20  namespace (it must be in this namespace).   The parameters are \i optional\i0  and have default values.  If any new phases are included in the \f2\fs18 user_rating\f0\fs20  or \f2\fs18 user_reliability\f0\fs20  tables, they can be added here to allow additional values of the \f2\fs18 RatingType\f0\fs20  typesafe enum to be defined.\par
+\par
+\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2365\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6534\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8748\pard\intbl\b Parameter\cell Description\cell Values\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2365\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6534\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8748\pard\intbl\b0\f2\fs18 Design\cell\f0\fs20 The id number of the \ldblquote Design\rdblquote  phase. (Optional; defaults to 112)\f1\cell\f0 112\f1\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2365\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6534\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8748\pard\intbl\f2\fs18 Development\cell\f0\fs20 The Id number of the \ldblquote Development\rdblquote  phase. (Optional; defaults to 113)\cell 113\cell\row\pard\sa120\f1\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0 3.3\tab Dependencies Configuration\par
+\pard\b0 The DBConnection Factory component must be configured, within the same namespace as given to the constructor of the DB*Retrieval classes.  At least one connection provider must be defined.\f1\par
+\line\f0 Configure and populate an Informix 10 database with the desired data to retrieve.\f1\par
+\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b\f0 4.\tab Usage Notes\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0 4.1\tab Required steps to test the component\par
+\pard\fi-360\li1080\sa120\tx1080\b0\f4\'b7\tab\f0 Extract the component distribution.\par
+\pard\f4\'b7\tab\f0 Follow {\field{\*\fldinst{HYPERLINK "C:\\\\filez\\\\work\\\\tc\\\\tcs_corp\\\\templates\\\\component\\\\" \\\\l "_Dependencies_Configuration" }}{\fldrslt{\cf5\ul Dependencies Configuration}}}\cf0\ulnone\f1\fs20 .\par
+\f4\'b7\tab\f0 Execute \lquote ant test\rquote  within the directory that the distribution was extracted to.\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 4.2\tab Required steps to use the component\par
+\pard\fi-360\li1080\tx1080\b0\f4\'b7\tab\f0 Configure the DB connection factory according to the documentation and your particular database configuration (e.g., IP address, database name, user name, password). \f1\par
+\pard\fi-360\li1080\f4\'b7\tab\f0 Configure the ConfigManager component with the appropriate namespaces and config files.\par
+\f4\'b7\tab\f0 Instantiate one of the DB*Retrieval classes\par
+\f4\'b7\tab\f0 Use the API either as in the Requirements Specification or as augmented in this design.\par
+\pard\f1\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0 4.3\tab Demo\par
+\pard\b0 Before executing the demo, the various ConfigManager namespaces must be configured as described in the previous sections.\par
+\f1\par
+\f0 Also, since this component is read-only, this demo assumes that the database is populated with certain user and project/component records; \b\i that step is not shown here\b0\i0 .  The demo assumes that most data is retrieved (and indicates when there should be multiple records, or no records retrieved.)  \f1\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0 4.3.1\tab Retrieve user(s) by handle\par
+\pard\i0\f1\par
+\pard\fi720\cf6\f3\fs18 // Should be non-null.\par
+\pard\cf0     \tab ExternalUser user = defaultDBUserRetrieval.retrieveUser(\cf7 "Handle B"\cf0 );\par
+    \tab\par
+    \tab\cf6 // Should be 1002.\par
+\cf0     \tab System.out.println(user.getId());\par
+    \tab // Should all be non-null.\par
+    \tab System.out.println(user.getHandle());\par
+    \tab System.out.println(user.getFirstName());\par
+    \tab System.out.println(user.getLastName());\par
+\tab\par
+    \tab\cf6 // Should be N/A or zero.\cf0\par
+    \tab System.out.println(user.getDesignRating());\par
+    \tab System.out.println(user.getDesignReliability());\par
+    \tab System.out.println(user.getDesignNumRatings());\par
+    \tab System.out.println(user.getDesignVolatility());\par
+\tab\par
+    \tab\cf6 // There are two alt-emails.\par
+\cf0     \tab System.out.println(user.getAlternativeEmails().length);\par
+    \tab System.out.println(user.getAlternativeEmails()[0]);\par
+\tab System.out.println(user.getAlternativeEmails()[1]);\par
+\tab\par
+    \tab\cf6 // Should be not N/A and not zero.\cf0\par
+    \tab System.out.println(user.getDevRating());\par
+    \tab System.out.println(user.getDevVolatility());\par
+    \tab System.out.println(user.getDevReliability());\par
+    \tab System.out.println(user.getDevNumRatings());\par
+\tab\par
+    \tab\cf6 // Should be null if user is not found.\cf0\par
+    \tab ExternalUser shouldBeNull = defaultDBUserRetrieval.retrieveUser(\cf7 "Not Exist"\cf0 );\par
+    \tab System.out.println(shouldBeNull);\par
+\tab\par
+    \tab\cf6 // Find all users, case insensitively. This demo assumes there is only 1 user\par
+    \tab // with this handle as a lower-case string.\par
+\cf0     \tab ExternalUser[] userA = defaultDBUserRetrieval.retrieveUsersIgnoreCase\par
+\pard\fi720\li1440 (\cf5 new\cf0  String[] \{ \cf7 "hAnDle A"\cf0  \});\par
+\pard     \tab\cf6 // Should only have one.\par
+\cf0     \tab System.out.println(userA.length);\par
+    \tab ExternalUser sameAsUser = userA[0];\par
+    \tab\cf6 // Outputs his info.\par
+\cf0     \tab System.out.println(sameAsUser.getHandle());\par
+    \tab\par
+    \tab\cf6 // Should have a maximum of 2 users, but the order is indeterminate\cf0\par
+    \tab ExternalUser[] users = defaultDBUserRetrieval.retrieveUsers(\par
+    \tab\tab\tab\cf5 new\cf0  String[] \{\cf7 "Handle A"\cf0 , \cf7 "Handle C"\cf0 , \cf7 "Handle Z"\cf0\});\par
+    \tab System.out.println(users.length);\par
+\f1\fs20\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0 4.3.2\tab Retrieve user(s) by id\f1\par
+\pard\i0\par
+\pard\fi720\cf6\f3\fs18 // The record exists.\par
+\pard\cf0\tab ExternalUser user = defaultDBUserRetrieval.retrieveUser(1002);\par
+\tab System.out.println(user.getId());\par
+\tab\par
+\tab\cf6 // This record does not exist; should be null if user is not found.\cf0\par
+\tab ExternalUser shouldBeNull = defaultDBUserRetrieval\par
+\pard\fi720\li1440 .retrieveUser(Long.MAX_VALUE);\par
+\pard\tab\cf6 // Should be null\par
+\cf0\tab System.out.println(shouldBeNull);\par
+\tab\par
+\tab\cf6 // Should have a maximum of 2 users even though there were 3 values given.\par
+\tab\cf0 ExternalUser[] users = defaultDBUserRetrieval.retrieveUsers\par
+\pard\fi720\li1440 (\cf5 new\cf0  long[] \{ 1001, 1002, Long.MAX_VALUE \});\par
+\pard\tab\cf6 // The length should be 2.\par
+\tab\cf0 System.out.println(users.length);\par
+\f1\fs20\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0 4.3.3\tab Retrieve users by last name, first name\f1\par
+\pard\i0\par
+\pard\fi720\cf6\f3\fs18 // Should retrieve all users whose first name starts with 'First' and last\par
+// name starts with 'Last'.\par
+\pard\cf0     \tab ExternalUser[] users = defaultDBUserRetrieval.retrieveUsersByName\par
+\pard\fi720\li1440 (\cf7 "First A"\cf0 , \cf7 "Last A"\cf0 );\par
+\pard     \cf6\tab // There should be 1 user got.\par
+    \cf0\tab System.out.println(users.length);\par
+    \tab\par
+    \tab ExternalUser user = users[0];\par
+       \cf6 // There is only one alternative email.\par
+       \cf0 System.out.println(user.getAlternativeEmails().length);\par
+       \cf6 // The email address should be the same to User1@163.com.\par
+       \cf0 System.out.println(user.getAlternativeEmails()[0]);\par
+       \cf6 // The design number ratings should be the same as 10.\par
+       \cf0 System.out.println(user.getDesignNumRatings());\par
+       \cf6 // The design rating should be the same as 1563.\par
+       \cf0 System.out.println(user.getDesignRating());\par
+       \cf6 // The design reliability should be the same 1.00 %.\par
+       \cf0 System.out.println(user.getDesignReliability());\par
+       \cf6 // The design volatility should be the same as 431.\par
+       \cf0 System.out.println(user.getDesignVolatility());\par
+       \cf6 // There is no dev rating of the user.\par
+       \cf0 System.out.println(user.getDevNumRatings());\par
+       \cf6 // There is no dev rating of the user.\par
+       \cf0 System.out.println(user.getDevRating());\par
+       \cf6 // There is no dev rating of the user.\par
+\cf0        System.out.println(user.getDevReliability());\par
+       \cf6 // There is no dev rating of the user.\par
+       \cf0 System.out.println(user.getDevVolatility());\par
+       \cf6 // The email address should be the same as User1@gmail.com.\par
+       \cf0 System.out.println(user.getEmail());\par
+      \cf6  // The first name should be the same as First A.\par
+      \cf0  System.out.println(user.getFirstName());\par
+       \cf6 // The last name should be the same as Last A.\par
+       \cf0 System.out.println(user.getLastName());\par
+       \cf6 // The handle should be the same as Handle A.\par
+       \cf0 System.out.println(user.getHandle());\par
+       \cf6 // The user id should be the same as 1001.\par
+       \cf0 System.out.println(user.getId());\par
+\tab\par
+    \cf6\tab // Should retrieve all users whose last name starts with Last (ignores first name)\par
+    \cf0\tab ExternalUser[] tcsUsers = defaultDBUserRetrieval.retrieveUsersByName\par
+\pard\fi720\li720 (\cf7 ""\cf0 , \cf7 "Last"\cf0 );\par
+\pard     \cf6\tab // There should be 3 users got.\par
+    \cf0\tab System.out.println(tcsUsers.length);\par
+\tab\par
+    \cf6\tab // must have at least first or last name be not empty.\par
+    \cf0\tab try \{\par
+    \tab\tab defaultDBUserRetrieval.retrieveUsersByName(\cf7 ""\cf0 , \cf7 ""\cf0 );\par
+    \tab\} catch (IllegalArgumentException e) \{\par
+    \tab\}\par
+\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0\fs20 4.3.4\tab Retrieve project(s) by id\par
+\pard\i0\f1\par
+\pard\fi720\cf6\f3\fs18 // Retrieve a known project\par
+\pard\cf0     \tab ExternalProject project = defaultDBProjectRetrieval.retrieveProject(2);\par
+    \tab System.out.println(project.getId());\par
+\tab\par
+    \tab\cf6 // Outputs its info.\par
+    \tab\cf0 System.out.println(project.getComponentId());\par
+    \tab System.out.println(project.getForumId());\par
+    \tab System.out.println(project.getName());\par
+    \tab System.out.println(project.getVersion());\par
+    \tab System.out.println(project.getVersionId());\par
+    \tab System.out.println(project.getDescription());\par
+    \tab System.out.println(project.getComments());\line\cf1     \tab System.out.println(project.getShortDescription());\par
+\pard\li720 System.out.println(project.getFunctionalDescription());\line String[] tech = project.getTechnologies(); // should not be null\line for(int t = 0; t < tech.length; t++)\par
+\pard\fi720\li720 System.out.println(\ldblquote Uses technology: \ldblquote  + tech[\cf2 t\cf1 ]);\par
+\pard\cf0\tab\par
+    \tab\cf6 // Not found \endash  should be null which is acceptable\par
+    \tab\cf0 ExternalProject shouldBeNull = defaultDBProjectRetrieval\par
+\pard\fi720\li1440 .retrieveProject(Long.MAX_VALUE);\par
+\pard     \tab System.out.println(shouldBeNull);\par
+\tab\par
+    \tab\cf6 // Should only have a maximum of 1 entry.\par
+    \tab\cf0 ExternalProject[] projects = defaultDBProjectRetrieval.retrieveProjects\par
+\pard\fi720\li1440 (\cf5 new\cf0  long[] \{ 1, 100 \});\par
+\pard     \tab System.out.println(projects.length);\par
+    \tab System.out.println(projects[0].getName());\par
+\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0\fs20 4.3.5\tab Retrieve projects by name and version\par
+\pard\i0\f3\fs18\par
+\pard\fi720\cf6 // There might be more than one with this name and version (e.g., different catalog)\par
+\pard     \tab\cf0 ExternalProject[] projects = defaultDBProjectRetrieval.retrieveProject\par
+\pard\fi720\li1440 (\cf7 "Project A"\cf0 , \cf7 "Version 1"\cf0 );\par
+\pard     \tab\par
+    \tab for (int i = 0; i < projects.length; ++i) \{\par
+\tab     \tab\cf6 // Outputs the info of each project.\par
+    \tab\tab\cf0 ExternalProject project = projects[i];\par
+\tab     \tab System.out.println(project.getId());\par
+\tab     \tab System.out.println(project.getName());\par
+\tab     \tab System.out.println(project.getVersion());\par
+\tab     \tab System.out.println(project.getCatalogId());\par
+\tab     \tab System.out.println(project.getForumId());\line\cf1     \tab\tab System.out.println(project.getShortDescription());\par
+    \tab\tab System.out.println(project.getFunctionalDescription());\line\tab\tab String[] tech = project.getTechnologies(); // should not be null\line       \tab\tab for(int t = 0; t < tech.length; t++)\line            \tab\tab System.out.println(\ldblquote Uses technology: \ldblquote  + tech[\cf2 t\cf1 ]);\par
+\cf0\par
+    \tab\}\par
+\par
+    \tab\cf6 // Should only have a maximum of 2 entries but the order may vary.\par
+    \tab\cf0 ExternalProject[] projects2 = defaultDBProjectRetrieval.retrieveProjects(\par
+    \tab\tab\tab\cf5 new\cf0  String[] \{ \cf7 "Project A"\cf0 , \cf7 "Project C"\cf0  \},\par
+    \tab\tab\tab\cf5 new\cf0  String[] \{ \cf7 "Version 1"\cf0 , \cf7 "Version 2"\cf0  \});\par
+    \tab\cf6 // Should get only one.\par
+    \tab\cf0 System.out.println(projects2.length);\par
+    \tab System.out.println(projects2[0].getName());\par
+\par
+\f1\fs20\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b\f0 5.\tab Future Enhancements\par
+\pard\fi-360\li720\tx720\b0\f4\'b7\tab\f0 Other implementations of the \f2\fs18 UserRetrieval\f0\fs20  interface e.g., XML (e.g., from the TopCoder XML user feed) or based on Hibernate\f1 .\par
+\pard\li360\par
+\pard\fi-360\li720\tx720\f4\'b7\tab\f0 Other implementations of the \f2\fs18 ProjectRetrieval\f0\fs20  interface e.g., based on Hibernate.\f1\par
+\pard\li360\par
+\pard\fi-360\li720\tx720\f4\'b7\tab\f0 Create a factory to instantiate implementations of the \f2\fs18 UserRetrieval\f0\fs20  or \f2\fs18 ProjectRetrieval\f0\fs20  interfaces using the TopCoder Object Factory component\f1 .\par
+\pard\li360\par
+\pard\fi-360\li720\tx720\f4\'b7\tab\f0 Create versions of the retrieval interfaces that cache their values (especially for the \f2\fs18 UserRetrieval\f0\fs20  interface) to avoid hitting the database for every query.  It is unknown how frequently the user or project information is updated or how \ldblquote fresh\rdblquote  the data is required to be, which is why this was not modeled in this version.\f1\par
+\pard\par
+\pard\fi-360\li720\tx720\f4\'b7\tab\f0 Integrate with the TopCoder Search Builder component for even more complex searches.  \f1\par
+\pard\par
+\pard\fi-360\li720\tx720\f4\'b7\tab\f0 Creating completely thread-safe versions of the \f2\fs18 *Impl\f0\fs20  classes.\par
+\pard\f1\par
+}
+ 

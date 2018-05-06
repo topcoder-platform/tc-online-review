@@ -1,0 +1,32 @@
+<?xml version ="1.0" ?>
+<CMConfig>
+	<Config name="optional.missing">
+	</Config>
+
+	<Config name="optional.configured">
+		<Property name="property">
+			<Value>value</Value>
+		</Property>
+	</Config>
+
+	<Config name="required.missing">
+	</Config>
+
+	<Config name="required.empty">
+		<Property name="property">
+			<Value></Value>
+		</Property>
+	</Config>
+
+	<Config name="required.blank">
+		<Property name="property">
+			<Value> </Value>
+		</Property>
+	</Config>
+
+	<Config name="required.configured">
+		<Property name="property">
+			<Value>value</Value>
+		</Property>
+	</Config>
+</CMConfig>

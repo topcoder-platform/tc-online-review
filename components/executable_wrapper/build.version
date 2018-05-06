@@ -1,0 +1,9 @@
+#property file defining the components information
+component.name=Executable Wrapper
+component.distfilename=executable_wrapper
+component.package=com.topcoder.util.exec
+component.packagedir=com/topcoder/util/exec
+component.version.major=1
+component.version.minor=0
+component.version.micro=1
+component.version.build=1

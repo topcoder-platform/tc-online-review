@@ -1,0 +1,9 @@
+#property file defining the components information
+component.name=GUID Generator
+component.distfilename=guid_generator
+component.package=com.topcoder.util.generator.guid
+component.packagedir=com/topcoder/util/generator/guid
+component.version.major=1
+component.version.minor=0
+component.version.micro=1
+component.version.build=1

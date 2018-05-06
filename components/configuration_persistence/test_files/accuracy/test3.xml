@@ -1,0 +1,7 @@
+<CMConfig>
+<Config name="namespace">
+  <Property name="test1">
+   <Value>Value</Value>
+  </Property>
+</Config>
+</CMConfig>

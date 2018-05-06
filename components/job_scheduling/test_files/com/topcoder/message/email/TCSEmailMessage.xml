@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<CMConfig>
+	<!--
+		Configuration used for accuracy tests.
+	-->
+  <Property name="Priorities">
+
+      <!-- The same as defualt -->
+	  <Property name="highest">
+    	<Value>Priority:urgent</Value>
+    	<Value>X-Priority:1 (Highest)</Value>
+    	<Value>X-MSMail-Priority:Highest</Value>
+      </Property>
+
+      <!-- Priority was changed to Y-Priority
+           urgent was changed to very urgent
+           X-MSMail-Priority to X-MYMail-Priority -->
+	  <Property name="high">
+		<Value>Y-Priority:very urgent</Value>
+		<Value>X-Priority:2 (High)</Value>
+		<Value>X-MYMail-Priority:High</Value>
+      </Property>
+
+      <!-- empty for X-Priority -->
+	  <Property name="normal">
+		<Value>Priority:normal</Value>
+		<Value>X-Priority:</Value>
+		<Value>X-MSMail-Priority:Normal</Value>
+      </Property>
+
+      <!-- place holder -->
+	  <Property name="low">
+		<Value></Value>
+      </Property>
+
+      <!-- 5 (Lowest) changed to The lowest-->
+	  <Property name="lowest">
+		<Value>Priority:non-urgent</Value>
+		<Value>Z-Priority:The lowest</Value>
+      </Property>
+
+      <!-- none level -->
+      <Property name="none">
+        <Value>X-Priority:None Priority</Value>
+        <Value>Y-Priority:None Priority</Value>
+      </Property>
+  </Property>
+</CMConfig>

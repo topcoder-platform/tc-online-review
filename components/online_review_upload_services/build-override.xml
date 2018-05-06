@@ -1,0 +1,92 @@
+<project name="Override Macrodef Standard Behaviour Import" basedir=".">
+    <!-- macrodef override definition in order to change the standard behaviour -->
+
+    <!-- name of build war -->
+    <property name="axis.war" value="${builddir}/axis.war"/>
+
+    <!-- path to axis deployment descriptor -->
+    <property name="deploy.wsdd" value="${testfiles}/deploy.wsdd"/>
+    <!-- path to axis deployment descriptor -->
+    <property name="undeploy.wsdd" value="${testfiles}/undeploy.wsdd"/>
+    
+    <!-- adds to classpath all libraries required by axis -->
+    <path id="axis-all.classpath">
+        <fileset dir="${axis.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <taskdef resource="axis-tasks.properties"
+             classpathref="axis-all.classpath"/>
+
+    <!-- deploys war to tomcat by simpling coping it into webapps directory -->
+    <target name="deploy_tomcat" depends="war">
+        <sequential>
+            <copy file="${axis.war}" todir="${tomcat.home}/webapps"/>
+        </sequential>
+    </target>
+
+    <!-- deploys axis service -->
+    <target name="deploy_service">
+        <axis-admin
+                port="${tomcat.port}"
+                hostname="${tomcat.server}"
+                failonerror="true"
+                servletpath="${axis.appname}/services/AdminService"
+                debug="true"
+                xmlfile="${deploy.wsdd}"
+                />
+    </target>
+
+    <!-- Creates a war used for testing -->
+    <target name="war" depends="compile_tests">
+        <property name="test_reflibs_temp_dir" value="test_reflibs_temp_dir"/>
+        <mkdir dir="${test_reflibs_temp_dir}"/>
+
+        <!--Create a temporary directory where to store the .jar files from test_reflibs/-->
+        <!--directory because in WEB-INF/ directory of the .war archive the .jar files must-->
+        <!--be copied flatten  so <code>lib dir="${basedir}/${test_reflib}"</code> is not an option.-->
+        <copy file="${workdays.jar}" todir="${test_reflibs_temp_dir}"/>
+        <copy file="${typesafe_enum.jar}" todir="${test_reflibs_temp_dir}"/>
+        <copy file="${object_formatter.jar}" todir="${test_reflibs_temp_dir}"/>
+        <copy file="${database_abstraction.jar}" todir="${test_reflibs_temp_dir}"/>
+        <copy file="${javamail.jar}" todir="${test_reflibs_temp_dir}"/>
+        <copy file="${ifxjdbc.jar}" todir="${test_reflibs_temp_dir}"/>
+
+        <!-- package everything into war -->
+        <war destfile="${axis.war}" basedir="${testfiles}/axis">
+            <!--<webinf dir="${testfiles}/axis/WEB-INF"/>            -->
+
+            <!-- include configuration files -->
+            <classes dir="${testfiles}/conf"/>
+            <!-- include all classes used by this component -->
+            <classes dir="${build_classdir}"/>
+            <classes dir="${build_testclassdir}"/>            
+
+            <!-- add all required libraries into build war -->
+            <lib file="${configuration_manager.jar}"/>
+            <lib file="${configuration_api.jar}"/>
+            <lib file="${object_factory.jar}"/>
+            <lib file="${object_factory_config_manager_plugin.jar}"/>
+            <lib file="${base_exception.jar}"/>
+            <lib file="${logging_wrapper.jar}"/>
+            <lib file="${search_builder.jar}"/>
+            <lib file="${phase_management.jar}"/>
+            <lib file="${project_phases.jar}"/>
+            <lib file="${resource_management.jar}"/>
+            <lib file="${project_management.jar}"/>
+            <lib file="${deliverable_management.jar}"/>
+            <lib file="${auto_screening_management.jar}"/>
+            <lib file="${guid_generator.jar}"/>
+            <lib file="${user_project_data_store.jar}"/>
+            <lib file="${db_connection_factory.jar}"/>
+
+            <lib file="${activation.jar}"/>
+
+            <lib dir="${test_reflibs_temp_dir}"/>
+        </war>
+        <!-- Remove temporary directory holding the libs from test_reflibs directory. -->
+        <delete dir="${test_reflibs_temp_dir}"/>
+    </target>
+
+</project>

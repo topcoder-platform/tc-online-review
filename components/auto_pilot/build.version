@@ -1,0 +1,9 @@
+#property file defining the component's information
+component.name=Auto Pilot
+component.distfilename=auto_pilot
+component.package=com.topcoder.management
+component.packagedir=com/topcoder/management
+component.version.major=1
+component.version.minor=0
+component.version.micro=2
+component.version.build=1

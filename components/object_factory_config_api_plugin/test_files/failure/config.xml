@@ -1,0 +1,345 @@
+<CMConfig>
+
+<Config name="Valid">
+	<Property name="frac:default">
+		<Property name="type">
+			<Value>java.lang.String</Value>
+		</Property>
+	</Property>
+</Config>
+
+<Config name="MissingType">
+	<Property name="frac:default">
+		<!-- missing type
+		<Property name="type">
+			<Value>java.lang.String</Value>
+		</Property>
+		-->
+		<Property name="params">
+			<Property name="param1">
+				<Property name="type">
+                    <Value>String</Value>
+                </Property>
+                <Property name="value">
+                    <Value>str</Value>
+                </Property>
+            </Property>
+		</Property>
+	</Property>
+</Config>
+
+
+<Config name="MissingParamType">
+	<Property name="frac:default">
+		<Property name="type">
+			<Value>java.lang.String</Value>
+		</Property>
+		<Property name="params">
+			<Property name="param1">
+				<!-- missing type
+				<Property name="type">
+                    <Value>String</Value>
+                </Property>
+				-->
+                <Property name="value">
+                    <Value>str</Value>
+                </Property>
+            </Property>
+		</Property>
+	</Property>
+</Config>
+
+<Config name="MissingParamValue">
+	<Property name="frac:default">
+		<Property name="type">
+			<Value>java.lang.Integer</Value>
+		</Property>
+		<Property name="params">
+			<Property name="param1">
+				<Property name="type">
+                    <Value>int</Value>
+                </Property>
+				<!-- simple type missing value
+                <Property name="value">
+                    <Value>str</Value>
+                </Property>
+				-->
+            </Property>
+		</Property>
+	</Property>
+</Config>
+
+<Config name="ParamName">
+	<Property name="frac:default">
+		<Property name="type">
+			<Value>java.lang.String</Value>
+		</Property>
+		<Property name="params">
+			<Property name="param1">
+				<Property name="type">
+                    <Value>String</Value>
+                </Property>
+                <Property name="value">
+                    <Value>str</Value>
+                </Property>
+				<!-- simple type has name property -->
+				<Property name="name">
+                    <Value>str</Value>
+                </Property>
+				<!-- the end -->
+            </Property>
+		</Property>
+	</Property>
+</Config>
+
+<Config name="InvalidType">
+	<Property name="frac:default">
+		<!-- invalid type -->
+		<Property name="type">
+			<Value>inexistent</Value>
+		</Property>
+		<Property name="params">
+			<Property name="param1">
+				<Property name="type">
+                    <Value>int</Value>
+                </Property>
+                <Property name="value">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+		</Property>
+	</Property>
+</Config>
+
+<Config name="InvalidParamType">
+	<Property name="frac:default">
+		<Property name="type">
+			<Value>java.lang.String</Value>
+		</Property>
+		<Property name="params">
+			<Property name="param1">
+				<!-- invalid type -->
+				<Property name="type">
+                    <Value>inexistent</Value>
+                </Property>
+                <Property name="value">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+		</Property>
+	</Property>
+</Config>
+
+<Config name="InvalidArrayType">
+	<Property name="intArray:default">
+		<!-- invalid type -->
+		<Property name="arrayType">
+			<Value>inexistent</Value>
+		</Property>
+		<Property name="dimension">
+			<Value>1</Value>
+		</Property>
+		<Property name="values">
+			<Value>{1,2}</Value>
+		</Property>
+	</Property>
+</Config>
+
+<Config name="ArrayDimensionMismatch">
+	<Property name="intArray:default">
+		<Property name="arrayType">
+			<Value>int</Value>
+		</Property>
+		<!-- dimension and values not match -->
+		<Property name="dimension">
+			<Value>3</Value>
+		</Property>
+		<Property name="values">
+			<Value>{1,2}</Value>
+		</Property>
+	</Property>
+</Config>
+
+<Config name="NegativeDimension">
+	<Property name="intArray:default">
+		<Property name="arrayType">
+			<Value>int</Value>
+		</Property>
+		<!-- negative dimension -->
+		<Property name="dimension">
+			<Value>-1</Value>
+		</Property>
+		<Property name="values">
+			<Value>{1,2}</Value>
+		</Property>
+	</Property>
+</Config>
+
+<Config name="NonIntegerDimension">
+	<Property name="intArray:default">
+		<Property name="arrayType">
+			<Value>int</Value>
+		</Property>
+		<!-- non-integer -->
+		<Property name="dimension">
+			<Value>aaa</Value>
+		</Property>
+		<Property name="values">
+			<Value>{1,2}</Value>
+		</Property>
+	</Property>
+</Config>
+
+<Config name="InvalidArrayValues">
+	<Property name="intArray:default">
+		<Property name="arrayType">
+			<Value>int</Value>
+		</Property>
+		<Property name="dimension">
+			<Value>1</Value>
+		</Property>
+		<!-- invalid values -->
+		<Property name="values">
+			<Value>{1,2}}}</Value>
+		</Property>
+	</Property>
+</Config>
+
+<Config name="InvalidArrayValue">
+	<Property name="intArray:default">
+		<Property name="arrayType">
+			<Value>int</Value>
+		</Property>
+		<Property name="dimension">
+			<Value>2</Value>
+		</Property>
+		<!-- invalid values -->
+		<Property name="values">
+			<Value>{{1,},{3,4}}</Value>
+		</Property>
+	</Property>
+</Config>
+
+<Config name="InvalidArrayValueSizes">
+	<Property name="intArray:default">
+		<Property name="arrayType">
+			<Value>int</Value>
+		</Property>
+		<Property name="dimension">
+			<Value>2</Value>
+		</Property>
+		<!-- invalid values -->
+		<Property name="values">
+			<Value>{{1},{3,4}}</Value>
+		</Property>
+	</Property>
+</Config>
+
+<Config name="MissingArrayType">
+	<Property name="intArray:default">
+		<!-- miss array type
+		<Property name="arrayType">
+			<Value>int</Value>
+		</Property>
+		-->
+		<Property name="dimension">
+			<Value>1</Value>
+		</Property>
+		<Property name="values">
+			<Value>{1,2}</Value>
+		</Property>
+	</Property>
+</Config>
+
+<Config name="MissingDimension">
+	<Property name="intArray:default">
+		<Property name="arrayType">
+			<Value>int</Value>
+		</Property>
+		<!-- missing dimension
+		<Property name="dimension">
+			<Value>1</Value>
+		</Property>
+		-->
+		<Property name="values">
+			<Value>{1,2}</Value>
+		</Property>
+	</Property>
+</Config>
+
+<Config name="MissingArrayValues">
+	<Property name="intArray:default">
+		<Property name="arrayType">
+			<Value>int</Value>
+		</Property>
+		<Property name="dimension">
+			<Value>1</Value>
+		</Property>
+		<!-- missing values
+		<Property name="values">
+			<Value>{1,2}</Value>
+		</Property>
+		-->
+	</Property>
+</Config>
+
+<Config name="NullArrayValue">
+	<Property name="intArray:default">
+		<Property name="arrayType">
+			<Value>int</Value>
+		</Property>
+		<Property name="dimension">
+			<Value>1</Value>
+		</Property>
+		<!-- simple type array contains null -->
+		<Property name="values">
+			<Value>{1,2,null}</Value>
+		</Property>
+	</Property>
+</Config>
+
+
+<Config name="CircularReference">
+
+	<Property name="frac:default">
+		<Property name="type">
+			<Value>java.lang.String</Value>
+		</Property>
+		<Property name="params">
+			<Property name="param1">
+				<Property name="name">
+                    <Value>frac</Value>
+                </Property>
+			</Property>
+		</Property>
+	</Property>
+
+	<Property name="frac">
+		<Property name="type">
+			<Value>java.lang.StringBuffer</Value>
+		</Property>
+		<Property name="params">
+			<Property name="param1">
+				<Property name="name">
+                    <Value>frac:default</Value>
+                </Property>
+            </Property>
+		</Property>
+	</Property>
+
+</Config>
+<Config name="MissingReference">
+	<Property name="frac:default">
+		<Property name="type">
+			<Value>java.lang.String</Value>
+		</Property>
+		<Property name="params">
+			<Property name="param1">
+				<Property name="name">
+                    <Value>intArray</Value>
+                </Property>
+			</Property>
+		</Property>
+	</Property>
+</Config>
+</CMConfig>

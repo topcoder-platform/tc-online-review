@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<Properties>
+  <Property name="context.default.factory">com.sun.jndi.fscontext.RefFSContextFactory</Property> 
+  <Property name="context.default.url">file:test_files/stress/tests</Property> 
+  <Property name="context.ldap.factory">com.sun.jndi.ldap.LdapCtxFactory</Property> 
+  <Property name="context.ldap.url">ldap://openldap.org:389</Property> 
+  <Property name="context.test.factory">com.sun.jndi.fscontext.RefFSContextFactory</Property> 
+  <Property name="context.test.url">file:test_files/stress/tests</Property> 
+  </Properties>

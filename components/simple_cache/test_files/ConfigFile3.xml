@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+
+<!-- 	This is a configuration file for SimpleCache component ver 2.0
+	IllegalArgumentException should be thrown.
+-->
+
+
+<CMConfig>
+<Config name="com.topcoder.util.cache.ConfigFile3">
+
+    	<Property name="MaxCacheSize">
+      	<Value>0</Value>
+    	</Property>
+
+	<!-- 	maximum number of memory bytes that all the entries are allowed
+ 	     	This is a posisitive long value
+		Optional. Defaults to long infinity 
+	-->
+    	<Property name="MaxCacheByteCapacity">
+      	<Value>0</Value>
+    	</Property>
+
+	<!-- 	Cache refresh interval after which the cache entries will be refreshed
+		Optional. Defaults to no timeout 
+	-->
+    	<Property name="TimeoutMS">
+      	<Value>0</Value>
+    	</Property>
+
+ </Config>
+</CMConfig>

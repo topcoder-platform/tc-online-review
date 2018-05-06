@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<ConfigManager>
+	<!-- The default namespace for configuration of the CalculationManager -->
+	<Config name="com.topcoder.management.review.scorecalculator.CalculationManager">
+		<!-- This property defines whether the caching should be used -->
+		<Property name="use_caching">
+			<Value>true</Value>
+		</Property>
+
+		<!-- This property defines the ScorecardMatrixBuilder class to use -->
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+		</Property>
+
+		<!-- This property defines configured calculators -->
+		<Property name="calculators">
+			<!-- This is the configuration for the yes/no question type -->
+			<Property name="binaryCalculator">
+				<!-- This sub-property describes the question type id -->
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+
+				<!-- This sub-property describes the class name for the calculator -->
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+				</Property>
+
+				<!-- This sub-property describes the configuration namespace for the calculator -->
+				<Property name="namespace">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+				</Property>
+			</Property>
+
+			<!-- This is the configuration for the scale 4 question type -->
+			<Property name="scale4Calculator">
+				<Property name="question_type">
+					<Value>2</Value>
+				</Property>
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
+				</Property>
+				<Property name="namespace">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator1</Value>
+				</Property>
+			</Property>
+
+			<!-- This is the configuration for the scale 10 question type -->
+			<Property name="scale10Calculator">
+				<Property name="question_type">
+					<Value>3</Value>
+				</Property>
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
+				</Property>
+				<Property name="namespace">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator2</Value>
+				</Property>
+			</Property>
+
+			<!-- This is the configuration for the dynamic question type -->
+			<Property name="dynamicCalculator">
+				<Property name="question_type">
+					<Value>4</Value>
+				</Property>
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<!-- This namespace contains additional configuration for the binary calculator -->
+	<Config name="com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator">
+		<!-- This property defines the positive answer to use -->
+		<Property name="positive_answer">
+			<Value>Yes</Value>
+		</Property>
+
+		<!-- This property defines the negative answer to use -->
+		<Property name="negative_answer">
+			<Value>No</Value>
+		</Property>
+	</Config>
+
+	<!-- This namespace contains additional configuration for scale 4 calculator -->
+	<Config name="com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator1">
+		<!-- This property defines the scale to use -->
+		<Property name="default_scale">
+			<Value>4</Value>
+		</Property>
+	</Config>
+
+	<!-- This namespace contains additional configuration for scale 10 calculator -->
+	<Config name="com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator2">
+		<!-- This property defines the scale to use -->
+		<Property name="default_scale">
+			<Value>10</Value>
+		</Property>
+	</Config>
+</ConfigManager>

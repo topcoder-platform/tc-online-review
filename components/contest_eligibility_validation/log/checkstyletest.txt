@@ -1,0 +1,53 @@
+Starting audit...
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:347:13: '<' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:347:14: '<' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:347:32: '>' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:347:63: '<' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:347:64: '<' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:347:82: '>' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:347:83: '>' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:374:13: '<' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:374:14: '<' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:374:32: '>' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:374:63: '<' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:374:64: '<' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:374:82: '>' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:374:83: '>' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:391:13: '<' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:391:14: '<' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:391:32: '>' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:391:63: '<' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:391:64: '<' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:391:82: '>' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:391:83: '>' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:423:13: '<' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:423:14: '<' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:423:32: '>' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:423:63: '<' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:423:64: '<' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:423:82: '>' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:423:83: '>' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:444:13: '<' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:444:14: '<' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:444:32: '>' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:444:63: '<' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:444:64: '<' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:444:82: '>' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:444:83: '>' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:467:13: '<' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:467:14: '<' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:467:32: '>' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:467:63: '<' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:467:64: '<' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:467:82: '>' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\ContestEligibilityValidationManagerBeanTests.java:467:83: '>' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\DemoTest.java:97:13: '<' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\DemoTest.java:97:14: '<' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\DemoTest.java:97:32: '>' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\DemoTest.java:97:63: '<' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\DemoTest.java:97:64: '<' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\DemoTest.java:97:82: '>' is not preceded with whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\DemoTest.java:97:83: '>' is not followed by whitespace.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\MockEligibilityValidator.java:0: Got an exception - java.lang.RuntimeException: Unable to get class information for @throws tag 'ContestEligibilityValidatorException'.
+C:\contest_eligibility_validation_1.0.0_dev_dist\src\java\tests\com\topcoder\service\contest\eligibilityvalidation\UnitTests.java:18: Type Javadoc tag @author must match pattern '^TCSDEVELOPER$'.
+Audit done.

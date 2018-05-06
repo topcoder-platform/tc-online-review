@@ -1,0 +1,10 @@
+1. Make the table compatible with older version.
+it now work like this:
+
+if (object instanceof BigDecimal) {
+	//older version
+} else {
+	//3.0.1
+}
+
+2. Update the test case, fix some test error problem.

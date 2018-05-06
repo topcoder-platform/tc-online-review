@@ -1,0 +1,14 @@
+<p>
+%PHASE_TIMESTAMP{Phase timestamp}%<br/>
+Handle\: %USER_HANDLE{User handle}%<br/>
+Contest\: <a href\="%OR_LINK%">%PROJECT_NAME{Project name}%</a><br/>
+Version\: %PROJECT_VERSION{Project version}%<br/>
+This is the notification about %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.<br/>
+
+Review results\:<br/>
+Handle		Score<br/>
+
+%loop:SUBMITTER%
+%SUBMITTER_HANDLE%	%SUBMITTER_SCORE%<br/>
+%endloop%
+</p>

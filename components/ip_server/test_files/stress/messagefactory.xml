@@ -1,0 +1,7 @@
+<CMConfig>
+	<Property name="MessageTypes">
+		<Property name="message">
+			<Value>com.topcoder.processor.ipserver.message.serializable.SimpleSerializableMessage</Value>
+		</Property>
+	</Property>
+</CMConfig>

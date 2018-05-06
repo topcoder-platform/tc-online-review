@@ -1,0 +1,18 @@
+<!-- The PlaceAssignmentAlgorithm property is missing. -->
+<Config name="invalid4">
+  <Property name="ScoreAggregationAlgorithm:default">
+    <Property name="type">
+      <Value>com.topcoder.management.review.scoreaggregator.impl.AveragingAggregationAlgorithm</Value>
+    </Property>
+  </Property>
+  <Property name="TieDetector:default">
+    <Property name="type">
+      <Value>com.topcoder.management.review.scoreaggregator.impl.StandardTieDetector</Value>
+    </Property>
+  </Property>
+  <Property name="TieBreaker:default">
+    <Property name="type">
+      <Value>com.topcoder.management.review.scoreaggregator.impl.StandardTieBreaker</Value>
+    </Property>
+  </Property>
+</Config>

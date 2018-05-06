@@ -1,0 +1,25 @@
+---------------------------------------------------------------------------------
+ Test Setup
+---------------------------------------------------------------------------------
+
+- All the required steps to set up the test environment has been described in Component Specification in section 4.1,
+  I have automated the deployment phase, all you need to do is change the build-dependencies.xml
+  properties and than run ant deploy_tomcat also if your Tomcat server doesn't run on your machine or on the local
+  port 8080 please update the value of END_POINT field in TestHelper.java file to match with your configuration 
+- Note: that to run all the test you will have to set up the database required by user_project_data_store,
+  the ddl script can be found in test_files/dbschema.sql.
+
+- Both the axis and conf directories are used when the axis.war is being build
+- The axis directory contains web distribution of axis 1.4 (including some sample code - you may
+  remove that if you want to) 
+- The conf contains configuration files used by this component, they will be added to axis.war
+- The upload directory is used by test cases to create there temporary files.
+
+- In the test_files directory you will find deliverable_management version 1.1 used by this component.
+
+---------------------------------------------------------------------------------
+ Comments
+---------------------------------------------------------------------------------
+Please not that for unknown to project manager reason the implementation of the previous version changed a bit
+comparing to original specification, so this will required to modify the appropriate accuracy/failure test.
+Please see thread: http://forums.topcoder.com/?module=Thread&threadID=679913&start=0.

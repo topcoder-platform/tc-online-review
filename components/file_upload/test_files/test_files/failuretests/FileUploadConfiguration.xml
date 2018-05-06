@@ -1,0 +1,82 @@
+<CMConfig>
+	<Config name="com.topcoder.servlet.request.failuretests.SingleFileLimitPropertyEmpty">
+		<Property name="single_file_limit">
+			<Value> </Value>
+		</Property>
+		<Property name="total_file_limit">
+			<Value>200</Value>
+		</Property>
+	</Config>
+	<Config name="com.topcoder.servlet.request.failuretests.SingleFileLimitPropertyNotNumber">
+		<Property name="single_file_limit">
+			<Value>1a</Value>
+		</Property>
+		<Property name="total_file_limit">
+			<Value>200</Value>
+		</Property>
+	</Config>
+	<Config name="com.topcoder.servlet.request.failuretests.SingleFileLimitPropertyInvalidLongFormat">
+		<Property name="single_file_limit">
+			<Value>1.1</Value>
+		</Property>
+		<Property name="total_file_limit">
+			<Value>200</Value>
+		</Property>
+	</Config>
+	<Config name="com.topcoder.servlet.request.failuretests.SingleFileLimitPropertyTooBig">
+		<Property name="single_file_limit">
+			<Value>22222222224564562222222222222222222224444444444</Value>
+		</Property>
+		<Property name="total_file_limit">
+			<Value>200</Value>
+		</Property>
+	</Config>
+	<Config name="com.topcoder.servlet.request.failuretests.SingleFileLimitPropertyTooSmall">
+		<Property name="single_file_limit">
+			<Value>-2</Value>
+		</Property>
+		<Property name="total_file_limit">
+			<Value>200</Value>
+		</Property>
+	</Config>
+	<Config name="com.topcoder.servlet.request.failuretests.TotalFileLimitPropertyEmpty">
+		<Property name="single_file_limit">
+			<Value>100</Value>
+		</Property>
+		<Property name="total_file_limit">
+			<Value> </Value>
+		</Property>
+	</Config>
+	<Config name="com.topcoder.servlet.request.failuretests.TotalFileLimitPropertyNotNumber">
+		<Property name="single_file_limit">
+			<Value>100</Value>
+		</Property>
+		<Property name="total_file_limit">
+			<Value>1a</Value>
+		</Property>
+	</Config>
+	<Config name="com.topcoder.servlet.request.failuretests.TotalFileLimitPropertyInvalidLongFormat">
+		<Property name="single_file_limit">
+			<Value>100</Value>
+		</Property>
+		<Property name="total_file_limit">
+			<Value>1.1</Value>
+		</Property>
+	</Config>
+	<Config name="com.topcoder.servlet.request.failuretests.TotalFileLimitPropertyTooBig">
+		<Property name="single_file_limit">
+			<Value>100</Value>
+		</Property>
+		<Property name="total_file_limit">
+			<Value>111111111111111111111111111111111111111111111111111111111111111111111111111</Value>
+		</Property>
+	</Config>
+	<Config name="com.topcoder.servlet.request.failuretests.TotalFileLimitPropertyTooSmall">
+		<Property name="single_file_limit">
+			<Value>100</Value>
+		</Property>
+		<Property name="total_file_limit">
+			<Value>-2</Value>
+		</Property>
+	</Config>
+</CMConfig>

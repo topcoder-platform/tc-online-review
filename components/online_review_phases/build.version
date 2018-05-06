@@ -1,0 +1,9 @@
+#property file defining the components information
+component.name=Online Review Phases
+component.distfilename=online_review_phases
+component.package=com.cronos.onlinereview.phases
+component.packagedir=com/cronos/onlinereview/phases
+component.version.major=1
+component.version.minor=8
+component.version.micro=6
+component.version.build=1

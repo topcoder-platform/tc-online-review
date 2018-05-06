@@ -1,0 +1,751 @@
+<CMConfig>
+    <Config name="com.topcoder.management.review.assignment">
+        <!-- the DB Connection Factory configuration. This can be changed -->
+        <Property name="dbConnectionFactoryConfig">
+            <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+                <Property name="connections">
+                    <Property name="default">
+                        <Value>accuracyDB</Value>
+                    </Property>
+                    <Property name="accuracyDB">
+                        <Property name="producer">
+                            <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                        </Property>
+                        <Property name="parameters">
+                            <Property name="jdbc_driver">
+                                <Value>com.informix.jdbc.IfxDriver</Value>
+                            </Property>
+                            <Property name="jdbc_url">
+                                <Value>jdbc:informix-sqli://localhost:2021/tcs_catalog:informixserver=informixoltp_tcp</Value>
+                            </Property>
+                            <Property name="user">
+                                <Value>informix</Value>
+                            </Property>
+                            <Property name="password">
+                                <Value>1nf0rm1x</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+
+        <!-- To send emails from. This can be changed -->
+        <Property name="emailSender">
+            <Value>isv@test.com</Value>
+        </Property>
+
+        <!-- To send emails to. This can be changed -->
+        <Property name="sampleEmailRecipient">
+            <Value>isv@test.com</Value>
+        </Property>
+
+
+        <!-- The below properties should not be changed -->
+        <Property name="loggerName">
+            <Value>accuracyLogger</Value> <!-- Do not change this -->
+        </Property>
+
+        <Property name="minimumFeedbacks">
+            <Value>2</Value> <!-- Do not change this -->
+        </Property>
+
+        <Property name="defaultRating">
+            <Value>1.5</Value> <!-- Do not change this -->
+        </Property>
+
+        <Property name="connectionName">
+            <Value>accuracyDB</Value> <!-- Do not change this -->
+        </Property>
+
+        <Property name="userRetrievalKey">
+            <Value>userRetrievalObjectFactoryKey</Value>
+        </Property>
+
+        <Property name="resourceManagerKey">
+            <Value>resourceManagerObjectFactoryKey</Value>
+        </Property>
+
+        <Property name="phaseManagerKey">
+            <Value>phaseManagerObjectFactoryKey</Value>
+        </Property>
+
+        <Property name="approvedApplicantEmailSubjectTemplateText">
+            <Value>Your review application has been approved</Value>
+        </Property>
+
+        <Property name="approvedApplicantEmailBodyTemplatePath">
+            <Value>test_files/accuracy/templates/acceptedApplicantsEmail.txt</Value>
+        </Property>
+
+        <Property name="rejectedApplicantEmailSubjectTemplateText">
+            <Value>Your review application has been rejected</Value>
+        </Property>
+
+        <Property name="rejectedApplicantEmailBodyTemplatePath">
+            <Value>test_files/accuracy/templates/rejectedApplicantsEmail.txt</Value>
+        </Property>
+
+        <Property name="managerEmailSubjectTemplateText">
+            <Value>Reviewers have been assigned to your project</Value>
+        </Property>
+
+        <Property name="managerApplicantEmailBodyTemplatePath">
+            <Value>test_files/accuracy/templates/managersEmail.txt</Value>
+        </Property>
+
+        <Property name="managerResourceRoleIds">
+            <Value>13</Value>
+            <Value>14</Value>
+            <Value>15</Value>
+        </Property>
+
+        <Property name="registrationDateFormatString">
+            <Value>MM.dd.yyyy hh:mm</Value>
+        </Property>
+
+        <Property name="forumsBeanUrl">
+            <Value>forumsBeanUrl</Value>
+        </Property>
+
+        <Property name="forumsBeanFactory">
+            <Value>com.topcoder.management.review.assignment.MockInitialContextFactory</Value>
+        </Property>
+
+        <Property name="forumsBeanName">
+            <Value>forumsBeanName</Value>
+        </Property>
+
+        <Property name="operator">
+            <Value>1</Value>
+        </Property>
+
+        <Property name="phaseTypeExtensionRules">
+            <Property name="3">
+                <Value>3000000</Value>
+            </Property>
+            <Property name="4">
+                <Value>4000000</Value>
+            </Property>
+        </Property>
+
+        <Property name="reviewAssignmentAlgorithmKey">
+            <Value>reviewAssignmentAlgorithmObjectFactoryKey</Value>
+        </Property>
+
+        <Property name="reviewAssignmentProjectManagerKey">
+            <Value>reviewAssignmentProjectManagerObjectFactoryKey</Value>
+        </Property>
+
+        <Property name="reviewAssignmentNotificationManagerKey">
+            <Value>reviewAssignmentNotificationManagerObjectFactoryKey</Value>
+        </Property>
+
+        <Property name="reviewApplicationManagerKey">
+            <Value>reviewApplicationManagerObjectFactoryKey</Value>
+        </Property>
+
+        <Property name="reviewAuctionManagerKey">
+            <Value>reviewAuctionManagerObjectFactoryKey</Value>
+        </Property>
+
+        <Property name="projectManagerKey">
+            <Value>projectManagerObjectFactoryKey</Value>
+        </Property>
+
+        <Property name="pendingReviewApplicationStatusId">
+            <Value>1</Value>
+        </Property>
+
+        <Property name="approvedReviewApplicationStatusId">
+            <Value>3</Value>
+        </Property>
+
+        <Property name="rejectedReviewApplicationStatusId">
+            <Value>4</Value>
+        </Property>
+
+        <Property name="objectFactoryConfig">
+            <Property name="userRetrievalObjectFactoryKey">
+                <Property name="type">
+                    <Value>com.cronos.onlinereview.external.impl.DBUserRetrieval</Value>
+                </Property>
+                <Property name="params">
+                    <Property name="param1">
+                        <Property name="name">
+                            <Value>dbConnectionFactoryObjectFactoryKey</Value>
+                        </Property>
+                    </Property>
+                    <Property name="param2">
+                        <Property name="type">
+                            <Value>String</Value>
+                        </Property>
+                        <Property name="value">
+                            <Value>accuracyDB</Value>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="dbConnectionFactoryObjectFactoryKey">
+                <Property name="type">
+                    <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                </Property>
+                <Property name="params">
+                    <Property name="param1">
+                        <Property name="type">
+                            <Value>String</Value>
+                        </Property>
+                        <Property name="value">
+                            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="resourcePersistenceObjectFactoryKey">
+                <Property name="type">
+                    <Value>com.topcoder.management.resource.persistence.sql.SqlResourcePersistence</Value>
+                </Property>
+                <Property name="params">
+                    <Property name="param1">
+                        <Property name="name">
+                            <Value>dbConnectionFactoryObjectFactoryKey</Value>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="searchBundleManagerObjectFactoryKey">
+                <Property name="type">
+                    <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+                </Property>
+                <Property name="params">
+                    <Property name="param1">
+                        <Property name="type">
+                            <Value>String</Value>
+                        </Property>
+                        <Property name="value">
+                            <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="resourceManagerObjectFactoryKey">
+                <Property name="type">
+                    <Value>com.topcoder.management.resource.persistence.PersistenceResourceManager</Value>
+                </Property>
+                <Property name="params">
+                    <Property name="param1">
+                        <Property name="name">
+                            <Value>resourcePersistenceObjectFactoryKey</Value>
+                        </Property>
+                    </Property>
+                    <Property name="param2">
+                        <Property name="name">
+                            <Value>searchBundleManagerObjectFactoryKey</Value>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="phaseManagerObjectFactoryKey">
+                <Property name="type">
+                    <Value>com.topcoder.management.phase.DefaultPhaseManager</Value>
+                </Property>
+                <Property name="params">
+                    <Property name="param1">
+                        <Property name="type">
+                            <Value>String</Value>
+                        </Property>
+                        <Property name="value">
+                            <Value>com.topcoder.management.phase.PhaseManager</Value>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+
+            <Property name="reviewAssignmentAlgorithmObjectFactoryKey">
+                <Property name="type">
+                    <Value>com.topcoder.management.review.assignment.algorithm.MaxSumOfRatingReviewAssignmentAlgorithm</Value>
+                </Property>
+            </Property>
+            <Property name="reviewAssignmentProjectManagerObjectFactoryKey">
+                <Property name="type">
+                    <Value>com.topcoder.management.review.assignment.project.DefaultReviewAssignmentProjectManager</Value>
+                </Property>
+            </Property>
+            <Property name="reviewAssignmentNotificationManagerObjectFactoryKey">
+                <Property name="type">
+                    <Value>com.topcoder.management.review.assignment.notification.EmailBasedReviewAssignmentNotificationManager</Value>
+                </Property>
+            </Property>
+            <Property name="projectManagerObjectFactoryKey">
+                <Property name="type">
+                    <Value>com.topcoder.management.project.ProjectManagerImpl</Value>
+                </Property>
+            </Property>
+            <Property name="reviewAuctionManagerObjectFactoryKey">
+                <Property name="type">
+                    <Value>com.topcoder.management.review.application.impl.ReviewAuctionManagerImpl</Value>
+                </Property>
+            </Property>
+            <Property name="reviewApplicationManagerObjectFactoryKey">
+                <Property name="type">
+                    <Value>com.topcoder.management.review.application.impl.ReviewApplicationManagerImpl</Value>
+                </Property>
+            </Property>
+
+        </Property>
+
+        <Property name="reviewAssignmentAlgorithmConfig">
+            <Property name="minimumFeedbacks">
+                <Value>2</Value>
+                <!-- Do not change this -->
+            </Property>
+
+            <Property name="defaultRating">
+                <Value>1.5</Value>
+                <!-- Do not change this -->
+            </Property>
+
+
+            <Property name="loggerName">
+                <Value>testlog</Value>
+            </Property>
+
+            <Property name="connectionName">
+                <Value>accuracyDB</Value>
+            </Property>
+
+            <!-- the DB Connection Factory configuration can be here as well -->
+            <Property name="dbConnectionFactoryConfig">
+                <Property
+                        name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+                    <Property name="connections">
+                        <!-- the "default" property refers to a configured connection -->
+                        <Property name="default">
+                            <Value>accuracyDB</Value>
+                        </Property>
+                        <Property name="accuracyDB">
+                            <Property name="producer">
+                                <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                            </Property>
+                            <Property name="parameters">
+                                <Property name="jdbc_driver">
+                                    <Value>com.informix.jdbc.IfxDriver</Value>
+                                </Property>
+                                <Property name="jdbc_url">
+                                    <Value>jdbc:informix-sqli://localhost:2021/tcs_catalog:informixserver=informixoltp_tcp</Value>
+                                </Property>
+                                <Property name="user">
+                                    <Value>informix</Value>
+                                </Property>
+                                <Property name="password">
+                                    <Value>1nf0rm1x</Value>
+                                </Property>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+
+        <Property name="reviewAssignmentNotificationManagerConfig">
+            <Property name="loggerName">
+                <Value>testlog</Value>
+            </Property>
+
+            <Property name="userRetrievalKey">
+                <Value>userRetrievalObjectFactoryKey</Value>
+            </Property>
+
+            <Property name="resourceManagerKey">
+                <Value>resourceManagerObjectFactoryKey</Value>
+            </Property>
+
+            <Property name="approvedApplicantEmailSubjectTemplateText">
+                <Value>Your review application has been approved</Value>
+            </Property>
+
+            <Property name="approvedApplicantEmailBodyTemplatePath">
+                <Value>test_files/accuracy/templates/acceptedApplicantsEmail.txt</Value>
+            </Property>
+
+            <Property name="rejectedApplicantEmailSubjectTemplateText">
+                <Value>Your review application has been rejected</Value>
+            </Property>
+
+            <Property name="rejectedApplicantEmailBodyTemplatePath">
+                <Value>test_files/accuracy/templates/rejectedApplicantsEmail.txt</Value>
+            </Property>
+
+            <Property name="managerEmailSubjectTemplateText">
+                <Value>Reviewers have been assigned to your project</Value>
+            </Property>
+
+            <Property name="managerApplicantEmailBodyTemplatePath">
+                <Value>test_files/accuracy/templates/managersEmail.txt</Value>
+            </Property>
+
+            <Property name="emailSender">
+                <Value>isv@test.com</Value>
+            </Property>
+
+            <Property name="managerResourceRoleIds">
+                <Value>13</Value>
+                <Value>14</Value>
+                <Value>15</Value>
+            </Property>
+
+            <Property name="objectFactoryConfig">
+                <Property name="userRetrievalObjectFactoryKey">
+                    <Property name="type">
+                        <Value>com.cronos.onlinereview.external.impl.DBUserRetrieval</Value>
+                    </Property>
+                    <Property name="params">
+                        <Property name="param1">
+                            <Property name="type">
+                                <Value>String</Value>
+                            </Property>
+                            <Property name="value">
+                                <Value>com.cronos.onlinereview.external.impl.DBUserRetrieval</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+                <Property name="dbConnectionFactoryObjectFactoryKey">
+                    <Property name="type">
+                        <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                    </Property>
+                    <Property name="params">
+                        <Property name="param1">
+                            <Property name="type">
+                                <Value>String</Value>
+                            </Property>
+                            <Property name="value">
+                                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+                <Property name="resourcePersistenceObjectFactoryKey">
+                    <Property name="type">
+                        <Value>com.topcoder.management.resource.persistence.sql.SqlResourcePersistence</Value>
+                    </Property>
+                    <Property name="params">
+                        <Property name="param1">
+                            <Property name="name">
+                                <Value>dbConnectionFactoryObjectFactoryKey</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+                <Property name="searchBundleManagerObjectFactoryKey">
+                    <Property name="type">
+                        <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+                    </Property>
+                    <Property name="params">
+                        <Property name="param1">
+                            <Property name="type">
+                                <Value>String</Value>
+                            </Property>
+                            <Property name="value">
+                                <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+                <Property name="resourceManagerObjectFactoryKey">
+                    <Property name="type">
+                        <Value>com.topcoder.management.resource.persistence.PersistenceResourceManager</Value>
+                    </Property>
+                    <Property name="params">
+                        <Property name="param1">
+                            <Property name="name">
+                                <Value>resourcePersistenceObjectFactoryKey</Value>
+                            </Property>
+                        </Property>
+                        <Property name="param2">
+                            <Property name="name">
+                                <Value>searchBundleManagerObjectFactoryKey</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+                <Property name="phaseManagerObjectFactoryKey">
+                    <Property name="type">
+                        <Value>com.topcoder.management.phase.DefaultPhaseManager</Value>
+                    </Property>
+                    <Property name="params">
+                        <Property name="param1">
+                            <Property name="type">
+                                <Value>String</Value>
+                            </Property>
+                            <Property name="value">
+                                <Value>com.topcoder.management.phase.PhaseManager</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+
+        <Property name="reviewAssignmentProjectManagerConfig">
+            <Property name="loggerName">
+                <Value>testlog</Value>
+            </Property>
+
+            <Property name="userRetrievalKey">
+                <Value>userRetrievalObjectFactoryKey</Value>
+            </Property>
+
+            <Property name="resourceManagerKey">
+                <Value>resourceManagerObjectFactoryKey</Value>
+            </Property>
+
+            <Property name="phaseManagerKey">
+                <Value>phaseManagerObjectFactoryKey</Value>
+            </Property>
+
+            <Property name="forumsBeanUrl">
+                <Value>forumsBeanUrl</Value>
+            </Property>
+
+            <Property name="forumsBeanFactory">
+                <Value>com.topcoder.management.review.assignment.MockInitialContextFactory</Value>
+            </Property>
+
+            <Property name="forumsBeanName">
+                <Value>forumsBeanName</Value>
+            </Property>
+
+            <Property name="operator">
+                <Value>1</Value>
+            </Property>
+
+            <Property name="phaseTypeExtensionRules">
+                <Property name="3">
+                    <Value>3000000</Value>
+                </Property>
+                <Property name="4">
+                    <Value>4000000</Value>
+                </Property>
+            </Property>
+
+            <Property name="objectFactoryConfig">
+                <Property name="userRetrievalObjectFactoryKey">
+                    <Property name="type">
+                        <Value>com.cronos.onlinereview.external.impl.DBUserRetrieval</Value>
+                    </Property>
+                    <Property name="params">
+                        <Property name="param1">
+                            <Property name="type">
+                                <Value>String</Value>
+                            </Property>
+                            <Property name="value">
+                                <Value>com.cronos.onlinereview.external.impl.DBUserRetrieval</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+                <Property name="dbConnectionFactoryObjectFactoryKey">
+                    <Property name="type">
+                        <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                    </Property>
+                    <Property name="params">
+                        <Property name="param1">
+                            <Property name="type">
+                                <Value>String</Value>
+                            </Property>
+                            <Property name="value">
+                                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+                <Property name="resourcePersistenceObjectFactoryKey">
+                    <Property name="type">
+                        <Value>com.topcoder.management.resource.persistence.sql.SqlResourcePersistence</Value>
+                    </Property>
+                    <Property name="params">
+                        <Property name="param1">
+                            <Property name="name">
+                                <Value>dbConnectionFactoryObjectFactoryKey</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+                <Property name="searchBundleManagerObjectFactoryKey">
+                    <Property name="type">
+                        <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+                    </Property>
+                    <Property name="params">
+                        <Property name="param1">
+                            <Property name="type">
+                                <Value>String</Value>
+                            </Property>
+                            <Property name="value">
+                                <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+                <Property name="resourceManagerObjectFactoryKey">
+                    <Property name="type">
+                        <Value>com.topcoder.management.resource.persistence.PersistenceResourceManager</Value>
+                    </Property>
+                    <Property name="params">
+                        <Property name="param1">
+                            <Property name="name">
+                                <Value>resourcePersistenceObjectFactoryKey</Value>
+                            </Property>
+                        </Property>
+                        <Property name="param2">
+                            <Property name="name">
+                                <Value>searchBundleManagerObjectFactoryKey</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+                <Property name="phaseManagerObjectFactoryKey">
+                    <Property name="type">
+                        <Value>com.topcoder.management.phase.DefaultPhaseManager</Value>
+                    </Property>
+                    <Property name="params">
+                        <Property name="param1">
+                            <Property name="type">
+                                <Value>String</Value>
+                            </Property>
+                            <Property name="value">
+                                <Value>com.topcoder.management.phase.PhaseManager</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+
+    </Config>
+
+    <Config name="com.topcoder.management.project">
+        <Property name="SearchBuilderNamespace">
+            <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+        </Property>
+        <Property name="PersistenceClass">
+            <Value>com.topcoder.management.project.persistence.InformixProjectPersistence</Value>
+        </Property>
+        <Property name="PersistenceNamespace">
+            <Value>com.topcoder.management.project.persistence.InformixProjectPersistence</Value>
+        </Property>
+        <Property name="ValidatorClass">
+            <Value>com.topcoder.management.project.validation.DefaultProjectValidator</Value>
+        </Property>
+        <Property name="ValidatorNamespace">
+            <Value>not used</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.management.project.persistence.InformixProjectPersistence">
+        <!-- The DBConnectionFactory class name used to create DB Connection Factory, required -->
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <!-- the connection name to retrieve connection in DB Connection Factory, required -->
+        <Property name="ConnectionName">
+            <Value>accuracyDB</Value>
+        </Property>
+        <Property name="ProjectIdSequenceName">
+            <Value>project_id_seq</Value>
+        </Property>
+        <Property name="ProjectAuditIdSequenceName">
+            <Value>project_audit_id_seq</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.management.phase.PhaseManager">
+        <Property name="PhasePersistence">
+            <Property name="className">
+                <Value>com.topcoder.management.phase.db.InformixPhasePersistence</Value>
+            </Property>
+        </Property>
+        <Property name="Idgenerator">
+            <Property name="sequenceName">
+                <Value>project_phase_id_seq</Value>
+            </Property>
+            <Property name="className">
+                <Value>com.topcoder.util.idgenerator.IDGeneratorImpl</Value>
+            </Property>
+        </Property>
+        <Property name="connectionName">
+            <Value>accuracyDB</Value>
+        </Property>
+        <Property name="ConnectionFactory">
+            <Property name="className">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+        </Property>
+        <Property name="ObjectFactoryNamespace">
+            <Value>com.topcoder.management.phase.ObjectFactory</Value>
+        </Property>
+        <Property name="Handlers">
+            <!-- All handlers are registered directly from application's code -->
+        </Property>
+        <Property name="ProjectManager">
+            <Property name="className">
+                <Value>com.topcoder.management.project.ProjectManagerImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.management.project</Value>
+            </Property>
+        </Property>
+
+        <Property name="ProjectLinkManager">
+            <Property name="className">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <Config name="com.cronos.onlinereview.external.impl.DBUserRetrieval">
+        <!-- the forum type to match in the comp_forum_xref table -->
+        <Property name="forumType">
+            <Value>5</Value>
+        </Property>
+
+        <Property name="connName">
+            <Value>UserProjectDataStoreConnection</Value>
+        </Property>
+
+        <!-- the DB Connection Factory configuration can be here as well -->
+        <Property name="connections">
+
+            <Property name="default">
+                <Value>UserProjectDataStoreConnection</Value>
+            </Property>
+
+            <Property name="UserProjectDataStoreConnection">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>jdbc:informix-sqli://localhost:2021/tcs_catalog:informixserver=informixoltp_tcp</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>informix</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>1nf0rm1x</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+</CMConfig>

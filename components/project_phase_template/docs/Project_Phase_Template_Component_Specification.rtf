@@ -1,0 +1,819 @@
+{\rtf1\ansi\ansicpg1251\deff0\deflang1049\deflangfe1049{\fonttbl{\f0\fswiss\fprq2\fcharset204{\*\fname Arial;}Arial CYR;}{\f1\froman\fprq2\fcharset204{\*\fname Times New Roman;}Times New Roman CYR;}{\f2\fmodern\fprq6\fcharset134 \'cb\'ce\'cc\'e5;}{\f3\froman\fprq2\fcharset2 Symbol;}{\f4\fnil\fprq2\fcharset2 Wingdings;}{\f5\fmodern\fprq1\fcharset204{\*\fname Courier New;}Courier New CYR;}{\f6\froman\fprq2\fcharset204 Times;}}
+{\colortbl ;\red0\green112\blue192;\red112\green48\blue160;\red255\green0\blue0;\red0\green0\blue0;\red0\green0\blue255;}
+{\stylesheet{ Normal;}{\s1 heading 1;}{\s2 heading 2;}{\s3 heading 3;}}
+{\*\generator Msftedit 5.41.21.2500;}\viewkind4\uc1\pard\keepn\nowidctlpar\sb120\sa60\sl240\slmult0\tx720\lang1033\ul\b\f0\fs28 Project Phase Template 1.\cf1 2\cf0  Component Specification\par
+\pard\nowidctlpar\li720\sa120\ulnone\b0\f1\fs20\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b\f0 1.\tab\fs24 Design\par
+\pard\nowidctlpar\li720\sa60\b0\fs20 All\lang2052\f2  \lang1033\f0  changes performed when synchronizing documentation with the version 1.1 of the source code of this component are marked with \cf2\b purple\cf0\b0\f1 .\par
+\f0 All changes made in the version 1.2 are marked with \cf1\b blue\cf0\b0\f1 .\par
+\f0 All new items in the version 1.2 are marked with \cf3\b red\cf0\b0 .\par
+\pard\nowidctlpar\li720 A project is usually executed in a predefined set of phases for a particular customer. Requiring the user to manually define the phase hierarchy is laborious and unnecessary. The component provides a template mechanism to handle this scenario. Template storage is pluggable and can be added without code changes. XML storage is provided with this release. \par
+\par
+There\rquote re two things need to be pluggable in this component \endash  the template persistence logic and the default project start date generation logic. Two interfaces are defined to fulfill those requirements, so that plugging a persistence mechanism or start date generation algorithm is very simple.\par
+\par
+PhaseTemplatePersistence interface defines the contract to generate a set of project phases from a specific persistence mechanism, a built-in implementation based on XML persistence is designed as the default persistence logic, a schema and a sample persistence file are provided in the docs directory.\cf4  Inside the XmlPhasePersistence, the template is stored as a Map of Document DOM objects, keyed on the template names.\par
+\cf0\par
+StartDateGenerator interface defines the contract to generate a default project start date according to a specific generation algorithm, a built-in implementation which generates a relative time in a week is designed as the default start date generation logic, it can generate a relative time in any week based on the configurations. One thing to note is that, a concept of \ldblquote week offset\rdblquote  is introduced to describe the relationship of weeks. For example, if we say the target week has a week offset of 1 from current week, then the target week is the next week, if we say the target week has a week offset of 0 from current week, then the target week is current week itself.\par
+\par
+\pard\li720 Version 1.1 adds the following:\par
+\pard\nowidctlpar\fi-360\li1440\sl240\slmult0\tx1440\f3\'b7\tab\f0 database persistence\par
+\pard\nowidctlpar\fi-360\li1440\sl240\slmult0\f3\'b7\tab\f0 a category classification for templates\par
+\f3\'b7\tab\f0 extra fields to templates\par
+\f3\'b7\tab\f0 a new way of applying the templates.\par
+\f3\'b7\tab\f0 a migration utility to translate XML templates to DB templates.\par
+\pard\li720 The new version is backwards compatible, i.e. if this version is used instead of version 1.0 in an existing application, it reads the old XML template file and the application code shouldn\rquote t be changed in order to continue working.\par
+\par
+New methods were added to PhaseTemplate interface. Two new applyTemplate() overloads can accept variable phase ID, fixed phase ID and fixed phase start date. This way of generating phases enables the user to additionally specify when a phase (other than the first) starts. It is used, for example, to specify both registration and review start dates, and let the submission length be automatically adjusted.\par
+\par
+Also PhaseTemplate interface now contains methods those allow the user to retrieve some information about templates (creation date, description and category \endash  an integer value, representing categories like design, development, architecture, specification and so on, but this component doesn\rquote t care about the actual meaning of this value).\par
+\par
+PhaseTemplatePersistence interface was extended to support additional template parameters (category, creation date and description).\par
+\par
+DBPhaseTemplatePersistence class was designed to add database persistence functionality to the component. It also provides a method that allows the user to remove a template from database.\par
+\par
+Some XML templates will be migrated to DB. Thus ConverterUtility class is provided to be used as a standalone utility that reads an XML file and generate SQL insert commands. Those commands are sent to standard output so that the user can copy-paste and run them. In the automatic mode this utility can automatically execute all generated SQL queries.\par
+\par
+\cf3 In the version 1.2 this component was updated to support flexible selection of phases from the template to be put to the created project. Now the user can pass the list of IDs of phases to be left out to one of new overloads PhaseTemplate#applyTemplate() of method.\par
+\pard\li720\sb120 Please note that currently phase IDs are inconsistent between XmlPhaseTemplatePersistence and DBPhaseTemplatePersistence\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\cf0\b 1.1\tab Design Patterns \par
+\pard\nowidctlpar\li720 Strategy Pattern\b0  \endash  The component has decoupled the logic for phase template persistence (PhaseTemplatePersistence interface and its implementations) and project start date generation (StartDateGenerator interface and its implementations). \par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 1.2\tab Industry Standards \par
+\pard\nowidctlpar\b0\tab XML, XSD schema, JDBC, SQL\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 1.3\tab Required Algorithms\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf1\b0\i 1.3.1\tab Generate project phases from XML-based phase template persistence\par
+\pard\nowidctlpar\li708\sa120\sl240\slmult0\cf4\i0 The XML schema for the template persistence is fairly simple, there\rquote re three main concepts:\par
+\pard\nowidctlpar\fi-420\li1128\sa120\sl240\slmult0\tx709\f4 l\tab\b\f0 PhaseType definitions \b0 : defines the phase types information needed in this template, type id and type name is included(note that in this XML schema, attribute \ldblquote id\rdblquote  is reserved for internal reference, so attribute \ldblquote typeId\rdblquote  is used to store the id of the type, while \ldblquote id\rdblquote  attribute is used to store the internal reference point so that the phase definitions can specify the type conveniently).\b\par
+\pard\nowidctlpar\fi-420\li1128\sa120\sl240\slmult0\b0\f4 l\tab\b\f0 Phase definitions \b0 : defines the phases in this template, the information included are \endash  phase length(in \ldblquote length\rdblquote  attribute), phase type (in \ldblquote type\rdblquote  attribute\rdblquote ) and dependency information (in \ldblquote Dependency\rdblquote  child elements). An internal \ldblquote id\rdblquote  is reserved for internal reference so that we can specify the dependency information conveniently.\b\par
+\b0\f4 l\tab\b\f0 Dependency descriptions \b0 : defines a single dependency of a phase, the information included are \endash  the dependency phase (in \ldblquote id\rdblquote  attribute), whether the dependency is a start (in \ldblquote isDependencyStart\rdblquote  attribute, optional, default to false if missing) , whether the dependent is a start (in \ldblquote isDependentStart\rdblquote  attribute, optional, default to true if missing) and lag time(in \ldblquote lagTime\rdblquote  attribute, optional, default to 0 if missing) between the dependency and dependent. Note that zero or more \ldblquote Dependency\rdblquote  child elements may exist, each one describes a single dependency information.\b\par
+\pard\nowidctlpar\li708\sa120\sl240\slmult0\b0 Please see docs/xml_phase_template.xsd and docs/sample.xml for more details.\par
+\par
+Inside the XmlPhasePersistence, the template is stored as a Map of Document DOM objects, keyed on the template names.\par
+Given a template name, the phases generation algorithm is as following:\par
+\pard\nowidctlpar\fi480\li708\sa120\sl240\slmult0\i XmlPhaseTemplatePersistence.generatePhases(String templateName , Project project)\par
+\b\i0 0. Getting the template DOM Document.\par
+\b0 First, retrieve the DOM Document object for the template associated with the given templateName.\tab\par
+\i Document templateDOM = (Document) templates.get(templateName);\par
+\pard\nowidctlpar\li708\sa120\sl240\slmult0\b\i0 1. Phase types generation\par
+\b0 Before generating the phases, all phase types defined in the template will be generated and cached in a Map with the id for further reference. (NOT typeId) as the key (The developer may choose lazy generation to improve the efficiency):\par
+For each "PhaseType" element, create a PhaseType object with the "typeId" and "typeName" attributes, then put the PhaseType object into a map for caching.\par
+\par
+\i Map phaseTypes = new HashMap();\par
+NodeList list = templateDOM.getElementsByTagName("PhaseType");\par
+for (int i = 0; i < list.getLength(); i++) \{\par
+    Element typeElement = (Element) list.item(i);\par
+\pard\nowidctlpar\fi240\li708\sa120\sl240\slmult0 phaseTypes.put(typeElement.getAttribute("id"),\par
+\pard\nowidctlpar\fi60\li708\sa120\sl240\slmult0 new PhaseType(Long.parseLong(typeElement.getAttribute("typeId")), typeElement.getAttribute("typeName"));\par
+\pard\nowidctlpar\li708\sa120\sl240\slmult0\}\par
+\i0\par
+\pard\nowidctlpar\fi1\li708\sa120\sl240\slmult0\cf1\b 2. Phases generation\par
+\pard\nowidctlpar\li708\sa120\sl240\slmult0\cf4\b0 It is recommended to perform a 2-pass scan to generate the full hierarchy(however the developer may choose more efficient approach where appropriate):\par
+In the 1st pass, create a Phase object for each "Phase" element with the "length" and "type" attributes, ignore the dependencies information, and cache the Phase objects in a Map, with the "id" attribute as the key.\par
+In the 2nd pass, go through the dependencies information for each "Phase" element, add the dependency relationship to the created Phase objects.\par
+\cf3 In the version 1.2 this algorithm was updated to check whether all phases specified in leftOutPhaseIds parameter exist in the template, ignore phases specified in leftOutPhaseIds and \ldblquote redirect\rdblquote  all dependencies to left out phases. See sample in the section 4.3.14 to understand how redirection of dependencies works. Note that leftOutPhaseIds equal to null must be treated as an empty array.\par
+\pard\nowidctlpar\fi480\li708\sa120\sl240\slmult0\cf4 Finally, return the created phase objects.\par
+\pard\nowidctlpar\fi480\li708\i // 1st pass\par
+Map phases = new HashMap(); // key is phase ID string (name)\par
+\cf3 Set leftOutPhaseNames = new HashSet();\par
+Map dependenciesToLeftOutPhases = new HashMap();\par
+// keys in both maps are Longs for dependent phase IDs\par
+// values in both maps are Lists of Dependency instances\par
+\cf4 list = templateDOM.getElementsByTagName("Phase");\par
+for (int i = 0; i < list.getLength(); i++) \{\par
+    Element phaseElement = (Element) list.item(i);\par
+    String id = Long.parseLong(phaseElement.getAttribute("id"));\par
+\cf0     // do this only if phaseId attribute is present:\par
+    long phaseId = Long.parseLong(phaseElement.getAttribute("phaseId"));\cf4\par
+\cf3     If phaseId is specified and leftOutPhaseIds contains phaseId then\par
+        leftOutPhaseNames.add(id);\par
+\cf4     long length = Long.parseLong(phaseElement.getAttribute("length"));\par
+    Phase phase = new Phase(project, length);\par
+\cf0     phase.setId(phaseId);\par
+\pard\nowidctlpar\fi-600\li1308              phase.setPhaseType((PhaseType) phaseTypes.get(phaseElement.getAttribute("type")));\par
+\pard\nowidctlpar\fi480\li708\cf4     phases.put(id, phase);\par
+\}\par
+\cf3 If leftOutPhaseNames.size() != leftOutPhaseIds.length then\par
+    Throw IllegalArgumentException (at least one of elements in leftOutPhaseIds is not\par
+                   a valid phase ID)\par
+\cf4 // 2nd pass\par
+for (int i = 0; i < list.getLength(); i++) \{\par
+    Element phaseElement = (Element) list.item(i);\par
+\pard\nowidctlpar\fi-700\li1408              NodeList dependencyElements =\par
+                   phaseElement.getElementsByTagName("Dependency");\par
+\pard\nowidctlpar\fi480\li708     Phase phase = (Phase) phases.get(phaseElement.getAttribute(\ldblquote id\rdblquote ));\par
+    for (int j = 0; j < dependencyElements.getLength(); j++) \{\par
+        Element dependencyElement = (Element) dependencyElements.item(j);\par
+        String dependencyId = dependencyElement.getAttribute(\ldblquote id\rdblquote );\par
+\pard\nowidctlpar\fi-800\li1508                  Phase dependencyPhase = (Phase) phase.get(dependencyId);\par
+\pard\nowidctlpar\fi480\li708         // isDependencyStart flag, optional attribute, default to false if missing.\par
+        boolean isDependencyStart = false\par
+        // isDependentStart flag, optional attribute, default to true if missing\par
+        boolean isDependentStart = true;\par
+\pard\nowidctlpar\fi-400\li1108                  // lagTime between the dependent and the dependency, optional attribute, default to\par
+                 //0  if missing\par
+\pard\nowidctlpar\fi480\li708         int lagTime = 0;\par
+        // temp variable to cache attribute value\par
+        String tmp = dependencyElement.getAttribute("isDependencyStart");\par
+        if (tmp != null) \{\par
+             if (tmp.equals(\ldblquote true\rdblquote ) \{\par
+\tab\tab     isDependencyStart = true;\par
+\pard\nowidctlpar\fi600\li708\} else if (tmp.equals(\ldblquote false\rdblquote ) \{\par
+    isDependencyStart = false;\par
+\} else \{\par
+    throw new IllegalArgumentException(\ldblquote cannot parse isDependencyStart\rdblquote );\par
+\}\par
+\pard\nowidctlpar\fi480\li708\par
+\pard\nowidctlpar\fi426\li708  \}\par
+\pard\nowidctlpar\fi480\li708         tmp = dependencyElement.getAttribute("isDependentStart");\par
+        if (tmp != null) \{\par
+\tab\tab if (tmp.equals(\ldblquote true\rdblquote ) \{\par
+\tab\tab     isDependentStart = true;\par
+\pard\nowidctlpar\fi600\li708\} else if (tmp.equals(\ldblquote false\rdblquote ) \{\par
+    isDependentStart = false;\par
+\} else \{\par
+    throw new IllegalArgumentException(\ldblquote cannot parse isDependentStart\rdblquote );\par
+\}\par
+\pard\nowidctlpar\fi480\li708         \}\par
+        tmp = dependencyElement.getAttribute("lagTime");\par
+        if (tmp != null) \{\par
+              lagTime = Integer.parseInt(tmp);\par
+\pard\nowidctlpar\fi-800\li1508         \}\par
+\pard\nowidctlpar\fi880\li708 Dependency dependency = new Dependency(dependencyPhase,\par
+\pard\nowidctlpar\li708 phase,  isDependencyStart, isDependentStart, lagTime);\par
+\cf3                 If leftOutPhaseNames contains dependencyId then\par
+                     long depPhaseId = dependencyPhase.getId();\par
+                     List dependenciesToLeftOutPhase =\par
+                         dependenciesToLeftOutPhases.get(depPhaseId);\par
+                     If dependenciesToLeftOutPhase == null then\par
+                         dependenciesToLeftOutPhase = new ArrayList();\par
+                         dependenciesToLeftOutPhases.put(depPhaseId, dependenciesToLeftOutPhase);\par
+                     dependenciesToLeftOutPhase.add(dependency);\par
+\pard\nowidctlpar\fi480\li708         If dependency represents a dependency to not left out phase or phase is a left out phase\par
+\cf4             phase.addDependency(dependency);\par
+    \}\par
+\}\par
+\cf3 // process all dependencies for left out phases\par
+// this algorithm replaces each dependency from not left out phase to left out phase\par
+// with dependencies from the original not left out phase to not left out phases that\par
+// are dependencies of the original left out phase\par
+// Note that since dependency phases of left out phases can be also left out,\par
+// the breadth-first search approach is used in this algorithm to locate all new dependencies\par
+// to be used instead of the old dependency\par
+For each (leftOutPhaseId:long; dependencies:List) from dependenciesToLeftOutPhases do:\par
+    For each dependency:Dependency from dependencies do:\par
+        Phase dependentPhase = dependency.getDependent();\par
+        If leftOutPhaseIds contains dependentPhase.getId() then continue;\par
+        LinkedList dependenciesToBeProcessed = new LinkedList();\par
+        Set allProcessedDependencies = new HashSet();\par
+        dependenciesToBeProcessed.add(dependency);\par
+        While dependenciesToBeProcessed is not empty do:\par
+            Dependency curDependency = dependenciesToBeProcessed.removeFirst();\par
+            If allProcessedDependencies contains curDependency then continue;\par
+            allProcessedDependencies.add(curDependency);\par
+            If leftOutPhaseIds contains curDependency.getDependency().getId() then\par
+                Set moreDependencies = curDependency.getDependency().getDependencies();\par
+                For each dependencyToProcess:Dependency from moreDependencies do:\par
+                    Combine two dependencies \endash  curDependency and dependencyToProcess \endash  as\par
+                        described in the section 1.3.10. Save result to combinedDep:Dependency.\par
+                    dependenciesToBeProcessed.add(combinedDep);\par
+            Else\par
+\pard\nowidctlpar\fi-1364\li2552                 If dependentPhase.getDependencies() contains a Dependency with ID equal to curDependency.getDependency().getId(), then continue.\par
+                Create a copy of curDependency (create a new instance of Dependency and copy all attributes to it). Set result to dependencyCopy:Dependency.\par
+                dependencyCopy.setDependent(dependentPhase);\par
+                dependentPhase.addDependency(dependencyCopy);\cf4\par
+\pard\nowidctlpar\fi480\li708 // add the phases to the project\par
+for (Iterator itr = phases.values().iterator(); itr.hasNext();;) \{\par
+    Phase phase = (Phase) itr.next();\par
+\cf3     If leftOutPhaseIds doesn\rquote t contain phase.getId() then\par
+\tab     project.addPhase(phase);\par
+\cf4\}\par
+\pard\nowidctlpar\li708\sa120\sl240\slmult0\i0\par
+\pard\nowidctlpar\fi360\li708\sa120\sl240\slmult0 If any exception is caught in the above process, wrap it into PhaseGenerationException and throw out. Generally the possible errors would be:\par
+(1) dependency reference doesn't exist\par
+(2) phase type reference doesn't exist\par
+(3) cyclic dependency exists in the template(certain exception will be thrown from Project Phases component).\par
+\cf3 (4) dependency phase cannot be left out when dependent phase is not left out\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf0\i 1.3.2\tab Generate a relative time in a week\par
+\pard\nowidctlpar\li709\sa120\sl240\slmult0\cf4\b\i0 1. Obtain a Calendar instance for current time:\par
+\b0\i Calendar cal = Calendar.getInstance();\par
+\b\i0 2. Adjust the time to the week according to the weekOffset\par
+\b0\i cal.add(Calendar.WEEK_OF_YEAR, weekOffset);\par
+\b\i0 3. Adjust the time to the day of week according to the dayOfWeek\par
+\b0\i cal.set(Calendar.DAY_OF_WEEK, dayOfWeek);\par
+\b\i0 4. Adjust the time to the exact time according to the hour, minute, second.\par
+\b0\i cal.set(Calendar.HOUR_OF_DAY, hour);\par
+cal.set(Calendar.MINUTE, minute);\par
+cal.set(Calendar.SECOND, second);\par
+\b\i0 5. Return the adjusted time.\par
+\b0\i return cal.getTime();\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf1 1.3.3\tab Generate a project with phases from a given template and a start date\par
+\pard\nowidctlpar\li708\sa120\sl240\slmult0\cf4 DefaultPhaseTemplate.applyTemplate(String template, Date startDate):\par
+\i0 1.\cf0  \cf4 Create an empty project : \i Project project = new Project(startDate, workdays);\i0\par
+\pard\nowidctlpar\fi-300\li1008\sa120\sl240\slmult0 2. Generate a set of phases and add them to the project by calling \i persistence.generatePhases(template, project\cf3 , null\cf4 );\i0  \par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf1\i 1.3.4\tab Generate a project with phases from a given template, without a specific start date provided\par
+\pard\nowidctlpar\li708\sa120\sl240\slmult0\cf4 DefaultPhaseTemplate.applyTemplate(String template):\par
+\i0 1. Generate a start date by calling \i startDateGenerator.generateStartDate()\i0 ,\par
+2. Create an empty project with the date generated from 1 :\par
+    \i Project project = new Project(startDate, workdays);\par
+\pard\nowidctlpar\fi-200\li908\sa120\sl240\slmult0\i0 3.\cf0  \cf4 Generate a set of phases and add them to the project by calling \i persistence.generatePhases(template, project\cf3 , null\cf4 );\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf0 1.3.5\tab Adjust intermediate phase start date\f1\par
+\pard\nowidctlpar\li708\i0\f0 This algorithm corresponds to DefaultPhaseTemplate#adjustPhases(project:Project, varPhaseId:int, fixedPhaseId:int, fixedPhaseStartDate:Date) method.\par
+Each phase may have many dependencies. Thus in some cases it\rquote s impossible to adjust some phase start date only by changing the length of some other phase.  This algorithm is based on binary search:\par
+\par
+- Get all phases of project.\par
+- In the retrieved array find varPhase with id equal to varPhaseId and fixedPhase with id equal to fixedPhaseId.\par
+- Get difference between current fixed phase start date and desired one (in minutes):\par
+\pard\nowidctlpar\fi-1100\li1808     long diff = (fixedPhaseStartDate.getTime() - fixedPhase.calcStartDate().getTime()) / 60000;\par
+\pard\nowidctlpar\li708 - Save the variable phase length (in minutes):\par
+    long oldLength = varPhase.getLength() / 60000;\par
+- If diff is equal to 0 then return.\par
+- Use the binary search to find the best correction:\par
+- long left=0, right=oldLength + 7*24*60 + diff; // this will take less than 25 iterations\par
+- While left <= right do:\par
+   \tab       long mid = (left + right) / 2;\par
+   \tab       varPhase.setLength(mid*60000);\par
+          diff = (fixedPhaseStartDate.getTime() - fixedPhase.\par
+\pard\nowidctlpar\fi240\li708 calcStartDate().getTime()) / 60000;\par
+\pard\nowidctlpar\li708            If diff = 0 then return;\par
+           If diff > 0 then left = mid+1 else right = mid-1.\par
+- Throw exception.\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf1\i 1.3.6\tab Generate project phases from database-based phase template persistence\f1\par
+\pard\nowidctlpar\li708\cf0\i0\f0 This algorithm corresponds to DBPhaseTemplatePersistence#generatePhases() method.\par
+In this algorithm some queries are executed to retrieve corresponding information from the database. Please read section 1.3.8 for details on how to perform SQL queries.\par
+- Create a database connection with use of DBConnectionFactory.\par
+- Execute query \ldblquote SELECT id FROM template WHERE name=\{1\}\rdblquote , where \{1\}=templateName.\par
+- Save returned value to templateId. If zero or more than one row is present in the query result then throw an exception.\par
+- Create a types map (keys are global type ids in DB, values are PhaseType objects).\par
+- Execute query \ldblquote SELECT id, type_id, name FROM phase_type WHERE template_id=\{1\}\rdblquote , where \{1\}=templateId.\par
+- For each row in the result:\line     Extract id, typeId and name values.\par
+    Create PhaseType(typeId, name).\par
+    Add created object to types map: types.put(id, phaseType).\par
+- Create a phases map (keys are global phase ids in DB, values are Phase objects).\par
+\pard\nowidctlpar\fi708\cf3 - int skippedPhasesNum = 0;\par
+- Map dependenciesToLeftOutPhases = new HashMap();\par
+    // keys in both maps are Longs for dependent phase IDs\par
+    // values in both maps are Lists of Dependency instances\par
+\pard\nowidctlpar\li708\cf0 - Execute query \ldblquote SELECT id, phase_type_id, phase_id, time_length FROM phase WHERE template_id=\{1\}\rdblquote , where \{1\}=templateId.\par
+- For each row in the result:\par
+    Extract id, typeId, phaseId and timeLength values.\par
+\cf3     If leftOutPhaseIds contains id then\par
+        skippedPhasesNum++;\par
+\cf0     Create Phase object: new Phase(project, timeLength).\par
+    Set phase type: phase.setPhaseType(types.get(typeId)).\par
+    Set phase ID: phase.setId(phaseId).\par
+    Add phase object to phases map: phases.put(id, phase).\par
+\cf3 - If skippedPhasesNum != leftOutPhaseIds.length then\par
+    Throw IllegalArgumentException (at least one of elements in leftOutPhaseIds is not a valid\par
+                    phase ID)\par
+\cf0 - For each phase from phases:\par
+\~\~\~ Execute query \ldblquote SELECT dependency_id, dependent_start, dependency_start, lag_time FROM dependency WHERE dependent_id=\{1\}\rdblquote , where \{1\}= phase id in database.\par
+    For each row from the result:\par
+        Extract dependencyId, dependentStart, dependencyStart and lagTime.\par
+        Create a dependency: new Dependency(phases.get(dependencyId), phases.get(dependentId), dependencyStart, dependentStart, lagTime).\par
+\cf3\i         If leftOutPhaseIds contains dependencyId then\par
+             List dependenciesToLeftOutPhase =\par
+                 dependenciesToLeftOutPhases.get(dependencyId);\par
+             If dependenciesToLeftOutPhase == null then\par
+                 dependenciesToLeftOutPhase = new ArrayList();\par
+                 dependenciesToLeftOutPhases.put(dependencyId, dependenciesToLeftOutPhase);\par
+             dependenciesToLeftOutPhase.add(dependency);\par
+\pard\nowidctlpar\fi708         If dependency represents a dependency to not left out phase or phase is a left out phase\par
+\pard\nowidctlpar\li708\cf0\i0             Add a dependency to a phase: phases.get(dependentId).addDependency(dependency);\par
+\pard\nowidctlpar\fi-1704\li2410\cf3 // Process all left out dependencies\par
+// The same algorithm as in the section 1.3.1 is used here, thus developers\par
+// need to perorm a proper code refactoring to avoid duplication\par
+- For each (leftOutPhaseId:long; dependencies:List) from dependenciesToLeftOutPhases do:\par
+    For each dependency:Dependency from dependencies do:\par
+        Phase dependentPhase = dependency.getDependent();\par
+        If leftOutPhaseIds contains dependentPhase.getId() then continue;\par
+        LinkedList dependenciesToBeProcessed = new LinkedList();\par
+        Set allProcessedDependencies = new HashSet();\par
+        dependenciesToBeProcessed.add(dependency);\par
+        While dependenciesToBeProcessed is not empty do:\par
+            Dependency curDependency = dependenciesToBeProcessed.removeFirst();\par
+            If allProcessedDependencies contains curDependency then continue;\par
+            allProcessedDependencies.add(curDependency);\par
+            If leftOutPhaseIds contains curDependency.getDependency().getId() then\par
+                Set moreDependencies = curDependency.getDependency().getDependencies();\par
+                For each dependencyToProcess:Dependency from moreDependencies do:\par
+\pard\nowidctlpar\fi480\li708\i             Combine two dependencies \endash  curDependency and dependencyToProcess \endash  as\par
+                described in the section 1.3.10. Save result to combinedDep:Dependency.\par
+            dependenciesToBeProcessed.add(combinedDep);\par
+\pard\nowidctlpar\fi-1704\li2410\i0             Else\par
+                If dependentPhase.getDependencies() contains a Dependency with ID equal to curDependency.getDependency().getId(), then continue.\par
+                Create a copy of curDependency (create a new instance of Dependency and copy all attributes to it). Set result to dependencyCopy:Dependency.\par
+                dependencyCopy.setDependent(dependentPhase);\par
+                dependentPhase.addDependency(dependencyCopy);\par
+\pard\nowidctlpar\li708\cf0 - For each phase from phases:\par
+\cf3\i     If leftOutPhaseIds doesn\rquote t contain phase.getId() then\cf0\i0\par
+        Check cyclic dependencies: phase.calcStartDate();\par
+        Add phase to the project: project.addPhase(phase);\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i 1.3.7\tab Generate a list of INSERT SQL command for specified XML phase template files\f1\par
+\pard\nowidctlpar\li708\i0\f0 This algorithm corresponds to ConverterUtility#convert(templateFileNames) method.\par
+\pard\nowidctlpar\li708\sb60 In the following algorithm if some error occurs (e.g. attribute is absent in XML file, needed element is absent in a map) a corresponding message must be printed out to System.out and execution must be terminated with return statement.\par
+ - If connection is not null then start a transaction.\par
+\pard\nowidctlpar\li708  - Create DocumentBuilderFactory factory instance:\par
+ \~\~\~ DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();\par
+ - Create DocumentBuilder builder from factory:\par
+ \~\~\~ DocumentBuilder builder = factory.newDocumentBuilder();\par
+ - For each fileName from templateFiles:\par
+ \~\~\~ templatesId++;\par
+ \~\~\~ Parse the given file:\par
+ \~\~\~\~\~\~\~ Document doc = builder.parse(new File(fileName));\par
+ \~\~\~ Get current template name:\par
+ \~\~\~\~\~\~\~ String templateName = doc.getDocumentElement().getAttribute("name");\par
+ \~\~\~ Read category of the current template to String templateCategory (use "category" attribute), set to "0" if not specified.\par
+ \~\~\~ Read creation date to String creationDate (use "creationDate" attribute), set to "NULL" if not specified.\par
+ \~\~\~ Read description to String description (use "description" attribute), set to "NULL" if not specified.\par
+ \~\~\~ Read, parse as boolean and save "isDefault" attribute (can be "true"/"yes" or "false"/"no") to boolean templateIsDefault, set to false if attribute is absent.\par
+ \~\~\~ Output to System.out line "INSERT INTO template (id, name, category, creation_date, description) VALUES (\{1\}, '\{2\}', \{3\}, '\{4\}', '\{5\}');", replace \{X\} with templatesId, templateName, category, creationDate and description values correspondingly. Execute this query if connection is not null.\par
+ \~\~\~ If templateIsDefault then output to System.out line "INSERT INTO default_template (template_id, category) VALUES (\{1\}, \{2\});", replace \{X\} with templatesId and category values correspondingly. Execute this query if connection is not null.\par
+ \~\~\~ Create a map of phase types (key will be an internal id in XML file, value - id in a database table):\par
+ \~\~\~\~\~\~\~ Map phaseTypes = new HashMap();\par
+ \~\~\~ Get a list of phase type nodes:\par
+ \~\~\~\~\~\~\~ NodeList list = doc.getDocumentElement().getElementsByTagName("PhaseTypes");\par
+ \~\~\~ For each Element typeElement from list:\par
+ \~\~\~\~\~\~\~ phaseTypesId++;\par
+ \~\~\~\~\~\~\~ Read "id", "typeId" and "typeName" attributes of an element:\par
+ \~\~\~\~\~\~\~\~\~\~\~ String id = typeElement.getAttribute("id"); // must be an integer though\par
+ \~\~\~\~\~\~\~\~\~\~\~ int typeId = Long.parseLong(typeElement.getAttribute("typeId"));\par
+ \~\~\~\~\~\~\~\~\~\~\~ String typeName = typeElement.getAttribute("typeName");\par
+ \~\~\~\~\~\~\~\~\~\~\~ Add an item to phaseTypes:\par
+ \~\~\~\~\~\~\~\~\~\~\~\~\~\~\~ phaseTypes.put(id, phaseTypesId);\par
+ \~\~\~\~\~\~\~\~\~\~\~ Output to System.out line "INSERT INTO phase_type (id, template_id, type_id, name) VALUES (\{1\}, \{2\}, \{3\}, '\{4\}');", replace \{X\} with phaseTypesId, templatesId, typeId and typeName values correspondingly. Execute this query if connection is not null.\par
+ \~\~\~ Create a map of phases (key is an internal id in XML file, value - id in a database table):\par
+ \~\~\~\~\~\~\~ Map phases = new HashMap();\par
+ \~\~\~ int curPhaseId = 0; // is used if "phaseId" attribute is absent\par
+ \~\~\~ Get a list of phase nodes:\par
+ \~\~\~\~\~\~\~ list = doc.getDocumentElement().getElementsByTagName("Phases");\par
+ \~\~\~ For each Element phaseElement from list:\par
+ \~\~\~\~\~\~\~ phasesId++; curPhaseId++;\par
+ \~\~\~\~\~\~\~ Get "id", "phaseId", "length" and "type" attributes of an element to String id, phaseId, length and type correspondingly, if "phaseId" attribute is absent, set phaseId to curPhaseId instead.\par
+ \~\~\~\~\~\~\~ Add an item to phases:\par
+ \~\~\~\~\~\~\~\~\~\~\~ phases.put(id, phasesId);\par
+ \~\~\~\~\~\~\~ Get typeId for type:\par
+ \~\~\~\~\~\~\~\~\~\~\~ long typeId = (long) phaseTypes.get(type);\par
+ \~\~\~\~\~\~\~ Output to System.out line "INSERT INTO phase (id, template_id, phase_type_id, phase_id, time_length) VALUES (\{1\}, \{2\}, \{3\}, \{4\}, \{5\});", replace \{X\} with phasesId, templatesId, typeId, phaseId and length values correspondingly. Execute this query if connection is not null.\par
+ \~\~\~ For each Element phaseElement from list:\par
+ \~\~\~\~\~\~\~ Get dependentId: read "id" attribute of phaseElement to String id, long dependentId = (long) phases.get(id).\par
+ \~\~\~\~\~\~\~ Get dependencies list:\par
+ \~\~\~\~\~\~\~\~\~\~\~ NodeList dependencyElements = phaseElement.getElementsByTagName("Dependency");\par
+ \~\~\~\~\~\~\~ For each Element dependencyElement from dependencyElements:\par
+ \~\~\~\~\~\~\~\~\~\~\~ dependenciesId++;\par
+ \~\~\~\~\~\~\~\~\~\~\~ Get dependencyId: read "id" attribute of dependencyElement to String id, long dependencyId = (long) phases.get(id).\par
+ \~\~\~\~\~\~\~\~\~\~\~ Get "isDependencyStart", "isDependentStart" attributes and set String isDependencyStart to "f" if corresponding attribute is absent or equal to "false", else set it to "t", set String isDependentStart to "t" if corresponding attribute is absent or equal to "true", else set it ti "f".\par
+ \~\~\~\~\~\~\~\~\~\~\~ Get "lagTime" attribute of dependencyElement and set it to String lagTime.\par
+ \~\~\~\~\~\~\~\~\~\~\~ Output to System.out line "INSERT INFO dependency (id, dependent_id, dependency_id, dependent_start, dependency_start, lag_time) VALUES (\{1\}, \{2\}, \{3\}, '\{4\}', '\{5\}', \{6\});", replace \{X\} with dependenciesId, dependentId, dependencyId, isDependentStart, isDependencyStart and lagTime values correspondingly. Execute this query if connection is not null.\par
+ - Discard or commit DB changes if connection is not null.\par
+\par
+For details of parsing XML file see XMLPhaseTemplatePersistence.initializeTemplates() method source.\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i 1.3.8\tab Perform database SQL query\f1\par
+\pard\nowidctlpar\li708\i0\f0 SQL queries are performed by DBPhaseTemplatePersistence and ConverterUtility classes.\par
+- Use DBConnectionFactory instance to create a Connection.\par
+- Set autocommit to false.\par
+- For each query in the current transaction PreparedStatement instance must be created.\par
+- Start a transaction: Execute the PreparedStatement(s).\par
+- Extract all required data from ResultSet object.\par
+- If error occurred then rollback, else commit.\par
+- Connection, PreparedStatement and ResultSet must be properly closed.\par
+- Transaction is not needed for the simple query statement.\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf3\i 1.3.9\tab Generate a project phases with some phases being left out\f1\par
+\pard\nowidctlpar\li708\sa120\sl240\slmult0\f0 This is performed in the following methods:\par
+DefaultPhaseTemplate#applyTemplate(templateName, leftOutPhaseIds)\par
+DefaultPhaseTemplate#applyTemplate(templateName, leftOutPhaseIds, startDate)\par
+DefaultPhaseTemplate#applyTemplate(templateName, leftOutPhaseIds, varPhaseId, fixedPhaseId, fixedPhaseStartDate)\par
+DefaultPhaseTemplate#applyTemplate(templateName, leftOutPhaseIds, varPhaseId, fixedPhaseId, fixedPhaseStartDate, startDate)\par
+\pard\nowidctlpar\fi-1\li707\sa120\sl240\slmult0\i0 The algorithms are the same as for respective overloads without leftOutPhaseIds parameter, but this parameter is simply passed to PhaseTemplatePersistence#generatePhases() methods instead of null. See details in method docs provided in TCUML.\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i 1.3.10\tab Combine dependencies\f1\par
+\pard\nowidctlpar\li708\i0\f0 This algorithm is used when generating phases and some phases are left out.\par
+Input of this algorithm is two dependencies (D1 and D2) that match the following condition: dependency phase in D1 is a dependent phase in D2. I.e. these two dependencies indicate that phase A depends on phase B, and phase B depends on phase C.\par
+Output of this algorithm is a dependency D3 that occurs when phase B is left out.\par
+This algorithm must create a new Dependency instance and set its properties as specified below:\par
+\pard\nowidctlpar\fi12\li1428 D3.dependent = D1.dependent\par
+D3.dependency = D2.dependency\par
+D3.dependentStart = D1.dependentStart\par
+D3.dependencyStart = D2.dependencyStart\par
+D3.lagTime = D1.lagTime + D2.lagTime\par
+\pard\nowidctlpar\li708\cf0\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 1.4\tab Component Class Overview\par
+\pard\nowidctlpar\par
+\pard\nowidctlpar\li720\b0\i Note: a more thorough description of all the classes is available in the Documentation tabs within \cf2 TC UML Tool\cf0 .\b\i0\par
+\b0\par
+\cf1\b Interface PhaseTemplate\par
+\cf0\b0 PhaseTemplate interface defines the contract to access the phase templates, generally the implementations will manage several different templates which are used to generate different project phase hierarchies. It provides the API to generate a set of project phases from a given predefined template, and compose a Project object with those phases, with or without a specified project start date, it also provides the API to retrieve names of all templates available to use.\par
+In the version 1.1 new methods were added. They allow the user to retrieve additional information about each template: category, description and creation date, retrieve all template names and default one for each category. Also methods for applying templates with intermediate phase start time specified were added.\par
+\cf3 Changes in 1.2:\par
+- Added applyTemplate() overloads that allow to left out some phases from the template being applied.\par
+- Fixed type of varPhaseId and fixedPhaseId parameters.\par
+\cf0\par
+\cf1\b Class DefaultPhaseTemplate\par
+\cf0\b0 DefaultPhaseTemplate is a default implementation of PhaseTemplate interface.\par
+It manages two underlying variables - persistence(of type PhaseTemplatePersistence) which is used as the actual template storage logic; and startDateGenerator(of type StartDateGenerator) which is used as the default project start date generation logic if there's no specific start date provided during the phase generation. By this, we can easily change the persistence and start date generator implementation so that the client is able to swap out for different storage and start date generation strategies without code changes - all we need to do is adding new PhaseTemplatePersistence and/or StartDateGenerator implementations.\par
+In the version 1.1 new methods were added. They allow the user to retrieve additional information about each template: category, description and creation date, retrieve all template names and default one for each category. Also methods for applying templates with intermediate phase start time specified were added.\par
+\cf3 Changes in 1.2:\par
+- Added applyTemplate() overloads that allow to left out some phases from the template being applied.\par
+- Fixed type of varPhaseId and fixedPhaseId parameters.\par
+\cf0\par
+\cf1\b Interface PhaseTemplatePersistence\par
+\cf0\b0  PhaseTemplatePersistence interface acts as the persistence layer of the phase templates, so that the persistence is pluggable and can be added without code changes. It manages a set of templates, provides the API to generate an array of Phases from a template it manages.\par
+Note that this interface generates only phases, the Project generation is out of the scope of this interface.\par
+In this initial release, the persistence is read-only, all templates are not modifiable with this component.The template authoring functionalities may be added in the future versions.\par
+In the version 1.1 new methods were added. They allow the user to retrieve additional information about each template: category, description and creation date, retrieve all template names and default one for each category.\par
+\cf3 Change in 1.2:\par
+- Added leftOutPhaseIds parameter to generatePhases() method.\par
+\cf0\par
+\cf1\b Class XmlPhaseTemplatePersistence\par
+\cf0\b0 XmlPhaseTemplatePersistence is an XML based persistence implementation.\par
+Phase templates are stored in XML files, each XML file defines one template, the XML schema is defined in docs/xml_phase_template.xsd, and also a sample template is provided in docs directory.\par
+Each template is assigned a template name, inside the XmlPhaseTemplatePersistence, templates are stored in a Map with the template name as the key, and with org.w3c.dom.Document objects parsed from the XML document as the value.\par
+In the version 1.1 new methods were added. They allow the user to retrieve additional information about each template: category, description and creation date, retrieve all template names and default one for each category.\par
+generatePhases() method was modified so that it now reads phaseId attribute of Phase elements.\par
+\cf3 Change in 1.2:\par
+- Updated generatePhases() method to support skipping specified phases from the template.\par
+\cf0\par
+\cf1\b Class DBPhaseTemplatePersistence\par
+\cf0\b0 This\~is a database based persistence implementation. It uses DBConnectionFactory to establish a connection with DBMS. Structure of the database can be seen with use of DBDesigner (see DBModel.xml file) or by SQL tables creation script in database.sql file. Also it provides the user with the method that removes a template from the database.\par
+\cf3 Change in 1.2:\par
+- Updated generatePhases() method to support skipping specified phases from the template.\par
+\cf0\par
+\b Interface StartDateGenerator\par
+\b0 StartDateGenerator interface defines the contract to generate a default start date for a project according to specific generation logic, so that the DefaultPhaseTemplate can employ different start date generation logic without code changes.\par
+It will be used in the DefaultPhaseTemplate as the default project start date generation logic if no start date specified in the phase generation process.\par
+\par
+\b Class RelativeWeekTimeStartDateGenerator\par
+\b0 RelativeWeekTimeStartDateGenerator is the initial built-in implementation of StartDateGenerator interface.\par
+It generates a relative time in a week as the default start date, for example, it can be configured to generate 9:00 AM next Thursday as the default start date.\par
+\par
+\b ConverterUtility\par
+\b0 This class is a persistence migrating utility for XML phase templates files. It can be used as a main class in a standalone utility which reads XML files with templates and outputs to console SQL INSERT queries those must be executed by the user to configure template phases database. This utility uses Configuration Manager component to retrieve all input data. Namespaces of XmlPhaseTemplatePersistence and optionally DBPhaseTemplatePersistence configurations must be specified as command line arguments.\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 1.5\tab Component Exception Definitions\par
+\pard\nowidctlpar\li720\tx0 IllegalArgumentException \b0\par
+It may be thrown from many places in this component where the argument is null or empty string, or the numeric argument is out of range.\par
+\pard\nowidctlpar\tx0\par
+\pard\nowidctlpar\fi-720\li720\tx0\tab\b PhaseTemplateException\b0 :\par
+\pard\nowidctlpar\li720\tx0 It is the base class for custom exceptions thrown from this component.\par
+\pard\nowidctlpar\fi-720\li720\tx0\par
+\tab\b PhaseGenerationException\b0 :\par
+\pard\nowidctlpar\li720\tx0 It may be thrown from PhaseTemplatePersistence and PhaseTemplate implementations if there\rquote re errors in the phase generation process, e.g. the cyclic dependency, reference to an undefined project phase, etc.\par
+\pard\nowidctlpar\fi-720\li720\tx0\par
+\tab\b StartDateGenerationException\b0 :\par
+\pard\nowidctlpar\li720\tx0 It may be thrown from StartDateGenerator implementations if there\rquote re errors in the start date generation process,  e.g. connection errors in database-based start date generation implementations. In the initial release, this exception is not used at all, it is designed for future extension.\par
+\pard\nowidctlpar\fi-720\li720\tx0\tab\par
+\tab\b ConfigurationException\b0 :\par
+\pard\nowidctlpar\li720\tx0 It may be thrown from many places where the outside configuration is needed but there\rquote re errors in the configuration. for example, the expected namespace is not loaded, the required configuration property is missing, etc.\par
+\par
+\b PersistenceException\b0\par
+PersistenceException indicates that there're errors while accessing the template persistence, e.g. persistence file doesn't exist for file-based persistence layer.\par
+\par
+\cf2\b PersistenceRuntimeException\b0\par
+PersistenceRuntimeException is the runtime version of exception for the PhaseTemplatePersistence interface. This exception is used for DBPhaseTemplatePersistence's implementation on the methods defined in version 1.0. These methods in version 1.0 defined in PhaseTemplatePersistence interface would not allow to throw non-runtime exception.\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\cf0\b 1.6\tab Thread Safety\par
+\pard\nowidctlpar\li720\sa120\sl240\slmult0\b0 This component should be thread safe, implementations of the interfaces defined in this component must be thread safe.\par
+RelativeWeekTimeStartDateGenerator and XmlPhaseTemplatePersistence are immutable and therefore they\rquote re thread safe.\par
+DefaultPhaseTemplate is mutable(persistence and startDateGenerator may be modified), so appropriate locking mechanism is required in the applyTemplate method implementations, however it is fairly simple : lock on the persistence while generating phases from a template, lock on the startDateGenerator while generating the default project start date, lock on this in while changing the object references in setters.\par
+New classes and changes in version 1.1 don\rquote t break thread safety of the component. Locking is used in new methods of DefaultPhaseTemplate, thus it is still thread safe. DBPhaseTemplatePersistence is immutable and thread safe class. ConverterUtility is used as a standalone utility, thus it is not required to be thread safe.\par
+\cf3 Thread safety of this component was not changed in the version 1.2.\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\cf0\b 2.\tab\fs24 Environment Requirements\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\fs20 2.1\tab Environment\par
+\pard\nowidctlpar\li720\tx0\b0 Development language: Java 1.5\par
+Compile target: Java 1.5\par
+QA Environment: Solaris 7, RedHat Linux 7.1, Windows 2000, Informix 10, Windows 2003\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 2.2\tab TopCoder Software Components\par
+\pard\nowidctlpar\fi-181\li901\sa120\tx1134\b0\f4\fs16 l\tab\b\f0\fs20 Configuration Manager Version 2.1.5 \cf2\b0\endash  loads configuration for all classes\cf0\par
+\pard\nowidctlpar\fi-181\li901\sa120\f4\fs16 l\tab\b\f0\fs20 Project Phases Version \cf2 2.0.1\b0  \endash  defines project phase entities used in this component\cf0\b\par
+\b0\f4\fs16 l\tab\b\f0\fs20 Object Factory Version \cf2 2.1\b0  \endash  creates instances of predefined pluggable objects\cf0\b\par
+\pard\nowidctlpar\fi-414\li1134\sa120\tx1134\cf2\b0\f4\fs16 l\tab\b\f0\fs20 Object Factory Config Manager Plugin 1.0 \b0\endash  allows Object Factory to be configured with Configuration Manager component\b\par
+\pard\nowidctlpar\fi-181\li901\sa120\tx1134\cf0\b0\f4\fs16 l\tab\b\f0\fs20 Workdays Version \cf2 1.0.1\b0  \endash  defines Wirkdays instance used in this component\cf0\b\par
+\pard\nowidctlpar\fi-181\li901\sa120\b0\f4\fs16 l\tab\b\f0\fs20 Base Exception Version \cf2 2.0\cf0  \cf2\b0\endash  provides a base class for custom exceptions\cf0\b\par
+\b0\f4\fs16 l\tab\b\f0\fs20 DB Connection Factory 1.1 \b0\endash  creates a predefined DB connection\b\par
+\b0\f4\fs16 l\tab\b\f0\fs20 Command Line Utility 1.0 \b0\endash  simplifies command line arguments parsing\b\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0 2.3\tab Third Party Components\par
+\pard\nowidctlpar\fi-181\li901\sa120\tx1134\b0\f4\fs16 l\tab\b\f0\fs20 JAXP 3.0 Implementation (Xerces2-J , version 2.8.0 for example)\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\fs24 3.\tab Installation and Configuration\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\fs20 3.1\tab Package Name\par
+\pard\nowidctlpar\li709\b0 com.topcoder.project.phases.template\par
+com.topcoder.project.phases.template.persistence\par
+com.topcoder.project.phases.template.startdategenerator\par
+com.topcoder.project.phases.template.converter\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 3.2\tab Configuration Parameters\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\b0\i 3.2.1\tab Configuration for XmlPhaseTemplatePersistence\f1\par
+\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1468\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6706\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9354\pard\intbl\nowidctlpar\b\i0\f0 Parameter\cell Description\cell Values\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1468\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6706\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9354\pard\intbl\nowidctlpar\b0 template_files\cell A list of template files from which the templates will be loaded\cell XML persistence file names.\par
+\b Required\cell\row\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\b0\i 3.2.2\tab Configuration for RelativeWeekTimeStartDateGenerator\par
+\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1320\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6049\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9128\pard\intbl\nowidctlpar\b\i0 Parameter\cell Description\cell Values\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1320\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6049\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9128\pard\intbl\nowidctlpar\b0 week_offset\cell The week offset of the date to generate, from current week.\cell Any integer value.e.g. 0 means current week, 1 means the next week\par
+\b Required\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1320\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6049\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9128\pard\intbl\nowidctlpar\b0 day_of_week\cell the day of the week\cell Integer values from 1 to 7, representing SUNDAY to SATURDAY respectively.\par
+\b Required.\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1320\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6049\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9128\pard\intbl\nowidctlpar\b0 hour\cell hour in 24-hour clock\cell Integer values in [0, 23].\par
+\b Required\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1320\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6049\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9128\pard\intbl\nowidctlpar\b0 minute\cell Minute value\cell Integer values in [0, 59]\par
+\b Required\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1320\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6049\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9128\pard\intbl\nowidctlpar\b0 second\cell Second value\cell Integer values in [0, 59]\par
+\b Required\cell\row\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\b0\i 3.2.3\tab Configuration for DefaultPhaseTemplate\f1\par
+\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3214\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6749\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx10131\pard\intbl\nowidctlpar\b\i0\f0 Parameter\cell\b0 Description\cell\b Values\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3214\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6749\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx10131\pard\intbl\nowidctlpar\b0 persistence\cell Configuration property for persistence, should have \ldblquote class\rdblquote  and \ldblquote namespace\rdblquote  sub-properties\cell See persistence.class and persistence.namespace\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3214\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6749\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx10131\pard\intbl\nowidctlpar persistence.class\cell class of the PhaseTemplatePersistence\cell Full qualified class name\par
+\b Required\b0\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3214\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6749\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx10131\pard\intbl\nowidctlpar persistence.namespace\cell namespace from which the PhaseTemplatePersistence will be created\cell The configuration namespace\par
+\b Optional\b0 , if not provided, no arg ctor will be used to create the persistence\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3214\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6749\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx10131\pard\intbl\nowidctlpar start_date_generator\cell Configuration property for start date generator, should have \ldblquote class\rdblquote  and \ldblquote namespace\rdblquote  sub-properties\cell See start_date_generator.class and start_date_generator.namespace\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3214\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6749\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx10131\pard\intbl\nowidctlpar start_date_generator.class\cell class of the StartDateGenerator\cell Full qualified class name\par
+\b Required\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3214\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6749\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx10131\pard\intbl\nowidctlpar\b0 start_date_generator.namespace\cell namespace from which the StartDateGenerator will be created\cell The configuration namespace\par
+\b Optional\b0 , if not provided, no arg ctor will be used to create the startDateGenerator.\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3214\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6749\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx10131\pard\intbl\nowidctlpar workdays\cell Configuration property for workdays variable, should have \ldblquote object_specification_namespace\rdblquote  and \ldblquote object_key\rdblquote  sub-properties, \ldblquote object_identifier\rdblquote  sub-property is optional.\cell See workdays. object_specification_namespace, workdays.object_key and workdays.object_identifier\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3214\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6749\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx10131\pard\intbl\nowidctlpar workdays. object_specification_namespace\cell Configuration namespace of the object specification configuration of the workdays\cell The configuration namespace.\par
+\b Required\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3214\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6749\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx10131\pard\intbl\nowidctlpar\b0 workdays.object_key\cell key of the workdays object\cell The key of the workdays object in the Object specification configuration, \b Required\b0\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3214\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6749\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx10131\pard\intbl\nowidctlpar workdays.object_identifier\cell Identifier of the workdays object\cell The key of the workdays object in the Object specification configuration, \b Optional. \b0 If missing, the workdays will be created without identifier.\cell\row\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i 3.2.4\tab Object Specification Configuration for Workdays\par
+\pard\nowidctlpar\li142\f5\fs18 <CMConfig>\par
+\i0   <Config name="com.topcoder.project.phases.template.DefaultPhaseTemplate.workdays">\par
+    <Property name="workdays:default">\par
+      <Property name="type">\par
+        <Value>com.topcoder.date.workdays.DefaultWorkdays</Value>\par
+      </Property>\par
+      <Property name="params">\par
+        <Property name="param1">\par
+          <Property name="type">\par
+            <Value>String</Value>\par
+          </Property>\par
+          <Property name="value">\par
+            <Value>test_files/workdays.xml</Value>\par
+          </Property>\par
+        </Property>\par
+        <Property name="param2">\par
+          <Property name="type">\par
+            <Value>String</Value>\par
+          </Property>\par
+          <Property name="value">\par
+            <Value>XML</Value>\par
+          </Property>\par
+        </Property>\par
+      </Property>\par
+    </Property>\par
+  </Config>\par
+</CMConfig>\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0\fs20 3.2.5\tab XML phases template format\f1\par
+\pard\nowidctlpar\li709\i0\f0 In the version 1.1 Phase element can have new category, isDefault, creationDate and description attributes. All these attributes are optional. Category attribute must be integer, when it's not specified then assume that template belongs to zero-category (category = 0). IsDefault attribute specifies whether the current template is default for its category. The user is responsible to ensure that only one template (or none) is specified as a default for each category. CreationDate and description attributes can contain template creation date in format "yyyy-MM-dd HH:mm:ss" and template description correspondingly. In the new version Phase element can contain an optional phaseId attribute value of which must be an integer.\par
+\pard\li709\sb120\f5\fs16 <?xml version="1.0" encoding="UTF-8"?>\par
+\pard <xs:schema xmlns:xs=http://www.w3.org/2001/XMLSchema\par
+           elementFormDefault="qualified">\par
+  <xs:element name="Template">\par
+    <xs:complexType>\par
+      <xs:sequence>\par
+        <xs:element ref="PhaseTypes"/>\par
+        <xs:element ref="Phases"/>\par
+      </xs:sequence>\par
+      <xs:attribute name="name" use="required"/>\par
+      <xs:attribute name="category" use="optional" type="xs:integer"/>\par
+      <xs:attribute name="isDefault" use="optional" type="xs:boolean"/>\par
+      <xs:attribute name="creationDate" use="optional"/>\par
+      <xs:attribute name="description" use="optional"/>\par
+    </xs:complexType>\par
+  </xs:element>\par
+  <xs:element name="PhaseTypes">\par
+    <xs:complexType>\par
+      <xs:sequence>\par
+        <xs:element maxOccurs="unbounded" ref="PhaseType"/>\par
+      </xs:sequence>\par
+    </xs:complexType>\par
+  </xs:element>\par
+  <xs:element name="PhaseType">\par
+    <xs:complexType>\par
+      <xs:attribute name="id" use="required" type="xs:NCName"/>\par
+      <xs:attribute name="typeId" use="required" type="xs:integer"/>\par
+      <xs:attribute name="typeName" use="required"/>\par
+    </xs:complexType>\par
+  </xs:element>\par
+  <xs:element name="Phases">\par
+    <xs:complexType>\par
+      <xs:sequence>\par
+        <xs:element maxOccurs="unbounded" ref="Phase"/>\par
+      </xs:sequence>\par
+    </xs:complexType>\par
+  </xs:element>\par
+  <xs:element name="Phase">\par
+    <xs:complexType>\par
+      <xs:sequence>\par
+        <xs:element minOccurs="0" ref="Dependency"/>\par
+      </xs:sequence>\par
+      <xs:attribute name="id" use="required" type="xs:NCName"/>\par
+      <xs:attribute name="phaseId" use="optional" type="xs:integer"/>\par
+      <xs:attribute name="length" use="required" type="xs:integer"/>\par
+      <xs:attribute name="type" use="required" type="xs:NCName"/>\par
+    </xs:complexType>\par
+  </xs:element>\par
+  <xs:element name="Dependency">\par
+    <xs:complexType>\par
+      <xs:attribute name="id" use="required" type="xs:NCName"/>\par
+      <xs:attribute name="isDependencyStart" use="optional" type="xs:boolean"/>\par
+      <xs:attribute name="isDependentStart" use="optional" type="xs:boolean"/>\par
+      <xs:attribute name="lagTime" use="optional" type="xs:integer"/>\par
+    </xs:complexType>\par
+  </xs:element>\par
+\pard\nowidctlpar\li709 </xs:schema>\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0\fs20 3.2.6\tab Configuration for DBPhaseTemplatePersistence\par
+\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3001\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx7560\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9128\pard\intbl\nowidctlpar\b\i0 Parameter\cell Description\cell Values\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3001\clvertalc\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx7560\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9128\pard\intbl\lang1024\b0 connection_name\cell\lang1033 A String, which represents the database connection name\cell\lang1024 String\par
+\b Optional\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3001\clvertalc\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx7560\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9128\pard\intbl\nowidctlpar\lang1033\b0 connection_factory_class_name\cell\pard\intbl A String, which represents the class name, which is used to create the database connection\cell\lang1024 String\par
+\b Required\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3001\clvertalc\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx7560\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9128\pard\intbl\nowidctlpar\lang1033\b0 object_factory_namespace\cell\pard\intbl A String, which represents the object factory namespace\cell\lang1024 String\par
+\b Required\cell\row\pard\nowidctlpar\lang1033\b0\f6\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0 3.3\tab Dependencies Configuration\par
+\pard\nowidctlpar\li720\sa60\sl240\slmult0\b0 All dependency components must be properly configured. See their docs for details.\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b 4.\tab\fs24 Usage Notes\par
+\pard\nowidctlpar\fi-420\li1140\sa60\tx960\b0\f4\fs16 l\tab\f0\fs20 Extract the component distribution. \par
+\pard\nowidctlpar\fi-420\li1140\sa60\f4\fs16 l\tab\f0\fs20 Follow Dependencies Configuration. \par
+\pard\nowidctlpar\fi-420\li1140\sa120\tx960\f4\fs16 l\tab\f0\fs20 Execute \lquote ant test\rquote  within the directory that the distribution was extracted to. \par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 4.1\tab Required steps to test the component\par
+\pard\nowidctlpar\li720\b0 Preload the configuration file into Configuration Manager. Follow demo.\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 4.2\tab Required steps to use the component\par
+\pard\nowidctlpar\fi720\b0 Preload the configuration file into Configuration Manager. Follow demo.\par
+\pard\nowidctlpar\li720 Please see the configuration files in docs directory for information on how to configure this component.\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 4.3\tab Demo\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\b0\i 4.3.1\tab Create the PhaseTemplate instance from configuration\par
+\pard\nowidctlpar\li709\i0\f5\fs16 DefaultPhaseTemplate template = new\par
+    DefaultPhaseTemplate(\par
+        "com.topcoder.project.phases.template.DefaultPhaseTemplate");\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0\fs20 4.3.2\tab Create the PhaseTemplate instance with specific PhaseTemplatePersistence and StartDateGenerator.\par
+\pard\nowidctlpar\li709\i0\f5\fs16 // create PhaseTemplatePersistence instance\par
+PhaseTemplatePersistence persistence = new\par
+    XmlPhaseTemplatePersistence(\par
+        "com.topcoder.project.phases.template." +\par
+        "persistence.XmlPhaseTemplatePersistence");\par
+// create StartDateGenerator instance\par
+StartDateGenerator startDateGenerator = new\par
+    RelativeWeekTimeStartDateGenerator(\par
+        "com.topcoder.project.phases.template." +\par
+        "startdategenerator.RelativeWeekTimeStartDateGenerator");\par
+// create PhaseTemplate instance with the persistence and startDateGenerator\par
+\pard\nowidctlpar\li708 DefaultPhaseTemplate template =\par
+    new DefaultPhaseTemplate(persistence, startDateGenerator, new DefaultWorkdays());\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0\fs20 4.3.3\tab Apply a template to generate project phases\par
+\pard\nowidctlpar\li709\i0\f5\fs16 // apply a template with name "TCS Component Project" with a given start date\par
+Project project = template.applyTemplate("TCS Component Project",\par
+                                         Calendar.getInstance().getTime());\par
+// apply a template with name "TCS Component Project" without a specific start date\par
+project = template.applyTemplate("TCS Component Project");\par
+\par
+// apply a template with name "TCS Component Project" with a given start date,\par
+// adjust the length of the phase with id=2 to make the phase with id=1 start\par
+// a fixed startTime\par
+project template.applyTemplate("TCS Component Project", 2, 1, startTime,\par
+                               Calendar.getInstance().getTime());\par
+\par
+// apply a template with name "TCS Component Project" with auto detected start date,\par
+// adjust the length of the phase with id=2 to make the phase with id=1 start\par
+// a fixed startTime\par
+project template.applyTemplate("TCS Component Project", 2, 1, startTime);\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0\fs20 4.3.4\tab Retrieve names of all available templates\par
+\pard\nowidctlpar\li709\i0\f5\fs16 // retrieve names of all available templates\par
+String[] templateNames = template.getAllTemplateNames();\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0\fs20 4.3.5\tab Change template persistence or start date generator dynamically\par
+\pard\nowidctlpar\li709\i0\f5\fs16 // change template persistence(say we have a SQLPhaseTemplatePersistence\par
+template.setPersistence(new SQLPhaseTemplatePersistence(\par
+  "com.topcoder.project.phases.template.persistence.SQLPhaseTemplatePersistence"));\par
+// change start date generator(say we have a RelativeMonthTimeStartDateGenerator)\par
+template.setStartDateGenerator(new RelativeMonthTimeStartDateGenerator(\par
+    "com.topcoder.project.phases.template.startdategenerator." +\par
+    "RelativeMonthTimeStartDateGenerator"));\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0\fs20 4.3.6\tab Create the PhaseTemplate instance with use of specific DBPhaseTemplatePersistence and StartDateGenerator.\par
+\pard\nowidctlpar\li709\i0\f5\fs16 // create DBPhaseTemplatePersistence instance\par
+PhaseTemplatePersistence persistence = new\par
+    DBPhaseTemplatePersistence("com.topcoder.project.phases.template." +\par
+    "persistence.DBPhaseTemplatePersistence");\par
+// create StartDateGenerator instance\par
+StartDateGenerator startDateGenerator = new\par
+    RelativeWeekTimeStartDateGenerator("com.topcoder.project.phases.template." +\par
+        "startdategenerator.RelativeWeekTimeStartDateGenerator");\par
+// create PhaseTemplate instance with the persistence and startDateGenerator\par
+\pard\nowidctlpar\li708 DefaultPhaseTemplate template =\par
+    new DefaultPhaseTemplate(persistence, startDateGenerator, new DefaultWorkdays());\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0\fs20 4.3.7\tab Retrieve names of all available templates from specific category\par
+\pard\nowidctlpar\li709\i0\f5\fs16 // retrieve names of all available templates from category 2\par
+String[] templateNames = template.getAllTemplateNames(2);\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0\fs20 4.3.8\tab Retrieve the name of the default template for specific category\par
+\pard\nowidctlpar\li709\i0\f5\fs16 // retrieve the name of the default template for category 2\par
+String templateName = template.getDefaultTemplateName(2);\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0\fs20 4.3.9\tab Retrieve template information\par
+\pard\nowidctlpar\li709\i0\f5\fs16 // retrieve the category of the template with name "New_Design"\par
+int category = template.getTemplateCategory("New_Design");\par
+// retrive the description of the template with name "New_Design"\par
+String description = template.getTemplateDescription("New_Design");\par
+// retrive the creation date of the template with name "New_Design"\par
+Date creationDate = template.getTemplateCreationDate("New_Design");\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0\fs20 4.3.10\tab Use XML templates migration utility\f1\par
+\pard\nowidctlpar\li709\i0\f0 The following command line can be used to output SQL queries those are intended for fulfilling an empty database:\par
+\f5\fs18 java ConverterUtility.class \endash inamespace xml_phase_template_namespace\par
+\pard\nowidctlpar\li709\sb60\f0\fs20 The following command line can be used to output SQL queries those are intended for adding templates to non-empty database:\par
+\pard\nowidctlpar\li709\f5\fs18 java ConverterUtility.class \endash inamespace xml_phase_template_namespace \endash onamespace db_phase_template_namespace\par
+\f0\fs20  The following command line can be used to fulfill a database (queries are executed automatically):\par
+\f5\fs18 java ConverterUtility.class \endash inamespace xml_phase_template_namespace \endash onamespace db_phase_template_namespace \endash auto\par
+\par
+\pard\nowidctlpar\li709\ri-34\f0\fs20 If users want to specify the config files in the command line instead of ConfigManager.properties,\par
+they can use the following command line(suppose the xml_phase_template_namespace is in file \ldblquote xml_config.xml\rdblquote , and db_phase_template_namespace is in "db_config.xml"):\par
+\pard\nowidctlpar\li709\f5\fs18 java ConverterUtility.class \endash inamespace xml_phase_template_namespace \endash onamespace db_phase_template_namespace \endash ifile xml_config.xml \endash ofile db_config.xml \endash auto\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0\fs20 4.3.11\tab Delete a template from database\f1\par
+\pard\nowidctlpar\li709\i0\f5\fs16 // create DBPhaseTemplatePersistence instance\par
+DBPhaseTemplatePersistence dbPersistence = new\par
+    DBPhaseTemplatePersistence(\par
+        "com.topcoder.project.phases.template." +\par
+        "persistence.DBPhaseTemplatePersistence");\par
+// delete the template with name "New_Design"\par
+dbPersistence.removeTemplate("New_Design");\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0\fs20 4.3.12\tab XML-to-DB conversion sample\f1\par
+\pard\nowidctlpar\li709\i0\f0 This section contains a sample XML phase template file content and a database content which must be generated by migration utility.\par
+\pard\nowidctlpar\li709\sb60\ul\b\f5\fs16 Xml_Phase_Template_Persistence.xml\par
+\pard\nowidctlpar\li709\ulnone\b0 <?xml version="1.0"?>\par
+<CMConfig>\par
+  <Config name= \par
+    "com.topcoder.project.phases.template.persistence.DemoXmlPhaseTemplatePersistence">\par
+    <!-- XML files from which the templates will be loaded. -->\par
+    <Property name="template_files">\par
+      <Value>My_Project.xml</Value>\par
+    </Property>\par
+  </Config>\par
+</CMConfig>\par
+\pard\nowidctlpar\li709\sb60\ul\b My_Project.xml\par
+\pard\nowidctlpar\li709\ulnone\b0 <?xml version="1.0"?>\par
+<!-- A template which defines a set of project phases -->\par
+<Template name="Design" category="1" isDefault="true"\par
+          creationDate="2007.12.04 14:45:02"\par
+          description="This is a design phases template">\par
+  <!-- An enumeration of project phase types defined in this template -->\par
+  <PhaseTypes>\par
+    <PhaseType id="firstPhaseType" typeId="1" typeName="FirstPhaseType"/>\par
+    <PhaseType id=\rdblquote secondPhaseType" typeId="2" typeName="SecondPhaseType"/>\par
+  </PhaseTypes>\par
+  <!-- A set of project phases defined in this template. -->\par
+  <Phases>\par
+    <Phase id="firstPhase" phaseId="1" length="604800000" type="firstPhaseType"/>\par
+    <Phase id="secondPhase" phaseId="2" length="86400000" type="secondPhaseType">\par
+      <Dependency id="firstPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>\par
+    </Phase>\par
+  </Phases>\par
+</Template>\par
+\pard\nowidctlpar\li709\sb60\ul\b ProjectPhaseTemplate database\par
+\pard\nowidctlpar\qc\ulnone\b0\fs18 Table \ldblquote template\rdblquote\par
+\trowd\trgaph108\trleft-108\trqc\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1620\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2592\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx4968\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8748\pard\intbl\nowidctlpar id\cell category\cell name\cell creation_date\cell description\cell\row\trowd\trgaph108\trleft-108\trqc\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1620\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2592\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx4968\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8748\pard\intbl\nowidctlpar 1\cell 1\cell Design\cell 2007.12.04 14:45:02\cell This is a design phases template\cell\row\pard\nowidctlpar\sb60\qc Table \ldblquote default_template\rdblquote\par
+\trowd\trgaph108\trleft-108\trqc\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1944\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3132\pard\intbl\nowidctlpar id\cell template_id\cell category\cell\row\trowd\trgaph108\trleft-108\trqc\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1944\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3132\pard\intbl\nowidctlpar 1\cell 1\cell 1\cell\row\pard\nowidctlpar\sb60\qc Table \ldblquote phase_type\rdblquote\par
+\trowd\trgaph108\trleft-108\trqc\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1944\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3024\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx4968\pard\intbl\nowidctlpar id\cell template_id\cell type_id\cell name\cell\row\trowd\trgaph108\trleft-108\trqc\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1944\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3024\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx4968\pard\intbl\nowidctlpar 1\cell 1\cell 1\cell FirstPhaseType\cell\row\trowd\trgaph108\trleft-108\trqc\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1944\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3024\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx4968\pard\intbl\nowidctlpar 2\cell 1\cell 2\cell SecondPhaseType\cell\row\pard\nowidctlpar\sb60\qc Table \ldblquote phase\rdblquote\par
+\trowd\trgaph108\trleft-108\trqc\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1944\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3564\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx4752\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6264\pard\intbl\nowidctlpar id\cell template_id\cell phase_type_id\cell phase_id\cell time_length\cell\row\trowd\trgaph108\trleft-108\trqc\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1944\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3564\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx4752\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6264\pard\intbl\nowidctlpar 1\cell 1\cell 1\cell 1\cell 604800000\cell\row\trowd\trgaph108\trleft-108\trqc\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx1944\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3564\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx4752\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6264\pard\intbl\nowidctlpar 2\cell 1\cell 2\cell 2\cell 86400000\cell\row\pard\nowidctlpar\sb60\qc Table \ldblquote dependency\rdblquote\par
+\trowd\trgaph108\trleft-108\trqc\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2052\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3780\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx5724\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx7776\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8964\pard\intbl\nowidctlpar id\cell dependent_id\cell dependency_id\cell dependent_start\cell dependency_start\cell lag_time\cell\row\trowd\trgaph108\trleft-108\trqc\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2052\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3780\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx5724\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx7776\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8964\pard\intbl\nowidctlpar 1\cell 2\cell 1\cell t\cell f\cell 0\cell\row\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf3\i\f0\fs20 4.3.13\tab Generate project with phase being left out\par
+\pard\nowidctlpar\li709\i0 Assume that persistence contains a template definition described in the section 4.3.12.\par
+\pard\nowidctlpar\li709\sa120 Then the following call can be used to create a project with only one phase (with ID=1) configured (with phase with ID=2 left out):\par
+\pard\nowidctlpar\li709\f5\fs16 // apply a template with name "TCS Component Project" with a given start date\par
+// left out a phase with ID=2\par
+project = template.applyTemplate("TCS Component Project",\par
+                 new long[]\{2\}, Calendar.getInstance().getTime());\par
+\pard\nowidctlpar\li709\sa120 // project will contain only one phase (with ID=1) and no phase dependencies\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0\fs20 4.3.14\tab Samples of \ldblquote redirection\rdblquote  of dependencies to left out phases\f1\par
+\pard\nowidctlpar\li709\i0\f0 Assume that we have phases A, B, C, D, E and F with the following dependencies:\par
+\i Phase C depends on phases A and B.\par
+Phase D depends on phase C.\par
+Phase E depends on phase D.\par
+\pard\nowidctlpar\li709\sa120 Phase F depends on phase D.\par
+\pard\nowidctlpar\li709\i0 In this case if phases C and D are left out, this component must create phases A, B, E and F with the following dependencies:\par
+\i Phase E depends on phases A and B.\par
+\pard\nowidctlpar\li709\sa120 Phase F depends on phases A and B.\par
+\pard\nowidctlpar\li709\i0 The redirection logic is the following:\par
+Since phase D is left out, dependency from E to D can be transformed into dependency from E to the phase which phase D depends on \endash  i.e. phase C. In turn, since phase C is also left out, dependency from E to C is transformed into dependencies from E to all phases which C depends on, i.e. from E to A and from E to B. The same applies to dependencies of phase F.\par
+\par
+One more example with different dependency types:\par
+Assume that we have phases A, B, C with the following dependencies:\par
+\i Phase A ends in 1 hour after phase B ends.\par
+\pard\nowidctlpar\li709\sa120 Phase B starts 2 hours before phase C starts.\par
+\pard\nowidctlpar\li709\sa60\i0 We can show this schematically:\par
+\trowd\trgaph108\trleft601\trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\brdrcf3\clbrdrt\brdrw10\brdrs\brdrcf3\clbrdrr\brdrw10\brdrs\brdrcf3\clbrdrb\brdrw10\brdrs\brdrcf3 \cellx7513\clbrdrl\brdrw10\brdrs\brdrcf3 \cellx9434\pard\intbl\nowidctlpar\qc Phase A\cell\cell\row\trowd\trgaph108\trleft601\trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrt\brdrw10\brdrs\brdrcf3\clbrdrr\brdrw10\brdrs\brdrcf3 \cellx1418\clbrdrl\brdrw10\brdrs\brdrcf3\clbrdrt\brdrw10\brdrs\brdrcf3\clbrdrr\brdrw10\brdrs\brdrcf3\clbrdrb\brdrw10\brdrs\brdrcf3 \cellx5900\clbrdrl\brdrw10\brdrs\brdrcf3\clbrdrt\brdrw10\brdrs\brdrcf3 \cellx7513\cellx9434\pard\intbl\nowidctlpar\qc\cell Phase B\cell\lang1049\f4\'df\lang1033\f0 -- 1 hour --\lang1049\f4\'e0\lang1033\f0\cell\cell\row\trowd\trgaph108\trleft601\trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\cellx1418\clbrdrr\brdrw10\brdrs\brdrcf3 \cellx4134\clbrdrl\brdrw10\brdrs\brdrcf3\clbrdrt\brdrw10\brdrs\brdrcf3\clbrdrr\brdrw10\brdrs\brdrcf3\clbrdrb\brdrw10\brdrs\brdrcf3 \cellx9434\pard\intbl\nowidctlpar\qc\cell\lang1049\f4\'df\lang1033\f0 --------- 2 hours ---------\lang1049\f4\'e0\lang1033\f0\cell Phase C\cell\row\pard\nowidctlpar\li709\sb60\sa60 Then after phase B is left out, phase A should depend on phase C:\par
+\trowd\trgaph108\trleft601\trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\brdrcf3\clbrdrt\brdrw10\brdrs\brdrcf3\clbrdrr\brdrw10\brdrs\brdrcf3\clbrdrb\brdrw10\brdrs\brdrcf3 \cellx4133\clbrdrl\brdrw10\brdrs\brdrcf3 \cellx5900\cellx7667\cellx9434\pard\intbl\nowidctlpar\qc Phase A\cell\cell\cell\cell\row\trowd\trgaph108\trleft601\trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrt\brdrw10\brdrs\brdrcf3 \cellx2366\clbrdrt\brdrw10\brdrs\brdrcf3 \cellx4133\cellx5900\clbrdrb\brdrw10\brdrs\brdrcf3 \cellx7667\clbrdrb\brdrw10\brdrs\brdrcf3 \cellx9434\pard\intbl\nowidctlpar\qc\cell\lang1049\f4\'df\lang1033\f0 --- 1 hour ---\lang1049\f4\'e0\lang1033\f0\cell\lang1049\f4\'df\lang1033\f0 --- 1 hour ---\lang1049\f4\'e0\lang1033\f0\cell\cell\cell\row\trowd\trgaph108\trleft601\trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\cellx2366\clbrdrr\brdrw10\brdrs\brdrcf3 \cellx5900\clbrdrl\brdrw10\brdrs\brdrcf3\clbrdrt\brdrw10\brdrs\brdrcf3\clbrdrr\brdrw10\brdrs\brdrcf3\clbrdrb\brdrw10\brdrs\brdrcf3 \cellx9434\pard\intbl\nowidctlpar\qc\cell\lang1049\f4\'df\lang1033\f0 ---------------- 2 hours ----------------\lang1049\f4\'e0\lang1033\f0\cell Phase C\cell\row\pard\nowidctlpar\li709\sb60 I.e. phase A should end 1 hour before phase C starts.\par
+To understand why we get this result try to imagine that the length of phase B became equal to 0.\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\cf0\b 5.\tab\fs24 Future Enhancements\par
+\pard\nowidctlpar\fi-425\li851\sb60\tx851\b0\f4\fs16 l\tab\f0\fs20 Implement new StartDateGenerator implementations to add new project start date generation logic.\par
+\pard\nowidctlpar\fi-425\li851\tx851\f4\fs16 l\tab\f0\fs20 Add template authoring/editing functionality\par
+\pard\nowidctlpar\fi-425\li851\f4\fs16 l\tab\f0\fs20 Enhance the XmlPhaseTemplatePersistence to support dynamic template management (adding/removing).\par
+\f4\fs16 l\tab\f0\fs20 Enhance the DBPhaseTemplatePersistence to support dynamic template management (adding).\par
+}
+ 

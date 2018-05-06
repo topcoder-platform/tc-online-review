@@ -1,0 +1,14 @@
+# Property file defining the component's information.
+component.name=Topcoder Commons Utility
+component.distfilename=topcoder_commons_utility
+component.package=com.topcoder.commons.utils
+component.packagedir=com/topcoder/commons/utils
+component.version.major=1
+component.version.minor=0
+component.version.micro=0
+component.version.build=1
+
+# Defines the Main-Class property for the manifest file (e.g. com.topcoder.utility.SomeClass)
+# This property is only used for components that can be run from command line.
+# Leave the property value empty if not applicable.
+component.mainclass=

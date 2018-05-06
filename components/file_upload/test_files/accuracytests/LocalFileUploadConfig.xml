@@ -1,0 +1,38 @@
+<CMConfig>
+	<Config name="ValidWithOverwrite">	
+		<Property name="single_file_limit">
+			<Value>10000</Value>
+		</Property>
+		<Property name="total_file_limit">
+			<Value>20000</Value>
+		</Property>
+		<Property name="allowed_dirs">
+			<Value>test_files/accuracytests/temp</Value>
+			<Value>test_files/accuracytests/files</Value>
+		</Property>
+		<Property name="default_dir">
+			<Value>test_files/accuracytests/temp</Value>
+		</Property>
+		<Property name="overwrite">
+			<Value>true</Value>
+		</Property>
+	</Config>
+	<Config name="ValidWithoutOverwrite">
+		<Property name="single_file_limit">
+			<Value>10000</Value>
+		</Property>
+		<Property name="total_file_limit">
+			<Value>20000</Value>
+		</Property>
+		<Property name="allowed_dirs">
+			<Value>test_files/accuracytests/temp</Value>
+			<Value>test_files/accuracytests/files</Value>
+		</Property>
+		<Property name="default_dir">
+			<Value>test_files/accuracytests/temp</Value>
+		</Property>
+		<Property name="overwrite">
+			<Value>false</Value>
+		</Property>
+	</Config>
+</CMConfig>

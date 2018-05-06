@@ -1,0 +1,16 @@
+<CMConfig>
+	<Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadExternalServices">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="uploadServicesIdentifier">
+			<Value>uploadServices</Value>
+		</Property>
+		<Property name="filenamePattern">
+			<Value>submission-{0}-{1}</Value>
+		</Property>
+		<Property name="fileStorageLocation">
+			<Value>E:/Program Files/Apache Software Foundation/Tomcat 5.5/webapps/axis/WEB-INF/classes/test_files/upload</Value>
+		</Property>
+	</Config>
+</CMConfig>	

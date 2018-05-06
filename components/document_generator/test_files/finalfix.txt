@@ -1,0 +1,6 @@
+1.add TestFileTemplateSource.testGetTemplate_ResourceFile test cases.
+2.web demo is updated, to show reading file from ear/war.
+3.refer http://forums.topcoder.com/?module=Thread&threadID=667633&start=0, the files must be in the classpath directory.
+4. As Class DocumentGeneratorCommand is no need to change, so I resume it.
+5. use "ant create_ear" to build web demo's ear/web file.
+  The files are in build/dist/app

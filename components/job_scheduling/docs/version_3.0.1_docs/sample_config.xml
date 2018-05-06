@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CMConfig>
+    <!-- this configuration is same as version 1.0 -->
+    <Property name="jobName07">
+        <Value>StartDTG: May 5, 2003 05:00:00 AM </Value>
+        <Value>EndDTG:  May 5, 2004 05:00:00 AM</Value>
+        <Value>IntervalValue: 1</Value>
+        <Value>IntervalUnit: DATE</Value>
+        <Value>JobType: JOB_TYPE_EXTERNAL</Value>
+        <Value>JobCmd: dir</Value>
+    </Property>
+    <Property name="jobName01">
+        <Value>StartDTG:January 1, 2003 1:00:00 AM</Value>
+        <Value>EndDTG:January 1, 2004 1:00:00 AM</Value>
+        <Value>IntervalValue:1</Value>
+        <Value>IntervalUnit:MINUTE</Value>
+        <Value>JobType:JOB_TYPE_JAVA_CLASS</Value>
+        <Value>JobCmd:com.topcoder.util.scheduler.MyJob</Value>
+    </Property>
+    <!-- this configuration is same as version 1.0 (end)-->
+    
+    
+    <!-- single job in version 2.0 -->
+    <Property name="newJobName01">    <!-- a job only has a dependence -->    
+        <Value>JobType: JOB_TYPE_JAVA_CLASS</Value>
+        <Value>JobCmd: com.topcoder.util.scheduler.MyJob</Value>
+        
+        <Property name="Dependence">
+            <Property name="jobName07">
+                <Property name="Status"><VALUE>SUCCESSFUL</VALUE></Property> <!-- can be SUCCESSFUL, FAILED or BOTH -->
+                <Property name="Delay"><VALUE>10000</VALUE></Property> <!-- <VALUE>10000<VALUE> ms = 10s -->                
+            </Property>           
+        </Property>
+        
+        <Property name="Messages">
+            <Property name="SUCCESSFUL">                
+                <Property name="TemplateFileName"><Value>c:\template1.txt</Value></Property>                 
+                <Property name="Recipients"> 
+                    <Value>rec1@topcoder.com</Value>
+                    <Value>rec2@topcoder.com</Value>
+                </Property>
+                
+            </Property>
+            
+            <Property name="FAILED">
+                <Property name="TemplateFileName"><Value>c:\template2.txt</Value></Property>                
+                <Property name="Recipients">
+                    <Value>rec1@topcoder.com</Value>
+                    <Value>rec2@topcoder.com</Value>
+                </Property>
+                
+            </Property>
+            
+            <Property name="NOT_STARTED">                
+                <Property name="TemplateFileName"><Value>c:\template3.txt</Value></Property>
+                <Property name="Recipients">
+                    <Value>rec1@topcoder.com</Value>                
+                </Property>
+                
+            </Property>
+            
+        </Property>        
+    </Property>
+    
+    <Property name="newJobName02">
+        <Value>StartDTG: May 5, 2003 05:00:00 AM </Value> 
+        <Value>EndDTG:  May 5, 2004 05:00:00 AM</Value>
+        <Value>IntervalValue: 1</Value>
+        <Value>IntervalUnit: DATE</Value>
+        <Value>JobType: JOB_TYPE_JAVA_CLASS</Value>
+        <Value>JobCmd: com.topcoder.util.scheduler.MyJob</Value>
+        
+        <Property name="Messages">
+            <Property name="SUCCESSFUL">                
+                <Property name="TemplateFileName"><Value>c:\template1.txt</Value></Property>                 
+                <Property name="Recipients"> 
+                    <Value>rec1@topcoder.com</Value>
+                    <Value>rec2@topcoder.com</Value>
+                </Property>
+                
+            </Property>
+            
+            <Property name="FAILED">
+                <Property name="TemplateFileName"><Value>c:\template2.txt</Value></Property>                
+                <Property name="Recipients">
+                    <Value>rec1@topcoder.com</Value>
+                    <Value>rec2@topcoder.com</Value>
+                </Property>
+                
+            </Property>
+            
+            <Property name="NOT_STARTED">                
+                <Property name="TemplateFileName"><Value>c:\template3.txt</Value></Property>
+                <Property name="Recipients">
+                    <Value>rec1@topcoder.com</Value>                
+                </Property>
+                
+            </Property>
+        </Property>        
+        
+    </Property>
+    
+    <Property name="newJobName03">
+        <Value>StartDTG: May 5, 2003 05:00:00 AM </Value> 
+        <Value>EndDTG:  May 5, 2004 05:00:00 AM</Value>
+        <Value>IntervalValue: 1</Value>
+        <Value>IntervalUnit: DATE</Value>
+        <Value>JobType: JOB_TYPE_JAVA_CLASS</Value>
+        <Value>JobCmd: com.topcoder.util.scheduler.MyJob</Value>
+        
+    </Property>
+    
+    
+    <!-- Defined Groups -->
+    <Property name="DefinedGroups">
+        <Property name="group_1"> <!-- group name -->
+            <Property name="Jobs"> <!-- must have one job -->
+                <Value>newJobName01</Value>
+                <Value>newJobName03</Value>
+            </Property>
+            <Property name="Messages"> <!-- Email Event handlers in this group, optional -->
+                <Property name="SUCCESSFUL">                
+                    <Property name="TemplateFileName"><Value>c:\template1.txt</Value></Property>                 
+                    <Property name="Recipients"> 
+                        <Value>rec1@topcoder.com</Value>
+                        <Value>rec2@topcoder.com</Value>
+                    </Property>
+                    
+                </Property>
+                
+                <Property name="FAILED">
+                    <Property name="TemplateFileName"><Value>c:\template2.txt</Value></Property>                
+                    <Property name="Recipients">
+                        <Value>rec1@topcoder.com</Value>
+                        <Value>rec2@topcoder.com</Value>
+                    </Property>
+                    
+                </Property>
+                
+                <Property name="NOT_STARTED">                
+                    <Property name="TemplateFileName"><Value>c:\template3.txt</Value></Property>
+                    <Property name="Recipients">
+                        <Value>rec1@topcoder.com</Value>                
+                    </Property>
+                    
+                </Property>
+                
+            </Property>
+        </Property>    
+        
+        <Property name="group_2">
+            <Property name="Jobs">
+                <Value>newJobName02</Value>                
+            </Property>
+        </Property>    
+    </Property>
+    
+    <Property name="EmailConfiguration"> <!-- required -->
+        <Property name="FromAddress"> <!-- required -->
+            <Value>JobScheduler@topcoder.com</Value>
+        </Property>
+        <Property name="Subject"> <!-- required -->
+            <Value>Topcoder Job Scheduler Service</Value>
+        </Property>        
+        <Property name="DefaultTemplate"> <!-- required -->
+            <Value>c:\sample_template.txt</Value>
+        </Property>
+    </Property>
+</CMConfig>

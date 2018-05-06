@@ -1,0 +1,845 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CMConfig>
+     <Config name="com.cronos.onlinereview.phases.AbstractPhaseHandler.MissingProjectDetailsURL">
+        <Property name="ConnectionName">
+            <Value>informix_connection</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>MissingProjectDetailsURL</Value>
+        </Property>
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>Reviewer</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+            </Property>
+            <Property name="EmptyScheme">
+               <!-- such definition, is invalid. just for coverage purpose -->
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+	        <Property name="StartPhaseEmail">
+	        	<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	        </Property>
+	        <Property name="EndPhaseEmail">
+	        	<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase End</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	        </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+        	<Property name="StartPhaseEmail">
+        		<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template_manager.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	            <Property name="Priority">
+	            	<Value>1</Value>
+	            </Property>
+        	</Property>
+        	<Property name="EndPhaseEmail">
+        		<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template_manager.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+        	</Property>
+        </Property>
+        
+    </Config>
+    <Config name="com.cronos.onlinereview.phases.AbstractPhaseHandler.Invalid2">
+        <Property name="ConnectionName">
+            <Value>informix_connection</Value>
+        </Property>
+        <!-- not exists-->
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper.notExists</Value>
+        </Property>
+
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>Reviewer</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+            </Property>
+            <Property name="EmptyScheme">
+               <!-- such definition, is invalid. just for coverage purpose -->
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+	        <Property name="StartPhaseEmail">
+	        	<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	        </Property>
+	        <Property name="EndPhaseEmail">
+	        	<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase End</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	        </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+        	<Property name="StartPhaseEmail">
+        		<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template_manager.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	            <Property name="Priority">
+	            	<Value>1</Value>
+	            </Property>
+        	</Property>
+        	<Property name="EndPhaseEmail">
+        		<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template_manager.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+        	</Property>
+        </Property>
+    </Config>
+    <Config name="com.cronos.onlinereview.phases.AbstractPhaseHandler.MissingStartPhaseEmail">
+        <Property name="ConnectionName">
+            <Value>informix_connection</Value>
+        </Property>
+        <!-- not exists-->
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+         
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>Reviewer</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+            </Property>
+            <Property name="EmptyScheme">
+               <!-- such definition, is invalid. just for coverage purpose -->
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+	        <Property name="EndPhaseEmail">
+	        	<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase End</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	        </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+        	<Property name="EndPhaseEmail">
+        		<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template_manager.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+        	</Property>
+        </Property>
+    </Config>
+    <Config name="com.cronos.onlinereview.phases.AbstractPhaseHandler.MissingEndPhaseEmail">
+        <Property name="ConnectionName">
+            <Value>informix_connection</Value>
+        </Property>
+        <!-- not exists-->
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+         
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>Reviewer</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+            </Property>
+            <Property name="EmptyScheme">
+               <!-- such definition, is invalid. just for coverage purpose -->
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+	        <Property name="StartPhaseEmail">
+	        	<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	        </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+        	<Property name="StartPhaseEmail">
+        		<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template_manager.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	            <Property name="Priority">
+	            	<Value>1</Value>
+	            </Property>
+        	</Property>
+        </Property>
+    </Config>
+    
+    <Config name="com.cronos.onlinereview.phases.AbstractPhaseHandler.InvalidStartSendEmail">
+        <Property name="ConnectionName">
+            <Value>informix_connection</Value>
+        </Property>
+        <!-- not exists-->
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+         
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>Reviewer</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+            </Property>
+            <Property name="EmptyScheme">
+               <!-- such definition, is invalid. just for coverage purpose -->
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+	        <Property name="StartPhaseEmail">
+	        	<Property name="SendEmail">
+	        		<Value>invalid</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	        </Property>
+	        <Property name="EndPhaseEmail">
+	        	<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase End</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	        </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+        	<Property name="StartPhaseEmail">
+        		<Property name="SendEmail">
+	        		<Value>invalid</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template_manager.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	            <Property name="Priority">
+	            	<Value>1</Value>
+	            </Property>
+        	</Property>
+        	<Property name="EndPhaseEmail">
+        		<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template_manager.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+        	</Property>
+        </Property>
+    </Config>
+    
+    <Config name="com.cronos.onlinereview.phases.AbstractPhaseHandler.InvalidEndSendEmail">
+        <Property name="ConnectionName">
+            <Value>informix_connection</Value>
+        </Property>
+        <!-- not exists-->
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+         
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>Reviewer</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+            </Property>
+            <Property name="EmptyScheme">
+               <!-- such definition, is invalid. just for coverage purpose -->
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+	        <Property name="StartPhaseEmail">
+	        	<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	        </Property>
+	        <Property name="EndPhaseEmail">
+	        	<Property name="SendEmail">
+	        		<Value>invalid</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase End</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	        </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+        	<Property name="StartPhaseEmail">
+        		<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template_manager.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	            <Property name="Priority">
+	            	<Value>1</Value>
+	            </Property>
+        	</Property>
+        	<Property name="EndPhaseEmail">
+        		<Property name="SendEmail">
+	        		<Value>invalid</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template_manager.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+        	</Property>
+        </Property>
+    </Config>
+    
+    <Config name="com.cronos.onlinereview.phases.AbstractPhaseHandler.MissingStartEmailFromAddress">
+        <Property name="ConnectionName">
+            <Value>informix_connection</Value>
+        </Property>
+        <!-- not exists-->
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+         
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>Reviewer</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+            </Property>
+            <Property name="EmptyScheme">
+               <!-- such definition, is invalid. just for coverage purpose -->
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+	        <Property name="StartPhaseEmail">
+	        	<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	        </Property>
+	        <Property name="EndPhaseEmail">
+	        	<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase End</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	        </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+        	<Property name="StartPhaseEmail">
+        		<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template_manager.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="Priority">
+	            	<Value>1</Value>
+	            </Property>
+        	</Property>
+        	<Property name="EndPhaseEmail">
+        		<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template_manager.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+        	</Property>
+        </Property>
+    </Config>
+    
+    <Config name="com.cronos.onlinereview.phases.AbstractPhaseHandler.MissingEndEmailFromAddress">
+        <Property name="ConnectionName">
+            <Value>informix_connection</Value>
+        </Property>
+        <!-- not exists-->
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+         
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>Reviewer</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+            </Property>
+            <Property name="EmptyScheme">
+               <!-- such definition, is invalid. just for coverage purpose -->
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+	        <Property name="StartPhaseEmail">
+	        	<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	        </Property>
+	        <Property name="EndPhaseEmail">
+	        	<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase End</Value>
+	            </Property>
+	        </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+        	<Property name="StartPhaseEmail">
+        		<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template_manager.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	            <Property name="Priority">
+	            	<Value>1</Value>
+	            </Property>
+        	</Property>
+        	<Property name="EndPhaseEmail">
+        		<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template_manager.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+        	</Property>
+        </Property>
+    </Config>
+
+    <Config name="com.cronos.onlinereview.phases.AbstractPhaseHandler.InvalidPriority">
+        <Property name="ConnectionName">
+            <Value>informix_connection</Value>
+        </Property>
+        <!-- not exists-->
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+         
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>Reviewer</Value>
+            </Property>
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+            </Property>
+            <Property name="EmptyScheme">
+               <!-- such definition, is invalid. just for coverage purpose -->
+            </Property>
+        </Property>
+        <Property name="DefaultScheme">
+	        <Property name="StartPhaseEmail">
+	        	<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	        </Property>
+	        <Property name="EndPhaseEmail">
+	        	<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase End</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	        </Property>
+        </Property>
+        <Property name="ExtendedScheme">
+        	<Property name="StartPhaseEmail">
+        		<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template_manager.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+	            <Property name="Priority">
+	            	<Value>xyz</Value>
+	            </Property>
+        	</Property>
+        	<Property name="EndPhaseEmail">
+        		<Property name="SendEmail">
+	        		<Value>yes</Value>
+	        	</Property>
+	            <Property name="EmailTemplateName">
+	                <Value>test_files/valid_email_template_manager.txt</Value>
+	            </Property>
+	            <Property name="EmailSubject">
+	                <Value>Phase Start</Value>
+	            </Property>
+	            <Property name="EmailFromAddress">
+	                <Value>topcoder.developer@gmail.com</Value>
+	            </Property>
+        	</Property>
+        </Property>
+    </Config>
+
+    <Config name="MissingProjectDetailsURL">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>dbconnection</Value>
+        </Property>
+        <Property name="SearchBundleManagerNS">
+            <Value>com.topcoder.search.builder.Upload_Resource_Search</Value>
+        </Property>
+        <Property name="ProjectManager">
+            <Property name="Namespace">
+                <Value>com.topcoder.management.project.InformixProjectManager</Value>
+            </Property>
+            <Property name="ClassName">
+                <Value>com.cronos.onlinereview.phases.failuretests.mock.MockProjectManager</Value>
+            </Property>
+        </Property>
+        <Property name="PhaseManager">
+            <Property name="Namespace">
+                <Value>com.topcoder.management.phase.DefaultPhaseManager</Value>
+            </Property>
+            <Property name="ClassName">
+                <Value>com.cronos.onlinereview.phases.failuretests.mock.MockPhaseManager</Value>
+            </Property>
+        </Property>
+        <Property name="ScorecardManager">
+            <Property name="Namespace">
+                <Value>com.topcoder.management.scorecard.InformixScorecardManager</Value>
+            </Property>
+            <Property name="ClassName">
+                <Value>com.cronos.onlinereview.phases.failuretests.mock.MockScorecardManager</Value>
+            </Property>
+        </Property>
+        <Property name="ReviewManager">
+            <Property name="Namespace">
+                <Value>com.topcoder.management.review.InformixReviewManager</Value>
+            </Property>
+            <Property name="ClassName">
+                <Value>com.cronos.onlinereview.phases.failuretests.mock.MockReviewManager</Value>
+            </Property>
+        </Property>
+        <Property name="ScreeningManager">
+            <Property name="Namespace">
+                <Value>com.cronos.onlinereview.phases.failuretests.screening</Value>
+            </Property>
+        </Property>
+        <Property name="UploadManager">
+            <Property name="ClassName">
+                <Value>com.cronos.onlinereview.phases.failuretests.mock.MockUploadManager</Value>
+            </Property>
+            <Property name="UploadSearchBundleName">
+                <Value>UploadSearchBundle</Value>
+            </Property>
+            <Property name="SubmissionSearchBundleName">
+                <Value>SubmissionSearchBundle</Value>
+            </Property>
+            <Property name="UploadIdGeneratorName">
+                <Value>upload_id_seq</Value>
+            </Property>
+            <Property name="UploadTypeIdGeneratorName">
+                <Value>upload_type_id_seq</Value>
+            </Property>
+            <Property name="UploadStatusIdGeneratorName">
+                <Value>upload_status_id_seq</Value>
+            </Property>
+            <Property name="SubmissionIdGeneratorName">
+                <Value>submission_id_seq</Value>
+            </Property>
+            <Property name="SubmissionStatusIdGeneratorName">
+                <Value>submission_status_id_seq</Value>
+            </Property>
+            <Property name="PersistenceClassName">
+                <Value>com.cronos.onlinereview.phases.failuretests.mock.MockUploadPersistence</Value>
+            </Property>
+        </Property>
+        <Property name="ResourceManager">
+            <Property name="ClassName">
+                <Value>com.cronos.onlinereview.phases.failuretests.mock.MockResourceManager</Value>
+            </Property>
+            <Property name="ResourceSearchBundleName">
+                <Value>ResourceSearchBundle</Value>
+            </Property>
+            <Property name="ResourceRoleSearchBundleName">
+                <Value>ResourceRoleSearchBundle</Value>
+            </Property>
+            <Property name="NotificationSearchBundleName">
+                <Value>NotificationSearchBundle</Value>
+            </Property>
+            <Property name="NotificationTypeSearchBundleName">
+                <Value>NotificationTypeSearchBundle</Value>
+            </Property>
+            <Property name="ResourceIdGeneratorName">
+                <Value>resource_id_seq</Value>
+            </Property>
+            <Property name="NotificationTypeIdGeneratorName">
+                <Value>notification_type_id_seq</Value>
+            </Property>
+            <Property name="ResourceRoleIdGeneratorName">
+                <Value>resource_role_id_seq</Value>
+            </Property>
+            <Property name="PersistenceClassName">
+                <Value>com.cronos.onlinereview.phases.failuretests.mock.MockResourcePersistence</Value>
+            </Property>
+        </Property>
+        <Property name="UserProjectDataStore">
+            <Property name="UserRetrievalClassName">
+                <Value>com.cronos.onlinereview.phases.failuretests.mock.MockUserRetrieval</Value>
+            </Property>
+            <Property name="UserRetrievalNamespace">
+                <Value>com.cronos.onlinereview.external.impl.DBUserRetrieval</Value>
+            </Property>
+        </Property>
+        <!-- Missing
+        <Property name="ProjectDetailsURL">
+		    <Value>http://www.topcoder.com/tc?projectDetails=?</Value>
+	    </Property> -->
+    </Config>
+</CMConfig>

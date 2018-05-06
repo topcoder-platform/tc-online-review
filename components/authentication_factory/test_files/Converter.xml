@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>  
+<CMConfig>
+  <!-- properties for DefaultKeyConverter -->
+  <Config name="com.topcoder.security.authenticationfactory.DefaultKeyConverter">
+    <!-- mapping from the principal's key to Authenticator's key, optional. -->
+    <Property name="mappings">
+      <!-- the name contains authenticator's key, and the value contains principal's key. -->
+      <Property name="username">
+        <Value>UserName</Value>
+      </Property>
+      <Property name="password">
+        <Value>Pwd</Value>
+      </Property>
+    </Property>
+  </Config>
+
+  <!-- properties for DefaultKeyConverter -->
+  <Config name="com.topcoder.security.authenticationfactory.ErrorConverter">
+    <!-- mapping from the principal's key to Authenticator's key, optional. -->
+    <Property name="mappings">
+      <!-- the name contains authenticator's key, and the value contains principal's key. -->
+      <Property name="username">
+        <Value> </Value>
+      </Property>
+      <Property name="password">
+        <Value>Pwd</Value>
+      </Property>
+    </Property>
+  </Config>
+</CMConfig>

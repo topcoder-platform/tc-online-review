@@ -1,0 +1,594 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang1033\deflangfe1033{\fonttbl{\f0\fswiss\fprq2\fcharset0 Arial;}{\f1\froman\fprq2\fcharset0 Times New Roman;}{\f2\froman\fprq2\fcharset2 Symbol;}{\f3\fnil\fprq2\fcharset2 Wingdings;}{\f4\fmodern\fprq1\fcharset0 Courier New;}{\f5\fnil Courier New;}{\f6\fnil\fcharset0 Courier New;}}
+{\colortbl ;\red0\green0\blue255;\red0\green102\blue255;\red255\green0\blue0;\red0\green0\blue0;\red63\green127\blue95;\red232\green242\blue254;\red127\green0\blue85;\red0\green0\blue192;\red42\green0\blue255;\red255\green248\blue147;\red63\green95\blue191;\red127\green127\blue159;\red127\green159\blue191;}
+{\stylesheet{ Normal;}{\s1 heading 1;}{\s2 heading 2;}{\s3 heading 3;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\ul\b\f0\fs28 Logging Wrapper 2.0 Component Specification\par
+\pard\nowidctlpar\li720\sa120\ulnone\b0\f1\fs20\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b\f0 1.\tab\fs24 Design\par
+\pard\nowidctlpar\li720\sa120\b0\fs20 The Logging Wrapper component provides a standard logging API with a pluggable back-end logging implementation. Utilization of the Logging Wrapper insures that components are not tied to a specific logging solution. More importantly, a change to the back-end logging solution does not require a code change to existing, tested components. \par
+The design is based on a factory pattern. \cf1 The\cf0  \cf1 LogManager\cf0  \cf1 will be used by the application to obtain Log instances from the underlying LogFactory\cf0 . The Log interface abstracts a logging implementation (concrete instances are \cf1 basic print stream \cf0 logging, JDK 1.4 logging and Log4j logging) \cf1 and provides an API to delay the formatting of the logging message as long as possible (sometimes even into the underlying logging system)\cf0 . \cf1 The LogManager\cf0  can be used to get an instance of a logger \cf1 for a given logger name\cf0 . \cf1 The LogManager can be configured to specify the type of LogFactory to use and to specify the various Object Formatters to format a message object (such as an event or transaction).  By utilizing Object Formatters, the application can separate the logging format of an object from the object itself (and/or centralize the formatting of objects into a single location rather than at each logging line).\f1\par
+\cf0\i\par
+\f0 Version 1.2 Changes\par
+\i0 The changes to this design are presented below. Some changes were due to the new requirements and some were the result of a refactoring cycle, meant to fix some problems with the previous design. Note that despite of the drastic changes, compatibility is still preserved with old client code (the main goal was to support the LogFactory.getInstance().getLog(name) call).\par
+One of the biggest changes of this design is the removal of the factory implementation classes. The factory classes were redundant and they only complicated the design with no benefit. Since the factory classes where build themselves using Java reflection, it made sense creating the Log instances directly, using Java reflection. The intermediation done by the factory class served to no purpose at all. Simply put, the flaw of the previous version was the fact that this class was a \i factory of factories\i0 , an obvious overkill. This removal implied also the removal of the abstract getLog method and of the abstract modified for this class.\par
+\pard\nowidctlpar\fi720\sa120 Here is a summary of the changes:\par
+\pard\nowidctlpar\fi-360\li1440\f2\'b7\tab\f0 removed all LogFactory subclasses\par
+\f2\'b7\tab\f0 removed LogFactory.getLog abstract method and LogFactory abstract modifier\par
+\f2\'b7\tab\f0 removed createInstance (see the forum) and made getInstance deprecated\par
+\f2\'b7\tab\f0 added static getLog and getLog(name) methods with all exceptions silently caught\par
+\f2\'b7\tab\f0 added static getLogWithExceptions (same as getLog but with exceptions thrown, to allow the user to debug problems if needed)\par
+\f2\'b7\tab\f0 fixed some loadConfiguration method inconsistencies (see loadConfiguration)\par
+\f2\'b7\tab\f0 LogException uses the standard BaseException component\par
+\f2\'b7\tab\f0 Level uses the standard Type Safe Enumeration component\par
+\f2\'b7\tab\f0 added Level.hashCode (because whenever equals is overwritten, hashCode should be overwritten too)\par
+\f2\'b7\tab\f0 removed exceptions from the implementations of Log.log and Log.isEnabled, loadConfiguration and getAttribute\par
+\f2\'b7\tab\f0 changed visibility of the constants from BasicLog to private, because they do not need to be used by outside code\par
+\f2\'b7\tab\f0 enhanced the javadocs in all classes.\par
+\pard\nowidctlpar\li720\f1\par
+\pard\nowidctlpar\li720\sa120\i\par
+\cf1\f0 Version 2.0 Changes\f1\par
+\i0\f0 All changes to this document (beyond simple formatting, minor spelling corrections and deletions) will be marked in blue.\par
+\f1\par
+\f0 Please note that the project file (.zuml) will mark added items in \cf2 blue\cf1  and updated items in \cf3 red\cf1 .  The only exceptions to this are:\par
+\pard\nowidctlpar\fi-360\li1440\sa120 1.\tab All the design documentation tabs (class, variables, and methods) were updated to reflect the v1.2 distribution code \endash  if the method logic itself was unchanged, this type of update would not be marked in \cf3 red\cf1\f1 .\par
+\f0 2.\tab Converting the project file to Poseidon 5.0 destroyed the existing sequence diagrams and marking the differences would be too difficult.  Since most of these diagrams were fully updated anyway \endash  no markings were made.\par
+\pard\nowidctlpar\li720\sa120\f1\par
+\f0 This enhancement to the Logging Wrapper has the following goals:\par
+\pard\nowidctlpar\fi-360\li1800\sa120\f2 1.\tab\f0 The configuration manager was eliminated from this component\f1 .\f0   All references to it were removed and all corresponding methods were updated and associated fields dropped.\f1\par
+\f2 2.\tab\f0 Formatting of the message should be put off as much as possible\f1 .\f0   This goal was satisfied by providing functions that allows the application to specify the formatting and have that formatting delayed as much as possible.  In both the log4j and java logging instances, specific situations were even pushed past this component and into the native processing of those logging systems.\f1\par
+\f2 3.\tab\f0 Stack trace support was added to the component to allow any throwable to be specified for logging\f1 .\f0   In the case of log4j/jdk14 logging, the throwable is simply passed to the appropriate method.  In the case of the basic logger, the throwable will print the stack trace out to the PrintStream.\f1\par
+\pard\nowidctlpar\li1440\sa120\par
+\pard\nowidctlpar\li720\sa120\f0 In addition to those changes, the following changes occurred:\par
+\pard\nowidctlpar\fi-360\li1800\sa120 1.\tab Full support for message \b object\b0  formatting was introduced by utilizing the Object Formatter component (PM required approval of all components in the forum - see PM approval message in docs directory).  This provides separation between a message object and its formatting logic.  The application simply logs with the message and the string format of the object is then controlled via the Object Formatter (also allowing for a centralized area to update the formatting).\par
+2.\tab The basic logger was enhanced to work with any PrintStream (not just System.out/System.err).  This would allow the BasicLogger to also write the information out to files or sockets.\par
+3.\tab The .zuml file was fully updated to current standards/colors and the documentation changed to reflect the v1.2 development.\par
+4.\tab Added more constructors to the LogException to allow it to be used by other LogFactory types.\par
+5.\tab Added a convenience method to parse a level from a string.  This enables an application to easily store and recreate a level by either the string form or the integer form.\par
+6.\tab An error in the mapping of the log4j levels was corrected\f1 .\f0   \par
+\pard\nowidctlpar\li1440\sa120\f1\par
+\pard\nowidctlpar\li720\f0 Summary of Changes to existing classes:\par
+\pard\nowidctlpar\li1440 LogManager (formerly known as LogFactory)\f1\par
+\pard\nowidctlpar\fi-360\li1800\f2\'b7\tab\f0 Name was changed to LogManager.\f1\par
+\f2\'b7\tab\f0 Removed Configuration Manager fields, variables and references.\f1\par
+\f2\'b7\tab\f0 Support for the new LogFactory and Object Formatter were added.\f1\par
+\f2\'b7\tab\f0 Made the BasicLogFactory the default factory for the LogManager if none was specified.\f1\par
+\f2\'b7\tab\f0 Changed the logger DEFAULT_NAME to be public.\par
+\pard\nowidctlpar\li1440\cf0\f1\par
+\cf1\f0 Level\par
+\pard\nowidctlpar\fi-360\li1800\f2\'b7\tab\f0 Add a new convenience method parseLevel(string)\f1 .\par
+\f2\'b7\tab\f0 Made the level integer final\par
+\pard\nowidctlpar\li720\f1\par
+\pard\nowidctlpar\li1440\f0 LogException\par
+\pard\nowidctlpar\fi-360\li1800\f2\'b7\tab\f0 Added two new constructors.\f1\par
+\pard\nowidctlpar\li1440\par
+\f0 BasicLog\par
+\pard\nowidctlpar\fi-360\li1800\f2\'b7\tab\f0 Removed Configuration Manager fields, variables and references.\par
+\f2\'b7\tab\f0 Changed to inherit from AbstractLog for storage of the name\f1 .\par
+\f2\'b7\tab\f0 Changed to print to a generic PrintStream that is specified in the constructor.\f1\par
+\f2\'b7\tab\f0 Changed to print the stack trace after the message.\par
+\pard\nowidctlpar\li720\f1\par
+\pard\nowidctlpar\li1440\f0 Log4jLog\par
+\pard\nowidctlpar\fi-360\li1800\f2\'b7\tab\f0 Removed Configuration Manager fields, variables and references.\par
+\f2\'b7\tab\f0 Fixed an error in the level mapping.\par
+\f2\'b7\tab\f0 Changed to inherit from AbstractLog for storage of the name\par
+\f2\'b7\tab\f0 Dropped the current level variable and processing (was not needed).\f1\par
+\f2\'b7\tab\f0 Changed the constructor to package private since it should only be created by the associated factory now.\par
+\f2\'b7\tab\f0 Changed its logging method to implement the new signature defined by the AbstractLog\par
+\f2\'b7\tab\f0 Changed the logging method to call the appropriate underlying logging method depending if a throwable was specified or not.\par
+\f2\'b7\tab\f0 Overrode some of the AbstractLog methods to allow message object formatting to be processed internally by a Log4J Layout if the application specified one (delaying the formatting further than this component).\par
+\f2\'b7\tab\f0 Made the logger variable final.\par
+\pard\nowidctlpar\f1\par
+\pard\nowidctlpar\li1440\f0 Jdk14Log\par
+\pard\nowidctlpar\fi-360\li1800\f2\'b7\tab\f0 Removed Configuration Manager fields, variables and references.\par
+\f2\'b7\tab\f0 Changed to inherit from AbstractLog for storage of the name\par
+\f2\'b7\tab\f0 Dropped the current level variable and processing (was not needed).\par
+\f2\'b7\tab\f0 Changed the constructor to package private since it should only be created by the associated factory now.\par
+\f2\'b7\tab\f0 Changed its logging method to implement the new signature defined by the AbstractLog\par
+\f2\'b7\tab\f0 Changed the logging method to call the appropriate underlying logging method depending if a throwable was specified or not.\par
+\f2\'b7\tab\f0 Overrode some of the AbstractLog methods to allow message string formatting to be processed internally by a java logging API (delaying the formatting further than this component).\par
+\f2\'b7\tab\f0 Made the logger variable final.\f1\par
+\pard\nowidctlpar\par
+\par
+\pard\nowidctlpar\li720\f0 Summary of new classes:\par
+\pard\nowidctlpar\fi-360\li1800\f2\'b7\tab\f0 AbstractLog\par
+\f2\'b7\tab\f0 LogFactory\f1\par
+\f2\'b7\tab\f0 BasicLogFactory\f1\par
+\f2\'b7\tab\f0 Jdk14LogFactory\par
+\f2\'b7\tab\f0 Log4jLogFactory\f1\par
+\pard\nowidctlpar\li720\par
+\pard\nowidctlpar\li1440\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\cf0\b\f0 1.1\tab Design Patterns \par
+\pard\keepn\nowidctlpar\s3\fi-360\li1800\sb120\sa60\sl240\slmult0\b0\f2\'b7\tab\f0 The Log implementations are adapters for the classes that do the actual logging\par
+\cf1\f2\'b7\tab\f0 The factory pattern is used by each LogFactory to produce Log implementations specific to that factory implementation.\f1\par
+\f2\'b7\tab\f0 The strategy pattern was used to allow interchangeability of the various LogFactory implementations and their associated Log implementation.\f1\par
+\f2\'b7\tab\f0 The template pattern was used to in AbstractLog to allow subclasses to override specific methods without affecting the overall structure\par
+\pard\nowidctlpar\cf0\f1\par
+\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0 1.2\tab Industry Standards\par
+\pard\nowidctlpar\fi-360\li1080\b0\f3\'a7\tab\f0 None\par
+\pard\nowidctlpar\li720\f1\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0 1.3\tab Required Algorithms\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf1\b0\i 1.3.1\tab Message String Formatting\par
+\pard\nowidctlpar\li720\i0 This component can format a message format string pattern with a list of arguments.  To format the list, the AbstractLog will simply:\par
+\par
+\pard\nowidctlpar\li1440\f4 // Format the string pattern with the arguments\par
+\fs18 String formattedMessage = MessageFormat.format(messageFormat,args);\par
+\pard\nowidctlpar\f1\par
+\pard\nowidctlpar\li720\f0\fs20 The formatted message is then passed to the underlying logger\rquote s log method.  \par
+\par
+Please note that the Jdk14 API provides an API to do this internally and the Jdk14Log implementation will override this functionality to simply pass the message format pattern and its arguments directly to the Jdk14 Logger (thus delaying the formatting even further).   Note: this only occurs on the non-Throwable version of this API (the Jdk14 Logger API only provides a non-Throwable version of this).\par
+\pard\nowidctlpar\li1440\f1\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0 1.3.2\tab Message Object Formatting\f1\par
+\pard\nowidctlpar\li720\i0\f0 This component can also format a message object utilizing the Object Formatter component.  This allows the application to separate the formatting of the object from the object itself and from the logging locations.  When the AbstractLog needs to format an object, it will simply:\f1\par
+\par
+\pard\nowidctlpar\li1440\f4\fs18 // Get the Object Formatter (if not specified via the API)\par
+\f0\fs20 ObjectFormatter of = LogManager.getObjectFormatter();\par
+\par
+// Format the object\par
+String formattedMessage = of.format(message);\par
+\par
+// As a backup \endash  if it wasn\rquote t formatted, default to the toString()\par
+If (formattedMessage == null) formattedMessage = message.toString();\par
+\pard\nowidctlpar\li720\f1\par
+\f0 The formatted message is then passed to the underlying logger\rquote s log method.  \par
+\par
+Please note that the Log4J API provides the ability to format message objects via a Layout implementation.  This component provides the API to turn off the above logic in the Log4J factory if the application will be specifying object formatting via the Layout itself.  This would allow the component to delay the formatting of the message object even further.\f1\par
+\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\cf0\b\f0 1.4\tab Component Class Overview \par
+\pard\nowidctlpar\fi720\sb120\sa120\cf1 com.topcoder.util.log.LogManager\f1\par
+\pard\nowidctlpar\fi720\li720\sb120\sa120\b0\f0 This is the main class for the Logging Wrapper component.  The Logging Wrapper component provides a standard logging API with a pluggable back-end logging implementation. Utilization of the Logging Wrapper insures that components are not tied to a specific logging solution. More importantly, a change to the back-end logging solution does not require a code change to existing, tested components. Support exists for the console, log4j and java1.4 Logger as back-end logging implementations.  This class will default to the console logger unless a new one is specified.  Additionally, logging a message object can be generically formatted via the Object Formatter component prior to logging.\par
+\pard\nowidctlpar\fi720\sb120\sa120\b com.topcoder.util.log.LogFactory\par
+\pard\nowidctlpar\fi720\li720\sb120\sa120\b0 This interface defines the contract for implementations that will produce Log instances.  The LogFactory will implement the createLog method that takes the name to assign to the Log and return a Log instance for it.\par
+\pard\nowidctlpar\fi720\sb120\sa120\b com.topcoder.util.log.Log\f1\par
+\pard\nowidctlpar\fi720\li720\sb120\sa120\b0\f0 The Log interface should be extended by classes that wish to provide a custom logging implementation. The various log method(s) are used to log a message using the underlying implementation, and the isEnabled method is used to determine if a specific logging level is currently being logged. This class has various overridden methods to allow flexible logging. All log methods will attempt to delay the formatting of the logging message to the latest possible moment (which may be in the underlying logging mechanism if supported).  At the highest level, the message will not be formatted if the logging level is not enabled.  Beyond that level, it's entirely dependent upon the underlying logger. Example: the java logger can delay message format processing until the last possible moment natively and the log4j logger could delay message object formatting until the last possible moment.\par
+\pard\nowidctlpar\fi720\sb120\sa120\b com.topcoder.util.log.AbstractLog\par
+\pard\nowidctlpar\fi720\li720\sb120\sa120\b0 This is an abstract implementation of the Log interface that can provide common services to Log implementations. This abstract base, currently, provides services to store and retrieve the name assigned to the logger and provides default implementations to the various log methods in the Log interface.  This abstract base will be responsible for converting the message into a string form and then calling an abstract method (that the subclass will provide) to log the message.  Please note that subclasses may override any of these methods to provide specific functionality from the underlying implementation.\par
+\pard\nowidctlpar\fi720\sb120\sa120\f1\par
+\b\f0 com.topcoder.util.log.Level\par
+\pard\nowidctlpar\fi720\li720\sa120\b0 The Level class maintains the list of acceptable logging levels. It provides the user this easy access to predefined logging levels though the constants defined in this class\f1 .\par
+\pard\nowidctlpar\li1440\sa120\par
+\pard\nowidctlpar\fi720\sb120\sa120\b\f0 com.topcoder.util.log.basic.BasicLogFactory\par
+\pard\nowidctlpar\fi720\li720\b0 This is the implementation of the LogFactory interface that will create BasicLog instances based on the print stream given.\par
+\pard\nowidctlpar\li1440\f1\par
+\pard\nowidctlpar\fi720\sb120\sa120\b\f0 com.topcoder.util.log.basic.BasicLog\par
+\pard\nowidctlpar\fi720\li720\b0 This is the basic implementation of the Log interface that will write the logging message to the specified print stream\f1 .\par
+\pard\nowidctlpar\li1440\par
+\pard\nowidctlpar\fi720\sb120\sa120\b\f0 com.topcoder.util.log.jdk14.Jdk14LogFactory\par
+\pard\nowidctlpar\fi720\li720\b0 This is the implementation of the LogFactory interface that will create Jdk14Log instances based on the java logger for the given name.\par
+\pard\nowidctlpar\li1440\f1\par
+\pard\nowidctlpar\fi720\sb120\sa120\b\f0 com.topcoder.util.log.jdk14.Jdk14Log\par
+\pard\nowidctlpar\fi720\li720\b0 This is the implementation of the Log interface that will write the logging messages to the specified java logging system.\f1\par
+\pard\nowidctlpar\li1440\par
+\pard\nowidctlpar\fi720\sb120\sa120\b\f0 com.topcoder.util.log.log4j.Log4jLogFactory\par
+\pard\nowidctlpar\fi720\li720\b0 This is the implementation of the LogFactory interface that will create Log4jLog instances based on the log4j logger for the given name.\par
+\pard\nowidctlpar\li1440\f1\par
+\pard\nowidctlpar\fi720\sb120\sa120\b\f0 com.topcoder.util.log.log4j.Log4jLog\par
+\pard\nowidctlpar\fi720\li720\sb120\sa120\b0 This is the implementation of the Log interface that will write the logging messages to the specified log4j logging system.\f1\par
+\cf0\b\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\f0 1.5\tab Component Exception Definitions\par
+\pard\nowidctlpar\fi720\cf1 com.topcoder.util.log.\cf0 LogException\b0 :\par
+\pard\nowidctlpar\fi720\li720\sa120 This class is an exception class for all logging exceptions thrown from this API. It provides the ability to reference the underlying exception via the getCause method, inherited from BaseException.\f1\par
+\pard\nowidctlpar\sa120\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\cf1\b\f0 1.6\tab Thread Safety\par
+\pard\nowidctlpar\li720\b0 This component has been made reasonably thread\f1 -\f0 safe\f1 .\f0   \f1\par
+\par
+\f0 Typically, configuration of the Logging component is done before the application is up and running.  Since configuration is done in a public manner, that configuration can technically be called at any time.  In this case, to fully support thread safety, the normal logging path would have to synchronize whenever a configurable item is touched and since logging is executed quite a bit \endash  that synchronization overhead would likely impact the performance of the application.  However, since configuration is typically done at startup and typically not touched afterwards, it\rquote s reasonable to assume that the configuration API won\rquote t be called during logging and the synchronization can safely be ignored.\par
+\par
+This component implements this reasonable thread safety for the setup type of items:  the logging factory and the object formatter.  Both of these setups should be done prior to actual logging usage.  If either is done any other time during the lifetime of the application, it may work 9,999 times in a row \endash  but there is no guarantee that it will work the 10,000 time since this component assumes the setup work will always be done prior to usage\f1 .\par
+\par
+\f0 Beyond the setup information, the component itself is thread-safe by having either stateless or immutable state information classes.  However, reasonably thread safe still applies since we assume the underlying logging system is thread-safe also (which may not be the case).\f1\par
+\cf0\par
+\pard\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b\f0 2.\tab\fs24 Environment Requirements\tab\tab\par
+\pard\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\fs20 2.1\tab Environment\par
+\pard\nowidctlpar\s3\fi-360\li1080\sb120\sa60\sl240\slmult0\b0\f2\'b7\tab\f0 At minimum, Java1.4 is required for compilation and executing test cases.\par
+\f2\'b7\tab\f0 Java 1.4 or higher must be used for Java 1.4 built in logging (Jdk14Log class).\par
+\pard\nowidctlpar\f1\par
+\pard\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0 2.2\tab TopCoder Software Components\par
+\pard\nowidctlpar\s3\fi-360\li1440\sb120\sa60\sl240\slmult0\b0\f3\'a7\tab\f0 Base Exception 1.0 (provides the base for the LogException in a uniform manner across JDK 1.4 and previous JDK versions)\par
+\f3\'a7\tab\f0 Type Safe Enumeration 1.0 (the Level class was a type safe enumeration before, with some minor problems, especially at serialization; using this component fixes the problem and makes the enumeration handling consistent across the component catalog)\par
+\pard\nowidctlpar\li-1440\f1\par
+\pard\nowidctlpar\fi-360\li1440\cf1\f3\'a7\tab\f0 Object Formatter Component 1.0 is used to provide the ability to format message objects automatically.\f1\par
+\pard\nowidctlpar\par
+\cf0\i\par
+\pard\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\i0\f0 2.3\tab Third Party Components\par
+\pard\nowidctlpar\s3\fi360\li720\sb120\sa60\sl240\slmult0\cf4\b0 Log4j-1.2.\cf3 12 \cf4 or higher (only in the Log4jLog class): \cf0\i{\field{\*\fldinst{HYPERLINK "http://jakarta.apache.org/log4j/docs/index.html"}}{\fldrslt{\cf4\ul\i0\fs24 download\line\pard }}}\cf0\ulnone\i\f1\fs20\par
+\pard\cf4\f0 NOTE: The default location for 3\up3 rd\up0  party packages is ../lib relative to this component installation.  Setting the ext_libdir property in topcoder_global.properties will overwrite this default location.\par
+\pard\nowidctlpar\cf0\i0\f1\par
+\pard\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b\f0 3.\tab\fs24 Installation and Configuration\par
+\pard\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\fs20 3.1\tab Package Names\par
+\pard\nowidctlpar\s3\fi-360\li1440\sa60\sl240\slmult0\b0\f2\'b7\tab\f0 com.topcoder.util.log\par
+\f2\'b7\tab\f0 com.topcoder.util.log.basic\par
+\f2\'b7\tab\f0 com.topcoder.util.log.jdk14\par
+\f2\'b7\tab\f0 com.topcoder.util.log.log4j\par
+\pard\nowidctlpar\cf1\f1\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\cf0\b\f0 3.2\tab Configuration Parameters\par
+\pard\nowidctlpar\li720\cf1\b0 No configuration is necessary.\f1\par
+\pard\nowidctlpar\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\cf0\b\f0 3.3\tab Dependencies Configuration\par
+\pard\nowidctlpar\fi-360\li1080\b0\f3\'a7\tab\f0 Logging configuration\par
+\pard\nowidctlpar\fi-360\li1800\f4 o\tab\f0 If jdk1.4 logging is used, the logging configuration must be specified according to the JRE requirements. By default, the logging.properties file located in the lib directory of the JRE is used.\par
+\f4 o\tab\f0 If log4j logging is used, the logging configuration must be specified according to log4j requirements. The config.file configuration parameter can be used to help specify a configuration file.\par
+\pard\nowidctlpar\fi-360\li1080\f3\'a7\tab\f0 Log4j jar file\par
+\pard\nowidctlpar\fi360\li1080 The build script uses Log4j-1.2.\cf1 12\cf0 .  If you use a different version of Log4j either:\par
+\pard\nowidctlpar\fi-360\li2160\f2\'b7\tab\f0 Modify the log4j.jar property in the build.xml to point to the version you are using.\par
+\pard\nowidctlpar\fi720\li1440 OR\par
+\pard\nowidctlpar\fi-360\li2160\f2\'b7\tab\f0 Add the following to the topcoder_global.properties to override all references to log4j in TopCoder Software components.\par
+\pard\nowidctlpar\fi360\li1800 Log4j.jar=\i PATH\i0\f1\par
+\i\f0 Where PATH is the location and name of the log4j jar on your system.\line\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b\i0\fs24 4.\tab Usage Notes\par
+\pard\nowidctlpar\li720\sa120\b0\fs20 If the basic logger is used, there is no concept of level. All logging messages are written to the log regardless of level. Therefore, the isEnabled() method will always return true for the basic logger.\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 4.1\tab Required steps to test the component\par
+\pard\nowidctlpar\fi-360\li1080\sa120\b0\f2\'b7\tab\f0 Extract the component distribution.\par
+\pard\f2\'b7\tab\f0 Follow {\field{\*\fldinst{HYPERLINK "\\\\l "_Dependencies_Configuration""}}{\fldrslt{\cf1\ul\fs24 Dependencies Configuration}}}\cf0\ulnone\f1\fs20 .\par
+\f2\'b7\tab\f0 Execute \lquote ant test\rquote  within the directory that the distribution was extracted to.\par
+\pard\nowidctlpar\fi-360\li1800\sa120\f3\'a7\tab\f0 Executing \lquote ant test\rquote  will execute tests for all logging implementations.  The tests will fail if each implementation is not properly configured.\par
+\f3\'a7\tab\f0 To remove tests for certain logging implementations:\par
+\pard\nowidctlpar\fi-360\li2520\sa120 1.\tab Open the build.xml file.\par
+2.\tab Locate the \ldblquote test\rdblquote  target.\par
+3.\tab Comment out the tests that should not be executed.  To comment a section, use <!-- -->\par
+\pard\nowidctlpar\li1440\sa120\b NOTE: The Logging Wrapper component requires Java1.4 to compile and execute test cases.\par
+\pard\nowidctlpar\fi-360\li1080\sa120\b0\f2\'b7\tab\f0 Make sure that the specific logging implementation is logging at the appropriate level for the tests and that the logging output file (if necessary) is located in the required directory for the tests.\par
+\pard\nowidctlpar\li720\sa120 The accuracy tests should cover the following areas:\par
+\pard\nowidctlpar\fi-360\li1080\sa120 -\tab The basic logging should be tested to see if output is actually generated.\par
+-\tab The JDK 1.4 logging should be tested, especially the level conversion. There should be tests to verify if the levels work as they should.\par
+-\tab The Log4j logging should be tested, especially the level conversion. There should be tests to verify if the levels work as they should.\par
+-\tab A compatibility test should be created. This test would do the logging as in the previous versions. Its purpose is to ensure backward compatibility now and in the future versions.\par
+\pard\nowidctlpar\li720\sa120\f1\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0 4.2\tab Required steps to use the component\par
+\pard\nowidctlpar\fi-360\li1080\sa120\b0\f2\'b7\tab\f0 Place the \cf3 log4j-1.2.12\cf0 .jar in your classpath.\par
+\f2\'b7\tab\f0 Import the appropriate classes from the com.topcoder.util.log package and appropriate sub packages.\par
+\pard\nowidctlpar\fi720\li2160\f4\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0 4.3\tab Demo\par
+\pard\nowidctlpar\fi720\b0\f1\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf1\i\f0 4.3.1\tab What needs to change when upgrading from v1.2 to v2.0:\par
+\pard\nowidctlpar\i0\f1\par
+\pard\nowidctlpar\li720\f0 There are two breakage points when upgrading from v1.2 to v2.0:\par
+\pard\nowidctlpar\fi-360\li2160 a.\tab The loss of specifying the logger implementation via the configuration file.\par
+b.\tab The main class name that changed.\par
+\pard\nowidctlpar\li720\f1\par
+\f0 Fortunately, both breakage points can be rectified with one simple change.\par
+\par
+In v1.2 \endash  you would load the configuration with the following line:\par
+\pard\nowidctlpar\li1440\f1\par
+\f4\fs18 LogFactory.loadConfiguration();\par
+\pard\nowidctlpar\f1\fs20\par
+\pard\nowidctlpar\li720\f0 To convert this to v2.0 \endash  you simply replace the line with the following (using the appropriate logging factory):\par
+\par
+\pard\nowidctlpar\li1440\f4 LogManager.setLogFactory(new Log4jLogFactory());\par
+\pard\nowidctlpar\f1\par
+\pard\nowidctlpar\li720\f0 This corrects both the name change and specification of the underlying logging system.\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i 4.3.2\tab Logging setup\f1\par
+\pard\nowidctlpar\i0\par
+\pard\nowidctlpar\li720\f0 Before any logging is done, the Logging Wrapper component should be setup.  Setup involves two steps \endash  specification of the underlying logging factory and specification of the message object formatting (if needed).\par
+\cf5\f5 // set the underlying logging factory to use the Log4jLog\par
+\f6 // \highlight6\f5 the logging configuration of log4j must be specified according to log4j requirements\cf0\highlight0\par
+\cf4 LogManager.\i setLogFactory\i0 (\cf7\b new\cf4\b0  Log4jLogFactory());\cf0\par
+\cf5 // set the message object formatting to use PrimitiveFormatter\cf0\par
+\cf4 ObjectFormatter objectFormatter = ObjectFormatterFactory.\i getPrettyFormatter\i0 ();\cf0\par
+\cf5 // get the Log instance, it should be Log4jLog\cf0\par
+\cf4 Log log = LogManager.\i getLog\i0 ();\cf0\par
+\cf5 // log the object using PrimitiveFormatter\cf0\par
+\cf4 log.log(Level.\cf8\i\f6 INFO\cf4\i0\f5 , \cf7\b new\cf4\b0  Integer(123456789), objectFormatter);\par
+\cf1\f0\par
+Both steps are optional.  If the underlying logging factory is not specified, logging to the console (System.out) will be used by default.  If the message object formatting is not specified, a simply object.toString() will be used for formatting.\par
+\f1\par
+\par
+\pard\nowidctlpar\f0 4.3.2.1\tab Specification of the Logging Factory\par
+\pard\nowidctlpar\li720 In version 2.0, the component provides three basic logging systems:\par
+\pard\nowidctlpar\fi-360\li1800 a)\tab A Basic Log Factory that will log to a specified print stream.\par
+b)\tab A Java Log Factory that will log to the Java 1.4+ logging API\par
+c)\tab A Log4J Log Factory that will log to the Log4J logging API\par
+\pard\nowidctlpar\f1\par
+\pard\nowidctlpar\li720\f0 Although not required, it's highly recommended that the logging factory be specified as early as possible and only be specified once.  Here is an example of using the Basic Log Factory to write logging to a file.\par
+\pard\nowidctlpar\li1440\cf5\f5 // create a print stream to the file with auto flushing\cf0\par
+\cf4 PrintStream ps = \cf7\b new\cf4\b0  PrintStream(\cf7\b new\cf4\b0  FileOutputStream(\cf9 "test_files/log.txt"\cf4 ), \cf7\b true\cf4\b0 );\cf0\par
+\cf5 // specify the basic logger with the above print stream\par
+\highlight6 // it's highly recommended that the logging factory is only specified once\par
+\cf4\highlight0 LogManager.\i setLogFactory\i0 (\cf7\b new\cf4\b0  BasicLogFactory(ps));\par
+\cf5 // \f6 a\f5 pplication code ...\cf0\par
+\cf5 // \f6 a\f5 ny logging from this point on will go to the \f6 "test_files/l\f5 og.txt\f6 " \f5 file\cf0\par
+\cf5\f6 /\f5 / get the Log instance, it should be BasicLog\cf0\par
+\cf4 Log log = LogManager.\i getLog\i0 ();\cf0\par
+\cf5 // log the object using PrimitiveFormatter\cf0\par
+\cf4 log.log(Level.\cf8\i\f6 INFO\cf4\i0\f5 , \cf7\b new\cf4\b0  Integer(123456789));\cf1\f4\fs18\par
+\pard\nowidctlpar\li2160\f1\fs20\tab\par
+\pard\nowidctlpar\li720\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0 4.3.2.2\tab Specification of Object Formatting\f1\par
+\pard\nowidctlpar\li720\i0\f0 This component makes use of the Object Formatter component to separate the formatting of an object from the object itself or from the logging line itself.\par
+\par
+If an application needed to log property change events in a GUI application, the logging code would look something like:\par
+\pard\nowidctlpar\li1440\f4\fs18 logger.log(Level.DEBUG, event.getPropertyName() \par
+   + " changed to a new value of " + event.getNewValue());\par
+\pard\nowidctlpar\li720\f1\fs20\par
+\f0 Or like:\par
+\pard\nowidctlpar\li1440\f4\fs18 logger.log(Level.DEBUG, event.toString());\par
+\pard\nowidctlpar\li720\fs20\par
+\f0 Using the new message format API, you could change this to:\par
+\pard\nowidctlpar\li1440\f4\fs18 logger.log(Level.DEBUG, "\{0\} changed to a new value of \{1\}",\par
+\pard\nowidctlpar\fi720\li1440 event.getPropertyName(), event.getNewValue());\par
+\pard\nowidctlpar\li720\fs20\par
+\f0 The problem with any of those is that the formatting of the event is duplicated in every logging line (especially across the application) or the formatting of the event is left up to its toString method (which ties the formatting directly to the object or provides more/less information than you need).  If you wanted to add in the old value from the event, you\rquote d have to modify every location.  \par
+\par
+A better way would be to setup the application with specific object formatters:\par
+\par
+\f4\fs18 public static void main(String[] args) \{\par
+\par
+\pard\nowidctlpar\li1440\cf5\f5\fs20 // specify Log4J logging\cf0\par
+\cf4 LogManager.setLogFactory(\cf7\b new\cf4\b0  Log4jLogFactory());\cf0\par
+\par
+\cf5 // specify a format method for all PropertyChangeEvent classes\cf0\par
+\cf4 LogManager.\i getObjectFormatter\i0 ().setFormatMethodForClass(\cf0\par
+\cf4           PropertyChangeEvent.\cf7\b class\cf4\b0 ,\cf0\par
+\cf4           \cf7\b new\cf4\b0  ObjectFormatMethod() \{\cf0\par
+\cf4\f6\tab\f5           \cf7\b public\cf4\b0  String format(Object o) \{\cf0\par
+\cf4       \f6  \f5                  PropertyChangeEvent e = (PropertyChangeEvent) o;\cf0\par
+\cf4                         \cf7\b return\cf4\b0  e.getPropertyName() + \cf9 " changed from "\cf4  + e.getOldValue() + \cf9 " to "\cf4  + e.getNewValue();\cf0\par
+\cf4                 \}\cf0\par
+\cf4           \},\cf0\par
+\cf4           \cf7\b true\cf4\b0 );\cf0\par
+\cf5 // application code...\cf0\par
+\cf5 // get the Log instance, it should be Log4jLog\cf0\par
+\cf4 Log log = LogManager.\i getLog\i0 ();\cf0\par
+\cf5 // then the logging line would be simply:\cf0\par
+\cf4 log.log(Level.\cf8\highlight10\i INFO\cf4\highlight0\i0 , \cf7\b new\cf4\b0  PropertyChangeEvent(\cf7\b new\cf4\b0  Object(), \cf9 "propertyName"\cf4 , \cf9 "oldValue"\cf4 , \cf9 "newValue"\cf4 ));\cf1\f4\fs18\par
+\pard\nowidctlpar\li720\}\par
+\b\f1\fs20\par
+\b0\f0 If you ever needed to change the format of the logging, you\rquote d just have to change the ObjectFormatMethod above and all instances of the event logging would change automatically.  This provides separation of formatting code from both the object itself and the logging locations.\par
+\pard\nowidctlpar\fi720\f1\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0 4.3.3\tab Traditional Message Logging with Exception Stack Trace\f1\par
+\pard\nowidctlpar\li720\i0\f0 Logging a message with or without an exception is fairly straight forward.  You simply acquire a Log then use the API to log message and/or errors:\par
+\par
+\pard\nowidctlpar\li1440\cf4\f5 Log log = LogManager.\i getLog\i0 (\cf9 "acme"\cf4 );\cf0\par
+\cf5 // other codes ...\cf0\par
+\cf5 // Log the entry into the message\cf0\par
+\cf4 log.log(Level.\cf8\i DEBUG\cf4\i0 , \cf9 "Entering doUpdate"\cf4 );\cf0\par
+\cf7\b try\cf4\b0  \{\cf0\par
+\cf5\f6\tab /\f5 / some SQL based updates\cf0\par
+\cf4\f6  \f5      \highlight10 doSQLUpdate\f6 s\highlight0\f5 ();\cf0\par
+\cf4\} \cf7\b catch\cf4\b0  (SQLException e) \{\cf0\par
+\cf5\f6\tab //\f5  Log the exception with a full stack trace\cf0\par
+\cf4       log.log(Level.\cf8\i ERROR\cf4\i0 , e, \cf9 "Update failed"\cf4 );\cf0\par
+\cf4\}\cf1\f4\fs18\par
+\pard\nowidctlpar\li720\f1\fs20\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0 4.3.4\tab Message Formatting Logging\par
+\pard\nowidctlpar\li720\i0 The performance aspect of logging is an area that needs constant attention.\par
+ \par
+Example: the following logging code has a fairly high overhead because it constructs a String regardless if the message will be logged or not:\par
+\par
+\pard\nowidctlpar\li1440\f4\fs18 log.log(Level.DEBUG, someString + " happened at " + System.currentMillis());\par
+\pard\nowidctlpar\f1\fs20\par
+\pard\nowidctlpar\li720\f0 If only Level.INFO and above is enabled, the above line will waste time by constructing the string first then determining nothing should be logged.\par
+\par
+Traditionally, you could get around that issue by writing the code like:\par
+\par
+\pard\nowidctlpar\li1440\f4\fs18 if (log.isEnabled(Level.DEBUG)) \{\par
+\pard\nowidctlpar\li2160 log.log(Level.DEBUG, someString + " happened at " + System.currentMillis());\par
+\pard\nowidctlpar\li1440\}\par
+\pard\nowidctlpar\li720\f1\fs20\par
+\f0 However, this is fairly involved code for logging and programmers tend to forget the performance aspect of that.\par
+\f1\par
+\f0 Instead, the message format API can be used:\par
+\f1\par
+\pard\nowidctlpar\li1440\f4\fs18 log.log(Level.DEBUG, "\{0\} happened at \{1\}", someString, System.currentMillis());\par
+\pard\nowidctlpar\f1\fs20\par
+\pard\nowidctlpar\li720\par
+\f0 This minimizes the overhead by allowing the formatting to happen as late as possible (certainly after a check to see if logging is enabled).  This allows the code to be more compact and easier to write (and less performance error prone).\par
+\par
+\pard\nowidctlpar\f1\par
+\pard\nowidctlpar\li720\f0 The API provides overloaded "log" methods for specification of up to three arguments directly.  More arguments can be specified by using the object array API:\tab\cf5\f5 // get the \f6 BasicLog\highlight6\f5\par
+\cf0\highlight0\f6\tab\cf4\f5 Log log = LogManager.\i getLog\i0 ();\cf0\par
+\f6\tab\cf4\f5 String tradeDesc = \cf9 "tradeDesc"\cf4 ;\cf0\par
+\cf4\f6  \f5      Integer numOfShares = \cf7\b new\cf4\b0  Integer(3);\cf0\par
+\f6\tab\cf4\f5 Double pricePerShare = \cf7\b new\cf4\b0  Double(1.5);\cf0\par
+\f6  \tab\cf4\f5 Date tradeTime = \cf7\b new\cf4\b0  Date();\cf0\par
+\f6\tab\cf5\f5 // log the message formatting\cf0\par
+\f6\tab\cf4\f5 log.log(Level\f6 .\cf1 DEBUG\cf4\f5 , \cf9 "Trade \{0\} for \{1\} shares at \{2\} occurred at \{3\}"\cf4 ,\cf0\par
+\f6\tab\tab\cf7\b\f5 new\cf4\b0  Object[] \{tradeDesc, numOfShares, pricePerShare, tradeTime\});\cf1\f4\fs18\par
+\pard\nowidctlpar\cf0\f1\fs20\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf1\i\f0 4.3.5\tab NIO Server example\f1\par
+\pard\nowidctlpar\li720\i0\f0 The following is an example of the usage of the Logging Wrapper component in a NIO Server.  This example demonstrates the setup and API usage of the component:\par
+\cf0\f1\par
+\pard\li720\cf7\b\f5 import\cf4\b0  java.io.IOException;\cf0\par
+\cf7\b import\cf4\b0\f6  java\f5 .net.InetAddress;\cf0\par
+\cf7\b import\cf4\b0  java.net.InetSocketAddress;\cf0\par
+\cf7\b import\cf4\b0  java.net.UnknownHostException;\cf0\par
+\cf7\b import\cf4\b0  java.nio.channels.SelectionKey;\cf0\par
+\cf7\b import\cf4\b0  java.nio.channels.Selector;\cf0\par
+\cf7\b import\cf4\b0  java.nio.channels.ServerSocketChannel;\cf0\par
+\cf7\b import\cf4\b0  java.nio.channels.spi.SelectorProvider;\cf0\par
+\cf7\b import\cf4\b0  java.util.Iterator;\cf0\par
+\par
+\cf7\b import\cf4\b0  com.topcoder.util.format.ObjectFormatMethod;\cf0\par
+\cf7\b import\cf4\b0  com.topcoder.util.log.jdk14.Jdk14LogFactory;\cf0\f4\fs18\par
+\par
+\pard\nowidctlpar\li360\f5\fs20\par
+\pard\nowidctlpar\li358\cf4\tab\cf11 /**\cf0\par
+\cf4\tab  \cf11 *\cf4  \cf12 <p>\cf0\par
+\cf4\tab  \cf11 *\cf4  \cf11 This\cf4  \cf11 class\cf4  \cf11 is\cf4  \cf11 an\cf4  \cf11 example\cf4  \cf11 of\cf4  \cf11 the\cf4  \cf11 usage\cf4  \cf11 of\cf4  \cf11 the\cf4  \cf11 Logging\cf4  \cf11 Wrapper\cf4  \cf11 component\cf4  \cf11 in\cf4  \cf11 a\cf4  \cf11 NIO\cf4  \cf11 Server.\cf0\par
+\cf4\tab  \cf11 *\cf4  \cf12 </p>\cf0\par
+\cf4\tab  \cf11 *\cf0\par
+\cf4\tab  \cf11 *\cf4  \cf12 <p>\cf0\par
+\cf4\tab  \cf11 *\cf4  \cf11 This\cf4  \cf11 example\cf4  \cf11 demonstrates\cf4  \cf11 the\cf4  \cf11 setup\cf4  \cf11 and\cf4  \cf11 API\cf4  \cf11 usage\cf4  \cf11 of\cf4  \cf11 the\cf4  \cf11 component.\cf0\par
+\cf4\tab  \cf11 *\cf4  \cf12 </p>\cf0\par
+\cf4\tab  \cf11 *\cf0\par
+\cf4\tab  \cf11 *\cf4  \cf12 <p>\cf0\par
+\cf4\tab  \cf11 *\cf4  \cf11 This\cf4  \cf11 class\cf4  \cf11 will\cf4  \cf11 be\cf4  \cf11 used\cf4  \cf11 in\cf4  \cf11 DemoTests.\cf0\par
+\cf4\tab  \cf11 *\cf4  \cf12 </p>\cf0\par
+\cf4\tab  \cf11 *\cf0\par
+\cf4\tab  \cf11 *\cf0\par
+\cf4\tab  \cf11 *\cf4  \cf13\b @author\cf4\b0  \cf11 TCSDEVELOPER\cf0\par
+\cf4\tab  \cf11 *\cf4  \cf13\b @version\cf4\b0  \cf11 2.0\cf0\par
+\cf4\tab  \cf11 */\cf0\par
+\cf4\tab\cf7\b public\cf4\b0  \cf7\b class\cf4\b0  NioServer \cf7\b implements\cf4\b0  Runnable \{\cf0\par
+\cf4\tab\cf0\par
+\cf4\tab\tab\cf11 /**\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 <p>\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf11 Represents\cf4  \cf11 the\cf4  \cf11 InetAddress\cf4  \cf11 with\cf4  \cf11 host:port\cf4  \cf11 combination\cf4  \cf11 to\cf4  \cf11 listen\cf4  \cf11 on.\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 </p>\cf0\par
+\cf4\tab\tab  \cf11 */\cf0\par
+\cf4\tab\tab\cf7\b private\cf4\b0  InetAddress \cf8 hostAddress\cf4 ;\cf0\par
+\cf4\tab\cf0\par
+\cf4\tab\tab\cf11 /**\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 <p>\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf11 Represents\cf4  \cf11 the\cf4  \cf11 port\cf4  \cf11 to\cf4  \cf11 listen\cf4  \cf11 on.\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 </p>\cf0\par
+\cf4\tab\tab  \cf11 */\cf0\par
+\cf4\tab\tab\cf7\b private\cf4\b0  \cf7\b int\cf4\b0  \cf8 port\cf4 ;\cf0\par
+\cf4\tab\cf0\par
+\cf4\tab\tab\cf11 /**\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 <p>\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf11 Represents\cf4  \cf11 the\cf4  \cf11 channel\cf4  \cf11 on\cf4  \cf11 which\cf4  \cf11 we'll\cf4  \cf11 accept\cf4  \cf11 connections.\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 </p>\cf0\par
+\cf4\tab\tab  \cf11 */\cf0\par
+\cf4\tab\tab\cf7\b private\cf4\b0  ServerSocketChannel \cf8 serverChannel\cf4 ;\cf0\par
+\cf4\tab\cf0\par
+\cf4\tab\tab\cf11 /**\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 <p>\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf11 Represents\cf4  \cf11 the\cf4  \cf11 selector\cf4  \cf11 we'll\cf4  \cf11 be\cf4  \cf11 monitoring.\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 </p>\cf0\par
+\cf4\tab\tab  \cf11 */\cf0\par
+\cf4\tab\tab\cf7\b private\cf4\b0  Selector \cf8 selector\cf4 ;\cf0\par
+\cf4\tab\cf0\par
+\cf4\tab\tab\cf11 /**\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 <p>\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf11 Represents\cf4  \cf11 the\cf4  \cf11 logger\cf4  \cf11 we\rquote l\cf4  \cf11 be\cf4  \cf11 using.\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 </p>\cf0\par
+\cf4\tab\tab  \cf11 */\cf0\par
+\cf4\tab\tab\cf7\b private\cf4\b0  Log \cf8 log\cf4  = LogManager.\i getLog\i0 (\cf9 "nioserver"\cf4 );\cf0\par
+\cf4\tab\cf0\par
+\cf4\tab\tab\cf11 /**\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 <p>\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf11 Constructs\cf4  \cf11 a\cf4  \cf11 NioServer.\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 </p>\cf0\par
+\cf4\tab\tab  \cf11 *\cf0\par
+\cf4\tab\tab  \cf11 *\cf4  \cf13\b @param\cf4\b0  \cf11 args\cf4  \cf11 the\cf4  \cf11 arguments\cf4  \cf11 to\cf4  \cf11 create\cf4  \cf11 a\cf4  \cf11 NioServer\cf0\par
+\cf4\tab\tab  \cf11 */\cf0\par
+\cf4\tab\tab\cf7\b public\cf4\b0  NioServer(String[] args) \{\cf0\par
+\cf4\tab\tab\tab\cf7\b try\cf4\b0  \{\cf0\par
+\cf4\tab\tab\tab\tab\cf5 // parse arguments and get the initial selector\cf0\par
+\cf4\tab\tab\tab\tab\cf7\b this\cf4\b0 .\cf8 hostAddress\cf4  = InetAddress.\i getByName\i0 (args[0]);\cf0\par
+\cf4\tab\tab\tab\tab\cf7\b this\cf4\b0 .\cf8 port\cf4  = Integer.\i parseInt\i0 (args[1]);\cf0\par
+\cf4\tab\tab\tab\tab\cf7\b this\cf4\b0 .\cf8 selector\cf4  = \cf7\b this\cf4\b0 .initSelector();\cf0\par
+\cf4\tab\tab\tab\} \cf7\b catch\cf4\b0  (UnknownHostException e) \{\cf0\par
+\cf4\tab\tab\tab\tab\cf5 // log error with exception stack trace\cf0\par
+\cf4\tab\tab\tab\tab\cf8 log\cf4 .log(Level.\cf8\i ERROR\cf4\i0 , e, \cf9 "Invalid host name: \{0\}"\cf4 , args[0]);\cf0\par
+\cf4\tab\tab\tab\} \cf7\b catch\cf4\b0  (NumberFormatException e) \{\cf0\par
+\cf4\tab\tab\tab\tab\cf5 // log error the number parsing error\cf0\par
+\cf4\tab\tab\tab\tab\cf8 log\cf4 .log(Level.\cf8\i ERROR\cf4\i0 , \cf9 "Specified port \lquote 0\}\rquote was not a valid number"\cf4 , args[1]);\cf9\par
+\cf4\tab\tab\tab\} \cf7\b catch\cf4\b0  (IOException e) \{\cf9\par
+\cf4\tab\tab\tab\tab\cf5 // log the IO error\cf9\par
+\cf4\tab\tab\tab\tab\cf8 log\cf4 .log(Level.\cf8\i ERROR\cf4\i0 , e, \cf9 "IOException occurred initializing server"\cf4 );\cf9\par
+\cf4\tab\tab\tab\}\cf9\par
+\cf4\tab\tab\}\cf9\par
+\cf4\tab\cf9\par
+\cf4\tab\tab\cf11 /**\cf9\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 <p>\cf9\par
+\cf4\tab\tab  \cf11 *\cf4  \cf11 Creates\cf4  \cf11 and\cf4  \cf11 initializes\cf4  \cf11 the\cf4  \cf11 selector.\cf9\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 </p>\cf9\par
+\cf4\tab\tab  \cf11 *\cf9\par
+\cf4\tab\tab  \cf11 *\cf4  \cf13\b @return\cf4\b0  \cf11 the\cf4  \cf11 selector\cf4  \cf11 which\cf4  \cf11 has\cf4  \cf11 been\cf4  \cf11 created\cf4  \cf11 and\cf4  \cf11 initialized\cf9\par
+\cf4\tab\tab  \cf11 *\cf9\par
+\cf4\tab\tab  \cf11 *\cf4  \cf13\b @throws\cf4\b0  \cf11 IOException\cf4  \cf11 if\cf4  \cf11 fail\cf4  \cf11 to\cf4  \cf11 create\cf4  \cf11 and\cf4  \cf11 initialize\cf4  \cf11 the\cf4  \cf11 selector\cf9\par
+\cf4\tab\tab  \cf11 */\cf9\par
+\cf4\tab\tab\cf7\b private\cf4\b0  Selector initSelector() \cf7\b throws\cf4\b0  IOException \{\cf9\par
+\cf4\tab\tab\tab\cf5 // create a new selector\cf9\par
+\cf4\tab\tab\tab Selector socketSelector = SelectorProvider.\i provider\i0 ().openSelector();\cf9\par
+\cf4\tab\cf9\par
+\cf4\tab\tab\tab\cf5 // create a new non-blocking server socket channel\cf9\par
+\cf4\tab\tab\tab\cf7\b this\cf4\b0 .\cf8 serverChannel\cf4  = ServerSocketChannel.\i open\i0 ();\cf9\par
+\cf4\tab\tab\tab\cf8 serverChannel\cf4 .configureBlocking(\cf7\b false\cf4\b0 );\cf9\par
+\cf4\tab\cf9\par
+\cf4\tab\tab\tab\cf5 // bind the server socket to the specified address and port\cf9\par
+\cf4\tab\tab\tab InetSocketAddress isa = \cf7\b new\cf4\b0  InetSocketAddress(\cf7\b this\cf4\b0 .\cf8 hostAddress\cf4 , \cf7\b this\cf4\b0 .\cf8 port\cf4 );\cf9\par
+\cf4\tab\tab\tab\cf8 serverChannel\cf4 .socket().bind(isa);\cf9\par
+\cf4\tab\cf9\par
+\cf4\tab\tab\tab\cf5 // register the server socket channel, indicating an interest in\cf9\par
+\cf4\tab\tab\tab\cf5 // accepting new connections\cf9\par
+\cf4\tab\tab\tab\cf8 serverChannel\cf4 .register(socketSelector, SelectionKey.\cf8\i OP_ACCEPT\cf4\i0 );\cf9\par
+\cf4\tab\cf9\par
+\cf4\tab\tab\tab\cf7\b return\cf4\b0  socketSelector;\cf9\par
+\cf4\tab\tab\}\cf9\par
+\cf4\tab\cf9\par
+\cf4\tab\tab\cf11 /**\cf9\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 <p>\cf9\par
+\cf4\tab\tab  \cf11 *\cf4  \cf11 The\cf4  \cf11 entry\cf4  \cf11 point\cf4  \cf11 method\cf4  \cf11 of\cf4  \cf11 this\cf4  \cf11 thread.\cf9\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 </p>\cf9\par
+\cf4\tab\tab  \cf11 */\cf9\par
+\cf4\tab\tab\cf7\b public\cf4\b0  \cf7\b void\cf4\b0  run() \{\cf9\par
+\cf4\tab\tab\tab\cf8 log\cf4 .log(Level.\cf8\i INFO\cf4\i0 , \cf9 "Server started for \{0\} listening to port \{1\}"\cf4 , \cf8 hostAddress\cf4 , \cf7\b new\cf4\b0  Integer(\cf8 port\cf4 ));\cf9\par
+\cf4\tab\cf9\par
+\cf4\tab\tab\tab\cf7\b while\cf4\b0  (\cf7\b true\cf4\b0 ) \{\cf9\par
+\cf4\tab\tab\tab\tab\cf7\b try\cf4\b0  \{\cf9\par
+\cf4\tab\tab\tab\tab\tab\cf5 // wait for an event one of the registered channels\cf9\par
+\cf4\tab\tab\tab\tab\tab\cf7\b this\cf4\b0 .\cf8 selector\cf4 .select();\cf9\par
+\cf4\tab\tab\tab\tab\tab\cf5 // iterate over the set of keys for which events are available\cf9\par
+\cf4\tab\tab\tab\tab\tab Iterator selectedKeys = \cf7\b this\cf4\b0 .\cf8 selector\cf4 .selectedKeys().iterator();\cf9\par
+\cf4\tab\tab\tab\tab\tab\cf7\b while\cf4\b0  (selectedKeys.hasNext()) \{\cf9\par
+\cf4\tab\tab\tab\tab\tab\tab SelectionKey key = (SelectionKey) selectedKeys.next();\cf9\par
+\cf4\tab\cf9\par
+\cf4\tab\tab\tab\tab\tab\tab\cf5 // log the selection event\cf9\par
+\cf4\tab\tab\tab\tab\tab\tab\cf8 log\cf4 .log(Level.\cf8\i DEBUG\cf4\i0 , key);\cf9\par
+\cf4\tab\cf9\par
+\cf4\tab\tab\tab\tab\tab\tab selectedKeys.remove();\cf9\par
+\cf4\tab\tab\tab\tab\tab\tab\cf7\b if\cf4\b0  (!key.isValid()) \{\cf9\par
+\cf4\tab\tab\tab\tab\tab\tab\tab\cf7\b continue\cf4\b0 ;\cf9\par
+\cf4\tab\tab\tab\tab\tab\tab\}\cf9\par
+\cf4\tab\cf9\par
+\cf4\tab\tab\tab\tab\tab\tab\cf5 // check what event is available and deal with it\cf9\par
+\cf4\tab\tab\tab\tab\tab\tab\cf7\b if\cf4\b0  (key.isAcceptable()) \{\cf9\par
+\cf4\tab\tab\tab\tab\tab\tab\tab\cf7\b this\cf4\b0 .accept(key);\cf9\par
+\cf4\tab\tab\tab\tab\tab\tab\}\cf9\par
+\cf4\tab\tab\tab\tab\tab\}\cf9\par
+\cf4\tab\tab\tab\tab\} \cf7\b catch\cf4\b0  (IOException e) \{\cf9\par
+\cf4\tab\tab\tab\tab\tab\cf5 // \f6 l\f5 og the exception and break\cf9\par
+\cf4\tab\tab\tab\tab\tab\cf8 log\cf4 .log(Level.\cf8\i ERROR\cf4\i0 , e, \cf9 "Server encountered an exception during selector processing"\cf4 );\cf9\par
+\cf4\tab\tab\tab\tab\tab\cf7\b break\cf4\b0 ;\cf9\par
+\cf4\tab\tab\tab\tab\}\cf9\par
+\cf4\tab\tab\tab\}\cf9\par
+\cf4\tab\tab\tab\cf5 // \f6 l\f5 og server stopping message\cf9\par
+\cf4\tab\tab\tab\cf8 log\cf4 .log(Level.\cf8\i INFO\cf4\i0 , \cf9 "Server stopped"\cf4 );\cf9\par
+\cf4\tab\tab\}\cf9\par
+\cf4\tab\cf9\par
+\cf4\tab\tab\cf11 /**\cf9\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 <p>\cf9\par
+\cf4\tab\tab  \cf11 *\cf4  \cf11 Accepts\cf4  \cf11 a\cf4  \cf11 connections.\cf9\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 </p>\cf9\par
+\cf4\tab\tab  \cf11 *\cf9\par
+\cf4\tab\tab  \cf11 *\cf4  \cf13\b @param\cf4\b0  \cf11 key\cf4  \cf11 the\cf4  \cf11 selectionKey\cf4  \cf11 representing\cf4  \cf11 the\cf4  \cf11 registration\cf4  \cf11 of\cf4  \cf11 a\cf4  \cf11 SelectableChannel\cf4  \cf11 with\cf4  \cf11 a\cf4  \cf11 Selector.\cf9\par
+\cf4\tab\tab  \cf11 */\cf9\par
+\cf4\tab\tab\cf7\b public\cf4\b0  \cf7\b void\cf4\b0  accept(SelectionKey key) \{\cf9\par
+\cf4\tab\tab\tab\cf5 // ... application processing code\cf9\par
+\cf4\tab\tab\}\cf9\par
+\cf4\tab\cf9\par
+\cf4\tab\tab\cf11 /**\cf9\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 <p>\cf9\par
+\cf4\tab\tab  \cf11 *\cf4  \cf11 The\cf4  \cf11 Main\cf4  \cf11 entry\cf4  \cf11 point.\cf9\par
+\cf4\tab\tab  \cf11 *\cf4  \cf12 </p>\cf9\par
+\cf4\tab\tab  \cf11 *\cf9\par
+\cf4\tab\tab  \cf11 *\cf4  \cf13\b @param\cf4\b0  \cf11 args\cf4  \cf11 the\cf4  \cf11 arguments\cf4  \cf11 used\cf4  \cf11 for\cf4  \cf11 Main\cf4  \cf11 entry\cf4  \cf11 point\cf9\par
+\cf4\tab\tab  \cf11 */\cf9\par
+\cf4\tab\tab\cf7\b public\cf4\b0  \cf7\b static\cf4\b0  \cf7\b void\cf4\b0  main(String[] args) \{\cf9\par
+\cf4\tab\tab\tab\cf5 // set logging to use the Java Logging API\cf9\par
+\cf4\tab\tab\tab LogManager.\i setLogFactory\i0 (\cf7\b new\cf4\b0  Jdk14LogFactory());\cf9\par
+\cf4\tab\cf9\par
+\cf4\tab\tab\tab\cf5 // create an object formatter for a selection key\cf9\par
+\cf4\tab\tab\tab LogManager.\i getObjectFormatter\i0 ().setFormatMethodForClass(\cf9\par
+\cf4\tab\tab\tab\tab\tab SelectionKey.\cf7\b class\cf4\b0 ,\cf9\par
+\cf4\tab\tab\tab\tab\tab\cf7\b new\cf4\b0  ObjectFormatMethod() \{\cf9\par
+\cf4\tab\tab\tab\tab\tab\tab\cf7\b public\cf4\b0  String format(Object o) \{\cf9\par
+\cf4\tab\tab\tab\tab\tab\tab\tab SelectionKey k = (SelectionKey) o;\cf9\par
+\cf4\tab\tab\tab\tab\tab\tab\tab\cf7\b return\cf4\b0  \cf9 "InterestOps: "\cf4  + k.interestOps() + \cf9 ", ReadyOps: "\cf4  + k.readyOps();\cf9\par
+\cf4\tab\tab\tab\tab\tab\tab\}\cf9\par
+\cf4\tab\tab\tab\tab\tab\},\cf9\par
+\cf4\tab\tab\tab\tab\tab\cf7\b true\cf4\b0 );\cf9\par
+\cf4\tab\tab\tab\cf5 // start the server\cf9\par
+\cf4\tab\tab\tab\cf7\b new\cf4\b0  Thread(\cf7\b new\cf4\b0  NioServer(args)).start();\cf9\par
+\cf4\tab\tab\}\cf9\par
+\cf4\tab\}\cf0  \f1\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b\f0 5.\tab\fs24 Future Enhancements\par
+\pard\nowidctlpar\li720\sa120\cf1\b0\fs20 Restore the logger implementations from v1.4:\f1\par
+\pard\nowidctlpar\fi-360\li1800\sa120\f0 a)\tab The composite logger implementation was a good implementation to combine a generic logging system with some application specific need.  Example: in the Xmpp Assembly contest \endash  the Xmpp needed to send log levels above a certain level to a terminal session.  A composite logger would have been useful to provide this specialized logging in addition to the standardized logging.\par
+b)\tab A filtering logging wrapper would be useful to filter in/out messages based on some criteria (and would be doubly useful when combined with a composite logger).\par
+c)\tab A database logger implementation would be useful to log messages to a database for storage.\par
+d)\tab An asynchronous logging wrapper is useful when implementing a database or other high latency logging implementation.\par
+}
+ 

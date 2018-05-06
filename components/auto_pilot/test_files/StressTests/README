@@ -1,0 +1,3 @@
+In order to run through the stress tests, you may need to have something changed:
+1. In AutoPilot.xml, you may need to change "com.topcoder.management.project.ProjectManagerImpl" and "com.topcoder.management.phase.DefaultPhaseManager" to your mock implementation names.
+2. Your mock implementations may need to update. In some mock implementation, it just return null, which may fail the cases, so we need a modification here.

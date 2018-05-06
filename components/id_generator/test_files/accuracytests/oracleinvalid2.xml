@@ -1,0 +1,7 @@
+<CMConfig>
+    <Config name="com.topcoder.util.idgenerator.OracleSequenceGenerator">
+        <Property name="SQL_NEXT_SEQUENCE_ID">
+            <Value>INVALID</Value>
+        </Property>
+    </Config>
+</CMConfig>    

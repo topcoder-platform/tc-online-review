@@ -1,0 +1,9 @@
+#property file defining the components information
+component.name=Memory Usage
+component.distfilename=memory_usage
+component.package=com.topcoder.util.memoryusage
+component.packagedir=com/topcoder/util/memoryusage
+component.version.major=2
+component.version.minor=0
+component.version.micro=0
+component.version.build=1

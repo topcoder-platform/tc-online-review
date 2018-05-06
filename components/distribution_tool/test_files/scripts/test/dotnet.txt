@@ -1,0 +1,2 @@
+execute        : MSBuild "Component Sources.csproj" /t:DesignDist :: %{comp_dir}
+ifdef(var1) IFnDEF(var2) define : var3 = ABC

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="dist" name="Dependency Import">
+    <!--property file defining the component's dependencies-->
+    <!--Properties used in compile_targets ANT target for JDK version x-->
+    <property name="component.target" value="1.x"/>
+    <property name="component.bootclasspath" value="${java_1_x_bootclasspath}"/>
+    <!--TCS dependencies-->
+    <property name="base_exception.jar" value="${tcs_libdir}/base_exception/1.0.0/base_exception.jar"/>
+    <property name="configmanager.jar" value="${tcs_libdir}/configuration_manager/2.1.5/configuration_manager.jar"/>
+    <property name="db_connection_factory.jar" value="${tcs_libdir}/db_connection_factory/1.0.0/db_connection_factory.jar"/>
+    <property name="typesafe_enum.jar" value="${tcs_libdir}/typesafe_enum/1.0.0/typesafe_enum.jar"/>
+    <!--3rd party dependencies-->
+    <property name="junit.jar" value="${ext_libdir}/junit/3.8.2/junit.jar"/>
+    <property name="ifxjdbc.jar" value="${ext_libdir}/informix/3.0/ifxjdbc.jar"/>
+    <property name="commons-logging.jar" value="${ext_libdir}/commons-logging/1.1.1/commons-logging-1.1.1.jar"/>
+    <property name="jakarta-oro.jar" value="${ext_libdir}/jakarta-oro/2.0.8/jakarta-oro-2.0.8.jar"/>
+    <property name="mockrunner.jar" value="${ext_libdir}/mockrunner/0.3.8/mockrunner-0.3.8.jar"/>
+    <!--Path declarations which are to be used in the master build file.-->
+    <path id="component.tcs-dependencies">
+        <pathelement location="${base_exception.jar}"/>
+        <pathelement location="${configmanager.jar}"/>
+        <pathelement location="${db_connection_factory.jar}"/>
+        <pathelement location="${typesafe_enum.jar}"/>
+    </path>
+    <path id="component.3rdParty-dependencies"/>
+    <path id="component.test.3rdParty-dependencies">
+        <pathelement location="${junit.jar}"/>
+        <pathelement location="${ifxjdbc.jar}"/>
+        <pathelement location="${commons-logging.jar}"/>
+        <pathelement location="${jakarta-oro.jar}"/>
+        <pathelement location="${mockrunner.jar}"/>
+    </path>
+</project>

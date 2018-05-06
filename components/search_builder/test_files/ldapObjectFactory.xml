@@ -1,0 +1,85 @@
+<CMConfig>
+  <Config name="com.topcoder.search.builder.ldap.connInfo.factory">
+
+      <Property name="ldapConnectionInfo:DefaultInfo">
+          <Property name="type">
+            <Value>com.topcoder.search.builder.ldap.LDAPConnectionInformation</Value>
+          </Property>
+          <Property name="params">
+              <Property name="param1">
+                  <Property name="name">
+                    <Value>LDAPSDKFactory</Value>
+                  </Property>
+              </Property>
+              <Property name="param2">
+			          <Property name="type">
+			            <Value>String</Value>
+			          </Property>
+			          <Property name="value">
+			            <Value>localhost</Value>
+			          </Property>
+			        </Property>
+			        <Property name="param3">
+			          <Property name="type">
+			            <Value>int</Value>
+			          </Property>
+			          <Property name="value">
+			            <Value>389</Value>
+			          </Property>
+			        </Property>
+			        <Property name="param4">
+			          <Property name="type">
+			            <Value>boolean</Value>
+			          </Property>
+			          <Property name="value">
+			            <Value>false</Value>
+			          </Property>
+			        </Property>
+			        <Property name="param5">
+			          <Property name="type">
+			            <Value>int</Value>
+			          </Property>
+			          <Property name="value">
+			            <Value>1</Value>
+			          </Property>
+			        </Property>
+			        <Property name="param6">
+			          <Property name="type">
+			            <Value>String</Value>
+			          </Property>
+			          <Property name="value">
+			            <Value>cn=Manager,dc=guessant,dc=org</Value>
+			          </Property>
+			        </Property>
+			        <Property name="param7">
+			          <Property name="type">
+			            <Value>String</Value>
+			          </Property>
+			          <Property name="value">
+			            <Value>secret</Value>
+			          </Property>
+			        </Property>
+          </Property>
+      </Property>
+      
+      <Property name="LDAPSDKFactory">
+          <Property name="type">
+            <Value>com.topcoder.util.net.ldap.sdkinterface.LDAPSDK</Value>
+          </Property>
+          <Property name="params">
+              <Property name="param1">
+			          <Property name="type">
+			            <Value>String</Value>
+			          </Property>
+			          <Property name="value">
+			            <Value>com.topcoder.util.net.ldap.sdkinterface.netscape.NetscapeFactory</Value>
+			          </Property>
+			        </Property>
+          </Property>
+      </Property>
+  </Config>
+  
+  <!-- simple empty -->
+  <Config name="com.topcoder.search.builder.ldap.factory">
+  </Config>
+</CMConfig>

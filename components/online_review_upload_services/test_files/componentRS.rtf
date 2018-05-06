@@ -1,0 +1,423 @@
+{\rtf1\ansi\ansicpg1251\deff0\deflang1049\deflangfe1049{\fonttbl{\f0\fswiss\fprq2\fcharset204{\*\fname Arial;}Arial CYR;}{\f1\froman\fprq2\fcharset204{\*\fname Times New Roman;}Times New Roman CYR;}{\f2\fswiss\fprq2\fcharset0 Arial;}{\f3\froman\fprq2\fcharset0 Times New Roman;}{\f4\froman\fprq2\fcharset2 Symbol;}{\f5\fmodern\fprq1\fcharset204{\*\fname Courier New;}Courier New CYR;}{\f6\fswiss\fprq2\fcharset238{\*\fname Arial;}Arial CE;}{\f7\fnil\fcharset2 Symbol;}}
+{\colortbl ;\red0\green112\blue192;\red112\green48\blue160;\red255\green0\blue0;\red0\green0\blue0;\red0\green0\blue255;\red63\green127\blue95;\red127\green0\blue85;\red42\green0\blue255;\red0\green128\blue128;\red0\green0\blue192;}
+{\stylesheet{ Normal;}{\s1 heading 1;}{\s2 heading 2;}{\s3 heading 3;}}
+{\*\generator Msftedit 5.41.21.2509;}\viewkind4\uc1\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx720\lang1033\ul\b\f0\fs28 Online Review Upload Services 1.\cf1 1\cf0  Component Specification\par
+\pard\nowidctlpar\li720\sa120\ulnone\b0\fs20\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b 1.\tab\fs24  Design\par
+\pard\nowidctlpar\li720\sa60\b0\f1 All changes performed when synchronizing documentation with the version 1.0 of the source code of this component are marked with \cf2\b purple\cf0\b0\f0 .\par
+\f1 All changes made in the version 1.1 are marked with \cf1\b blue\cf0\b0\f0 .\par
+All new items in the version 1.1 are marked with \cf3\b red\cf0\b0 .\par
+\pard\nowidctlpar\li720 The Online Review Submission Services will encapsulate the functionality of managing different Upload types. This component will be used in two different ways. Firstly, it will be used by the Online Review web site. Secondly, this component will provide a web services interfaces to allow external applications to upload files to Online Review.\par
+\par
+The design provides the interfaces described in RS and their default implementations. The interfaces related to the external web services use the internal UploadServices interface to delegate all operations. All implementation are configurable via ObjectFactory and the name of file stored by external implementation is configurable.\par
+\par
+\cf3 In the version 1.1 methods for uploading specification were added to UploadServices, UploadExternalServices and their implementations.\par
+\cf0\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\fs20 1.1\tab  Design considerations\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\b0\i 1.1.1\tab  Apache Axis\par
+\pard\nowidctlpar\li720\i0\fs24 In the Class Diagram the classes related with Axis are not shown. This is because the generation of web services through Axis is completely transparent. Axis, in fact, will generate a Dynamic Proxy using the extern interface UploadExternalServices. Or it can generate the WSDL using the Java2WDSL application.\par
+\pard\nowidctlpar\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\fs20 1.2\tab  Design Patterns \par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\b0 1.2.1\tab  Strategy\par
+\pard\nowidctlpar\li720\fs24 DefaultUploadServices can use different implementations of ManagersProvider. DefaultUploadExternalServices can use different implementations of UploadServices.\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\f2\fs20 1.2.2\tab  Fa\'e7ade\par
+\pard\nowidctlpar\li720\f3\fs24 The Fa\'e7ade pattern can be said to be used in the DefaultUploadServices and Default\f0 UploadExternalServices, as it provides streamlined access to managing submissions that uses numerous other components.\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\fs20 1.2.3\tab  Delegation\par
+\pard\nowidctlpar\li720\fs24 DefaultUploadExternalServices delegates all methods to DefaultUploadServices\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\fs20 1.3\tab  Industry Standards \par
+\pard\nowidctlpar\fi-360\li1080\b0\f4\'b7\tab\f0\fs24 XML \endash  SOAP \par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\fs20 1.4\tab  Required Algorithms\par
+\pard\nowidctlpar\li750\b0\fs24 There aren't precise algorithms to describe because all methods are described with many details in the doc tab.\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\fs20 1.4.1\tab  Logging\par
+\pard\nowidctlpar\li720\fs24\par
+You must log the operations with the follow levels:\par
+\pard\nowidctlpar\li720\qj Fatal Level:\par
+\pard\nowidctlpar\fi-360\li1440\qj\f4\'b7\tab\f0 Missing required configurations properties.\par
+\f4\'b7\tab\f0 Missing required files. Basically, every issue that makes the application failed to start.\par
+\pard\nowidctlpar\li720\qj\par
+Error Level:  \par
+\pard\nowidctlpar\fi-360\li1440\qj\f4\'b7\tab\f0 All Exceptions must be logged at least one time. A lot of caution has to be put on in order to not log the same exception several times. Given that sometimes this requirement is difficult to be accomplished, it shouldn\rquote t be taken as a \ldblquote must\rdblquote .\par
+\pard\nowidctlpar\li720\qj\par
+Warn Level:\par
+\pard\nowidctlpar\fi-360\li1440\qj\f4\'b7\tab\f0 Login failures.\par
+\f4\'b7\tab\f0 Authorization failures. Every time a user tries to perform some action for which he/she doesn\rquote t have permission must be logged.\par
+\f4\'b7\tab\f0 Every time a phase can\rquote t be opened or closed, an entry in the log must be added explaining why.\par
+\pard\nowidctlpar\li720\qj\par
+Info Level:\par
+\pard\nowidctlpar\fi-360\li1440\qj\f4\'b7\tab\f0 When an entity is created, updated or deleted a log entry with the primary key must be added.\par
+\f4\'b7\tab\f0 When a phase is opened or closed a log entry containing the project id, phase id, phase type must be added.\par
+\f4\'b7\tab\f0 When configuration parameters are read from its persistence storage, for instance every time a component reads a parameter from Configuration Manager must be logged.\par
+\pard\nowidctlpar\li720\qj\par
+\pard\nowidctlpar\li720 For all levels, whenever it\rquote s possible, add to the log message the id of the user doing the action. \par
+Finally, a great effort have to be put on generating a consistent logging message in order to easy the log viewing and filtering.\par
+\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\fs20 1.5\tab Component Class Overview\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\b0 1.5.1\tab  com.cronos.onlinereview.services.uploads\par
+\pard\nowidctlpar\li720\fs24 This package holds all the main interfaces and classes in this component. \par
+\par
+\b ManagersProvides\par
+\b0\~It provides instances of entity managers used in UploadServices interface. It contains all managers kept from the external components.\par
+\par
+\cf1\b UploadServices\par
+\cf0\b0 Defines the contract for managing different type of uploads and set status of submissions.\par
+\cf3 Change in 1.1: Added a method for uploading a specification.\par
+\cf0\par
+\cf1\b UploadExternalServices\par
+\cf0\b0 Defines the web service contract for managing different type of uploads and set status of submissions.\par
+\cf3 Change in 1.1: Added a method for uploading a specification.\par
+\pard\nowidctlpar\cf0\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\fs20 1.5.2\tab  com.cronos.onlinereview.services.uploads.impl\par
+\pard\nowidctlpar\li720\fs24 This package holds the implementations.\par
+\par
+\b DefaultManagersProvider\par
+\b0 This is the default implementation of ManagersProvides.It provides instances of entity managers used in UploadServices class. The managers are loaded using Object Factory or set through constructor. The log is performed for all methods.\par
+\par
+\cf1\b DefaultUploadServices\par
+\cf0\b0 This is the default implementation of UploadServices interface. It manages different type of upload. It used all managers from ManagerProvider to perform several operations. All the methods are logged. It's possible to construct the instance through configuration and Object Factory and set via constructor.\par
+\cf3 Changes in 1.1: Added a method for uploading a specification. Updated uploadSubmission() method to make it specify the submission type for created Submissions.\par
+\cf0\par
+\cf1\b DefaultUploadExternalServices\par
+\cf0\b0 This is the default implementation of UploadExternalServices interface. For all upload* methods it saves the file into fileStorageLocation and then delegates to UploadServices implementation. \~The \cf2 setSubmissionStatus method delegates\cf0  directly to UploadServices instance.\par
+\cf3 Change in 1.1: Added a method for uploading a specification.\par
+\cf0\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\fs20 1.6\tab  Component Exception Definitions\par
+\pard\nowidctlpar\li720\b0\fs24\par
+\pard\nowidctlpar\li679\cf4\b ConfigurationException\par
+\b0 This is the configuration exception of this component. It's thrown when there are invalid configuration values and missing configuration properties.\par
+\par
+\b InvalidProjectException\par
+\b0\f1 This is thrown when a project doesn't exist\f0 .\par
+\b\par
+InvalidProjectPhaseException\par
+\b0 This is thrown when the project phase is invalid. The Project phase is a "Project" class but in phase package, different from "Project" Class in project package.\par
+\b\par
+InvalidSubmissionException \par
+\b0\f1 This is thrown when a submission doesn't exist.\par
+\f0\par
+\b InvalidSubmissionStatusException \par
+\b0\f1 This is thrown when a submission status doesn't exist.\par
+\f0\par
+\b InvalidUserException \par
+\b0\f1 This is thrown when a user doesn't exists or when some error occurs related\par
+\pard\nowidctlpar\f0  \tab to the user (for example: she/he is not winner submitter)\par
+\pard\nowidctlpar\li679\par
+\b PersistenceException \par
+\b0 This exception wraps all exceptions related with the Persistence layer.\par
+\par
+\b UploadServicesException \par
+\b0\f1 This is the parent exception of the component. It's thrown when some error\par
+\f0 occurs and is not covered from the other custom exceptions.\par
+\pard\nowidctlpar\li720\cf0\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\fs20 1.7\tab Thread Safety\par
+\pard\nowidctlpar\li720\b0\fs24 The component is virtually thread-safe, and under expected conditions, it is effectively thread-safe. The reason is that this component uses numerous interfaces from other component. The classes in this component don't have a changeable state: it's impossible to change the variables in the classes. However, It's not sure that these external instances are thread safe, hence the thread safety of the classes depends totally to the thread safety of the external interfaces (managers) used. \par
+\pard\nowidctlpar\li720\sb120\cf3 Thread safety of this component was not changed in the version 1.1.\par
+\pard\nowidctlpar\li720\cf0\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b 2.\tab Environment Requirements\tab\tab\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\fs20 2.1\tab Environment\par
+\pard\nowidctlpar\fi-360\li1080\b0\f4\'b7\tab\f0\fs24 Development language: Java 1.5\par
+\f4\'b7\tab\f0 Compile target: Java 1.5\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\fs20 2.2\tab TopCoder Software Components\par
+\pard\nowidctlpar\fi-360\li1080\sa120\b0\f4\'b7\tab\f1\fs24 Configuration Manager 2.1.5\par
+\pard\nowidctlpar\fi-360\li1800\sa120\f5 o\tab\f1 Used for configuration of  implementation classes\par
+\pard\nowidctlpar\fi-360\li1080\sa120\f4\'b7\tab\f1 Object Factory 2.0.1\par
+\pard\nowidctlpar\fi-360\li1800\sa120\f5 o\tab\f1 Used to create the several implementations of managers and other interfaces inside the default implementations.\par
+\pard\nowidctlpar\fi-360\li1080\sa120\cf2\f4\'b7\tab\f1 Object Factory Config Manager Plugin 1.0\cf0\par
+\pard\nowidctlpar\fi-360\li1800\sa120\cf2\f5 o\tab\f1 Allows Object Factory to be configured with Configuration Manager component\cf0\par
+\pard\nowidctlpar\fi-360\li1080\sa120\f4\'b7\tab\f1 Base Exception 2.0\par
+\pard\nowidctlpar\fi-360\li1800\sa120\f5 o\tab\f1 TopCoder standard for all custom exceptions.\par
+\pard\nowidctlpar\fi-360\li1080\sa120\f4\'b7\tab\f1 Logging Wrapper 2.0\par
+\pard\nowidctlpar\fi-360\li1800\sa120\f5 o\tab\f1 Used for logging the operations.\par
+\pard\nowidctlpar\fi-360\li1080\sa120\f4\'b7\tab\f1 Search Builder \cf2 1.4\cf0\par
+\pard\nowidctlpar\fi-360\li1800\sa120\f5 o\tab\f1 Used to create the Filters used in DefaultUploadServices\par
+\pard\nowidctlpar\fi-360\li1080\sa120\f4\'b7\tab\f1 Phase Management \cf2 1.0.4\cf0\par
+\pard\nowidctlpar\fi-360\li1800\sa120\f5 o\tab\f1 Used to retrieve the Projects from Project Phases component.\par
+\pard\nowidctlpar\fi-360\li1080\sa120\f4\'b7\tab\f1 Project Phases \cf2 2.0.1\cf0\par
+\pard\nowidctlpar\fi-360\li1800\sa120\f5 o\tab\f1 Used for  the Project bean of this component (notice that this is different from Project in Project Management)\par
+\pard\nowidctlpar\fi-360\li1080\sa120\f4\'b7\tab\f1 Resource Management \cf2 1.1.1\cf0\par
+\pard\nowidctlpar\fi-360\li1800\sa120\f5 o\tab\f1 Used to retrieve the project's resources\par
+\pard\nowidctlpar\fi-360\li1080\sa120\f4\'b7\tab\f1 Project Management \cf2 1.0.1\cf0\par
+\pard\nowidctlpar\fi-360\li1800\sa120\f5 o\tab\f1 Used to retrieve the Projects of this component and for the Project Bean. (notice that this is different from Project in Project Phases)\par
+\pard\nowidctlpar\fi-360\li1080\f4\'b7\tab\f0 Deliverable Management \cf1 1.1\cf0\par
+\pard\nowidctlpar\fi-360\li1800\sa120\f5 o\tab\f1 Used to retrieve Submission and the Upload entity.\par
+\pard\nowidctlpar\fi-360\li1080\f4\'b7\tab\f0 Auto Screening Management 1.0\par
+\pard\nowidctlpar\fi-360\li1800\sa120\f5 o\tab\f1 Used to perform all screening tasks\par
+\pard\nowidctlpar\fi-360\li1080\f4\'b7\tab\f0 GUID Generator \cf2 1.0.1\cf0\par
+\pard\nowidctlpar\fi-360\li1800\sa120\f5 o\tab\f1 Used to create the UUID for the submission's filename to store\par
+\pard\nowidctlpar\fi-360\li1080\cf2\f4\'b7\tab\f0 User Project Data Store 1.0.1\par
+\pard\nowidctlpar\fi-360\li1800\sa120\f5 o\tab\f1 Defines ExternalUser and UserRetrieval interfaces\par
+\pard\nowidctlpar\fi-360\li1080\f4\'b7\tab\f0 DB Connection Factory 1.1\par
+\pard\nowidctlpar\fi-360\li1800\sa120\f5 o\tab\f1 Used to create DB connections\par
+\pard\nowidctlpar\sa120\cf0\f0\fs20\par
+\pard\nowidctlpar\li720\i\fs24 NOTE: The default location for TopCoder Software component jars is../lib/tcs/COMPONENT_NAME/COMPONENT_VERSION relative to the component installation.\cf4   Setting the tcs_libdir property in topcoder_global.properties will overwrite this default location.\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\cf0\b\i0\fs20 2.3\tab Third Party Components\par
+\pard\fi-360\li1080\lang11274\b0\f4\'b7\tab\f0\fs24 Apache Axis 1.4: {\field{\*\fldinst{HYPERLINK "http://ws.apache.org/axis/"}}{\fldrslt{\ul\cf5 http://ws.apache.org/axis/}}}\lang1033\f0\fs24\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b 3.\tab Installation and Configuration\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\fs20 3.1\tab Package Names\par
+\pard\nowidctlpar\li709\b0 com.cronos.onlinereview.services.uploads\par
+com.cronos.onlinereview.services.uploads.impl\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 3.2\tab  Configuration Parameters\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\b0 3.2.1\tab  DefaultManagersProvider\par
+\pard\nowidctlpar\li720\fs24\par
+\trowd\trgaph10\trleft-138\trpaddl10\trpaddr10\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrt\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx2392\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrt\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx5384\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrt\brdrw5\brdrs\brdrcf4\clbrdrr\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx8630\pard\intbl\nowidctlpar\cf4\b Parameter\cell Description\cell Details\cell\row\trowd\trgaph10\trleft-138\trpaddl10\trpaddr10\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx2392\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx5384\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrr\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx8630\pard\intbl\nowidctlpar\sa120\b0\f1\fs20 objectFactoryNamespace\cell Namespace to use with the ConfigManagerSpecificationFactory.\par
+Required\cell Example: \par
+\ldblquote com.topcoder.specify\rdblquote\par
+\cell\row\trowd\trgaph10\trleft-128\trpaddl10\trpaddr10\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx2402\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx5394\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrr\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx8640\pard\intbl\nowidctlpar\sa120 resourceManagerIdentifier\par
+\cell Key for the ResourceManager to pass to ObjectFactory.\par
+Required\cell Valid key in ObjectFactory\cell\row\trowd\trgaph10\trleft-128\trpaddl10\trpaddr10\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx2402\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx5394\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrr\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx8640\pard\intbl\nowidctlpar\sa120 phaseManagerIdentifier\par
+\cell Key for the PhaseManager to pass to ObjectFactory.\par
+Required\cell Valid key in ObjectFactory\cell\row\trowd\trgaph10\trleft-128\trpaddl10\trpaddr10\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx2402\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx5394\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrr\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx8640\pard\intbl\nowidctlpar\sa120 projectManagerIdentifier\par
+\cell Key for the ProjectManager to pass to ObjectFactory.\par
+Required\cell Valid key in ObjectFactory\cell\row\trowd\trgaph10\trleft-128\trpaddl10\trpaddr10\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx2402\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx5394\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrr\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx8640\pard\intbl\nowidctlpar\sa120 screeningManagerIdentifier\par
+\cell Key for the ScreeningManager to pass to ObjectFactory.\par
+Required\cell Valid key in ObjectFactory\cell\row\trowd\trgaph10\trleft-128\trpaddl10\trpaddr10\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx2402\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx5394\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrr\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx8640\pard\intbl\nowidctlpar\sa120 uploadManagerIdentifier\par
+\cell Key for the UploadManager to pass to ObjectFactory.\par
+Required\cell Valid key in ObjectFactory\cell\row\pard\nowidctlpar\cf0\f0\fs24\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\fs20 3.2.2\tab  DefaultUploadServices\par
+\pard\nowidctlpar\li720\fs24\par
+\trowd\trgaph10\trleft-118\trpaddl10\trpaddr10\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrt\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx3251\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrt\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx6268\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrt\brdrw5\brdrs\brdrcf4\clbrdrr\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx8767\pard\intbl\nowidctlpar\cf4\b Parameter\cell Description\cell Details\cell\row\trowd\trgaph10\trleft-118\trpaddl10\trpaddr10\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw10\brdrs \cellx3251\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw10\brdrs \cellx6268\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrr\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw10\brdrs \cellx8767\pard\intbl\nowidctlpar\sa120\b0\f1\fs20 objectFactoryNamespace\cell Namespace to use with the ConfigManagerSpecificationFactory.\par
+Optional\cell Example: \par
+\ldblquote com.topcoder.specify\rdblquote\par
+\cell\row\trowd\trgaph10\trleft-118\trpaddl10\trpaddr10\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx3251\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6268\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8767\pard\intbl\nowidctlpar\sa120 managersProviderIdentifier\par
+\cell Key for the ManagersProvider to pass to ObjectFactory.\par
+Optional: default is DefaultManagersProvider\cell Valid key in ObjectFactory\cell\row\pard\nowidctlpar\li720\f0\fs24\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf0\fs20 3.2.3\tab  DefaultUploadExternalServices\par
+\pard\nowidctlpar\li720\fs24\par
+\trowd\trgaph10\trleft-118\trpaddl10\trpaddr10\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrt\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx2281\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrt\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx5385\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrt\brdrw5\brdrs\brdrcf4\clbrdrr\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx8630\pard\intbl\nowidctlpar\b Parameter\cell Description\cell Details\cell\row\trowd\trgaph10\trleft-118\trpaddl10\trpaddr10\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx2281\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx5385\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrr\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx8630\pard\intbl\nowidctlpar\sa120\cf4\b0\f1\fs20 objectFactoryNamespace\cell Namespace to use with the ConfigManagerSpecificationFactory.\par
+Optional\cell Example: \par
+\ldblquote com.topcoder.specify\rdblquote\par
+\cell\row\trowd\trgaph10\trleft-108\trpaddl10\trpaddr10\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx2291\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx5395\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrr\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx8640\pard\intbl\nowidctlpar\sa120 uploadServicesIdentifier\par
+\cell Key for the UploadServices to pass to ObjectFactory.\par
+Optional:default is DefaultUploadServices\cell Valid key in ObjectFactory\cell\row\trowd\trgaph10\trleft-108\trpaddl10\trpaddr10\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx2291\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx5395\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrr\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx8640\pard\intbl\nowidctlpar\sa120 filenamePattern\par
+\cell The pattern to write the filename\par
+Optional: default is \ldblquote\{0\}_\{1\}\rdblquote\cell Valid string\cell\row\trowd\trgaph10\trleft-108\trpaddl10\trpaddr10\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx2291\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx5395\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrr\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx8640\pard\intbl\nowidctlpar\sa120 fileStorageLocation\par
+\cell The path to store the submission files\par
+Required\cell Valid path\cell\row\pard\nowidctlpar\li720\f0\fs24\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf0\fs20 3.2.4\tab  filenamePattern\par
+\pard\nowidctlpar\li720\fs24\par
+These parameters are included in the pattern. See MessageFormat class for more information.\par
+\par
+\trowd\trgaph10\trleft-118\trpaddl10\trpaddr10\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrt\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx2001\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrt\brdrw5\brdrs\brdrcf4\clbrdrr\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx8630\pard\intbl\nowidctlpar\b Parameter\cell Description\cell\row\trowd\trgaph10\trleft-118\trpaddl10\trpaddr10\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx2001\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrr\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx8630\pard\intbl\nowidctlpar\sa120\cf4\b0\f1\fs20\{0\}\cell Represents the UUID generated\cell\row\trowd\trgaph10\trleft-108\trpaddl10\trpaddr10\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx2011\clbrdrl\brdrw5\brdrs\brdrcf4\clbrdrr\brdrw5\brdrs\brdrcf4\clbrdrb\brdrw5\brdrs\brdrcf4 \cellx8640\pard\intbl\nowidctlpar\sa120\f0\{\f1 1\}\par
+\cell Represents  the filename passed from external web services\cell\row\pard\nowidctlpar\li720\cf0\f0\fs24\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\fs20 3.3\tab  Dependencies Configuration\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\b0\i 3.3.1\tab TopCoder dependencies\par
+\pard\nowidctlpar\li765\i0\fs24 All the dependencies are to be configured according to their component specifications.\par
+\pard\nowidctlpar\li720\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b 4.\tab Usage Notes\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\fs20 4.1\tab Required steps to test the component\b0\par
+\pard{\pntext\f7\'B7\tab}{\*\pn\pnlvlblt\pnf7\pnindent0{\pntxtb\'B7}}\nowidctlpar\fi-360\li1440\sa120\lang1045\f6 Extract the component distribution.\lang1033\f0\par
+\lang1045\f6{\pntext\f7\'B7\tab}Follow the dependencies (note that axis 1.4 has been already added to test_reflib)\lang1033\f0\par
+\lang1045\f6{\pntext\f7\'B7\tab}Configure you informix database, the database schema script can be found in test_files/dbschema.sql\lang1033\f0\par
+\lang1045\f6{\pntext\f7\'B7\tab}Modify the database connection string and user credentials in test_files/config.xml.\lang1033\f0\par
+\lang1045\f6{\pntext\f7\'B7\tab}Download and install Tomcat (minimal version required by axis is 4.4, but any greater version can be used as long it runs on java 1.5).\lang1033\f0\par
+\lang1045\f6{\pntext\f7\'B7\tab}Run your tomcat server by executing startup.[sh/bat]\lang1033\f0\par
+\lang1045\f6{\pntext\f7\'B7\tab}Modify the tomcat.home, tomcat.port, tomcat.server in build-dependencies.xml.\lang1033\f0\par
+\lang1045\f6{\pntext\f7\'B7\tab}Modify the path to upload directory in \lang1033\f0\par
+\lang1045\f6{\pntext\f7\'B7\tab}Run 'ant deploy_tomcat' - this will compile all the classes in this component and package them with all dependencies into war. Then the war will copied into tomcat.home/webapps directory. (You can check if the web app has been successfully deployed, by opening in you browser address {\field{\*\fldinst{HYPERLINK "http://localhost:8080/axis"}}{\fldrslt{\ul\cf5 http://localhost:8080/axis}}}\f6\fs20 )\lang1033\f0\par
+\lang1045\f6{\pntext\f7\'B7\tab}Run 'deploy_service' this will deploy UploadService in axis.\lang1033\f0\par
+\lang1045\f6{\pntext\f7\'B7\tab}Run 'ant test'.\lang1033\f0\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 4.2\tab  Required steps to use the component\par
+\lang1045\f6\tab  See demo below\lang1033\f0\par
+\pard\nowidctlpar\li720\b0\fs24\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\fs20 4.3\tab  Demo\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\b0 4.3.1\tab Setup\par
+\pard\nowidctlpar\li720\fs24\par
+Much of the setup for any demo involves properly configuring all the components. This demo will not go into that depth, but it will use a sample configuration XML file for each implementation.\par
+\par
+\pard\nowidctlpar\fs16\tab\cf4\f5 <Config name="DefaultManagersProvider">\par
+\cf0\f0\tab\par
+\tab\tab\f5 <Property name="objectFactoryNamespace">\par
+\tab\tab\tab <Value>myObjectFactory</Value>\par
+\tab\tab </Property>\par
+\tab\par
+\tab\tab <Property name="resourceManagerIdentifier">\par
+\tab\tab\tab <Value>resourceManager</Value>\par
+\tab\tab </Property>\par
+\tab\par
+\tab\tab <Property name="phaseManagerIdentifier">\par
+\tab\tab\tab <Value>phaseManager</Value>\par
+\tab\tab </Property>\par
+\tab\par
+\tab\tab <Property name="projectManagerIdentifier">\par
+\tab\tab\tab <Value>projectManager</Value>\par
+\tab\tab </Property>\par
+\tab\par
+\tab\tab <Property name="screeningManagerIdentifier">\par
+\tab\tab\tab <Value>screeningManager</Value>\par
+\tab\tab </Property>\par
+\tab\par
+\tab\tab <Property name="uploadManagerIdentifier">\par
+\tab\tab\tab <Value>uploadManager</Value>\par
+\tab\tab </Property>\par
+\tab\par
+\tab </Config>\par
+\f0\par
+\tab\f5 <Config name="DefaultUploadServices">\par
+\tab\par
+\tab\tab <Property name="objectFactoryNamespace">\par
+\tab\tab\tab <Value>myObjectFactory</Value>\par
+\tab\tab </Property>\par
+\tab\par
+\tab\tab <Property name="managersProviderIdentifier">\par
+\tab\tab\tab <Value>managersProvider</Value>\par
+\tab\tab </Property>\f0\par
+\par
+\tab\f5 </Config>\par
+\par
+\tab <Config name="DefaultUploadExternalServices">\par
+\tab\par
+\tab\tab <Property name="objectFactoryNamespace">\par
+\tab\tab\tab <Value>myObjectFactory</Value>\par
+\tab\tab </Property>\par
+\tab\par
+\tab\tab <Property name="uploadServicesIdentifier">\par
+\tab\tab\tab <Value>uploadServices</Value>\par
+\tab\tab </Property>\par
+\tab\par
+\tab\tab <Property name="filenamePattern">\par
+\tab\tab\tab <Value>submission-\{0\}-\{1\}</Value>\par
+\tab\tab </Property>\par
+\tab\par
+\tab\tab <Property name="fileStorageLocation">\par
+\tab\tab\tab <Value>/opt/mySubmissions</Value>\par
+\tab\tab </Property>\par
+\par
+\tab </Config>\par
+\pard\nowidctlpar\li720\f0\fs18\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf1\fs20 4.3.2\tab  Usage of internal interface\par
+\pard\nowidctlpar\li720\cf0\fs24\par
+A typical usage scenario involves the full use of the methods of internal interface, for example from a Web application:\par
+\par
+\pard\cf6\fs20\tab\f5\fs16 // Create the implementation\cf0\par
+\cf4         UploadServices services = \cf7\b new\cf4\b0  DefaultUploadServices();\cf0\par
+\cf4         \cf6 // Implementation created\cf0\par
+\par
+\cf4         \cf6 // In this demo it will show the different phases of a project\cf0\par
+\cf4         \cf6 // The project has the id=20, the user has the id=600.\cf0\par
+\cf4         \cf6 // The names of submission will b e different depend from phase\cf0\par
+\par
+\cf4         \cf6 // upload the submission\cf0\par
+\cf4         \cf7\b long\cf4\b0  idSubmission = services.uploadSubmission(30, 600, \cf8 "submissionMyComponent"\cf4 );\cf0\par
+\cf4         \cf6 // submission uploaded and the id of submission is returned\cf0\par
+\cf4         \cf6 // Upload the final fixe\cf0\par
+\cf4         \cf7\b long\cf4\b0  idFinalFix = services.uploadFinalFix(30, 600, \cf8 "finalFixMyComponent"\cf4 );\cf0\par
+\cf4         \cf6 // final fix uploaded and the id of final fix is returned\cf0\par
+\par
+\cf4         \cf6 // Upload the test case\cf0\par
+\cf4         \cf7\b long\cf4\b0  idTestCases = services.uploadTestCases(30, 600, \cf8 "testCaseMyComponent"\cf4 );\cf0\par
+\cf4         \cf6 // test cases uploaded and the id of test cases is returned\par
+\par
+\cf3         // Upload the specification\par
+        \b long\b0  idSpecification = services.uploadSpecification(30, 600, "componentRS.rtf");\par
+        // specification uploaded and the id of specification is returned\par
+\cf0\par
+\cf4         \cf6 // change the status of submission previous uploaded to the status of id=1\cf0\par
+\cf4         services.setSubmissionStatus(idSubmission, 1, \cf8 ""\cf4  + 30);\cf0\par
+\cf4         \cf6 // the submission status has changed\cf0\par
+\pard\nowidctlpar\li720\f0\fs24\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\fs20 4.3.3\tab   Deployment configuration\par
+\pard\nowidctlpar\li720\fs24\par
+The deployment configuration of Axis will be:\par
+\par
+\pard\nowidctlpar\cf9\f5\fs16 <deployment xmlns="http://xml.apache.org/axis/wsdd/"\par
+            xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">\par
+\tab <typeMapping qname="OR:DataHandler" xmlns:OR="http://onlinereview.topcoder.com"\par
+\tab\tab serializer="org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory"\par
+\tab\tab deserializer="org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory"\par
+\tab\tab languageSpecificType="java:javax.activation.DataHandler"\par
+\tab\tab encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" \par
+\tab />\par
+\par
+\tab <service name="UploadService" provider="java:RPC">\par
+\tab\tab <namespace>http://onlinereview.topcoder.com</namespace>\par
+\tab\tab <parameter name="className" value="com.cronos.onlinereview.services.uploads.impl.DefaultUploadExternalServices" />\par
+\tab\tab <parameter name="allowedMethods" value="*" />\par
+\tab </service>\par
+</deployment>\par
+\cf0\f0\par
+\pard\nowidctlpar\li720\fs24\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf1\fs20 4.3.4\tab  Usage of the external interface with Axis: Java2WSDL and WSDL2Java\par
+\pard\nowidctlpar\li720\cf0\fs24\par
+\cf4 The typical usage of Axis is to generate the WSDL with Java2WSDL library. After this the WSDL will be generated and published. The client which will want use the web services will use the Axis client. The Axis client is generated with WSDL2Java library. At this point the interface equivalent to UploadExternalServices will be generated and the client will use the web services without explicit SOAP call, all mechanism will be completely transparent.\par
+\par
+\pard\fi720\cf6\f5\fs16 // Create the implementation\cf0\par
+\pard\cf4         UploadExternalServices services = \cf7\b new\cf4\b0  DefaultUploadExternalServices();\cf0\par
+\cf4         \cf6 // Implementation created\cf0\par
+\par
+\cf4         \cf6 // In this demo it will show the different phases of a project\cf0\par
+\cf4         \cf6 // The project has the id=20, the user has the id=600.\cf0\par
+\cf4         \cf6 // The names of submission will b e different depend from phase\cf0\par
+\par
+\cf4         \cf6 // Create the DataHandler\cf0\par
+\pard\li720\cf4 FileDataSource dataSource = \cf7\b new\cf4\b0  FileDataSource(TestHelper.\cf10\i TEST_FILES\cf4\i0  + \cf8 "sample.jar"\cf4 );\cf0\par
+\pard\cf4         DataHandler dataHandler = \cf7\b new\cf4\b0  DataHandler(dataSource);\cf0\par
+\cf4         \cf6 // DataHandler created\cf0\par
+\par
+\cf4         \cf6 // upload the submission\cf0\par
+\pard\li720\cf7\b long\cf4\b0  idSubmission = services.uploadSubmission(30, 600, \cf8 "submissionMyComponent"\cf4 , dataHandler);\cf0\par
+\pard\cf4         \cf6 // submission uploaded and the id of submission is returned\cf0\par
+\par
+\cf4         \cf6 // upload the final fix\cf0\par
+\pard\li720\cf7\b long\cf4\b0  idFinalFix = services.uploadFinalFix(30, 600, \cf8 "finalFixMyComponent"\cf4 , dataHandler);\cf0\par
+\pard\cf4         \cf6 // final fix uploaded and the id of final fix is returned\cf0\par
+\par
+\cf4         \cf6 // upload the test cases\cf0\par
+\pard\li720\cf7\b long\cf4\b0  idTestCases = services.uploadTestCases(30, 100, \cf8 "testCaseMyComponent"\cf4 , dataHandler);\cf0\par
+\pard\cf4         \cf6 // test cases uploaded and the id of test cases is returned\cf0\par
+\par
+\cf3         // Upload the specification\par
+        \b long\b0  idSpecification = services.uploadSpecification(30, 600, "my_rs.rtf", dataHandler);\par
+        // specification uploaded and the id of specification is returned\par
+\cf0\par
+\cf4         \cf6 // change the status of submission previous uploaded to the status of id=1\cf0\par
+\cf4         services.setSubmissionStatus(idSubmission, 1, \cf8 ""\cf4  + 30);\cf0\par
+\cf4         \cf6 // the submission status has changed\cf0\par
+\pard\nowidctlpar\li720\f0\fs24\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\b\fs20 4.3.5\tab  \b0 Usage the WebServices in SOAP mode\b\par
+\pard\nowidctlpar\b0\fs24\tab In this case the Axis classes of client are not generated and the normal SOAP call \tab is  used:\par
+\par
+\pard\cf6\fs16       \cf4\f5       \cf6 // Create the service\cf0\par
+\cf4         Service service = \cf7\b new\cf4\b0  Service();\cf0\par
+\par
+\cf4         \cf6 // Create the caller and set the endpoint\cf0\par
+\cf4         Call call = (Call) service.createCall();\cf0\par
+\cf4         call.setTargetEndpointAddress(\cf7\b new\cf4\b0  java.net.URL(TestHelper.\cf10\i END_POINT\cf4\i0 ));\cf0\par
+\par
+\cf4         \cf6 // Set the operation\cf0\par
+\pard\li720\cf4  call.setOperationName(\cf7\b new\cf4\b0  QName(\cf8 "http://onlinereview.topcoder.com"\cf4 , \cf8 "uploadTestCases"\cf4 ));\cf0\par
+\pard\par
+\cf4         QName qName = \cf7\b new\cf4\b0  QName(\cf8 "DataHandler"\cf4 );\cf0\par
+\cf4         call.addParameter(\cf8 "op1"\cf4 , XMLType.\cf10\i XSD_LONG\cf4\i0 , ParameterMode.\cf10\i IN\cf4\i0 );\cf0\par
+\cf4         call.addParameter(\cf8 "op2"\cf4 , XMLType.\cf10\i XSD_LONG\cf4\i0 , ParameterMode.\cf10\i IN\cf4\i0 );\cf0\par
+\cf4         call.addParameter(\cf8 "op3"\cf4 , XMLType.\cf10\i XSD_STRING\cf4\i0 , ParameterMode.\cf10\i IN\cf4\i0 );\cf0\par
+\cf4         call.addParameter(qName, XMLType.\cf10\i MIME_DATA_HANDLER\cf4\i0 , ParameterMode.\cf10\i IN\cf4\i0 );\cf0\par
+\par
+\cf4         call.setReturnType(XMLType.\cf10\i XSD_LONG\cf4\i0 );\cf0\par
+\par
+\cf4         \cf6 // Invoke the webservice.\cf0\par
+\pard\li720\cf7\b long\cf4\b0  id = (Long) call.invoke(\cf7\b new\cf4\b0  Object[] \{ projectId, userId, \cf8 "sample_accuracy.jar"\cf4 , testCase \});\cf0\par
+\pard\nowidctlpar\par
+\f0\par
+\cf4\fs24\tab The other operations are equivalent.\cf0\par
+\pard\nowidctlpar\li720\cf4\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\cf0\b 5.\tab Future Enhancements\par
+\pard\nowidctlpar\fi720\b0 Other implementations of UploadServices can be provided.\par
+}
+ 

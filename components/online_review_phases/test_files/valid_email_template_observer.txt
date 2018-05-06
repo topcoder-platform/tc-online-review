@@ -1,0 +1,7 @@
+%PHASE_TIMESTAMP{Phase timestamp}%
+Hello %USER_FIRST_NAME{User first name}% %USER_LAST_NAME{User last name}%,
+Handle\: %USER_HANDLE{User handle}%
+This is the notification on project\: %PROJECT_NAME{Project name}%
+Version\: %PROJECT_VERSION{Project version}%
+This is the %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.
+this is observer view.

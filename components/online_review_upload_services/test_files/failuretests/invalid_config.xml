@@ -1,0 +1,401 @@
+<CMConfig>
+	<Config name="objectFactoryNamespace_missing">
+		<Property name="resourceManagerIdentifier">
+			<Value>resourceManager</Value>
+		</Property>
+		<Property name="phaseManagerIdentifier">
+			<Value>phaseManager</Value>
+		</Property>
+		<Property name="projectManagerIdentifier">
+			<Value>projectManager</Value>
+		</Property>
+		<Property name="screeningManagerIdentifier">
+			<Value>screeningManager</Value>
+		</Property>
+		<Property name="uploadManagerIdentifier">
+			<Value>uploadManager</Value>
+		</Property>
+	</Config>	
+	
+	
+		<Config name="objectFactoryNamespace_empty">
+		<Property name="objectFactoryNamespace">
+			<Value> </Value>
+		</Property>
+		<Property name="resourceManagerIdentifier">
+			<Value>resourceManager</Value>
+		</Property>
+		<Property name="phaseManagerIdentifier">
+			<Value>phaseManager</Value>
+		</Property>
+		<Property name="projectManagerIdentifier">
+			<Value>projectManager</Value>
+		</Property>
+		<Property name="screeningManagerIdentifier">
+			<Value>screeningManager</Value>
+		</Property>
+		<Property name="uploadManagerIdentifier">
+			<Value>uploadManager</Value>
+		</Property>
+	</Config>
+	
+	<Config name="objectFactoryNamespace_invalid">
+		<Property name="objectFactoryNamespace">
+			<Value>invalid</Value>
+		</Property>
+		<Property name="resourceManagerIdentifier">
+			<Value>resourceManager</Value>
+		</Property>
+		<Property name="phaseManagerIdentifier">
+			<Value>phaseManager</Value>
+		</Property>
+		<Property name="projectManagerIdentifier">
+			<Value>projectManager</Value>
+		</Property>
+		<Property name="screeningManagerIdentifier">
+			<Value>screeningManager</Value>
+		</Property>
+		<Property name="uploadManagerIdentifier">
+			<Value>uploadManager</Value>
+		</Property>
+	</Config>
+	
+	
+		<Config name="resourceManagerIdentifier_missing">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="phaseManagerIdentifier">
+			<Value>phaseManager</Value>
+		</Property>
+		<Property name="projectManagerIdentifier">
+			<Value>projectManager</Value>
+		</Property>
+		<Property name="screeningManagerIdentifier">
+			<Value>screeningManager</Value>
+		</Property>
+		<Property name="uploadManagerIdentifier">
+			<Value>uploadManager</Value>
+		</Property>
+	</Config>
+	
+		<Config name="resourceManagerIdentifier_empty">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="resourceManagerIdentifier">
+			<Value> </Value>
+		</Property>
+		<Property name="phaseManagerIdentifier">
+			<Value>phaseManager</Value>
+		</Property>
+		<Property name="projectManagerIdentifier">
+			<Value>projectManager</Value>
+		</Property>
+		<Property name="screeningManagerIdentifier">
+			<Value>screeningManager</Value>
+		</Property>
+		<Property name="uploadManagerIdentifier">
+			<Value>uploadManager</Value>
+		</Property>
+	</Config>
+	
+		<Config name="resourceManagerIdentifier_invalid">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="resourceManagerIdentifier">
+			<Value>invalid</Value>
+		</Property>
+		<Property name="phaseManagerIdentifier">
+			<Value>phaseManager</Value>
+		</Property>
+		<Property name="projectManagerIdentifier">
+			<Value>projectManager</Value>
+		</Property>
+		<Property name="screeningManagerIdentifier">
+			<Value>screeningManager</Value>
+		</Property>
+		<Property name="uploadManagerIdentifier">
+			<Value>uploadManager</Value>
+		</Property>
+	</Config>
+	
+	
+		<Config name="phaseManagerIdentifier_missing">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="resourceManagerIdentifier">
+			<Value>resourceManager</Value>
+		</Property>
+		<Property name="projectManagerIdentifier">
+			<Value>projectManager</Value>
+		</Property>
+		<Property name="screeningManagerIdentifier">
+			<Value>screeningManager</Value>
+		</Property>
+		<Property name="uploadManagerIdentifier">
+			<Value>uploadManager</Value>
+		</Property>
+	</Config>
+	
+	
+		<Config name="phaseManagerIdentifier_empty">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="resourceManagerIdentifier">
+			<Value>resourceManager</Value>
+		</Property>
+		<Property name="phaseManagerIdentifier">
+			<Value> </Value>
+		</Property>
+		<Property name="projectManagerIdentifier">
+			<Value>projectManager</Value>
+		</Property>
+		<Property name="screeningManagerIdentifier">
+			<Value>screeningManager</Value>
+		</Property>
+		<Property name="uploadManagerIdentifier">
+			<Value>uploadManager</Value>
+		</Property>
+	</Config>
+	
+	
+		<Config name="phaseManagerIdentifier_invalid">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="resourceManagerIdentifier">
+			<Value>resourceManager</Value>
+		</Property>
+		<Property name="phaseManagerIdentifier">
+			<Value>invalid</Value>
+		</Property>
+		<Property name="projectManagerIdentifier">
+			<Value>projectManager</Value>
+		</Property>
+		<Property name="screeningManagerIdentifier">
+			<Value>screeningManager</Value>
+		</Property>
+		<Property name="uploadManagerIdentifier">
+			<Value>uploadManager</Value>
+		</Property>
+	</Config>
+	
+		<Config name="projectManagerIdentifier_missing">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="resourceManagerIdentifier">
+			<Value>resourceManager</Value>
+		</Property>
+		<Property name="phaseManagerIdentifier">
+			<Value>phaseManager</Value>
+		</Property>
+		<Property name="screeningManagerIdentifier">
+			<Value>screeningManager</Value>
+		</Property>
+		<Property name="uploadManagerIdentifier">
+			<Value>uploadManager</Value>
+		</Property>
+	</Config>
+	
+	
+		<Config name="projectManagerIdentifier_empty">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="resourceManagerIdentifier">
+			<Value>resourceManager</Value>
+		</Property>
+		<Property name="phaseManagerIdentifier">
+			<Value>phaseManager</Value>
+		</Property>
+		<Property name="projectManagerIdentifier">
+			<Value> </Value>
+		</Property>
+		<Property name="screeningManagerIdentifier">
+			<Value>screeningManager</Value>
+		</Property>
+		<Property name="uploadManagerIdentifier">
+			<Value>uploadManager</Value>
+		</Property>
+	</Config>
+	
+		<Config name="projectManagerIdentifier_invalid">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="resourceManagerIdentifier">
+			<Value>resourceManager</Value>
+		</Property>
+		<Property name="phaseManagerIdentifier">
+			<Value>phaseManager</Value>
+		</Property>
+		<Property name="projectManagerIdentifier">
+			<Value>projectManager</Value>
+		</Property>
+		<Property name="screeningManagerIdentifier">
+			<Value>screeningManager</Value>
+		</Property>
+		<Property name="uploadManagerIdentifier">
+			<Value>invalid</Value>
+		</Property>
+	</Config>
+	
+		<Config name="screeningManagerIdentifier_missing">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="resourceManagerIdentifier">
+			<Value>resourceManager</Value>
+		</Property>
+		<Property name="phaseManagerIdentifier">
+			<Value>phaseManager</Value>
+		</Property>
+		<Property name="projectManagerIdentifier">
+			<Value>projectManager</Value>
+		</Property>
+		<Property name="uploadManagerIdentifier">
+			<Value>uploadManager</Value>
+		</Property>
+	</Config>
+	
+	
+		<Config name="screeningManagerIdentifier_empty">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="resourceManagerIdentifier">
+			<Value>resourceManager</Value>
+		</Property>
+		<Property name="phaseManagerIdentifier">
+			<Value>phaseManager</Value>
+		</Property>
+		<Property name="projectManagerIdentifier">
+			<Value>projectManager</Value>
+		</Property>
+		<Property name="screeningManagerIdentifier">
+			<Value> </Value>
+		</Property>
+		<Property name="uploadManagerIdentifier">
+			<Value>uploadManager</Value>
+		</Property>
+	</Config>
+	
+		<Config name="screeningManager_invalid">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="resourceManagerIdentifier">
+			<Value>resourceManager</Value>
+		</Property>
+		<Property name="phaseManagerIdentifier">
+			<Value>phaseManager</Value>
+		</Property>
+		<Property name="projectManagerIdentifier">
+			<Value>projectManager</Value>
+		</Property>
+		<Property name="screeningManagerIdentifier">
+			<Value>invalid</Value>
+		</Property>
+		<Property name="uploadManagerIdentifier">
+			<Value>uploadManager</Value>
+		</Property>
+	</Config>
+	
+		<Config name="uploadManagerIdentifier_missing">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="resourceManagerIdentifier">
+			<Value>resourceManager</Value>
+		</Property>
+		<Property name="phaseManagerIdentifier">
+			<Value>phaseManager</Value>
+		</Property>
+		<Property name="projectManagerIdentifier">
+			<Value>projectManager</Value>
+		</Property>
+		<Property name="screeningManagerIdentifier">
+			<Value>screeningManager</Value>
+		</Property>
+	</Config>
+	
+		<Config name="uploadManagerIdentifier_empty">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="resourceManagerIdentifier">
+			<Value>resourceManager</Value>
+		</Property>
+		<Property name="phaseManagerIdentifier">
+			<Value>phaseManager</Value>
+		</Property>
+		<Property name="projectManagerIdentifier">
+			<Value>projectManager</Value>
+		</Property>
+		<Property name="screeningManagerIdentifier">
+			<Value>screeningManager</Value>
+		</Property>
+		<Property name="uploadManagerIdentifier">
+			<Value> </Value>
+		</Property>
+	</Config>
+	
+		<Config name="uploadManagerIdentifier_invalid">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="resourceManagerIdentifier">
+			<Value>resourceManager</Value>
+		</Property>
+		<Property name="phaseManagerIdentifier">
+			<Value>phaseManager</Value>
+		</Property>
+		<Property name="projectManagerIdentifier">
+			<Value>projectManager</Value>
+		</Property>
+		<Property name="screeningManagerIdentifier">
+			<Value>screeningManager</Value>
+		</Property>
+		<Property name="uploadManagerIdentifier">
+			<Value>invalid</Value>
+		</Property>
+	</Config>
+	
+	
+		<Config name="fileStorageLocation_missing">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="uploadServicesIdentifier">
+			<Value>uploadServices</Value>
+		</Property>
+		<Property name="filenamePattern">
+			<Value>submission-{0}-{1}</Value>
+		</Property>
+	</Config>
+	
+	
+		<Config name="fileStorageLocation_empty">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="uploadServicesIdentifier">
+			<Value>uploadServices</Value>
+		</Property>
+		<Property name="filenamePattern">
+			<Value>submission-{0}-{1}</Value>
+		</Property>
+		<Property name="fileStorageLocation">
+			<Value> </Value>
+		</Property>
+	</Config>
+	
+
+	
+</CMConfig>
+	

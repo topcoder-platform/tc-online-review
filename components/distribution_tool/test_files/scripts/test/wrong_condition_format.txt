@@ -1,0 +1,2 @@
+# wrong format for condition
+ifdef(xxx define : name = value

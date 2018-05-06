@@ -1,0 +1,194 @@
+<?xml version="1.0"?>
+<CMConfig>
+    <Config name="com.topcoder.util.distribution.DistributionTool">
+        <Property name="logger_name">
+            <Value>my_logger</Value>
+        </Property>
+        <Property name="object_factory_config">
+            <Property name="type">
+                <Value>com.topcoder.util.distribution.parsers.DistributionScriptParserImpl</Value>
+            </Property>
+        </Property>
+        <Property name="script_parser_key">
+            <Value>com.topcoder.util.distribution.parsers.DistributionScriptParserImpl</Value>
+        </Property>
+        <Property name="scripts">
+            <Property name="script_java">
+                <Property name="distribution_type">
+                    <Value>java</Value>
+                </Property>
+                <Property name="script_path">
+                    <Value>test_files/stresstests/scripts/java/script.txt</Value>
+                </Property>
+                <Property name="param_1">
+                    <Property name="name">
+                        <Value>output_dir</Value>
+                    </Property>
+                </Property>
+                <Property name="param_2">
+                    <Property name="name">
+                        <Value>version</Value>
+                    </Property>
+                    <Property name="default_value">
+                        <Value>1.1.1.1</Value>
+                    </Property>
+                </Property>
+                <Property name="param_3">
+                    <Property name="name">
+                        <Value>Component Name</Value>
+                    </Property>
+                </Property>
+                <Property name="param_4">
+                    <Property name="name">
+                        <Value>package.name</Value>
+                    </Property>
+                </Property>
+                <Property name="param_5">
+                    <Property name="name">
+                        <Value>component_description</Value>
+                    </Property>
+                    <Property name="default_value">
+                        <Value></Value>
+                    </Property>
+                </Property>
+                <Property name="param_6">
+                    <Property name="name">
+                        <Value>rs</Value>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="script_js">
+                <Property name="distribution_type">
+                    <Value>js</Value>
+                </Property>
+                <Property name="script_path">
+                    <Value>test_files/stresstests/scripts/js/script.txt</Value>
+                </Property>
+                <Property name="param_1">
+                    <Property name="name">
+                        <Value>output_dir</Value>
+                    </Property>
+                </Property>
+                <Property name="param_2">
+                    <Property name="name">
+                        <Value>version</Value>
+                    </Property>
+                    <Property name="default_value">
+                        <Value>2.1</Value>
+                    </Property>
+                </Property>
+                <Property name="param_3">
+                    <Property name="name">
+                        <Value>Component Name</Value>
+                    </Property>
+                </Property>
+                <Property name="param_4">
+                    <Property name="name">
+                        <Value>package.name</Value>
+                    </Property>
+                </Property>
+                <Property name="param_5">
+                    <Property name="name">
+                        <Value>component_description</Value>
+                    </Property>
+                    <Property name="default_value">
+                        <Value></Value>
+                    </Property>
+                </Property>
+                <Property name="param_6">
+                    <Property name="name">
+                        <Value>rs</Value>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="script_flex">
+                <Property name="distribution_type">
+                    <Value>flex</Value>
+                </Property>
+                <Property name="script_path">
+                    <Value>test_files/stresstests/scripts/flex/script.txt</Value>
+                </Property>
+                <Property name="param_1">
+                    <Property name="name">
+                        <Value>output_dir</Value>
+                    </Property>
+                </Property>
+                <Property name="param_2">
+                    <Property name="name">
+                        <Value>version</Value>
+                    </Property>
+                    <Property name="default_value">
+                        <Value>1.1</Value>
+                    </Property>
+                </Property>
+                <Property name="param_3">
+                    <Property name="name">
+                        <Value>Component Name</Value>
+                    </Property>
+                </Property>
+                <Property name="param_4">
+                    <Property name="name">
+                        <Value>package.name</Value>
+                    </Property>
+                </Property>
+                <Property name="param_5">
+                    <Property name="name">
+                        <Value>component_description</Value>
+                    </Property>
+                    <Property name="default_value">
+                        <Value></Value>
+                    </Property>
+                </Property>
+                <Property name="param_6">
+                    <Property name="name">
+                        <Value>rs</Value>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="script_dotnet">
+                <Property name="distribution_type">
+                    <Value>dotnet</Value>
+                </Property>
+                <Property name="script_path">
+                    <Value>test_files/stresstests/scripts/dotnet/script.txt</Value>
+                </Property>
+                <Property name="param_1">
+                    <Property name="name">
+                        <Value>output_dir</Value>
+                    </Property>
+                </Property>
+                <Property name="param_2">
+                    <Property name="name">
+                        <Value>version</Value>
+                    </Property>
+                    <Property name="default_value">
+                        <Value>1.2.3.4</Value>
+                    </Property>
+                </Property>
+                <Property name="param_3">
+                    <Property name="name">
+                        <Value>Component Name</Value>
+                    </Property>
+                </Property>
+                <Property name="param_4">
+                    <Property name="name">
+                        <Value>package.name</Value>
+                    </Property>
+                </Property>
+                <Property name="param_5">
+                    <Property name="name">
+                        <Value>component_description</Value>
+                    </Property>
+                    <Property name="default_value">
+                        <Value></Value>
+                    </Property>
+                </Property>
+                <Property name="param_6">
+                    <Property name="name">
+                        <Value>rs</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+</CMConfig>

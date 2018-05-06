@@ -1,0 +1,1 @@
+Please remove all useless type checks and castings in the source code that occurred after specifying generic parameters for all collection types.

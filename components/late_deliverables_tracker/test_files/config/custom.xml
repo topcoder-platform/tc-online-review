@@ -1,0 +1,311 @@
+<?xml version="1.0"?>
+<CMConfig>
+    <Config name="custom_namespace">
+		<Property name="loggerName">
+			<Value>myLogger</Value>
+		</Property>
+        <Property name="schedulerConfig">
+		    <Property name="lateDeliverablesTrackingJob">
+		        <Property name="StartDate">
+			        <Value>Sep 13, 2010 05:00:00 AM</Value>
+		        </Property>
+		        <Property name="StartTime">
+			        <Value>1000</Value>
+		        </Property>
+		        <Property name="EndDate">
+			        <Value>Sep 25, 2011 05:00:00 AM</Value>
+		        </Property>
+				<Property name="JobType">
+					<Value>JOB_TYPE_JAVA_CLASS</Value>
+				</Property>
+				<Property name="JobCommand">
+					<Value>com.topcoder.management.deliverable.latetracker.LateDeliverablesTrackingJobRunner</Value>
+				</Property>
+				<Property name="Active">
+					<Value>True</Value>
+				</Property>
+				<Property name="ModificationDate">
+					<Value>Sep 20, 2010 05:00:00 AM</Value>
+				</Property>
+				<Property name="Recurrence">
+					<Value>2</Value>
+				</Property>
+				<Property name="Interval">
+					<Property name="Value">
+						<Value>20</Value>
+					</Property>
+					<Property name="Unit">
+						<Property name="Type">
+							<Value>com.topcoder.util.scheduler.scheduling.Second</Value>
+						</Property>
+					</Property>
+				</Property>
+			</Property>
+        </Property>
+		<Property name="jobName">
+		    <Value>lateDeliverablesTrackingJob</Value>
+		</Property>
+		
+		<Property name="jobConfig">
+			<Property name="loggerName">
+				<Value>myLogger</Value>
+			</Property>
+	
+			<Property name="objectFactoryConfig">
+			    <property name="lateDeliverablesRetriever">
+					<property name="type">
+		            	<value>com.topcoder.management.deliverable.latetracker.retrievers.LateDeliverablesRetrieverImpl</value>
+		        	</property>
+			    </property>
+			    <property name="lateDeliverableProcessor">
+					<property name="type">
+		            	<value>com.topcoder.management.deliverable.latetracker.processors.LateDeliverableProcessorImpl</value>
+		        	</property>
+			    </property>
+			</Property>
+			<Property name="lateDeliverableProcessorKey">
+				<Value>lateDeliverableProcessor</Value>
+			</Property>
+			
+			<Property name="lateDeliverablesRetrieverKey">
+				<Value>lateDeliverablesRetriever</Value>
+			</Property>
+			
+			<Property name="lateDeliverablesRetrieverConfig">
+			<Property name="loggerName">
+				<Value>myLogger</Value>
+			</Property>
+			<Property name="trackingDeliverableIds">
+				<Value>3,4</Value>
+			</Property>
+			<Property name="objectFactoryConfig">
+			    <property name="projectManager">
+					<property name="type">
+		            	<value>com.topcoder.management.project.ProjectManagerImpl</value>
+		        	</property>
+			    </property>
+			    <property name="phaseManager">
+					<property name="type">
+		            	<value>com.topcoder.management.phase.DefaultPhaseManager</value>
+		        	</property>
+		        	<Property name="params">
+					    <Property name="param1">
+						    <Property name="type">
+							    <Value>String</Value>
+						    </Property>
+						    <Property name="value">
+							    <Value>com.topcoder.management.phase.DefaultPhaseManager</Value>
+						    </Property>
+					    </Property>
+				    </Property>
+			    </property>
+			    <property name="deliverablePersistence">
+					<property name="type">
+		            	<value>com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersistence</value>
+		        	</property>
+		        	<Property name="params">
+					    <Property name="param1">
+						    <Property name="name">
+							    <Value>DBConnectionFactory</Value>
+						    </Property>
+					    </Property>
+				    </Property>
+			    </property>
+			    <property name="DBConnectionFactory">
+					<property name="type">
+		            	<value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</value>
+		        	</property>
+		        	<Property name="params">
+					    <Property name="param1">
+						    <Property name="type">
+							    <Value>String</Value>
+						    </Property>
+						    <Property name="value">
+							    <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+						    </Property>
+					    </Property>
+				    </Property>
+			    </property>
+			    <property name="screeningDeliverableChecker">
+					<property name="type">
+		            	<value>com.topcoder.management.deliverable.latetracker.MockDeliverableChecker</value>
+		        	</property>
+			    </property>
+			    <property name="reviewDeliverableChecker">
+					<property name="type">
+		            	<value>com.topcoder.management.deliverable.latetracker.MockDeliverableChecker</value>
+		        	</property>
+			    </property>
+			</Property>
+			<Property name="projectManagerKey">
+				<Value>projectManager</Value>
+			</Property>
+			<Property name="phaseManagerKey">
+				<Value>phaseManager</Value>
+			</Property>
+			<Property name="deliverablePersistenceKey">
+				<Value>deliverablePersistence</Value>
+			</Property>
+			<Property name="deliverableChecker1">
+				<Property name="deliverableName">
+				    <Value>Screening Scorecard</Value>
+				</Property>
+				<Property name="deliverableCheckerKey">
+				    <Value>screeningDeliverableChecker</Value>
+				</Property>
+			</Property>
+			<Property name="deliverableChecker2">
+				<Property name="deliverableName">
+				    <Value>Review Scorecard</Value>
+				</Property>
+				<Property name="deliverableCheckerKey">
+				    <Value>reviewDeliverableChecker</Value>
+				</Property>
+			</Property>
+			<Property name="searchBundleManagerNamespace">
+				<Value>com.topcoder.search.builder.SearchBundleManager</Value>
+			</Property>
+	    </Property>
+	    
+	    <Property name="lateDeliverableProcessorConfig">
+			<Property name="loggerName">
+				<Value>myLogger</Value>
+			</Property>
+			<Property name="connectionName">
+				<Value>informix_connection</Value>
+			</Property>
+			<Property name="objectFactoryConfig">
+			    <property name="resourceManager">
+					<property name="type">
+		            	<value>com.topcoder.management.resource.persistence.PersistenceResourceManager</value>
+		        	</property>
+		        	<Property name="params">
+					    <Property name="param1">
+						    <Property name="name">
+							    <Value>ResourcePersistence</Value>
+						    </Property>
+					    </Property>
+					    <Property name="param2">
+						    <Property name="name">
+							    <Value>SearchBundleManager</Value>
+						    </Property>
+					    </Property>
+				    </Property>
+			    </property>
+			    <property name="ResourcePersistence">
+					<property name="type">
+		            	<value>com.topcoder.management.resource.persistence.sql.SqlResourcePersistence</value>
+		        	</property>
+		        	<Property name="params">
+					    <Property name="param1">
+						    <Property name="name">
+							    <Value>DBConnectionFactory</Value>
+						    </Property>
+					    </Property>
+				    </Property>
+			    </property>
+			    <property name="DBConnectionFactory">
+					<property name="type">
+		            	<value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</value>
+		        	</property>
+		        	<Property name="params">
+					    <Property name="param1">
+						    <Property name="type">
+							    <Value>String</Value>
+						    </Property>
+						    <Property name="value">
+							    <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+						    </Property>
+					    </Property>
+				    </Property>
+			    </property>
+			    <property name="SearchBundleManager">
+					<property name="type">
+		            	<value>com.topcoder.search.builder.SearchBundleManager</value>
+		        	</property>
+		        	<Property name="params">
+					    <Property name="param1">
+						    <Property name="type">
+							    <Value>String</Value>
+						    </Property>
+						    <Property name="value">
+							    <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+						    </Property>
+					    </Property>
+				    </Property>
+			    </property>
+			    <property name="userRetrieval">
+					<property name="type">
+		            	<value>com.cronos.onlinereview.external.impl.DBUserRetrieval</value>
+		        	</property>
+		        	<Property name="params">
+					    <Property name="param1">
+						    <Property name="type">
+							    <Value>String</Value>
+						    </Property>
+						    <Property name="value">
+							    <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+						    </Property>
+					    </Property>
+				    </Property>
+			    </property>
+			</Property>
+			<Property name="dbConnectionFactoryConfig">
+			    <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+			        <Property name="connections">
+			            <Property name="informix_connection">
+			                <Property name="producer">
+			                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+			                </Property>
+			                <Property name="parameters">
+			                    <Property name="jdbc_driver">
+			                        <Value>com.informix.jdbc.IfxDriver</Value>
+			                    </Property>
+			                    <Property name="jdbc_url">
+			                        <Value>jdbc:informix-sqli://127.0.0.1:9088/tcs:informixserver=ol_svr_custom</Value>
+			                    </Property>
+			                    <Property name="user">
+			                        <Value>informix</Value>
+			                    </Property>
+			                    <Property name="password">
+			                        <Value>123456</Value>
+			                    </Property>
+			                </Property>
+			            </Property>
+			        </Property>
+			    </Property>
+			</Property>
+			<Property name="emailSubjectForDeliverable3">
+			    <Value>WARNING\: You are late when providing a deliverable for %PROJECT_NAME%</Value>
+			</Property>
+			<Property name="emailBodyForDeliverable3">
+			    <Value>test_files/warn_email_template.html</Value>
+			</Property>
+			<Property name="notificationDeliverableIds">
+			    <Value>4</Value>
+			</Property>
+			<Property name="defaultEmailSubjectTemplateText">
+			    <Value>WARNING\: You are late when providing a deliverable for %PROJECT_NAME%</Value>
+			</Property>
+			<Property name="defaultEmailBodyTemplatePath">
+			    <Value>test_files/warn_email_template.html</Value>
+			</Property>
+			<Property name="emailSender">
+			    <Value>service@topcoder.com</Value>
+			</Property>
+			<Property name="resourceManagerKey">
+			    <Value>resourceManager</Value>
+			</Property>
+			<Property name="userRetrievalKey">
+			    <Value>userRetrieval</Value>
+			</Property>
+			<Property name="timestampFormat">
+			    <Value>yyyy-MM-dd HH:mm:ss</Value>
+			</Property>
+			<Property name="notificationInterval">
+			    <Value>10</Value>
+			</Property>
+	    </Property>
+    </Property>
+    </Config>
+</CMConfig>

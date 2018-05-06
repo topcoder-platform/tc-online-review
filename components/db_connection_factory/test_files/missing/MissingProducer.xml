@@ -1,0 +1,113 @@
+<CMConfig>
+  <Config name="com.topcoder.db.connectionfactory.DBConnectionFactoryImplFailureTest">
+    <Property name="connections">
+        <!--
+            The "default" property refers to a configured connection.
+        -->
+        <Property name="default">
+            <Value>MySqlJDBCConnection</Value>
+        </Property>
+
+        <!--
+            The following property configures the ConnectionProducer obtaining the Connections
+            from a JDBC URL
+        -->
+        <Property name="MySqlJDBCConnection">
+            <Property name="producer">
+                <Value></Value>
+            </Property>
+            <Property name="parameters">
+                <Property name="jdbc_driver">
+                    <Value>com.mysql.jdbc.Driver</Value>
+                </Property>
+                <Property name="jdbc_url">
+                    <Value>jdbc:mysql://localhost:3306/tcs</Value>
+                </Property>
+                <Property name="user">
+                    <Value>root</Value>
+                </Property>
+                <Property name="password">
+                    <Value>19820127</Value>
+                </Property>
+            </Property>
+        </Property>
+
+        <!--
+            The following property configures the ConnectionProducer obtaining the Connections
+            from a JDBC URL. The JDBC driver is customized being provided driver-specific properties.
+        -->
+<!--
+        <Property name="CustomizedOracleJDBCConnection">
+            <Property name="producer">
+                <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+            </Property>
+            <Property name="parameters">
+                <Property name="jdbc_driver">
+                    <Value>oracle.jdbc.driver.OracleDriver</Value>
+                </Property>
+                <Property name="jdbc_url">
+                    <Value>java:oracle:thin:@localhost:1521:TEST</Value>
+                </Property>
+                <Property name="user">
+                    <Value>scott</Value>
+                </Property>
+                <Property name="password">
+                    <Value>tiger</Value>
+                </Property>
+                <Property name="defaultRowPrefetch">
+                    <Value>15</Value>
+                </Property>
+                <Property name="defaultExecuteBatch">
+                    <Value>30</Value>
+                </Property>
+                <Property name="processEscapes">
+                    <Value>false</Value>
+                </Property>
+            </Property>
+        </Property>
+-->
+        <!--
+            The following property configures the ConnectionProducer obtaining the Connections from a DataSource
+            object located through JNDI. This producer is provided only with a JNDI name to be used to lookup for the
+            DataSource. Therefore a default JNDI context is used to locate the DataSource.
+        -->
+        <Property name="DefaultJNDI">
+            <Property name="producer">
+                <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+            </Property>
+            <Property name="parameters">
+                <Property name="jndi_name">
+                    <Value>java:comp/env/jdbc/tcs</Value>
+                </Property>
+            </Property>
+        </Property>
+
+        <!--
+            The following property configures the ConnectionProducer obtaining the Connections from a DataSource
+            object located through JNDI. This producer is provided with a JNDI name to be used to lookup for the
+            DataSource along with a set of initial parameters to be used to configure the JNDI context to be used to
+            locate the requested DataSource. The names of such initial parameters represent the names of context
+            parameters specified by the JNDI specification having the '.' character replaced with '_' character. This is
+            caused by a restriction applied by Configuration Manager for the property names.
+        -->
+<!--
+        <Property name="CustomJNDI">
+            <Property name="producer">
+                <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+            </Property>
+            <Property name="parameters">
+                <Property name="jndi_name">
+                    <Value>java:comp/env/jdbc/tcs</Value>
+                </Property>
+                <Property name="java_naming_factory_initial">
+                    <Value>foo.bar.ContextFactory</Value>
+                </Property>
+                <Property name="java_naming_provider_url">
+                    <Value>protocol://localhost:port</Value>
+                </Property>
+            </Property>
+        </Property>
+-->
+    </Property>
+</Config>
+</CMConfig>

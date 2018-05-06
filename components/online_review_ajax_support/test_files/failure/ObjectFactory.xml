@@ -1,0 +1,95 @@
+<Config name="com.cronos.onlinereview.ajax.factory">
+    <!-- defining the "SetScorecardStatus" handler concrete implementation -->
+    <Property name="SetScorecardStatus">
+        <Property name="type">
+            <Value>com.cronos.onlinereview.ajax.handlers.SetScorecardStatusHandler</Value>
+        </Property>
+    </Property>
+
+    <!-- defining the "LoadTimelineTemplate" handler concrete implementation -->
+    <Property name="LoadTimelineTemplate">
+        <Property name="type">
+            <Value>com.cronos.onlinereview.ajax.handlers.LoadTimelineTemplateHandler</Value>
+        </Property>
+    </Property>
+
+    <!-- defining the "SetTimelineNotification" handler concrete implementation -->
+    <Property name="SetTimelineNotification">
+        <Property name="type">
+            <Value>com.cronos.onlinereview.ajax.handlers.SetTimelineNotificationHandler</Value>
+        </Property>
+    </Property>
+
+    <!-- defining the "PlaceAppeal" handler concrete implementation-->
+    <Property name="PlaceAppeal">
+        <Property name="type">
+            <Value>com.cronos.onlinereview.ajax.handlers.PlaceAppealHandler</Value>
+        </Property>
+    </Property>
+
+    <!--defining the "ResolveAppeal" handler concrete
+   implementation -->
+    <Property name="ResolveAppeal">
+        <Property name="type">
+            <Value>com.cronos.onlinereview.ajax.handlers.ResolveAppealHandler</Value>
+        </Property>
+    </Property>
+
+    <!-- defining the resource manager concrete implementation -->
+    <Property name="com/topcoder/management/resource/ResourceManager">
+        <Property name="type">
+            <Value>com.cronos.onlinereview.ajax.failuretests.mock.MockResourceManager</Value>
+        </Property>
+    </Property>
+
+    <!-- defining the review manager concrete implementation -->
+    <Property name="com/topcoder/management/review/ReviewManager">
+        <Property name="type">
+            <Value>com.cronos.onlinereview.ajax.failuretests.mock.MockReviewManager</Value>
+        </Property>
+    </Property>
+
+    <!-- defining the phase templae concrete implementation -->
+    <Property name="com/topcoder/project/phases/template/PhaseTemplate">
+        <Property name="type">
+            <Value>com.cronos.onlinereview.ajax.failuretests.mock.MockPhaseTemplate</Value>
+        </Property>
+    </Property>
+
+    <!-- defining the phase templae concrete implementation -->
+    <Property name="com/topcoder/management/deliverable/UploadManager">
+        <Property name="type">
+            <Value>com.cronos.onlinereview.ajax.failuretests.mock.MockUploadManager</Value>
+        </Property>
+    </Property>
+
+    <!-- defining the phase templae concrete implementation -->
+    <Property name="com/topcoder/management/phase/PhaseManager">
+        <Property name="type">
+            <Value>com.cronos.onlinereview.ajax.failuretests.mock.MockPhaseManager</Value>
+        </Property>
+    </Property>
+
+    <!-- defining the phase templae concrete implementation -->
+    <Property name="com/topcoder/management/review/scorecalculator/CalculationManager">
+        <Property name="type">
+            <Value>com.cronos.onlinereview.ajax.failuretests.mock.MockCalculationManager</Value>
+        </Property>
+    </Property>
+
+    <!-- defining the phase templae concrete implementation -->
+    <Property name="com/topcoder/management/scorecard/ScorecardManager">
+        <Property name="type">
+            <Value>com.cronos.onlinereview.ajax.failuretests.mock.MockScorecardManager</Value>
+        </Property>
+    </Property>
+
+    <!-- defining the phase templae concrete implementation -->
+    <Property name="com/topcoder/management/project/ProjectManager">
+        <Property name="type">
+            <Value>com.cronos.onlinereview.ajax.failuretests.mock.MockProjectManager</Value>
+        </Property>
+    </Property>
+
+    <!-- the rest of the manager classes must be defined here -->
+</Config>

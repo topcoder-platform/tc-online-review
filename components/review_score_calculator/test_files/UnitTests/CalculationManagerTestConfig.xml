@@ -1,0 +1,383 @@
+<?xml version ="1.0" ?>
+<CMConfig>
+	<Config name="com.topcoder.management.review.scorecalculator.CalculationManager">
+		<Property name="use_caching">
+			<Value>true</Value>
+		</Property>
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="missing.builder.class">
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="empty.builder.class">
+		<Property name="builder_class">
+			<Value></Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="blank.builder.class">
+		<Property name="builder_class">
+			<Value> </Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="invalid.builder.class">
+		<Property name="builder_class">
+			<Value>this.class.doesnt.exist</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="underived.builder.class">
+		<Property name="builder_class">
+			<Value>java.lang.Exception</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="noexist.builder.class.ctor">
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.MockNoZeroArgCtorScorecardMatrixBuilder</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="noexist.builder.class.ns.ctor">
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+		</Property>
+		<Property name="builder_namespace">
+			<Value>noexist.builder.class.ns.ctor</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="missing.calculators">
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+		</Property>
+		<Property name="calculators">
+		</Property>
+	</Config>
+
+	<Config name="missing.calc.question.type">
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="invalid.calc.question.type">
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>TopCoder</Value>
+				</Property>
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="too.large.calc.question.type">
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>9223372036854775808</Value>
+				</Property>
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="negative.calc.question.type">
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>-1</Value>
+				</Property>
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="zero.calc.question.type">
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>0</Value>
+				</Property>
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="duplicate.calc.question.type">
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+				</Property>
+			</Property>
+
+			<Property name="binaryCalculator2">
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="missing.calculator.class">
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="empty.calculator.class">
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+				<Property name="class">
+					<Value></Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="blank.calculator.class">
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+				<Property name="class">
+					<Value> </Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="invalid.calculator.class">
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+				<Property name="class">
+					<Value>this.class.does.not.exist</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="underived.calculator.class">
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+				<Property name="class">
+					<Value>java.lang.Exception</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="noexist.calculator.class.ctor">
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.MockNoZeroArgCtorScoreCalculator</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="noexist.calculator.class.ns.ctor">
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.MockNoNamespaceCtorScoreCalculator</Value>
+				</Property>
+				<Property name="namespace">
+					<Value>noexist.calculator.class.ns.ctor</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+
+	<Config name="valid">
+		<Property name="use_caching">
+			<Value>true</Value>
+		</Property>
+		<Property name="builder_class">
+			<Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+		</Property>
+		<Property name="calculators">
+			<Property name="binaryCalculator">
+				<Property name="question_type">
+					<Value>1</Value>
+				</Property>
+
+				<Property name="class">
+					<Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Config>
+</CMConfig>

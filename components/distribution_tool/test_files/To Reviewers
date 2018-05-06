@@ -1,0 +1,39 @@
+Hi reviewers, thank you for your work. The following is some notes for you.
+
+1. There is design change, now we are required to use jodconverter to do
+the pdf convertion, all the jars needed are attached in /test_reflib
+
+2. From the 'README' of jodconverter-2.2.2:
+"Before you can perform any conversions you need to start OpenOffice.org
+in listening mode on port 8100 as described in the JODConverter Guide.
+
+As a quick start you can type from a command line
+
+  soffice -headless -accept="socket,port=8100;urp;"
+
+I also provide you a shell script for this, you can just start the script
+before running test cases. It's /test_files/startOpenOfficeConn.sh
+
+3. As the scope of this component is a little complicate, I have tried my
+best to test it fully, and make the coverage up to 90%+ (92%,98%), please consider
+my effort for this when scoring my submission
+
+4. Due to the design change, we have to test this component under linux, so
+I didn't test creating .net distribution as no MSBuild command supported.
+However, I still have a test case for the generated dir structures of .net
+componnet (only comment the last command in the script.txt for .net)
+The commented command:
+# execute        : MSBuild "Component Sources.csproj" /t:DesignDist :: %{comp_dir}
+
+5. while executing the ant command to generate design_dist, there are some dependences
+one is 'ant-contrib', ant-contrib-1.0b3.jar is provided in test_reflib/ for you,
+you need to put in your ANT_HOME/lib, the is 'cobertura', you should make sure it can
+be found.
+
+6. Two functions exceed 30 statements (32, 35), however, it's not a big deal given the
+complexity of this componnet.
+
+7. Besides the tcs component dependencies listed in CS, there are also indirected referenced
+tcs components 'object_formatter', 'typesafe_enum'. See my build-dependency.xml for details.
+
+8. Thanks

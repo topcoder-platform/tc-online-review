@@ -1,0 +1,5 @@
+1. For this version, I add a separate test suite EmailEngineAccuracyTestV32
+and add it into com.topcoder.message.email.accuracytests/AccuracyTests.java
+these two are the only added source file.
+
+2. It's assumed that 'smtp_host_addr' is 'localhsot' and 'smtp_host_port' is 25.

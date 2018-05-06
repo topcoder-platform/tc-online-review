@@ -1,0 +1,3 @@
+Javadoc of CustomResultSet#getMetaData() has missing @return tag.
+
+Javadoc of AbstractionHelper#checkColumnIndex() has missing @throws tag.

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<CMConfig>
+    <Config name="config">
+    	<property name="a_property">
+    		<property name="property_name">
+    			<Value></Value>
+    		</property>
+    	</property>
+    </Config>
+</CMConfig>

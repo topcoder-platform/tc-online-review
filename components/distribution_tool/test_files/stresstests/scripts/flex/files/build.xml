@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="TopCoder Flex Generic Build" basedir=".">
+
+    <!-- Include external properties files -->
+    <property file="../topcoder_global.properties"/>
+    <property file="${basedir}/build.version"/>
+
+    <!-- Import common task definition -->
+    <import file="${basedir}/build-common-tasks.xml" />
+
+
+    <!-- Override these in ../topcoder_global.properties -->
+    <property name="libdir" value="../tcs/flex"/>
+    <property name="tcs_libdir" value="${libdir}/catalog"/>
+    <property name="ext_libdir" value="${libdir}/third_party"/>
+    <property name="FLEX_HOME" value="C:/Program Files/Adobe/Flex Builder 3/sdks/3.0.0"/>
+    <property name="flexunitdir" value="../3rdParty" />
+    <property name="flexunitantdir" value="../3rdParty" />
+
+    <!-- DIRECTORY SETUP -->
+    
+    <!-- This property can be changed for client build scripts -->
+    <property name="target_libdir" value="${tcs_libdir}"/>
+
+    <property name="srcdir" value="src" />
+    <property name="testdir" value="${srcdir}/flex/tests" />
+
+    <property name="testlogdir" value="log" />
+    <property name="docsdir" value="docs"/>
+    <property name="asdocsdir" value="${docsdir}/asdocs"/>
+    <property name="configdir" value="conf"/>
+    <property name="test_reflib" value="test_reflib"/>
+    <property name="testfiles" value="test_files"/>
+
+    <property name="flexsrc" value="${srcdir}/flex" />
+    <property name="flexmain" value="${flexsrc}/main" />
+    <property name="flextests" value="${flexsrc}/tests" />
+
+    <!-- Import build dependencies -->
+    <import file="${basedir}/build-dependencies.xml" />
+
+    <!-- COMPONENT PARAMETERS -->
+    <property name="component" value="${component.name}"/>
+    <property name="package" value="${component.package}"/>
+    <property name="packagedir" value="${component.packagedir}"/>
+    <property name="distfilename" value="${component.distfilename}"/>
+    <property name="component_version" value="${component.version.major}.${component.version.minor}.${component.version.micro}"/>
+    <property name="component_path" value="${distfilename}/${component_version}"/>
+
+    <property name="builddir" value="build" />
+    <property name="testbuilddir" value="build_test" />
+    <property name="build_distdir" value="${builddir}/dist"/>
+    <property name="build_asdocsdir" value="${builddir}/${asdocsdir}"/>
+    <property name="build_tcsdistdir" value="${build_distdir}/${distfilename}-${component_version}"/>
+
+
+    <!-- COMPONENT DISTRIBUTION STRUCTURE -->
+    <property name="dist_lib" value="${build_distdir}/flex/catalog"/>
+    <property name="dist_asdocs" value="${build_tcsdistdir}/${asdocsdir}"/>
+
+
+    <!-- DOCUMENT PACKAGE -->
+    <property name="dist_docpackage" value="${builddir}/doc_package"/>
+    <property name="docpackage.jar" value="${distfilename}_docs.jar"/>
+
+
+    <!-- Distribution names -->
+    <property name="design_submission.zip" value="${distfilename}_${component_version}_design_submission.zip" />
+    <property name="dev_submission.zip" value="${distfilename}_${component_version}_dev_submission.zip" />
+    <property name="design_dist.zip" value="${distfilename}_${component_version}_design_dist.zip" />
+    <property name="dev_dist.zip" value="${distfilename}_${component_version}_dev_dist.zip" />
+    <property name="asdocs.jar" value="javadocs.jar"/>
+    <property name="component.dist.zip" value="${build_distdir}/${distfilename}-${component_version}.zip"/>
+    <property name="component.swc" value="${dist_lib}/${component_path}/${distfilename}.swc"/>
+
+
+    <!-- FLEX DEVELOPMENT DEPENDENCIES -->
+    <property name="APP_ROOT" value="${flexmain}"/>
+    <property name="flex.frameworks.dir" value="${FLEX_HOME}/frameworks" />
+    <property name="flex.compc.jar" value="${FLEX_HOME}/lib/compc.jar" />
+    <property name="flex.mxmlc.jar" value="${FLEX_HOME}/lib/mxmlc.jar" />
+
+    <!-- Flex Unit -->
+    <property name="flexunit" value="${flexunitdir}/bin/FlexUnit.swc" />
+    <property name="flexunitoptional" value="${flexunitdir}/bin/FlexUnitOptional.swc" />
+
+    <!-- Flex Unit Ant task -->
+    <property name="flexunitantjar" value="${flexunitantdir}/dist/FlexAntTasks.jar" />
+
+    <!-- FlexUnit Ant Task definition -->
+    <taskdef resource="com/adobe/ac/ant/tasks/tasks.properties" classpath="${flexunitantjar}" />
+
+    <!-- Asdoc template -->
+    <property name="asdoc.template.dir" value="${FLEX_HOME}/asdoc/templates" />
+
+    <!-- libraries path defined -->
+    
+    <!-- libraries path for compiling the component -->
+    <path id="build.lib">
+        <path refid="component.tcs-dependencies" />
+        <path refid="component.3rdParty-dependencies" />
+    </path>
+    
+    <!-- libraries path for compiling the tests of the component -->
+    <path id="build.test.lib">
+        <path refid="build.lib" />
+        <path refid="component.test.3rdParty-dependencies" />
+        <fileset dir="${basedir}">
+            <include name="${test_reflib}/**/*.swc"/>
+            <include name="${test_reflib}/**/*.swf"/>
+            <include name="${test_reflib}/**/*.as" />
+        </fileset>
+    </path>
+    
+    <!-- libraries path for building the TestRunner.swf and AntTestRunner.swf -->
+    <path id="run.test.lib">
+        <path refid="build.test.lib" />
+        <pathelement location="${builddir}/${distfilename}.swc" />
+        <pathelement location="${testbuilddir}/${distfilename}-test.swc" />
+    </path>
+
+    <!-- Clean -->
+    <target name="clean">
+        <delete dir="${builddir}"/>
+        <delete dir="${testbuilddir}" />
+    </target>
+
+    <!-- Compile -->
+    <target name="compile">
+        <mkdir dir="${builddir}"/>
+        <compc dest="${builddir}/${distfilename}.swc" src.dir="${flexmain}" lib.path.id="build.lib"></compc>
+    </target>
+
+    <!-- Compile tests -->
+    <target name="compile_tests">
+        <mkdir dir="${testbuilddir}"/>
+
+        <!-- DO NOT CHANGE THIS to depends -->
+        <antcall target="compile" />
+        
+        <echo message="start compiling tests." />
+        
+        <compc dest="${testbuilddir}/${distfilename}-test.swc" src.dir="${flexmain},${flextests}" lib.path.id="build.test.lib" />
+
+        <!-- Builds the version run manually, with graphical interface-->
+        <mxmlc src="${flextests}/TestRunner.mxml" dest="${testbuilddir}/TestRunner.swf" lib.path.id="run.test.lib" />
+
+        <!-- Builds the version run from Ant-->
+        <mxmlc src="${flextests}/AntTestRunner.mxml" dest="${testbuilddir}/AntTestRunner.swf" lib.path.id="run.test.lib" />
+    </target>
+
+    <!-- Test -->
+    <target name="test">
+        <mkdir dir="${testlogdir}"/>
+
+        <!-- DO NOT CHANGE THIS to depends -->
+        <antcall target="compile_tests" />
+
+        <flexunit timeout="0" haltonfailure="false" swf="${testbuilddir}/AntTestRunner.swf" toDir="${testlogdir}" verbose="true" />
+    </target>
+
+    <!-- ASDoc -->
+    <target name="asdoc">
+        
+        <echo message="start to generate the flex documents." />
+        
+        <!-- convert the component dependencies into library path -->
+        <pathconvert property="_asdoc.lib.files" refid="build.lib" pathsep="," />
+        <condition property="_asdoc.libpath" value="${_asdoc.lib.files}" else="">
+            <not>
+                <equals arg1="" arg2="${_asdoc.lib.files}" trim="true" />
+            </not>
+        </condition>
+
+        <exec executable="${FLEX_HOME}/bin/asdoc.exe" failonerror="true">
+
+            <arg line="-doc-sources ${flexmain}"/>
+            <arg line="-source-path ${flexmain}"/>
+
+            <arg value="-window-title" />
+            <arg value="TopCoder Software"/>
+
+            <arg value="-main-title" />
+            <arg value="${component.name}" />
+
+            <arg value="-footer" />
+            <arg value="Copyright %{current_year} - TopCoder, Inc." />
+
+            <arg value="-output" />
+            <arg value="${dist_asdocs}"/>
+
+            <arg value="-templates-path=${asdoc.template.dir}/" />
+
+            <arg line="-library-path=${_asdoc.libpath},${FLEX_HOME}/frameworks/libs" />
+
+        </exec>
+
+        <echo>Component docs have been successfully created.</echo>
+    </target>
+
+    <!-- Package the docs -->
+    <target name="package_docs" depends="asdoc">
+        <mkdir dir="${dist_docpackage}"/>
+        <jar jarfile="${dist_docpackage}/${asdocs.jar}" basedir="${build_tcsdistdir}/${asdocsdir}"/>
+        <copy todir="${dist_docpackage}">
+            <fileset dir="${docsdir}" casesensitive="no">
+                <include name="${distfilename}_Class_Diagram*"/>
+                <include name="${distfilename}_Use_Case_Diagram*"/>
+                <include name="${distfilename}_Sequence_Diagram*"/>
+                <include name="${distfilename}_Requirements_Specification.pdf"/>
+                <include name="${distfilename}_Component_Specification.pdf"/>
+            </fileset>
+        </copy>
+        <jar jarfile="${builddir}/${docpackage.jar}" basedir="${dist_docpackage}"/>
+    </target>
+
+    <!-- Dev submission -->
+    <target name="dev_submission" depends="test">
+        <zip destfile="${dev_submission.zip}"
+            basedir="."
+            includes="README,
+            build.version,
+            build.xml,
+            ${configdir}/**,
+            ${srcdir}/**,
+            ${testlogdir}/**,
+            ${testfiles}/**,
+            ${docsdir}/**,
+            ${test_reflib}/**"
+
+            excludes="${flextests}/${packagedir}/stresstests/*,
+            ${flextests}/${packagedir}/failuretests/*,
+            ${flextests}/${packagedir}/accuracytests/*"
+        />
+    </target>
+
+    <!-- Design submission -->
+    <target name="design_submission">
+        <zip destfile="${design_submission.zip}"
+            basedir="."
+            includes="${configdir}/**,
+            ${javamain}/**,
+            ${docsdir}/**,
+            ${testfiles}/**"
+        />
+    </target>
+
+    <!-- Development submission -->
+    <target name="dev_dist">
+        <zip destfile="${dev_dist.zip}"
+            basedir="."
+            includes="build.xml,
+            README,
+            build.version,
+            ${configdir}/**,
+            ${srcdir}/**,
+            ${docsdir}/**,
+            ${testfiles}/**,
+            ${test_reflib}/**"
+        />
+    </target>
+
+    <!-- Design sbumission -->
+    <target name="design_dist">
+        <zip destfile="${design_dist.zip}"
+            basedir="."
+            includes="build.xml,
+            README,
+            build-common-tasks.xml,
+            build-dependencies.xml,
+            build.version,
+            ${configdir}/**,
+            ${srcdir}/**,
+            ${docsdir}/**,
+            ${testfiles}/**"
+        />
+    </target>
+
+    <!-- Put the built swc file into dist -->
+    <target name="dist" depends="compile">
+        <mkdir dir="${dist_lib}/${component_path}"/>
+        <copy todir="${dist_lib}/${component_path}" file="${builddir}/${distfilename}.swc"/>
+    </target>
+
+    <!-- Move the distribution to target lib locatioin -->
+    <target name="move_to_tcs">
+        <mkdir dir="${target_libdir}/${component_path}"/>
+        <mkdir dir="${target_libdir}/${component_path}/dist"/>
+
+        <copy file="${component.swc}" todir="${target_libdir}/${component_path}"/>
+        <copy file="${component.dist.zip}" todir="${target_libdir}/${component_path}/dist"/>
+    </target>
+
+    <!-- Make the official distribution and package the docs -->
+    <target name="dist_tcs" depends="clean,dist">
+        <!-- define tcs distribution format -->
+        <mkdir dir="${build_tcsdistdir}"/>
+        <copy todir="${build_tcsdistdir}">
+            <fileset dir="${basedir}">
+                <include name="${configdir}/**/*"/>
+                <include name="${docsdir}/**/*"/>
+                <include name="${srcdir}/**/*"/>
+                <include name="${testfiles}/**/*"/>
+                <include name="${test_reflib}/**/*"/>
+                <include name="build-common-tasks.xml" />
+                <include name="build-dependencies.xml" />
+                <include name="README"/>
+                <include name="build.version"/>
+            </fileset>
+        </copy>
+        
+        <!-- Change to use build_dist.xml -->
+        <copy file="build_dist.xml" tofile="${build_tcsdistdir}/build.xml"/>
+        
+        <antcall target="package_docs"/>
+
+        <zip destfile="${component.dist.zip}" basedir="${build_distdir}"/>
+
+        <antcall target="move_to_tcs"/>
+    </target>
+
+</project>

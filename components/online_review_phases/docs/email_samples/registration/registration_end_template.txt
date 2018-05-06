@@ -1,0 +1,20 @@
+%PHASE_TIMESTAMP{Phase timestamp}%
+Hello %USER_FIRST_NAME{User first name}% %USER_LAST_NAME{User last name}%,
+Handle\: %USER_HANDLE{User handle}%
+This is the notification on project\: %PROJECT_NAME{Project name}%
+OR link\: %OR_LINK% 
+Version\: %PROJECT_VERSION{Project version}%
+This is the %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.
+
+%if:N_REGISTRANTS>'0'%
+The following members registered for the project\:
+Handle         Rating           Reliability	
+
+%loop:REGISTRANT%
+%REGISTRANT_HANDLE%	      %REGISTRANT_RATING%	     %REGISTRANT_RELIABILITY%
+%endloop%
+%endif%
+
+%if:N_REGISTRANTS='0'%
+There are no registrants.
+%endif%

@@ -1,0 +1,26 @@
+<CMConfig>
+<Config name="intArray">
+	<Property name="intArray1">
+		<Property name="arrayType">
+			<Value>int</Value>
+		</Property>
+		<Property name="dimension">
+			<Value>1</Value>
+		</Property>
+		<Property name="values">
+			<Value>{1,2}</Value>
+		</Property>
+	</Property>
+	<Property name="intArray2">
+		<Property name="arrayType">
+			<Value>int</Value>
+		</Property>
+		<Property name="dimension">
+			<Value>3</Value>
+		</Property>
+		<Property name="values">
+			<Value>{{{1,2},{3,4}}}</Value>
+		</Property>
+	</Property>
+</Config>
+</CMConfig>

@@ -1,0 +1,27 @@
+This README file explains how to setup and build this component:
+
+1. Install the component structure in ${basedir}
+
+2. Create "topcoder_global.properties" in ${basedir}/.. and add the properties from steps 3
+
+3. The following standard build script properties must be set:
+	ext_libdir - root of third party libraries
+	tcs_libdir - root of topcoder flex components
+	FLEX_HOME - the installation path of the Flex SDK (e.g. c:\program files\flex_sdk)
+	flexunitdir - the directory of FlexUnit
+	flexunitantdir - the directory of FlexUnit Ant Task
+	asdocantdir - the directory of AsDoc Ant Task
+
+4. Ant Commands:
+	ant clean - removes temporary build files
+	ant compile - builds the production code
+	ant compile_tests - builds the test code
+	ant test - runs the test code
+	ant asdoc - generates asdoc for this component
+
+Note:
+	The folder ${basedir}/test_reflib contains TopCoder components
+	that are required by this component's test code. This component is
+	used to by compile_test and test targets. Components are listed under
+	the following directory structure "component name"/"component version".
+	Components are provided AS IS for development purposes only.

@@ -1,0 +1,67 @@
+<Config name="com.cronos.onlinereview.ajax.factory">
+	<Property name="SetScorecardStatus">
+		<Property name="type">
+			<Value>com.cronos.onlinereview.ajax.handlers.SetScorecardStatusHandler</Value>
+		</Property>
+	</Property>
+	<Property name="LoadTimelineTemplate">
+		<Property name="type">
+			<Value>com.cronos.onlinereview.ajax.handlers.LoadTimelineTemplateHandler</Value>
+		</Property>
+	</Property>
+	<Property name="SetTimelineNotification">
+		<Property name="type">
+			<Value>com.cronos.onlinereview.ajax.handlers.SetTimelineNotificationHandler</Value>
+		</Property>
+	</Property>
+	<Property name="PlaceAppeal">
+		<Property name="type">
+			<Value>com.cronos.onlinereview.ajax.handlers.PlaceAppealHandler</Value>
+		</Property>
+	</Property>
+	<Property name="ResolveAppeal">
+		<Property name="type">
+			<Value>com.cronos.onlinereview.ajax.handlers.ResolveAppealHandler</Value>
+		</Property>
+	</Property>
+	<Property name="com/topcoder/project/phases/template/PhaseTemplate">
+		<Property name="type">
+			<Value>com.topcoder.project.phases.template.MockPhaseTemplate</Value>
+		</Property>
+	</Property>
+	<Property name="com/topcoder/management/resource/ResourceManager">
+		<Property name="type">
+			<Value>com.topcoder.management.resource.MockResourceManager</Value>
+		</Property>
+	</Property>
+	<Property name="com/topcoder/management/review/ReviewManager">
+		<Property name="type">
+			<Value>com.topcoder.management.review.MockReviewManager</Value>
+		</Property>
+	</Property>
+	<Property name="com/topcoder/management/deliverable/UploadManager">
+		<Property name="type">
+			<Value>com.topcoder.management.deliverable.MockUploadManager</Value>
+		</Property>
+	</Property>
+	<Property name="com/topcoder/management/phase/PhaseManager">
+		<Property name="type">
+			<Value>com.topcoder.management.phase.MockPhaseManager</Value>
+		</Property>
+	</Property>
+	<Property name="com/topcoder/management/review/scorecalculator/CalculationManager">
+		<Property name="type">
+			<Value>com.topcoder.management.review.scorecalculator.CalculationManager</Value>
+		</Property>
+	</Property>
+	<Property name="com/topcoder/management/scorecard/ScorecardManager">
+		<Property name="type">
+			<Value>com.topcoder.management.scorecard.MockScorecardManager</Value>
+		</Property>
+	</Property>
+	<Property name="com/topcoder/management/project/ProjectManager">
+		<Property name="type">
+			<Value>com.topcoder.management.project.MockProjectManager</Value>
+		</Property>
+	</Property>
+</Config>

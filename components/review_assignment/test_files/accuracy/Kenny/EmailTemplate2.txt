@@ -1,0 +1,4 @@
+<p>
+%PARAM1% - the first parameter.
+%PARAM2% - the second parameter.
+</p>

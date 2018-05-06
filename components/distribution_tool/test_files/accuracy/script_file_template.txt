@@ -1,0 +1,1 @@
+file_template : %{root}/template.txt -> %{root}/temp/newfile.txt 

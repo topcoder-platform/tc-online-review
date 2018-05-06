@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<CMConfig>
+  <Config name="com.topcoder.management.payment.calculator.impl.ProjectPaymentAdjustmentCalculator">
+    <Property name="object_factory_config">
+      <!-- Put Object Factory configuration here -->
+    </Property>
+    <Property name="project_payment_calculator_key">
+      <Value>DefaultProjectPaymentCalculator</Value>
+    </Property>
+    <Property name="logger_name">
+      <Value>adjustment_calculator_logger</Value>
+    </Property>
+    <Property name="connection_name">
+      <Value>my_connection</Value>
+    </Property>
+    <Property name="db_connection_factory_config">
+      <!-- Put DB Connection Factory configuration here, please refer to the DB connection factory component 
+         for more information about its configuration parameters description -->
+    </Property>
+  </Config>
+  
+  <Config name="com.topcoder.management.payment.calculator.impl.DefaultProjectPaymentCalculator">
+    <Property name="logger_name">
+      <Value>calculator_logger</Value>
+    </Property>
+    <Property name="connection_name">
+      <Value>my_connection</Value>
+    </Property>
+    <Property name="db_connection_factory_config">
+      <!-- Put DB Connection Factory configuration here, please refer to the DB connection factory component 
+         for more information about its configuration parameters description -->
+    </Property>
+  </Config>
+</CMConfig>

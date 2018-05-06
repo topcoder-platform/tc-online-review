@@ -1,0 +1,20 @@
+%PHASE_TIMESTAMP{Phase timestamp}%
+Hello %USER_FIRST_NAME{User first name}% %USER_LAST_NAME{User last name}%,
+Handle\: %USER_HANDLE{User handle}%
+This is the notification on project\: %PROJECT_NAME{Project name}%
+OR link\: %OR_LINK% 
+Version\: %PROJECT_VERSION{Project version}%
+This is the %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.
+
+Screening results\:
+
+%if:NO_SCREENING_PASS='1'%
+[There is no submission pass the screening!]
+%endif%
+
+
+Handle		Score	Result
+%loop:SUBMITTER%
+%SUBMITTER_HANDLE%	%SUBMITTER_SCORE%		%SUBMITTER_RESULT%
+%endloop%
+

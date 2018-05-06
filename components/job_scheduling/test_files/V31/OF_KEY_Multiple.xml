@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CMConfig>
+	<Config name="OF_KEY_Multiple">
+		<Property name="ObjectFactoryNamespace">
+			<Value>
+				com.topcoder.util.scheduler.scheduling.objectfactory
+			</Value>
+		</Property>
+		<Property name="ScheduledEnableObjectKey">
+			<Value>key</Value>
+			<Value>key</Value>
+		</Property>
+	</Config>
+</CMConfig>

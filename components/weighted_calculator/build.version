@@ -1,0 +1,9 @@
+#property file defining the component's information
+component.name=Weighted Calculator
+component.distfilename=weighted_calculator
+component.package=com.topcoder.util.weightedcalculator
+component.packagedir=com/topcoder/util/weightedcalculator
+component.version.major=1
+component.version.minor=0
+component.version.micro=0
+component.version.build=1

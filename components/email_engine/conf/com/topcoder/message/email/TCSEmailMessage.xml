@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<CMConfig>
+	<!--
+		Default priority headers values
+	-->
+  <Property name="Priorities">
+	  <Property name="highest">
+    	<Value>Priority:urgent</Value>
+    	<Value>X-Priority:1 (Highest)</Value>
+    	<Value>X-MSMail-Priority:High</Value>
+      </Property>
+	  <Property name="high">
+		<Value>Priority:urgent</Value>
+		<Value>X-Priority:2 (High)</Value>
+		<Value>X-MSMail-Priority:High</Value>
+      </Property>
+	  <Property name="normal">
+		<Value>Priority:normal</Value>
+		<Value>X-Priority:3 (Normal)</Value>
+		<Value>X-MSMail-Priority:Normal</Value>
+      </Property>
+	  <Property name="low">
+		<Value>Priority:non-urgent</Value>
+		<Value>X-Priority:4 (Low)</Value>
+		<Value>X-MSMail-Priority:Low</Value>
+      </Property>
+	  <Property name="lowest">
+		<Value>Priority:non-urgent</Value>
+		<Value>X-Priority:5 (Lowest)</Value>
+		<Value>X-MSMail-Priority:Low</Value>
+      </Property>
+  </Property>
+</CMConfig>

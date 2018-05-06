@@ -1,0 +1,40 @@
+<html>
+	<head>
+		<title>Document Generator Web Demo</title>
+	</head>
+	<body>
+		<form action="gendocument" method="POST">
+			<table border="1">
+				<tr>
+					<td>Configuration File:</td>
+					<td><input type="text" name="config_file" value="resource/DocumentManager.xml"/></td>
+				</tr>
+				<tr>
+					<td>Configuration NameSpace:</td>
+					<td><input type="text" name="config_namespace" value="myconfig"/></td>
+				</tr>
+				<tr>
+					<td>template source identifier:</td>
+					<td><input type="text" name="source_id" value="file"/></td>
+				</tr>
+				<tr>
+					<td>name of template:</td>
+					<td><select name="template_file">
+							<option value="resource/designer.txt">resource/designer.txt(jar)</option>
+							<option value="/designer_ear.txt">/designer_ear.txt(ear/war)</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>XML file with field data:</td>
+					<td><select name="data_file">
+							<option value="resource/designer.xml">resource/designer.xml(jar)</option>
+							<option value="/designer_ear.xml">/designer_ear.xml(ear/war)</option>
+						</select>
+					</td>
+				</tr>
+				<tr><td colspan="2"><input type="submit" value="submit"/></td></tr>
+			</table>
+		</form>
+	</body>
+</html>

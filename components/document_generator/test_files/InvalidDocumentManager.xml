@@ -1,0 +1,258 @@
+<?xml version="1.0"?>
+<CMConfig>
+   <Config name="sources_missing">
+    <!-- the identifier of the template source to be used as default -->
+    <Property name="default_source">
+      <Value>file</Value>
+    </Property>
+
+    <!-- here follow custom properties for each template source -->
+    <!-- the <sourceidentifier>_class property is mandatory -->
+    <!-- the other <sourceidentifier>_<property_name> properties are specific for each source -->
+
+    <!-- file template source properties -->
+    <Property name="file_class">
+      <Value>com.topcoder.util.file.templatesource.FileTemplateSource</Value>
+    </Property>
+
+    <!-- my_file template source properties -->
+    <Property name="my_file_class">
+      <Value>com.topcoder.util.file.MyFileTemplateSource</Value>
+    </Property>
+
+    <Property name="my_file_dir">
+      <Value>test_files/my_files/</Value>
+    </Property>   
+ </Config>
+ 
+    <Config name="file_class_missing">
+    <Property name="sources">
+      <Value>file</Value>
+      <Value>my_file</Value>
+    </Property>
+
+    <!-- the identifier of the template source to be used as default -->
+    <Property name="default_source">
+      <Value>file</Value>
+    </Property>
+
+    <!-- here follow custom properties for each template source -->
+    <!-- the <sourceidentifier>_class property is mandatory -->
+    <!-- the other <sourceidentifier>_<property_name> properties are specific for each source -->
+
+    <!-- my_file template source properties -->
+    <Property name="my_file_class">
+      <Value>com.topcoder.util.file.MyFileTemplateSource</Value>
+    </Property>
+
+    <Property name="my_file_dir">
+      <Value>test_files/my_files/</Value>
+    </Property>   
+ </Config>
+ 
+ 
+    <Config name="my_file_class_missing">
+    <Property name="sources">
+      <Value>file</Value>
+      <Value>my_file</Value>
+    </Property>
+
+    <!-- the identifier of the template source to be used as default -->
+    <Property name="default_source">
+      <Value>file</Value>
+    </Property>
+
+    <!-- here follow custom properties for each template source -->
+    <!-- the <sourceidentifier>_class property is mandatory -->
+    <!-- the other <sourceidentifier>_<property_name> properties are specific for each source -->
+
+    <!-- file template source properties -->
+    <Property name="file_class">
+      <Value>com.topcoder.util.file.templatesource.FileTemplateSource</Value>
+    </Property>
+
+    <Property name="my_file_dir">
+      <Value>test_files/my_files/</Value>
+    </Property>   
+ </Config>
+ 
+ 
+    <Config name="default_source_invalid">
+    <Property name="sources">
+      <Value>file</Value>
+      <Value>my_file</Value>
+    </Property>
+
+    <!-- the identifier of the template source to be used as default -->
+    <Property name="default_source">
+      <Value>invalid</Value>
+    </Property>
+
+    <!-- here follow custom properties for each template source -->
+    <!-- the <sourceidentifier>_class property is mandatory -->
+    <!-- the other <sourceidentifier>_<property_name> properties are specific for each source -->
+
+    <!-- file template source properties -->
+    <Property name="file_class">
+      <Value>com.topcoder.util.file.templatesource.FileTemplateSource</Value>
+    </Property>
+
+    <!-- my_file template source properties -->
+    <Property name="my_file_class">
+      <Value>com.topcoder.util.file.MyFileTemplateSource</Value>
+    </Property>
+
+    <Property name="my_file_dir">
+      <Value>test_files/my_files/</Value>
+    </Property>   
+ </Config>
+ 
+    <Config name="file_class_invalid">
+    <Property name="sources">
+      <Value>file</Value>
+      <Value>my_file</Value>
+    </Property>
+
+    <!-- the identifier of the template source to be used as default -->
+    <Property name="default_source">
+      <Value>file</Value>
+    </Property>
+
+    <!-- here follow custom properties for each template source -->
+    <!-- the <sourceidentifier>_class property is mandatory -->
+    <!-- the other <sourceidentifier>_<property_name> properties are specific for each source -->
+
+    <!-- file template source properties -->
+    <Property name="file_class">
+      <Value>invalid</Value>
+    </Property>
+
+    <!-- my_file template source properties -->
+    <Property name="my_file_class">
+      <Value>com.topcoder.util.file.MyFileTemplateSource</Value>
+    </Property>
+
+    <Property name="my_file_dir">
+      <Value>test_files/my_files/</Value>
+    </Property>   
+ </Config>
+ 
+ 
+    <Config name="my_file_class_invalid">
+    <Property name="sources">
+      <Value>file</Value>
+      <Value>my_file</Value>
+    </Property>
+
+    <!-- the identifier of the template source to be used as default -->
+    <Property name="default_source">
+      <Value>file</Value>
+    </Property>
+
+    <!-- here follow custom properties for each template source -->
+    <!-- the <sourceidentifier>_class property is mandatory -->
+    <!-- the other <sourceidentifier>_<property_name> properties are specific for each source -->
+
+    <!-- file template source properties -->
+    <Property name="file_class">
+      <Value>com.topcoder.util.file.templatesource.FileTemplateSource</Value>
+    </Property>
+
+    <!-- my_file template source properties -->
+    <Property name="my_file_class">
+      <Value>invalid</Value>
+    </Property>
+
+    <Property name="my_file_dir">
+      <Value>test_files/my_files/</Value>
+    </Property>   
+ </Config>
+ 
+    <Config name="file_class_not_TemplateSource">
+    <Property name="sources">
+      <Value>file</Value>
+      <Value>my_file</Value>
+    </Property>
+
+    <!-- the identifier of the template source to be used as default -->
+    <Property name="default_source">
+      <Value>file</Value>
+    </Property>
+
+    <!-- here follow custom properties for each template source -->
+    <!-- the <sourceidentifier>_class property is mandatory -->
+    <!-- the other <sourceidentifier>_<property_name> properties are specific for each source -->
+
+    <!-- file template source properties -->
+    <Property name="file_class">
+      <Value>java.lang.String</Value>
+    </Property>
+
+    <!-- my_file template source properties -->
+    <Property name="my_file_class">
+      <Value>com.topcoder.util.file.MyFileTemplateSource</Value>
+    </Property>
+
+    <Property name="my_file_dir">
+      <Value>test_files/my_files/</Value>
+    </Property>     
+ </Config>
+    
+  <Config name="my_file_class_not_method">
+    <Property name="sources">
+      <Value>file</Value>
+      <Value>my_file</Value>
+    </Property>
+
+    <!-- the identifier of the template source to be used as default -->
+    <Property name="default_source">
+      <Value>file</Value>
+    </Property>
+
+    <!-- here follow custom properties for each template source -->
+    <!-- the <sourceidentifier>_class property is mandatory -->
+    <!-- the other <sourceidentifier>_<property_name> properties are specific for each source -->
+
+    <!-- file template source properties -->
+    <Property name="file_class">
+      <Value>com.topcoder.util.file.templatesource.FileTemplateSource</Value>
+    </Property>
+
+    <!-- my_file template source properties -->
+    <Property name="my_file_class">
+      <Value>com.topcoder.util.file.MockTemplateSource</Value>
+    </Property>
+
+    <Property name="my_file_dir">
+      <Value>test_files/my_files/</Value>
+    </Property>   
+ </Config>
+
+
+   <Config name="default_source_missing">
+    <Property name="sources">
+      <Value>file</Value>
+      <Value>my_file</Value>
+    </Property>
+
+    <!-- here follow custom properties for each template source -->
+    <!-- the <sourceidentifier>_class property is mandatory -->
+    <!-- the other <sourceidentifier>_<property_name> properties are specific for each source -->
+
+    <!-- file template source properties -->
+    <Property name="file_class">
+      <Value>com.topcoder.util.file.templatesource.FileTemplateSource</Value>
+    </Property>
+
+    <!-- my_file template source properties -->
+    <Property name="my_file_class">
+      <Value>com.topcoder.util.file.MyFileTemplateSource</Value>
+    </Property>
+
+    <Property name="my_file_dir">
+      <Value>test_files/my_files/</Value>
+    </Property>   
+ </Config>
+ 
+ 
+</CMConfig>

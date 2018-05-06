@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<CMConfig>
+    <Property name="from">
+        <Value>test@mydomain.com</Value>
+    </Property>
+    <Property name="to">
+        <Value>test@mydomain.com</Value>
+    </Property>
+</CMConfig>

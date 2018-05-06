@@ -1,0 +1,9 @@
+#property file defining the components information
+component.name=Test Flex Component2
+component.distfilename=test_flex_component2
+component.package=com.topcoder.test
+component.packagedir=com/topcoder/test
+component.version.major=1
+component.version.minor=1
+component.version.micro=0
+component.version.build=1

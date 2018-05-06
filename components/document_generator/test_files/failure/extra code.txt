@@ -1,0 +1,33 @@
+	public void testCommandLineNull()
+	{
+		try {
+			DocumentGenerator.main(null);
+			fail("Should have failed on null input.");
+		}
+		catch (NullPointerException e) { /* expected */ }
+		catch (Exception e)  { fail("wrong exception" + e.toString()); }
+	}
+
+	public void testCommandLineNull2()
+	{		
+		try {
+			DocumentGenerator.main(new String[200]);
+			fail("Should have failed on null input.");
+		}
+		catch (NullPointerException e) { /* expected */ }
+		catch (Exception e)  { fail("wrong exception" + e.toString()); }
+	}
+	
+	public void testCommandLineNull3()
+	{		
+		try {
+			DocumentGenerator.main(new String[] { "-t",
+					"test_files/failure/valid-simple-comment.txt",
+					"-x",
+			"test_files/failure/valid-empty-data.xml",
+			null});
+			fail("Should have failed on null input.");
+		}
+		catch (NullPointerException e) { /* expected */ }
+		catch (Exception e)  { fail("wrong exception" + e.toString()); }
+	}

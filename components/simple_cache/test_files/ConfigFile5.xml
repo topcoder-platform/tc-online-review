@@ -1,0 +1,81 @@
+<?xml version="1.0" ?>
+
+<!-- 	This is a configuration file for SimpleCache component ver 2.0
+	All properties are correct.
+-->
+
+
+<CMConfig>
+<Config name="com.topcoder.util.cache.ConfigFile5">
+
+	<!-- 	Which strategy class shoudl be used.
+ 	     	This is a fully qualified java class name.
+		Optional. Defaults to com.topcoder.util.cache.FIFOCacheEvoctionStrategy 
+	-->
+    	<Property name="CacheEvictionStrategy">
+      	<Value>com.topcoder.util.cache.BOFCacheEvictionStrategy</Value>
+    	</Property>
+
+	<!-- 	maximum number of cache entries allowed
+ 	     	This is a posisitive integer value
+		Optional. Defaults to int infinity  
+	-->
+    	<Property name="MaxCacheSize">
+      	<Value>1000</Value>
+    	</Property>
+
+	<!-- 	maximum number of memory bytes that all the entries are allowed
+ 	     	This is a posisitive long value
+		Optional. Defaults to long infinity 
+	-->
+    	<Property name="MaxCacheByteCapacity">
+      	<Value>10000000</Value>
+    	</Property>
+
+	<!-- 	Cache refresh interval after which the cache entries will be refreshed
+		Optional. Defaults to no timeout 
+	-->
+    	<Property name="TimeoutMS">
+      	<Value>3600000</Value>
+    	</Property>
+
+	<!-- 	Memory utilization handler used to determine object sizes in memory
+ 	     	This is used to calculate the cache capacity.
+		Optional. Defaults to com.topcoder.util.cache.SimpleMemoryUtilizationHandler 
+	-->
+    	<Property name="MemoryUtilizationHandler">
+      	<Value>com.topcoder.util.cache.SimpleMemoryUtilizationHandler</Value>
+    	</Property>
+
+	<!-- 	Flag signalling if compression is applied to the entries
+		Optional. Defaults to false 
+	-->
+    	<Property name="CompressionFlag">
+      	<Value>true</Value>
+    	</Property>
+
+	<!-- 	A listing of compression handlers that should be applied to cache entries
+		If multiple handlers are present then they are chained based on the order
+		given here. Basically the first handler in the list will be tried first
+		and if it can not compress the entry then the next one will be tried.
+		Each handler can be configured with additional peramaters as specified 
+		below.
+		Optional. For defaults please refer to the example give below         
+	-->
+    	<Property name="CompressionHandlers">
+		<!-- Put your handler configuration here -->
+		<Property name="SomeHandler">
+			<Property name="class">
+				<Value>com.topcoder.util.cache.TestCompressionHandler</Value>
+			</Property>
+			<Property name="StringParameter">
+				<Value>One_Value</Value>
+			</Property>
+			<Property name="ListParameter">
+				<Value>First_Value</Value>
+				<Value>Second_Value</Value>
+			</Property>
+		</Property>
+    	</Property>
+ </Config>
+</CMConfig>

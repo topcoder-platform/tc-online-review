@@ -1,0 +1,128 @@
+<CMConfig>
+	<Config name="com.topcoder.search.builder.SearchBundleManager.failure">
+		<Property name="searchStrategyFactoryNamespace">
+			<Value>com.topcoder.search.builder.strategy.factory</Value>
+		</Property>
+		<Property name="fieldValidatorFactoryNamespace">
+			<Value>com.topcoder.search.builder.validator.factory</Value>
+		</Property>
+
+		<Property name="searchBundles">
+		    <Property name="Deliverable Search Bundle">
+			<Property name="searchStrategy">
+	        <Property name="class">
+    	       		<Value>dbStrategy</Value>
+     			</Property>
+   		</Property>
+                <Property name="context">
+                    <Value>
+                        SELECT UNIQUE notedeliverable_id,
+                               resource_id,
+                               project_phase.project_phase_id
+                          FROM deliverable_lu,
+                               resource,
+                               project_phase
+                         WHERE deliverable_lu.resource_role_id = resource.resource_role_id
+                           AND deliverable_lu.phase_type_id = project_phase.phase_type_id
+                           AND resource.project_id = project_phase.project_id
+                           AND
+                    </Value>
+                </Property>
+        <Property name="searchableFields">
+          <Property name="dummy">
+	            <Property name="validator">
+                	<Property name="class">
+                    	<Value>validator</Value>
+                    </Property>
+	               	<Property name="identifier">
+  	                <Value>default</Value>
+        	       	</Property>
+                </Property>
+            </Property>
+				</Property>
+                <Property name="alias">
+                    <Property name="name">
+                        <Value>deliverable_lu.name</Value>
+                    </Property>
+                    <Property name="project_id">
+                        <Value>resource.project_id</Value>
+                    </Property>
+                    <Property name="phase_id">
+                        <Value>project_phase.project_phase_id</Value>
+                    </Property>
+                    <Property name="resource_id">
+                        <Value>resource.resource_id</Value>
+                    </Property>
+                    <Property name="required">
+                        <Value>deliverable_lu.required</Value>
+                    </Property>
+                </Property>
+			</Property>
+
+            <Property name="Deliverable With Submission Search Bundle">
+			  <Property name="searchStrategy">
+	        <Property name="class">
+    	       		<Value>dbStrategy</Value>
+     			</Property>
+   			</Property>
+                <Property name="context">
+                    <Value>
+                        SELECT     deliverable_id,
+                                   resource.resource_id,
+                                   project_phase.project_phase_id,
+                                   submission_id
+                              FROM deliverable_lu,
+                                   resource,
+                                   project_phase
+                        CROSS JOIN submission
+                        INNER JOIN submission_status_lu
+                                ON submission.submission_status_id = submission_status_lu.submission_status_id
+                        INNER JOIN upload
+                                ON submission.upload_id = upload.upload_id
+                             WHERE submission_status_lu.name = 'Active'
+                               AND deliverable_lu.per_submission = 1
+                               AND upload.project_id = resource.project_id
+                               AND deliverable_lu.resource_role_id = resource.resource_role_id
+                               AND deliverable_lu.phase_type_id = project_phase.phase_type_id
+                               AND
+                    </Value>
+                </Property>
+        <Property name="searchableFields">
+          <Property name="dummy">
+	            <Property name="validator">
+                	<Property name="class">
+                   	<Value>validator</Value>
+                  </Property>
+	             	<Property name="identifier">
+  	              <Value>null</Value>
+              	</Property>
+              </Property>
+          </Property>
+			  </Property>
+                <Property name="alias">
+                    <Property name="deliverable_id">
+                        <Value>deliverable_lu.deliverable_id</Value>
+                    </Property>
+                    <Property name="name">
+                        <Value>deliverable_lu.name</Value>
+                    </Property>
+                    <Property name="project_id">
+                        <Value>resource.project_id</Value>
+                    </Property>
+                    <Property name="phase_id">
+                        <Value>project_phase.project_phase_id</Value>
+                    </Property>
+                    <Property name="resource_id">
+                        <Value>resource.resource_id</Value>
+                    </Property>
+                    <Property name="required">
+                        <Value>deliverable_lu.required</Value>
+                    </Property>
+                    <Property name="submission_id">
+                        <Value>submission.submission_id</Value>
+                    </Property>
+                </Property>
+      </Property>
+		</Property>
+	</Config>
+</CMConfig>

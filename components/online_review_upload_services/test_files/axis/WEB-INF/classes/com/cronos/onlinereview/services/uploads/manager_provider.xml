@@ -1,0 +1,23 @@
+<CMConfig>
+	<Config name="com.cronos.onlinereview.services.uploads.impl.DefaultManagersProvider">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="resourceManagerIdentifier">
+			<Value>resourceManager</Value>
+		</Property>
+		<Property name="phaseManagerIdentifier">
+			<Value>phaseManager</Value>
+		</Property>
+		<Property name="projectManagerIdentifier">
+			<Value>projectManager</Value>
+		</Property>
+		<Property name="screeningManagerIdentifier">
+			<Value>screeningManager</Value>
+		</Property>
+		<Property name="uploadManagerIdentifier">
+			<Value>uploadManager</Value>
+		</Property>
+	</Config>
+</CMConfig>
+	

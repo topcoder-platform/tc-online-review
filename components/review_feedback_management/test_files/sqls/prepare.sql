@@ -1,0 +1,6 @@
+insert into 'informix'.project(project_id,project_status_id ,project_category_id ,project_studio_spec_id,create_user,create_date,modify_user,modify_date,tc_direct_project_id) values (1,1,1,1,'user1',CURRENT,'modifyuser1',CURRENT,1);
+insert into 'informix'.project(project_id,project_status_id ,project_category_id ,project_studio_spec_id,create_user,create_date,modify_user,modify_date,tc_direct_project_id) values (2,2,1,1,'user1',CURRENT,'modifyuser1',CURRENT,2);
+
+insert into 'informix'.audit_action_type_lu(audit_action_type_id, name, description, create_user, create_date, modify_user, modify_date) values (1,'audit type 1','audit type 1','user1',CURRENT,'modifyuser1',CURRENT);
+insert into 'informix'.audit_action_type_lu(audit_action_type_id, name, description, create_user, create_date, modify_user, modify_date) values (2,'audit type 2','audit type 2','user1',CURRENT,'modifyuser1',CURRENT);
+insert into 'informix'.audit_action_type_lu(audit_action_type_id, name, description, create_user, create_date, modify_user, modify_date) values (3,'audit type 3','audit type 3','user1',CURRENT,'modifyuser1',CURRENT);

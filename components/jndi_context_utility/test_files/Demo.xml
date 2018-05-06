@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Properties>
+	<Property name="context.default.factory">com.sun.jndi.fscontext.RefFSContextFactory</Property>
+	<Property name="context.default.url">file:test_files/test_root</Property>
+	<Property name="context.test.factory">com.sun.jndi.fscontext.RefFSContextFactory</Property>
+	<Property name="context.test.url">file:test_files</Property>
+</Properties>

@@ -1,0 +1,9 @@
+#property file defining the component's information
+component.name=LDAP SDK Interface
+component.distfilename=ldap_sdk_interface
+component.package=com.topcoder.util.net.ldap.sdkinterface
+component.packagedir=com/topcoder/util/net/ldap/sdkinterface
+component.version.major=1
+component.version.minor=0
+component.version.micro=2
+component.version.build=1

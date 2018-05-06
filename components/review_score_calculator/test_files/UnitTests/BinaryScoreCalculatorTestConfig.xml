@@ -1,0 +1,68 @@
+<?xml version ="1.0" ?>
+<CMConfig>
+	<Config name="valid">
+		<Property name="positive_answer">
+			<Value>Pass</Value>
+		</Property>
+		<Property name="negative_answer">
+			<Value>Fail</Value>
+		</Property>
+	</Config>
+
+	<Config name="missing.positive.answer">
+		<Property name="negative_answer">
+			<Value>Fail</Value>
+		</Property>
+	</Config>
+
+	<Config name="empty.positive.answer">
+		<Property name="positive_answer">
+			<Value></Value>
+		</Property>
+		<Property name="negative_answer">
+			<Value>Fail</Value>
+		</Property>
+	</Config>
+
+	<Config name="blank.positive.answer">
+		<Property name="positive_answer">
+			<Value> </Value>
+		</Property>
+		<Property name="negative_answer">
+			<Value>Fail</Value>
+		</Property>
+	</Config>
+
+	<Config name="missing.negative.answer">
+		<Property name="positive_answer">
+			<Value>Pass</Value>
+		</Property>
+	</Config>
+
+	<Config name="empty.negative.answer">
+		<Property name="positive_answer">
+			<Value>Pass</Value>
+		</Property>
+		<Property name="negative_answer">
+			<Value></Value>
+		</Property>
+	</Config>
+
+	<Config name="blank.negative.answer">
+		<Property name="positive_answer">
+			<Value>Pass</Value>
+		</Property>
+		<Property name="negative_answer">
+			<Value> </Value>
+		</Property>
+	</Config>
+
+	<Config name="same.positive.negative.answer">
+		<Property name="positive_answer">
+			<Value>Pass</Value>
+		</Property>
+		<Property name="negative_answer">
+			<Value>Pass</Value>
+		</Property>
+	</Config>
+</CMConfig>

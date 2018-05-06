@@ -1,0 +1,104 @@
+<CMConfig>
+    <Config name="termsOfUseDao">
+		<Property name="dbConnectionFactoryConfig">
+		  <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+			<Property name="connections">
+                <Property name="default">
+                    <Value>InformixConnection</Value>
+                </Property>
+				<Property name="InformixConnection">
+					<Property name="producer">
+						<Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+					</Property>
+					<Property name="parameters">
+						<Property name="jdbc_driver">
+						<Value>com.informix.jdbc.IfxDriver</Value>
+						</Property>
+		                <Property name="jdbc_url">
+		                    <Value>jdbc:informix-sqli://129.127.226.5:2021/informix:informixserver=informixoltp_tcp</Value>
+		                </Property>
+		                <Property name="user">
+		                    <Value>informix</Value>
+		                </Property>
+		                <Property name="password">
+		                    <Value>1nf0rm1x</Value>
+		                </Property>
+					</Property>
+				</Property>
+			</Property>
+		  </Property>
+		</Property>
+		<Property name="loggerName">
+			<Value>loggerName</Value>
+		</Property>
+		<Property name="idGeneratorName">
+			<Value>idGenerator</Value>
+		</Property>
+    </Config>
+    <Config name="userTermsOfUseDao">
+		<Property name="dbConnectionFactoryConfig">
+		  <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+			<Property name="connections">
+                <Property name="default">
+                    <Value>InformixConnection</Value>
+                </Property>
+				<Property name="InformixConnection">
+					<Property name="producer">
+						<Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+					</Property>
+					<Property name="parameters">
+						<Property name="jdbc_driver">
+						<Value>com.informix.jdbc.IfxDriver</Value>
+						</Property>
+		                <Property name="jdbc_url">
+		                    <Value>jdbc:informix-sqli://129.127.226.5:2021/informix:informixserver=informixoltp_tcp</Value>
+		                </Property>
+		                <Property name="user">
+		                    <Value>informix</Value>
+		                </Property>
+		                <Property name="password">
+		                    <Value>1nf0rm1x</Value>
+		                </Property>
+					</Property>
+				</Property>
+			</Property>
+		  </Property>
+		</Property>
+		<Property name="loggerName">
+			<Value>loggerName</Value>
+		</Property>
+    </Config>
+    <Config name="projectTermsOfUseDao">
+		<Property name="dbConnectionFactoryConfig">
+		  <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+			<Property name="connections">
+                <Property name="default">
+                    <Value>InformixConnection</Value>
+                </Property>
+				<Property name="InformixConnection">
+					<Property name="producer">
+						<Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+					</Property>
+					<Property name="parameters">
+						<Property name="jdbc_driver">
+						<Value>com.informix.jdbc.IfxDriver</Value>
+						</Property>
+		                <Property name="jdbc_url">
+		                    <Value>jdbc:informix-sqli://129.127.226.5:2021/informix:informixserver=informixoltp_tcp</Value>
+		                </Property>
+		                <Property name="user">
+		                    <Value>informix</Value>
+		                </Property>
+		                <Property name="password">
+		                    <Value>1nf0rm1x</Value>
+		                </Property>
+					</Property>
+				</Property>
+			</Property>
+		  </Property>
+		</Property>
+		<Property name="loggerName">
+			<Value>loggerName</Value>
+		</Property>
+    </Config>    
+</CMConfig>

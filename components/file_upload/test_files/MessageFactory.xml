@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<CMConfig>
+	<Config name="com.topcoder.processor.ipserver.message">
+		<!-- The mapping between names and message class names, required -->
+		<Property name="MessageTypes">
+			<!-- Property name is the name, property value is the class name.There must be at
+         least one of this property. -->
+			<Property name="simple">
+				<Value>com.topcoder.processor.ipserver.message.serializable.SimpleSerializableMessage</Value>
+			</Property>
+			<Property name="KeepAlive">
+				<Value>com.topcoder.processor.ipserver.message.serializable.SimpleSerializableMessage</Value>
+			</Property>
+		</Property>
+	</Config>
+</CMConfig>

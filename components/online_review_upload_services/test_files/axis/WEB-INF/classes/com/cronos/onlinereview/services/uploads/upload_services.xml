@@ -1,0 +1,13 @@
+<CMConfig>
+	
+	<Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices">
+		<Property name="objectFactoryNamespace">
+			<Value>myObjectFactory</Value>
+		</Property>
+		<Property name="managersProviderIdentifier">
+			<Value>managersProvider</Value>
+		</Property>
+	</Config>
+	
+</CMConfig>
+	

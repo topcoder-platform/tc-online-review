@@ -1,0 +1,10 @@
+<CMConfig>  
+  <Config name="com.topcoder.util.idgenerator.OracleSequenceGenerator">
+    <Property name="SQL_SELECT_BLOCK_SIZE">
+       <Value>SELECT INCREMENT_BY, FROM all_sequences WHERE SEQUENCE_NAME = '?'</Value>
+    </Property>
+		<Property name="SQL_NEXT_SEQUENCE_ID">
+				<Value></Value>
+		</Property>
+	</Config>
+</CMConfig> 

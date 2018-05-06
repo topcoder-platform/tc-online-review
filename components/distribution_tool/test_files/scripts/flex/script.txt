@@ -1,0 +1,52 @@
+#define macroses
+define         : files     = %{script_dir}/files
+define         : comp_dir  = %{output_dir}/%{component_name}
+define         : tests_dir = %{comp_dir}/src/flex/tests/%{package/name}
+
+#create distribution directories
+create_folder  : %{comp_dir}/conf
+create_folder  : %{comp_dir}/docs/asdocs
+create_folder  : %{comp_dir}/test_files
+create_folder  : %{comp_dir}/test_reflib
+create_folder  : %{comp_dir}/src/flex/main/%{package/name}
+create_folder  : %{tests_dir}/accuracytests
+create_folder  : %{tests_dir}/failuretests
+create_folder  : %{tests_dir}/stresstests
+
+#copy build.version file and replace macroses with the real values
+file_template  : %{files}/build.version              -> %{comp_dir}/build.version
+
+#copy files to the distribution
+file_template  : %{files}/build.xml                  -> %{comp_dir}/build.xml
+file_template  : %{files}/build_dist.xml             -> %{comp_dir}/build_dist.xml
+copy_file      : %{files}/build-common-tasks.xml     -> %{comp_dir}/build-common-tasks.xml
+copy_file      : %{files}/build-dependencies.xml     -> %{comp_dir}/build-dependencies.xml
+copy_file      : %{files}/README                     -> %{comp_dir}/README
+
+copy_file      : %{files}/putYourTestFilesHere.txt   -> %{comp_dir}/test_files/putYourTestFilesHere.txt
+copy_file      : %{files}/putYourConfigFilesHere.txt -> %{comp_dir}/conf/putYourConfigFilesHere.txt
+copy_file      : %{files}/putYourSourceFilesHere.txt -> %{comp_dir}/src/flex/main/%{package/name}/putYourSourceFilesHere.txt
+
+#copy source and test files and replace macroses with the real values
+file_template  : %{files}/TestRunner.mxml            -> %{comp_dir}/src/flex/tests/TestRunner.mxml
+file_template  : %{files}/AntTestRunner.mxml         -> %{comp_dir}/src/flex/tests/AntTestRunner.mxml
+
+file_template  : %{files}/AllTests.as                -> %{tests_dir}/AllTests.as
+file_template  : %{files}/UnitTests.as               -> %{tests_dir}/UnitTests.as
+file_template  : %{files}/AccuracyTests.as           -> %{tests_dir}/accuracytests/AccuracyTests.as
+file_template  : %{files}/FailureTests.as            -> %{tests_dir}/failuretests/FailureTests.as
+file_template  : %{files}/StressTests.as             -> %{tests_dir}/stresstests/StressTests.as
+
+#convert to PDF and copy Requirements Specification to the docs directory of the distribution
+convert_to_pdf : %{rs} -> %{comp_dir}/docs/%{Component_Name}_Requirements_Specification.pdf
+
+#copy additional documents if specified
+ifdef(additional_doc1) copy_file : %{additional_doc1} -> %{comp_dir}/docs/{FILENAME}.{EXT}
+ifdef(additional_doc2) copy_file : %{additional_doc2} -> %{comp_dir}/docs/{FILENAME}.{EXT}
+ifdef(additional_doc3) copy_file : %{additional_doc3} -> %{comp_dir}/docs/{FILENAME}.{EXT}
+
+#prepare design distribution
+# On linux
+execute          : ant design_dist :: %{comp_dir}
+# On windows
+# execute        : cmd /c ant design_dist :: %{comp_dir}

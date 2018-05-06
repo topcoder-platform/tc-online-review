@@ -1,0 +1,2 @@
+Update the failuretests code, some class missing loading config file in setUp.
+Update the stresstests code, some class doesn't clean the namespace in config manager.

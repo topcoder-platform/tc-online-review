@@ -1,0 +1,51 @@
+From:	Tong Chen [TChen@topcoder.com]
+Sent:	Monday, March 19, 2007 2:48 PM
+Subject:	RE: Approval for component
+
+I’m ok with using the Object Formatter component if you feel it’s necessary for your design, as long as 
+no other dependencies are introduced.
+
+Regards,
+ 
+Tong Chen (tc)
+ 
+ 
+Sent: Sunday, March 18, 2007 12:08 PM 
+To: Tong Chen 
+Subject: RE: Approval for component
+
+Btw – you’re still going to get overloaded log methods to do (level, string, arg, arg, etc) [too bad we 
+aren’t using varargs in 1.5) that will automatically use the MessageFormat ObjectFormatter 
+implementation (that’s why I asked about where that one should go – in the logging wrapper or object 
+formatter component).  But I also wanted to provide a log(level, object, objectformatter) method for 
+general formatting and wanted to also provide a default object formatter that the log(level, object) 
+could use.
+
+Note: just to reinforce this – would have been great for the XMPP project when you are logging the 
+events.  You’d just pass the event to the logger and the object formatter would format it.  Thus 
+removing the formatting code from every logging line (and providing separation of the object and the 
+format of the object [allowing you to change it with one sweeping change]).
+
+From: Tong Chen [mailto:TChen@topcoder.com]  
+Sent: Sunday, March 18, 2007 10:14 AM 
+
+Subject: RE: Approval for component
+
+I’m not sure how much advantage that offers compared to something like MessageFormat. If not much, 
+then I would use what the language provides for this component.
+
+Regards,
+ 
+Tong Chen (tc)
+ 
+ 
+Sent: Sunday, March 18, 2007 8:44 AM 
+To: Tong Chen 
+Subject: Approval for component
+
+I want to use the ObjectFormatter component in this component to do the formatting of whatever 
+object is being passed.  Because this component is simply a framework (and has no implementations) 
+– there are no other dependencies.  Additionally,  since there are no object formatting 
+implementations – I’m wanting to include a basic ‘toString’ implementation and a simple 
+string/argument formatter implementation (which prompted my question – these are so generic, they 
+really belong to that component and not the log wrapper component)..

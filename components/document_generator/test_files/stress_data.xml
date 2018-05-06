@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<DATA>
+        <CODER_HANDLE>someone</CODER_HANDLE>
+        <PROJECT_TYPE>Design</PROJECT_TYPE>
+        <CURRENT_DATE>9/4</CURRENT_DATE>
+        <SCREENING_DATE>9/5 - 9/11</SCREENING_DATE>
+        <REVIEW_DATE>9/12 - 9/16</REVIEW_DATE>
+        <AGGREGATION_DATE>9/17 - 9/19</AGGREGATION_DATE>
+        <FINAL_REVIEW_DATE>9/20 - 9/25</FINAL_REVIEW_DATE>
+        <PROJECT>
+                <PROJECT_NAME>HTTP Utility 1.0</PROJECT_NAME>
+                <REVIEWER>
+                        <REVIEWER_ROLE>Primary/Failure</REVIEWER_ROLE>
+                        <REVIEWER_HANDLE>handle1</REVIEWER_HANDLE>
+                        <REVIEWER_PAYMENT>100</REVIEWER_PAYMENT>
+                </REVIEWER>
+                <REVIEWER>
+                        <REVIEWER_ROLE>Stress</REVIEWER_ROLE>
+                        <REVIEWER_HANDLE>handle2</REVIEWER_HANDLE>
+                        <REVIEWER_PAYMENT>70</REVIEWER_PAYMENT>
+                </REVIEWER>
+                <REVIEWER>
+                        <REVIEWER_ROLE>Accuracy</REVIEWER_ROLE>
+                        <REVIEWER_HANDLE>handle3</REVIEWER_HANDLE>
+                        <REVIEWER_PAYMENT>70</REVIEWER_PAYMENT>
+                </REVIEWER>
+                <PM_HANDLE>somepm</PM_HANDLE>
+        </PROJECT>
+        <PROJECT>
+                <PROJECT_NAME>Document Generator 2.0</PROJECT_NAME>
+                <REVIEWER>
+                        <REVIEWER_ROLE>Primary/Failure</REVIEWER_ROLE>
+                        <REVIEWER_HANDLE>handle4</REVIEWER_HANDLE>
+                        <REVIEWER_PAYMENT>100</REVIEWER_PAYMENT>
+                </REVIEWER>
+                <REVIEWER>
+                        <REVIEWER_ROLE>Stress</REVIEWER_ROLE>
+                        <REVIEWER_HANDLE>handle1</REVIEWER_HANDLE>
+                        <REVIEWER_PAYMENT>70</REVIEWER_PAYMENT>
+                </REVIEWER>
+                <REVIEWER>
+                        <REVIEWER_ROLE>Accuracy</REVIEWER_ROLE>
+                        <REVIEWER_HANDLE>handle5</REVIEWER_HANDLE>
+                        <REVIEWER_PAYMENT>70</REVIEWER_PAYMENT>
+                </REVIEWER>
+                <PM_HANDLE>somepm</PM_HANDLE>
+        </PROJECT>
+</DATA>

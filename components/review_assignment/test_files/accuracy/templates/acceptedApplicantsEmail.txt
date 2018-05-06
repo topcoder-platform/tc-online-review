@@ -1,0 +1,8 @@
+This is just a sample email used for accuracy testing and sent to approved applicants.
+
+Project ID\: %PROJECT_ID%
+Project Name\: %PROJECT_NAME%
+Project Version\: %PROJECT_VERSION%
+
+User Handle\: %USER_HANDLE%
+Role\: %REVIEW_APPLICATION_ROLE_NAME%

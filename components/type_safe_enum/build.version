@@ -1,0 +1,9 @@
+#property file defining the components information
+component.name=Typesafe Enum
+component.distfilename=typesafe_enum
+component.package=com.topcoder.util.collection.typesafeenum
+component.packagedir=com/topcoder/util/collection/typesafeenum
+component.version.major=1
+component.version.minor=1
+component.version.micro=0
+component.version.build=1

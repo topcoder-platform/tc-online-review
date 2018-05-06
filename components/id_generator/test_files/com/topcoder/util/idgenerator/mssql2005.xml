@@ -1,0 +1,11 @@
+<ConfigManager>
+    
+    <Config name="mssql2005">
+        <Property name="select_next_block">
+            <Value>SELECT next_block_start, block_size, exhausted FROM id_sequences WITH (SERIALIZABLE) WHERE name = ?</Value>
+        </Property>
+        <Property name="connection_name">
+            <Value>mssql2005</Value>
+        </Property>
+    </Config>
+</ConfigManager>

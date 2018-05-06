@@ -1,0 +1,73 @@
+<?xml version="1.0" ?>
+<CMConfig>
+
+    <Config name="com.topcoder.security.authenticationfactory.AuthenticationFactory">
+        <Property name="authenticators">
+            <Property name="http">
+                <Property name="class">
+                    <Value>com.topcoder.security.authenticationfactory.http.basicimpl.HTTPBasicAuthenticator</Value>
+                </Property>
+                <Property name="namespace">
+                    <Value>com.topcoder.security.http.HTTPBasicAuthenticator</Value>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.security.http.HTTPBasicAuthenticator">
+        <Property name="default_mappings">
+            <Property name="protocol">
+                <Value>http</Value>
+            </Property>
+            <Property name="port">
+                <Value>80</Value>
+            </Property>
+            <Property name="host">
+                <Value>www.topcoder.com</Value>
+            </Property>
+            <Property name="file">
+                <Value>index.html</Value>
+            </Property>
+            <Property name="request_properties">
+                <Property name="accept">
+                    <Value>text/html</Value>
+                </Property>
+            </Property>
+        </Property>
+
+        <Property name="principal_key_converter">
+            <Property name="class">
+                <Value>com.topcoder.security.authenticationfactory.DefaultKeyConverter</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.security.authenticationfactory.DefaultKeyConverter</Value>
+            </Property>
+        </Property>
+
+        <Property name="cache_factory">
+            <Property name="class">
+                <Value>com.topcoder.security.authenticationfactory.TimeoutCacheFactory</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.security.authenticationfactory.TimeoutCacheFactory</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.security.authenticationfactory.DefaultKeyConverter">
+        <Property name="mappings">
+            <Property name="username">
+                <Value>User</Value>
+            </Property>
+            <Property name="password">
+                <Value>Pwd</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.security.authenticationfactory.TimeoutCacheFactory">
+        <Property name="timeout">
+            <Value>1000</Value>
+        </Property>
+    </Config>
+</CMConfig>

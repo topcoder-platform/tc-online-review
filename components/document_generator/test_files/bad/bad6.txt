@@ -1,0 +1,2 @@
+#This file contain incorrect field tag
+%field{description}=defaultValue%

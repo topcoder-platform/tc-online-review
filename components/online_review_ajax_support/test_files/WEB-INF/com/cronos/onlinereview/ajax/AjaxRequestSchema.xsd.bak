@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:complexType name="RequestType">
+        <xs:annotation>
+        	<xs:documentation>The Ajax request Element Type</xs:documentation>
+        </xs:annotation>
+        <xs:sequence maxOccurs="1" minOccurs="1">
+			<xs:element name="parameters" type="ParametersType"></xs:element>
+		</xs:sequence>
+		<xs:attribute name="type" type="NotEmptyString">
+			<xs:annotation>
+				<xs:documentation>The type of the Ajax request</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="ParametersType">
+        <xs:annotation>
+        	<xs:documentation>The parameters Element Type</xs:documentation>
+        </xs:annotation>
+        <xs:sequence maxOccurs="unbounded" minOccurs="0">
+			<xs:element name="parameter" type="ParameterType">
+				<xs:annotation>
+					<xs:documentation>Zero or more parameters</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+<xs:complexType name="ParameterType">
+            <xs:simpleContent>
+                      <xs:extension base="xs:string">
+                              <xs:attribute name="name" type="NotEmptyString"/>
+                      </xs:extension>
+            </xs:simpleContent>
+</xs:complexType>
+
+	<xs:simpleType name="NotEmptyString">
+        <xs:annotation>
+        	<xs:documentation>Not empty string type</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+			<xs:minLength value="1" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:element name="request" type="RequestType">
+		<xs:annotation>
+			<xs:documentation>The root element of the XML document, it represents an Ajax request</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+
+</xsd:schema>

@@ -1,0 +1,27 @@
+<project name="Dependency Import" default="dist" basedir=".">
+    <!-- property file defining the component's dependencies -->
+
+    <!-- Properties used in compile_targets ANT target for JDK version x -->
+    <property name="component.target" value="1.5"/>
+    <property name="component.bootclasspath" value="${java_1_5_bootclasspath}"/>
+
+    <!-- TCS dependencies -->
+
+    <!-- 3rd party dependencies -->
+    <property name="SampleJar.jar" value="./conf/SampleJar.jar"/>
+    
+    <property name="junit.jar" value="${ext_libdir}/junit/4.6/junit-4.6.jar"/>
+    
+
+    <path id="component.tcs-dependencies">
+    </path>
+
+    <path id="component.3rdParty-dependencies">
+    </path>
+
+    <path id="component.test.3rdParty-dependencies">
+        <pathelement location="${junit.jar}"/>
+        <pathelement location="${SampleJar.jar}"/>
+    </path>
+
+</project>

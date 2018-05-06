@@ -1,0 +1,9 @@
+#property file defining the component's information
+component.name=Project Management
+component.distfilename=project_management
+component.package=com.topcoder.management.project
+component.packagedir=com/topcoder/management/project
+component.version.major=1
+component.version.minor=2
+component.version.micro=4
+component.version.build=1

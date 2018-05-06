@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<CMConfig>
+  <Config name="com.topcoder.management.deliverable.late.impl.LateDeliverableManagerImpl">
+    <Property name="loggerName">
+      <Value>myLogger</Value>
+    </Property>
+    <Property name="objectFactoryConfig">
+      <Property name="DatabaseLateDeliverablePersistence">
+        <Property name="type">
+          <Value>com.topcoder.management.deliverable.late.impl.persistence.DatabaseLateDeliverablePersistence</Value>
+        </Property>
+      </Property>
+    </Property>
+    <Property name="searchBundleManagerNamespace">
+      <Value>LateDeliverableManagerImpl.SearchBuilderManager</Value>
+    </Property>
+    <Property name="nonRestrictedSearchBundleName">
+      <Value>Non-restricted Late Deliverable Search Bundle</Value>
+    </Property>
+    <Property name="restrictedSearchBundleName">
+      <Value>Restricted Late Deliverable Search Bundle</Value>
+    </Property>
+    <Property name="persistenceKey">
+      <Value>DatabaseLateDeliverablePersistence</Value>
+    </Property>
+    <Property name="persistenceConfig">
+      <Property name="loggerName">
+        <Value>myLogger</Value>
+      </Property>
+      <Property name="dbConnectionFactoryConfig">
+        <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+          <Property name="connections">
+            <Property name="default">
+              <Value>myConnection</Value>
+            </Property>
+            <Property name="myConnection">
+              <Property name="producer">
+                  <Value>Invalid producer</Value>
+              </Property>
+              <Property name="parameters">
+                <Property name="jdbc_driver">
+                  <Value>com.informix.jdbc.IfxDriver</Value>
+                </Property>
+                <Property name="jdbc_url">
+                  <Value>jdbc:informix-sqli://localhost:9088/tcs_catalog:informixserver=ol_svr_custom</Value>
+                </Property>
+                <Property name="SelectMethod">
+                  <Value>cursor</Value>
+                </Property>
+                <Property name="user">
+                  <Value>informix</Value>
+                </Property>
+                <Property name="password">
+                  <Value>123456</Value>
+                </Property>
+              </Property>
+            </Property>
+          </Property>
+        </Property>
+      </Property>
+      <Property name="connectionName">
+        <Value>myConnection</Value>
+      </Property>
+    </Property>
+  </Config>
+</CMConfig>

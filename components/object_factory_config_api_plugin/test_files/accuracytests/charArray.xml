@@ -1,0 +1,15 @@
+<CMConfig>
+<Config name="charArray">
+	<Property name="charArray">
+		<Property name="arrayType">
+			<Value>char</Value>
+		</Property>
+		<Property name="dimension">
+			<Value>1</Value>
+		</Property>
+		<Property name="values">
+			<Value>{" ","\","{","}",",","''"}</Value>
+		</Property>
+	</Property>
+</Config>
+</CMConfig>

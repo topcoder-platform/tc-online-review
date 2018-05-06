@@ -1,0 +1,25 @@
+ 1. Added LateDeliverableType class.
+ 2. Added LateDeliverable#type property.
+ 3. Updated Search Builder configuration (see CS 3.3.1).
+ 4. Updated implementation notes of LateDeliverableManagerImpl#getLateDeliverables().
+ 5. Updated "Search Restricted Late Deliverables Sequence Diagram".
+ 6. Updated the demo to show LateDeliverableType usage (CS 4.3.2).
+ 7. Added LateDeliverableManager#getLateDeliverableTypes().
+ 8. Updated description of LateDeliverableManager (in both TCUML and CS).
+ 9. Added LateDeliverableManagerImpl#getLateDeliverableTypes().
+10. Added LateDeliverablePersistence#getLateDeliverableTypes().
+11. Updated description of LateDeliverablePersistence (in both TCUML and CS).
+12. Added DatabaseLateDeliverablePersistence#getLateDeliverableTypes().
+13. Updated description of DatabaseLateDeliverablePersistence (in both TCUML and CS).
+14. Added "Retrieve all late deliverable types" use case.
+15. Updated throws doc of LateDeliverableManager#update().
+16. Updated throws doc of LateDeliverableManagerImpl#update().
+17. Updated throws doc of LateDeliverablePersistence#update().
+18. Updated throws doc of DatabaseLateDeliverablePersistence#update().
+19. Updated implementation notes of DatabaseLateDeliverablePersistence#update().
+20. Updated "Update Late Deliverable in Persistence Sequence Diagram".
+21. Updated the demo to show LateDeliverableManager#getLateDeliverableTypes() usage (CS 4.3.2).
+22. Added LateDeliverableFilterBuilder#createLateDeliverableTypeIdFilter().
+23. Added "Create filter matching late deliverable type ID" use case.
+24. Mentioned LateDeliverableType in CS 1.1, 1.4 and 1.6.
+25. Updated implementation notes of LateDeliverable#toString().

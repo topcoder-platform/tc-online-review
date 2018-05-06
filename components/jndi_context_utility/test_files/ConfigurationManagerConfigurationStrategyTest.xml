@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<Config name="com.topcoder.naming.jndiutility.configstrategy.ConfigurationManagerConfigurationStrategyTest">
+    <Property name="property1">
+        <Value>value1</Value>
+    </Property>
+    <Property name="property2">
+        <Value>  </Value>
+    </Property>
+    <Property name="property4">
+        <Value>ONWGHOCKGZUOTQAXXMGQZNT</Value>
+    </Property>
+</Config>

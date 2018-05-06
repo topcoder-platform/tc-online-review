@@ -1,0 +1,51 @@
+<CMConfig>
+<Config name="namespace">
+  <Property name="test1">
+    <Property name="test2">
+      <Property name="test3">
+    <Value>1</Value>
+    <Value>2</Value>
+    <Value>3</Value>
+    <Value>4</Value>
+    <Value>5</Value>
+  </Property>
+  </Property>
+  </Property>
+</Config>
+<Config name="namespace2">
+  <Property name="test1">
+    <Value>1</Value>
+    <Value>2</Value>
+    <Value>3</Value>
+    <Value>4</Value>
+    <Value>5</Value>
+  </Property>
+</Config>
+<Config name="namespace3">
+  <Property name="test1">
+    <Value>1</Value>
+    <Value>2</Value>
+    <Value>3</Value>
+    <Value>4</Value>
+    <Value>5</Value>
+  </Property>
+</Config>
+<Config name="namespace4">
+  <Property name="test1">
+    <Value>1</Value>
+    <Value>2</Value>
+    <Value>3</Value>
+    <Value>4</Value>
+    <Value>5</Value>
+  </Property>
+</Config>
+<Config name="namespace5">
+  <Property name="test1">
+    <Value>1</Value>
+    <Value>2</Value>
+    <Value>3</Value>
+    <Value>4</Value>
+    <Value>5</Value>
+  </Property>
+</Config>
+</CMConfig>

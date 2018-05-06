@@ -1,0 +1,98 @@
+<?xml version="1.0" ?>  
+<CMConfig>
+  <Config name="com.topcoder.security.authenticationfactory.AuthenticationFactory">
+    <Property name="authenticators">
+      <!-- http authenticator -->
+      <Property name="https">          
+        <!-- the full qualified class name, required. -->
+        <Property name="class">
+          <Value>com.topcoder.security.authenticationfactory.http.basicimpl.HTTPBasicAuthenticator</Value>
+        </Property>
+        
+        <!-- the namespace to load configuration values, required. -->
+        <Property name="namespace">
+          <Value>com.topcoder.security.http.HTTPBasicAuthenticator</Value>
+        </Property>
+      </Property>
+      
+      <!-- another authenticator, only an demonstration here -->
+      <!-- anotherhttp authenticator -->
+      <Property name="https2">          
+        <!-- the full qualified class name, required. -->
+        <Property name="class">
+          <Value>com.topcoder.security.authenticationfactory.http.basicimpl.HTTPBasicAuthenticator</Value>
+        </Property>
+        
+        <!-- the namespace to load configuration values, required. -->
+        <Property name="namespace">
+          <Value>com.topcoder.security.http.HTTPBasicAuthenticator</Value>
+        </Property>
+      </Property>
+    </Property>
+  </Config>
+
+  <Config name="com.topcoder.security.http.HTTPBasicAuthenticator">
+    <!-- properties for the AbstractAuthenticator -->
+
+    <!-- default mappings, optional, if not specified, default mapping is empty -->
+    <Property name="default_mappings">
+      <Property name="protocol"><Value>http</Value></Property>
+      <Property name="port"><Value>80</Value></Property>
+      <Property name="host"><Value>www.topcoder.com</Value></Property>
+      <Property name="file"><Value>index.html</Value></Property>
+      <Property name="request_properties">
+        <Property name="accept"><Value>text/html</Value></Property>
+      </Property>
+    </Property>
+
+    <!-- principal key converter, optional, if not specified, DefaultKeyConverter is used. -->
+    <Property name="principal_key_converter">
+      <!-- full qualified class name for converter, required. -->
+      <Property name="class">
+        <Value>com.topcoder.security.authenticationfactory.DefaultKeyConverter</Value>
+      </Property>
+      <!-- namespace to create the converter, required. -->
+      <Property name="namespace">
+        <Value>com.topcoder.security.authenticationfactory.DefaultKeyConverter</Value>
+      </Property>
+    </Property>
+
+    <!-- cache factory, optional, if not specified, response is not cached.  -->
+    <Property name="cache_factory">
+      <Property name="class">
+        <Value>com.topcoder.security.authenticationfactory.TimeoutCacheFactory</Value>      
+      </Property>
+      <Property name="namespace">
+        <Value>com.topcoder.security.authenticationfactory.TimeoutCacheFactory</Value>
+      </Property>
+    </Property>
+  </Config>
+
+  <!-- properties for DefaultKeyConverter -->
+  <Config name="com.topcoder.security.authenticationfactory.DefaultKeyConverter">
+    <!-- mapping from the principal's key to Authenticator's key, optional. -->
+    <Property name="mappings">
+      <!-- the name contains authenticator's key, and the value contains principal's key. -->
+      <Property name="username">
+        <Value>UserName</Value>
+      </Property>
+      <Property name="password">
+        <Value>Pwd</Value>
+      </Property>
+    </Property>
+  </Config>
+
+  <!-- properties for TimeoutCacheFactory -->
+  <Config name="com.topcoder.security.authenticationfactory.TimeoutCacheFactory">
+    <!-- timeout in milli-seconds, non-negative long value, 0 means NO_TIMEOUT, required -->
+    <Property name="timeout">
+      <Value>1000</Value>
+    </Property>
+  </Config>
+
+  <Config name="com.topcoder.security.CustomNamespace">
+    <!-- use default values for AbstractAuthenticator, 
+         it will create the DefaultKeyConverter using 
+         'com.topcoder.security.CustomNamespace' namespace -->
+  </Config>
+</CMConfig>

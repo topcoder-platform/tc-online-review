@@ -1,0 +1,22 @@
+<CMConfig>
+  <Config name="test_namespace">
+    <Property name="connections">
+    <Property name="default">
+      <Value>dummyJDBC</Value>
+    </Property>
+    <Property name="dummyJDBC">
+      <Property name="producer">
+        <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+      </Property>
+      <Property name="parameters">
+        <Property name="jdbc_url">
+          <Value>dummy:From JDBC</Value>
+        </Property>
+        <Property name="jdbc_driver">
+          <Value>com.topcoder.db.connectionfactory.stresstests.DummyDriver</Value>
+        </Property>
+      </Property>
+    </Property>
+    </Property>
+  </Config>
+</CMConfig>

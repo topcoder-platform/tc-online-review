@@ -1,0 +1,162 @@
+2010-07-11 20:20:02.799
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_5_5" 1 times in 1 thread, cost 703 milliseconds
+
+2010-07-11 20:20:28.625
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_5_5" 25 times in 5 thread, cost 7,640 milliseconds
+
+2010-07-11 20:21:24.853
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_String_LongArray_Date_5_5" 25 times in 5 thread, cost 7,296 milliseconds
+
+2010-07-11 20:21:36.618
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_String_LongArray_Date_2_20" 40 times in 2 thread, cost 10,890 milliseconds
+
+2010-07-11 20:22:34.315
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_String_LongArray_Date_2_100" 200 times in 2 thread, cost 56,432 milliseconds
+
+2010-07-11 20:22:41.111
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_String_LongArray_Long_Long_Date_5_5" 25 times in 5 thread, cost 5,780 milliseconds
+
+2010-07-11 20:22:55.75
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_String_LongArray_Long_Long_Date_2_20" 40 times in 2 thread, cost 13,701 milliseconds
+
+2010-07-11 20:23:55.09
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_String_LongArray_Long_Long_Date_2_100" 200 times in 2 thread, cost 58,340 milliseconds
+
+2010-07-11 20:24:02.59
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_String_LongArray_5_5" 25 times in 5 thread, cost 6,609 milliseconds
+
+2010-07-11 20:24:13.902
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_String_LongArray_2_20" 40 times in 2 thread, cost 10,406 milliseconds
+
+2010-07-11 20:25:19.476
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_String_LongArray_2_100" 200 times in 2 thread, cost 64,637 milliseconds
+
+2010-07-11 20:25:27.117
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_5_5" 25 times in 5 thread, cost 6,735 milliseconds
+
+2010-07-11 20:25:38.257
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_heavy_load_2_20" 40 times in 2 thread, cost 10,156 milliseconds
+
+2010-07-11 20:27:04.002
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_heavy_load_2_100" 200 times in 2 thread, cost 84,792 milliseconds
+
+2010-07-11 20:27:04.612
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_5" 5 times in 1 thread, cost 16 milliseconds
+
+2010-07-11 20:27:05.158
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_50" 50 times in 1 thread, cost 468 milliseconds
+
+2010-07-11 20:27:06.83
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_100" 100 times in 1 thread, cost 1,609 milliseconds
+
+2010-07-11 20:27:08.486
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_500" 100 times in 1 thread, cost 1,578 milliseconds
+
+2010-07-11 20:27:15.861
+Perform "com.topcoder.project.phases.template.stresstests.DBPhaseTemplatePersistenceStressTests#test_generatePhases_1_5" 5 times in 1 thread, cost 4,812 milliseconds
+
+2010-07-11 20:27:50.75
+Perform "com.topcoder.project.phases.template.stresstests.DBPhaseTemplatePersistenceStressTests#test_generatePhases_1_50" 50 times in 1 thread, cost 32,858 milliseconds
+
+2010-07-11 20:28:26.436
+Perform "com.topcoder.project.phases.template.stresstests.DBPhaseTemplatePersistenceStressTests#test_generatePhases_1_100" 100 times in 1 thread, cost 33,155 milliseconds
+
+2010-07-11 20:31:56.007
+Perform "com.topcoder.project.phases.template.stresstests.DBPhaseTemplatePersistenceStressTests#test_generatePhases_1_500" 500 times in 1 thread, cost 206,400 milliseconds
+
+2010-07-12 10:34:08.702
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_5" 5 times in 1 thread, cost 31 milliseconds
+
+2010-07-12 10:34:09.046
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_50" 50 times in 1 thread, cost 328 milliseconds
+
+2010-07-12 10:34:10.311
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_100" 100 times in 1 thread, cost 1,250 milliseconds
+
+2010-07-12 10:34:11.546
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_500" 100 times in 1 thread, cost 1,219 milliseconds
+
+2010-07-12 10:38:56.796
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_5" 5 times in 1 thread, cost 31 milliseconds
+
+2010-07-12 10:38:57.14
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_50" 50 times in 1 thread, cost 329 milliseconds
+
+2010-07-12 10:38:58.39
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_100" 100 times in 1 thread, cost 1,235 milliseconds
+
+2010-07-12 10:38:59.655
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_500" 100 times in 1 thread, cost 1,250 milliseconds
+
+2010-07-12 10:40:09.124
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_5" 5 times in 1 thread, cost 16 milliseconds
+
+2010-07-12 10:40:09.483
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_50" 50 times in 1 thread, cost 343 milliseconds
+
+2010-07-12 10:40:10.733
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_100" 100 times in 1 thread, cost 1,250 milliseconds
+
+2010-07-12 10:40:11.983
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_500" 100 times in 1 thread, cost 1,234 milliseconds
+
+2010-07-12 10:44:19.171
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_String_LongArray_Date_5_5" 25 times in 5 thread, cost 1,031 milliseconds
+
+2010-07-12 10:44:21.374
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_String_LongArray_Date_2_20" 40 times in 2 thread, cost 1,797 milliseconds
+
+2010-07-12 10:44:31.936
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_String_LongArray_Date_2_100" 200 times in 2 thread, cost 10,093 milliseconds
+
+2010-07-12 10:44:36.202
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_String_LongArray_Long_Long_Date_5_5" 25 times in 5 thread, cost 2,500 milliseconds
+
+2010-07-12 10:44:38.296
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_String_LongArray_Long_Long_Date_2_20" 40 times in 2 thread, cost 1,672 milliseconds
+
+2010-07-12 10:44:46.624
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_String_LongArray_Long_Long_Date_2_100" 200 times in 2 thread, cost 7,812 milliseconds
+
+2010-07-12 10:44:48.202
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_String_LongArray_5_5" 25 times in 5 thread, cost 984 milliseconds
+
+2010-07-12 10:44:50.14
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_String_LongArray_2_20" 40 times in 2 thread, cost 1,532 milliseconds
+
+2010-07-12 10:44:58.077
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_String_LongArray_2_100" 200 times in 2 thread, cost 7,484 milliseconds
+
+2010-07-12 10:44:59.483
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_5_5" 25 times in 5 thread, cost 1,000 milliseconds
+
+2010-07-12 10:45:01.436
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_heavy_load_2_20" 40 times in 2 thread, cost 1,562 milliseconds
+
+2010-07-12 10:45:09.421
+Perform "com.topcoder.project.phases.template.stresstests.ProjectPhaseStressTests#test_applyTemplate_heavy_load_2_100" 200 times in 2 thread, cost 7,563 milliseconds
+
+2010-07-12 10:45:09.468
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_5" 5 times in 1 thread, cost 0 milliseconds
+
+2010-07-12 10:45:09.796
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_50" 50 times in 1 thread, cost 313 milliseconds
+
+2010-07-12 10:45:11.015
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_100" 100 times in 1 thread, cost 1,219 milliseconds
+
+2010-07-12 10:45:12.218
+Perform "com.topcoder.project.phases.template.stresstests.XmlPhaseTemplatePersistenceStressTests#test_generatePhases_1_500" 100 times in 1 thread, cost 1,203 milliseconds
+
+2010-07-12 10:45:12.952
+Perform "com.topcoder.project.phases.template.stresstests.DBPhaseTemplatePersistenceStressTests#test_generatePhases_1_5" 5 times in 1 thread, cost 312 milliseconds
+
+2010-07-12 10:45:15.53
+Perform "com.topcoder.project.phases.template.stresstests.DBPhaseTemplatePersistenceStressTests#test_generatePhases_1_50" 50 times in 1 thread, cost 2,156 milliseconds
+
+2010-07-12 10:45:20.983
+Perform "com.topcoder.project.phases.template.stresstests.DBPhaseTemplatePersistenceStressTests#test_generatePhases_1_100" 100 times in 1 thread, cost 4,984 milliseconds
+
+2010-07-12 10:46:17.593
+Perform "com.topcoder.project.phases.template.stresstests.DBPhaseTemplatePersistenceStressTests#test_generatePhases_1_500" 500 times in 1 thread, cost 56,219 milliseconds
+

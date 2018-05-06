@@ -1,0 +1,8 @@
+<Config name="com.topcoder.naming.jndiutility.Demo">
+	<Property name="context.default.factory">
+		<Value>com.sun.jndi.fscontext.RefFSContextFactory</Value>
+	</Property>
+	<Property name="context.default.url">
+		<Value>file:test_files/test_root</Value>
+	</Property>
+</Config>

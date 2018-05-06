@@ -1,0 +1,40 @@
+<CMConfig>
+	<Config name="myObjectFactory">
+		<Property name="resourceManager">
+      		<Property name="type">
+        		<Value>com.cronos.onlinereview.services.uploads.impl.MockResourceManager</Value>
+      		</Property>
+      	</Property>
+      	<Property name="phaseManager">
+      		<Property name="type">
+        		<Value>com.cronos.onlinereview.services.uploads.impl.MockPhaseManager</Value>
+      		</Property>
+      	</Property>
+      	<Property name="projectManager">
+      		<Property name="type">
+        		<Value>com.cronos.onlinereview.services.uploads.impl.MockProjectManager</Value>
+      		</Property>
+      	</Property>
+      	<Property name="screeningManager">
+      		<Property name="type">
+        		<Value>com.cronos.onlinereview.services.uploads.impl.MockScreeningManager</Value>
+      		</Property>
+      	</Property>
+      	<Property name="uploadManager">
+      		<Property name="type">
+        		<Value>com.cronos.onlinereview.services.uploads.impl.MockUploadManager</Value>
+      		</Property>
+      	</Property>
+      	<Property name="managersProvider">
+      		<Property name="type">
+        		<Value>com.cronos.onlinereview.services.uploads.impl.DefaultManagersProvider</Value>
+      		</Property>
+      	</Property>
+      	<Property name="uploadServices">
+      		<Property name="type">
+        		<Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices</Value>
+      		</Property>
+      	</Property>
+	</Config>
+</CMConfig>
+	

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="dist" name="Dependency Import">
+    <!--property file defining the component's dependencies-->
+    <!--Properties used in compile_targets ANT target for JDK version x-->
+    <property name="component.target" value="1.4"/>
+    <property name="component.bootclasspath" value="${java_1_4_bootclasspath}"/>
+    <!--TCS dependencies-->
+    <property name="base_exception.jar" value="${tcs_libdir}/base_exception/2.0.0/base_exception.jar"/>
+    <property name="configmanager.jar" value="${tcs_libdir}/configuration_manager/2.1.5/configuration_manager.jar"/>
+	  <property name="data_validation.jar" value="${tcs_libdir}/data_validation/1.1.1/data_validation.jar"/>
+	  <property name="database_abstraction.jar" value="${tcs_libdir}/database_abstraction/1.1.0/database_abstraction.jar"/>
+	  <property name="db_connection_factory.jar" value="${tcs_libdir}/db_connection_factory/1.1.0/db_connection_factory.jar"/>
+    <property name="id_generator.jar" value="${tcs_libdir}/id_generator/3.0.0/id_generator.jar"/>
+    <property name="logging_wrapper.jar" value="${tcs_libdir}/logging_wrapper/1.2/logging_wrapper.jar"/>	  
+	  <property name="search_builder.jar" value="${tcs_libdir}/search_builder/1.4.0/search_builder.jar"/>
+    <!--3rd party dependencies-->
+    <property name="informix.jar" value="${ext_libdir}/informix/3.0/ifxjdbc.jar" />
+    <property name="junit.jar" value="${ext_libdir}/junit/3.8.2/junit.jar"/>
+    <!--Path declarations which are to be used in the master build file.-->
+    <path id="component.tcs-dependencies">
+        <pathelement location="${base_exception.jar}"/>
+        <pathelement location="${configmanager.jar}"/>
+        <pathelement location="${data_validation.jar}"/>
+        <pathelement location="${database_abstraction.jar}"/>
+        <pathelement location="${db_connection_factory.jar}"/>
+        <pathelement location="${id_generator.jar}"/>
+        <pathelement location="${logging_wrapper.jar}"/>
+        <pathelement location="${search_builder.jar}"/>
+    </path>
+    <path id="component.3rdParty-dependencies">
+        <pathelement location="${informix.jar}"/>
+    </path>
+    <path id="component.test.3rdParty-dependencies">
+        <pathelement location="${junit.jar}"/>
+    </path>
+</project>

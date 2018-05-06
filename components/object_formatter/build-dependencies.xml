@@ -1,0 +1,11 @@
+<project name="Dependency Import" default="dist" basedir=".">
+    <!-- 3rd party dependencies -->
+    <property name="junit.jar" value="${ext_libdir}/junit/3.8.2/junit.jar"/>
+
+    <!-- property file defining the component's dependencies -->
+    <path id="component.tcs-dependencies" />
+    <path id="component.3rdParty-dependencies" />
+    <path id="component.test.3rdParty-dependencies">
+        <pathelement location="${junit.jar}"/>
+    </path>
+</project>

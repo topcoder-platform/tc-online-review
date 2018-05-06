@@ -1,0 +1,9 @@
+#property file defining the components information
+component.name=Configuration API
+component.distfilename=configuration_api
+component.package=com.topcoder.configuration
+component.packagedir=com/topcoder/configuration
+component.version.major=1
+component.version.minor=1
+component.version.micro=0
+component.version.build=1

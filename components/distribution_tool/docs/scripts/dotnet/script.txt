@@ -1,0 +1,40 @@
+#define macroses
+define         : files     = %{script_dir}/files
+define         : comp_dir  = %{output_dir}/%{component_name}
+define         : tests_dir = %{comp_dir}/src/csharp/tests/%{package/name}
+
+#create distribution directories
+create_folder  : %{comp_dir}/conf
+create_folder  : %{comp_dir}/docs
+create_folder  : %{comp_dir}/test_files
+create_folder  : %{comp_dir}/src/csharp/main/%{package/name}
+create_folder  : %{tests_dir}/AccuracyTests
+create_folder  : %{tests_dir}/FailureTests
+create_folder  : %{tests_dir}/StressTests
+
+#copy file templates and replace macroses with the real values
+file_template  : %{files}/Build.version              -> %{comp_dir}/Build.version
+file_template  : %{files}/Component Name.sln         -> %{comp_dir}/%{Component Name}.sln
+file_template  : %{files}/AssemblyInfo.cs            -> %{comp_dir}/src/csharp/main/%{package/name}/AssemblyInfo.cs
+
+#copy files to the distribution
+copy_file      : %{files}/Build.dependencies         -> %{comp_dir}/Build.dependencies
+copy_file      : %{files}/Component Sources.csproj   -> %{comp_dir}/Component Sources.csproj
+copy_file      : %{files}/Component Tests.csproj     -> %{comp_dir}/Component Tests.csproj
+copy_file      : %{files}/README.txt                 -> %{comp_dir}/README.txt
+copy_file      : %{files}/TestFilesGoHere.txt        -> %{comp_dir}/test_files/TestFilesGoHere.txt
+copy_file      : %{files}/PutConfigFilesHere.txt     -> %{comp_dir}/conf/PutConfigFilesHere.txt
+copy_file      : %{files}/AddYourAccuracyTests.txt   -> %{tests_dir}/AccuracyTests/AddYourAccuracyTests.txt
+copy_file      : %{files}/AddYourFailureTests.txt    -> %{tests_dir}/FailureTests/AddYourFailureTests.txt
+copy_file      : %{files}/AddYourStressTests.txt     -> %{tests_dir}/StressTests/AddYourStressTests.txt
+
+#convert to PDF and copy Requirements Specification to the docs directory of the distribution
+convert_to_pdf : %{rs} -> %{comp_dir}/docs/%{Component_Name}_Requirements_Specification.pdf
+
+#copy additional documents if specified
+ifdef(additional_doc1) copy_file : %{additional_doc1} -> %{comp_dir}/docs/{FILENAME}.{EXT}
+ifdef(additional_doc2) copy_file : %{additional_doc2} -> %{comp_dir}/docs/{FILENAME}.{EXT}
+ifdef(additional_doc3) copy_file : %{additional_doc3} -> %{comp_dir}/docs/{FILENAME}.{EXT}
+
+#prepare design distribution
+execute        : MSBuild "Component Sources.csproj" /t:DesignDist :: %{comp_dir}

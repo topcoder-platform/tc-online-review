@@ -1,0 +1,9 @@
+#property file defining the components information
+component.name=Document Generator
+component.distfilename=document_generator
+component.package=com.topcoder.util.file
+component.packagedir=com/topcoder/util/file
+component.version.major=3
+component.version.minor=1
+component.version.micro=1
+component.version.build=1

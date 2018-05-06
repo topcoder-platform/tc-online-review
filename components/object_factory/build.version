@@ -1,0 +1,9 @@
+#property file defining the components information
+component.name=Object Factory
+component.distfilename=object_factory
+component.package=com.topcoder.util.objectfactory
+component.packagedir=com/topcoder/util/objectfactory
+component.version.major=2
+component.version.minor=2
+component.version.micro=0
+component.version.build=1

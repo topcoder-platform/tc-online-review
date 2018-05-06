@@ -1,0 +1,14 @@
+<p>
+Late Deliverable ID\: %LATE_DELIVERABLE_ID%<br/>
+Deadline\: %DEADLINE%<br/>
+Your current delay is\: %DELAY%<br/>
+Contest link\: <a href\="http\://software.topcoder.com/review/actions/ViewProjectDetails.do?pid\=%PROJECT_ID%">%PROJECT_NAME%</a><br/>
+%if:COMPENSATED_AND_REAL_DEADLINES_DIFFER = 'true'%
+<b>Note that the deadline was compensated due to the dependency phases having ended prematurely.<br/>
+The compensated deadline is %COMPENSATED_DEADLINE%</b><br/>
+%endif%
+%if:EXPLANATION_CAN_BE_SENT = 'true'%
+<b>You must provide an explanation for this late deliverable in OR!</b><br/>
+Deadline for providing an explanation\: %EXPLANATION_DEADLINE%
+%endif%
+</p>

@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<CMConfig>
+
+    <Config name="com.cronos.onlinereview.login.LoginActions">
+        <Property name="auth_response_parser">
+            <Property name="class">
+                <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthResponseParser</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthResponseParser</Value>
+            </Property>
+        </Property>
+
+        <Property name="authenticator_name">
+            <Value>MockAuthenticator</Value>
+        </Property>
+
+        <Property name="logger_name">
+            <Value>logingActionsLoggerName</Value>
+        </Property>
+    </Config>
+</CMConfig>

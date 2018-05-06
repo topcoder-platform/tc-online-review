@@ -1,0 +1,31 @@
+<CMConfig>
+<Config name="IntegerArray">
+	<Property name="IntegerArray">
+		<Property name="arrayType">
+			<Value>java.lang.Integer</Value>
+		</Property>
+		<Property name="dimension">
+			<Value>1</Value>
+		</Property>
+		<Property name="values">
+			<Value>{integer:default, null}</Value>            
+		</Property>
+	</Property>
+	
+	<Property name="integer:default">
+		<Property name="type">
+			<Value>java.lang.Integer</Value>
+		</Property>		
+		<Property name="params">
+			<Property name="param1">
+				<Property name="type">
+					<Value>int</Value>
+				</Property>
+				<Property name="value">
+					<Value>100</Value>
+				</Property>
+			</Property>
+		</Property>
+	</Property>
+</Config>
+</CMConfig>

@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<CMConfig>
+    <Config name="com.cronos.onlinereview.external.impl.DBUserRetrieval">
+        <!-- the forum type to match in the comp_forum_xref table -->
+        <Property name="forumType">
+            <Value>5</Value>
+        </Property>
+
+        <Property name="connName">
+            <Value>UserProjectDataStoreConnection</Value>
+        </Property>
+
+        <!-- the DB Connection Factory configuration can be here as well -->
+        <Property name="connections">
+
+            <Property name="default">
+                <Value>UserProjectDataStoreConnection</Value>
+            </Property>
+
+            <Property name="UserProjectDataStoreConnection">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>jdbc:informix-sqli://127.0.0.1:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>informix</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>topcoder</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+</CMConfig> 

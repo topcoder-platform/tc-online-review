@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>  
+<CMConfig>
+
+<Config name="com.topcoder.security.authenticationfactory.stresstests">
+
+          <Property name="protocol"><Value>http</Value></Property>
+          <Property name="port"><Value>8080</Value></Property>
+          <Property name="host"><Value>localhost</Value></Property>
+          <Property name="path"><Value>/webapp1/index.html</Value></Property>
+</Config>
+
+</CMConfig>

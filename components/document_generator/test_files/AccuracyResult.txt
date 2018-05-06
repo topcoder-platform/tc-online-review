@@ -1,0 +1,46 @@
+Hello someone,
+This email details the Design Review Board assignments for the
+week of 9/4
+Application Dates: Screening 9/5 - 9/11, Review 9/12 - 9/16,
+Aggregation 9/17 - 9/19, Final Review 9/20 - 9/25
+
+Component: HTTP Utility 1.0
+
+Primary/Failure: handle1 Pay - 100
+This is a test.
+
+
+Stress: handle2 Pay - 70
+This is a test.
+
+
+Accuracy: handle3 Pay - 70
+This is a test.
+
+Note that this accuracy reviewer is evilisneo.
+
+
+Product Manager: somepm
+
+Component: Document Generator 2.0
+
+Primary/Failure: handle4 Pay - 100
+This is a test.
+
+
+Stress: handle1 Pay - 70
+This is a test.
+
+
+Accuracy: handle5 Pay - 70
+This is a test.
+
+Note that this accuracy reviewer is evilisneo.
+
+
+Product Manager: somepm
+
+----------------------------
+As always, please let us know if you will be unavailable to participate in reviews in the coming weeks.
+Thank you,
+TopCoder Software

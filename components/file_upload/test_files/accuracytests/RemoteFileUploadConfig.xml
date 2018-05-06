@@ -1,0 +1,25 @@
+<CMConfig>
+	<Config name="RemoteFileUploadConfig">
+		<Property name="single_file_limit">
+			<Value>10000</Value>
+		</Property>
+		<Property name="total_file_limit">
+			<Value>20000</Value>
+		</Property>
+		<Property name="temp_dir">
+			<Value>test_files/accuracytests/temp/</Value>
+		</Property>
+		<Property name="ip_address">
+			<Value>127.0.0.1</Value>
+		</Property>
+		<Property name="port">
+			<Value>9998</Value>
+		</Property>
+		<Property name="message_namespace">
+			<Value>com.topcoder.processor.ipserver.message</Value>
+		</Property>
+		<Property name="handler_id">
+			<Value>HanderId</Value>
+		</Property>
+	</Config>
+</CMConfig>

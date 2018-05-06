@@ -1,0 +1,7 @@
+<p>
+%USER_HANDLE%, your review application has been approved. Details are provided below.
+Project ID\: %PROJECT_ID%
+Project Name\: %PROJECT_NAME%
+Project Version\: %PROJECT_VERSION%
+Review application role\: %REVIEW_APPLICATION_ROLE_NAME%
+</p>

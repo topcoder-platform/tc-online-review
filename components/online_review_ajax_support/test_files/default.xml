@@ -1,0 +1,28 @@
+<CMConfig>
+    <Config name="com.cronos.onlinereview.ajax">
+        <!-- defining the user id attribute name -->
+        <Property name="UserIdAttributeName">
+            <Value>UserId</Value>
+        </Property>
+
+        <!-- defining the Ajax request handlers names -->
+        <Property name="Handlers">
+            <Value>SetScorecardStatus</Value>
+            <Value>LoadTimelineTemplate</Value>
+            <Value>SetTimelineNotification</Value>
+            <Value>PlaceAppeal</Value>
+            <Value>ResolveAppeal</Value>
+        </Property>
+    </Config>
+    <Config name="com.topcoder.util.log">
+        <!-- The Log implementation class -->
+        <Property name="logClass">
+            <Value>com.cronos.onlinereview.ajax.MockLog</Value>
+        </Property>
+
+        <!-- Additional property file required by the logging implementation -->
+        <!-- <Property name="config.file">
+              <Value>conf/jdk14logging.properties</Value>
+      </Property> -->
+    </Config>
+</CMConfig>

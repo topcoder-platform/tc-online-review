@@ -1,0 +1,9 @@
+#property file defining the component's information
+component.name=User Project Data Store
+component.distfilename=user_project_data_store
+component.package=com.cronos.onlinereview.external
+component.packagedir=com/cronos/onlinereview/external
+component.version.major=1
+component.version.minor=1
+component.version.micro=2
+component.version.build=1

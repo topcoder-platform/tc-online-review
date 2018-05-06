@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CMConfig>
+    <Config name="com.topcoder.management.phase.autopilot.AutoPilotJob">
+    <Property name="com/topcoder/management/phase/autopilot/AutoPilotJob">
+        <Property name="type">
+            <Value>com.topcoder.management.phase.autopilot.AutoPilotJob</Value>
+        </Property>
+        <Property name="params">
+        </Property>
+    </Property>
+    </Config>
+
+    <Config name="AutoPilotJob">
+        <Property name="AutoPilotJob">
+            <Value>StartDTG:July 20, 2006 12:00:00 AM</Value>
+            <Value>EndDTG:</Value>
+            <Value>IntervalValue:5</Value>
+            <Value>IntervalUnit:MINUTE</Value>
+            <Value>JobType:JOB_TYPE_JAVA_CLASS</Value>
+            <Value>JobCmd:com.topcoder.management.phase.autopilot.AutoPilotJob</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.management.phase.autopilot.AutoPilot">
+        <Property name="com/topcoder/management/phase/autopilot/AutoPilotSource">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.impl.ActiveAutoPilotSource</Value>
+            </Property>
+            <Property name="params">
+            </Property>
+        </Property>
+        <Property name="com/topcoder/management/phase/autopilot/ProjectPilot">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot</Value>
+            </Property>
+            <Property name="params">
+            </Property>
+        </Property>
+    </Config>
+    <Config name="com.topcoder.management.phase.autopilot.impl.ActiveAutoPilotSource">
+        <Property name="com/topcoder/management/project/ProjectManager">
+            <Property name="type">
+                <Value>com.topcoder.management.project.ProjectManagerImpl2</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>project_manager</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+    <Config name="com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot">
+        <Property name="com/topcoder/management/phase/PhaseManager">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.DefaultPhaseManager2</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>project_pilot</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+    <Config name="com.topcoder.util.log">
+        <Property name="logClass">
+            <Value>com.topcoder.util.log.basic.BasicLog</Value>
+        </Property>
+        <Property name="basic.log.target">
+            <Value>System.err</Value>
+        </Property>
+    </Config>
+</CMConfig>

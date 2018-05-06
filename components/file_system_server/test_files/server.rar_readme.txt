@@ -1,0 +1,3 @@
+please extract server.rar to test_files/server
+
+there are more than 2 thousand small files, it is very hard to check in with svn one by one.

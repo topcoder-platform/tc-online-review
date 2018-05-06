@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<CMConfig>
+    <property name="locale.language">
+        <value>en</value>
+    </property>
+    <property name="endTime.hours">
+        <value>16</value>
+    </property>
+    <property name="isSundayWorkday">
+        <value>false</value>
+    </property>
+    <property name="nonWorkdays">
+        <value>Jan 10, 2005</value>
+        <value>Jan 20, 2005</value>
+        <value>Jan 15, 2005</value>
+        <value>Jan 23, 2005</value>
+    </property>
+    <property name="endTime.minutes">
+        <value>30</value>
+    </property>
+    <property name="locale.variant">
+        <value></value>
+    </property>
+    <property name="startTime.hours">
+        <value>8</value>
+    </property>
+    <property name="isSaturdayWorkday">
+        <value>true</value>
+    </property>
+    <property name="startTime.minutes">
+        <value>0</value>
+    </property>
+    <property name="locale.country">
+        <value>US</value>
+    </property>
+</CMConfig>

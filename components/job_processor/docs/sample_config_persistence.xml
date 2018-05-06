@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CMConfig>
+
+    <Property name="jobName07">
+        <Property name="StartDate"><Value>May 5, 2006</Value></Property>
+	  <Property name="StartTime"><Value>05:00:00 AM</Value></Property>
+        <Property name="EndDate"><Value>May 5, 2007 05:00:00 AM</Value></Property>
+        <Property name="JobType"><Value>JOB_TYPE_EXTERNAL</Value></Property>
+        <Property name="JobCmd"><Value>dir</Value></Property>
+        <Property name="Active"><Value>true</Value></Property>
+        <Property name="Recurrence"><Value>5</Value></Property>
+
+        <Property name="Interval">
+	      <Property name="Value"><Value>2</Value></Property>
+            <Property name="Unit">
+                <Property name="IntervalUnit"><Value>com.topcoder.util.scheduler.scheduling.Week</Value></Property>
+	      </Property>
+        </Property>
+
+        <Property name="ModificationDate"><Value>Jan 5, 2007 05:00:00 AM</Value></Property>
+    </Property>
+
+    <Property name="newJobName01">    <!-- a job only has a dependence -->
+        <Property name="JobType"><Value>JOB_TYPE_JAVA_CLASS</Value></Property>
+        <Property name="JobCmd"><Value>com.topcoder.util.scheduler.MyJob</Value></Property>
+        <Property name="Active"><Value>true</Value></Property>
+        <Property name="ModificationDate"><Value>Jan 5, 2007 05:00:00 AM</Value></Property>
+
+        <Property name="Dependence">
+            <Property name="jobName07">
+                <Property name="Status"><VALUE>SUCCESSFUL</VALUE></Property> <!-- can be SUCCESSFUL, FAILED or BOTH -->
+                <Property name="Delay"><VALUE>10000</VALUE></Property> <!-- <VALUE>10000<VALUE> ms = 10s -->
+            </Property>
+        </Property>
+
+        <Property name="Messages">
+            <Property name="SUCCESSFUL">
+                <Property name="TemplateFileName"><Value>c:\template1.txt</Value></Property>
+                <Property name="Recipients">
+                    <Value>rec1@topcoder.com</Value>
+                    <Value>rec2@topcoder.com</Value>
+                </Property>
+
+            </Property>
+
+            <Property name="FAILED">
+                <Property name="TemplateFileName"><Value>c:\template2.txt</Value></Property>
+                <Property name="Recipients">
+                    <Value>rec1@topcoder.com</Value>
+                    <Value>rec2@topcoder.com</Value>
+                </Property>
+
+            </Property>
+
+            <Property name="NOT_STARTED">
+                <Property name="TemplateFileName"><Value>c:\template3.txt</Value></Property>
+                <Property name="Recipients">
+                    <Value>rec1@topcoder.com</Value>
+                </Property>
+
+            </Property>
+
+        </Property>
+    </Property>
+
+
+    <!-- Defined Groups -->
+    <Property name="DefinedGroups">
+        <Property name="group_1"> <!-- group name -->
+            <Property name="Jobs"> <!-- must have one job -->
+                <Value>newJobName01</Value>
+                <Value>newJobName03</Value>
+            </Property>
+            <Property name="Messages"> <!-- Email Event handlers in this group, optional -->
+                <Property name="SUCCESSFUL">
+                    <Property name="TemplateFileName"><Value>c:\template1.txt</Value></Property>
+                    <Property name="Recipients">
+                        <Value>rec1@topcoder.com</Value>
+                        <Value>rec2@topcoder.com</Value>
+                    </Property>
+
+                </Property>
+
+                <Property name="FAILED">
+                    <Property name="TemplateFileName"><Value>c:\template2.txt</Value></Property>
+                    <Property name="Recipients">
+                        <Value>rec1@topcoder.com</Value>
+                        <Value>rec2@topcoder.com</Value>
+                    </Property>
+
+                </Property>
+
+                <Property name="NOT_STARTED">
+                    <Property name="TemplateFileName"><Value>c:\template3.txt</Value></Property>
+                    <Property name="Recipients">
+                        <Value>rec1@topcoder.com</Value>
+                    </Property>
+
+                </Property>
+
+            </Property>
+        </Property>
+
+    </Property>
+
+</CMConfig>

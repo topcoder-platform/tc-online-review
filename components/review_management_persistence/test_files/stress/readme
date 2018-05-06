@@ -1,0 +1,6 @@
+1. To run the stress in multithreaded environment, please make sure the lock mode for all tables are ROW.
+(Default mode is PAGE !)
+
+You can use the ddl.sql provided in this directory to build the database.
+
+Thanks.

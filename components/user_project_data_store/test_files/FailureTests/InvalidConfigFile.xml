@@ -1,0 +1,193 @@
+<CMConfig>
+
+    <!-- Missing connName -->
+    <Config name="invalid1">
+        <Property name="forumType">
+            <Value>2</Value>
+        </Property>
+
+        <Property name="connName">
+            <Value>unknown</Value>
+        </Property>
+
+        <Property name="connections">
+
+            <Property name="default">
+                <Value>UserProjectDataStoreConnection</Value>
+            </Property>
+
+            <Property name="UserProjectDataStoreConnection">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>jdbc:informix-sqli://192.168.178.20:1526/user_project:informixserver=ol_topcoder</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>informix</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>sa</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+
+
+    <!-- Empty connName -->
+    <Config name="invalid2">
+        <Property name="forumType">
+            <Value>2</Value>
+        </Property>
+
+        <Property name="connName">
+            <Value>  </Value>
+        </Property>
+
+        <Property name="connections">
+
+            <Property name="default">
+                <Value>UserProjectDataStoreConnection</Value>
+            </Property>
+
+            <Property name="UserProjectDataStoreConnection">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>jdbc:informix-sqli://192.168.178.20:1526/user_project:informixserver=ol_topcoder</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>informix</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>sa</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+
+
+    <!-- Missing default Connection and connName -->
+    <Config name="invalid3">
+        <Property name="forumType">
+            <Value>2</Value>
+        </Property>
+
+        <Property name="connections">
+
+            <Property name="UserProjectDataStoreConnection">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>jdbc:informix-sqli://192.168.178.20:1526/user_project:informixserver=ol_topcoder</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>informix</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>sa</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+
+
+    <!-- forumType cannot be parsed -->
+    <Config name="invalid4">
+        <Property name="forumType">
+            <Value>foobar</Value>
+        </Property>
+
+        <Property name="connName">
+            <Value>UserProjectDataStoreConnection</Value>
+        </Property>
+
+        <Property name="connections">
+
+            <Property name="default">
+                <Value>UserProjectDataStoreConnection</Value>
+            </Property>
+
+            <Property name="UserProjectDataStoreConnection">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>jdbc:informix-sqli://192.168.178.20:1526/user_project:informixserver=ol_topcoder</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>informix</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>sa</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+
+
+    <!-- Negative forumType -->
+    <Config name="invalid5">
+        <Property name="forumType">
+            <Value>-1</Value>
+        </Property>
+
+        <Property name="connName">
+            <Value>UserProjectDataStoreConnection</Value>
+        </Property>
+
+        <Property name="connections">
+
+            <Property name="default">
+                <Value>UserProjectDataStoreConnection</Value>
+            </Property>
+
+            <Property name="UserProjectDataStoreConnection">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>jdbc:informix-sqli://192.168.178.20:1526/user_project:informixserver=ol_topcoder</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>informix</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>sa</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+</CMConfig>

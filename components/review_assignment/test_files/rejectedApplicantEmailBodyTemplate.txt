@@ -1,0 +1,6 @@
+<p>
+%USER_HANDLE%, your review application has been rejected. Details are provided below.
+Project ID\: %PROJECT_ID%
+Project Name\: %PROJECT_NAME%
+Project Version\: %PROJECT_VERSION%
+</p>

@@ -1,0 +1,164 @@
+<CMConfig>
+<Config name="com.cronos.onlinereview.phases.ManagerHelper">
+	<Property name="ProjectManager">
+		<Property name="ClassName">
+			<Value>com.topcoder.management.project.ProjectManagerImpl</Value>
+		</Property>
+		<Property name="Namespace">
+			<Value>com.topcoder.management.project.ProjectManagerImpl</Value>
+		</Property>
+	</Property>
+
+    <Property name="ProjectLinkManager">
+            <Property name="ClassName">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
+            </Property>
+            <Property name="Namespace">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManager</Value>
+            </Property>
+        </Property>
+
+	<Property name="PhaseManager">
+		<Property name="ClassName">
+			<Value>com.topcoder.management.phase.DefaultPhaseManager</Value>
+		</Property>
+		<Property name="Namespace">
+			<Value>com.topcoder.management.phase.DefaultPhaseManager</Value>
+		</Property>
+	</Property>
+
+	<Property name="ReviewManager">
+		<Property name="ClassName">
+			<Value>com.topcoder.management.review.DefaultReviewManager</Value>
+		</Property>
+		<Property name="Namespace">
+			<Value>com.topcoder.management.review.DefaultReviewManager</Value>
+		</Property>
+	</Property>
+
+	<Property name="ScorecardManager">
+		<Property name="ClassName">
+			<Value>com.topcoder.management.scorecard.ScorecardManagerImpl</Value>
+		</Property>
+		<Property name="Namespace">
+			<Value>com.topcoder.management.scorecard.ScorecardManagerImpl</Value>
+		</Property>
+	</Property>
+
+	<Property name="ScreeningManager">
+		<Property name="Namespace">
+			<Value>com.cronos.onlinereview.autoscreening.management.DefaultDBScreeningManager</Value>
+		</Property>
+	</Property>
+
+	<Property name="ConnectionFactoryNS">
+		<Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+	</Property>
+
+	<Property name="ConnectionName">
+		<Value>informix_connection</Value>
+	</Property>
+
+	<Property name="SearchBundleManagerNS">
+		<Value>com.topcoder.search.builder.Upload_Resource_Search</Value>
+	</Property>
+
+	<Property name="ResourceManager">
+		<Property name="ClassName">
+			<Value>com.topcoder.management.resource.persistence.PersistenceResourceManager</Value>
+		</Property>
+		<Property name="ResourceSearchBundleName">
+			<Value>ResourceSearchBundle</Value>
+		</Property>
+		<Property name="ResourceRoleSearchBundleName">
+			<Value>ResourceRoleSearchBundle</Value>
+		</Property>
+		<Property name="NotificationSearchBundleName">
+			<Value>NotificationSearchBundle</Value>
+		</Property>
+		<Property name="NotificationTypeSearchBundleName">
+			<Value>NotificationTypeSearchBundle</Value>
+		</Property>
+		<Property name="ResourceIdGeneratorName">
+			<Value>resource_id_seq</Value>
+		</Property>
+		<Property name="NotificationTypeIdGeneratorName">
+			<Value>notification_type_id_seq</Value>
+		</Property>
+		<Property name="ResourceRoleIdGeneratorName">
+			<Value>resource_role_id_seq</Value>
+		</Property>
+		<Property name="PersistenceClassName">
+			<Value>com.topcoder.management.resource.persistence.sql.SqlResourcePersistence</Value>
+		</Property>
+	</Property>
+
+	<Property name="UploadManager">
+		<Property name="ClassName">
+			<Value>com.topcoder.management.deliverable.PersistenceUploadManager</Value>
+		</Property>
+		<Property name="UploadSearchBundleName">
+			<Value>UploadSearchBundle</Value>
+		</Property>
+		<Property name="SubmissionSearchBundleName">
+			<Value>SubmissionSearchBundle</Value>
+		</Property>
+		<Property name="UploadIdGeneratorName">
+			<Value>upload_id_seq</Value>
+		</Property>
+		<Property name="UploadTypeIdGeneratorName">
+			<Value>upload_type_id_seq</Value>
+		</Property>
+		<Property name="UploadStatusIdGeneratorName">
+			<Value>upload_status_id_seq</Value>
+		</Property>
+		<Property name="SubmissionIdGeneratorName">
+			<Value>submission_id_seq</Value>
+		</Property>
+		<Property name="SubmissionStatusIdGeneratorName">
+			<Value>submission_status_id_seq</Value>
+		</Property>
+		<Property name="PersistenceClassName">
+			<Value>com.topcoder.management.deliverable.persistence.sql.SqlUploadPersistence</Value>
+		</Property>
+	</Property>
+
+	<Property name="UserProjectDataStore">
+		<Property name="UserRetrievalClassName">
+			<Value>com.cronos.onlinereview.external.impl.DBUserRetrieval</Value>
+		</Property>
+		<Property name="UserRetrievalNamespace">
+			<Value>com.cronos.onlinereview.external</Value>
+		</Property>
+	</Property>
+
+	<Property name="ScorecardAggregator">
+		<Property name="Namespace">
+			<Value>com.topcoder.management.review.scoreaggregator.ReviewScoreAggregator</Value>
+		</Property>
+	</Property>
+	
+	<Property name="ProjectDetailsURL">
+		<Value>http://www.topcoder.com/tc?projectDetails=?</Value>
+	</Property>
+
+</Config>
+
+  <Config name="com.topcoder.management.project.persistence.link.ProjectLinkManager">
+        <!-- The DBConnectionFactory class name used to create DB Connection Factory, required -->
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <!-- the connection name to retrieve connection in DB Connection Factory, required -->
+        <Property name="ConnectionName">
+            <Value>informix_connection</Value>
+        </Property>
+    </Config>
+
+
+        <Config name="com.topcoder.util.log">
+        <Property name="logClass">
+            <Value>com.topcoder.util.log.log4j.Log4jLog</Value>
+        </Property>
+    </Config>
+    </CMConfig>

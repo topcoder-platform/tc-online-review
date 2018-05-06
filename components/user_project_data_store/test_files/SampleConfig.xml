@@ -1,0 +1,112 @@
+<CMConfig>
+
+    <Config name="com.cronos.onlinereview.external">
+        <!-- the forum type to match in the comp_forum_xref table -->
+        <Property name="forumType">
+            <Value>5</Value>
+        </Property>
+
+        <Property name="connName">
+            <Value>UserProjectDataStoreConnection</Value>
+        </Property>
+
+        <!-- the DB Connection Factory configuration can be here as well -->
+        <Property name="connections">
+
+            <Property name="default">
+                <Value>UserProjectDataStoreConnection</Value>
+            </Property>
+
+            <Property name="UserProjectDataStoreConnection">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>jdbc:informix-sqli://192.168.178.20:1526/user_project:informixserver=ol_topcoder</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>informix</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>sa</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+    <Config name="com.cronos.onlinereview.external.ForumTypeNotDefined">
+        <!-- the forum type is not defined here. -->
+
+        <Property name="connName">
+            <Value>UserProjectDataStoreConnection</Value>
+        </Property>
+
+        <!-- the DB Connection Factory configuration can be here as well -->
+        <Property name="connections">
+
+            <Property name="default">
+                <Value>UserProjectDataStoreConnection</Value>
+            </Property>
+
+            <Property name="UserProjectDataStoreConnection">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>jdbc:informix-sqli://192.168.178.20:1526/user_project:informixserver=ol_topcoder</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>informix</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>sa</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- defines the values for the RatingType enum -->
+    <Config name="com.cronos.onlinereview.external.RatingType">
+    	<Property name="Architecture">
+            <Value>118</Value>
+        </Property>
+        <Property name="Assembly">
+            <Value>125</Value>
+        </Property>
+        <Property name="Conceptualization">
+            <Value>134</Value>
+        </Property>
+        <Property name="Design">
+            <Value>112</Value>
+        </Property>
+        <Property name="Development">
+            <Value>113</Value>
+        </Property>
+        <Property name="RIA Build">
+            <Value>135</Value>
+        </Property>
+		<Property name="Specification">
+            <Value>117</Value>
+        </Property>
+        <Property name="Test Scenarios">
+            <Value>137</Value>
+        </Property>
+        <Property name="Test Suites">
+            <Value>124</Value>
+        </Property>
+        <Property name="UI Prototype">
+            <Value>130</Value>
+        </Property>
+    </Config>
+
+</CMConfig>

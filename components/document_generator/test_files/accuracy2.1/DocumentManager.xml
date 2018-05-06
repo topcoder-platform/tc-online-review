@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<CMConfig>
+<Property name="com.topcoder.util.file">
+<Value>test_files/accuracy2.1/accuracy_config.xml</Value>
+</Property>
+</CMConfig>

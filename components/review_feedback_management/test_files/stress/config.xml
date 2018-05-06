@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<CMConfig>
+  <Config name="com.topcoder.management.reviewfeedback">
+    <property name="logName">
+      <value>com.topcoder.management.reviewfeedback</value>
+    </property>
+    <property name="dbConnectionName">
+      <value>TCSCatalog</value>
+    </property>
+   </Config>
+   
+    <Config name="dbConnectionFactoryConfiguration">
+      <!-- Configuration for DBConnectionFactoryImpl should be placed here. It must have "TCSCatalog" connection configured. -->
+	    <Property name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+	        <Property name="connections">
+	            <Property name="default">
+	                <Value>TCSCatalog</Value>
+	            </Property>
+	            <Property name="TCSCatalog">
+	                <Property name="producer">
+	                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+	                </Property>
+	                <Property name="parameters">
+	                    <Property name="jdbc_driver">
+	                        <Value>com.informix.jdbc.IfxDriver</Value>
+	                    </Property>
+	                    <Property name="jdbc_url">
+                            <Value>jdbc:informix-sqli://localhost:9088/informix:informixserver=ol_svr_custom</Value>
+                        </Property>
+                        <Property name="user">
+                            <Value>lenovo</Value>
+                        </Property>
+                        <Property name="password">
+                            <Value>iceword</Value>
+                        </Property>
+	                </Property>
+	            </Property>
+	        </Property>
+	    </Property>
+    </Config>
+   
+</CMConfig>

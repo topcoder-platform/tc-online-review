@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<CMConfig>
+   <Config name="com.topcoder.management.reviewfeedback">
+      <Property name="logName">
+          <Value>com.topcoder.management.reviewfeedback</Value>
+      </Property>
+      <Property name="dbConnectionName">
+          <Value>TCSCatalog</Value>
+      </Property>
+    </Config>
+    <Config name="dbConnectionFactoryConfiguration">
+        <Property name="connections">
+            <Property name="default">
+                <Value>TCSCatalog</Value>
+            </Property>
+            <Property name="TCSCatalog">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                   <Property name="jdbc_driver">
+                    <Value>com.informix.jdbc.IfxDriver</Value>
+                </Property>
+                <Property name="jdbc_url">
+                    <Value>jdbc:informix-sqli://localhost:2021/test:informixserver=informixoltp_tcp</Value>
+                </Property>
+                <Property name="user">
+                    <Value>topcoder</Value>
+                </Property>
+                <Property name="password">
+                    <Value>topcoder</Value>
+                </Property>
+                <Property name="defaultRowPrefetch">
+                    <Value>15</Value>
+                </Property>
+                <Property name="defaultExecuteBatch">
+                    <Value>30</Value>
+                </Property>
+                <Property name="processEscapes">
+                    <Value>false</Value>
+                </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config> 
+</CMConfig>

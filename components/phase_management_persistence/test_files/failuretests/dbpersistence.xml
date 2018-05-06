@@ -1,0 +1,75 @@
+<?xml version="1.0" ?>
+<CMConfig>
+	<!-- connection name is empty -->
+	<Config	name="com.topcoder.management.phase.db.invalid1">
+		<Property name="connectionName">
+			<Value>      </Value>
+		</Property>
+		<Property name="ConnectionFactory">
+			<Property name="className">
+				<Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+			</Property>
+			<Property name="namespace">
+				<Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+			</Property>
+		</Property>
+	</Config>
+
+	<!-- ConnectionFactory is missed -->
+	<Config	name="com.topcoder.management.phase.db.invalid2">
+	</Config>
+
+	<!-- ConnectionFactory.className is missed -->
+	<Config	name="com.topcoder.management.phase.db.invalid3">
+		<Property name="ConnectionFactory">
+			<Property name="namespace">
+				<Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+			</Property>
+		</Property>
+	</Config>
+
+	<!-- ConnectionFactory.namespace is missed -->
+	<Config	name="com.topcoder.management.phase.db.invalid4">
+		<Property name="ConnectionFactory">
+			<Property name="namespace">
+				<Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+			</Property>
+		</Property>
+	</Config>
+
+	<!-- ConnectionFactory.className is empty -->
+	<Config	name="com.topcoder.management.phase.db.invalid5">
+		<Property name="ConnectionFactory">
+			<Property name="className">
+				<Value>    </Value>
+			</Property>
+			<Property name="namespace">
+				<Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+			</Property>
+		</Property>
+	</Config>
+
+	<!-- ConnectionFactory.className is invalid -->
+	<Config	name="com.topcoder.management.phase.db.invalid6">
+		<Property name="ConnectionFactory">
+			<Property name="className">
+				<Value>java.lang.String</Value>
+			</Property>
+			<Property name="namespace">
+				<Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+			</Property>
+		</Property>
+	</Config>
+
+	<!-- ConnectionFactory.namespace is invalid -->
+	<Config	name="com.topcoder.management.phase.db.invalid7">
+		<Property name="ConnectionFactory">
+			<Property name="className">
+				<Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+			</Property>
+			<Property name="namespace">
+				<Value>invalid namespace</Value>
+			</Property>
+		</Property>
+	</Config>
+</CMConfig>

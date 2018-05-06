@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<CMConfig>
+    <Config name="com.cronos.onlinereview.ajax">
+        <!-- defining the Ajax request handlers names -->
+        <Property name="Handlers">
+            <Value>SetScorecardStatus</Value>
+            <Value>LoadTimelineTemplate</Value>
+            <Value>SetTimelineNotification</Value>
+            <Value>PlaceAppeal</Value>
+            <Value>ResolveAppeal</Value>
+        </Property>
+        <Property name="UserIdAttributeName">
+            <Value>UserId</Value>
+        </Property>
+    </Config>
+    <Config name="com.topcoder.util.log">
+        <!-- The Log implementation class -->
+        <Property name="logClass">
+            <Value>com.topcoder.util.log.jdk14.Jdk14Log</Value>
+        </Property>
+    </Config>
+</CMConfig>

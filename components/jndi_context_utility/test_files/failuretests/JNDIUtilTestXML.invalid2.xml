@@ -1,0 +1,3 @@
+<Properties>
+	<Property name="context.default.url">file:test_files/failuretests/test_root</Property>
+</Properties>

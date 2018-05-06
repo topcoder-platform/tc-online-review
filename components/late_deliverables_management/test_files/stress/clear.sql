@@ -1,0 +1,17 @@
+DELETE FROM tcs_catalog:late_deliverable;
+DELETE FROM tcs_catalog:late_deliverable_type_lu;
+DELETE FROM tcs_catalog:deliverable_lu;
+DELETE FROM tcs_catalog:submission_type_lu;
+DELETE FROM tcs_catalog:resource_info;
+DELETE FROM tcs_catalog:resource_info_type_lu;
+DELETE FROM tcs_catalog:resource;
+DELETE FROM tcs_catalog:resource_role_lu;
+DELETE FROM tcs_catalog:project_phase;
+DELETE FROM tcs_catalog:phase_type_lu;
+DELETE FROM tcs_catalog:phase_status_lu;
+DELETE FROM tcs_catalog:project;
+DELETE FROM tcs_catalog:project_status_lu;
+DELETE FROM tcs_catalog:project_category_lu;
+DELETE FROM tcs_catalog:project_type_lu;
+DELETE FROM corporate_oltp:tc_direct_project;
+DELETE FROM corporate_oltp:user_permission_grant;

@@ -1,0 +1,985 @@
+{\rtf1\ansi\ansicpg936\uc2\deff1\stshfdbch13\stshfloch0\stshfhich0\stshfbi0\deflang1033\deflangfe2052{\fonttbl{\f0\froman\fcharset0\fprq2{\*\panose 02020603050405020304}Times New Roman{\*\falt Times New Roman};}
+{\f1\fswiss\fcharset0\fprq2{\*\panose 020b0604020202020204}Arial{\*\falt Arial};}{\f2\fmodern\fcharset0\fprq1{\*\panose 02070309020205020404}Courier New{\*\falt Courier New};}
+{\f3\froman\fcharset2\fprq2{\*\panose 05050102010706020507}Symbol{\*\falt Symbol};}{\f5\fmodern\fcharset0\fprq1{\*\panose 02070409020205020404}Courier{\*\falt Courier New};}
+{\f10\fnil\fcharset2\fprq2{\*\panose 05000000000000000000}Wingdings{\*\falt Wingdings};}{\f13\fnil\fcharset134\fprq2{\*\panose 02010600030101010101}\'cb\'ce\'cc\'e5{\*\falt SimSun};}
+{\f36\fnil\fcharset134\fprq2{\*\panose 02010600030101010101}@\'cb\'ce\'cc\'e5;}{\f190\froman\fcharset238\fprq2 Times New Roman CE{\*\falt Times New Roman};}{\f191\froman\fcharset204\fprq2 Times New Roman Cyr{\*\falt Times New Roman};}
+{\f193\froman\fcharset161\fprq2 Times New Roman Greek{\*\falt Times New Roman};}{\f194\froman\fcharset162\fprq2 Times New Roman Tur{\*\falt Times New Roman};}{\f195\froman\fcharset177\fprq2 Times New Roman (Hebrew){\*\falt Times New Roman};}
+{\f196\froman\fcharset178\fprq2 Times New Roman (Arabic){\*\falt Times New Roman};}{\f197\froman\fcharset186\fprq2 Times New Roman Baltic{\*\falt Times New Roman};}{\f198\froman\fcharset163\fprq2 Times New Roman (Vietnamese){\*\falt Times New Roman};}
+{\f200\fswiss\fcharset238\fprq2 Arial CE{\*\falt Arial};}{\f201\fswiss\fcharset204\fprq2 Arial Cyr{\*\falt Arial};}{\f203\fswiss\fcharset161\fprq2 Arial Greek{\*\falt Arial};}{\f204\fswiss\fcharset162\fprq2 Arial Tur{\*\falt Arial};}
+{\f205\fswiss\fcharset177\fprq2 Arial (Hebrew){\*\falt Arial};}{\f206\fswiss\fcharset178\fprq2 Arial (Arabic){\*\falt Arial};}{\f207\fswiss\fcharset186\fprq2 Arial Baltic{\*\falt Arial};}{\f208\fswiss\fcharset163\fprq2 Arial (Vietnamese){\*\falt Arial};}
+{\f210\fmodern\fcharset238\fprq1 Courier New CE{\*\falt Courier New};}{\f211\fmodern\fcharset204\fprq1 Courier New Cyr{\*\falt Courier New};}{\f213\fmodern\fcharset161\fprq1 Courier New Greek{\*\falt Courier New};}
+{\f214\fmodern\fcharset162\fprq1 Courier New Tur{\*\falt Courier New};}{\f215\fmodern\fcharset177\fprq1 Courier New (Hebrew){\*\falt Courier New};}{\f216\fmodern\fcharset178\fprq1 Courier New (Arabic){\*\falt Courier New};}
+{\f217\fmodern\fcharset186\fprq1 Courier New Baltic{\*\falt Courier New};}{\f218\fmodern\fcharset163\fprq1 Courier New (Vietnamese){\*\falt Courier New};}{\f322\fnil\fcharset0\fprq2 SimSun Western{\*\falt SimSun};}
+{\f552\fnil\fcharset0\fprq2 @\'cb\'ce\'cc\'e5 Western;}}{\colortbl;\red0\green0\blue0;\red0\green0\blue255;\red0\green255\blue255;\red0\green255\blue0;\red255\green0\blue255;\red255\green0\blue0;\red255\green255\blue0;\red255\green255\blue255;
+\red0\green0\blue128;\red0\green128\blue128;\red0\green128\blue0;\red128\green0\blue128;\red128\green0\blue0;\red128\green128\blue0;\red128\green128\blue128;\red192\green192\blue192;\red153\green51\blue0;\red255\green102\blue0;}{\stylesheet{
+\ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0 \fs20\lang1033\langfe1033\loch\f1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 \snext0 Normal;}{\s1\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx360\faauto\ls1\outlinelevel0\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\f1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 \sbasedon0 \snext0 heading 1;}{\s2\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl1\outlinelevel1\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\f1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 \sbasedon1 \snext0 heading 2;}{\s3\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl2\outlinelevel2\adjustright\rin0\lin0\itap0 \i\fs20\lang1033\langfe1033\loch\f1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 \sbasedon1 \snext0 heading 3;}{\s4\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl3\outlinelevel3\adjustright\rin0\lin0\itap0 \fs20\lang1033\langfe1033\loch\f1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 \sbasedon1 \snext0 heading 4;}{\s5\ql \li0\ri0\sb240\sa60\sl240\slmult0\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl4\outlinelevel4\adjustright\rin0\lin0\itap0 \fs22\lang1033\langfe1033\loch\f1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 \sbasedon0 \snext0 heading 5;}{\s6\ql \li0\ri0\sb240\sa60\sl240\slmult0\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl5\outlinelevel5\adjustright\rin0\lin0\itap0 \i\fs22\lang1033\langfe1033\loch\f1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 \sbasedon0 \snext0 heading 6;}{\s7\ql \li0\ri0\sb240\sa60\sl240\slmult0\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl6\outlinelevel6\adjustright\rin0\lin0\itap0 \fs20\lang1033\langfe1033\loch\f1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 \sbasedon0 \snext0 heading 7;}{\s8\ql \li0\ri0\sb240\sa60\sl240\slmult0\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl7\outlinelevel7\adjustright\rin0\lin0\itap0 \i\fs20\lang1033\langfe1033\loch\f1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 \sbasedon0 \snext0 heading 8;}{\s9\ql \li0\ri0\sb240\sa60\sl240\slmult0\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl8\outlinelevel8\adjustright\rin0\lin0\itap0 \b\i\fs18\lang1033\langfe1033\loch\f1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 \sbasedon0 \snext0 heading 9;}{\*\cs10 \additive \ssemihidden Default Paragraph Font;}{\*
+\ts11\tsrowd\trftsWidthB3\trpaddl108\trpaddr108\trpaddfl3\trpaddft3\trpaddfb3\trpaddfr3\tscellwidthfts0\tsvertalt\tsbrdrt\tsbrdrl\tsbrdrb\tsbrdrr\tsbrdrdgl\tsbrdrdgr\tsbrdrh\tsbrdrv 
+\ql \li0\ri0\widctlpar\aspalpha\aspnum\faauto\adjustright\rin0\lin0\itap0 \fs20\lang1024\langfe1024\loch\f0\hich\af0\dbch\af13\cgrid\langnp1024\langfenp1024 \snext11 \ssemihidden Normal Table;}{\*\cs15 \additive \ul\cf2 \sbasedon10 Hyperlink;}{
+\s16\ql \li0\ri0\sa120\widctlpar\faauto\adjustright\rin0\lin0\itap0 \fs20\lang1033\langfe1033\loch\f1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 \sbasedon0 \snext16 Body Text;}{\s17\ql \li720\ri0\sa120\sl240\slmult0
+\nowidctlpar\faauto\adjustright\rin0\lin720\itap0 \i\fs20\cf2\lang1033\langfe1033\loch\f1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 \sbasedon0 \snext16 \sautoupd InfoBlue;}{\*\ts18\tsrowd\trbrdrt\brdrs\brdrw10 \trbrdrl\brdrs\brdrw10 \trbrdrb
+\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrh\brdrs\brdrw10 \trbrdrv\brdrs\brdrw10 \trftsWidthB3\trpaddl108\trpaddr108\trpaddfl3\trpaddft3\trpaddfb3\trpaddfr3\tscellwidthfts0\tsvertalt\tsbrdrt\tsbrdrl\tsbrdrb\tsbrdrr\tsbrdrdgl\tsbrdrdgr\tsbrdrh\tsbrdrv 
+\ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0 \fs20\lang1024\langfe1024\loch\f1\hich\af1\dbch\af13\cgrid\langnp1024\langfenp1024 \sbasedon11 \snext18 \styrsid6824991 Table Grid;}}{\*\latentstyles\lsdstimax156\lsdlockeddef0}{\*\listtable
+{\list\listtemplateid-985754512{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'00.;}{\levelnumbers\'01;}\s1\jclisttab\tx360 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0
+\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'03\'00.\'01;}{\levelnumbers\'01\'03;}\s2\jclisttab\tx0 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext
+\'05\'00.\'01.\'02;}{\levelnumbers\'01\'03\'05;}\s3\jclisttab\tx0 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'07\'00.\'01.\'02.\'03;}{\levelnumbers\'01\'03\'05\'07;}\s4
+\jclisttab\tx0 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'09\'00.\'01.\'02.\'03.\'04;}{\levelnumbers\'01\'03\'05\'07\'09;}\s5\jclisttab\tx0 }{\listlevel\levelnfc0\levelnfcn0
+\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'0b\'00.\'01.\'02.\'03.\'04.\'05;}{\levelnumbers\'01\'03\'05\'07\'09\'0b;}\s6\jclisttab\tx0 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1
+\levelspace0\levelindent0{\leveltext\'0d\'00.\'01.\'02.\'03.\'04.\'05.\'06;}{\levelnumbers\'01\'03\'05\'07\'09\'0b\'0d;}\s7\jclisttab\tx0 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext
+\'0f\'00.\'01.\'02.\'03.\'04.\'05.\'06.\'07;}{\levelnumbers\'01\'03\'05\'07\'09\'0b\'0d\'0f;}\s8\jclisttab\tx0 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext
+\'11\'00.\'01.\'02.\'03.\'04.\'05.\'06.\'07.\'08;}{\levelnumbers\'01\'03\'05\'07\'09\'0b\'0d\'0f\'11;}\s9\jclisttab\tx0 }{\listname ;}\listid-5}{\list\listtemplateid-1587759700{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1
+\levelspace0\levelindent0{\leveltext\'02\'00.;}{\levelnumbers\'01;}\fbias0 \fi-945\li1665\jclisttab\tx1665\lin1665 }{\listlevel\levelnfc4\levelnfcn4\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'01.;}{\levelnumbers
+\'01;}\fi-360\li1800\jclisttab\tx1800\lin1800 }{\listlevel\levelnfc2\levelnfcn2\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'02.;}{\levelnumbers\'01;}\fi-180\li2520\jclisttab\tx2520\lin2520 }{\listlevel\levelnfc0
+\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'03.;}{\levelnumbers\'01;}\fi-360\li3240\jclisttab\tx3240\lin3240 }{\listlevel\levelnfc4\levelnfcn4\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0
+\levelindent0{\leveltext\'02\'04.;}{\levelnumbers\'01;}\fi-360\li3960\jclisttab\tx3960\lin3960 }{\listlevel\levelnfc2\levelnfcn2\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'05.;}{\levelnumbers\'01;}\fi-180\li4680
+\jclisttab\tx4680\lin4680 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'06.;}{\levelnumbers\'01;}\fi-360\li5400\jclisttab\tx5400\lin5400 }{\listlevel\levelnfc4\levelnfcn4\leveljc0
+\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'07.;}{\levelnumbers\'01;}\fi-360\li6120\jclisttab\tx6120\lin6120 }{\listlevel\levelnfc2\levelnfcn2\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0
+{\leveltext\'02\'08.;}{\levelnumbers\'01;}\fi-180\li6840\jclisttab\tx6840\lin6840 }{\listname ;}\listid95105459}{\list\listtemplateid-1064637722\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0
+\levelindent0{\leveltext\leveltemplateid1640238020\'02\'00.;}{\levelnumbers\'01;}\fbias0 \fi-360\li1080\jclisttab\tx1080\lin1080 }{\listlevel\levelnfc4\levelnfcn4\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext
+\leveltemplateid67698713\'02\'01.;}{\levelnumbers\'01;}\fi-360\li1800\jclisttab\tx1800\lin1800 }{\listlevel\levelnfc2\levelnfcn2\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\leveltemplateid67698715
+\'02\'02.;}{\levelnumbers\'01;}\fi-180\li2520\jclisttab\tx2520\lin2520 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\leveltemplateid67698703\'02\'03.;}{\levelnumbers\'01;}\fi-360\li3240
+\jclisttab\tx3240\lin3240 }{\listlevel\levelnfc4\levelnfcn4\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\leveltemplateid67698713\'02\'04.;}{\levelnumbers\'01;}\fi-360\li3960\jclisttab\tx3960\lin3960 }{\listlevel
+\levelnfc2\levelnfcn2\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\leveltemplateid67698715\'02\'05.;}{\levelnumbers\'01;}\fi-180\li4680\jclisttab\tx4680\lin4680 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0
+\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\leveltemplateid67698703\'02\'06.;}{\levelnumbers\'01;}\fi-360\li5400\jclisttab\tx5400\lin5400 }{\listlevel\levelnfc4\levelnfcn4\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0
+\levelindent0{\leveltext\leveltemplateid67698713\'02\'07.;}{\levelnumbers\'01;}\fi-360\li6120\jclisttab\tx6120\lin6120 }{\listlevel\levelnfc2\levelnfcn2\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext
+\leveltemplateid67698715\'02\'08.;}{\levelnumbers\'01;}\fi-180\li6840\jclisttab\tx6840\lin6840 }{\listname ;}\listid263341032}{\list\listtemplateid-203400736{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0
+\levelindent0{\leveltext\'02\'00.;}{\levelnumbers\'01;}\fbias0 \fi-360\li720\jclisttab\tx720\lin720 }{\listlevel\levelnfc4\levelnfcn4\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'01.;}{\levelnumbers\'01;}
+\fi-360\li1440\jclisttab\tx1440\lin1440 }{\listlevel\levelnfc2\levelnfcn2\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'02.;}{\levelnumbers\'01;}\fi-180\li2160\jclisttab\tx2160\lin2160 }{\listlevel\levelnfc0
+\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'03.;}{\levelnumbers\'01;}\fi-360\li2880\jclisttab\tx2880\lin2880 }{\listlevel\levelnfc4\levelnfcn4\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0
+\levelindent0{\leveltext\'02\'04.;}{\levelnumbers\'01;}\fi-360\li3600\jclisttab\tx3600\lin3600 }{\listlevel\levelnfc2\levelnfcn2\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'05.;}{\levelnumbers\'01;}\fi-180\li4320
+\jclisttab\tx4320\lin4320 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'06.;}{\levelnumbers\'01;}\fi-360\li5040\jclisttab\tx5040\lin5040 }{\listlevel\levelnfc4\levelnfcn4\leveljc0
+\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'07.;}{\levelnumbers\'01;}\fi-360\li5760\jclisttab\tx5760\lin5760 }{\listlevel\levelnfc2\levelnfcn2\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0
+{\leveltext\'02\'08.;}{\levelnumbers\'01;}\fi-180\li6480\jclisttab\tx6480\lin6480 }{\listname ;}\listid759326948}{\list\listtemplateid67698689\listsimple{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0
+\levelindent0{\leveltext\'01{\uc1\u-3913 ?};}{\levelnumbers;}\f3\fbias0 \fi-360\li360\jclisttab\tx360\lin360 }{\listname ;}\listid771898072}{\list\listtemplateid-160384884{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1
+\levelspace0\levelindent0{\leveltext\'01{\uc1\u-3913 ?};}{\levelnumbers;}\f3\fbias0 \fi-360\li1080\jclisttab\tx1080\lin1080 }{\listlevel\levelnfc4\levelnfcn4\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext
+\'02\'01.;}{\levelnumbers\'01;}\fi-360\li1800\jclisttab\tx1800\lin1800 }{\listlevel\levelnfc2\levelnfcn2\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'02.;}{\levelnumbers\'01;}\fi-180\li2520
+\jclisttab\tx2520\lin2520 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'03.;}{\levelnumbers\'01;}\fi-360\li3240\jclisttab\tx3240\lin3240 }{\listlevel\levelnfc4\levelnfcn4\leveljc0
+\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'04.;}{\levelnumbers\'01;}\fi-360\li3960\jclisttab\tx3960\lin3960 }{\listlevel\levelnfc2\levelnfcn2\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0
+{\leveltext\'02\'05.;}{\levelnumbers\'01;}\fi-180\li4680\jclisttab\tx4680\lin4680 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'06.;}{\levelnumbers\'01;}\fi-360\li5400
+\jclisttab\tx5400\lin5400 }{\listlevel\levelnfc4\levelnfcn4\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'07.;}{\levelnumbers\'01;}\fi-360\li6120\jclisttab\tx6120\lin6120 }{\listlevel\levelnfc2\levelnfcn2\leveljc2
+\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'08.;}{\levelnumbers\'01;}\fi-180\li6840\jclisttab\tx6840\lin6840 }{\listname ;}\listid806357716}{\list\listtemplateid-1256816470{\listlevel\levelnfc0\levelnfcn0\leveljc0
+\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'00.;}{\levelnumbers\'01;}\fbias0 \fi-360\li720\jclisttab\tx720\lin720 }{\listlevel\levelnfc4\levelnfcn4\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0
+{\leveltext\'02\'01.;}{\levelnumbers\'01;}\fi-360\li1440\jclisttab\tx1440\lin1440 }{\listlevel\levelnfc2\levelnfcn2\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'02.;}{\levelnumbers\'01;}\fi-180\li2160
+\jclisttab\tx2160\lin2160 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'03.;}{\levelnumbers\'01;}\fi-360\li2880\jclisttab\tx2880\lin2880 }{\listlevel\levelnfc4\levelnfcn4\leveljc0
+\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'04.;}{\levelnumbers\'01;}\fi-360\li3600\jclisttab\tx3600\lin3600 }{\listlevel\levelnfc2\levelnfcn2\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0
+{\leveltext\'02\'05.;}{\levelnumbers\'01;}\fi-180\li4320\jclisttab\tx4320\lin4320 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'06.;}{\levelnumbers\'01;}\fi-360\li5040
+\jclisttab\tx5040\lin5040 }{\listlevel\levelnfc4\levelnfcn4\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'07.;}{\levelnumbers\'01;}\fi-360\li5760\jclisttab\tx5760\lin5760 }{\listlevel\levelnfc2\levelnfcn2\leveljc2
+\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'08.;}{\levelnumbers\'01;}\fi-180\li6480\jclisttab\tx6480\lin6480 }{\listname ;}\listid811097213}{\list\listtemplateid932329388{\listlevel\levelnfc23\levelnfcn23\leveljc0
+\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'01{\uc1\u-3913 ?};}{\levelnumbers;}\f3\fbias0 \fi-360\li1080\jclisttab\tx1080\lin1080 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0
+\levelindent0{\leveltext\'01o;}{\levelnumbers;}\f2\fbias0 \fi-360\li1800\jclisttab\tx1800\lin1800 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'01{\uc1\u-3929 ?};}{\levelnumbers;}
+\f10\fbias0 \fi-360\li2520\jclisttab\tx2520\lin2520 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'01{\uc1\u-3913 ?};}{\levelnumbers;}\f3\fbias0 \fi-360\li3240
+\jclisttab\tx3240\lin3240 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'01o;}{\levelnumbers;}\f2\fbias0 \fi-360\li3960\jclisttab\tx3960\lin3960 }{\listlevel\levelnfc23\levelnfcn23
+\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'01{\uc1\u-3929 ?};}{\levelnumbers;}\f10\fbias0 \fi-360\li4680\jclisttab\tx4680\lin4680 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1
+\levelspace0\levelindent0{\leveltext\'01{\uc1\u-3913 ?};}{\levelnumbers;}\f3\fbias0 \fi-360\li5400\jclisttab\tx5400\lin5400 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext
+\'01o;}{\levelnumbers;}\f2\fbias0 \fi-360\li6120\jclisttab\tx6120\lin6120 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'01{\uc1\u-3929 ?};}{\levelnumbers;}\f10\fbias0 \fi-360\li6840
+\jclisttab\tx6840\lin6840 }{\listname ;}\listid876431865}{\list\listtemplateid67698703\listsimple{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'00.;}{\levelnumbers\'01;}\fi-360\li360
+\jclisttab\tx360\lin360 }{\listname ;}\listid979647610}{\list\listtemplateid948985370{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat0\levelspace0\levelindent0{\leveltext\'01{\uc1\u-3913 ?};}{\levelnumbers;}\fbias0 
+\fi-360\li720\jclisttab\tx720\lin720 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'01o;}{\levelnumbers;}\f2\fbias0 \fi-360\li1440\jclisttab\tx1440\lin1440 }{\listlevel\levelnfc23
+\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'01{\uc1\u-3929 ?};}{\levelnumbers;}\f10\fbias0 \fi-360\li2160\jclisttab\tx2160\lin2160 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0
+\levelstartat1\levelspace0\levelindent0{\leveltext\'01{\uc1\u-3913 ?};}{\levelnumbers;}\f3\fbias0 \fi-360\li2880\jclisttab\tx2880\lin2880 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext
+\'01o;}{\levelnumbers;}\f2\fbias0 \fi-360\li3600\jclisttab\tx3600\lin3600 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'01{\uc1\u-3929 ?};}{\levelnumbers;}\f10\fbias0 \fi-360\li4320
+\jclisttab\tx4320\lin4320 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'01{\uc1\u-3913 ?};}{\levelnumbers;}\f3\fbias0 \fi-360\li5040\jclisttab\tx5040\lin5040 }{\listlevel\levelnfc23
+\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'01o;}{\levelnumbers;}\f2\fbias0 \fi-360\li5760\jclisttab\tx5760\lin5760 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1
+\levelspace0\levelindent0{\leveltext\'01{\uc1\u-3929 ?};}{\levelnumbers;}\f10\fbias0 \fi-360\li6480\jclisttab\tx6480\lin6480 }{\listname ;}\listid991715650}{\list\listtemplateid67698703\listsimple{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0
+\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'00.;}{\levelnumbers\'01;}\fi-360\li360\jclisttab\tx360\lin360 }{\listname ;}\listid1300451852}{\list\listtemplateid1175866966{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0
+\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'00.;}{\levelnumbers\'01;}\fbias0 \fi-360\li720\jclisttab\tx720\lin720 }{\listlevel\levelnfc4\levelnfcn4\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext
+\'02\'01.;}{\levelnumbers\'01;}\fi-360\li1440\jclisttab\tx1440\lin1440 }{\listlevel\levelnfc2\levelnfcn2\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'02.;}{\levelnumbers\'01;}\fi-180\li2160
+\jclisttab\tx2160\lin2160 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'03.;}{\levelnumbers\'01;}\fi-360\li2880\jclisttab\tx2880\lin2880 }{\listlevel\levelnfc4\levelnfcn4\leveljc0
+\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'04.;}{\levelnumbers\'01;}\fi-360\li3600\jclisttab\tx3600\lin3600 }{\listlevel\levelnfc2\levelnfcn2\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0
+{\leveltext\'02\'05.;}{\levelnumbers\'01;}\fi-180\li4320\jclisttab\tx4320\lin4320 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'06.;}{\levelnumbers\'01;}\fi-360\li5040
+\jclisttab\tx5040\lin5040 }{\listlevel\levelnfc4\levelnfcn4\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'07.;}{\levelnumbers\'01;}\fi-360\li5760\jclisttab\tx5760\lin5760 }{\listlevel\levelnfc2\levelnfcn2\leveljc2
+\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\'02\'08.;}{\levelnumbers\'01;}\fi-180\li6480\jclisttab\tx6480\lin6480 }{\listname ;}\listid1331715574}{\list\listtemplateid-880922222\listhybrid{\listlevel\levelnfc0\levelnfcn0
+\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\leveltemplateid548040758\'02\'00.;}{\levelnumbers\'01;}\b\cf9\fbias0 \fi-360\li720\jclisttab\tx720\lin720 }{\listlevel\levelnfc4\levelnfcn4\leveljc0\leveljcn0\levelfollow0
+\levelstartat1\levelspace0\levelindent0{\leveltext\leveltemplateid67698713\'02\'01.;}{\levelnumbers\'01;}\fi-360\li1440\jclisttab\tx1440\lin1440 }{\listlevel\levelnfc2\levelnfcn2\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0
+{\leveltext\leveltemplateid67698715\'02\'02.;}{\levelnumbers\'01;}\fi-180\li2160\jclisttab\tx2160\lin2160 }{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\leveltemplateid67698703
+\'02\'03.;}{\levelnumbers\'01;}\fi-360\li2880\jclisttab\tx2880\lin2880 }{\listlevel\levelnfc4\levelnfcn4\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\leveltemplateid67698713\'02\'04.;}{\levelnumbers\'01;}\fi-360\li3600
+\jclisttab\tx3600\lin3600 }{\listlevel\levelnfc2\levelnfcn2\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\leveltemplateid67698715\'02\'05.;}{\levelnumbers\'01;}\fi-180\li4320\jclisttab\tx4320\lin4320 }{\listlevel
+\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\leveltemplateid67698703\'02\'06.;}{\levelnumbers\'01;}\fi-360\li5040\jclisttab\tx5040\lin5040 }{\listlevel\levelnfc4\levelnfcn4\leveljc0\leveljcn0
+\levelfollow0\levelstartat1\levelspace0\levelindent0{\leveltext\leveltemplateid67698713\'02\'07.;}{\levelnumbers\'01;}\fi-360\li5760\jclisttab\tx5760\lin5760 }{\listlevel\levelnfc2\levelnfcn2\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace0
+\levelindent0{\leveltext\leveltemplateid67698715\'02\'08.;}{\levelnumbers\'01;}\fi-180\li6480\jclisttab\tx6480\lin6480 }{\listname ;}\listid1745836072}}{\*\listoverridetable{\listoverride\listid-5\listoverridecount9{\lfolevel\listoverridestartat
+\levelstartat1}{\lfolevel\listoverridestartat\levelstartat1}{\lfolevel\listoverridestartat\levelstartat1}{\lfolevel\listoverridestartat\levelstartat1}{\lfolevel\listoverridestartat\levelstartat1}{\lfolevel\listoverridestartat\levelstartat1}{\lfolevel
+\listoverridestartat\levelstartat1}{\lfolevel\listoverridestartat\levelstartat1}{\lfolevel\listoverridestartat\levelstartat1}\ls1}{\listoverride\listid806357716\listoverridecount9{\lfolevel}{\lfolevel\listoverridestartat\levelstartat1}{\lfolevel
+\listoverridestartat\levelstartat1}{\lfolevel\listoverridestartat\levelstartat1}{\lfolevel\listoverridestartat\levelstartat1}{\lfolevel\listoverridestartat\levelstartat1}{\lfolevel\listoverridestartat\levelstartat1}{\lfolevel\listoverridestartat
+\levelstartat1}{\lfolevel\listoverridestartat\levelstartat1}\ls2}{\listoverride\listid876431865\listoverridecount9{\lfolevel}{\lfolevel}{\lfolevel}{\lfolevel}{\lfolevel}{\lfolevel}{\lfolevel}{\lfolevel}{\lfolevel}\ls3}{\listoverride\listid991715650
+\listoverridecount0\ls4}{\listoverride\listid95105459\listoverridecount0\ls5}{\listoverride\listid759326948\listoverridecount0\ls6}{\listoverride\listid811097213\listoverridecount0\ls7}{\listoverride\listid1331715574\listoverridecount0\ls8}
+{\listoverride\listid771898072\listoverridecount0\ls9}{\listoverride\listid979647610\listoverridecount0\ls10}{\listoverride\listid1300451852\listoverridecount0\ls11}{\listoverride\listid1745836072\listoverridecount0\ls12}{\listoverride\listid263341032
+\listoverridecount0\ls13}}{\*\pgptbl {\pgp\ipgp0\itap0\li0\ri0\sb0\sa0}}{\*\rsidtbl \rsid23312\rsid70358\rsid143044\rsid277119\rsid471422\rsid490415\rsid678694\rsid946765\rsid993133\rsid1006621\rsid1120710\rsid1133006\rsid1183290\rsid1318603\rsid1530749
+\rsid1715426\rsid1932877\rsid1997727\rsid2058865\rsid2124004\rsid2369644\rsid2564765\rsid2630253\rsid2650560\rsid2699192\rsid2704544\rsid2767489\rsid2837896\rsid2975559\rsid2976077\rsid3032453\rsid3096579\rsid3219043\rsid3363717\rsid3477475\rsid3547440
+\rsid3686297\rsid3765181\rsid3876403\rsid3942856\rsid4072133\rsid4094902\rsid4143696\rsid4349044\rsid4596520\rsid4616229\rsid4668422\rsid4725111\rsid4728543\rsid4750211\rsid4865743\rsid4866373\rsid5383740\rsid5396218\rsid5511644\rsid5712861\rsid5720465
+\rsid5904846\rsid6188176\rsid6234225\rsid6242784\rsid6322832\rsid6452508\rsid6453881\rsid6643896\rsid6697565\rsid6824991\rsid6949648\rsid7037484\rsid7081815\rsid7220669\rsid7361269\rsid7410731\rsid7474624\rsid7486995\rsid7563804\rsid7952754\rsid8066776
+\rsid8077502\rsid8079924\rsid8218560\rsid8344371\rsid8745911\rsid8920561\rsid9060365\rsid9068918\rsid9264590\rsid9270170\rsid9316492\rsid9401025\rsid9914584\rsid10045746\rsid10099893\rsid10106694\rsid10172111\rsid10176577\rsid10373979\rsid10516382
+\rsid10753444\rsid10765677\rsid10841442\rsid10969921\rsid11215905\rsid11349568\rsid11560466\rsid11606951\rsid11690558\rsid11696217\rsid11952364\rsid12005863\rsid12079417\rsid12148962\rsid12212386\rsid12212606\rsid12543255\rsid12609609\rsid12928722
+\rsid13133569\rsid13204940\rsid13391692\rsid13438195\rsid13517118\rsid13588805\rsid13726525\rsid13769217\rsid13786734\rsid13786936\rsid13849915\rsid13903177\rsid13911690\rsid13964502\rsid14038776\rsid14165886\rsid14224803\rsid14230257\rsid14245030
+\rsid14381872\rsid14383154\rsid14433547\rsid14891964\rsid15094809\rsid15225614\rsid15229038\rsid15297436\rsid15343561\rsid15432753\rsid15498102\rsid15533997\rsid15671691\rsid15812871\rsid15819520\rsid15886751\rsid16189035\rsid16320532\rsid16331622
+\rsid16539186\rsid16669152\rsid16720539}{\*\generator Microsoft Word 11.0.6568;}{\info{\title <<Component>> <<Version>> Component Specification}{\author TCSDESIGNER}{\operator daiwb}{\creatim\yr2006\mo6\dy12\hr22\min7}{\revtim\yr2006\mo7\dy16\hr1\min20}
+{\version135}{\edmins2053}{\nofpages13}{\nofwords4000}{\nofchars22802}{\*\company TopCoder}{\nofcharsws26749}{\vern24579}}\paperw12240\paperh15840\margl1800\margr1800\margt1440\margb1440\gutter0 
+\ftnbj\aenddoc\noxlattoyen\expshrtn\noultrlspc\dntblnsbdb\nospaceforul\hyphcaps0\formshade\horzdoc\dghspace120\dgvspace120\dghorigin1701\dgvorigin1984\dghshow0\dgvshow3\jcompress\viewkind1\viewscale100\pgbrdrhead\pgbrdrfoot\nolnhtadjtbl\rsidroot3096579 
+\fet0\sectd \linex0\endnhere\sectlinegrid360\sectdefaultcl\sftnbj {\*\pnseclvl1\pnucrm\pnstart1\pnindent720\pnhang {\pntxta \dbch .}}{\*\pnseclvl2\pnucltr\pnstart1\pnindent720\pnhang {\pntxta \dbch .}}{\*\pnseclvl3\pndec\pnstart1\pnindent720\pnhang 
+{\pntxta \dbch .}}{\*\pnseclvl4\pnlcltr\pnstart1\pnindent720\pnhang {\pntxta \dbch )}}{\*\pnseclvl5\pndec\pnstart1\pnindent720\pnhang {\pntxtb \dbch (}{\pntxta \dbch )}}{\*\pnseclvl6\pnlcltr\pnstart1\pnindent720\pnhang {\pntxtb \dbch (}{\pntxta \dbch )}}
+{\*\pnseclvl7\pnlcrm\pnstart1\pnindent720\pnhang {\pntxtb \dbch (}{\pntxta \dbch )}}{\*\pnseclvl8\pnlcltr\pnstart1\pnindent720\pnhang {\pntxtb \dbch (}{\pntxta \dbch )}}{\*\pnseclvl9\pnlcrm\pnstart1\pnindent720\pnhang {\pntxtb \dbch (}{\pntxta \dbch )}}
+\pard\plain \s1\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar\tx720\faauto\outlinelevel0\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\fs28\ul\insrsid15229038 
+\hich\af1\dbch\af13\loch\f1 Review Score Aggregator 1.0}{\fs28\ul\insrsid2630253 \hich\af1\dbch\af13\loch\f1  Component Specification
+\par }\pard\plain \s16\ql \li720\ri0\sa120\widctlpar\faauto\adjustright\rin0\lin720\itap0 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 
+\par {\listtext\pard\plain\s1 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 1.\tab}}\pard\plain \s1\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx360\faauto\ls1\outlinelevel0\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Design
+\par {\listtext\pard\plain\s2 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 1.1\tab}}\pard\plain \s2\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl1\outlinelevel1\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Overview
+\par }\pard\plain \ql \li720\ri0\widctlpar\faauto\adjustright\rin0\lin720\itap0\pararsid3686297 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid9264590 \hich\af1\dbch\af13\loch\f1 
+This component is used to aggregate the various review scores for submission}{\insrsid6949648 \hich\af1\dbch\af13\loch\f1 s in a component design or dev}{\lang1033\langfe2052\langfenp2052\insrsid678694 \hich\af1\dbch\af13\loch\f1 e}{\insrsid3686297 
+\hich\af1\dbch\af13\loch\f1 lopment contest}{\insrsid9264590 \hich\af1\dbch\af13\loch\f1 .  }{\insrsid7563804 \hich\af1\dbch\af13\loch\f1 There are }{\insrsid10176577 \hich\af1\dbch\af13\loch\f1 three }{\insrsid7563804 \hich\af1\dbch\af13\loch\f1 
+steps in aggregating and ranking submissions:}{\lang1033\langfe2052\langfenp2052\insrsid7563804 
+\par }{\lang1033\langfe2052\langfenp2052\insrsid2650560\charrsid2650560 
+\par {\listtext\pard\plain\b\f1\fs20\cf9\lang1033\langfe1033\langfenp1033\insrsid7563804\charrsid2650560 \hich\af1\dbch\af13\loch\f1 1.\tab}}\pard \ql \fi-360\li1080\ri0\widctlpar\jclisttab\tx1080\faauto\ls13\adjustright\rin0\lin1080\itap0\pararsid7563804 {
+\b\cf9\insrsid7563804\charrsid2650560 \hich\af1\dbch\af13\loch\f1 Aggregating
+\par {\listtext\pard\plain\b\f1\fs20\cf9\lang1033\langfe1033\langfenp1033\insrsid10176577\charrsid2650560 \hich\af1\dbch\af13\loch\f1 2.\tab}}{\b\cf9\insrsid10176577\charrsid2650560 \hich\af1\dbch\af13\loch\f1 Calculate relative placement}{
+\b\cf9\lang1033\langfe2052\langfenp2052\insrsid1715426 \hich\af1\dbch\af13\loch\f1 s}{\b\cf9\insrsid10176577\charrsid2650560 \hich\af1\dbch\af13\loch\f1 , using t}{\b\cf9\insrsid7563804\charrsid2650560 \hich\af1\dbch\af13\loch\f1 ie detection}{
+\b\cf9\insrsid10176577\charrsid2650560 \hich\af1\dbch\af13\loch\f1  and t}{\b\cf9\insrsid7563804\charrsid2650560 \hich\af1\dbch\af13\loch\f1 ie breaking}{\b\cf9\insrsid10176577\charrsid2650560 \hich\af1\dbch\af13\loch\f1  rules}{
+\b\cf9\insrsid7563804\charrsid2650560 
+\par {\listtext\pard\plain\b\f1\fs20\cf9\lang1033\langfe1033\langfenp1033\insrsid10176577\charrsid2650560 \hich\af1\dbch\af13\loch\f1 3.\tab}}{\b\cf9\insrsid10176577\charrsid2650560 \hich\af1\dbch\af13\loch\f1 Assign final placement ranks}{
+\b\cf9\insrsid7563804\charrsid2650560 
+\par }\pard \ql \li720\ri0\widctlpar\faauto\adjustright\rin0\lin720\itap0\pararsid3686297 {\insrsid7563804 
+\par }{\insrsid9264590 \hich\af1\dbch\af13\loch\f1 The algorithm that \hich\af1\dbch\af13\loch\f1 is used for aggregation of scores is pluggable, and a default implementation is provided.  }{\insrsid7563804 \hich\af1\dbch\af13\loch\f1 This implem}{
+\lang1033\langfe2052\langfenp2052\insrsid10753444 \hich\af1\dbch\af13\loch\f1 e}{\insrsid7563804 \hich\af1\dbch\af13\loch\f1 ntation, as required, takes the arithmetic mean of th}{\insrsid10172111 \hich\af1\dbch\af13\loch\f1 
+e review scores of a submission}{\insrsid7563804 \hich\af1\dbch\af13\loch\f1  to generate the aggregated score.}{\insrsid3686297 
+\par 
+\par }{\insrsid9264590 \hich\af1\dbch\af13\loch\f1 The }{\insrsid3686297 \hich\af1\dbch\af13\loch\f1 relative placement}{\insrsid9264590 \hich\af1\dbch\af13\loch\f1 
+ of each submission in the content is also calculated by this component.  Ties between submissions are }{\i\insrsid9264590\charrsid14245030 \hich\af1\dbch\af13\loch\f1 detected}{\insrsid9264590 \hich\af1\dbch\af13\loch\f1 
+ using a pluggable algorithm; a default implementation is pr}{\insrsid14224803 \hich\af1\dbch\af13\loch\f1 ovided}{\insrsid14245030 \hich\af1\dbch\af13\loch\f1  which uses an epsilon}{\insrsid10176577 \hich\af1\dbch\af13\loch\f1 .  I}{\insrsid14245030 
+\hich\af1\dbch\af13\loch\f1 f two score are relatively or absolutely within that \hich\af1\dbch\af13\loch\f1 epsilon of each other, a tie is detected}{\insrsid14224803 \hich\af1\dbch\af13\loch\f1 .  }{\insrsid3686297 \hich\af1\dbch\af13\loch\f1 
+This functionality was }{\insrsid14245030 \hich\af1\dbch\af13\loch\f1 not defined }{\insrsid3686297 \hich\af1\dbch\af13\loch\f1 in the requirements specification, but was added to support var}{\insrsid13849915 \hich\af1\dbch\af13\loch\f1 
+ious tie detection mechanisms. }{\lang1033\langfe2052\langfenp2052\insrsid14245030 
+\par }{\insrsid14245030 
+\par }{\insrsid14224803 \hich\af1\dbch\af13\loch\f1 After ties are detecte}{\insrsid9264590 \hich\af1\dbch\af13\loch\f1 d, }{\insrsid14224803 \hich\af1\dbch\af13\loch\f1 ties }{\insrsid9264590 \hich\af1\dbch\af13\loch\f1 are broken using another pluggable a}{
+\insrsid14224803 \hich\af1\dbch\af13\loch\f1 lgorithm, for wh\hich\af1\dbch\af13\loch\f1 ich a default i}{\insrsid9264590 \hich\af1\dbch\af13\loch\f1 m}{\insrsid14224803 \hich\af1\dbch\af13\loch\f1 p}{\insrsid9264590 \hich\af1\dbch\af13\loch\f1 l}{
+\insrsid14224803 \hich\af1\dbch\af13\loch\f1 e}{\insrsid9264590 \hich\af1\dbch\af13\loch\f1 mentation}{\insrsid14224803 \hich\af1\dbch\af13\loch\f1  is provided as descr}{\insrsid9264590 \hich\af1\dbch\af13\loch\f1 ibed in }{\insrsid14245030 
+\hich\af1\dbch\af13\loch\f1 \hich\f1 the requirements specification.  This implementation considers the submission with the most \'93\loch\f1 \hich\f1 wins\'94\loch\f1 
+ to be the highest ranked of all tied submissions. Then, the highest ranked is removed, and the remai\hich\af1\dbch\af13\loch\f1 ning submissions are re-ranked. If ties remain, the submissions are considered ties.}{\insrsid9264590 
+\par }\pard \ql \li720\ri0\widctlpar\faauto\adjustright\rin0\lin720\itap0\pararsid9264590 {\insrsid9264590 
+\par }{\insrsid9264590 \hich\af1\dbch\af13\loch\f1 Finally, to define the final placements, a pluggable }{\insrsid14224803 \hich\af1\dbch\af13\loch\f1 algorithm is also available (with a default implementation) to further define tie-breaker rules.}{
+\insrsid3686297 \hich\af1\dbch\af13\loch\f1   }{\insrsid14245030 \hich\af1\dbch\af13\loch\f1 This algorithm take\hich\af1\dbch\af13\loch\f1 s the initial placement (e.g., 1, 2, 2, 3) and creates a final placement (e.g., 1, 2, 2, 4}{\insrsid12609609 
+\hich\af1\dbch\af13\loch\f1 .}{\insrsid14245030 \hich\af1\dbch\af13\loch\f1 )  A pluggable algorithm }{\insrsid3686297 \hich\af1\dbch\af13\loch\f1 was not }{\insrsid2369644 \hich\af1\dbch\af13\loch\f1 mentioned in }{\insrsid3686297 
+\hich\af1\dbch\af13\loch\f1 the requirements }{\insrsid2369644 \hich\af1\dbch\af13\loch\f1 specification }{\insrsid3686297 \hich\af1\dbch\af13\loch\f1 but was added }{\insrsid2369644 \hich\af1\dbch\af13\loch\f1 in this design }{\insrsid3686297 
+\hich\af1\dbch\af13\loch\f1 to support future expansion.}{\insrsid14245030 \hich\af1\dbch\af13\loch\f1   The default implementation pr\hich\af1\dbch\af13\loch\f1 
+ovides exactly the above functionality, which was required (in a post on the developer forums.)}{\lang1033\langfe2052\langfenp2052\insrsid9264590\charrsid11215905 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid9264590 {\insrsid9264590\charrsid9264590 
+\par {\listtext\pard\plain\s2 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 1.2\tab}}\pard\plain \s2\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl1\outlinelevel1\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Design Patterns 
+\par }\pard\plain \ql \li720\ri0\widctlpar\faauto\adjustright\rin0\lin720\itap0\pararsid3686297 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\ul\cf9\insrsid3686297\charrsid6453881 \hich\af1\dbch\af13\loch\f1 Strategy}{
+\insrsid3686297 \hich\af1\dbch\af13\loch\f1  \hich\f1 \endash \loch\f1  The various interfaces and implementations thereof represent the Strategy Pattern.  The four interfaces are: }{\b\i\cf9\insrsid3686297\charrsid70358 \hich\af1\dbch\af13\loch\f1 
+ScoreAggregationAl\hich\af1\dbch\af13\loch\f1 gorithm}{\insrsid3686297 \hich\af1\dbch\af13\loch\f1 , }{\b\i\cf9\insrsid3686297\charrsid70358 \hich\af1\dbch\af13\loch\f1 TieDetector}{\insrsid3686297 \hich\af1\dbch\af13\loch\f1 , }{
+\b\i\cf9\insrsid3686297\charrsid70358 \hich\af1\dbch\af13\loch\f1 TieBreaker}{\insrsid3686297 \hich\af1\dbch\af13\loch\f1  and }{\b\i\cf9\insrsid3686297\charrsid70358 \hich\af1\dbch\af13\loch\f1 PlaceAssignmentAlgorithm}{\insrsid3686297 
+\hich\af1\dbch\af13\loch\f1 .
+\par }{\insrsid14433547 
+\par }{\ul\cf9\insrsid14433547\charrsid6453881 \hich\af1\dbch\af13\loch\f1 \hich\f1 Fa\'e7\loch\f1 ade}{\insrsid14433547 \hich\af1\dbch\af13\loch\f1  \hich\f1 \endash \loch\f1  The }{\b\i\cf9\insrsid14433547\charrsid70358 \hich\af1\dbch\af13\loch\f1 
+ReviewScoreAggregator}{\insrsid14433547 \hich\af1\dbch\af13\loch\f1 \hich\f1  class acts as a fa\'e7\loch\f1 ade to the various algorithms that it calls to aggregate and rank submissions.  This effectively takes a complex API and makes it into a
+\hich\af1\dbch\af13\loch\f1  simple API. }{\insrsid14433547\charrsid14433547 
+\par }{\insrsid3686297 
+\par {\listtext\pard\plain\s2 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid13133569 \hich\af1\dbch\af13\loch\f1 1.3\tab}}\pard\plain \s2\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl1\outlinelevel1\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid13133569 \hich\af1\dbch\af13\loch\f1 Industry Standards}{\insrsid2630253 
+\par }\pard\plain \ql \li720\ri0\widctlpar\faauto\adjustright\rin0\lin720\itap0\pararsid1133006 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid1133006 \hich\af1\dbch\af13\loch\f1 None}{
+\insrsid1133006\charrsid1133006 
+\par {\listtext\pard\plain\s2 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 1.4\tab}}\pard\plain \s2\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl1\outlinelevel1\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Required Algorithms
+\par {\listtext\pard\plain\s3 \i\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid1133006 \hich\af1\dbch\af13\loch\f1 1.4.1\tab}}\pard\plain \s3\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\aspalpha\aspnum\faauto\ls1\ilvl2\outlinelevel2\adjustright\rin0\lin0\itap0\pararsid16669152 \i\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid1133006 \hich\af1\dbch\af13\loch\f1 
+Calculate placements algorithm}{\insrsid16669152 
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid5383740 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid5720465 
+\par }{\insrsid1932877 \hich\af1\dbch\af13\loch\f1 This is the heart of the entire component.  It is implemented in the }{\b\i\cf9\insrsid1932877\charrsid4094902 \hich\af1\dbch\af13\loch\f1 calcPlacements}{\insrsid1932877 \hich\af1\dbch\af13\loch\f1 
+ method of the }{\b\i\cf9\insrsid1932877\charrsid4094902 \hich\af1\dbch\af13\loch\f1 ReviewScoreAggregator}{\insrsid1932877 \hich\af1\dbch\af13\loch\f1  class.  This is a multi-part algorithm because the requirements are complex.  }{\insrsid1120710 
+\hich\af1\dbch\af13\loch\f1 There are four parts to }{\insrsid10516382 \hich\af1\dbch\af13\loch\f1 this }{\insrsid1120710 \hich\af1\dbch\af13\loch\f1 algorithm:
+\par {\listtext\pard\plain\b\f1\fs20\cf9\lang1033\langfe1033\langfenp1033\insrsid1120710\charrsid16539186 \hich\af1\dbch\af13\loch\f1 1.\tab}}\pard \ql \fi-360\li720\ri0\widctlpar\jclisttab\tx720\faauto\ls12\adjustright\rin0\lin720\itap0\pararsid1120710 {
+\b\cf9\insrsid1120710\charrsid16539186 \hich\af1\dbch\af13\loch\f1 Prepare}{\insrsid1120710 \hich\af1\dbch\af13\loch\f1 . In this step, the input array is sorted descending based on aggregated score
+\par {\listtext\pard\plain\b\f1\fs20\cf9\lang1033\langfe1033\langfenp1033\insrsid1120710\charrsid16539186 \hich\af1\dbch\af13\loch\f1 2.\tab}}{\b\cf9\insrsid1120710\charrsid16539186 \hich\af1\dbch\af13\loch\f1 Assign initial placements}{\insrsid1120710 
+\hich\af1\dbch\af13\loch\f1 .  This is where tie\hich\af1\dbch\af13\loch\f1 s are detected using the }{\insrsid10516382 \hich\af1\dbch\af13\loch\f1 current }{\b\i\cf9\insrsid1120710\charrsid4094902 \hich\af1\dbch\af13\loch\f1 TieDetector}{
+\insrsid10516382 \hich\af1\dbch\af13\loch\f1  implementation}{\insrsid1120710 \hich\af1\dbch\af13\loch\f1 , and broken using the }{\insrsid10516382 \hich\af1\dbch\af13\loch\f1 current }{\b\i\cf9\insrsid1120710\charrsid4094902 \hich\af1\dbch\af13\loch\f1 
+TieBreaker}{\insrsid10516382 \hich\af1\dbch\af13\loch\f1  implementation}{\insrsid1120710 \hich\af1\dbch\af13\loch\f1 . The initial placement for each submission is calculated.  The output may look like [1, 2, 2, 3, 3, 4].
+\par {\listtext\pard\plain\b\f1\fs20\cf9\lang1033\langfe1033\langfenp1033\insrsid1120710\charrsid16539186 \hich\af1\dbch\af13\loch\f1 3.\tab}}{\b\cf9\insrsid1120710\charrsid16539186 \hich\af1\dbch\af13\loch\f1 Convert initial placements into final placements}{
+\insrsid1120710 \hich\af1\dbch\af13\loch\f1 .  This utilizes the }{\insrsid10516382 \hich\af1\dbch\af13\loch\f1 current }{\b\i\cf9\insrsid1120710\charrsid4094902 \hich\af1\dbch\af13\loch\f1 PlaceAssignmentAlgorithm}{\insrsid16539186 
+\hich\af1\dbch\af13\loch\f1 .}{\insrsid10516382 \hich\af1\dbch\af13\loch\f1  implementation}{\insrsid1120710 \hich\af1\dbch\af13\loch\f1 . The placement array now may look like [1, 2, 2, 4, 4, 6]
+\par {\listtext\pard\plain\b\f1\fs20\cf9\lang1033\langfe1033\langfenp1033\insrsid1120710\charrsid4094902 \hich\af1\dbch\af13\loch\f1 4.\tab}}{\b\cf9\insrsid1120710\charrsid4094902 \hich\af1\dbch\af13\loch\f1 Build the output in the form of }{
+\b\i\cf9\insrsid1120710\charrsid4094902 \hich\af1\dbch\af13\loch\f1 RankedSubmission}{\b\cf9\insrsid1120710\charrsid4094902 \hich\af1\dbch\af13\loch\f1  objects
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid5383740 {\insrsid1120710 
+\par {\listtext\pard\plain\s4 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid1932877\charrsid9401025 \hich\af1\dbch\af13\loch\f1 1.4.1.1\tab}}\pard\plain \s4\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl3\outlinelevel3\adjustright\rin0\lin0\itap0\pararsid1932877 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\b\insrsid1932877\charrsid9401025 \hich\af1\dbch\af13\loch\f1 Prepare
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid4616229 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid946765\charrsid946765 
+\hich\af5\dbch\af13\loch\f5 // \hich\af5\dbch\af13\loch\f5 Return an empty array if the input array is empty.
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid946765 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid946765\charrsid946765 \hich\af5\dbch\af13\loch\f5 if (submissions.length == 0) \{
+\par }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid946765 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid946765\charrsid946765 \hich\af5\dbch\af13\loch\f5 return new RankedSubmission[0];
+\par \}
+\par 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid4616229 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid946765\charrsid946765 \hich\af5\dbch\af13\loch\f5 // Make a copy of the original array.
+\par \hich\af5\dbch\af13\loch\f5 // The next manipulations will be on this one.
+\par \hich\af5\dbch\af13\loch\f5 AggregatedSubmission[] copy = (AggregatedSubmission[\hich\af5\dbch\af13\loch\f5 ]) submissions.clone();
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid946765 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid946765\charrsid4616229 
+\par }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid946765\charrsid946765 \hich\af5\dbch\af13\loch\f5 // Sort and reverse the array.
+\par \hich\af5\dbch\af13\loch\f5 Arrays.sort(copy);
+\par \hich\af5\dbch\af13\loch\f5 for (int i = 0; i < copy.length / 2; ++i) \{
+\par }\pard \ql \fi180\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi100\pararsid4616229 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid946765\charrsid946765 \hich\af5\dbch\af13\loch\f5 AggregatedSubmission tmp = copy[i];
+\par \hich\af5\dbch\af13\loch\f5 copy[i] = copy[copy.length - 1 - i];
+\par \hich\af5\dbch\af13\loch\f5 copy[copy.length - 1 - i] = tmp;
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid946765 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid946765\charrsid946765 \}
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid1120710 {\f5\fs18\insrsid1120710 
+\par {\listtext\pard\plain\s4 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid1932877\charrsid9401025 \hich\af1\dbch\af13\loch\f1 1.4.1.2\tab}}\pard\plain \s4\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl3\outlinelevel3\adjustright\rin0\lin0\itap0\pararsid1932877 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\b\insrsid1932877\charrsid9401025 \hich\af1\dbch\af13\loch\f1 
+Assign initial placements}{\b\insrsid1932877\charrsid9401025 
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid11690558 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 
+\hich\af5\dbch\af13\loch\f5 // Initial placements array (values are 1-based).
+\par \hich\af5\dbch\af13\loch\f5 int initialPlacements[] = new int[copy.length];
+\par 
+\par \hich\af5\dbch\af13\loch\f5 // Current placement (starts from 1).
+\par \hich\af5\dbch\af13\loch\f5 int currentPlacement = 1;
+\par \hich\af5\dbch\af13\loch\f5 initialPlacements[0] = 1;
+\par 
+\par \hich\af5\dbch\af13\loch\f5 // Index of the first submission that wa\hich\af5\dbch\af13\loch\f5 s tied.
+\par \hich\af5\dbch\af13\loch\f5 int firstTied = 0;
+\par 
+\par \hich\af5\dbch\af13\loch\f5 // The current list of tied submission.
+\par \hich\af5\dbch\af13\loch\f5 List tied = new ArrayList();
+\par \hich\af5\dbch\af13\loch\f5 tied.add(copy[0]);
+\par 
+\par \hich\af5\dbch\af13\loch\f5 // Note the end condition is "i <= copy.length" not "i < copy.length".
+\par \hich\af5\dbch\af13\loch\f5 // Since in the algorithm the designer }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558 \hich\af5\dbch\af13\loch\f5 provided, some tied submissio\hich\af5\dbch\af13\loch\f5 ns
+\par \hich\af5\dbch\af13\loch\f5 // }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5 will be left un-processing.
+\par \hich\af5\dbch\af13\loch\f5 for (int i = 1; i <= copy.length; ++i) \{
+\par }\pard \ql \fi180\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi100\pararsid13588805 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5 
+if (i != copy.length && tieDetector.tied(copy[i].getAggregatedScore(), copy[i - 1].getAggregatedScore())) \{
+\par }\pard \ql \fi360\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi200\pararsid13588805 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5 // Tied with the previous one. Add to the list.
+\par \hich\af5\dbch\af13\loch\f5 tied.add(copy[i]);
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid11690558 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5   \}\hich\af5\dbch\af13\loch\f5  else \{
+\par \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid13588805 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5 if (tied.size() > 1) \{
+\par \hich\af5\dbch\af13\loch\f5     }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid13588805 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5 
+// Process the tied submissions.
+\par }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid13588805 
+\par }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5       // Break ties among these submissions.
+\par \hich\af5\dbch\af13\loch\f5       // The array returned }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid13588805 \hich\af5\dbch\af13\loch\f5 will have values starting at 1
+\par }\pard \ql \fi540\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi300\pararsid13588805 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid13588805 \hich\af5\dbch\af13\loch\f5 // }{
+\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5 which we will then add to each record.
+\par }\pard \ql \fi540\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi300\pararsid13964502 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5 AggregatedSubmission[] subs = new A
+\hich\af5\dbch\af13\loch\f5 ggregatedSubmission[tied.size()];
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid11690558 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5      for (int t = 0; t < tied.size(); ++t) \{
+\par \hich\af5\dbch\af13\loch\f5      }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid13964502 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5 
+subs[t] = (AggregatedSubmission) tied.get(t);
+\par \hich\af5\dbch\af13\loch\f5      \}
+\par \hich\af5\dbch\af13\loch\f5      int relativePlacements[] = tieBreaker.breakTies(subs);
+\par }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid13964502 
+\par }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5      for (int j = 0; j < relativePlacements.length; ++j)\hich\af5\dbch\af13\loch\f5  \{
+\par \hich\af5\dbch\af13\loch\f5      }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid13964502 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5 
+// Update all entries starting from where we "first tied"
+\par \hich\af5\dbch\af13\loch\f5      }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid13964502 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5 
+// (note, subtract 1 because both are 1-based).
+\par \hich\af5\dbch\af13\loch\f5        initialPlacements[j + firstTied] = currentPlacement + relativePlacements[j] - 1;
+\par \hich\af5\dbch\af13\loch\f5      \}
+\par 
+\par \hich\af5\dbch\af13\loch\f5      // Set the curren}{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid13964502 \hich\af5\dbch\af13\loch\f5 tPlacement valu\hich\af5\dbch\af13\loch\f5 e to the maximum
+\par }\pard \ql \fi540\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi300\pararsid13964502 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid13964502 \hich\af5\dbch\af13\loch\f5 // }{
+\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5 so we continue from the right number.
+\par }\pard \ql \fi540\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi300\pararsid15498102 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5 for (int j = firstTied; j < i; ++j) \{
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid11690558 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5      }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid15498102 
+\hich\af5\dbch\af13\loch\f5   }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5 currentPlacement = Math.max(currentPlacement, initialPlacements[j]);
+\par \hich\af5\dbch\af13\loch\f5      \}
+\par \hich\af5\dbch\af13\loch\f5    \}
+\par 
+\par \hich\af5\dbch\af13\loch\f5    // Clear the tied.
+\par \hich\af5\dbch\af13\loch\f5    tied.clear();
+\par }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid15498102 
+\par }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5    // Assign t}{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid15498102 \hich\af5\dbch\af13\loch\f5 he next placement value to this
+\par }\pard \ql \fi360\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi200\pararsid15498102 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid15498102 \hich\af5\dbch\af13\loch\f5 // }{
+\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5 (note, it may get overwritten in another iteration).
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid11690558 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5    if (i != copy.length) \{
+\par \hich\af5\dbch\af13\loch\f5    }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid15297436 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5 
+// Increase currentPlacement first before assignment.
+\par \hich\af5\dbch\af13\loch\f5      initialPlacements[i] = ++currentPlacement;
+\par 
+\par \hich\af5\dbch\af13\loch\f5      // Remember this location an}{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid15297436 \hich\af5\dbch\af13\loch\f5 d submission in case subsequent
+\par }\pard \ql \fi540\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi300\pararsid15297436 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid15297436 \hich\af5\dbch\af13\loch\f5 // }{
+\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5 entries are also tied with this one.
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid11690558 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \hich\af5\dbch\af13\loch\f5      firstTied = i;
+\par \hich\af5\dbch\af13\loch\f5      tied.add(copy[i]);
+\par \hich\af5\dbch\af13\loch\f5    }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid15297436 \hich\af5\dbch\af13\loch\f5  }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \}
+\par \hich\af5\dbch\af13\loch\f5  }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid15297436 \hich\af5\dbch\af13\loch\f5  }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \}
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid1120710 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid11690558\charrsid11690558 \}}{\f5\fs18\insrsid1120710\charrsid1120710 
+\par }{\f5\fs18\insrsid1120710 
+\par {\listtext\pard\plain\s4 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid1932877\charrsid9401025 \hich\af1\dbch\af13\loch\f1 1.4.1.3\tab}}\pard\plain \s4\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl3\outlinelevel3\adjustright\rin0\lin0\itap0\pararsid1932877 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\b\insrsid1932877\charrsid9401025 \hich\af1\dbch\af13\loch\f1 
+Convert to final placements}{\b\insrsid1932877\charrsid9401025 
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid7361269 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\f5\fs18\insrsid7361269\charrsid7361269 \hich\af5\dbch\af13\loch\f5 
+// Convert initial placements into final placements.
+\par }{\f5\fs18\insrsid6452508 \hich\af5\dbch\af13\loch\f5 int[] finalPlacements = }{\f5\fs18\insrsid7361269\charrsid7361269 \hich\af5\dbch\af13\loch\f5 placeAssignmentAlgorithm.assignPlacements(initialPlacements);}{\f5\fs18\insrsid1120710\charrsid7361269 
+
+\par {\listtext\pard\plain\s4 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid1932877\charrsid9401025 \hich\af1\dbch\af13\loch\f1 1.4.1.4\tab}}\pard\plain \s4\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl3\outlinelevel3\adjustright\rin0\lin0\itap0\pararsid1932877 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\b\insrsid1932877\charrsid9401025 \hich\af1\dbch\af13\loch\f1 Build output
+
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid8077502 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\f5\fs18\insrsid8077502\charrsid8077502 \hich\af5\dbch\af13\loch\f5 
+// Build rankerSubmission objects from the AggregatedSubmissions.
+\par \hich\af5\dbch\af13\loch\f5 RankedSubmission[] ret = new RankedSubmission[copy.length];
+\par \hich\af5\dbch\af13\loch\f5 for (int i = 0; i < copy.length; ++i) \{
+\par }\pard \ql \fi180\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi100\pararsid8077502 {\f5\fs18\insrsid8077502\charrsid8077502 \hich\af5\dbch\af13\loch\f5 ret[i] \hich\af5\dbch\af13\loch\f5 = new RankedSubmission(copy[i], finalPlacements[i]);
+
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid8077502 {\f5\fs18\insrsid8077502\charrsid8077502 \}}{\f5\fs18\insrsid1120710\charrsid8077502 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid1120710 {\f5\fs18\insrsid1932877\charrsid1120710 
+\par {\listtext\pard\plain\s3 \i\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid16669152 \hich\af1\dbch\af13\loch\f1 1.4.2\tab}}\pard\plain \s3\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\aspalpha\aspnum\faauto\ls1\ilvl2\outlinelevel2\adjustright\rin0\lin0\itap0\pararsid16669152 \i\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid16669152 \hich\af1\dbch\af13\loch\f1 
+Standard tie breaking algorithm
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid5383740 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid8920561 \hich\af1\dbch\af13\loch\f1 \hich\f1 
+The standard tie-breaking algorithm takes into account the number of times each tied submission was \'93\loch\f1 \hich\f1 won\'94\loch\f1  (according to its review score) by each reviewer.  The s\hich\af1\dbch\af13\loch\f1 \hich\f1 
+ubmission(s) with the most \'93\loch\f1 \hich\f1 wins\'94\loch\f1  }{\lang1033\langfe2052\langfenp2052\insrsid15343561 \hich\af1\dbch\af13\loch\f1 (there may be several ones) }{\insrsid8920561 \hich\af1\dbch\af13\loch\f1 
+is considered the highest ranked.  T}{\insrsid9270170 \hich\af1\dbch\af13\loch\f1 hese submissions are then removed from consideration, and the rest of the submissions are considered for the next highest ranking.  This is the algorithm that
+\hich\af1\dbch\af13\loch\f1  is implemented by the }{\b\i\cf9\insrsid9270170\charrsid3032453 \hich\af1\dbch\af13\loch\f1 breakTies}{\insrsid9270170 \hich\af1\dbch\af13\loch\f1  method of the }{\b\i\cf9\insrsid9270170\charrsid3032453 
+\hich\af1\dbch\af13\loch\f1 StandardTieBreaker}{\insrsid9270170 \hich\af1\dbch\af13\loch\f1  class:}{\insrsid5383740 
+\par }{\insrsid9270170 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid15094809 {\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 // Note : since the algorithm designe}{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5 
+r provided use sort every time
+\par \hich\af5\dbch\af13\loch\f5 // }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 the time complexity is O(nm^2logm)
+\par \hich\af5\dbch\af13\loch\f5 // where n is the number of submissions and m is the number of reviewers.
+\par \hich\af5\dbch\af13\loch\f5 // I use some extra memory to record whether a submission has been assigned rank.
+\par \hich\af5\dbch\af13\loch\f5 // To get the winning submissions, I t}{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5 hink a O(m) traverse is enough,
+\par \hich\af5\dbch\af13\loch\f5 // }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 there's no need to sort.
+\par \hich\af5\dbch\af13\loch\f5 // So the time complexity is O(nm^}{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5 2) and space complexity is O(n)
+\par \hich\af5\dbch\af13\loch\f5 // }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 which i\hich\af5\dbch\af13\loch\f5 s a improvement to the algorithm.
+\par 
+\par \hich\af5\dbch\af13\loch\f5 // The rank of each submission.
+\par \hich\af5\dbch\af13\loch\f5 int[] rank = new int[len];
+\par 
+\par \hich\af5\dbch\af13\loch\f5 // The number of scores for each submission.
+\par \hich\af5\dbch\af13\loch\f5 int n = submissions[0].getScores().length;
+\par 
+\par \hich\af5\dbch\af13\loch\f5 // First initialize the nextrank to be 1.
+\par \hich\af5\dbch\af13\loch\f5 int nextrank = 1;
+\par 
+\par \hich\af5\dbch\af13\loch\f5 // Representing whether a submission has been assigned a rank.
+\par \hich\af5\dbch\af13\loch\f5 boolean[] visit = new boolean[len];
+\par 
+\par \hich\af5\dbch\af13\loch\f5 // The number of submission which has not been assigned a rank.
+\par \hich\af5\dbch\af13\loch\f5 // Initialized to the number of submissions.
+\par \hich\af5\dbch\af13\loch\f5 int left = submissions.length;
+\par }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid15094809 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid10045746 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid10045746\charrsid10045746 \hich\af5\dbch\af13\loch\f5 
+// These array stores the the score of the i-th submission, j-th reviewer.
+\par \hich\af5\dbch\af13\loch\f5 // It is for fast access in the next step.
+\par \hich\af5\dbch\af13\loch\f5 float[][] scores = new float[len][n];}{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid10045746 
+\par }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid10045746\charrsid10045746 \hich\af5\dbch\af13\loch\f5 for (int i = 0; i < len; ++i) \{
+\par }\pard \ql \fi180\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi100\pararsid10045746 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid10045746\charrsid10045746 \hich\af5\dbch\af13\loch\f5 float[] ss = submissions[i].get
+\hich\af5\dbch\af13\loch\f5 Scores();
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid10045746 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid10045746\charrsid10045746 \hich\af5\dbch\af13\loch\f5   \hich\af5\dbch\af13\loch\f5 for (int j = 0; j < n; ++j) \{
+\par }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid10045746 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid10045746 \hich\af5\dbch\af13\loch\f5   }{
+\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid10045746\charrsid10045746 \hich\af5\dbch\af13\loch\f5 scores[i][j] = ss[j];
+\par }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid10045746 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid10045746\charrsid10045746 \}
+\par \}}{\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid10045746\charrsid10045746 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid15094809 {\f5\fs18\lang1033\langfe2052\langfenp2052\insrsid10045746\charrsid15094809 
+\par }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 while (left > 0\hich\af5\dbch\af13\loch\f5 ) \{
+\par }\pard \ql \fi180\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi100\pararsid15094809 {\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 // The number of win's for each submission.
+\par \hich\af5\dbch\af13\loch\f5 // Initialized to be all 0.
+\par \hich\af5\dbch\af13\loch\f5 int[] wins = new int[len];
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid15094809 {\f5\fs18\insrsid15094809\charrsid15094809 
+\par \hich\af5\dbch\af13\loch\f5   // For each kind of score (e.g. from the same reviewer)
+\par \hich\af5\dbch\af13\loch\f5   // get the winning submissions (there may be several ones).
+\par \hich\af5\dbch\af13\loch\f5   for (int i = 0; i < n; ++i) \{
+\par \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 // Store the winning submissions.
+\par \hich\af5\dbch\af13\loch\f5     int[] win = new int[len];
+\par 
+\par \hich\af5\dbch\af13\loch\f5     // The number of "EXACT" equal winning submissions.
+\par \hich\af5\dbch\af13\loch\f5     int num = 0;
+\par 
+\par \hich\af5\dbch\af13\loch\f5     // The highest score for this specified reviewer score.
+\par \hich\af5\dbch\af13\loch\f5     float highest = -1;
+\par 
+\par \hich\af5\dbch\af13\loch\f5     \hich\af5\dbch\af13\loch\f5 for (int j = 0; j < len; ++j) \{
+\par \hich\af5\dbch\af13\loch\f5     }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 // Has been assigned a rank, skip.
+\par \hich\af5\dbch\af13\loch\f5     }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 if (visit[j]) \{
+\par \hich\af5\dbch\af13\loch\f5     }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5     }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 continue;
+\par \hich\af5\dbch\af13\loch\f5     }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \}
+\par 
+\par \hich\af5\dbch\af13\loch\f5     }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 // Score for specified submission (j) and reviewer (i).
+\par \hich\af5\dbch\af13\loch\f5     }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 float score = }{\f5\fs18\insrsid4596520\charrsid4596520 \hich\af5\dbch\af13\loch\f5 
+scores[j][i];}{\f5\fs18\insrsid15094809\charrsid4596520 
+\par }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5     }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 if (score > hig\hich\af5\dbch\af13\loch\f5 hest) 
+\{
+\par \hich\af5\dbch\af13\loch\f5     }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5     }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 highest = score;
+\par \hich\af5\dbch\af13\loch\f5       }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 num = 0;
+\par \hich\af5\dbch\af13\loch\f5       }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 win[num++] = j;
+\par \hich\af5\dbch\af13\loch\f5     }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \}\hich\af5\dbch\af13\loch\f5  else if (score == highest) \{
+\par \hich\af5\dbch\af13\loch\f5       }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 // Here we use "==" to determine "EXACT" equal to winning submission.
+\par \hich\af5\dbch\af13\loch\f5       }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 win[num++] = j;
+\par }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5       }{\f5\fs18\insrsid15094809\charrsid15094809 \}
+\par }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5     }{\f5\fs18\insrsid15094809\charrsid15094809 \}
+\par }\pard \ql \fi360\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi200\pararsid15094809 {\f5\fs18\insrsid15094809 
+\par }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 for (int j = 0; j < num; ++j\hich\af5\dbch\af13\loch\f5 ) \{
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid15094809 {\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5     }{
+\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 ++wins[win[j]];
+\par \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \}
+\par }\pard \ql \fi180\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi100\pararsid15094809 {\f5\fs18\insrsid15094809\charrsid15094809 \}
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid15094809 {\f5\fs18\insrsid15094809\charrsid15094809 
+\par }\pard \ql \fi180\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi100\pararsid15094809 {\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 // Find the most number of win's for all the non-rank-assigned submissions.
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid15094809 {\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5   int mostwin = 0;
+\par \hich\af5\dbch\af13\loch\f5   for (int i = 0; i < len; ++i) \{
+\par \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 // Has been assigned a rank, skip.
+\par \hich\af5\dbch\af13\loch\f5     if (visit[i]) \{
+\par \hich\af5\dbch\af13\loch\f5     }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 continue;
+\par \hich\af5\dbch\af13\loch\f5     \}
+\par 
+\par \hich\af5\dbch\af13\loch\f5     \hich\af5\dbch\af13\loch\f5 if (wins[i] > mostwin) \{
+\par \hich\af5\dbch\af13\loch\f5     }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 mostwin = wins[i];
+\par \hich\af5\dbch\af13\loch\f5     \}
+\par }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \}
+\par 
+\par \hich\af5\dbch\af13\loch\f5   // Assign rank to the winning submissions.
+\par \hich\af5\dbch\af13\loch\f5   for (int i = 0; i < len; ++i) \{
+\par \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 // Has been assigned a rank, skip.
+\par \hich\af5\dbch\af13\loch\f5     if (visit[i]) \{
+\par \hich\af5\dbch\af13\loch\f5     }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 continue;
+\par \hich\af5\dbch\af13\loch\f5     \}
+\par 
+\par \hich\af5\dbch\af13\loch\f5     if (wins[i] == mostwin) \{
+\par \hich\af5\dbch\af13\loch\f5     }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 rank[i] = nextrank;
+\par \hich\af5\dbch\af13\loch\f5     }{\f5\fs18\insrsid15094809 \hich\af5\dbch\af13\loch\f5   }{\f5\fs18\insrsid15094809\charrsid15094809 \hich\af5\dbch\af13\loch\f5 --left;
+\par \hich\af5\dbch\af13\loch\f5       visit[i] = true;
+\par \hich\af5\dbch\af13\loch\f5     \}
+\par \hich\af5\dbch\af13\loch\f5   \}
+\par 
+\par \hich\af5\dbch\af13\loch\f5   // Increase the rank number.
+\par \hich\af5\dbch\af13\loch\f5   ++nextrank;
+\par \}
+\par \hich\af5\dbch\af13\loch\f5 return rank;}{\f5\fs18\insrsid1932877\charrsid15094809 
+\par {\listtext\pard\plain\s3 \i\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid1133006 \hich\af1\dbch\af13\loch\f1 1.4.3\tab}}\pard\plain \s3\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\aspalpha\aspnum\faauto\ls1\ilvl2\outlinelevel2\adjustright\rin0\lin0\itap0\pararsid16669152 \i\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid1133006 \hich\af1\dbch\af13\loch\f1 Standard }{
+\insrsid16669152 \hich\af1\dbch\af13\loch\f1 place}{\insrsid1133006 \hich\af1\dbch\af13\loch\f1  assignment }{\insrsid16669152 \hich\af1\dbch\af13\loch\f1 algorithm
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid5383740 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid1932877 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid1932877 {\insrsid1932877 \hich\af1\dbch\af13\loch\f1 \hich\f1 The \'93\loch\f1 \hich\f1 standard\'94\hich\af1\dbch\af13\loch\f1 
+ place assignment algorithm takes an array of initial placements and creates a final placement array from it.  This implementation skips intermediate rankings (e.g}{\insrsid14383154 \hich\af1\dbch\af13\loch\f1 .}{\insrsid1932877 
+\hich\af1\dbch\af13\loch\f1 , 1,2,2,3 becomes 1,2,2,4).  This algorithm is implemented in the }{\b\i\cf9\insrsid1932877\charrsid13786734 \hich\af1\dbch\af13\loch\f1 assignPlacements}{\insrsid1932877 \hich\af1\dbch\af13\loch\f1  method of
+\hich\af1\dbch\af13\loch\f1  the }{\b\i\cf9\insrsid1932877\charrsid13786734 \hich\af1\dbch\af13\loch\f1 StandardPlaceAssignment}{\insrsid1932877 \hich\af1\dbch\af13\loch\f1  class:}{\insrsid1932877\charrsid14165886 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid5383740 {\insrsid1932877 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid15533997 {\f2\fs18\insrsid15533997\charrsid15533997 \hich\af2\dbch\af13\loch\f2 // Make a copy of the initialPlacements and sort it.
+\par \hich\af2\dbch\af13\loch\f2 int[] copy = (int[]) initialPlacements.clone();
+\par \hich\af2\dbch\af13\loch\f2 Arrays.sort(copy);
+\par 
+\par \hich\af2\dbch\af13\loch\f2 if (copy[0] != 1) \{
+\par }\pard \ql \fi180\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi100\pararsid15533997 {\f2\fs18\insrsid15533997\charrsid15533997 \hich\af2\dbch\af13\loch\f2 throw new IllegalArgumentException("The highest rank should be 1.");
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid15533997 {\f2\fs18\insrsid15533997\charrsid15533997 \}
+\par 
+\par \hich\af2\dbch\af13\loch\f2 // Map\hich\af2\dbch\af13\loch\f2 s from input (1-based) to output.
+\par \hich\af2\dbch\af13\loch\f2 // The size is 'n+1' since the maximum number is n and the input ranks are 1-based.
+\par \hich\af2\dbch\af13\loch\f2 int mapping[] = new int[n + 1];
+\par 
+\par \hich\af2\dbch\af13\loch\f2 // First place is always 1.
+\par \hich\af2\dbch\af13\loch\f2 mapping[1] = 1;
+\par 
+\par \hich\af2\dbch\af13\loch\f2 // Skip the first one which is already mapped.
+\par \hich\af2\dbch\af13\loch\f2 for (int i = \hich\af2\dbch\af13\loch\f2 1; i < n; ++i) \{
+\par }\pard \ql \fi180\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi100\pararsid15533997 {\f2\fs18\insrsid15533997\charrsid15533997 \hich\af2\dbch\af13\loch\f2 if (copy[i] - copy[i - 1] > 1) \{
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid15533997 {\f2\fs18\insrsid15533997\charrsid15533997 \hich\af2\dbch\af13\loch\f2   }{\f2\fs18\insrsid15533997 \hich\af2\dbch\af13\loch\f2   }{
+\f2\fs18\insrsid15533997\charrsid15533997 \hich\af2\dbch\af13\loch\f2 throw new IllegalArgumentException("Gaps exist in the numbers of the initialPlacements");
+\par }{\f2\fs18\insrsid15533997 \hich\af2\dbch\af13\loch\f2   }{\f2\fs18\insrsid15533997\charrsid15533997 \}
+\par \hich\af2\dbch\af13\loch\f2   if (copy[i] != copy[i - 1]) \{
+\par \hich\af2\dbch\af13\loch\f2   }{\f2\fs18\insrsid15533997 \hich\af2\dbch\af13\loch\f2   }{\f2\fs18\insrsid15533997\charrsid15533997 \hich\af2\dbch\af13\loch\f2 // We have progressed a non-tied value, set it\hich\af2\dbch\af13\loch\f2 
+ to the current index (1-based).
+\par \hich\af2\dbch\af13\loch\f2     mapping[copy[i]] = i + 1;
+\par }{\f2\fs18\insrsid15533997 \hich\af2\dbch\af13\loch\f2   }{\f2\fs18\insrsid15533997\charrsid15533997 \}
+\par \}
+\par 
+\par \hich\af2\dbch\af13\loch\f2 // Remap inputs to their outputs
+\par \hich\af2\dbch\af13\loch\f2 int[] ret = new int[n];
+\par \hich\af2\dbch\af13\loch\f2 for (int i = 0; i < n; ++i) \{
+\par }\pard \ql \fi180\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi100\pararsid2058865 {\f2\fs18\insrsid15533997\charrsid15533997 \hich\af2\dbch\af13\loch\f2 ret[i] = mapping[initialPlacements[i]];
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid15533997 {\f2\fs18\insrsid15533997\charrsid15533997 \}
+\par \hich\af2\dbch\af13\loch\f2 return ret;}{\f2\fs18\insrsid10765677\charrsid15533997 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid16669152 {\insrsid16669152\charrsid16669152 
+\par {\listtext\pard\plain\s2 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 1.5\tab}}\pard\plain \s2\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl1\outlinelevel1\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Component Class Overview
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 
+\par }\pard \ql \li720\ri0\widctlpar\faauto\adjustright\rin0\lin720\itap0 {\b\insrsid14165886\charrsid14165886 \hich\af1\dbch\af13\loch\f1 class ReviewSc\hich\af1\dbch\af13\loch\f1 oreAggregator}{\b\insrsid2630253 
+\par }\pard \ql \li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0\pararsid13726525 {\insrsid13726525 \hich\af1\dbch\af13\loch\f1 
+This is the main class of the Review Score Aggregator component. It provides pluggable implementations of the following four features:
+\par \tab \hich\af1\dbch\af13\loch\f1 1. Score aggregation (currently just averages)
+\par }\pard \ql \fi720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0\pararsid13726525 {\insrsid13726525 \hich\af1\dbch\af13\loch\f1 2. Tie detector (using an epsilon)
+\par \hich\af1\dbch\af13\loch\f1 3. Tie breaker (using "m\hich\af1\dbch\af13\loch\f1 ost wins" among tied submissions)
+\par \hich\af1\dbch\af13\loch\f1 4. Final place assignment (e.g., to skip tied indices)
+\par }\pard \ql \li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0\pararsid13726525 {\insrsid13726525 \hich\af1\dbch\af13\loch\f1 There are two main entry points in this class: }{\b\i\cf9\insrsid13726525\charrsid13911690 \hich\af1\dbch\af13\loch\f1 
+aggregateScores}{\insrsid13726525 \hich\af1\dbch\af13\loch\f1 , which calculates aggregated scores for a set of submissions, and }{\b\i\cf9\insrsid13726525\charrsid13911690 \hich\af1\dbch\af13\loch\f1 calcPlacements}{\insrsid13726525 
+\hich\af1\dbch\af13\loch\f1 , which takes aggregated submissions and determines their final relative ranking.
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0 {\b\insrsid13726525 
+\par }{\b\insrsid14165886\charrsid4668422 \hich\af1\dbch\af13\loch\f1 class Submission}{\b\insrsid14165886 
+\par }\pard \ql \li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0\pararsid11349568 {\insrsid11349568\charrsid11349568 \hich\af1\dbch\af13\loch\f1 This class represents a component submission and currently only stores the scores r}{\insrsid11349568 
+\hich\af1\dbch\af13\loch\f1 ec}{\insrsid11349568\charrsid11349568 \hich\af1\dbch\af13\loch\f1 e}{\insrsid11349568 \hich\af1\dbch\af13\loch\f1 i}{\insrsid11349568\charrsid11349568 \hich\af1\dbch\af13\loch\f1 ved from each of the reviewers as floats.
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0 {\insrsid4143696 
+\par }{\b\insrsid14165886\charrsid4668422 \hich\af1\dbch\af13\loch\f1 class Aggregat\hich\af1\dbch\af13\loch\f1 edSubmission extends Submission implements Comparable
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0\pararsid11349568 {\insrsid4143696 \tab }{\insrsid1997727 \hich\af1\dbch\af13\loch\f1 Represents a}{\insrsid11349568 \hich\af1\dbch\af13\loch\f1 
+ submission whose scores have been aggregated.  This class implements Comparable so it can be used to sort submissions by their aggregated scores.}{\insrsid14165886 
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0 {\insrsid4143696 
+\par }{\b\insrsid14165886\charrsid4668422 \hich\af1\dbch\af13\loch\f1 class RankedSubmission extends Aggregated\hich\af1\dbch\af13\loch\f1 Submission
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0\pararsid5383740 {\insrsid4143696 \tab }{\insrsid471422 \hich\af1\dbch\af13\loch\f1 Represents a}{\insrsid5383740 \hich\af1\dbch\af13\loch\f1 
+ submission that has been assigned an aggregated score, and a relative rank to other submissions in this component contest.  Stores the rank as an integer.}{\insrsid14165886 
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0 {\insrsid4143696\charrsid14165886 
+\par }{\b\insrsid14165886\charrsid4668422 \hich\af1\dbch\af13\loch\f1 interface ScoreAggregationAlgorithm
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0\pararsid16189035 {\insrsid3547440 \tab }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 This interface defines a score aggrega\hich\af1\dbch\af13\loch\f1 
+tion algorithm, whereby scores from multiple reviewers}{\insrsid5904846 \hich\af1\dbch\af13\loch\f1  }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 are aggregated into a single combined score. Different implementations may aggregate}{\insrsid5904846 
+\hich\af1\dbch\af13\loch\f1  }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 scores differently, e.g., arithmetic average, or by throwing out the highest and lowest, and}{\insrsid5904846 \hich\af1\dbch\af13\loch\f1  }{\insrsid16189035 
+\hich\af1\dbch\af13\loch\f1 averaging the rest.}{\insrsid14165886 
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0 {\insrsid4143696 
+\par }{\b\insrsid14165886\charrsid4668422 \hich\af1\dbch\af13\loch\f1 cl\hich\af1\dbch\af13\loch\f1 ass AveragingAggregationAlgorithm implements ScoreAggregationAlgorithm
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0\pararsid16189035 {\insrsid3547440 \tab }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 
+This class defines the standard score aggregation algorithm, whereby the aggregated score is the}{\insrsid5904846 \hich\af1\dbch\af13\loch\f1  }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 arithmetic average of the individual score}{\insrsid14165886 
+
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0 {\insrsid4143696 
+\par }{\b\insrsid14165886\charrsid4668422 \hich\af1\dbch\af13\loch\f1 interface TieDetector
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0\pararsid16189035 {\insrsid3547440 \tab }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 This interface defin\hich\af1\dbch\af13\loch\f1 
+es the "tie detector" contract.  Two scores, represented as floats,}{\insrsid5904846 \hich\af1\dbch\af13\loch\f1  }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 are tested to determine if they are in fact tied.  An implementation of this class is}{
+\insrsid5904846 \hich\af1\dbch\af13\loch\f1  }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 used by the }{\b\i\cf9\insrsid16189035\charrsid7952754 \hich\af1\dbch\af13\loch\f1 ReviewScoreAggregator}{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 
+ class when determining if two or more submissions are}{\insrsid5904846 \hich\af1\dbch\af13\loch\f1  }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 tied (and need\hich\af1\dbch\af13\loch\f1  to have their ranking tie broken by a }{
+\b\i\cf9\insrsid16189035\charrsid7952754 \hich\af1\dbch\af13\loch\f1 TieBreaker}{\insrsid16189035 \hich\af1\dbch\af13\loch\f1  implementation.)}{\insrsid14165886 
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0 {\insrsid4143696 
+\par }{\b\insrsid14165886\charrsid4668422 \hich\af1\dbch\af13\loch\f1 class StandardTieDetector implements TieDetector
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0\pararsid16189035 {\insrsid3547440 \tab }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 "Standard" implementation of the }{\b\i\cf9\insrsid16189035\charrsid7952754 
+\hich\af1\dbch\af13\loch\f1 TieDetector}{\insrsid16189035 \hich\af1\dbch\af13\loch\f1  interface, which uses an epsilon to}{\insrsid5904846 \hich\af1\dbch\af13\loch\f1  }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 
+detect relative or absolute differences between two scores.  It }{\insrsid3477475 \hich\af1\dbch\af13\loch\f1 uses an algorithm similar to}{\insrsid5904846 \hich\af1\dbch\af13\loch\f1  t}{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 he standard }{
+\i\insrsid16189035\charrsid7952754 \hich\af1\dbch\af13\loch\f1 TopCoder}{\insrsid16189035 \hich\af1\dbch\af13\loch\f1  comparison method for doubles. }{\insrsid4143696 
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0 {\insrsid14165886\charrsid14165886 \hich\af1\dbch\af13\loch\f1  
+\par }{\b\insrsid14165886\charrsid4668422 \hich\af1\dbch\af13\loch\f1 interface TieBreaker
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0\pararsid16189035 {\insrsid3547440 \tab }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 
+This interface determines the relative placement of a set of Submissions whose aggregated scores}{\insrsid5904846 \hich\af1\dbch\af13\loch\f1  }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 
+have already been determined to be 'tied'. An implementation of this interface is used by the}{\insrsid5904846 \hich\af1\dbch\af13\loch\f1  }{\b\i\cf9\insrsid16189035\charrsid7952754 \hich\af1\dbch\af13\loch\f1 ReviewScoreAggregator}{\insrsid16189035 
+\hich\af1\dbch\af13\loch\f1  class to brea}{\insrsid3219043 \hich\af1\dbch\af13\loch\f1 k ties between tied submis}{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 s}{\insrsid3219043 \hich\af1\dbch\af13\loch\f1 i}{\insrsid16189035 
+\hich\af1\dbch\af13\loch\f1 on\hich\af1\dbch\af13\loch\f1 s. Implementations may use}{\insrsid5904846 \hich\af1\dbch\af13\loch\f1  }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 various methods to break ties (including not breaking ties at all).
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0 {\insrsid4143696 
+\par }{\b\insrsid14165886\charrsid4668422 \hich\af1\dbch\af13\loch\f1 class StandardTieBreaker implements TieBreaker
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0\pararsid16189035 {\insrsid3547440 \tab }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 This class is the "standard" }{\insrsid16189035\charrsid10172111 
+\hich\af1\dbch\af13\loch\f1 impl}{\insrsid3477475\charrsid10172111 \hich\af1\dbch\af13\loch\f1 e}{\insrsid16189035\charrsid10172111 \hich\af1\dbch\af13\loch\f1 mentat}{\insrsid10172111 \hich\af1\dbch\af13\loch\f1 io}{\insrsid16189035\charrsid10172111 
+\hich\af1\dbch\af13\loch\f1 n}{\insrsid16189035 \hich\af1\dbch\af13\loch\f1  of the }{\b\i\cf9\insrsid16189035\charrsid7952754 \hich\af1\dbch\af13\loch\f1 TieBreaker}{\insrsid16189035 \hich\af1\dbch\af13\loch\f1  interface.}{\insrsid3477475 
+\hich\af1\dbch\af13\loch\f1  }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 It implements the tie-breaking algorith\hich\af1\dbch\af13\loch\f1 m described in the Requirements Specification, namely}{\insrsid3477475 \hich\af1\dbch\af13\loch\f1  }{
+\insrsid16189035 \hich\af1\dbch\af13\loch\f1 submissions with more 'wins' are ranked higher than other submissions with the same tied score.}{\insrsid14165886 
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0 {\insrsid4143696 
+\par }{\b\insrsid14165886\charrsid4668422 \hich\af1\dbch\af13\loch\f1 interface PlaceAssignmentAlgorithm
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0\pararsid16189035 {\insrsid3547440 \tab }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 This interface defines an algorithm for assigning the final place ran
+\hich\af1\dbch\af13\loch\f1 king for a set of submissions based on their initial placements. An implementation of this interface is used by the }{\b\i\cf9\insrsid16189035\charrsid7952754 \hich\af1\dbch\af13\loch\f1 ReviewScoreAggregator}{\insrsid16189035 
+\hich\af1\dbch\af13\loch\f1  class when calculating final rankings of submissions after aggregation, sorting by score, and tie-breaking is applied.\hich\af1\dbch\af13\loch\f1 
+ Implementations of this interface can take the given array and apply various transformations on it to produce the final placements. For example, if the initial array is 1,2,2,3, one implementation might assign their final places to be 1,2,2,4. Another im
+\hich\af1\dbch\af13\loch\f1 p\hich\af1\dbch\af13\loch\f1 lementation might assign their final places as 1,3,3,4.}{\insrsid14165886 
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0 {\insrsid4143696 
+\par }{\b\insrsid14165886\charrsid4668422 \hich\af1\dbch\af13\loch\f1 class StandardPlaceAssignment implements PlaceAssignmentAlgorithm
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0\pararsid16189035 {\insrsid3547440 \tab }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 This is the }{\insrsid3477475 \loch\af1\dbch\af13\hich\f1 \'93}{\insrsid16189035 
+\hich\af1\dbch\af13\loch\f1 standard}{\insrsid3477475 \loch\af1\dbch\af13\hich\f1 \'94}{\insrsid16189035 \hich\af1\dbch\af13\loch\f1  implementation of the }{\b\i\cf9\insrsid16189035\charrsid7952754 \hich\af1\dbch\af13\loch\f1 PlaceAssignmentAlgorithm}{
+\insrsid16189035 \hich\af1\dbch\af13\loch\f1  interface. This implementation skips }{\insrsid5904846 \hich\af1\dbch\af13\loch\f1 intermediate }{\insrsid16189035 \hich\af1\dbch\af13\loch\f1 rankings (e.\hich\af1\dbch\af13\loch\f1 
+g, 1,2,2,3 becomes 1,2,2,4) after ties are applied.}{\lang1033\langfe2052\langfenp2052\insrsid4143696 
+\par }{\lang1033\langfe2052\langfenp2052\insrsid3363717 
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0\pararsid3363717 {\b\insrsid3363717\charrsid4668422 \hich\af1\dbch\af13\loch\f1 class }{\b\insrsid3363717\charrsid3363717 \hich\af1\dbch\af13\loch\f1 Util}{
+\b\lang1033\langfe2052\langfenp2052\insrsid3363717 
+\par }\pard \ql \li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0\pararsid3363717 {\insrsid3363717\charrsid3363717 \hich\af1\dbch\af13\loch\f1 Helper class for the Status Tracker Component}{\lang1033\langfe2052\langfenp2052\insrsid3363717 
+\hich\af1\dbch\af13\loch\f1  which provides some useful }{\lang1033\langfe2052\langfenp2052\insrsid10373979 \hich\af1\dbch\af13\loch\f1 functionality}{\insrsid3363717\charrsid3363717 \hich\af1\dbch\af13\loch\f1 .
+\par {\listtext\pard\plain\s2 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 1.6\tab}}\pard\plain \s2\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl1\outlinelevel1\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Component Exception Definitions
+\par }\pard\plain \ql \fi720\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\b\insrsid2630253 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid16669152 {\insrsid16669152 \tab }{\b\insrsid16669152\charrsid16669152 \hich\af1\dbch\af13\loch\f1 ReviewScoreAggregatorException}{\b\insrsid16669152 \hich\af1\dbch\af13\loch\f1 
+ extends BaseException}{\insrsid16669152 
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0 {\b\insrsid2630253 \tab }{\insrsid2630253 \hich\af1\dbch\af13\loch\f1 The generic exception that represents an error that occurred in any part of the }{\insrsid16669152 
+\hich\af1\dbch\af13\loch\f1 Review Score Aggregator }{\insrsid2630253 \hich\af1\dbch\af13\loch\f1 component.}{\insrsid16669152 \hich\af1\dbch\af13\loch\f1   It can wrap another }{\insrsid2704544 \hich\af1\dbch\af13\loch\f1 exception th}{\insrsid14433547 
+\hich\af1\dbch\af13\loch\f1 at occurred (e.g., ConfigManager}{\insrsid2704544 \hich\af1\dbch\af13\loch\f1 Exception)}{\insrsid2630253 
+\par }{\insrsid2704544 
+\par }{\b\insrsid2704544\charrsid2704544 \hich\af1\dbch\af13\loch\f1 InconsistentDataException extends ReviewScoreAggregatorException
+\par }{\insrsid2704544 \tab }{\insrsid2704544 \hich\af1\dbch\af13\loch\f1 \hich\f1 This exception indicates that the data passed into a method is considered \'93\loch\f1 \hich\f1 inconsistent\'94\loch\f1 .  Usually it \hich\af1\dbch\af13\loch\f1 
+means that the number of review scores is not the same for all submissions provided.  It is thrown by both the }{\b\i\cf9\insrsid2704544\charrsid13769217 \hich\af1\dbch\af13\loch\f1 ReviewScoreAggregator}{\insrsid2704544 \hich\af1\dbch\af13\loch\f1 
+ class as well as implementations of the }{\b\i\cf9\insrsid11952364\charrsid13769217 \hich\af1\dbch\af13\loch\f1 TieBreaker}{\insrsid2704544 \hich\af1\dbch\af13\loch\f1  interface.
+\par 
+\par }\pard \ql \fi-720\li1440\ri-270\widctlpar\faauto\adjustright\rin-270\lin1440\itap0\pararsid2704544 {\b\insrsid2704544\charrsid16669152 \hich\af1\dbch\af13\loch\f1 ReviewScoreAggregator}{\b\insrsid2704544 \hich\af1\dbch\af13\loch\f1 Config}{
+\b\insrsid2704544\charrsid16669152 \hich\af1\dbch\af13\loch\f1 Exception}{\b\insrsid2704544 \hich\af1\dbch\af13\loch\f1  extends R}{\b\insrsid2704544\charrsid16669152 \hich\af1\dbch\af13\loch\f1 eviewScoreAggr\hich\af1\dbch\af13\loch\f1 egatorException}{
+\b\insrsid2704544 
+\par \tab }{\insrsid2704544 \hich\af1\dbch\af13\loch\f1 This exception indicates that there was a configuration problem with the component.  It is thrown by the }{\b\i\cf9\insrsid2704544\charrsid13769217 \hich\af1\dbch\af13\loch\f1 ReviewScoreAggregator}{
+\insrsid2704544 \hich\af1\dbch\af13\loch\f1  class, in one of its constructors, when it is attempting to build objects using the Object Factory component.}{\insrsid2704544\charrsid2704544 
+\par }\pard \ql \fi-720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0 {\insrsid2630253 
+\par {\listtext\pard\plain\s2 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 1.7\tab}}\pard\plain \s2\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl1\outlinelevel1\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Thread Safety
+\par }\pard\plain \ql \li720\ri0\widctlpar\faauto\adjustright\rin0\lin720\itap0\pararsid2704544 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2704544 \hich\af1\dbch\af13\loch\f1 
+Each class in this component has been designed to be thread-safe.  The various algorithm interface implementations are all immutable, as are the Submission class and its descendants.  The only mutable class, }{\b\i\cf9\insrsid2704544\charrsid13769217 
+\hich\af1\dbch\af13\loch\f1 ReviewScoreAggregator}{\insrsid2704544 \hich\af1\dbch\af13\loch\f1 , is expl\hich\af1\dbch\af13\loch\f1 icitly synchronized in each of its methods so that it achieves thread safety.}{\insrsid2704544\charrsid2704544 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0 {\insrsid2630253 
+\par {\listtext\pard\plain\s1 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 2.\tab}}\pard\plain \s1\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx360\faauto\ls1\outlinelevel0\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Environment Requirements
+\par {\listtext\pard\plain\s2 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 2.1\tab}}\pard\plain \s2\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl1\outlinelevel1\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Environment
+\par {\listtext\pard\plain\f3\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \loch\af3\dbch\af13\hich\f3 \'b7\tab}}\pard\plain \ql \fi-360\li1080\ri0\widctlpar\jclisttab\tx1080\faauto\ls2\adjustright\rin0\lin1080\itap0 
+\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 At minimum, Java 1.4 is required for compilation and executing test cases.
+\par {\listtext\pard\plain\f3\fs20\lang1033\langfe1033\langfenp1033\insrsid16669152 \loch\af3\dbch\af13\hich\f3 \'b7\tab}}\pard \ql \fi-360\li1080\ri0\widctlpar\jclisttab\tx1080\aspalpha\aspnum\faauto\ls2\adjustright\rin0\lin1080\itap0\pararsid16669152 {
+\insrsid16669152 \hich\af1\dbch\af13\loch\f1 Java 1.4 or higher must be used for Java 1.4 built in logging.
+\par }\pard \ql \li720\ri0\widctlpar\faauto\adjustright\rin0\lin720\itap0 {\insrsid2630253 
+\par {\listtext\pard\plain\s2 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 2.2\tab}}\pard\plain \s2\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl1\outlinelevel1\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 TopCoder Software Components
+\par {\listtext\pard\plain\s1 \f3\fs20\cf17\lang1033\langfe1033\langfenp1033\insrsid16669152\charrsid13769217 \loch\af3\dbch\af13\hich\f3 \'b7\tab}}\pard\plain \s1\ql \fi-360\li1080\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx1080\faauto\ls2\outlinelevel0\adjustright\rin0\lin1080\itap0\pararsid16669152 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\b0\ul\cf17\insrsid16669152\charrsid13769217 \hich\af1\dbch\af13\loch\f1 
+Base Exception 1.0}{\b0\insrsid16669152\charrsid16669152 \hich\af1\dbch\af13\loch\f1 : The base class for all custom exceptions in this component.
+\par {\listtext\pard\plain\s1 \f3\fs20\cf17\lang1033\langfe1033\langfenp1033\insrsid16669152\charrsid13769217 \loch\af3\dbch\af13\hich\f3 \'b7\tab}}{\b0\ul\cf17\insrsid16669152\charrsid13769217 \hich\af1\dbch\af13\loch\f1 Object Factory 2.0}{
+\b0\insrsid16669152\charrsid16669152 \hich\af1\dbch\af13\loch\f1 : Used by the }{\insrsid16669152\charrsid10172111 \hich\af1\dbch\af13\loch\f1 ReviewScoreAggregator}{\b0\insrsid16669152\charrsid16669152 \hich\af1\dbch\af13\loch\f1  }{\b0\insrsid10172111 
+\hich\af1\dbch\af13\loch\f1 class\hich\f1 \rquote \loch\f1  }{\b0\insrsid16669152\charrsid16669152 \hich\af1\dbch\af13\loch\f1 one-argument c\hich\af1\dbch\af13\loch\f1 onstructor to determine the implementation classes to instantiate
+\par {\listtext\pard\plain\s1 \f3\fs20\cf17\lang1033\langfe1033\langfenp1033\insrsid16669152\charrsid13769217 \loch\af3\dbch\af13\hich\f3 \'b7\tab}}{\b0\ul\cf17\insrsid16669152\charrsid13769217 \hich\af1\dbch\af13\loch\f1 Configuration Manager 2.1.4}{
+\b0\insrsid16669152\charrsid16669152 \hich\af1\dbch\af13\loch\f1 : Used by the dependent component Object Factory.  Note that the Review Score Aggregator component does not rely directly on the Configuration Manager.
+\par }\pard\plain \s16\ql \li720\ri0\sa120\widctlpar\faauto\adjustright\rin0\lin720\itap0\pararsid16669152 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid16669152\charrsid16669152 
+\par }\pard\plain \ql \li720\ri0\widctlpar\faauto\adjustright\rin0\lin720\itap0 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\i\insrsid2630253 \hich\af1\dbch\af13\loch\f1 NOTE: Th\hich\af1\dbch\af13\loch\f1 
+e default location for TopCoder Software component jars is../lib/tcs/COMPONENT_NAME/COMPONENT_VERSION relative to the component installation.}{\i\cf1\insrsid2630253 \hich\af1\dbch\af13\loch\f1 
+  Setting the tcs_libdir property in topcoder_global.properties will overwrite this default location.}{\insrsid2630253 
+\par }\pard\plain \s16\ql \li720\ri0\sa120\widctlpar\faauto\adjustright\rin0\lin720\itap0 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 
+\par {\listtext\pard\plain\s2 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 2.3\tab}}\pard\plain \s2\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl1\outlinelevel1\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Third Pa\hich\af1\dbch\af13\loch\f1 rty Components
+
+\par {\listtext\pard\plain\s16 \f3\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \loch\af3\dbch\af13\hich\f3 \'b7\tab}}\pard\plain \s16\ql \fi-360\li1080\ri0\sa120\widctlpar\jclisttab\tx1080\faauto\ls3\adjustright\rin0\lin1080\itap0 
+\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 None
+\par {\listtext\pard\plain\s1 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 3.\tab}}\pard\plain \s1\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx360\faauto\ls1\outlinelevel0\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Installation and Configuration
+\par {\listtext\pard\plain\s2 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 3.1\tab}}\pard\plain \s2\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl1\outlinelevel1\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Package Name
+\par }\pard\plain \s16\ql \fi720\li0\ri0\sa120\widctlpar\faauto\adjustright\rin0\lin0\itap0 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid16669152 \hich\af1\dbch\af13\loch\f1 
+com.topcoder.management.review.scoreaggregator}{\insrsid2630253 
+\par {\listtext\pard\plain\s2 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 3.2\tab}}\pard\plain \s2\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl1\outlinelevel1\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Configuration Parameters
+\par }\pard\plain \ql \li720\ri0\widctlpar\faauto\adjustright\rin0\lin720\itap0\pararsid12212386 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid12212386 \hich\af1\dbch\af13\loch\f1 
+This component depends on a configuration file used by the Object Factory component for its configuration.  }{\insrsid6824991 \hich\af1\dbch\af13\loch\f1 This is used in the one-arg (String) constructor of the }{\b\insrsid6824991\charrsid6824991 
+\hich\af1\dbch\af13\loch\f1 ReviewScoreAggregator}{\insrsid6824991 \hich\af1\dbch\af13\loch\f1  class.  }{\insrsid12212386 \hich\af1\dbch\af13\loch\f1 The configuration file that is needed is:
+\par 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid2976077 {\f5\insrsid2976077\charrsid2976077 \hich\af5\dbch\af13\loch\f5 
+<!-- This is the configuration file for ObjectFactory to use to build the "standard" implementations of the four algorithms. -->
+\par \hich\af5\dbch\af13\loch\f5 <Config name="com.topcoder.management.review.scoreaggregator">
+\par \hich\af5\dbch\af13\loch\f5   <Property name="ScoreAggregationAlgorithm:default">
+\par \hich\af5\dbch\af13\loch\f5     <Prope\hich\af5\dbch\af13\loch\f5 rty name="type">
+\par \hich\af5\dbch\af13\loch\f5       <Value>com.topcoder.management.review.scoreaggregator.impl.AveragingAggregationAlgorithm</Value>
+\par \hich\af5\dbch\af13\loch\f5     </Property>
+\par \hich\af5\dbch\af13\loch\f5   </Property>
+\par \hich\af5\dbch\af13\loch\f5   <Property name="TieDetector:default">
+\par \hich\af5\dbch\af13\loch\f5     <Property name="type">
+\par \hich\af5\dbch\af13\loch\f5       <Value>com.topcoder.management.re\hich\af5\dbch\af13\loch\f5 view.scoreaggregator.impl.StandardTieDetector</Value>
+\par \hich\af5\dbch\af13\loch\f5     </Property>
+\par \hich\af5\dbch\af13\loch\f5   </Property>
+\par \hich\af5\dbch\af13\loch\f5   <Property name="TieBreaker:default">
+\par \hich\af5\dbch\af13\loch\f5     <Property name="type">
+\par \hich\af5\dbch\af13\loch\f5       <Value>com.topcoder.management.review.scoreaggregator.impl.StandardTieBreaker</Value>
+\par \hich\af5\dbch\af13\loch\f5     </Property\hich\af5\dbch\af13\loch\f5 >
+\par \hich\af5\dbch\af13\loch\f5   </Property>
+\par \hich\af5\dbch\af13\loch\f5   <Property name="PlaceAssignmentAlgorithm:default">
+\par \hich\af5\dbch\af13\loch\f5     <Property name="type">
+\par \hich\af5\dbch\af13\loch\f5       <Value>com.topcoder.management.review.scoreaggregator.impl.StandardPlaceAssignment</Value>
+\par \hich\af5\dbch\af13\loch\f5     </Property>
+\par \hich\af5\dbch\af13\loch\f5   </Property>
+\par \hich\af5\dbch\af13\loch\f5 </Config>}{\f5\insrsid12212386\charrsid2976077 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid12212386 {\f5\insrsid3547440 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0 {\insrsid2630253 
+\par }\trowd \irow0\irowband0\ts18\trgaph108\trleft-360\trbrdrt\brdrs\brdrw10 \trbrdrl\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrh\brdrs\brdrw10 \trbrdrv\brdrs\brdrw10 
+\trftsWidth3\trwWidth9540\trftsWidthB3\trftsWidthA3\trautofit1\trpaddl108\trpaddr108\trpaddfl3\trpaddft3\trpaddfb3\trpaddfr3\tbllkhdrrows\tbllklastrow\tbllkhdrcols\tbllklastcol \clvertalt\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb
+\brdrs\brdrw10 \clbrdrr\brdrs\brdrw10 \cltxlrtb\clftsWidth3\clwWidth4797\clshdrawnil \cellx4437\clvertalt\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb\brdrs\brdrw10 \clbrdrr\brdrs\brdrw10 \cltxlrtb\clftsWidth3\clwWidth3573\clshdrawnil \cellx8010
+\clvertalt\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb\brdrs\brdrw10 \clbrdrr\brdrs\brdrw10 \cltxlrtb\clftsWidth3\clwWidth1170\clshdrawnil \cellx9180\pard\plain \ql \li0\ri0\widctlpar\intbl\faauto\adjustright\rin0\lin0\pararsid490415\yts18 
+\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\b\insrsid6824991\charrsid6824991 \hich\af1\dbch\af13\loch\f1 Parameter\cell \hich\af1\dbch\af13\loch\f1 Description\cell \hich\af1\dbch\af13\loch\f1 Typical Value\cell 
+}\pard\plain \ql \li0\ri0\widctlpar\intbl\aspalpha\aspnum\faauto\adjustright\rin0\lin0 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid6824991\charrsid6824991 \trowd \irow0\irowband0\ts18\trgaph108\trleft-360
+\trbrdrt\brdrs\brdrw10 \trbrdrl\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrh\brdrs\brdrw10 \trbrdrv\brdrs\brdrw10 
+\trftsWidth3\trwWidth9540\trftsWidthB3\trftsWidthA3\trautofit1\trpaddl108\trpaddr108\trpaddfl3\trpaddft3\trpaddfb3\trpaddfr3\tbllkhdrrows\tbllklastrow\tbllkhdrcols\tbllklastcol \clvertalt\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb
+\brdrs\brdrw10 \clbrdrr\brdrs\brdrw10 \cltxlrtb\clftsWidth3\clwWidth4797\clshdrawnil \cellx4437\clvertalt\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb\brdrs\brdrw10 \clbrdrr\brdrs\brdrw10 \cltxlrtb\clftsWidth3\clwWidth3573\clshdrawnil \cellx8010
+\clvertalt\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb\brdrs\brdrw10 \clbrdrr\brdrs\brdrw10 \cltxlrtb\clftsWidth3\clwWidth1170\clshdrawnil \cellx9180\row }\pard\plain 
+\ql \li0\ri0\widctlpar\intbl\faauto\adjustright\rin0\lin0\pararsid490415\yts18 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\f5\insrsid6824991\charrsid8218560 \hich\af5\dbch\af13\loch\f5 ScoreAggregationAlgorithm}{
+\f5\insrsid6824991 \hich\af5\dbch\af13\loch\f5 :default/type}{\insrsid6824991\charrsid6824991 \cell }{\insrsid6824991 \hich\af1\dbch\af13\loch\f1 Fully-qualified class name of the ScoreAggregationAlgorithm implementation to use }{
+\insrsid6824991\charrsid6824991 \cell }{\insrsid6824991 \hich\af1\dbch\af13\loch\f1 See above}{\insrsid6824991\charrsid6824991 \cell }\pard\plain \ql \li0\ri0\widctlpar\intbl\aspalpha\aspnum\faauto\adjustright\rin0\lin0 
+\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid6824991\charrsid6824991 \trowd \irow1\irowband1\ts18\trgaph108\trleft-360\trbrdrt\brdrs\brdrw10 \trbrdrl\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trbrdrr
+\brdrs\brdrw10 \trbrdrh\brdrs\brdrw10 \trbrdrv\brdrs\brdrw10 \trftsWidth3\trwWidth9540\trftsWidthB3\trftsWidthA3\trautofit1\trpaddl108\trpaddr108\trpaddfl3\trpaddft3\trpaddfb3\trpaddfr3\tbllkhdrrows\tbllklastrow\tbllkhdrcols\tbllklastcol \clvertalt
+\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb\brdrs\brdrw10 \clbrdrr\brdrs\brdrw10 \cltxlrtb\clftsWidth3\clwWidth4797\clshdrawnil \cellx4437\clvertalt\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb\brdrs\brdrw10 \clbrdrr\brdrs\brdrw10 
+\cltxlrtb\clftsWidth3\clwWidth3573\clshdrawnil \cellx8010\clvertalt\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb\brdrs\brdrw10 \clbrdrr\brdrs\brdrw10 \cltxlrtb\clftsWidth3\clwWidth1170\clshdrawnil \cellx9180\row }\pard\plain 
+\ql \li0\ri0\widctlpar\intbl\faauto\adjustright\rin0\lin0\pararsid490415\yts18 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\f5\insrsid6824991\charrsid8218560 \hich\af5\dbch\af13\loch\f5 TieDetector}{
+\f5\insrsid6824991 \hich\af5\dbch\af13\loch\f5 :default/type}{\f5\insrsid6824991\charrsid8218560 \cell }{\insrsid6824991 \hich\af1\dbch\af13\loch\f1 Fully-qualified class name of the }{\f5\insrsid6824991\charrsid8218560 \hich\af5\dbch\af13\loch\f5 
+TieDetector}{\insrsid6824991 \hich\af1\dbch\af13\loch\f1  implementation to use}{\insrsid6824991\charrsid6824991 \cell }{\insrsid6824991 \hich\af1\dbch\af13\loch\f1 See above}{\insrsid6824991\charrsid6824991 \cell }\pard\plain 
+\ql \li0\ri0\widctlpar\intbl\aspalpha\aspnum\faauto\adjustright\rin0\lin0 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid6824991\charrsid6824991 \trowd \irow2\irowband2\ts18\trgaph108\trleft-360\trbrdrt
+\brdrs\brdrw10 \trbrdrl\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrh\brdrs\brdrw10 \trbrdrv\brdrs\brdrw10 
+\trftsWidth3\trwWidth9540\trftsWidthB3\trftsWidthA3\trautofit1\trpaddl108\trpaddr108\trpaddfl3\trpaddft3\trpaddfb3\trpaddfr3\tbllkhdrrows\tbllklastrow\tbllkhdrcols\tbllklastcol \clvertalt\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb
+\brdrs\brdrw10 \clbrdrr\brdrs\brdrw10 \cltxlrtb\clftsWidth3\clwWidth4797\clshdrawnil \cellx4437\clvertalt\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb\brdrs\brdrw10 \clbrdrr\brdrs\brdrw10 \cltxlrtb\clftsWidth3\clwWidth3573\clshdrawnil \cellx8010
+\clvertalt\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb\brdrs\brdrw10 \clbrdrr\brdrs\brdrw10 \cltxlrtb\clftsWidth3\clwWidth1170\clshdrawnil \cellx9180\row }\pard\plain 
+\ql \li0\ri0\widctlpar\intbl\faauto\adjustright\rin0\lin0\pararsid490415\yts18 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\f5\insrsid6824991\charrsid8218560 \hich\af5\dbch\af13\loch\f5 Tie}{\f5\insrsid6824991 
+\hich\af5\dbch\af13\loch\f5 Breaker:default/type}{\f5\insrsid6824991\charrsid8218560 \cell }{\insrsid6824991 \hich\af1\dbch\af13\loch\f1 Fully-qualified class name of the }{\f5\insrsid6824991\charrsid8218560 \hich\af5\dbch\af13\loch\f5 Tie}{
+\f5\insrsid6824991 \hich\af5\dbch\af13\loch\f5 Breaker}{\insrsid6824991 \hich\af1\dbch\af13\loch\f1  implementation to use}{\insrsid6824991\charrsid6824991 \cell }{\insrsid6824991 \hich\af1\dbch\af13\loch\f1 See above}{\insrsid6824991\charrsid6824991 
+\cell }\pard\plain \ql \li0\ri0\widctlpar\intbl\aspalpha\aspnum\faauto\adjustright\rin0\lin0 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid6824991\charrsid6824991 \trowd \irow3\irowband3
+\ts18\trgaph108\trleft-360\trbrdrt\brdrs\brdrw10 \trbrdrl\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrh\brdrs\brdrw10 \trbrdrv\brdrs\brdrw10 
+\trftsWidth3\trwWidth9540\trftsWidthB3\trftsWidthA3\trautofit1\trpaddl108\trpaddr108\trpaddfl3\trpaddft3\trpaddfb3\trpaddfr3\tbllkhdrrows\tbllklastrow\tbllkhdrcols\tbllklastcol \clvertalt\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb
+\brdrs\brdrw10 \clbrdrr\brdrs\brdrw10 \cltxlrtb\clftsWidth3\clwWidth4797\clshdrawnil \cellx4437\clvertalt\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb\brdrs\brdrw10 \clbrdrr\brdrs\brdrw10 \cltxlrtb\clftsWidth3\clwWidth3573\clshdrawnil \cellx8010
+\clvertalt\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb\brdrs\brdrw10 \clbrdrr\brdrs\brdrw10 \cltxlrtb\clftsWidth3\clwWidth1170\clshdrawnil \cellx9180\row }\pard\plain 
+\ql \li0\ri0\widctlpar\intbl\faauto\adjustright\rin0\lin0\pararsid490415\yts18 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\f5\insrsid6824991\charrsid8218560 \hich\af5\dbch\af13\loch\f5 PlaceAssignmentAlgorithm}{
+\f5\insrsid6824991 \hich\af5\dbch\af13\loch\f5 :default/type}{\f5\insrsid6824991\charrsid8218560 \cell }{\insrsid6824991 \hich\af1\dbch\af13\loch\f1 Fully-qualified class name of the }{\f5\insrsid6824991\charrsid8218560 \hich\af5\dbch\af13\loch\f5 
+PlaceAssignmentAlgorithm}{\insrsid6824991 \hich\af1\dbch\af13\loch\f1  implementation to use}{\insrsid6824991\charrsid6824991 \cell }{\insrsid6824991 \hich\af1\dbch\af13\loch\f1 See above}{\insrsid6824991\charrsid6824991 \cell }\pard\plain 
+\ql \li0\ri0\widctlpar\intbl\aspalpha\aspnum\faauto\adjustright\rin0\lin0 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid6824991\charrsid6824991 \trowd \irow4\irowband4\lastrow \ts18\trgaph108\trleft-360
+\trbrdrt\brdrs\brdrw10 \trbrdrl\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrh\brdrs\brdrw10 \trbrdrv\brdrs\brdrw10 
+\trftsWidth3\trwWidth9540\trftsWidthB3\trftsWidthA3\trautofit1\trpaddl108\trpaddr108\trpaddfl3\trpaddft3\trpaddfb3\trpaddfr3\tbllkhdrrows\tbllklastrow\tbllkhdrcols\tbllklastcol \clvertalt\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb
+\brdrs\brdrw10 \clbrdrr\brdrs\brdrw10 \cltxlrtb\clftsWidth3\clwWidth4797\clshdrawnil \cellx4437\clvertalt\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb\brdrs\brdrw10 \clbrdrr\brdrs\brdrw10 \cltxlrtb\clftsWidth3\clwWidth3573\clshdrawnil \cellx8010
+\clvertalt\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb\brdrs\brdrw10 \clbrdrr\brdrs\brdrw10 \cltxlrtb\clftsWidth3\clwWidth1170\clshdrawnil \cellx9180\row }\pard\plain \s16\ql \li0\ri0\sa120\widctlpar\faauto\adjustright\rin0\lin0\itap0 
+\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 
+\par {\listtext\pard\plain\s2 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 3.3\tab}}\pard\plain \s2\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl1\outlinelevel1\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Dependencies Configuration
+\par }\pard\plain \ql \li720\ri0\widctlpar\faauto\adjustright\rin0\lin720\itap0\pararsid5712861 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid5712861 \hich\af1\dbch\af13\loch\f1 
+The Object Factory component must be configured prior to use.  See above for Object Factory configuration.  Setting up the Config Manager with this namespace is desirable so the user doesn\hich\f1 \rquote \loch\f1 t have to manually load the configuratio
+\hich\af1\dbch\af13\loch\f1 n file.  In the default Config Manager configuration file (usually located at }{\f5\fs18\insrsid5712861 \hich\af5\dbch\af13\loch\f5 conf/com/topcoder/util/config/ConfigManager.properties}{\insrsid5712861 
+\hich\af1\dbch\af13\loch\f1 ), add this line
+\par 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid5712861 {\f5\fs18\insrsid5712861\charrsid5712861 \hich\af5\dbch\af13\loch\f5 com.topcoder.management.review.scoreaggregator=<path to file described in 3.2>
+\par }{\f5\fs18\insrsid5712861 
+\par {\listtext\pard\plain\s1 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 4.\tab}}\pard\plain \s1\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx360\faauto\ls1\outlinelevel0\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Usage Notes
+\par {\listtext\pard\plain\s2 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 4.1\tab}}\pard\plain \s2\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl1\outlinelevel1\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Required steps to test the component
+\par {\listtext\pard\plain\s16 \f3\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \loch\af3\dbch\af13\hich\f3 \'b7\tab}}\pard\plain \s16\ql \fi-360\li1080\ri0\sa120\widctlpar\jclisttab\tx1080\faauto\ls3\adjustright\rin0\lin1080\itap0 
+\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Extract the component distribution.
+\par {\listtext\pard\plain\s16 \f3\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \loch\af3\dbch\af13\hich\f3 \'b7\tab}\hich\af1\dbch\af13\loch\f1 Follow }{\field\fldedit{\*\fldinst {\insrsid2630253 \hich\af1\dbch\af13\loch\f1  HYPERLINK "C:\\filez\\work
+\\tc\\tcs_corp\\templates\\component\\" \\l "_Dependencies_Configuration" }{\insrsid2975559 {\*\datafield 
+00d0c9ea79f9bace118c8200aa004ba90b0200000001000000e0c9ea79f9bace118c8200aa004ba90b800000002e002e002f002e002e002f007300740061007400750073005f0074007200610063006b00650072002f00660069006c0065007a0077006f0072006b00740063007400630073005f0063006f00720070007400
+65006d0070006c00610074006500730063006f006d0070006f006e0065006e00740025003200320020006c000000000000000000000000}}}{\fldrslt {\cs15\ul\cf2\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Dependencies Configuration}}}{\insrsid2630253 \hich\af1\dbch\af13\loch\f1 .
+
+\par {\listtext\pard\plain\s16 \f3\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \loch\af3\dbch\af13\hich\f3 \'b7\tab}\hich\af1\dbch\af13\loch\f1 Execute \hich\f1 \lquote \loch\f1 ant test\hich\f1 \rquote \hich\af1\dbch\af13\loch\f1 
+ within the directory that the distribution was extracted to.
+\par {\listtext\pard\plain\s2 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 4.2\tab}}\pard\plain \s2\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl1\outlinelevel1\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Required steps to use the component
+\par {\listtext\pard\plain\f3\fs20\lang1033\langfe1033\langfenp1033\insrsid15432753 \loch\af3\dbch\af13\hich\f3 \'b7\tab}}\pard\plain \ql \fi-360\li1080\ri0\widctlpar\jclisttab\tx1080\faauto\ls3\adjustright\rin0\lin1080\itap0\pararsid15432753 
+\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid15432753 \hich\af1\dbch\af13\loch\f1 Configure the component by pointing the Configuration Manager at the configuration file descr}{\insrsid993133 
+\hich\af1\dbch\af13\loch\f1 ibed above, or manually managing the pluggable algorithms}{\insrsid15432753 
+\par {\listtext\pard\plain\f3\fs20\lang1033\langfe1033\langfenp1033\insrsid15432753 \loch\af3\dbch\af13\hich\f3 \'b7\tab}}{\insrsid15432753 \hich\af1\dbch\af13\loch\f1 See Demo}{\insrsid10841442 \hich\af1\dbch\af13\loch\f1  for examples of usage.}{
+\insrsid15432753\charrsid15432753 
+\par {\listtext\pard\plain\s2 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 4.3\tab}}\pard\plain \s2\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl1\outlinelevel1\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Demo
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid1318603 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid1318603 
+\par }{\b\cf18\insrsid1318603\charrsid1318603 \hich\af1\dbch\af13\loch\f1 Here are the demo provided by the designer}{\b\cf18\insrsid1318603 \hich\af1\dbch\af13\loch\f1 .}{\b\cf18\insrsid1318603\charrsid1318603 
+\par }{\insrsid1318603\charrsid1318603 
+\par {\listtext\pard\plain\s3 \i\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid12212606 \hich\af1\dbch\af13\loch\f1 4.3.1\tab}}\pard\plain \s3\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl2\outlinelevel2\adjustright\rin0\lin0\itap0\pararsid12148962 \i\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid12212606 \hich\af1\dbch\af13\loch\f1 Manage pluggable}{
+\insrsid12148962 \hich\af1\dbch\af13\loch\f1  algorithms}{\insrsid12212606 
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid6322832 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\f5\fs18\insrsid6322832\charrsid4725111 \hich\af5\dbch\af13\loch\f5 
+// instantiates the versions in the configuration file
+\par \hich\af5\dbch\af13\loch\f5 ReviewScoreAggregator rsa = new ReviewScoreAggregator(
+\par }\pard \ql \fi720\li2880\ri0\widctlpar\faauto\adjustright\rin0\lin2880\itap0\pararsid6322832 {\f5\fs18\insrsid6322832\charrsid4725111 \hich\af5\dbch\af13\loch\f5 ReviewScoreAggregator.}{\f5\fs18\insrsid7081815 \hich\af5\dbch\af13\loch\f5 DEFAULT_}{
+\f5\fs18\insrsid6322832\charrsid4725111 \hich\af5\dbch\af13\loch\f5 NAMESPACE);
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid8344371 {\f5\fs18\insrsid6322832\charrsid4725111 
+\par }{\f5\fs18\insrsid8344371\charrsid4725111 \hich\af5\dbch\af13\loch\f5 // generates default implementations
+\par \hich\af5\dbch\af13\loch\f5 rsa = new ReviewScoreAggregator();
+\par 
+\par \hich\af5\dbch\af13\loch\f5 // override the tie detector with a }{\f5\fs18\insrsid10969921\charrsid4725111 \hich\af5\dbch\af13\loch\f5 less}{\f5\fs18\insrsid8344371\charrsid4725111 \hich\af5\dbch\af13\loch\f5  sensitive one.
+\par \hich\af5\dbch\af13\loch\f5 rsa.setTieDetect}{\f5\fs18\insrsid4725111\charrsid4725111 \hich\af5\dbch\af13\loch\f5 or(new StandardTieDetector(0}{\f5\fs18\insrsid7037484\charrsid4725111 \hich\af5\dbch\af13\loch\f5 .1}{
+\f5\fs18\insrsid8344371\charrsid4725111 \hich\af5\dbch\af13\loch\f5 ));
+\par 
+\par \hich\af5\dbch\af13\loch\f5 // should be the }{\f5\fs18\insrsid10969921\charrsid4725111 \hich\af5\dbch\af13\loch\f5 S}{\f5\fs18\insrsid8344371\charrsid4725111 \hich\af5\dbch\af13\loch\f5 tandard}{\f5\fs18\insrsid10969921\charrsid4725111 
+\hich\af5\dbch\af13\loch\f5 T}{\f5\fs18\insrsid8344371\charrsid4725111 \hich\af5\dbch\af13\loch\f5 ie}{\f5\fs18\insrsid10969921\charrsid4725111 \hich\af5\dbch\af13\loch\f5 B}{\f5\fs18\insrsid8344371\charrsid4725111 \hich\af5\dbch\af13\loch\f5 reaker
+
+\par \hich\af5\dbch\af13\loch\f5 TieBreaker tb = rsa\hich\af5\dbch\af13\loch\f5 .getTieBreaker();
+\par }{\f5\fs18\insrsid10969921\charrsid4725111 
+\par \hich\af5\dbch\af13\loch\f5 // should be the AveragingAggregationAlgorihtm
+\par \hich\af5\dbch\af13\loch\f5 ScoreAggregationAlgorithm aggregator = rsa.getScoreAggregationAlgorithm();
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid12212606 {\f5\fs18\insrsid12148962\charrsid4725111 
+\par }{\f5\fs18\insrsid10969921\charrsid4725111 \hich\af5\dbch\af13\loch\f5 // note, this class is not in the component, for examples only
+\par \hich\af5\dbch\af13\loch\f5 rsa.setPlacementAlgorithm\hich\af5\dbch\af13\loch\f5 (new PassthroughPlacementAlgorithm());
+\par }{\insrsid10969921 
+\par 
+\par {\listtext\pard\plain\s3 \i\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid12148962 \hich\af1\dbch\af13\loch\f1 4.3.2\tab}}\pard\plain \s3\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl2\outlinelevel2\adjustright\rin0\lin0\itap0\pararsid12148962 \i\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid12148962 \hich\af1\dbch\af13\loch\f1 Aggregate scores
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid2124004 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2124004 
+\par }{\f5\fs18\insrsid9068918\charrsid4725111 \hich\af5\dbch\af13\loch\f5 // scores from the TCO finals:
+\par }{\f5\fs18\insrsid2124004\charrsid4725111 \hich\af5\dbch\af13\loch\f5 float scores[][]}{\f5\fs18\insrsid4725111 \hich\af5\dbch\af13\loch\f5  = \{}{\f5\fs18\insrsid2124004\charrsid4725111 \{\hich\af5\dbch\af13\loch\f5 97.28, 97.44, 93.47\},
+\par }\pard \ql \fi720\li1440\ri0\widctlpar\faauto\adjustright\rin0\lin1440\itap0\pararsid2124004 {\f5\fs18\insrsid2124004\charrsid4725111 \{\hich\af5\dbch\af13\loch\f5 89.25, 98.47, 94.47\},
+\par \{\hich\af5\dbch\af13\loch\f5 86.81, 96.75, 93.59\},
+\par \{\hich\af5\dbch\af13\loch\f5 92.81, 90.94, 91.50\},
+\par \{\hich\af5\dbch\af13\loch\f5 78.03, 86.63, 86.44\},
+\par \{\hich\af5\dbch\af13\loch\f5 78.41, 82.50, 79.03\},
+\par \{\hich\af5\dbch\af13\loch\f5 60.81, 71.22, 70.97\}\};}{\f5\fs18\insrsid12148962\charrsid4725111 
+\par }{\f5\fs18\insrsid6322832\charrsid4725111 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid12212606 {\f5\fs18\insrsid6322832\charrsid4725111 \hich\af5\dbch\af13\loch\f5 // should have 7 entries, with aggregated scores:
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid6322832 {\f5\fs18\insrsid6322832\charrsid4725111 \hich\af5\dbch\af13\loch\f5 // 96.06333333
+\par \hich\af5\dbch\af13\loch\f5 // 94.06333333
+\par \hich\af5\dbch\af13\loch\f5 // 92.38333333
+\par \hich\af5\dbch\af13\loch\f5 // 91.75
+\par \hich\af5\dbch\af13\loch\f5 // 83.7
+\par \hich\af5\dbch\af13\loch\f5 // 79.98
+\par \hich\af5\dbch\af13\loch\f5 // 67.66666667
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid12212606 {\f5\fs18\insrsid2124004\charrsid4725111 \hich\af5\dbch\af13\loch\f5 AggregatedSubmission }{\f5\fs18\insrsid7220669\charrsid4725111 \hich\af5\dbch\af13\loch\f5 aggregated}{
+\f5\fs18\insrsid2124004\charrsid4725111 \hich\af5\dbch\af13\loch\f5 [] = rsa.aggregateScores(scores);}{\f5\fs18\insrsid10969921\charrsid4725111 
+\par }{\f5\fs18\insrsid2124004\charrsid4725111 
+\par }{\f5\fs18\insrsid2767489\charrsid4725111 \hich\af5\dbch\af13\loch\f5 // This sho\hich\af5\dbch\af13\loch\f5 uld result in the same numbers, because the other version of }{\f5\fs18\insrsid4725111 
+\par \hich\af5\dbch\af13\loch\f5 // }{\f5\fs18\insrsid2767489\charrsid4725111 \hich\af5\dbch\af13\loch\f5 this method takes an array}{\f5\fs18\insrsid4725111 \hich\af5\dbch\af13\loch\f5  }{\f5\fs18\insrsid2767489\charrsid4725111 \hich\af5\dbch\af13\loch\f5 
+of Submission objects}{\f5\fs18\insrsid4725111 \hich\af5\dbch\af13\loch\f5 , so it should }{\f5\fs18\insrsid2767489\charrsid4725111 \hich\af5\dbch\af13\loch\f5 aggregate}{\f5\fs18\insrsid4725111 
+\par \hich\af5\dbch\af13\loch\f5 //}{\f5\fs18\insrsid2767489\charrsid4725111 \hich\af5\dbch\af13\loch\f5  them the same way.
+\par \hich\af5\dbch\af13\loch\f5 AggregatedSubmission same[] = rsa.aggregateScores(}{\f5\fs18\insrsid7220669\charrsid4725111 \hich\af5\dbch\af13\loch\f5 aggregated}{\f5\fs18\insrsid2767489\charrsid4725111 \hich\af5\dbch\af13\loch\f5 );
+\par }{\insrsid2124004 
+\par {\listtext\pard\plain\s3 \i\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid12148962 \hich\af1\dbch\af13\loch\f1 4.3.3\tab}}\pard\plain \s3\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl2\outlinelevel2\adjustright\rin0\lin0\itap0\pararsid12148962 \i\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid12148962 \hich\af1\dbch\af13\loch\f1 Assign placements
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid7220669 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\f5\fs18\insrsid4725111\charrsid4725111 \hich\af5\dbch\af13\loch\f5 // }{
+\f5\fs18\insrsid4725111 \hich\af5\dbch\af13\loch\f5 T}{\f5\fs18\insrsid4725111\charrsid4725111 \hich\af5\dbch\af13\loch\f5 he r\hich\af5\dbch\af13\loch\f5 ankings shou}{\f5\fs18\insrsid5511644 \hich\af5\dbch\af13\loch\f5 ld be 1 through 7 }{
+\f5\fs18\insrsid4725111\charrsid4725111 
+\par }{\f5\fs18\insrsid7220669\charrsid4725111 \hich\af5\dbch\af13\loch\f5 RankedSubmission[] ranked = rsa.calcPlacements(aggregated);
+\par }{\f5\fs18\insrsid4725111\charrsid4725111 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid4725111 {\f5\fs18\insrsid4725111\charrsid4725111 \hich\af5\dbch\af13\loch\f5 // The results are aggregated first, then }{\f5\fs18\insrsid6697565 \hich\af5\dbch\af13\loch\f5 
+ranked, as above}{\f5\fs18\insrsid4725111\charrsid4725111 
+\par \hich\af5\dbch\af13\loch\f5 RankedSubmission[] rawRanked = rsa.calcPlacements(scores);
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid7220669 {\insrsid4725111 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid1006621 {\f5\fs18\insrsid1006621\charrsid4725111 \hich\af5\dbch\af13\loch\f5 // }{\f5\fs18\insrsid6697565 \hich\af5\dbch\af13\loch\f5 O}{\f5\fs18\insrsid1006621\charrsid4725111 
+\hich\af5\dbch\af13\loch\f5 verride the tie detector with a }{\f5\fs18\insrsid1006621 \hich\af5\dbch\af13\loch\f5 MUCH }{\f5\fs18\insrsid1006621\charrsid4725111 \hich\af5\dbch\af13\loch\f5 less sensitive one.
+\par \hich\af5\dbch\af13\loch\f5 rsa.setTieDetect}{\f5\fs18\insrsid11696217 \hich\af5\dbch\af13\loch\f5 or(new StandardTieDetector(3}{\f5\fs18\insrsid1006621\charrsid4725111 \hich\af5\dbch\af13\loch\f5 ));}{\f5\fs18\insrsid1006621 
+\par }{\f5\fs18\insrsid6697565 
+\par }{\f5\fs18\insrsid1006621 \hich\af5\dbch\af13\loch\f5 // the order }{\f5\fs18\insrsid11696217 \hich\af5\dbch\af13\loch\f5 is now different \hich\f5 \endash \loch\f5  2,1,3,4,5,6,7 because submission #2
+\par \hich\af5\dbch\af13\loch\f5 // had more \hich\f5 \lquote \loch\f5 wins\hich\f5 \rquote }{\f5\fs18\insrsid6697565 \hich\af5\dbch\af13\loch\f5  than 1 or 3 (which are both within 2 points)}{\f5\fs18\insrsid1318603 
+\par }{\f5\fs18\insrsid1006621\charrsid4725111 \hich\af5\dbch\af13\loch\f5 ranked = rsa.calcPlacements(aggregated);
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid7220669 {\insrsid1006621 
+\par }{\insrsid1318603 
+\par }{\b\cf18\insrsid1318603\charrsid1318603 \hich\af1\dbch\af13\loch\f1 Here are my \hich\af1\dbch\af13\loch\f1 demo tests.}{\b\cf18\insrsid10099893 
+\par 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid10099893 {\b\cf1\insrsid277119\charrsid6234225 \hich\af1\dbch\af13\loch\f1 /** Some variables used in tests. */
+\par }{\cf1\insrsid277119 
+\par }{\cf2\insrsid10099893\charrsid277119 \hich\af1\dbch\af13\loch\f1 /** Configuration file for ObjectFactory. */
+\par \hich\af1\dbch\af13\loch\f1 private static final String CONFIG_FILE = "test_files" + File.separator + "Standard.xml";
+\par 
+\par \hich\af1\dbch\af13\loch\f1 /** Default namespace that external clients can use when configuring this component. */
+\par \hich\af1\dbch\af13\loch\f1 private static final String NAMESPACE = ReviewScoreAggregator.DEFAULT_NAMESPACE;
+\par 
+\par \hich\af1\dbch\af13\loch\f1 /** Scores used for tests. */
+\par \hich\af1\dbch\af13\loch\f1 private static final float[][] SCORES = new float[][] \{
+\par \hich\af1\dbch\af13\loch\f1         \{97.28f, 97.44f, 93.47f\},
+\par \hich\af1\dbch\af13\loch\f1         \{89.25f, 98.47f, 94.47f\},
+\par \hich\af1\dbch\af13\loch\f1         \{86.81f, 96.75f, 93.59f\},
+\par \hich\af1\dbch\af13\loch\f1         \{92.81f, 90.94f, 91.50f\},
+\par \hich\af1\dbch\af13\loch\f1         \{78.03f, 86.63f, 86.44f\},
+\par \hich\af1\dbch\af13\loch\f1         \{78.41f, 82.50f, 79.03f\},
+\par \hich\af1\dbch\af13\loch\f1         \{60.81f, 71.22f, 70.97f\}
+\par \}\hich\af1\dbch\af13\loch\f1 ;
+\par 
+\par \hich\af1\dbch\af13\loch\f1 /** Array of <c\hich\af1\dbch\af13\loch\f1 ode>AggregatedSubmission</code> instances used for tests. */
+\par \hich\af1\dbch\af13\loch\f1 private AggregatedSubmission[] aggregatedSubs = null;
+\par 
+\par \hich\af1\dbch\af13\loch\f1 /** Array of <code>Submission</code> instances used for tests. */
+\par \hich\af1\dbch\af13\loch\f1 private Submission[] subs = null;}{\cf2\insrsid10099893 
+\par }{\cf2\insrsid277119 
+\par }{\b\cf1\insrsid277119\charrsid6234225 \hich\af1\dbch\af13\loch\f1 /** Set up the environment. */
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid277119 {\cf2\insrsid277119\charrsid277119 \hich\af1\dbch\af13\loch\f1 aggregat\hich\af1\dbch\af13\loch\f1 edSubs = new AggregatedSubmission[SCORES.length];
+\par \hich\af1\dbch\af13\loch\f1 subs = new Submission[SCORES.length];
+\par 
+\par \hich\af1\dbch\af13\loch\f1 for (int i = 0; i < SCORES.length; ++i) \{
+\par }\pard \ql \fi200\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi100\pararsid277119 {\cf2\insrsid277119\charrsid277119 \hich\af1\dbch\af13\loch\f1 aggregatedSubs[i] = new AggregatedSubmission(i + 1, SCORES[i],
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid277119 {\cf2\insrsid277119\charrsid277119 \hich\af1\dbch\af13\loch\f1                     (new AveragingAggregationAlgorithm()).calculateAggregateScore(SCORES[i]));
+\par 
+\par \hich\af1\dbch\af13\loch\f1    subs[i] = new Submission(i + 1, SCORES[i]);
+\par \hich\af1\dbch\af13\loch\f1  \}
+\par 
+\par \hich\af1\dbch\af13\loch\f1  ConfigManager cm = ConfigManager.getInstance();
+\par \hich\af1\dbch\af13\loch\f1  File file = new File(CONFIG_FILE);
+\par \hich\af1\dbch\af13\loch\f1  if (cm.existsNamespace(\hich\af1\dbch\af13\loch\f1 NAMESPACE)) \{
+\par \hich\af1\dbch\af13\loch\f1  }{\cf2\insrsid277119 \hich\af1\dbch\af13\loch\f1   }{\cf2\insrsid277119\charrsid277119 \hich\af1\dbch\af13\loch\f1 cm.removeNamespace(NAMESPACE);
+\par \hich\af1\dbch\af13\loch\f1  \}
+\par \hich\af1\dbch\af13\loch\f1  cm.add(file.getAbsolutePath());}{\cf2\insrsid277119 
+\par }{\cf2\insrsid13786936\charrsid277119 
+\par {\listtext\pard\plain\s3 \i\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid13391692 \hich\af1\dbch\af13\loch\f1 4.3.4\tab}}\pard\plain \s3\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl2\outlinelevel2\adjustright\rin0\lin0\itap0\pararsid13786936 \i\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid13391692 \hich\af1\dbch\af13\loch\f1 
+Demo test for ScoreAggregationAlgorithm}{\insrsid11606951\charrsid11606951 
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid11606951 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\cf1\insrsid11606951\charrsid11606951 \hich\af1\dbch\af13\loch\f1 
+ScoreAggregationAlgorithm algo = new AveragingAggregationAlgorithm();
+\par 
+\par \hich\af1\dbch\af13\loch\f1 for (int i = 0; i < SCORES.length; ++i) \{
+\par }\pard \ql \fi200\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi100\pararsid11606951 {\cf1\insrsid11606951\charrsid11606951 \hich\af1\dbch\af13\loch\f1 System.out.println(algo.calculateAggregateScore(SCORES[i]));
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid11606951 {\cf1\insrsid11606951\charrsid11606951 \}}{\cf1\insrsid10099893 
+\par }{\cf1\insrsid13786936 
+\par {\listtext\pard\plain\s3 \i\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid13786936 \hich\af1\dbch\af13\loch\f1 4.3.5\tab}}\pard\plain \s3\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl2\outlinelevel2\adjustright\rin0\lin0\itap0\pararsid13786936 \i\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid13786936 \hich\af1\dbch\af13\loch\f1 Demo test for }{
+\insrsid13786936\charrsid13786936 \hich\af1\dbch\af13\loch\f1 PlaceAssignmentAlgorithm}{\insrsid13786936\charrsid11606951 
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid13786936 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\cf1\insrsid13786936\charrsid13786936 \hich\af1\dbch\af13\loch\f1 
+PlaceAssignmentAlgorithm algo = new StandardPlaceAssignment();
+\par \hich\af1\dbch\af13\loch\f1 int[] original = new int[] \{1, 2, 3, 2, 1, 7, 6, 4, 5\};
+\par \hich\af1\dbch\af13\loch\f1 int[] received = algo.assignPlacements(original);
+\par 
+\par \hich\af1\dbch\af13\loch\f1 for (int i = 0; i < received.length; ++i) \{
+\par }\pard \ql \fi200\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi100\pararsid13786936 {\cf1\insrsid13786936\charrsid13786936 \hich\af1\dbch\af13\loch\f1 System.out.println(received[i]);
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid13786936 {\cf1\insrsid13786936\charrsid13786936 \}}{\cf1\insrsid13786936 
+\par }{\cf1\insrsid8745911 
+\par {\listtext\pard\plain\s3 \i\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid8745911 \hich\af1\dbch\af13\loch\f1 4.3.6\tab}}\pard\plain \s3\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl2\outlinelevel2\adjustright\rin0\lin0\itap0\pararsid8745911 \i\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid8745911 \hich\af1\dbch\af13\loch\f1 Demo test for }{
+\insrsid8745911\charrsid8745911 \hich\af1\dbch\af13\loch\f1 TieBreaker}{\insrsid8745911\charrsid11606951 
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid8745911 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\cf1\insrsid8745911\charrsid8745911 \hich\af1\dbch\af13\loch\f1 
+TieBreaker breaker = new StandardTieBreaker();
+\par \hich\af1\dbch\af13\loch\f1 int[] received = breaker.breakTies(aggregatedSu\hich\af1\dbch\af13\loch\f1 bs);
+\par 
+\par \hich\af1\dbch\af13\loch\f1 for (int i = 0; i < received.length; ++i) \{
+\par }\pard \ql \fi200\li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\cufi100\pararsid8745911 {\cf1\insrsid8745911\charrsid8745911 \hich\af1\dbch\af13\loch\f1 System.out.println(received[i]);
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid8745911 {\cf1\insrsid8745911\charrsid8745911 \}
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid13786936 {\cf1\insrsid8745911 
+\par {\listtext\pard\plain\s3 \i\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid4349044 \hich\af1\dbch\af13\loch\f1 4.3.7\tab}}\pard\plain \s3\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl2\outlinelevel2\adjustright\rin0\lin0\itap0\pararsid4349044 \i\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid4349044 \hich\af1\dbch\af13\loch\f1 Demo test for }{
+\insrsid4349044\charrsid4349044 \hich\af1\dbch\af13\loch\f1 TieDetector}{\insrsid4349044\charrsid11606951 
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid4349044 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\cf1\insrsid4349044\charrsid4349044 \hich\af1\dbch\af13\loch\f1 
+TieDetector detector = new StandardTieDetector();
+\par \hich\af1\dbch\af13\loch\f1 detector = new StandardTieDetector(0.3f);
+\par \hich\af1\dbch\af13\loch\f1 System.out.println(detector.tied(1, 25.1f));
+\par \hich\af1\dbch\af13\loch\f1 System.out.println(detector.tied(0.99f, 3));
+\par \hich\af1\dbch\af13\loch\f1 System.out.println(detector.tied(1.1f, 4));
+\par \hich\af1\dbch\af13\loch\f1 System.out.println(detector.tied(1, 3.9f));
+\par \hich\af1\dbch\af13\loch\f1 System.out.println(detector.tied(1, 1.1f));}{\cf1\insrsid4349044\charrsid4349044 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid13786936 {\cf1\insrsid4349044 
+\par {\listtext\pard\plain\s3 \i\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2564765 \hich\af1\dbch\af13\loch\f1 4.3.8\tab}}\pard\plain \s3\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl2\outlinelevel2\adjustright\rin0\lin0\itap0\pararsid2564765 \i\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2564765 \hich\af1\dbch\af13\loch\f1 Demo test for }{
+\insrsid2564765\charrsid2564765 \hich\af1\dbch\af13\loch\f1 Submission}{\insrsid2564765\charrsid11606951 
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid23312 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\cf1\insrsid23312\charrsid23312 \hich\af1\dbch\af13\loch\f1 
+Submission sub = new Submission(1, SCORES[0]);
+\par \hich\af1\dbch\af13\loch\f1 sub.getId();
+\par \hich\af1\dbch\af13\loch\f1 sub.getScores();}{\cf1\insrsid8745911\charrsid23312 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid13786936 {\cf1\insrsid2564765 
+\par {\listtext\pard\plain\s3 \i\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid23312 \hich\af1\dbch\af13\loch\f1 4.3.9\tab}}\pard\plain \s3\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl2\outlinelevel2\adjustright\rin0\lin0\itap0\pararsid23312 \i\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid23312 \hich\af1\dbch\af13\loch\f1 Demo test for }{
+\insrsid23312\charrsid23312 \hich\af1\dbch\af13\loch\f1 AggregatedSubmission}{\insrsid23312\charrsid11606951 
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid23312 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\cf1\insrsid23312\charrsid23312 \hich\af1\dbch\af13\loch\f1 
+Submission sub = new Submission(1, SCORES[0]);
+\par \hich\af1\dbch\af13\loch\f1 AggregatedSubmission aggregatedSub1 = new AggregatedSubmission(sub, 90.0f);
+\par \hich\af1\dbch\af13\loch\f1 AggregatedSubmission aggregatedSub2 = new AggregatedSubmissio\hich\af1\dbch\af13\loch\f1 n(2, SCORES[0], 80.0f);
+\par \hich\af1\dbch\af13\loch\f1 aggregatedSub1.getId();
+\par \hich\af1\dbch\af13\loch\f1 aggregatedSub2.getScores();
+\par \hich\af1\dbch\af13\loch\f1 aggregatedSub1.compareTo(aggregatedSub2);}{\cf1\insrsid2564765\charrsid23312 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid13786936 {\cf1\insrsid23312 
+\par {\listtext\pard\plain\s3 \i\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid23312 \hich\af1\dbch\af13\loch\f1 4.3.10\tab}}\pard\plain \s3\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl2\outlinelevel2\adjustright\rin0\lin0\itap0\pararsid23312 \i\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid23312 \hich\af1\dbch\af13\loch\f1 Demo test for }{
+\insrsid23312\charrsid23312 \hich\af1\dbch\af13\loch\f1 RankedSubmission}{\insrsid23312\charrsid11606951 
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid23312 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\cf1\insrsid23312\charrsid23312 \hich\af1\dbch\af13\loch\f1 
+AggregatedSubmission aggregatedSub = new AggregatedSubmission(2, SCORES[0], 80.0f);
+\par \hich\af1\dbch\af13\loch\f1 RankedSubmissio\hich\af1\dbch\af13\loch\f1 n rankedSub = new RankedSubmission(aggregatedSub, 1);
+\par \hich\af1\dbch\af13\loch\f1 rankedSub.getRank();}{\cf1\insrsid23312\charrsid23312 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid13786936 {\cf1\insrsid23312 
+\par {\listtext\pard\plain\s3 \i\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid4866373 \hich\af1\dbch\af13\loch\f1 4.3.11\tab}}\pard\plain \s3\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx0\faauto\ls1\ilvl2\outlinelevel2\adjustright\rin0\lin0\itap0\pararsid4866373 \i\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid4866373 \hich\af1\dbch\af13\loch\f1 Demo test for }{
+\insrsid4866373\charrsid4866373 \hich\af1\dbch\af13\loch\f1 ReviewScoreAggregator}{\insrsid4866373\charrsid11606951 
+\par }\pard\plain \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid9316492 \fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\cf1\insrsid9316492\charrsid9316492 \hich\af1\dbch\af13\loch\f1 
+ReviewScoreAggregator aggregator = new ReviewScoreAggregator();
+\par \hich\af1\dbch\af13\loch\f1 aggregator = new ReviewScoreAggregator(new AveragingAggregationAlgorithm(), new StandardTieDetector(),
+\par \hich\af1\dbch\af13\loch\f1                 new StandardTieBreaker(), new StandardPlaceAssignment());
+\par \hich\af1\dbch\af13\loch\f1         aggregator = new ReviewScoreAggregator(ReviewScoreAggregator.DEFAULT_NA\hich\af1\dbch\af13\loch\f1 MESPACE);
+\par 
+\par \hich\af1\dbch\af13\loch\f1 aggregator.setScoreAggregationAlgorithm(new AveragingAggregationAlgorithm());
+\par \hich\af1\dbch\af13\loch\f1 aggregator.getScoreAggregationAlgorithm();
+\par 
+\par \hich\af1\dbch\af13\loch\f1 aggregator.setPlaceAssignmentAlgorighm(new StandardPlaceAssignment());
+\par \hich\af1\dbch\af13\loch\f1 aggregator.getPlaceAssignmentAlgorithm();
+\par 
+\par \hich\af1\dbch\af13\loch\f1 aggregator.setTieBreaker(new StandardTieBreaker());
+\par \hich\af1\dbch\af13\loch\f1 aggregator.getTieBreaker();
+\par 
+\par \hich\af1\dbch\af13\loch\f1 aggregator.setTieDetector(new StandardTieDetector(0.3f));
+\par \hich\af1\dbch\af13\loch\f1 aggregator.getTieDetector();
+\par 
+\par \hich\af1\dbch\af13\loch\f1 aggregator.aggregateScores(SCORES);
+\par \hich\af1\dbch\af13\loch\f1 aggregator.aggregateScores(subs);
+\par 
+\par \hich\af1\dbch\af13\loch\f1 aggregator.calcP\hich\af1\dbch\af13\loch\f1 lacements(SCORES);
+\par \hich\af1\dbch\af13\loch\f1 aggregator.calcPlacements(aggregatedSubs);}{\cf1\insrsid23312\charrsid9316492 
+\par }\pard \ql \li0\ri0\widctlpar\faauto\adjustright\rin0\lin0\itap0\pararsid11606951 {\cf1\insrsid13786936\charrsid11606951 
+\par {\listtext\pard\plain\s1 \b\f1\fs20\lang1033\langfe1033\langfenp1033\insrsid2630253 \hich\af1\dbch\af13\loch\f1 5.\tab}}\pard\plain \s1\ql \li0\ri0\sb120\sa60\sl240\slmult0\keepn\nowidctlpar
+\jclisttab\tx360\faauto\ls1\outlinelevel0\adjustright\rin0\lin0\itap0 \b\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid2630253 \hich\af1\dbch\af13\loch\f1 Future Enhancements
+\par {\listtext\pard\plain\f3\fs20\lang1033\langfe1033\langfenp1033\insrsid13903177 \loch\af3\dbch\af13\hich\f3 \'b7\tab}}\pard\plain \ql \fi-360\li1080\ri0\widctlpar\jclisttab\tx1080\faauto\ls3\adjustright\rin0\lin1080\itap0\pararsid13903177 
+\fs20\lang1033\langfe1033\loch\af1\hich\af1\dbch\af13\cgrid\langnp1033\langfenp1033 {\insrsid13903177 \hich\af1\dbch\af13\loch\f1 \hich\f1 Add additional tie-detector implementations, such as, a \'93\loch\f1 \hich\f1 relative\'94\loch\f1 \hich\f1 
+ epsilon, or an \'93\loch\f1 \hich\f1 absolute\'94\loch\f1  epsilon}{\insrsid3547440 
+\par }\pard \ql \li720\ri0\widctlpar\faauto\adjustright\rin0\lin720\itap0\pararsid10172111 {\insrsid10172111 
+\par {\listtext\pard\plain\f3\fs20\lang1033\langfe1033\langfenp1033\insrsid13903177 \loch\af3\dbch\af13\hich\f3 \'b7\tab}}\pard \ql \fi-360\li1080\ri0\widctlpar\jclisttab\tx1080\faauto\ls3\adjustright\rin0\lin1080\itap0\pararsid10172111 {\insrsid13903177 
+\hich\af1\dbch\af13\loch\f1 \hich\f1 Add additional tie-breaker implementations, such as, \'93\loch\f1 all the sa\hich\af1\dbch\af13\loch\f1 \hich\f1 me\'94\loch\f1 \hich\f1  (i.e., returns 1,1,1,1), or \'93\loch\f1 \hich\f1 aggregated score value\'94
+\loch\f1  (i.e., returns 1,2,3,4)}{\insrsid10172111 
+\par }\pard \ql \li720\ri0\widctlpar\faauto\adjustright\rin0\lin720\itap0\pararsid10172111 {\insrsid10172111 
+\par {\listtext\pard\plain\f3\fs20\lang1033\langfe1033\langfenp1033\insrsid13903177 \loch\af3\dbch\af13\hich\f3 \'b7\tab}}\pard \ql \fi-360\li1080\ri0\widctlpar\jclisttab\tx1080\faauto\ls3\adjustright\rin0\lin1080\itap0\pararsid13903177 {\insrsid13903177 
+\hich\af1\dbch\af13\loch\f1 \hich\f1 Add additional score aggregation implementations, such as \'93\loch\f1 \hich\f1 throw out highest and lowest, and average the rest\'94
+\par }\pard \ql \li720\ri0\widctlpar\faauto\adjustright\rin0\lin720\itap0\pararsid10172111 {\insrsid10172111 
+\par {\listtext\pard\plain\f3\fs20\lang1033\langfe1033\langfenp1033\insrsid13903177 \loch\af3\dbch\af13\hich\f3 \'b7\tab}}\pard \ql \fi-360\li1080\ri0\widctlpar\jclisttab\tx1080\faauto\ls3\adjustright\rin0\lin1080\itap0\pararsid10172111 {\insrsid13903177 
+\hich\af1\dbch\af13\loch\f1 Add additional final place assignment algorithms, such as \hich\af1\dbch\af13\loch\f1 one that would convert 1,2,2,3 into 1,3,3,4. }{\insrsid10172111 
+\par }\pard \ql \li720\ri0\widctlpar\faauto\adjustright\rin0\lin720\itap0\pararsid10172111 {\insrsid10172111 
+\par {\listtext\pard\plain\f3\fs20\lang1033\langfe1033\langfenp1033\insrsid13903177 \loch\af3\dbch\af13\hich\f3 \'b7\tab}}\pard \ql \fi-360\li1080\ri0\widctlpar\jclisttab\tx1080\faauto\ls3\adjustright\rin0\lin1080\itap0\pararsid13903177 {\insrsid13903177 
+\hich\af1\dbch\af13\loch\f1 Integrate with the Review }{\insrsid10172111 \hich\af1\dbch\af13\loch\f1 Data Structure }{\insrsid13903177 \hich\af1\dbch\af13\loch\f1 and Scorecard Data Structure }{\insrsid10172111 \hich\af1\dbch\af13\loch\f1 Components}{
+\insrsid13903177\charrsid3547440 
+\par }}

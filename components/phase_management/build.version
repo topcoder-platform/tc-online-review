@@ -1,0 +1,14 @@
+# Property file defining the component's information.
+component.name=Phase Management
+component.distfilename=phase_management
+component.package=com.topcoder.management.phase
+component.packagedir=com/topcoder/management/phase
+component.version.major=1
+component.version.minor=1
+component.version.micro=0
+component.version.build=1
+
+# Defines the Main-Class property for the manifest file (e.g. com.topcoder.utility.SomeClass)
+# This property is only used for components that can be run from command line.
+# Leave the property value empty if not applicable.
+component.mainclass=

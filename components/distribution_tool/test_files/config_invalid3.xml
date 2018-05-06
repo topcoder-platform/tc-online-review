@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<CMConfig>
+    <Config name="com.topcoder.util.distribution.DistributionTool">
+        <Property name="logger_name">
+            <Value>my_logger</Value>
+        </Property>
+        <Property name="object_factory_config">
+            <!-- Put Object Factory configuration here -->
+            <Property name="type">
+                <Value>com.topcoder.util.distribution.parsers.DistributionScriptParserImpl</Value>
+            </Property>
+        </Property>
+        <Property name="script_parser_key">
+            <Value>com.topcoder.util.distribution.parsers.DistributionScriptParserImpl</Value>
+        </Property>
+        <Property name="scripts">
+          <!-- no script -->
+
+        </Property>
+    </Config>
+</CMConfig>

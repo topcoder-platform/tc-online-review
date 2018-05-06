@@ -1,0 +1,95 @@
+<CMConfig>
+
+    <!-- This namespace is used to configure the ActiveAutoPilotSource through default constructor -->
+    <Config name="com.topcoder.management.phase.autopilot.impl.ActiveAutoPilotSource">
+        <Property name="com/topcoder/management/project/ProjectManager">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.accuracytests.mock.MockProjectManager</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- This namespace is used to configure the DefaultProjectPilot through default constructor -->
+    <Config name="com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot">
+        <Property name="com/topcoder/management/phase/PhaseManager">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.accuracytests.mock.MockPhaseManager</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- This namespace is used to configure the AutoPilot through default constructor -->
+    <Config name="com.topcoder.management.phase.autopilot.AutoPilot">
+        <Property name="com/topcoder/management/phase/autopilot/AutoPilotSource">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.accuracytests.mock.MockAutoPilotSource</Value>
+            </Property>
+        </Property>
+        <Property name="com/topcoder/management/phase/autopilot/ProjectPilot">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.accuracytests.mock.MockProjectPilot</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- This namespace is used to configure the AutoPilotJob through default constructor -->
+    <Config name="com.topcoder.management.phase.autopilot.AutoPilotJob">
+        <Property name="Operator">
+            <Value>AccuracyTest</Value>
+        </Property>
+    </Config>
+    <Config name="com.topcoder.management.phase.autopilot.AutoPilotJob.factory">
+        <Property name="com/topcoder/management/phase/autopilot/AutoPilot">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.accuracytests.mock.MockAutoPilot</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.management.phase.autopilot.accuracytests">
+        <!--  Used to initialize ActiveAutoPilotSource -->
+        <Property name="ProjectManager">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.accuracytests.mock.MockProjectManagerAlternate</Value>
+            </Property>
+        </Property>
+        <!--  Used to initialize DefaultProjectPilot -->
+        <Property name="PhaseManager">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.accuracytests.mock.MockPhaseManagerAlternate</Value>
+            </Property>
+        </Property>
+        <!-- Used to initialize AutoPilot instance -->
+        <Property name="source">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.accuracytests.mock.MockAutoPilotSourceAlternate</Value>
+            </Property>
+        </Property>
+        <Property name="pilot">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.accuracytests.mock.MockProjectPilotAlternate</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.management.phase.autopilot.accuracytests.factory">
+        <Property name="com/topcoder/management/phase/autopilot/AutoPilot">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.accuracytests.mock.MockAutoPilot</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- Used to initialize the Logging Wrapper component -->
+    <Config name="com.topcoder.util.log">
+        <Property name="logClass">
+            <Value>com.topcoder.management.phase.autopilot.accuracytests.mock.MockLog</Value>
+        </Property>
+        <Property name="AccuracyLog">
+            <Property name="logClass">
+                <Value>com.topcoder.management.phase.autopilot.accuracytests.mock.MockLogAlternate</Value>
+            </Property>
+        </Property>
+    </Config>
+
+</CMConfig>

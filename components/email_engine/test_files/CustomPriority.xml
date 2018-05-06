@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CMConfig>
+  <Property name="Priorities">
+    <Property name="normal">
+      <!--This will remove the default headers and replace
+      them with this header only for the "normal" setting
+      and not for the others. The headers set will be
+      "X-Priority2:SuperNormal" and
+      "Z-Priority:Normal" -->
+      <Value>X-Priority2:Super-Normal</Value>
+      <Value>Z-Priority:Normal</Value>
+    </Property>
+    <Property name="none">
+        <!--This will set a header for none, even through there
+        is no default header for none. The header set will
+        be "X-Priority:No Priority" -->
+        <Value>Priority:No Priority</Value>
+      </Property>
+      <Property name="high">
+        <!-- Don't use default property entries for this property
+        but don't use any custom ones either. The empty Value
+        here is included as a placeholder for
+        configuration Manager-->
+        <Value></Value>
+    </Property>
+  </Property>
+</CMConfig>

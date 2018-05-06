@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<CMConfig>
+    <Property name="smtp_host_addr">
+        <Value>localhost</Value>
+    </Property>
+    <Property name="smtp_host_port">
+        <Value>25</Value>
+    </Property>
+    <Property name="username">
+        <Value>from@topcoder.com</Value>
+    </Property>
+    <Property name="password">
+        <Value>123456</Value>
+    </Property>
+</CMConfig>

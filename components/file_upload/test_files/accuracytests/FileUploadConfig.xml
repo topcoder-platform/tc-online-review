@@ -1,0 +1,10 @@
+<CMConfig>
+	<Config name="FileUploadConfig">
+		<Property name="single_file_limit">
+			<Value>111</Value>
+		</Property>
+		<Property name="total_file_limit">
+			<Value>222</Value>
+		</Property>
+	</Config>
+</CMConfig>

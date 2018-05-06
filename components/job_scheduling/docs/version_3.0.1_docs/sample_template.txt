@@ -1,0 +1,13 @@
+# This is a sample template.
+#
+# - A comment line starts with #.
+# - If # is needed at the start of a line, then \# should be used.
+# - The character # can be used freely after the start of the line without applying the previous rule.
+# - The template fields have the syntax %fieldname=defaultValue{description}% where =defaultvalue is optional
+# - If %, {, =, \ are needed as actual text then \%, \{, \=, \\ should be used instead (similar to \ in Java).
+# - Looping constructs can be done using the loop special field.
+# - Everything between %loop:field_name% and %endloop% will be repeated as many times as
+# the field_name appears in the input XML.
+# - Loops can be nested.
+Hi,
+This email notifies you that the job %JobName% has the status %JobStatus% now.

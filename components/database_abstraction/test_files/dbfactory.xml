@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<CMConfig>
+	<Config name="testConnection">
+    <Property name="connections">
+        <!--
+            The "default" property refers to a configured connection.
+        -->
+        <Property name="default">
+            <Value>informix_db</Value>
+        </Property>
+        <Property name="informix_db">
+        	<Property name="producer">
+						<Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+					</Property>
+					<Property name="parameters">
+						<Property name="jdbc_driver">
+							<Value>com.informix.jdbc.IfxDriver</Value>
+						</Property>
+						<Property name="jdbc_url">
+							<Value>jdbc:informix-sqli://localhost:2021/test:INFORMIXSERVER=informixoltp_tcp</Value>
+						</Property>
+						<Property name="user">
+							<Value>informix</Value>
+						</Property>
+						<Property name="password">
+							<Value>123456</Value>
+						</Property>
+				</Property>
+  		</Property>
+		</Property>
+	</Config>
+</CMConfig>

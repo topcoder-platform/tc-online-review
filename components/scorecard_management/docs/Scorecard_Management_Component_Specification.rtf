@@ -1,0 +1,702 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang1033\deflangfe1033{\fonttbl{\f0\fswiss\fprq2\fcharset0 Arial;}{\f1\fmodern\fprq1\fcharset0 Courier New;}{\f2\froman\fprq2\fcharset2 Symbol;}{\f3\froman\fprq2\fcharset0 Times New Roman;}}
+{\colortbl ;\red255\green0\blue0;\red0\green0\blue255;}
+{\stylesheet{ Normal;}{\s1 heading 1;}{\s2 heading 2;}{\s3 heading 3;}}
+{\*\generator Msftedit 5.41.21.2500;}\viewkind4\uc1\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx720\ul\b\f0\fs28 Scorecard Management 1.0 Component Specification\par
+\pard\ulnone\b0\f1\fs20\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b\f0 1.\tab Design\f1\par
+\pard\b0\f0 A scorecard is a template to produce reviews. The scorecard hierarchy consists of groups, sections and questions. Weight can be assigned on each level to control the contribution to the overall score of the scorecard. Different question types are supported and each question can be attached with a document, for example, a test log. A scorecard has minimum and maximum passing score, and has type, status and category attributes. A simple versioning mechanism will be built, where only scorecards not currently in use can be modified.\par
+\par
+The component provides the management functionalities such as create, update or search scorecards. The scorecard persistence logic is pluggable.\par
+\par
+The main class of this component is ScorecardManagerImpl. This class provides methods to create, update, retrieve and search for scorecards. These operations process the scorecard as a whole, which mean they also process groups, sections and questions belong to a scorecard. For example, the creation of a scorecard may involve many database tables and many rows may be added.\par
+\par
+The ScorecardPersistence interface defines the contract for persistence implementations. This allows future implementations to plug into this component. For this version, Informix database is supported. The manager loads the persistence implementation using settings from a configuration namespace.\par
+\par
+Scorecard searching function uses SearchBuilder component. By using this component, various types of search condition can be created. The supported search criteria include: scorecard type, scorecard status, project, project category, scorecard name and scorecard version and any combination of them.\par
+\par
+The ScorecardValidator interface defines the contract for scorecard validator implementation. This allows future validator to plug-into this component. A default validator is provided with this component with some basic rules to validate the scorecard tree to make sure it conforms to the database schema. Validator settings are also configurable in the ScorecardManagerImpl class.\par
+\par
+This design provides some enhancement features such as:\par
+\pard\fi-360\li720\tx720 -\tab Pluggable validator: Future implementations can add have more complex rules to validate scorecards.\par
+\pard\par
+\cf1 Note: This design will be separated into two development projects. The first project implements main and validation packages. The second project implements the persistence package.\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\cf0\b 1.1\tab Design Patterns \par
+\pard\b0 Strategy pattern is used in ScorecardValidator and ScorecardPersistence interfaces. This allows plugging in different implementations of scorecard validator and scorecard persistence.\par
+\par
+Facade pattern is used in ScorecardManagerImpl. This class utilizes validator and persistence implementations.\par
+\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 1.2\tab Industry Standards \par
+\pard\b0 JDBC, XML, SQL\par
+\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 1.3\tab Required Algorithms\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\b0\i 1.3.1\tab Common logic for creating/updating/retrieving scorecards:\par
+\pard\i0 To satisfy the requirement of connection cannot be cached. Methods that access database must create connection at the beginning and close connection when finished.\par
+\par
+With create/update method, transaction logic should be provided as below to ensure data consistence.\par
+\par
+\cf2\f1 Create connection using the 'factory' instance and the configured DB connection name (connectionName). If connectionName is null, create the default connection.\par
+\par
+Set the connection\rquote s auto commit to false. \par
+Do create/update items.\par
+If error occurred, call rollback, and then throw PersistenceException that wrap the error.\par
+Call commit if everything is fine.\par
+Close the connection in finally block.\par
+\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf0\i\f0 1.3.2\tab Check scorecard version format\par
+\pard This logic belong to DefaultScorecardValidator# validateScorecard(Scorecard scorecard) method:\par
+\i0 The check logic is simple, so I just provide the check conditions. Throw ValidationException if any condition fails.\par
+\cf2\f1 Length is smaller than or equal to 16.\par
+Contain all number (the dot character is also allowed)\par
+Contains at least one numeric character\par
+The dot character cannot be the first or last character in the version string.\par
+\cf0\f0\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i 1.3.3\tab Determine if a scorecard is in use\par
+\pard\i0 A scorecard is considered in use when it is referenced in the phase_criteria table. The following SQL command check for this:\par
+\cf2\f1\fs18 SELECT COUNT(*) FROM phase_criteria \par
+JOIN phase_criteria_type_lu ON \par
+phase_criteria.phase_criteria_type_id = phase_criteria_type_lu.phase_criteria_type_id\par
+WHERE phase_criteria_type_lu.name="Scorecard ID"\par
+AND phase_criteria.parameter =?\par
+\cf0\f0\fs20\par
+The \ldblquote ?\rdblquote  parameter will be the id of the scorecard. If the query returns one or more rows, then the scorecard is in use.\par
+\par
+When retrieving scorecard based on a list of ids, the command should be:\par
+\cf2\f1\fs18 SELECT parameter FROM phase_criteria \par
+JOIN phase_criteria_type_lu ON \par
+phase_criteria.phase_criteria_type_id = \par
+phase_criteria_type_lu.phase_criteria_type_id\par
+WHERE phase_criteria_type_lu.name="Scorecard ID"\par
+AND phase_criteria.parameter IN (id1, id2,.., idN);\par
+\par
+\cf0\f0\fs20 The returned rows contains the id of the in use scorecards, store these values to an array and use them to set scorecard \ldblquote in use\rdblquote  value using scorecard.setInUse() method. See \ldblquote\i Retrieve scorecard/group/section\i0\rdblquote  for more information.\par
+\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i 1.3.4\tab Create scorecard/group/section\par
+\pard\i0 The creation of these instances is similar and related to each other. They together help persist the scorecard tree in the database. The creation of questions is simple and described in the class documentation.\par
+\par
+\i InformixScorecardPersistence#createScorecard() method:\par
+\i0\par
+\cf2\f1\fs18 Generate a new id for the scorecard using IdGenerator\par
+Create a new row for the scorecard in its corresponding table (scorecard)\par
+Create an InformixGroupPersistence instance\par
+For each group in the scorecard\par
+        Generate a new id for the group\par
+        Use the created InformixGroupPersistence instance to create the group\par
+End For\par
+Assign the generated id back to the scorecard instance for consistency.\par
+\cf0\f0\fs20\par
+\i InformixGroupPersistence#createGroup() method:\par
+\i0\par
+\cf2\f1\fs18 Generate a new id for the group using IdGenerator\par
+Create a new row for the group in its corresponding table (scorecard_group)\par
+Create an InformixSectionPersistence instance\par
+For each section in the group\par
+        Generate a new id for the section\par
+        Use the created InformixSectionPersistence instance to create the section\par
+End For\par
+Assign the generated id back to the group instance for consistency.\par
+\cf0\f0\fs20\par
+\i InformixSectionPersistence#createSection() method:\par
+\i0\par
+\cf2\f1\fs18 Generate a new id for the section using IdGenerator\par
+Create a new row for the section in its corresponding table (scorecard_section)\par
+Create an InformixQuestionPersistence instance\par
+For each question in the section\par
+        Generate a new id for the question\par
+        Use the created InformixQuestionPersistence instance to create the question\par
+End For\par
+Assign the generated id back to the section instance for consistency.\par
+\cf0\f0\fs20\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i 1.3.5\tab Update scorecard/group/section\par
+\pard\i0 The modification of these instances is similar and related to each other. They together help persist the scorecard tree in the database. The update of question is simple and described in the class documentation.\par
+Note that when updating group and section, the removed section ids and question ids are collected to two lists and will be deleted in the end of update scorecard method.\par
+\par
+\i InformixScorecardPersistence#updateScorecard() method\par
+:\i0  \par
+\cf2\b\f1\fs18 Get the scorecard from the persistence using getScorecard(id) method (oldScorecard)\par
+\b0\tab It will be used to find out removed items from the updated instance.\par
+\par
+Check if the scorecard id exists in the database, if not, throw exception\par
+\b Determine if the scorecard is in use\par
+\b0\tab Use the \ldblquote Determine if a scorecard is in use\rdblquote  routine to determine if the current scorecard is in use or not.\par
+\pard\fi720 If it is in use throws exception indicates that the scorecard is in use and cannot be modified.\par
+\pard Query \lquote scorecard\rquote  table to get the current version of the scorecard\par
+\b Increase the minor version by 1\b0  (the number behind the last dot character \endash  if there is no dot, append a dot first)\par
+(The version format is already validated using the logic in DefaultScorecardValidator)\par
+\par
+Find the added group instance: \par
+        Added group instances are instance that id equals 0\par
+Find the removed group instance:\par
+        Get a list of group ids previously belong to the scorecard using \ldblquote oldScorecard\rdblquote  instance\par
+        Compare to the current group ids to see what was removed\par
+Find the updated group instance:\par
+        The instances that do not belong to the two above\par
+Create new group instances in the database using InformixGroupPersistence#createGroup()\par
+Update the rest by using InformixGroupPersistence#udpateGroup(). Pass two empty lists named deletedSectionIds and deletedQuestionIds to this method.\par
+Collect deletedSectionIds and deletedQuestionIds from updateGroup() calls.\par
+\par
+Delete removed group instances in the database using InformixGroupPersistence#deleteGroups()\par
+Delete removed section instances in the database using \par
+InformixSectionPersistence#deleteSections(). The deletedSectionIds is collected from updateGroup() calls.\par
+Delete removed question instances in the database using \par
+InformixQuestionPersistence#deleteQuestions().The deletedQuestionIds is collected from updateGroup() calls. \par
+\par
+\cf0\f0\fs20\par
+\i InformixGroupPersistence#updateGroup() method:\par
+\i0\par
+\cf2\f1\fs18 Check if the group id exists in the database, if not, throw exception\par
+Update group data in the corresponding table (scorecard_group)\par
+\par
+Find the added section instance: \par
+        Added section instances are instance that id equals 0\par
+Find the removed section instance:\par
+        Get a list of section ids previously belong to the group using \ldblquote oldScorecard\rdblquote  instance\par
+       Compare to the current section ids to see what was removed\par
+Find the updated section instance:\par
+        The instances that do not belong to the two above\par
+Create new section instances in the database using InformixSectionPersistence#createSection()\par
+Save the deleted section Ids to the \ldblquote deletedSectionIds\rdblquote  output parameter.\par
+\par
+Update the rest using InformixSectionPersistence#udpateSection().Pass an empty list named deletedQuestionIds to this method. \par
+Collect deleted question Ids from updateSection() calls. \par
+\par
+Save the deleted question Ids to the \ldblquote deletedQuestionIds\rdblquote  output parameter. \par
+\cf0\f0\fs20\par
+\i InformixSectionPersistence#updateSection() method:\par
+\i0\par
+\cf2\f1\fs18 Check if the section id exists in the database, if not, throw exception\par
+Update section data in the corresponding table (scorecard_section)\par
+\cf0\f0\fs20\par
+\cf2\f1\fs18 Find the added question instance: \par
+        Added question instances are instance that id equals 0\par
+Find the removed question instance:\par
+        Get a list of question ids previously belong to the section using \ldblquote oldScorecard\rdblquote  instance\par
+        Compare to the current question ids to see what was removed\par
+Find the updated question instance:\par
+        The instances that do not belong to the two above\par
+\par
+Create new question instances in the database using InformixQuestionPersistence#createQuestion()\par
+\par
+Update the rest using InformixQuestionPersistence#udpateQuestion()\par
+\par
+Save the deleted question Ids to the \ldblquote deletedQuestionIds\rdblquote  output parameter. \par
+\par
+\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf0\i\f0\fs20 1.3.6\tab Retrieve scorecard/group/section\par
+\pard\i0 Because of performance reason when retrieving a scorecard, we need to reduce the queries to the database as much as possible. The persistence layer has two getScorecard() method. One method receive the scorecard id as parameter, the other method receive a list of scorecard ids to retrieve all of them at the same time.\par
+\par
+The following is the algorithm to retrieve scorecards using a list of scorecard ids. The method that receives a single scorecard id can pass a list contains a single id to this method.\par
+\par
+\cf2\b\f1\fs18 Get all scorecard instances for the given scorecard ids.\par
+\par
+\b0 Get the ids of in use scorecard using \ldblquote Determine if a scorecard is in use\rdblquote .(inUseIds)\par
+\b\par
+\b0 SELECT scorecard_id, status.scorecard_status_id, type.scorecard_type_id, \par
+project_category_id, scorecard.name, version, min_score, max_score, \par
+create_user, create_date, modify_user, modify_date, status.name, type.name\par
+FROM scorecard \par
+JOIN scorecard_type_lu AS type ON\par
+scorecard.scorecard_type_id=type.scorecard_type_id\par
+JOIN scorecard_status_lu AS status ON\par
+scorecard.scorecard_status_id=status.scorecard_status_id\par
+WHERE scorecard_id IN (id1, id2,..,idN);\par
+\cf0\f0\fs20\par
+\cf2\f1\fs18 For each row returned\par
+\tab Create a new Scorecard instance with the retrieved information\par
+\tab Create new ScorecardType and ScorecardStatus instances to set to the Scorecard instance\par
+\tab Check if the current scorecardId exists in \ldblquote inUseIds\rdblquote  list. Then set the scorecard in use property accordingly.\par
+\tab Store the Scorecard instance in a list (scorecards)\par
+End For\par
+\par
+\b If the \ldblquote complete\rdblquote  parameter is false, convert the \ldblquote scorecards\rdblquote  list to array and return. \par
+\cf0\b0\f0\fs20\par
+\cf2\b\f1\fs18 Get all group instances for the given scorecard ids.\par
+\b0\par
+SELECT scorecard_group_id, scorecard_id, name, weight FROM scorecard_group \par
+WHERE scorecard_id IN (id1, id2,..,idN);\par
+ \par
+For each row returned\par
+Create a new Group instance with the retrieved information\par
+Store the Group instance in a list (groups) \par
+\tab Walk the \ldblquote scorecards\rdblquote  list and match the group with its scorecard using the retrieved scorecard_id.\par
+\tab When found the matched scorecard, set the group to the scorecard.\par
+End For\par
+\cf0\f0\fs20\par
+\cf2\b\f1\fs18 Get all section instances for the given scorecard ids.\par
+\b0\par
+SELECT scorecard_section_id, group.scorecard_group_id, \par
+scorecard.scorecard_id, section.name, section.weight \par
+FROM scorecard_section AS section\par
+JOIN scorecard_group AS group ON section.scorecard_group_id= \par
+group.scorecard_group_id\par
+JOIN scorecard ON group.scorecard_id=scorecard.scorecard_id\par
+WHERE scorecard.scorecard_id IN (id1, id2,..,idN);\par
+\par
+For each row returned\par
+Create a new Section instance with the retrieved information\par
+Store the Section instance in a list (sections) \par
+\tab Walk the \ldblquote groups\rdblquote  list and \b match\b0  the section with its group using the retrieved scorecard_group_id.\par
+\tab When found the matched group, set the section to the group.\par
+End For\par
+\cf0\f0\fs20\par
+\cf2\b\f1\fs18 Get all question instances for the given scorecard ids.\par
+\b0\par
+SELECT question.scorecard_question_id, question.scorecard_question_type_id, \par
+question_type.name, section.scorecard_section_id, group.scorecard_group_id, \par
+scorecard.scorecard_id, question.description, question.guideline, \par
+question.weight, question.upload_document, question.upload_document_required\par
+FROM scorecard_question AS question\par
+JOIN scorecard_question_type_lu AS question_type ON \par
+question.scorecard_question_type_id = question_type.scorecard_question_type_id\par
+JOIN scorecard_section AS section ON\par
+question.scorecard_section_id=section.scorecard_section_id\par
+JOIN scorecard_group AS group ON \par
+section.scorecard_group_id=group.scorecard_group_id\par
+JOIN scorecard ON group.scorecard_id=scorecard.scorecard_id\par
+WHERE scorecard.scorecard_id IN (id1, id2,..,idN);\par
+\par
+For each row returned\par
+Create a new Question instance with the retrieved information.\par
+Create a new QuestionType instance and set to the question.\par
+\tab Walk the \ldblquote sections\rdblquote  list and match the question with its section using the retrieved scorecard_section_id.\par
+\tab When found the matched section, set the question to the section.\par
+End For\par
+\par
+\b Convert the \ldblquote scorecards\rdblquote  list to array and return.\par
+\b0\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf0\i\f0\fs20 1.3.7\tab Delete groups/sections/questions\par
+\pard\i0 For performance reason, batch deletion is supported for these items. The delete methods receive an array of ids of items to be deleted.\par
+\par
+\i InformixGroupPersistence#deleteGroups() method:\par
+\cf2\i0\f1\fs18\par
+Get sectionIds for the given groupIds\par
+\pard\li720 SELECT scorecard_section_id FROM scorecard_section AS section\par
+JOIN scorecard_group AS group ON\par
+section.scorecard_group_id=group.scorecard_group_id\par
+WHERE group.scorecard_group_id IN (grId1, grId2,.., grIdN);\par
+\pard Delete the question belong to the obtained sectionIds\par
+\pard\li720 DELETE FROM scorecard_question WHERE scorecard_section_id \par
+IN (secId1, secId2,.., secIdN);\par
+\pard Delete the obtained sections\par
+\tab DELETE FROM scorecard_section WHERE scorecard_section_id \par
+\pard\fi720 IN (secId1, secId2,.., secIdN);\par
+\pard Delete the groups\par
+\tab DELETE FROM scorecard_group WHERE scorecard_group_id\par
+\pard\fi720 IN (grId1, grId2,.., grIdN);\par
+\pard\tab\par
+\cf0\f0\fs20\par
+\i InformixSectionPersistence#deleteSections() method:\par
+\i0\par
+\cf2\f1\fs18 Delete the question belong to the sectionIds\par
+\pard\li720 DELETE FROM scorecard_question WHERE scorecard_section_id \par
+IN (secId1, secId2,.., secIdN);\par
+\pard Delete the sections\par
+\tab DELETE FROM scorecard_section WHERE scorecard_section_id \par
+\pard\fi720 IN (secId1, secId2,.., secIdN);\par
+\par
+\pard\cf0\i\f0\fs20 InformixSectionPersistence#deleteQuestions() method:\par
+\cf2\i0\f1\fs18\par
+DELETE FROM scorecard_question WHERE scorecard_question_id \par
+IN (qId1, qId2,.., qIdN)\par
+\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf0\i\f0\fs20 1.3.8\tab Initialize the SearchBundle instance and use its for searching\par
+\pard ScorecardManagerImpl#constructor:\par
+\i0\par
+\cf2\f1\fs18 Load the 'SearchBuilderNamespace' property\par
+Initialize SearchBundleManager using that value\par
+Call manager.getSearchBundle("ScorecardSearchBundle") to get the SearchBundle(searchBundle)\par
+Create a map with the following key/value pairs, this is required by SearchBundle (validationMap)\par
+        "ScorecardStatusID"/LongValidator.isPositive()\par
+        "ScorecardTypeID"/LongValidator.isPositive()\par
+        "ProjectCategoryID"/LongValidator.isPositive()\par
+        "ProjectID"/LongValidator.isPositive()\par
+        "ScorecardStatusName"/ StringValidator.hasLength(IntegerValidator.lessThanOrEqualTo(64))\par
+        "ScorecardTypeName"/ StringValidator.hasLength(IntegerValidator.lessThanOrEqualTo(64))\par
+        "ScorecardName"/ StringValidator.hasLength(IntegerValidator.lessThanOrEqualTo(64)));\par
+        "ScorecardVersion"/ StringValidator.hasLength(IntegerValidator.lessThanOrEqualTo(16)));\par
+Call searchBundle.setSearchableFields(validationMap) to set the validation map\par
+\cf0\f0\fs20\par
+\i ScorecardManagerImpl#searchScorecards() method:\par
+\i0\par
+Use the SearchBundle instance to search for ids, then the ScorecardPersistence instance to get Scorecard instance array. The \lquote searchBundle\rquote  here is the member of ScorecardManagerImpl class. CustomResultSet \endash  class of Database Abstraction component \endash  is used by SearchBuilder to store search result.\par
+.\par
+\pard\li720\cf2\f1\fs18 CustomResultSet result = (CustomResultSet)searchBundle.search(filter);\par
+Get the scorecardIds from result\par
+Get Scorecard instances using persistence.\cf0\f0\fs20  \cf2\f1\fs18 getScorecards() method with \ldblquote scorecardIds\rdblquote  and \ldblquote complete\rdblquote  parameter.\par
+Return the Scorecard instances. \par
+\pard\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\cf0\b\f0\fs20 1.4\tab Component Class Overview\par
+\pard\b0\par
+\b\i ScorecardManager\par
+\b0\i0 This interface defines the contract for scorecard manager. A scorecard manager implementation has the responsibility to validate and create/update/retrieve/search scorecard instances in the persistence. The manager read configuration settings to load the configured persistence and validator implementation.\par
+\par
+\b ScorecardManagerImpl\par
+\b0 This is the manager class of this component. It loads persistence implementation using settings in the configuration namespace. Then it uses the persistence implementation to create/update/retrieve/search scorecards. This is the main class of the component, which is used by client to perform the above scorecards operations. The default configuration namespace for this class is: "com.topcoder.management.scorecard". It can accept a custom namespace as well. Apart from the persistence settings, it also initializes a SearchBundle instance to use in scorecards searching and a ScorecardValidator instance to validate scorecards.\par
+\par
+\b ScorecardSearchBundle\par
+\b0 This class contains methods to build filter instances to use in scorecard searching. It can build filter to search for scorecard based on various criteria such as: - Scorecard name - Scorecard version - Scorecard type id - Scorecard type name - Scorecard status id - Scorecard status name - Project category id that the scorecard linked to. - Project id that the scorecard linked to. Besides, this class also provides method to combine any of the above filter to make complex filters. This class is used be the client to create search filter. The created filter is used in searchScorecards() method of ScorecardManager.\par
+\par
+\b\i ScorecardPersistence\par
+\b0\i0 This interface defines the contract that any scorecard persistence must implenment. The implementation classes will be used by ScorecardManagerImpl to perform scorecard persistence operations. The implementation classes should have a constructor that receives a namespace string parameter so that they're exchangeable with each other by changing configuration settings in the manager.\par
+\par
+\b InformixScorecardPersistence\par
+\b0 This class contains operations to create and update scorecard instances into the Informix database. It implements the ScorecardPersistence interface to provide a plug-in persistence for Informix database. It is used by the ScorecardManagerImpl class. The constructor takes a namespace parameter to initialize database connection. Note that in this class, delete operation is not supported. To delete the scorecard, its status is set to 'Disabled'. The create and update operation here work on the scorecard and including its sub items as well. It means creating/updating a scorecard would involve creating/updating its sub groups/sections and questions. The get scorecard operation including a 'complete' parameter, so the scorecard can be retrieve with or without its sub items.\par
+\b InformixGroupPersistence\par
+\b0 This class contains operations to create and update group instances into the Informix database. It is package level because it is used only in InformixScorecardPersistence class to persist group information. Connection to the database is passed to this class during initialization.\par
+\par
+\b InformixSectionPersistence\par
+\b0 This class contains operations to create and update section instances into the Informix database. It is package level because it is used only in InformixGroupPersistence class to persist section information. Connection to the database is passed to this class during initialization.\par
+\par
+\b InformixQuestionPersistence\b0\par
+This class contains operations to create and update question instances into the Informix database. It is package level because it is used only in InformixSectionPersistence class to persist question information. Connection to the database is passed to this class during initialization.\par
+\par
+\b\i ScorecardValidator\par
+\b0\i0 This interface defines the contract that scorecard validators should implement. The implementation classes will be used by ScorecardManagerImpl to perform scorecard validation. ScorecardManagerImpl loads the validation implementation from the configuration settings, which allows further validator to plug-in. The implementation classes should have a constructor that receives a namespace string parameter so that they're exchangeable with each other by changing configuration settings in the manager.\par
+\par
+\b DefaultScorecardValidator\par
+\b0 This is the default implementation of the ScorecardValidator interface to provide scorecard validation functions. It validates the scorecard base on the following rules: 1/ For scorecard: - scorecard_status_id: Must be greater than zero - scorecard_type_id: Must be greater than zero - project_category_id: Must be greater than zero - name: Must not empty. Length must smaller than or equal to 64 - version: Must not empty and have at least one dot character. Length smaller than 16 - min_score: Must be greater than or equal to zero - max_score: Must be greater than min_score. 2/ For group: - name: Length must smaller than or equal to 64 - weight: Must be greater than or equal to zero and smaller than or equal to 100 - Total weight must equals to 100 3/ For section: - name: Length must smaller than or equal to 64 - weight: Must be greater than or equal to zero and smaller than or equal to 100 - Total weight must equals to 100 4/ For question: - name: Must not empty. Length must smaller than or equal to 64 - description: Must not be empty - guideline: Can be null or empty - weight: Must be greater than or equal to zero and smaller than or equal to 100 - Total weight must equals to 100\par
+\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 1.5\tab Component Exception Definitions\par
+\pard ConfigurationException [Custom]\par
+\b0 Represents an exception related to loading configuration settings. Inner exception should be provided to give more details about the error. It is used in classes that have to load configuration settings such as ScorecardManagerImpl and InformixScorecardPersistence.\par
+\b\par
+PersistenceException [Custom]\par
+\par
+\b0 Represents an exception related to persistence operations such as cannot create connection, database table does not exist, etc. Inner exception should be provided to give more details about the error. It is used in persistence implementation classes.\par
+\b\page ValidationException [Custom]\par
+\par
+\b0 Represents an exception related to validating scorecard. Inner exception should be provided to give more details about the error. It is used in classes of the validation package.\par
+\par
+\b IllegalArgumentException\par
+\b0 This exception is used in all classes for invalid arguments. Invalid arguments in this design are usually null objects, empty strings (including all spaces strings), arrays with null elements. \par
+\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 1.6\tab Thread Safety\par
+\pard\b0 This design is not thread safe because thread-safety is not required. Two threads running the same method will use the same statement and could overwrite each other's work. To achieve thread-safety in a multi-threading environment, data classes such as Scorecard, Group, Section, and Question should not be shared among different threads. That mean each thread should create its own data classes to persist scorecard data. ScorecardSearchBundle and DefaultScorecardValidator classes are immutable so they\rquote re thread-safe by default.\par
+\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b 2.\tab Environment Requirements\tab\tab\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0 2.1\tab Environment\par
+\pard\li720\qj\b0 JDK 1.3\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 2.2\tab TopCoder Software Components\par
+\pard\b0 Configuration Manager v2.1.3 \endash  used to read the configuration information.\par
+DB Connection Factory v1.0 \endash  used to create the connection to the database.\par
+Search Builder v1.3 \endash  used to provide scorecard search functions.\par
+ID Generator v3.0 \endash  used to generate ids for scorecards, groups, sections and questions.\par
+Base Exception 1.0 \endash  used as the base for all custom exception classes.\par
+Data Validation 1.0 \endash  used to validate scorecards.\par
+\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 2.3\tab Third Party Components\par
+\pard\fi-360\li1080\sa120\tx1080\b0\f2\'b7\tab\f0 None\par
+\pard\li720\sa120\qj NOTE: The default location for 3\super rd\nosupersub  party packages is ../lib relative to this component installation.  Setting the ext_libdir property in topcoder_global.properties will overwrite this default location.\par
+\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b 3.\tab Installation and Configuration\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0 3.1\tab Package Name\par
+\pard\fi720\b0 com.topcoder.management.scorecard\par
+com.topcoder.management.scorecard.persistence\par
+com.topcoder.management.scorecard.validation\par
+\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 3.2\tab Configuration Parameters\par
+\pard\b0\i\par
+For ScorecardManagerImpl class:\par
+\par
+\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6032\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8180\pard\intbl\b\i0 Parameter\cell Description\cell More information\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6032\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8180\pard\intbl\b0 SearchBuilderNamespace\cell The namespace that contains settings for SearchBuilder.\cell String \endash  Required\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6032\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8180\pard\intbl PersistenceClass\cell The full class name of the persistence implementation.\cell String \endash  Required\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6032\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8180\pard\intbl PersistenceNamespace\cell The namespace that contains setting for the persistence implementation. If missing, value of \lquote PersistenceClass\rquote  will be used.\cell String - Optional\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6032\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8180\pard\intbl ValidatorClass\cell The full class name of the validation implementation.\cell String \endash  Required\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6032\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8180\pard\intbl ValidatorNamespace\cell The namespace that contains setting for the validation implementation. If missing, value of \lquote ValidatorClass\lquote  will be used.\cell String - Optional\cell\row\pard\fi720\par
+\pard\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\i For InformixScorecardPersistence class:\par
+\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6032\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8180\pard\intbl\b\i0 Parameter\cell Description\cell More information\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6032\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8180\pard\intbl\b0 ConnectionFactoryNS\cell The namespace that contains settings for DB Connection Factory.\cell String \endash  Required\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2432\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx6032\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx8180\pard\intbl ConnectionName\cell The name of the connection that will be used by DBConnectionFactory to create connection. If missing, default connection will be created.\cell String - Optional\cell\row\pard\par
+\par
+\par
+\par
+\par
+\i Search Builder alias: These alias setting affect the logic of the component. Therefore, they should not be changed. They are defined as public constant in ScorecardSearchBundle class and used in the component logic.\par
+\par
+\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2121\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx5040\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9000\pard\intbl\b\i0 Alias\cell Description\cell Value\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2121\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx5040\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9000\pard\intbl\b0 ScorecardStatusID\cell Alias for scorecard status id column.\cell scorecard_status_lu.scorecard_status_id\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2121\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx5040\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9000\pard\intbl ScorecardStatusName\cell Alias for scorecard status name column.\cell scorecard_status_lu.name\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2121\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx5040\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9000\pard\intbl ScorecardTypeID\cell Alias for scorecard type id column.\cell scorecard_type_lu.scorecard_type_id\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2121\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx5040\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9000\pard\intbl ScorecardTypeName\cell Alias for scorecard type name column.\cell scorecard_type_lu.name\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2121\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx5040\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9000\pard\intbl ProjectCategoryID\cell Alias for project category id column.\cell project_category_lu.project_category_id\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2121\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx5040\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9000\pard\intbl ProjectID\cell Alias for project id column.\cell project_scorecard.project_id\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2121\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx5040\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9000\pard\intbl ScorecardName\cell Alias for scorecard name column.\cell scorecard.name\cell\row\trowd\trgaph108\trleft-108\trbrdrl\brdrs\brdrw10 \trbrdrt\brdrs\brdrw10 \trbrdrr\brdrs\brdrw10 \trbrdrb\brdrs\brdrw10 \trpaddl108\trpaddr108\trpaddfl3\trpaddfr3
+\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx2121\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx5040\clbrdrl\brdrw10\brdrs\clbrdrt\brdrw10\brdrs\clbrdrr\brdrw10\brdrs\clbrdrb\brdrw10\brdrs \cellx9000\pard\intbl ScorecardVersion\cell Alias for scorecard verssion column.\cell scorecard.version\cell\row\pard\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\i This is SQL command used as \lquote context\rquote  property in SearchBuilder setting. Note the use of \b LEFT JOIN\b0\par
+on project_scorecard table. This is make sure scorecard id is still retrieved even it does not exist in project_scorecard table. \b It ensures both in-use and not in-use scorecard are returned from the search.\b0\par
+\par
+\cf2\i0\f1\fs18 SELECT scorecard.scorecard_id FROM scorecard \par
+JOIN scorecard_status_lu ON\par
+scorecard.scorecard_status_id=scorecard_status_lu.scorecard_status_id\par
+JOIN scorecard_type_lu ON \par
+scorecard.scorecard_type_id=scorecard_type_lu.scorecard_type_id\par
+JOIN project_category_lu ON \par
+scorecard.project_category_id=project_category_lu.project_category_id\par
+LEFT JOIN project_scorecard ON\par
+scorecard.scorecard_id=project_scorecard.scorecard_id WHERE\par
+\par
+\cf0\b\i\f0\fs20 Sample configuration file:\par
+\par
+\cf2\b0\i0\f1\fs18 <?xml version="1.0" ?>\par
+<CMConfig>\par
+    <!-- Namespace for ScorecardManagerImpl class -->\par
+    <Config name="com.topcoder.management.scorecard">\par
+        <Property name="SearchBuilderNamespace">\par
+            <Value>com.topcoder.searchbuilder</Value>\par
+        </Property>\par
+        \par
+        <Property name="PersistenceClass">\par
+            <Value>com.topcoder.management.scorecard.persistence.InformixScorecardPersistence</Value>\par
+        </Property>\par
+        \par
+        <Property name="PersistenceNamespace">\par
+            <Value>com.topcoder.management.scorecard.persistence.InformixScorecardPersistence</Value>\par
+        </Property>\par
+        \par
+        <Property name="ValidatorClass">\par
+            <Value>com.topcoder.management.scorecard.validation.DefaultScorecardValidator</Value>\par
+        </Property>\par
+        \par
+        <Property name="ValidatorNamespace">\par
+            <Value>com.topcoder.management.scorecard.validation.DefaultScorecardValidator</Value>\par
+        </Property>\par
+    </Config>\par
+    \par
+    <!-- Namespace for InformixScorecardPersistence class -->\par
+    <Config name="com.topcoder.management.scorecard.persistence.InformixScorecardPersistence">\par
+        <Property name="ConnectionFactoryNS">\par
+            <Value>Dbconnection.factory</Value>\par
+        </Property>\par
+    </Config>\par
+    \par
+    <!-- Namespace for DBConnectionFactory component -->\par
+    <Config name="Dbconnection.factory">\par
+        <Property name="connections">\par
+            <Property name="default">\par
+                <Value>dbconnection</Value>\par
+            </Property>\par
+            \par
+            <Property name="dbconnection">\par
+                <Property name="producer">\par
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>\par
+                </Property>\par
+                \par
+                <Property name="parameters">\par
+                    <Property name="jdbc_driver">\par
+                        <Value>com.informix.jdbc.IfxDriver</Value>\par
+                    </Property>\par
+\par
+                    <Property name="jdbc_url">\par
+                        <Value>jdbc:informix-sqli://zeyuanzhu-home:1526/score:INFORMIXSERVER=ol_home</Value>\par
+                    </Property>\par
+\par
+                    <Property name="SelectMethod">\par
+                        <Value>cursor</Value>\par
+                    </Property>\par
+\par
+                    <Property name="DatabaseName">\par
+                        <Value>score</Value>\par
+                    </Property>\par
+\par
+                    <Property name="user">\par
+                        <Value>informix</Value>\par
+                    </Property>\par
+\par
+                    <Property name="password">\par
+                        <Value>12345</Value>\par
+                    </Property>\par
+                </Property>\par
+            </Property>\par
+        </Property>\par
+    </Config>\par
+    \par
+  <!-- Namespace for SearchBuilder component\par
+    The setting in this section decide the logic of secorecard searching.\par
+   -->\par
+  <Config name="com.topcoder.searchbuilder">\par
+        <Property name="searchBundles">\par
+            <Property name="ScorecardSearchBundle">\par
+                        <Property name="type">\par
+                      <Value>Database</Value>\par
+              </Property>\par
+                        <Property name="name">\par
+                      <Value>ScorecardSearchBundle</Value>\par
+              </Property>\par
+                        <Property name="context">\par
+                         <Value>SELECT scorecard.scorecard_id FROM scorecard \par
+JOIN scorecard_status_lu ON\par
+scorecard.scorecard_status_id=scorecard_status_lu.scorecard_status_id\par
+JOIN scorecard_type_lu ON \par
+scorecard.scorecard_type_id=scorecard_type_lu.scorecard_type_id\par
+JOIN project_category_lu ON \par
+scorecard.project_category_id=project_category_lu.project_category_id\par
+LEFT JOIN project_scorecard ON\par
+scorecard.scorecard_id=project_scorecard.scorecard_id WHERE</Value>\par
+                </Property>\par
+            \par
+            <Property name="DBNamcespace">\par
+                    <Value>Dbconnection.factory</Value> \par
+            </Property>\par
+            <Property name="connectionProducerName">\par
+                    <Value>dbconnection</Value> \par
+            </Property>\par
+            \par
+            <Property name="alias">\par
+                <Property name="ScorecardStatusID">\par
+                    <Value>scorecard_status_lu.scorecard_status_id</Value>\par
+                 </Property>\par
+                 <Property name="ScorecardStatusName">\par
+                    <Value>scorecard_status_lu.name</Value>\par
+                 </Property>\par
+                <Property name="ScorecardTypeID">\par
+                    <Value>scorecard_type_lu.scorecard_type_id</Value>\par
+                </Property>\par
+                <Property name="ScorecardTypeName">\par
+                    <Value>scorecard_type_lu.name</Value>\par
+                </Property>\par
+                <Property name="ProjectCategoryID">\par
+                    <Value>project_category_lu.project_category_id</Value>\par
+                </Property>\par
+                <Property name="ProjectID">\par
+                    <Value>project_scorecard.project_id</Value>\par
+                </Property>\par
+                <Property name="ScorecardName">\par
+                    <Value>scorecard.name</Value>\par
+                </Property>\par
+                <Property name="ScorecardVersion">\par
+                    <Value>scorecard.version</Value>\par
+                </Property>\par
+                \par
+            </Property>\par
+        </Property>\par
+       </Property>\par
+  </Config>\par
+</CMConfig>\par
+\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\cf0\b\f0\fs20 3.3\tab Dependencies Configuration\par
+\pard\nowidctlpar\li720\sa120\sl240\slmult0\b0\f3\fs24 The connection definitions in DB Connection Factory need to be configured. See the spec of the DB Connection Factory component for details.\f0\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b\fs20 4.\tab Usage Notes\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0 4.1\tab Required steps to test the component\par
+\pard\fi-360\li1080\sa120\tx1080\b0\f2\'b7\tab\f0 Extract the component distribution.\par
+\pard\fi-360\li1080\sa120\f2\'b7\tab\f0 Follow {\field{\*\fldinst{HYPERLINK "C:\\\\filez\\\\work\\\\tc\\\\tcs_corp\\\\templates\\\\component\\\\" \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\l "_Dependencies_Configuration" }}{\fldrslt{\cf2\ul Dependencies Configuration}}}\cf0\ulnone\f0\fs20 .\par
+\f2\'b7\tab\f0 Execute \lquote ant test\rquote  within the directory that the distribution was extracted to.\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 4.2\tab Required steps to use the component\par
+\pard\nowidctlpar\li720\sa120\sl240\slmult0\b0\f3\fs24 Load the configuration before using this component. Follow the demo.\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0\fs20 4.3\tab Demo\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\b0\i 4.3.1\tab General usage demo\par
+\pard\li720\cf2\i0\f1\fs18 // create scorecard manager with default ns\par
+ScorecardManager manager = new ScoreCardManagerImpl();\par
+\par
+// create a scorecard\par
+Scorecard scorecard = ...;\par
+\par
+// insert scorecard into the persistence, the operator is "user1"\par
+manager.createScorecard(scorecard, "user1");\par
+\par
+// the scorecard id is updated\par
+System.out.println("New scorecard id: " + scorecard.getId());\par
+\par
+// the scorecard creation user is updated\par
+System.out.println("Creation user: " + scorecard.getCreationUser());\par
+\par
+// makesome modification to the scorecard\par
+scorecard.addGroup(...);\par
+\par
+// update scorecard in the persistence, the operator is "user2"\par
+manager.updateScorecard(scorecard, "user2");\par
+\par
+// the scorecard modification user is updated\par
+System.out.println("Modification user: " + scorecard.getModificationUser());\par
+\par
+// retrieve a scorecard\par
+Scorecard newScorecard = manager.getScorecard(scorecard.getId());\par
+\par
+// build a filter for searching scorecard, this case is the filter for type id equals 1\par
+Filter f1 = ScorecardSearchBundle.buildTypeIdEqualFilter(1);\par
+\par
+// light weight searching, which only retrieve scorecards without theirs sub items such as\par
+// groups, sections, questions\par
+Scorecard[] lightResult = manager.searchScorecards(f1, false);\par
+\par
+// complete searching, which retrieve the scorecards and their sub items\par
+Scorecard[] completeResult = manager.searchScorecards(f1, true);\par
+\par
+// retrieve all scorecard types\par
+ScorecardType[] scorecardTypes = manager.getAllScorecardTypes();\par
+\par
+// retrieve all scorecard statuses\par
+ScorecardStatus[] scorecardStatuses = manager.getAllScorecardStatuses();\par
+\par
+// retrieve all question types\par
+QuestionType[] questionTypes = manager.getAllQuestionTypes();\par
+\pard\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\cf0\i\f0\fs20 4.3.2\tab Build filters demo:\par
+\pard\i0         \cf2\f1\fs18 // get filter for scorecard with type id equals 1\par
+        Filter f1 = ScorecardSearchBundle.buildTypeIdEqualFilter(1);\par
+\par
+        // get filter for scorecard with type id equals 1, 3, or 4\par
+        List typeIds = new ArrayList();\par
+        typeIds.add(new Long(1));\par
+        typeIds.add(new Long(3));\par
+        typeIds.add(new Long(4));\par
+        Filter f2 = ScorecardSearchBundle.buildTypeIdInFilter(typeIds);\par
+\par
+        // get filter for scorecard with type name equals 'Design'\par
+        Filter f3 = ScorecardSearchBundle.buildTypeNameEqualFilter("Design");\par
+\par
+        // get filter for scorecard with type name equals 'Design' or 'Development'\par
+        List typeNames = new ArrayList();\par
+        typeNames.add("Design");\par
+        typeNames.add("Development");\par
+        Filter f4 = ScorecardSearchBundle.buildTypeNameInFilter(typeNames);\par
+\par
+        // get filter for scorecard with status id equals 1\par
+        Filter f5 = ScorecardSearchBundle.buildStatusIdEqualFilter(1);\par
+\par
+        // get filter for scorecard with project category id equals 1\par
+        Filter f6 = ScorecardSearchBundle.buildProjectCategoryIdEqualFilter(1);\par
+\par
+        // get filter for scorecard with project id equals 1\par
+        Filter f7 = ScorecardSearchBundle.buildProjectIdEqualFilter(1);\par
+\par
+        // get filter for scorecard with name equals 'Test'\par
+        Filter f8 = ScorecardSearchBundle.buildNameEqualFilter("Test");\par
+\par
+        // get filter for scorecard with version equals '1.0'\par
+        Filter f9 = ScorecardSearchBundle.buildNameEqualFilter("1.0");\par
+\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\cf0\b\f0\fs20 5.\tab Future Enhancements\par
+\pard\li720\sa120\b0 Additional databases could be supported.\par
+Additional validator could be supported to validate scorecard.\par
+\pard\cf2\f1\fs18\par
+}
+ 

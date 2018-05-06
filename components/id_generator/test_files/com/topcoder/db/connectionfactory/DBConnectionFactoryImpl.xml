@@ -1,0 +1,71 @@
+<CMConfig>  
+  <Config name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+    <Property name="connections">
+        <!-- The default should not be oracle, the db should be in the scope of the DBs which are allowed in IDGenerator 2.0 -->
+        <Property name="default">
+            <Value>IDGeneratorImpl</Value>
+        </Property>
+        
+        <Property name="IDGeneratorImpl">
+            <Property name="producer">
+                <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+            </Property>
+            <Property name="parameters">
+                <Property name="jdbc_driver">
+                    <Value>com.mysql.jdbc.Driver</Value>
+                </Property>
+                <Property name="jdbc_url">
+                    <Value>jdbc:mysql://localhost:3306/tempdb</Value>
+                </Property>
+                <Property name="user">
+                    <Value>root</Value>
+                </Property>
+                <Property name="password">
+                    <Value>J3V4G8WL</Value>
+                </Property>
+            </Property>
+        </Property>  
+        
+<!-- The user should keep the name : OracleIDGenerator for using oracle db -->
+        <Property name="OracleSequence">
+           <Property name="producer">
+                <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+            </Property>
+            <Property name="parameters">
+                <Property name="jdbc_driver">
+                    <Value>oracle.jdbc.driver.OracleDriver</Value>
+                </Property>
+                <Property name="jdbc_url">
+                    <Value>jdbc:oracle:thin:@127.0.0.1:1521:TCS</Value>
+                </Property>
+                <Property name="user">
+                    <Value>scott</Value>
+                </Property>
+                <Property name="password">
+                    <Value>tiger</Value>
+                </Property>
+            </Property>
+        </Property>
+        
+        <Property name="mssql2005">
+          <Property name="producer">
+                <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+            </Property>
+            <Property name="parameters">
+                <Property name="jdbc_driver">
+                    <Value>com.microsoft.sqlserver.jdbc.SQLServerDriver</Value>
+                </Property>
+                <Property name="jdbc_url">
+                    <Value>jdbc:sqlserver://localhost;database=tempdb;integratedSecurity=true;</Value>
+                </Property>
+                <Property name="user">
+                    <Value>sa</Value>
+                </Property>
+                <Property name="password">
+                    <Value>system</Value>
+                </Property>
+            </Property>
+        </Property>
+    </Property>
+</Config>
+</CMConfig> 

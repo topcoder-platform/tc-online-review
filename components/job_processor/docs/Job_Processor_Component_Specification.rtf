@@ -1,0 +1,308 @@
+{\rtf1\ansi\ansicpg936\deff0\deflang1033\deflangfe2052{\fonttbl{\f0\fswiss\fprq2\fcharset0 Arial;}{\f1\froman\fprq2\fcharset0 Times New Roman;}{\f2\fnil Courier New;}{\f3\froman\fprq2\fcharset0 Garamond;}{\f4\fnil\fprq2\fcharset2 Wingdings;}{\f5\fmodern\fprq1\fcharset0 Courier New;}}
+{\colortbl ;\red0\green0\blue0;\red0\green0\blue255;\red0\green0\blue192;\red127\green0\blue85;\red63\green127\blue95;\red0\green128\blue0;\red255\green0\blue0;\red42\green0\blue255;\red51\green51\blue153;}
+{\stylesheet{ Normal;}{\s1 heading 1;}{\s2 heading 2;}{\s3 heading 3;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\ul\b\f0\fs24 Job Processor 3.0 Component Specification\par
+\pard\nowidctlpar\li720\sa120\ulnone\b0\fs20\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b\fs24 1.\tab Design\par
+\pard\nowidctlpar\li720\cf1\b0\f1 The Job Scheduling Component enables the timed execution of specified tasks.  This functionality is similar to the unix cron utility and variants that exist on most operating system.  Users can schedule both one-time and repeating tasks.\par
+\par
+\cf0 In the second version of this component, the concepts of Job dependency and grouping were introduced to create a more robust capability. Jobs could be created that are dependent on other jobs, and to more easily perform jobs by grouping them. The third version, as proposed by this design, is to separate the scheduling part of the design from the processing part. This new scheduler will be solely responsible for managing the jobs, including their persistence, and will be moved to a separate component. The processor will then use that persistence to look up schedules.\par
+\par
+The processor will take over the starting and stopping aspects of the Scheduler.\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0\fs20 1.1\tab Design Patterns\par
+\pard\nowidctlpar\li720\b0\f1\fs24 The Scheduler implementations are used as \b Strategies. \b0 The TriggerEventHandler as it is strategically registered as an event handler with the job.\f0\fs20\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 1.2\tab Industry Standards\par
+\pard\nowidctlpar\fi720\b0 None.\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 1.3\tab\page Required Algorithms\par
+\pard\nowidctlpar\li720\b0\f1\fs24 These algorithms are mostly untouched from 2.0. Where there are changes, these are indicated with light blue. The developer will thus be able to reuse most of the code in the 2.0 version.\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i\f0\fs20 1.3.1\tab Scheduler Algorithm\par
+\pard\nowidctlpar\li720\i0\f1\fs24 This algorithm is from 2.0. Modifications are in \cf2 blue\cf0 .\par
+\f0\fs20\par
+\b\f1\fs24 Purpose:\b0  \par
+To schedule any job which has a specific schedule time.\par
+\par
+\b Implementation:\par
+\b0 The scheduler algorithm is implemented in the JobProcessor.startExecuteHeartBeat method, and is started by the JobProcessor.start method. There are two lists in the processor, the jobs list and the executing jobs list.\par
+It uses java.util.Timer and TimerTask to setup the heartbeat thread.\cf2\f0\fs20\par
+\par
+\pard\nowidctlpar\li1080\cf3\f2\fs16 executeTimer\cf1  = \cf4\b new\cf1\b0  Timer();\cf0\par
+\cf1         \cf3 executeTimer\cf1 .schedule(\cf4\b new\cf1\b0  TimerTask() \{\cf0\par
+\cf1                 \cf4\b public\cf1\b0  \cf4\b void\cf1\b0  run() \{\cf0\par
+\cf1                     \cf5 //sifts through jobs list, for expired jobs, removes them, for due jobs, executes them\cf0\par
+\cf1                     \cf4\b synchronized\cf1\b0  (\cf3 jobs\cf1 ) \{\cf0\par
+\cf1                         GregorianCalendar rightNow = \cf4\b new\cf1\b0  GregorianCalendar();\cf0\par
+\par
+\cf1                         \cf4\b for\cf1\b0  (\cf4\b int\cf1\b0  i = \cf3 jobs\cf1 .size() - 1; i >= 0; i--) \{\cf0\par
+\cf1                             Job job = (Job) \cf3 jobs\cf1 .get(i);\cf0\par
+\cf1                             GregorianCalendar stopDate = job.getStopDate();\cf0\par
+\par
+\cf1                             \cf4\b int\cf1\b0  executionCount = job.getExecutionCount();\cf0\par
+\par
+\cf1                             \cf4\b if\cf1\b0  (((stopDate != \cf4\b null\cf1\b0 )\cf0\par
+\cf1                                     && (rightNow.after(stopDate) || job.getNextRun().after(stopDate)))\cf0\par
+\cf1                                   || (executionCount == 0)) \{\cf0\par
+\cf1                                 \cf5 // the job is expired, or reached its occurrence limit, remove it.\cf0\par
+\cf1                                 \cf3 jobs\cf1 .remove(i);\cf0\par
+\cf1                             \} \cf4\b else\cf1\b0  \cf4\b if\cf1\b0  (!rightNow.before(job.getNextRun())) \{\cf0\par
+\cf1                                 \cf5 //the job is ready to start, records last run time\cf0\par
+\cf1                                 job.setLastRun(rightNow);\cf0\par
+\par
+\cf1                                 \cf5 //calculates the next execution for the job\cf0\par
+\cf1                                 job.setNextRun(NextRunCalculator.\i nextRun\i0 (job.getStartDate(), rightNow,\cf0\par
+\cf1                                         job.getIntervalUnit(), job.getIntervalValue()));\cf0\par
+\par
+\cf1                                 \cf4\b if\cf1\b0  (executionCount != -1) \{\cf0\par
+\cf1                                     \cf5 //if job is not a forever cycled job, decreases executionCount\cf0\par
+\cf1                                     job.setExecutionCount(executionCount - 1);\cf0\par
+\cf1                                 \}\cf0\par
+\par
+\cf1                                 \cf5 //starts the job and adds it into execution jobs list\cf0\par
+\cf1                                 Job executingJob = \cf4\b new\cf1\b0  Job(job);\cf0\par
+\par
+\cf1                                     executingJob.start();\cf0\par
+\cf1                                     \cf3 executingJobs\cf1 .add(executingJob);\cf0\par
+\cf1                             \}\cf0\par
+\cf1                         \}\cf0\par
+\cf1                     \} \cf5 // end of synchronized (jobs)\cf0\par
+\par
+\cf1                     \cf5 //sifts through executingJobs list, for finished jobs, removes them, and fires event if they\cf0\par
+\cf1                     \cf5 //are v2.0 jobs.\cf0\par
+\cf1                     \cf4\b synchronized\cf1\b0  (\cf3 executingJobs\cf1 ) \{\cf0\par
+\cf1                         \cf4\b for\cf1\b0  (\cf4\b int\cf1\b0  i = \cf3 executingJobs\cf1 .size() - 1; i >= 0; i--) \{\cf0\par
+\cf1                             Job job = (Job) \cf3 executingJobs\cf1 .get(i);\cf0\par
+\par
+\cf1                             String status = job.getRunningStatus();\cf0\par
+\par
+\cf1                             \cf5 //if job is done\cf0\par
+\cf1                             \cf4\b if\cf1\b0  (status.equals(ScheduledEnable.\cf3\i SUCCESSFUL\cf1\i0 ) || status.equals(ScheduledEnable.\cf3\i FAILED\cf1\i0 )) \{\cf0\par
+\cf1                                 \cf5 //for ver2.0 job, fire the event on it\cf0\par
+\cf1                                 \cf4\b if\cf1\b0  ((job.getJobType() == JobType.\cf3\i JOB_TYPE_EXTERNAL\cf1\i0 ) || job.isScheduledEnable()) \{\cf0\par
+\cf1                                     job.fireEvent(status);\cf0\par
+\cf1                                 \}\cf0\par
+\par
+\cf1                                 \cf5 //removes the completed job\cf0\par
+\cf1                                 \cf3 executingJobs\cf1 .remove(job);\cf0\par
+\cf1                             \}\cf0\par
+\cf1                         \}\cf0\par
+\cf1                     \}\cf0\par
+\par
+\cf1                 \}\cf0\par
+\cf1             \}, 0, \cf3\i TIMER_INTERVAL\cf1\i0 );\cf0\f0\fs20\par
+\pard\nowidctlpar\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i 1.3.2\tab Reloader Algorithm\par
+\pard\nowidctlpar\li720\i0\f1\fs24 This algorithm is new to 3.0.\par
+\pard\nowidctlpar\par
+\pard\nowidctlpar\li720\b Purpose:\b0  \par
+To reload jobs at a regular time, to be set at construction time.\par
+\par
+\b Implementation:\par
+\b0 The reloading algorithm is implemented in the JobProcessor.startReloadHeartBeat method, and is started by the JobProcessor.start method. It uses java.util.Timer and TimerTask to setup this heartbeat thread.\f0\fs20\par
+\par
+\pard\nowidctlpar\cf1\f2         \cf3\fs16 reloadTimer\cf1  = \cf4\b new\cf1\b0  Timer();\cf0\par
+\par
+\cf1         \cf5 //schedule a new task to reload the Jobs data\cf0\par
+\cf1         \cf3 reloadTimer\cf1 .schedule(\cf4\b new\cf1\b0  TimerTask() \{\cf0\par
+\cf1                 \cf4\b public\cf1\b0  \cf4\b void\cf1\b0  run() \{\cf0\par
+\cf1                     \cf5 //gets all jobs\cf0\par
+\cf1                     Job[] retrievedJobs = \cf4\b null\cf1\b0 ;\cf0\par
+\cf1                     retrievedJobs = \cf3 scheduler\cf1 .getJobList();\cf0\par
+\par
+\cf1                     \cf4\b if\cf1\b0  (retrievedJobs != \cf4\b null\cf1\b0 ) \{\cf0\par
+\cf1                         \cf4\b synchronized\cf1\b0  (\cf3 jobs\cf1 ) \{\cf0\par
+\cf1                             \cf5 //sifts through these jobs to get the ones that will be added.\cf0\par
+\cf1                             List tempList = \cf4\b new\cf1\b0  ArrayList();\cf0\par
+\par
+\cf1                             \cf4\b for\cf1\b0  (\cf4\b int\cf1\b0  i = 0; i < retrievedJobs.\cf3 length\cf1 ; i++) \{\cf0\par
+\cf1                                 Job retrievedJob = retrievedJobs[i];\cf0\par
+\par
+\cf1                                 \cf5 //dependent job has no start date, should be filtered\cf0\par
+\cf1                                 \cf4\b if\cf1\b0  (retrievedJob.getStartDate() == \cf4\b null\cf1\b0 )\{\cf0\par
+\cf1                                     \cf4\b continue\cf1\b0 ;\cf0\par
+\cf1                                 \}\cf0\par
+\par
+\cf1                                 \cf4\b if\cf1\b0  (!retrievedJob.getActive()) \{\cf0\par
+\cf1                                     \cf5 //removes inactive jobs\cf0\par
+\cf1                                     \cf3 jobs\cf1 .remove(retrievedJob);\cf0\par
+\cf1                                 \} \cf4\b else\cf1\b0  \cf4\b if\cf1\b0  (!\cf3 jobs\cf1 .contains(retrievedJob)) \{\cf0\par
+\cf1                                     \cf5 //adds if job is new\cf0\par
+\cf1                                     tempList.add(prepareJob(retrievedJob));\cf0\par
+\cf1                                 \} \cf4\b else\cf1\b0  \{\cf0\par
+\cf1                                     Job oldJob = (Job) \cf3 jobs\cf1 .get(\cf3 jobs\cf1 .indexOf(retrievedJob));\cf0\par
+\par
+\cf1                                     \cf5 //else if the job already exists in the job list and it's modified since last loaded\cf0\par
+\cf1                                     \cf4\b if\cf1\b0  (!oldJob.getModificationDate().equals(retrievedJob.getModificationDate())) \{\cf0\par
+\cf1                                         tempList.add(prepareJob(retrievedJob));\cf0\par
+\cf1                                         \cf3 jobs\cf1 .remove(oldJob);\cf0\par
+\cf1                                     \}\cf0\par
+\cf1                                 \}\cf0\par
+\cf1                             \}\cf0\par
+\cf1                             \cf5 //adds all updated jobs\cf0\par
+\cf1                             \cf3 jobs\cf1 .addAll(tempList);\cf0\par
+\cf1                         \} \cf5 // end of synchronized\cf0\par
+\cf1                     \}\cf0\par
+\cf1                 \}\cf0\par
+\cf1             \}, 0, \cf3 reloadInterval\cf1 );\cf0\f0\tab\fs20\par
+\par
+\tab\b Note \par
+\b0\tab A cycle running Job may trigger its depdendent job to run multi times, thus it will cause serval Jobs will the same name exist in the Jobs list, however,\par
+\tab this will not make any trouble to the jobs' executions. While a job is inactive, it should be removed from the jobs list, and it will make sense that the dedpendent \tab jobs of it will be removed as well, but it's not the requirement of current design.\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i 1.3.3\tab Next job run time calculation at startup.\par
+\pard\nowidctlpar\li720\i0\f1\fs24 On startup the component needs to calculate the date and time that a job next needs to run. The date and time calculated should always be in the future, and should always be recalculated from the actual scheduling data (as opposed to the run-log data).  The component should never attempt to make up execution times missed while not running or idle.\par
+\pard\nowidctlpar\fi360\li1080\par
+\pard\nowidctlpar\li709 Examples:\par
+Job A is scheduled to run every hour, starting at 0100 on 01 March.  The component is started on 03 March at 0305.  The next scheduled run time for Job A, after the component starts up, should be 0400 on 03 March.  Job A then runs for a day; the scheduler is then shut down on 04 March at 0405, right after it\rquote s 0400 run, and is not restarted until 04 March at 0730, missing time slots 0500, 0600, and 0700.  The next scheduled run time should be 0800, as missed time slots are not made up.\par
+\par
+Job B is initially scheduled as such: starting on 01 March at 0200, run every 30 minutes.  The component is started and Job B runs several times.  The last log entry is shown as 03 March, 0330, meaning that is when the job was last launched.  The component is shut down, the job parameters are altered in the configuration file offline as such: time interval and unit is changed from 30 minutes to 1 hour (nothing else is changed), and the component is restarted at 0345.  The component should recalculate the job based on the configuration file information, starting on 01 March and advancing until a date in the future is found using the new time increment of one hour, which would be 03 March at 0400.  The log showing the last run time is ignored for these calculations (had it not, the next scheduled run time would have been 03 March at 0430).\par
+\par
+Internally, GregorianCalendar is used to store and manipulate dates.\par
+Note that if the job stop date/time falls in the past, it is not necessary to load the job in the processor.\par
+\par
+The basic algorithm is:\par
+\pard\nowidctlpar\li1080\f0\fs20\par
+\f3\fs24   For each job in configuration file.\par
+\tab NextRun \f4\'df\f3  job start date/time.\par
+      While NextRun <= currentTime and (NextRun <JobStopDateTime or JobStopDateTime is null)\par
+      \tab\tab NextRun \f4\'df\f3  NextRun + jobRunInterval\par
+\par
+\pard\nowidctlpar\li720\f1 Note that a null JobStopDateTime indicates there is no stop date for the job and it should therefore be re-scheduled indefinitely.\par
+\pard\nowidctlpar\f0\fs20\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i 1.3.4\tab\page Trigger the job which has a dependency job to start\par
+\pard\nowidctlpar\li720\i0\f1\fs24 This algorithm is from 2.0. Modifications are in \cf2 blue\cf0 .\f0\fs20\par
+\pard\nowidctlpar\par
+\pard\nowidctlpar\fi720\b\f1\fs24 Purpose: \par
+\pard\nowidctlpar\li709\b0 A Job in version 2.0 can be dependent on another job regarding the execution time. This algorithm shows how to trigger the dependent job to start.\par
+\par
+\pard\nowidctlpar\fi709\b Implementation:\par
+\pard\nowidctlpar\li709\b0 This function is implemented using the TriggerEventHandler. When a job is retrieved from the scheduler, the processor will add a TriggereEventHandler to the job, so that, when this job executed completely, regardless successfully or failed, the TriggerEventHandler instance will trigger the jobs which has a dependence on this job according the event it raised.\f0\fs20\par
+\par
+\f1\fs24 Here is the pseudo code:\par
+\f0\fs20\par
+\f5\fs16 if (!event.equals(EventHandler.NOTSTARTED)) \{\par
+\cf6     // get all the dependent jobs and start the jobs if the dependence matches.\par
+\cf0     List jobs = processor.scheduler.getAllDependentJobs(job);\tab\par
+    for each depJob in jobs \{\par
+        if (depJob.getDependence().getDependentEvent().equals("BOTH") || \par
+            depJob.getDependence().getDependentEvent().equals(event)) \{\par
+\pard\nowidctlpar\li1418\tab\tab   \cf5\f2\fs20 // set up the start/end time of the job to ensure the job starts to\cf0\par
+\cf1         \cf5 // execute in the depJob.getDependence().getDelay() milliseconds and\cf0\par
+\cf1         \cf5 // execute only once.\cf0\par
+\cf1         Job sjob = \cf4\b new\cf1\b0  Job(depJob);\cf0\par
+\cf1         \cf4\b int\cf1\b0  delay = depJob.getDependence().getDelay();\cf0\par
+\par
+\cf1         GregorianCalendar startTime = \cf4\b new\cf1\b0  GregorianCalendar();\cf0\par
+\par
+\cf1         startTime.add(Calendar.\cf3\i MILLISECOND\cf1\i0 , delay);\cf0\par
+\par
+\cf1         sjob.setStartDate(startTime);\cf0\par
+\par
+\cf1         \cf5 //calculates how many milliseconds have elapsed since start of today\cf0\par
+\cf1         GregorianCalendar startOfToday = (GregorianCalendar) startTime.clone();\cf0\par
+\cf1         startOfToday.set(Calendar.\cf3\i HOUR_OF_DAY\cf1\i0 , 0);\cf0\par
+\cf1         startOfToday.set(Calendar.\cf3\i MINUTE\cf1\i0 , 0);\cf0\par
+\cf1         startOfToday.set(Calendar.\cf3\i SECOND\cf1\i0 , 0);\cf0\par
+\cf1         startOfToday.set(Calendar.\cf3\i MILLISECOND\cf1\i0 , 0);\cf0\par
+\cf1         sjob.setStartTime((\cf4\b int\cf1\b0 ) (startTime.getTimeInMillis() - startOfToday.getTimeInMillis()));\cf0\par
+\par
+\cf1         \cf5 //delay will never be more than 24 hours, this will ensure that stopDate will in fact not\cf0\par
+\cf1         \cf5 //occur before the job is to start! And also, it makes sure the job is only run once.\cf0\par
+\cf1         GregorianCalendar stopDate = (GregorianCalendar) startTime.clone();\cf0\par
+\cf1         stopDate.add(Calendar.\cf3\i MILLISECOND\cf1\i0 , \cf3\i ONE_DAY\cf1\i0 );\cf0\par
+\cf1         sjob.setStopDate(stopDate);\cf0\par
+\par
+\cf1         sjob.setIntervalUnit(\cf4\b new\cf1\b0  Year());\cf0\par
+\cf1         sjob.setIntervalValue(1);\cf0\par
+\pard\nowidctlpar\fi11\li1418\cf1         sjob.setRecurrence(1);\cf0\f5\fs16\par
+\pard\nowidctlpar\li709\tab\tab\tab\par
+\tab\tab     processor.schedule(sjob);\par
+\tab\tab\} else \{\par
+\tab\tab     \cf6 // if the depJob is not triggered to started, the NOTSTARTED\par
+\tab\tab     // event will be raised.\cf0\par
+\tab\tab     depJob.fireEvent(EventHandler.NOT_STARTED);\par
+\tab\tab\}\par
+    \}\par
+\}\tab\f0\fs20\par
+\pard\nowidctlpar\par
+\par
+\pard\keepn\nowidctlpar\s3\sb120\sa60\sl240\slmult0\tx0\i 1.3.5\tab\page Logging\par
+\pard\nowidctlpar\li720\i0\f1\fs24 Logging is performed in two places in this component: JobProcessor and TriggerEventHandler. This section serves as an authoritative list of where and how logging should be performed, in lieu of putting this information in method documentation.\par
+\par
+The entry and exit of all methods will be logged at TRACE level. Any exception is logged at ERROR level.\f0\fs20\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 1.4\tab Component Class Overview\par
+\pard\nowidctlpar\li720\f1\fs24 JobProcessor\par
+\b0 This class used to retrieve and run scheduled jobs that have specified scheduled time. It will maintain two running tasks. One for reloading jobs from the scheduler, and another for executing them. The current and reloaded jobs will be held in one staging list, whereas executing jobs, or rather copies of them, will be held in another.\par
+\par
+\b TriggerEventHandler\par
+\b0 It used to start the jobs that are dependent on the completion of the job. The jobs can be configured to be dependent on the success or failure or both of another job.\par
+\cf7\f0\fs20\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\cf0\b 1.5\tab Component Exception Definitions\par
+\pard\nowidctlpar\li720\f1\fs24 JobProcessorException\par
+\b0 This exception indicates a failure start or shutdown of the processor, but not used currently in this component.\cf2\f0\fs20\par
+\pard\nowidctlpar\cf0\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 1.6\tab Thread Safety\par
+\pard\nowidctlpar\li720\b0\f1\fs24 This component is thread-safe. JobProcessor and TriggerEventHandler are immutable and thread-safe.\par
+\f0\fs20\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b\fs24 2.\tab  Environment Requirements\tab\tab\par
+\pard\keepn\nowidctlpar\s2\sb120\sa120\sl240\slmult0\tx0\fs20 2.1\tab Environment\par
+\pard\nowidctlpar\b0 .\tab\f1\fs24 Development language: Java1.4\par
+\pard\nowidctlpar\fi720 Compile target: Java1.4, Java1.5\cf2\f0\fs20\par
+\pard\nowidctlpar\li720\cf0\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 2.2\tab TopCoder Software Components:\par
+\pard\nowidctlpar\fi720\sa120 Job Scheduler 3.0\par
+\pard\nowidctlpar\li1440\sa120\b0 This is the other half of the previous component, and it now contains the Scheduler interface as well as the Job and so forth.\par
+\pard\nowidctlpar\li720\b Base Exception 1.0\par
+\pard\nowidctlpar\fi720\li720\b0 Provides a uniform base exception class.\par
+\par
+\pard\nowidctlpar\li720\b Logging Wrapper 1.2\par
+\pard\nowidctlpar\fi720\li720\sa120\b0 Used by JobProcessor and TriggerEventHandler to log.\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b 2.3\tab Third Party Components:\par
+\pard\nowidctlpar\li720\b0\f1\fs24 None\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b\f0 3.\tab Installation and Configuration\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\fs20 3.1\tab Package Name\par
+\pard\nowidctlpar\li720\b0\f1\fs24 com.topcoder.util.scheduler.processor\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0\fs20 3.2\tab Configuration Parameters\par
+\pard\nowidctlpar\li720\b0\f1\fs24 None\par
+\pard\keepn\nowidctlpar\s2\sb120\sa60\sl240\slmult0\tx0\b\f0\fs20 3.3\tab Dependencies Configuration\par
+\pard\nowidctlpar\fi720\b0\f1\fs24 None\par
+\pard\keepn\nowidctlpar\s1\sb120\sa60\sl240\slmult0\tx360\b\f0 4.\tab Usage Notes\par
+\pard\keepn\nowidctlpar\s2\sb120\sa120\sl240\slmult0\tx0\fs20 4.1\tab Required steps to test the component\par
+\pard\nowidctlpar\fi-420\li1140\sa120\tx1140\b0\f4\'d8\tab\f0 Extract the component distribution.\par
+\pard\nowidctlpar\fi-420\li1140\sa120\f4\'d8\tab\f0 Follow {\field{\*\fldinst{HYPERLINK "C:\\\\filez\\\\work\\\\tc\\\\tcs_corp\\\\templates\\\\component\\\\" \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\l "_Dependencies_Configuration" }}{\fldrslt{\cf2\ul Dependencies Configuration}}}\cf0\ulnone\f0\fs20 .\par
+\f4\'d8\tab\f0 Execute \lquote ant test\rquote  within the directory that the distribution was extracted to.\par
+\pard\keepn\nowidctlpar\s2\sb120\sa120\sl240\slmult0\tx0\b 4.2\tab Required steps to use the component\par
+\pard\nowidctlpar\fi720\b0\f1\fs24 None\par
+\pard\keepn\nowidctlpar\s2\sb120\sa120\sl240\slmult0\tx0\b\f0\fs20 4.3\tab Demo\par
+\pard\nowidctlpar\cf1\b0\f2         ConfigManager.\i getInstance\i0 ().add(\cf8 "log.xml"\cf1 );\cf0\par
+\par
+\cf1         \cf5 //here is a predefined Scheduler\cf0\par
+\cf1         Scheduler scheduler = \cf4\b new\cf1\b0  MyScheduler();\cf0\par
+\cf1         \cf5 //we can add a job to the scheduler so that the processor can load and execute it\cf0\par
+\cf1         scheduler.addJob(createImmediateJob());\cf0\par
+\par
+\cf1         \cf5 //defines the reload interval\cf0\par
+\cf1         \cf4\b int\cf1\b0  reloadInterval = 15 * 60 * 1000;\cf0\par
+\par
+\cf1         \cf5 //defines a logger\cf0\par
+\cf1         Log log = LogFactory.\i getLog\i0 ();\cf0\par
+\par
+\cf1         \cf5 //creates a processor\cf0\par
+\cf1         JobProcessor processor = \cf4\b new\cf1\b0  \cf2\ul JobProcessor\cf1\ulnone (scheduler, reloadInterval, log);\cf0\par
+\par
+\cf1         \cf5 //starts the processor, jobs from scheduler can be automatically scheduled\cf0\par
+\cf1         processor.start();\cf0\par
+\par
+\cf1         \cf5 //we can also get those jobs on execution\cf0\par
+\cf1         List executingJobs = processor.getExecutingJobs();\cf0\par
+\par
+\cf1         \cf5 //now stop the job\cf0\par
+\cf1         processor.stopJob(\cf8 "test"\cf1 );\cf0\par
+\par
+\cf1         \cf5 //and shut down the processor\cf0\par
+\pard\nowidctlpar\fi720\cf1   processor.shutdown();\cf0\f5\fs18\par
+\par
+\pard\nowidctlpar\cf9\par
+\pard\keepn\nowidctlpar\s1\sb120\sa120\sl240\slmult0\tx360\cf0\b\f0\fs20 5.\tab Future Enhancements\par
+\pard\nowidctlpar\li720\b0 None \par
+\pard\nowidctlpar\li720\sa120\sl240\slmult0\i\f1 .\par
+\pard\nowidctlpar\cf9\i0\f5\fs18\par
+}
+ 
