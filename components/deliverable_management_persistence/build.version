@@ -1,9 +1,0 @@
-#property file defining the component's information
-component.name=Deliverable Management Persistence
-component.distfilename=deliverable_management_persistence
-component.package=com.topcoder.management.deliverable.persistence
-component.packagedir=com/topcoder/management/deliverable/persistence
-component.version.major=1
-component.version.minor=2
-component.version.micro=7
-component.version.build=1

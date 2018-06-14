@@ -1,4 +1,0 @@
-<Properties>
-	<Property name="context.default.factory">com.sun.jndi.fscontext.RefFSContextFactory</Property>
-	<Property name="context.default.url"> </Property>
-</Properties>

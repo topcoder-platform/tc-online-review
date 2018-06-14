@@ -1,9 +1,0 @@
-#This file is cool.
-This file is valid.
-%{Home, home on the range.}%
-#It really is!
-
-
-No joke.
-
-%USERNAME=AdamSelene{The name of the user.}% thinks it is cool.

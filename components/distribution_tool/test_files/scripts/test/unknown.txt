@@ -1,2 +1,0 @@
-# unknown command
-unknown         : tests_dir = %{comp_dir}/src/java/tests/%{package/name}

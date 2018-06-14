@@ -1,9 +1,0 @@
-#property file defining the component's information
-component.name=Review Score Calculator
-component.distfilename=review_score_calculator
-component.package=com.topcoder.management.review.scorecalculator
-component.packagedir=com/topcoder/management/review/scorecalculator
-component.version.major=1
-component.version.minor=0
-component.version.micro=4
-component.version.build=3

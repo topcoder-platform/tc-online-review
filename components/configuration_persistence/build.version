@@ -1,9 +1,0 @@
-#property file defining the components information
-component.name=Configuration Persistence
-component.distfilename=configuration_persistence
-component.package=com.topcoder.configuration.persistence
-component.packagedir=com/topcoder/configuration/persistence
-component.version.major=1
-component.version.minor=0
-component.version.micro=2
-component.version.build=1

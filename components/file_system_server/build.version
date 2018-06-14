@@ -1,9 +1,0 @@
-#property file defining the components information
-component.name=File System Server
-component.distfilename=file_system_server
-component.package=com.topcoder.file.transfer
-component.packagedir=com/topcoder/file/transfer
-component.version.major=1
-component.version.minor=1
-component.version.micro=1
-component.version.build=1
