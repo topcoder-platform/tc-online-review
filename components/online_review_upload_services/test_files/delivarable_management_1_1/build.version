@@ -1,9 +1,0 @@
-#property file defining the component's information
-component.name=Deliverable Management
-component.distfilename=deliverable_management
-component.package=com.topcoder.management.deliverable
-component.packagedir=com/topcoder/management/deliverable
-component.version.major=1
-component.version.minor=1
-component.version.micro=0
-component.version.build=0

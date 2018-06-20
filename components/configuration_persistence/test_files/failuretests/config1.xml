@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<CMConfig>
-    <property name="Website">
-        <value>http://www.topcoder.com/tc</value>
-    </property>
-    <property name="Company">
-        <value>Topcoder</value>
-    </property>
-</CMConfig>

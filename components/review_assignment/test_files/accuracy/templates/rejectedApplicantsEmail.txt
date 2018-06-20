@@ -1,7 +1,0 @@
-This is just a sample email used for accuracy testing and sent to rejected applicants.
-
-Project ID\: %PROJECT_ID%
-Project Name\: %PROJECT_NAME%
-Project Version\: %PROJECT_VERSION%
-
-User Handle\: %USER_HANDLE%

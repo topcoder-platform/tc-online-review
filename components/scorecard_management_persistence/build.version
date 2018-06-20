@@ -1,9 +1,0 @@
-#property file defining the component's information
-component.name=Scorecard Management Persistence
-component.distfilename=scorecard_management_persistence
-component.package=com.topcoder.management.scorecard.persistence
-component.packagedir=com/topcoder/management/scorecard/persistence
-component.version.major=1
-component.version.minor=0
-component.version.micro=3
-component.version.build=1

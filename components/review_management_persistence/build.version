@@ -1,9 +1,0 @@
-#property file defining the component's information
-component.name=Review Management Persistence
-component.distfilename=review_management_persistence
-component.package=com.topcoder.management.review.persistence
-component.packagedir=com/topcoder/management/review/persistence
-component.version.major=1
-component.version.minor=2
-component.version.micro=4
-component.version.build=1

@@ -1,9 +1,0 @@
-#property file defining the components information
-component.name=Command Line Utility
-component.distfilename=command_line_utility
-component.package=com.topcoder.util.commandline
-component.packagedir=com/topcoder/util/commandline
-component.version.major=1
-component.version.minor=0
-component.version.micro=0
-component.version.build=1

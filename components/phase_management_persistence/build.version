@@ -1,9 +1,0 @@
-#property file defining the components information
-component.name=Phase Management Persistence
-component.distfilename=phase_management_persistence
-component.package=com.topcoder.management.phase.db
-component.packagedir=com/topcoder/management/phase/db
-component.version.major=1
-component.version.minor=0
-component.version.micro=4
-component.version.build=1

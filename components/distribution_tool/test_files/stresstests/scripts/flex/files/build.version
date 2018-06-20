@@ -1,9 +1,0 @@
-#property file defining the components information
-component.name=%{Component Name}
-component.distfilename=%{component_name}
-component.package=%{package.name}
-component.packagedir=%{package/name}
-component.version.major=%{version.major}
-component.version.minor=%{version.minor}
-component.version.micro=%{version.micro}
-component.version.build=%{version.build}

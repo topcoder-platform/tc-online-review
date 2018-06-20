@@ -1,9 +1,0 @@
-#property file defining the components information
-component.name=Class Associations
-component.distfilename=class_associations
-component.package=com.topcoder.util.classassociations
-component.packagedir=com/topcoder/util/classassociations
-component.version.major=1
-component.version.minor=0
-component.version.micro=0
-component.version.build=1

@@ -1,1 +1,0 @@
-  copy_file:%{root}/test.txt->%{root}/temp/newfile

@@ -1,2 +1,0 @@
-If you're not on unix, please change shell command in test.properties to its windows version (if necessary)
-If you want to test output hung up problem in ExecuteProcessCommand, change 'short_task' to 'long_task' in test.properties and tests will never complete.

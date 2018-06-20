@@ -1,9 +1,0 @@
-#property file defining the components information
-component.name=Resource Management Persistence
-component.distfilename=resource_management_persistence
-component.package=com.topcoder.management.resource.persistence
-component.packagedir=com/topcoder/management/resource/persistence
-component.version.major=1
-component.version.minor=2
-component.version.micro=6
-component.version.build=0

@@ -1,1 +1,0 @@
-convert_to_pdf:test_files/accuracy/to_convert.pdf->test_files/accuracy/temp/test.pdf

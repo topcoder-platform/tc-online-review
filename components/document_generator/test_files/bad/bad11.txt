@@ -1,3 +1,0 @@
-#This file contain incorrect loop tag
-%loop::%
-%endloop%

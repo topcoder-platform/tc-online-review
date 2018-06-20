@@ -1,9 +1,0 @@
-<CMConfig>  
-  <Config name="com.topcoder.db.connectionfactory.TestHelper">
-    <Property name="connections">
-        <Property name="datasource_class">
-            <Value>com.topcoder.db.connectionfactory.producers.DataSourceImpl</Value>
-        </Property>
-    </Property>
-</Config>
-</CMConfig> 
