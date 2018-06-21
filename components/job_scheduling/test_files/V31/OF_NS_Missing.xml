@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CMConfig>
-	<Config name="OF_NS_Missing">
-		<Property name="ScheduledEnableObjectKey">
-			<Value>key</Value>
-		</Property>
-	</Config>
-</CMConfig>

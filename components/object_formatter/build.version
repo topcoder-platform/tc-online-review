@@ -1,9 +1,0 @@
-#property file defining the components information
-component.name=Object Formatter
-component.distfilename=object_formatter
-component.package=com.topcoder.util.format
-component.packagedir=com/topcoder/util/format
-component.version.major=1
-component.version.minor=0
-component.version.micro=0
-component.version.build=1

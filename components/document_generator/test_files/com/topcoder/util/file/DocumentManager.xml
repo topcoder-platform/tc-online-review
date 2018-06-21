@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<CMConfig>
-<Property name="com.topcoder.util.file">
-<Value>com/topcoder/util/file/default.xml</Value>
-</Property>
-</CMConfig>

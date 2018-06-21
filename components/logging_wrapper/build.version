@@ -1,9 +1,0 @@
-#property file defining the components information
-component.name=Logging Wrapper
-component.distfilename=logging_wrapper
-component.package=com.topcoder.util.log
-component.packagedir=com/topcoder/util/log
-component.version.major=2
-component.version.minor=0
-component.version.micro=0
-component.version.build=1

@@ -1,8 +1,0 @@
-#This file is cool.
-This file is valid.
-
-#It really is!
-
-No joke.
-
-%USERNAME{The name of the user.}% thinks it is cool.

@@ -1,5 +1,0 @@
-Fix javadoc of ObjectSpecification#getIdentifier() and ObjectSpecification#getValue() methods.
-
-Fix javadoc of IllegalReferenceException and SpecificationConfigurationException (according to TCUML).
-
-Javadoc of ObjectFactory#REFLECTION_ONLY and ObjectFactory#SPECIFICATION_ONLY must be swapped in the source code.

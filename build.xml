@@ -4,17 +4,14 @@
   <!-- property file defining the component's dependencies -->
   <property file="build.properties"/>
 
+  <!--components-->
+  <import file="${basedir}/component-dependencies.xml"/>
+
   <!-- Import the dependencies of this build file -->
   <import file="${basedir}/build-dependencies.xml"/>
 
   <!-- include ant contrib tasks -->
   <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${ant-contrib.jar}"/>
-  
-  <!--Import the build-components.xml -->
-  <property name="components.conf" value="${basedir}/components.xml" />
-  <property name="components_dir" value="components" />
-  <import file="${basedir}/build-components.xml"/>
-
 
   <!-- COMPONENT PARAMETERS -->
   <property name="component" value="online_review"/>
@@ -83,32 +80,21 @@
   <target name="clean">
     <delete failonerror="false" dir="${builddir}"/>
   </target>
-  
+
   <!-- compiles the application -->
   <target name="compile">
-    <trycatch property="error">
-        <try>
-            <get-components-src />
-            <mkdir dir="${build_classdir}"/>
-            <javac
-                   srcdir="${javamain};${components_src}"
-                   destdir="${build_classdir}"
-                   includes="**/*.java"
-                   debug="true"
-                   verbose="${verbose}"
-                   includeantruntime="false"
-                   source="1.5"
-                   target="1.5">
-              <classpath refid="buildlibs"/>
-            </javac>
-        </try>
-        <catch>
-            <echo>----------------------------------------------------------------------------------------------------------</echo>
-            <echo>IMPORTANT - Make sure that all component's sources are up to date by executing 'ant checkout-components' !</echo>
-            <echo>----------------------------------------------------------------------------------------------------------</echo>
-            <fail>${error}</fail>
-        </catch>
-    </trycatch>
+    <mkdir dir="${build_classdir}"/>
+    <javac
+            srcdir="${javamain}"
+            destdir="${build_classdir}"
+            includes="**/*.java"
+            debug="true"
+            verbose="${verbose}"
+            includeantruntime="false"
+            source="1.5"
+            target="1.5">
+      <classpath refid="buildlibs"/>
+    </javac>
   </target>
 
   <!-- updates Online Review files from SVN and builds application -->
@@ -166,6 +152,80 @@
       <lib dir="${shared_libdir}" includes="${catalog.jar.name}"/>
       <lib dir="${shared_libdir}" includes="${tcwebcommon.jar.name}"/>
       <lib dir="${shared_libdir}" includes="${shared.jar.name}"/>
+
+      <!--components-->
+      <lib file="${authentication_factory.jar}" />
+      <lib file="${auto_pilot.jar}" />
+      <lib file="${base_exception.jar}" />
+      <lib file="${class_associations.jar}" />
+      <lib file="${command_line_utility.jar}" />
+      <lib file="${compression_utility.jar}" />
+      <lib file="${configuration_api.jar}" />
+      <lib file="${configuration_manager.jar}" />
+      <lib file="${configuration_persistence.jar}" />
+      <lib file="${contest_eligibility_persistence.jar}" />
+      <lib file="${contest_eligibility_validation.jar}" />
+      <lib file="${data_validation.jar}" />
+      <lib file="${database_abstraction.jar}" />
+      <lib file="${db_connection_factory.jar}" />
+      <lib file="${deliverable_management.jar}" />
+      <lib file="${deliverable_management_persistence.jar}" />
+      <lib file="${distribution_tool.jar}" />
+      <lib file="${document_generator.jar}" />
+      <lib file="${email_engine.jar}" />
+      <lib file="${executable_wrapper.jar}" />
+      <lib file="${file_system_server.jar}" />
+      <lib file="${file_upload.jar}" />
+      <lib file="${guid_generator.jar}" />
+      <lib file="${heartbeat.jar}" />
+      <lib file="${id_generator.jar}" />
+      <lib file="${ip_server.jar}" />
+      <lib file="${jndi_context_utility.jar}" />
+      <lib file="${job_processor.jar}" />
+      <lib file="${job_scheduling.jar}" />
+      <lib file="${late_deliverables_management.jar}" />
+      <lib file="${late_deliverables_tracker.jar}" />
+      <lib file="${ldap_sdk_interface.jar}" />
+      <lib file="${logging_wrapper.jar}" />
+      <lib file="${memory_usage.jar}" />
+      <lib file="${object_factory.jar}" />
+      <lib file="${object_factory_config_manager_plugin.jar}" />
+      <lib file="${object_factory_configuration_api_plugin.jar}" />
+      <lib file="${object_formatter.jar}" />
+      <lib file="${online_review_ajax_support.jar}" />
+      <lib file="${online_review_deliverables.jar}" />
+      <lib file="${online_review_login.jar}" />
+      <lib file="${online_review_phases.jar}" />
+      <lib file="${online_review_upload_services.jar}" />
+      <lib file="${phase_management.jar}" />
+      <lib file="${phase_management_persistence.jar}" />
+      <lib file="${project_management.jar}" />
+      <lib file="${project_management_persistence.jar}" />
+      <lib file="${project_payment_calculator.jar}" />
+      <lib file="${project_payment_management.jar}" />
+      <lib file="${project_phase_template.jar}" />
+      <lib file="${project_phases.jar}" />
+      <lib file="${resource_management.jar}" />
+      <lib file="${resource_management_persistence.jar}" />
+      <lib file="${review_application_management.jar}" />
+      <lib file="${review_assignment.jar}" />
+      <lib file="${review_data_structure.jar}" />
+      <lib file="${review_feedback_management.jar}" />
+      <lib file="${review_management.jar}" />
+      <lib file="${review_management_persistence.jar}" />
+      <lib file="${review_score_aggregator.jar}" />
+      <lib file="${review_score_calculator.jar}" />
+      <lib file="${scorecard_data_structure.jar}" />
+      <lib file="${scorecard_management.jar}" />
+      <lib file="${scorecard_management_persistence.jar}" />
+      <lib file="${search_builder.jar}" />
+      <lib file="${simple_cache.jar}" />
+      <lib file="${terms_of_use.jar}" />
+      <lib file="${topcoder_commons_utility.jar}" />
+      <lib file="${typesafe_enum.jar}" />
+      <lib file="${user_project_data_store.jar}" />
+      <lib file="${weighted_calculator.jar}" />
+      <lib file="${workdays.jar}" />
 
       <!-- Added libs to support ejb3 calls -->
       <lib dir="${ext_libdir}/jboss/">
@@ -335,7 +395,6 @@
   <target name="redeploy">
     <antcall target="stop_tools" />
 
-    <antcall target="checkout-components" />
     <antcall target="deploy_tools" />
 
     <antcall target="start_jboss" />
@@ -557,10 +616,9 @@
   <target name="compile_tests">
     <trycatch property="error">
         <try>
-            <get-components-src />
             <mkdir dir="${build_testclassdir}"/>
             <javac
-                   srcdir="${javatests};${components_src}"
+                   srcdir="${javatests}"
                    destdir="${build_testclassdir}"
                    includes="**/*.java"
                    debug="true"
@@ -572,9 +630,6 @@
             </javac>
         </try>
         <catch>
-            <echo>----------------------------------------------------------------------------------------------------------</echo>
-            <echo>IMPORTANT - Make sure that all component's sources are up to date by executing 'ant checkout-components' !</echo>
-            <echo>----------------------------------------------------------------------------------------------------------</echo>
             <fail>${error}</fail>
         </catch>
     </trycatch>

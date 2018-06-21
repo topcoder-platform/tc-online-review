@@ -1,9 +1,0 @@
-#property file defining the components information
-component.name=Data Validation
-component.distfilename=data_validation
-component.package=com.topcoder.util.datavalidator
-component.packagedir=com/topcoder/util/datavalidator
-component.version.major=1
-component.version.minor=1
-component.version.micro=1
-component.version.build=1

@@ -1,3 +1,0 @@
-#This file contain incorrect endloop tag
-%loop:var%
-%endLoop%

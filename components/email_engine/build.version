@@ -1,9 +1,0 @@
-#property file defining the component's information
-component.name=Email Engine
-component.distfilename=email_engine
-component.package=com.topcoder.message.email
-component.packagedir=com/topcoder/message/email
-component.version.major=3
-component.version.minor=2
-component.version.micro=1
-component.version.build=1

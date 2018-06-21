@@ -1,9 +1,0 @@
-#property file defining the component's information
-component.name=Database Abstraction
-component.distfilename=database_abstraction
-component.package=com.topcoder.util.sql.databaseabstraction
-component.packagedir=com/topcoder/util/sql/databaseabstraction
-component.version.major=2
-component.version.minor=0
-component.version.micro=0
-component.version.build=1

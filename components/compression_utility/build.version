@@ -1,9 +1,0 @@
-#property file defining the components information
-component.name=Compression Utility
-component.distfilename=compression_utility
-component.package=com.topcoder.util.compression
-component.packagedir=com/topcoder/util
-component.version.major=2
-component.version.minor=0
-component.version.micro=2
-component.version.build=1

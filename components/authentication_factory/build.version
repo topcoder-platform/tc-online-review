@@ -1,9 +1,0 @@
-#property file defining the component's information
-component.name=Authentication Factory
-component.distfilename=authentication_factory
-component.package=com.topcoder.security.authenticationfactory
-component.packagedir=com/topcoder/security/authenticationfactory
-component.version.major=2
-component.version.minor=0
-component.version.micro=1
-component.version.build=1
