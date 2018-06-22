@@ -501,6 +501,9 @@
         <!-- "Export Review" action -->
         <action name="ExportReview" class="exportReviewAction">
         </action>
+        
+        <action name="eventBusHandleAppealResponseAction" class="eventBusHandleAppealResponseAction">
+        </action>
 
         <!-- Redirect for old-style Struts1 requests -->
         <action name="*.do" class="struts1MappingAction">

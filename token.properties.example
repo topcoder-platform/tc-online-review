@@ -169,6 +169,9 @@
 ### mockxmlauthenticator.xmlfile - when defined it is excluded from the build, comment it out to include in build for development
 # exclude.mockxmlauthenticator.xmlfile=yes, exclude me!
 
+@topcoder_event_bus_url@=https://api.topcoder-dev.com/v5/bus/events
+@topcoder_event_bus_auth_token@=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJDb25uZWN0IE1hbmFnZXIiLCJhZG1pbmlzdHJhdG9yIiwiVG9wY29kZXIgVXNlciJdLCJpc3MiOiJodHRwczovL3RvcGNvZGVyLWRldi5hdXRoMC5jb20vIiwiaGFuZGxlIjoibXR3b21leSIsInVzZXJJZCI6IjQwMDE2MzU2IiwiZW1haWwiOiJtdHdvbWV5QHRvcGNvZGVyLmNvbSIsImp0aSI6Ijg0NjFhYzNiLWU1NGYtNDE4Zi04YTc3LTQxZGNlZDNmMjRjZCIsImlhdCI6MTUyOTA3NTIxMCwiZXhwIjoxNTI5NjgwMDEwfQ.8wB5ZAeBINQY9q7Q1jDZRUzMlVV61epAYpH0naQxDDM
+
 ############################################
 # Parameters used to run integration tests #
 ############################################

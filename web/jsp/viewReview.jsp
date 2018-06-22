@@ -1,8 +1,9 @@
 <%--
   - Author: TCSASSEMBLER
-  - Version: 2.0
+  - Version: 2.1
   - Copyright (C) 2005 - 2014 TopCoder Inc., All Rights Reserved.
-  -
+  - changes in the Topcoder - Online Review Update - Post to Event BUS v1.0
+  - - add the handleEventOfAppealResponse js function to fire the appeal response event
   - Description: This page renders the Review scorecard.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
@@ -34,6 +35,23 @@
     <script language="JavaScript" type="text/javascript" src="/js/or/dojo.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript">
         var ajaxSupportUrl = "<or:url value='/ajaxSupport' />";
+        
+        function handleEventOfAppealResponse(reviewId) {
+            // create the Ajax request
+            var myRequest = createXMLHttpRequest();
+        
+            // set the callback function
+            // TODO: Check for errors not handled by Ajax Support
+            myRequest.onreadystatechange = function() {
+                if (myRequest.readyState == 4 && myRequest.status == 200) {
+                    // the response is ready.
+                }
+            };
+
+            // send the request
+            myRequest.open('GET', '<%=request.getContextPath() %>/actions/eventBusHandleAppealResponseAction?reviewId=' + reviewId, true);
+            myRequest.send(null);
+        }
     </script>
     <script language="JavaScript" type="text/javascript" src="/js/or/ajax1.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="/js/or/util.js"><!-- @ --></script>
@@ -143,6 +161,8 @@
                     hideRow("placeAppealResponse_" + itemIdx);
                     alterComment(itemIdx);
                     alterScore(respXML.getElementsByTagName("result")[0]);
+                    
+                    handleEventOfAppealResponse(reviewId);
                 },
                 function (result, respXML) {
                     // operation failed, alert the error message to the user

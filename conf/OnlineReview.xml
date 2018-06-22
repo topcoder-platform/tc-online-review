@@ -5232,6 +5232,15 @@
         <Property name="sso_domain_for_v3jwt_cookie">
             <Value>.topcoder.com</Value>
         </Property>
+        
+        <Property name="event_bus">
+	        <Property name="authToken">
+	            <Value>@topcoder_event_bus_auth_token@</Value>
+	        </Property>
+	        <Property name="endpoint">
+	            <Value>@topcoder_event_bus_url@</Value>
+	        </Property>
+        </Property>
     </Config>
 
     <!--

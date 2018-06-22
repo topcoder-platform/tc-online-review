@@ -30,9 +30,14 @@ import com.topcoder.util.config.UnknownNamespaceException;
  * Changes in version 2.1 Topcoder - Add Group Permission Check For Adding Resources v1.0
  * - add the userGroupMemebershipUrl, v3jwtCookieName, v2jwtCookieName, v3jwtAuthorizationUrl,
  * ssoDomainForV3jwtCookie configuration values
+ * 
+ * <p>
+ * Version 2.2 - Topcoder - Online Review Update - Post to Event BUS v1.0
+ * - add configurations for event bus
+ * </p>
  *
  * @author TCSASSEMBLER
- * @version 2.1
+ * @version 2.2 
  */
 public class ConfigHelper {
 
@@ -973,6 +978,16 @@ public class ConfigHelper {
      * <p>Represents the ssoDomainForV3jwtCookie.</p> 
      */
     private static String ssoDomainForV3jwtCookie;
+    
+    /**
+     * <p>Represents the eventBusAuthToken.</p> 
+     */
+    private static String eventBusAuthToken;
+    
+    /**
+     * <p>Represents the eventBusEndpoint.</p> 
+     */
+    private static String eventBusEndpoint;
 
     static {
         // Obtaining the instance of Configuration Manager
@@ -1575,6 +1590,10 @@ public class ConfigHelper {
             v2jwtCookieName = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, V2_JWT_COOKIE_NAME);
             ssoDomainForV3jwtCookie = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, SSO_DOMAIN_FOR_V3_JWT_COOKIE);
             v3jwtAuthorizationUrl = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, V3_JWT_AUTHORIZATION_URL);
+            
+            Property eventBus = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "event_bus");
+            eventBusAuthToken = eventBus.getValue("authToken");
+            eventBusEndpoint = eventBus.getValue("endpoint");
         } catch (UnknownNamespaceException une) {
             System.out.println(une.getMessage());
             une.printStackTrace();
@@ -2452,6 +2471,24 @@ public class ConfigHelper {
      */
     public static String getSsoDomainForV3jwtCookie() {
         return ssoDomainForV3jwtCookie;
+    }
+    
+    /**
+     * Get eventBusAuthToken
+     *
+     * @return the eventBusAuthToken
+     */
+    public static String getEventBusAuthToken() {
+        return eventBusAuthToken;
+    }
+    
+    /**
+     * Get eventBusEndpoint
+     *
+     * @return the eventBusEndpoint
+     */
+    public static String getEventBusEndpoint() {
+        return eventBusEndpoint;
     }
     
 }
