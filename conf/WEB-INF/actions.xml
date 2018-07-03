@@ -669,4 +669,6 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
   
   <bean id="eventBusHandleAppealResponseAction" class="com.cronos.onlinereview.actions.event.EventBusHandleAppealResponseAction" scope="request">
   </bean>
+  <bean id="eventBusHandleAppealAction" class="com.cronos.onlinereview.actions.event.EventBusHandleAppealAction" scope="request">
+  </bean>
 </beans>

@@ -1,9 +1,11 @@
 <%--
   - Author: TCSASSEMBLER
-  - Version: 2.1
+  - Version: 2.2
   - Copyright (C) 2005 - 2014 TopCoder Inc., All Rights Reserved.
   - changes in the Topcoder - Online Review Update - Post to Event BUS v1.0
   - - add the handleEventOfAppealResponse js function to fire the appeal response event
+  - changes in the version 2.2 (Topcoder - Online Review Update - Post to Event BUS Part 2 v1.0)
+  - - add the handleEventOfAppeal js function to fire the appeal submit event
   - Description: This page renders the Review scorecard.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
@@ -35,7 +37,7 @@
     <script language="JavaScript" type="text/javascript" src="/js/or/dojo.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript">
         var ajaxSupportUrl = "<or:url value='/ajaxSupport' />";
-        
+        var challengeId = '${project.id}';
         function handleEventOfAppealResponse(reviewId) {
             // create the Ajax request
             var myRequest = createXMLHttpRequest();
@@ -50,6 +52,28 @@
 
             // send the request
             myRequest.open('GET', '<%=request.getContextPath() %>/actions/eventBusHandleAppealResponseAction?reviewId=' + reviewId, true);
+            myRequest.send(null);
+        }
+        
+        /**
+         * Fire the appeal submit event to the event bus
+         *
+         * @param challengeId the challenge id of the appeal 
+         */
+        function handleEventOfAppeal(challengeId) {
+            // create the Ajax request
+            var myRequest = createXMLHttpRequest();
+        
+            // set the callback function
+            // TODO: Check for errors not handled by Ajax Support
+            myRequest.onreadystatechange = function() {
+                if (myRequest.readyState == 4 && myRequest.status == 200) {
+                    // the response is ready.
+                }
+            };
+
+            // send the request
+            myRequest.open('GET', '<%=request.getContextPath() %>/actions/eventBusHandleAppealAction?challengeId=' + challengeId, true);
             myRequest.send(null);
         }
     </script>
@@ -94,6 +118,7 @@
                     // operation succeeded
                     // TODO: Some changes to here
                     toggleDisplay("appealText_" + itemIdx);
+                    handleEventOfAppeal(challengeId);
                 },
                 function (result, respXML) {
                     // operation failed, alert the error message to the user

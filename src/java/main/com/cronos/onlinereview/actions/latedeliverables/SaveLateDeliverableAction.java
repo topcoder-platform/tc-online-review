@@ -11,6 +11,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.Constants;
+import com.cronos.onlinereview.actions.event.EventBusServiceClient;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.functions.Functions;
@@ -39,9 +40,14 @@ import com.topcoder.util.file.templatesource.FileTemplateSource;
  * <p>
  * <b>Thread Safety:</b>Struts 2 Action objects are instantiated for each request, so there are no thread-safety issues.
  * </p>
+ * 
+ * <p>
+ * Changes in Version 2.1 Topcoder - Online Review Update - Post to Event Bus Part 2 v1.0
+ * - fire the late deliverable update event
+ * </p>
  *
  * @author TCSASSEMBLER
- * @version 2.0
+ * @version 2.1
  */
 public class SaveLateDeliverableAction extends BaseLateDeliverableAction {
 
@@ -191,6 +197,13 @@ public class SaveLateDeliverableAction extends BaseLateDeliverableAction {
                         }
                     }
 
+                    // fire the late deliverable update event
+                    EventBusServiceClient.fireLateDeliverableUpdateEvent(
+                            lateDeliverable.getProjectId(), lateDeliverableUserId, lateDeliverable.getId(),
+                            ActionsHelper.explanationDeadline(lateDeliverable), lateDeliverable.getExplanation(), 
+                            isLateDeliverableOwner ? 0 : currentUserId,
+                            lateDeliverable.isForgiven(), lateDeliverable.getResponse());
+                   
                     this.setId(lateDeliverable.getId());
                     return Constants.SUCCESS_FORWARD_NAME;
                 }

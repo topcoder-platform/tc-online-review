@@ -504,6 +504,8 @@
         
         <action name="eventBusHandleAppealResponseAction" class="eventBusHandleAppealResponseAction">
         </action>
+        <action name="eventBusHandleAppealAction" class="eventBusHandleAppealAction">
+        </action>
 
         <!-- Redirect for old-style Struts1 requests -->
         <action name="*.do" class="struts1MappingAction">

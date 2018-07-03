@@ -35,9 +35,14 @@ import com.topcoder.util.config.UnknownNamespaceException;
  * Version 2.2 - Topcoder - Online Review Update - Post to Event BUS v1.0
  * - add configurations for event bus
  * </p>
+ * 
+ * <p>
+ * Version 2.3 - Topcoder - Online Review Update - Post to Event BUS Part 2 v1.0
+ * - add contestSubmissionDownloadUrl and checkpointSubmissionDownloadUrl
+ * </p>
  *
  * @author TCSASSEMBLER
- * @version 2.2 
+ * @version 2.3 
  */
 public class ConfigHelper {
 
@@ -988,6 +993,16 @@ public class ConfigHelper {
      * <p>Represents the eventBusEndpoint.</p> 
      */
     private static String eventBusEndpoint;
+    
+    /**
+     * <p>Represents the contestSubmissionDownloadUrl.</p> 
+     */
+    private static String contestSubmissionDownloadUrl;
+    
+    /**
+     * <p>Represents the checkpointSubmissionDownloadUrl.</p> 
+     */
+    private static String checkpointSubmissionDownloadUrl;
 
     static {
         // Obtaining the instance of Configuration Manager
@@ -1594,6 +1609,8 @@ public class ConfigHelper {
             Property eventBus = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "event_bus");
             eventBusAuthToken = eventBus.getValue("authToken");
             eventBusEndpoint = eventBus.getValue("endpoint");
+            contestSubmissionDownloadUrl = eventBus.getValue("contestSubmissionDownloadUrl");
+            checkpointSubmissionDownloadUrl = eventBus.getValue("checkpointSubmissionDownloadUrl");
         } catch (UnknownNamespaceException une) {
             System.out.println(une.getMessage());
             une.printStackTrace();
@@ -2490,5 +2507,22 @@ public class ConfigHelper {
     public static String getEventBusEndpoint() {
         return eventBusEndpoint;
     }
-    
+
+    /**
+     * Get contestSubmissionDownloadUrl
+     * 
+     * @return the contestSubmissionDownloadUrl
+     */
+    public static String getContestSubmissionDownloadUrl() {
+        return contestSubmissionDownloadUrl;
+    }
+
+    /**
+     * Get checkpointSubmissionDownloadUrl
+     * 
+     * @return the checkpointSubmissionDownloadUrl
+     */
+    public static String getCheckpointSubmissionDownloadUrl() {
+        return checkpointSubmissionDownloadUrl;
+    }
 }

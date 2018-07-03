@@ -169,8 +169,11 @@
 ### mockxmlauthenticator.xmlfile - when defined it is excluded from the build, comment it out to include in build for development
 # exclude.mockxmlauthenticator.xmlfile=yes, exclude me!
 
+# configuration for event bus
 @topcoder_event_bus_url@=https://api.topcoder-dev.com/v5/bus/events
-@topcoder_event_bus_auth_token@=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJDb25uZWN0IE1hbmFnZXIiLCJhZG1pbmlzdHJhdG9yIiwiVG9wY29kZXIgVXNlciJdLCJpc3MiOiJodHRwczovL3RvcGNvZGVyLWRldi5hdXRoMC5jb20vIiwiaGFuZGxlIjoibXR3b21leSIsInVzZXJJZCI6IjQwMDE2MzU2IiwiZW1haWwiOiJtdHdvbWV5QHRvcGNvZGVyLmNvbSIsImp0aSI6Ijg0NjFhYzNiLWU1NGYtNDE4Zi04YTc3LTQxZGNlZDNmMjRjZCIsImlhdCI6MTUyOTA3NTIxMCwiZXhwIjoxNTI5NjgwMDEwfQ.8wB5ZAeBINQY9q7Q1jDZRUzMlVV61epAYpH0naQxDDM
+@topcoder_event_bus_auth_token@=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJDb25uZWN0IE1hbmFnZXIiLCJhZG1pbmlzdHJhdG9yIiwiVG9wY29kZXIgVXNlciJdLCJub3RlIjoiVG9rZW4gdXNlZCBpbiBjaGFsbGVnZSBpbiBkZXYgZW52IiwiaXNzIjoiaHR0cHM6Ly90b3Bjb2Rlci1kZXYuYXV0aDAuY29tLyIsImhhbmRsZSI6Im10d29tZXkiLCJ1c2VySWQiOiI0MDAxNjM1NiIsImVtYWlsIjoibXR3b21leUB0b3Bjb2Rlci5jb20iLCJqdGkiOiI4NDYxYWMzYi1lNTRmLTQxOGYtOGE3Ny00MWRjZWQzZjI0Y2QiLCJpYXQiOjE1Mjk2OTE0ODMsImV4cCI6MTUzMDkwMTA4M30.21nfCN8i1NRQ7V2YdnVSmEYc720YoDRuI4PoDtpox1U
+@contest_submission_download_url@=http://tcs.cloud.topcoder.com/review/actions/DownloadContestSubmission?uid=%s
+@checkpoint_submission_download_url@=http://tcs.cloud.topcoder.com/review/actions/DownloadCheckpointSubmission?uid=%s
 
 ############################################
 # Parameters used to run integration tests #

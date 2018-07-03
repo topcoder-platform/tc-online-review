@@ -54,6 +54,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import com.cronos.onlinereview.Constants;
+import com.cronos.onlinereview.actions.event.EventBusServiceClient;
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
@@ -112,8 +113,13 @@ import com.topcoder.web.common.RowNotFoundException;
  * <ul>- check user group permission before add resource</ul>
  * </p>
  * 
+ * <p>
+ * Changes in Version 2.3 Topcoder - Online Review Update - Post to Event Bus Part 2 v1.0
+ * - fire the project update event
+ * </p>
+ * 
  * @author TCSCODER
- * @version 2.2
+ * @version 2.3 
  */
 public class SaveProjectAction extends BaseProjectAction {
 
@@ -463,6 +469,8 @@ public class SaveProjectAction extends BaseProjectAction {
         }
 
         AmazonSNSHelper.publishProjectUpdateEvent(project);
+        EventBusServiceClient.fireProjectUpdateEvent(project.getId(), AuthorizationHelper.getLoggedInUserId(request), 
+                project, Arrays.asList(projectPhases));
 
         this.pid = project.getId();
         // Return success forward

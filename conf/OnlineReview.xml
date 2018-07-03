@@ -5240,6 +5240,12 @@
 	        <Property name="endpoint">
 	            <Value>@topcoder_event_bus_url@</Value>
 	        </Property>
+	        <Property name="contestSubmissionDownloadUrl">
+	            <Value>@contest_submission_download_url@</Value>
+	        </Property>
+	        <Property name="checkpointSubmissionDownloadUrl">
+	            <Value>@checkpoint_submission_download_url@</Value>
+	        </Property>
         </Property>
     </Config>
 
