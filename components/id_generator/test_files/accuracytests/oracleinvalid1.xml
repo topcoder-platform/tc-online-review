@@ -1,7 +1,0 @@
-<CMConfig>
-    <Config name="com.topcoder.util.idgenerator.OracleSequenceGenerator">
-        <Property name="SQL_SELECT_BLOCK_SIZE">
-            <Value>INVALID</Value>
-        </Property>
-    </Config>
-</CMConfig>    

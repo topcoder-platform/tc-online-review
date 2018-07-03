@@ -1,3 +1,0 @@
-
- # this command will return error when executed
- ifDef( abc )   iFNDef(xyz)ifndef(pqr)copy_file : test_files/accuracy/no_such_file.txt->some_dest

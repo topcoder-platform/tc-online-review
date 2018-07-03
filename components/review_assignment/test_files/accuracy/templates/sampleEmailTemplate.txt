@@ -1,5 +1,0 @@
-This is just a sample email used for accuracy testing.
-
-Project ID\: %PROJECT_ID%
-Project Name\: %PROJECT_NAME%
-Project Version\: %PROJECT_VERSION%

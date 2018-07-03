@@ -1,8 +1,0 @@
-1. all test cases are passed now, I have aggregated all the test cases.
-For other reviewer's test case, you may need to make sure the lib will
-be found successfully while executing the 'ant design_dist' command.
-
-2. the acc's test issue for 'hang up' problem is also solved.
-see: http://forums.topcoder.com/?module=Thread&threadID=663713&start=0&mc=4
-
-3. thanks

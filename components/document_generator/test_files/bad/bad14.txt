@@ -1,2 +1,0 @@
-#This file have not end of loop tag
-%loop:var%

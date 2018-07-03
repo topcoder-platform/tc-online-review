@@ -1,6 +1,0 @@
-#This file is cool.
-This file is valid.
-
-#It really is!
-
-No joke.

@@ -1,9 +1,0 @@
-#property file defining the component's information
-component.name=Job Scheduling
-component.distfilename=job_scheduling
-component.package=com.topcoder.util.scheduler.scheduling
-component.packagedir=com/topcoder/util/scheduler/scheduling
-component.version.major=3
-component.version.minor=2
-component.version.micro=1
-component.version.build=1

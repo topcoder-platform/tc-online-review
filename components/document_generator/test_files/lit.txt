@@ -1,4 +1,0 @@
-# This is little template.
-%TITLE%
-%loop:WORD{Write world}%%loop:ALPHA{Write alpha}%%alpha%%endloop%
-%endloop%

@@ -1,9 +1,0 @@
-1. Configuration persistence component is compiled in JDK 1.4.
-
-2. Refer to http://forums.topcoder.com/?module=Thread&threadID=668109&start=0,
-   I have modified 4 source files: Util.java, FileTemplateSource.java, DocumentServlet.java, TestFileTemplateSource.java
-   And the copyright statement are updated to "2007 - 2010" according to this thread:
-    http://forums.topcoder.com/?module=Thread&threadID=667938&start=0
-
-3. Refer to http://forums.topcoder.com/?module=Thread&threadID=668108&start=0,
-   The web demo can show reading files from ear/war.

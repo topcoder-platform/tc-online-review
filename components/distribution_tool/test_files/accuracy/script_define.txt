@@ -1,3 +1,0 @@
-define : pqr = 000
-define : abc =
-define : xyz = 1=2=3

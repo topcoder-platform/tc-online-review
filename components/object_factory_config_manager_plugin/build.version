@@ -1,9 +1,0 @@
-#property file defining the components information
-component.name=Object Factory Config Manager Plugin
-component.distfilename=object_factory_config_manager_plugin
-component.package=com.topcoder.util.objectfactory.impl
-component.packagedir=com/topcoder/util/objectfactory/impl
-component.version.major=1
-component.version.minor=1
-component.version.micro=0
-component.version.build=1

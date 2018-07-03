@@ -1,4 +1,0 @@
-<Properties>
-	<Property name="context.default.factory">java.lang.Object</Property>
-	<Property name="context.default.url">file:test_files/test_root</Property>
-</Properties>

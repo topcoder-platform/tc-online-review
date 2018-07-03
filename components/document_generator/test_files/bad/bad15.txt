@@ -1,3 +1,0 @@
-#This file have bad end of loop tag.
-%this is field%
-%endloop%
