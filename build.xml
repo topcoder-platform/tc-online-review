@@ -132,6 +132,7 @@
       <lib dir="${tcs_libdir}/${securityEJB.path}" includes="*.jar"/>
       <lib dir="${tcs_libdir}" includes="tc_id_generator.jar"/>
       <lib dir="${tcs_libdir}" includes="tcjive.jar"/>
+      <lib dir="${tcs_libdir}/${core.api.path}" includes="${core.api.jar.name}"/>
       
       <lib dir="${ext_libdir}" includes="*.jar" excludes="ejb-2_0.jar, servlet-api.jar, jsp-api.jar, log4j.jar"/>
       <lib dir="${ext_libdir}/log4j" includes="*.jar"/>
@@ -147,7 +148,10 @@
       <lib dir="${ext_libdir}/aws" includes="*.jar" />
       <lib dir="${ext_libdir}/httpcomponents" includes="*.jar" />
       <lib dir="${ext_libdir}/joda-time" includes="*.jar" />
-      
+      <lib dir="${ext_libdir}/${rs-api.path}" includes="${rs-api.jar.name}"/>
+      <lib dir="${ext_libdir}/${jersey-client.path}" includes="*.jar"/>
+      <lib dir="${ext_libdir}/${hk2.path}" includes="*.jar"/>
+
       <lib file="${jaf.jar}" />
       <lib dir="${shared_libdir}" includes="${catalog.jar.name}"/>
       <lib dir="${shared_libdir}" includes="${tcwebcommon.jar.name}"/>

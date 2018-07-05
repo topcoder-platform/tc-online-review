@@ -6,6 +6,7 @@ package com.cronos.onlinereview.actions.projectreview;
 import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.Constants;
+import com.cronos.onlinereview.actions.event.EventBusServiceClient;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
@@ -221,6 +222,7 @@ public class SaveFinalReviewAction extends BaseProjectReviewAction {
         // Update (save) edited Aggregation
         ReviewManager revMgr = ActionsHelper.createReviewManager();
         revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        EventBusServiceClient.fireReviewUpdate(review, Long.parseLong(review.getCreationUser()), AuthorizationHelper.getLoggedInUserId(request), "Final Review");
 
         if (!validationSucceeded) {
             // Put the review object into the request

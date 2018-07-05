@@ -5232,6 +5232,33 @@
         <Property name="sso_domain_for_v3jwt_cookie">
             <Value>.topcoder.com</Value>
         </Property>
+        
+        <Property name="event_bus">
+	        <Property name="client_id">
+	            <Value>@topcoder_event_bus_client_id@</Value>
+	        </Property>
+            <Property name="client_secret">
+                <Value>@topcoder_event_bus_client_secret@</Value>
+            </Property>
+            <Property name="auth_audience">
+                <Value>@topcoder_event_bus_auth_audience@</Value>
+            </Property>
+            <Property name="auth_domain">
+                <Value>@topcoder_event_bus_auth_domain@</Value>
+            </Property>
+            <Property name="expiration_time">
+                <Value>@topcoder_event_bus_expiration_time@</Value>
+            </Property>
+	        <Property name="endpoint">
+	            <Value>@topcoder_event_bus_url@</Value>
+	        </Property>
+	        <Property name="contestSubmissionDownloadUrl">
+	            <Value>@contest_submission_download_url@</Value>
+	        </Property>
+	        <Property name="checkpointSubmissionDownloadUrl">
+	            <Value>@checkpoint_submission_download_url@</Value>
+	        </Property>
+        </Property>
     </Config>
 
     <!--

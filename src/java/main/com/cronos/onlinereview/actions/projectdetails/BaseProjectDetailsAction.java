@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.actions.DynamicModelDrivenAction;
+import com.cronos.onlinereview.actions.event.EventBusServiceClient;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.model.DynamicModel;
@@ -74,9 +75,14 @@ import com.topcoder.util.file.templatesource.FileTemplateSource;
  * <p>
  * <b>Thread Safety:</b>Struts 2 Action objects are instantiated for each request, so there are no thread-safety issues.
  * </p>
+ * 
+ * <p>
+ * Changes in Version 2.1 - Topcoder - Online Review Update - Post to Event Bus Part 2 v1.0
+ * - fire the submission upload event when the f2f/assembly/code/checkpoint submissions are uploaded
+ * </p>
  *
  * @author TCSASSEMBLER
- * @version 2.0
+ * @version 2.1 
  */
 public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction  {
     /**
@@ -642,6 +648,20 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         }
 
         AmazonSNSHelper.publishProjectUpdateEvent(project);
+        
+        // fire the submission creation event
+        Long devTypeId = EventBusServiceClient.F2F_ASSEMBLY_CODE_ID_MAP.get(project.getProjectCategory().getId());
+        int submissionTypeId = devTypeId == null ? 0 : devTypeId.intValue();
+        boolean isCheckPointSubmission = Constants.CHECKPOINT_SUBMISSION_TYPE_NAME.equals(submissionTypeName);
+        submissionTypeId = isCheckPointSubmission 
+                ? EventBusServiceClient.SUBMISSION_TYPE_ID_FOR_CHECKPOINT_SUBMISSION : submissionTypeId;
+        
+        if (submissionTypeId > 0) {
+            String fileUrl = isCheckPointSubmission ? String.format(ConfigHelper.getCheckpointSubmissionDownloadUrl(), upload.getId()) 
+                    : String.format(ConfigHelper.getContestSubmissionDownloadUrl(), upload.getId());
+            EventBusServiceClient.fireSubmissionCreateEvent(project.getId(), 
+                    AuthorizationHelper.getLoggedInUserId(request), upload.getParameter(), fileUrl, submission.getId(), submissionTypeId);
+        }
 
         this.pid = project.getId();
         return Constants.SUCCESS_FORWARD_NAME;
