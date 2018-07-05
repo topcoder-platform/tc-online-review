@@ -21,6 +21,11 @@
     <property name="job_scheduler.path" value="job_scheduler/${job_scheduler.version}" />
     <property name="job_scheduler.jar" value="${tcs_libdir}/${job_scheduler.path}/${job_scheduler.jar.name}" />
 
+    <property name="core.api.version" value="4.3.0" />
+    <property name="core.api.jar.name" value="core.api.jar" />
+    <property name="core.api.path" value="core.api/${core.api.version}" />
+    <property name="core.api.jar" value="${tcs_libdir}/${core.api.path}/${core.api.jar.name}" />
+
     <!-- TCS Dependencies - non-versioned -->
     <property name="userEJB.path" value="user_ejb"/>
     <property name="userEJB.jar.name" value="User.jar"/>
@@ -118,7 +123,17 @@
 
     <property name="httpcore.jar.name" value="httpcore-4.2.jar" />
     <property name="httpcore.jar" value="${ext_libdir}/httpcomponents/${httpcore.jar.name}" />
-  
+
+    <property name="rs-api.version" value="2.0.1" />
+    <property name="rs-api.jar.name" value="rs-api.jar" />
+    <property name="rs-api.path" value="rs-api/${rs-api.version}" />
+    <property name="rs-api.jar" value="${ext_libdir}/${rs-api.path}/${rs-api.jar.name}" />
+
+    <property name="jersey-client.version" value="2.23.1" />
+    <property name="jersey-client.path" value="jersey/${jersey-client.version}" />
+    <property name="hk2.version" value="2.4.0" />
+    <property name="hk2.path" value="hk2/${hk2.version}" />
+
     <path id="svnant.lib" >
       <fileset dir="${ext_libdir}/svnant" includes="*.jar" />
       <fileset dir="${ext_libdir}/svnkit" includes="*.jar" />
@@ -172,6 +187,7 @@
         <pathelement location="${httpclient.jar}" />
         <pathelement location="${httpcore.jar}" />
         <pathelement location="${xerces.jar}" />
+        <pathelement location="${core.api.jar}" />
 
         <path refid="spring_libs"/>
         <path refid="poi_libs"/>
