@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.appirio.tech.core.api.v3.util.jwt.JWTTokenGenerator;
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.Property;
 import com.topcoder.util.config.UnknownNamespaceException;
@@ -26,23 +27,29 @@ import com.topcoder.util.config.UnknownNamespaceException;
  * This class is thread-safe as its inner state is initialized only once and
  * is not changed afterwards.
  * </p>
- * 
+ *
  * Changes in version 2.1 Topcoder - Add Group Permission Check For Adding Resources v1.0
  * - add the userGroupMemebershipUrl, v3jwtCookieName, v2jwtCookieName, v3jwtAuthorizationUrl,
  * ssoDomainForV3jwtCookie configuration values
- * 
+ *
  * <p>
  * Version 2.2 - Topcoder - Online Review Update - Post to Event BUS v1.0
  * - add configurations for event bus
  * </p>
- * 
+ *
  * <p>
  * Version 2.3 - Topcoder - Online Review Update - Post to Event BUS Part 2 v1.0
  * - add contestSubmissionDownloadUrl and checkpointSubmissionDownloadUrl
  * </p>
  *
+ * <p>
+ * Version 2.4 - Topcoder - Online Review Update - Post to Event Bus - M2M Token Integration
+ * - add configurations for event buswith M2M token
+ * </p>
+ *
+ *
  * @author TCSASSEMBLER
- * @version 2.3 
+ * @version 2.4
  */
 public class ConfigHelper {
 
@@ -571,7 +578,7 @@ public class ConfigHelper {
      * <p>A <code>String</code> providing the name for v3 jwt cookie name property.</p>
      */
     private static final String V3_JWT_COOKIE_NAME = "v3jwt_cookie_name";
-    
+
     /**
      * <p>A <code>String</code> providing the name for user group memeber ship url property.</p>
      */
@@ -581,22 +588,22 @@ public class ConfigHelper {
      * <p>A <code>String</code> providing the name for parent groups url property.</p>
      */
     private static final String PARENT_GROUPS_URL = "parent_groups_url";
-    
+
     /**
      * <p>A <code>String</code> providing the name for v2 jwt cookie name property.</p>
      */
     private static final String V2_JWT_COOKIE_NAME = "v2jwt_cookie_name";
-    
+
     /**
      * <p>A <code>String</code> providing the name for sso domain for v3 jwt cookie property.</p>
      */
     private static final String SSO_DOMAIN_FOR_V3_JWT_COOKIE = "sso_domain_for_v3jwt_cookie";
-    
+
     /**
      * <p>A <code>String</code> providing the name for v3 jwt authorization url property.</p>
      */
     private static final String V3_JWT_AUTHORIZATION_URL = "v3jwt_authorization_url";
-    
+
     /**
      * This member variable holds the submitter role id.
      */
@@ -953,9 +960,9 @@ public class ConfigHelper {
      * <p>Represents the password of the Thurgood user.</p>
      */
     private static String thurgoodPassword;
-    
+
     /**
-     * <p>Represents the userGroupMembershipUrl.</p> 
+     * <p>Represents the userGroupMembershipUrl.</p>
      */
     private static String userGroupMembershipUrl;
 
@@ -963,46 +970,76 @@ public class ConfigHelper {
      * <p>Represents the parentGroupsUrl.</p>
      */
     private static String parentGroupsUrl;
-    
+
     /**
-     * <p>Represents the v3jwtCookieBame.</p> 
+     * <p>Represents the v3jwtCookieBame.</p>
      */
     private static String v3jwtCookieName;
-    
+
     /**
-     * <p>Represents the v2jwtCookieBame.</p> 
+     * <p>Represents the v2jwtCookieBame.</p>
      */
     private static String v2jwtCookieName;
-    
+
     /**
-     * <p>Represents the v3jwtAuthorizationUrl.</p> 
+     * <p>Represents the v3jwtAuthorizationUrl.</p>
      */
     private static String v3jwtAuthorizationUrl;
-    
+
     /**
-     * <p>Represents the ssoDomainForV3jwtCookie.</p> 
+     * <p>Represents the ssoDomainForV3jwtCookie.</p>
      */
     private static String ssoDomainForV3jwtCookie;
-    
+
     /**
-     * <p>Represents the eventBusAuthToken.</p> 
+     * <p>Represents the eventBusAuthToken.</p>
      */
     private static String eventBusAuthToken;
-    
+
     /**
-     * <p>Represents the eventBusEndpoint.</p> 
+     * <p>Represents the eventBusEndpoint.</p>
      */
     private static String eventBusEndpoint;
-    
+
     /**
-     * <p>Represents the contestSubmissionDownloadUrl.</p> 
+     * <p>Represents the contestSubmissionDownloadUrl.</p>
      */
     private static String contestSubmissionDownloadUrl;
-    
+
     /**
-     * <p>Represents the checkpointSubmissionDownloadUrl.</p> 
+     * <p>Represents the checkpointSubmissionDownloadUrl.</p>
      */
     private static String checkpointSubmissionDownloadUrl;
+
+    /**
+     * JWT Client Id
+     */
+    private static String clientId;
+
+    /**
+     * JWT Client secret
+     */
+    private static String clientSecret;
+
+    /**
+     * JWT audience
+     */
+    private static String authAudience;
+
+    /**
+     * JWT domain
+     */
+    private static String authDomain;
+
+    /**
+     * JWT expiration time in minutes
+     */
+    private static int expirationTime;
+
+    /**
+     * JWT default expiration time (1 day)
+     */
+    private static final int DEFAULT_EXPIRATION_TIME = 60 * 24;
 
     static {
         // Obtaining the instance of Configuration Manager
@@ -1128,9 +1165,9 @@ public class ConfigHelper {
             defaultDistributionScript = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, DEFAULT_DISTRIBUTION_SCRIPT_PROP);
             if (defaultDistributionScript == null || defaultDistributionScript.trim().length() == 0) {
                 System.err.println("The value of " + DEFAULT_DISTRIBUTION_SCRIPT_PROP
-                    + " configuration property is null. "
-                    + "This value will be ignored and value of " + DEFAULT_DISTRIBUTION_SCRIPT
-                    + " will be used instead");
+                        + " configuration property is null. "
+                        + "This value will be ignored and value of " + DEFAULT_DISTRIBUTION_SCRIPT
+                        + " will be used instead");
 
                 defaultDistributionScript = DEFAULT_DISTRIBUTION_SCRIPT;
             }
@@ -1175,7 +1212,7 @@ public class ConfigHelper {
 
                 if (propRootCatIcons.containsProperty(strPropName + "." + ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP)) {
                     String script = propRootCatIcons.getValue(strPropName + "."
-                        + ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP);
+                            + ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP);
 
                     distributionScriptRootCatalogs.put(strID, script);
                 } else {
@@ -1314,8 +1351,8 @@ public class ConfigHelper {
             }
             // Parse the number of required reviewers for Post-Mortem phase
             String postMortemReviewersStr
-                = cfgMgr.getPropertyObject("com.cronos.onlinereview.phases.PostMortemPhaseHandler",
-                                           "PostMortemPhaseDefaultReviewersNumber").getValue();
+                    = cfgMgr.getPropertyObject("com.cronos.onlinereview.phases.PostMortemPhaseHandler",
+                    "PostMortemPhaseDefaultReviewersNumber").getValue();
             if (postMortemReviewersStr != null && postMortemReviewersStr.trim().length() != 0) {
                 int minimum = Integer.parseInt(postMortemReviewersStr, 10);
                 if (minimum >= 0) {
@@ -1324,8 +1361,8 @@ public class ConfigHelper {
             }
             // Parse the number of required reviewers for Approval phase
             String approversStr
-                = cfgMgr.getPropertyObject("com.cronos.onlinereview.phases.ApprovalPhaseHandler",
-                                           "ApprovalPhaseDefaultReviewersNumber").getValue();
+                    = cfgMgr.getPropertyObject("com.cronos.onlinereview.phases.ApprovalPhaseHandler",
+                    "ApprovalPhaseDefaultReviewersNumber").getValue();
             if (approversStr != null && approversStr.trim().length() != 0) {
                 int minimum = Integer.parseInt(approversStr, 10);
                 if (minimum >= 0) {
@@ -1433,7 +1470,7 @@ public class ConfigHelper {
             }
 
             Property propContactManagerEmail =
-                cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, CONTACT_MANAGER_EMAIL_PROP);
+                    cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, CONTACT_MANAGER_EMAIL_PROP);
 
             if (propContactManagerEmail != null) {
                 contactManagerEmailTemplate = propContactManagerEmail.getValue(EMAIL_TEMPLATE_NAME_PROP);
@@ -1447,8 +1484,8 @@ public class ConfigHelper {
                     registrationPhaseMaxExtensionDays = new Integer(value);
                 } catch (NumberFormatException nfe) {
                     System.err.println("The value of " + REGISTRATION_PHASE_MAX_EXTENSION_PROP
-                                       + " configuration property is not numeric: " + value
-                                       + ". This value will be ignored.");
+                            + " configuration property is not numeric: " + value
+                            + ". This value will be ignored.");
                 }
             }
 
@@ -1458,8 +1495,8 @@ public class ConfigHelper {
                     submissionPhaseMaxExtensionDays = new Integer(value);
                 } catch (NumberFormatException nfe) {
                     System.err.println("The value of " + SUBMISSION_PHASE_MAX_EXTENSION_PROP
-                                       + " configuration property is not numeric: " + value
-                                       + ". This value will be ignored.");
+                            + " configuration property is not numeric: " + value
+                            + ". This value will be ignored.");
                 }
             }
 
@@ -1469,9 +1506,9 @@ public class ConfigHelper {
                     minimumHoursBeforeSubmissionDeadlineForExtension = new Integer(value);
                 } catch (NumberFormatException nfe) {
                     System.err.println("The value of " + MINIMUM_HOURS_BEFORE_SUBMISSION_DEADLINE_FOR_EXTENSION_PROP
-                                       + " configuration property is not numeric: " + value
-                                       + ". This value will be ignored and value of " + DEFAULT_MINIMUM_HOURS_LEFT
-                                       + " will be used instead");
+                            + " configuration property is not numeric: " + value
+                            + ". This value will be ignored and value of " + DEFAULT_MINIMUM_HOURS_LEFT
+                            + " will be used instead");
                 }
             }
 
@@ -1479,9 +1516,9 @@ public class ConfigHelper {
 
             if (distributionToolOutputDir == null || distributionToolOutputDir.trim().length() == 0) {
                 System.err.println("The value of " + DISTRIBUTION_TOOL_OUTPUT_DIR_PROP
-                    + " configuration property is null. "
-                    + "This value will be ignored and value of " + DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR
-                    + " will be used instead");
+                        + " configuration property is null. "
+                        + "This value will be ignored and value of " + DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR
+                        + " will be used instead");
 
                 distributionToolOutputDir = DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR;
             }
@@ -1490,50 +1527,50 @@ public class ConfigHelper {
 
             if (catalogOutputDir == null || catalogOutputDir.trim().length() == 0) {
                 System.err.println("The value of " + CATALOG_OUTPUT_DIR_PROP
-                    + " configuration property is null. "
-                    + "This value will be ignored and value of " + DEFAULT_CATALOG_OUTPUT_DIR
-                    + " will be used instead");
+                        + " configuration property is null. "
+                        + "This value will be ignored and value of " + DEFAULT_CATALOG_OUTPUT_DIR
+                        + " will be used instead");
 
                 catalogOutputDir = DEFAULT_CATALOG_OUTPUT_DIR;
             }
 
             Property disabledResourceRolesConfig
-                = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DISABLED_RESOURCE_ROLES_PROP);
+                    = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DISABLED_RESOURCE_ROLES_PROP);
             disabledResourceRoles = disabledResourceRolesConfig.getValues();
 
             Property svnPermissionGrantResourceRolesConfig
-                = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, SVN_PERM_GRANT_RESOURCE_ROLES_PROP);
+                    = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, SVN_PERM_GRANT_RESOURCE_ROLES_PROP);
             svnPermissionGrantResourceRoles = svnPermissionGrantResourceRolesConfig.getValues();
 
             Property svnRepoConfig = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, SVN_CONFIG_PROP);
-            svnConfig = new String[] {svnRepoConfig.getValue("Root"),
-                                      svnRepoConfig.getValue("AuthUsername"),
-                                      svnRepoConfig.getValue("AuthPassword"),
-                                      svnRepoConfig.getValue("MkDirCommitMessage"),
-                                      svnRepoConfig.getValue("TempFilesBaseDir"),
-                                      svnRepoConfig.getValue("PathBasedPermissionsFileURL")};
+            svnConfig = new String[]{svnRepoConfig.getValue("Root"),
+                    svnRepoConfig.getValue("AuthUsername"),
+                    svnRepoConfig.getValue("AuthPassword"),
+                    svnRepoConfig.getValue("MkDirCommitMessage"),
+                    svnRepoConfig.getValue("TempFilesBaseDir"),
+                    svnRepoConfig.getValue("PathBasedPermissionsFileURL")};
 
             Property lateDeliverableEmailConfig
-                = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "LateDeliverableUpdateNotificationEmail");
+                    = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "LateDeliverableUpdateNotificationEmail");
 
-            lateDeliverablesUpdatedByManagerNotificationConfig = new String[] {
-                lateDeliverableEmailConfig.getValue("ByManager.EmailTemplateName"),
-                lateDeliverableEmailConfig.getValue("ByManager.EmailFromAddress"),
-                lateDeliverableEmailConfig.getValue("ByManager.EmailSubject"),
-                lateDeliverableEmailConfig.getValue("ByManager.Roles")};
+            lateDeliverablesUpdatedByManagerNotificationConfig = new String[]{
+                    lateDeliverableEmailConfig.getValue("ByManager.EmailTemplateName"),
+                    lateDeliverableEmailConfig.getValue("ByManager.EmailFromAddress"),
+                    lateDeliverableEmailConfig.getValue("ByManager.EmailSubject"),
+                    lateDeliverableEmailConfig.getValue("ByManager.Roles")};
 
-            lateDeliverablesUpdatedByMemberNotificationConfig = new String[] {
-                lateDeliverableEmailConfig.getValue("ByMember.EmailTemplateName"),
-                lateDeliverableEmailConfig.getValue("ByMember.EmailFromAddress"),
-                lateDeliverableEmailConfig.getValue("ByMember.EmailSubject"),
-                lateDeliverableEmailConfig.getValue("ByMember.Roles")};
+            lateDeliverablesUpdatedByMemberNotificationConfig = new String[]{
+                    lateDeliverableEmailConfig.getValue("ByMember.EmailTemplateName"),
+                    lateDeliverableEmailConfig.getValue("ByMember.EmailFromAddress"),
+                    lateDeliverableEmailConfig.getValue("ByMember.EmailSubject"),
+                    lateDeliverableEmailConfig.getValue("ByMember.Roles")};
 
             lateDeliverableBaseURL = lateDeliverableEmailConfig.getValue("EditLateDeliverablePageBaseURL");
 
             Property f2fSubmissionReuploadedConfig
                     = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "F2FSubmissionReuploadNotificationEmail");
 
-            f2fSubmissionReuploadedNotificationConfig = new String[] {
+            f2fSubmissionReuploadedNotificationConfig = new String[]{
                     f2fSubmissionReuploadedConfig.getValue("EmailTemplateName"),
                     f2fSubmissionReuploadedConfig.getValue("EmailFromAddress"),
                     f2fSubmissionReuploadedConfig.getValue("EmailSubject")};
@@ -1556,7 +1593,7 @@ public class ConfigHelper {
             String adminUsersProperty = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, ADMIN_USERS_PROP);
             if (adminUsersProperty != null && adminUsersProperty.trim().length() != 0) {
                 String[] adminUserIDs = adminUsersProperty.split(",");
-                for(String adminUserID : adminUserIDs) {
+                for (String adminUserID : adminUserIDs) {
                     try {
                         adminUsers.add(Long.parseLong(adminUserID.trim()));
                     } catch (NumberFormatException nfe) {
@@ -1605,12 +1642,21 @@ public class ConfigHelper {
             v2jwtCookieName = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, V2_JWT_COOKIE_NAME);
             ssoDomainForV3jwtCookie = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, SSO_DOMAIN_FOR_V3_JWT_COOKIE);
             v3jwtAuthorizationUrl = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, V3_JWT_AUTHORIZATION_URL);
-            
+
             Property eventBus = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "event_bus");
-            eventBusAuthToken = eventBus.getValue("authToken");
-            eventBusEndpoint = eventBus.getValue("endpoint");
             contestSubmissionDownloadUrl = eventBus.getValue("contestSubmissionDownloadUrl");
             checkpointSubmissionDownloadUrl = eventBus.getValue("checkpointSubmissionDownloadUrl");
+            eventBusEndpoint = eventBus.getValue("endpoint");
+            clientId = eventBus.getValue("client_id");
+            clientSecret = eventBus.getValue("client_secret");
+            authDomain = eventBus.getValue("auth_domain");
+            authAudience = eventBus.getValue("auth_audience");
+            try {
+                expirationTime = Integer.parseInt(eventBus.getValue("expiration_time"));
+                if (expirationTime < 0) expirationTime = DEFAULT_EXPIRATION_TIME;
+            } catch (NumberFormatException e) {
+                expirationTime = DEFAULT_EXPIRATION_TIME;
+            }
         } catch (UnknownNamespaceException une) {
             System.out.println(une.getMessage());
             une.printStackTrace();
@@ -2438,7 +2484,7 @@ public class ConfigHelper {
     public static String getThurgoodPassword() {
         return thurgoodPassword;
     }
-    
+
     /**
      * Get user group membership url
      *
@@ -2468,7 +2514,7 @@ public class ConfigHelper {
 
     /**
      * Get v2jwtCookieName.
-     * @return the v2jwtCookieName. 
+     * @return the v2jwtCookieName.
      */
     public static String getV2jwtCookieName() {
         return v2jwtCookieName;
@@ -2476,7 +2522,7 @@ public class ConfigHelper {
 
     /**
      * Get v3jwtAuthorizationUrl.
-     * @return the v3jwtAuthorizationUrl. 
+     * @return the v3jwtAuthorizationUrl.
      */
     public static String getV3jwtAuthorizationUrl() {
         return v3jwtAuthorizationUrl;
@@ -2484,21 +2530,12 @@ public class ConfigHelper {
 
     /**
      * Get ssoDomainForV3jwtCookie.
-     * @return the ssoDomainForV3jwtCookie. 
+     * @return the ssoDomainForV3jwtCookie.
      */
     public static String getSsoDomainForV3jwtCookie() {
         return ssoDomainForV3jwtCookie;
     }
-    
-    /**
-     * Get eventBusAuthToken
-     *
-     * @return the eventBusAuthToken
-     */
-    public static String getEventBusAuthToken() {
-        return eventBusAuthToken;
-    }
-    
+
     /**
      * Get eventBusEndpoint
      *
@@ -2509,8 +2546,20 @@ public class ConfigHelper {
     }
 
     /**
+     * Get clientSecret
+     *
+     * @return the client secret
+     */
+    public static String getEventBusAuthToken() throws Exception {
+        JWTTokenGenerator jwtTokenGenerator = JWTTokenGenerator.getInstance(clientId, clientSecret, authAudience,
+            authDomain, expirationTime);
+        eventBusAuthToken = jwtTokenGenerator.getMachineToken();
+        return eventBusAuthToken;
+    }
+
+    /**
      * Get contestSubmissionDownloadUrl
-     * 
+     *
      * @return the contestSubmissionDownloadUrl
      */
     public static String getContestSubmissionDownloadUrl() {
@@ -2519,10 +2568,11 @@ public class ConfigHelper {
 
     /**
      * Get checkpointSubmissionDownloadUrl
-     * 
+     *
      * @return the checkpointSubmissionDownloadUrl
      */
     public static String getCheckpointSubmissionDownloadUrl() {
         return checkpointSubmissionDownloadUrl;
     }
+
 }
