@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.actions.DynamicModelDrivenAction;
+import com.cronos.onlinereview.actions.event.EventBusServiceClient;
 import com.cronos.onlinereview.model.DynamicModel;
 import com.cronos.onlinereview.model.FormFile;
 import com.cronos.onlinereview.phases.OnlineReviewServices;
@@ -52,9 +53,14 @@ import com.topcoder.util.errorhandling.BaseException;
  * <p>
  * <b>Thread Safety:</b>Struts 2 Action objects are instantiated for each request, so there are no thread-safety issues.
  * </p>
+ * 
+ * <p>
+  * Version 2.1 - Topcoder - Online Review Update - Post to Event BUS v1.0
+ * - add fire the events when the review is created or updated for the following review types: screening, checkpoint review, review, iterative review 
+ * </p>
  *
  * @author TCSASSEMBLER
- * @version 2.0
+ * @version 2.1 
  */
 public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
     /**
@@ -1442,8 +1448,10 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         // Determine which action should be performed - creation or updating
         if (verification.getReview() == null) {
             revMgr.createReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+            EventBusServiceClient.fireReviewCreate(review, AuthorizationHelper.getLoggedInUserId(request), reviewType);
         } else {
             revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+            EventBusServiceClient.fireReviewUpdate(review, Long.parseLong(review.getCreationUser()), AuthorizationHelper.getLoggedInUserId(request), reviewType);
         }
 
         // This operation will possibly update final aggregated score for the submitter

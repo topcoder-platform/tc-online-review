@@ -666,4 +666,9 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
   <!-- Struts1MappingAction action -->
   <bean id="struts1MappingAction" class="com.cronos.onlinereview.actions.Struts1MappingAction" scope="request">
   </bean>
+  
+  <bean id="eventBusHandleAppealResponseAction" class="com.cronos.onlinereview.actions.event.EventBusHandleAppealResponseAction" scope="request">
+  </bean>
+  <bean id="eventBusHandleAppealAction" class="com.cronos.onlinereview.actions.event.EventBusHandleAppealAction" scope="request">
+  </bean>
 </beans>

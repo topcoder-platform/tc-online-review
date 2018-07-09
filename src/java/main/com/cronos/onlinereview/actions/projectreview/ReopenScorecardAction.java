@@ -4,12 +4,14 @@
 package com.cronos.onlinereview.actions.projectreview;
 
 import com.cronos.onlinereview.Constants;
+import com.cronos.onlinereview.actions.event.EventBusServiceClient;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.review.data.Review;
+import com.topcoder.management.scorecard.data.ScorecardType;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.util.errorhandling.BaseException;
 
@@ -18,9 +20,14 @@ import com.topcoder.util.errorhandling.BaseException;
  * <p>
  * <b>Thread Safety:</b>Struts 2 Action objects are instantiated for each request, so there are no thread-safety issues.
  * </p>
+ * 
+ * <p>
+ * Version 2.1 - Topcoder - Online Review Update - Post to Event BUS v1.0
+ * - fire the review update event when the scorecard is reopened
+ * </p>
  *
  * @author TCSASSEMBLER
- * @version 2.0
+ * @version 2.1 
  */
 public class ReopenScorecardAction extends BaseProjectReviewAction {
 
@@ -92,6 +99,9 @@ public class ReopenScorecardAction extends BaseProjectReviewAction {
         String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
         review.setCommitted(false);
         ActionsHelper.createReviewManager().updateReview(review, operator);
+        
+        ScorecardType scType = ActionsHelper.createScorecardManager().getScorecard(review.getScorecard()).getScorecardType();
+        EventBusServiceClient.fireReviewUpdate(review, Long.parseLong(review.getCreationUser()), AuthorizationHelper.getLoggedInUserId(request), scType.getName());
 
         setPid(project.getId());
         return Constants.SUCCESS_FORWARD_NAME;
