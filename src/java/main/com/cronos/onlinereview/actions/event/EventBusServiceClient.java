@@ -34,15 +34,15 @@ import java.util.TimeZone;
 
 /**
  * The client to communicate with TC Event Bus With the REST API.
- * 
+ *
  * It's added in Topcoder - Online Review Update - Post to Event BUS v1.0
- * 
+ *
  * Version 1.1 - Topcoder - Online Review Update - Post to Event Bus Part 2 v1.0
  * - add more util methods to fire the events for the submission/appeal creation, late deliverable and project update.
  * - fix the fireEvent to handle the Date type for the json serialization
- * 
+ *
  * @author TCCoder
- * @version 1.1 
+ * @version 1.1
  *
  */
 public class EventBusServiceClient {
@@ -55,12 +55,12 @@ public class EventBusServiceClient {
      * The CREATE field
      */
     public static final String CREATE = "CREATE";
-    
+
     /**
      * The UPDATE field
      */
     public static final String UPDATE = "UPDATE";
-    
+
     /**
      * The REVIEW_TYPES_MAP field maps the review type to review type id
      */
@@ -78,7 +78,7 @@ public class EventBusServiceClient {
             put("Post-Mortem", 12L);
         }
     };
-    
+
     /**
      * The F2F_ASSEMBLY_CODE_ID_MAP field, maps the project category id to the submission type id for f2f/assembly/code
      */
@@ -89,34 +89,34 @@ public class EventBusServiceClient {
             put(39L, 1L);
         }
     };
-    
+
     /**
-     * The SUBMISSION_TYPE_ID_FOR_CHECKPOINT_SUBMISSION field 
+     * The SUBMISSION_TYPE_ID_FOR_CHECKPOINT_SUBMISSION field
      */
     public static final int SUBMISSION_TYPE_ID_FOR_CHECKPOINT_SUBMISSION = 4;
-    
+
     /**
-     * The SUBMISSION_TYPE_ID_FOR_APPEAL field 
+     * The SUBMISSION_TYPE_ID_FOR_APPEAL field
      */
     public static final int SUBMISSION_TYPE_ID_FOR_APPEAL = 5;
-    
+
     /**
-     * The SUBMISSION_TYPE_ID_FOR_LATE_DELIVERABLE field 
+     * The SUBMISSION_TYPE_ID_FOR_LATE_DELIVERABLE field
      */
     public static final int SUBMISSION_TYPE_ID_FOR_LATE_DELIVERABLE = 6;
-    
+
     /**
-     * The SUBMISSION_TYPE_ID_FOR_PROJECT_UPDATE field 
+     * The SUBMISSION_TYPE_ID_FOR_PROJECT_UPDATE field
      */
     public static final int SUBMISSION_TYPE_ID_FOR_PROJECT_UPDATE = 7;
-    
+
     /**
-     * The LATE_DELIVERABLE_TYPE_ID_FOR_USER field 
+     * The LATE_DELIVERABLE_TYPE_ID_FOR_USER field
      */
     public static final int LATE_DELIVERABLE_TYPE_ID_FOR_USER = 1;
-    
+
     /**
-     * The LATE_DELIVERABLE_TYPE_ID_FOR_MANAGER field 
+     * The LATE_DELIVERABLE_TYPE_ID_FOR_MANAGER field
      */
     public static final int LATE_DELIVERABLE_TYPE_ID_FOR_MANAGER = 2;
 
@@ -168,7 +168,7 @@ public class EventBusServiceClient {
             EventBusServiceClient.fireEvent(msg);
         }
     }
-    
+
     /**
      * Fire submission create event
      *
@@ -192,7 +192,7 @@ public class EventBusServiceClient {
         msg.setPayload("legacySubmissionId", legacyId);
         EventBusServiceClient.fireEvent(msg);
     }
-    
+
     /**
      * Fire late deliverable update event
      *
@@ -216,7 +216,7 @@ public class EventBusServiceClient {
         data.put("lateDeliverableTypeId", managerId <= 0 ? LATE_DELIVERABLE_TYPE_ID_FOR_USER : LATE_DELIVERABLE_TYPE_ID_FOR_MANAGER);
         data.put("explanation", explanation);
         data.put("deadline", deadline);
-        
+
         if (managerId > 0) {
             data.put("justified", justified);
             data.put("response", response);
@@ -226,7 +226,7 @@ public class EventBusServiceClient {
         msg.setPayload("lateDeliverableId", lateDeliverableId);
         EventBusServiceClient.fireEvent(msg);
     }
-    
+
     /**
      * Fire project update event
      *
@@ -256,11 +256,11 @@ public class EventBusServiceClient {
                     deps.add(map);
                 }
                 phaseMap.put("dependencies", deps);
-                
+
                 convertedPhases.add(phaseMap);
             }
         }
-        
+
         EventMessage msg = EventMessage.getDefaultReviewEvent();
         msg.setPayload("challengeId", challengeId);
         msg.setPayload("userId", userId);
@@ -271,7 +271,7 @@ public class EventBusServiceClient {
         msg.setPayload("data", data);
         EventBusServiceClient.fireEvent(msg);
     }
-    
+
     /**
      * Fire project update event
      *
@@ -288,10 +288,10 @@ public class EventBusServiceClient {
         msg.setPayload("data", projectPaymentsForm);
         EventBusServiceClient.fireEvent(msg);
     }
-    
+
     /**
      * Convert phase to map
-     * 
+     *
      * If onlyIdInclude is true, only the phase id will be put in the result
      *
      * @param phase the phase to use
@@ -324,10 +324,10 @@ public class EventBusServiceClient {
                 }
             }
         }
-        
+
         return map;
     }
-    
+
     /**
      * Fire event
      *
@@ -335,6 +335,8 @@ public class EventBusServiceClient {
      */
     public static void fireEvent(EventMessage eventMessage) {
         try {
+            LOGGER.debug("will fire event to bus API");
+
             HttpClient client = new DefaultHttpClient();
             HttpPost httpPost = new HttpPost(ConfigHelper.getEventBusEndpoint());
 
@@ -350,9 +352,8 @@ public class EventBusServiceClient {
             if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_NO_CONTENT) {
                 LOGGER.info("Unable to fire event:" + response.getStatusLine().getReasonPhrase());
             } else {
-                LOGGER.debug("successfully fired the event");
+                LOGGER.debug("successfully fired the event in topic: " + eventMessage.getData().get("topic"));
             }
-
         } catch (Exception e) {
             LOGGER.error("Fail to fire event", e);
         }

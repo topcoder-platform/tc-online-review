@@ -53,7 +53,7 @@
 
      <layout class="org.apache.log4j.PatternLayout">
        <param name="ConversionPattern" value="%d %-5p [%c] %m%n"/>
-     </layout>	    
+     </layout>
    </appender>
    -->
 
@@ -173,6 +173,10 @@
       <priority value="INFO"/>
    </category>
 
+   <category name="com.cronos.onlinereview.actions.event">
+      <priority value="DEBUG"/>
+   </category>
+
    <!-- Limit the com.topcoder.management.deliverable.late category to INFO as its DEBUG is verbose -->
    <category name="com.topcoder.management">
       <priority value="INFO"/>
@@ -213,19 +217,19 @@
      <priority value="TRACE" class="org.jboss.logging.XLevel"/>
    </category>
    -->
-  
+
    <!--
        | Logs these events to SNMP:
            - server starts/stops
            - cluster evolution (node death/startup)
            - When an EJB archive is deployed (and associated verified messages)
            - When an EAR archive is deployed
-      	 
+
    <category name="org.jboss.system.server.Server">
      <priority value="INFO" />
      <appender-ref ref="TRAP_LOG"/>
    </category>
-  
+
    <category name="org.jboss.ha.framework.interfaces.HAPartition.lifecycle">
      <priority value="INFO" />
      <appender-ref ref="TRAP_LOG"/>
@@ -235,18 +239,18 @@
      <priority value="ERROR" />
      <appender-ref ref="TRAP_LOG"/>
    </category>
-   
+
    <category name="org.jboss.ejb.EJBDeployer">
      <priority value="INFO" />
      <appender-ref ref="TRAP_LOG"/>
    </category>
-   
+
    <category name="org.jboss.deployment.EARDeployer">
      <priority value="INFO" />
      <appender-ref ref="TRAP_LOG"/>
    </category>
-   
-  
+
+
    -->
 
 
