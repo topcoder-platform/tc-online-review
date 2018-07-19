@@ -36,7 +36,7 @@
                debug="${debug}" verbose="${verbose}"
                includeantruntime="false"
                source="1.5" target="1.5">
-            <classpath refid="buildlibs"/>
+            <classpath refid="buildlibs" />
         </javac>
     </target>
 
@@ -82,12 +82,21 @@
             <fileset file="${tcwebcommon.jar}"/>
             <fileset file="${shared.jar}"/>
             <fileset file="${jbossall-client.jar}"/>
+            <fileset file="${rs-api.jar}"/>
+            <fileset file="${core.api.jar}"/>
+            <fileset file="${gson.jar}"/>
+            <fileset file="${javax.persistence.jar}"/>
+            <fileset file="${javax.annotation-api.jar}"/>
+            <fileset file="${slf4j-api.jar}"/>
+            <fileset file="${slf4j-log4j12.jar}"/>
             <fileset dir="${ext_libdir}/svnkit" includes="*.jar"/>
             <fileset dir="${ext_libdir}/aws" includes="*.jar" />
             <fileset dir="${ext_libdir}/httpcomponents" includes="*.jar" />
             <fileset dir="${ext_libdir}/joda-time" includes="*.jar" />
             <fileset dir="${ext_libdir}/commons" includes="*.jar"/>
             <fileset dir="${ext_libdir}/jackson" includes="*.jar"/>
+            <fileset dir="${ext_libdir}/${hk2.path}" includes="*.jar"/>
+            <fileset dir="${ext_libdir}/${jersey-client.path}" includes="*.jar"/>
 
             <!--components-->
             <fileset file="${authentication_factory.jar}"/>
