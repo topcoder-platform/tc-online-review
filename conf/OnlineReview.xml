@@ -4899,6 +4899,9 @@
                 <Value>Global Payment Manager</Value>
                 <Value>Payment Manager</Value>
                 <Value>Global Manager</Value>
+		<Value>Cockpit Project User</Value>    
+                <Value>Client Manager</Value>
+                <Value>Manager</Value>
             </Property>
 
             <Property name="View Project Management Console">
