@@ -151,7 +151,7 @@
 @thurgood.username@=Thurgood
 @thurgood.password@=password
 @topcoder_api_base_url@=http://api.topcoder.com/v2/develop/challenges
-@topcoder_api_base_url_v3@=http://192.168.31.105:8084/v3/
+@topcoder_api_base_url_v3@=http://api.topcoder.com/v3/challenges
 @amazon_sns_arn@=
 @amazonSNSAccessKey@=
 @amazonSNSSecretKey@=
@@ -164,7 +164,7 @@
 #@distributionToolOutputDir@=/home/tcs/temp_files/tmp_dist
 #@distributionScriptsBase@=/home/tcs/onlinereview/distribution_scripts
 #@exttemplatesdir@=/home/tcs/onlinereview/templates/
-#@pactJNDIAddress@=jnp://localhost:1199 
+#@pactJNDIAddress@=jnp://localhost:1199
 
 ### mockxmlauthenticator.xmlfile - when defined it is excluded from the build, comment it out to include in build for development
 # exclude.mockxmlauthenticator.xmlfile=yes, exclude me!
@@ -252,4 +252,3 @@
 @svn.temp.files.basedir@=<<path_to_directory>>
 # An URL for path-based permissions file in SVN repository
 @svn.authz.file.url@=<<URL_for_permissions_file>>
-

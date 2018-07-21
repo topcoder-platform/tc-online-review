@@ -8,12 +8,12 @@
        <!ENTITY managerNotificationEmailTemplatesBase "@exttemplatesdir@">
        <!ENTITY notificationEmailFromAddress "@notificationEmailFromAddress@">
 ]>
-<CMConfig>   
+<CMConfig>
     <!--
         ===== Configuration for Phase Handlers from Online Review Phases component =====
     -->
     <!-- Default namespace for AbstractPhaseHandler, it contains default values -->
-    <Config name="com.cronos.onlinereview.phases.AbstractPhaseHandler">    
+    <Config name="com.cronos.onlinereview.phases.AbstractPhaseHandler">
         <Property name="DefaultStartPhaseEmail">
             <Property name="EmailSubject">
                 <Value>%PHASE_TYPE% Start\\: %PROJECT_NAME%</Value>
@@ -30,8 +30,8 @@
                 <Value>&notificationEmailFromAddress;</Value>
             </Property>
         </Property>
-    </Config>    
-    
+    </Config>
+
     <!-- Default namespace for Specification Submission handler -->
     <Config name="com.cronos.onlinereview.phases.CheckpointSubmissionPhaseHandler">
         <Property name="ManagerHelperNamespace">
@@ -128,7 +128,7 @@
             </Property>
         </Property>
     </Config>
-        
+
 
     <Config name="com.cronos.onlinereview.phases.CheckpointScreeningPhaseHandler">
         <Property name="ManagerHelperNamespace">
@@ -237,7 +237,7 @@
             </Property>
             <Property name="ScorecardLink">
                 <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
-                <Value>http://studio.topcoder.com/?module=ViewScorecardDetails&amp;amp;rid={0,number,#}</Value>            
+                <Value>http://studio.topcoder.com/?module=ViewScorecardDetails&amp;amp;rid={0,number,#}</Value>
             </Property>
             <Property name="EmailFromAddress">
                 <Value>&notificationEmailFromAddress;</Value>
@@ -341,7 +341,7 @@
             </Property>
         </Property>
     </Config>
-    
+
     <Config name="com.cronos.onlinereview.phases.SpecificationSubmissionPhaseHandler">
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
@@ -818,7 +818,7 @@
             </Property>
             <Property name="ScorecardLink">
                 <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
-                <Value>http://studio.topcoder.com/?module=ViewScorecardDetails&amp;amp;rid={0,number,#}</Value>            
+                <Value>http://studio.topcoder.com/?module=ViewScorecardDetails&amp;amp;rid={0,number,#}</Value>
             </Property>
             <Property name="EmailFromAddress">
                 <Value>&notificationEmailFromAddress;</Value>
@@ -832,7 +832,7 @@
             <Value>5</Value>
         </Property>
         <Property name="PeerReviewScoreAggregationAPI">
-            <Value>http://localhost:8090/v3/challenges/{challengeId}/aggregateScores</Value>
+            <Value>@topcoder_api_base_url_v3@/{challengeId}/aggregateScores</Value>
         </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
