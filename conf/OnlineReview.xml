@@ -5262,6 +5262,14 @@
 	            <Value>@checkpoint_submission_download_url@</Value>
 	        </Property>
         </Property>
+        <Property name="aws_s3">
+            <Property name="bucket">
+                <Value>@aws_s3_bucket@</Value>
+            </Property>
+            <Property name="expire">
+                <Value>@aws_s3_expire@</Value>
+            </Property>
+        </Property>
     </Config>
 
     <!--

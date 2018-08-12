@@ -1037,6 +1037,16 @@ public class ConfigHelper {
     private static int expirationTime;
 
     /**
+     * AWS S3 bucket
+     */
+    private static String s3Bucket;
+
+    /**
+     * AWS S3 presigned expire time in millisecond
+     */
+    private static long preSignedExpTimeMilis;
+
+    /**
      * JWT default expiration time (1 day)
      */
     private static final int DEFAULT_EXPIRATION_TIME = 60 * 24;
@@ -1656,6 +1666,13 @@ public class ConfigHelper {
                 if (expirationTime < 0) expirationTime = DEFAULT_EXPIRATION_TIME;
             } catch (NumberFormatException e) {
                 expirationTime = DEFAULT_EXPIRATION_TIME;
+            }
+            Property awsS3 = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "aws_s3");
+            s3Bucket = awsS3.getValue("bucket");
+            try {
+                preSignedExpTimeMilis = Long.parseLong(awsS3.getValue("expire"));
+            } catch (Exception e) {
+                preSignedExpTimeMilis = 60 * 60 * 1000;
             }
         } catch (UnknownNamespaceException une) {
             System.out.println(une.getMessage());
@@ -2575,4 +2592,19 @@ public class ConfigHelper {
         return checkpointSubmissionDownloadUrl;
     }
 
+    /**
+     * Get S3 Bucket
+     * @return s3 bucket
+     */
+    public static String getS3Bucket() {
+        return s3Bucket;
+    }
+
+    /**
+     * Get S3 presigned expire time in millis
+     * @return expire time
+     */
+    public static long getPreSignedExpTimeMilis() {
+        return preSignedExpTimeMilis;
+    }
 }

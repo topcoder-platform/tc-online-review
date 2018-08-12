@@ -3,6 +3,8 @@
  */
 package com.cronos.onlinereview.util;
 
+import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -12,6 +14,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.amazonaws.auth.PropertiesCredentials;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.opensymphony.xwork2.TextProvider;
 import com.topcoder.management.deliverable.SubmissionType;
 import com.topcoder.management.resource.ResourceManager;
@@ -48,6 +52,38 @@ import com.topcoder.util.errorhandling.BaseException;
  * @version 2.0
  */
 public final class PhasesDetailsServices {
+
+    /**
+     * The AWS credentials file.
+     */
+    private static final String AWS_CREDENTIALS_FILE = "AwsS3Credentials.properties";
+
+    /**
+     * AWS S3 client
+     */
+    private static final AmazonS3Client s3Client;
+
+    /**
+     * Expire time for presigned s3 url in millis
+     */
+    private static long presignedExpireMillis;
+
+    /**
+     * AWS S3 bucket name
+     */
+    private static final String s3Bucket;
+
+    static {
+        try {
+            ClassLoader loader = PhasesDetailsServices.class.getClassLoader();
+            URL credentialURL = loader.getResource(AWS_CREDENTIALS_FILE);
+            s3Bucket = ConfigHelper.getS3Bucket();
+            presignedExpireMillis = ConfigHelper.getPreSignedExpTimeMilis();
+            s3Client = new AmazonS3Client(new PropertiesCredentials(new File(credentialURL.getFile())));
+        } catch (Throwable e) {
+            throw new RuntimeException("Failed load to Amazon S3 CLient", e);
+        }
+    }
 
     /**
      * This constructor is declared private to prevent class instantiation.
@@ -357,6 +393,7 @@ public final class PhasesDetailsServices {
             phaseGroup.setPastCheckpointSubmissions(
                 getPreviousUploadsForSubmissions(request, project, submissions,
                                                  Constants.VIEW_ALL_CHECKPOINT_SUBMISSIONS_PERM_NAME));
+            generateS3PreSignedUrlForSubmission(submissions);
             phaseGroup.setCheckpointSubmissions(submissions);
         }
 
@@ -444,7 +481,7 @@ public final class PhasesDetailsServices {
             // Find all deleted submissions for specified project
             Submission[] allDeletedSubmissions = ActionsHelper.getProjectSubmissions(
                     project.getId(), null, "Deleted", true);
-
+            generateS3PreSignedUrlForSubmission(allDeletedSubmissions);
             pastSubmissions = new Upload[submissions.length][];
 
             for (int j = 0; j < pastSubmissions.length; ++j) {
@@ -558,6 +595,7 @@ public final class PhasesDetailsServices {
             phaseGroup.setPastSubmissions(getPreviousUploadsForSubmissions(request, project, submissions,
                                                                            Constants.VIEW_ALL_SUBM_PERM_NAME));
 
+            generateS3PreSignedUrlForSubmission(submissions);
             phaseGroup.setSubmissions(submissions);
         }
 
@@ -578,6 +616,7 @@ public final class PhasesDetailsServices {
                     }
                 }
                 submissions = tempSubs.toArray(new Submission[tempSubs.size()]);
+                generateS3PreSignedUrlForSubmission(submissions);
                 phaseGroup.setSubmissions(submissions);
             }
 
@@ -665,6 +704,7 @@ public final class PhasesDetailsServices {
             comparator.assignSubmitters(submitters);
             Arrays.sort(submissions, comparator);
 
+            generateS3PreSignedUrlForSubmission(submissions);
             phaseGroup.setSubmissions(submissions);
 
             // Some resource roles can always see links to reviews (if there are any).
@@ -934,6 +974,7 @@ public final class PhasesDetailsServices {
             UploadManager upMgr = ActionsHelper.createUploadManager();
             Submission[] submissions = upMgr.searchSubmissions(new AndFilter(phaseFilter, submissionTypeFilter));
             if (submissions.length > 0) {
+                generateS3PreSignedUrlForSubmission(submissions);
                 phaseGroup.setSpecificationSubmission(submissions[0]);
                 ResourceManager resourceManager = ActionsHelper.createResourceManager();
                 phaseGroup.setSpecificationSubmitter(resourceManager.getResource(submissions[0].getUpload().getOwner()));
@@ -1234,6 +1275,7 @@ public final class PhasesDetailsServices {
                 Constants.CONTEST_SUBMISSION_TYPE_NAME, Constants.ACTIVE_SUBMISSION_STATUS_NAME, false);
         }
         if (submissions != null) {
+            generateS3PreSignedUrlForSubmission(submissions);
             phaseGroup.setSubmissions(submissions);
         }
     }
@@ -1340,6 +1382,21 @@ public final class PhasesDetailsServices {
 
             totalAppeals[i] = innerTotalAppeals;
             unresolvedAppeals[i] = innerUnresolvedAppeals;
+        }
+    }
+
+    /**
+     * Generate presigned s3 url
+     *
+     * @param submissions submission
+     */
+    private static void generateS3PreSignedUrlForSubmission(Submission[] submissions) {
+        for (Submission submission : submissions) {
+            String filename = submission.getUpload().getParameter();
+            Date exp = new Date();
+            exp.setTime(exp.getTime() + presignedExpireMillis);
+            // Put S3 link to description
+            submission.getUpload().setDescription(s3Client.generatePresignedUrl(s3Bucket, filename, exp).toString());
         }
     }
 }
