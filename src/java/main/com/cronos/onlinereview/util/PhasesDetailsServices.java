@@ -1392,11 +1392,16 @@ public final class PhasesDetailsServices {
      */
     private static void generateS3PreSignedUrlForSubmission(Submission[] submissions) {
         for (Submission submission : submissions) {
-            String filename = submission.getUpload().getParameter();
-            Date exp = new Date();
-            exp.setTime(exp.getTime() + presignedExpireMillis);
-            // Put S3 link to description
-            submission.getUpload().setDescription(s3Client.generatePresignedUrl(s3Bucket, filename, exp).toString());
+            String urlPath = submission.getUpload().getUrl();
+            System.out.println("DDD id:" + submission.getUpload().getId() + " path: " + urlPath);
+            if (urlPath != null) {
+                System.out.println("before set path");
+                if (urlPath.startsWith("http://") || urlPath.startsWith("https://")) continue;
+                System.out.println("set path");
+                Date exp = new Date();
+                exp.setTime(exp.getTime() + presignedExpireMillis);
+                submission.getUpload().setUrl(s3Client.generatePresignedUrl(s3Bucket, urlPath, exp).toString());
+            }
         }
     }
 }

@@ -170,13 +170,17 @@
                                                 </c:if>
                                             </c:if>
                                             <c:if test="${not downloadCurrentIterativeReview || underIterativeReview}">
-                                                <a href="${submission.upload.description}" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
-                                                <%-- <c:if test="${project.projectCategory.projectType.id ne 3}">
-                                                    <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                <c:if test="${not empty submission.upload.url}">
+                                                    <a href="${submission.upload.url}" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                                 </c:if>
-                                                <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                    <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
-                                                </c:if> --%>
+                                                <c:if test="${empty submission.upload.url}">
+                                                    <c:if test="${project.projectCategory.projectType.id ne 3}">
+                                                        <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    </c:if>
+                                                    <c:if test="${project.projectCategory.projectType.id eq 3}">
+                                                        <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    </c:if>
+                                                </c:if>
                                                 <c:if test="${not empty submitter}">
                                                     (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
                                                 </c:if>
@@ -284,13 +288,17 @@
                                         <tr id="PrevSubm${submBoxIdx}_${submissionStatus.index}" class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}' style="display:none;">
                                             <td class="value" colspan="2" nowrap="nowrap">
                                                     <img border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowMore.img' />" class="Outline" style="visibility:hidden;" />
-                                                    <a href="${pastSubmission.description}" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
-                                                    <%-- <c:if test="${project.projectCategory.projectType.id ne 3}">
-                                                        <a href="<or:url value='/actions/DownloadContestSubmission?uid=${pastSubmission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
+                                                    <c:if test="${not empty pastSubmission.url}">
+                                                        <a href="${pastSubmission.url}" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
                                                     </c:if>
-                                                    <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                        <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&uid=${pastSubmission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
-                                                    </c:if> --%>
+                                                    <c:if test="${empty pastSubmission.url}">
+                                                        <c:if test="${project.projectCategory.projectType.id ne 3}">
+                                                            <a href="<or:url value='/actions/DownloadContestSubmission?uid=${pastSubmission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
+                                                        </c:if>
+                                                        <c:if test="${project.projectCategory.projectType.id eq 3}">
+                                                            <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&uid=${pastSubmission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
+                                                        </c:if>
+                                                    </c:if>
                                             </td>
                                             <td class="value" width="22%">${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
                                             <c:if test="${isThurgood}">
@@ -440,13 +448,17 @@
                                                         <img src="<or:text key='viewProjectDetails.box.Submission.icoFailed.img' />" alt="${placeStr}" border="0" />
                                                     </c:if>
                                                 </c:if>
-                                                <a href="${submission.upload.description}" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
-                                                <%-- <c:if test="${project.projectCategory.projectType.id ne 3}">
-                                                    <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                <c:if test="${not empty submission.upload.url}">
+                                                    <a href="${submission.upload.url}" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                                 </c:if>
-                                                <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                    <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
-                                                </c:if> --%>
+                                                <c:if test="${empty submission.upload.url}">
+                                                    <c:if test="${project.projectCategory.projectType.id ne 3}">
+                                                        <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    </c:if>
+                                                    <c:if test="${project.projectCategory.projectType.id eq 3}">
+                                                        <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    </c:if>
+                                                </c:if>
                                                 <c:if test="${not empty submitter}">
                                                     (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
                                                 </c:if>
@@ -540,9 +552,13 @@
                                     <tr class="light">
                                         <td class="value" nowrap="nowrap">
                                             <img src="<or:text key='viewProjectDetails.Submitter.icoWinner.img' />" alt="<or:text key='viewProjectDetails.Submitter.icoWinner.alt' />" border="0" class="Outline" />
-                                            <a href="${winningSubmission.upload.description}" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${winningSubmission.id}</a>
-                                            <%-- <a href="<or:url value='/actions/DownloadContestSubmission?uid=${winningSubmission.upload.id}' />"
-                                                title="<or:text key='viewProjectDetails.box.Submission.Download' />">${winningSubmission.id}</a> --%>
+                                            <c:if test="${not empty winningSubmission.upload.url}">
+                                                <a href="${winningSubmission.upload.url}" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${winningSubmission.id}</a>
+                                            </c:if>
+                                            <c:if test="${empty winningSubmission.upload.url}">
+                                                <a href="<or:url value='/actions/DownloadContestSubmission?uid=${winningSubmission.upload.id}' />"
+                                                    title="<or:text key='viewProjectDetails.box.Submission.Download' />">${winningSubmission.id}</a>
+                                            </c:if>
                                             (<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
                                         </td>
                                         <c:if test="${not empty group.aggregation}">
@@ -595,18 +611,26 @@
                                     <tr class="light">
                                         <td class="value" nowrap="nowrap">
                                             <img src="<or:text key='viewProjectDetails.Submitter.icoWinner.img' />" alt="<or:text key='viewProjectDetails.Submitter.icoWinner.alt' />" border="0" class="Outline" />
-                                            <a href="${winningSubmission.upload.description}" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${winningSubmission.id}</a>
-                                            <%-- <a href="<or:url value='/actions/DownloadContestSubmission?uid=${winningSubmission.upload.id}' />"
-                                                title="<or:text key='viewProjectDetails.box.Submission.Download' />">${winningSubmission.id}</a> --%>
+                                            <c:if test="${not empty winningSubmission.upload.url}">
+                                                <a href="${winningSubmission.upload.url}" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${winningSubmission.id}</a>
+                                            </c:if>
+                                            <c:if test="${empty winningSubmission.upload.url}">
+                                                <a href="<or:url value='/actions/DownloadContestSubmission?uid=${winningSubmission.upload.id}' />"
+                                                    title="<or:text key='viewProjectDetails.box.Submission.Download' />">${winningSubmission.id}</a> --%>
+                                            </c:if>
                                             (<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
                                         </td>
                                         <c:if test="${not empty group.finalFix}">
                                             <td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.finalFix.creationTimestamp)}</td>
                                             <td class="valueC" nowrap="nowrap">
-                                                <a href="${group.finalFix.description}" title="<or:text key='viewProjectDetails.box.FinalFix.Download.alt' />"><or:text key="viewProjectDetails.box.FinalFix.Download" /></a>
-                                                <%-- <a href="<or:url value='/actions/DownloadFinalFix?uid=${group.finalFix.id}' />"
+                                            <c:if test="${not empty group.finalFix.url}">
+                                                <a href="${group.finalFix.url}" title="<or:text key='viewProjectDetails.box.FinalFix.Download.alt' />"><or:text key="viewProjectDetails.box.FinalFix.Download" /></a>
+                                            </c:if>
+                                            <c:if test="${empty group.finalFix.url}">
+                                                <a href="<or:url value='/actions/DownloadFinalFix?uid=${group.finalFix.id}' />"
                                                     title="<or:text key='viewProjectDetails.box.FinalFix.Download.alt' />"><or:text
-                                                    key="viewProjectDetails.box.FinalFix.Download" /></a> --%>
+                                                    key="viewProjectDetails.box.FinalFix.Download" /></a>
+                                            </c:if>
                                             </td>
                                         </c:if>
                                         <c:if test="${empty group.finalFix}">
@@ -686,19 +710,27 @@
                                                 <img src="<or:text key='viewProjectDetails.Submitter.icoWinner.img' />"
                                                           alt="<or:text key='viewProjectDetails.Submitter.icoWinner.alt' />" border="0"
                                                           class="Outline"/>
-                                                <a href="${winningSubmission.upload.description}" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${winningSubmission.id}</a>
-                                                <%-- <a href="<or:url value='/actions/DownloadContestSubmission?uid=${winningSubmission.upload.id}' />"
-                                                        title="<or:text key='viewProjectDetails.box.Submission.Download' />">${winningSubmission.id}</a> --%>
+                                                <c:if test="${not empty winningSubmission.upload.url}">
+                                                    <a href="${winningSubmission.upload.url}" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${winningSubmission.id}</a>
+                                                </c:if>
+                                                <c:if test="${empty winningSubmission.upload.url}">
+                                                    <a href="<or:url value='/actions/DownloadContestSubmission?uid=${winningSubmission.upload.id}' />"
+                                                        title="<or:text key='viewProjectDetails.box.Submission.Download' />">${winningSubmission.id}</a>
+                                                </c:if>
                                                 (<tc-webtag:handle
                                                     coderId='${group.winner.allProperties["External Reference ID"]}'
                                                     context="${orfn:getHandlerContext(pageContext.request)}"/>)
                                             </td>
                                             <td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.finalFix.modificationTimestamp)}</td>
                                             <td class="valueC" nowrap="nowrap">
-                                                <a href="${group.finalFix.description}" title="<or:text key='viewProjectDetails.box.FinalFix.Download.alt' />"><or:text key="viewProjectDetails.box.FinalFix.Download"/></a>
-                                                <%-- <a href="<or:url value='/actions/DownloadFinalFix?uid=${group.finalFix.id}' />"
+                                                <c:if test="${not empty group.finalFix.url}">
+                                                    <a href="${group.finalFix.url}" title="<or:text key='viewProjectDetails.box.FinalFix.Download.alt' />"><or:text key="viewProjectDetails.box.FinalFix.Download"/></a>
+                                                </c:if>
+                                                <c:if test="${empty group.finalFix.url}">
+                                                    <a href="<or:url value='/actions/DownloadFinalFix?uid=${group.finalFix.id}' />"
                                                         title="<or:text key='viewProjectDetails.box.FinalFix.Download.alt' />"><or:text
-                                                        key="viewProjectDetails.box.FinalFix.Download"/></a> --%>
+                                                        key="viewProjectDetails.box.FinalFix.Download"/></a>
+                                                </c:if>
                                             </td>
                                             <td class="valueC" nowrap="nowrap">
                                                 <tc-webtag:handle
@@ -857,9 +889,13 @@
                                 <c:if test="${not empty group.specificationSubmission}">
                                     <tr class="light">
                                         <td class="value" nowrap="nowrap">
-                                            <a href="${group.specificationSubmission.description}" title="<or:text key='viewProjectDetails.box.Specification.Download' />">${group.specificationSubmission.id}</a>
-                                            <%-- <a href="<or:url value='/actions/DownloadSpecificationSubmission?uid=${group.specificationSubmission.upload.id}' />"
-                                                title="<or:text key='viewProjectDetails.box.Specification.Download' />">${group.specificationSubmission.id}</a> --%>
+                                        <c:if test="${not empty group.specificationSubmission.upload.url}">
+                                            <a href="${group.specificationSubmission.upload.url}" title="<or:text key='viewProjectDetails.box.Specification.Download' />">${group.specificationSubmission.id}</a>
+                                        </c:if>
+                                        <c:if test="${empty group.specificationSubmission.upload.url}">
+                                            <a href="<or:url value='/actions/DownloadSpecificationSubmission?uid=${group.specificationSubmission.upload.id}' />"
+                                                title="<or:text key='viewProjectDetails.box.Specification.Download' />">${group.specificationSubmission.id}</a>
+                                        </c:if>
                                             (<tc-webtag:handle coderId='${group.specificationSubmitter.allProperties["External Reference ID"]}'
                                                                context="${orfn:getHandlerContext(pageContext.request)}" />)
                                         </td>
@@ -984,14 +1020,18 @@
                                                     <img src="<or:text key='viewProjectDetails.box.Submission.icoFailed.img' />" alt="${placeStr}" border="0" />
                                                 </c:if>
                                             </c:if>
-                                            <a href="${submission.upload.description}" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
-                                            <%-- <c:if test="${project.projectCategory.projectType.id ne 3}">
+                                            <c:if test="${not empty submission.upload.url}">
+                                                <a href="${submission.upload.url}" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                            </c:if>
+                                            <c:if test="${empty submission.upload.url}">
+                                                <c:if test="${project.projectCategory.projectType.id ne 3}">
                                                 <a href="<or:url value='/actions/DownloadCheckpointSubmission?uid=${submission.upload.id}' />"
                                                        title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                </c:if>
+                                                <c:if test="${project.projectCategory.projectType.id eq 3}">
+                                                    <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                </c:if>
                                             </c:if>
-                                            <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
-                                            </c:if> --%>
                                             <c:if test="${not empty submitter}">
                                                 (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}'
                                                                    context="${orfn:getHandlerContext(pageContext.request)}" />)
@@ -1201,14 +1241,18 @@
                                         <tr id="PrevSubm${submBoxIdx}_${submissionStatus.index}" class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}' style="display:none;">
                                             <td class="value" colspan="2" nowrap="nowrap">
                                                 <img border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowMore.img' />" class="Outline" style="visibility:hidden;" />
-                                                <a href="${pastSubmission.description}" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
-                                                <%-- <c:if test="${project.projectCategory.projectType.id ne 3}">
-                                                        <a href="<or:url value='/actions/DownloadContestSubmission?uid=${pastSubmission.id}' />"
-                                                               title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
+                                                <c:if test="${not empty pastSubmission.url}">
+                                                    <a href="${pastSubmission.url}" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
                                                 </c:if>
-                                                <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                        <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${pastSubmission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
-                                                </c:if> --%>
+                                                <c:if test="${empty pastSubmission.url}">
+                                                    <c:if test="${project.projectCategory.projectType.id ne 3}">
+                                                            <a href="<or:url value='/actions/DownloadContestSubmission?uid=${pastSubmission.id}' />"
+                                                                   title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
+                                                    </c:if>
+                                                    <c:if test="${project.projectCategory.projectType.id eq 3}">
+                                                            <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${pastSubmission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
+                                                    </c:if>
+                                                </c:if>
                                             </td>
                                             <td class="value" width="12%">${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
                                             <td class="value" width="12%"><!-- @ --></td>
@@ -1328,13 +1372,17 @@
                                                     <img src="<or:text key='viewProjectDetails.box.Submission.icoFailed.img' />" alt="${placeStr}" border="0" />
                                                 </c:if>
                                             </c:if>
-                                            <a href="${submission.upload.description}" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
-                                            <%-- <c:if test="${project.projectCategory.projectType.id ne 3}">
-                                                <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                            <c:if test="${not empty submission.upload.url}">
+                                                <a href="${submission.upload.url}" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                             </c:if>
-                                            <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
-                                            </c:if> --%>
+                                            <c:if test="${empty submission.upload.url}">
+                                                <c:if test="${project.projectCategory.projectType.id ne 3}">
+                                                    <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                </c:if>
+                                                <c:if test="${project.projectCategory.projectType.id eq 3}">
+                                                    <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                </c:if>
+                                            </c:if>
                                             <c:if test="${isManager || group.iterativeReviewPhase.phaseStatus.name eq 'Closed'}">                              
                                                 (<tc-webtag:handle coderId='${group.iterativeReviewSubmitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
                                             </c:if>
