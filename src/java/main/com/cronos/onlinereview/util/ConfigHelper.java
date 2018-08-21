@@ -1012,6 +1012,16 @@ public class ConfigHelper {
     private static String checkpointSubmissionDownloadUrl;
 
     /**
+     * Event bus kafka topic
+     */
+    private static String kafkaTopic;
+
+    /**
+     * Event bus kafka originator
+     */
+    private static String kafkaOriginator;
+
+    /**
      * JWT Client Id
      */
     private static String clientId;
@@ -1657,6 +1667,8 @@ public class ConfigHelper {
             contestSubmissionDownloadUrl = eventBus.getValue("contestSubmissionDownloadUrl");
             checkpointSubmissionDownloadUrl = eventBus.getValue("checkpointSubmissionDownloadUrl");
             eventBusEndpoint = eventBus.getValue("endpoint");
+            kafkaTopic = eventBus.getValue("topic");
+            kafkaOriginator = eventBus.getValue("originator");
             clientId = eventBus.getValue("client_id");
             clientSecret = eventBus.getValue("client_secret");
             authDomain = eventBus.getValue("auth_domain");
@@ -2560,6 +2572,24 @@ public class ConfigHelper {
      */
     public static String getEventBusEndpoint() {
         return eventBusEndpoint;
+    }
+
+    /**
+     * Get kafka topic.
+     *
+     * @return the kafka topic
+     */
+    public static String getKafkaTopic() {
+        return kafkaTopic;
+    }
+
+    /**
+     * Get kafka topic.
+     *
+     * @return the kafka topic
+     */
+    public static String getKafkaOriginator() {
+        return kafkaOriginator;
     }
 
     /**

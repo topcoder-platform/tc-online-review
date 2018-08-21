@@ -170,6 +170,8 @@
 # exclude.mockxmlauthenticator.xmlfile=yes, exclude me!
 
 # configuration for event bus
+@topcoder_event_bus_topic@=or.notification.create
+@topcoder_event_bus_originator@=tc-online-review
 @topcoder_event_bus_url@=https://api.topcoder-dev.com/v5/bus/events
 @topcoder_event_bus_client_id@=5fctfjaLJHdvM04kSrCcC8yn0I4t1JTd
 @topcoder_event_bus_client_secret@=GhvDENIrYXo-d8xQ10fxm9k7XSVg491vlpvolXyWNBmeBdhsA5BAq2mH4cAAYS0x
@@ -252,6 +254,8 @@
 @svn.temp.files.basedir@=<<path_to_directory>>
 # An URL for path-based permissions file in SVN repository
 @svn.authz.file.url@=<<URL_for_permissions_file>>
+
+# AWS S3 Credentials for download submission
 @aws_s3_bucket@=topcoder-dev-submissions
 @aws_s3_expire@=3600000
 @aws_s3_access_key@=

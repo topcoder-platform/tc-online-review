@@ -17,14 +17,12 @@
            id="myRolesTable">
         <tr>
             <td class="title"><or:text key="viewProjectDetails.box.MyInfo" /></td>
-            <%--
             <c:if test="${empty myDeliverables}">
                 <td class="title"><!-- @ --></td>
             </c:if>
             <c:if test="${not empty myDeliverables}">
                 <td class="title"><or:text key="viewProjectDetails.box.MyDeliverabes" /></td>
-            </c:if> --%>
-            <td class="title"><!-- @ --></td>
+            </c:if>
             <td class="title"><or:text key="viewProjectDetails.box.OutstandingDeliverabes" /></td>
         </tr>
         <tr class="light">
@@ -98,8 +96,7 @@
                 </table>
             </td>
 
-            <td class="myRoleValues" width="27%" align="left" nowrap="nowrap"><!-- @ --></td>
-            <%-- <c:if test="${empty myDeliverables}">
+            <c:if test="${empty myDeliverables}">
                 <td class="myRoleValues" width="27%" align="left" nowrap="nowrap"><!-- @ --></td>
             </c:if>
             <c:if test="${not empty myDeliverables}">
@@ -118,7 +115,7 @@
                             </c:when>
                         </c:choose>
                         ${orfn:displayDate(pageContext.request, myDeliverableDates[deliverableStatus.index])}
-                        <c:if test="${empty myDeliverableLinks[deliverableStatus.index]}">
+                        <%-- <c:if test="${empty myDeliverableLinks[deliverableStatus.index]}">
                             <b><or:text key='Deliverable.${fn:replace(deliverable.name, " ", "")}' /></b><c:if
                                 test="${deliverableStatus.index != fn:length(myDeliverables) - 1}"><br />
                             </c:if>
@@ -137,10 +134,10 @@
                                      test="${deliverableStatus.index != fn:length(myDeliverables) - 1}"><br />
                                   </c:if>
                             </c:if>
-                        </c:if>
+                        </c:if>  --%>
                     </c:forEach>
                 </td>
-            </c:if>   --%>
+            </c:if>
 
             <td class="myRoleValues" width="37%" align="left" nowrap="nowrap">
                 <c:if test="${not empty outstandingDeliverables}">

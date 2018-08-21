@@ -292,11 +292,11 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
 
         Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForPhases(activePhases, allProjectResources);
 
-// removing upload link by implementing Submission API endpoint
-//        Deliverable[] myDeliverables = ActionsHelper.getMyDeliverables(deliverables, myResources);
+        // removing upload link by implementing Submission API endpoint
+        Deliverable[] myDeliverables = ActionsHelper.getMyDeliverables(deliverables, myResources);
         Deliverable[] outstandingDeliverables = ActionsHelper.getOutstandingDeliverables(deliverables);
 
-//        request.setAttribute("myDeliverables", myDeliverables);
+        request.setAttribute("myDeliverables", myDeliverables);
         request.setAttribute("outstandingDeliverables", outstandingDeliverables);
 
         request.setAttribute("unrespondedLateDeliverables", false);
@@ -320,24 +320,22 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         long currentTime = (new Date()).getTime();
 
         // These two arrays will contain Deadline near / Late / Completed codes for deliverables
-// removing upload link by implementing Submission API endpoint
-//        int[] myDeliverableStatuses = getDeliverableStatusCodes(myDeliverables, activePhases, currentTime);
+        int[] myDeliverableStatuses = getDeliverableStatusCodes(myDeliverables, activePhases, currentTime);
         int[] outstandingDeliverableStatuses =
             getDeliverableStatusCodes(outstandingDeliverables, activePhases, currentTime);
 
-//        Date[] myDeliverableDates = new Date[myDeliverables.length];
+        Date[] myDeliverableDates = new Date[myDeliverables.length];
         Date[] outstandingDeliverableDates = new Date[outstandingDeliverables.length];
 
-        // removing upload link by implementing Submission API endpoint
-//        for (int i = 0; i < myDeliverables.length; ++i) {
-//            Deliverable deliverable = myDeliverables[i];
-//            if (deliverable.isComplete()) {
-//                myDeliverableDates[i] = deliverable.getCompletionDate();
-//            } else {
-//                Phase phase = ActionsHelper.getPhaseForDeliverable(activePhases, deliverable);
-//                myDeliverableDates[i] = phase.getScheduledEndDate();
-//            }
-//        }
+       for (int i = 0; i < myDeliverables.length; ++i) {
+           Deliverable deliverable = myDeliverables[i];
+           if (deliverable.isComplete()) {
+               myDeliverableDates[i] = deliverable.getCompletionDate();
+           } else {
+               Phase phase = ActionsHelper.getPhaseForDeliverable(activePhases, deliverable);
+               myDeliverableDates[i] = phase.getScheduledEndDate();
+           }
+       }
 
         for (int i = 0; i < outstandingDeliverables.length; ++i) {
             Deliverable deliverable = outstandingDeliverables[i];
@@ -349,16 +347,15 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
             }
         }
 
-// removing upload link by implementing Submission API endpoint
-//        String[] myDeliverableLinks = generateDeliverableLinks(request, myDeliverables, phases);
+        String[] myDeliverableLinks = generateDeliverableLinks(request, myDeliverables, phases);
         Long[] outstandingDeliverableUserIds = getDeliverableUserIds(outstandingDeliverables, allProjectResources);
         Long[] outstandingDeliverableSubmissionUserIds = getDeliverableSubmissionUserIds(outstandingDeliverables);
 
-        // request.setAttribute("myDeliverableDates", myDeliverableDates);
+        request.setAttribute("myDeliverableDates", myDeliverableDates);
         request.setAttribute("outstandingDeliverableDates", outstandingDeliverableDates);
-//        request.setAttribute("myDeliverableStatuses", myDeliverableStatuses);
+        request.setAttribute("myDeliverableStatuses", myDeliverableStatuses);
         request.setAttribute("outstandingDeliverableStatuses", outstandingDeliverableStatuses);
-//        request.setAttribute("myDeliverableLinks", myDeliverableLinks);
+        request.setAttribute("myDeliverableLinks", myDeliverableLinks);
         request.setAttribute("outstandingDeliverableUserIds", outstandingDeliverableUserIds);
         request.setAttribute("outstandingDeliverableSubmissionUserIds", outstandingDeliverableSubmissionUserIds);
 
@@ -1209,4 +1206,3 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         return (reviews.length != 0) ? reviews[0] : null;
     }
 }
-

@@ -3,7 +3,6 @@
  */
 package com.cronos.onlinereview.actions.event;
 
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,18 +10,20 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
+import com.cronos.onlinereview.util.ConfigHelper;
+
 /**
  * Represents the EventMessage model.
  * It also provides util method to get the default review event
- * 
+ *
  * It's added in Topcoder - Online Review Update - Post to Event BUS v1.0
- * 
+ *
  * @author TCCoder
  * @version 1.0
  *
  */
 public class EventMessage {
-	/**
+	  /**
      * The fields field
      */
     private Map<String, Object> fields = new LinkedHashMap<String, Object>();
@@ -75,7 +76,7 @@ public class EventMessage {
 
     /**
      * Set payload
-     * 
+     *
      * This method is useful if users want to set an entity directly as the payload.
      *
      * @param payload the payload to use
@@ -95,7 +96,7 @@ public class EventMessage {
      * @throws java.lang.ClassCastException if the payload object can not be casted to Map<Sring, Object>
      */
     public EventMessage setPayload(String key, Object value) {
-        // throw java.lang.ClassCastException if the fields.get("payload") is not of Map<String, Object> type 
+        // throw java.lang.ClassCastException if the fields.get("payload") is not of Map<String, Object> type
         Map<String, Object> payload = (Map<String, Object>) fields.get("payload");
         if (payload == null) {
             payload = new LinkedHashMap<String, Object>();
@@ -116,14 +117,16 @@ public class EventMessage {
         Map<String, Object> copy = new LinkedHashMap<String, Object>(this.fields);
         return copy;
     }
-    
+
     /**
      * Get default review event
      *
      * @return the EventMessage result
      */
     public static EventMessage getDefaultReviewEvent() {
-    	return new EventMessage().setTopic("notifications.or.submissions.events").setOriginator("tc-online-review")
+        final String topic = ConfigHelper.getKafkaTopic();
+        final String originator = ConfigHelper.getKafkaOriginator();
+        return new EventMessage().setTopic(topic).setOriginator(originator)
                 .setMimeType("application/json").setTimestamp(new Date());
     }
 }
