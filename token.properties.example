@@ -252,3 +252,7 @@
 @svn.temp.files.basedir@=<<path_to_directory>>
 # An URL for path-based permissions file in SVN repository
 @svn.authz.file.url@=<<URL_for_permissions_file>>
+@aws_s3_bucket@=topcoder-dev-submissions
+@aws_s3_expire@=3600000
+@aws_s3_access_key@=
+@aws_s3_secret_key@=

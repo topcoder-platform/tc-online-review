@@ -17,12 +17,14 @@
            id="myRolesTable">
         <tr>
             <td class="title"><or:text key="viewProjectDetails.box.MyInfo" /></td>
+            <%--
             <c:if test="${empty myDeliverables}">
                 <td class="title"><!-- @ --></td>
             </c:if>
             <c:if test="${not empty myDeliverables}">
                 <td class="title"><or:text key="viewProjectDetails.box.MyDeliverabes" /></td>
-            </c:if>
+            </c:if> --%>
+            <td class="title"><!-- @ --></td>
             <td class="title"><or:text key="viewProjectDetails.box.OutstandingDeliverabes" /></td>
         </tr>
         <tr class="light">
@@ -95,7 +97,9 @@
                     </c:if>
                 </table>
             </td>
-            <c:if test="${empty myDeliverables}">
+
+            <td class="myRoleValues" width="27%" align="left" nowrap="nowrap"><!-- @ --></td>
+            <%-- <c:if test="${empty myDeliverables}">
                 <td class="myRoleValues" width="27%" align="left" nowrap="nowrap"><!-- @ --></td>
             </c:if>
             <c:if test="${not empty myDeliverables}">
@@ -136,7 +140,7 @@
                         </c:if>
                     </c:forEach>
                 </td>
-            </c:if>
+            </c:if>   --%>
 
             <td class="myRoleValues" width="37%" align="left" nowrap="nowrap">
                 <c:if test="${not empty outstandingDeliverables}">
