@@ -3,8 +3,14 @@
  */
 package com.cronos.onlinereview.util;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -25,10 +31,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.amazonaws.auth.PropertiesCredentials;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+
 import javax.ejb.CreateException;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
@@ -186,6 +198,38 @@ public class ActionsHelper {
      * Allows for no more than 300 requests per 3000 minutes, which is 1 request per 10 minutes in average.</p>
      */
     private static final Throttle longThrottle = new Throttle(300, 300 * (10*60*1000));
+
+    /**
+     * The AWS credentials file.
+     */
+    private static final String AWS_CREDENTIALS_FILE = "AwsS3Credentials.properties";
+
+    /**
+     * AWS S3 client
+     */
+    private static final AmazonS3Client s3Client;
+
+    /**
+     * Expire time for presigned s3 url in millis
+     */
+    private static long presignedExpireMillis;
+
+    /**
+     * AWS S3 bucket name
+     */
+    private static final String s3Bucket;
+
+    static {
+        try {
+            ClassLoader loader = ActionsHelper.class.getClassLoader();
+            URL credentialURL = loader.getResource(AWS_CREDENTIALS_FILE);
+            s3Bucket = ConfigHelper.getS3Bucket();
+            presignedExpireMillis = ConfigHelper.getPreSignedExpTimeMilis();
+            s3Client = new AmazonS3Client(new PropertiesCredentials(new File(credentialURL.getFile())));
+        } catch (Throwable e) {
+            throw new RuntimeException("Failed load to Amazon S3 CLient", e);
+        }
+    }
 
     /**
      * This constructor is declared private to prohibit instantiation of the <code>ActionsHelper</code> class.
@@ -1249,7 +1293,7 @@ public class ActionsHelper {
                     foundResources.add(resource);
                 }
             } else {
-                // Handle Post-Mortem, Approval, Iterative Review phases differently. Those resources are not mapped 
+                // Handle Post-Mortem, Approval, Iterative Review phases differently. Those resources are not mapped
                 // to phase type so they must be discovered based on resource role name
                 if (phase.getPhaseType().getName().equals(Constants.POST_MORTEM_PHASE_NAME)) {
                     if (resource.getResourceRole().getName().equals(Constants.POST_MORTEM_REVIEWER_ROLE_NAME)) {
@@ -1319,7 +1363,7 @@ public class ActionsHelper {
         } catch (NumberFormatException nfe) {
             winnerId = null;
         }
-        
+
         if (winnerId != null) {
             long submitterRoleId = LookupHelper.getResourceRole("Submitter").getId();
 
@@ -3562,5 +3606,44 @@ public class ActionsHelper {
             }
         }
         return lastModificationTime;
+    }
+
+    public static void outputDownloadS3File(String key, String contentDisposition, HttpServletResponse response) throws IOException {
+        try {
+            log.log(Level.INFO, "will download from s3: " + key);
+
+            S3Object s3Object = s3Client.getObject(new GetObjectRequest(s3Bucket, key));
+            InputStream in = (InputStream) s3Object.getObjectContent();
+
+            response.setHeader("Content-Type", s3Object.getObjectMetadata().getContentType());
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setIntHeader("Content-Length", (int) s3Object.getObjectMetadata().getContentLength());
+            response.setHeader("Content-Disposition", contentDisposition);
+
+            response.flushBuffer();
+
+            OutputStream out = null;
+
+            try {
+                out = response.getOutputStream();
+                byte[] buffer = new byte[65536];
+
+                for (;;) {
+                    int numOfBytesRead = in.read(buffer);
+                    if (numOfBytesRead == -1) {
+                        break;
+                    }
+                    out.write(buffer, 0, numOfBytesRead);
+                }
+            } finally {
+                in.close();
+                if (out != null) {
+                    out.close();
+                }
+            }
+        } catch(Exception e) {
+            log.log(Level.ERROR, "ex: " + e.getMessage());
+            throw new IOException("Error S3 download", e);
+        }
     }
 }
