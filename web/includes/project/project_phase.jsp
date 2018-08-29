@@ -174,7 +174,8 @@
                                                     <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                                 </c:if>
                                                 <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                    <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a> -->
+                                                    <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                                 </c:if>
                                                 <c:if test="${not empty submitter}">
                                                     (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
@@ -287,7 +288,8 @@
                                                         <a href="<or:url value='/actions/DownloadContestSubmission?uid=${pastSubmission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
                                                     </c:if>
                                                     <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                        <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&uid=${pastSubmission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
+                                                        <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&uid=${pastSubmission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a> -->
+                                                        <a href="<or:url value='/actions/DownloadContestSubmission?uid=${pastSubmission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
                                                     </c:if>
                                             </td>
                                             <td class="value" width="22%">${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
@@ -442,7 +444,8 @@
                                                     <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                                 </c:if>
                                                 <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                    <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a> -->
+                                                    <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                                 </c:if>
                                                 <c:if test="${not empty submitter}">
                                                     (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
@@ -977,7 +980,9 @@
                                                        title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                             </c:if>
                                             <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a> -->
+                                                <a href="<or:url value='/actions/DownloadCheckpointSubmission?uid=${submission.upload.id}' />"
+                                                       title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                             </c:if>
                                             <c:if test="${not empty submitter}">
                                                 (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}'
@@ -1193,7 +1198,9 @@
                                                                title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
                                                 </c:if>
                                                 <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                        <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${pastSubmission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
+                                                        <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${pastSubmission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a> -->
+                                                        <a href="<or:url value='/actions/DownloadContestSubmission?uid=${pastSubmission.id}' />"
+                                                               title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
                                                 </c:if>
                                             </td>
                                             <td class="value" width="12%">${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
@@ -1318,7 +1325,8 @@
                                                 <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                             </c:if>
                                             <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a> -->
+                                                <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                             </c:if>
                                             <c:if test="${isManager || group.iterativeReviewPhase.phaseStatus.name eq 'Closed'}">
                                                 (<tc-webtag:handle coderId='${group.iterativeReviewSubmitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
