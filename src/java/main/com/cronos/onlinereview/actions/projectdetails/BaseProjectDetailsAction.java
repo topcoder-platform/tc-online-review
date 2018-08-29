@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.actions.DynamicModelDrivenAction;
+import com.cronos.onlinereview.actions.event.EventBusServiceClient;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.model.DynamicModel;
@@ -75,8 +76,13 @@ import com.topcoder.util.file.templatesource.FileTemplateSource;
  * <b>Thread Safety:</b>Struts 2 Action objects are instantiated for each request, so there are no thread-safety issues.
  * </p>
  *
+ * <p>
+ * Changes in Version 2.1 - Topcoder - Online Review Update - Post to Event Bus Part 2 v1.0
+ * - fire the submission upload event when the f2f/assembly/code/checkpoint submissions are uploaded
+ * </p>
+ *
  * @author TCSASSEMBLER
- * @version 2.0
+ * @version 2.1
  */
 public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction  {
     /**
@@ -183,24 +189,38 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
 
         // At this point, redirect-after-login attribute should be removed (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
-
-        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
-        UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
-
         UploadManager upMgr = ActionsHelper.createUploadManager();
-        Submission[] submissions = upMgr.searchSubmissions(SubmissionFilterBuilder.createUploadIdFilter(upload.getId()));
-        Submission submission = (submissions.length != 0) ? submissions[0] : null;
 
-        String contentDisposition;
-        if (submission != null) {
-            contentDisposition = "attachment; filename=\"submission-" + submission.getId() + "-"
-                                 + uploadedFile.getRemoteFileName() + "\"";
+        System.out.println("processSubmissionDownload");
+        if (upload.getUrl() == null) {
+            System.out.println("normal download");
+
+            FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
+            UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
+
+            Submission[] submissions = upMgr.searchSubmissions(SubmissionFilterBuilder.createUploadIdFilter(upload.getId()));
+            Submission submission = (submissions.length != 0) ? submissions[0] : null;
+
+            String contentDisposition;
+            if (submission != null) {
+                contentDisposition = "attachment; filename=\"submission-" + submission.getId() + "-"
+                                     + uploadedFile.getRemoteFileName() + "\"";
+            } else {
+                contentDisposition = "attachment; filename=\"upload-" + upload.getId() + "-"
+                                     + uploadedFile.getRemoteFileName() + "\"";
+            }
+
+            outputDownloadedFile(uploadedFile, contentDisposition, response);
         } else {
-            contentDisposition = "attachment; filename=\"upload-" + upload.getId() + "-"
-                                 + uploadedFile.getRemoteFileName() + "\"";
-        }
+            System.out.println("upload url: " + upload.getUrl());
+            String path = new URL(upload.getUrl()).getPath();
+            int sep = path.lastIndexOf( '/' );
+            String key = ( sep < 0 ) ? path : path.substring( sep + 1 );
 
-        outputDownloadedFile(uploadedFile, contentDisposition, response);
+            String contentDisposition = "attachment; filename=\"" + key + "\"";
+
+            ActionsHelper.outputDownloadS3File(key, contentDisposition, response);
+        }
     }
 
     /**
@@ -214,7 +234,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
      * @throws FileDoesNotExistException if an unexpected error occurs.
      * @throws IOException if an unexpected error occurs.
      */
-    protected void outputDownloadedFile(UploadedFile uploadedFile, String contentDisposition, HttpServletResponse response) 
+    protected void outputDownloadedFile(UploadedFile uploadedFile, String contentDisposition, HttpServletResponse response)
     throws PersistenceException, FileDoesNotExistException, IOException {
 
         InputStream in = uploadedFile.getInputStream();
@@ -324,7 +344,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         }
 
         // Get all phases for the current project (needed to do permission checks)
-        Project project = verification.getProject(); 
+        Project project = verification.getProject();
         Phase[] phases = ActionsHelper.getPhasesForProject(
                 ActionsHelper.createPhaseManager(false), verification.getProject());
 
@@ -643,6 +663,20 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
 
         AmazonSNSHelper.publishProjectUpdateEvent(project);
 
+        // fire the submission creation event
+        Long devTypeId = EventBusServiceClient.F2F_ASSEMBLY_CODE_ID_MAP.get(project.getProjectCategory().getId());
+        int submissionTypeId = devTypeId == null ? 0 : devTypeId.intValue();
+        boolean isCheckPointSubmission = Constants.CHECKPOINT_SUBMISSION_TYPE_NAME.equals(submissionTypeName);
+        submissionTypeId = isCheckPointSubmission
+                ? EventBusServiceClient.SUBMISSION_TYPE_ID_FOR_CHECKPOINT_SUBMISSION : submissionTypeId;
+
+        if (submissionTypeId > 0) {
+            String fileUrl = isCheckPointSubmission ? String.format(ConfigHelper.getCheckpointSubmissionDownloadUrl(), upload.getId())
+                    : String.format(ConfigHelper.getContestSubmissionDownloadUrl(), upload.getId());
+            EventBusServiceClient.fireSubmissionCreateEvent(project.getId(),
+                    AuthorizationHelper.getLoggedInUserId(request), upload.getParameter(), fileUrl, submission.getId(), submissionTypeId);
+        }
+
         this.pid = project.getId();
         return Constants.SUCCESS_FORWARD_NAME;
     }
@@ -666,7 +700,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         if (reviewerUserIds.size() == 0) {
             return;
         }
-        
+
         Resource nextSubmitter = ActionsHelper.createResourceManager().getResource(
                 nextEarliestSubmission.getUpload().getOwner());
         String nextSubmitterHandle = (String) nextSubmitter.getProperty("Handle");
@@ -913,4 +947,3 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         this.pid = pid;
     }
 }
-

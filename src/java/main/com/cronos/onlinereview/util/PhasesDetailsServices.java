@@ -645,7 +645,7 @@ public final class PhasesDetailsServices {
                         break;
                     }
                 }
-                
+
                 if (myResource == null) {
                     throw new BaseException("Unable to find the Submitter resource " +
                             "associated with the current user for project " + project.getId());
@@ -891,8 +891,8 @@ public final class PhasesDetailsServices {
 
         if (phaseName.equalsIgnoreCase(Constants.FINAL_FIX_PHASE_NAME)) {
             Upload[] uploads = ActionsHelper.getPhaseUploads(phase.getId(), "Final Fix");
-            
-            if (uploads.length > 0) { 
+
+            if (uploads.length > 0) {
                 phaseGroup.setFinalFix(uploads[0]);
             }
         }
@@ -1084,7 +1084,7 @@ public final class PhasesDetailsServices {
                         break;
                     }
                 }
-                
+
                 if (myResource == null) {
                     throw new BaseException("Unable to find the Submitter resource " +
                             "associated with the current user for project " + project.getId());
@@ -1250,9 +1250,9 @@ public final class PhasesDetailsServices {
      */
     private static Resource[] getSubmitters(HttpServletRequest request,
             Resource[] allProjectResources, boolean isAfterAppealsResponse, boolean isStudioScreening, Resource[] prevSubmitters) {
-        final boolean canSeeSubmitters = (isAfterAppealsResponse 
-                || AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME) 
-                || (isStudioScreening && (AuthorizationHelper.hasUserRole(request, Constants.SCREENER_ROLE_NAME) || 
+        final boolean canSeeSubmitters = (isAfterAppealsResponse
+                || AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)
+                || (isStudioScreening && (AuthorizationHelper.hasUserRole(request, Constants.SCREENER_ROLE_NAME) ||
                 AuthorizationHelper.hasUserRole(request, Constants.CHECKPOINT_SCREENER_ROLE_NAME) )));
 
         if (!canSeeSubmitters) {

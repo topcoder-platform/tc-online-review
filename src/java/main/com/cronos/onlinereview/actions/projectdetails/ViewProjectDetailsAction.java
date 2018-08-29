@@ -292,6 +292,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
 
         Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForPhases(activePhases, allProjectResources);
 
+        // removing upload link by implementing Submission API endpoint
         Deliverable[] myDeliverables = ActionsHelper.getMyDeliverables(deliverables, myResources);
         Deliverable[] outstandingDeliverables = ActionsHelper.getOutstandingDeliverables(deliverables);
 
@@ -326,15 +327,15 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         Date[] myDeliverableDates = new Date[myDeliverables.length];
         Date[] outstandingDeliverableDates = new Date[outstandingDeliverables.length];
 
-        for (int i = 0; i < myDeliverables.length; ++i) {
-            Deliverable deliverable = myDeliverables[i];
-            if (deliverable.isComplete()) {
-                myDeliverableDates[i] = deliverable.getCompletionDate();
-            } else {
-                Phase phase = ActionsHelper.getPhaseForDeliverable(activePhases, deliverable);
-                myDeliverableDates[i] = phase.getScheduledEndDate();
-            }
-        }
+       for (int i = 0; i < myDeliverables.length; ++i) {
+           Deliverable deliverable = myDeliverables[i];
+           if (deliverable.isComplete()) {
+               myDeliverableDates[i] = deliverable.getCompletionDate();
+           } else {
+               Phase phase = ActionsHelper.getPhaseForDeliverable(activePhases, deliverable);
+               myDeliverableDates[i] = phase.getScheduledEndDate();
+           }
+       }
 
         for (int i = 0; i < outstandingDeliverables.length; ++i) {
             Deliverable deliverable = outstandingDeliverables[i];
@@ -1205,4 +1206,3 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         return (reviews.length != 0) ? reviews[0] : null;
     }
 }
-

@@ -1538,6 +1538,7 @@
                                upload.resource_id AS resource_id,
                                upload.parameter AS upload_parameter,
                                upload.upload_desc AS upload_desc,
+                               upload.url AS url,
                                upload_type_lu.upload_type_id AS upload_type_id,
                                upload_type_lu.create_user AS upload_type_create_user,
                                upload_type_lu.create_date AS upload_type_create_date,
@@ -4899,6 +4900,9 @@
                 <Value>Global Payment Manager</Value>
                 <Value>Payment Manager</Value>
                 <Value>Global Manager</Value>
+		<Value>Cockpit Project User</Value>
+                <Value>Client Manager</Value>
+                <Value>Manager</Value>
             </Property>
 
             <Property name="View Project Management Console">
@@ -5213,7 +5217,7 @@
         <Property name="topcoder_api_base_url">
             <Value>@topcoder_api_base_url@</Value>
         </Property>
-        
+
         <Property name="user_group_membership_url">
             <Value>@topcoder_api_base_url_v3@/groups?memberId=%s&amp;membershipType=User</Value>
         </Property>
@@ -5231,6 +5235,47 @@
         </Property>
         <Property name="sso_domain_for_v3jwt_cookie">
             <Value>.topcoder.com</Value>
+        </Property>
+
+        <Property name="event_bus">
+	        <Property name="topic">
+	            <Value>@topcoder_event_bus_topic@</Value>
+	        </Property>
+  	        <Property name="originator">
+  	            <Value>@topcoder_event_bus_originator@</Value>
+  	        </Property>
+	        <Property name="client_id">
+	            <Value>@topcoder_event_bus_client_id@</Value>
+	        </Property>
+            <Property name="client_secret">
+                <Value>@topcoder_event_bus_client_secret@</Value>
+            </Property>
+            <Property name="auth_audience">
+                <Value>@topcoder_event_bus_auth_audience@</Value>
+            </Property>
+            <Property name="auth_domain">
+                <Value>@topcoder_event_bus_auth_domain@</Value>
+            </Property>
+            <Property name="expiration_time">
+                <Value>@topcoder_event_bus_expiration_time@</Value>
+            </Property>
+	        <Property name="endpoint">
+	            <Value>@topcoder_event_bus_url@</Value>
+	        </Property>
+	        <Property name="contestSubmissionDownloadUrl">
+	            <Value>@contest_submission_download_url@</Value>
+	        </Property>
+	        <Property name="checkpointSubmissionDownloadUrl">
+	            <Value>@checkpoint_submission_download_url@</Value>
+	        </Property>
+        </Property>
+        <Property name="aws_s3">
+            <Property name="bucket">
+                <Value>@aws_s3_bucket@</Value>
+            </Property>
+            <Property name="expire">
+                <Value>@aws_s3_expire@</Value>
+            </Property>
         </Property>
     </Config>
 

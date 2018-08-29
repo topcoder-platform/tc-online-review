@@ -95,6 +95,7 @@
                     </c:if>
                 </table>
             </td>
+
             <c:if test="${empty myDeliverables}">
                 <td class="myRoleValues" width="27%" align="left" nowrap="nowrap"><!-- @ --></td>
             </c:if>
@@ -114,7 +115,7 @@
                             </c:when>
                         </c:choose>
                         ${orfn:displayDate(pageContext.request, myDeliverableDates[deliverableStatus.index])}
-                        <c:if test="${empty myDeliverableLinks[deliverableStatus.index]}">
+                        <%-- <c:if test="${empty myDeliverableLinks[deliverableStatus.index]}">
                             <b><or:text key='Deliverable.${fn:replace(deliverable.name, " ", "")}' /></b><c:if
                                 test="${deliverableStatus.index != fn:length(myDeliverables) - 1}"><br />
                             </c:if>
@@ -133,7 +134,7 @@
                                      test="${deliverableStatus.index != fn:length(myDeliverables) - 1}"><br />
                                   </c:if>
                             </c:if>
-                        </c:if>
+                        </c:if>  --%>
                     </c:forEach>
                 </td>
             </c:if>

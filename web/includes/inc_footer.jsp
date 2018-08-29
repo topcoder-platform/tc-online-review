@@ -7,6 +7,7 @@
 --%>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="or" uri="/or-tags" %>
+<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ page import="com.topcoder.shared.util.ApplicationServer" %>
 
 <div align="center" style="margin: 20px;">
@@ -41,4 +42,11 @@
   }}();
 </script>
 
+
+<script>
+analytics.identify('', {
+  <%--name: '<tc-webtag:handle coderId="${orfn:getLoggedInUserId(pageContext.request)}" />' --%>
+  id: '${orfn:getLoggedInUserId(pageContext.request)}'
+});
+</script>
 

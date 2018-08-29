@@ -14,6 +14,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.Constants;
+import com.cronos.onlinereview.actions.event.EventBusServiceClient;
 import com.cronos.onlinereview.model.ProjectPaymentsForm;
 import com.cronos.onlinereview.model.ProjectPaymentsForm.ResourcePayments;
 import com.cronos.onlinereview.phases.PaymentsHelper;
@@ -34,9 +35,14 @@ import com.topcoder.util.errorhandling.BaseException;
  * <p>
  * <b>Thread Safety:</b>Struts 2 Action objects are instantiated for each request, so there are no thread-safety issues.
  * </p>
+ * 
+ * <p>
+ * changes Version 2.1 - Topcoder - Online Review Update - Post to Event Bus Part 2 v1.0
+ * - fire the project payment update event
+ * </p>
  *
  * @author TCSASSEMBLER
- * @version 2.0
+ * @version 2.1 
  */
 public class SaveProjectPaymentsAction extends BaseProjectPaymentAction {
 
@@ -157,6 +163,7 @@ public class SaveProjectPaymentsAction extends BaseProjectPaymentAction {
         PaymentsHelper.processAutomaticPayments(projectId, operator);
         PaymentsHelper.updateProjectResultPayments(projectId);
 
+        EventBusServiceClient.fireProjectPaymentUpdateEvent(projectId, AuthorizationHelper.getLoggedInUserId(request), this.getModel());
         setPid(projectId);
         // Return success forward
         return Constants.SUCCESS_FORWARD_NAME;

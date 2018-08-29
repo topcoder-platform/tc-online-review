@@ -151,7 +151,7 @@
 @thurgood.username@=Thurgood
 @thurgood.password@=password
 @topcoder_api_base_url@=http://api.topcoder.com/v2/develop/challenges
-@topcoder_api_base_url_v3@=http://192.168.31.105:8084/v3/
+@topcoder_api_base_url_v3@=http://api.topcoder.com/v3/challenges
 @amazon_sns_arn@=
 @amazonSNSAccessKey@=
 @amazonSNSSecretKey@=
@@ -164,10 +164,22 @@
 #@distributionToolOutputDir@=/home/tcs/temp_files/tmp_dist
 #@distributionScriptsBase@=/home/tcs/onlinereview/distribution_scripts
 #@exttemplatesdir@=/home/tcs/onlinereview/templates/
-#@pactJNDIAddress@=jnp://localhost:1199 
+#@pactJNDIAddress@=jnp://localhost:1199
 
 ### mockxmlauthenticator.xmlfile - when defined it is excluded from the build, comment it out to include in build for development
 # exclude.mockxmlauthenticator.xmlfile=yes, exclude me!
+
+# configuration for event bus
+@topcoder_event_bus_topic@=or.notification.create
+@topcoder_event_bus_originator@=tc-online-review
+@topcoder_event_bus_url@=https://api.topcoder-dev.com/v5/bus/events
+@topcoder_event_bus_client_id@=5fctfjaLJHdvM04kSrCcC8yn0I4t1JTd
+@topcoder_event_bus_client_secret@=GhvDENIrYXo-d8xQ10fxm9k7XSVg491vlpvolXyWNBmeBdhsA5BAq2mH4cAAYS0x
+@topcoder_event_bus_auth_audience@=https://www.topcoder.com
+@topcoder_event_bus_auth_domain@=topcoder-newauth.auth0.com
+@topcoder_event_bus_expiration_time@=30
+@contest_submission_download_url@=http://tcs.cloud.topcoder.com/review/actions/DownloadContestSubmission?uid=%s
+@checkpoint_submission_download_url@=http://tcs.cloud.topcoder.com/review/actions/DownloadCheckpointSubmission?uid=%s
 
 ############################################
 # Parameters used to run integration tests #
@@ -243,3 +255,8 @@
 # An URL for path-based permissions file in SVN repository
 @svn.authz.file.url@=<<URL_for_permissions_file>>
 
+# AWS S3 Credentials for download submission
+@aws_s3_bucket@=topcoder-dev-submissions
+@aws_s3_expire@=3600000
+@aws_s3_access_key@=
+@aws_s3_secret_key@=

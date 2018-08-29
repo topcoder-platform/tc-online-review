@@ -174,7 +174,8 @@
                                                     <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                                 </c:if>
                                                 <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                    <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a> -->
+                                                    <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                                 </c:if>
                                                 <c:if test="${not empty submitter}">
                                                     (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
@@ -259,7 +260,7 @@
                                                         </c:if>
                                                         <c:if test="${isAllowedToAdvanceSubmissionWithFailedScreening and submission.submissionStatus.name eq 'Failed Screening'}">
                                                             (<a href="<or:url value='/actions/AdvanceFailedScreeningSubmission?uid=${submission.upload.id}' />"><or:text key="viewProjectDetails.box.Screening.Advance" /></a>)
-                                                        </c:if>                                                    
+                                                        </c:if>
                                                     </c:if>
                                                     <c:if test="${group.screeningPhaseStatus != 3}">
                                                         <or:text key="NotAvailable" />
@@ -287,7 +288,8 @@
                                                         <a href="<or:url value='/actions/DownloadContestSubmission?uid=${pastSubmission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
                                                     </c:if>
                                                     <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                        <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&uid=${pastSubmission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
+                                                        <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&uid=${pastSubmission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a> -->
+                                                        <a href="<or:url value='/actions/DownloadContestSubmission?uid=${pastSubmission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
                                                     </c:if>
                                             </td>
                                             <td class="value" width="22%">${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
@@ -437,13 +439,14 @@
                                                         <c:set var="placeStr" value="${orfn:getMessage(pageContext, failureKeyName)} (Place ${placement})" />
                                                         <img src="<or:text key='viewProjectDetails.box.Submission.icoFailed.img' />" alt="${placeStr}" border="0" />
                                                     </c:if>
-                                                </c:if>                                   
+                                                </c:if>
                                                 <c:if test="${project.projectCategory.projectType.id ne 3}">
                                                     <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                                 </c:if>
                                                 <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                    <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
-                                                </c:if>                                                
+                                                    <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a> -->
+                                                    <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                </c:if>
                                                 <c:if test="${not empty submitter}">
                                                     (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
                                                 </c:if>
@@ -977,7 +980,9 @@
                                                        title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                             </c:if>
                                             <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a> -->
+                                                <a href="<or:url value='/actions/DownloadCheckpointSubmission?uid=${submission.upload.id}' />"
+                                                       title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                             </c:if>
                                             <c:if test="${not empty submitter}">
                                                 (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}'
@@ -1087,7 +1092,7 @@
                                                 <c:otherwise><or:text key="NotAvailable" /></c:otherwise>
                                             </c:choose>
                                         </td>
-                                        
+
 
                                             <%-- Checkpoint Reviewer --%>
                                             <td class="valueC" width="12%">
@@ -1193,7 +1198,9 @@
                                                                title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
                                                 </c:if>
                                                 <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                        <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${pastSubmission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
+                                                        <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${pastSubmission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a> -->
+                                                        <a href="<or:url value='/actions/DownloadContestSubmission?uid=${pastSubmission.id}' />"
+                                                               title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
                                                 </c:if>
                                             </td>
                                             <td class="value" width="12%">${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
@@ -1313,14 +1320,15 @@
                                                     <c:set var="placeStr" value="${orfn:getMessage(pageContext, failureKeyName)} (Place ${placement})" />
                                                     <img src="<or:text key='viewProjectDetails.box.Submission.icoFailed.img' />" alt="${placeStr}" border="0" />
                                                 </c:if>
-                                            </c:if>                                   
+                                            </c:if>
                                             <c:if test="${project.projectCategory.projectType.id ne 3}">
                                                 <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                             </c:if>
                                             <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
-                                            </c:if>                  
-                                            <c:if test="${isManager || group.iterativeReviewPhase.phaseStatus.name eq 'Closed'}">                              
+                                                <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a> -->
+                                                <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                            </c:if>
+                                            <c:if test="${isManager || group.iterativeReviewPhase.phaseStatus.name eq 'Closed'}">
                                                 (<tc-webtag:handle coderId='${group.iterativeReviewSubmitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
                                             </c:if>
                                         </td>
