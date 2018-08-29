@@ -1,4 +1,4 @@
 [submodule "lib"]
 	path = lib
 	url = https://github.com/topcoder-platform/tc-java-component-libs
-        branch = dev
+        branch = master
