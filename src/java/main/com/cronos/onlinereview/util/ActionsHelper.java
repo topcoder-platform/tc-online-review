@@ -120,6 +120,7 @@ import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.servlet.request.DisallowedDirectoryException;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.LocalFileUpload;
+import com.topcoder.servlet.request.LocalStudioFileUpload;
 import com.topcoder.shared.util.ApplicationServer;
 import com.topcoder.shared.util.TCContext;
 import com.topcoder.util.errorhandling.BaseException;
@@ -2161,6 +2162,26 @@ public class ActionsHelper {
      *             if the directory is not one of the allowed directories.
      */
     public static FileUpload createFileUploadManager(HttpServletRequest request)
+            throws DisallowedDirectoryException, com.topcoder.servlet.request.ConfigurationException {
+        return createFileUploadManager(request, 0, null);
+    }
+
+    /**
+     * This static method helps to create an object of the <code>FileUpload</code> class.
+     *
+     * @return a newly created instance of the class.
+     * @param request
+     *            an <code>HttpServletRequest</code> object, where created
+     *            <code>UserRetrieval</code> object can be stored to let reusing it later for the
+     *            same request.
+     * @param userId user id of owner of file
+     * @param handle user handle of owner of file
+     * @throws com.topcoder.servlet.request.ConfigurationException
+     *             if any error occurs while reading parameters from the configuration file.
+     * @throws DisallowedDirectoryException
+     *             if the directory is not one of the allowed directories.
+     */
+    public static FileUpload createFileUploadManager(HttpServletRequest request, long userId, String handle)
         throws DisallowedDirectoryException, com.topcoder.servlet.request.ConfigurationException {
         // Validate parameter
         validateParameterNotNull(request, "request");
@@ -2170,7 +2191,16 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (fileUpload == null) {
-            fileUpload = new LocalFileUpload("com.topcoder.servlet.request.LocalFileUpload");
+            Project project = (Project)request.getAttribute("project");
+            if (isStudioProject(project)) {
+                if (userId < 1 || handle == null) {
+                    throw new IllegalArgumentException("userId and handle is required");
+                }
+                fileUpload = new LocalStudioFileUpload("com.topcoder.servlet.request.LocalStudioFileUpload",
+                        project.getId(), userId, handle);
+            } else {
+                fileUpload = new LocalFileUpload("com.topcoder.servlet.request.LocalFileUpload");
+            }
             // Place newly-created object into the request as attribute
             request.setAttribute("fileUploadManager", fileUpload);
         }

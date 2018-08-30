@@ -141,6 +141,7 @@
 # typical windows configuration
 @login.authenticator@=MockXMLAuthenticator
 @localFileUploadDir@=<<some_temp_folder>>/upload
+@localStudioFileUploadDir@=<<path_to_studio_submission>>
 @catalogOutputDir@=<<some_temp_folder>>/temp_files
 @distributionToolOutputDir@=<<some_temp_folder>>/temp_files/tmp_dist
 @distributionScriptsBase@=<<path_to_online_review_trunk>>/conf/distribution_scripts/windows

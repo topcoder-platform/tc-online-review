@@ -43,6 +43,7 @@ import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.Resource;
+import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.message.email.EmailEngine;
@@ -185,6 +186,28 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
      * @throws IOException if an unexpected error occurs.
      */
     protected void processSubmissionDownload(Upload upload, HttpServletRequest request, HttpServletResponse response) throws UploadPersistenceException, SearchBuilderException, DisallowedDirectoryException,
+            ConfigurationException, PersistenceException, FileDoesNotExistException, IOException{
+        processSubmissionDownload(upload, request, response, 0, null);
+    }
+
+    /**
+     * <p>Sends the content of specified file for downloading by client.</p>
+     *
+     * @param upload an <code>Upload</code> providing the details for the filr to be downloaded by client.
+     * @param request an <code>HttpServletRequest</code> representing the incoming request.
+     * @param response an <code>HttpServletResponse</code> representing the outgoing response.
+     * @param userId user id of the owner of file
+     * @param handle user handle of the owner of file
+     * @throws UploadPersistenceException if an unexpected error occurs.
+     * @throws SearchBuilderException if an unexpected error occurs.
+     * @throws DisallowedDirectoryException if an unexpected error occurs.
+     * @throws ConfigurationException if an unexpected error occurs.
+     * @throws PersistenceException if an unexpected error occurs.
+     * @throws FileDoesNotExistException if an unexpected error occurs.
+     * @throws IOException if an unexpected error occurs.
+     */
+    protected void processSubmissionDownload(Upload upload, HttpServletRequest request, HttpServletResponse response,
+                                             long userId, String handle) throws UploadPersistenceException, SearchBuilderException, DisallowedDirectoryException,
     ConfigurationException, PersistenceException, FileDoesNotExistException, IOException{
 
         // At this point, redirect-after-login attribute should be removed (if it exists)
@@ -195,7 +218,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         if (upload.getUrl() == null) {
             System.out.println("normal download");
 
-            FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
+            FileUpload fileUpload = ActionsHelper.createFileUploadManager(request, userId, handle);
             UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
 
             Submission[] submissions = upMgr.searchSubmissions(SubmissionFilterBuilder.createUploadIdFilter(upload.getId()));
@@ -497,7 +520,14 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
                     errorMessageKey, "Error.NoPermission", Boolean.FALSE);
         }
 
-        processSubmissionDownload(upload, request, response);
+        if (ActionsHelper.isStudioProject(project)) {
+            ResourceManager resMgr = ActionsHelper.createResourceManager();
+            Resource submitter = resMgr.getResource(upload.getOwner());
+            String handle = (String)submitter.getProperty("Handle");
+            processSubmissionDownload(upload, request, response, submitter.getUserId(), handle);
+        } else {
+            processSubmissionDownload(upload, request, response);
+        }
 
         return null;
     }
