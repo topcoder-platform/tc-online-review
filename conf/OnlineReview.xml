@@ -373,6 +373,12 @@
         <Property name="default_dir">
             <Value>&localStudioFileUploadDir;</Value>
         </Property>
+        <Property name="allowed_dirs">
+            <Value>&localStudioFileUploadDir;</Value>
+        </Property>
+        <Property name="overwrite">
+            <Value>false</Value>
+        </Property>
     </Config>
 
     <!--
