@@ -43,6 +43,8 @@ import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.Resource;
+import com.topcoder.management.resource.ResourceManager;
+import com.topcoder.management.resource.persistence.ResourcePersistenceException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.message.email.EmailEngine;
@@ -183,9 +185,10 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
      * @throws PersistenceException if an unexpected error occurs.
      * @throws FileDoesNotExistException if an unexpected error occurs.
      * @throws IOException if an unexpected error occurs.
+     * @throws ResourcePersistenceException if an unexpected error occurs.
      */
-    protected void processSubmissionDownload(Upload upload, HttpServletRequest request, HttpServletResponse response) throws UploadPersistenceException, SearchBuilderException, DisallowedDirectoryException,
-    ConfigurationException, PersistenceException, FileDoesNotExistException, IOException{
+    protected void processSubmissionDownload(Upload upload, HttpServletRequest request, HttpServletResponse response) throws UploadPersistenceException, SearchBuilderException,DisallowedDirectoryException,
+    ConfigurationException, PersistenceException, FileDoesNotExistException, IOException, ResourcePersistenceException {
 
         // At this point, redirect-after-login attribute should be removed (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
@@ -194,9 +197,20 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         System.out.println("processSubmissionDownload");
         if (upload.getUrl() == null) {
             System.out.println("normal download");
-
-            FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
-            UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
+            Project project = (Project)request.getAttribute("project");
+            String fullPath;
+            FileUpload fileUpload;
+            if (ActionsHelper.isStudioProject(project)) {
+                ResourceManager resMgr = ActionsHelper.createResourceManager();
+                Resource submitter = resMgr.getResource(upload.getOwner());
+                String handle = (String)submitter.getProperty("Handle");
+                fileUpload = ActionsHelper.createFileUploadManager(request, ActionsHelper.LOCAL_STUDIO_STORAGE_NAMESPACE);
+                fullPath = ActionsHelper.createStudioLocalFilePath(project.getId(), submitter.getUserId(), handle, upload.getParameter());
+            } else {
+                fileUpload = ActionsHelper.createFileUploadManager(request, ActionsHelper.LOCAL_STORAGE_NAMESPACE);
+                fullPath = upload.getParameter();
+            }
+            UploadedFile uploadedFile = fileUpload.getUploadedFile(fullPath);
 
             Submission[] submissions = upMgr.searchSubmissions(SubmissionFilterBuilder.createUploadIdFilter(upload.getId()));
             Submission submission = (submissions.length != 0) ? submissions[0] : null;
