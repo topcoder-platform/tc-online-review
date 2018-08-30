@@ -6,7 +6,6 @@ package com.cronos.onlinereview.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -120,7 +119,6 @@ import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.servlet.request.DisallowedDirectoryException;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.LocalFileUpload;
-import com.topcoder.servlet.request.LocalStudioFileUpload;
 import com.topcoder.shared.util.ApplicationServer;
 import com.topcoder.shared.util.TCContext;
 import com.topcoder.util.errorhandling.BaseException;
@@ -204,6 +202,16 @@ public class ActionsHelper {
      * The AWS credentials file.
      */
     private static final String AWS_CREDENTIALS_FILE = "AwsS3Credentials.properties";
+
+    /**
+     * FileUpload namespace for develop challenge
+     */
+    public static final String LOCAL_STORAGE_NAMESPACE = "com.topcoder.servlet.request.LocalFileUpload";
+
+    /**
+     * FileUpload namespace fro studio challenge
+     */
+    public static final String LOCAL_STUDIO_STORAGE_NAMESPACE = "com.topcoder.servlet.request.LocalStudioFileUpload";
 
     /**
      * AWS S3 client
@@ -2163,7 +2171,7 @@ public class ActionsHelper {
      */
     public static FileUpload createFileUploadManager(HttpServletRequest request)
             throws DisallowedDirectoryException, com.topcoder.servlet.request.ConfigurationException {
-        return createFileUploadManager(request, 0, null);
+        return createFileUploadManager(request, LOCAL_STORAGE_NAMESPACE);
     }
 
     /**
@@ -2174,35 +2182,25 @@ public class ActionsHelper {
      *            an <code>HttpServletRequest</code> object, where created
      *            <code>UserRetrieval</code> object can be stored to let reusing it later for the
      *            same request.
-     * @param userId user id of owner of file
-     * @param handle user handle of owner of file
+     * @param namespace namespace
      * @throws com.topcoder.servlet.request.ConfigurationException
      *             if any error occurs while reading parameters from the configuration file.
      * @throws DisallowedDirectoryException
      *             if the directory is not one of the allowed directories.
      */
-    public static FileUpload createFileUploadManager(HttpServletRequest request, long userId, String handle)
+    public static FileUpload createFileUploadManager(HttpServletRequest request, String namespace)
         throws DisallowedDirectoryException, com.topcoder.servlet.request.ConfigurationException {
         // Validate parameter
         validateParameterNotNull(request, "request");
 
         // Try retrieving File Upload from the request's attribute first
-        FileUpload fileUpload = (FileUpload) request.getAttribute("fileUploadManager");
+        FileUpload fileUpload = (FileUpload) request.getAttribute(namespace);
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (fileUpload == null) {
-            Project project = (Project)request.getAttribute("project");
-            if (isStudioProject(project)) {
-                if (userId < 1 || handle == null) {
-                    throw new IllegalArgumentException("userId and handle is required");
-                }
-                fileUpload = new LocalStudioFileUpload("com.topcoder.servlet.request.LocalStudioFileUpload",
-                        project.getId(), userId, handle);
-            } else {
-                fileUpload = new LocalFileUpload("com.topcoder.servlet.request.LocalFileUpload");
-            }
+            fileUpload = new LocalFileUpload(namespace);
             // Place newly-created object into the request as attribute
-            request.setAttribute("fileUploadManager", fileUpload);
+            request.setAttribute(namespace, fileUpload);
         }
 
         // Return the File Upload object
@@ -3675,5 +3673,24 @@ public class ActionsHelper {
             log.log(Level.ERROR, "ex: " + e.getMessage());
             throw new IOException("Error S3 download", e);
         }
+    }
+
+    /**
+     * Create local studio path
+     * @param projectId project id
+     * @param userId user id the owner of file
+     * @param userHandle user handle of owner of file
+     * @param parameter upload parameter of file
+     */
+    public static String createStudioLocalFilePath(long projectId, long userId, String userHandle, String parameter) {
+        StringBuffer buf = new StringBuffer(80);
+        buf.append(projectId);
+        buf.append(System.getProperty("file.separator"));
+        buf.append(userHandle.toLowerCase());
+        buf.append("_");
+        buf.append(userId);
+        buf.append(System.getProperty("file.separator"));
+        buf.append(parameter);
+        return buf.toString();
     }
 }
