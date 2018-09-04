@@ -194,7 +194,9 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         AuthorizationHelper.removeLoginRedirect(request);
         UploadManager upMgr = ActionsHelper.createUploadManager();
 
-        System.out.println("processSubmissionDownload");
+        Submission[] submissions = upMgr.searchSubmissions(SubmissionFilterBuilder.createUploadIdFilter(upload.getId()));
+        Submission submission = (submissions.length != 0) ? submissions[0] : null;
+
         if (upload.getUrl() == null) {
             System.out.println("normal download");
             Project project = (Project)request.getAttribute("project");
@@ -212,9 +214,6 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             }
             UploadedFile uploadedFile = fileUpload.getUploadedFile(fullPath);
 
-            Submission[] submissions = upMgr.searchSubmissions(SubmissionFilterBuilder.createUploadIdFilter(upload.getId()));
-            Submission submission = (submissions.length != 0) ? submissions[0] : null;
-
             String contentDisposition;
             if (submission != null) {
                 contentDisposition = "attachment; filename=\"submission-" + submission.getId() + "-"
@@ -231,7 +230,14 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             int sep = path.lastIndexOf( '/' );
             String key = ( sep < 0 ) ? path : path.substring( sep + 1 );
 
-            String contentDisposition = "attachment; filename=\"" + key + "\"";
+            String contentDisposition;
+            if (submission != null) {
+                contentDisposition = "attachment; filename=\"submission-" + submission.getId() + "-"
+                                    + key + "\"";
+            } else {
+                contentDisposition = "attachment; filename=\"upload-" + upload.getId() + "-"
+                                    + key + "\"";
+            }
 
             ActionsHelper.outputDownloadS3File(key, contentDisposition, response);
         }
