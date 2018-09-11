@@ -32,6 +32,7 @@ import java.util.Set;
 
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 
@@ -3636,7 +3637,7 @@ public class ActionsHelper {
         return lastModificationTime;
     }
 
-    public static void outputDownloadS3File(String key, String contentDisposition, HttpServletResponse response) throws IOException {
+    public static void outputDownloadS3File(String url, String key, String contentDisposition, HttpServletResponse response) throws IOException {
         try {
             log.log(Level.INFO, "will download from s3: " + key);
 
@@ -3669,6 +3670,10 @@ public class ActionsHelper {
                     out.close();
                 }
             }
+        } catch (AmazonS3Exception e) {
+            // Not on our S3. This is user's own url file
+            log.log(Level.INFO, url + " is not on our S3 bucket, this is user's own url. redirect it");
+            response.sendRedirect(url);
         } catch(Exception e) {
             log.log(Level.ERROR, "ex: " + e.getMessage());
             throw new IOException("Error S3 download", e);
