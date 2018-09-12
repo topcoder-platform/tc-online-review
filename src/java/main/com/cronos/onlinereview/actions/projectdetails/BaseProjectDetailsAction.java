@@ -239,7 +239,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
                                     + key + "\"";
             }
 
-            ActionsHelper.outputDownloadS3File(key, contentDisposition, response);
+            ActionsHelper.outputDownloadS3File(upload.getUrl(), key, contentDisposition, response);
         }
     }
 
