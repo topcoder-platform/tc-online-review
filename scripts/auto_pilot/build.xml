@@ -14,7 +14,7 @@
     <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${ant-contrib.jar}"/>
 
     <!-- DIRECTORY SETUP -->
-    <property name="javamain" value="${online_review_home}/src/java/main/com/cronos/onlinereview/phases"/>
+    <property name="javamain" value="${online_review_home}/src/main/java/com/cronos/onlinereview/phases"/>
 
     <property name="builddir" value="${online_review_home}/build/ant/auto_pilot"/>
     <property name="build_classdir" value="${builddir}/classes"/>

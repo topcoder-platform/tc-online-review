@@ -36,8 +36,8 @@
   <property name="jboss_files_deploy" value="${jboss_files}/deploy"/>
   <property name="jboss_files_lib" value="${jboss_files}/lib"/>
 
-  <property name="javasrc" value="${srcdir}/java"/>
-  <property name="javamain" value="${javasrc}/main"/>
+  <property name="javasrc" value="${srcdir}/main"/>
+  <property name="javamain" value="${javasrc}/java"/>
   <property name="javatests" value="${javasrc}/tests"/>
   <property name="sqlsrc" value="${srcdir}/sql"/>
 
@@ -133,7 +133,7 @@
       <lib dir="${tcs_libdir}" includes="tc_id_generator.jar"/>
       <lib dir="${tcs_libdir}" includes="tcjive.jar"/>
       <lib dir="${tcs_libdir}/${core.api.path}" includes="${core.api.jar.name}"/>
-      
+
       <lib dir="${ext_libdir}" includes="*.jar" excludes="ejb-2_0.jar, servlet-api.jar, jsp-api.jar, log4j.jar"/>
       <lib dir="${ext_libdir}/log4j" includes="*.jar"/>
       <lib dir="${ext_libdir}/struts" includes="*.jar"/>
@@ -471,7 +471,7 @@
     </if>
 
   </target>
-  
+
   <!-- Redeploy tools -->
   <target name="deploy_tools" >
     <!-- redeploy tools -->
@@ -569,7 +569,7 @@
     </junitreport>
     <echo>The execution of reports is complete.  Reports are available in /${reports}</echo>
   </target>
-  
+
   <!-- - - - - - - - - - - - - - - - - -
       target: prod-init
     - - - - - - - - - - - - - - - - - -->
