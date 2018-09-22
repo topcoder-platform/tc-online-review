@@ -513,7 +513,7 @@
     <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
-      <version>1.8.3</version>
+      <version>1.7.0</version>
     </dependency>
     <dependency>
       <groupId>commons-chain</groupId>
@@ -1130,7 +1130,7 @@
               <id>deploy-locally</id>
               <configuration>
                 <target>
-                  <ant antfile="${basedir}/build.pom.xml" target="deploy_locally"/>
+                  <ant antfile="${basedir}/build.pom.xml" target="copy_shared_files"/>
                 </target>
               </configuration>
               <goals>
@@ -1141,7 +1141,7 @@
               <id>first-deploy</id>
               <configuration>
                 <target>
-                  <ant antfile="${basedir}/build.pom.xml" target="first-deploy"/>
+                  <ant antfile="${basedir}/build.pom.xml" target="first_deploy"/>
                 </target>
               </configuration>
               <goals>

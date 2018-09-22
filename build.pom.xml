@@ -153,17 +153,8 @@
     </copy>
   </target>
 
-  <!-- move the built files to the target deployment location -->
-  <target name="deploy_locally" depends="copy_shared_files">
-    <mkdir dir="${deploy-dir}"/>
-
-    <copy todir="${deploy-dir}" overwrite="true">
-      <fileset dir="${build_explodedwar}" includes="**"/>
-    </copy>
-  </target>
-
   <!-- builds deploys OR with dependencies -->
-  <target name="first_deploy" depends="deploy_locally, copy_jboss_files">
+  <target name="first_deploy" depends="copy_shared_files, copy_jboss_files">
   </target>
 
 </project>
