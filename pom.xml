@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.cronos.onlinereview</groupId>
   <artifactId>online-review</artifactId>
-  <version>1.0</version>
+  <version>1.0.0</version>
   <packaging>war</packaging>
 
   <name>Online Review</name>
@@ -16,6 +16,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.5</maven.compiler.source>
     <maven.compiler.target>1.5</maven.compiler.target>
+    <s3.bucket.name>${env.AWS_S3_BUCKET_NAME}</s3.bucket.name>
+    <output.dir>${project.basedir}/build/online_review</output.dir>
   </properties>
 
   <dependencies>
@@ -836,9 +838,9 @@
       <version>2.8.2</version>
     </dependency>
     <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-core</artifactId>
-        <version>2.8.2</version>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.8.2</version>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
@@ -1095,6 +1097,17 @@
     </repository>
   </repositories>
 
+  <pluginRepositories>
+    <pluginRepository>
+      <id>temp-maven-repo</id>
+      <url>https://github.com/coderReview/temp-maven-repo/raw/master</url>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
   <build>
     <finalName>review</finalName>
     <pluginManagement>
@@ -1120,6 +1133,17 @@
               <configuration>
                 <target>
                   <ant antfile="${basedir}/build.pom.xml" target="tokenize"/>
+                </target>
+              </configuration>
+              <goals>
+                <goal>run</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>tokenize_all</id>
+              <configuration>
+                <target>
+                  <ant antfile="${basedir}/build.pom.xml" target="tokenize_all"/>
                 </target>
               </configuration>
               <goals>
@@ -1163,22 +1187,45 @@
             </archive>
             <webResources>
               <resource>
-                <directory>build/ant/online_review/conf/WEB-INF</directory>
+                <directory>${output.dir}/conf/WEB-INF</directory>
                 <targetPath>WEB-INF</targetPath>
               </resource>
               <resource>
-                <directory>build/ant/online_review/conf/META-INF</directory>
+                <directory>${output.dir}/conf/META-INF</directory>
                 <targetPath>META-INF</targetPath>
               </resource>
               <resource>
-                <directory>build/ant/online_review/conf</directory>
+                <directory>${output.dir}/conf</directory>
                 <targetPath>WEB-INF/classes</targetPath>
                 <excludes>
                   <exclude>WEB-INF/**</exclude>
                   <exclude>META-INF/**</exclude>
+                  <exclude>*.war</exclude>
                 </excludes>
               </resource>
             </webResources>
+            <outputDirectory>${output.dir}</outputDirectory>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>com.github.nikodem911</groupId>
+          <artifactId>s3-upload-maven-plugin</artifactId>
+          <version>1.5.1</version>
+          <configuration>
+            <bucketName>${s3.bucket.name}</bucketName>
+            <source>${output.dir}/</source>
+            <destination>online_review/</destination>
+            <recursive>true</recursive>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>com.coderreview.or</groupId>
+          <artifactId>s3-download-maven-plugin</artifactId>
+          <version>1.0.1</version>
+          <configuration>
+            <bucketName>${s3.bucket.name}</bucketName>
+            <source>token.properties</source>
+            <destination>./</destination>
           </configuration>
         </plugin>
       </plugins>

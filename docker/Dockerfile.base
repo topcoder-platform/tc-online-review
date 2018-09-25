@@ -1,0 +1,39 @@
+FROM ibmcom/informix-innovator-c:latest
+
+USER root
+
+RUN cd /opt/ \
+       && wget -q --no-cookies --no-check-certificate http://monalisa.cern.ch/MONALISA/download/java/jdk-7u80-linux-x64.tar.gz \
+       && tar xzf jdk-7u80-linux-x64.tar.gz \
+       && rm -rf jdk-7u80-linux-x64.tar.gz
+
+ENV JAVA_HOME=/opt/jdk1.7.0_80
+ENV JRE_HOME=/opt/jdk1.7.0_80/jre
+ENV PATH=$PATH:/opt/jdk1.7.0_80/bin:/opt/jdk1.7.0_80/jre/bin
+
+RUN apt-get update -qq && apt-get -qq install -y wget zip unzip python python-pip
+RUN pip install s3cmd
+
+ENV INFORMIXDIR /opt/ibm/informix
+ENV INFORMIX_HOME /home/informix
+ENV INFORMIXSERVER informixoltp_tcp
+ENV INFORMIXTERM terminfo
+ENV CLIENT_LOCALE=en_US.utf8
+ENV DB_LOCALE=en_US.utf8
+ENV DBDATE Y4MD-
+ENV DBDELIMITER "|"
+ENV PATH ${INFORMIXDIR}/bin:${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql:${PATH}
+ENV LD_LIBRARY_PATH ${INFORMIXDIR}/lib:$INFORMIXDIR/lib/esql:$INFORMIXDIR/lib/tools
+ENV INFORMIXSQLHOSTS /opt/ibm/informix/etc/sqlhosts.informixoltp_tcp
+ENV USER root
+ENV LICENSE accept
+
+RUN mkdir -p /deployment/bin
+WORKDIR /deployment
+
+RUN wget -q http://downloads.sourceforge.net/project/jboss/JBoss/JBoss-4.0.2/jboss-4.0.2.tar.gz
+RUN tar xfz jboss-4.0.2.tar.gz && rm -f jboss-4.0.2.tar.gz
+
+ENV JBOSS_HOME=/deployment/jboss-4.0.2
+
+ENTRYPOINT [ "bash", "-c" ]

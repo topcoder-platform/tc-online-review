@@ -23,7 +23,7 @@
   <property name="jboss_files_deploy" value="${jboss_files}/deploy"/>
   <property name="jboss_files_lib" value="${jboss_files}/lib"/>
 
-  <property name="builddir" value="build/ant/online_review" />
+  <property name="builddir" value="build/online_review" />
   <property name="build_conf" value="${builddir}/conf" />
   <property name="build_tests" value="${builddir}/tests" />
   <property name="build_shared" value="${builddir}/shared" />
@@ -120,7 +120,16 @@
     </replace>
 
     <copy todir="${build_jboss_files_deploy}" overwrite="true">
-      <fileset file="${jboss_files_deploy}/tcs_informix-ds.xml"/>
+      <fileset dir="${jboss_files_deploy}" includes="**"/>
+    </copy>
+
+    <mkdir dir="${build_jboss_files_deploy}/static.ear/static.war"/>
+    <copy todir="${build_jboss_files_deploy}/static.ear/static.war" overwrite="true">
+      <fileset dir="${webdir}">
+        <include name="css/**/*"/>
+        <include name="i/**/*"/>
+        <include name="js/**/*"/>
+      </fileset>
     </copy>
 
     <replace dir="${build_jboss_files_deploy}" replacefilterfile="${token.properties}">
@@ -140,21 +149,22 @@
     <copy todir="${deploy-deploy-dir}" overwrite="true">
       <fileset dir="${jboss_files_deploy}" excludes="tcs_informix-ds.xml" includes="**"/>
     </copy>
-    <mkdir dir="${deploy-deploy-dir}/static.ear/static.war"/>
+    <!--<mkdir dir="${deploy-deploy-dir}/static.ear/static.war"/>
     <copy todir="${deploy-deploy-dir}/static.ear/static.war" overwrite="true">
       <fileset dir="${webdir}">
         <include name="css/**/*"/>
         <include name="i/**/*"/>
         <include name="js/**/*"/>
       </fileset>
-    </copy>
+    </copy>-->
     <copy todir="${deploy-lib-dir}" overwrite="true" verbose="${verbose}" flatten="true">
       <fileset dir="${jboss_files_lib}"/>
     </copy>
   </target>
 
   <!-- builds deploys OR with dependencies -->
-  <target name="first_deploy" depends="copy_shared_files, copy_jboss_files">
-  </target>
+  <target name="first_deploy" depends="copy_shared_files, copy_jboss_files" />
+
+  <target name="tokenize_all" depends="tokenize, tokenize_jboss_files, tokenize_shared_files" />
 
 </project>
