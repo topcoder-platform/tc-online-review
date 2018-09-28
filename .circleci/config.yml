@@ -1,0 +1,43 @@
+
+version: 2
+
+jobs:
+  # Build & Deploy against development backend
+  "build":
+    docker:
+      - image: maven:3.5.4-jdk-7
+    steps:
+      # Initialization.
+      - run:
+          name: Installation of build dependencies.
+          command: |
+            apt update
+            apt install -y  zip jq 
+            mkdir ~/awscli
+            cd  ~/awscli
+            curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+            unzip awscli-bundle.zip
+            ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+            cd ~
+            wget -q http://downloads.sourceforge.net/project/jboss/JBoss/JBoss-4.0.2/jboss-4.0.2.tar.gz
+            tar xfz jboss-4.0.2.tar.gz && rm -f jboss-4.0.2.tar.gz
+            wget http://downloads.sourceforge.net/project/jboss/JBoss/JBoss-4.2.3.GA/jboss-4.2.3.GA-jdk6.zip
+            unzip jboss-4.2.3.GA-jdk6.zip
+            cd project
+      - checkout
+      - run:
+          name: Installation of build dependencies.
+          command: |
+            export JBOSS_HOME=$HOME/jboss-4.0.2
+            javac -version
+            mvn -version
+            aws --version
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: [maven-circleci]
