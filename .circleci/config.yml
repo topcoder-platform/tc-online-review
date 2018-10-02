@@ -19,17 +19,15 @@ jobs:
             unzip awscli-bundle.zip
             ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
             cd ~
-            wget -q http://downloads.sourceforge.net/project/jboss/JBoss/JBoss-4.0.2/jboss-4.0.2.tar.gz
-            tar xfz jboss-4.0.2.tar.gz && rm -f jboss-4.0.2.tar.gz
             cd project
       - checkout
       - run:
           name: Installation of build dependencies.
           command: |
-            export JBOSS_HOME=$HOME/jboss-4.0.2
-            javac -version
-            mvn -version
-            aws --version
+            ./buildproperties.sh -e DEV -b build.properties,token.properties -k OR
+            mvn -B -Dmaven.test.skip=true antrun:run@tokenize package
+            git submodule  update --init
+            mvn -B -Dmaven.test.skip=true antrun:run@first-deploy
 
 workflows:
   version: 2
