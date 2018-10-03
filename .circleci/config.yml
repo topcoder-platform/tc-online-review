@@ -28,6 +28,7 @@ jobs:
             mvn -B -Dmaven.test.skip=true antrun:run@tokenize package
             git submodule  update --init
             mvn -B -Dmaven.test.skip=true antrun:run@first-deploy
+            docker build --rm -f "docker/Dockerfile.base" -t or-dev-base:latest docker
 
 workflows:
   version: 2
