@@ -12,14 +12,10 @@ jobs:
           name: Installation of build dependencies.
           command: |
             apt update
-            apt install -y  zip jq 
-            mkdir ~/awscli
-            cd  ~/awscli
-            curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
-            unzip awscli-bundle.zip
-            ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
-            cd ~
-            cd project
+            apt install -y  zip jq awscli
+            apt install -y  apt-transport-https ca-certificates curl gnupg2 software-properties-common
+            curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+            add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
       - checkout
       - setup_remote_docker
       - run:
