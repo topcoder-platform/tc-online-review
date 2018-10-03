@@ -21,6 +21,7 @@ jobs:
             cd ~
             cd project
       - checkout
+      - setup_remote_docker
       - run:
           name: Installation of build dependencies.
           command: |
