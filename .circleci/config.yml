@@ -24,13 +24,13 @@ jobs:
       - run:
           name: Building software
           command: |
+            export PATH=~/.local/bin:$PATH          
             ./buildproperties.sh -e DEV -b build.properties,token.properties -k OR
             mvn -B -Dmaven.test.skip=true antrun:run@tokenize package
             git submodule  update --init
             mvn -B -Dmaven.test.skip=true antrun:run@first-deploy
             docker build --rm -f "docker/Dockerfile.base" -t or-dev-base:latest docker
             docker build --rm -f "docker/Dockerfile-ECS" -t or-dev-run:latest .
-            export PATH=~/.local/bin:$PATH
             docker tag or-dev-run:latest ${DEV_AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/tc-onlinereview:${CIRCLE_BUILD_NUM}
             eval $(aws ecr get-login --no-include-email --region us-east-1)
             docker push ${DEV_AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/tc-onlinereview:${CIRCLE_BUILD_NUM}
