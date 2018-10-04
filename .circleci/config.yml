@@ -12,7 +12,8 @@ jobs:
           name: Installation of build dependencies.
           command: |
             apt update
-            apt install -y  zip jq awscli
+            apt install -y  zip jq python-pip
+            pip install awscli --upgrade --user
             apt install -y  apt-transport-https ca-certificates curl gnupg2 software-properties-common
             curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
             add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
@@ -29,6 +30,10 @@ jobs:
             mvn -B -Dmaven.test.skip=true antrun:run@first-deploy
             docker build --rm -f "docker/Dockerfile.base" -t or-dev-base:latest docker
             docker build --rm -f "docker/Dockerfile-ECS" -t or-dev-run:latest .
+            export PATH=~/.local/bin:$PATH
+            docker tag or-dev-run:latest ${DEV_AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/tc-onlinereview:${CIRCLE_BUILD_NUM}
+            eval $(aws ecr get-login --no-include-email --region us-east-1)
+            docker push ${DEV_AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/tc-onlinereview:${CIRCLE_BUILD_NUM}
 workflows:
   version: 2
   build:
