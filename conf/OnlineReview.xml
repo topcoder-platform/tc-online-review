@@ -5298,6 +5298,9 @@
             <Property name="expire">
                 <Value>@aws_s3_expire@</Value>
             </Property>
+            <Property name="bucket_dmz">
+                <Value>@aws_s3_bucket_dmz@</Value>
+            </Property>
         </Property>
     </Config>
 

@@ -1052,6 +1052,11 @@ public class ConfigHelper {
     private static String s3Bucket;
 
     /**
+     * AWS S3 bucket for DMZ
+     */
+    private static String s3BucketDmz;
+
+    /**
      * AWS S3 presigned expire time in millisecond
      */
     private static long preSignedExpTimeMilis;
@@ -1681,6 +1686,7 @@ public class ConfigHelper {
             }
             Property awsS3 = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "aws_s3");
             s3Bucket = awsS3.getValue("bucket");
+            s3BucketDmz = awsS3.getValue("bucket_dmz");
             try {
                 preSignedExpTimeMilis = Long.parseLong(awsS3.getValue("expire"));
             } catch (Exception e) {
@@ -2628,6 +2634,14 @@ public class ConfigHelper {
      */
     public static String getS3Bucket() {
         return s3Bucket;
+    }
+
+    /**
+     * Get S3 bucket DMZ
+     * @return s3 bucket dmz name
+     */
+    public static String getS3BucketDmz() {
+        return s3BucketDmz;
     }
 
     /**
