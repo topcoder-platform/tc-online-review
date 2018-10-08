@@ -22,9 +22,17 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
+          name: Build enve var
+          command: |
+            export PATH=~/.local/bin:$PATH
+            git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
+            cp ./../buildscript/buildenv.sh .
+            ./buildenv.sh -e DEV -b onlinereview
+      - run:
           name: Building software
           command: |
-            export PATH=~/.local/bin:$PATH          
+            export PATH=~/.local/bin:$PATH    
+            source buildenvvar      
             ./buildproperties.sh -e DEV -b build.properties,token.properties -k OR
             mvn -B -Dmaven.test.skip=true antrun:run@tokenize package
             git submodule  update --init
@@ -33,7 +41,6 @@ jobs:
       - deploy:
           command: |
             export PATH=~/.local/bin:$PATH 
-            git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
             cp ./../buildscript/master_deply_v4.2.sh .
             ./master_deply_v4.2.sh -d ECS -e DEV -t $CIRCLE_BUILD_NUM -s onlinereview              
 workflows:
