@@ -26,7 +26,7 @@
 #@database.server@=env.topcoder.com
 #@database.port@=2021
 #@database.username@=coder
-#@database.password@=c0d3r4T
+#@database.password@=<<db pwd>>
 #@database.INFORMIXSERVER@=informixoltp_tcp
 
 #######################
@@ -174,10 +174,10 @@
 @topcoder_event_bus_topic@=or.notification.create
 @topcoder_event_bus_originator@=tc-online-review
 @topcoder_event_bus_url@=https://api.topcoder-dev.com/v5/bus/events
-@topcoder_event_bus_client_id@=5fctfjaLJHdvM04kSrCcC8yn0I4t1JTd
-@topcoder_event_bus_client_secret@=GhvDENIrYXo-d8xQ10fxm9k7XSVg491vlpvolXyWNBmeBdhsA5BAq2mH4cAAYS0x
-@topcoder_event_bus_auth_audience@=https://www.topcoder.com
-@topcoder_event_bus_auth_domain@=topcoder-newauth.auth0.com
+@topcoder_event_bus_client_id@=<<auth0 clientId>>
+@topcoder_event_bus_client_secret@=<<auth0 client secret>>
+@topcoder_event_bus_auth_audience@=<<auth0 audience>>
+@topcoder_event_bus_auth_domain@=?<<auth0 domain>>
 @topcoder_event_bus_expiration_time@=30
 @contest_submission_download_url@=http://tcs.cloud.topcoder.com/review/actions/DownloadContestSubmission?uid=%s
 @checkpoint_submission_download_url@=http://tcs.cloud.topcoder.com/review/actions/DownloadCheckpointSubmission?uid=%s
