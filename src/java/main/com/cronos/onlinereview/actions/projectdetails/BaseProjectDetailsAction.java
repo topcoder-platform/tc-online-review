@@ -517,6 +517,10 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
                     errorMessageKey, "Error.NoPermission", Boolean.FALSE);
         }
 
+        if (upload.getUrl() != null && ActionsHelper.isDmzBucket(upload.getUrl())) {
+            return ActionsHelper.produceErrorReport(this, request, null, "Error.SubmissionOnDmz", null);
+        }
+
         processSubmissionDownload(upload, request, response);
 
         return null;
