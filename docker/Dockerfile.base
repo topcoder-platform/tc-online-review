@@ -2,6 +2,9 @@ FROM ibmcom/informix-innovator-c:latest
 
 USER root
 
+RUN apt-get update -qq && apt-get -qq install -y wget zip unzip python python-pip
+RUN pip install s3cmd
+
 RUN cd /opt/ \
        && wget -q --no-cookies --no-check-certificate http://monalisa.cern.ch/MONALISA/download/java/jdk-7u80-linux-x64.tar.gz \
        && tar xzf jdk-7u80-linux-x64.tar.gz \
@@ -11,8 +14,7 @@ ENV JAVA_HOME=/opt/jdk1.7.0_80
 ENV JRE_HOME=/opt/jdk1.7.0_80/jre
 ENV PATH=$PATH:/opt/jdk1.7.0_80/bin:/opt/jdk1.7.0_80/jre/bin
 
-RUN apt-get update -qq && apt-get -qq install -y wget zip unzip python python-pip
-RUN pip install s3cmd
+
 
 ENV INFORMIXDIR /opt/ibm/informix
 ENV INFORMIX_HOME /home/informix
