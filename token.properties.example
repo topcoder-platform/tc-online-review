@@ -177,7 +177,7 @@
 @topcoder_event_bus_client_id@=<<auth0 clientId>>
 @topcoder_event_bus_client_secret@=<<auth0 client secret>>
 @topcoder_event_bus_auth_audience@=<<auth0 audience>>
-@topcoder_event_bus_auth_domain@=?<<auth0 domain>>
+@topcoder_event_bus_auth_domain@=<<auth0 domain>>
 @topcoder_event_bus_expiration_time@=30
 @contest_submission_download_url@=http://tcs.cloud.topcoder.com/review/actions/DownloadContestSubmission?uid=%s
 @checkpoint_submission_download_url@=http://tcs.cloud.topcoder.com/review/actions/DownloadCheckpointSubmission?uid=%s
