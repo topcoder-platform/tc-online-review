@@ -126,10 +126,7 @@ public class DownloadFinalFixAction extends BaseProjectDetailsAction {
         }
         ActionsHelper.logDownloadAttempt(request, upload, true);
 
-        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
-        UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
-        outputDownloadedFile(uploadedFile, "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"", response);
-
+        processSubmissionDownload(upload, request, response);
         return null;
     }
 }

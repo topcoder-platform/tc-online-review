@@ -26,7 +26,7 @@
 #@database.server@=env.topcoder.com
 #@database.port@=2021
 #@database.username@=coder
-#@database.password@=c0d3r4T
+#@database.password@=<<db pwd>>
 #@database.INFORMIXSERVER@=informixoltp_tcp
 
 #######################
@@ -258,6 +258,7 @@
 
 # AWS S3 Credentials for download submission
 @aws_s3_bucket@=topcoder-dev-submissions
+@aws_s3_bucket_dmz@=topcoder-dev-submissions-dmz
 @aws_s3_expire@=3600000
 @aws_s3_access_key@=
 @aws_s3_secret_key@=

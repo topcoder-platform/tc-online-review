@@ -610,7 +610,7 @@
                                             <td class="value"><!-- @ --></td>
                                             <c:if test="${isAllowedToUploadFF}">
                                                 <td class="valueC" nowrap="nowrap">
-                                                    <a href="<or:url value='/actions/UploadFinalFix?pid=${project.id}' />"><or:text
+                                                    <a href="${viewContestLink}"><or:text
                                                         key="viewProjectDetails.box.FinalFix.Upload" /></a></td>
                                             </c:if>
                                             <c:if test="${not isAllowedToUploadFF}">
