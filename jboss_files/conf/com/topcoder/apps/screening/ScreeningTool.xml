@@ -1,0 +1,47 @@
+<CMConfig>  
+  <Config name="com.topcoder.apps.screening.ScreeningTool">
+    <Property name="temp_folder">
+        <Value>/export/home/apps/screening_tmp</Value>
+    </Property>
+    <Property name="soft">
+        <Value>on</Value>
+    </Property>
+    <Property name="rules">
+        <Value>java_design</Value>
+        <Value>java_dev</Value>
+        <Value>csharp_design</Value>
+        <Value>csharp_dev</Value>
+    </Property>
+    <Property name="java_design_rule">
+        <Value>com.topcoder.apps.screening.rules.JarFileRule</Value>
+        <Value>com.topcoder.apps.screening.rules.DesignDirRule</Value>
+        <Value>com.topcoder.apps.screening.rules.ComponentSpecificationRule</Value>
+        <Value>com.topcoder.apps.screening.rules.PoseidonFileRule</Value>
+        <Value>com.topcoder.apps.screening.rules.PersonalInfoRule</Value>
+    </Property>
+    <Property name="java_dev_rule">
+        <Value>com.topcoder.apps.screening.rules.JarFileRule</Value>
+        <Value>com.topcoder.apps.screening.rules.JavaDevDirRule</Value>
+        <Value>com.topcoder.apps.screening.rules.ComponentSpecificationRule</Value>
+        <Value>com.topcoder.apps.screening.rules.TestLogRule</Value>
+        <Value>com.topcoder.apps.screening.rules.JavaSourceCodeRule</Value>
+        <Value>com.topcoder.apps.screening.rules.JavaCheckStyleRule</Value>
+        <Value>com.topcoder.apps.screening.rules.PersonalInfoRule</Value>
+    </Property>
+    <Property name="csharp_design_rule">
+        <Value>com.topcoder.apps.screening.rules.ZipFileRule</Value>
+        <Value>com.topcoder.apps.screening.rules.DesignDirRule</Value>
+        <Value>com.topcoder.apps.screening.rules.ComponentSpecificationRule</Value>
+        <Value>com.topcoder.apps.screening.rules.PoseidonFileRule</Value>
+        <Value>com.topcoder.apps.screening.rules.PersonalInfoRule</Value>
+    </Property>
+    <Property name="csharp_dev_rule">
+        <Value>com.topcoder.apps.screening.rules.ZipFileRule</Value>
+        <Value>com.topcoder.apps.screening.rules.CSharpDevDirRule</Value>
+        <Value>com.topcoder.apps.screening.rules.ComponentSpecificationRule</Value>
+        <Value>com.topcoder.apps.screening.rules.TestLogRule</Value>
+        <Value>com.topcoder.apps.screening.rules.CSharpSourceCodeRule</Value>
+        <Value>com.topcoder.apps.screening.rules.PersonalInfoRule</Value>
+    </Property>
+  </Config>
+</CMConfig>

@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<CMConfig>
+  <!-- refresh period for a cache named 'review_cache' -->
+<!--
+    <Property name="review_cache.refresh.period">
+      <Value>60</Value>
+    </Property> 
+-->
+</CMConfig>
