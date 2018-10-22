@@ -1,0 +1,53 @@
+
+version: 2
+
+jobs:
+  # Build & Deploy against development backend
+  "build":
+    docker:
+      - image: maven:3-jdk-8-slim
+    steps:
+      # Initialization.
+      - run:
+          name: Installation of build dependencies.
+          command: |
+            apt update
+            apt install -y  zip jq python-pip
+            pip install awscli --upgrade --user
+            apt install -y  apt-transport-https ca-certificates curl gnupg2 software-properties-common
+            curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+            add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+            apt update
+            apt install -y docker-ce
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build enve var
+          command: |
+            export PATH=~/.local/bin:$PATH
+            git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
+            cp ./../buildscript/buildenv.sh .
+            ./buildenv.sh -e DEV -b onlinereview
+      - run:
+          name: Building software
+          command: |
+            export PATH=~/.local/bin:$PATH    
+            source buildenvvar      
+            ./buildproperties.sh -e DEV -b build.properties,token.properties -k OR
+            mvn -B -Dmaven.test.skip=true antrun:run@tokenize package
+            git submodule  update --init
+            mvn -B -Dmaven.test.skip=true antrun:run@first-deploy
+            ./buildimage.sh DEV
+      - deploy:
+          command: |
+            export PATH=~/.local/bin:$PATH 
+            cp ./../buildscript/master_deply_v4.2.sh .
+            ./master_deply_v4.2.sh -d ECS -e DEV -t $CIRCLE_BUILD_NUM -s onlinereview              
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: [maven-circleci]
