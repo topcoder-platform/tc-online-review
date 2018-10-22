@@ -1,0 +1,15 @@
+<CMConfig>  
+	<Config name="com.topcoder.util.idgenerator.onlinereview">
+		<Property name="db_connection_factory">
+			<Property name="class">
+				<Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>   
+			</Property>
+			<Property name="namespace">
+				<Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>   
+			</Property>
+			<Property name="connection_name">
+				<Value>tcs_catalog_conn</Value>   
+			</Property>        
+	    </Property>
+	</Config>
+</CMConfig>

@@ -35,6 +35,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.AmazonS3URI;
 
 import javax.ejb.CreateException;
 import javax.naming.Context;
@@ -229,11 +230,17 @@ public class ActionsHelper {
      */
     private static final String s3Bucket;
 
+    /**
+     * AWS S3 bucket DMZ name
+     */
+    private static final String s3BucketDmz;
+
     static {
         try {
             ClassLoader loader = ActionsHelper.class.getClassLoader();
             URL credentialURL = loader.getResource(AWS_CREDENTIALS_FILE);
             s3Bucket = ConfigHelper.getS3Bucket();
+            s3BucketDmz = ConfigHelper.getS3BucketDmz();
             presignedExpireMillis = ConfigHelper.getPreSignedExpTimeMilis();
             s3Client = new AmazonS3Client(new PropertiesCredentials(new File(credentialURL.getFile())));
         } catch (Throwable e) {
@@ -3678,6 +3685,18 @@ public class ActionsHelper {
             log.log(Level.ERROR, "ex: " + e.getMessage());
             throw new IOException("Error S3 download", e);
         }
+    }
+
+    /**
+     * Check upload url is on dmz
+     *
+     * @param url upload url
+     * @return true if uploadfile is on dmz bucket
+     */
+    public static boolean isDmzBucket(String url) {
+        AmazonS3URI s3Uri = new AmazonS3URI(url);
+        log.log(Level.INFO, "S3 Bucket from url: " + s3Uri.getBucket());
+        return s3BucketDmz.equals(s3Uri.getBucket());
     }
 
     /**

@@ -1,0 +1,34 @@
+<CMConfig>
+  <Property name="startTime.hours">
+    <Value>0</Value>
+  </Property>
+  <Property name="startTime.minutes">
+    <Value>0</Value>
+  </Property>
+  <Property name="endTime.hours">
+    <Value>24</Value>
+  </Property>
+  <Property name="endTime.minutes">
+    <Value>0</Value>
+  </Property>
+  <Property name="isSaturdayWorkday">
+    <Value>true</Value>
+  </Property>
+  <Property name="isSundayWorkday">
+    <Value>true</Value>
+  </Property>
+  <Property name="locale.language">
+    <Value>US</Value>
+  </Property>
+  <Property name="locale.country">
+    <Value>us</Value>
+  </Property>
+  <Property name="locale.variant">
+    <Value>MAC</Value>
+  </Property>
+  <Property name="dateStyle">
+    <Value>SHORT</Value>
+  </Property>
+  <Property name="nonWorkdays">
+  </Property>
+</CMConfig>
