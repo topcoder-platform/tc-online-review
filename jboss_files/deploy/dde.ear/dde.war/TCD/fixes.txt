@@ -1,0 +1,41 @@
+Final fixes for 13483
+
+	Overall
+
+#	    * The footer is the Black portion of the very bottom if the home page. It does not include the "What's new" or "Link Block." 
+	      These two sections should be removed from all pages except the home page.
+#	    * The graphic "Plug into the world's largest community of competitive...." should appear only on the home page.
+
+	Home page
+
+#	    * "Learn More" in the "Fix" box is out of alignment.
+
+	Platform Tools
+
+#	    * Platform Tools icons should link to the tool as well
+
+	------
+
+	IE7/IE6 Specific
+
+	Overall
+
+	    * Spacing between headers, subheads and text runs together and does not display as nicely as FireFox
+
+	Methodology
+
+#	    * Icons and descriptions do not line up properly from left to right
+
+
+
+//--------------------------------------------------------------------
+------//
+
+# : fixed
+
+Also already validated in 
+  - http://validator.w3.org/check and
+  - http://jigsaw.w3.org/css-validator/
+
+
+  -virose

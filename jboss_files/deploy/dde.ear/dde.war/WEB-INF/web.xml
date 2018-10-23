@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<web-app
+        version="2.4"
+        xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+    <!-- Action Servlet Configuration -->
+    <servlet>
+            <servlet-name>CatalogDownload</servlet-name>
+            <servlet-class>com.topcoder.dde.servlet.DDEComponentDownload</servlet-class>
+    </servlet>
+    <servlet>
+            <servlet-name>CatalogDocument</servlet-name>
+            <servlet-class>com.topcoder.dde.servlet.DDEDocumentDownload</servlet-class>
+    </servlet>
+    <servlet>
+  	    <servlet-name>SVGDocument</servlet-name>
+  	    <servlet-class>com.topcoder.dde.servlet.DDESVGDownload</servlet-class>
+    </servlet>
+    <servlet>
+  	    <servlet-name>ForumAttachment</servlet-name>
+  	    <servlet-class>com.topcoder.dde.servlet.DDEForumAttachmentDownload</servlet-class>
+    </servlet>
+    <servlet>
+            <servlet-name>JavadocViewing</servlet-name>
+            <servlet-class>com.topcoder.dde.servlet.JavadocServlet</servlet-class>
+    </servlet>
+    <servlet>
+            <servlet-name>SubmissionDownload</servlet-name>
+            <servlet-class>com.topcoder.dde.servlet.DDESubmissionDownload</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>tcs</servlet-name>
+        <servlet-class>com.topcoder.dde.servlet.TCSServlet</servlet-class>
+
+        <!-- begin parameters required by BaseServlet -->
+        <init-param>
+            <param-name>module_key</param-name>
+            <param-value>module</param-value>
+            <description>the url parameter that defines which processor to execute</description>
+        </init-param>
+        <init-param>
+            <param-name>default_processor</param-name>
+            <param-value>Static</param-value>
+            <description>the processor to execute if non is specified in the request</description>
+        </init-param>
+<!--
+        <init-param>
+            <param-name>login_processor</param-name>
+            <param-value>Login</param-value>
+            <description>the processor to execute when we need to direct the user to login</description>
+        </init-param>
+-->
+
+        <init-param>
+            <param-name>login_servlet</param-name>
+            <param-value>/login.jsp</param-value>
+            <description>the servlet path to use when we need to direct the user to login</description>
+        </init-param>
+        <init-param>
+            <param-name>processor_path</param-name>
+            <param-value>com.topcoder.dde.request.</param-value>
+            <description>the path to the processors for this app</description>
+        </init-param>
+        <init-param>
+            <param-name>error_page</param-name>
+            <param-value>/errorPage.jsp</param-value>
+            <description>where to forward for errors</description>
+        </init-param>
+        <!-- end  parameters required by BaseServlet -->
+
+    </servlet>
+
+    <!-- Action Servlet Mapping -->
+    <servlet-mapping>
+        <servlet-name>SubmissionDownload</servlet-name>
+        <url-pattern>/catalog/submission</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JavadocViewing</servlet-name>
+        <url-pattern>/catalog/javadoc/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CatalogDownload</servlet-name>
+        <url-pattern>/catalog/download</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CatalogDocument</servlet-name>
+        <url-pattern>/catalog/document</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SVGDocument</servlet-name>
+        <url-pattern>/catalog/svg</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ForumAttachment</servlet-name>
+        <url-pattern>/forum/attachment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>tcs</servlet-name>
+        <url-pattern>/tcs</url-pattern>
+    </servlet-mapping>
+
+    <session-config>
+        <session-timeout>60</session-timeout>
+    </session-config>
+
+    <!-- The Welcome File List -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>../index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!-- ERROR Pages -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/attention/pagenotfound.jsp</location>
+    </error-page>
+
+    <ejb-local-ref>
+        <ejb-ref-name>ejb/DDEDocTypesEJB</ejb-ref-name>
+        <ejb-ref-type>Entity</ejb-ref-type>
+        <local-home>com.topcoder.dde.persistencelayer.interfaces.LocalDDEDocTypesHome</local-home>
+        <local>com.topcoder.dde.persistencelayer.interfaces.LocalDDEDocTypes</local>
+        <ejb-link>DDEDocTypesEJB</ejb-link>
+    </ejb-local-ref>
+    
+    <ejb-local-ref>
+        <ejb-ref-name>ejb/DDECompCatalogEJB</ejb-ref-name>
+        <ejb-ref-type>Entity</ejb-ref-type>
+        <local-home>com.topcoder.dde.persistencelayer.interfaces.LocalDDECompCatalogHome</local-home>
+        <local>com.topcoder.dde.persistencelayer.interfaces.LocalDDECompCatalog</local>
+        <ejb-link>DDECompCatalogEJB</ejb-link>
+    </ejb-local-ref>
+
+    <ejb-local-ref>
+        <ejb-ref-name>ejb/DDECategoriesEJB</ejb-ref-name>
+        <ejb-ref-type>Entity</ejb-ref-type>
+        <local-home>com.topcoder.dde.persistencelayer.interfaces.LocalDDECategoriesHome</local-home>
+        <local>com.topcoder.dde.persistencelayer.interfaces.LocalDDECategories</local>
+        <ejb-link>DDECategoriesEJB</ejb-link>
+    </ejb-local-ref>
+
+</web-app>

@@ -1,0 +1,1 @@
+WEB - Contains user interface files such as JSPs, ASPs and HTML.

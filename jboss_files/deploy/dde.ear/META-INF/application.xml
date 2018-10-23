@@ -1,0 +1,61 @@
+<!DOCTYPE application PUBLIC "-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN"
+        "http://java.sun.com/dtd/application_1_3.dtd">
+
+<application>
+    <display-name>DDE</display-name>
+
+    <module>
+        <ejb>admin.jar</ejb>
+    </module>
+    <!--remove with new OR
+        <module>
+            <ejb>auto_pilot_timer.sar</ejb>
+        </module>
+        <module>
+            <ejb>cache_refresher.sar</ejb>
+        </module>
+    -->
+    <module>
+        <ejb>catalog.jar</ejb>
+    </module>
+    <module>
+        <ejb>ddePersistenceLayer.jar</ejb>
+    </module>
+    <module>
+        <ejb>ddesubmission.jar</ejb>
+    </module>
+    <module>
+        <ejb>forums.jar</ejb>
+    </module>
+    <module>
+        <ejb>idgenerator.jar</ejb>
+    </module>
+    <module>
+        <ejb>notification.jar</ejb>
+    </module>
+    <module>
+        <ejb>persistence.jar</ejb>
+    </module>
+    <module>
+        <java>security.jar</java>
+    </module>
+    <module>
+        <ejb>user.jar</ejb>
+    </module>
+    <module>
+        <web>
+            <web-uri>dde.war</web-uri>
+            <context-root>/</context-root>
+        </web>
+    </module>
+
+    <!--remove with new OR
+        <module>
+            <web>
+                <web-uri>review.war</web-uri>
+                <context-root>/review</context-root>
+            </web>
+        </module>
+    -->
+
+</application>
