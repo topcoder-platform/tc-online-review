@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+ "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
+<web-app>
+    <distributable/>
+    <servlet>
+        <servlet-name>onsite</servlet-name>
+        <display-name>onsite</display-name>
+        <description>The main controller servlet</description>
+        <servlet-class>com.topcoder.web.onsite.controller.MainServlet</servlet-class>
+
+        <!-- begin parameters required by BaseServlet -->
+        <init-param>
+            <param-name>module_key</param-name>
+            <param-value>module</param-value>
+            <description>the url parameter that defines which processor to execute</description>
+        </init-param>
+        <init-param>
+            <param-name>default_processor</param-name>
+            <param-value>Static</param-value>
+            <description>the processor to execute if non is specified in the request</description>
+        </init-param>
+        <init-param>
+            <param-name>login_processor</param-name>
+            <param-value>Login</param-value>
+            <description>the processor to execute when we need to direct the user to login</description>
+        </init-param>
+        <init-param>
+            <param-name>login_servlet</param-name>
+            <param-value>/onsite</param-value>
+            <description>the servlet path to use when we need to direct the user to login</description>
+        </init-param>
+        <init-param>
+            <param-name>processor_path</param-name>
+            <param-value>com.topcoder.web.onsite.controller.request.</param-value>
+            <description>the path to the processors for this app</description>
+        </init-param>
+        <init-param>
+            <param-name>error_page</param-name>
+            <param-value>/errorPage.jsp</param-value>
+            <description>where to forward for errors</description>
+        </init-param>
+        <!-- end  parameters required by BaseServlet -->
+
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>onsite</servlet-name>
+        <url-pattern>/onsite</url-pattern>
+    </servlet-mapping>
+
+    <taglib>
+       <taglib-uri>rsc-taglib.tld</taglib-uri>
+       <taglib-location>/WEB-INF/rsc-taglib.tld</taglib-location>
+    </taglib>
+    <taglib>
+       <taglib-uri>tc-webtags.tld</taglib-uri>
+       <taglib-location>/WEB-INF/tc-webtags.tld</taglib-location>
+    </taglib>
+
+    <error-page>
+         <error-code>404</error-code>
+         <location>/errorPage.jsp</location>
+    </error-page>
+
+
+</web-app>

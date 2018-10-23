@@ -1,0 +1,251 @@
+<CMConfig>
+  <Config name="com.topcoder.management.resource.searchbuilder">
+	<Property name="searchStrategyFactoryNamespace">
+		<Value>com.topcoder.search.builder.strategy.factory</Value>
+    </Property>
+	<Property name="fieldValidatorFactoryNamespace">
+		<Value>com.topcoder.search.builder.validator.factory</Value>
+	</Property>
+	<Property name="searchBundles">
+            <Property name="Resource Search Bundle">
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+
+                <Property name="searchableFields">
+                    <Property name="resource_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>nonnull</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="project_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>nonnull</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="resource_role_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>nonnull</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="name">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>nonnull</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="value">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>nonnull</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>Resource Search Bundle</Value>
+                </Property>
+
+                <Property name="context">
+                    <Value>
+                        SELECT DISTINCT resource.resource_id FROM resource LEFT OUTER JOIN resource_submission ON
+                        resource.resource_id = resource_submission.resource_id LEFT OUTER JOIN resource_info ON
+                        resource.resource_id = resource_info.resource_id LEFT OUTER JOIN resource_info_type_lu ON
+                        resource_info.resource_info_type_id = resource_info_type_lu.resource_info_type_id WHERE
+                    </Value>
+                </Property>
+
+                <Property name="DBNamcespace">
+                    <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                </Property>
+                <Property name="connectionProducerName">
+                    <Value>tcs</Value>
+                </Property>
+
+                <Property name="alias">
+                    <Property name="resource_id">
+                        <Value>resource_id</Value>
+                    </Property>
+                    <Property name="resource_id1">
+                        <Value>resource_id</Value>
+                    </Property>
+                </Property>
+            </Property>
+
+            <Property name="Resource Role Search Bundle">
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+
+                <Property name="searchableFields">
+                    <Property name="resource_role_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>nonnull</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>Resource Role Search Bundle</Value>
+                </Property>
+
+                <Property name="context">
+                    <Value>SELECT DISTINCT resource_role_id FROM resource_role_lu WHERE</Value>
+                </Property>
+
+                <Property name="DBNamcespace">
+                    <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                </Property>
+                <Property name="connectionProducerName">
+                    <Value>tcs</Value>
+                </Property>
+
+                <Property name="alias">
+                    <Property name="resource_role_id">
+                        <Value>resource_role_id</Value>
+                    </Property>
+                </Property>
+            </Property>
+
+            <Property name="Notification Search Bundle">
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+
+                <Property name="searchableFields">
+                    <Property name="project_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>nonnull</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="external_ref_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>nonnull</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>Notification Search Bundle</Value>
+                </Property>
+
+                <Property name="context">
+                    <Value>
+                        SELECT DISTINCT external_ref_id, project_id, notification_type_id FROM notification WHERE
+                    </Value>
+                </Property>
+
+                <Property name="DBNamcespace">
+                    <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                </Property>
+                <Property name="connectionProducerName">
+                    <Value>tcs</Value>
+                </Property>
+
+                <Property name="alias">
+                    <Property name="The ID">
+                        <Value>peopleID</Value>
+                    </Property>
+                </Property>
+            </Property>
+
+            <Property name="Notification Type Search Bundle">
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+
+                <Property name="searchableFields">
+                    <Property name="dummy">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>null</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>Notification Type Search Bundle</Value>
+                </Property>
+
+                <Property name="context">
+                    <Value>SELECT DISTINCT notification_type_id FROM notification_type_lu WHERE</Value>
+                </Property>
+
+                <Property name="DBNamcespace">
+                    <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                </Property>
+                <Property name="connectionProducerName">
+                    <Value>tcs</Value>
+                </Property>
+
+                <Property name="alias">
+                    <Property name="The ID">
+                        <Value>peopleID</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+  </Config>
+</CMConfig> 

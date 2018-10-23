@@ -1,0 +1,40 @@
+p {
+  color: #333333;
+  font-family: sans-serif,Arial,Helvetica;
+  font-size: 12px;
+  display: inline;
+}
+
+a:link {
+  color: #0000FF;
+}
+
+a:hover{
+  text-decoration: underline;
+}
+
+.headline {
+  color: #990000;
+  font-family: sans-serif,Arial,Helvetica;
+  font-size: 18px;
+  font-weight: bold;
+  display: block;
+}
+
+.subTitle {
+  color: #990000;
+  font-size: 15px;
+  font-family: sans-serif,Arial,Helvetica;
+  font-style: italic;
+  font-weight: bold;
+  display: inline;
+}
+
+.smallText {
+  color: #000000;
+  font-family: sans-serif,Arial,Helvetica;
+  font-size: 11px;
+  font-style: none;
+  display: inline;
+}
+

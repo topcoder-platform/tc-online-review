@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<CMConfig>  
+    <Config name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+        <Property name="connections">
+            <Property name="default">
+                <Value>tcs</Value>
+            </Property>
+            <Property name="tcs">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jndi_name">
+                        <Value>java:JTS_TCS_CATALOG</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+</CMConfig>

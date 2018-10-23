@@ -1,0 +1,10 @@
+<div class="wrapper">
+        <h2 id="whats_new"><span>What's New</span></h2>
+		[% foreach item %]
+			<div class="post">
+            <h3><a href="[%= link %]">[%= title %]</a> <small>| [%= pubDate format:M D Y%]</small></h3>
+            <p>[%= description %]</p>
+            <p class="learn_more"><a href="[%= link %]">Learn More</a></p>
+        </div>
+		[% /foreach %]
+    </div>
