@@ -28,6 +28,13 @@ jobs:
             git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
             cp ./../buildscript/buildenv.sh .
             ./buildenv.sh -e DEV -b onlinereview
+      - restore_cache:
+          key: tc-or-{{ checksum "~/project/pom.xml" }}
+      - run: mvn -f ~/project/pom.xml dependency:go-offline
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: tc-or-{{ checksum "~/project/pom.xml" }}                 
       - run:
           name: Building software
           command: |
