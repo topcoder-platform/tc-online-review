@@ -1,7 +1,7 @@
 
 Notes on testing some actions from Project Admin & Review
 
-  1. Upload Submission
+  1. Upload Submission 
 
      To go to the upload submission page you should enter the following into
      the Address field of your browser:
