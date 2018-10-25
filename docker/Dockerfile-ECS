@@ -16,4 +16,4 @@ RUN mkdir -p /nfs_shares/tcs-downloads
 EXPOSE 8080
 
 ENTRYPOINT [ "bash", "-c" ]
-CMD [ "or-run.sh" ]
+CMD [ "./or-run.sh" ]
