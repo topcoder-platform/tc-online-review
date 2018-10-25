@@ -5,6 +5,7 @@ ENV JBOSS_HOME=/deployment/jboss-4.0.2
 ENV JAVA_OPTS="-Xms256m -Xmx512m"
 WORKDIR ${JBOSS_HOME}
 #RUN rm -rf ${JBOSS_HOME}/server/default
+COPY or-run.sh ${JBOSS_HOME}
 COPY jboss_output/server/default ${JBOSS_HOME}/server/default
 COPY build/online_review/jboss_files/deploy/tcs_informix-ds.xml ${JBOSS_HOME}/server/default/deploy
 COPY build/online_review/review.war ${JBOSS_HOME}/server/default/deploy
@@ -15,4 +16,4 @@ RUN mkdir -p /nfs_shares/tcs-downloads
 EXPOSE 8080
 
 ENTRYPOINT [ "bash", "-c" ]
-CMD [ "bin/run.sh","-b","0.0.0.0","-DFOREGROUND" ]
+CMD [ "or-run.sh" ]
