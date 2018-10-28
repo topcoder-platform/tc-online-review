@@ -405,7 +405,6 @@
       <groupId>com.topcoder.internal</groupId>
       <artifactId>catalog</artifactId>
       <version>1.0.0</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.topcoder.internal</groupId>
