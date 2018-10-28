@@ -393,21 +393,25 @@
       <groupId>com.topcoder.internal</groupId>
       <artifactId>forums</artifactId>
       <version>1.0.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.topcoder.internal</groupId>
       <artifactId>shared</artifactId>
       <version>1.0.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.topcoder.internal</groupId>
       <artifactId>catalog</artifactId>
       <version>1.0.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.topcoder.internal</groupId>
       <artifactId>job_scheduler</artifactId>
       <version>1.0.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.topcoder.internal</groupId>
@@ -419,31 +423,37 @@
       <groupId>com.topcoder.internal</groupId>
       <artifactId>tcjive</artifactId>
       <version>1.0.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.topcoder.internal</groupId>
       <artifactId>tc_id_generator</artifactId>
       <version>1.0.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.topcoder.internal</groupId>
       <artifactId>jivebase</artifactId>
       <version>1.0.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.topcoder.internal</groupId>
       <artifactId>jiveforums</artifactId>
       <version>1.0.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.topcoder.internal</groupId>
       <artifactId>user_ejb</artifactId>
       <version>1.0.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.topcoder.internal</groupId>
       <artifactId>security_ejb</artifactId>
       <version>1.0.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.topcoder.internal</groupId>
