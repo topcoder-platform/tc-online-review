@@ -410,7 +410,6 @@
       <groupId>com.topcoder.internal</groupId>
       <artifactId>job_scheduler</artifactId>
       <version>1.0.0</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.topcoder.internal</groupId>
@@ -422,7 +421,6 @@
       <groupId>com.topcoder.internal</groupId>
       <artifactId>tcjive</artifactId>
       <version>1.0.0</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.topcoder.internal</groupId>
@@ -433,7 +431,6 @@
       <groupId>com.topcoder.internal</groupId>
       <artifactId>jivebase</artifactId>
       <version>1.0.0</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.topcoder.internal</groupId>
