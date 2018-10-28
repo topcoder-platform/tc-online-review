@@ -447,13 +447,11 @@
       <groupId>com.topcoder.internal</groupId>
       <artifactId>user_ejb</artifactId>
       <version>1.0.0</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.topcoder.internal</groupId>
       <artifactId>security_ejb</artifactId>
       <version>1.0.0</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.topcoder.internal</groupId>
