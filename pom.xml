@@ -429,7 +429,6 @@
       <groupId>com.topcoder.internal</groupId>
       <artifactId>tc_id_generator</artifactId>
       <version>1.0.0</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.topcoder.internal</groupId>
