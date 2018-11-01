@@ -9,6 +9,10 @@ COPY or-run.sh ${JBOSS_HOME}
 COPY jboss_output/server/default ${JBOSS_HOME}/server/default
 COPY build/online_review/jboss_files/deploy/tcs_informix-ds.xml ${JBOSS_HOME}/server/default/deploy
 COPY build/online_review/review.war ${JBOSS_HOME}/server/default/deploy
+COPY TC.prod.ldap.keystore ${JBOSS_HOME}/bin
+COPY run.conf ${JBOSS_HOME}/bin
+COPY security.keystore ${JBOSS_HOME}/bin
+
 RUN mkdir -p /nfs_shares/studiofiles
 RUN mkdir -p /nfs_shares/tcssubmissions
 RUN mkdir -p /nfs_shares/tcs-downloads
