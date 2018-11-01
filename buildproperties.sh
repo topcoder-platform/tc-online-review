@@ -31,19 +31,31 @@ track_error()
 }
 download_buildenvfile()
 {
-    Buffer_seclist=$(echo $BUILDENV_LIST | sed 's/,/ /g' )
-    for listname in $Buffer_seclist;
-    do
-        if [ -z "$KEY_LOCATION" ];
-        then
-            aws s3 cp s3://tc-buildproperties-${ENV_CONFIG}/$listname .
-            track_error $? "Environment setting" 
-        else
-                aws s3 cp s3://tc-buildproperties-${ENV_CONFIG}/$KEY_LOCATION/$listname .
-                track_error $? "Environment setting"
-        fi    
+	if [ -z "$BUILDENV_LIST" ];
+	then
+		if [ -z "$KEY_LOCATION" ];
+		then
+		    track_error $? "Please provide the file list using -b or file location -k or both -b and -k " 
+		else
+			aws s3 sync s3://tc-buildproperties-${ENV_CONFIG}/$KEY_LOCATION .
+			track_error $? "Environment setting"
+		fi      
 
-    done
+	else
+	    Buffer_seclist=$(echo $BUILDENV_LIST | sed 's/,/ /g' )
+	    for listname in $Buffer_seclist;
+	    do
+		if [ -z "$KEY_LOCATION" ];
+		then
+		    aws s3 cp s3://tc-buildproperties-${ENV_CONFIG}/$listname .
+		    track_error $? "Environment setting" 
+		else
+			aws s3 cp s3://tc-buildproperties-${ENV_CONFIG}/$KEY_LOCATION/$listname .
+			track_error $? "Environment setting"
+		fi  
+	    done     
+	fi 
+   
 }
 
 configure_aws_cli() {
