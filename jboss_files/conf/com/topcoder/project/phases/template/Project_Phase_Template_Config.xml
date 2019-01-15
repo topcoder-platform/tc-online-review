@@ -45,9 +45,9 @@
     <Config name="com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence">
         <!-- XML files from which the templates will be loaded. -->
         <Property name="template_files">
-            <Value>/home/apps/web/conf/templates/TCSTemplate_Design.xml</Value>
-            <Value>/home/apps/web/conf/templates/TCSTemplate_Development.xml</Value>
-            <Value>/home/apps/web/conf/templates/TCSTemplate_Application.xml</Value>
+            <Value>/deployment/jboss-4.0.2/server/default/conf/template/TCSTemplate_Design.xml</Value>
+            <Value>/deployment/jboss-4.0.2/server/default/conf/template/TCSTemplate_Development.xml</Value>
+            <Value>/deployment/jboss-4.0.2/server/default/conf/template/TCSTemplate_Application.xml</Value>
         </Property>
     </Config>
 
