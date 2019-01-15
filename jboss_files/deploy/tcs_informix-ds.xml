@@ -48,7 +48,8 @@
 
   <local-tx-datasource>
     <jndi-name>DW</jndi-name>
-    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/topcoder_dw:INFORMIXSERVER=@database.INFORMIXSERVER@;IFX_USE_STRENC=true</connection-url>
+    <!-- <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/topcoder_dw:INFORMIXSERVER=@database.INFORMIXSERVER@;IFX_USE_STRENC=true</connection-url> -->
+    <connection-url>jdbc:informix-sqli://dw01.prod.topcoder.com:2020/topcoder_dw:INFORMIXSERVER=datawarehouse_tcp;IFX_USE_STRENC=true</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
@@ -64,7 +65,8 @@
   </local-tx-datasource>
   <no-tx-datasource>
     <jndi-name>TCS_DW</jndi-name>
-    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/tcs_dw:INFORMIXSERVER=@database.INFORMIXSERVER@;IFX_USE_STRENC=true</connection-url>
+    <!-- <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/tcs_dw:INFORMIXSERVER=@database.INFORMIXSERVER@;IFX_USE_STRENC=true</connection-url> -->
+    <connection-url>jdbc:informix-sqli://dw01.prod.topcoder.com:2020/tcs_dw:INFORMIXSERVER=datawarehouse_tcp;IFX_USE_STRENC=true</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
