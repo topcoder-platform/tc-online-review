@@ -25,7 +25,7 @@ jobs:
           name: Build enve var
           command: |
             export PATH=~/.local/bin:$PATH
-            git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
+            git clone --branch v1.1 https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
             cp ./../buildscript/buildenv.sh .
             ./buildenv.sh -e DEV -b onlinereview
       - run:
