@@ -112,6 +112,10 @@
       </fileset>
     </copy>
 
+    <copy todir="${build_jboss_files_conf}/distribution_scripts" overwrite="true">
+      <fileset dir="${jboss_files_conf}/distribution_scripts" includes="**"/>
+    </copy>
+
     <replace dir="${build_jboss_files_conf}" replacefilterfile="${token.properties}">
       <include name="**/*.properties"/>
       <include name="**/*.xml"/>
