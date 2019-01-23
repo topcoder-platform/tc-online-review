@@ -3646,7 +3646,7 @@ public class ActionsHelper {
 
     public static void outputDownloadS3File(String url, String key, String contentDisposition, HttpServletResponse response) throws IOException {
         try {
-            log.log(Level.INFO, "will download from s3: " + key);
+            log.log(Level.INFO, "Will download from S3 with key " + key + " for url " + url);
 
             S3Object s3Object = s3Client.getObject(new GetObjectRequest(s3Bucket, key));
             InputStream in = (InputStream) s3Object.getObjectContent();
@@ -3677,10 +3677,6 @@ public class ActionsHelper {
                     out.close();
                 }
             }
-        } catch (AmazonS3Exception e) {
-            // Not on our S3. This is user's own url file
-            log.log(Level.INFO, url + " is not on our S3 bucket, this is user's own url. redirect it");
-            response.sendRedirect(url);
         } catch(Exception e) {
             log.log(Level.ERROR, "ex: " + e.getMessage());
             throw new IOException("Error S3 download", e);
@@ -3694,9 +3690,28 @@ public class ActionsHelper {
      * @return true if uploadfile is on dmz bucket
      */
     public static boolean isDmzBucket(String url) {
-        AmazonS3URI s3Uri = new AmazonS3URI(url);
+        AmazonS3URI s3Uri = isS3Url(url);
+        if (s3Uri == null) {
+            return false;
+        }
         log.log(Level.INFO, "S3 Bucket from url: " + s3Uri.getBucket());
         return s3BucketDmz.equals(s3Uri.getBucket());
+    }
+
+    /**
+     * Check upload url is a valid S3 url.
+     *
+     * @param url upload url
+     * @return true if uploadfile is on dmz bucket
+     */
+    public static AmazonS3URI isS3Url(String url) {
+        try {
+            AmazonS3URI s3Uri = new AmazonS3URI(url);
+            return s3Uri;
+        } catch (IllegalArgumentException ex) {
+            // url doesn't seem to be a valid
+            return null;
+        }
     }
 
     /**

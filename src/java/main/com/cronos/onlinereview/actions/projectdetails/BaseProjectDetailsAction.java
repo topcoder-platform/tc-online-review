@@ -21,6 +21,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.amazonaws.services.s3.AmazonS3URI;
+
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.actions.DynamicModelDrivenAction;
 import com.cronos.onlinereview.actions.event.EventBusServiceClient;
@@ -188,7 +190,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
      * @throws ResourcePersistenceException if an unexpected error occurs.
      */
     protected void processSubmissionDownload(Upload upload, HttpServletRequest request, HttpServletResponse response) throws UploadPersistenceException, SearchBuilderException,DisallowedDirectoryException,
-    ConfigurationException, PersistenceException, FileDoesNotExistException, IOException, ResourcePersistenceException {
+      ConfigurationException, PersistenceException, FileDoesNotExistException, IOException, ResourcePersistenceException {
 
         // At this point, redirect-after-login attribute should be removed (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
@@ -226,20 +228,22 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             outputDownloadedFile(uploadedFile, contentDisposition, response);
         } else {
             System.out.println("upload url: " + upload.getUrl());
-            String path = new URL(upload.getUrl()).getPath();
-            int sep = path.lastIndexOf( '/' );
-            String key = ( sep < 0 ) ? path : path.substring( sep + 1 );
-
-            String contentDisposition;
-            if (submission != null) {
-                contentDisposition = "attachment; filename=\"submission-" + submission.getId() + "-"
-                                    + key + "\"";
+            AmazonS3URI s3Uri = ActionsHelper.isS3Url(upload.getUrl());
+            if (s3Uri == null) {
+                response.sendRedirect(upload.getUrl());
             } else {
-                contentDisposition = "attachment; filename=\"upload-" + upload.getId() + "-"
-                                    + key + "\"";
-            }
+                String key = s3Uri.getKey();
+                String contentDisposition;
+                if (submission != null) {
+                    contentDisposition = "attachment; filename=\"submission-" + submission.getId() + "-"
+                                        + key + "\"";
+                } else {
+                    contentDisposition = "attachment; filename=\"upload-" + upload.getId() + "-"
+                                        + key + "\"";
+                }
 
-            ActionsHelper.outputDownloadS3File(upload.getUrl(), key, contentDisposition, response);
+                ActionsHelper.outputDownloadS3File(upload.getUrl(), key, contentDisposition, response);
+            }
         }
     }
 
@@ -517,6 +521,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
                     errorMessageKey, "Error.NoPermission", Boolean.FALSE);
         }
 
+        // url not null and url bucket is equal to S3 DMZ bucket
         if (upload.getUrl() != null && ActionsHelper.isDmzBucket(upload.getUrl())) {
             return ActionsHelper.produceErrorReport(this, request, null, "Error.SubmissionOnDmz", null);
         }
