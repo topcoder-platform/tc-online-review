@@ -1,5 +1,5 @@
 
-Notes on testing some actions from Project Admin & Review 
+Notes on testing some actions from Project Admin & Review
 
   1. Upload Submission 
 
