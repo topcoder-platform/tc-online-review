@@ -297,6 +297,8 @@ public class ProjectDataAccess extends BaseDataAccess {
      * @throws Exception if any exception occurs
      */
     public long getProjectClient(long directProjectId) {
+        System.out.println("Will run getProjectClient with id=" + directProjectId);
+                
         String queryName = "non_admin_client_billing_accounts";
 
         ResultSetContainer resultContainer = runQueryInDB(DBMS.TCS_DW_DATASOURCE_NAME, queryName,
