@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 - 2017 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2013 - 2019 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions.project;
 
@@ -100,26 +100,33 @@ import com.topcoder.web.common.RowNotFoundException;
  * <p>
  * Struts 2 Action objects are instantiated for each request, so there are no thread-safety issues.
  * </p>
- * 
+ *
  * <p>
  * Version 2.1 (TOPCODER DIRECT - SUPPORT CHALLENGES WITH ZERO PRIZE):
  * <ul>
  *     <li>Updated validateProjectPrizes method to accept zero prize</li>
  * </ul>
  * </p>
- * 
+ *
  * <p>
  * Changes in version 2.2 Topcoder - Add Group Permission Check For Adding Resources v1.0
  * <ul>- check user group permission before add resource</ul>
  * </p>
- * 
+ *
  * <p>
  * Changes in Version 2.3 Topcoder - Online Review Update - Post to Event Bus Part 2 v1.0
  * - fire the project update event
  * </p>
- * 
+ *
+ * <p>
+ * Changes in Version 2.4 Topcoder - Online Review Update - Improve Performance during Edit Project v1.0
+ * <ul>
+ * <li>check Terms of Use only for added resources or modified roles.</li>
+ * </ul>
+ * </p>
+ *
  * @author TCSCODER
- * @version 2.3 
+ * @version 2.4
  */
 public class SaveProjectAction extends BaseProjectAction {
 
@@ -165,7 +172,7 @@ public class SaveProjectAction extends BaseProjectAction {
      * <p>A long number holding the ID for submitter role.</p>
      */
     private static final long SUBMITTER_ROLE_ID = 1L;
-    
+
     /**
      * The jackson object mapping which is used to deserialize json return from API to domain model.
      */
@@ -469,7 +476,7 @@ public class SaveProjectAction extends BaseProjectAction {
         }
 
         AmazonSNSHelper.publishProjectUpdateEvent(project);
-        EventBusServiceClient.fireProjectUpdateEvent(project.getId(), AuthorizationHelper.getLoggedInUserId(request), 
+        EventBusServiceClient.fireProjectUpdateEvent(project.getId(), AuthorizationHelper.getLoggedInUserId(request),
                 project, Arrays.asList(projectPhases));
 
         this.pid = project.getId();
@@ -1395,7 +1402,7 @@ public class SaveProjectAction extends BaseProjectAction {
         // Returned parsed Date
         return calendar.getTime();
     }
-    
+
     /**
      * Get groups for the login user
      *
@@ -1411,12 +1418,12 @@ public class SaveProjectAction extends BaseProjectAction {
             HttpGet getRequest = new HttpGet(groupEndPoint);
 
             String v3Token = new JwtTokenUpdater().check().getToken();
-            
+
             getRequest.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + v3Token);
 
             getRequest.addHeader(HttpHeaders.ACCEPT, "application/json");
             HttpResponse httpResponse = httpClient.execute(getRequest);
-            
+
             HttpEntity entity = httpResponse.getEntity();
 
             if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
@@ -1424,10 +1431,10 @@ public class SaveProjectAction extends BaseProjectAction {
             }
 
             JsonNode result = objectMapper.readTree(entity.getContent());
-            
-            JsonNode groups = result.path("result").path("content");        
+
+            JsonNode groups = result.path("result").path("content");
             Set<Long> groupIds = new HashSet<Long>();
-            for (JsonNode group : groups) {            
+            for (JsonNode group : groups) {
                 groupIds.add(group.path("id").asLong());
             }
 
@@ -1435,7 +1442,7 @@ public class SaveProjectAction extends BaseProjectAction {
             for (Long groupId : groupIds) {
                 allGroupIds.addAll(getParentGroups(groupId));
             }
-            
+
             return allGroupIds;
     	} catch (Exception exp) {
     		throw new BaseException(exp.getMessage(), exp);
@@ -1499,7 +1506,7 @@ public class SaveProjectAction extends BaseProjectAction {
 
         return parentGroupIds;
     }
-    
+
     /**
      * Check group permission
      *
@@ -1515,7 +1522,7 @@ public class SaveProjectAction extends BaseProjectAction {
         		// check user group before save the resource
     	        Map<String, Long> groups = new ProjectDataAccess().checkUserChallengeEligibility(
     	        		userId, projectId);
-    	        
+
     	        // If there's no corresponding record in group_contest_eligibility
     	        // then the challenge is available to all users
     	        if (groups != null && groups.entrySet().size() > 0) {
@@ -1546,10 +1553,10 @@ public class SaveProjectAction extends BaseProjectAction {
         } catch (Exception exp) {
         	throw new BaseException(exp.getMessage(), exp);
         }
-        
+
         return true;
     }
-    
+
     /**
      * Private helper method to save resources.
      *
@@ -2084,8 +2091,11 @@ public class SaveProjectAction extends BaseProjectAction {
             if (resourceNames[i] != null && resourceNames[i].trim().length() > 0) {
                 ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
                 String resourceAction = (String) getModel().get("resources_action", i);
-                // check for additions or modifications
-                if (!"delete".equals(resourceAction)) {
+                long resourceId = (Long) getModel().get("resources_id", i);
+
+                // check for additions or role modifications
+                // -1 value as id marks the resources that were't persisted in DB yet (addition)
+                if ("roleChanged".equals(resourceAction) || resourceId == -1) {
                     long roleId = (Long) getModel().get("resources_role", i);
                     long userId = user.getId();
 
@@ -2174,7 +2184,7 @@ public class SaveProjectAction extends BaseProjectAction {
                     {
                         continue;
                     }
-                    
+
                     boolean groupPermission = this.checkUserChallengeEligibility(request, i, project.getId(), userId);
                     if (!groupPermission) {
                         allResourcesValid = false;
