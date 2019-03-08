@@ -1,9 +1,12 @@
 <%--
   - Author: TCSASSEMBLER
-  - Version: 2.0
-  - Copyright (C) 2004 - 2014 TopCoder Inc., All Rights Reserved.
+  - Version: 2.1
+  - Copyright (C) 2004 - 2019 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays project edition page.
+  -
+  - Changes in Version 2.1 Topcoder - Online Review Update - Improve Performance during Edit Project v1.0
+  - - add hidden "roleChanged" flag when resource role is changed
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -453,6 +456,13 @@
         }
 
         function onResourceRoleChange(resourceNode) {
+            // Retrieve hidden inputs
+            var inputs = resourceNode.cells[2].getElementsByTagName("input");
+
+            // Set hidden resources_action parameter to "roleChanged"
+            var actionInput = inputs[0];
+            actionInput.value = "roleChanged";
+
             // Get phase parameters input nodes
             var phaseIdNodes = getChildrenByNamePrefix(document.documentElement, "phase_js_id");
             var phaseActionNodes = getChildrenByNamePrefix(document.documentElement, "phase_action");
@@ -513,7 +523,7 @@
             // Check if the phase should have a criterion row and at it if it is needed
             if (phaseName == "Screening" || phaseName == "Specification Review" || phaseName == "Review" || phaseName == "Approval" ||
                     phaseName == "Registration" || phaseName == "Appeals"
-                    || phaseName == "Post-Mortem" || phaseName == "Checkpoint Screening" 
+                    || phaseName == "Post-Mortem" || phaseName == "Checkpoint Screening"
                     || phaseName == "Checkpoint Review" || phaseName == "Iterative Review") {
                 var templateRow;
                 if (phaseName == "Screening") {
@@ -979,11 +989,11 @@
                         lagTime = -lagTime;
                         getChildByNamePrefix(newPhaseRow, "phase_start_plusminus").value = 'minus';
                     }
-                    
+
                     if (lagTime != 0) {
                         getChildByNamePrefix(newPhaseRow, "phase_start_dayshrs").value = 'mins';
                     }
-                    
+
                     getChildByNamePrefix(newPhaseRow, "phase_start_phase").value = "template_" + dependencyId;
                     getChildByNamePrefix(newPhaseRow, "phase_start_when").value = (dependencyStart == "true") ? "starts" : "ends";
                     getChildByNamePrefix(newPhaseRow, "phase_start_amount").value = '' + lagTime / 1000 / 60;
