@@ -48,11 +48,10 @@
 
   <local-tx-datasource>
     <jndi-name>DW</jndi-name>
-    <!-- <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/topcoder_dw:INFORMIXSERVER=@database.INFORMIXSERVER@;IFX_USE_STRENC=true</connection-url> -->
-    <connection-url>jdbc:informix-sqli://dw01.prod.topcoder.com:2020/topcoder_dw:INFORMIXSERVER=datawarehouse_tcp;IFX_USE_STRENC=true</connection-url>
+    <connection-url>jdbc:informix-sqli://@database.server.dw@:@database.port.dw@/topcoder_dw:INFORMIXSERVER=@database.INFORMIXSERVER.dw@;IFX_USE_STRENC=true</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
-    <user-name>@database.username@</user-name>
-    <password>@database.password@</password>
+    <user-name>@database.username.dw@</user-name>
+    <password>@database.password.dw@</password>
         <new-connection-sql>set lock mode to wait 5</new-connection-sql>
 
         <!-- sql to call on an existing pooled connection when it is obtained from pool -->
@@ -65,11 +64,10 @@
   </local-tx-datasource>
   <no-tx-datasource>
     <jndi-name>TCS_DW</jndi-name>
-    <!-- <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/tcs_dw:INFORMIXSERVER=@database.INFORMIXSERVER@;IFX_USE_STRENC=true</connection-url> -->
-    <connection-url>jdbc:informix-sqli://dw01.prod.topcoder.com:2020/tcs_dw:INFORMIXSERVER=datawarehouse_tcp;IFX_USE_STRENC=true</connection-url>
+    <connection-url>jdbc:informix-sqli://@database.server.dw@:@database.port.dw@/tcs_dw:INFORMIXSERVER=@database.INFORMIXSERVER.dw@;IFX_USE_STRENC=true</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
-    <user-name>@database.username@</user-name>
-    <password>@database.password@</password>
+    <user-name>@database.username.dw@</user-name>
+    <password>@database.password.dw@</password>
         <new-connection-sql>set lock mode to wait 5</new-connection-sql>
 
         <!-- sql to call on an existing pooled connection when it is obtained from pool -->
