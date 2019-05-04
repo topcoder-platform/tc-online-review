@@ -3,6 +3,7 @@
  */
 package com.cronos.onlinereview.phases;
 
+import com.topcoder.management.phase.OperationCheckResult;
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.project.phases.Phase;
 
@@ -12,17 +13,27 @@ import com.topcoder.project.phases.Phase;
  * <p>
  * Thread-safety: This class is thread-safe as it does not contain any mutable inner state.
  * </p>
- *
+ * <p>
+ * Version 2.1 changes note:
+ * <ul>
+ * <li>Ignore multiple uploads exception.
+ * </ul>
+ * </p>
  * @author TCSASSEMBLER
- * @version 2.0
+ * @version 2.1
  */
 public class PRFinalFixPhaseHandler extends FinalFixPhaseHandler {
-    
+
     /**
     * Used for pulling data to project_result table and filling payments.
     */
     private final PRHelper prHelper = new PRHelper();
-    
+
+    /**
+    * Used for checking against multiple uploads error message.
+    */
+    private final String MULTIPLE_UPLOAD_MESSAGE = "There cannot be multiple final fix uploads";
+
     /**
      * Create a new instance of FinalFixPhaseHandler using the default namespace for loading configuration settings.
      *
@@ -42,6 +53,29 @@ public class PRFinalFixPhaseHandler extends FinalFixPhaseHandler {
      */
     public PRFinalFixPhaseHandler(String namespace) throws ConfigurationException {
         super(namespace);
+    }
+
+    /**
+     * Check if the input phase can be executed or not. Just call super method. Will ignore multiple uploads
+     * exception.
+     *
+     * @param phase The input phase to check.
+     *
+     * @return True if the input phase can be executed, false otherwise.
+     *
+     * @throws PhaseNotSupportedException if the input phase type is not "Final Fix" type.
+     * @throws PhaseHandlingException if there is any error occurred while processing the phase.
+     * @throws IllegalArgumentException if the input is null.
+     */
+    public OperationCheckResult canPerform(Phase phase) throws PhaseHandlingException {
+        try {
+          return super.canPerform(phase);
+        } catch (PhaseHandlingException e) {
+            if (MULTIPLE_UPLOAD_MESSAGE.equals(e.getMessage())) {
+                return OperationCheckResult.SUCCESS;
+            }
+            throw e;
+        }
     }
 
     /**
