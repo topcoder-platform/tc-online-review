@@ -1,15 +1,27 @@
-Your checkpoint submission has been screened and the results are detailed below. Learn more about screening (and common reasons for failure) by visiting this page\:<br/>
-<a href\="https://help.topcoder.com/hc/en-us/categories/202610437-DESIGN">https://help.topcoder.com/hc/en-us/categories/202610437-DESIGN</a><br/><br/>
+%if:SCREENING_STATUS='1'%
+Congratulations! Your checkpoint submission %SUBMISSION_ID% for the contest <a href\="%STUDIO_LINK%">%PROJECT_NAME{Project name}%</a>
+has PASSED Checkpoint Screening.
 
-If your checkpoint submission passes screening, it will be presented to the client and is eligible for prize placement.
-If your checkpoint submission fails screening, your scorecard will note the reasons for failure.
-IMPORTANT\: Even if your checkpoint submission passed screening, you should review your scorecard to see if the screener has issued any warnings or important comments.<br/><br/>
-
-%if:SCREENING_FAILED='0'%
-Your Checkpoint Submission %SUBMISSION_ID% which was uploaded on %SUBMISSION_DATE% for the contest <a href\="%CHALLENGE_LINK%">%PROJECT_NAME{Project name}%</a> has PASSED Checkpoint Screening.<br/><br/>
-%endif%
-%if:SCREENING_FAILED='1'%
-Your Checkpoint Submission %SUBMISSION_ID% which was uploaded on %SUBMISSION_DATE% for the contest <a href\="%CHALLENGE_LINK%">%PROJECT_NAME{Project name}%</a> has FAILED Checkpoint Screening.<br/><br/>
+You can view your Checkpoint Screening scorecard results here <a href\="%SCORECARD_LINK%">Checkpoint Screen Scorecard</a>.
 %endif%
 
-Check your Checkpoint Screening scorecard results\: <a href\="%OR_LINK%">%OR_LINK%</a>
+%if:SCREENING_STATUS='2'%
+Your Checkpoint Submission %SUBMISSION_ID% for the contest <a href\="%STUDIO_LINK%">%PROJECT_NAME{Project name}%</a>
+has been screened and the results are detailed below.
+
+Passed Checkpoint Screening with score\: <b>%SCREENING_SCORE%</b>
+<b>Action Required\:</b> Check your <a href\="%SCORECARD_LINK%">Checkpoint Screen Scorecard</a> results for issued warnings and important comments on how to fix the issues.
+You are still eligible to submit in subsequent rounds.
+%endif%
+
+%if:SCREENING_STATUS='3'%
+Your checkpoint submission %SUBMISSION_ID% for the contest <a href\="%STUDIO_LINK%">%PROJECT_NAME{Project name}%</a>
+has been screened and the results are detailed below.
+
+Submission Status\: <b>Failed</b>
+Next steps\: Unfortunately, because you did not pass this checkpoint, you are no longer eligible to proceed in this challenge.
+Check your <a href\="%SCORECARD_LINK%">Checkpoint Screen Scorecard</a> results for reasons for failure.
+
+Learn more about screening (and common reasons for failure) by visiting this page\:
+<a href\="https\://help.topcoder.com/hc/en-us/articles/217959577-How-to-Pass-Screening-in-Design-Challenges">https\://help.topcoder.com/hc/en-us/articles/217959577-How-to-Pass-Screening-in-Design-Challenges</a>
+%endif%

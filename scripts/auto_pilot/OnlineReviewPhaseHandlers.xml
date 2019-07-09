@@ -233,11 +233,15 @@
             </Property>
             <Property name="ProjectLink">
                 <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
-                <Value>http://studio.topcoder.com/?module=ViewContestDetails&amp;amp;ct={0,number,#}</Value>
+                <Value>https://www.topcoder.com/challenges/{0,number,#}</Value>
+            </Property>
+            <Property name="ScreeningScorecardLink">
+                <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
+                <Value>https://software.topcoder.com/review/actions/ViewCheckpointScreening?rid={0,number,#}</Value>
             </Property>
             <Property name="ScorecardLink">
                 <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
-                <Value>http://studio.topcoder.com/?module=ViewScorecardDetails&amp;amp;rid={0,number,#}</Value>
+                <Value>https://software.topcoder.com/review/actions/ViewReview?rid={0,number,#}</Value>
             </Property>
             <Property name="EmailFromAddress">
                 <Value>&notificationEmailFromAddress;</Value>
@@ -814,11 +818,15 @@
             </Property>
             <Property name="ProjectLink">
                 <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
-                <Value>http://studio.topcoder.com/?module=ViewContestDetails&amp;amp;ct={0,number,#}</Value>
+                <Value>https://www.topcoder.com/challenges/{0,number,#}</Value>
+            </Property>
+            <Property name="ScreeningScorecardLink">
+                <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
+                <Value>https://software.topcoder.com/review/actions/ViewCheckpointScreening?rid={0,number,#}</Value>
             </Property>
             <Property name="ScorecardLink">
                 <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
-                <Value>http://studio.topcoder.com/?module=ViewScorecardDetails&amp;amp;rid={0,number,#}</Value>
+                <Value>https://software.topcoder.com/review/actions/ViewReview?rid={0,number,#}</Value>
             </Property>
             <Property name="EmailFromAddress">
                 <Value>&notificationEmailFromAddress;</Value>

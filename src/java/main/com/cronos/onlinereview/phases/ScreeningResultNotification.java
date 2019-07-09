@@ -103,6 +103,26 @@ public class ScreeningResultNotification {
     private String failedScreeningStatusName;
 
     /**
+     * Maximum screening score
+     */
+    private static final Double MAX_SCREENING_SCORE = 100.0;
+
+    /**
+     * Email title for pass screening
+     */
+    private static final String EMAIL_TITLE_PASS = "Topcoder Submission Screening Passed";
+
+    /**
+     * Email title if action required
+     */
+    private static final String EMAIL_TITLE_ACTION_REQUIRED = "ACTION REQUIRED - Topcoder Submission Screening";
+
+    /**
+     * Email title for failed screening
+     */
+    private static final String EMAIL_TITLE_FAILED = "Topcoder Submission Screening Failed";
+
+    /**
      * Constructor. It reads the configurations from the namespace.
      *
      * @param namespace the configuration namespace.
@@ -121,7 +141,7 @@ public class ScreeningResultNotification {
         this.emailTemplateName = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.EmailTemplateName", true);
         this.emailSubject = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.EmailSubject", true);
         this.projectLinkTemplate = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.ProjectLink", true);
-        this.scorecardLinkTemplate = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.ScorecardLink", true);
+        this.scorecardLinkTemplate = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.ScreeningScorecardLink", true);
         this.emailFromAddress = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.EmailFromAddress", true);
         this.submissionTypeName = submissionTypeName;
         this.scorecardTypeName = scorecardTypeName;
@@ -186,7 +206,16 @@ public class ScreeningResultNotification {
 
         String emailContent = docGenerator.applyTemplate(root);
         TCSEmailMessage message = new TCSEmailMessage();
-        message.setSubject(MessageFormat.format(emailSubject, "Studio", project.getProperty("Project Name")));
+        if (failedScreeningStatusName.equalsIgnoreCase(submission.getSubmissionStatus().getName())) {
+            message.setSubject(EMAIL_TITLE_FAILED);
+        } else {
+            if (review.getScore() != null &&
+                    review.getScore() < MAX_SCREENING_SCORE) {
+                message.setSubject(EMAIL_TITLE_ACTION_REQUIRED);
+            } else {
+                message.setSubject(EMAIL_TITLE_PASS);
+            }
+        }
         message.setBody(emailContent);
         message.setFromAddress(emailFromAddress);
         message.setToAddress(user.getEmail(), TCSEmailMessage.TO);
@@ -234,14 +263,24 @@ public class ScreeningResultNotification {
                     field.setValue(String.valueOf(submission.getId()));
                 } else if ("SUBMISSION_DATE".equals(field.getName())) {
                     field.setValue(formatDate(submission.getCreationTimestamp()));
+                } else if ("SCREENING_SCORE".equals(field.getName())) {
+                    field.setValue(String.valueOf(review.getScore()));
                 }
             } else if (node instanceof Condition) {
                 Condition condition = ((Condition) node);
-                if ("SCREENING_FAILED".equals(condition.getName())) {
+                if ("SCREENING_STATUS".equals(condition.getName())) {
+                    // 1: pass screening
+                    // 2: pass with issues
+                    // 3: fail
                     if (failedScreeningStatusName.equalsIgnoreCase(submission.getSubmissionStatus().getName())) {
-                        condition.setValue("1");
+                        condition.setValue("3");
                     } else {
-                        condition.setValue("0");
+                        if (review.getScore() != null &&
+                                review.getScore() < MAX_SCREENING_SCORE) {
+                            condition.setValue("2");
+                        } else {
+                            condition.setValue("1");
+                        }
                     }
                     NodeList subNodes = condition.getSubNodes();
                     TemplateFields block = new TemplateFields(subNodes.getNodes(), root.getTemplate());
