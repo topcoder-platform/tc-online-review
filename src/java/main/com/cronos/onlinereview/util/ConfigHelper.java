@@ -20,21 +20,23 @@ import com.topcoder.util.config.Property;
 import com.topcoder.util.config.UnknownNamespaceException;
 
 /**
- * This class is a helper class that loads application's configuration parameters on application
- * startup and stores them in the internal member variables.  These parameters can easily be
- * accessed by the application later by through calls to a set of exposed methods.
+ * This class is a helper class that loads application's configuration
+ * parameters on application startup and stores them in the internal member
+ * variables. These parameters can easily be accessed by the application later
+ * by through calls to a set of exposed methods.
  * <p>
- * This class is thread-safe as its inner state is initialized only once and
- * is not changed afterwards.
+ * This class is thread-safe as its inner state is initialized only once and is
+ * not changed afterwards.
  * </p>
  *
- * Changes in version 2.1 Topcoder - Add Group Permission Check For Adding Resources v1.0
- * - add the userGroupMemebershipUrl, v3jwtCookieName, v2jwtCookieName, v3jwtAuthorizationUrl,
- * ssoDomainForV3jwtCookie configuration values
+ * Changes in version 2.1 Topcoder - Add Group Permission Check For Adding
+ * Resources v1.0 - add the userGroupMemebershipUrl, v3jwtCookieName,
+ * v2jwtCookieName, v3jwtAuthorizationUrl, ssoDomainForV3jwtCookie configuration
+ * values
  *
  * <p>
- * Version 2.2 - Topcoder - Online Review Update - Post to Event BUS v1.0
- * - add configurations for event bus
+ * Version 2.2 - Topcoder - Online Review Update - Post to Event BUS v1.0 - add
+ * configurations for event bus
  * </p>
  *
  * <p>
@@ -43,73 +45,79 @@ import com.topcoder.util.config.UnknownNamespaceException;
  * </p>
  *
  * <p>
- * Version 2.4 - Topcoder - Online Review Update - Post to Event Bus - M2M Token Integration
- * - add configurations for event buswith M2M token
+ * Version 2.4 - Topcoder - Online Review Update - Post to Event Bus - M2M Token
+ * Integration - add configurations for event buswith M2M token
+ * </p>
+ * 
+ * <p>
+ * Version 2.5 - Topcoder - Online Review Update - Post to Event Bus - get M2M
+ * token from cache
  * </p>
  *
  *
- * @author TCSASSEMBLER
- * @version 2.4
+ * @author dushyantb
+ * @version 2.5
  */
 public class ConfigHelper {
 
     /**
-     * This member variable is a string constant that specifies the configuration namespace under
-     * which all configuration parameters for the application itself are stored.
+     * This member variable is a string constant that specifies the configuration
+     * namespace under which all configuration parameters for the application itself
+     * are stored.
      */
     private static final String ONLINE_REVIEW_CFG_NS = "com.cronos.OnlineReview";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains the submitter role id.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains the submitter role id.
      */
     private static final String SUBMITTER_ROLE_ID_NAME_PROP = "submitter_role_id";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains the reviewer role id.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains the reviewer role id.
      */
     private static final String REVIEWER_ROLE_ID_NAME_PROP = "reviewer_role_id";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains the accuracy reviewer role id.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains the accuracy reviewer role id.
      */
     private static final String ACCURACY_REVIEWER_ROLE_ID_NAME_PROP = "accuracy_reviewer_role_id";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains the failure reviewer role id.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains the failure reviewer role id.
      */
     private static final String FAILURE_REVIEWER_ROLE_ID_NAME_PROP = "failure_reviewer_role_id";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains the stress reviewer role id.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains the stress reviewer role id.
      */
     private static final String STRESS_REVIEWER_ROLE_ID_NAME_PROP = "stress_reviewer_role_id";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains the primary screener role id.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains the primary screener role id.
      */
     private static final String PRIMARY_SCREENER_ROLE_ID_NAME_PROP = "primary_screener_role_id";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains the aggregator role id.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains the aggregator role id.
      */
     private static final String AGGREGATOR_ROLE_ID_NAME_PROP = "aggregator_role_id";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains the final reviewer role id.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains the final reviewer role id.
      */
     private static final String FINAL_REVIEWER_ROLE_ID_NAME_PROP = "final_reviewer_role_id";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains the pacts payment detail URL.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains the pacts payment detail URL.
      */
     private static final String PACTS_PAYMENT_DETAIL_URL_PROP = "pacts_payment_url";
 
@@ -124,8 +132,9 @@ public class ConfigHelper {
     private static final String PROP_DIRECT_PROJECT_URL = "DirectProjectURL";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains definitions of Root Catalogs' IDs, icon filenames, and alternative text keys.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains definitions of Root Catalogs' IDs, icon filenames,
+     * and alternative text keys.
      *
      * @see #ROOT_CATALOG_ID_PROP
      * @see #ROOT_CATALOG_ICON_SM_PROP
@@ -134,8 +143,9 @@ public class ConfigHelper {
     private static final String ROOT_CATALOGS_PROP = "RootCatalogs";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains Root Catalog ID that should be matched with an icon file.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains Root Catalog ID that should be matched with an icon
+     * file.
      *
      * @see #ROOT_CATALOGS_PROP
      * @see #ROOT_CATALOG_ICON_SM_PROP
@@ -144,8 +154,9 @@ public class ConfigHelper {
     private static final String ROOT_CATALOG_ID_PROP = "id";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains filename of a small icon that is matched to Root Catalog ID.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains filename of a small icon that is matched to Root
+     * Catalog ID.
      *
      * @see #ROOT_CATALOGS_PROP
      * @see #ROOT_CATALOG_ID_PROP
@@ -153,10 +164,10 @@ public class ConfigHelper {
     private static final String ROOT_CATALOG_ICON_SM_PROP = "IconSmall";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains name of the key in Resource Messages file.  This key will be used to retrieve
-     * localized name of the Root Catalog.  This name is usually displayed as an alternative
-     * text for the icon.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains name of the key in Resource Messages file. This key
+     * will be used to retrieve localized name of the Root Catalog. This name is
+     * usually displayed as an alternative text for the icon.
      *
      * @see #ROOT_CATALOGS_PROP
      * @see #ROOT_CATALOG_ID_PROP
@@ -165,9 +176,9 @@ public class ConfigHelper {
     private static final String ROOT_CATALOG_ALT_TEXT_KEY_PROP = "AltTextKey";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains name of the key in Resource Messages file.  This key will be used to retrieve
-     * a flag showing if the catalog is custom.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains name of the key in Resource Messages file. This key
+     * will be used to retrieve a flag showing if the catalog is custom.
      *
      * @see #ROOT_CATALOGS_PROP
      * @see #ROOT_CATALOG_ID_PROP
@@ -175,9 +186,9 @@ public class ConfigHelper {
     private static final String ROOT_CATALOG_CUSTOM_KEY_PROP = "Custom";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains name of the key in Resource Messages file.  This key will be used to retrieve
-     * the distribution script.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains name of the key in Resource Messages file. This key
+     * will be used to retrieve the distribution script.
      *
      * @see #ROOT_CATALOGS_PROP
      * @see #ROOT_CATALOG_ID_PROP
@@ -185,9 +196,9 @@ public class ConfigHelper {
     private static final String ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP = "DistributionScript";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains definitions of Project Category name/icon filename pairs for icons that should
-     * be matched to certain Project Categories.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains definitions of Project Category name/icon filename
+     * pairs for icons that should be matched to certain Project Categories.
      *
      * @see #PROJECT_CATEGORY_ICON_SM_PROP
      * @see #PROJECT_CATEGORY_ICON_PROP
@@ -195,8 +206,9 @@ public class ConfigHelper {
     private static final String PROJECT_CATEGORY_ICONS_PROP = "ProjectCategoryIcons";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains filename of a small icon that is matched to Project Category.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains filename of a small icon that is matched to Project
+     * Category.
      *
      * @see #PROJECT_CATEGORY_ICONS_PROP
      * @see #PROJECT_CATEGORY_ICON_PROP
@@ -204,8 +216,9 @@ public class ConfigHelper {
     private static final String PROJECT_CATEGORY_ICON_SM_PROP = "IconSmall";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains filename of an icon that is matched to Project Category.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains filename of an icon that is matched to Project
+     * Category.
      *
      * @see #PROJECT_CATEGORY_ICONS_PROP
      * @see #PROJECT_CATEGORY_ICON_SM_PROP
@@ -213,27 +226,30 @@ public class ConfigHelper {
     private static final String PROJECT_CATEGORY_ICON_PROP = "Icon";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains definitions of Project Type links to view contest page for the project.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains definitions of Project Type links to view contest
+     * page for the project.
      */
     private static final String PROJECT_TYPE_VIEW_CONTEST_LINKS_PROP = "ProjectTypeViewContestLinks";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains definitions of Project Type links to forum for the project.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains definitions of Project Type links to forum for the
+     * project.
      */
     private static final String PROJECT_TYPE_FORUM_LINKS_PROP = "ProjectTypeForumLinks";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains definitions of Deliverable Type Lookups for 'Late Deliverable' page.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains definitions of Deliverable Type Lookups for 'Late
+     * Deliverable' page.
      */
     private static final String DELIVERABLE_TYPES_PROP = "DeliverableTypes";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains default values used in the application, such as default phase length, default note
-     * length, etc.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains default values used in the application, such as
+     * default phase length, default note length, etc.
      *
      * @see #PIXELS_PER_HOUR_PROP
      * @see #PHASE_DURATION_PROP
@@ -245,49 +261,55 @@ public class ConfigHelper {
     private static final String DEFAULT_VALUES_PROP = "Defaults";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * defines the amount of pixels displayed in the Gantt chart for every hour.
+     * This member variable is a string constant that specifies the name of the
+     * property which defines the amount of pixels displayed in the Gantt chart for
+     * every hour.
      *
      * @see #DEFAULT_VALUES_PROP
      */
     private static final String PIXELS_PER_HOUR_PROP = "PixelsPerHour";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * defines the default duration, in hours, for all newly-created phases.
+     * This member variable is a string constant that specifies the name of the
+     * property which defines the default duration, in hours, for all newly-created
+     * phases.
      *
      * @see #DEFAULT_VALUES_PROP
      */
     private static final String PHASE_DURATION_PROP = "PhaseDuration";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * defines the default minimum length, in characters, of project's note text.
+     * This member variable is a string constant that specifies the name of the
+     * property which defines the default minimum length, in characters, of
+     * project's note text.
      *
      * @see #DEFAULT_VALUES_PROP
      */
     private static final String NOTE_LENGTH_PROP = "NoteLength";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * defines the default minimum amount of registrants required before Registration phase can end.
+     * This member variable is a string constant that specifies the name of the
+     * property which defines the default minimum amount of registrants required
+     * before Registration phase can end.
      *
      * @see #DEFAULT_VALUES_PROP
      */
     private static final String REQ_REGISTRANTS_PROP = "RequiredRegistrants";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * defines the default minimum amount of registered reviewers before Review phase can end.
+     * This member variable is a string constant that specifies the name of the
+     * property which defines the default minimum amount of registered reviewers
+     * before Review phase can end.
      *
      * @see #DEFAULT_VALUES_PROP
      */
     private static final String REQ_REVIEWERS_PROP = "RequiredReviewers";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * defines the time duration, in hours, before phase ends during which outstanding deliverables
-     * are displayed with &quot;Deadline&#160;Near&quot; status, and phases' statuses are shown as
+     * This member variable is a string constant that specifies the name of the
+     * property which defines the time duration, in hours, before phase ends during
+     * which outstanding deliverables are displayed with
+     * &quot;Deadline&#160;Near&quot; status, and phases' statuses are shown as
      * &quot;Closing&quot;.
      *
      * @see #DEFAULT_VALUES_PROP
@@ -295,9 +317,9 @@ public class ConfigHelper {
     private static final String DEADLINE_NEAR_DURATION_PROP = "DeadlineNearDuration";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains format-strings to use to build formatting classes to format different values into
-     * strings.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains format-strings to use to build formatting classes to
+     * format different values into strings.
      *
      * @see #SCORECARD_SCORE_FORMAT_PROP
      * @see #MONETARY_VALUE_FULL_FORMAT_PROP
@@ -309,67 +331,71 @@ public class ConfigHelper {
     private static final String FORMATS_PROP = "Formats";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * defines the formatting string used to format scorecard scores.
+     * This member variable is a string constant that specifies the name of the
+     * property which defines the formatting string used to format scorecard scores.
      *
      * @see #FORMATS_PROP
      */
     private static final String SCORECARD_SCORE_FORMAT_PROP = "ScorecardScore";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * defines the formatting string used to format monetary values (used to display payment
-     * amounts).
+     * This member variable is a string constant that specifies the name of the
+     * property which defines the formatting string used to format monetary values
+     * (used to display payment amounts).
      *
      * @see #FORMATS_PROP
      */
     private static final String MONETARY_VALUE_FULL_FORMAT_PROP = "MonetaryValueFull";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * defines the formatting string used to format monetary values without fractional part (used to
-     * display payment amounts).
+     * This member variable is a string constant that specifies the name of the
+     * property which defines the formatting string used to format monetary values
+     * without fractional part (used to display payment amounts).
      *
      * @see #FORMATS_PROP
      */
     private static final String MONETARY_VALUE_NO_FRAC_FORMAT_PROP = "MonetaryValueNoFrac";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * defines the formatting string used to format dates.
+     * This member variable is a string constant that specifies the name of the
+     * property which defines the formatting string used to format dates.
      *
      * @see #FORMATS_PROP
      */
     private static final String DATE_FORMAT_PROP = "Date";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * defines the formatting string used to format dates (only the date part of them).
+     * This member variable is a string constant that specifies the name of the
+     * property which defines the formatting string used to format dates (only the
+     * date part of them).
      *
      * @see #FORMATS_PROP
      */
     private static final String DATE_ONLY_FORMAT_PROP = "DateOnly";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * defines the formatting string used to format dates (only the time part of them).
+     * This member variable is a string constant that specifies the name of the
+     * property which defines the formatting string used to format dates (only the
+     * time part of them).
      *
      * @see #FORMATS_PROP
      */
     private static final String TIME_ONLY_FORMAT_PROP = "TimeOnly";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains definition of the whole Permissions Matrix.  The Matrix is defined on
-     * per-permission basis, i.e. for every permission name there is a list of values, each value
-     * defines the name of single Resource Role which this permission is granted to.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains definition of the whole Permissions Matrix. The
+     * Matrix is defined on per-permission basis, i.e. for every permission name
+     * there is a list of values, each value defines the name of single Resource
+     * Role which this permission is granted to.
      */
     private static final String PERMISSIONS_MATRIX_PROP = "Permissions Matrix";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains definitions of the phase groups. The phases that belong to the same group will be
-     * displayed under the same tab on View Project Details page.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains definitions of the phase groups. The phases that
+     * belong to the same group will be displayed under the same tab on View Project
+     * Details page.
      *
      * @see #PHASE_GROUP_RM_KEY_PROP
      * @see #PHASE_GROUP_TBL_NAME_KEY_PROP
@@ -379,9 +405,9 @@ public class ConfigHelper {
     private static final String PHASE_GROUPING_PROP = "PhaseGrouping";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains the name of the key in message resources file. This key denotes message that should
-     * be displayed for grouped phases.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains the name of the key in message resources file. This
+     * key denotes message that should be displayed for grouped phases.
      *
      * @see #PHASE_GROUPING_PROP
      * @see #PHASE_GROUP_TBL_NAME_KEY_PROP
@@ -391,9 +417,9 @@ public class ConfigHelper {
     private static final String PHASE_GROUP_RM_KEY_PROP = "NameKey";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains the name of the key in message resources file. This key denotes message that should
-     * be displayed for tables for grouped phases.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains the name of the key in message resources file. This
+     * key denotes message that should be displayed for tables for grouped phases.
      *
      * @see #PHASE_GROUPING_PROP
      * @see #PHASE_GROUP_RM_KEY_PROP
@@ -403,8 +429,9 @@ public class ConfigHelper {
     private static final String PHASE_GROUP_TBL_NAME_KEY_PROP = "TableNameKey";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains the names of phases that will be considered as belonging to the same.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains the names of phases that will be considered as
+     * belonging to the same.
      *
      * @see #PHASE_GROUPING_PROP
      * @see #PHASE_GROUP_RM_KEY_PROP
@@ -414,9 +441,9 @@ public class ConfigHelper {
     private static final String PHASES_DEFINITIONS_PROP = "Phases";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains the name of the application's functionality that should be executed for the phase
-     * group.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains the name of the application's functionality that
+     * should be executed for the phase group.
      *
      * @see #PHASE_GROUPING_PROP
      * @see #PHASE_GROUP_RM_KEY_PROP
@@ -426,181 +453,250 @@ public class ConfigHelper {
     private static final String PHASE_GROUP_APP_FUNCTION_PROP = "AppFunction";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * contains definitions of other properties that describe how mails sent to managers will be
-     * generated.
+     * This member variable is a string constant that specifies the name of the
+     * property which contains definitions of other properties that describe how
+     * mails sent to managers will be generated.
      *
      * @see #EMAIL_TEMPLATE_NAME_PROP
      */
     private static final String CONTACT_MANAGER_EMAIL_PROP = "ContactManagerEmail";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * specifies the name of the file where email template can be loaded.
+     * This member variable is a string constant that specifies the name of the
+     * property which specifies the name of the file where email template can be
+     * loaded.
      *
      * @see #CONTACT_MANAGER_EMAIL_PROP
      */
     private static final String EMAIL_TEMPLATE_NAME_PROP = "EmailTemplateName";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * specifies the email address of the email sender.
+     * This member variable is a string constant that specifies the name of the
+     * property which specifies the email address of the email sender.
      *
      * @see #CONTACT_MANAGER_EMAIL_PROP
      */
     private static final String EMAIL_FROM_ADDRESS_PROP = "EmailFromAddress";
 
     /**
-     * <p>This member variable is a string constant that specifies the name of the property which contains the
-     * maximum number of days to extend the <code>Registration</code> phase.</p>
+     * <p>
+     * This member variable is a string constant that specifies the name of the
+     * property which contains the maximum number of days to extend the
+     * <code>Registration</code> phase.
+     * </p>
      */
     private static final String REGISTRATION_PHASE_MAX_EXTENSION_PROP = "registration_phase_extension_days_maximum";
 
     /**
-     * <p>This member variable is a string constant that specifies the name of the property which contains the
-     * maximum number of days to extend the <code>Submission</code> phase.</p>
+     * <p>
+     * This member variable is a string constant that specifies the name of the
+     * property which contains the maximum number of days to extend the
+     * <code>Submission</code> phase.
+     * </p>
      */
     private static final String SUBMISSION_PHASE_MAX_EXTENSION_PROP = "submission_phase_extension_days_maximum";
 
     /**
-     * <p>This member variable is a string constant that specifies the name of the property which contains the
-     * minimum number of hours before <code>Submission</code> phase deadline to allow the extension of
-     * <code>Registration</code> or <code>Submission</code> phases.</p>
+     * <p>
+     * This member variable is a string constant that specifies the name of the
+     * property which contains the minimum number of hours before
+     * <code>Submission</code> phase deadline to allow the extension of
+     * <code>Registration</code> or <code>Submission</code> phases.
+     * </p>
      */
-    private static final String MINIMUM_HOURS_BEFORE_SUBMISSION_DEADLINE_FOR_EXTENSION_PROP
-        = "minimum_hours_before_submission_deadline_for_phase_extension";
+    private static final String MINIMUM_HOURS_BEFORE_SUBMISSION_DEADLINE_FOR_EXTENSION_PROP = "minimum_hours_before_submission_deadline_for_phase_extension";
 
     /**
-     * <p>An <code>int</code> providing the minimum time (in hours) to be left before project's submission deadline in
-     * order to allow the extension of desired project phase. If less than specified time is left then phase extension
-     * must be prohibited.</p>
+     * <p>
+     * An <code>int</code> providing the minimum time (in hours) to be left before
+     * project's submission deadline in order to allow the extension of desired
+     * project phase. If less than specified time is left then phase extension must
+     * be prohibited.
+     * </p>
      */
     private static final int DEFAULT_MINIMUM_HOURS_LEFT = 48;
 
     /**
-     * <p>This member variable is a string that specifies the name of the property which contains the
-     * output dir for the distribution tool.</p>
+     * <p>
+     * This member variable is a string that specifies the name of the property
+     * which contains the output dir for the distribution tool.
+     * </p>
      */
     private static final String DISTRIBUTION_TOOL_OUTPUT_DIR_PROP = "distribution_tool_output_dir";
 
     /**
-     * <p>This is the default distribution tool output dir.</p>
+     * <p>
+     * This is the default distribution tool output dir.
+     * </p>
      */
     private static final String DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR = "/tmp";
 
     /**
-     * <p>This member variable is a string constant that specifies the name of the property which contains the
-     * output dir for the TopCoder catalog.</p>
+     * <p>
+     * This member variable is a string constant that specifies the name of the
+     * property which contains the output dir for the TopCoder catalog.
+     * </p>
      */
     private static final String CATALOG_OUTPUT_DIR_PROP = "catalog_output_dir";
 
     /**
-     * <p>This is the default catalog output dir.</p>
+     * <p>
+     * This is the default catalog output dir.
+     * </p>
      */
     private static final String DEFAULT_CATALOG_OUTPUT_DIR = "/tmp";
 
     /**
-     * <p>This member variable is a string constant that specifies the name of the property which contains the
-     * default distribution tool script to use when no script is defined.</p>
+     * <p>
+     * This member variable is a string constant that specifies the name of the
+     * property which contains the default distribution tool script to use when no
+     * script is defined.
+     * </p>
      */
     private static final String DEFAULT_DISTRIBUTION_SCRIPT_PROP = "default_distribution_script";
 
     /**
-     * <p>This is the default distribution tool script to use when no script is defined.</p>
+     * <p>
+     * This is the default distribution tool script to use when no script is
+     * defined.
+     * </p>
      */
     private static final String DEFAULT_DISTRIBUTION_SCRIPT = "other";
 
     /**
-     * <p>A <code>String</code> providing the name for configuration property listing the disabled resource roles.</p>
+     * <p>
+     * A <code>String</code> providing the name for configuration property listing
+     * the disabled resource roles.
+     * </p>
      */
     private static final String DISABLED_RESOURCE_ROLES_PROP = "DisabledResourceRoles";
 
     /**
-     * <p>A <code>String</code> providing the name for configuration property listing the resource roles which are to be
-     * granted permission for accessing SVN module for project once the project enters <code>Final Review</code> phase.
+     * <p>
+     * A <code>String</code> providing the name for configuration property listing
+     * the resource roles which are to be granted permission for accessing SVN
+     * module for project once the project enters <code>Final Review</code> phase.
      * </p>
      */
     private static final String SVN_PERM_GRANT_RESOURCE_ROLES_PROP = "SVNPermissionGrantResourceRoles";
 
     /**
-     * <p>A <code>String</code> providing the name for configuration property listing the parameters for SVN repository.
+     * <p>
+     * A <code>String</code> providing the name for configuration property listing
+     * the parameters for SVN repository.
      * </p>
      */
     private static final String SVN_CONFIG_PROP = "SVNConfig";
 
     /**
-     * <p>A <code>String</code> providing the name for configuration property listing the parameters of the Resources tabs
-     * to be displayed in the Resource section in project detail page.</p>
+     * <p>
+     * A <code>String</code> providing the name for configuration property listing
+     * the parameters of the Resources tabs to be displayed in the Resource section
+     * in project detail page.
+     * </p>
      */
     private static final String RESOURCE_TABS_PROP_STRING = "ResourceTabs";
 
     /**
-     * <p>A <code>String</code> providing the name for configuration property listing the admin user IDs.</p>
+     * <p>
+     * A <code>String</code> providing the name for configuration property listing
+     * the admin user IDs.
+     * </p>
      */
     private static final String ADMIN_USERS_PROP = "AdminUsers";
 
     /**
-     * <p>A <code>String</code> providing the name for thurgood api url property.</p>
+     * <p>
+     * A <code>String</code> providing the name for thurgood api url property.
+     * </p>
      */
     private static final String THURGOOD_API_URL_PROP = "thurgood_api_url";
 
     /**
-     * <p>A <code>String</code> providing the name for thurgood api key property.</p>
+     * <p>
+     * A <code>String</code> providing the name for thurgood api key property.
+     * </p>
      */
     private static final String THURGOOD_API_KEY_PROP = "thurgood_api_key";
 
     /**
-     * <p>A <code>String</code> providing the name for thurgood timeout property.</p>
+     * <p>
+     * A <code>String</code> providing the name for thurgood timeout property.
+     * </p>
      */
     private static final String THURGOOD_TIMEOUT_PROP = "thurgood_timeout";
 
     /**
-     * <p>A <code>String</code> providing the name for thurgood code url property.</p>
+     * <p>
+     * A <code>String</code> providing the name for thurgood code url property.
+     * </p>
      */
     private static final String THURGOOD_CODE_URL_PROP = "thurgood_code_url";
 
     /**
-     * <p>A <code>String</code> providing the name for thurgood job base UI url property.</p>
+     * <p>
+     * A <code>String</code> providing the name for thurgood job base UI url
+     * property.
+     * </p>
      */
     private static final String THURGOOD_JOB_BASE_UI_URL_PROP = "thurgood_job_base_ui_url";
 
     /**
-     * <p>A <code>String</code> providing the name for thurgood username property.</p>
+     * <p>
+     * A <code>String</code> providing the name for thurgood username property.
+     * </p>
      */
     private static final String THURGOOD_USERNAME_PROP = "thurgood_username";
 
     /**
-     * <p>A <code>String</code> providing the name for thurgood password property.</p>
+     * <p>
+     * A <code>String</code> providing the name for thurgood password property.
+     * </p>
      */
     private static final String THURGOOD_PASSWORD_PROP = "thurgood_password";
 
     /**
-     * <p>A <code>String</code> providing the name for v3 jwt cookie name property.</p>
+     * <p>
+     * A <code>String</code> providing the name for v3 jwt cookie name property.
+     * </p>
      */
     private static final String V3_JWT_COOKIE_NAME = "v3jwt_cookie_name";
 
     /**
-     * <p>A <code>String</code> providing the name for user group memeber ship url property.</p>
+     * <p>
+     * A <code>String</code> providing the name for user group memeber ship url
+     * property.
+     * </p>
      */
     private static final String USER_GROUP_MEMBERSHIP_URL = "user_group_membership_url";
 
     /**
-     * <p>A <code>String</code> providing the name for parent groups url property.</p>
+     * <p>
+     * A <code>String</code> providing the name for parent groups url property.
+     * </p>
      */
     private static final String PARENT_GROUPS_URL = "parent_groups_url";
 
     /**
-     * <p>A <code>String</code> providing the name for v2 jwt cookie name property.</p>
+     * <p>
+     * A <code>String</code> providing the name for v2 jwt cookie name property.
+     * </p>
      */
     private static final String V2_JWT_COOKIE_NAME = "v2jwt_cookie_name";
 
     /**
-     * <p>A <code>String</code> providing the name for sso domain for v3 jwt cookie property.</p>
+     * <p>
+     * A <code>String</code> providing the name for sso domain for v3 jwt cookie
+     * property.
+     * </p>
      */
     private static final String SSO_DOMAIN_FOR_V3_JWT_COOKIE = "sso_domain_for_v3jwt_cookie";
 
     /**
-     * <p>A <code>String</code> providing the name for v3 jwt authorization url property.</p>
+     * <p>
+     * A <code>String</code> providing the name for v3 jwt authorization url
+     * property.
+     * </p>
      */
     private static final String V3_JWT_AUTHORIZATION_URL = "v3jwt_authorization_url";
 
@@ -656,19 +752,20 @@ public class ConfigHelper {
 
     /**
      * This constant stores base URL for pacts payment detail page.
+     * 
      * @see #PACTS_PAYMENT_DETAIL_URL_PROP
      */
     private static String pactsPaymentDetailBaseURL;
 
     /**
-     * This member variable holds the names of small icons (.gif) files that should be displayed
-     * on the JSP pages for different Root Catalog IDs.
+     * This member variable holds the names of small icons (.gif) files that should
+     * be displayed on the JSP pages for different Root Catalog IDs.
      */
     private static final Map<String, String> rootCatalogIconsSm = new HashMap<String, String>();
 
     /**
-     * This member variable holds the keys of Message Resources that should be used to match
-     * Root Catalog ID with the name of that same Root Catalog.
+     * This member variable holds the keys of Message Resources that should be used
+     * to match Root Catalog ID with the name of that same Root Catalog.
      */
     private static final Map<String, String> rootCatalogAltTextKeys = new HashMap<String, String>();
 
@@ -678,19 +775,20 @@ public class ConfigHelper {
     private static final Set<String> customRootCatalogs = new HashSet<String>();
 
     /**
-     * This member variable holds the distribution tool script for root catalogs ids.
+     * This member variable holds the distribution tool script for root catalogs
+     * ids.
      */
     private static final Map<String, String> distributionScriptRootCatalogs = new HashMap<String, String>();
 
     /**
-     * This member variable holds the names of small icons (.gif) files that should be displayed
-     * on the JSP pages for different Project Categories.
+     * This member variable holds the names of small icons (.gif) files that should
+     * be displayed on the JSP pages for different Project Categories.
      */
     private static final Map<String, String> projectCategoryIconsSm = new HashMap<String, String>();
 
     /**
-     * This member variable holds the names of icons (.gif) files that should be displayed
-     * on the JSP pages for different Project Categories.
+     * This member variable holds the names of icons (.gif) files that should be
+     * displayed on the JSP pages for different Project Categories.
      */
     private static final Map<String, String> projectCategoryIcons = new HashMap<String, String>();
 
@@ -706,71 +804,81 @@ public class ConfigHelper {
 
     /**
      * <p>
-     * A <code>Map</code> mapping the deliverable type to deliverable id, use LinkedHashMap as order
-     * should be maintained.
+     * A <code>Map</code> mapping the deliverable type to deliverable id, use
+     * LinkedHashMap as order should be maintained.
      * </p>
      */
     private static final Map<String, String> deliverableTypes = new LinkedHashMap<String, String>();
 
     /**
-     * This member variable holds the amount of pixels displayed in the Gantt Chart per every hour.
-     * The default value of this variable is 5.
+     * This member variable holds the amount of pixels displayed in the Gantt Chart
+     * per every hour. The default value of this variable is 5.
      */
     private static int pixelsPerHour = 5;
 
     /**
-     * This member variable holds the default duration of newly-created phase, in hours.
+     * This member variable holds the default duration of newly-created phase, in
+     * hours.
      */
     private static int phaseDuration = 168;
 
     /**
-     * This member variable holds the default minimum length of text, in characters, that should be
-     * entered into Note field for every new project created.
+     * This member variable holds the default minimum length of text, in characters,
+     * that should be entered into Note field for every new project created.
      */
     private static int noteLength = 1;
 
     /**
-     * This member variable holds the default minimum amount of registrants required for ending
-     * Registration phase.
+     * This member variable holds the default minimum amount of registrants required
+     * for ending Registration phase.
      */
     private static int reqRegistrants = -1;
 
     /**
-     * This member variable holds the default minimum amount of registered reviewers required for
-     * ending Review phase.
+     * This member variable holds the default minimum amount of registered reviewers
+     * required for ending Review phase.
      */
     private static int reqReviewers = -1;
 
     /**
-     * <p>An <code>int</code> providing the default number of required approvers for Approval phase.</p>
+     * <p>
+     * An <code>int</code> providing the default number of required approvers for
+     * Approval phase.
+     * </p>
      */
     private static int reqApprovers = -1;
 
     /**
-     * <p>An <code>int</code> providing the default number of required reviewers for Post-Mortem phase.</p>
+     * <p>
+     * An <code>int</code> providing the default number of required reviewers for
+     * Post-Mortem phase.
+     * </p>
      */
     private static int reqPostMortemReviewers = -1;
 
     /**
-     * This member variable holds the time duration, in hours, before phase ends during which
-     * outstanding deliverables are shown with &quot;Deadline&#160;Near&quot; status, and statuses
-     * of open phases are shown as &quot;Closing&quot;.
+     * This member variable holds the time duration, in hours, before phase ends
+     * during which outstanding deliverables are shown with
+     * &quot;Deadline&#160;Near&quot; status, and statuses of open phases are shown
+     * as &quot;Closing&quot;.
      */
     private static long deadlineNearDuration = 48;
 
     /**
-     * This member variable holds the formatting string used to format scorecard scores.
+     * This member variable holds the formatting string used to format scorecard
+     * scores.
      */
     private static String scorecardScoreFormat = "0";
 
     /**
-     * This member variable holds the formatting string used to format monetary values.
+     * This member variable holds the formatting string used to format monetary
+     * values.
      */
     private static String monetaryValueFullFormat = "#.##";
 
     /**
-     * This member variable holds the formatting string used to format monetary values without
-     * fractional part.
+     * This member variable holds the formatting string used to format monetary
+     * values without fractional part.
      */
     private static String monetaryValueNoFracFormat = "0";
 
@@ -780,78 +888,89 @@ public class ConfigHelper {
     private static String dateFormat = "MM.dd.yyyy HH:mm z";
 
     /**
-     * This member variable holds the formatting string used to format dates (onlt the date part of
-     * them).
+     * This member variable holds the formatting string used to format dates (onlt
+     * the date part of them).
      */
     private static String dateOnlyFormat = "MM.dd.yyyy";
 
     /**
-     * This member variable holds the formatting string used to format dates (onlt the time part of
-     * them).
+     * This member variable holds the formatting string used to format dates (onlt
+     * the time part of them).
      */
     private static String timeOnlyFormat = "HH:mm";
 
     /**
-     * This member variable holds the names of all permissions for the application (as keys), and
-     * lists of roles that have every of the permissions (as values for the corresponding keys).
+     * This member variable holds the names of all permissions for the application
+     * (as keys), and lists of roles that have every of the permissions (as values
+     * for the corresponding keys).
      */
     private static Map<String, String[]> permissionsMatrix = new HashMap<String, String[]>();
 
     /**
-     * This member variable holds the list of names of the phase groups. The names are represented
-     * as keys that should be used to retrieve localized group name from the message resources file.
-     * Every item in this list should be of type <code>String</code> and cannot be
-     * <code>null</code>.
+     * This member variable holds the list of names of the phase groups. The names
+     * are represented as keys that should be used to retrieve localized group name
+     * from the message resources file. Every item in this list should be of type
+     * <code>String</code> and cannot be <code>null</code>.
      */
     private static List<String> phaseGroupNames = new ArrayList<String>();
 
     /**
-     * This member variable holds the list of names of tables for the phase groups. The names are
-     * represented as keys that should be used to retrieve localized name from the message resources
-     * file. Every item in this list should be of type <code>String</code> and cannot be
-     * <code>null</code>.
+     * This member variable holds the list of names of tables for the phase groups.
+     * The names are represented as keys that should be used to retrieve localized
+     * name from the message resources file. Every item in this list should be of
+     * type <code>String</code> and cannot be <code>null</code>.
      */
     private static List<String> phaseGroupTableNames = new ArrayList<String>();
 
     /**
-     * This member variable holds the list of sets. Every set in this list denotes a single phase
-     * group and defines the phases included in that group.
+     * This member variable holds the list of sets. Every set in this list denotes a
+     * single phase group and defines the phases included in that group.
      */
     private static List<Set<String>> phaseGroupPhases = new ArrayList<Set<String>>();
 
     /**
-     * This member variable holds the list of names of application's functionality that should be
-     * executed for the corresponding phase group. Every item in this list
-     * should be of type <code>String</code> and cannot be <code>null</code>.
+     * This member variable holds the list of names of application's functionality
+     * that should be executed for the corresponding phase group. Every item in this
+     * list should be of type <code>String</code> and cannot be <code>null</code>.
      */
     private static List<String> phaseGroupFunctions = new ArrayList<String>();
 
     /**
-     * This member variable holds the path where email template can be loaded from to send message
-     * to project's manager.
+     * This member variable holds the path where email template can be loaded from
+     * to send message to project's manager.
      */
     private static String contactManagerEmailTemplate = "";
 
     /**
-     * This member variable holds the "from" address for the messages to project's manager.
+     * This member variable holds the "from" address for the messages to project's
+     * manager.
      */
     private static String contactManagerEmailFromAddress = "";
 
     /**
-     * <p>An <code>Integer</code> providing the maximum number of days which <code>Registration</code> phase can be
-     * extended for. <code>null</code> value means that such a limit is not specified.</p>
+     * <p>
+     * An <code>Integer</code> providing the maximum number of days which
+     * <code>Registration</code> phase can be extended for. <code>null</code> value
+     * means that such a limit is not specified.
+     * </p>
      */
     private static Integer registrationPhaseMaxExtensionDays = null;
 
     /**
-     * <p>An <code>Integer</code> providing the maximum number of days which <code>Submission</code> phase can be
-     * extended for. <code>null</code> value means that such a limit is not specified.</p>
+     * <p>
+     * An <code>Integer</code> providing the maximum number of days which
+     * <code>Submission</code> phase can be extended for. <code>null</code> value
+     * means that such a limit is not specified.
+     * </p>
      */
     private static Integer submissionPhaseMaxExtensionDays = null;
 
     /**
-     * <p>An <code>Integer</code> providing the minimum number of hours before <code>Submission</code> phase deadline
-     * to allow extension for <code>Registration</code> and <code>Submission</code> phases.</p>
+     * <p>
+     * An <code>Integer</code> providing the minimum number of hours before
+     * <code>Submission</code> phase deadline to allow extension for
+     * <code>Registration</code> and <code>Submission</code> phases.
+     * </p>
      */
     private static Integer minimumHoursBeforeSubmissionDeadlineForExtension = DEFAULT_MINIMUM_HOURS_LEFT;
 
@@ -877,137 +996,194 @@ public class ConfigHelper {
     private static String defaultDistributionScript = DEFAULT_DISTRIBUTION_SCRIPT;
 
     /**
-     * <p>A <code>String</code> array listing the IDs for resource roles which are not allowed for selection.</p>
+     * <p>
+     * A <code>String</code> array listing the IDs for resource roles which are not
+     * allowed for selection.
+     * </p>
      */
     private static String[] disabledResourceRoles;
 
     /**
-     * <p>A <code>String</code> array listing the IDs for resource roles which are to be granted permission for
-     * accessing SVN repository for project once the project enters <code>Final Review</code> phase.</p>
+     * <p>
+     * A <code>String</code> array listing the IDs for resource roles which are to
+     * be granted permission for accessing SVN repository for project once the
+     * project enters <code>Final Review</code> phase.
+     * </p>
      */
     private static String[] svnPermissionGrantResourceRoles;
 
     /**
-     * <p>A <code>String</code> array providing the SVN configuration.</p>
+     * <p>
+     * A <code>String</code> array providing the SVN configuration.
+     * </p>
      */
     private static String[] svnConfig;
 
     /**
-     * <p>A <code>String</code> array providing the configuration for email message to be sent when late deliverables
-     * are updated by managers.</p>
+     * <p>
+     * A <code>String</code> array providing the configuration for email message to
+     * be sent when late deliverables are updated by managers.
+     * </p>
      */
     private static String[] lateDeliverablesUpdatedByManagerNotificationConfig;
 
     /**
-     * <p>A <code>String</code> array providing the configuration for email message to be sent when late deliverables
-     * are updated by late members.</p>
+     * <p>
+     * A <code>String</code> array providing the configuration for email message to
+     * be sent when late deliverables are updated by late members.
+     * </p>
      */
     private static String[] lateDeliverablesUpdatedByMemberNotificationConfig;
 
     /**
-     * <p>A <code>String</code> providing the base URL for <code>Edit Late Deliverable</code> page.</p>
+     * <p>
+     * A <code>String</code> providing the base URL for
+     * <code>Edit Late Deliverable</code> page.
+     * </p>
      */
     private static String lateDeliverableBaseURL;
 
     /**
-     * <p>A <code>String</code> array providing the configuration for email message to be sent when a member
-     * reuploads submission for an F2F project.</p>
+     * <p>
+     * A <code>String</code> array providing the configuration for email message to
+     * be sent when a member reuploads submission for an F2F project.
+     * </p>
      */
     private static String[] f2fSubmissionReuploadedNotificationConfig;
 
     /**
-     * <p>A <code>Map</code> providing the Resources tabs to be displayed in the Resource section in project detail page.
-     * The key is the tab name, the value is a <code>Set</code> of resource role IDs.</p>
+     * <p>
+     * A <code>Map</code> providing the Resources tabs to be displayed in the
+     * Resource section in project detail page. The key is the tab name, the value
+     * is a <code>Set</code> of resource role IDs.
+     * </p>
      */
     private static final Map<String, Set<String>> resourceTabs = new LinkedHashMap<String, Set<String>>();
 
     /**
-     * <p>A <code>List</code> for the admin user IDs.</p>
+     * <p>
+     * A <code>List</code> for the admin user IDs.
+     * </p>
      */
     private static final List<Long> adminUsers = new ArrayList<Long>();
 
     /**
-     * <p>Represents the Thurgood URL for creating and submitting the Thurgood job.</p>
+     * <p>
+     * Represents the Thurgood URL for creating and submitting the Thurgood job.
+     * </p>
      */
     private static String thurgoodApiURL;
 
     /**
-     * <p>Represents the API Key for creating and submitting the Thurgood job.</p>
+     * <p>
+     * Represents the API Key for creating and submitting the Thurgood job.
+     * </p>
      */
     private static String thurgoodApiKey;
 
     /**
-     * <p>Represents the timeout for creating and submitting the Thurgood job.</p>
+     * <p>
+     * Represents the timeout for creating and submitting the Thurgood job.
+     * </p>
      */
     private static int thurgoodTimeout = 5000;
 
     /**
-     * <p>Represents the submission's code url for creating and submitting the Thurgood job.</p>
+     * <p>
+     * Represents the submission's code url for creating and submitting the Thurgood
+     * job.
+     * </p>
      */
     private static String thurgoodCodeURL;
 
     /**
-     * <p>Represents the job base UI url of the submitted the Thurgood job.</p>
+     * <p>
+     * Represents the job base UI url of the submitted the Thurgood job.
+     * </p>
      */
     private static String thurgoodJobBaseUIURL;
 
     /**
-     * <p>Represents the username of the Thurgood user.</p>
+     * <p>
+     * Represents the username of the Thurgood user.
+     * </p>
      */
     private static String thurgoodUsername;
 
     /**
-     * <p>Represents the password of the Thurgood user.</p>
+     * <p>
+     * Represents the password of the Thurgood user.
+     * </p>
      */
     private static String thurgoodPassword;
 
     /**
-     * <p>Represents the userGroupMembershipUrl.</p>
+     * <p>
+     * Represents the userGroupMembershipUrl.
+     * </p>
      */
     private static String userGroupMembershipUrl;
 
     /**
-     * <p>Represents the parentGroupsUrl.</p>
+     * <p>
+     * Represents the parentGroupsUrl.
+     * </p>
      */
     private static String parentGroupsUrl;
 
     /**
-     * <p>Represents the v3jwtCookieBame.</p>
+     * <p>
+     * Represents the v3jwtCookieBame.
+     * </p>
      */
     private static String v3jwtCookieName;
 
     /**
-     * <p>Represents the v2jwtCookieBame.</p>
+     * <p>
+     * Represents the v2jwtCookieBame.
+     * </p>
      */
     private static String v2jwtCookieName;
 
     /**
-     * <p>Represents the v3jwtAuthorizationUrl.</p>
+     * <p>
+     * Represents the v3jwtAuthorizationUrl.
+     * </p>
      */
     private static String v3jwtAuthorizationUrl;
 
     /**
-     * <p>Represents the ssoDomainForV3jwtCookie.</p>
+     * <p>
+     * Represents the ssoDomainForV3jwtCookie.
+     * </p>
      */
     private static String ssoDomainForV3jwtCookie;
 
     /**
-     * <p>Represents the eventBusAuthToken.</p>
+     * <p>
+     * Represents the eventBusAuthToken.
+     * </p>
      */
     private static String eventBusAuthToken;
 
     /**
-     * <p>Represents the eventBusEndpoint.</p>
+     * <p>
+     * Represents the eventBusEndpoint.
+     * </p>
      */
     private static String eventBusEndpoint;
 
     /**
-     * <p>Represents the contestSubmissionDownloadUrl.</p>
+     * <p>
+     * Represents the contestSubmissionDownloadUrl.
+     * </p>
      */
     private static String contestSubmissionDownloadUrl;
 
     /**
-     * <p>Represents the checkpointSubmissionDownloadUrl.</p>
+     * <p>
+     * Represents the checkpointSubmissionDownloadUrl.
+     * </p>
      */
     private static String checkpointSubmissionDownloadUrl;
 
@@ -1045,6 +1221,11 @@ public class ConfigHelper {
      * JWT expiration time in minutes
      */
     private static int expirationTime;
+
+    /**
+     * JWT auth0 proxy server url
+     */
+    private static String authProxyServerUrl;
 
     /**
      * AWS S3 bucket
@@ -1095,7 +1276,8 @@ public class ConfigHelper {
                 }
             }
 
-            // Retrieve the value of the property that contains the accuracy_reviewer_role_id
+            // Retrieve the value of the property that contains the
+            // accuracy_reviewer_role_id
             value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, ACCURACY_REVIEWER_ROLE_ID_NAME_PROP);
             // If the value has been retrieved successfully ...
             if (value != null && value.trim().length() != 0) {
@@ -1130,7 +1312,6 @@ public class ConfigHelper {
                     // don't do anything, keep the default
                 }
             }
-
 
             // Retrieve the value of the property that contains the primary_screener_role_id
             value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, PRIMARY_SCREENER_ROLE_ID_NAME_PROP);
@@ -1168,19 +1349,22 @@ public class ConfigHelper {
                 }
             }
 
-            // Retrieve the value of the property that contains the project details page base URL
+            // Retrieve the value of the property that contains the project details page
+            // base URL
             value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, PROP_PROJECT_DETAILS_URL);
             if (value != null && value.trim().length() != 0) {
                 projectDetailsBaseURL = value;
             }
 
-            // Retrieve the value of the property that contains the direct project page base URL
+            // Retrieve the value of the property that contains the direct project page base
+            // URL
             value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, PROP_DIRECT_PROJECT_URL);
             if (value != null && value.trim().length() != 0) {
                 directProjectBaseURL = value;
             }
 
-            // Retrieve the value of the property that contains the pacts payment detail page base URL
+            // Retrieve the value of the property that contains the pacts payment detail
+            // page base URL
             value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, PACTS_PAYMENT_DETAIL_URL_PROP);
             if (value != null && value.trim().length() != 0) {
                 pactsPaymentDetailBaseURL = value;
@@ -1190,9 +1374,8 @@ public class ConfigHelper {
             defaultDistributionScript = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, DEFAULT_DISTRIBUTION_SCRIPT_PROP);
             if (defaultDistributionScript == null || defaultDistributionScript.trim().length() == 0) {
                 System.err.println("The value of " + DEFAULT_DISTRIBUTION_SCRIPT_PROP
-                        + " configuration property is null. "
-                        + "This value will be ignored and value of " + DEFAULT_DISTRIBUTION_SCRIPT
-                        + " will be used instead");
+                        + " configuration property is null. " + "This value will be ignored and value of "
+                        + DEFAULT_DISTRIBUTION_SCRIPT + " will be used instead");
 
                 defaultDistributionScript = DEFAULT_DISTRIBUTION_SCRIPT;
             }
@@ -1215,7 +1398,8 @@ public class ConfigHelper {
 
                 // Retrieve small icon's filename that should be associated with the ID
                 String strFilenameSm = propRootCatIcons.getValue(strPropName + "." + ROOT_CATALOG_ICON_SM_PROP);
-                // Retrieve Message Resources key for alternative text -- the name of the Root Catalog
+                // Retrieve Message Resources key for alternative text -- the name of the Root
+                // Catalog
                 String strAltTextKey = propRootCatIcons.getValue(strPropName + "." + ROOT_CATALOG_ALT_TEXT_KEY_PROP);
 
                 // If small icon's filename has been read from the configuration ...
@@ -1236,8 +1420,8 @@ public class ConfigHelper {
                 }
 
                 if (propRootCatIcons.containsProperty(strPropName + "." + ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP)) {
-                    String script = propRootCatIcons.getValue(strPropName + "."
-                            + ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP);
+                    String script = propRootCatIcons
+                            .getValue(strPropName + "." + ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP);
 
                     distributionScriptRootCatalogs.put(strID, script);
                 } else {
@@ -1247,7 +1431,8 @@ public class ConfigHelper {
                 }
             }
 
-            // Retrieve property that contains definitions of Project Category name/icon filename pairs
+            // Retrieve property that contains definitions of Project Category name/icon
+            // filename pairs
             Property propProjCatIcons = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PROJECT_CATEGORY_ICONS_PROP);
             // Prepare to enumerate all the nested properties
             propsIcons = propProjCatIcons.propertyNames();
@@ -1256,9 +1441,11 @@ public class ConfigHelper {
                 // Get the name of the next property in the list.
                 // The property name retrieved is also the name of a Project Category
                 String strPropName = (String) propsIcons.nextElement();
-                // Retrieve small icon's filename that should be associated with the Project Category name
+                // Retrieve small icon's filename that should be associated with the Project
+                // Category name
                 String strFilenameSm = propProjCatIcons.getValue(strPropName + "." + PROJECT_CATEGORY_ICON_SM_PROP);
-                // Retrieve icon's filename that should be associated with the Project Category name
+                // Retrieve icon's filename that should be associated with the Project Category
+                // name
                 String strFilename = propProjCatIcons.getValue(strPropName + "." + PROJECT_CATEGORY_ICON_PROP);
 
                 // If filename for a small icon has been read fine ...
@@ -1273,8 +1460,10 @@ public class ConfigHelper {
                 }
             }
 
-            // Retrieve property that contains definitions of Project Type view contest links
-            Property propProjTypeDesc = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PROJECT_TYPE_VIEW_CONTEST_LINKS_PROP);
+            // Retrieve property that contains definitions of Project Type view contest
+            // links
+            Property propProjTypeDesc = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS,
+                    PROJECT_TYPE_VIEW_CONTEST_LINKS_PROP);
             // Prepare to enumerate all the nested properties
             Enumeration propsLinks = propProjTypeDesc.propertyNames();
 
@@ -1375,9 +1564,10 @@ public class ConfigHelper {
                 }
             }
             // Parse the number of required reviewers for Post-Mortem phase
-            String postMortemReviewersStr
-                    = cfgMgr.getPropertyObject("com.cronos.onlinereview.phases.PostMortemPhaseHandler",
-                    "PostMortemPhaseDefaultReviewersNumber").getValue();
+            String postMortemReviewersStr = cfgMgr
+                    .getPropertyObject("com.cronos.onlinereview.phases.PostMortemPhaseHandler",
+                            "PostMortemPhaseDefaultReviewersNumber")
+                    .getValue();
             if (postMortemReviewersStr != null && postMortemReviewersStr.trim().length() != 0) {
                 int minimum = Integer.parseInt(postMortemReviewersStr, 10);
                 if (minimum >= 0) {
@@ -1385,8 +1575,7 @@ public class ConfigHelper {
                 }
             }
             // Parse the number of required reviewers for Approval phase
-            String approversStr
-                    = cfgMgr.getPropertyObject("com.cronos.onlinereview.phases.ApprovalPhaseHandler",
+            String approversStr = cfgMgr.getPropertyObject("com.cronos.onlinereview.phases.ApprovalPhaseHandler",
                     "ApprovalPhaseDefaultReviewersNumber").getValue();
             if (approversStr != null && approversStr.trim().length() != 0) {
                 int minimum = Integer.parseInt(approversStr, 10);
@@ -1394,7 +1583,6 @@ public class ConfigHelper {
                     reqApprovers = minimum;
                 }
             }
-
 
             // Verify that duration of "Deadline Near" status was specified, and assign it
             if (deadlineNearDurationStr != null && deadlineNearDurationStr.trim().length() != 0) {
@@ -1439,7 +1627,8 @@ public class ConfigHelper {
 
             // Retrieve property that contains definition of Permissions Matrix
             Property propPermissionsMatrix = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PERMISSIONS_MATRIX_PROP);
-            // Prepare to enumerate all permission name properties that are nested inside the Permissions Matrix one
+            // Prepare to enumerate all permission name properties that are nested inside
+            // the Permissions Matrix one
             Enumeration permissionNames = propPermissionsMatrix.propertyNames();
 
             while (permissionNames.hasMoreElements()) {
@@ -1464,9 +1653,11 @@ public class ConfigHelper {
             while (phaseGroups.hasMoreElements()) {
                 // Get the name of the next property in the list.
                 String propertyName = phaseGroups.nextElement() + ".";
-                // Retrieve a name of a key that will point to a message containing the name of group
+                // Retrieve a name of a key that will point to a message containing the name of
+                // group
                 String strGroupNameKey = propPhaseGrouping.getValue(propertyName + PHASE_GROUP_RM_KEY_PROP);
-                // Retrieve a name of a key that will point to a message containing the name of table
+                // Retrieve a name of a key that will point to a message containing the name of
+                // table
                 String strGroupTableNameKey = propPhaseGrouping.getValue(propertyName + PHASE_GROUP_TBL_NAME_KEY_PROP);
                 // Retrieve an array of phase names included in this group
                 String[] strPhases = propPhaseGrouping.getValues(propertyName + PHASES_DEFINITIONS_PROP);
@@ -1474,8 +1665,8 @@ public class ConfigHelper {
                 String strAppFunction = propPhaseGrouping.getValue(propertyName + PHASE_GROUP_APP_FUNCTION_PROP);
 
                 // If everything has been read fine ...
-                if (strGroupNameKey != null && strGroupNameKey.trim().length() != 0 &&
-                        strAppFunction != null && /*strAppFunction.trim().length() != 0 &&*/
+                if (strGroupNameKey != null && strGroupNameKey.trim().length() != 0 && strAppFunction != null
+                        && /* strAppFunction.trim().length() != 0 && */
                         strPhases != null && strPhases.length != 0) {
                     // ... store phase group definition for later use
                     phaseGroupNames.add(strGroupNameKey.trim());
@@ -1494,23 +1685,23 @@ public class ConfigHelper {
                 }
             }
 
-            Property propContactManagerEmail =
-                    cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, CONTACT_MANAGER_EMAIL_PROP);
+            Property propContactManagerEmail = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS,
+                    CONTACT_MANAGER_EMAIL_PROP);
 
             if (propContactManagerEmail != null) {
                 contactManagerEmailTemplate = propContactManagerEmail.getValue(EMAIL_TEMPLATE_NAME_PROP);
                 contactManagerEmailFromAddress = propContactManagerEmail.getValue(EMAIL_FROM_ADDRESS_PROP);
             }
 
-            // Get the configurable maximum values for extension days for registration and submission phases
+            // Get the configurable maximum values for extension days for registration and
+            // submission phases
             value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, REGISTRATION_PHASE_MAX_EXTENSION_PROP);
             if (value != null && value.trim().length() != 0) {
                 try {
                     registrationPhaseMaxExtensionDays = new Integer(value);
                 } catch (NumberFormatException nfe) {
                     System.err.println("The value of " + REGISTRATION_PHASE_MAX_EXTENSION_PROP
-                            + " configuration property is not numeric: " + value
-                            + ". This value will be ignored.");
+                            + " configuration property is not numeric: " + value + ". This value will be ignored.");
                 }
             }
 
@@ -1520,8 +1711,7 @@ public class ConfigHelper {
                     submissionPhaseMaxExtensionDays = new Integer(value);
                 } catch (NumberFormatException nfe) {
                     System.err.println("The value of " + SUBMISSION_PHASE_MAX_EXTENSION_PROP
-                            + " configuration property is not numeric: " + value
-                            + ". This value will be ignored.");
+                            + " configuration property is not numeric: " + value + ". This value will be ignored.");
                 }
             }
 
@@ -1541,9 +1731,8 @@ public class ConfigHelper {
 
             if (distributionToolOutputDir == null || distributionToolOutputDir.trim().length() == 0) {
                 System.err.println("The value of " + DISTRIBUTION_TOOL_OUTPUT_DIR_PROP
-                        + " configuration property is null. "
-                        + "This value will be ignored and value of " + DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR
-                        + " will be used instead");
+                        + " configuration property is null. " + "This value will be ignored and value of "
+                        + DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR + " will be used instead");
 
                 distributionToolOutputDir = DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR;
             }
@@ -1551,56 +1740,53 @@ public class ConfigHelper {
             catalogOutputDir = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, CATALOG_OUTPUT_DIR_PROP);
 
             if (catalogOutputDir == null || catalogOutputDir.trim().length() == 0) {
-                System.err.println("The value of " + CATALOG_OUTPUT_DIR_PROP
-                        + " configuration property is null. "
+                System.err.println("The value of " + CATALOG_OUTPUT_DIR_PROP + " configuration property is null. "
                         + "This value will be ignored and value of " + DEFAULT_CATALOG_OUTPUT_DIR
                         + " will be used instead");
 
                 catalogOutputDir = DEFAULT_CATALOG_OUTPUT_DIR;
             }
 
-            Property disabledResourceRolesConfig
-                    = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DISABLED_RESOURCE_ROLES_PROP);
+            Property disabledResourceRolesConfig = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS,
+                    DISABLED_RESOURCE_ROLES_PROP);
             disabledResourceRoles = disabledResourceRolesConfig.getValues();
 
-            Property svnPermissionGrantResourceRolesConfig
-                    = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, SVN_PERM_GRANT_RESOURCE_ROLES_PROP);
+            Property svnPermissionGrantResourceRolesConfig = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS,
+                    SVN_PERM_GRANT_RESOURCE_ROLES_PROP);
             svnPermissionGrantResourceRoles = svnPermissionGrantResourceRolesConfig.getValues();
 
             Property svnRepoConfig = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, SVN_CONFIG_PROP);
-            svnConfig = new String[]{svnRepoConfig.getValue("Root"),
-                    svnRepoConfig.getValue("AuthUsername"),
-                    svnRepoConfig.getValue("AuthPassword"),
-                    svnRepoConfig.getValue("MkDirCommitMessage"),
-                    svnRepoConfig.getValue("TempFilesBaseDir"),
-                    svnRepoConfig.getValue("PathBasedPermissionsFileURL")};
+            svnConfig = new String[] { svnRepoConfig.getValue("Root"), svnRepoConfig.getValue("AuthUsername"),
+                    svnRepoConfig.getValue("AuthPassword"), svnRepoConfig.getValue("MkDirCommitMessage"),
+                    svnRepoConfig.getValue("TempFilesBaseDir"), svnRepoConfig.getValue("PathBasedPermissionsFileURL") };
 
-            Property lateDeliverableEmailConfig
-                    = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "LateDeliverableUpdateNotificationEmail");
+            Property lateDeliverableEmailConfig = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS,
+                    "LateDeliverableUpdateNotificationEmail");
 
-            lateDeliverablesUpdatedByManagerNotificationConfig = new String[]{
+            lateDeliverablesUpdatedByManagerNotificationConfig = new String[] {
                     lateDeliverableEmailConfig.getValue("ByManager.EmailTemplateName"),
                     lateDeliverableEmailConfig.getValue("ByManager.EmailFromAddress"),
                     lateDeliverableEmailConfig.getValue("ByManager.EmailSubject"),
-                    lateDeliverableEmailConfig.getValue("ByManager.Roles")};
+                    lateDeliverableEmailConfig.getValue("ByManager.Roles") };
 
-            lateDeliverablesUpdatedByMemberNotificationConfig = new String[]{
+            lateDeliverablesUpdatedByMemberNotificationConfig = new String[] {
                     lateDeliverableEmailConfig.getValue("ByMember.EmailTemplateName"),
                     lateDeliverableEmailConfig.getValue("ByMember.EmailFromAddress"),
                     lateDeliverableEmailConfig.getValue("ByMember.EmailSubject"),
-                    lateDeliverableEmailConfig.getValue("ByMember.Roles")};
+                    lateDeliverableEmailConfig.getValue("ByMember.Roles") };
 
             lateDeliverableBaseURL = lateDeliverableEmailConfig.getValue("EditLateDeliverablePageBaseURL");
 
-            Property f2fSubmissionReuploadedConfig
-                    = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "F2FSubmissionReuploadNotificationEmail");
+            Property f2fSubmissionReuploadedConfig = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS,
+                    "F2FSubmissionReuploadNotificationEmail");
 
-            f2fSubmissionReuploadedNotificationConfig = new String[]{
+            f2fSubmissionReuploadedNotificationConfig = new String[] {
                     f2fSubmissionReuploadedConfig.getValue("EmailTemplateName"),
                     f2fSubmissionReuploadedConfig.getValue("EmailFromAddress"),
-                    f2fSubmissionReuploadedConfig.getValue("EmailSubject")};
+                    f2fSubmissionReuploadedConfig.getValue("EmailSubject") };
 
-            // Retrieve the property that contains the definitions of resource tabs to be displayed in Resource section
+            // Retrieve the property that contains the definitions of resource tabs to be
+            // displayed in Resource section
             Property propResourceTabs = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, RESOURCE_TABS_PROP_STRING);
             // Prepare to enumerate all the nested properties
             Enumeration<String> propsResourceTab = propResourceTabs.propertyNames();
@@ -1678,9 +1864,11 @@ public class ConfigHelper {
             clientSecret = eventBus.getValue("client_secret");
             authDomain = eventBus.getValue("auth_domain");
             authAudience = eventBus.getValue("auth_audience");
+            authProxyServerUrl = eventBus.getValue("auth_proxy_server_url");
             try {
                 expirationTime = Integer.parseInt(eventBus.getValue("expiration_time"));
-                if (expirationTime < 0) expirationTime = DEFAULT_EXPIRATION_TIME;
+                if (expirationTime < 0)
+                    expirationTime = DEFAULT_EXPIRATION_TIME;
             } catch (NumberFormatException e) {
                 expirationTime = DEFAULT_EXPIRATION_TIME;
             }
@@ -1798,26 +1986,26 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns the filename of small icon that will be displayed on a JSP page
-     * for some Root Catalog.  Root Catalog is pecified by its ID.
+     * This static method returns the filename of small icon that will be displayed
+     * on a JSP page for some Root Catalog. Root Catalog is pecified by its ID.
      *
-     * @return the filename of small icon that should be used to represent particular Root Catalog.
-     * @param rootCatalogId
-     *            Root Catalog ID which small icon's filename should be looked up for.
+     * @return the filename of small icon that should be used to represent
+     *         particular Root Catalog.
+     * @param rootCatalogId Root Catalog ID which small icon's filename should be
+     *                      looked up for.
      */
     public static String getRootCatalogIconNameSm(String rootCatalogId) {
         return rootCatalogIconsSm.get(rootCatalogId);
     }
 
     /**
-     * This static method returns the Message Resources key which will be used to retrieve the name
-     * of the Root Catalog.  This name may later be used to display it somewhere on a page, say, via
-     * alternative text for the Root Catalog icon.
+     * This static method returns the Message Resources key which will be used to
+     * retrieve the name of the Root Catalog. This name may later be used to display
+     * it somewhere on a page, say, via alternative text for the Root Catalog icon.
      *
-     * @return the key that should be used to look up the text string containing the name of the
-     *         Root Catalog
-     * @param rootCatalogId
-     *            Root Catalog ID which name should be looked up for.
+     * @return the key that should be used to look up the text string containing the
+     *         name of the Root Catalog
+     * @param rootCatalogId Root Catalog ID which name should be looked up for.
      */
     public static String getRootCatalogAltTextKey(String rootCatalogId) {
         return rootCatalogAltTextKeys.get(rootCatalogId);
@@ -1827,8 +2015,7 @@ public class ConfigHelper {
      * This static method returns true if the specified root catalog id is custom
      *
      * @return true if the specified root catalog id is custom
-     * @param rootCatalogId
-     *            Root Catalog ID which to look for.
+     * @param rootCatalogId Root Catalog ID which to look for.
      */
     public static boolean isCustomRootCatalog(String rootCatalogId) {
         return customRootCatalogs.contains(rootCatalogId);
@@ -1838,50 +2025,54 @@ public class ConfigHelper {
      * This static method returns the distribution script for a catalog.
      *
      * @return the distribution script for a catalog.
-     * @param rootCatalogId
-     *            Root Catalog ID which to look for.
+     * @param rootCatalogId Root Catalog ID which to look for.
      */
     public static String getDistributionScript(String rootCatalogId) {
         return distributionScriptRootCatalogs.get(rootCatalogId);
     }
 
     /**
-     * This static method returns the filename of small icon that will be displayed on JSP page for
-     * certain Project Category, which is specified by <code>projectCategoryName</code> parameter.
+     * This static method returns the filename of small icon that will be displayed
+     * on JSP page for certain Project Category, which is specified by
+     * <code>projectCategoryName</code> parameter.
      *
-     * @return the filename of small icon that should be used to represent particular Project
-     *         Category.
-     * @param projectCategoryName
-     *            Project Category name which small icon's filename should be looked up for.
+     * @return the filename of small icon that should be used to represent
+     *         particular Project Category.
+     * @param projectCategoryName Project Category name which small icon's filename
+     *                            should be looked up for.
      */
     public static String getProjectCategoryIconNameSm(String projectCategoryName) {
         return projectCategoryIconsSm.get(projectCategoryName);
     }
 
     /**
-     * This static method returns the filename of icon that will be displayed on JSP page for
-     * certain Project Category, which is specified by <code>projectCategoryName</code> parameter.
+     * This static method returns the filename of icon that will be displayed on JSP
+     * page for certain Project Category, which is specified by
+     * <code>projectCategoryName</code> parameter.
      *
-     * @return the filename of icon that should be used to represent particular Project Category.
-     * @param projectCategoryName
-     *            Project Category name which icon's filename should be looked up for.
+     * @return the filename of icon that should be used to represent particular
+     *         Project Category.
+     * @param projectCategoryName Project Category name which icon's filename should
+     *                            be looked up for.
      */
     public static String getProjectCategoryIconName(String projectCategoryName) {
         return projectCategoryIcons.get(projectCategoryName);
     }
 
     /**
-     * This static method returns the link to the view contest page for project based on the type of
-     * project passed as parameter.
+     * This static method returns the link to the view contest page for project
+     * based on the type of project passed as parameter.
      *
      * @return the link to view contest page of the project.
-     * @param projectTypeName
-     *            Project Type name which link to view contest page should be looked up for.
-     * @param projectId
-     *            ID of the project (numeric value) that should be substituted instead of
-     *            &quot;<code>&lt;PROJECT_ID&gt;</code>&quot; substring in the template link read
-     *            from the configuration. If this value is zero or negative, the aforementioned
-     *            substring will be simply removed from the template link.
+     * @param projectTypeName Project Type name which link to view contest page
+     *                        should be looked up for.
+     * @param projectId       ID of the project (numeric value) that should be
+     *                        substituted instead of
+     *                        &quot;<code>&lt;PROJECT_ID&gt;</code>&quot; substring
+     *                        in the template link read from the configuration. If
+     *                        this value is zero or negative, the aforementioned
+     *                        substring will be simply removed from the template
+     *                        link.
      */
     public static String getProjectTypeViewContestLink(String projectTypeName, long projectId) {
         String templateLink = projectTypeViewContestLinks.get(projectTypeName);
@@ -1891,17 +2082,19 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns the link to the forum for project based on the type of project
-     * passed as parameter.
+     * This static method returns the link to the forum for project based on the
+     * type of project passed as parameter.
      *
      * @return the link to forum for the project.
-     * @param projectTypeName
-     *            Project Type name which link to full description should be looked up for.
-     * @param forumId
-     *            ID of the forum (numeric value) that should be substituted instead of
-     *            &quot;<code>&lt;FORUM_ID&gt;</code>&quot; substring in the template link read from
-     *            the configuration. If this value is zero or negative, the aforementioned substring
-     *            will be simply removed from the template link.
+     * @param projectTypeName Project Type name which link to full description
+     *                        should be looked up for.
+     * @param forumId         ID of the forum (numeric value) that should be
+     *                        substituted instead of
+     *                        &quot;<code>&lt;FORUM_ID&gt;</code>&quot; substring in
+     *                        the template link read from the configuration. If this
+     *                        value is zero or negative, the aforementioned
+     *                        substring will be simply removed from the template
+     *                        link.
      */
     public static String getProjectTypeForumLink(String projectTypeName, long forumId) {
         String templateLink = projectTypeForumLinks.get(projectTypeName);
@@ -1911,8 +2104,8 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns the amount of pixels that should be displayed for each hour in
-     * the project's GANTT chart.
+     * This static method returns the amount of pixels that should be displayed for
+     * each hour in the project's GANTT chart.
      *
      * @return a value that represent the amount of pixels per each hour.
      */
@@ -1921,8 +2114,8 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns default duration, in hours, that will be used on Create/Edit
-     * Project page every time a new phase is added to the timeline.
+     * This static method returns default duration, in hours, that will be used on
+     * Create/Edit Project page every time a new phase is added to the timeline.
      *
      * @return default duration of a phase, in hours.
      */
@@ -1931,8 +2124,8 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns default minimum length of the text, in characters, that should be
-     * entered into Note field for every new project.
+     * This static method returns default minimum length of the text, in characters,
+     * that should be entered into Note field for every new project.
      *
      * @return default minimum length of text, in characters.
      */
@@ -1941,8 +2134,8 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns default minimum of registrants required before Registration phase
-     * can be closed.
+     * This static method returns default minimum of registrants required before
+     * Registration phase can be closed.
      *
      * @return default minimum amount, or -1 if there is no default minimum value.
      */
@@ -1951,8 +2144,8 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns default minimum of registered reviewers required before Review
-     * phase can be closed.
+     * This static method returns default minimum of registered reviewers required
+     * before Review phase can be closed.
      *
      * @return default minimum amount, or -1 if there is no default minimum value.
      */
@@ -1961,8 +2154,8 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns default minimum of registered approvers required before Approval
-     * phase can be closed.
+     * This static method returns default minimum of registered approvers required
+     * before Approval phase can be closed.
      *
      * @return default minimum amount, or -1 if there is no default minimum value.
      */
@@ -1971,8 +2164,8 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns default minimum of registered reviewers required before Post-Mortem
-     * phase can be closed.
+     * This static method returns default minimum of registered reviewers required
+     * before Post-Mortem phase can be closed.
      *
      * @return default minimum amount, or -1 if there is no default minimum value.
      */
@@ -1981,9 +2174,10 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns the time duration, in hours, before phase ends during which all
-     * outstanding deliverables are shown with &quot;Deadline&#160;Near&quot; status, and all open
-     * phases are shown with &quot;Closing&quot; status.
+     * This static method returns the time duration, in hours, before phase ends
+     * during which all outstanding deliverables are shown with
+     * &quot;Deadline&#160;Near&quot; status, and all open phases are shown with
+     * &quot;Closing&quot; status.
      *
      * @return the time duration, in hours.
      */
@@ -1992,7 +2186,8 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns the formatting string used to format scorecard scores.
+     * This static method returns the formatting string used to format scorecard
+     * scores.
      *
      * @return formatting string for scorecard scores.
      */
@@ -2001,7 +2196,8 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns the formatting string used to format monetary values.
+     * This static method returns the formatting string used to format monetary
+     * values.
      *
      * @return formatting string for monetary values.
      */
@@ -2010,8 +2206,8 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns the formatting string used to format monetary values without
-     * fractional part.
+     * This static method returns the formatting string used to format monetary
+     * values without fractional part.
      *
      * @return formatting string for monetary values.
      */
@@ -2031,7 +2227,8 @@ public class ConfigHelper {
     /**
      * This static method returns the formatting string used to format dates.
      *
-     * @return formatting string for dates. This string will output only the date part (no time).
+     * @return formatting string for dates. This string will output only the date
+     *         part (no time).
      */
     public static String getDateOnlyFormat() {
         return dateOnlyFormat;
@@ -2040,22 +2237,25 @@ public class ConfigHelper {
     /**
      * This static method returns the formatting string used to format dates.
      *
-     * @return formatting string for dates. This string will output only the time part (no date).
+     * @return formatting string for dates. This string will output only the time
+     *         part (no date).
      */
     public static String getTimeOnlyFormat() {
         return timeOnlyFormat;
     }
 
     /**
-     * This static method returns the list of roles for some particular permission name as defined
-     * by Permissions Matrix.  The array of roles returned denote Resource Roles that have
-     * permission specified by <code>permissionName</code> parameter granted.  If permission with
-     * the specified name has not been found, or found permission does not have any resource roles
-     * assigned, this method returns empty array.
+     * This static method returns the list of roles for some particular permission
+     * name as defined by Permissions Matrix. The array of roles returned denote
+     * Resource Roles that have permission specified by <code>permissionName</code>
+     * parameter granted. If permission with the specified name has not been found,
+     * or found permission does not have any resource roles assigned, this method
+     * returns empty array.
      *
-     * @return array of names of Resource Roles that are granted some certain permission.
-     * @param permissionName
-     *            name of the permission which list of role names should be retrieved for.
+     * @return array of names of Resource Roles that are granted some certain
+     *         permission.
+     * @param permissionName name of the permission which list of role names should
+     *                       be retrieved for.
      */
     public static String[] getRolesForPermission(String permissionName) {
         String[] roles = permissionsMatrix.get(permissionName);
@@ -2063,7 +2263,8 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns the number of phase groups defined in the configuration.
+     * This static method returns the number of phase groups defined in the
+     * configuration.
      *
      * @return the number of phase groups.
      */
@@ -2072,12 +2273,11 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method finds the first phase group that contains a phase specified by its name,
-     * and returns an index of that phase group.
+     * This static method finds the first phase group that contains a phase
+     * specified by its name, and returns an index of that phase group.
      *
      * @return an index of the phase group containing specified phase.
-     * @param phaseName
-     *            a name of the phase.
+     * @param phaseName a name of the phase.
      */
     public static int findPhaseGroupForPhaseName(String phaseName) {
         for (int i = 0; i < phaseGroupPhases.size(); ++i) {
@@ -2089,59 +2289,57 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns the name of a key for a phase group referenced by its index.
+     * This static method returns the name of a key for a phase group referenced by
+     * its index.
      *
-     * @return the name of a key. This key can later be used to retrieve the localized name of phase
-     *         group from message resources.
-     * @param index
-     *            an index of a phase group to retrieve the name of a key for.
+     * @return the name of a key. This key can later be used to retrieve the
+     *         localized name of phase group from message resources.
+     * @param index an index of a phase group to retrieve the name of a key for.
      */
     public static String getPhaseGroupNameKey(int index) {
         return phaseGroupNames.get(index);
     }
 
     /**
-     * This static method returns the name of a key for a phase group referenced by its index.
+     * This static method returns the name of a key for a phase group referenced by
+     * its index.
      *
-     * @return the name of a key. This key can later be used to retrieve the localized name of table
-     *         for some phase group from message resources.
-     * @param index
-     *            an index of a phase group to retrieve the name of a key for.
+     * @return the name of a key. This key can later be used to retrieve the
+     *         localized name of table for some phase group from message resources.
+     * @param index an index of a phase group to retrieve the name of a key for.
      */
     public static String getPhaseGroupTableNameKey(int index) {
         return phaseGroupTableNames.get(index);
     }
 
     /**
-     * This static method determines if a phase group referenced by its index contains specified
-     * phase. The phase is specified by its name.
+     * This static method determines if a phase group referenced by its index
+     * contains specified phase. The phase is specified by its name.
      *
-     * @return <code>true</code> if specified phase group contains the phase, <code>false</code>
-     *         if it doesn't.
-     * @param index
-     *            an index of a phase group.
-     * @param phaseName
-     *            a name of the phase which presence in the phase group is to be tested.
+     * @return <code>true</code> if specified phase group contains the phase,
+     *         <code>false</code> if it doesn't.
+     * @param index     an index of a phase group.
+     * @param phaseName a name of the phase which presence in the phase group is to
+     *                  be tested.
      */
     public static boolean isPhaseGroupContainsPhase(int index, String phaseName) {
         return phaseGroupPhases.get(index).contains(phaseName);
     }
 
     /**
-     * This static method returns the name of application's functionality that should be executed
-     * for the phase group specified by its index.
+     * This static method returns the name of application's functionality that
+     * should be executed for the phase group specified by its index.
      *
      * @return the name of application's functionality for a particular phase group.
-     * @param index
-     *            an index of a phase group.
+     * @param index an index of a phase group.
      */
     public static String getPhaseGroupAppFunction(int index) {
         return phaseGroupFunctions.get(index);
     }
 
     /**
-     * This static method returns the path where email template to send to project's manager can be
-     * loaded from.
+     * This static method returns the path where email template to send to project's
+     * manager can be loaded from.
      *
      * @return a string containing the path to email template.
      */
@@ -2150,7 +2348,8 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns the "from" address for the messages to project's manager.
+     * This static method returns the "from" address for the messages to project's
+     * manager.
      *
      * @return a string containing the "from" address.
      */
@@ -2161,7 +2360,7 @@ public class ConfigHelper {
     /**
      * Return the property value of online_review namespace.
      *
-     * @param name the property name
+     * @param name         the property name
      * @param defaultValue the default value
      * @return property value
      */
@@ -2178,37 +2377,51 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the maximum allowed number of days to extend <code>Registration</code> phase for.</p>
+     * <p>
+     * Gets the maximum allowed number of days to extend <code>Registration</code>
+     * phase for.
+     * </p>
      *
-     * @return an <code>Integer</code> providing the maximum allowed number of days to extend <code>Registration</code>
-     *         phase or <code>null</code> if there is no such limit specified.
+     * @return an <code>Integer</code> providing the maximum allowed number of days
+     *         to extend <code>Registration</code> phase or <code>null</code> if
+     *         there is no such limit specified.
      */
     public static Integer getRegistrationPhaseMaxExtensionDays() {
         return registrationPhaseMaxExtensionDays;
     }
 
     /**
-     * <p>Gets the maximum allowed number of days to extend <code>Submission</code> phase for.</p>
+     * <p>
+     * Gets the maximum allowed number of days to extend <code>Submission</code>
+     * phase for.
+     * </p>
      *
-     * @return an <code>Integer</code> providing the maximum allowed number of days to extend <code>Submission</code>
-     *         phase or <code>null</code> if there is no such limit specified.
+     * @return an <code>Integer</code> providing the maximum allowed number of days
+     *         to extend <code>Submission</code> phase or <code>null</code> if there
+     *         is no such limit specified.
      */
     public static Integer getSubmissionPhaseMaxExtensionDays() {
         return submissionPhaseMaxExtensionDays;
     }
 
     /**
-     * <p>Gets the maximum allowed number of days to extend <code>Submission</code> phase for.</p>
+     * <p>
+     * Gets the maximum allowed number of days to extend <code>Submission</code>
+     * phase for.
+     * </p>
      *
-     * @return an <code>Integer</code> providing the maximum allowed number of days to extend <code>Submission</code>
-     *         phase or <code>null</code> if there is no such limit specified.
+     * @return an <code>Integer</code> providing the maximum allowed number of days
+     *         to extend <code>Submission</code> phase or <code>null</code> if there
+     *         is no such limit specified.
      */
     public static Integer getMinimumHoursBeforeSubmissionDeadlineForExtension() {
         return minimumHoursBeforeSubmissionDeadlineForExtension;
     }
 
     /**
-     * <p>Gets the distribution tool output dir.</p>
+     * <p>
+     * Gets the distribution tool output dir.
+     * </p>
      *
      * @return the distribution tool output dir.
      */
@@ -2217,7 +2430,9 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the TopCoder Catalog output dir.</p>
+     * <p>
+     * Gets the TopCoder Catalog output dir.
+     * </p>
      *
      * @return the TopCoder Catalog output dir.
      */
@@ -2226,7 +2441,9 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the Distribution Tool default script.</p>
+     * <p>
+     * Gets the Distribution Tool default script.
+     * </p>
      *
      * @return the Distribution Tool default script.
      */
@@ -2235,26 +2452,35 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the list of disabled resource role IDs.</p>
+     * <p>
+     * Gets the list of disabled resource role IDs.
+     * </p>
      *
-     * @return a <code>String</code> array listing the IDs for resource roles which are not allowed for selection.
+     * @return a <code>String</code> array listing the IDs for resource roles which
+     *         are not allowed for selection.
      */
     public static String[] getDisabledResourceRoles() {
         return disabledResourceRoles;
     }
 
     /**
-     * <p>Gets the list of resource role IDs which are to be granted permission for accessing SVN module for project
-     * once the project enters the <code>Final Review</code> phase.</p>
+     * <p>
+     * Gets the list of resource role IDs which are to be granted permission for
+     * accessing SVN module for project once the project enters the
+     * <code>Final Review</code> phase.
+     * </p>
      *
-     * @return a <code>String</code> array listing the IDs for resource roles which are to be granted SVN permission.
+     * @return a <code>String</code> array listing the IDs for resource roles which
+     *         are to be granted SVN permission.
      */
     public static String[] getSvnPermissionGrantResourceRoles() {
         return svnPermissionGrantResourceRoles;
     }
 
     /**
-     * <p>Gets the URL for SVN repository.</p>
+     * <p>
+     * Gets the URL for SVN repository.
+     * </p>
      *
      * @return a <code>String</code> providing the URL for SVN repository.
      */
@@ -2263,53 +2489,70 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the username for authentication to SVN repository.</p>
+     * <p>
+     * Gets the username for authentication to SVN repository.
+     * </p>
      *
-     * @return a <code>String</code> providing the username to be used for authenticating to SVN repository.
+     * @return a <code>String</code> providing the username to be used for
+     *         authenticating to SVN repository.
      */
     public static String getSVNAuthnUsername() {
         return svnConfig[1];
     }
 
     /**
-     * <p>Gets the password for authentication to SVN repository.</p>
+     * <p>
+     * Gets the password for authentication to SVN repository.
+     * </p>
      *
-     * @return a <code>String</code> providing the password to be used for authenticating to SVN repository.
+     * @return a <code>String</code> providing the password to be used for
+     *         authenticating to SVN repository.
      */
     public static String getSVNAuthnPassword() {
         return svnConfig[2];
     }
 
     /**
-     * <p>Gets the message for committing the new directories to SVN repository.</p>
+     * <p>
+     * Gets the message for committing the new directories to SVN repository.
+     * </p>
      *
-     * @return a <code>String</code> providing message for committing the new directories to SVN repository.
+     * @return a <code>String</code> providing message for committing the new
+     *         directories to SVN repository.
      */
     public static String getSVNCommitMessage() {
         return svnConfig[3];
     }
 
     /**
-     * <p>Gets the path to local directory where the SVN files can be temporarily checked to.</p>
+     * <p>
+     * Gets the path to local directory where the SVN files can be temporarily
+     * checked to.
+     * </p>
      *
-     * @return a <code>String</code> providing the path to local directory where the SVN files can be temporarily
-     *         checked to.
+     * @return a <code>String</code> providing the path to local directory where the
+     *         SVN files can be temporarily checked to.
      */
     public static String getSVNTemporaryFilesBaseDir() {
         return svnConfig[4];
     }
 
     /**
-     * <p>Gets the URL for path-based permissions file in SVN repository.</p>
+     * <p>
+     * Gets the URL for path-based permissions file in SVN repository.
+     * </p>
      *
-     * @return a <code>String</code> providing the URL for path-based permissions file in SVN repository.
+     * @return a <code>String</code> providing the URL for path-based permissions
+     *         file in SVN repository.
      */
     public static String getSVNPathBasedPermissionsFileURL() {
         return svnConfig[5];
     }
 
     /**
-     * <p>Gets the mapping from deliverable type name to deliverable ids.</p>
+     * <p>
+     * Gets the mapping from deliverable type name to deliverable ids.
+     * </p>
      *
      * @return a map of mapping from deliverable type name to deliverable ids.
      */
@@ -2318,8 +2561,10 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the name for template for email to be sent to intended recipients when late deliverable is updated by
-     * manager.</p>
+     * <p>
+     * Gets the name for template for email to be sent to intended recipients when
+     * late deliverable is updated by manager.
+     * </p>
      *
      * @return a <code>String</code> referencing the email template.
      */
@@ -2328,8 +2573,10 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the FROM address for email message to be sent to intended recipients when late deliverable is updated by
-     * manager.</p>
+     * <p>
+     * Gets the FROM address for email message to be sent to intended recipients
+     * when late deliverable is updated by manager.
+     * </p>
      *
      * @return a <code>String</code> providing the FROM address for email message.
      */
@@ -2338,8 +2585,10 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the subject for email message to be sent to intended recipients when late deliverable is updated by
-     * manager.</p>
+     * <p>
+     * Gets the subject for email message to be sent to intended recipients when
+     * late deliverable is updated by manager.
+     * </p>
      *
      * @return a <code>String</code> providing the subject for email message.
      */
@@ -2348,14 +2597,18 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the list of names for resource roles to be notified when late deliverable is updated by manager.</p>
+     * <p>
+     * Gets the list of names for resource roles to be notified when late
+     * deliverable is updated by manager.
+     * </p>
      *
-     * @return a <code>String</code> providing the list of names for resource roles to be notified when late deliverable
-     *         is updated by manager or <code>null</code> if such a list is not set.
+     * @return a <code>String</code> providing the list of names for resource roles
+     *         to be notified when late deliverable is updated by manager or
+     *         <code>null</code> if such a list is not set.
      */
     public static String[] getLateDeliverableUpdateByManagerRecipientRoleNames() {
         if ((lateDeliverablesUpdatedByManagerNotificationConfig[3] != null)
-            && (lateDeliverablesUpdatedByManagerNotificationConfig[3].trim().length() > 0)) {
+                && (lateDeliverablesUpdatedByManagerNotificationConfig[3].trim().length() > 0)) {
             return lateDeliverablesUpdatedByManagerNotificationConfig[3].split(",");
         } else {
             return null;
@@ -2363,17 +2616,22 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the base URL for <code>Edit Late Deliverable</code> page.</p>
+     * <p>
+     * Gets the base URL for <code>Edit Late Deliverable</code> page.
+     * </p>
      *
-     * @return a <code>String</code> providing the base URL for <code>Edit Late Deliverable</code> page.
+     * @return a <code>String</code> providing the base URL for
+     *         <code>Edit Late Deliverable</code> page.
      */
     public static String getLateDeliverableBaseURL() {
         return lateDeliverableBaseURL;
     }
 
     /**
-     * <p>Gets the name for template for email to be sent to intended recipients when late deliverable is updated by
-     * member.</p>
+     * <p>
+     * Gets the name for template for email to be sent to intended recipients when
+     * late deliverable is updated by member.
+     * </p>
      *
      * @return a <code>String</code> referencing the email template.
      */
@@ -2382,8 +2640,10 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the FROM address for email message to be sent to intended recipients when late deliverable is updated by
-     * member.</p>
+     * <p>
+     * Gets the FROM address for email message to be sent to intended recipients
+     * when late deliverable is updated by member.
+     * </p>
      *
      * @return a <code>String</code> providing the FROM address for email message.
      */
@@ -2392,8 +2652,10 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the subject for email message to be sent to intended recipients when late deliverable is updated by
-     * member.</p>
+     * <p>
+     * Gets the subject for email message to be sent to intended recipients when
+     * late deliverable is updated by member.
+     * </p>
      *
      * @return a <code>String</code> providing the subject for email message.
      */
@@ -2402,14 +2664,18 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the list of names for resource roles to be notified when late deliverable is updated by member.</p>
+     * <p>
+     * Gets the list of names for resource roles to be notified when late
+     * deliverable is updated by member.
+     * </p>
      *
-     * @return a <code>String</code> providing the list of names for resource roles to be notified when late deliverable
-     *         is updated by member or <code>null</code> if such a list is not set.
+     * @return a <code>String</code> providing the list of names for resource roles
+     *         to be notified when late deliverable is updated by member or
+     *         <code>null</code> if such a list is not set.
      */
     public static String[] getLateDeliverableUpdateByMemberRecipientRoleNames() {
         if ((lateDeliverablesUpdatedByMemberNotificationConfig[3] != null)
-            && (lateDeliverablesUpdatedByMemberNotificationConfig[3].trim().length() > 0)) {
+                && (lateDeliverablesUpdatedByMemberNotificationConfig[3].trim().length() > 0)) {
             return lateDeliverablesUpdatedByMemberNotificationConfig[3].split(",");
         } else {
             return null;
@@ -2417,8 +2683,10 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the name for template for email to be sent to iterative reviewers when a member reuploads submission
-     * for an F2F project.</p>
+     * <p>
+     * Gets the name for template for email to be sent to iterative reviewers when a
+     * member reuploads submission for an F2F project.
+     * </p>
      *
      * @return a <code>String</code> referencing the email template.
      */
@@ -2427,8 +2695,10 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the FROM address for email message to be sent to iterative reviewers when a member reuploads submission
-     * for an F2F project.</p>
+     * <p>
+     * Gets the FROM address for email message to be sent to iterative reviewers
+     * when a member reuploads submission for an F2F project.
+     * </p>
      *
      * @return a <code>String</code> providing the FROM address for email message.
      */
@@ -2437,8 +2707,10 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the subject for email message to be sent to iterative reviewers when a member reuploads submission
-     * for an F2F project.</p>
+     * <p>
+     * Gets the subject for email message to be sent to iterative reviewers when a
+     * member reuploads submission for an F2F project.
+     * </p>
      *
      * @return a <code>String</code> providing the subject for email message.
      */
@@ -2447,9 +2719,11 @@ public class ConfigHelper {
     }
 
     /**
-     * Gets the Resources tabs to be displayed in the Resource section in project detail page.
+     * Gets the Resources tabs to be displayed in the Resource section in project
+     * detail page.
      *
-     * @return the Resources tabs to be displayed in the Resource section in project detail page.
+     * @return the Resources tabs to be displayed in the Resource section in project
+     *         detail page.
      */
     public static Map<String, Set<String>> getResourceTabs() {
         return resourceTabs;
@@ -2466,6 +2740,7 @@ public class ConfigHelper {
 
     /**
      * Getter of the thurgood API URL.
+     * 
      * @return the thurgood API URL
      */
     public static String getThurgoodApiURL() {
@@ -2474,6 +2749,7 @@ public class ConfigHelper {
 
     /**
      * Getter of thurgood API key.
+     * 
      * @return the thurgood API key
      */
     public static String getThurgoodApiKey() {
@@ -2482,6 +2758,7 @@ public class ConfigHelper {
 
     /**
      * Getter of thurgood timeout.
+     * 
      * @return the thurgood timeout
      */
     public static int getThurgoodTimeout() {
@@ -2490,6 +2767,7 @@ public class ConfigHelper {
 
     /**
      * Getter of thurgood code URL.
+     * 
      * @return the thurgood code URL
      */
     public static String getThurgoodCodeURL() {
@@ -2498,6 +2776,7 @@ public class ConfigHelper {
 
     /**
      * Getter of thurgood job base UI URL.
+     * 
      * @return the thurgood job base UI URL
      */
     public static String getThurgoodJobBaseUIURL() {
@@ -2506,6 +2785,7 @@ public class ConfigHelper {
 
     /**
      * Getter of Thurgood user username.
+     * 
      * @return the Thurgood user username.
      */
     public static String getThurgoodUsername() {
@@ -2514,6 +2794,7 @@ public class ConfigHelper {
 
     /**
      * Getter of Thurgood user password.
+     * 
      * @return the Thurgood user password.
      */
     public static String getThurgoodPassword() {
@@ -2526,7 +2807,7 @@ public class ConfigHelper {
      * @return the userGroupMembershipUrl
      */
     public static String getUserGroupMembershipUrl() {
-    	return userGroupMembershipUrl;
+        return userGroupMembershipUrl;
     }
 
     /**
@@ -2544,11 +2825,12 @@ public class ConfigHelper {
      * @return the v3jwtCookieName
      */
     public static String getV3jwtCookieName() {
-    	return v3jwtCookieName;
+        return v3jwtCookieName;
     }
 
     /**
      * Get v2jwtCookieName.
+     * 
      * @return the v2jwtCookieName.
      */
     public static String getV2jwtCookieName() {
@@ -2557,6 +2839,7 @@ public class ConfigHelper {
 
     /**
      * Get v3jwtAuthorizationUrl.
+     * 
      * @return the v3jwtAuthorizationUrl.
      */
     public static String getV3jwtAuthorizationUrl() {
@@ -2565,6 +2848,7 @@ public class ConfigHelper {
 
     /**
      * Get ssoDomainForV3jwtCookie.
+     * 
      * @return the ssoDomainForV3jwtCookie.
      */
     public static String getSsoDomainForV3jwtCookie() {
@@ -2605,7 +2889,7 @@ public class ConfigHelper {
      */
     public static String getEventBusAuthToken() throws Exception {
         JWTTokenGenerator jwtTokenGenerator = JWTTokenGenerator.getInstance(clientId, clientSecret, authAudience,
-            authDomain, expirationTime);
+                authDomain, expirationTime, authProxyServerUrl);
         eventBusAuthToken = jwtTokenGenerator.getMachineToken();
         return eventBusAuthToken;
     }
@@ -2630,6 +2914,7 @@ public class ConfigHelper {
 
     /**
      * Get S3 Bucket
+     * 
      * @return s3 bucket
      */
     public static String getS3Bucket() {
@@ -2638,6 +2923,7 @@ public class ConfigHelper {
 
     /**
      * Get S3 bucket DMZ
+     * 
      * @return s3 bucket dmz name
      */
     public static String getS3BucketDmz() {
@@ -2646,6 +2932,7 @@ public class ConfigHelper {
 
     /**
      * Get S3 presigned expire time in millis
+     * 
      * @return expire time
      */
     public static long getPreSignedExpTimeMilis() {
