@@ -2,6 +2,7 @@
  * Copyright (C) 2014 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions.projectdetails;
+
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.DataOutputStream;
@@ -74,47 +75,49 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
 import com.topcoder.util.file.templatesource.FileTemplateSource;
 
 /**
- * This is the base class for project details actions classes.
- * It provides the basic functions which will be used by all project detail actions.
+ * This is the base class for project details actions classes. It provides the
+ * basic functions which will be used by all project detail actions.
  * <p>
- * <b>Thread Safety:</b>Struts 2 Action objects are instantiated for each request, so there are no thread-safety issues.
+ * <b>Thread Safety:</b>Struts 2 Action objects are instantiated for each
+ * request, so there are no thread-safety issues.
  * </p>
  *
  * <p>
- * Changes in Version 2.1 - Topcoder - Online Review Update - Post to Event Bus Part 2 v1.0
- * - fire the submission upload event when the f2f/assembly/code/checkpoint submissions are uploaded
+ * Changes in Version 2.1 - Topcoder - Online Review Update - Post to Event Bus
+ * Part 2 v1.0 - fire the submission upload event when the
+ * f2f/assembly/code/checkpoint submissions are uploaded
  * </p>
  *
  * @author TCSASSEMBLER
  * @version 2.1
  */
-public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction  {
+public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction {
     /**
      * Represents the project id.
-    */
+     */
     private long pid;
 
     /**
-     * This method verifies the request for certain conditions to be met. This includes verifying if
-     * the user has specified an ID of the upload he wants to perform an operation on (most often
-     * &#x96; to download), and whether the ID of the upload specified by user denotes existing
-     * upload.
+     * This method verifies the request for certain conditions to be met. This
+     * includes verifying if the user has specified an ID of the upload he wants to
+     * perform an operation on (most often &#x96; to download), and whether the ID
+     * of the upload specified by user denotes existing upload.
      *
-     * @return an instance of the {@link CorrectnessCheckResult} class, which specifies whether the
-     *         check was successful and, in the case it was, contains additional information
-     *         retrieved during the check operation, which might be of some use for the calling
-     *         method.
-     * @param request
-     *            the http request.
-     * @param errorMessageKey
-     *            permission to check against, or <code>null</code> if no check is required.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or if
-     *             <code>errorMessageKey</code> parameter is an empty string.
-     * @throws BaseException
-     *             if any error occurs.
+     * @return an instance of the {@link CorrectnessCheckResult} class, which
+     *         specifies whether the check was successful and, in the case it was,
+     *         contains additional information retrieved during the check operation,
+     *         which might be of some use for the calling method.
+     * @param request         the http request.
+     * @param errorMessageKey permission to check against, or <code>null</code> if
+     *                        no check is required.
+     * @throws IllegalArgumentException if any of the parameters are
+     *                                  <code>null</code>, or if
+     *                                  <code>errorMessageKey</code> parameter is an
+     *                                  empty string.
+     * @throws BaseException            if any error occurs.
      */
-    protected CorrectnessCheckResult checkForCorrectUploadId(HttpServletRequest request, String errorMessageKey) throws BaseException {
+    protected CorrectnessCheckResult checkForCorrectUploadId(HttpServletRequest request, String errorMessageKey)
+            throws BaseException {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(request, "request");
         ActionsHelper.validateParameterStringNotEmpty(errorMessageKey, "errorMessageKey");
@@ -125,8 +128,8 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         // Verify that Upload ID was specified and denotes correct upload
         String uidParam = request.getParameter("uid");
         if (uidParam == null || uidParam.trim().length() == 0) {
-            result.setResult(ActionsHelper.produceErrorReport(
-                    this, request, errorMessageKey, "Error.UploadIdNotSpecified", null));
+            result.setResult(ActionsHelper.produceErrorReport(this, request, errorMessageKey,
+                    "Error.UploadIdNotSpecified", null));
             // Return the result of the check
             return result;
         }
@@ -137,8 +140,8 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             // Try to convert specified uid parameter to its integer representation
             uid = Long.parseLong(uidParam, 10);
         } catch (NumberFormatException nfe) {
-            result.setResult(ActionsHelper.produceErrorReport(
-                    this, request, errorMessageKey, "Error.UploadNotFound", null));
+            result.setResult(
+                    ActionsHelper.produceErrorReport(this, request, errorMessageKey, "Error.UploadNotFound", null));
             // Return the result of the check
             return result;
         }
@@ -149,8 +152,8 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         Upload upload = upMgr.getUpload(uid);
         // Verify that upload with given ID exists
         if (upload == null) {
-            result.setResult(ActionsHelper.produceErrorReport(
-                    this, request, errorMessageKey, "Error.UploadNotFound", null));
+            result.setResult(
+                    ActionsHelper.produceErrorReport(this, request, errorMessageKey, "Error.UploadNotFound", null));
             // Return the result of the check
             return result;
         }
@@ -175,41 +178,51 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
     }
 
     /**
-     * <p>Sends the content of specified file for downloading by client.</p>
+     * <p>
+     * Sends the content of specified file for downloading by client.
+     * </p>
      *
-     * @param upload an <code>Upload</code> providing the details for the filr to be downloaded by client.
-     * @param request an <code>HttpServletRequest</code> representing the incoming request.
-     * @param response an <code>HttpServletResponse</code> representing the outgoing response.
-     * @throws UploadPersistenceException if an unexpected error occurs.
-     * @throws SearchBuilderException if an unexpected error occurs.
+     * @param upload   an <code>Upload</code> providing the details for the filr to
+     *                 be downloaded by client.
+     * @param request  an <code>HttpServletRequest</code> representing the incoming
+     *                 request.
+     * @param response an <code>HttpServletResponse</code> representing the outgoing
+     *                 response.
+     * @throws UploadPersistenceException   if an unexpected error occurs.
+     * @throws SearchBuilderException       if an unexpected error occurs.
      * @throws DisallowedDirectoryException if an unexpected error occurs.
-     * @throws ConfigurationException if an unexpected error occurs.
-     * @throws PersistenceException if an unexpected error occurs.
-     * @throws FileDoesNotExistException if an unexpected error occurs.
-     * @throws IOException if an unexpected error occurs.
+     * @throws ConfigurationException       if an unexpected error occurs.
+     * @throws PersistenceException         if an unexpected error occurs.
+     * @throws FileDoesNotExistException    if an unexpected error occurs.
+     * @throws IOException                  if an unexpected error occurs.
      * @throws ResourcePersistenceException if an unexpected error occurs.
      */
-    protected void processSubmissionDownload(Upload upload, HttpServletRequest request, HttpServletResponse response) throws UploadPersistenceException, SearchBuilderException,DisallowedDirectoryException,
-      ConfigurationException, PersistenceException, FileDoesNotExistException, IOException, ResourcePersistenceException {
+    protected void processSubmissionDownload(Upload upload, HttpServletRequest request, HttpServletResponse response)
+            throws UploadPersistenceException, SearchBuilderException, DisallowedDirectoryException,
+            ConfigurationException, PersistenceException, FileDoesNotExistException, IOException,
+            ResourcePersistenceException {
 
-        // At this point, redirect-after-login attribute should be removed (if it exists)
+        // At this point, redirect-after-login attribute should be removed (if it
+        // exists)
         AuthorizationHelper.removeLoginRedirect(request);
         UploadManager upMgr = ActionsHelper.createUploadManager();
 
-        Submission[] submissions = upMgr.searchSubmissions(SubmissionFilterBuilder.createUploadIdFilter(upload.getId()));
+        Submission[] submissions = upMgr
+                .searchSubmissions(SubmissionFilterBuilder.createUploadIdFilter(upload.getId()));
         Submission submission = (submissions.length != 0) ? submissions[0] : null;
 
         if (upload.getUrl() == null) {
-            System.out.println("normal download");
-            Project project = (Project)request.getAttribute("project");
+            Project project = (Project) request.getAttribute("project");
             String fullPath;
             FileUpload fileUpload;
             if (ActionsHelper.isStudioProject(project)) {
                 ResourceManager resMgr = ActionsHelper.createResourceManager();
                 Resource submitter = resMgr.getResource(upload.getOwner());
-                String handle = (String)submitter.getProperty("Handle");
-                fileUpload = ActionsHelper.createFileUploadManager(request, ActionsHelper.LOCAL_STUDIO_STORAGE_NAMESPACE);
-                fullPath = ActionsHelper.createStudioLocalFilePath(project.getId(), submitter.getUserId(), handle, upload.getParameter());
+                String handle = (String) submitter.getProperty("Handle");
+                fileUpload = ActionsHelper.createFileUploadManager(request,
+                        ActionsHelper.LOCAL_STUDIO_STORAGE_NAMESPACE);
+                fullPath = ActionsHelper.createStudioLocalFilePath(project.getId(), submitter.getUserId(), handle,
+                        upload.getParameter());
             } else {
                 fileUpload = ActionsHelper.createFileUploadManager(request, ActionsHelper.LOCAL_STORAGE_NAMESPACE);
                 fullPath = upload.getParameter();
@@ -219,15 +232,14 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             String contentDisposition;
             if (submission != null) {
                 contentDisposition = "attachment; filename=\"submission-" + submission.getId() + "-"
-                                     + uploadedFile.getRemoteFileName() + "\"";
+                        + uploadedFile.getRemoteFileName() + "\"";
             } else {
                 contentDisposition = "attachment; filename=\"upload-" + upload.getId() + "-"
-                                     + uploadedFile.getRemoteFileName() + "\"";
+                        + uploadedFile.getRemoteFileName() + "\"";
             }
 
             outputDownloadedFile(uploadedFile, contentDisposition, response);
         } else {
-            System.out.println("upload url: " + upload.getUrl());
             AmazonS3URI s3Uri = ActionsHelper.isS3Url(upload.getUrl());
             if (s3Uri == null) {
                 response.sendRedirect(upload.getUrl());
@@ -235,11 +247,9 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
                 String key = s3Uri.getKey();
                 String contentDisposition;
                 if (submission != null) {
-                    contentDisposition = "attachment; filename=\"submission-" + submission.getId() + "-"
-                                        + key + "\"";
+                    contentDisposition = "attachment; filename=\"submission-" + submission.getId() + "-" + key + "\"";
                 } else {
-                    contentDisposition = "attachment; filename=\"upload-" + upload.getId() + "-"
-                                        + key + "\"";
+                    contentDisposition = "attachment; filename=\"upload-" + upload.getId() + "-" + key + "\"";
                 }
 
                 ActionsHelper.outputDownloadS3File(upload.getUrl(), key, contentDisposition, response);
@@ -249,17 +259,23 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
 
     /**
      *
-     * <p>Outputs the content of specified file to specified response for downloading by client.</p>
+     * <p>
+     * Outputs the content of specified file to specified response for downloading
+     * by client.
+     * </p>
      *
-     * @param uploadedFile an <code>UploadedFile</code> providing the details for the filr to be downloaded by client.
-     * @param contentDisposition a <code>String</code> providing the value for <code>Content-Disposition</code> header.
-     * @param response an <code>HttpServletResponse</code> representing the outgoing response.
-     * @throws PersistenceException if an unexpected error occurs.
+     * @param uploadedFile       an <code>UploadedFile</code> providing the details
+     *                           for the filr to be downloaded by client.
+     * @param contentDisposition a <code>String</code> providing the value for
+     *                           <code>Content-Disposition</code> header.
+     * @param response           an <code>HttpServletResponse</code> representing
+     *                           the outgoing response.
+     * @throws PersistenceException      if an unexpected error occurs.
      * @throws FileDoesNotExistException if an unexpected error occurs.
-     * @throws IOException if an unexpected error occurs.
+     * @throws IOException               if an unexpected error occurs.
      */
-    protected void outputDownloadedFile(UploadedFile uploadedFile, String contentDisposition, HttpServletResponse response)
-    throws PersistenceException, FileDoesNotExistException, IOException {
+    protected void outputDownloadedFile(UploadedFile uploadedFile, String contentDisposition,
+            HttpServletResponse response) throws PersistenceException, FileDoesNotExistException, IOException {
 
         InputStream in = uploadedFile.getInputStream();
 
@@ -292,49 +308,74 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
     }
 
     /**
-     * <p>Handles the request for downloading the submission of desired type.</p>
+     * <p>
+     * Handles the request for downloading the submission of desired type.
+     * </p>
      *
      *
-     * @param request an <code>HttpServletRequest</code> providing the details for incoming request.
-     * @param response an <code>HttpServletResponse</code> providing the details for outgoing response.
-     * @param errorMessageKey a <code>String</code> providing the key in message bundle for the error to be displayed
-     *        to user.
-     * @param viewAllSubmissionsPermName a <code>String</code> providing the name for permission for viewing all
-     *        submissions.
-     * @param viewMySubmissionsPermissionName a <code>String</code> providing the name for permission for viewing own
-     *        submissions
-     * @param viewSubmissionByScreenerPermissionName a <code>String</code> providing the name for permission for viewing
-     *        submissions by screener.
-     * @param viewMostRecentSubmissionsPermissionName a <code>String</code> providing the name for permission for
-     *        viewing most recent submissions.
-     * @param downloadCustomSubmissionPermissionName a <code>String</code> providing the name for permission for
-     *        downloading submission for custom catalog.
-     * @param viewWinningSubmissionPermissionName a <code>String</code> providing the name for permission for viewing
-     *        winning submissions.
-     * @param screeningPhaseName a <code>String</code> providing the name for screening phase type.
-     * @param reviewPhaseName a <code>String</code> providing the name for review phase type.
-     * @param screenerRoleNames a <code>String</code> array listing the names for screener roles.
-     * @param reviewerRoleNames a <code>String</code> array listing the names for reviewer roles.
-     * @param submissionType a <code>long</code> referencing the type of the submission being downloaded.
-     * @return an <code>ActionForward</code> referencing the next view to be displayed to user in case of errors or
-     *         <code>null</code> if submission is downloaded successfully.
+     * @param request                                 an
+     *                                                <code>HttpServletRequest</code>
+     *                                                providing the details for
+     *                                                incoming request.
+     * @param response                                an
+     *                                                <code>HttpServletResponse</code>
+     *                                                providing the details for
+     *                                                outgoing response.
+     * @param errorMessageKey                         a <code>String</code>
+     *                                                providing the key in message
+     *                                                bundle for the error to be
+     *                                                displayed to user.
+     * @param viewAllSubmissionsPermName              a <code>String</code>
+     *                                                providing the name for
+     *                                                permission for viewing all
+     *                                                submissions.
+     * @param viewMySubmissionsPermissionName         a <code>String</code>
+     *                                                providing the name for
+     *                                                permission for viewing own
+     *                                                submissions
+     * @param viewSubmissionByScreenerPermissionName  a <code>String</code>
+     *                                                providing the name for
+     *                                                permission for viewing
+     *                                                submissions by screener.
+     * @param viewMostRecentSubmissionsPermissionName a <code>String</code>
+     *                                                providing the name for
+     *                                                permission for viewing most
+     *                                                recent submissions.
+     * @param downloadCustomSubmissionPermissionName  a <code>String</code>
+     *                                                providing the name for
+     *                                                permission for downloading
+     *                                                submission for custom catalog.
+     * @param viewWinningSubmissionPermissionName     a <code>String</code>
+     *                                                providing the name for
+     *                                                permission for viewing winning
+     *                                                submissions.
+     * @param screeningPhaseName                      a <code>String</code>
+     *                                                providing the name for
+     *                                                screening phase type.
+     * @param reviewPhaseName                         a <code>String</code>
+     *                                                providing the name for review
+     *                                                phase type.
+     * @param screenerRoleNames                       a <code>String</code> array
+     *                                                listing the names for screener
+     *                                                roles.
+     * @param reviewerRoleNames                       a <code>String</code> array
+     *                                                listing the names for reviewer
+     *                                                roles.
+     * @param submissionType                          a <code>long</code>
+     *                                                referencing the type of the
+     *                                                submission being downloaded.
+     * @return an <code>ActionForward</code> referencing the next view to be
+     *         displayed to user in case of errors or <code>null</code> if
+     *         submission is downloaded successfully.
      * @throws BaseException if an unexpected error occurs.
-     * @throws IOException if an I/O error occurs.
+     * @throws IOException   if an I/O error occurs.
      */
-    protected String handleDownloadSubmission(HttpServletRequest request,
-                                                   HttpServletResponse response, String errorMessageKey,
-                                                   String viewAllSubmissionsPermName,
-                                                   String viewMySubmissionsPermissionName,
-                                                   String viewSubmissionByScreenerPermissionName,
-                                                   String viewMostRecentSubmissionsPermissionName,
-                                                   String downloadCustomSubmissionPermissionName,
-                                                   String viewWinningSubmissionPermissionName,
-                                                   String screeningPhaseName,
-                                                   String reviewPhaseName,
-                                                   String[] screenerRoleNames,
-                                                   String[] reviewerRoleNames,
-                                                   long submissionType)
-        throws BaseException, IOException {
+    protected String handleDownloadSubmission(HttpServletRequest request, HttpServletResponse response,
+            String errorMessageKey, String viewAllSubmissionsPermName, String viewMySubmissionsPermissionName,
+            String viewSubmissionByScreenerPermissionName, String viewMostRecentSubmissionsPermissionName,
+            String downloadCustomSubmissionPermissionName, String viewWinningSubmissionPermissionName,
+            String screeningPhaseName, String reviewPhaseName, String[] screenerRoleNames, String[] reviewerRoleNames,
+            long submissionType) throws BaseException, IOException {
         LoggingHelper.logAction(request);
 
         CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
@@ -355,32 +396,32 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         // Verify that upload is a submission
         if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
             ActionsHelper.logDownloadAttempt(request, upload, false);
-            return ActionsHelper.produceErrorReport(
-                    this, request, errorMessageKey, "Error.NotASubmission", null);
+            return ActionsHelper.produceErrorReport(this, request, errorMessageKey, "Error.NotASubmission", null);
         }
 
-        // Verify the status of upload and check whether the user has permission to download old uploads
+        // Verify the status of upload and check whether the user has permission to
+        // download old uploads
         if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted")
-            && !AuthorizationHelper.hasUserPermission(request, viewAllSubmissionsPermName)) {
+                && !AuthorizationHelper.hasUserPermission(request, viewAllSubmissionsPermName)) {
             ActionsHelper.logDownloadAttempt(request, upload, false);
-            return ActionsHelper.produceErrorReport(
-                    this, request, errorMessageKey, "Error.UploadDeleted", null);
+            return ActionsHelper.produceErrorReport(this, request, errorMessageKey, "Error.UploadDeleted", null);
         }
 
         // Get all phases for the current project (needed to do permission checks)
         Project project = verification.getProject();
-        Phase[] phases = ActionsHelper.getPhasesForProject(
-                ActionsHelper.createPhaseManager(false), verification.getProject());
+
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false),
+                verification.getProject());
 
         boolean noRights = true;
 
         // Check if it is the Thurgood server trying to get the submission.
         // If it's Thurgood, authorize the request.
-        boolean useThurgood = !isEmptyOrNull(project.getProperty("Thurgood Platform")) &&
-                !isEmptyOrNull(project.getProperty("Thurgood Language"));
+        boolean useThurgood = !isEmptyOrNull(project.getProperty("Thurgood Platform"))
+                && !isEmptyOrNull(project.getProperty("Thurgood Language"));
         if (useThurgood && !AuthorizationHelper.isUserLoggedIn(request)) {
-            if (ConfigHelper.getThurgoodUsername().equals(request.getParameter("username")) &&
-                ConfigHelper.getThurgoodPassword().equals(request.getParameter("password"))) {
+            if (ConfigHelper.getThurgoodUsername().equals(request.getParameter("username"))
+                    && ConfigHelper.getThurgoodPassword().equals(request.getParameter("password"))) {
                 noRights = false;
             }
         }
@@ -401,14 +442,14 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         }
 
         if (noRights && AuthorizationHelper.hasUserPermission(request, viewSubmissionByScreenerPermissionName)) {
-            // Determine whether Screening phase has already been opened (does not have Scheduled status)
+            // Determine whether Screening phase has already been opened (does not have
+            // Scheduled status)
             final boolean isScreeningOpen = ActionsHelper.isInOrAfterPhase(phases, 0, screeningPhaseName);
             // If screener tries to download submission before Screening phase opens,
             // notify him about this wrong-doing and do not let perform the action
             if (AuthorizationHelper.hasUserRole(request, screenerRoleNames) && !isScreeningOpen) {
                 ActionsHelper.logDownloadAttempt(request, upload, false);
-                return ActionsHelper.produceErrorReport(
-                        this, request, errorMessageKey, "Error.IncorrectPhase", null);
+                return ActionsHelper.produceErrorReport(this, request, errorMessageKey, "Error.IncorrectPhase", null);
             }
             noRights = false;
         }
@@ -419,23 +460,23 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             if (AuthorizationHelper.hasUserRole(request, reviewerRoleNames)
                     && !ActionsHelper.isInOrAfterPhase(phases, 0, reviewPhaseName)) {
                 ActionsHelper.logDownloadAttempt(request, upload, false);
-                return ActionsHelper.produceErrorReport(
-                        this, request, errorMessageKey, "Error.IncorrectPhase", null);
+                return ActionsHelper.produceErrorReport(this, request, errorMessageKey, "Error.IncorrectPhase", null);
             }
 
-            // Regular reviewers can view checkpoint submissions only after the Review phase has started
+            // Regular reviewers can view checkpoint submissions only after the Review phase
+            // has started
             if (submissionType == 3
                     && !AuthorizationHelper.hasUserRole(request, Constants.CHECKPOINT_REVIEWER_ROLE_NAME)
                     && AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES)
                     && !ActionsHelper.isInOrAfterPhase(phases, 0, Constants.REVIEW_PHASE_NAME)) {
                 ActionsHelper.logDownloadAttempt(request, upload, false);
-                return ActionsHelper.produceErrorReport(
-                        this, request, errorMessageKey, "Error.IncorrectPhase", null);
+                return ActionsHelper.produceErrorReport(this, request, errorMessageKey, "Error.IncorrectPhase", null);
             }
             noRights = false;
         }
 
-        // For the Submitters we only allow to download others' submissions if the user has at least passed screening.
+        // For the Submitters we only allow to download others' submissions if the user
+        // has at least passed screening.
         if (noRights && AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) {
             // Get all submissions for this user.
             Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.SUBMITTER_ROLE_NAME);
@@ -443,13 +484,16 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             Long[] subIds = resource.getSubmissions();
 
             // Check that the user has a submission that passed screening.
-            // We don't need to check the current phase because if it is still prior to the Appeals Response
+            // We don't need to check the current phase because if it is still prior to the
+            // Appeals Response
             // the user won't be able to download others' submissions anyway.
             boolean passedScreening = false;
             for (Long id : subIds) {
                 Submission submission = upMgr.getSubmission(id);
-                if (submission != null && submission.getSubmissionType().getName().equals(Constants.CONTEST_SUBMISSION_TYPE_NAME) &&
-                    !submission.getSubmissionStatus().getName().equals(Constants.FAILED_SCREENING_SUBMISSION_STATUS_NAME)) {
+                if (submission != null
+                        && submission.getSubmissionType().getName().equals(Constants.CONTEST_SUBMISSION_TYPE_NAME)
+                        && !submission.getSubmissionStatus().getName()
+                                .equals(Constants.FAILED_SCREENING_SUBMISSION_STATUS_NAME)) {
                     passedScreening = true;
                     break;
                 }
@@ -457,14 +501,17 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
 
             if (!passedScreening) {
                 ActionsHelper.logDownloadAttempt(request, upload, false);
-                return ActionsHelper.produceErrorReport(
-                        this, request, "ViewSubmission", "Error.NoScreeningPassed", null);
+                return ActionsHelper.produceErrorReport(this, request, "ViewSubmission", "Error.NoScreeningPassed",
+                        null);
             }
 
-            // Submitters can download others' contest submissions and checkpoint submissions only
-            // after the Appeals Response phase (or Review phase if Appeals Response phase is not present)
+            // Submitters can download others' contest submissions and checkpoint
+            // submissions only
+            // after the Appeals Response phase (or Review phase if Appeals Response phase
+            // is not present)
             // is closed and only if at least one submission passed review.
-            // This also takes care of contests with Iterative Review phase, for which submitters
+            // This also takes care of contests with Iterative Review phase, for which
+            // submitters
             // can't download others' submissions at all.
             if (submissionType == 1 || submissionType == 3) {
                 Phase reviewPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.APPEALS_RESPONSE_PHASE_NAME);
@@ -487,7 +534,8 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
                     Constants.CONTEST_SUBMISSION_TYPE_NAME, null, false);
             Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.ITERATIVE_REVIEWER_ROLE_NAME);
             List<Filter> filters = new ArrayList<Filter>();
-            Filter filterScorecard = new EqualToFilter("scorecardType", LookupHelper.getScorecardType("Iterative Review").getId());
+            Filter filterScorecard = new EqualToFilter("scorecardType",
+                    LookupHelper.getScorecardType("Iterative Review").getId());
             Filter filterReviewer = new EqualToFilter("reviewer", resource.getId());
             filters.add(filterScorecard);
             filters.add(filterReviewer);
@@ -495,7 +543,8 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             ReviewManager revMgr = ActionsHelper.createReviewManager();
             Review[] reviews = revMgr.searchReviews(filterForReviews, false);
             for (Submission submission : submissions) {
-                // If this reviewer already has a review scorecard submitted for this submission, that reviewer can
+                // If this reviewer already has a review scorecard submitted for this
+                // submission, that reviewer can
                 // download the submission.
                 if (submission.getUpload().getId() == upload.getId()) {
                     for (Review review : reviews) {
@@ -506,9 +555,10 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
                 }
             }
 
-            // If it's the "current" submission (i.e. the next one in the queue), the reviewer can download the submission.
-            Submission earliestSubmission = ActionsHelper.getEarliestActiveSubmission(
-                    upload.getProject(), Constants.CONTEST_SUBMISSION_TYPE_NAME);
+            // If it's the "current" submission (i.e. the next one in the queue), the
+            // reviewer can download the submission.
+            Submission earliestSubmission = ActionsHelper.getEarliestActiveSubmission(upload.getProject(),
+                    Constants.CONTEST_SUBMISSION_TYPE_NAME);
             if (earliestSubmission != null && earliestSubmission.getUpload().getId() == upload.getId()) {
                 noRights = false;
             }
@@ -517,8 +567,8 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         ActionsHelper.logDownloadAttempt(request, upload, !noRights);
 
         if (noRights) {
-            return ActionsHelper.produceErrorReport(this, request,
-                    errorMessageKey, "Error.NoPermission", Boolean.FALSE);
+            return ActionsHelper.produceErrorReport(this, request, errorMessageKey, "Error.NoPermission",
+                    Boolean.FALSE);
         }
 
         // url not null and url bucket is equal to S3 DMZ bucket
@@ -532,21 +582,26 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
     }
 
     /**
-     * <p>Handles the request for uploading a submission to project.</p>
+     * <p>
+     * Handles the request for uploading a submission to project.
+     * </p>
      *
      * @param uploadSubmissionForm a model providing the form submitted by user.
-     * @param request an <code>HttpServletRequest</code> providing the details for incoming request.
-     * @param submissionTypeName a <code>String</code> providing the name of submission type.
-     * @param submitPermissionName a <code>String</code> providing the permission to be used for authorizing users to
-     *        perform submission upload.
-     * @param phaseName a <code>String</code> providing the name of the type of project phase which submission maps to.
-     * @return an <code>ActionForward</code> referencing the next view to be displayed to user.
+     * @param request              an <code>HttpServletRequest</code> providing the
+     *                             details for incoming request.
+     * @param submissionTypeName   a <code>String</code> providing the name of
+     *                             submission type.
+     * @param submitPermissionName a <code>String</code> providing the permission to
+     *                             be used for authorizing users to perform
+     *                             submission upload.
+     * @param phaseName            a <code>String</code> providing the name of the
+     *                             type of project phase which submission maps to.
+     * @return an <code>ActionForward</code> referencing the next view to be
+     *         displayed to user.
      * @throws BaseException if an unexpected error occurs.
      */
     protected String handleUploadSubmission(DynamicModel uploadSubmissionForm, HttpServletRequest request,
-                                                 String submissionTypeName, String submitPermissionName,
-                                                 String phaseName)
-        throws BaseException {
+            String submissionTypeName, String submitPermissionName, String phaseName) throws BaseException {
         LoggingHelper.logAction(request);
 
         CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
@@ -558,8 +613,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         final boolean postBack = (request.getParameter("postBack") != null);
 
         // Verify that certain requirements are met before processing with the Action
-        verification = ActionsHelper.checkForCorrectProjectId(
-                this, request, submitPermissionName, postBack);
+        verification = ActionsHelper.checkForCorrectProjectId(this, request, submitPermissionName, postBack);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getResult();
@@ -572,16 +626,15 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
 
         Phase currentPhase = ActionsHelper.getPhase(phases, true, phaseName);
         if (currentPhase == null) {
-            return ActionsHelper.produceErrorReport(this, request,
-                    submitPermissionName, "Error.IncorrectPhase", null);
+            return ActionsHelper.produceErrorReport(this, request, submitPermissionName, "Error.IncorrectPhase", null);
         }
 
-        // We don't allow user to upload contest submissions/checkpoint submissions for studio contest
+        // We don't allow user to upload contest submissions/checkpoint submissions for
+        // studio contest
         if ("Studio".equalsIgnoreCase(project.getProjectCategory().getProjectType().getName())
-                && (submissionTypeName.equals(Constants.CONTEST_SUBMISSION_TYPE_NAME) ||
-                    submissionTypeName.equals(Constants.CHECKPOINT_SUBMISSION_TYPE_NAME))) {
-            return ActionsHelper.produceErrorReport(this, request,
-                    submitPermissionName, "Error.UploadForStudio", null);
+                && (submissionTypeName.equals(Constants.CONTEST_SUBMISSION_TYPE_NAME)
+                        || submissionTypeName.equals(Constants.CHECKPOINT_SUBMISSION_TYPE_NAME))) {
+            return ActionsHelper.produceErrorReport(this, request, submitPermissionName, "Error.UploadForStudio", null);
         }
 
         // Get my resource
@@ -589,10 +642,12 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         Submission[] activeSubmissions = ActionsHelper.getResourceSubmissions(resource.getId(), submissionTypeName,
                 Constants.ACTIVE_SUBMISSION_STATUS_NAME, false);
 
-        Boolean allowMultipleSubmissions = Boolean.parseBoolean((String) project.getProperty("Allow multiple submissions"));
+        Boolean allowMultipleSubmissions = Boolean
+                .parseBoolean((String) project.getProperty("Allow multiple submissions"));
 
         if (!postBack) {
-            // Retrieve some basic project info (such as icons' names) and place it into request
+            // Retrieve some basic project info (such as icons' names) and place it into
+            // request
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), this);
 
             if (activeSubmissions.length > 0 && !allowMultipleSubmissions) {
@@ -605,8 +660,8 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
 
         // Disallow uploading of empty files
         if (file == null || file.getFileSize() == 0) {
-            return ActionsHelper.produceErrorReport(this, request,
-                                                    submitPermissionName, "Error.EmptyFileUploaded", null);
+            return ActionsHelper.produceErrorReport(this, request, submitPermissionName, "Error.EmptyFileUploaded",
+                    null);
         }
 
         StrutsRequestParser parser = new StrutsRequestParser();
@@ -645,8 +700,8 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         if (!isEmptyOrNull(thurgoodPlatform) && !isEmptyOrNull(thurgoodLanguage)
                 && submissionTypeName.equals(Constants.CONTEST_SUBMISSION_TYPE_NAME)) {
 
-            Map<String, String> parameters =
-                buildCreateThurgoodParameters(project, thurgoodPlatform, thurgoodLanguage, upload.getId(), request);
+            Map<String, String> parameters = buildCreateThurgoodParameters(project, thurgoodPlatform, thurgoodLanguage,
+                    upload.getId(), request);
             if (parameters != null) {
                 String thurgoodJobId = submitThurgoodJob(createThurgoodJob(parameters));
                 submission.setThurgoodJobId(thurgoodJobId);
@@ -657,7 +712,8 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         resource.addSubmission(submission.getId());
         ActionsHelper.createResourceManager().updateResource(resource, operator);
 
-        // Now depending on whether the project allows multiple submissions or not mark the old submission
+        // Now depending on whether the project allows multiple submissions or not mark
+        // the old submission
         // and the upload as deleted.
         if (activeSubmissions.length > 0 && !allowMultipleSubmissions) {
             Submission earliestSubmission = ActionsHelper.getEarliestActiveSubmission(project.getId(),
@@ -696,14 +752,16 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         Long devTypeId = EventBusServiceClient.F2F_ASSEMBLY_CODE_ID_MAP.get(project.getProjectCategory().getId());
         int submissionTypeId = devTypeId == null ? 0 : devTypeId.intValue();
         boolean isCheckPointSubmission = Constants.CHECKPOINT_SUBMISSION_TYPE_NAME.equals(submissionTypeName);
-        submissionTypeId = isCheckPointSubmission
-                ? EventBusServiceClient.SUBMISSION_TYPE_ID_FOR_CHECKPOINT_SUBMISSION : submissionTypeId;
+        submissionTypeId = isCheckPointSubmission ? EventBusServiceClient.SUBMISSION_TYPE_ID_FOR_CHECKPOINT_SUBMISSION
+                : submissionTypeId;
 
         if (submissionTypeId > 0) {
-            String fileUrl = isCheckPointSubmission ? String.format(ConfigHelper.getCheckpointSubmissionDownloadUrl(), upload.getId())
+            String fileUrl = isCheckPointSubmission
+                    ? String.format(ConfigHelper.getCheckpointSubmissionDownloadUrl(), upload.getId())
                     : String.format(ConfigHelper.getContestSubmissionDownloadUrl(), upload.getId());
             EventBusServiceClient.fireSubmissionCreateEvent(project.getId(),
-                    AuthorizationHelper.getLoggedInUserId(request), upload.getParameter(), fileUrl, submission.getId(), submissionTypeId);
+                    AuthorizationHelper.getLoggedInUserId(request), upload.getParameter(), fileUrl, submission.getId(),
+                    submissionTypeId);
         }
 
         this.pid = project.getId();
@@ -711,27 +769,31 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
     }
 
     /**
-     * <p>Sends email to Iterative Reviewers to notify them about re-uploaded submission, which was in review.</p>
+     * <p>
+     * Sends email to Iterative Reviewers to notify them about re-uploaded
+     * submission, which was in review.
+     * </p>
      *
-     * @param project a <code>Project</code> providing details for project.
-     * @param submissionId a <code>ID</code> of the deleted submission.
-     * @param handle a <code>String</code> providing the handle of the member who re-uploaded his submission.
+     * @param project                a <code>Project</code> providing details for
+     *                               project.
+     * @param submissionId           a <code>ID</code> of the deleted submission.
+     * @param handle                 a <code>String</code> providing the handle of
+     *                               the member who re-uploaded his submission.
      * @param nextEarliestSubmission next active earliest submission in the queue.
-     * @throws BaseException if an unexpected error occurs.
+     * @throws BaseException          if an unexpected error occurs.
      * @throws ConfigManagerException if there is a problem with configuration.
      */
     private void notifyIterativeReviewers(Project project, long submissionId, String handle,
-                                          Submission nextEarliestSubmission)
-            throws BaseException, ConfigManagerException {
-        List<Long> reviewerUserIds = ActionsHelper.getUserIDsByRoleNames(
-                new String[] {Constants.ITERATIVE_REVIEWER_ROLE_NAME}, project.getId());
+            Submission nextEarliestSubmission) throws BaseException, ConfigManagerException {
+        List<Long> reviewerUserIds = ActionsHelper
+                .getUserIDsByRoleNames(new String[] { Constants.ITERATIVE_REVIEWER_ROLE_NAME }, project.getId());
 
         if (reviewerUserIds.size() == 0) {
             return;
         }
 
-        Resource nextSubmitter = ActionsHelper.createResourceManager().getResource(
-                nextEarliestSubmission.getUpload().getOwner());
+        Resource nextSubmitter = ActionsHelper.createResourceManager()
+                .getResource(nextEarliestSubmission.getUpload().getOwner());
         String nextSubmitterHandle = (String) nextSubmitter.getProperty("Handle");
 
         List<String> reviewerEmails = ActionsHelper.getEmailsByUserIDs(request, reviewerUserIds);
@@ -765,8 +827,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         String emailContent = docGenerator.applyTemplate(root);
         TCSEmailMessage message = new TCSEmailMessage();
         message.setSubject(MessageFormat.format(ConfigHelper.getF2FSubmissionReuploadedEmailTemplateSubject(),
-                project.getProperty("Project Name"),
-                project.getProperty("Project Version")));
+                project.getProperty("Project Name"), project.getProperty("Project Version")));
         message.setBody(emailContent);
         message.setFromAddress(ConfigHelper.getF2FSubmissionReuploadedEmailFromAddress());
         for (String recipient : reviewerEmails) {
@@ -778,16 +839,17 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
 
     /**
      * Build the parameters for creating Thurgood job.
-     * @param project the current project
+     * 
+     * @param project          the current project
      * @param thurgoodPlatform the Thurgood platform
      * @param thurgoodLanguage the Thurgood language
-     * @param uploadId the upload id
-     * @param request the http servlet request
+     * @param uploadId         the upload id
+     * @param request          the http servlet request
      * @return the parameters map
      * @throws BaseException if any error
      */
     private Map<String, String> buildCreateThurgoodParameters(Project project, String thurgoodPlatform,
-        String thurgoodLanguage, long uploadId, HttpServletRequest request) throws BaseException {
+            String thurgoodLanguage, long uploadId, HttpServletRequest request) throws BaseException {
 
         // Get the ID of the sender
         long senderId = AuthorizationHelper.getLoggedInUserId(request);
@@ -807,8 +869,9 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
     }
 
     /**
-     * Check if the given object is a null or empty string.
-     * As it is called, it is guaranteed that the value is of string type.
+     * Check if the given object is a null or empty string. As it is called, it is
+     * guaranteed that the value is of string type.
+     * 
      * @param value the value to be checked.
      * @return true if the string object is null or empty.
      */
@@ -818,6 +881,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
 
     /**
      * Submit the Thurgood job.
+     * 
      * @param id the Thurgood job id.
      * @return the submitted job id, null if submitting fails
      */
@@ -835,7 +899,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
                 // optional default is GET
                 con.setRequestMethod("PUT");
 
-                //add request header
+                // add request header
                 con.setRequestProperty("Authorization", String.format(authHeader, ConfigHelper.getThurgoodApiKey()));
                 int responseCode = con.getResponseCode();
 
@@ -875,6 +939,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
 
     /**
      * Create the Thurgood Job.
+     * 
      * @param parameters the submitted parameters
      * @return the created job id, null if creation fails
      */
@@ -889,7 +954,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             // set connection timeout
             con.setConnectTimeout(ConfigHelper.getThurgoodTimeout());
 
-            //set header
+            // set header
             con.setRequestMethod("POST");
             con.setRequestProperty("Authorization", String.format(authHeader, ConfigHelper.getThurgoodApiKey()));
 
@@ -918,7 +983,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
                 return null;
             }
 
-            //get the job id.
+            // get the job id.
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode root = (ObjectNode) mapper.readTree(response.toString());
             if (root.get("success") == null || !"true".equalsIgnoreCase(root.get("success").asText())
@@ -950,6 +1015,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
 
     /**
      * Close the resource if it is not null.
+     * 
      * @param resource the resource to be closed.
      */
     private static void closeResource(Closeable resource) {
@@ -961,15 +1027,19 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             }
         }
     }
+
     /**
      * Getter of pid.
+     * 
      * @return the pid
      */
     public long getPid() {
         return pid;
     }
+
     /**
      * Setter of pid.
+     * 
      * @param pid the pid to set
      */
     public void setPid(long pid) {
