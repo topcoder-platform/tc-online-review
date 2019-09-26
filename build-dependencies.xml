@@ -73,6 +73,7 @@
     <property name="jackson-core.jar" value="${ext_libdir}/jackson/jackson-core-2.1.5.jar"/>
     <property name="jackson-databind.jar" value="${ext_libdir}/jackson/jackson-databind-2.1.5.jar"/>
     <property name="jackson-annotations.jar" value="${ext_libdir}/jackson/jackson-annotations-2.1.5.jar"/>
+    <property name="java-jwt.jar" value="${ext_libdir}/java-jwt.jar"/>
 
     <property name="struts2-core.jar" value="${ext_libdir}/struts/struts2-core-2.5.13.jar"/>
     <property name="struts2-json-plugin.jar" value="${ext_libdir}/struts/struts2-json-plugin-2.5.13.jar"/>
@@ -205,6 +206,7 @@
         <pathelement location="${core.api.jar}" />
         <pathelement location="${gson.jar}" />
         <pathelement location="${rs-api.jar}" />
+        <pathelement location="${java-jwt.jar}" />
 
         <!--components-->
         <pathelement location="${authentication_factory.jar}"/>
