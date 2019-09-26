@@ -21,7 +21,7 @@
     <property name="job_scheduler.path" value="job_scheduler/${job_scheduler.version}" />
     <property name="job_scheduler.jar" value="${tcs_libdir}/${job_scheduler.path}/${job_scheduler.jar.name}" />
 
-    <property name="core.api.version" value="4.3.0" />
+    <property name="core.api.version" value="4.3.3" />
     <property name="core.api.jar.name" value="core.api.jar" />
     <property name="core.api.path" value="core.api/${core.api.version}" />
     <property name="core.api.jar" value="${tcs_libdir}/${core.api.path}/${core.api.jar.name}" />
