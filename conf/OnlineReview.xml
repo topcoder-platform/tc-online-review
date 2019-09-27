@@ -5287,6 +5287,9 @@
             <Property name="expiration_time">
                 <Value>@topcoder_event_bus_expiration_time@</Value>
             </Property>
+            <Property name="auth_proxy_server_url">
+                <Value>@topcoder_event_bus_auth_proxy_server_url@</Value>
+            </Property>
 	        <Property name="endpoint">
 	            <Value>@topcoder_event_bus_url@</Value>
 	        </Property>
