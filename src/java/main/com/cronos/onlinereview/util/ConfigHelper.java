@@ -1047,6 +1047,11 @@ public class ConfigHelper {
     private static int expirationTime;
 
     /**
+     * JWT Auth0 Proxy URL
+     */
+    private static String authProxyURL;
+
+    /**
      * AWS S3 bucket
      */
     private static String s3Bucket;
@@ -1678,6 +1683,7 @@ public class ConfigHelper {
             clientSecret = eventBus.getValue("client_secret");
             authDomain = eventBus.getValue("auth_domain");
             authAudience = eventBus.getValue("auth_audience");
+            authProxyURL = eventBus.getValue("auth_proxy_server_url");
             try {
                 expirationTime = Integer.parseInt(eventBus.getValue("expiration_time"));
                 if (expirationTime < 0) expirationTime = DEFAULT_EXPIRATION_TIME;
@@ -2605,7 +2611,7 @@ public class ConfigHelper {
      */
     public static String getEventBusAuthToken() throws Exception {
         JWTTokenGenerator jwtTokenGenerator = JWTTokenGenerator.getInstance(clientId, clientSecret, authAudience,
-            authDomain, expirationTime);
+            authDomain, expirationTime, authProxyURL);
         eventBusAuthToken = jwtTokenGenerator.getMachineToken();
         return eventBusAuthToken;
     }

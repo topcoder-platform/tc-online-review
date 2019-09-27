@@ -505,6 +505,18 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
                         null);
             }
 
+            // Allow only submitter to download the submission if it is MM type of challenge
+            if (project.getProjectCategory().getId() == 37) {
+                if (!Boolean.parseBoolean((String) project.getProperty("Viewable Submissions Flag"))) {
+                    long submitter =  upload.getOwner();
+                    long loggedInUserId = AuthorizationHelper.getLoggedInUserId(request);
+                    if (submitter != loggedInUserId) {
+                        return ActionsHelper.produceErrorReport(this, request, errorMessageKey, "Error.NoPermission",
+                            Boolean.FALSE);
+                    }
+                }  
+            }
+
             // Submitters can download others' contest submissions and checkpoint
             // submissions only
             // after the Appeals Response phase (or Review phase if Appeals Response phase
