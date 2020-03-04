@@ -197,8 +197,8 @@
 @tests.competitorusername@=user
 @tests.competitoruserpassword@=password
 @tests.competitoruserid@=132458
-@tests.timeout@=5000
 
+@tests.timeout@=5000
 #####################################
 # Parameters specific to Auto Pilot #
 #####################################
@@ -262,3 +262,4 @@
 @aws_s3_expire@=3600000
 @aws_s3_access_key@=
 @aws_s3_secret_key@=
+@submission_api_endpoint@=http://localhost:3000/v5/

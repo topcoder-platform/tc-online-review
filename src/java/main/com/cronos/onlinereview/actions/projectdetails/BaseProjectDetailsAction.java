@@ -3,27 +3,6 @@
  */
 package com.cronos.onlinereview.actions.projectdetails;
 
-import java.io.BufferedReader;
-import java.io.Closeable;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.amazonaws.services.s3.AmazonS3URI;
-
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.actions.DynamicModelDrivenAction;
 import com.cronos.onlinereview.actions.event.EventBusServiceClient;
@@ -36,11 +15,7 @@ import com.cronos.onlinereview.util.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.SubmissionStatus;
-import com.topcoder.management.deliverable.Upload;
-import com.topcoder.management.deliverable.UploadManager;
-import com.topcoder.management.deliverable.UploadStatus;
+import com.topcoder.management.deliverable.*;
 import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
 import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
 import com.topcoder.management.project.Project;
@@ -57,22 +32,27 @@ import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.EqualToFilter;
 import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.servlet.request.ConfigurationException;
-import com.topcoder.servlet.request.DisallowedDirectoryException;
-import com.topcoder.servlet.request.FileDoesNotExistException;
-import com.topcoder.servlet.request.FileUpload;
-import com.topcoder.servlet.request.FileUploadResult;
-import com.topcoder.servlet.request.PersistenceException;
-import com.topcoder.servlet.request.UploadedFile;
+import com.topcoder.servlet.request.*;
 import com.topcoder.util.config.ConfigManagerException;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.util.file.DocumentGenerator;
 import com.topcoder.util.file.Template;
-import com.topcoder.util.file.fieldconfig.Condition;
 import com.topcoder.util.file.fieldconfig.Field;
 import com.topcoder.util.file.fieldconfig.Node;
 import com.topcoder.util.file.fieldconfig.TemplateFields;
 import com.topcoder.util.file.templatesource.FileTemplateSource;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This is the base class for project details actions classes. It provides the
@@ -200,7 +180,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
     protected void processSubmissionDownload(Upload upload, HttpServletRequest request, HttpServletResponse response)
             throws UploadPersistenceException, SearchBuilderException, DisallowedDirectoryException,
             ConfigurationException, PersistenceException, FileDoesNotExistException, IOException,
-            ResourcePersistenceException {
+            ResourcePersistenceException, BaseException {
 
         // At this point, redirect-after-login attribute should be removed (if it
         // exists)
@@ -240,20 +220,22 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
 
             outputDownloadedFile(uploadedFile, contentDisposition, response);
         } else {
-            AmazonS3URI s3Uri = ActionsHelper.isS3Url(upload.getUrl());
-            if (s3Uri == null) {
-                response.sendRedirect(upload.getUrl());
-            } else {
-                String key = s3Uri.getKey();
-                String contentDisposition;
-                if (submission != null) {
-                    contentDisposition = "attachment; filename=\"submission-" + submission.getId() + "-" + key + "\"";
-                } else {
-                    contentDisposition = "attachment; filename=\"upload-" + upload.getId() + "-" + key + "\"";
-                }
-
-                ActionsHelper.outputDownloadS3File(upload.getUrl(), key, contentDisposition, response);
-            }
+//            AmazonS3URI s3Uri = ActionsHelper.isS3Url(upload.getUrl());
+//            if (s3Uri == null) {
+//                response.sendRedirect(upload.getUrl());
+//            } else {
+//                String key = s3Uri.getKey();
+//                String contentDisposition;
+//                if (submission != null) {
+//                    contentDisposition = "attachment; filename=\"submission-" + submission.getId() + "-" + key + "\"";
+//                } else {
+//                    contentDisposition = "attachment; filename=\"upload-" + upload.getId() + "-" + key + "\"";
+//                }
+//
+//                ActionsHelper.outputDownloadS3File(upload.getUrl(), key, contentDisposition, response);
+//            }
+           // HttpResponse submissionFromApi = ActionsHelper.downloadSubmissionFromApi(submission.getId());
+            ActionsHelper.outputDownloadFromSubmissionApi(submission.getId(), response);
         }
     }
 
