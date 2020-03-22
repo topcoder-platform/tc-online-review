@@ -98,6 +98,7 @@ import com.topcoder.util.log.LogManager;
 import com.topcoder.web.common.throttle.Throttle;
 import com.topcoder.web.ejb.forums.Forums;
 import com.topcoder.web.ejb.forums.ForumsHome;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -3830,25 +3831,7 @@ public class ActionsHelper {
 
             response.flushBuffer();
 
-            OutputStream out = null;
-
-            try {
-                out = response.getOutputStream();
-                byte[] buffer = new byte[65536];
-
-                for (;;) {
-                    int numOfBytesRead = in.read(buffer);
-                    if (numOfBytesRead == -1) {
-                        break;
-                    }
-                    out.write(buffer, 0, numOfBytesRead);
-                }
-            } finally {
-                in.close();
-                if (out != null) {
-                    out.close();
-                }
-            }
+            pipeInputStreamToOutputStream(in, response.getOutputStream());
         } catch (Exception e) {
             log.log(Level.ERROR, "ex: " + e.getMessage());
             throw new IOException("Error S3 download", e);
@@ -3948,31 +3931,44 @@ public class ActionsHelper {
             servletResponse.setHeader("Content-Type", response.getEntity().getContentType().getValue());
             servletResponse.setStatus(HttpServletResponse.SC_OK);
             servletResponse.setIntHeader("Content-Length", (int) response.getEntity().getContentLength());
-            servletResponse.setHeader("Content-Disposition", response.getHeaders("Content-Disposition")[0].getValue());
 
-            servletResponse.flushBuffer();
-
-            OutputStream out = null;
-            try {
-                out = servletResponse.getOutputStream();
-                byte[] buffer = new byte[65536];
-
-                for (;;) {
-                    int numOfBytesRead = in.read(buffer);
-                    if (numOfBytesRead == -1) {
-                        break;
-                    }
-                    out.write(buffer, 0, numOfBytesRead);
-                }
-            } finally {
-                in.close();
-                if (out != null) {
-                    out.close();
-                }
+            Header[] headers = response.getHeaders("Content-Disposition");
+            String filename = "submission-" + submissionId + ".zip";
+            if (headers.length > 0) {
+                filename = headers[0].getValue();
             }
 
+            servletResponse.setHeader("Content-Disposition", filename);
+
+            servletResponse.flushBuffer();
+            pipeInputStreamToOutputStream(in, servletResponse.getOutputStream());
+
         } catch(Exception e) {
-            throw new BaseException(e.getMessage());
+            log.log(Level.ERROR, "Fail to get submission file for submissionId " + submissionId + "ex: " + e.getMessage());
+            throw new BaseException("Fail to get submission file for submissionId " + submissionId, e);
+        }
+    }
+
+    /**
+     * Pipe inputstream to outputstream
+     *
+     * @param in inputstream
+     * @param out outputstream
+     * @throws IOException
+     */
+    private static void pipeInputStreamToOutputStream(InputStream in, OutputStream out) throws IOException {
+        try {
+            byte[] buffer = new byte[65536];
+            for (;;) {
+                int numOfBytesRead = in.read(buffer);
+                if (numOfBytesRead == -1) {
+                    break;
+                }
+                out.write(buffer, 0, numOfBytesRead);
+            }
+        } finally {
+            if (in != null) in.close();
+            if (out != null) out.close();
         }
     }
 }
