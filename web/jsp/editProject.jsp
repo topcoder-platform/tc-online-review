@@ -216,6 +216,20 @@
         }
 
         /**
+        * Make the select drop down readonly.
+        * It simply disables all non selected options and leaves only the selected option enabled.
+        *
+        * @param prefix the prefix of select widget name.
+        */
+         function makeSelectReadonly(prefix) {
+            var eles = getChildrenByNamePrefix(document.body, prefix);
+            for (var i = 0; i < eles.length; i++) {
+                // disable non-selected option
+                eles[i].disabled = eles[i].selected ? "" : true;
+            }
+        }
+
+        /**
         * Disable or enable the select widget.
         *
         * @param prefix the prefix of select widget name.
@@ -1262,12 +1276,12 @@
                                     <td class="title" colspan="2"><or:text key="editProject.ProjectDetails.title" /></td>
                                 </c:if>
                             </tr>
-                            <%-- If editing the existing project, should have project name edited here --%>
+                            <%-- If editing the existing project, should have project name displayed here - project name and type are not editable --%>
                             <c:if test="${not newProject}">
                                 <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
                                     <td class="valueB"><or:text key="editProject.ProjectDetails.Name" /></td>
                                     <td class="value" nowrap="nowrap">
-                                        <input type="text" class="inputBox" name="project_name" style="width: 350px;"  value="<or:fieldvalue field='project_name' />" />
+                                        <input type="text" class="inputBox" name="project_name" style="width: 350px;"  value="<or:fieldvalue field='project_name' />" readonly/>
                                         <span id="project_name_validation_msg" style="display:none;" class="error"></span>
                                     </td>
                                 </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
@@ -1275,7 +1289,7 @@
                                     <td width="9%" class="valueB"><or:text key="editProject.ProjectDetails.Type" /></td>
                                     <td width="91%" class="value" nowrap="nowrap">
                                         <select class="inputBox" name="project_type" style="width:150px;"
-                                                onchange="onProjectTypeChange(this);"><c:set var="OR_FIELD_TO_SELECT" value="project_type"/>
+                                                ><c:set var="OR_FIELD_TO_SELECT" value="project_type"/>
                                             <c:forEach items="${projectTypes}" var="type">
                                                 <c:if test="${not type.generic}">
                                                     <option  value="${type.id}"  <or:selected value="${type.id}"/>><or:text key="ProjectType.${fn:replace(type.name, ' ', '')}.plural" def="${type.name}" /></option>
@@ -1487,5 +1501,6 @@
     disableSelect("contest_prizes_num_dump[", !studio, canEditContestPrize);
     disableSelect("checkpoint_prizes_num[", false, canEditCheckpointPrize);
     disableSelect("checkpoint_prizes_num_dump[", false, canEditCheckpointPrize);
+    makeSelectReadonly("project_type");
 </script>
 </html>

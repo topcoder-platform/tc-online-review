@@ -176,16 +176,6 @@ public class ConfigHelper {
 
     /**
      * This member variable is a string constant that specifies the name of the property which
-     * contains name of the key in Resource Messages file.  This key will be used to retrieve
-     * the distribution script.
-     *
-     * @see #ROOT_CATALOGS_PROP
-     * @see #ROOT_CATALOG_ID_PROP
-     */
-    private static final String ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP = "DistributionScript";
-
-    /**
-     * This member variable is a string constant that specifies the name of the property which
      * contains definitions of Project Category name/icon filename pairs for icons that should
      * be matched to certain Project Categories.
      *
@@ -478,39 +468,6 @@ public class ConfigHelper {
     private static final int DEFAULT_MINIMUM_HOURS_LEFT = 48;
 
     /**
-     * <p>This member variable is a string that specifies the name of the property which contains the
-     * output dir for the distribution tool.</p>
-     */
-    private static final String DISTRIBUTION_TOOL_OUTPUT_DIR_PROP = "distribution_tool_output_dir";
-
-    /**
-     * <p>This is the default distribution tool output dir.</p>
-     */
-    private static final String DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR = "/tmp";
-
-    /**
-     * <p>This member variable is a string constant that specifies the name of the property which contains the
-     * output dir for the TopCoder catalog.</p>
-     */
-    private static final String CATALOG_OUTPUT_DIR_PROP = "catalog_output_dir";
-
-    /**
-     * <p>This is the default catalog output dir.</p>
-     */
-    private static final String DEFAULT_CATALOG_OUTPUT_DIR = "/tmp";
-
-    /**
-     * <p>This member variable is a string constant that specifies the name of the property which contains the
-     * default distribution tool script to use when no script is defined.</p>
-     */
-    private static final String DEFAULT_DISTRIBUTION_SCRIPT_PROP = "default_distribution_script";
-
-    /**
-     * <p>This is the default distribution tool script to use when no script is defined.</p>
-     */
-    private static final String DEFAULT_DISTRIBUTION_SCRIPT = "other";
-
-    /**
      * <p>A <code>String</code> providing the name for configuration property listing the disabled resource roles.</p>
      */
     private static final String DISABLED_RESOURCE_ROLES_PROP = "DisabledResourceRoles";
@@ -676,11 +633,6 @@ public class ConfigHelper {
      * This member variable holds the custom root catalogs ids
      */
     private static final Set<String> customRootCatalogs = new HashSet<String>();
-
-    /**
-     * This member variable holds the distribution tool script for root catalogs ids.
-     */
-    private static final Map<String, String> distributionScriptRootCatalogs = new HashMap<String, String>();
 
     /**
      * This member variable holds the names of small icons (.gif) files that should be displayed
@@ -854,27 +806,6 @@ public class ConfigHelper {
      * to allow extension for <code>Registration</code> and <code>Submission</code> phases.</p>
      */
     private static Integer minimumHoursBeforeSubmissionDeadlineForExtension = DEFAULT_MINIMUM_HOURS_LEFT;
-
-    /**
-     * <p>
-     * The distribution tool output dir.
-     * </p>
-     */
-    private static String distributionToolOutputDir = DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR;
-
-    /**
-     * <p>
-     * The TopCoder catalog output dir.
-     * </p>
-     */
-    private static String catalogOutputDir = DEFAULT_CATALOG_OUTPUT_DIR;
-
-    /**
-     * <p>
-     * The default distribution script.
-     * </p>
-     */
-    private static String defaultDistributionScript = DEFAULT_DISTRIBUTION_SCRIPT;
 
     /**
      * <p>A <code>String</code> array listing the IDs for resource roles which are not allowed for selection.</p>
@@ -1191,17 +1122,6 @@ public class ConfigHelper {
                 pactsPaymentDetailBaseURL = value;
             }
 
-            // Retrieve the value of the default distribution script
-            defaultDistributionScript = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, DEFAULT_DISTRIBUTION_SCRIPT_PROP);
-            if (defaultDistributionScript == null || defaultDistributionScript.trim().length() == 0) {
-                System.err.println("The value of " + DEFAULT_DISTRIBUTION_SCRIPT_PROP
-                        + " configuration property is null. "
-                        + "This value will be ignored and value of " + DEFAULT_DISTRIBUTION_SCRIPT
-                        + " will be used instead");
-
-                defaultDistributionScript = DEFAULT_DISTRIBUTION_SCRIPT;
-            }
-
             // Retrieve property that contains definitions of ID/filename pairs
             Property propRootCatIcons = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, ROOT_CATALOGS_PROP);
             // Prepare to enumerate all the nested properties
@@ -1240,16 +1160,6 @@ public class ConfigHelper {
                     customRootCatalogs.add(strID);
                 }
 
-                if (propRootCatIcons.containsProperty(strPropName + "." + ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP)) {
-                    String script = propRootCatIcons.getValue(strPropName + "."
-                            + ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP);
-
-                    distributionScriptRootCatalogs.put(strID, script);
-                } else {
-
-                    // Use the default distribution script
-                    distributionScriptRootCatalogs.put(strID, defaultDistributionScript);
-                }
             }
 
             // Retrieve property that contains definitions of Project Category name/icon filename pairs
@@ -1542,28 +1452,6 @@ public class ConfigHelper {
                 }
             }
 
-            distributionToolOutputDir = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, DISTRIBUTION_TOOL_OUTPUT_DIR_PROP);
-
-            if (distributionToolOutputDir == null || distributionToolOutputDir.trim().length() == 0) {
-                System.err.println("The value of " + DISTRIBUTION_TOOL_OUTPUT_DIR_PROP
-                        + " configuration property is null. "
-                        + "This value will be ignored and value of " + DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR
-                        + " will be used instead");
-
-                distributionToolOutputDir = DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR;
-            }
-
-            catalogOutputDir = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, CATALOG_OUTPUT_DIR_PROP);
-
-            if (catalogOutputDir == null || catalogOutputDir.trim().length() == 0) {
-                System.err.println("The value of " + CATALOG_OUTPUT_DIR_PROP
-                        + " configuration property is null. "
-                        + "This value will be ignored and value of " + DEFAULT_CATALOG_OUTPUT_DIR
-                        + " will be used instead");
-
-                catalogOutputDir = DEFAULT_CATALOG_OUTPUT_DIR;
-            }
-
             Property disabledResourceRolesConfig
                     = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DISABLED_RESOURCE_ROLES_PROP);
             disabledResourceRoles = disabledResourceRolesConfig.getValues();
@@ -1838,17 +1726,6 @@ public class ConfigHelper {
      */
     public static boolean isCustomRootCatalog(String rootCatalogId) {
         return customRootCatalogs.contains(rootCatalogId);
-    }
-
-    /**
-     * This static method returns the distribution script for a catalog.
-     *
-     * @return the distribution script for a catalog.
-     * @param rootCatalogId
-     *            Root Catalog ID which to look for.
-     */
-    public static String getDistributionScript(String rootCatalogId) {
-        return distributionScriptRootCatalogs.get(rootCatalogId);
     }
 
     /**
@@ -2211,33 +2088,6 @@ public class ConfigHelper {
      */
     public static Integer getMinimumHoursBeforeSubmissionDeadlineForExtension() {
         return minimumHoursBeforeSubmissionDeadlineForExtension;
-    }
-
-    /**
-     * <p>Gets the distribution tool output dir.</p>
-     *
-     * @return the distribution tool output dir.
-     */
-    public static String getDistributionToolOutputDir() {
-        return distributionToolOutputDir;
-    }
-
-    /**
-     * <p>Gets the TopCoder Catalog output dir.</p>
-     *
-     * @return the TopCoder Catalog output dir.
-     */
-    public static String getCatalogOutputDir() {
-        return catalogOutputDir;
-    }
-
-    /**
-     * <p>Gets the Distribution Tool default script.</p>
-     *
-     * @return the Distribution Tool default script.
-     */
-    public static String getDefaultDistributionScript() {
-        return defaultDistributionScript;
     }
 
     /**

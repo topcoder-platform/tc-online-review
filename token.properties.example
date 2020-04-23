@@ -143,8 +143,6 @@
 @localFileUploadDir@=<<some_temp_folder>>/upload
 @localStudioFileUploadDir@=<<path_to_studio_submission>>
 @catalogOutputDir@=<<some_temp_folder>>/temp_files
-@distributionToolOutputDir@=<<some_temp_folder>>/temp_files/tmp_dist
-@distributionScriptsBase@=<<path_to_online_review_trunk>>/conf/distribution_scripts/windows
 @exttemplatesdir@=<<path_to_online_review_trunk>>/conf/templates
 @pactJNDIAddress@=jnp://localhost:1099
 @adminUsers@=<<comma separated list of user IDs, that have the ADMIN role>>
@@ -162,8 +160,6 @@
 #@login.authenticator@=ORAuthenticator
 #@localFileUploadDir@=/home/tcs/downloads
 #@catalogOutputDir@=/home/tcs/temp_files
-#@distributionToolOutputDir@=/home/tcs/temp_files/tmp_dist
-#@distributionScriptsBase@=/home/tcs/onlinereview/distribution_scripts
 #@exttemplatesdir@=/home/tcs/onlinereview/templates/
 #@pactJNDIAddress@=jnp://localhost:1199
 

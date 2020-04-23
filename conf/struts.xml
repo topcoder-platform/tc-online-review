@@ -186,18 +186,6 @@
            <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
         </action>
 
-        <!-- "Upload Distribution" action -->
-        <action name="UploadDistribution" class="uploadDistributionAction">
-           <result name="input">/jsp/viewProjectManagementConsole.jsp</result>
-           <result name="success" type="redirect">/actions/ViewManagementConsole?pid=${pid}&amp;activeTabIdx=2</result>
-        </action>
-
-        <!-- "Manage Distribution" action -->
-        <action name="ManageDistribution" class="manageDistributionAction">
-           <result name="input">/jsp/viewProjectManagementConsole.jsp</result>
-           <result name="success" type="redirect">/actions/ViewManagementConsole?pid=${pid}&amp;activeTabIdx=2</result>
-        </action>
-
         <!-- "Save Review Payments" action -->
         <action name="SaveReviewPayments" class="saveReviewPaymentsAction">
            <result name="input">/jsp/viewProjectManagementConsole.jsp</result>
