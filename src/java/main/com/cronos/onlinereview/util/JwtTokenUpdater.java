@@ -111,7 +111,6 @@ public class JwtTokenUpdater {
 
                 long exp = jsonNode.get("exp").asLong();
                 Date expDate = new Date(exp * 1000);
-                logger.info("token expire at: " + expDate);
                 if (expDate.before(new Date())) {
                 	valid = false;
                 }
