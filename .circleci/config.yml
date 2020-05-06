@@ -48,10 +48,11 @@ build_steps: &build_steps
     - run:
         name: Installation of build dependencies.
         command: |
+          source awsenvconf
           ./buildproperties.sh -e $BUILD_ENV -k onlinereviewapp
           ant clean dist    
     - run:
-        name: "Deployment direct app and direct web"
+        name: "Deployment OR app and direct web"
         command: |
           source awsenvconf
           echo "executing deploy"
