@@ -38,7 +38,7 @@ build_steps: &build_steps
     - run:
         name: Fetching Libraries
         command: |
-          sed -i 's/master/$SUBMODULE_BRANCH/g' .gitmodules 
+          sed -i "s/master/$SUBMODULE_BRANCH/g" .gitmodules 
           git submodule init
           git submodule update --remote
     - run:
