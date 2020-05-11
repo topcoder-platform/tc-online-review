@@ -13,9 +13,6 @@ fi
 JQ="jq --raw-output --exit-status"
 COUNTER_LIMIT=20
 
-BUILD_VARIABLE_FILE_NAME="./buildvar.conf"
-source $BUILD_VARIABLE_FILE_NAME
-
 
 AWS_CD_PACKAGE_NAME="${APPNAME}-${APPVER}.zip"
 if [ "$AWS_S3_KEY_LOCATION" = "" ] ;
