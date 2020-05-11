@@ -51,12 +51,19 @@ build_steps: &build_steps
         command: |
           source awsenvconf
           ./buildproperties.sh -e $BUILD_ENV -k onlinereviewapp
-          ant clean dist    
+          ant clean dist
+    - run:
+        name: Build Pacakge
+        command: ./build-package.sh $APPNAME            
     - run:
         name: "Deployment OR app and direct web"
         command: |
           source awsenvconf
+          ./buildenv.sh -e $DEPLOY_ENV -b ${APPNAME}-deployvar
+          source buildenvvar
+          source apppackagever          
           echo "executing deploy"
+          ./deploy.sh $BUILD_ENV $ORAPPVER $APPNAME
 
 
 jobs:
@@ -67,6 +74,8 @@ jobs:
       BUILD_ENV: "DEV"
       LBUILD_ENV: "dev"
       SUBMODULE_BRANCH: "dev"
+      DEPLOY_ENV: "DEV"
+      APPNAME: "onlinereview"
     steps: *build_steps
 
   "build-prod":
@@ -74,6 +83,7 @@ jobs:
     environment:
       BUILD_ENV: "PROD"
       LBUILD_ENV: "prod" 
+      DEPLOY_ENV: "PROD"      
       SUBMODULE_BRANCH: "prod"           
     steps: *build_steps      
 
