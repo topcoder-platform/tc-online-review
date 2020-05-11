@@ -84,7 +84,8 @@ jobs:
       BUILD_ENV: "PROD"
       LBUILD_ENV: "prod" 
       DEPLOY_ENV: "PROD"      
-      SUBMODULE_BRANCH: "prod"           
+      SUBMODULE_BRANCH: "prod"
+      APPNAME: "onlinereview"                 
     steps: *build_steps      
 
 workflows:
