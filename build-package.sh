@@ -13,7 +13,7 @@ create_cdpacakge()
   PACKAGEPATH="dist-cdpack"
   rm -rf $PACKAGEPATH
   mkdir -p $PACKAGEPATH
-  cp -Rvf $SCRIPTDIR/ $PACKAGEPATH/
+  cp -Rvf $SCRIPTDIR/* $PACKAGEPATH/
   cp build/ant/online_review/dist/review.war $PACKAGEPATH/
   zip -j $AWS_CD_PACKAGE_NAME $PACKAGEPATH/*
 }
