@@ -7,4 +7,4 @@ JBDEPLOY=/home/apps/jboss-4.0.2/server/default/deploy
 JBDEPLOYAPP=$JBDEPLOY/review.war
 mkdir -p $JBDEPLOYAPP
 cd $JBDEPLOYAPP
-jar -xf $DEPLOY_SRCPACKAGE
+/usr/local/java/jdk1.7.0_95/bin/jar -xf $DEPLOY_SRCPACKAGE
