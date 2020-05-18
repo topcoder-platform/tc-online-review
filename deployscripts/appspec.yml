@@ -1,0 +1,24 @@
+version: 0.0
+os: linux
+files:
+  - source: ./review.war
+    destination: /home/apps/deploy_or/
+permissions:
+  - object: /home/apps/deploy_or
+    pattern: "review.jar"
+    owner: apps
+    group: apps
+hooks:
+  ApplicationStop:
+    - location: appstop.sh
+      runas: apps
+  BeforeInstall:
+    - location: backup-app.sh
+      runas: apps
+  AfterInstall:
+    - location: expand-app.sh
+      runas: apps
+  ApplicationStart: 
+    - location: appstart.sh
+      runas: apps
+

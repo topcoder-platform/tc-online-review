@@ -1,0 +1,105 @@
+version: 2
+defaults: &defaults
+    docker:
+      - image: openjdk:7 
+
+install_dependency: &install_dependency
+    name: Installation of build dependencies.
+    command: |
+      sed -i '/jessie-updates/d' /etc/apt/sources.list
+      apt update
+      apt install -y  openssl ant git zip jq 
+      mkdir ~/awscli
+      cd  ~/awscli
+      curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+      unzip awscli-bundle.zip
+      ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+      cd /usr/share/ant/lib
+      wget https://repo1.maven.org/maven2/org/codehaus/groovy/groovy-all/1.7.8/groovy-all-1.7.8.jar
+      wget https://repo1.maven.org/maven2/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3.jar
+      # cd ~
+      # wget http://downloads.sourceforge.net/project/jboss/JBoss/JBoss-4.2.3.GA/jboss-4.2.3.GA-jdk6.zip
+      # unzip jboss-4.2.3.GA-jdk6.zip
+      cd ~/project
+
+install_deploysuite: &install_deploysuite
+    name: Installation of install_deploysuite.
+    command: |
+      git clone --branch v1.4.2 https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
+      cp ./../buildscript/master_deploy.sh .
+      cp ./../buildscript/buildenv.sh .
+      cp ./../buildscript/awsconfiguration.sh .
+
+build_steps: &build_steps
+    # Initialization.
+    - run: *install_dependency
+    - checkout
+    - run: *install_deploysuite
+    - run:
+        name: Fetching Libraries
+        command: |
+          sed -i "s/master/$SUBMODULE_BRANCH/g" .gitmodules 
+          git submodule init
+          git submodule update --remote
+    - run:
+        name: "AWS Configuration"
+        command: |
+          ./awsconfiguration.sh $BUILD_ENV
+          source awsenvconf               
+    - run:
+        name: Installation of build dependencies.
+        command: |
+          source awsenvconf
+          ./buildproperties.sh -e $BUILD_ENV -k onlinereviewapp
+          ant clean dist
+    - run:
+        name: Build Pacakge
+        command: ./build-package.sh $APPNAME            
+    - run:
+        name: "Deployment OR app and direct web"
+        command: |
+          source awsenvconf
+          ./buildenv.sh -e $DEPLOY_ENV -b ${APPNAME}-deployvar
+          source buildenvvar
+          source apppackagever          
+          echo "executing deploy"
+          ./deploy.sh $BUILD_ENV $ORAPPVER $APPNAME
+
+
+jobs:
+  # Build & Deploy against development backend
+  "build-dev":
+    <<: *defaults
+    environment:
+      BUILD_ENV: "DEV"
+      LBUILD_ENV: "dev"
+      SUBMODULE_BRANCH: "dev"
+      DEPLOY_ENV: "DEV"
+      APPNAME: "onlinereview"
+    steps: *build_steps
+
+  "build-prod":
+    <<: *defaults
+    environment:
+      BUILD_ENV: "PROD"
+      LBUILD_ENV: "prod" 
+      DEPLOY_ENV: "PROD"      
+      SUBMODULE_BRANCH: "prod"
+      APPNAME: "onlinereview"                 
+    steps: *build_steps      
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build-dev:
+          context : org-global      
+          filters:
+            branches:
+              only: [dev-circleci2, dev]
+      - build-prod:
+          context : org-global      
+          filters:
+            branches:
+              only: [ master ]
+
