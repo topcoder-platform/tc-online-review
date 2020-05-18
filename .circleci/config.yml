@@ -96,10 +96,10 @@ workflows:
           context : org-global      
           filters:
             branches:
-              only: [dev-circleci2, dev-sts]
+              only: [dev-circleci2, dev]
       - build-prod:
           context : org-global      
           filters:
             branches:
-              only: [ master1 ]
+              only: [ master ]
 
