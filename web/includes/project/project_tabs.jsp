@@ -38,6 +38,7 @@
         </a>
     </c:if>
     </div>
+<!--  
     <div style="float: left;">
         <c:if test="${(not empty projectTabIndex) and (projectTabIndex == 4)}">
             <img src="/i/or/tab_draft_projects_on.gif" width="119" height="36" border="0" name="tab4"/>
@@ -49,6 +50,7 @@
             </a>
         </c:if>
     </div>
+-->
     <div style="float: left;">
     <c:if test="${orfn:isUserLoggedIn(pageContext.request)}">
         <c:if test="${(not empty projectTabIndex) and (projectTabIndex == 5)}">
@@ -62,7 +64,8 @@
         </c:if>
     </c:if>
     </div>
-    <div style="float: left;">
+<!--
+  <div style="float: left;">
     <c:if test="${isAllowedToCreateProject}">
         <c:if test="${(not empty projectTabIndex) and (projectTabIndex == 3)}">
             <img src="/i/or/tab_create_project_on.gif" width="119" height="36" border="0" name="tab3" />
@@ -74,4 +77,5 @@
         </c:if>
     </c:if>
     </div>
+-->
 </div>
