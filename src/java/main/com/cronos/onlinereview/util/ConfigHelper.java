@@ -1057,6 +1057,11 @@ public class ConfigHelper {
     private static String s3Bucket;
 
     /**
+     * Submission Api endpoint
+     */
+    private static String submissionApiEndpoint;
+
+    /**
      * AWS S3 bucket for DMZ
      */
     private static String s3BucketDmz;
@@ -1693,6 +1698,7 @@ public class ConfigHelper {
             Property awsS3 = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "aws_s3");
             s3Bucket = awsS3.getValue("bucket");
             s3BucketDmz = awsS3.getValue("bucket_dmz");
+            submissionApiEndpoint = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, "submission_api");
             try {
                 preSignedExpTimeMilis = Long.parseLong(awsS3.getValue("expire"));
             } catch (Exception e) {
@@ -2640,6 +2646,10 @@ public class ConfigHelper {
      */
     public static String getS3Bucket() {
         return s3Bucket;
+    }
+
+    public static String getSubmissionApiEndpoint() {
+        return submissionApiEndpoint;
     }
 
     /**

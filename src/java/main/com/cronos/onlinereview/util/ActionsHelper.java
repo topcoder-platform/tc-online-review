@@ -3,46 +3,11 @@
  */
 package com.cronos.onlinereview.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.net.URL;
-import java.rmi.RemoteException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.AmazonS3URI;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.AmazonS3URI;
-
-import javax.ejb.CreateException;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.dataaccess.ResourceDataAccess;
@@ -58,6 +23,8 @@ import com.cronos.onlinereview.phases.PaymentsHelper;
 import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
 import com.cronos.termsofuse.dao.TermsOfUseDao;
 import com.cronos.termsofuse.dao.UserTermsOfUseDao;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.TextProvider;
@@ -131,6 +98,47 @@ import com.topcoder.util.log.LogManager;
 import com.topcoder.web.common.throttle.Throttle;
 import com.topcoder.web.ejb.forums.Forums;
 import com.topcoder.web.ejb.forums.ForumsHome;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import javax.ejb.CreateException;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.net.URI;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 
 /**
  * <p>
@@ -242,6 +250,23 @@ public class ActionsHelper {
      */
     private static final String s3BucketDmz;
 
+    /**
+     * Submission Api endpoint
+     */
+    private static final String submissionApiUrl;
+
+    /**
+     * Submission api get submission
+     */
+    private static final String GET_SUBMISSION_ENDPOINT = "%s/submissions?legacySubmissionId=%s";
+
+    /**
+     * Submission Api download submission
+     */
+    private static final String GET_DOWNLOAD_ENDPOINT = "%s/submissions/%s/download";
+
+    protected static final ObjectMapper objectMapper = new ObjectMapper();
+
     static {
         try {
             ClassLoader loader = ActionsHelper.class.getClassLoader();
@@ -250,10 +275,13 @@ public class ActionsHelper {
             s3BucketDmz = ConfigHelper.getS3BucketDmz();
             presignedExpireMillis = ConfigHelper.getPreSignedExpTimeMilis();
             s3Client = new AmazonS3Client(new PropertiesCredentials(new File(credentialURL.getFile())));
+            String sUrl = ConfigHelper.getSubmissionApiEndpoint().trim();
+            submissionApiUrl = sUrl.endsWith("/") ? sUrl.substring(0, sUrl.length() -1 ) : sUrl;
         } catch (Throwable e) {
             throw new RuntimeException("Failed load to Amazon S3 CLient", e);
         }
     }
+
 
     /**
      * This constructor is declared private to prohibit instantiation of the
@@ -3803,25 +3831,7 @@ public class ActionsHelper {
 
             response.flushBuffer();
 
-            OutputStream out = null;
-
-            try {
-                out = response.getOutputStream();
-                byte[] buffer = new byte[65536];
-
-                for (;;) {
-                    int numOfBytesRead = in.read(buffer);
-                    if (numOfBytesRead == -1) {
-                        break;
-                    }
-                    out.write(buffer, 0, numOfBytesRead);
-                }
-            } finally {
-                in.close();
-                if (out != null) {
-                    out.close();
-                }
-            }
+            pipeInputStreamToOutputStream(in, response.getOutputStream());
         } catch (Exception e) {
             log.log(Level.ERROR, "ex: " + e.getMessage());
             throw new IOException("Error S3 download", e);
@@ -3877,5 +3887,88 @@ public class ActionsHelper {
         buf.append(System.getProperty("file.separator"));
         buf.append(parameter);
         return buf.toString();
+    }
+
+    /**
+     * Get submission from external API
+     *
+     * @param submissionId submissionId
+     * @throws Exception
+     */
+    public static void outputDownloadFromSubmissionApi(long submissionId,
+                                                       HttpServletResponse servletResponse) throws BaseException {
+        HttpResponse response = null;
+        DefaultHttpClient httpClient = null;
+        try {
+            httpClient = new DefaultHttpClient();
+            log.log(Level.INFO, "Get submission from api id: " + submissionId);
+            HttpGet request = new HttpGet(String.format(GET_SUBMISSION_ENDPOINT, submissionApiUrl, submissionId));
+            String v3Token = new JwtTokenUpdater().check().getToken();
+
+            request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + v3Token);
+            request.addHeader(HttpHeaders.ACCEPT, "application/json");
+            response = httpClient.execute(request);
+            HttpEntity entity = response.getEntity();
+
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                throw new BaseException("Unable submission from the API:" + response.getStatusLine().getReasonPhrase());
+            }
+            JsonNode result = objectMapper.readTree(entity.getContent());
+
+            if (result.size() < 1) {
+             throw new BaseException("Can not found submission from API");
+            }
+            String v5SubmissionId = result.get(0).get("id").asText();
+            log.log(Level.INFO, "Found submission id: " + v5SubmissionId);
+            request.setURI(new URI(String.format(GET_DOWNLOAD_ENDPOINT, submissionApiUrl, v5SubmissionId)));
+            response = httpClient.execute(request);
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                throw new BaseException("Unable to download submission from the API:" + response.getStatusLine().getReasonPhrase());
+            }
+            log.log(Level.INFO, "begin downloading submission: " + v5SubmissionId);
+            InputStream in = response.getEntity().getContent();
+
+            servletResponse.setHeader("Content-Type", response.getEntity().getContentType().getValue());
+            servletResponse.setStatus(HttpServletResponse.SC_OK);
+            servletResponse.setIntHeader("Content-Length", (int) response.getEntity().getContentLength());
+
+            Header[] headers = response.getHeaders("Content-Disposition");
+            String filename = "submission-" + submissionId + ".zip";
+            if (headers.length > 0) {
+                filename = headers[0].getValue();
+            }
+
+            servletResponse.setHeader("Content-Disposition", filename);
+
+            servletResponse.flushBuffer();
+            pipeInputStreamToOutputStream(in, servletResponse.getOutputStream());
+
+        } catch(Exception e) {
+            log.log(Level.ERROR, "Fail to get submission file for submissionId " + submissionId + "ex: " + e.getMessage());
+            throw new BaseException("Fail to get submission file for submissionId " + submissionId, e);
+        }
+    }
+
+    /**
+     * Pipe inputstream to outputstream
+     *
+     * @param in inputstream
+     * @param out outputstream
+     * @throws IOException
+     */
+    private static void pipeInputStreamToOutputStream(InputStream in, OutputStream out) throws IOException {
+        try {
+            byte[] buffer = new byte[65536];
+            for (;;) {
+                int numOfBytesRead = in.read(buffer);
+                if (numOfBytesRead == -1) {
+                    break;
+                }
+                out.write(buffer, 0, numOfBytesRead);
+            }
+        } finally {
+            if (in != null) in.close();
+            if (out != null) out.close();
+        }
     }
 }

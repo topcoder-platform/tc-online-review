@@ -5311,6 +5311,9 @@
                 <Value>@aws_s3_bucket_dmz@</Value>
             </Property>
         </Property>
+        <Property name="submission_api">
+            <Value>@submission_api_endpoint@</Value>
+        </Property>
     </Config>
 
     <!--
