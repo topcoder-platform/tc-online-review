@@ -48,4 +48,13 @@ analytics.identify('', {
   id: '${orfn:getLoggedInUserId(pageContext.request)}'
 });
 </script>
-
+<script>
+function prepareFrame() {
+	var ifrm = document.createElement("iframe");
+	ifrm.setAttribute("src", "https://accounts-auth0.topcoder-dev.com/");
+	ifrm.style.width = "0px";
+	ifrm.style.height = "0px";
+	document.body.appendChild(ifrm);
+}
+window.onload = prepareFrame;
+</script>

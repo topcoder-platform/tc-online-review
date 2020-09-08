@@ -96,7 +96,7 @@ workflows:
           context : org-global      
           filters:
             branches:
-              only: [dev-circleci2, dev]
+              only: [dev-circleci2, dev, 'feature/RS256-IdToken']
       - build-prod:
           context : org-global      
           filters:
