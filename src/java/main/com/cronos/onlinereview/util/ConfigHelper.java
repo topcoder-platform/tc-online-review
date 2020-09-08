@@ -1071,6 +1071,11 @@ public class ConfigHelper {
      */
     private static final int DEFAULT_EXPIRATION_TIME = 60 * 24;
 
+    /**
+     * New Auth URL for Iframe to refresh the RS256 token
+     */
+    private static String newAuthUrl;
+
     static {
         // Obtaining the instance of Configuration Manager
         ConfigManager cfgMgr = ConfigManager.getInstance();
@@ -1698,6 +1703,10 @@ public class ConfigHelper {
             } catch (Exception e) {
                 preSignedExpTimeMilis = 60 * 60 * 1000;
             }
+
+            Property newAuth = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "new_auth");
+            newAuthUrl = newAuth.getValue("new_auth_url");
+            
         } catch (UnknownNamespaceException une) {
             System.out.println(une.getMessage());
             une.printStackTrace();
@@ -2656,5 +2665,13 @@ public class ConfigHelper {
      */
     public static long getPreSignedExpTimeMilis() {
         return preSignedExpTimeMilis;
+    }
+	
+    /**
+     * Get new auth url 
+     * @return url 
+     */
+    public static String getNewAuthUrl() {
+        return newAuthUrl;
     }
 }
