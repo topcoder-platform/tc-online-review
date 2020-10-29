@@ -5311,6 +5311,11 @@
                 <Value>@aws_s3_bucket_dmz@</Value>
             </Property>
         </Property>
+        <Property name="new_auth">
+            <Property name="new_auth_url">
+                <Value>@new_auth_url@</Value>
+            </Property>
+        </Property>
     </Config>
 
     <!--
