@@ -54,7 +54,7 @@
             </script>    
 
             <a href="javascript:;" class="social-login">Social login</a>
-             | <a href="http://<%=ApplicationServer.SERVER_NAME%>/login/?next=https://<%=ApplicationServer.SOFTWARE_SERVER_NAME%>/review">Login</a>
+             | <a href="http://<%=com.cronos.onlinereview.util.ConfigHelper.getNewAuthUrl()%>?retUrl=https://<%=ApplicationServer.SOFTWARE_SERVER_NAME%>/review">Login</a>
              | <a href="http://<%=ApplicationServer.SERVER_NAME%>/reg/">Register</a>
              | <a href="http://<%=ApplicationServer.SERVER_NAME%>/">Home</a>
         </c:if>
