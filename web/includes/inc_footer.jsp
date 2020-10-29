@@ -50,3 +50,14 @@ analytics.identify('', {
 });
 </script>
 
+<script>
+function prepareFrame() {
+	var ifrm = document.createElement("iframe");
+	ifrm.setAttribute("src", "<%=com.cronos.onlinereview.util.ConfigHelper.getNewAuthUrl()%>");
+	ifrm.style.width = "0px";
+	ifrm.style.height = "0px";
+	document.body.appendChild(ifrm);
+}
+window.onload = prepareFrame;
+</script>
+
