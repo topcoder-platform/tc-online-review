@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import org.apache.struts2.ServletActionContext;
-import org.apache.xerces.utils.Base64;
+import org.apache.commons.codec.binary.Base64;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -101,12 +101,15 @@ public class JwtTokenUpdater {
         	if (tokenSplit.length <= 1) {
         		valid = false;
         	} else {
-        		StringBuffer payloadStr = new StringBuffer(tokenSplit[1]);
+        		/*StringBuffer payloadStr = new StringBuffer(tokenSplit[1]);
                 while (payloadStr.length() % 4 != 0) {
                 	payloadStr.append('=');
                 }
                 
                 String payload = new String(Base64.decode(payloadStr.toString().getBytes(StandardCharsets.UTF_8)));
+                */
+
+                String payload = new String(Base64.decodeBase64(tokenSplit[1]), "UTF-8");
                 JsonNode jsonNode = objectMapper.readValue(payload.toString(), JsonNode.class);
 
                 long exp = jsonNode.get("exp").asLong();
