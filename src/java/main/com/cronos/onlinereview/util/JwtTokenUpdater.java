@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import org.apache.struts2.ServletActionContext;
-import org.apache.xerces.utils.Base64;
+import org.apache.commons.codec.binary.Base64;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
