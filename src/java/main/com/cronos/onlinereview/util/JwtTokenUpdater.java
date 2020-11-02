@@ -102,9 +102,10 @@ public class JwtTokenUpdater {
         		valid = false;
         	} else {
         		StringBuffer payloadStr = new StringBuffer(tokenSplit[1]);
-                while (payloadStr.length() % 4 != 0) {
+                /*while (payloadStr.length() % 4 != 0) {
                 	payloadStr.append('=');
-                }
+                }*/
+                payloadStr.append('=');
                 
                 String payload = new String(Base64.decode(payloadStr.toString().getBytes(StandardCharsets.UTF_8)));
                 JsonNode jsonNode = objectMapper.readValue(payload.toString(), JsonNode.class);
