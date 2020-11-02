@@ -100,12 +100,11 @@ public class JwtTokenUpdater {
         	String[] tokenSplit = jwtCookieV3.getValue().split("\\.");
         	if (tokenSplit.length <= 1) {
         		valid = false;
-        	} else {
+        	} /*else {
         		StringBuffer payloadStr = new StringBuffer(tokenSplit[1]);
-                /*while (payloadStr.length() % 4 != 0) {
+                while (payloadStr.length() % 4 != 0) {
                 	payloadStr.append('=');
-                }*/
-                payloadStr.append('=');
+                }
                 
                 String payload = new String(Base64.decode(payloadStr.toString().getBytes(StandardCharsets.UTF_8)));
                 JsonNode jsonNode = objectMapper.readValue(payload.toString(), JsonNode.class);
@@ -116,7 +115,7 @@ public class JwtTokenUpdater {
                 if (expDate.before(new Date())) {
                 	valid = false;
                 }
-        	}
+        	}*/
         }
         if (jwtCookieV3 == null || !valid) {
         	String newToken = getRefreshTokenFromApi(jwtCookieV2.getValue());
