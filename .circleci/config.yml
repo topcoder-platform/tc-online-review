@@ -96,7 +96,7 @@ workflows:
           context : org-global      
           filters:
             branches:
-              only: [dev, 'hotfix/RS256-token']
+              only: [dev, 'fix/new-auth-url']
       - build-prod:
           context : org-global      
           filters:
