@@ -174,7 +174,6 @@
       <lib file="${db_connection_factory.jar}" />
       <lib file="${deliverable_management.jar}" />
       <lib file="${deliverable_management_persistence.jar}" />
-      <lib file="${distribution_tool.jar}" />
       <lib file="${document_generator.jar}" />
       <lib file="${email_engine.jar}" />
       <lib file="${executable_wrapper.jar}" />

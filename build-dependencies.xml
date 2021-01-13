@@ -229,7 +229,6 @@
         <pathelement location="${db_connection_factory.jar}"/>
         <pathelement location="${deliverable_management.jar}"/>
         <pathelement location="${deliverable_management_persistence.jar}"/>
-        <pathelement location="${distribution_tool.jar}"/>
         <pathelement location="${document_generator.jar}"/>
         <pathelement location="${email_engine.jar}"/>
         <pathelement location="${executable_wrapper.jar}"/>

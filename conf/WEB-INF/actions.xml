@@ -239,36 +239,6 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
       <property name="model" ref="projectManagementConsoleForm"/>
   </bean>
 
-  <bean id="uploadDistributionForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">
-      <property name="name" value="uploadDistributionForm"/>
-      <property name="config">
-        <props>
-            <prop key="pid">java.lang.Long</prop>
-            
-            <prop key="distribution_component_name">java.lang.String</prop>
-            <prop key="distribution_package_name">java.lang.String</prop>
-            <prop key="distribution_version">java.lang.String</prop>
-
-            <prop key="distribution_rs">com.cronos.onlinereview.model.FormFile</prop>
-            <prop key="distribution_additional1">com.cronos.onlinereview.model.FormFile</prop>
-            <prop key="distribution_additional2">com.cronos.onlinereview.model.FormFile</prop>
-            <prop key="distribution_additional3">com.cronos.onlinereview.model.FormFile</prop>
-
-            <prop key="upload_to_server">java.lang.Boolean</prop>
-            <prop key="return_distribution">java.lang.Boolean</prop>
-            <prop key="distribution_file">com.cronos.onlinereview.model.FormFile</prop>
-        </props>
-      </property>
-  </bean>
-
-  <bean id="uploadDistributionAction" class="com.cronos.onlinereview.actions.projectmanagementconsole.UploadDistributionAction" parent="baseProjectManagementConsoleAction" scope="request">
-      <property name="model" ref="uploadDistributionForm"/>
-  </bean>
-
-  <bean id="manageDistributionAction" class="com.cronos.onlinereview.actions.projectmanagementconsole.ManageDistributionAction" parent="baseProjectManagementConsoleAction" scope="request">
-      <property name="model" ref="uploadDistributionForm"/>
-  </bean>
-
   <bean id="reviewPaymentsForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">
       <property name="name" value="reviewPaymentsForm"/>
       <property name="config">
