@@ -154,7 +154,14 @@ public class ContactManagerAction extends BaseProjectDetailsAction {
         List<Long> managerUsrIds = ActionsHelper.getUserIDsByRoleNames(new String[]{"Manager", "Copilot"}, project.getId());
         List<String> managerEmails = ActionsHelper.getEmailsByUserIDs(request, managerUsrIds);
         for (String managerEmail : managerEmails) {
-            message.addToAddress(managerEmail, TCSEmailMessage.TO);
+            if(managerEmail.equals("null@topcoder.com")) {
+                LoggingHelper.logDebugMsg("Skipping email null@topcoder.com");
+                continue;
+            } else {
+                LoggingHelper.logDebugMsg("Adding Email: " + managerEmail);
+                message.addToAddress(managerEmail, TCSEmailMessage.TO);
+            }
+            
         }
 
         // Add 'BCC' addresses to message (Client Managers wish to keep their email addresses private)
