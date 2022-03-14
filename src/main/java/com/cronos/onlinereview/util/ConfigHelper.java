@@ -2620,7 +2620,7 @@ public class ConfigHelper {
      */
     public static String getEventBusAuthToken() throws Exception {
         JWTTokenGenerator jwtTokenGenerator = JWTTokenGenerator.getInstance(clientId, clientSecret, authAudience,
-            authDomain, expirationTime, authProxyURL);
+            authDomain, expirationTime);
         eventBusAuthToken = jwtTokenGenerator.getMachineToken();
         return eventBusAuthToken;
     }
