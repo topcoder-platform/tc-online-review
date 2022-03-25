@@ -12,11 +12,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
 
 import javax.servlet.http.Cookie;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import org.apache.struts2.ServletActionContext;
@@ -25,6 +23,8 @@ import org.apache.commons.codec.binary.Base64;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.topcoder.util.errorhandling.BaseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class to check and update token from  cookie
@@ -37,7 +37,7 @@ public class JwtTokenUpdater {
 	/**
      * The logger
      */
-    private static final Logger logger = Logger.getLogger(JwtTokenUpdater.class);
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenUpdater.class);
 
     /**
      * v3 token

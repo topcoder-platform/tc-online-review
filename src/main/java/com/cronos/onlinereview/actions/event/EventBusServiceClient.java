@@ -18,7 +18,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -49,7 +50,7 @@ public class EventBusServiceClient {
     /**
      * The logger used to log events
      */
-    private static final Logger LOGGER = Logger.getLogger(EventBusServiceClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventBusServiceClient.class);
 
     /**
      * The CREATE field
