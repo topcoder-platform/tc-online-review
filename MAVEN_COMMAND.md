@@ -14,6 +14,10 @@
 
 1. navigate to `JBOSS_BASE/bin` and then run `./run.sh` (you should run in this folder if you don't update `exttemplatesdir` value in token.properties)
 
+## Run in docker
+
+1. run `docker-compose up -d` in root dir.
+
 ## Note
 
 You need comment `login` and `cache` function when deploying locally.
