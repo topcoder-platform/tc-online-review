@@ -16,6 +16,8 @@ services:
   tc-online-review:
     platform: linux/amd64
     image: tc-online-review:latest
+    depends_on:
+      - tc-informix
     build:
       context: .
     ports:

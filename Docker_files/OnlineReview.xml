@@ -5,12 +5,12 @@
        <!ENTITY catalogOutputDir "/mnt/shared/temp_files">
        <!ENTITY distributionToolOutputDir "/mnt/shared/temp_files/tmp_dist">
        <!ENTITY distributionScriptsBase "/root/online_review/conf/distribution_scripts/unix">
-       <!ENTITY timelineTemplateDir "../server/default/deploy/review.war/WEB-INF/classes/templates">
-       <!ENTITY contactManagersTemplate "../server/default/deploy/review.war/WEB-INF/classes/templates/contact_manager_template.txt">
+       <!ENTITY timelineTemplateDir "/root/jboss-4.0.2/server/default/deploy/review.war/WEB-INF/classes/templates">
+       <!ENTITY contactManagersTemplate "/root/jboss-4.0.2/server/default/deploy/review.war/WEB-INF/classes/templates/contact_manager_template.txt">
        <!ENTITY notificationEmailFromAddress "servicetopcodersoftware.com">
        <!ENTITY smtpServerAuthAddress "do_not_reply@topcoder.com">
        <!ENTITY pactJNDIAddress "jnp://localhost:1099">
-       <!ENTITY lateDeliverableUpdatedByManagerTemplate "../server/default/deploy/review.war/WEB-INF/classes/templates/late_deliverable_updated_by_manager_template.txt">
+       <!ENTITY lateDeliverableUpdatedByManagerTemplate "/root/jboss-4.0.2/server/default/deploy/review.war/WEB-INF/classes/templates/late_deliverable_updated_by_manager_template.txt">
        <!ENTITY lateDeliverableUpdatedByMemberTemplate "../server/default/deploy/review.war/WEB-INF/classes/templates/late_deliverable_updated_by_member_template.txt">
        <!ENTITY F2FSubmissionReuploadedTemplate "../server/default/deploy/review.war/WEB-INF/classes/templates/f2f_submission_reuploaded_template.txt">
 ]>
@@ -1566,7 +1566,7 @@
                                upload.resource_id AS resource_id,
                                upload.parameter AS upload_parameter,
                                upload.upload_desc AS upload_desc,
-                               upload.url AS url,
+                               '' AS url,
                                upload_type_lu.upload_type_id AS upload_type_id,
                                upload_type_lu.create_user AS upload_type_create_user,
                                upload_type_lu.create_date AS upload_type_create_date,

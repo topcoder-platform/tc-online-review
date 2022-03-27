@@ -12,7 +12,7 @@
 <datasources>
   <local-tx-datasource>
     <jndi-name>InformixDS</jndi-name>
-    <connection-url>jdbc:informix-sqli://host.docker.internal:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp;IFX_USE_STRENC=true</connection-url>
+    <connection-url>jdbc:informix-sqli://tc-informix:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp;IFX_USE_STRENC=true</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>informix</user-name>
     <password>1nf0rm1x</password>
@@ -31,7 +31,7 @@
 
   <no-tx-datasource>
     <jndi-name>OLTP</jndi-name>
-    <connection-url>jdbc:informix-sqli://host.docker.internal:2021/informixoltp:INFORMIXSERVER=informixoltp_tcp;IFX_USE_STRENC=true</connection-url>
+    <connection-url>jdbc:informix-sqli://tc-informix:2021/informixoltp:INFORMIXSERVER=informixoltp_tcp;IFX_USE_STRENC=true</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>informix</user-name>
     <password>1nf0rm1x</password>
@@ -51,7 +51,7 @@
 
   <local-tx-datasource>
     <jndi-name>DW</jndi-name>
-    <connection-url>jdbc:informix-sqli://host.docker.internal:2021/topcoder_dw:INFORMIXSERVER=informixoltp_tcp;IFX_USE_STRENC=true</connection-url>
+    <connection-url>jdbc:informix-sqli://tc-informix:2021/topcoder_dw:INFORMIXSERVER=informixoltp_tcp;IFX_USE_STRENC=true</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>informix</user-name>
     <password>1nf0rm1x</password>
@@ -71,7 +71,7 @@
 
   <no-tx-datasource>
     <jndi-name>TCS_DW</jndi-name>
-    <connection-url>jdbc:informix-sqli://host.docker.internal:2021/tcs_dw:INFORMIXSERVER=informixoltp_tcp;IFX_USE_STRENC=true</connection-url>
+    <connection-url>jdbc:informix-sqli://tc-informix:2021/tcs_dw:INFORMIXSERVER=informixoltp_tcp;IFX_USE_STRENC=true</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>informix</user-name>
     <password>1nf0rm1x</password>
@@ -93,7 +93,7 @@
 
   <no-tx-datasource>
     <jndi-name>DS</jndi-name>
-    <connection-url>jdbc:informix-sqli://host.docker.internal:2021/common_oltp:INFORMIXSERVER=informixoltp_tcp;IFX_USE_STRENC=true</connection-url>
+    <connection-url>jdbc:informix-sqli://tc-informix:2021/common_oltp:INFORMIXSERVER=informixoltp_tcp;IFX_USE_STRENC=true</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>informix</user-name>
     <password>1nf0rm1x</password>
@@ -113,7 +113,7 @@
 
   <no-tx-datasource>
     <jndi-name>TCS_CATALOG</jndi-name>
-    <connection-url>jdbc:informix-sqli://host.docker.internal:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp;IFX_USE_STRENC=true</connection-url>
+    <connection-url>jdbc:informix-sqli://tc-informix:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp;IFX_USE_STRENC=true</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>informix</user-name>
     <password>1nf0rm1x</password>
@@ -132,7 +132,7 @@
 
   <local-tx-datasource>
     <jndi-name>JTS_TCS_CATALOG</jndi-name>
-    <connection-url>jdbc:informix-sqli://host.docker.internal:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp;IFX_USE_STRENC=true</connection-url>
+    <connection-url>jdbc:informix-sqli://tc-informix:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp;IFX_USE_STRENC=true</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>informix</user-name>
     <password>1nf0rm1x</password>
@@ -152,7 +152,7 @@
 
   <no-tx-datasource>
     <jndi-name>JiveDS</jndi-name>
-    <connection-url>jdbc:informix-sqli://host.docker.internal:2021/jive:INFORMIXSERVER=informixoltp_tcp;IFX_USE_STRENC=true</connection-url>
+    <connection-url>jdbc:informix-sqli://tc-informix:2021/jive:INFORMIXSERVER=informixoltp_tcp;IFX_USE_STRENC=true</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>informix</user-name>
     <password>1nf0rm1x</password>
@@ -171,7 +171,7 @@
 
   <local-tx-datasource>
         <jndi-name>TimeDS</jndi-name>
-        <connection-url>jdbc:informix-sqli://host.docker.internal:2021/time_oltp:INFORMIXSERVER=informixoltp_tcp;IFX_USE_STRENC=true</connection-url>
+        <connection-url>jdbc:informix-sqli://tc-informix:2021/time_oltp:INFORMIXSERVER=informixoltp_tcp;IFX_USE_STRENC=true</connection-url>
         <driver-class>com.informix.jdbc.IfxDriver</driver-class>
 		<user-name>informix</user-name>
 		<password>1nf0rm1x</password>

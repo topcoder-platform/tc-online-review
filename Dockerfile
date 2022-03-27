@@ -16,5 +16,9 @@ Add ./web/js /root/jboss-4.0.2/server/default/deploy/jbossweb-tomcat55.sar/ROOT.
 
 Add ./target/review /root/jboss-4.0.2/server/default/deploy/review.war
 Add ./Docker_files/OnlineReview.xml /root/jboss-4.0.2/server/default/deploy/review.war/WEB-INF/classes/
+Add ./Docker_files/AuthorizationHelper.class /root/jboss-4.0.2/server/default/deploy/review.war/WEB-INF/classes/com/cronos/onlinereview/util/
+Add ./Docker_files/inc_header.jsp /root/jboss-4.0.2/server/default/deploy/review.war/includes/
+Add ./Docker_files/project_phase.jsp /root/jboss-4.0.2/server/default/deploy/review.war/includes/project/
+Add ./Docker_files/project_resource.jsp /root/jboss-4.0.2/server/default/deploy/review.war/includes/project/
 
 CMD ["/root/jboss-4.0.2/bin/run.sh","-DFOREGROUND"]

@@ -16,7 +16,8 @@
 
 ## Run in docker
 
-1. run `docker-compose up -d` in root dir.
+1. build war dir `mvn clean package`
+2. run `docker-compose up -d` in root dir.
 
 ## Note
 
