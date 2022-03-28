@@ -8,17 +8,18 @@ RUN cd /root/ \
 ENV JBOSS_HOME=/root/jboss-4.0.2
 ENV PATH=$PATH:/root/jboss-4.0.2/bin
 
-Add ./Docker_files/ifxjdbc.jar /root/jboss-4.0.2/server/default/lib/
-Add ./Docker_files/informix-ds.xml /root/jboss-4.0.2/server/default/deploy/
+Add ./local/Docker_files/ifxjdbc.jar /root/jboss-4.0.2/server/default/lib/
+Add ./local/Docker_files/informix-ds.xml /root/jboss-4.0.2/server/default/deploy/
 Add ./web/i /root/jboss-4.0.2/server/default/deploy/jbossweb-tomcat55.sar/ROOT.war/i
 Add ./web/css /root/jboss-4.0.2/server/default/deploy/jbossweb-tomcat55.sar/ROOT.war/css
 Add ./web/js /root/jboss-4.0.2/server/default/deploy/jbossweb-tomcat55.sar/ROOT.war/js
 
 Add ./target/review /root/jboss-4.0.2/server/default/deploy/review.war
-Add ./Docker_files/OnlineReview.xml /root/jboss-4.0.2/server/default/deploy/review.war/WEB-INF/classes/
-Add ./Docker_files/AuthorizationHelper.class /root/jboss-4.0.2/server/default/deploy/review.war/WEB-INF/classes/com/cronos/onlinereview/util/
-Add ./Docker_files/inc_header.jsp /root/jboss-4.0.2/server/default/deploy/review.war/includes/
-Add ./Docker_files/project_phase.jsp /root/jboss-4.0.2/server/default/deploy/review.war/includes/project/
-Add ./Docker_files/project_resource.jsp /root/jboss-4.0.2/server/default/deploy/review.war/includes/project/
+Add ./local/Docker_files/OnlineReview.xml /root/jboss-4.0.2/server/default/deploy/review.war/WEB-INF/classes/
+Add ./local/Docker_files/AuthorizationHelper.class /root/jboss-4.0.2/server/default/deploy/review.war/WEB-INF/classes/com/cronos/onlinereview/util/
+Add ./local/Docker_files/inc_header.jsp /root/jboss-4.0.2/server/default/deploy/review.war/includes/
+Add ./local/Docker_files/project_phase.jsp /root/jboss-4.0.2/server/default/deploy/review.war/includes/project/
+Add ./local/Docker_files/project_resource.jsp /root/jboss-4.0.2/server/default/deploy/review.war/includes/project/
+Add ./local/Docker_files/cache.properties /root/jboss-4.0.2/server/default/deploy/review.war/WEB-INF/classes/
 
 CMD ["/root/jboss-4.0.2/bin/run.sh","-DFOREGROUND"]

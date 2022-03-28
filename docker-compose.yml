@@ -1,9 +1,12 @@
 version: '3'
 services:
   tc-informix:
-    image: "appiriodevops/tc-database-scripts:latest"
+    image: "tc-informix:latest"
+    platform: linux/amd64
     hostname: informix.cloud.topcoder.com
-    container_name: iif_innovator_c
+    container_name: tc-online-db
+    build:
+      context: local/db
     environment:
       LICENSE: accept
     ports:
