@@ -19,6 +19,13 @@
 1. build war dir `mvn clean package`
 2. run `docker-compose up -d` in root dir.
 
+## Build docker image for dev and prod
+
+> before build this image, you should make sure you've set the token.properties corresponding to the environment
+ 
+1. build war dir `mvn clean package`
+2. run `docker build -t tc-online-review:dev -f ECSDockerfile --platform=linux/amd64 .` in root dir.
+
 ## Note
 
 You need comment `login` and `cache` function when deploying locally.
