@@ -6,5 +6,5 @@ mv .deploy/circleci/token.properties .
 #add svn user name and password to build.properies
 echo "build.svn.username=$SVN_USERNAME" >> build.properties
 echo "build.svn.password=$SVN_PASSWORD" >> build.properties
-ant first_deploy deploy
+mvn clean package
 
