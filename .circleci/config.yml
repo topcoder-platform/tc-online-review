@@ -93,7 +93,7 @@ workflows:
           context : org-global      
           filters:
             branches:
-              only: [dev, 'feature/maven']
+              only: [dev, 'dev-maven']
       - build-prod:
           context : org-global      
           filters:
