@@ -99,7 +99,7 @@ deploy_steps: &deploy_steps
     - attach_workspace: *workspace_attach
     - setup_remote_docker
     - run: *install_deploy_dependency
-    # - run: *install_deploysuite
+    - run: *install_deploysuite
     - run: 
        name: Build image
        command: |  
