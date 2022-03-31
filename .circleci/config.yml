@@ -45,8 +45,8 @@ build_components: &build_components
     name: Building  of components
     command: |
       cd ../tc-online-review-backend
+      ./install-third-dep.sh      
       mvn clean install -DskipTests
-      ./install-third-dep.sh
       cd ~/project
 
 workspace_persist: &workspace_persist
