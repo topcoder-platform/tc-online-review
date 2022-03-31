@@ -3,6 +3,15 @@ defaults: &defaults
     docker:
       - image: maven:3.6.1-jdk-7
 
+deploy_defaults: &deploy_defaults
+    docker:
+      - image: cimg/python:3.10.2
+
+install_deploy_dependency: &install_deploy_dependency
+    name: Installation of build and deployment dependencies.
+    command: |
+      pip3 install awscli --upgrade
+
 install_dependency: &install_dependency
     name: Installation of build dependencies.
     command: |
@@ -27,11 +36,34 @@ install_deploysuite: &install_deploysuite
       cp ./../buildscript/buildenv.sh .
       cp ./../buildscript/awsconfiguration.sh .
 
+fetch_component_src: &fetch_component_src
+    name: Installation of fetch_component_src.
+    command: |
+      git clone --branch ${COMPONENT_BRANCH} https://github.com/topcoder-platform/tc-online-review-backend ../tc-online-review-backend
+
+build_components: &build_components    
+    name: Building  of components
+    command: |
+      cd ../tc-online-review-backend
+      mvn clean install -DskipTests
+      ./install-third-dep.sh
+      cd ~/project
+
+workspace_persist: &workspace_persist
+    root: ~/
+    paths:
+      - project
+
+workspace_attach: &workspace_attach
+    at: ./   
+
 build_steps: &build_steps
     # Initialization.
     - run: *install_dependency
     - checkout
     - run: *install_deploysuite
+    - run: *fetch_component_src
+    - run: *build_components
     #- run:
     #    name: Fetching Libraries
     #    command: |
@@ -61,7 +93,21 @@ build_steps: &build_steps
     #      source apppackagever          
     #      echo "executing deploy"
     #      ./deploy.sh $BUILD_ENV $ORAPPVER $APPNAME
+    - persist_to_workspace: *workspace_persist
 
+deploy_steps: &deploy_steps
+    - attach_workspace: *workspace_attach
+    - run: *install_deploy_dependency
+    # - run: *install_deploysuite
+    - run: ./buildimage.sh ${APPNAME}
+    - deploy:
+        name: Running MasterScript.
+        command: |
+          ./awsconfiguration.sh $DEPLOY_ENV
+          source awsenvconf
+          # ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-deployvar
+          # source buildenvvar
+          # ./master_deploy.sh -d ECS -e $DEPLOY_ENV -t latest -s ${LOGICAL_ENV}-global-appvar,${LOGICAL_ENV}-${APPNAME}-appvar -i ${APPNAME}
 
 jobs:
   # Build & Deploy against development backend
@@ -71,6 +117,7 @@ jobs:
       BUILD_ENV: "DEV"
       LBUILD_ENV: "dev"
       SUBMODULE_BRANCH: "dev"
+      COMPONENT_BRANCH: "master"
       DEPLOY_ENV: "DEV"
       APPNAME: "onlinereview"
     steps: *build_steps
@@ -82,6 +129,7 @@ jobs:
       LBUILD_ENV: "prod" 
       DEPLOY_ENV: "PROD"      
       SUBMODULE_BRANCH: "master"
+      COMPONENT_BRANCH: "master"      
       APPNAME: "onlinereview"                 
     steps: *build_steps      
 
