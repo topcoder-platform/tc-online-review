@@ -97,9 +97,14 @@ build_steps: &build_steps
 
 deploy_steps: &deploy_steps
     - attach_workspace: *workspace_attach
+    - setup_remote_docker
     - run: *install_deploy_dependency
     # - run: *install_deploysuite
-    - run: ./buildimage.sh ${APPNAME}
+    - run: 
+       name: Build image
+         command: |  
+            mv project/* .  
+            ./buildimage.sh ${APPNAME}
     - deploy:
         name: Running MasterScript.
         command: |
