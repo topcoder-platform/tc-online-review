@@ -110,9 +110,9 @@ deploy_steps: &deploy_steps
         command: |
           ./awsconfiguration.sh $DEPLOY_ENV
           source awsenvconf
-          # ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-deployvar
-          # source buildenvvar
-          # ./master_deploy.sh -d ECS -e $DEPLOY_ENV -t latest -s ${LOGICAL_ENV}-global-appvar,${LOGICAL_ENV}-${APPNAME}-appvar -i ${APPNAME}
+          ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-deployvar
+          source buildenvvar
+          ./master_deploy.sh -d ECS -e $DEPLOY_ENV -t latest -s ${LOGICAL_ENV}-${APPNAME}-appvar -i ${APPNAME}
 
 jobs:
   # Build & Deploy against development backend
@@ -123,7 +123,7 @@ jobs:
       LOGICAL_ENV: "dev"
       COMPONENT_BRANCH: "master"
       DEPLOY_ENV: "DEV"
-      APPNAME: "onlinereview"
+      APPNAME: "tc-online-review"
     steps: *build_steps
 
   "build-prod":
@@ -133,7 +133,7 @@ jobs:
       LOGICAL_ENV: "prod" 
       DEPLOY_ENV: "PROD"      
       COMPONENT_BRANCH: "master"      
-      APPNAME: "onlinereview"                 
+      APPNAME: "tc-online-review"                 
     steps: *build_steps 
 
   deployDev:
@@ -141,7 +141,7 @@ jobs:
     environment:
       DEPLOY_ENV: "DEV"
       LOGICAL_ENV: "dev"
-      APPNAME: "onlinereview"
+      APPNAME: "tc-online-review"
     steps: *deploy_steps
 
   deployProd:
@@ -149,7 +149,7 @@ jobs:
     environment:
       DEPLOY_ENV: "PROD"
       LOGICAL_ENV: "prod"
-      APPNAME: "onlinereview"
+      APPNAME: "tc-online-review"
     steps: *deploy_steps
 
 workflows:
