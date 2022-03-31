@@ -102,9 +102,9 @@ deploy_steps: &deploy_steps
     # - run: *install_deploysuite
     - run: 
        name: Build image
-         command: |  
-            mv project/* .  
-            ./buildimage.sh ${APPNAME}
+       command: |  
+         mv project/* .  
+         ./buildimage.sh ${APPNAME}
     - deploy:
         name: Running MasterScript.
         command: |
