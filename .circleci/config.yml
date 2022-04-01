@@ -79,7 +79,7 @@ build_steps: &build_steps
         name: Installation of build dependencies.
         command: |
           source awsenvconf
-          ./buildproperties.sh -e $BUILD_ENV -k onlinereviewapp
+          ./buildproperties.sh -e $BUILD_ENV -k onlinereviewappv1
           mvn clean package
     #- run:
     #    name: Build Pacakge
