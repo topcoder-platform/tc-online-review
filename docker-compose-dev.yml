@@ -1,0 +1,12 @@
+version: '3'
+services:
+  tc-online-review-dev:
+    platform: linux/amd64
+    image: tc-online-review:dev
+    build:
+      context: .
+      dockerfile: ECSDockerfile
+    ports:
+      - 8080:8080
+    environment:
+      - JAVA_OPTS= -Xms1G -Xmx1G -XX:MaxPermSize=256M -server
