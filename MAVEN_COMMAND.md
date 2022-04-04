@@ -22,9 +22,11 @@
 ## Build docker image for dev and prod
 
 > before build this image, you should make sure you've set the token.properties corresponding to the environment
+> if you use docker container to run this project, you should use `host.docker.internal` to connect the host machine.
  
 1. build war dir `mvn clean package`
 2. run `docker build -t tc-online-review:dev -f ECSDockerfile --platform=linux/amd64 .` in root dir.
+3. run `docker-compose -f docker-compose-dev.yml up -d` in root dir to start docker container.
 
 ## Note
 
