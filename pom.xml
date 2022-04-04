@@ -719,9 +719,9 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.topcoder</groupId>
+            <groupId>com.topcoder.thirdpart</groupId>
             <artifactId>core.api</artifactId>
-            <version>4.3.6</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.topcoder.thirdpart</groupId>
