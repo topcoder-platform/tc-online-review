@@ -44,6 +44,7 @@ context.security.url=localhost:1099
 
 # typical windows configuration (cache doesn't work in local build)
 cache.host_url=localhost:1099
+redis.host_url=redis://tc-cache:6379
 
 #######################################
 ## Parameters used by EmailEngine.xml #
