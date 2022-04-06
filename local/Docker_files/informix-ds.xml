@@ -16,7 +16,7 @@
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>informix</user-name>
     <password>1nf0rm1x</password>
-    <min-pool-size>5</min-pool-size>
+    <min-pool-size>0</min-pool-size>
     <max-pool-size>20</max-pool-size>
     <idle-timeout-minutes>15</idle-timeout-minutes>
         <!-- sql to call when connection is created -->
@@ -37,7 +37,7 @@
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>informix</user-name>
     <password>1nf0rm1x</password>
-    <min-pool-size>5</min-pool-size>
+    <min-pool-size>0</min-pool-size>
     <max-pool-size>20</max-pool-size>
     <idle-timeout-minutes>15</idle-timeout-minutes>
         <!-- sql to call when connection is created -->
@@ -59,7 +59,7 @@
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>informix</user-name>
     <password>1nf0rm1x</password>
-    <min-pool-size>5</min-pool-size>
+    <min-pool-size>0</min-pool-size>
     <max-pool-size>20</max-pool-size>
     <idle-timeout-minutes>15</idle-timeout-minutes>
         <!-- sql to call when connection is created
@@ -81,7 +81,7 @@
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>informix</user-name>
     <password>1nf0rm1x</password>
-    <min-pool-size>5</min-pool-size>
+    <min-pool-size>0</min-pool-size>
     <max-pool-size>20</max-pool-size>
     <idle-timeout-minutes>15</idle-timeout-minutes>
         <!-- sql to call when connection is created
@@ -105,7 +105,7 @@
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>informix</user-name>
     <password>1nf0rm1x</password>
-    <min-pool-size>5</min-pool-size>
+    <min-pool-size>0</min-pool-size>
     <max-pool-size>20</max-pool-size>
     <idle-timeout-minutes>15</idle-timeout-minutes>
         <!-- sql to call when connection is created
@@ -127,7 +127,7 @@
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>informix</user-name>
     <password>1nf0rm1x</password>
-    <min-pool-size>5</min-pool-size>
+    <min-pool-size>0</min-pool-size>
     <max-pool-size>20</max-pool-size>
     <idle-timeout-minutes>15</idle-timeout-minutes>
         <!-- sql to call when connection is created -->
@@ -148,7 +148,7 @@
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>informix</user-name>
     <password>1nf0rm1x</password>
-    <min-pool-size>5</min-pool-size>
+    <min-pool-size>0</min-pool-size>
     <max-pool-size>20</max-pool-size>
     <idle-timeout-minutes>15</idle-timeout-minutes>
         <!-- sql to call when connection is created -->
@@ -170,7 +170,7 @@
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>informix</user-name>
     <password>1nf0rm1x</password>
-    <min-pool-size>5</min-pool-size>
+    <min-pool-size>0</min-pool-size>
     <max-pool-size>20</max-pool-size>
     <idle-timeout-minutes>15</idle-timeout-minutes>
         <!-- sql to call when connection is created -->
@@ -192,7 +192,7 @@
         <driver-class>com.informix.jdbc.IfxDriver</driver-class>
 		<user-name>informix</user-name>
 		<password>1nf0rm1x</password>
-        <min-pool-size>5</min-pool-size>
+        <min-pool-size>0</min-pool-size>
         <max-pool-size>20</max-pool-size>
         <idle-timeout-minutes>15</idle-timeout-minutes>
         <!-- sql to call when connection is created -->

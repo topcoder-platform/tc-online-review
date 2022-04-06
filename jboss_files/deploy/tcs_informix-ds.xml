@@ -16,7 +16,7 @@
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
-    <min-pool-size>5</min-pool-size>
+    <min-pool-size>0</min-pool-size>
     <max-pool-size>20</max-pool-size>
     <idle-timeout-minutes>15</idle-timeout-minutes>
         <!-- sql to call when connection is created -->
@@ -37,7 +37,7 @@
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
-    <min-pool-size>5</min-pool-size>
+    <min-pool-size>0</min-pool-size>
     <max-pool-size>20</max-pool-size>
     <idle-timeout-minutes>15</idle-timeout-minutes>
         <new-connection-sql>set lock mode to wait 5</new-connection-sql>
@@ -56,7 +56,9 @@
     <jndi-name>DW</jndi-name>
     <connection-url>jdbc:informix-sqli://@dataware.server@:@dataware.port@/topcoder_dw:INFORMIXSERVER=@dataware.INFORMIXSERVER@;IFX_USE_STRENC=true</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
-    <min-pool-size>5</min-pool-size>
+    <user-name>@database.username@</user-name>
+    <password>@database.password@</password>
+    <min-pool-size>0</min-pool-size>
     <max-pool-size>20</max-pool-size>
     <idle-timeout-minutes>15</idle-timeout-minutes>
     <user-name>@dataware.username@</user-name>
@@ -75,7 +77,9 @@
     <jndi-name>TCS_DW</jndi-name>
     <connection-url>jdbc:informix-sqli://@dataware.server@:@dataware.port@/tcs_dw:INFORMIXSERVER=@dataware.INFORMIXSERVER@;IFX_USE_STRENC=true</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
-    <min-pool-size>5</min-pool-size>
+    <user-name>@database.username@</user-name>
+    <password>@database.password@</password>
+    <min-pool-size>0</min-pool-size>
     <max-pool-size>20</max-pool-size>
     <idle-timeout-minutes>15</idle-timeout-minutes>
     <user-name>@dataware.username@</user-name>
