@@ -16,6 +16,9 @@
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
+    <min-pool-size>5</min-pool-size>
+    <max-pool-size>20</max-pool-size>
+    <idle-timeout-minutes>15</idle-timeout-minutes>
         <!-- sql to call when connection is created -->
         <new-connection-sql>set lock mode to wait 5</new-connection-sql>
 
@@ -34,6 +37,9 @@
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
+    <min-pool-size>5</min-pool-size>
+    <max-pool-size>20</max-pool-size>
+    <idle-timeout-minutes>15</idle-timeout-minutes>
         <new-connection-sql>set lock mode to wait 5</new-connection-sql>
 
         <!-- sql to call on an existing pooled connection when it is obtained from pool -->
@@ -52,6 +58,9 @@
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
+    <min-pool-size>5</min-pool-size>
+    <max-pool-size>20</max-pool-size>
+    <idle-timeout-minutes>15</idle-timeout-minutes>
         <new-connection-sql>set lock mode to wait 5</new-connection-sql>
 
         <!-- sql to call on an existing pooled connection when it is obtained from pool -->
@@ -68,6 +77,9 @@
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <user-name>@database.username@</user-name>
     <password>@database.password@</password>
+    <min-pool-size>5</min-pool-size>
+    <max-pool-size>20</max-pool-size>
+    <idle-timeout-minutes>15</idle-timeout-minutes>
         <new-connection-sql>set lock mode to wait 5</new-connection-sql>
 
         <!-- sql to call on an existing pooled connection when it is obtained from pool -->
