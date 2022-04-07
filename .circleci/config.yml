@@ -47,7 +47,7 @@ build_components: &build_components
       cd ../tc-online-review-backend
       ./install-third-dep.sh      
       # mvn clean install -DskipTests
-      mvn dependency:go-offline
+      # mvn dependency:go-offline
       mvn -Dhttps.protocols=TLSv1.2 -DskipTests=true clean install
       cd ~/project
 
@@ -87,11 +87,11 @@ build_steps: &build_steps
           ./awsconfiguration.sh $BUILD_ENV
           source awsenvconf               
     - run:
-        name: Installation of build dependencies.
+        name: "Buidling OR file"
         command: |
           source awsenvconf
           ./buildproperties.sh -e $BUILD_ENV -k onlinereviewappv1
-          mvn dependency:go-offline
+          # mvn dependency:go-offline
           mvn clean package
     - save_cache: *save_cache_settings         
     #- run:
