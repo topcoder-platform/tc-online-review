@@ -4,7 +4,7 @@ Notes on testing some actions from Project Admin & Review
   1. Upload Submission
 
      To go to the upload submission page you should enter the following into
-     the Address field of your browser:
+     the Address field of your browser: 
 
        http://localhost:8080/review/actions/UploadSubmission.do?method=uploadSubmission&pid=<id-of-project>
 
