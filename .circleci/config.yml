@@ -46,7 +46,8 @@ build_components: &build_components
     command: |
       cd ../tc-online-review-backend
       ./install-third-dep.sh      
-      mvn clean install -DskipTests
+      # mvn clean install -DskipTests
+      mvn -Dhttps.protocols=TLSv1.2 -DskipTests=true clean install
       cd ~/project
 
 workspace_persist: &workspace_persist
