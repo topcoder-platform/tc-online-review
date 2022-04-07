@@ -47,6 +47,7 @@ build_components: &build_components
       cd ../tc-online-review-backend
       ./install-third-dep.sh      
       # mvn clean install -DskipTests
+      mvn dependency:go-offline
       mvn -Dhttps.protocols=TLSv1.2 -DskipTests=true clean install
       cd ~/project
 
@@ -58,12 +59,21 @@ workspace_persist: &workspace_persist
 workspace_attach: &workspace_attach
     at: ./   
 
+restore_cache_settings_for_build: &restore_cache_settings_for_build
+    key: tc-online-review-{{ checksum "~/project/pom.xml" }}
+
+save_cache_settings: &save_cache_settings
+    paths:
+      - ~/.m2
+    key: tc-online-review-{{ checksum "~/project/pom.xml" }}
+
 build_steps: &build_steps
     # Initialization.
     - run: *install_dependency
     - checkout
     - run: *install_deploysuite
     - run: *fetch_component_src
+    - restore_cache: *restore_cache_settings_for_build
     - run: *build_components
     #- run:
     #    name: Fetching Libraries
@@ -81,7 +91,9 @@ build_steps: &build_steps
         command: |
           source awsenvconf
           ./buildproperties.sh -e $BUILD_ENV -k onlinereviewappv1
+          mvn dependency:go-offline
           mvn clean package
+    - save_cache: *save_cache_settings         
     #- run:
     #    name: Build Pacakge
     #    command: ./build-package.sh $APPNAME            
