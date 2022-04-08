@@ -26,7 +26,7 @@ RUN mkdir -p /nfs_shares/tcs-downloads
 
 ## tokenized
 Add ./jboss_files/deploy/tcs_informix-ds.xml /root/
-Add ./token.properties /root/
+Add ./token.properties.local /root/token.properties
 RUN cat /root/token.properties | grep -v '^#' | grep -v '^$'| sed s/\\//\\\\\\//g | awk -F '=' '{print "s/@"$1"@/"$2"/g"}' | sed -f /dev/stdin /root/tcs_informix-ds.xml >> /root/jboss-4.0.2/server/default/deploy/informix-ds.xml
 RUN rm /root/token.properties
 RUN rm /root/tcs_informix-ds.xml

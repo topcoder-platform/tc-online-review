@@ -1,19 +1,5 @@
 <?xml version="1.0" ?>
-<!DOCTYPE CMConfig [
-       <!ENTITY localFileUploadDir "@localFileUploadDir@">
-        <!ENTITY localStudioFileUploadDir "@localStudioFileUploadDir@">
-       <!ENTITY catalogOutputDir "@catalogOutputDir@">
-       <!ENTITY distributionToolOutputDir "@distributionToolOutputDir@">
-       <!ENTITY distributionScriptsBase "@distributionScriptsBase@">
-       <!ENTITY timelineTemplateDir "@exttemplatesdir@">
-       <!ENTITY contactManagersTemplate "@exttemplatesdir@/contact_manager_template.txt">
-       <!ENTITY notificationEmailFromAddress "@notificationEmailFromAddress@">
-       <!ENTITY smtpServerAuthAddress "@emailengine_smtp_user@">
-       <!ENTITY pactJNDIAddress "@pactJNDIAddress@">
-       <!ENTITY lateDeliverableUpdatedByManagerTemplate "@exttemplatesdir@/late_deliverable_updated_by_manager_template.txt">
-       <!ENTITY lateDeliverableUpdatedByMemberTemplate "@exttemplatesdir@/late_deliverable_updated_by_member_template.txt">
-       <!ENTITY F2FSubmissionReuploadedTemplate "@exttemplatesdir@/f2f_submission_reuploaded_template.txt">
-]>
+
 <CMConfig>
 <!-- [OR-584] don't need this anymore
     <!ENTITY assignmentDocumentsFlag "false">
@@ -350,10 +336,10 @@
             <Value>-1</Value>
         </Property>
         <Property name="allowed_dirs">
-            <Value>&localFileUploadDir;</Value>
+            <Value>@localFileUploadDir@</Value>
         </Property>
         <Property name="default_dir">
-            <Value>&localFileUploadDir;</Value>
+            <Value>@localFileUploadDir@</Value>
         </Property>
         <Property name="overwrite">
             <Value>false</Value>
@@ -371,10 +357,10 @@
             <Value>-1</Value>
         </Property>
         <Property name="default_dir">
-            <Value>&localStudioFileUploadDir;</Value>
+            <Value>@localStudioFileUploadDir@</Value>
         </Property>
         <Property name="allowed_dirs">
-            <Value>&localStudioFileUploadDir;</Value>
+            <Value>@localStudioFileUploadDir@</Value>
         </Property>
         <Property name="overwrite">
             <Value>false</Value>
@@ -392,7 +378,7 @@
             <Value>@emailengine_smtp_port@</Value>
         </Property>
         <Property name="username">
-            <Value>&smtpServerAuthAddress;</Value>
+            <Value>@smtpServerAuthAddress@</Value>
         </Property>
         <Property name="password">
             <Value>@emailengine_smtp_password@</Value>
@@ -1025,14 +1011,14 @@
     <Config name="com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence">
         <!-- XML files from which the templates will be loaded. -->
         <Property name="template_files">
-<!--            <Value>&timelineTemplateDir;/ComponentTimeline.xml</Value> -->
-            <Value>&timelineTemplateDir;/TCSTemplate_Design.xml</Value>
-            <Value>&timelineTemplateDir;/TCSTemplate_Development.xml</Value>
-            <Value>&timelineTemplateDir;/TCSTemplate_Component_Testing.xml</Value>
-            <Value>&timelineTemplateDir;/TCSTemplate_Application.xml</Value>
-            <Value>&timelineTemplateDir;/TCSTemplate_Studio.xml</Value>
-            <Value>&timelineTemplateDir;/TCSTemplate_Security.xml</Value>
-            <Value>&timelineTemplateDir;/TCSTemplate_Studio_Checkpoint.xml</Value>
+<!--            <Value>@exttemplatesdir@/ComponentTimeline.xml</Value> -->
+            <Value>@exttemplatesdir@/TCSTemplate_Design.xml</Value>
+            <Value>@exttemplatesdir@/TCSTemplate_Development.xml</Value>
+            <Value>@exttemplatesdir@/TCSTemplate_Component_Testing.xml</Value>
+            <Value>@exttemplatesdir@/TCSTemplate_Application.xml</Value>
+            <Value>@exttemplatesdir@/TCSTemplate_Studio.xml</Value>
+            <Value>@exttemplatesdir@/TCSTemplate_Security.xml</Value>
+            <Value>@exttemplatesdir@/TCSTemplate_Studio_Checkpoint.xml</Value>
         </Property>
     </Config>
 
@@ -3166,7 +3152,7 @@
     -->
     <Config name="com.cronos.onlinereview.phases.pacts.services">
         <Property name="pacts_jndi_address">
-            <Value>&pactJNDIAddress;</Value>
+            <Value>@pactJNDIAddress@</Value>
         </Property>
     </Config>
 
@@ -3229,10 +3215,10 @@
             <Value>48</Value>
         </Property>
         <Property name="distribution_tool_output_dir">
-            <Value>&distributionToolOutputDir;</Value>
+            <Value>@distributionToolOutputDir@</Value>
         </Property>
         <Property name="catalog_output_dir">
-            <Value>&catalogOutputDir;</Value>
+            <Value>@catalogOutputDir@</Value>
         </Property>
         <Property name="default_distribution_script">
             <Value>other</Value>
@@ -5148,7 +5134,7 @@
 
         <Property name="ContactManagerEmail">
             <Property name="EmailTemplateName">
-                <Value>&contactManagersTemplate;</Value>
+                <Value>@exttemplatesdir@/contact_manager_template.txt</Value>
             </Property>
             <Property name="EmailFromAddress">
                 <Value>@contactPMEmailFromAddress@</Value>
@@ -5162,10 +5148,10 @@
             </Property>
             <Property name="ByManager">
                 <Property name="EmailTemplateName">
-                    <Value>&lateDeliverableUpdatedByManagerTemplate;</Value>
+                    <Value>@exttemplatesdir@/late_deliverable_updated_by_manager_template.txt</Value>
                 </Property>
                 <Property name="EmailFromAddress">
-                    <Value>&notificationEmailFromAddress;</Value>
+                    <Value>@notificationEmailFromAddress@</Value>
                 </Property>
                 <Property name="EmailSubject">
                     <Value>Late Deliverable Resolved: {0} {1}</Value>
@@ -5178,10 +5164,10 @@
             </Property>
             <Property name="ByMember">
                 <Property name="EmailTemplateName">
-                    <Value>&lateDeliverableUpdatedByMemberTemplate;</Value>
+                    <Value>@exttemplatesdir@/late_deliverable_updated_by_member_template.txt</Value>
                 </Property>
                 <Property name="EmailFromAddress">
-                    <Value>&notificationEmailFromAddress;</Value>
+                    <Value>@notificationEmailFromAddress@</Value>
                 </Property>
                 <Property name="EmailSubject">
                     <Value>Late Deliverable Explained: {0} {1}</Value>
@@ -5196,10 +5182,10 @@
 
         <Property name="F2FSubmissionReuploadNotificationEmail">
             <Property name="EmailTemplateName">
-                <Value>&F2FSubmissionReuploadedTemplate;</Value>
+                <Value>@exttemplatesdir@/f2f_submission_reuploaded_template.txt</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
+                <Value>@notificationEmailFromAddress@</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>F2F submission re-uploaded: {0} {1}</Value>
@@ -5343,7 +5329,7 @@
         </Property>
         <!-- Needs to be updated correctly -->
         <Property name="fileStorageLocation">
-            <Value>&localFileUploadDir;</Value>
+            <Value>@localFileUploadDir@</Value>
         </Property>
     </Config>
 
@@ -5393,7 +5379,7 @@
                     <Value>java</Value>
                 </Property>
                 <Property name="script_path">
-                    <Value>&distributionScriptsBase;/java/script.txt</Value>
+                    <Value>@distributionScriptsBase@/java/script.txt</Value>
                 </Property>
             </Property>
             <Property name="script_dotnet">
@@ -5401,7 +5387,7 @@
                     <Value>dotnet</Value>
                 </Property>
                 <Property name="script_path">
-                    <Value>&distributionScriptsBase;/dotnet/script.txt</Value>
+                    <Value>@distributionScriptsBase@/dotnet/script.txt</Value>
                 </Property>
             </Property>
             <Property name="script_other">
@@ -5409,7 +5395,7 @@
                     <Value>other</Value>
                 </Property>
                 <Property name="script_path">
-                    <Value>&distributionScriptsBase;/other/script.txt</Value>
+                    <Value>@distributionScriptsBase@/other/script.txt</Value>
                 </Property>
             </Property>
         </Property>
