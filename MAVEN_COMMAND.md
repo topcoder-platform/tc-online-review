@@ -16,8 +16,9 @@
 
 ## Run in docker
 
-1. build war dir `mvn clean package`
-2. run `docker-compose up -d` in root dir.
+1. replace `token.properties` to `token.properties.local` on pom.xml line 894
+2. build war dir `mvn clean package`
+3. run `docker-compose up -d` in root dir.
 
 ## Build docker image for dev and prod
 
@@ -30,8 +31,6 @@
 
 ## Note
 
-You need comment `login` and `cache` function when deploying locally.
+You need comment `login` function when deploying locally.
 
 - comment src/main/java/com/cronos/onlinereview/util/AuthorizationHelper.java line145-151 and then `return 132456L;`
-- comment web/includes/inc_header.jsp line22
-- comment web/includes/project/project_phase.jsp and web/includes/project/project_resource.jsp all `<tc-webtag:handle` tag
