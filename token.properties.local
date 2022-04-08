@@ -145,11 +145,11 @@ DOMAIN_AUTH0 = topcoder-dev.auth0.com
 ########################################
 # The authenticator used in the login process - this object must be defined in the OnlineReview.xml file too
 # typical windows configuration
-login.authenticator=MockXMLAuthenticator
-localFileUploadDir=/root/downloads
-localStudioFileUploadDir=/root/downloads
-catalogOutputDir=/mnt/shared/temp_files
-distributionToolOutputDir=/mnt/shared/temp_files/tmp_dist
+login.authenticator=ORAuthenticator
+localFileUploadDir=/nfs_shares/tcssubmissions
+localStudioFileUploadDir=/nfs_shares/studiofiles/submissions
+catalogOutputDir=/nfs_shares/tcs-downloads
+distributionToolOutputDir=/root/temp/dist-gen
 #distributionScriptsBase=/root/jboss-4.0.2/server/default/deploy/review.war/WEB-INF/classes/distribution_scripts/unix
 distributionScriptsBase=/root/web/conf/distribution_scripts/unix
 exttemplatesdir=/root/jboss-4.0.2/server/default/deploy/review.war/WEB-INF/classes/templates
