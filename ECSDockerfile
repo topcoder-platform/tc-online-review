@@ -19,6 +19,7 @@ Add ./target/review /root/jboss-4.0.2/server/default/deploy/review.war
 
 RUN mkdir -p /home/apps/web/conf
 Add ./conf/distribution_scripts /home/apps/web/conf/distribution_scripts
+RUN mkdir -p /root/temp/dist-gen
 
 ## tokenized
 Add ./jboss_files/deploy/tcs_informix-ds.xml /root/
