@@ -17,8 +17,8 @@ Add ./web/js /root/jboss-4.0.2/server/default/deploy/jbossweb-tomcat55.sar/ROOT.
 
 Add ./target/review /root/jboss-4.0.2/server/default/deploy/review.war
 
-RUN mkdir -p /home/apps/web/conf
-Add ./conf/distribution_scripts /home/apps/web/conf/distribution_scripts
+RUN mkdir -p /root/web/conf
+Add ./conf/distribution_scripts /root/web/conf/distribution_scripts
 RUN mkdir -p /root/temp/dist-gen
 
 ## tokenized
