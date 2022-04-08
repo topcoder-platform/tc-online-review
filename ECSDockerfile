@@ -8,6 +8,7 @@ RUN cd /root/ \
 ENV JAVA_OPTS="-Xms4G -Xmx4G -XX:MaxPermSize=1G -server"
 ENV JBOSS_HOME=/root/jboss-4.0.2
 ENV PATH=$PATH:/root/jboss-4.0.2/bin
+ENV TZ=America/Indiana/Indianapolis
 
 Add ./jboss_files/lib/ifxjdbc.jar /root/jboss-4.0.2/server/default/lib/
 Add ./web/i /root/jboss-4.0.2/server/default/deploy/jbossweb-tomcat55.sar/ROOT.war/i
@@ -15,6 +16,10 @@ Add ./web/css /root/jboss-4.0.2/server/default/deploy/jbossweb-tomcat55.sar/ROOT
 Add ./web/js /root/jboss-4.0.2/server/default/deploy/jbossweb-tomcat55.sar/ROOT.war/js
 
 Add ./target/review /root/jboss-4.0.2/server/default/deploy/review.war
+
+RUN mkdir -p /home/apps/web/conf
+Add ./conf/distribution_scripts /home/apps/web/conf/distribution_scripts
+RUN mkdir -p /root/temp/dist-gen
 
 ## tokenized
 Add ./jboss_files/deploy/tcs_informix-ds.xml /root/
