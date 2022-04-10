@@ -17,8 +17,12 @@
 ## Run in docker
 
 1. replace `token.properties` to `token.properties.local` on pom.xml line 894
-2. build war dir `mvn clean package`
-3. run `docker-compose up -d` in root dir.
+2. add `127.0.0.1       local.topcoder-dev.com` to your hosts
+3. add `local/nginx/certs/*` as a trusted root authority to your browser
+4. build war dir `mvn clean package`
+5. run `docker-compose up -d` in root dir.
+6. open `https://local.topcoder-dev.com:8443` and click `login` button on top-right corner
+7. use `dok/appirio123` to login
 
 ## Build docker image for dev and prod
 

@@ -31,6 +31,4 @@ RUN cat /root/token.properties | grep -v '^#' | grep -v '^$'| sed s/\\//\\\\\\//
 RUN rm /root/token.properties
 RUN rm /root/tcs_informix-ds.xml
 
-Add ./local/Docker_files/AuthorizationHelper.class /root/jboss-4.0.2/server/default/deploy/review.war/WEB-INF/classes/com/cronos/onlinereview/util/
-
 CMD ["/root/jboss-4.0.2/bin/run.sh","-DFOREGROUND"]
