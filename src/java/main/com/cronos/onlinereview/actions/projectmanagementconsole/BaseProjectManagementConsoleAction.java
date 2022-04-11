@@ -3,9 +3,6 @@
  */
 package com.cronos.onlinereview.actions.projectmanagementconsole;
 
-
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,7 +11,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,17 +27,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.actions.DynamicModelDrivenAction;
-import com.cronos.onlinereview.dataaccess.CatalogDataAccess;
-import com.cronos.onlinereview.ejblibrary.SpringContextProvider;
 import com.cronos.onlinereview.model.DynamicModel;
-import com.cronos.onlinereview.model.FormFile;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.ConfigHelper;
 import com.cronos.onlinereview.util.LookupException;
 import com.cronos.onlinereview.util.LookupHelper;
-import com.topcoder.dde.catalog.ComponentVersionInfo;
-import com.topcoder.dde.catalog.Document;
 import com.topcoder.management.payment.ProjectPaymentAdjustment;
 import com.topcoder.management.payment.calculator.ProjectPaymentCalculator;
 import com.topcoder.management.phase.PhaseManager;
@@ -66,7 +57,6 @@ import com.topcoder.search.builder.filter.InFilter;
 import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.Property;
-import com.topcoder.util.distribution.DistributionTool;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.util.errorhandling.BaseRuntimeException;
 
@@ -111,60 +101,6 @@ public abstract class BaseProjectManagementConsoleAction extends DynamicModelDri
      * <p>A <code>long</code> providing the constant value for designer resource role id.</p>
      */
     protected static final long DESIGNER_RESOURCE_ROLE_ID = 11;
-
-    /**
-     * The id of the design distribution document type.
-     */
-    protected static final long DESIGN_DISTRIBUTION_DOC_TYPE_ID = 25;
-
-    /**
-     * The id of the development distribution document type.
-     */
-    protected static final long DEVELOPMENT_DISTRIBUTION_DOC_TYPE_ID = 26;
-
-    /**
-     * The design distribution document type.
-     */
-    protected static final String DESIGN_DISTRIBUTION_DOC_TYPE = "Design Distribution";
-
-    /**
-     * The development distribution document type.
-     */
-    protected static final String DEVELOPMENT_DISTRIBUTION_DOC_TYPE = "Development Distribution";
-
-    /**
-     * Design project ID.
-     */
-    protected static final long DESIGN_PROJECT_ID = 1;
-
-    /**
-     * Development project ID.
-     */
-    protected static final long DEVELOPMENT_PROJECT_ID = 2;
-
-    /**
-     * <p>
-     * The directory to upload files that will be used by distribution tool. It is appended to the distribution tool
-     * output dir.
-     * </p>
-     */
-    protected static final String UPLOADED_ARTIFACTS_DIR = "upload_0";
-
-    /**
-     * <p>Valid package names.</p>
-     */
-    protected static final Pattern PACKAGE_PATTERN = Pattern
-        .compile("\\s*(([a-zA-Z])[a-zA-Z0-9_]*)(\\.([a-zA-Z])[a-zA-Z0-9_]*)*\\s*");
-
-    /**
-     * <p>Valid version numbers.</p>
-     */
-    protected static final Pattern VERSION_PATTERN = Pattern.compile("\\s*([1-9][0-9]*)(\\.[0-9]+){0,3}\\s*");
-
-    /**
-     * DistributionTool is thread-safe, so we can keep it as an instance variable.
-     */
-    protected static final DistributionTool DISTRIBUTION_TOOL = new DistributionTool();
 
     /**
      * Default date format.
@@ -315,125 +251,6 @@ public abstract class BaseProjectManagementConsoleAction extends DynamicModelDri
 
     /**
      * <p>
-     * Saves (or updates) the distribution file to the component catalog.
-     * </p>
-     *
-     * @param project the current project used to get component information.
-     * @param descriptor an object defining the distribution file (may be the upload stream or a file stream).
-     * @param request object used to add error information in case something goes wrong.
-     * @param isDesign indicates if the distribution is for design or development.
-     * @return <code>true</code> if the file was save properly, <code>false</code> otherwise
-     * @throws Exception if any error occurs while uploading the file.
-     */
-    protected boolean saveDistributionFileToCatalog(Project project, DistributionFileDescriptor descriptor,
-        HttpServletRequest request, boolean isDesign) throws Exception {
-
-        long componentId = getProjectLongValue(project, "Component ID");
-        long versionId = getProjectLongValue(project, "Version ID");
-
-        if (componentId == 0 || versionId == 0) {
-            if (componentId == 0) {
-                ActionsHelper.addErrorToRequest(request,
-                    "error.com.cronos.onlinereview.actions.manageProject.Distributions.Component.Invalid");
-            }
-
-            if (versionId == 0) {
-                ActionsHelper.addErrorToRequest(request,
-                    "error.com.cronos.onlinereview.actions.manageProject.Distributions.ComponentVersion.Invalid");
-            }
-
-            return false;
-        }
-
-        CatalogDataAccess catalogDataAccess = SpringContextProvider.getCatalogDataAccess();
-        ComponentVersionInfo componentVersion = catalogDataAccess.getComponentVersionInfo(componentId, versionId);
-
-        String rootDir = ConfigHelper.getCatalogOutputDir() + File.separator;
-        String dir = "" + componentId + File.separator + componentVersion.getVersionId() + File.separator;
-
-        File dirFile = new File(rootDir + dir);
-
-        // Create the directories if they do not already exist.
-        if (!dirFile.exists() && !dirFile.mkdirs()) {
-            ActionsHelper.addErrorToRequest(request,
-                "error.com.cronos.onlinereview.actions.manageProject.Distributions.Catalog.OutputDir");
-            return false;
-        }
-
-        String url = dir + descriptor.getFileName();
-
-        // Copy distribution file to catalog folder
-        copyStream(descriptor.getInputStream(), new FileOutputStream(rootDir + url));
-
-        long documentType;
-        String documentName;
-
-        // project is either Design or Development
-        if (isDesign) {
-            documentType = DESIGN_DISTRIBUTION_DOC_TYPE_ID;
-            documentName = DESIGN_DISTRIBUTION_DOC_TYPE;
-
-        } else {
-            documentType = DEVELOPMENT_DISTRIBUTION_DOC_TYPE_ID;
-            documentName = DEVELOPMENT_DISTRIBUTION_DOC_TYPE;
-        }
-
-        Document document
-            = getDocumentOfType(catalogDataAccess.getDocuments(componentVersion.getVersionId()), documentType);
-
-        if (document == null) {
-            // Add document to component
-            document = new Document(documentName, url, documentType);
-            catalogDataAccess.addDocument(componentVersion.getVersionId(), document);
-        } else {
-            // Update document
-            document.setURL(url);
-            catalogDataAccess.updateDocument(componentVersion.getVersionId(), document);
-        }
-
-        return true;
-    }
-
-    /**
-     * Return the document with the associated document type.
-     *
-     * @param documents the list of component documents.
-     * @param documentType document type.
-     * @return the document with the given document type, or null if not found.
-     */
-    private Document getDocumentOfType(Collection<?> documents, long documentType) {
-        for (Object documentObject : documents) {
-            Document document = (Document) documentObject;
-            if (document.getType() == documentType) {
-                // Assume a single document of this type will exist
-                return document;
-            }
-        }
-        // Not found
-        return null;
-    }
-
-    /**
-     * Return project property long value.
-     *
-     * @param project the project object
-     * @param name the property name
-     * @return the long value, 0 if it does not exist
-     */
-    private static long getProjectLongValue(Project project, String name) {
-        Object obj = project.getProperty(name);
-        if (obj == null) {
-            return 0;
-        }
-        try {
-            return Long.parseLong(obj.toString());
-        } catch (NumberFormatException ex) {
-            return 0;
-        }
-    }
-
-    /**
-     * <p>
      * Copies data from an InputStream to an OutputStream.
      * </p>
      *
@@ -464,130 +281,6 @@ public abstract class BaseProjectManagementConsoleAction extends DynamicModelDri
             } catch (IOException ex) {
                 // ignore
             }
-        }
-    }
-
-    /**
-     * Validate the form for creating new distribution.
-     * @param project the current project
-     * @param model the model for this page
-     * @param request the http servlet request.
-     */
-    protected void validateCreateDistributionForm(Project project, DynamicModel model, HttpServletRequest request) {
-
-        // Validate project type - must be a Design or Development
-        long projectCategoryId = project.getProjectCategory().getId();
-        if ((projectCategoryId != DESIGN_PROJECT_ID) && (projectCategoryId != DEVELOPMENT_PROJECT_ID)) {
-            ActionsHelper.addErrorToRequest(request, "error.com.cronos.onlinereview.actions.manageProject.Distributions.ProjectCategory");
-        }
-
-        String projectName = (String) project.getProperty("Project Name");
-
-        // validate project name
-        if (isEmpty(projectName)) {
-            ActionsHelper.addErrorToRequest(request,
-                "error.com.cronos.onlinereview.actions.manageProject.Distributions.ProjectName.Invalid");
-        }
-
-        String version = (String) project.getProperty("Project Version");
-
-        // validate project version
-        if (isEmpty(version) || !VERSION_PATTERN.matcher(version).matches()) {
-            ActionsHelper.addErrorToRequest(request, ActionsHelper.GLOBAL_MESSAGE,
-                "error.com.cronos.onlinereview.actions.manageProject.Distributions.Version.Invalid", "version");
-        }
-
-        // Determines the script that will be used (if other is used, package is not mandatory)
-        String rootCatalogID = (String) project.getProperty("Root Catalog ID");
-
-        // validate root catalog id
-        if (isEmpty(rootCatalogID)) {
-            ActionsHelper.addErrorToRequest(request,
-                "error.com.cronos.onlinereview.actions.manageProject.Distributions.RootCatalog.Invalid");
-
-        } else {
-            String defaultScript = ConfigHelper.getDefaultDistributionScript();
-            String distributionScript = ConfigHelper.getDistributionScript(rootCatalogID);
-
-            // validate root catalog id is defined in configuration file
-            if (distributionScript == null) {
-
-                ActionsHelper.addErrorToRequest(request, ActionsHelper.GLOBAL_MESSAGE,
-                    "error.com.cronos.onlinereview.actions.manageProject.Distributions.RootCatalog.NotDefined", "rootCatalogID");
-
-            } else if (!defaultScript.equals(distributionScript)) {
-                // Assume default script ('other') does not need package name
-                String packageName = (String) getModel().get("distribution_package_name");
-
-                // validate package is required
-                if (isEmpty(packageName)) {
-                    ActionsHelper.addErrorToRequest(request, "distribution_package_name",
-                        "error.com.cronos.onlinereview.actions.manageProject.Distributions.PackageName.Empty");
-
-                } else if (!PACKAGE_PATTERN.matcher(packageName).matches()) {
-                    // Validate it is a valid package
-                    ActionsHelper.addErrorToRequest(request, "distribution_package_name",
-                        "error.com.cronos.onlinereview.actions.manageProject.Distributions.PackageName.Invalid");
-                }
-            }
-        }
-
-        Set<String> uploadedFiles = new HashSet<String>();
-        FormFile distributionRSFile = (FormFile) getModel().get("distribution_rs");
-
-        // Validate the RS form file
-        if (distributionRSFile == null || isEmpty(distributionRSFile.getFileName())) {
-            ActionsHelper.addErrorToRequest(request, "distribution_rs",
-                "error.com.cronos.onlinereview.actions.manageProject.Distributions.RS.Missing");
-
-        } else if (distributionRSFile.getFileSize() == 0) {
-            ActionsHelper.addErrorToRequest(request, "distribution_rs",
-                "error.com.cronos.onlinereview.actions.manageProject.Distributions.RS.Empty");
-
-        } else {
-            // Validate RS file name
-            String lcFileName = distributionRSFile.getFileName().toLowerCase();
-            if (!(lcFileName.endsWith("rtf") || lcFileName.endsWith("doc") || lcFileName.endsWith("pdf"))) {
-                ActionsHelper.addErrorToRequest(request, "distribution_rs",
-                    "error.com.cronos.onlinereview.actions.manageProject.Distributions.RS.Invalid");
-            }
-
-            uploadedFiles.add(lcFileName);
-        }
-
-        // Validate additional files - check if more than one file has the same name
-        for (int i = 1; i <= 3; ++i) {
-            FormFile additionalFormFile = (FormFile) getModel().get("distribution_additional" + i);
-
-            // Only use additional file if it is uploaded and well set
-            if ((additionalFormFile != null) && (additionalFormFile.getFileSize() > 0)
-                && !isEmpty(additionalFormFile.getFileName())) {
-
-                String lcFileName = additionalFormFile.getFileName().toLowerCase();
-                if (uploadedFiles.contains(lcFileName)) {
-                    ActionsHelper.addErrorToRequest(request, "distribution_additional" + i,
-                        "error.com.cronos.onlinereview.actions.manageProject.Distributions.Files.SameName");
-                }
-
-                uploadedFiles.add(lcFileName);
-            }
-        }
-
-
-        boolean uploadToServer = getBooleanFromForm(getModel(), "upload_to_server");
-        boolean returnDistribution = getBooleanFromForm(getModel(), "return_distribution");
-
-        // Must select at least one of these options
-        if (!uploadToServer && !returnDistribution) {
-            // Add the error message to both checkboxes if design distribution
-
-            if (projectCategoryId == DESIGN_PROJECT_ID) {
-                ActionsHelper.addErrorToRequest(request, "upload_to_server",
-                    "error.com.cronos.onlinereview.actions.manageProject.Distributions.Upload.Unchecked");
-            }
-
-            ActionsHelper.addErrorToRequest(request, "return_distribution",
-                "error.com.cronos.onlinereview.actions.manageProject.Distributions.Upload.Unchecked");
         }
     }
 
@@ -633,16 +326,6 @@ public abstract class BaseProjectManagementConsoleAction extends DynamicModelDri
         setAvailableResourceRoles(request);
         setRegistrationPhaseExtensionParameters(request, phases);
         setSubmissionPhaseExtensionParameters(request, phases);
-
-        // Identifies if package name is needed
-        String rootCatalogID = (String) project.getProperty("Root Catalog ID");
-        if (!isEmpty(rootCatalogID)) {
-            String distributionScript = ConfigHelper.getDistributionScript(rootCatalogID);
-            if (!isEmpty(distributionScript)) {
-                request.setAttribute("needsPackageName", !ConfigHelper.getDefaultDistributionScript().equals(
-                    distributionScript));
-            }
-        }
 
         // Initialize the Review Feedback area
         initReviewFeedbackIntegration(request, project);
@@ -974,33 +657,5 @@ public abstract class BaseProjectManagementConsoleAction extends DynamicModelDri
             throw new BaseRuntimeException("Failed to instantiate the project payment calculator of type: "
                     + className, e);
         }
-    }
-
-    /**
-     * This interface provides an abstraction to the origin of the distribution file. It may be
-     * read directly from the file system, from memory or from an uploaded file.
-     *
-     * @author TCSASSEMBLER
-     * @version 2.0
-     */
-    protected static interface DistributionFileDescriptor {
-        /**
-         * <p>
-         * Returns the file name.
-         * </p>
-         *
-         * @return the file name.
-         */
-        public abstract String getFileName();
-
-        /**
-         * <p>
-         * Returns an input stream that will be used read the file contents.
-         * </p>
-         *
-         * @return the input stream that will be used read the file contents.
-         * @throws IOException if any error occurs while creating the input stream.
-         */
-        public abstract InputStream getInputStream() throws IOException;
     }
 }
