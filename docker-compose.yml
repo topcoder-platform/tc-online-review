@@ -38,14 +38,3 @@ services:
     environment:
       - JAVA_OPTS= -Xms1G -Xmx1G -XX:MaxPermSize=256M -server
       - TZ=America/Indiana/Indianapolis
-      - VIRTUAL_HOST=local.topcoder-dev.com
-      - VIRTUAL_PORT=8080
-  nginx-proxy:
-    image: nginxproxy/nginx-proxy
-    ports:
-      - "8880:80"
-      - "8443:443"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./local/nginx/certs:/etc/nginx/certs
-      - ./local/nginx/nginx.conf:/etc/nginx/nginx.conf:ro

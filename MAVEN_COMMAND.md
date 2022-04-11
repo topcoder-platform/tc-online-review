@@ -18,11 +18,10 @@
 
 1. replace `token.properties` to `token.properties.local` on pom.xml line 894
 2. add `127.0.0.1       local.topcoder-dev.com` to your hosts
-3. add `local/nginx/certs/*` as a trusted root authority to your browser
-4. build war dir `mvn clean package`
-5. run `docker-compose up -d` in root dir.
-6. open `https://local.topcoder-dev.com:8443` and click `login` button on top-right corner
-7. use `dok/appirio123` to login
+3. build war dir `mvn clean package`
+4. run `docker-compose up -d` in root dir.
+5. open `https://topcoder-dev.com/login` and use `dok/appirio123` to login.
+6. open `http://local.topcoder-dev.com:8080/review`
 
 ## Build docker image for dev and prod
 
@@ -32,9 +31,3 @@
 1. build war dir `mvn clean package`
 2. run `docker build -t tc-online-review:dev -f ECSDockerfile --platform=linux/amd64 .` in root dir.
 3. run `docker-compose -f docker-compose-dev.yml up -d` in root dir to start docker container.
-
-## Note
-
-You need comment `login` function when deploying locally.
-
-- comment src/main/java/com/cronos/onlinereview/util/AuthorizationHelper.java line145-151 and then `return 132456L;`
