@@ -20,9 +20,9 @@ Add ./target/review /root/jboss-4.0.2/server/default/deploy/review.war
 RUN mkdir -p /root/web/conf
 Add ./conf/distribution_scripts /root/web/conf/distribution_scripts
 RUN mkdir -p /root/temp/dist-gen
-RUN mkdir -p /nfs_shares/tcssubmissions
-RUN mkdir -p /nfs_shares/studiofiles/submissions
-RUN mkdir -p /nfs_shares/tcs-downloads
+# RUN mkdir -p /nfs_shares/tcssubmissions
+# RUN mkdir -p /nfs_shares/studiofiles/submissions
+# RUN mkdir -p /nfs_shares/tcs-downloads
 
 ## tokenized
 Add ./jboss_files/deploy/tcs_informix-ds.xml /root/
