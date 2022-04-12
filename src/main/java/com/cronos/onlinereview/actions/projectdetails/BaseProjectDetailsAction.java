@@ -846,7 +846,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             message.addToAddress(recipient, TCSEmailMessage.TO);
         }
         message.setContentType("text/html");
-        EmailEngine.send(message);
+        ActionsHelper.sendEmail(message);
     }
 
     /**

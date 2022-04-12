@@ -6,6 +6,7 @@ package com.cronos.onlinereview.phases;
 import java.text.MessageFormat;
 
 import com.cronos.onlinereview.external.ExternalUser;
+import com.cronos.onlinereview.util.ActionsHelper;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.phase.PhaseHandlingException;
@@ -109,7 +110,7 @@ public class ReviewResultNotification {
         message.setBody(emailContent);
         message.setFromAddress(winnersEmailFromAddress);
         message.setToAddress(user.getEmail(), TCSEmailMessage.TO);
-        EmailEngine.send(message);
+        ActionsHelper.sendEmail(message);
     }
 
     private Resource getResourceForProjectAndUser(Project project, Long userId) throws PhaseManagementException {

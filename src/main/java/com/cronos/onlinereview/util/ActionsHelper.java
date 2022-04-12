@@ -29,6 +29,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -104,6 +106,9 @@ import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.data.Group;
 import com.topcoder.management.scorecard.data.Scorecard;
 import com.topcoder.management.scorecard.data.Section;
+import com.topcoder.message.email.EmailEngine;
+import com.topcoder.message.email.SendingException;
+import com.topcoder.message.email.TCSEmailMessage;
 import com.topcoder.project.phases.Dependency;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
@@ -123,6 +128,7 @@ import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.LocalFileUpload;
 import com.topcoder.shared.util.ApplicationServer;
 import com.topcoder.shared.util.TCContext;
+import com.topcoder.util.config.ConfigManagerException;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.util.errorhandling.BaseRuntimeException;
 import com.topcoder.util.log.Level;
@@ -221,6 +227,8 @@ public class ActionsHelper {
      * FileUpload namespace fro studio challenge
      */
     public static final String LOCAL_STUDIO_STORAGE_NAMESPACE = "com.topcoder.servlet.request.LocalStudioFileUpload";
+
+    private static final ExecutorService THREAD_POOL = Executors.newFixedThreadPool(50);
 
     /**
      * AWS S3 client
@@ -3877,5 +3885,20 @@ public class ActionsHelper {
         buf.append(System.getProperty("file.separator"));
         buf.append(parameter);
         return buf.toString();
+    }
+
+    public static void sendEmail(final TCSEmailMessage message) {
+        THREAD_POOL.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    EmailEngine.send(message);
+                } catch (ConfigManagerException e) {
+                    log.log(Level.ERROR, "Send email with config error: " + e.getMessage());
+                } catch (SendingException e) {
+                    log.log(Level.ERROR, "Send email with sending error: " + e.getMessage());
+                }
+            }
+        });
     }
 }
