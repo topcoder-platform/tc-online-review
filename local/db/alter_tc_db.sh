@@ -37,6 +37,7 @@ myfatal $? "*** Startup of ${INFORMIXSERVER} FAILED***"
 echo "*** Startup of ${INFORMIXSERVER} SUCCESS ***"
 
 echo "alter table 'informix'.upload add (url varchar(100))" | dbaccess tcs_catalog > /dev/null 2>&1
+echo "update security_user set password='7dGdrcJuCUm4M9JZLae12Q=='" | dbaccess common_oltp > /dev/null 2>&1
 myfatal $? "ALTER TABLE FAILED"
 
 onmode -ky

@@ -4,6 +4,10 @@ services:
     image: "redis:3.2.10"
     ports:
       - "6379:6379"
+  tc-fakesmtp:
+    image: munkyboy/fakesmtp
+    ports:
+      - "1025:25"
   tc-informix:
     image: "tc-informix:latest"
     platform: linux/amd64
@@ -25,6 +29,8 @@ services:
     image: tc-online-review:latest
     depends_on:
       - tc-informix
+      - tc-cache
+      - tc-fakesmtp
     build:
       context: .
     ports:
