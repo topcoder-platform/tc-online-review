@@ -353,7 +353,7 @@ public class SaveLateDeliverableAction extends BaseLateDeliverableAction {
             message.addToAddress(ccRecipient, TCSEmailMessage.CC);
         }
         message.setContentType("text/html");
-        ActionsHelper.sendEmail(message);
+        EmailEngine.send(message);
     }
 
     /**

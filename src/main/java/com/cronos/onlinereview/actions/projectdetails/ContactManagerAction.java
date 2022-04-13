@@ -187,7 +187,7 @@ public class ContactManagerAction extends BaseProjectDetailsAction {
         message.setContentType("text/html");
 
         // Send an email
-        ActionsHelper.sendEmail(message);
+        EmailEngine.send(message);
         setPid(project.getId());
 
         return Constants.SUCCESS_FORWARD_NAME;

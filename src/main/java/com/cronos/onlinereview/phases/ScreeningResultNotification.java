@@ -10,7 +10,6 @@ import java.util.Date;
 
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
-import com.cronos.onlinereview.util.ActionsHelper;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.SubmissionStatus;
 import com.topcoder.management.deliverable.SubmissionType;
@@ -221,7 +220,7 @@ public class ScreeningResultNotification {
         message.setFromAddress(emailFromAddress);
         message.setToAddress(user.getEmail(), TCSEmailMessage.TO);
         message.setContentType("text/html");
-        ActionsHelper.sendEmail(message);
+        EmailEngine.send(message);
     }
 
     /**
