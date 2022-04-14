@@ -50,11 +50,6 @@ public class ViewScorecardAction extends BaseViewOrExportGenericReviewAction {
 
             LoggingHelper.logAction(request);
 
-            CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-            if (!verification.isSuccessful()) {
-                return verification.getResult();
-            }
-
             // Gather the roles the user has for current request
             AuthorizationHelper.gatherUserRoles(request);
 

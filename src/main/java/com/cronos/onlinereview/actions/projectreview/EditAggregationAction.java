@@ -55,13 +55,8 @@ public class EditAggregationAction extends BaseProjectReviewAction {
     public String execute() throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         // Verify that certain requirements are met before proceeding with the Action
-        verification = checkForCorrectReviewId(request, Constants.PERFORM_AGGREGATION_PERM_NAME);
+        CorrectnessCheckResult verification = checkForCorrectReviewId(request, Constants.PERFORM_AGGREGATION_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getResult();

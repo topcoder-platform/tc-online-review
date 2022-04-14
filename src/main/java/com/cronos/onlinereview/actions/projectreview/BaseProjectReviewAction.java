@@ -574,12 +574,6 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
      * @throws BaseException if an unexpected error occurs.
      */
     protected String createGenericReview(HttpServletRequest request, String reviewType) throws BaseException {
-
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         String permName;
         String phaseName;
         // Determine permission name and phase name from the review type
@@ -613,6 +607,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
 
         // Verify that certain requirements are met before proceeding with the Action
         // If any error has occurred, return action forward contained in the result bean
+        CorrectnessCheckResult verification = null;
         if (phaseName.equals(Constants.POST_MORTEM_PHASE_NAME)) {
             verification = checkForCorrectProjectId(request, permName);
         } else {
@@ -741,11 +736,6 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
      */
     protected String editGenericReview(HttpServletRequest request, String reviewType) throws BaseException {
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         String scorecardTypeName;
         // Determine permission name and phase name from the review type
         boolean isSpecReviewPhase = false;
@@ -769,7 +759,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         }
 
         // Verify that certain requirements are met before proceeding with the Action
-        verification =
+        CorrectnessCheckResult verification =
                 checkForCorrectReviewId(request, Constants.EDIT_MY_REVIEW_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
@@ -934,10 +924,6 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
      * @throws BaseException if any error.
      */
     protected String saveGenericReview(DynamicModel reviewForm, HttpServletRequest request, String reviewType) throws BaseException {
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
 
         String permName;
         String phaseName;
@@ -984,7 +970,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         }
 
         // Verify that certain requirements are met before proceeding with the Action
-        verification = null;
+        CorrectnessCheckResult verification = null;
         if (request.getParameter("rid") != null) {
             verification = checkForCorrectReviewId(request, permName);
         }

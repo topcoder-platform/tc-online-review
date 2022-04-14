@@ -55,12 +55,6 @@ public class EditReviewFeedbackAction extends BaseProjectManagementConsoleAction
     public String execute() throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false,
-                request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         request.setAttribute("activeTabIdx", 3);
         request.setAttribute("toEdit", Boolean.TRUE);
 
@@ -69,7 +63,7 @@ public class EditReviewFeedbackAction extends BaseProjectManagementConsoleAction
 
         // Check whether the user has the permission to perform this action. Also check that current user is granted a
         // permission to access the details for requested project
-        verification = ActionsHelper.checkForCorrectProjectId(this, request,
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(this, request,
                 Constants.VIEW_PROJECT_MANAGEMENT_CONSOLE_PERM_NAME, false);
 
         if (!verification.isSuccessful()) {

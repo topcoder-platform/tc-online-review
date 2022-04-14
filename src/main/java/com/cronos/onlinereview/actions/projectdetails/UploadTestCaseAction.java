@@ -67,16 +67,11 @@ public class UploadTestCaseAction extends BaseProjectDetailsAction {
     public String execute() throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         // Determine if this request is a post back
         boolean postBack = (request.getParameter("postBack") != null);
 
         // Verify that certain requirements are met before processing with the Action
-        verification = ActionsHelper.checkForCorrectProjectId(
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
                 this, request, Constants.UPLOAD_TEST_CASES_PERM_NAME, postBack);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {

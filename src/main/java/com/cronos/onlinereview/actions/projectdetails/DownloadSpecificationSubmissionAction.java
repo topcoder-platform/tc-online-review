@@ -49,13 +49,8 @@ public class DownloadSpecificationSubmissionAction extends BaseProjectDetailsAct
     public String execute() throws BaseException, IOException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         // Verify that certain requirements are met before processing with the Action
-        verification = checkForCorrectUploadId(request, "ViewSubmission");
+        CorrectnessCheckResult verification = checkForCorrectUploadId(request, "ViewSubmission");
         if (!verification.isSuccessful()) {
             return verification.getResult();
         }

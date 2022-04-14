@@ -128,7 +128,6 @@ import com.topcoder.util.errorhandling.BaseRuntimeException;
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
 import com.topcoder.util.log.LogManager;
-import com.topcoder.web.common.throttle.Throttle;
 import com.topcoder.web.ejb.forums.Forums;
 import com.topcoder.web.ejb.forums.ForumsHome;
 
@@ -190,22 +189,6 @@ public class ActionsHelper {
 
     /** constant for "Closed" phase status. */
     private static final String PHASE_STATUS_CLOSED = "Closed";
-
-    /**
-     * <p>
-     * Protects from throttling in a short term. Allows for no more than 20 requests
-     * per 5 seconds.
-     * </p>
-     */
-    private static final Throttle shortThrottle = new Throttle(20, 5000);
-
-    /**
-     * <p>
-     * Protects the page from throttling in a long term. Allows for no more than 300
-     * requests per 3000 minutes, which is 1 request per 10 minutes in average.
-     * </p>
-     */
-    private static final Throttle longThrottle = new Throttle(300, 300 * (10 * 60 * 1000));
 
     /**
      * The AWS credentials file.
@@ -422,37 +405,6 @@ public class ActionsHelper {
                     + "' stored in the request scope, or the attrubute stored is null.");
         }
         return obj;
-    }
-
-    /**
-     * This method is used for checking the throttle.
-     * 
-     * @param checkLongThrottle if this is a long throttle
-     * @param request           the servlet request
-     * @param textProvider      the text provider
-     * @return the result of this checking
-     * @throws BaseException if any error
-     */
-    public static CorrectnessCheckResult checkThrottle(boolean checkLongThrottle, HttpServletRequest request,
-            TextProvider textProvider) throws BaseException {
-        CorrectnessCheckResult result = new CorrectnessCheckResult();
-
-        // I-137967(https://appirio.my.salesforce.com/a3v50000000D2Lt)
-        // loginfo.append(request.getRemoteAddr());
-        String remoteAddr = request.getHeader("X-Forwarded-For");
-        if (remoteAddr == null || remoteAddr.trim().length() == 0) {
-            remoteAddr = request.getRemoteAddr();
-        }
-
-        if (shortThrottle.throttle(remoteAddr)) {
-            result.setResult(produceErrorReport(textProvider, request, null, "Error.RequestRateExceeded", false));
-        }
-
-        if (checkLongThrottle && longThrottle.throttle(remoteAddr)) {
-            result.setResult(produceErrorReport(textProvider, request, null, "Error.RequestRateExceeded", false));
-        }
-
-        return result;
     }
 
     /**

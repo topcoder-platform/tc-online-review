@@ -96,12 +96,6 @@ public class ListProjectsAction extends BaseProjectAction {
 
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(true, request, this);
-
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
 

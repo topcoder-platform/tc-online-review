@@ -113,11 +113,6 @@ public class SaveReviewPaymentsAction extends BaseProjectManagementConsoleAction
     public String execute() throws Exception {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         request.setAttribute("activeTabIdx", 4);
 
         // Gather the roles the user has for current request
@@ -126,7 +121,7 @@ public class SaveReviewPaymentsAction extends BaseProjectManagementConsoleAction
         // Check whether the user has the permission to perform this action. If not then redirect the request
         // to log-in page or report about the lack of permissions. Also check that current user is granted a
         // permission to access the details for requested project
-        verification = ActionsHelper.checkForCorrectProjectId(this, request,
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(this, request,
                 Constants.PROJECT_MANAGEMENT_PERM_NAME, false);
         if (!verification.isSuccessful()) {
             return verification.getResult();

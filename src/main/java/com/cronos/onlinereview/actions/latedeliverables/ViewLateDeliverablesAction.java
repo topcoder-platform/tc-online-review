@@ -157,11 +157,6 @@ public class ViewLateDeliverablesAction extends BaseLateDeliverableAction {
     public String execute() throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         // check user login
         if (!AuthorizationHelper.isUserLoggedIn(request)) {
             // set url for login redirect.

@@ -66,16 +66,11 @@ public class UploadSpecificationSubmissionAction extends BaseProjectDetailsActio
     public String execute() throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         // Determine if this request is a post back
         final boolean postBack = (request.getParameter("postBack") != null);
 
         // Verify that certain requirements are met before processing with the Action
-        verification = ActionsHelper.checkForCorrectProjectId(
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
             this, request, Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME,
             postBack);
 
