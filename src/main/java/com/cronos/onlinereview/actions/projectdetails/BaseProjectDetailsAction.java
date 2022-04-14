@@ -378,13 +378,8 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             long submissionType) throws BaseException, IOException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         // Verify that certain requirements are met before processing with the Action
-        verification = checkForCorrectUploadId(request, errorMessageKey);
+        CorrectnessCheckResult verification = checkForCorrectUploadId(request, errorMessageKey);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getResult();
@@ -616,16 +611,11 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             String submissionTypeName, String submitPermissionName, String phaseName) throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         // Determine if this request is a post back
         final boolean postBack = (request.getParameter("postBack") != null);
 
         // Verify that certain requirements are met before processing with the Action
-        verification = ActionsHelper.checkForCorrectProjectId(this, request, submitPermissionName, postBack);
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(this, request, submitPermissionName, postBack);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getResult();

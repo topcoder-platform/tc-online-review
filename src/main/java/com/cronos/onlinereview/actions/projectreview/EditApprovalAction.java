@@ -46,11 +46,6 @@ public class EditApprovalAction extends BaseProjectReviewAction {
     public String execute() throws BaseException{
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         String genericForward = editGenericReview(request, "Approval");
         if (Constants.SUCCESS_FORWARD_NAME.equals(genericForward)) {
             Boolean fixesRejected = null;

@@ -139,14 +139,8 @@ public abstract class BaseViewOrExportGenericReviewAction extends BaseProjectRev
      * @throws BaseException if any error
      */
     protected String viewOrExportAggregation(HttpServletRequest request, HttpServletResponse response, boolean export) throws BaseException {
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request,
-                this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         // Verify that certain requirements are met before proceeding with the Action
-        verification = checkForCorrectReviewId(request, Constants.VIEW_AGGREGATION_PERM_NAME);
+        CorrectnessCheckResult verification = checkForCorrectReviewId(request, Constants.VIEW_AGGREGATION_PERM_NAME);
 
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
@@ -260,14 +254,8 @@ public abstract class BaseViewOrExportGenericReviewAction extends BaseProjectRev
      * @throws BaseException if any error
      */
     protected String viewOrExportFinalReview(HttpServletRequest request, HttpServletResponse response, boolean export) throws BaseException {
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request,
-                this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         // Verify that certain requirements are met before proceeding with the Action
-        verification = checkForCorrectReviewId(request, Constants.VIEW_FINAL_REVIEW_PERM_NAME);
+        CorrectnessCheckResult verification = checkForCorrectReviewId(request, Constants.VIEW_FINAL_REVIEW_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getResult();
@@ -353,11 +341,6 @@ public abstract class BaseViewOrExportGenericReviewAction extends BaseProjectRev
         ActionsHelper.validateParameterNotNull(request, "request");
         ActionsHelper.validateParameterStringNotEmpty(reviewType, "reviewType");
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         String permName;
         String phaseName;
         String scorecardTypeName;
@@ -407,7 +390,7 @@ public abstract class BaseViewOrExportGenericReviewAction extends BaseProjectRev
         }
 
         // Verify that certain requirements are met before proceeding with the Action
-        verification = checkForCorrectReviewId(request, permName);
+        CorrectnessCheckResult verification = checkForCorrectReviewId(request, permName);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getResult();

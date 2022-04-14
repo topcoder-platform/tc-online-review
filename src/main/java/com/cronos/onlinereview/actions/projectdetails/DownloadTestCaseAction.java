@@ -52,13 +52,8 @@ public class DownloadTestCaseAction extends BaseProjectDetailsAction {
     public String execute() throws BaseException, IOException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         // Verify that certain requirements are met before processing with the Action
-        verification = checkForCorrectUploadId(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME);
+        CorrectnessCheckResult verification = checkForCorrectUploadId(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getResult();

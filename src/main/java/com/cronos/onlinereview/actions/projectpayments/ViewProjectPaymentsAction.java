@@ -54,14 +54,8 @@ public class ViewProjectPaymentsAction extends BaseProjectPaymentAction {
     public String execute() throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(
-                false, request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         // Verify that certain requirements are met before processing with the Action
-        verification = ActionsHelper.checkForCorrectProjectId(this, request,
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(this, request,
                 Constants.VIEW_PAYMENTS_PERM_NAME, false);
         // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {

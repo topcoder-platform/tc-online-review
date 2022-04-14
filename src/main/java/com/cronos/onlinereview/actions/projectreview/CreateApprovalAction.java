@@ -43,11 +43,6 @@ public class CreateApprovalAction extends BaseProjectReviewAction {
     public String execute() throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         String genericForward = createGenericReview(request, "Approval");
         if (Constants.SUCCESS_FORWARD_NAME.equals(genericForward)) {
             getModel().set("accept_but_require_fixes", Boolean.FALSE);

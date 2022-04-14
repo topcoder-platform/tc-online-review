@@ -206,17 +206,12 @@ public class SaveProjectAction extends BaseProjectAction {
     public String execute() throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         // Check whether user is creating new project or editing existing one
         final boolean newProject = (getModel().get("pid") == null);
         Project project = null;
 
         // Check if the user has the permission to perform this action
-        verification = null;
+        CorrectnessCheckResult verification = null;
         if (newProject) {
             // Gather the roles the user has for current request
             AuthorizationHelper.gatherUserRoles(request);

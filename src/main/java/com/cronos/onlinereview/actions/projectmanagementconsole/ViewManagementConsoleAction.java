@@ -47,17 +47,12 @@ public class ViewManagementConsoleAction extends BaseProjectManagementConsoleAct
     public String execute() throws BaseException {
         LoggingHelper.logAction(request);
 
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
 
         // Check whether the user has the permission to perform this action. Also check that current user is granted a
         // permission to access the details for requested project
-        verification = ActionsHelper.checkForCorrectProjectId(this, request,
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(this, request,
                 Constants.VIEW_PROJECT_MANAGEMENT_CONSOLE_PERM_NAME, false);
 
         if (!verification.isSuccessful()) {

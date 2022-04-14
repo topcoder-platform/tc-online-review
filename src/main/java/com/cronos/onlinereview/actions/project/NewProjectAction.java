@@ -42,13 +42,6 @@ public class NewProjectAction extends BaseProjectAction {
     public String execute() throws BaseException {
         LoggingHelper.logAction(request);
 
-        // Call the ActionsHelper.checkThrottle using new parameters
-        CorrectnessCheckResult verification = ActionsHelper.checkThrottle(false, request, this);
-
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
-        }
-
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
 
