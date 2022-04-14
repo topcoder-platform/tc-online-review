@@ -128,7 +128,6 @@ import com.topcoder.util.errorhandling.BaseRuntimeException;
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
 import com.topcoder.util.log.LogManager;
-import com.topcoder.web.common.throttle.Throttle;
 import com.topcoder.web.ejb.forums.Forums;
 import com.topcoder.web.ejb.forums.ForumsHome;
 
