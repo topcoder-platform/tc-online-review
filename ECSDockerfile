@@ -1,21 +1,21 @@
-FROM maven:3.6.1-jdk-7
 
 RUN cd /root/ \
-       && wget http://downloads.sourceforge.net/project/jboss/JBoss/JBoss-4.0.2/jboss-4.0.2.tar.gz \
-       && tar xzf jboss-4.0.2.tar.gz \
-       && rm -rf jboss-4.0.2.tar.gz
+       && wget https://github.com/wildfly/wildfly/releases/download/26.0.1.Final/wildfly-26.0.1.Final.tar.gz \
+       && tar xzf wildfly-26.0.1.Final.tar.gz \
+       && rm -rf wildfly-26.0.1.Final.tar.gz
 
-ENV JAVA_OPTS="-Xms4G -Xmx4G -XX:MaxPermSize=1G -server"
-ENV JBOSS_HOME=/root/jboss-4.0.2
-ENV PATH=$PATH:/root/jboss-4.0.2/bin
+ENV JAVA_OPTS="-Xms1G -Xmx1G -XX:MaxPermSize=256M -server"
+ENV JBOSS_HOME=/root/wildfly-26.0.1.Final
+ENV PATH=$PATH:/root/wildfly-26.0.1.Final/bin
 ENV TZ=America/Indiana/Indianapolis
 
-Add ./jboss_files/lib/ifxjdbc.jar /root/jboss-4.0.2/server/default/lib/
-Add ./web/i /root/jboss-4.0.2/server/default/deploy/jbossweb-tomcat55.sar/ROOT.war/i
-Add ./web/css /root/jboss-4.0.2/server/default/deploy/jbossweb-tomcat55.sar/ROOT.war/css
-Add ./web/js /root/jboss-4.0.2/server/default/deploy/jbossweb-tomcat55.sar/ROOT.war/js
+Add ./local/Docker_files/ifxjdbc.jar /root/wildfly-26.0.1.Final/standalone/deployments/
+Add ./web/i /root/wildfly-26.0.1.Final/welcome-content/i
+Add ./web/css /root/wildfly-26.0.1.Final/welcome-content/css
+Add ./web/js /root/wildfly-26.0.1.Final/welcome-content/js
 
-Add ./target/review /root/jboss-4.0.2/server/default/deploy/review.war
+Add ./target/review /root/wildfly-26.0.1.Final/standalone/deployments/review.war
+RUN touch /root/wildfly-26.0.1.Final/standalone/deployments/review.war.dodeploy
 
 RUN mkdir -p /root/web/conf
 Add ./conf/distribution_scripts /root/web/conf/distribution_scripts
@@ -26,9 +26,9 @@ RUN mkdir -p /nfs_shares/tcs-downloads
 
 ## tokenized
 Add ./jboss_files/deploy/tcs_informix-ds.xml /root/
-Add ./token.properties /root/
-RUN cat /root/token.properties | grep -v '^#' | grep -v '^$'| sed s/\\//\\\\\\//g | awk -F '=' '{print "s/@"$1"@/"$2"/g"}' | sed -f /dev/stdin /root/tcs_informix-ds.xml >> /root/jboss-4.0.2/server/default/deploy/informix-ds.xml
+Add ./token.properties /root/token.properties
+RUN cat /root/token.properties | grep -v '^#' | grep -v '^$'| sed s/\\//\\\\\\//g | awk -F '=' '{print "s/@"$1"@/"$2"/g"}' | sed -f /dev/stdin /root/tcs_informix-ds.xml >> /root/wildfly-26.0.1.Final/standalone/deployments/informix-ds.xml
 RUN rm /root/token.properties
 RUN rm /root/tcs_informix-ds.xml
 
-CMD ["/root/jboss-4.0.2/bin/run.sh","-DFOREGROUND"]
+CMD ["/root/wildfly-26.0.1.Final/bin/standalone.sh","-DFOREGROUND"]

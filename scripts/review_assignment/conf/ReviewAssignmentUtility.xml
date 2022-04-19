@@ -342,7 +342,7 @@
                 </Property>
 
                 <Property name="forumsBeanFactory">
-                    <Value>org.jnp.interfaces.NamingContextFactory</Value>
+                    <Value></Value>
                 </Property>
 
                 <Property name="forumsBeanName">

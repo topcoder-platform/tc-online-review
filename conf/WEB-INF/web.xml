@@ -6,10 +6,6 @@
          version="2.4">
 
     <display-name>Online Review</display-name>
-	<init-param>
-	      <param-name>convertNull</param-name>
-	      <param-value>true</param-value>
-	</init-param>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
