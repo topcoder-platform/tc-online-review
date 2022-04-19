@@ -48,8 +48,8 @@ context.security.url=localhost:1099
 # cache.host_url=env.topcoder.com:2199
 
 # typical windows configuration (cache doesn't work in local build)
-cache.host_url=tc-cache:2199
-redis.host_url=redis://tc-cache:6379
+cache.host_url=localhost:2199
+redis.host_url=redis://localhost:6379
 
 #######################################
 ## Parameters used by EmailEngine.xml #

@@ -35,6 +35,7 @@ services:
       context: .
     ports:
       - 8080:8080
+      - 9990:9990
     environment:
       - JAVA_OPTS= -Xms1G -Xmx1G -XX:MaxPermSize=256M -server
       - TZ=America/Indiana/Indianapolis

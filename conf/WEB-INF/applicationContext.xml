@@ -41,7 +41,7 @@
 
     <bean id="catalogDataAccess" class="com.cronos.onlinereview.dataaccess.CatalogDataAccess">
         <property name="idGeneratorDB" ref="catalogIdGeneratorDB"/>
-        <property name="idGeneratorDataSourceName" value="java:TCS_CATALOG"/>
+        <property name="idGeneratorDataSourceName" value="java:jboss/datasources/TCS_CATALOG"/>
         <property name="idGeneratorTableName" value="sequence_object"/>
         <property name="idGeneratorUserDefColumnName" value="name"/>
         <property name="idGeneratorHighValueColumnName" value="current_value"/>
@@ -51,7 +51,7 @@
     </bean>
     
     <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:TCS_CATALOG" />
+        <property name="jndiName" value="java:jboss/datasources/TCS_CATALOG" />
     </bean>
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
