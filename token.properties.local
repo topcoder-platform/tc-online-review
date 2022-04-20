@@ -161,6 +161,7 @@ thurgood.username=Thurgood
 thurgood.password=password
 topcoder_api_base_url=http://api.topcoder-dev.com/v2/develop/challenges
 topcoder_api_base_url_v3=http://api.topcoder-dev.com/v3/challenges
+topcoder_api_base_url_v5=https://api.topcoder-dev.com/v5
 amazon_sns_arn=arn:aws:sns:us-east-1:766830814403:community-challenge-create
 amazonSNSAccessKey=AKIAIZNXS3HERHTLVQKA
 amazonSNSSecretKey=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
