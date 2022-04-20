@@ -49,7 +49,7 @@ context.security.url=localhost:1099
 
 # typical windows configuration (cache doesn't work in local build)
 cache.host_url=localhost:2199
-redis.host_url=redis://localhost:6379
+redis.host_url=redis://tc-cache:6379
 
 #######################################
 ## Parameters used by EmailEngine.xml #
@@ -151,9 +151,8 @@ localFileUploadDir=/nfs_shares/tcssubmissions
 localStudioFileUploadDir=/nfs_shares/studiofiles/submissions
 catalogOutputDir=/nfs_shares/tcs-downloads
 distributionToolOutputDir=/root/temp/dist-gen
-#distributionScriptsBase=/root/jboss-4.0.2/server/default/deploy/review.war/WEB-INF/classes/distribution_scripts/unix
 distributionScriptsBase=/root/web/conf/distribution_scripts/unix
-exttemplatesdir=/root/jboss-4.0.2/server/default/deploy/review.war/WEB-INF/classes/templates
+exttemplatesdir=/root/wildfly-26.0.1.Final/standalone/deployments/review.war/WEB-INF/classes/templates
 pactJNDIAddress=jnp://localhost:1099
 adminUsers=132456
 thurgood.api.key=12345678901234567890
