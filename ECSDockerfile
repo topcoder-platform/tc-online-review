@@ -31,4 +31,4 @@ RUN cat /root/token.properties | grep -v '^#' | grep -v '^$'| sed s/\\//\\\\\\//
 RUN rm /root/token.properties
 RUN rm /root/tcs_informix-ds.xml
 
-CMD ["/root/wildfly-26.0.1.Final/bin/standalone.sh","-DFOREGROUND"]
+CMD ["/root/wildfly-26.0.1.Final/bin/standalone.sh", "-b", "0.0.0.0","-DFOREGROUND"]
