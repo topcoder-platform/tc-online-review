@@ -31,4 +31,7 @@ RUN cat /root/token.properties | grep -v '^#' | grep -v '^$'| sed s/\\//\\\\\\//
 RUN rm /root/token.properties
 RUN rm /root/tcs_informix-ds.xml
 
+## add admin account
+RUN /root/wildfly-26.0.1.Final/bin/add-user.sh -u 'admin' -p 'password1!'
+
 CMD ["/root/wildfly-26.0.1.Final/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0","-DFOREGROUND"]
