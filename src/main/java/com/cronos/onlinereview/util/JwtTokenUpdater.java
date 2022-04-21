@@ -101,11 +101,13 @@ public class JwtTokenUpdater {
         	if (tokenSplit.length <= 1) {
         		valid = false;
         	} else {
-        		//StringBuffer payloadStr = new StringBuffer(tokenSplit[1]);
-                /*while (payloadStr.length() % 4 != 0) {
+        		/*StringBuffer payloadStr = new StringBuffer(tokenSplit[1]);
+                while (payloadStr.length() % 4 != 0) {
                 	payloadStr.append('=');
-                }*/
-                //String payload = new String(Base64.decode(payloadStr.toString().getBytes(StandardCharsets.UTF_8)));
+                }
+                
+                String payload = new String(Base64.decode(payloadStr.toString().getBytes(StandardCharsets.UTF_8)));
+                */
 
                 String payload = new String(Base64.decodeBase64(tokenSplit[1]), "UTF-8");
                 JsonNode jsonNode = objectMapper.readValue(payload.toString(), JsonNode.class);
