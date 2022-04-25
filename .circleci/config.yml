@@ -31,7 +31,7 @@ install_dependency: &install_dependency
 install_deploysuite: &install_deploysuite
     name: Installation of install_deploysuite.
     command: |
-      git clone --branch v1.4.2 https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
+      git clone --branch v1.4.8 https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
       cp ./../buildscript/master_deploy.sh .
       cp ./../buildscript/buildenv.sh .
       cp ./../buildscript/awsconfiguration.sh .
@@ -175,12 +175,13 @@ workflows:
             branches:
               ignore:
                 - master
+                - master-maven
 
       - build-prod:
           context : org-global      
           filters:
             branches:
-              only: [ master ]
+              only: [ master-maven ]
 
       - deployDev:
           context : org-global
@@ -198,4 +199,4 @@ workflows:
           filters: &filters-prod
             branches:
               only:
-                - master
+                - master-maven
