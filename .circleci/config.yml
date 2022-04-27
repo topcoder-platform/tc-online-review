@@ -176,6 +176,7 @@ workflows:
               ignore:
                 - master
                 - master-maven
+                - migrate-v5-groups
 
       - build-prod:
           context : org-global      
@@ -191,6 +192,7 @@ workflows:
             branches:
               only:
                 - dev-maven
+                - migrate-v5-groups
 
       - deployProd:
           context : org-global
