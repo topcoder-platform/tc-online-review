@@ -55,7 +55,7 @@
     </statement>
   </datasource>
   <datasource connectable="false" enabled="true" jndi-name="java:jboss/datasources/DW" jta="true" pool-name="DW" spy="false" use-ccm="true" use-java-context="true">
-    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/topcoder_dw:INFORMIXSERVER=@database.INFORMIXSERVER@;IFX_USE_STRENC=true</connection-url>
+    <connection-url>jdbc:informix-sqli://@dataware.server@:@dataware.port@/topcoder_dw:INFORMIXSERVER=@dataware.INFORMIXSERVER@;IFX_USE_STRENC=true</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <driver>ifxjdbc.jar</driver>
     <new-connection-sql>set lock mode to wait 5</new-connection-sql>
@@ -66,8 +66,8 @@
       <flush-strategy>FailingConnectionOnly</flush-strategy>
     </pool>
     <security>
-      <user-name>@database.username@</user-name>
-      <password>@database.password@</password>
+      <user-name>@dataware.username@</user-name>
+      <password>@dataware.password@</password>
     </security>
     <validation>
       <check-valid-connection-sql>select '1' from dual</check-valid-connection-sql>
@@ -81,7 +81,7 @@
     </statement>
   </datasource>
   <datasource connectable="false" enabled="true" jndi-name="java:jboss/datasources/TCS_DW" jta="true" pool-name="TCS_DW" spy="false" use-ccm="true" use-java-context="true">
-    <connection-url>jdbc:informix-sqli://@database.server@:@database.port@/tcs_dw:INFORMIXSERVER=@database.INFORMIXSERVER@;IFX_USE_STRENC=true</connection-url>
+    <connection-url>jdbc:informix-sqli://@dataware.server@:@dataware.port@/tcs_dw:INFORMIXSERVER=@dataware.INFORMIXSERVER@;IFX_USE_STRENC=true</connection-url>
     <driver-class>com.informix.jdbc.IfxDriver</driver-class>
     <driver>ifxjdbc.jar</driver>
     <new-connection-sql>set lock mode to wait 5</new-connection-sql>
@@ -92,8 +92,8 @@
       <flush-strategy>FailingConnectionOnly</flush-strategy>
     </pool>
     <security>
-      <user-name>@database.username@</user-name>
-      <password>@database.password@</password>
+      <user-name>@dataware.username@</user-name>
+      <password>@dataware.password@</password>
     </security>
     <validation>
       <check-valid-connection-sql>select '1' from dual</check-valid-connection-sql>
