@@ -21,7 +21,7 @@
                         </Property>
                         <Property name="parameters">
                             <Property name="jndi_name">
-                                <Value>java:TCS_CATALOG</Value>
+                                <Value>java:jboss/datasources/TCS_CATALOG</Value>
                             </Property>
                         </Property>
                     </Property>

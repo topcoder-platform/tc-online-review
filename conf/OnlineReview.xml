@@ -18,7 +18,7 @@
                 </Property>
                 <Property name="parameters">
                     <Property name="jndi_name">
-                        <Value>java:JTS_TCS_CATALOG</Value>
+                        <Value>java:jboss/datasources/JTS_TCS_CATALOG</Value>
                     </Property>
                 </Property>
             </Property>
@@ -28,7 +28,7 @@
                 </Property>
                 <Property name="parameters">
                     <Property name="jndi_name">
-                        <Value>java:TimeDS</Value>
+                        <Value>java:jboss/datasources/TimeDS</Value>
                     </Property>
                 </Property>
             </Property>
@@ -38,7 +38,7 @@
                 </Property>
                 <Property name="parameters">
                     <Property name="jndi_name">
-                        <Value>java:OLTP</Value>
+                        <Value>java:jboss/datasources/OLTP</Value>
                     </Property>
                 </Property>
             </Property>
@@ -5441,7 +5441,7 @@
                     </Property>
                     <Property name="parameters">
                         <Property name="jndi_name">
-                            <Value>java:JTS_TCS_CATALOG</Value>
+                            <Value>java:jboss/datasources/JTS_TCS_CATALOG</Value>
                         </Property>
                     </Property>
                 </Property>
@@ -5484,7 +5484,7 @@
                             </Property>
                             <Property name="parameters">
                                 <Property name="jndi_name">
-                                    <Value>java:JTS_TCS_CATALOG</Value>
+                                    <Value>java:jboss/datasources/JTS_TCS_CATALOG</Value>
                                 </Property>
                             </Property>
                         </Property>
@@ -5533,7 +5533,7 @@
                             </Property>
                             <Property name="parameters">
                                 <Property name="jndi_name">
-                                    <Value>java:JTS_TCS_CATALOG</Value>
+                                    <Value>java:jboss/datasources/JTS_TCS_CATALOG</Value>
                                 </Property>
                             </Property>
                         </Property>
@@ -5566,7 +5566,7 @@
                         </Property>
                         <Property name="parameters">
                             <Property name="jndi_name">
-                                <Value>java:JTS_TCS_CATALOG</Value>
+                                <Value>java:jboss/datasources/JTS_TCS_CATALOG</Value>
                             </Property>
                         </Property>
                     </Property>

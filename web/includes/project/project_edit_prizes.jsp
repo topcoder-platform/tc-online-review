@@ -35,11 +35,11 @@
         <td class="value"></td>
         <td class="value">
             <label>${"$"}</label>
-            <input class="inputBoxDuration" type="text" name="contest_prizes_amount_dump[]"/>
+            <input class="inputBoxDuration" type="text" name="contest_prizes_amount_dump"/>
             <span name="prize_amount_validation_msg" style="display: none" class="error"></span>
         </td>
         <td class="value">
-            <select class="inputBox" <c:if test="${not newProject and typeId ne 3}">disabled="disabled" </c:if> name="contest_prizes_num_dump[]">
+            <select class="inputBox" <c:if test="${not newProject and typeId ne 3}">disabled="disabled" </c:if> name="contest_prizes_num_dump">
                 <c:forEach begin="1" end="10" var="index">
                     <option value="${index}">${index}</option>
                 </c:forEach>
@@ -100,11 +100,11 @@
         <td class="value"></td>
         <td class="value">
             <label>${"$"}</label>
-            <input class="inputBoxDuration" type="text" name="checkpoint_prizes_amount_dump[]"/>
+            <input class="inputBoxDuration" type="text" name="checkpoint_prizes_amount_dump"/>
             <span name="prize_amount_validation_msg" style="display: none" class="error"></span>
         </td>
         <td class="value">
-            <select class="inputBox" name="checkpoint_prizes_num_dump[]">
+            <select class="inputBox" name="checkpoint_prizes_num_dump">
                 <c:forEach begin="1" end="10" var="index">
                     <option value="${index}">${index}</option>
                 </c:forEach>

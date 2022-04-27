@@ -6,7 +6,7 @@
 	<persistence-unit name="ContestEligibilityPersistence"
 		transaction-type="JTA">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		<jta-data-source>java:/DS</jta-data-source>
+		<jta-data-source>java:jboss/datasources/DS</jta-data-source>
 		<properties>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.InformixDialect" />
 			<property name="hibernate.transaction.factory_class"

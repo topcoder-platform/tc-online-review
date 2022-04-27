@@ -2,6 +2,6 @@
 <jboss-web>
   <resource-ref>
     <res-ref-name>jdbc/DefaultDS</res-ref-name>
-    <jndi-name>java:DS</jndi-name>
+    <jndi-name>java:jboss/datasources/DS</jndi-name>
   </resource-ref>
 </jboss-web>
