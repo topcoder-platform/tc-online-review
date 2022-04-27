@@ -176,6 +176,7 @@ workflows:
               ignore:
                 - master
                 - master-maven
+                - resource-check
 
       - build-prod:
           context : org-global      
@@ -191,6 +192,7 @@ workflows:
             branches:
               only:
                 - dev-maven
+                - resource-check
 
       - deployProd:
           context : org-global
