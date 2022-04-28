@@ -1,3 +1,4 @@
+FROM maven:3.6.1-jdk-8
 
 RUN cd /root/ \
        && wget https://github.com/wildfly/wildfly/releases/download/26.0.1.Final/wildfly-26.0.1.Final.tar.gz \
