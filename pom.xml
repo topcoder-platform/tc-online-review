@@ -899,7 +899,7 @@
                 <version>3.3.2</version>
                 <configuration>
                     <filters>
-                        <filter>token.properties.local</filter>
+                        <filter>token.properties</filter>
                     </filters>
                     <webResources>
                         <resource>
