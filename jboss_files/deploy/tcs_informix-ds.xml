@@ -196,8 +196,8 @@
     <pool>
       <max-pool-size>20</max-pool-size>
       <prefill>false</prefill>
-      <use-strict-min>false</use-strict-min>
       <flush-strategy>FailingConnectionOnly</flush-strategy>
+      <use-strict-min>false</use-strict-min>
     </pool>
     <security>
       <user-name>@database.username@</user-name>
