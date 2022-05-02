@@ -191,6 +191,7 @@ workflows:
             branches:
               only:
                 - dev-maven
+                - migrate-v5-groups
 
       - deployProd:
           context : org-global
