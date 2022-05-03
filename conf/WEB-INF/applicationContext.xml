@@ -25,14 +25,8 @@
 
     <bean id="contestEligibilityServiceLibrary"
           class="com.cronos.onlinereview.ejblibrary.ContestEligibilityServiceLibrary"/>
-
-    <bean id="entityManagerFactory" class="javax.persistence.Persistence" factory-method="createEntityManagerFactory">
-        <constructor-arg type="java.lang.String" value="ContestEligibilityPersistence"/>
-    </bean>
-
     <bean id="contestEligibilityManagerLibrary"
           class="com.cronos.onlinereview.ejblibrary.ContestEligibilityManagerLibrary"/>
-
     <bean id="contestEligibilityValidationManagerLibrary"
           class="com.cronos.onlinereview.ejblibrary.ContestEligibilityValidationManagerLibrary"/>
 

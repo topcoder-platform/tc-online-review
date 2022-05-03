@@ -8,8 +8,6 @@ import com.topcoder.service.contest.eligibility.dao.ContestEligibilityManager;
 import com.topcoder.service.contest.eligibility.dao.ContestEligibilityManagerBean;
 import com.topcoder.service.contest.eligibility.dao.ContestEligibilityPersistenceException;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import java.util.List;
 import java.util.Set;
 
@@ -35,7 +33,6 @@ public class ContestEligibilityManagerLibrary implements ContestEligibilityManag
      */
     public ContestEligibilityManagerLibrary() {
         Extender extender = new Extender();
-        extender.initialize();
         this.bean = extender;
     }
 
@@ -110,25 +107,7 @@ public class ContestEligibilityManagerLibrary implements ContestEligibilityManag
          * <p>Constructs new <code>Extender</code> instance. This implementation does nothing.</p>
          */
         private Extender() {
-        }
-
-        /**
-         * Handle the post-construct event. It will initialize the logger.
-         */
-        @Override
-        protected void initialize() {
-            super.initialize();
-        }
-
-        /**
-         * <p> Returns the <code>EntityManager</code> looked up from the session context. </p>
-         *
-         * @return the EntityManager looked up from the session context
-         * @throws ContestEligibilityPersistenceException if fail to get the EntityManager from the sessionContext.
-         */
-        protected EntityManager getEntityManager() throws ContestEligibilityPersistenceException {
-            EntityManagerFactory emf = SpringContextProvider.getEntityManagerFactory();
-            return emf.createEntityManager();
+            super();
         }
     }
 }

@@ -37,9 +37,7 @@ public class ContestEligibilityServiceLibrary implements ContestEligibilityServi
     public ContestEligibilityServiceLibrary() {
         Extender extender = new Extender();
         extender.setContestEligibilityManager(new ContestEligibilityManagerBean());
-        ContestEligibilityValidationManagerBean cem = new ContestEligibilityValidationManagerBean();
-        cem.initialize();
-        extender.setContestEligibilityValidationManager(cem);
+        extender.setContestEligibilityValidationManager(new ContestEligibilityValidationManagerBean());
         this.bean = extender;
     }
 
