@@ -7,9 +7,11 @@ import java.util.Set;
 
 import com.cronos.onlinereview.util.EJBLibraryServicesLocator;
 import com.topcoder.service.contest.eligibility.dao.ContestEligibilityManager;
+import com.topcoder.service.contest.eligibility.dao.ContestEligibilityManagerBean;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityService;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityServiceBean;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidationManager;
+import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidationManagerBean;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
 
 /**
@@ -34,9 +36,8 @@ public class ContestEligibilityServiceLibrary implements ContestEligibilityServi
      */
     public ContestEligibilityServiceLibrary() {
         Extender extender = new Extender();
-        extender.setContestEligibilityManager(EJBLibraryServicesLocator.getContestEligibilityManager());
-        extender.setContestEligibilityValidationManager(
-            EJBLibraryServicesLocator.getContestEligibilityValidationManager());
+        extender.setContestEligibilityManager(new ContestEligibilityManagerBean());
+        extender.setContestEligibilityValidationManager(new ContestEligibilityValidationManagerBean());
         this.bean = extender;
     }
 
