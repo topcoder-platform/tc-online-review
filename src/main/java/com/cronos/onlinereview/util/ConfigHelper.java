@@ -957,16 +957,6 @@ public class ConfigHelper {
     private static String thurgoodPassword;
 
     /**
-     * <p>Represents the userGroupMembershipUrl.</p>
-     */
-    private static String userGroupMembershipUrl;
-
-    /**
-     * <p>Represents the parentGroupsUrl.</p>
-     */
-    private static String parentGroupsUrl;
-
-    /**
      * <p>Represents the userGroupMembershipUrlV5.</p>
      */
     private static String userGroupMembershipUrlV5;
