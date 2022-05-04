@@ -4,13 +4,12 @@
 package com.cronos.onlinereview.ejblibrary;
 
 import java.rmi.RemoteException;
-
-import javax.ejb.EJBException;
-
 import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
 import com.topcoder.web.common.RowNotFoundException;
 import com.topcoder.web.ejb.user.UserPreference;
 import com.topcoder.web.ejb.user.UserPreferenceBean;
+
+import javax.ejb.EJBException;
 
 /**
  * <p>An implementation of {@link UserPreference} interface which provides the library-call style for API of

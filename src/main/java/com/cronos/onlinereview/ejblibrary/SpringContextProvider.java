@@ -8,8 +8,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationContextException;
 
-import javax.persistence.EntityManagerFactory;
-
 /**
  * <p>A provider for <code>Spring</code> context set-up for <code>Online Review</code> application. The singleton
  * bean instance of this class must be defined in <code>Spring</code> context to be set with application context which
@@ -58,14 +56,5 @@ public class SpringContextProvider implements ApplicationContextAware {
      */
     public static CatalogDataAccess getCatalogDataAccess() {
         return (CatalogDataAccess) getApplicationContext().getBean("catalogDataAccess");
-    }
-
-    /**
-     * <p>Gets the entity manager factory.</p>
-     *
-     * @return a <code>EntityManagerFactory</code> providing a factory for entity managers.
-     */
-    public static EntityManagerFactory getEntityManagerFactory() {
-        return (EntityManagerFactory) getApplicationContext().getBean("entityManagerFactory");
     }
 }

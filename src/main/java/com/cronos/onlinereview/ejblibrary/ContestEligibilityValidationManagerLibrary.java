@@ -33,7 +33,6 @@ public class ContestEligibilityValidationManagerLibrary implements ContestEligib
      */
     public ContestEligibilityValidationManagerLibrary() {
         Extender extender = new Extender();
-        extender.initialize();
         this.bean = extender;
     }
 
@@ -63,17 +62,7 @@ public class ContestEligibilityValidationManagerLibrary implements ContestEligib
          * nothing.</p>
          */
         private Extender() {
-        }
-
-        /**
-         * <p>Handle the post-construct event. It will initialize any internal needed properties.</p>
-         *
-         * @throws ContestEligibilityValidationManagerConfigurationException if namespace or configFileName is empty or
-         *         any errors occurred when initializing
-         */
-        @Override
-        protected void initialize() {
-            super.initialize();
+            super();
         }
     }
 }
