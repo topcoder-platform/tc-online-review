@@ -580,14 +580,9 @@ public class ConfigHelper {
     private static final String V3_JWT_COOKIE_NAME = "v3jwt_cookie_name";
 
     /**
-     * <p>A <code>String</code> providing the name for user group memeber ship url property.</p>
+     * <p>A <code>String</code> providing the name for user group member ship v5 url property.</p>
      */
-    private static final String USER_GROUP_MEMBERSHIP_URL = "user_group_membership_url";
-
-    /**
-     * <p>A <code>String</code> providing the name for parent groups url property.</p>
-     */
-    private static final String PARENT_GROUPS_URL = "parent_groups_url";
+    private static final String USER_GROUP_MEMBERSHIP_URL_V5 = "user_group_membership_url_v5";
 
     /**
      * <p>A <code>String</code> providing the name for v2 jwt cookie name property.</p>
@@ -962,15 +957,9 @@ public class ConfigHelper {
     private static String thurgoodPassword;
 
     /**
-     * <p>Represents the userGroupMembershipUrl.</p>
+     * <p>Represents the userGroupMembershipUrlV5.</p>
      */
-    private static String userGroupMembershipUrl;
-
-    /**
-     * <p>Represents the parentGroupsUrl.</p>
-     */
-    private static String parentGroupsUrl;
-
+    private static String userGroupMembershipUrlV5;
     /**
      * <p>Represents the v3jwtCookieBame.</p>
      */
@@ -1671,8 +1660,7 @@ public class ConfigHelper {
                 thurgoodPassword = value;
             }
 
-            userGroupMembershipUrl = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, USER_GROUP_MEMBERSHIP_URL);
-            parentGroupsUrl = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, PARENT_GROUPS_URL);
+            userGroupMembershipUrlV5 = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, USER_GROUP_MEMBERSHIP_URL_V5);
             v3jwtCookieName = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, V3_JWT_COOKIE_NAME);
             v2jwtCookieName = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, V2_JWT_COOKIE_NAME);
             ssoDomainForV3jwtCookie = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, SSO_DOMAIN_FOR_V3_JWT_COOKIE);
@@ -2536,21 +2524,12 @@ public class ConfigHelper {
     }
 
     /**
-     * Get user group membership url
+     * Get user group membership v5 url
      *
-     * @return the userGroupMembershipUrl
+     * @return the userGroupMembershipUrlV5
      */
-    public static String getUserGroupMembershipUrl() {
-    	return userGroupMembershipUrl;
-    }
-
-    /**
-     * Get parent groups url
-     *
-     * @return the parent groups url
-     */
-    public static String getParentGroupsUrl() {
-        return parentGroupsUrl;
+    public static String getUserGroupMembershipUrlV5() {
+        return userGroupMembershipUrlV5;
     }
 
     /**
