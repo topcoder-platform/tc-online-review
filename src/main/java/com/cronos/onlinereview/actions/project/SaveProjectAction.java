@@ -1419,8 +1419,6 @@ public class SaveProjectAction extends BaseProjectAction {
             String m2mToken = ConfigHelper.getEventBusAuthToken();
             getRequest.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + m2mToken);
 
-            System.out.println("groupV5EndPoint: "+groupV5EndPoint);
-
             getRequest.addHeader(HttpHeaders.ACCEPT, "application/json");
             HttpResponse httpResponse = httpClient.execute(getRequest);
 
@@ -1431,13 +1429,11 @@ public class SaveProjectAction extends BaseProjectAction {
             }
 
             JsonNode groups = objectMapper.readTree(entity.getContent());
-
-            System.out.println("GROUPS:" + groups);
             Set<Long> groupIds = new HashSet<Long>();
             for (JsonNode group : groups) {
                 groupIds.add(group.asLong());
             }
-            System.out.println("Results:" + groupIds);
+            System.out.println("getGroups Results:" + groupIds);
             return groupIds;
     	} catch (Exception exp) {
     		throw new BaseException(exp.getMessage(), exp);
