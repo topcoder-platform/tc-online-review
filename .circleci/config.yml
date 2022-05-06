@@ -176,7 +176,6 @@ workflows:
               ignore:
                 - master
                 - master-maven
-                - resource-check
 
       - build-prod:
           context : org-global      
