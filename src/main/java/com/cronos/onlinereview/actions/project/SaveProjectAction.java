@@ -1763,7 +1763,7 @@ public class SaveProjectAction extends BaseProjectAction {
                         Long otherResourceId = (Long) getModel().get("resources_id", j);
                         System.out.println("Step 4");
                         System.out.println(otherResourceId);
-                        System.out.printf("handle: %s - resourceNames[j]: %s, %d\n", handle, resourceNames[j], handle.equalsIgnoreCase(resourceNames[j]));
+                        System.out.printf("handle: %s - resourceNames[j]: %s\n", handle, resourceNames[j]);
                         if (otherResourceId != -1 && handle.equalsIgnoreCase(resourceNames[j])) {
                             Resource otherResource = resourceManager.getResource(otherResourceId);
                             String otherResourceRoleName = otherResource.getResourceRole().getName();
