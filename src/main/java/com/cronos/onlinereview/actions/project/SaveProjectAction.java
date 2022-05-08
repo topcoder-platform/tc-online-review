@@ -176,7 +176,7 @@ public class SaveProjectAction extends BaseProjectAction {
     /**
      * <p>A <code>Set</code> holding the IDs for reviewer role and iterative reviewer role Ids which do not allow to be assigned to</p>
      */
-    private static final Set<Long> NO_REVIEWER_ITERATIVE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(21L, 2L));
+    private static final Set<Long> NO_REVIEWER_ITERATIVE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(21L, 4L));
 
     /**
      * The jackson object mapping which is used to deserialize json return from API to domain model.
@@ -1763,6 +1763,7 @@ public class SaveProjectAction extends BaseProjectAction {
                         Long otherResourceId = (Long) getModel().get("resources_id", j);
                         System.out.println("Step 4");
                         System.out.println(otherResourceId);
+                        System.out.printf("handle: %s - resourceNames[j]: %s", handle, resourceNames[j]);
                         if (otherResourceId != -1 && handle == resourceNames[j]) {
                             Resource otherResource = resourceManager.getResource(otherResourceId);
                             String otherResourceRoleName = otherResource.getResourceRole().getName();
