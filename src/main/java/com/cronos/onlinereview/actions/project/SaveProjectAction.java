@@ -1755,6 +1755,7 @@ public class SaveProjectAction extends BaseProjectAction {
                 System.out.println("Step 3");
                 System.out.println(handle);
                 long resourceRoleId = (Long) getModel().get("resources_role", i);
+                System.out.println(resourceRoleId);
                 if (NO_REVIEWER_ITERATIVE_REVIEWER_ROLE_IDS.contains(resourceRoleId)) {
                     boolean resourceHasSubmissions = false;
                     for (int j = 1; j < resourceNames.length; j++) {
