@@ -1744,35 +1744,21 @@ public class SaveProjectAction extends BaseProjectAction {
         // Validate that no submitters who have submitted for project were assigned as reviewer role or iterative reviewer role
         // 0-index resource is skipped as it is a "dummy" one
         for (int i = 1; i < resourceNames.length; i++) {
-            System.out.println("Step 1");
-            System.out.println((resourceNames[i]));
             String resourceAction = (String) getModel().get("resources_action", i);
             // check for additions or modifications
-            System.out.println("Step 2");
-            System.out.println(resourceAction);
             if (!"delete".equalsIgnoreCase(resourceAction)) {
                 String handle = resourceNames[i];
-                System.out.println("Step 3");
-                System.out.println(handle);
                 long resourceRoleId = (Long) getModel().get("resources_role", i);
-                System.out.println(resourceRoleId);
                 if (NO_REVIEWER_ITERATIVE_REVIEWER_ROLE_IDS.contains(resourceRoleId)) {
                     boolean resourceHasSubmissions = false;
                     for (int j = 1; j < resourceNames.length; j++) {
                         if (i == j) continue;
                         Long otherResourceId = (Long) getModel().get("resources_id", j);
-                        System.out.println("Step 4");
-                        System.out.println(otherResourceId);
-                        System.out.printf("handle: %s - resourceNames[j]: %s\n", handle, resourceNames[j]);
                         if (otherResourceId != -1 && handle.equalsIgnoreCase(resourceNames[j])) {
                             Resource otherResource = resourceManager.getResource(otherResourceId);
                             String otherResourceRoleName = otherResource.getResourceRole().getName();
-                            System.out.println("Step 5");
-                            System.out.println(otherResourceRoleName);
                             if ("Submitter".equals(otherResourceRoleName)) {
                                 Long[] submissionIds = otherResource.getSubmissions();
-                                System.out.println("Step 6");
-                                System.out.println(submissionIds);
                                 if ((submissionIds != null) && (submissionIds.length > 0)) {
                                     resourceHasSubmissions = true;
                                     break;
@@ -1781,8 +1767,6 @@ public class SaveProjectAction extends BaseProjectAction {
                         }
                     }
                     if(resourceHasSubmissions) {
-                        System.out.println("Step 7");
-                        System.out.println(resourceHasSubmissions);
                         ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                                 "error.com.cronos.onlinereview.actions."
                                         + "editProject.Resource.DuplicateSubmitterReviewerRole");
