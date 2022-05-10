@@ -191,7 +191,6 @@ workflows:
             branches:
               only:
                 - dev-maven
-                - resource-check
 
       - deployProd:
           context : org-global
