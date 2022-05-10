@@ -174,6 +174,11 @@ public class SaveProjectAction extends BaseProjectAction {
     private static final long SUBMITTER_ROLE_ID = 1L;
 
     /**
+     * <p>A <code>Set</code> holding the IDs for reviewer role and iterative reviewer role Ids which do not allow to be assigned to</p>
+     */
+    private static final Set<Long> NO_REVIEWER_ITERATIVE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(21L, 4L));
+
+    /**
      * The jackson object mapping which is used to deserialize json return from API to domain model.
      */
     protected static final ObjectMapper objectMapper;
@@ -1736,6 +1741,40 @@ public class SaveProjectAction extends BaseProjectAction {
             }
         }
 
+        // Validate that no submitters who have submitted for project were assigned as reviewer role or iterative reviewer role
+        // 0-index resource is skipped as it is a "dummy" one
+        for (int i = 1; i < resourceNames.length; i++) {
+            String resourceAction = (String) getModel().get("resources_action", i);
+            // check for additions or modifications
+            if (!"delete".equalsIgnoreCase(resourceAction)) {
+                String handle = resourceNames[i];
+                long resourceRoleId = (Long) getModel().get("resources_role", i);
+                if (NO_REVIEWER_ITERATIVE_REVIEWER_ROLE_IDS.contains(resourceRoleId)) {
+                    boolean resourceHasSubmissions = false;
+                    for (int j = 1; j < resourceNames.length; j++) {
+                        if (i == j) continue;
+                        Long otherResourceId = (Long) getModel().get("resources_id", j);
+                        if (otherResourceId != -1 && handle.equalsIgnoreCase(resourceNames[j])) {
+                            Resource otherResource = resourceManager.getResource(otherResourceId);
+                            String otherResourceRoleName = otherResource.getResourceRole().getName();
+                            if ("Submitter".equals(otherResourceRoleName)) {
+                                Long[] submissionIds = otherResource.getSubmissions();
+                                if ((submissionIds != null) && (submissionIds.length > 0)) {
+                                    resourceHasSubmissions = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if(resourceHasSubmissions) {
+                        ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                "error.com.cronos.onlinereview.actions."
+                                        + "editProject.Resource.DuplicateSubmitterReviewerRole");
+                        allResourcesValid = false;
+                    }
+                }
+            }
+        }
 
         // No resources are updated if at least one of them is incorrect.
         if (!allResourcesValid) {
