@@ -5,16 +5,12 @@ package com.cronos.onlinereview.actions.project;
 
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.dataaccess.DeliverableDataAccess;
-import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.dataaccess.ProjectPhaseDataAccess;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.Comparators;
 import com.cronos.onlinereview.util.ConfigHelper;
-import com.cronos.onlinereview.util.CorrectnessCheckResult;
-import com.cronos.onlinereview.util.EJBLibraryServicesLocator;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.cronos.onlinereview.util.LookupHelper;
 
 import com.opensymphony.xwork2.TextProvider;
 
@@ -27,7 +23,6 @@ import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectPropertyType;
 import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.resource.Resource;
@@ -108,9 +103,10 @@ public class ListProjectsAction extends BaseProjectAction {
             scope = "my";
         }
 
+        boolean isUserLoggedIn = AuthorizationHelper.isUserLoggedIn(request);
         // If the user is trying to access pages he doesn't have permission to view,
         // redirect him to scope-all page, where public projects are listed
-        if (scope.equalsIgnoreCase("my") && !AuthorizationHelper.isUserLoggedIn(request)) {
+        if (scope.equalsIgnoreCase("my") && !isUserLoggedIn) {
             return "all";
         }
 
@@ -144,8 +140,6 @@ public class ListProjectsAction extends BaseProjectAction {
         request.setAttribute("projectTypes", projectTypes);
         request.setAttribute("projectCategories", projectCategories);
 
-        ProjectPropertyType[] projectInfoTypes = manager.getAllProjectPropertyTypes();
-
         int[] typeCounts = new int[projectTypes.length];
         int[] categoryCounts = new int[projectCategories.length];
         String[] categoryIconNames = new String[projectCategories.length];
@@ -167,25 +161,34 @@ public class ListProjectsAction extends BaseProjectAction {
         String[][] myDeliverables = (myProjects) ? new String[projectCategories.length][] : null;
 
         // Fetch projects from the database. These projects will require further grouping
-        ProjectStatus draftStatus = LookupHelper.getProjectStatus("Draft");
-        ProjectStatus activeStatus = LookupHelper.getProjectStatus("Active");
         long userId = AuthorizationHelper.getLoggedInUserId(request);
         Project[] ungroupedProjects;
-        ProjectDataAccess projectDataAccess = new ProjectDataAccess();
         ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
+        ProjectStatus draftStatus = Arrays.stream(projectStatuses).filter(x -> "Draft".equals(x.getName()))
+            .findFirst().get();
+        ProjectStatus activeStatus = Arrays.stream(projectStatuses).filter(x -> "Active".equals(x.getName()))
+            .findFirst().get();
 
-        if (activeTab != 1) {
-            if (activeTab == 4) {
-                ungroupedProjects = projectDataAccess.searchDraftProjects(projectStatuses, projectCategories,
-                                                                          projectInfoTypes);
+        boolean hasManagerRole = false;
+        if (isUserLoggedIn) {
+            hasManagerRole = AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME);
+        }
+
+        if (activeTab == 1) {
+            // user projects
+            ungroupedProjects = manager.getAllProjects(userId, activeStatus, projectCategories, true, hasManagerRole);
+        } else if (activeTab == 2) {
+            if (isUserLoggedIn) {
+                ungroupedProjects = manager.getAllProjects(userId, activeStatus, projectCategories, false, hasManagerRole);
             } else {
-                ungroupedProjects = projectDataAccess.searchActiveProjects(projectStatuses, projectCategories,
-                                                                           projectInfoTypes);
+                ungroupedProjects = manager.getAllProjects(null, activeStatus, projectCategories, false, hasManagerRole);
             }
         } else {
-            // user projects
-            ungroupedProjects = projectDataAccess.searchUserActiveProjects(userId, projectStatuses, projectCategories,
-                                                                           projectInfoTypes);
+            if (isUserLoggedIn) {
+                ungroupedProjects = manager.getAllProjects(userId, draftStatus, projectCategories, false, hasManagerRole);
+            } else {
+                ungroupedProjects = manager.getAllProjects(null, draftStatus, projectCategories, false, hasManagerRole);
+            }
         }
 
         // Sort fetched projects. Currently sorting is done by projects' names only, in ascending order
@@ -198,24 +201,10 @@ public class ListProjectsAction extends BaseProjectAction {
         }
 
         Resource[] allMyResources = null;
-        if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request)) {
+        if (ungroupedProjects.length != 0 && isUserLoggedIn) {
             if (activeTab == 1) {  // My projects
                 allMyResources = ActionsHelper.searchUserResources(userId, activeStatus);
-            } else if (activeTab == 2) { // Active projects
-                allMyResources = ActionsHelper.searchUserResources(userId, activeStatus);
-            } else if (activeTab == 4) { // Draft projects
-                allMyResources = ActionsHelper.searchUserResources(userId, draftStatus);
             }
-        }
-
-        // new eligibility constraints
-        // if the user is not a global manager and is seeing all projects eligibility checks need to be performed
-        if (!AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) &&
-                (scope.equalsIgnoreCase("all") || scope.equalsIgnoreCase("draft")) && projectFilters.size() > 0) {
-
-            // remove those projects that the user can't see
-            ungroupedProjects = filterUsingEligibilityConstraints(
-                    ungroupedProjects, projectFilters, allMyResources);
         }
 
         // Obtain an instance of Phase Manager
@@ -388,62 +377,6 @@ public class ListProjectsAction extends BaseProjectAction {
 
         // Signal about successful execution of the Action
         return SUCCESS;
-    }
-
-    /**
-     * This method will return an array of <code>Project</code> with those projects the user can see taking into
-     * consideration eligibility constraints.
-     *
-     * The user can see all those "public" (no eligibility constraints) projects plus those non-public projects where
-     * he is assigned as a resource.
-     *
-     * @param ungroupedProjects all project to be displayed
-     * @param projectFilters all project ids to be displayed
-     * @param allMyResources all resources the user has for the projects to be displayed
-     *
-     * @return a <code>Project[]</code> with those projects that the user can see.
-     *
-     * @throws BaseException if any error occurs during eligibility services call
-     */
-    private Project[] filterUsingEligibilityConstraints(Project[] ungroupedProjects, List<Long> projectFilters,
-            Resource[] allMyResources) throws BaseException {
-        // check which projects have eligibility constraints
-        Set<Long> projectsWithEligibilityConstraints;
-
-        try {
-            projectsWithEligibilityConstraints =
-                EJBLibraryServicesLocator.getContestEligibilityService().haveEligibility(
-                    projectFilters.toArray(new Long[projectFilters.size()]), false);
-        } catch (Exception e) {
-            addActionError(getText(ACTION_ERROR_LIST_PROJECTS));
-            throw new BaseException("It was not possible to retrieve eligibility constraints", e);
-        }
-
-        // create a set of projects where the user is a resource
-        Set<Long> resourceProjects = new HashSet<Long>();
-
-        if (allMyResources != null) {
-            for (Resource r : allMyResources) {
-                resourceProjects.add(r.getProject());
-            }
-        }
-
-        // user can see those projects with eligibility constraints where he is a resource, so remove these
-        // from the projectsWithEligibilityConstraints set
-        projectsWithEligibilityConstraints.removeAll(resourceProjects);
-
-        // finally remove those projects left in projectsWithEligibilityConstraints from ungroupedProjects
-        List<Project> visibleProjects = new ArrayList<Project>();
-
-        for (Project p : ungroupedProjects) {
-            if (!projectsWithEligibilityConstraints.contains(p.getId())) {
-                visibleProjects.add(p);
-            }
-        }
-
-        ungroupedProjects = visibleProjects.toArray(new Project[visibleProjects.size()]);
-
-        return ungroupedProjects;
     }
 
     /**
