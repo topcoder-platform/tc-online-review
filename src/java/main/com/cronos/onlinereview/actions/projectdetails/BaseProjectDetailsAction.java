@@ -125,31 +125,39 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         // Prepare bean that will be returned as the result
         CorrectnessCheckResult result = new CorrectnessCheckResult();
 
+        UploadManager upMgr = ActionsHelper.createUploadManager();
+        Upload upload = null;
         // Verify that Upload ID was specified and denotes correct upload
         String uidParam = request.getParameter("uid");
         if (uidParam == null || uidParam.trim().length() == 0) {
-            result.setResult(ActionsHelper.produceErrorReport(this, request, errorMessageKey,
-                    "Error.UploadIdNotSpecified", null));
-            // Return the result of the check
-            return result;
+            String sidParam = request.getParameter("sid");
+            if (sidParam == null || sidParam.trim().length() == 0) {
+                result.setResult(ActionsHelper.produceErrorReport(this, request, errorMessageKey,
+                        "Error.UploadIdNotSpecified", null));
+                // Return the result of the check
+                return result;
+            } else {
+                try{
+                    Submission submission = upMgr.getSubmission(Long.parseLong(sidParam));
+                    upload = submission.getUpload();
+                } catch (NumberFormatException nfe) {
+                    result.setResult(
+                            ActionsHelper.produceErrorReport(this, request, errorMessageKey, "Error.UploadNotFound", null));
+                    // Return the result of the check
+                    return result;
+                }
+            }
+        } else {
+            try{
+                upload = upMgr.getUpload(Long.parseLong(uidParam, 10));
+            } catch (NumberFormatException nfe) {
+                result.setResult(
+                        ActionsHelper.produceErrorReport(this, request, errorMessageKey, "Error.UploadNotFound", null));
+                // Return the result of the check
+                return result;
+            }
         }
 
-        long uid;
-
-        try {
-            // Try to convert specified uid parameter to its integer representation
-            uid = Long.parseLong(uidParam, 10);
-        } catch (NumberFormatException nfe) {
-            result.setResult(
-                    ActionsHelper.produceErrorReport(this, request, errorMessageKey, "Error.UploadNotFound", null));
-            // Return the result of the check
-            return result;
-        }
-
-        // Obtain an instance of Upload Manager
-        UploadManager upMgr = ActionsHelper.createUploadManager();
-        // Get Upload by its ID
-        Upload upload = upMgr.getUpload(uid);
         // Verify that upload with given ID exists
         if (upload == null) {
             result.setResult(

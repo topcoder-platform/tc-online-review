@@ -118,6 +118,8 @@ public class PhaseGroup {
      */
     private Submission[] submissions = null;
 
+    private boolean[] readyToDownload = null;
+
     /**
      * This member variable holds an array of uploads of Submission type which were deleted due to a
      * newer version has been uploaded by Submitter, or <code>null</code> value if no such array
@@ -335,6 +337,8 @@ public class PhaseGroup {
      */
     private Submission specificationSubmission;
 
+    private boolean specificationReadyToDownload;
+
     /**
      * <p>A <code>Resource</code> providing the details for specification submitter.</p>
      */
@@ -344,6 +348,8 @@ public class PhaseGroup {
      * <p>A <code>Submission[]</code> providing the list of checkpoint submissions.</p>
      */
     private Submission[] checkpointSubmissions;
+
+    private boolean[] checkpointReadyToDownload;
 
     /**
      * <p>A <code>Resource</code> providing the details on checkpoint screener.</p>
@@ -395,6 +401,8 @@ public class PhaseGroup {
      * <p>A <code>Submission</code> providing the details on iterative review submission.</p>
      */
     private Submission iterativeReviewSubmission;
+
+    private boolean iterativeReadyToDownload;
 
     /**
      * <p>A <code>Resource</code> providing the details for iterative review submitter.</p>
@@ -575,6 +583,11 @@ public class PhaseGroup {
      */
     public void setSubmissions(Submission[] submissions) {
         this.submissions = submissions;
+        this.readyToDownload = new boolean[submissions.length];
+        for (int i = 0; i < submissions.length; i++) {
+            Upload upload = submissions[i].getUpload();
+            this.readyToDownload[i] = upload != null && upload.getUrl() != null && !ActionsHelper.isDmzBucket(upload.getUrl());
+        }
     }
 
     /**
@@ -1139,6 +1152,8 @@ public class PhaseGroup {
      */
     public void setSpecificationSubmission(Submission specificationSubmission) {
         this.specificationSubmission = specificationSubmission;
+        Upload upload = specificationSubmission.getUpload();
+        this.specificationReadyToDownload = upload != null && upload.getUrl() != null && !ActionsHelper.isDmzBucket(upload.getUrl());
     }
 
     /**
@@ -1283,6 +1298,11 @@ public class PhaseGroup {
      */
     public void setCheckpointSubmissions(Submission[] checkpointSubmissions) {
         this.checkpointSubmissions = checkpointSubmissions;
+        this.checkpointReadyToDownload = new boolean[checkpointSubmissions.length];
+        for (int i = 0; i < checkpointSubmissions.length; i++) {
+            Upload upload = checkpointSubmissions[i].getUpload();
+            this.checkpointReadyToDownload[i] = upload != null && upload.getUrl() != null && !ActionsHelper.isDmzBucket(upload.getUrl());
+        }
     }
 
     /**
@@ -1357,6 +1377,8 @@ public class PhaseGroup {
      */
     public void setIterativeReviewSubmission(Submission iterativeReviewSubmission) {
         this.iterativeReviewSubmission = iterativeReviewSubmission;
+        Upload upload = iterativeReviewSubmission.getUpload();
+        this.iterativeReadyToDownload = upload != null && upload.getUrl() != null && !ActionsHelper.isDmzBucket(upload.getUrl());
     }
 
     /**
@@ -1411,5 +1433,21 @@ public class PhaseGroup {
      */
     public void setIterativeReviewSubmitter(Resource iterativeReviewSubmitter) {
         this.iterativeReviewSubmitter = iterativeReviewSubmitter;
+    }
+
+    public boolean[] getReadyToDownload() {
+        return readyToDownload;
+    }
+
+    public boolean isSpecificationReadyToDownload() {
+        return specificationReadyToDownload;
+    }
+
+    public boolean[] getCheckpointReadyToDownload() {
+        return checkpointReadyToDownload;
+    }
+
+    public boolean isIterativeReadyToDownload() {
+        return iterativeReadyToDownload;
     }
 }
