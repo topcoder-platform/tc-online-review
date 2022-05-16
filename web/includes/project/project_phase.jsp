@@ -171,11 +171,21 @@
                                             </c:if>
                                             <c:if test="${not downloadCurrentIterativeReview || underIterativeReview}">
                                                 <c:if test="${project.projectCategory.projectType.id ne 3}">
-                                                    <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    <c:if test="${group.readyToDownload[submissionStatus.index]}">
+                                                        <a href="<or:url value='/actions/DownloadContestSubmission?sid=${submission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    </c:if>
+                                                    <c:if test="${not group.readyToDownload[submissionStatus.index]}">
+                                                        <a style="pointer-events:none" href="<or:url value='/actions/DownloadContestSubmission?sid=${submission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    </c:if>
                                                 </c:if>
                                                 <c:if test="${project.projectCategory.projectType.id eq 3}">
                                                     <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a> -->
-                                                    <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    <c:if test="${group.readyToDownload[submissionStatus.index]}">
+                                                    <a href="<or:url value='/actions/DownloadContestSubmission?sid=${submission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    </c:if>
+                                                    <c:if test="${not group.readyToDownload[submissionStatus.index]}">
+                                                    <a style="pointer-events:none" href="<or:url value='/actions/DownloadContestSubmission?sid=${submission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    </c:if>
                                                 </c:if>
                                                 <c:if test="${not empty submitter}">
                                                     (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
@@ -441,11 +451,21 @@
                                                     </c:if>
                                                 </c:if>
                                                 <c:if test="${project.projectCategory.projectType.id ne 3}">
-                                                    <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    <c:if test="${group.readyToDownload[submissionStatus.index]}">
+                                                    <a href="<or:url value='/actions/DownloadContestSubmission?sid=${submission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    </c:if>
+                                                    <c:if test="${not group.readyToDownload[submissionStatus.index]}">
+                                                    <a style="pointer-events:none" href="<or:url value='/actions/DownloadContestSubmission?sid=${submission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    </c:if>
                                                 </c:if>
                                                 <c:if test="${project.projectCategory.projectType.id eq 3}">
                                                     <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a> -->
-                                                    <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    <c:if test="${group.readyToDownload[submissionStatus.index]}">
+                                                    <a href="<or:url value='/actions/DownloadContestSubmission?sid=${submission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    </c:if>
+                                                    <c:if test="${not group.readyToDownload[submissionStatus.index]}">
+                                                    <a style="pointer-events:none" href="<or:url value='/actions/DownloadContestSubmission?sid=${submission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                    </c:if>
                                                 </c:if>
                                                 <c:if test="${not empty submitter}">
                                                     (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
@@ -540,7 +560,7 @@
                                     <tr class="light">
                                         <td class="value" nowrap="nowrap">
                                             <img src="<or:text key='viewProjectDetails.Submitter.icoWinner.img' />" alt="<or:text key='viewProjectDetails.Submitter.icoWinner.alt' />" border="0" class="Outline" />
-                                            <a href="<or:url value='/actions/DownloadContestSubmission?uid=${winningSubmission.upload.id}' />"
+                                            <a href="<or:url value='/actions/DownloadContestSubmission?sid=${winningSubmission.id}' />"
                                                 title="<or:text key='viewProjectDetails.box.Submission.Download' />">${winningSubmission.id}</a>
                                             (<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
                                         </td>
@@ -594,7 +614,7 @@
                                     <tr class="light">
                                         <td class="value" nowrap="nowrap">
                                             <img src="<or:text key='viewProjectDetails.Submitter.icoWinner.img' />" alt="<or:text key='viewProjectDetails.Submitter.icoWinner.alt' />" border="0" class="Outline" />
-                                            <a href="<or:url value='/actions/DownloadContestSubmission?uid=${winningSubmission.upload.id}' />"
+                                            <a href="<or:url value='/actions/DownloadContestSubmission?sid=${winningSubmission.id}' />"
                                                 title="<or:text key='viewProjectDetails.box.Submission.Download' />">${winningSubmission.id}</a>
                                             (<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
                                         </td>
@@ -680,7 +700,7 @@
                                                 <img src="<or:text key='viewProjectDetails.Submitter.icoWinner.img' />"
                                                           alt="<or:text key='viewProjectDetails.Submitter.icoWinner.alt' />" border="0"
                                                           class="Outline"/>
-                                                <a href="<or:url value='/actions/DownloadContestSubmission?uid=${winningSubmission.upload.id}' />"
+                                                <a href="<or:url value='/actions/DownloadContestSubmission?sid=${winningSubmission.id}' />"
                                                         title="<or:text key='viewProjectDetails.box.Submission.Download' />">${winningSubmission.id}</a>
                                                 (<tc-webtag:handle
                                                     coderId='${group.winner.allProperties["External Reference ID"]}'
@@ -849,8 +869,14 @@
                                 <c:if test="${not empty group.specificationSubmission}">
                                     <tr class="light">
                                         <td class="value" nowrap="nowrap">
+                                            <c:if test="${group.specificationReadyToDownload}">
                                             <a href="<or:url value='/actions/DownloadSpecificationSubmission?uid=${group.specificationSubmission.upload.id}' />"
                                                 title="<or:text key='viewProjectDetails.box.Specification.Download' />">${group.specificationSubmission.id}</a>
+                                            </c:if>
+                                            <c:if test="${not group.specificationReadyToDownload}">
+                                            <a style="pointer-events:none" href="<or:url value='/actions/DownloadSpecificationSubmission?uid=${group.specificationSubmission.upload.id}' />"
+                                                title="<or:text key='viewProjectDetails.box.Specification.Download' />">${group.specificationSubmission.id}</a>
+                                            </c:if>
                                             (<tc-webtag:handle coderId='${group.specificationSubmitter.allProperties["External Reference ID"]}'
                                                                context="${orfn:getHandlerContext(pageContext.request)}" />)
                                         </td>
@@ -976,13 +1002,25 @@
                                                 </c:if>
                                             </c:if>
                                             <c:if test="${project.projectCategory.projectType.id ne 3}">
+                                                <c:if test="${group.checkpointReadyToDownload[submissionStatus.index]}">
                                                 <a href="<or:url value='/actions/DownloadCheckpointSubmission?uid=${submission.upload.id}' />"
                                                        title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                </c:if>
+                                                <c:if test="${not group.checkpointReadyToDownload[submissionStatus.index]}">
+                                                <a style="pointer-events:none" href="<or:url value='/actions/DownloadCheckpointSubmission?uid=${submission.upload.id}' />"
+                                                       title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                </c:if>
                                             </c:if>
                                             <c:if test="${project.projectCategory.projectType.id eq 3}">
                                                 <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a> -->
+                                                <c:if test="${group.checkpointReadyToDownload[submissionStatus.index]}">
                                                 <a href="<or:url value='/actions/DownloadCheckpointSubmission?uid=${submission.upload.id}' />"
                                                        title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                </c:if>
+                                                <c:if test="${not group.checkpointReadyToDownload[submissionStatus.index]}">
+                                                <a style="pointer-events:none" href="<or:url value='/actions/DownloadCheckpointSubmission?uid=${submission.upload.id}' />"
+                                                       title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                </c:if>
                                             </c:if>
                                             <c:if test="${not empty submitter}">
                                                 (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}'
@@ -1322,11 +1360,21 @@
                                                 </c:if>
                                             </c:if>
                                             <c:if test="${project.projectCategory.projectType.id ne 3}">
-                                                <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                <c:if test="${group.iterativeReadyToDownload}">
+                                                <a href="<or:url value='/actions/DownloadContestSubmission?sid=${submission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                </c:if>
+                                                <c:if test="${not group.iterativeReadyToDownload}">
+                                                <a style="pointer-events:none" href="<or:url value='/actions/DownloadContestSubmission?sid=${submission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                </c:if>
                                             </c:if>
                                             <c:if test="${project.projectCategory.projectType.id eq 3}">
                                                 <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a> -->
-                                                <a href="<or:url value='/actions/DownloadContestSubmission?uid=${submission.upload.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                <c:if test="${group.iterativeReadyToDownload}">
+                                                <a href="<or:url value='/actions/DownloadContestSubmission?sid=${submission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                </c:if>
+                                                <c:if test="${not group.iterativeReadyToDownload}">
+                                                <a style="pointer-events:none" href="<or:url value='/actions/DownloadContestSubmission?sid=${submission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                </c:if>
                                             </c:if>
                                             <c:if test="${isManager || group.iterativeReviewPhase.phaseStatus.name eq 'Closed'}">
                                                 (<tc-webtag:handle coderId='${group.iterativeReviewSubmitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
