@@ -36,6 +36,7 @@
     <link type="text/css" rel="stylesheet" href="/css/coders.css" />
     <link type="text/css" rel="stylesheet" href="/css/stats.css" />
     <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
+    <link type="text/css" rel="stylesheet" href="/css/or/project_list.css" />
 
     <!-- CSS and JS from wireframes -->
     <script language="javascript" type="text/javascript" src="/js/or/expand_collapse.js"><!-- @ --></script>
