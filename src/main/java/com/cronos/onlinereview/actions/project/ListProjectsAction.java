@@ -255,7 +255,7 @@ public class ListProjectsAction extends BaseProjectAction {
         Resource[] allMyResources = null;
         if (projects.length != 0 && isUserLoggedIn) {
             if (activeTab == 1) { // My projects
-                allMyResources = ActionsHelper.createResourceManager().getResourcesByProjects(projectIds);
+                allMyResources = ActionsHelper.createResourceManager().getResourcesByProjects(projectIds, userId);
             }
         }
 
