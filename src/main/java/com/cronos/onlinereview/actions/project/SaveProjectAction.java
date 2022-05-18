@@ -2011,20 +2011,6 @@ public class SaveProjectAction extends BaseProjectAction {
             resourceManager.addNotifications(userIds, project.getId(),
                     timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
-
-        // Add forum permissions for all new users and remove permissions for removed resources.
-        ActionsHelper.removeForumPermissions(project, deletedUsers);
-        ActionsHelper.addForumPermissions(project, newUsers, false);
-        ActionsHelper.addForumPermissions(project, newModerators, true);
-
-        long forumId = 0;
-        if (project.getProperty("Developer Forum ID") != null && (Long) project.getProperty("Developer Forum ID") != 0) {
-            forumId = ((Long) project.getProperty("Developer Forum ID"));
-        }
-
-        ActionsHelper.removeForumWatch(project, deletedUsers, forumId);
-        ActionsHelper.removeForumWatch(project, deletedUsersForForumWatch, forumId);
-        ActionsHelper.addForumWatch(project, newUsersForumWatch, forumId);
     }
 
     /**
