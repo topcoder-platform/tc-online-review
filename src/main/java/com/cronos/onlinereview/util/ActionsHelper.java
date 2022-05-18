@@ -104,6 +104,7 @@ import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.data.Group;
 import com.topcoder.management.scorecard.data.Scorecard;
 import com.topcoder.management.scorecard.data.Section;
+import com.topcoder.onlinereview.component.project.management.ProjectType;
 import com.topcoder.project.phases.Dependency;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
@@ -128,6 +129,7 @@ import com.topcoder.util.errorhandling.BaseRuntimeException;
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
 import com.topcoder.util.log.LogManager;
+import com.topcoder.web.common.security.SSOCookieService;
 import com.topcoder.web.ejb.forums.Forums;
 import com.topcoder.web.ejb.forums.ForumsHome;
 
@@ -167,7 +169,7 @@ public class ActionsHelper {
     /**
      * This helper class is used for creating the managers.
      */
-    private static final ManagerCreationHelper managerCreationHelper = new ManagerCreationHelper();
+    private static ManagerCreationHelper managerCreationHelper;
 
     /**
      * Used for caching loaded scorecards.
@@ -239,10 +241,9 @@ public class ActionsHelper {
     }
 
     /**
-     * This constructor is declared private to prohibit instantiation of the
      * <code>ActionsHelper</code> class.
      */
-    private ActionsHelper() {
+    public ActionsHelper() {
     }
 
     // ------------------------------------------------------------ Hardcoded
@@ -1988,6 +1989,10 @@ public class ActionsHelper {
             // get Phase Manager without handlers
             return managerCreationHelper.getPhaseManagerWithoutHandlers();
         }
+    }
+
+    public static ProjectType[] getAllProjects() {
+        return managerCreationHelper.getNewProjectManager().getAllProjectTypes();
     }
 
     /**
@@ -3829,5 +3834,9 @@ public class ActionsHelper {
         buf.append(System.getProperty("file.separator"));
         buf.append(parameter);
         return buf.toString();
+    }
+
+    public void setManagerCreationHelper(ManagerCreationHelper managerCreationHelper) {
+        ActionsHelper.managerCreationHelper = managerCreationHelper;
     }
 }

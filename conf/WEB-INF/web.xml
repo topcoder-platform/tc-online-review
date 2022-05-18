@@ -11,6 +11,7 @@
 		<param-value>
 			/WEB-INF/actions.xml
 			/WEB-INF/applicationContext.xml
+            /WEB-INF/searchBundle.xml
 		</param-value>
 	</context-param>
     

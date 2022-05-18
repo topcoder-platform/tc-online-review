@@ -24,6 +24,7 @@ import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.project.UserProjectCategory;
 import com.topcoder.management.project.UserProjectType;
 import com.topcoder.management.resource.Resource;
+import com.topcoder.onlinereview.component.project.management.ProjectType;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.filter.AndFilter;
@@ -81,6 +82,10 @@ public class ListProjectsAction extends BaseProjectAction {
      *             if any error occurs.
      */
     public String execute() throws BaseException {
+        ProjectType[] types = ActionsHelper.getAllProjects();
+        for (ProjectType type: types) {
+            System.out.println("type: " + type.getName());
+        }
         // Remove redirect-after-login attribute (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
 

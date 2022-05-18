@@ -97,6 +97,7 @@ import com.topcoder.util.datavalidator.ObjectValidator;
 import com.topcoder.util.datavalidator.StringValidator;
 import com.topcoder.util.idgenerator.IDGenerator;
 import com.topcoder.util.idgenerator.IDGeneratorFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <p>
@@ -140,6 +141,9 @@ public class ManagerCreationHelper implements ManagersProvider {
      * Used for caching the created manager.
      */
     private ProjectManager projectManager = null;
+
+    @Autowired
+    private com.topcoder.onlinereview.component.project.management.ProjectManager newProjectManager;
     /**
      * Used for caching the created manager.
      */
@@ -335,6 +339,10 @@ public class ManagerCreationHelper implements ManagersProvider {
         } catch (Exception e) {
             throw new ManagerCreationException("Exception occurred while creating the ProjectManager.", e);
         }
+    }
+
+    public com.topcoder.onlinereview.component.project.management.ProjectManager getNewProjectManager() {
+        return newProjectManager;
     }
 
     /**

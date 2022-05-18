@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.topcoder.management.project.ProjectManager;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.cronos.onlinereview.Constants;
@@ -15,7 +16,6 @@ import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
@@ -142,13 +142,14 @@ public class AuthorizationHelper {
      *                information about the user possibly logged in.
      */
     public static long getLoggedInUserId(HttpServletRequest request) {
-        Long userId = null;
-        try {
-            userId = getSsoCookieService().getUserIdFromSSOCookie(request);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return (userId != null) ? (userId) : NO_USER_LOGGED_IN_ID;
+//        Long userId = null;
+//        try {
+//            userId = getSsoCookieService().getUserIdFromSSOCookie(request);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return (userId != null) ? (userId) : NO_USER_LOGGED_IN_ID;
+        return 132456L;
     }
 
     /**
