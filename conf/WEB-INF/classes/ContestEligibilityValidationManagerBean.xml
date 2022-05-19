@@ -14,16 +14,6 @@
 				<Property name="type">
 					<Value>com.topcoder.service.contest.eligibilityvalidation.GroupEligibilityValidator</Value>
 				</Property>
-				<Property name="params">
-					<Property name="param1">
-						<Property name="type">
-							<Value>java.lang.String</Value>
-						</Property>
-						<Property name="value">
-							<Value>ContestEligibilityPersistence</Value>
-						</Property>
-					</Property>
-				</Property>
 			</Property>
 		</Property>
 	</Config>

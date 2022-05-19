@@ -5,16 +5,10 @@ package com.cronos.onlinereview.actions.project;
 
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.dataaccess.DeliverableDataAccess;
-import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
-import com.cronos.onlinereview.dataaccess.ProjectPhaseDataAccess;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
-import com.cronos.onlinereview.util.Comparators;
 import com.cronos.onlinereview.util.ConfigHelper;
-import com.cronos.onlinereview.util.CorrectnessCheckResult;
-import com.cronos.onlinereview.util.EJBLibraryServicesLocator;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.cronos.onlinereview.util.LookupHelper;
 
 import com.opensymphony.xwork2.TextProvider;
 
@@ -25,32 +19,29 @@ import com.topcoder.management.deliverable.persistence.DeliverableCheckingExcept
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectPropertyType;
 import com.topcoder.management.project.ProjectStatus;
-import com.topcoder.management.project.ProjectType;
+import com.topcoder.management.project.UserProjectCategory;
+import com.topcoder.management.project.UserProjectType;
 import com.topcoder.management.resource.Resource;
-
 import com.topcoder.project.phases.Phase;
-import com.topcoder.project.phases.PhaseStatus;
-import com.topcoder.project.phases.PhaseType;
-
 import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.InFilter;
-
 import com.topcoder.util.errorhandling.BaseException;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import java.util.stream.Collectors;
 
 /**
  * This class is the struts action class which is used for listing all projects.
@@ -64,15 +55,14 @@ import java.util.Set;
 public class ListProjectsAction extends BaseProjectAction {
 
     /**
-     * Represents the key of the action error.
-     */
-    private static final String ACTION_ERROR_LIST_PROJECTS =
-            "exception.com.cronos.onlinereview.actions.project.ListProjectsAction";
-
-    /**
      * Represents the serial version id.
      */
     private static final long serialVersionUID = 8036294134759200834L;
+
+    /**
+     * Represents the amount of projects to be showed per page
+     */
+    private int projectPerpage = 100;
 
     /**
      * Default constructor.
@@ -107,10 +97,12 @@ public class ListProjectsAction extends BaseProjectAction {
             // Set default value for "scope" parameter, if previous condition has not been met
             scope = "my";
         }
+        scope = scope.toLowerCase();
 
+        boolean isUserLoggedIn = AuthorizationHelper.isUserLoggedIn(request);
         // If the user is trying to access pages he doesn't have permission to view,
         // redirect him to scope-all page, where public projects are listed
-        if (scope.equalsIgnoreCase("my") && !AuthorizationHelper.isUserLoggedIn(request)) {
+        if (scope.equals("my") && !isUserLoggedIn) {
             return "all";
         }
 
@@ -121,250 +113,217 @@ public class ListProjectsAction extends BaseProjectAction {
 
         // Determine projects displayed and index of the active tab
         // based on the value of the "scope" parameter
-        if (scope.equalsIgnoreCase("my")) {
+        if (scope.equals("my")) {
             activeTab = 1;
-        } else if (scope.equalsIgnoreCase("draft")) {
+        } else if (scope.equals("draft")) {
             activeTab = 4;
         } else {
             activeTab = 2;
+            scope = "all";
         }
-
+        request.setAttribute("scope", scope);
         // Pass the index of the active tab into request
         request.setAttribute("projectTabIndex", activeTab);
 
-        // Get all project types defined in the database (e.g. Assembly, Component, etc.)
-        ProjectType[] projectTypes = manager.getAllProjectTypes();
+        long userId = AuthorizationHelper.getLoggedInUserId(request);
+        boolean hasManagerRole = false;
+        if (isUserLoggedIn) {
+            hasManagerRole = AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME);
+        }
+        ProjectStatus activeStatus = new ProjectStatus(1, "Active");
+        ProjectStatus draftStatus = new ProjectStatus(2, "Draft");
+        List<UserProjectType> userProjectTypes;
+        if (activeTab == 1) {
+            userProjectTypes = manager.countUserProjects(userId, activeStatus, true, hasManagerRole);
+        } else if (activeTab == 2) {
+            if (isUserLoggedIn) {
+                userProjectTypes = manager.countUserProjects(userId, activeStatus, false, hasManagerRole);
+            } else {
+                userProjectTypes = manager.countUserProjects(null, activeStatus, false, hasManagerRole);
+            }
+        } else {
+            if (isUserLoggedIn) {
+                userProjectTypes = manager.countUserProjects(userId, draftStatus, false, hasManagerRole);
+            } else {
+                userProjectTypes = manager.countUserProjects(null, draftStatus, false, hasManagerRole);
+            }
+        }
 
-        // Sort project types by their names in ascending order
-        Arrays.sort(projectTypes, new Comparators.ProjectTypeComparer());
+        request.setAttribute("userProjectTypes", userProjectTypes);
 
-        // Get all project categories defined in the database (e.g. Design, Security, etc.)
-        ProjectCategory[] projectCategories = manager.getAllProjectCategories();
+        String selectedCategoryParam = request.getParameter("category");
+        Long selectedCategoryId = null;
+        String categoryName = "";
+        int totalProjectCount = 0;
+        try {
+            selectedCategoryId = Long.parseLong(selectedCategoryParam);
+        } catch (Exception e) {
+        }
+        if (selectedCategoryId != null) {
+            for (UserProjectType projectType : userProjectTypes) {
+                if (totalProjectCount > 0)
+                    break;
+                for (UserProjectCategory projectCategory : projectType.getCategories()) {
+                    if (selectedCategoryId.equals(projectCategory.getId())) {
+                        totalProjectCount = projectCategory.getCount();
+                        categoryName = projectCategory.getName();
+                        break;
+                    }
+                }
+            }
+        }
+        if (totalProjectCount == 0 && !userProjectTypes.isEmpty()) {
+            UserProjectCategory defaultCategory = userProjectTypes.get(0).getCategories().get(0);
+            selectedCategoryId = defaultCategory.getId();
+            totalProjectCount = defaultCategory.getCount();
+            categoryName = defaultCategory.getName();
+        }
+        request.setAttribute("totalProjectCount", totalProjectCount);
 
-        request.setAttribute("projectTypes", projectTypes);
-        request.setAttribute("projectCategories", projectCategories);
+        if (totalProjectCount == 0) {
+            request.setAttribute("projectCount", 0);
+            return SUCCESS;
+        }
+        request.setAttribute("selectedCategoryId", selectedCategoryId);
+        // pagination parameter
+        String pageParameter = request.getParameter("page");
+        Integer currentPage = null;
+        try {
+            currentPage = Integer.parseInt(pageParameter);
+        } catch (Exception e) {
+        }
+        if (currentPage == null || currentPage < 1 || (currentPage - 1) * projectPerpage > totalProjectCount) {
+            currentPage = 1;
+        }
+        int lastPage = (int) Math.ceil(totalProjectCount / (projectPerpage * 1.0));
+        int showingProjectsFrom = (currentPage - 1) * projectPerpage + 1;
+        int showingProjectsTo = Math.min(currentPage * projectPerpage, totalProjectCount);
+        int paginationStart = Math.max(currentPage - 2, 1);
+        int paginationEnd = Math.min(currentPage < 3 ? 5 : currentPage + 2, lastPage);
+        request.setAttribute("showingProjectsFrom", showingProjectsFrom);
+        request.setAttribute("showingProjectsTo", showingProjectsTo);
+        request.setAttribute("page", currentPage);
+        request.setAttribute("perPage", projectPerpage);
+        request.setAttribute("lastPage", lastPage);
+        request.setAttribute("paginationStart", paginationStart);
+        request.setAttribute("paginationEnd", paginationEnd);
 
-        ProjectPropertyType[] projectInfoTypes = manager.getAllProjectPropertyTypes();
+        Project[] projects;
 
-        int[] typeCounts = new int[projectTypes.length];
-        int[] categoryCounts = new int[projectCategories.length];
-        String[] categoryIconNames = new String[projectCategories.length];
+        if (activeTab == 1) {
+            // user projects
+            projects = manager.getAllProjects(userId, activeStatus, currentPage, projectPerpage, selectedCategoryId,
+                    true, hasManagerRole);
+        } else if (activeTab == 2) {
+            if (isUserLoggedIn) {
+                projects = manager.getAllProjects(userId, activeStatus, currentPage, projectPerpage, selectedCategoryId,
+                        false, hasManagerRole);
+            } else {
+                projects = manager.getAllProjects(null, activeStatus, currentPage, projectPerpage, selectedCategoryId,
+                        false, hasManagerRole);
+            }
+        } else {
+            if (isUserLoggedIn) {
+                projects = manager.getAllProjects(userId, draftStatus, currentPage, projectPerpage, selectedCategoryId,
+                        false, hasManagerRole);
+            } else {
+                projects = manager.getAllProjects(null, draftStatus, currentPage, projectPerpage, selectedCategoryId,
+                        false, hasManagerRole);
+            }
+        }
+        request.setAttribute("projectCount", projects.length);
+
+        String categoryIconName = ConfigHelper.getProjectCategoryIconNameSm(categoryName);
 
         // This is to signify whether "My" Projects list is displayed, or any other
         // type of Projects List. Some columns are present only in "My" Projects List
-        boolean myProjects = scope.equalsIgnoreCase("my");
+        boolean myProjects = scope.equals("my");
 
-        Project[][] projects = new Project[projectCategories.length][];
-        String[][] rootCatalogIcons = new String[projectCategories.length][];
-        String[][] rootCatalogNames = new String[projectCategories.length][];
-        Phase[][][] phases = new Phase[projectCategories.length][][];
-        Date[][] phaseEndDates = new Date[projectCategories.length][];
-        Date[][] projectEndDates = new Date[projectCategories.length][];
+        String[] rootCatalogIcons = new String[projects.length];
+        String[] rootCatalogNames = new String[projects.length];
+        Phase[][] phases = new Phase[projects.length][];
+        Date[] phaseEndDates = new Date[projects.length];
+        Date[] projectEndDates = new Date[projects.length];
 
         // The following will only be non-null for the list of "My" Projects
-        Resource[][][] myResources = (myProjects) ? new Resource[projectCategories.length][][] : null;
-        String[][] myRoles = (myProjects) ? new String[projectCategories.length][] : null;
-        String[][] myDeliverables = (myProjects) ? new String[projectCategories.length][] : null;
+        Resource[][] myResources = (myProjects) ? new Resource[projects.length][] : null;
+        String[] myRoles = (myProjects) ? new String[projects.length] : null;
+        String[] myDeliverables = (myProjects) ? new String[projects.length] : null;
 
-        // Fetch projects from the database. These projects will require further grouping
-        ProjectStatus draftStatus = LookupHelper.getProjectStatus("Draft");
-        ProjectStatus activeStatus = LookupHelper.getProjectStatus("Active");
-        long userId = AuthorizationHelper.getLoggedInUserId(request);
-        Project[] ungroupedProjects;
-        ProjectDataAccess projectDataAccess = new ProjectDataAccess();
-        ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
-
-        if (activeTab != 1) {
-            if (activeTab == 4) {
-                ungroupedProjects = projectDataAccess.searchDraftProjects(projectStatuses, projectCategories,
-                                                                          projectInfoTypes);
-            } else {
-                ungroupedProjects = projectDataAccess.searchActiveProjects(projectStatuses, projectCategories,
-                                                                           projectInfoTypes);
-            }
-        } else {
-            // user projects
-            ungroupedProjects = projectDataAccess.searchUserActiveProjects(userId, projectStatuses, projectCategories,
-                                                                           projectInfoTypes);
-        }
-
-        // Sort fetched projects. Currently sorting is done by projects' names only, in ascending order
-        Arrays.sort(ungroupedProjects, new Comparators.ProjectNameComparer());
-
-        List<Long> projectFilters = new ArrayList<Long>();
-
-        for (Project ungroupedProject : ungroupedProjects) {
-            projectFilters.add(ungroupedProject.getId());
-        }
-
+        Long[] projectIds = Arrays.stream(projects).map(x -> x.getId()).collect(Collectors.toList())
+                .toArray(new Long[projects.length]);
         Resource[] allMyResources = null;
-        if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request)) {
-            if (activeTab == 1) {  // My projects
-                allMyResources = ActionsHelper.searchUserResources(userId, activeStatus);
-            } else if (activeTab == 2) { // Active projects
-                allMyResources = ActionsHelper.searchUserResources(userId, activeStatus);
-            } else if (activeTab == 4) { // Draft projects
-                allMyResources = ActionsHelper.searchUserResources(userId, draftStatus);
+        if (projects.length != 0 && isUserLoggedIn) {
+            if (activeTab == 1) { // My projects
+                allMyResources = ActionsHelper.createResourceManager().getResourcesByProjects(projectIds, userId);
             }
-        }
-
-        // new eligibility constraints
-        // if the user is not a global manager and is seeing all projects eligibility checks need to be performed
-        if (!AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) &&
-                (scope.equalsIgnoreCase("all") || scope.equalsIgnoreCase("draft")) && projectFilters.size() > 0) {
-
-            // remove those projects that the user can't see
-            ungroupedProjects = filterUsingEligibilityConstraints(
-                    ungroupedProjects, projectFilters, allMyResources);
         }
 
         // Obtain an instance of Phase Manager
         PhaseManager phMgr = ActionsHelper.createPhaseManager(false);
-
-        PhaseStatus[] phaseStatuses = phMgr.getAllPhaseStatuses();
-
-        PhaseType[] phaseTypes = phMgr.getAllPhaseTypes();
-
-        ProjectPhaseDataAccess phasesDataAccess = new ProjectPhaseDataAccess();
-        Map<Long, com.topcoder.project.phases.Project> phProjects;
-
-        if (activeTab != 1) {
-            if (activeTab == 4) {
-                phProjects = phasesDataAccess.searchDraftProjectPhases(phaseStatuses, phaseTypes);
-            } else {
-                phProjects = phasesDataAccess.searchActiveProjectPhases(phaseStatuses, phaseTypes);
-            }
-        } else {
-            // user projects
-            phProjects = phasesDataAccess.searchUserProjectPhases(userId, phaseStatuses, phaseTypes);
+        com.topcoder.project.phases.Project[] phaseProjects = phMgr.getPhases(ArrayUtils.toPrimitive(projectIds));
+        Map<Long, com.topcoder.project.phases.Project> phProjects = new HashMap<Long, com.topcoder.project.phases.Project>(
+                phaseProjects.length);
+        for (com.topcoder.project.phases.Project phPr : phaseProjects) {
+            phProjects.put(phPr.getId(), phPr);
         }
 
-        for (int i = 0; i < projectCategories.length; ++i) {
-            // Count number of projects in this category
-            for (Project ungroupedProject : ungroupedProjects) {
-                if (ungroupedProject.getProjectCategory().getId() == projectCategories[i].getId()) {
-                    ++categoryCounts[i];
-                }
+        int counter = 0;
+        // Copy ungrouped projects into group of this category
+        for (Project project : projects) {
+            // Get this project's Root Catalog ID
+            String rootCatalogId = (String) project.getProperty("Root Catalog ID");
+
+            // Fetch Root Catalog icon's filename depending on ID of the Root Catalog
+            rootCatalogIcons[counter] = ConfigHelper.getRootCatalogIconNameSm(rootCatalogId);
+            // Fetch Root Catalog name depending depending on ID of the Root Catalog
+            rootCatalogNames[counter] = getText(ConfigHelper.getRootCatalogAltTextKey(rootCatalogId));
+
+            Phase[] activePhases = null;
+
+            // Calculate end date of the project and get all active phases (if any)
+            if (phProjects.containsKey(project.getId())) {
+                com.topcoder.project.phases.Project phProject = phProjects.get(project.getId());
+                projectEndDates[counter] = phProject.calcEndDate();
+                activePhases = ActionsHelper.getActivePhases(phProject.getAllPhases());
+                phaseEndDates[counter] = null;
             }
 
-            /*
-             * Now, as the exact count of projects in this category is known,
-             * it is possible to initialize arrays
-             */
-            Project[] projs = new Project[categoryCounts[i]]; // This Category's Projects
-            String[] rcIcons = new String[categoryCounts[i]]; // Root Catalog Icons
-            String[] rcNames = new String[categoryCounts[i]]; // Root Catalog Names (shown in tooltip)
-            Phase[][] phass = new Phase[categoryCounts[i]][]; // Projects' active Phases
-            Date[] pheds = new Date[categoryCounts[i]]; // End date of every first active phase
-            Date[] preds = new Date[categoryCounts[i]]; // Projects' end dates
-
-            // No need to collect any Resources or Roles if
-            // the list of projects is not just "My" Projects
-            Resource[][] myRss = (myProjects) ? new Resource[categoryCounts[i]][] : null;
-            String[] rols = (myProjects) ? new String[categoryCounts[i]] : null;
-
-            if (categoryCounts[i] != 0) {
-                // Counter of projects currently added to this category
-                int counter = 0;
-
-                // Copy ungrouped projects into group of this category
-                for (Project ungroupedProject : ungroupedProjects) {
-                    // Skip projects that are not in this category
-                    // (they'll be processed later, or have already been processed)
-                    if (ungroupedProject.getProjectCategory().getId() != projectCategories[i].getId()) {
-                        continue;
-                    }
-
-                    // Get this project's Root Catalog ID
-                    String rootCatalogId = (String) ungroupedProject.getProperty("Root Catalog ID");
-
-                    // Fetch Root Catalog icon's filename depending on ID of the Root Catalog
-                    rcIcons[counter] = ConfigHelper.getRootCatalogIconNameSm(rootCatalogId);
-                    // Fetch Root Catalog name depending depending on ID of the Root Catalog
-                    rcNames[counter] = getText(ConfigHelper.getRootCatalogAltTextKey(rootCatalogId));
-
-                    Phase[] activePhases = null;
-
-                    // Calculate end date of the project and get all active phases (if any)
-                    if (phProjects.containsKey(ungroupedProject.getId())) {
-                        com.topcoder.project.phases.Project phProject = phProjects.get(ungroupedProject.getId());
-                        preds[counter] = phProject.calcEndDate();
-                        activePhases = ActionsHelper.getActivePhases(phProject.getAllPhases());
-                        pheds[counter] = null;
-                    }
-
-                    // Get currently open phase end calculate its end date
-                    if (activePhases != null && activePhases.length != 0) {
-                        phass[counter] = activePhases;
-                        pheds[counter] = activePhases[0].getScheduledEndDate();
-                    }
-
-                    // Retrieve information about my roles, and my current unfinished deliverables
-                    if (myProjects) {
-                        Resource[] myResources2 = ActionsHelper.getResourcesForProject(allMyResources, ungroupedProject);
-                        myRss[counter] = myResources2;
-                        rols[counter] = getRolesFromResources(this, myResources2);
-                    }
-
-                    // Store project in a group and increment counter
-                    projs[counter] = ungroupedProject;
-                    ++counter;
-                }
+            // Get currently open phase end calculate its end date
+            if (activePhases != null && activePhases.length != 0) {
+                phases[counter] = activePhases;
+                phaseEndDates[counter] = activePhases[0].getScheduledEndDate();
             }
 
-            // Save collected data in main arrays
-            projects[i] = projs;
-            rootCatalogIcons[i] = rcIcons;
-            rootCatalogNames[i] = rcNames;
-            phases[i] = phass;
-            phaseEndDates[i] = pheds;
-            projectEndDates[i] = preds;
-
-            // Resources and roles must not always be saved
+            // Retrieve information about my roles, and my current unfinished deliverables
             if (myProjects) {
-                myResources[i] = myRss;
-                myRoles[i] = rols;
+                Resource[] myResources2 = ActionsHelper.getResourcesForProject(allMyResources, project);
+                myResources[counter] = myResources2;
+                myRoles[counter] = getRolesFromResources(this, myResources2);
             }
-
-            // Fetch Project Category icon's filename depending on the name of the current category
-            categoryIconNames[i] = ConfigHelper.getProjectCategoryIconNameSm(projectCategories[i].getName());
+            ++counter;
         }
 
-        if (ungroupedProjects.length != 0 && myProjects) {
+        if (projects.length != 0 && myProjects)
+
+        {
             Deliverable[] allMyDeliverables = getDeliverables(
                     ActionsHelper.createDeliverableManager(), projects, phases, myResources);
 
             // Group the deliverables per projects in list
             for (int i = 0; i < projects.length; ++i) {
-                String[] deliverables = new String[projects[i].length];
 
-                for (int j = 0; j < projects[i].length; ++j) {
-                    Long winnerId;
-                    try {
-                        winnerId = Long.parseLong((String) projects[i][j].getProperty("Winner External Reference ID"));
-                    } catch (NumberFormatException nfe) {
-                        winnerId = null;
-                    }
-
-                    deliverables[j] = getMyDeliverablesForPhases(
-                            this, allMyDeliverables, phases[i][j], myResources[i][j], winnerId);
+                Long winnerId;
+                try {
+                    winnerId = Long.parseLong((String) projects[i].getProperty("Winner External Reference ID"));
+                } catch (NumberFormatException nfe) {
+                    winnerId = null;
                 }
 
-                myDeliverables[i] = deliverables;
+                myDeliverables[i] = getMyDeliverablesForPhases(
+                        this, allMyDeliverables, phases[i], myResources[i], winnerId);
+
             }
-        }
-
-        int totalProjectsCount = 0;
-
-        // Count projects in every type group now
-        for (int i = 0; i < projectTypes.length; ++i) {
-            for (int j = 0; j < projectCategories.length; ++j) {
-                if (projectCategories[j].getProjectType().getId() == projectTypes[i].getId()) {
-                    typeCounts[i] += categoryCounts[j];
-                }
-            }
-
-            totalProjectsCount += typeCounts[i];
         }
 
         // Place all collected data into the request as attributes
@@ -374,12 +333,10 @@ public class ListProjectsAction extends BaseProjectAction {
         request.setAttribute("phases", phases);
         request.setAttribute("phaseEndDates", phaseEndDates);
         request.setAttribute("projectEndDates", projectEndDates);
-        request.setAttribute("typeCounts", typeCounts);
-        request.setAttribute("categoryCounts", categoryCounts);
-        request.setAttribute("totalProjectsCount", totalProjectsCount);
-        request.setAttribute("categoryIconNames", categoryIconNames);
+        request.setAttribute("categoryIconName", categoryIconName);
 
-        // If the currently displayed list is a list of "My" Projects, add some more attributes
+        // If the currently displayed list is a list of "My" Projects, add some more
+        // attributes
         if (myProjects) {
             request.setAttribute("isMyProjects", myProjects);
             request.setAttribute("myRoles", myRoles);
@@ -388,62 +345,6 @@ public class ListProjectsAction extends BaseProjectAction {
 
         // Signal about successful execution of the Action
         return SUCCESS;
-    }
-
-    /**
-     * This method will return an array of <code>Project</code> with those projects the user can see taking into
-     * consideration eligibility constraints.
-     *
-     * The user can see all those "public" (no eligibility constraints) projects plus those non-public projects where
-     * he is assigned as a resource.
-     *
-     * @param ungroupedProjects all project to be displayed
-     * @param projectFilters all project ids to be displayed
-     * @param allMyResources all resources the user has for the projects to be displayed
-     *
-     * @return a <code>Project[]</code> with those projects that the user can see.
-     *
-     * @throws BaseException if any error occurs during eligibility services call
-     */
-    private Project[] filterUsingEligibilityConstraints(Project[] ungroupedProjects, List<Long> projectFilters,
-            Resource[] allMyResources) throws BaseException {
-        // check which projects have eligibility constraints
-        Set<Long> projectsWithEligibilityConstraints;
-
-        try {
-            projectsWithEligibilityConstraints =
-                EJBLibraryServicesLocator.getContestEligibilityService().haveEligibility(
-                    projectFilters.toArray(new Long[projectFilters.size()]), false);
-        } catch (Exception e) {
-            addActionError(getText(ACTION_ERROR_LIST_PROJECTS));
-            throw new BaseException("It was not possible to retrieve eligibility constraints", e);
-        }
-
-        // create a set of projects where the user is a resource
-        Set<Long> resourceProjects = new HashSet<Long>();
-
-        if (allMyResources != null) {
-            for (Resource r : allMyResources) {
-                resourceProjects.add(r.getProject());
-            }
-        }
-
-        // user can see those projects with eligibility constraints where he is a resource, so remove these
-        // from the projectsWithEligibilityConstraints set
-        projectsWithEligibilityConstraints.removeAll(resourceProjects);
-
-        // finally remove those projects left in projectsWithEligibilityConstraints from ungroupedProjects
-        List<Project> visibleProjects = new ArrayList<Project>();
-
-        for (Project p : ungroupedProjects) {
-            if (!projectsWithEligibilityConstraints.contains(p.getId())) {
-                visibleProjects.add(p);
-            }
-        }
-
-        ungroupedProjects = visibleProjects.toArray(new Project[visibleProjects.size()]);
-
-        return ungroupedProjects;
     }
 
     /**
@@ -473,8 +374,8 @@ public class ListProjectsAction extends BaseProjectAction {
      *             if there is an error determining whether some Deliverable has been completed or
      *             not.
      */
-    private static Deliverable[] getDeliverables(DeliverableManager manager, Project[][] projects, Phase[][][] phases,
-            Resource[][][] resources)
+    private static Deliverable[] getDeliverables(DeliverableManager manager, Project[] projects, Phase[][] phases,
+            Resource[][] resources)
             throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
         DeliverableDataAccess deliverableDataAccess = new DeliverableDataAccess();
         Map<Long, Map<Long, Long>> deliverableTypes = deliverableDataAccess.getDeliverablesList();
@@ -490,23 +391,23 @@ public class ListProjectsAction extends BaseProjectAction {
         List<Long> resourceIds = new ArrayList<Long>();
 
         for (int i = 0; i < projects.length; ++i) {
-            for (int j = 0; j < projects[i].length; ++j) {
-                projectIds.add(projects[i][j].getId());
 
-                // Get an array of active phases for the project
-                Phase[] activePhases = phases[i][j];
+            projectIds.add(projects[i].getId());
+
+            // Get an array of active phases for the project
+            Phase[] activePhases = phases[i];
 
                 // If there are no active phases, no need to select deliverables for this project
                 if (activePhases == null) {
                     continue;
                 }
 
-                for (Phase activePhase : activePhases) {
-                    phaseTypeIds.add(activePhase.getId());
-                }
+            for (Phase activePhase : activePhases) {
+                phaseTypeIds.add(activePhase.getId());
+            }
 
-                // Get an array of "my" resources for the active phases
-                Resource[] myResources = resources[i][j];
+            // Get an array of "my" resources for the active phases
+            Resource[] myResources = resources[i];
 
                 // If there are no "my" resources, skip the rest of the loop
                 if (myResources == null) {
@@ -538,9 +439,9 @@ public class ListProjectsAction extends BaseProjectAction {
 
                     if (toAdd) {
                         resourceIds.add(myResource.getId());
-                    }
                 }
             }
+
         }
 
         // If any of the sets is empty, there cannot be any deliverables

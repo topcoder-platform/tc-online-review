@@ -12,7 +12,7 @@
                         </Property>
                         <Property name="parameters">
                             <Property name="jndi_name">
-                                <Value>java:DS</Value>
+                                <Value>java:jboss/datasources/DS</Value>
                             </Property>
                         </Property>
                     </Property>
@@ -39,7 +39,7 @@
                         </Property>
                         <Property name="parameters">
                             <Property name="jndi_name">
-                                <Value>java:DS</Value>
+                                <Value>java:jboss/datasources/DS</Value>
                             </Property>
                         </Property>
                     </Property>
@@ -63,7 +63,7 @@
                         </Property>
                         <Property name="parameters">
                             <Property name="jndi_name">
-                                <Value>java:DS</Value>
+                                <Value>java:jboss/datasources/DS</Value>
                             </Property>
                         </Property>
                     </Property>

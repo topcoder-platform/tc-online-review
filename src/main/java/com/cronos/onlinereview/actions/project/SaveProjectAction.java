@@ -174,6 +174,11 @@ public class SaveProjectAction extends BaseProjectAction {
     private static final long SUBMITTER_ROLE_ID = 1L;
 
     /**
+     * <p>A <code>Set</code> holding the IDs for reviewer role and iterative reviewer role Ids which do not allow to be assigned to</p>
+     */
+    private static final Set<Long> NO_REVIEWER_ITERATIVE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(21L, 4L));
+
+    /**
      * The jackson object mapping which is used to deserialize json return from API to domain model.
      */
     protected static final ObjectMapper objectMapper;
@@ -1401,7 +1406,6 @@ public class SaveProjectAction extends BaseProjectAction {
     /**
      * Get groups for the login user
      *
-     * @param request the request to use
      * @param userId the user id to use
      * @throws BaseException if any error occurs
      * @return the Set<Long> result contains the group ids
@@ -1409,12 +1413,11 @@ public class SaveProjectAction extends BaseProjectAction {
     private Set<Long> getGroups(long userId) throws BaseException {
     	try {
             DefaultHttpClient httpClient = new DefaultHttpClient();
-            String groupEndPoint = String.format(ConfigHelper.getUserGroupMembershipUrl(), userId);
-            HttpGet getRequest = new HttpGet(groupEndPoint);
+            String groupV5EndPoint = String.format(ConfigHelper.getUserGroupMembershipUrlV5(), userId);
+            HttpGet getRequest = new HttpGet(groupV5EndPoint);
 
-            String v3Token = new JwtTokenUpdater().check().getToken();
-
-            getRequest.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + v3Token);
+            String m2mToken = ConfigHelper.getEventBusAuthToken();
+            getRequest.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + m2mToken);
 
             getRequest.addHeader(HttpHeaders.ACCEPT, "application/json");
             HttpResponse httpResponse = httpClient.execute(getRequest);
@@ -1422,84 +1425,19 @@ public class SaveProjectAction extends BaseProjectAction {
             HttpEntity entity = httpResponse.getEntity();
 
             if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                throw new BaseException("Unable to get groups from the API:" + httpResponse.getStatusLine().getReasonPhrase());
+                throw new BaseException("Unable to get v5 groups from the API:" + httpResponse.getStatusLine().getReasonPhrase());
             }
 
-            JsonNode result = objectMapper.readTree(entity.getContent());
-
-            JsonNode groups = result.path("result").path("content");
+            JsonNode groups = objectMapper.readTree(entity.getContent());
             Set<Long> groupIds = new HashSet<Long>();
             for (JsonNode group : groups) {
-                groupIds.add(group.path("id").asLong());
+                groupIds.add(group.asLong());
             }
-
-            Set<Long> allGroupIds = new HashSet<Long>(groupIds);
-            for (Long groupId : groupIds) {
-                allGroupIds.addAll(getParentGroups(groupId));
-            }
-
-            return allGroupIds;
+            System.out.println("getGroups Results:" + groupIds);
+            return groupIds;
     	} catch (Exception exp) {
     		throw new BaseException(exp.getMessage(), exp);
     	}
-    }
-
-    /**
-     * Get parent groups for the given group id
-     *
-     * @param request the request to use
-     * @param groupId the user id to use
-     * @throws BaseException if any error occurs
-     * @return the Set<Long> result contains the group ids
-     */
-    private Set<Long> getParentGroups(long groupId) throws BaseException {
-        try {
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            String parentGroupsEndPoint = String.format(ConfigHelper.getParentGroupsUrl(), groupId);
-            HttpGet getRequest = new HttpGet(parentGroupsEndPoint);
-
-            String v3Token = new JwtTokenUpdater().check().getToken();
-
-            getRequest.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + v3Token);
-
-            getRequest.addHeader(HttpHeaders.ACCEPT, "application/json");
-            HttpResponse httpResponse = httpClient.execute(getRequest);
-
-            HttpEntity entity = httpResponse.getEntity();
-
-            if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                throw new BaseException("Unable to get groups from the API:" + httpResponse.getStatusLine().getReasonPhrase());
-            }
-
-            JsonNode result = objectMapper.readTree(entity.getContent());
-
-            JsonNode groupNode = result.path("result").path("content");
-            Set<Long> groupIds = parseGroup(groupNode);
-
-            return groupIds;
-        } catch (Exception exp) {
-            throw new BaseException(exp.getMessage(), exp);
-        }
-    }
-
-    /**
-     * Parse the group from the JSON node
-     * @param groupNode the JSON node
-     * @return the group
-     */
-    private Set<Long> parseGroup(JsonNode groupNode) {
-        Set<Long> parentGroupIds = new HashSet<Long>();
-        Long parentGroupId = groupNode.path("id").asLong();
-        if (parentGroupId != 0) {
-            // exclude null node
-            parentGroupIds.add(groupNode.path("id").asLong());
-        }
-
-        if (groupNode.has("parentGroup")) {
-            parentGroupIds.addAll(parseGroup(groupNode.path("parentGroup")));
-        }
-
-        return parentGroupIds;
     }
 
     /**
@@ -1803,6 +1741,40 @@ public class SaveProjectAction extends BaseProjectAction {
             }
         }
 
+        // Validate that no submitters who have submitted for project were assigned as reviewer role or iterative reviewer role
+        // 0-index resource is skipped as it is a "dummy" one
+        for (int i = 1; i < resourceNames.length; i++) {
+            String resourceAction = (String) getModel().get("resources_action", i);
+            // check for additions or modifications
+            if (!"delete".equalsIgnoreCase(resourceAction)) {
+                String handle = resourceNames[i];
+                long resourceRoleId = (Long) getModel().get("resources_role", i);
+                if (NO_REVIEWER_ITERATIVE_REVIEWER_ROLE_IDS.contains(resourceRoleId)) {
+                    boolean resourceHasSubmissions = false;
+                    for (int j = 1; j < resourceNames.length; j++) {
+                        if (i == j) continue;
+                        Long otherResourceId = (Long) getModel().get("resources_id", j);
+                        if (otherResourceId != -1 && handle.equalsIgnoreCase(resourceNames[j])) {
+                            Resource otherResource = resourceManager.getResource(otherResourceId);
+                            String otherResourceRoleName = otherResource.getResourceRole().getName();
+                            if ("Submitter".equals(otherResourceRoleName)) {
+                                Long[] submissionIds = otherResource.getSubmissions();
+                                if ((submissionIds != null) && (submissionIds.length > 0)) {
+                                    resourceHasSubmissions = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if(resourceHasSubmissions) {
+                        ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                "error.com.cronos.onlinereview.actions."
+                                        + "editProject.Resource.DuplicateSubmitterReviewerRole");
+                        allResourcesValid = false;
+                    }
+                }
+            }
+        }
 
         // No resources are updated if at least one of them is incorrect.
         if (!allResourcesValid) {
@@ -2039,20 +2011,6 @@ public class SaveProjectAction extends BaseProjectAction {
             resourceManager.addNotifications(userIds, project.getId(),
                     timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
-
-        // Add forum permissions for all new users and remove permissions for removed resources.
-        ActionsHelper.removeForumPermissions(project, deletedUsers);
-        ActionsHelper.addForumPermissions(project, newUsers, false);
-        ActionsHelper.addForumPermissions(project, newModerators, true);
-
-        long forumId = 0;
-        if (project.getProperty("Developer Forum ID") != null && (Long) project.getProperty("Developer Forum ID") != 0) {
-            forumId = ((Long) project.getProperty("Developer Forum ID"));
-        }
-
-        ActionsHelper.removeForumWatch(project, deletedUsers, forumId);
-        ActionsHelper.removeForumWatch(project, deletedUsersForForumWatch, forumId);
-        ActionsHelper.addForumWatch(project, newUsersForumWatch, forumId);
     }
 
     /**

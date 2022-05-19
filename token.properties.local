@@ -48,7 +48,7 @@ context.security.url=localhost:1099
 # cache.host_url=env.topcoder.com:2199
 
 # typical windows configuration (cache doesn't work in local build)
-cache.host_url=tc-cache:2199
+cache.host_url=localhost:2199
 redis.host_url=redis://tc-cache:6379
 
 #######################################
@@ -151,9 +151,8 @@ localFileUploadDir=/nfs_shares/tcssubmissions
 localStudioFileUploadDir=/nfs_shares/studiofiles/submissions
 catalogOutputDir=/nfs_shares/tcs-downloads
 distributionToolOutputDir=/root/temp/dist-gen
-#distributionScriptsBase=/root/jboss-4.0.2/server/default/deploy/review.war/WEB-INF/classes/distribution_scripts/unix
 distributionScriptsBase=/root/web/conf/distribution_scripts/unix
-exttemplatesdir=/root/jboss-4.0.2/server/default/deploy/review.war/WEB-INF/classes/templates
+exttemplatesdir=/root/wildfly-26.0.1.Final/standalone/deployments/review.war/WEB-INF/classes/templates
 pactJNDIAddress=jnp://localhost:1099
 adminUsers=132456
 thurgood.api.key=12345678901234567890
@@ -161,6 +160,7 @@ thurgood.username=Thurgood
 thurgood.password=password
 topcoder_api_base_url=http://api.topcoder-dev.com/v2/develop/challenges
 topcoder_api_base_url_v3=http://api.topcoder-dev.com/v3/challenges
+topcoder_api_base_url_v5=https://api.topcoder-dev.com/v5
 amazon_sns_arn=arn:aws:sns:us-east-1:766830814403:community-challenge-create
 amazonSNSAccessKey=AKIAIZNXS3HERHTLVQKA
 amazonSNSSecretKey=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

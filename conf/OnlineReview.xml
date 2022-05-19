@@ -18,7 +18,7 @@
                 </Property>
                 <Property name="parameters">
                     <Property name="jndi_name">
-                        <Value>java:JTS_TCS_CATALOG</Value>
+                        <Value>java:jboss/datasources/JTS_TCS_CATALOG</Value>
                     </Property>
                 </Property>
             </Property>
@@ -28,7 +28,7 @@
                 </Property>
                 <Property name="parameters">
                     <Property name="jndi_name">
-                        <Value>java:TimeDS</Value>
+                        <Value>java:jboss/datasources/TimeDS</Value>
                     </Property>
                 </Property>
             </Property>
@@ -38,7 +38,7 @@
                 </Property>
                 <Property name="parameters">
                     <Property name="jndi_name">
-                        <Value>java:OLTP</Value>
+                        <Value>java:jboss/datasources/OLTP</Value>
                     </Property>
                 </Property>
             </Property>
@@ -5231,12 +5231,8 @@
         <Property name="topcoder_api_base_url">
             <Value>@topcoder_api_base_url@</Value>
         </Property>
-
-        <Property name="user_group_membership_url">
-            <Value>@topcoder_api_base_url_v3@/groups?memberId=%s&amp;membershipType=User</Value>
-        </Property>
-        <Property name="parent_groups_url">
-            <Value>@topcoder_api_base_url_v3@/groups/%s/getParentGroup?oneLevel=false</Value>
+        <Property name="user_group_membership_url_v5">
+            <Value>@topcoder_api_base_url_v5@/groups/memberGroups/%s</Value>
         </Property>
         <Property name="v3jwt_cookie_name">
             <Value>v3jwt</Value>
@@ -5441,7 +5437,7 @@
                     </Property>
                     <Property name="parameters">
                         <Property name="jndi_name">
-                            <Value>java:JTS_TCS_CATALOG</Value>
+                            <Value>java:jboss/datasources/JTS_TCS_CATALOG</Value>
                         </Property>
                     </Property>
                 </Property>
@@ -5484,7 +5480,7 @@
                             </Property>
                             <Property name="parameters">
                                 <Property name="jndi_name">
-                                    <Value>java:JTS_TCS_CATALOG</Value>
+                                    <Value>java:jboss/datasources/JTS_TCS_CATALOG</Value>
                                 </Property>
                             </Property>
                         </Property>
@@ -5533,7 +5529,7 @@
                             </Property>
                             <Property name="parameters">
                                 <Property name="jndi_name">
-                                    <Value>java:JTS_TCS_CATALOG</Value>
+                                    <Value>java:jboss/datasources/JTS_TCS_CATALOG</Value>
                                 </Property>
                             </Property>
                         </Property>
@@ -5566,7 +5562,7 @@
                         </Property>
                         <Property name="parameters">
                             <Property name="jndi_name">
-                                <Value>java:JTS_TCS_CATALOG</Value>
+                                <Value>java:jboss/datasources/JTS_TCS_CATALOG</Value>
                             </Property>
                         </Property>
                     </Property>
