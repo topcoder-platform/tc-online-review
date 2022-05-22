@@ -3,6 +3,7 @@
  */
 package com.cronos.onlinereview.mockups;
 
+import com.cronos.onlinereview.external.ConfigException;
 import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.topcoder.onlinereview.component.external.UserRetrieval;
 import com.cronos.onlinereview.external.impl.DBUserRetrieval;
@@ -65,7 +66,7 @@ public class MockAuthenticator extends AbstractAuthenticator {
             } else {
                 return new Response(false, "Failed");
             }
-        } catch (BaseException e) {
+        } catch (BaseException | ConfigException e) {
             throw new AuthenticateException("Unable to connect to user store", e);
         }
     }

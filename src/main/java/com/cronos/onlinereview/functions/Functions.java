@@ -3,6 +3,19 @@
  */
 package com.cronos.onlinereview.functions;
 
+import com.cronos.onlinereview.util.ActionsHelper;
+import com.cronos.onlinereview.util.AuthorizationHelper;
+import com.cronos.onlinereview.util.ConfigHelper;
+import com.opensymphony.xwork2.ActionContext;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+import com.topcoder.onlinereview.component.resource.ResourcePersistenceException;
+import org.apache.struts2.util.TextProviderHelper;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.PageContext;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -12,21 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.PageContext;
-
-import org.apache.struts2.util.TextProviderHelper;
-
-import com.cronos.onlinereview.util.ActionsHelper;
-import com.cronos.onlinereview.util.AuthorizationHelper;
-import com.cronos.onlinereview.util.ConfigHelper;
-import com.opensymphony.xwork2.ActionContext;
-import com.topcoder.onlinereview.component.project.management.Project;
-import com.topcoder.onlinereview.component.resource.Resource;
-import com.topcoder.onlinereview.component.resource.ResourceManager;
-import com.topcoder.onlinereview.component.project.management.PersistenceException;
-import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class implements several helper-functions that can be used from JSP pages.

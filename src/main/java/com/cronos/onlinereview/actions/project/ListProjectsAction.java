@@ -82,10 +82,6 @@ public class ListProjectsAction extends BaseProjectAction {
      *             if any error occurs.
      */
     public String execute() throws BaseException {
-        ProjectType[] types = ActionsHelper.getAllProjects();
-        for (ProjectType type: types) {
-            System.out.println("type: " + type.getName());
-        }
         // Remove redirect-after-login attribute (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
 

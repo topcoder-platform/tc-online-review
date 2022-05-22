@@ -73,7 +73,7 @@ public class EarlyAppealsAction extends BaseProjectDetailsAction {
         }
 
         PhaseManager phaseMgr = ActionsHelper.createPhaseManager(false);
-        com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(verification.getProject().getId());
+        com.topcoder.onlinereview.component.project.phase.Project phProj = phaseMgr.getPhases(verification.getProject().getId());
         Phase[] phases = phProj.getAllPhases(new Comparators.ProjectPhaseComparer());
 
         // Obtain an array of all active phases of the project

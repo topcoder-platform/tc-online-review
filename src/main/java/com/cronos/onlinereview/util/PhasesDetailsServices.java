@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.opensymphony.xwork2.TextProvider;
 import com.topcoder.onlinereview.component.deliverable.SubmissionType;
+import com.topcoder.onlinereview.component.deliverable.UploadFilterBuilder;
 import com.topcoder.onlinereview.component.resource.ResourceManager;
 
 import com.cronos.onlinereview.Constants;
@@ -28,7 +29,6 @@ import com.topcoder.onlinereview.component.deliverable.Submission;
 import com.topcoder.onlinereview.component.deliverable.Upload;
 import com.topcoder.onlinereview.component.deliverable.UploadManager;
 import com.topcoder.onlinereview.component.deliverable.SubmissionFilterBuilder;
-import com.topcoder.management.deliverable.search.UploadFilterBuilder;
 import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.resource.Resource;
 import com.topcoder.onlinereview.component.review.ReviewManager;
@@ -72,7 +72,7 @@ public final class PhasesDetailsServices {
      */
     public static PhasesDetails getPhasesDetails(HttpServletRequest request, TextProvider textProvider, Project project,
             Phase[] phases, Resource[] allProjectResources, ExternalUser[] allProjectExternalUsers)
-            throws BaseException {
+            throws BaseException, RetrievalException, ConfigException {
 
         // Validate parameters first
         ActionsHelper.validateParameterNotNull(request, "request");

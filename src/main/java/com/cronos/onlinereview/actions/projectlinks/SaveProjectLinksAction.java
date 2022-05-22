@@ -12,7 +12,7 @@ import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
 import com.topcoder.onlinereview.component.project.management.Project;
-import com.topcoder.management.project.link.ProjectLinkManager;
+import com.topcoder.onlinereview.component.project.management.ProjectLinkManager;
 import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
