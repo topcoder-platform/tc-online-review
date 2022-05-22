@@ -3,21 +3,18 @@
  */
 package com.cronos.onlinereview.dataaccess;
 
-import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectPropertyType;
-import com.topcoder.management.project.ProjectStatus;
-import com.topcoder.management.resource.ResourceRole;
-import com.topcoder.project.phases.PhaseStatus;
-import com.topcoder.project.phases.PhaseType;
-import com.topcoder.shared.dataAccess.DataAccess;
-import com.topcoder.shared.dataAccess.Request;
-import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
-import com.topcoder.shared.util.DBMS;
+import com.topcoder.onlinereview.component.project.management.ProjectCategory;
+import com.topcoder.onlinereview.component.project.management.ProjectStatus;
+import com.topcoder.onlinereview.component.project.phase.PhaseStatus;
+import com.topcoder.onlinereview.component.project.phase.PhaseType;
+import com.topcoder.onlinereview.component.resource.ResourceRole;
+import com.topcoder.onlinereview.component.shared.dataaccess.DataAccess;
+import com.topcoder.onlinereview.component.shared.dataaccess.Request;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,10 +35,16 @@ public abstract class BaseDataAccess {
      */
     protected static final long PROJECT_STATUS_DRAFT_ID = 2;
 
+    protected JdbcTemplate tcsJdbcTemplate;
+
     /**
      * <p>Constructs new <code>BaseDataAccess</code> instance. This implementation does nothing.</p>
      */
     protected BaseDataAccess() {
+    }
+
+    public void setTcsJdbcTemplate(JdbcTemplate tcsJdbcTemplate) {
+        this.tcsJdbcTemplate = tcsJdbcTemplate;
     }
 
     /**
@@ -138,7 +141,7 @@ public abstract class BaseDataAccess {
      * @return a <code>Map</code> providing the query results. Maps query names to query results.
      * @throws DataAccessException if an unexpected error occurs while running the query.
      */
-    protected Map<String, ResultSetContainer> runQuery(String queryName, String paramName, String paramValue) {
+    protected Map<String, List<Map<String, Object>>> runQuery(String queryName, String paramName, String paramValue) {
         return runQuery(queryName, new String[] {paramName}, new String[] {paramValue});
     }
 
@@ -152,23 +155,23 @@ public abstract class BaseDataAccess {
      * @return a <code>Map</code> providing the query results. Maps query names to query results.
      * @throws DataAccessException if an unexpected error occurs while running the query.
      */
-    protected Map<String, ResultSetContainer> runQuery(String queryName, String[] paramNames, String[] paramValues) {
-        return runQueryInDB(DBMS.TCS_OLTP_DATASOURCE_NAME, queryName, paramNames, paramValues);
+    protected Map<String, List<Map<String, Object>>> runQuery(String queryName, String[] paramNames, String[] paramValues) {
+        return runQueryInDB(tcsJdbcTemplate, queryName, paramNames, paramValues);
     }
 
     /**
      * <p>Executes the specified query using Query Tool. The query is customized with provided value of specified
      * parameter.</p>
      *
-     * @param dbName the name of db.
+     * @param jdbcTemplate the name of db.
      * @param queryName a <code>String</code> providing the name of the query to be run.
      * @param paramNames a <code>String</code> array providing the names of the query parameters for customization.
      * @param paramValues a <code>String</code> array providing the values of the query parameters for customization.
      * @return a <code>Map</code> providing the query results. Maps query names to query results.
      * @throws DataAccessException if an unexpected error occurs while running the query.
      */
-    protected Map<String, ResultSetContainer> runQueryInDB(String dbName, String queryName, String[] paramNames, String[] paramValues) {
-        DataAccess dataAccess = new DataAccess(dbName);
+    protected Map<String, List<Map<String, Object>>> runQueryInDB(JdbcTemplate jdbcTemplate, String queryName, String[] paramNames, String[] paramValues) {
+        DataAccess dataAccess = new DataAccess(jdbcTemplate);
         Request request = new Request();
         request.setContentHandle(queryName);
         for (int i = 0; i < paramNames.length; i++) {
@@ -189,41 +192,7 @@ public abstract class BaseDataAccess {
      * @return a <code>Connection</code> providing the connection to TCS Catalog database.
      * @throws DataAccessException if an SQL error occurs while establishing connection to TCS Catalog database.
      */
-    protected Connection getTCSCatalogDBConnection() {
-        try {
-            return DBMS.getConnection(DBMS.TCS_OLTP_DATASOURCE_NAME);
-        } catch (SQLException e) {
-            throw new DataAccessException("Failed to connect to TCS Catalog database", e);
-        }
-    }
-
-    /**
-     * <p>Closes the specified statement. If an SQL error occurs while closing the statement it is ignored.</p>
-     *
-     * @param statement a <code>Statement</code> to be closed.
-     */
-    protected void close(Statement statement) {
-        if (statement != null) {
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                // Ignore
-            }
-        }
-    }
-
-    /**
-     * <p>Closes the specified connection. If an SQL error occurs while closing the connection it is ignored.</p>
-     *
-     * @param connection a <code>Connection</code> to be closed.
-     */
-    protected void close(Connection connection) {
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                // Ignore
-            }
-        }
+    protected JdbcTemplate getTcsJdbcTemplate() {
+        return tcsJdbcTemplate;
     }
 }

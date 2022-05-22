@@ -3,16 +3,19 @@
  */
 package com.cronos.onlinereview.dataaccess;
 
-import java.sql.Timestamp;
+import com.topcoder.onlinereview.component.project.management.ProjectStatus;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+import com.topcoder.onlinereview.component.resource.ResourceRole;
+
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import com.topcoder.management.project.ProjectStatus;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.resource.ResourceRole;
-import com.topcoder.management.resource.persistence.ResourcePersistenceException;
-import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
+import static com.topcoder.onlinereview.util.CommonUtils.getDate;
+import static com.topcoder.onlinereview.util.CommonUtils.getLong;
+import static com.topcoder.onlinereview.util.CommonUtils.getString;
 
 /**
  * <p>A simple DAO for project resources backed up by Query Tool.</p>
@@ -37,11 +40,9 @@ public class ResourceDataAccess extends BaseDataAccess {
      * @param status a <code>ProjectStatus</code> specifying the status of the projects.
      * @param resourceManager a <code>ResourceManager</code> to be used for searching.
      * @return a <code>Resource</code> array providing the details for found resources.
-     * @throws ResourcePersistenceException if an error occurs while retrieving resource roles.
      * @throws DataAccessException if an unexpected error occurs.
      */
-    public Resource[] searchUserResources(long userId, ProjectStatus status, ResourceManager resourceManager)
-        throws ResourcePersistenceException {
+    public Resource[] searchUserResources(long userId, ProjectStatus status, ResourceManager resourceManager) {
         
         // Get the list of existing resource roles and build a cache
         ResourceRole[] resourceRoles = resourceManager.getAllResourceRoles();
@@ -51,7 +52,7 @@ public class ResourceDataAccess extends BaseDataAccess {
         }
 
         // Get resources details by user ID using Query Tool
-        Map<String, ResultSetContainer> results;
+        Map<String, List<Map<String, Object>>> results;
         if (status == null) {
             results = runQuery("tcs_global_resources_by_user", "uid", String.valueOf(userId));
         } else {
@@ -60,7 +61,7 @@ public class ResourceDataAccess extends BaseDataAccess {
         }
 
         // Convert returned data into Resource objects
-        ResultSetContainer resourcesData;
+        List<Map<String, Object>> resourcesData;
         if (status == null) {
             resourcesData = results.get("tcs_global_resources_by_user");
         } else {
@@ -70,20 +71,20 @@ public class ResourceDataAccess extends BaseDataAccess {
         int recordNum = resourcesData.size();
         Resource[] resources = new Resource[recordNum];
         for (int i = 0; i < recordNum; i++) {
-            long resourceId = resourcesData.getLongItem(i, "resource_id");
-            long resourceRoleId = resourcesData.getLongItem(i, "resource_role_id");
+            long resourceId = getLong(resourcesData.get(i), "resource_id");
+            long resourceRoleId = getLong(resourcesData.get(i), "resource_role_id");
             Long projectId = null;
-            if (resourcesData.getItem(i, "project_id").getResultData() != null) {
-                projectId = resourcesData.getLongItem(i, "project_id");
+            if (resourcesData.get(i).get("project_id") != null) {
+                projectId = getLong(resourcesData.get(i), "project_id");
             }
             Long phaseId = null;
-            if (resourcesData.getItem(i, "phase_id").getResultData() != null) {
-                phaseId = resourcesData.getLongItem(i, "phase_id");
+            if (resourcesData.get(i).get("phase_id") != null) {
+                phaseId = getLong(resourcesData.get(i), "phase_id");
             }
-            String createUser = resourcesData.getStringItem(i, "create_user");
-            Timestamp createDate = resourcesData.getTimestampItem(i, "create_date");
-            String modifyUser = resourcesData.getStringItem(i, "modify_user");
-            Timestamp modifyDate = resourcesData.getTimestampItem(i, "modify_date");
+            String createUser = getString(resourcesData.get(i), "create_user");
+            Date createDate = getDate(resourcesData.get(i), "create_date");
+            String modifyUser = getString(resourcesData.get(i), "modify_user");
+            Date modifyDate = getDate(resourcesData.get(i), "modify_date");
 
             Resource resource = new Resource(resourceId, cachedRoles.get(resourceRoleId));
             resource.setProject(projectId);
@@ -99,7 +100,7 @@ public class ResourceDataAccess extends BaseDataAccess {
         }
 
         // Fill resources with resource info records
-        ResultSetContainer resourceInfosData;
+        List<Map<String, Object>> resourceInfosData;
         if (status == null) {
             resourceInfosData = results.get("tcs_global_resource_infos_by_user");
         } else {
@@ -108,9 +109,9 @@ public class ResourceDataAccess extends BaseDataAccess {
         recordNum = resourceInfosData.size();
 
         for (int i = 0; i < recordNum; i++) {
-            long resourceId = resourceInfosData.getLongItem(i, "resource_id");
-            String propName = resourceInfosData.getStringItem(i, "resource_info_type_name");
-            String value = resourceInfosData.getStringItem(i, "value");
+            long resourceId = getLong(resourceInfosData.get(i), "resource_id");
+            String propName = getString(resourceInfosData.get(i), "resource_info_type_name");
+            String value = getString(resourceInfosData.get(i), "value");
             Resource resource = cachedResources.get(resourceId);
             resource.setProperty(propName, value);
         }

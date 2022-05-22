@@ -3,22 +3,8 @@
  */
 package com.cronos.onlinereview.actions.projectmanagementconsole;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.external.ConfigException;
-import com.cronos.onlinereview.external.ExternalUser;
-import com.cronos.onlinereview.external.RetrievalException;
-import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.model.DynamicModel;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
@@ -27,22 +13,34 @@ import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.EJBLibraryServicesLocator;
 import com.cronos.onlinereview.util.LoggingHelper;
 import com.cronos.onlinereview.util.LookupHelper;
-import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
-import com.cronos.termsofuse.dao.TermsOfUseDao;
-import com.cronos.termsofuse.dao.TermsOfUsePersistenceException;
-import com.cronos.termsofuse.dao.UserTermsOfUseDao;
-import com.cronos.termsofuse.model.TermsOfUse;
-import com.topcoder.management.phase.PhaseManager;
-import com.topcoder.management.phase.PhaseStatusEnum;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.resource.ResourceRole;
-import com.topcoder.management.resource.search.ResourceFilterBuilder;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.project.phases.PhaseStatus;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.external.ExternalUser;
+import com.topcoder.onlinereview.component.external.UserRetrieval;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseManager;
+import com.topcoder.onlinereview.component.project.phase.PhaseStatus;
+import com.topcoder.onlinereview.component.project.phase.PhaseStatusEnum;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceFilterBuilder;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+import com.topcoder.onlinereview.component.resource.ResourceRole;
+import com.topcoder.onlinereview.component.termsofuse.ProjectTermsOfUseDao;
+import com.topcoder.onlinereview.component.termsofuse.TermsOfUse;
+import com.topcoder.onlinereview.component.termsofuse.TermsOfUseDao;
+import com.topcoder.onlinereview.component.termsofuse.TermsOfUsePersistenceException;
+import com.topcoder.onlinereview.component.termsofuse.UserTermsOfUseDao;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
-import com.topcoder.util.errorhandling.BaseException;
+
+import javax.servlet.http.HttpServletRequest;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This class is the struts action class which is used to view the project management console.
@@ -230,7 +228,7 @@ public class ManageProjectAction extends BaseProjectManagementConsoleAction {
             registrationPhase.setScheduledEndDate(newScheduledEndDate);
             registrationPhase.setLength(registrationPhase.getLength() + durationExtension);
 
-            com.topcoder.project.phases.Project phasesProject = registrationPhase.getProject();
+            com.topcoder.onlinereview.component.project.phase.Project phasesProject = registrationPhase.getProject();
             recalculateScheduledDates(phasesProject.getAllPhases());
             PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
             phaseManager.updatePhases(phasesProject, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
@@ -327,7 +325,7 @@ public class ManageProjectAction extends BaseProjectManagementConsoleAction {
                                             "error.com.cronos.onlinereview.actions.manageProject."
                                                               + "Resource.Unknown", handle);
                                     }
-                                } catch (RetrievalException e) {
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                     ActionsHelper.addErrorToRequest(request, "resource_handles[" + i + "]",
                                         "error.com.cronos.onlinereview.actions.manageProject."

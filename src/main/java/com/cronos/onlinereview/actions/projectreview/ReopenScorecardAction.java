@@ -9,11 +9,11 @@ import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.review.data.Review;
-import com.topcoder.management.scorecard.data.ScorecardType;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.review.Review;
+import com.topcoder.onlinereview.component.scorecard.ScorecardType;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class is the struts action class which is used to reopen the scorecard.

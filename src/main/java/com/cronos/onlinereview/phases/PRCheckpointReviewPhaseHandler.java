@@ -3,8 +3,15 @@
  */
 package com.cronos.onlinereview.phases;
 
-import com.topcoder.management.phase.PhaseHandlingException;
-import com.topcoder.project.phases.Phase;
+import com.topcoder.onlinereview.component.project.phase.ManagerHelper;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseHandlingException;
+import com.topcoder.onlinereview.component.project.phase.handler.CheckpointReviewPhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.EmailOptions;
+import com.topcoder.onlinereview.component.project.phase.handler.EmailScheme;
+import com.topcoder.onlinereview.component.project.phase.handler.PhasesHelper;
+
+import java.util.List;
 
 /**
  * <p>A handle for <code>Checkpoint Review</code> phase implementing the additional phase processing logic specific to
@@ -18,24 +25,21 @@ import com.topcoder.project.phases.Phase;
  * @version 2.0
  */
 public class PRCheckpointReviewPhaseHandler extends CheckpointReviewPhaseHandler {
-    /**
-     * <p>Constructs new <code>PRCheckpointReviewPhaseHandler</code> instance. This implementation does nothing.</p>
-     *
-     * @throws ConfigurationException if an unexpected error occurs while reading the configuration parameters.
-     */
-    public PRCheckpointReviewPhaseHandler() throws ConfigurationException {
-        super();
-    }
-    
+
     /**
      * <p>Constructs new <code>PRCheckpointReviewPhaseHandler</code> instance initialized based on parameters from
      * specified configuration namespace.</p>
      *
-     * @param namespace a <code>String</code> referencing the namespace for configuration parameters.
-     * @throws ConfigurationException if an unexpected error occurs while reading the configuration parameters.
      */
-    public PRCheckpointReviewPhaseHandler(String namespace) throws ConfigurationException {
-        super(namespace);
+    public PRCheckpointReviewPhaseHandler(ManagerHelper managerHelper,
+                                          List<EmailScheme> emailSchemes,
+                                          EmailScheme reviewFeedbackEmailScheme,
+                                          EmailOptions defaultStartEmailOption,
+                                          EmailOptions defaultEndEmailOption,
+                                          Long minPeerReviews,
+                                          String peerReviewAggregationURLTemplate) {
+        super(managerHelper, emailSchemes, reviewFeedbackEmailScheme, defaultStartEmailOption, defaultEndEmailOption,
+                minPeerReviews, peerReviewAggregationURLTemplate);
     }
     
     /**
@@ -43,7 +47,6 @@ public class PRCheckpointReviewPhaseHandler extends CheckpointReviewPhaseHandler
      *
      * @param phase    The input phase to check.
      * @param operator The operator that execute the phase.
-     * @throws PhaseNotSupportedException if the input phase type is not &quot;Checkpoint Screening&quot; type.
      * @throws PhaseHandlingException if there is any error occurred while processing the phase.
      * @throws IllegalArgumentException if the input parameters is null or empty string.
      */

@@ -20,11 +20,11 @@ import com.cronos.onlinereview.model.ProjectPaymentsForm;
 import com.cronos.onlinereview.model.ProjectPaymentsForm.ResourcePayments;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.opensymphony.xwork2.ModelDriven;
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.payment.ProjectPayment;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.deliverable.Submission;
+import com.topcoder.onlinereview.component.project.payment.ProjectPayment;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This is the base class for project payment actions classes.

@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.naming.Context;
@@ -22,6 +23,11 @@ import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
 import com.topcoder.util.config.ConfigManagerException;
 import com.topcoder.util.idgenerator.IdGenerator;
 import com.topcoder.util.idgenerator.sql.DB;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.topcoder.onlinereview.util.CommonUtils.executeUpdateSql;
+import static com.topcoder.onlinereview.util.CommonUtils.getLong;
+import static com.topcoder.onlinereview.util.CommonUtils.getString;
 
 /**
  * <p>A simple DAO for component catalog backed up by Query Tool.</p>
@@ -174,13 +180,13 @@ public class CatalogDataAccess extends BaseDataAccess {
         String[] queryArgNames = new String[] {"cd", "vid"};
         String[] queryArgs = new String[] {String.valueOf(componentId), String.valueOf(versionNumber)};
 
-        Map<String, ResultSetContainer> results = runQuery(queryName, queryArgNames, queryArgs);
-        ResultSetContainer versionData = results.get(queryName);
+        Map<String, List<Map<String, Object>>> results = runQuery(queryName, queryArgNames, queryArgs);
+        List<Map<String, Object>> versionData = results.get(queryName);
 
         if (versionData.isEmpty()) {
             return null;
         } else {
-            long versionId = versionData.getLongItem(0, "version_id");
+            long versionId = getLong(versionData.get(0), "version_id");
             return new ComponentVersionInfo(versionId, 0, null, null, 0, new Date(), 0, false);
         }
     }
@@ -194,14 +200,14 @@ public class CatalogDataAccess extends BaseDataAccess {
      */
     public Collection<Document> getDocuments(long componentVersionId) {
         final String queryName = "comp_version_documents";
-        Map<String, ResultSetContainer> results = runQuery(queryName, "cv", String.valueOf(componentVersionId));
-        ResultSetContainer data = results.get(queryName);
+        Map<String, List<Map<String, Object>>> results = runQuery(queryName, "cv", String.valueOf(componentVersionId));
+        List<Map<String, Object>> data = results.get(queryName);
         Collection<Document> documents = new ArrayList<Document>();
         for (int i = 0 ; i < data.size(); i++) {
-            Document document = new Document(data.getLongItem(i, "document_id"),
-                                             data.getStringItem(i, "document_name"),
-                                             data.getStringItem(i, "url"),
-                                             data.getLongItem(i, "document_type_id"));
+            Document document = new Document(getLong(data.get(i), "document_id"),
+                                             getString(data.get(i), "document_name"),
+                                             getString(data.get(i), "url"),
+                                             getLong(data.get(i), "document_type_id"));
             documents.add(document);
         }
         return documents;
@@ -216,31 +222,14 @@ public class CatalogDataAccess extends BaseDataAccess {
      * @throws DataAccessException if an unexpected error occurs.
      */
     public Document addDocument(long componentVersionId, Document document) {
-        Connection connection = getTCSCatalogDBConnection();
-        PreparedStatement ps = null;
-        try {
-            long documentId = generateNextCatalogScopedId();
-            ps = connection.prepareStatement
-                ("INSERT INTO comp_documentation (document_id, comp_vers_id, document_type_id, document_name, url) "
-                 + "VALUES (?, ?, ?, ?, ?)");
-            ps.setLong(1, documentId);
-            ps.setLong(2, componentVersionId);
-            ps.setLong(3, document.getType());
-            ps.setString(4, document.getName());
-            ps.setString(5, document.getURL());
-
-            int rowsInserted = ps.executeUpdate();
-            if (rowsInserted != 1) {
-                throw new DataAccessException("Failed to insert record for new document. Number of records inserted: "
-                                              + rowsInserted);
-            }
-            return new Document(documentId, document.getName(), document.getURL(), document.getType());
-        } catch (SQLException e) {
-            throw new DataAccessException("Failed to add new component version document", e);
-        } finally {
-            close(ps);
-            close(connection);
+        long documentId = generateNextCatalogScopedId();
+        int rowsInserted = executeUpdateSql(tcsJdbcTemplate, "INSERT INTO comp_documentation (document_id, comp_vers_id, document_type_id, document_name, url) "
+                + "VALUES (?, ?, ?, ?, ?)", newArrayList(documentId, componentVersionId, document.getType(), document.getName(), document.getURL()));
+        if (rowsInserted != 1) {
+            throw new DataAccessException("Failed to insert record for new document. Number of records inserted: "
+                                          + rowsInserted);
         }
+        return new Document(documentId, document.getName(), document.getURL(), document.getType());
     }
 
     /**
@@ -251,28 +240,11 @@ public class CatalogDataAccess extends BaseDataAccess {
      * @throws DataAccessException if an unexpected error occurs.
      */
     public void updateDocument(long componentVersionId, Document document) {
-        Connection connection = getTCSCatalogDBConnection();
-        PreparedStatement ps = null;
-        try {
-            ps = connection.prepareStatement(
-                "UPDATE comp_documentation SET document_type_id = ?, document_name = ?, url = ? "
-                + " WHERE document_id = ? AND comp_vers_id = ?");
-            ps.setLong(1, document.getType());
-            ps.setString(2, document.getName());
-            ps.setString(3, document.getURL());
-            ps.setLong(4, document.getId());
-            ps.setLong(5, componentVersionId);
-
-            int rowsUpdated = ps.executeUpdate();
-            if (rowsUpdated != 1) {
-                throw new DataAccessException(
-                    "Failed to update record for existing document. Number of records updated: " + rowsUpdated);
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException("Failed to update existing component version document", e);
-        } finally {
-            close(ps);
-            close(connection);
+        int rowsUpdated = executeUpdateSql(tcsJdbcTemplate, "UPDATE comp_documentation SET document_type_id = ?, document_name = ?, url = ? "
+                + " WHERE document_id = ? AND comp_vers_id = ?", newArrayList(document.getType(), document.getName(), document.getURL(), document.getId(), componentVersionId));
+        if (rowsUpdated != 1) {
+            throw new DataAccessException(
+                "Failed to update record for existing document. Number of records updated: " + rowsUpdated);
         }
     }
 

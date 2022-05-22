@@ -10,10 +10,10 @@ import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.deliverable.Upload;
+import com.topcoder.onlinereview.component.deliverable.Upload;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.UploadedFile;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class is the struts action class which is used for downloading document.

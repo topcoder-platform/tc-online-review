@@ -6,10 +6,10 @@ package com.cronos.onlinereview.actions.event;
 import com.cronos.onlinereview.actions.BaseServletAwareAction;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
-import com.topcoder.management.review.ReviewManager;
-import com.topcoder.management.review.data.Review;
-import com.topcoder.management.scorecard.data.ScorecardType;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.review.ReviewManager;
+import com.topcoder.onlinereview.component.review.Review;
+import com.topcoder.onlinereview.component.scorecard.ScorecardType;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * EventBusHandleAppealResponseAction is used to fire the review update event to

@@ -14,23 +14,23 @@ import com.opensymphony.xwork2.TextProvider;
 
 import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.DeliverableManager;
-import com.topcoder.management.deliverable.Submission;
+import com.topcoder.onlinereview.component.deliverable.Submission;
 import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
-import com.topcoder.management.phase.PhaseManager;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectStatus;
-import com.topcoder.management.project.UserProjectCategory;
-import com.topcoder.management.project.UserProjectType;
-import com.topcoder.management.resource.Resource;
+import com.topcoder.onlinereview.component.project.phase.PhaseManager;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.management.ProjectManager;
+import com.topcoder.onlinereview.component.project.management.ProjectStatus;
+import com.topcoder.onlinereview.component.project.management.UserProjectCategory;
+import com.topcoder.onlinereview.component.project.management.UserProjectType;
+import com.topcoder.onlinereview.component.resource.Resource;
 import com.topcoder.onlinereview.component.project.management.ProjectType;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.search.builder.SearchBuilderException;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.search.builder.filter.InFilter;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.search.SearchBuilderException;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+import com.topcoder.onlinereview.component.search.filter.InFilter;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 import org.apache.commons.lang3.ArrayUtils;
 

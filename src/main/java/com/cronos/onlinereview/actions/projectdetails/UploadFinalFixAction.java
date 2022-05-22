@@ -11,14 +11,18 @@ import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
 import com.cronos.onlinereview.util.LookupHelper;
 import com.cronos.onlinereview.util.StrutsRequestParser;
-import com.topcoder.management.deliverable.Upload;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.project.phases.Phase;
+import com.topcoder.onlinereview.component.deliverable.Upload;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.servlet.request.ConfigurationException;
+import com.topcoder.servlet.request.DisallowedDirectoryException;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.FileUploadResult;
+import com.topcoder.servlet.request.PersistenceException;
+import com.topcoder.servlet.request.RequestParsingException;
 import com.topcoder.servlet.request.UploadedFile;
-import com.topcoder.util.errorhandling.BaseException;
 
 /**
  * This class is the struts action class which is used for uploading final fix.
@@ -58,7 +62,7 @@ public class UploadFinalFixAction extends BaseProjectDetailsAction {
      * @throws BaseException
      *             if any error occurs.
      */
-    public String execute() throws BaseException {
+    public String execute() throws BaseException, ConfigurationException, DisallowedDirectoryException, PersistenceException, RequestParsingException {
         LoggingHelper.logAction(request);
 
         // Determine if this request is a post back

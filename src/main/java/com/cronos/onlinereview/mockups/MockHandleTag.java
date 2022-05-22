@@ -12,10 +12,10 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import com.cronos.onlinereview.external.ExternalUser;
-import com.cronos.onlinereview.external.UserRetrieval;
+import com.topcoder.onlinereview.component.external.ExternalUser;
+import com.topcoder.onlinereview.component.external.UserRetrieval;
 import com.cronos.onlinereview.external.impl.DBUserRetrieval;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class defines a mock up for real TopCoder's <tc-webtag:handle> tag, which displays members'

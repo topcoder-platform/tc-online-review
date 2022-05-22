@@ -3,9 +3,16 @@
  */
 package com.cronos.onlinereview.phases;
 
-import com.topcoder.management.phase.PhaseHandlingException;
-import com.topcoder.management.project.ProjectManager;
-import com.topcoder.project.phases.Phase;
+import com.topcoder.onlinereview.component.project.management.ProjectManager;
+import com.topcoder.onlinereview.component.project.phase.ManagerHelper;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseHandlingException;
+import com.topcoder.onlinereview.component.project.phase.handler.CheckpointScreeningPhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.EmailOptions;
+import com.topcoder.onlinereview.component.project.phase.handler.EmailScheme;
+import com.topcoder.onlinereview.component.project.phase.handler.PhasesHelper;
+
+import java.util.List;
 
 /**
  * <p>A handle for <code>Checkpoint Screening</code> phase implementing the additional phase processing logic specific to
@@ -24,26 +31,19 @@ public class PRCheckpointScreeningPhaseHandler extends CheckpointScreeningPhaseH
      */
     private final ScreeningResultNotification notification;
 
-    /**
-     * <p>Constructs new <code>PRCheckpointScreeningPhaseHandler</code> instance. This implementation does nothing.</p>
-     *
-     * @throws ConfigurationException if an unexpected error occurs while reading the configuration parameters.
-     */
-    public PRCheckpointScreeningPhaseHandler() throws ConfigurationException {
-        super();
-        notification = new ScreeningResultNotification(DEFAULT_NAMESPACE, "Checkpoint Submission", "Checkpoint Screening", "Failed Checkpoint Screening");
-    }
 
     /**
      * <p>Constructs new <code>PRCheckpointScreeningPhaseHandler</code> instance initialized based on parameters from
      * specified configuration namespace.</p>
-     *
-     * @param namespace a <code>String</code> referencing the namespace for configuration parameters.
-     * @throws ConfigurationException if an unexpected error occurs while reading the configuration parameters.
      */
-    public PRCheckpointScreeningPhaseHandler(String namespace) throws ConfigurationException {
-        super(namespace);
-        notification = new ScreeningResultNotification(namespace, "Checkpoint Submission", "Checkpoint Screening", "Failed Checkpoint Screening");
+    public PRCheckpointScreeningPhaseHandler(ManagerHelper managerHelper,
+                                             List<EmailScheme> emailSchemes,
+                                             EmailScheme reviewFeedbackEmailScheme,
+                                             EmailOptions defaultStartEmailOption,
+                                             EmailOptions defaultEndEmailOption,
+                                             ScreeningResultNotification notification) {
+        super(managerHelper, emailSchemes, reviewFeedbackEmailScheme, defaultStartEmailOption, defaultEndEmailOption);
+        this.notification = notification;
     }
 
     /**
@@ -51,7 +51,6 @@ public class PRCheckpointScreeningPhaseHandler extends CheckpointScreeningPhaseH
      *
      * @param phase    The input phase to check.
      * @param operator The operator that execute the phase.
-     * @throws PhaseNotSupportedException if the input phase type is not &quot;Checkpoint Screening&quot; type.
      * @throws PhaseHandlingException if there is any error occurred while processing the phase.
      * @throws IllegalArgumentException if the input parameters is null or empty string.
      */

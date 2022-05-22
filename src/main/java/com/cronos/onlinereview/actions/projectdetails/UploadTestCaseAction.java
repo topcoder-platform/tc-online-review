@@ -13,18 +13,18 @@ import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
 import com.cronos.onlinereview.util.LookupHelper;
 import com.cronos.onlinereview.util.StrutsRequestParser;
-import com.topcoder.management.deliverable.Upload;
-import com.topcoder.management.deliverable.UploadManager;
+import com.topcoder.onlinereview.component.deliverable.Upload;
+import com.topcoder.onlinereview.component.deliverable.UploadManager;
 import com.topcoder.management.deliverable.search.UploadFilterBuilder;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.Filter;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.FileUploadResult;
 import com.topcoder.servlet.request.UploadedFile;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class is the struts action class which is used for uploading test cases.

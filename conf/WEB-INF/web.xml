@@ -12,6 +12,7 @@
 			/WEB-INF/actions.xml
 			/WEB-INF/applicationContext.xml
             /WEB-INF/searchBundle.xml
+            /WEB-INF/phaseHandlers.xml
 		</param-value>
 	</context-param>
     

@@ -22,7 +22,7 @@ import org.apache.commons.codec.binary.Base64;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.exception.BaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

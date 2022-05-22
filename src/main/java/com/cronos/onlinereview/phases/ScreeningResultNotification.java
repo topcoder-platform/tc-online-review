@@ -3,44 +3,45 @@
  */
 package com.cronos.onlinereview.phases;
 
+import com.topcoder.onlinereview.component.deliverable.Submission;
+import com.topcoder.onlinereview.component.deliverable.SubmissionFilterBuilder;
+import com.topcoder.onlinereview.component.deliverable.SubmissionStatus;
+import com.topcoder.onlinereview.component.deliverable.SubmissionType;
+import com.topcoder.onlinereview.component.deliverable.UploadManager;
+import com.topcoder.onlinereview.component.deliverable.UploadPersistenceException;
+import com.topcoder.onlinereview.component.document.DocumentGenerator;
+import com.topcoder.onlinereview.component.document.Template;
+import com.topcoder.onlinereview.component.document.fieldconfig.Condition;
+import com.topcoder.onlinereview.component.document.fieldconfig.Field;
+import com.topcoder.onlinereview.component.document.fieldconfig.Node;
+import com.topcoder.onlinereview.component.document.fieldconfig.NodeList;
+import com.topcoder.onlinereview.component.document.fieldconfig.TemplateFields;
+import com.topcoder.onlinereview.component.document.templatesource.FileTemplateSource;
+import com.topcoder.onlinereview.component.email.EmailEngine;
+import com.topcoder.onlinereview.component.email.TCSEmailMessage;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.external.ExternalUser;
+import com.topcoder.onlinereview.component.external.UserRetrieval;
+import com.topcoder.onlinereview.component.project.management.PersistenceException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.phase.ManagerHelper;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+import com.topcoder.onlinereview.component.review.Review;
+import com.topcoder.onlinereview.component.review.ReviewManagementException;
+import com.topcoder.onlinereview.component.review.ReviewManager;
+import com.topcoder.onlinereview.component.scorecard.ScorecardManager;
+import com.topcoder.onlinereview.component.scorecard.ScorecardType;
+import com.topcoder.onlinereview.component.search.SearchBuilderException;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+import com.topcoder.onlinereview.component.search.filter.NotFilter;
+
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-
-import com.cronos.onlinereview.external.ExternalUser;
-import com.cronos.onlinereview.external.UserRetrieval;
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.SubmissionStatus;
-import com.topcoder.management.deliverable.SubmissionType;
-import com.topcoder.management.deliverable.UploadManager;
-import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
-import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.review.ReviewManagementException;
-import com.topcoder.management.review.ReviewManager;
-import com.topcoder.management.review.data.Review;
-import com.topcoder.management.scorecard.PersistenceException;
-import com.topcoder.management.scorecard.ScorecardManager;
-import com.topcoder.management.scorecard.data.ScorecardType;
-import com.topcoder.message.email.EmailEngine;
-import com.topcoder.message.email.TCSEmailMessage;
-import com.topcoder.search.builder.SearchBuilderException;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.EqualToFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.search.builder.filter.NotFilter;
-import com.topcoder.util.errorhandling.BaseException;
-import com.topcoder.util.file.DocumentGenerator;
-import com.topcoder.util.file.Template;
-import com.topcoder.util.file.fieldconfig.Condition;
-import com.topcoder.util.file.fieldconfig.Field;
-import com.topcoder.util.file.fieldconfig.Node;
-import com.topcoder.util.file.fieldconfig.NodeList;
-import com.topcoder.util.file.fieldconfig.TemplateFields;
-import com.topcoder.util.file.templatesource.FileTemplateSource;
 
 /**
  * This class is used to send email notification for checkpoint screening result or screening result.
@@ -121,34 +122,6 @@ public class ScreeningResultNotification {
      * Email title for failed screening
      */
     private static final String EMAIL_TITLE_FAILED = "Topcoder Submission Screening Failed";
-
-    /**
-     * Constructor. It reads the configurations from the namespace.
-     *
-     * @param namespace the configuration namespace.
-     * @param submissionTypeName the submission type name
-     * @param scorecardTypeName the scorecard type name
-     * @param failedScreeningStatusName the submission status which failed screening.
-     * @throws ConfigurationException if any error occurs when reading configurations
-     */
-    public ScreeningResultNotification(String namespace, String submissionTypeName, String scorecardTypeName,
-            String failedScreeningStatusName) throws ConfigurationException {
-        PhasesHelper.checkString(namespace, "namespace");
-        PhasesHelper.checkString(submissionTypeName, "submissionTypeName");
-        PhasesHelper.checkString(scorecardTypeName, "scorecardTypeName");
-        PhasesHelper.checkString(failedScreeningStatusName, "failedScreeningStatusName");
-
-        this.emailTemplateName = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.EmailTemplateName", true);
-        this.emailSubject = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.EmailSubject", true);
-        this.projectLinkTemplate = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.ProjectLink", true);
-        this.scorecardLinkTemplate = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.ScreeningScorecardLink", true);
-        this.emailFromAddress = PhasesHelper.getPropertyValue(namespace, "SubmittersEmail.EmailFromAddress", true);
-        this.submissionTypeName = submissionTypeName;
-        this.scorecardTypeName = scorecardTypeName;
-        this.failedScreeningStatusName = failedScreeningStatusName;
-
-        this.managerHelper = new ManagerHelper();
-    }
 
     /**
      * <p>
@@ -426,5 +399,41 @@ public class ScreeningResultNotification {
         SimpleDateFormat formatter = new SimpleDateFormat(EMAIL_TIMESTAMP_FORMAT);
 
         return formatter.format(dt);
+    }
+
+    public void setEmailTemplateName(String emailTemplateName) {
+        this.emailTemplateName = emailTemplateName;
+    }
+
+    public void setEmailSubject(String emailSubject) {
+        this.emailSubject = emailSubject;
+    }
+
+    public void setEmailFromAddress(String emailFromAddress) {
+        this.emailFromAddress = emailFromAddress;
+    }
+
+    public void setProjectLinkTemplate(String projectLinkTemplate) {
+        this.projectLinkTemplate = projectLinkTemplate;
+    }
+
+    public void setScorecardLinkTemplate(String scorecardLinkTemplate) {
+        this.scorecardLinkTemplate = scorecardLinkTemplate;
+    }
+
+    public void setManagerHelper(ManagerHelper managerHelper) {
+        this.managerHelper = managerHelper;
+    }
+
+    public void setSubmissionTypeName(String submissionTypeName) {
+        this.submissionTypeName = submissionTypeName;
+    }
+
+    public void setScorecardTypeName(String scorecardTypeName) {
+        this.scorecardTypeName = scorecardTypeName;
+    }
+
+    public void setFailedScreeningStatusName(String failedScreeningStatusName) {
+        this.failedScreeningStatusName = failedScreeningStatusName;
     }
 }

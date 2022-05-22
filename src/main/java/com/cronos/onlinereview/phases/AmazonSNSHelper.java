@@ -4,17 +4,19 @@
 package com.cronos.onlinereview.phases;
 
 import com.amazonaws.auth.PropertiesCredentials;
-import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.PublishRequest;
 import com.amazonaws.services.sns.model.PublishResult;
-import com.topcoder.management.project.Project;
+import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
 import com.topcoder.util.log.LogManager;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+
+import static com.topcoder.onlinereview.util.SpringUtils.getPropertyValue;
 
 /**
  * <p>
@@ -25,11 +27,6 @@ import java.net.URL;
  * @version 2.0
  **/
 public class AmazonSNSHelper {
-
-    /**
-     * The default configuration namespace of this class. It is used in the default constructor.
-     */
-    private static final String NAMESPACE = "com.cronos.OnlineReview";
 
     /**
      * The AWS credentials file.
@@ -57,58 +54,41 @@ public class AmazonSNSHelper {
     private static final String TOPCODER_API_BASE_URL_PROP = "topcoder_api_base_url";
 
     /**
-     * The amazon SNS client.
-     */
-    private static AmazonSNS amazonSNSClient;
-
-    /**
-     * The arn used to publish events to amazon SNS.
-     */
-    private static String amazonSnsArn;
-
-    /**
-     * The subject used to publish events to amazon SNS.
-     */
-    private static String amazonSnsMessageSubject;
-
-    /**
-     *  The message template used to publish events to amazon SNS.
-     */
-    private static String amazonSnsMessageTemplate;
-
-    /**
-     *  Root URL for TopCoder API.
-     */
-    private static String topCoderApiBaseUrl;
-
-    /**
      * The logger instance.
      */
     private static final Log log = LogManager.getLog(AmazonSNSHelper.class.getName());
-
-    /**
-     * Static section.
-     */
-    static {
-        try {
-            amazonSnsArn = PhasesHelper.getPropertyValue(NAMESPACE, AMAZON_SNS_ARN_PROP, false);
-            amazonSnsMessageSubject = PhasesHelper.getPropertyValue(NAMESPACE, AMAZON_SNS_MESSAGE_SUBJECT_PROP, false);
-            amazonSnsMessageTemplate = PhasesHelper.getPropertyValue(NAMESPACE, AMAZON_SNS_MESSAGE_TEMPLATE_PROP, false);
-            topCoderApiBaseUrl = PhasesHelper.getPropertyValue(NAMESPACE, TOPCODER_API_BASE_URL_PROP, false);
-
-            ClassLoader loader = AmazonSNSHelper.class.getClassLoader();
-            URL credentialURL = loader.getResource(AWS_CREDENTIALS_FILE);
-            amazonSNSClient = new AmazonSNSClient(new PropertiesCredentials(new File(credentialURL.getFile())));
-        } catch (Throwable e) {
-            throw new RuntimeException("Failed to initialize AmazonSNS.", e);
-        }
-    }
 
     /**
      * Empty private constructor.
      */
     private AmazonSNSHelper() {
         // Do nothing.
+    }
+
+    private static String getTopCoderApiBaseUrl() {
+        return getPropertyValue(TOPCODER_API_BASE_URL_PROP);
+    }
+
+    private static String getAmazonSnsArn() {
+        return getPropertyValue(AMAZON_SNS_ARN_PROP);
+    }
+
+    private static String getAmazonSnsMessageSubject() {
+        return getPropertyValue(AMAZON_SNS_MESSAGE_SUBJECT_PROP);
+    }
+
+    private static String getAmazonSnsMessageTemplate() {
+        return getPropertyValue(AMAZON_SNS_MESSAGE_TEMPLATE_PROP);
+    }
+
+    private static AmazonSNSClient getAmazonSNSClient() {
+        ClassLoader loader = AmazonSNSHelper.class.getClassLoader();
+        URL credentialURL = loader.getResource(AWS_CREDENTIALS_FILE);
+        try {
+            return new AmazonSNSClient(new PropertiesCredentials(new File(credentialURL.getFile())));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to initialize AmazonSNS.", e);
+        }
     }
 
     /**
@@ -121,6 +101,7 @@ public class AmazonSNSHelper {
         if (cmcTaskId == null || cmcTaskId.trim().length() == 0) {
             return;
         }
+        String topCoderApiBaseUrl = getTopCoderApiBaseUrl();
 
         String apiURL = "";
         if("Studio".equals(project.getProjectCategory().getProjectType().getName())) {
@@ -128,20 +109,20 @@ public class AmazonSNSHelper {
         } else {
             apiURL = topCoderApiBaseUrl + "/develop/challenges/" + String.valueOf(project.getId());
         }
-        String message = amazonSnsMessageTemplate.
+        String message = getAmazonSnsMessageTemplate().
                 replace("%CHALLENGE_ID%", String.valueOf(project.getId())).
                 replace("%CMC_TASK_ID%", cmcTaskId).
                 replace("%API_URL%", apiURL);
 
-        String subject = amazonSnsMessageSubject.replace("%CMC_TASK_ID%", cmcTaskId);
+        String subject = getAmazonSnsMessageSubject().replace("%CMC_TASK_ID%", cmcTaskId);
 
         PublishRequest request = new PublishRequest().
                 withSubject(subject).
                 withMessage(message).
-                withTopicArn(amazonSnsArn);
+                withTopicArn(getAmazonSnsArn());
 
         try {
-            PublishResult snsResult = amazonSNSClient.publish(request);
+            PublishResult snsResult = getAmazonSNSClient().publish(request);
             log.log(Level.DEBUG,
                     "Published project change event to Amazon SNS , project ID : " + project.getId() + ", result : " +
                             (snsResult == null ? "null" : snsResult.getMessageId()));

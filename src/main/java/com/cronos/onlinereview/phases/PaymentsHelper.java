@@ -3,12 +3,33 @@
  */
 package com.cronos.onlinereview.phases;
 
-import java.lang.reflect.InvocationTargetException;
+import com.topcoder.onlinereview.component.deliverable.Submission;
+import com.topcoder.onlinereview.component.project.management.PersistenceException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.payment.ProjectPayment;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentFilterBuilder;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentManagementException;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentManager;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentType;
+import com.topcoder.onlinereview.component.project.payment.calculator.ProjectPaymentCalculator;
+import com.topcoder.onlinereview.component.project.payment.calculator.ProjectPaymentCalculatorException;
+import com.topcoder.onlinereview.component.project.phase.ManagerHelper;
+import com.topcoder.onlinereview.component.project.phase.PhaseHandlingException;
+import com.topcoder.onlinereview.component.project.phase.handler.Constants;
+import com.topcoder.onlinereview.component.project.phase.handler.LookupHelper;
+import com.topcoder.onlinereview.component.project.phase.handler.PhasesHelper;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceFilterBuilder;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+import com.topcoder.onlinereview.component.resource.ResourcePersistenceException;
+import com.topcoder.onlinereview.component.review.Review;
+import com.topcoder.onlinereview.component.search.SearchBuilderException;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+import com.topcoder.util.config.ConfigManager;
+import com.topcoder.util.config.Property;
+
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,30 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.topcoder.db.connectionfactory.DBConnectionException;
-import com.topcoder.db.connectionfactory.DBConnectionFactory;
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.payment.ProjectPayment;
-import com.topcoder.management.payment.ProjectPaymentManagementException;
-import com.topcoder.management.payment.ProjectPaymentManager;
-import com.topcoder.management.payment.ProjectPaymentType;
-import com.topcoder.management.payment.calculator.ProjectPaymentCalculator;
-import com.topcoder.management.payment.calculator.ProjectPaymentCalculatorException;
-import com.topcoder.management.payment.search.ProjectPaymentFilterBuilder;
-import com.topcoder.management.phase.PhaseHandlingException;
-import com.topcoder.management.project.PersistenceException;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.resource.persistence.ResourcePersistenceException;
-import com.topcoder.management.resource.search.ResourceFilterBuilder;
-import com.topcoder.management.review.data.Review;
-import com.topcoder.search.builder.SearchBuilderConfigurationException;
-import com.topcoder.search.builder.SearchBuilderException;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.util.config.ConfigManager;
-import com.topcoder.util.config.Property;
+import static com.topcoder.onlinereview.util.CommonUtils.executeUpdateSql;
+import static com.topcoder.onlinereview.util.SpringUtils.getTcsJdbcTemplate;
 
 /**
  * <p>
@@ -124,82 +123,19 @@ public final class PaymentsHelper {
      * This constant for the "Copilot Payment" project payment type id.
      */
     private static final Long COPILOT_PAYMENT_TYPE_ID = 4L;
-    /**
-     * Property name constant for ProjectPaymentManager class name.
-     */
-    private static final String PROP_PROJECT_PAYMENT_MGR_CLASS_NAME = "ProjectPaymentManager.ClassName";
-    /**
-     * Property name constant for namespace to be passed to ProjectPaymentManager implementation constructor.
-     */
-    private static final String PROP_PROJECT_PAYMENT_MGR_NAMESPACE = "ProjectPaymentManager.Namespace";
-    /**
-     * Property name constant for configuration file location to be passed to ProjectPaymentManager
-     * implementation constructor.
-     */
-    private static final String PROP_PROJECT_PAYMENT_MGR_CONFIG_FILE = "ProjectPaymentManager.ConfigFile";
-    /**
-     * Property name constant for connection factory namespace.
-     */
-    private static final String PROP_CONNECTION_FACTORY_NS = "ConnectionFactoryNS";
-    /**
-     * Property name constant for connection name.
-     */
-    private static final String PROP_CONNECTION_NAME = "ConnectionName";
-    /**
-     * The default configuration namespace of this class. It is used in the default constructor.
-     */
-    private static final String DEFAULT_NAMESPACE = "com.cronos.onlinereview.phases.PRHelper";
-    /**
-     * A <code>ProjectPaymentCalculator</code> to be used for calculating the payments for reviewer roles for desired
-     * projects.
-     */
-    private static final ProjectPaymentCalculator projectPaymentCalculator = createProjectPaymentCalculator();
+
     /**
      * A <code>ProjectPaymentManager</code> to be used for managing project payment.
      */
-    private static final ProjectPaymentManager projectPaymentManager;
     /**
      * A <code>ManagerHelper</code> to be used for creating the manager instances.
      */
-    private static final ManagerHelper managerHelper;
-    /**
-     * The factory instance used to create connection to the database. It is initialized in the constructor using
-     * DBConnectionFactory component and never changed after that. It will be used in various persistence methods of
-     * this project. This field is never null.
-     */
-    private static final DBConnectionFactory factory;
-
-    /**
-     * Represents the connection name used to create connection to the database using DBConnectionFactory. This
-     * variable can be null. When it is null, default connection is be created. This variable can be initialized in
-     * the constructor and never change after that.
-     */
-    private static final String connectionName;
-
-    /**
-     * Static section.
-     */
-    static {
-        try {
-            projectPaymentManager = createProjectPaymentManager();
-            managerHelper = new ManagerHelper();
-
-            factory = PhasesHelper.createDBConnectionFactory(DEFAULT_NAMESPACE, PROP_CONNECTION_FACTORY_NS);
-            String connName = PhasesHelper.getPropertyValue(DEFAULT_NAMESPACE, PROP_CONNECTION_NAME, false);
-            if (!PhasesHelper.isStringNullOrEmpty(connName)) {
-                connectionName = connName;
-            } else {
-                connectionName = null;
-            }
-        } catch (ConfigurationException e) {
-            throw new RuntimeException("Error occurs when creating ProjectPaymentManager", e);
-        }
-    }
+    private static ManagerHelper managerHelper;
 
     /**
      * Empty private constructor.
      */
-    private PaymentsHelper() {
+    public PaymentsHelper() {
     }
 
     /**
@@ -243,7 +179,7 @@ public final class PaymentsHelper {
             Review[] allReviews = PRHelper.searchReviewsForProject(managerHelper, projectId, false);
 
             // get all existing project payments
-            List<ProjectPayment> existingPayments = projectPaymentManager.search(
+            List<ProjectPayment> existingPayments = createProjectPaymentManager().search(
                     ProjectPaymentFilterBuilder.createProjectIdFilter(projectId));
 
             // key->resource role id, value->the project payments of that resource role
@@ -293,7 +229,7 @@ public final class PaymentsHelper {
             for (Map.Entry<Domain, List<ProjectPayment>> entry : newPaymentsByDomain.entrySet()) {
                 Domain domain = entry.getKey();
                 domain.processPayments(entry.getValue(), existingPaymentsByDomain.get(domain),
-                        projectPaymentManager, operator);
+                        createProjectPaymentManager(), operator);
             }
 
             // If there are no new payment in a domain, delete all existing non-paid payments in the domain
@@ -305,14 +241,12 @@ public final class PaymentsHelper {
                     Resource resource = resourceLookup.get(payment.getResourceId());
                     if (payment.getPactsPaymentId() == null &&
                             !isManualPayment(resource)) {
-                        projectPaymentManager.delete(payment.getProjectPaymentId());
+                        createProjectPaymentManager().delete(payment.getProjectPaymentId());
                     }
                 }
             }
         } catch (PersistenceException e) {
             throw new PhaseHandlingException("Error occurs when retrieving project", e);
-        } catch (SearchBuilderConfigurationException e) {
-            throw new PhaseHandlingException("Problem with search builder configuration", e);
         } catch (ResourcePersistenceException e) {
             throw new PhaseHandlingException("There was a resource retrieval error", e);
         } catch (SearchBuilderException e) {
@@ -332,8 +266,6 @@ public final class PaymentsHelper {
      */
     public static void updateProjectResultPayments(long projectId) throws PhaseHandlingException {
         // get all resources
-        Connection conn = createConnection();
-        PreparedStatement ps = null;
         try {
             ResourceManager resourceManager = managerHelper.getResourceManager();
             Filter projectIdFilter = ResourceFilterBuilder.createProjectIdFilter(projectId);
@@ -341,11 +273,10 @@ public final class PaymentsHelper {
                     LookupHelper.getResourceRole(resourceManager, Constants.ROLE_SUBMITTER).getId());
             Resource[] submitterResources = resourceManager.searchResources(
                     new AndFilter(projectIdFilter, resourceRoleFilter));
-            List<ProjectPayment> payments = projectPaymentManager.search(
+            List<ProjectPayment> payments = createProjectPaymentManager().search(
                     ProjectPaymentFilterBuilder.createProjectIdFilter(projectId));
 
-            ps = conn.prepareStatement("UPDATE project_result SET payment = ? WHERE project_id = ? AND user_id = ?");
-            ps.setLong(2, projectId);
+            List<Object> params = new ArrayList<>();
             for (Resource resource : submitterResources) {
                 double totalPayment = 0;
                 for (ProjectPayment payment : payments) {
@@ -354,45 +285,20 @@ public final class PaymentsHelper {
                     }
                 }
                 if (totalPayment == 0) {
-                    ps.setNull(1, Types.DOUBLE);
+                    params.add(null);
                 } else {
-                    ps.setDouble(1, totalPayment);
+                    params.add(totalPayment);
                 }
-                ps.setLong(3, resource.getUserId());
-                ps.executeUpdate();
+                params.add(projectId);
+                params.add(resource.getUserId());
+                executeUpdateSql(getTcsJdbcTemplate(), "UPDATE project_result SET payment = ? WHERE project_id = ? AND user_id = ?", params);
             }
-        } catch (SearchBuilderConfigurationException e) {
-            throw new PhaseHandlingException("Problem with search builder configuration", e);
         } catch (ResourcePersistenceException e) {
             throw new PhaseHandlingException("There was a resource retrieval error", e);
         } catch (SearchBuilderException e) {
             throw new PhaseHandlingException("Problem with search builder", e);
         } catch (ProjectPaymentManagementException e) {
             throw new PhaseHandlingException("Problem with project payment manager", e);
-        } catch (SQLException e) {
-            throw new PhaseHandlingException("Error occurs when updating project result", e);
-        } finally {
-            PRHelper.close(ps);
-            PRHelper.close(conn);
-        }
-    }
-
-    /**
-     * This method is used to create the connection to access database. The connection needs to be
-     * closed after use.
-     *
-     * @return The database connection.
-     * @throws PhaseHandlingException if connection could not be created.
-     */
-    private static Connection createConnection() throws PhaseHandlingException {
-        try {
-            if (connectionName == null) {
-                return factory.createConnection();
-            } else {
-                return factory.createConnection(connectionName);
-            }
-        } catch (DBConnectionException ex) {
-            throw new PhaseHandlingException("Could not create connection", ex);
         }
     }
 
@@ -411,7 +317,7 @@ public final class PaymentsHelper {
         if (paymentsByResourceRole.keySet().size() == 0) {
             return;
         }
-        Map<Long, BigDecimal> resourceRolePayments = projectPaymentCalculator.getDefaultPayments(
+        Map<Long, BigDecimal> resourceRolePayments = managerHelper.getProjectPaymentAdjustmentCalculator().getDefaultPayments(
                 projectId, new ArrayList<Long>(paymentsByResourceRole.keySet()));
         for (Map.Entry<Long, List<ProjectPayment>> entry : paymentsByResourceRole.entrySet()) {
             BigDecimal amount = resourceRolePayments.get(entry.getKey());
@@ -570,39 +476,9 @@ public final class PaymentsHelper {
      * Creates new instance of project payment manager based on the available application configuration.
      *
      * @return a <code>ProjectPaymentManager</code> to be used for managing project payments.
-     * @throws ConfigurationException if any error occurs when creating the instance.
      */
-    private static ProjectPaymentManager createProjectPaymentManager() throws ConfigurationException {
-        String namespace = "com.cronos.OnlineReview";
-        String mgrClassName = PhasesHelper.getPropertyValue(namespace, PROP_PROJECT_PAYMENT_MGR_CLASS_NAME, true);
-        String mgrNamespace = PhasesHelper.getPropertyValue(namespace, PROP_PROJECT_PAYMENT_MGR_NAMESPACE, true);
-        String mgrConfigFile = PhasesHelper.getPropertyValue(namespace, PROP_PROJECT_PAYMENT_MGR_CONFIG_FILE, true);
-
-        Object[] params = new Object[]{mgrConfigFile, mgrNamespace};
-        Class<?>[] paramsTypes = new Class<?>[]{String.class, String.class};
-
-        // instantiate using reflection.
-        try {
-            Class<? extends ProjectPaymentManager> clazz = Class.forName(mgrClassName).asSubclass(ProjectPaymentManager.class);
-            return clazz.getConstructor(paramsTypes).newInstance(params);
-        } catch (ClassNotFoundException e) {
-            throw new ConfigurationException("Could not find class:" + mgrClassName, e);
-        } catch (IllegalArgumentException e) {
-            throw new ConfigurationException("The object could not be instantiated.", e);
-        } catch (SecurityException e) {
-            throw new ConfigurationException("The object could not be instantiated.", e);
-        } catch (InstantiationException e) {
-            throw new ConfigurationException("The object could not be instantiated.", e);
-        } catch (IllegalAccessException e) {
-            throw new ConfigurationException("The object could not be instantiated.", e);
-        } catch (InvocationTargetException e) {
-            throw new ConfigurationException("The object could not be instantiated.", e);
-        } catch (NoSuchMethodException e) {
-            throw new ConfigurationException("The object could not be instantiated.", e);
-        } catch (ClassCastException e) {
-            throw new ConfigurationException(mgrClassName + " must be of type " +
-                    ProjectPaymentManager.class.getName());
-        }
+    private static ProjectPaymentManager createProjectPaymentManager() {
+        return managerHelper.getProjectPaymentManager();
     }
 
     /**
@@ -878,5 +754,9 @@ public final class PaymentsHelper {
 
             super.processPayments(current, existing, projectPaymentManager, operator);
         }
+    }
+
+    public void setManagerHelper(com.topcoder.onlinereview.component.project.phase.ManagerHelper managerHelper) {
+        PaymentsHelper.managerHelper = managerHelper;
     }
 }

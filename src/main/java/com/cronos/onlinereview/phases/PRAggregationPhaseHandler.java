@@ -4,8 +4,15 @@
 package com.cronos.onlinereview.phases;
 
 
-import com.topcoder.management.phase.PhaseHandlingException;
-import com.topcoder.project.phases.Phase;
+import com.topcoder.onlinereview.component.project.phase.ManagerHelper;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseHandlingException;
+import com.topcoder.onlinereview.component.project.phase.handler.AggregationPhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.EmailOptions;
+import com.topcoder.onlinereview.component.project.phase.handler.EmailScheme;
+import com.topcoder.onlinereview.component.project.phase.handler.PhasesHelper;
+
+import java.util.List;
 
 /**
  * The extend from AggregationPhaseHandler to add on the logic to push data to project_result.
@@ -25,24 +32,16 @@ public class PRAggregationPhaseHandler extends AggregationPhaseHandler {
     private final PRHelper prHelper = new PRHelper();
     
     /**
-     * Create a new instance of AggregationPhaseHandler using the default namespace for loading configuration settings.
-     *
-     * @throws ConfigurationException if errors occurred while loading configuration settings.
-     */
-    public PRAggregationPhaseHandler() throws ConfigurationException {
-        super();
-    }
-
-    /**
      * Create a new instance of AggregationPhaseHandler using the given namespace for loading configuration settings.
      *
-     * @param namespace the namespace to load configuration settings from.
-     * @throws ConfigurationException if errors occurred while loading configuration settings or required properties
-     * missing.
      * @throws IllegalArgumentException if the input is null or empty string.
      */
-    public PRAggregationPhaseHandler(String namespace) throws ConfigurationException {
-        super(namespace);
+    public PRAggregationPhaseHandler(ManagerHelper managerHelper,
+                                     List<EmailScheme> emailSchemes,
+                                     EmailScheme reviewFeedbackEmailScheme,
+                                     EmailOptions defaultStartEmailOption,
+                                     EmailOptions defaultEndEmailOption) {
+        super(managerHelper, emailSchemes, reviewFeedbackEmailScheme, defaultStartEmailOption, defaultEndEmailOption);
     }
 
     /**
@@ -52,7 +51,6 @@ public class PRAggregationPhaseHandler extends AggregationPhaseHandler {
      * @param phase The input phase to check.
      * @param operator The operator that execute the phase.
      *
-     * @throws PhaseNotSupportedException if the input phase type is not "Submission" type.
      * @throws PhaseHandlingException if there is any error occurred while processing the phase.
      * @throws IllegalArgumentException if the input parameters is null or empty string.
      */

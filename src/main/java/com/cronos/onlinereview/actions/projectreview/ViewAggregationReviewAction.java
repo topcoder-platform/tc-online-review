@@ -8,11 +8,11 @@ import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.review.data.Comment;
-import com.topcoder.management.review.data.Review;
-import com.topcoder.management.scorecard.ScorecardManager;
-import com.topcoder.management.scorecard.data.Scorecard;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.review.Comment;
+import com.topcoder.onlinereview.component.review.Review;
+import com.topcoder.onlinereview.component.scorecard.ScorecardManager;
+import com.topcoder.onlinereview.component.scorecard.Scorecard;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class is the struts action class which is used to view the aggregation review.

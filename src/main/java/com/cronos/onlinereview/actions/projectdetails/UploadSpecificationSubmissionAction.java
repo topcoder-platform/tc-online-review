@@ -12,19 +12,23 @@ import com.cronos.onlinereview.util.LoggingHelper;
 import com.cronos.onlinereview.util.LookupHelper;
 import com.cronos.onlinereview.util.StrutsRequestParser;
 import com.cronos.onlinereview.util.TextContentRequestParser;
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.SubmissionStatus;
-import com.topcoder.management.deliverable.SubmissionType;
-import com.topcoder.management.deliverable.Upload;
-import com.topcoder.management.deliverable.UploadManager;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.project.phases.Phase;
+import com.topcoder.onlinereview.component.deliverable.Submission;
+import com.topcoder.onlinereview.component.deliverable.SubmissionStatus;
+import com.topcoder.onlinereview.component.deliverable.SubmissionType;
+import com.topcoder.onlinereview.component.deliverable.Upload;
+import com.topcoder.onlinereview.component.deliverable.UploadManager;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.servlet.request.ConfigurationException;
+import com.topcoder.servlet.request.DisallowedDirectoryException;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.FileUploadResult;
+import com.topcoder.servlet.request.PersistenceException;
 import com.topcoder.servlet.request.RequestParser;
+import com.topcoder.servlet.request.RequestParsingException;
 import com.topcoder.servlet.request.UploadedFile;
-import com.topcoder.util.errorhandling.BaseException;
 
 /**
  * This class is the struts action class which is used for uploading specification submission.
@@ -63,7 +67,7 @@ public class UploadSpecificationSubmissionAction extends BaseProjectDetailsActio
      *         Details page.
      * @throws BaseException if any error occurs.
      */
-    public String execute() throws BaseException {
+    public String execute() throws BaseException, ConfigurationException, DisallowedDirectoryException, PersistenceException, RequestParsingException {
         LoggingHelper.logAction(request);
 
         // Determine if this request is a post back

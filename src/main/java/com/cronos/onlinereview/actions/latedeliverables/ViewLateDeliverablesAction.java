@@ -21,8 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
-import com.cronos.onlinereview.external.ExternalUser;
-import com.cronos.onlinereview.external.UserRetrieval;
+import com.topcoder.onlinereview.component.external.ExternalUser;
+import com.topcoder.onlinereview.component.external.UserRetrieval;
 import com.cronos.onlinereview.model.CockpitProject;
 import com.cronos.onlinereview.model.DynamicModel;
 import com.cronos.onlinereview.util.ActionsHelper;
@@ -31,19 +31,19 @@ import com.cronos.onlinereview.util.Comparators;
 import com.cronos.onlinereview.util.ConfigHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.deliverable.late.LateDeliverable;
+import com.topcoder.onlinereview.component.deliverable.late.LateDeliverable;
 import com.topcoder.management.deliverable.late.LateDeliverableManagementException;
-import com.topcoder.management.deliverable.late.LateDeliverableManager;
+import com.topcoder.onlinereview.component.deliverable.late.LateDeliverableManager;
 import com.topcoder.management.deliverable.late.LateDeliverableType;
 import com.topcoder.management.deliverable.late.search.LateDeliverableFilterBuilder;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectCategory;
-import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectStatus;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.search.builder.filter.OrFilter;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.management.ProjectCategory;
+import com.topcoder.onlinereview.component.project.management.ProjectManager;
+import com.topcoder.onlinereview.component.project.management.ProjectStatus;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+import com.topcoder.onlinereview.component.search.filter.OrFilter;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class is the struts action class which is used for viewing the late deliverables.

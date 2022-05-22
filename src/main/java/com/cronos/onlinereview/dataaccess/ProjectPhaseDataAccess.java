@@ -3,20 +3,23 @@
  */
 package com.cronos.onlinereview.dataaccess;
 
+import com.topcoder.onlinereview.component.project.phase.Dependency;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseStatus;
+import com.topcoder.onlinereview.component.project.phase.PhaseType;
+import com.topcoder.onlinereview.component.project.phase.Project;
+import com.topcoder.onlinereview.component.workday.Workdays;
+import com.topcoder.onlinereview.component.workday.WorkdaysFactory;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.topcoder.date.workdays.DefaultWorkdaysFactory;
-import com.topcoder.date.workdays.Workdays;
-import com.topcoder.project.phases.Dependency;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.project.phases.PhaseStatus;
-import com.topcoder.project.phases.PhaseType;
-import com.topcoder.project.phases.Project;
-import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
+import static com.topcoder.onlinereview.util.CommonUtils.getDate;
+import static com.topcoder.onlinereview.util.CommonUtils.getInt;
+import static com.topcoder.onlinereview.util.CommonUtils.getLong;
 
 /**
  * <p>A simple DAO for project phases backed up by Query Tool.</p>
@@ -26,10 +29,15 @@ import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
  */
 public class ProjectPhaseDataAccess extends BaseDataAccess {
 
+    private WorkdaysFactory workdaysFactory;
     /**
      * <p>Constructs new <code>ProjectPhaseDataAccess</code> instance. This implementation does nothing.</p>
      */
     public ProjectPhaseDataAccess() {
+    }
+
+    public void setWorkdaysFactory(WorkdaysFactory workdaysFactory) {
+        this.workdaysFactory = workdaysFactory;
     }
 
     /**
@@ -81,7 +89,7 @@ public class ProjectPhaseDataAccess extends BaseDataAccess {
      * @return a <code>Project</code> array listing the project phases.
      * @throws DataAccessException if an unexpected error occurs while running the query via Query Tool.
      */
-    private Map<Long, Project> searchProjectPhasesByQueryTool(String queryName, String paramName, String paramValue,
+    private Map<Long, com.topcoder.onlinereview.component.project.phase.Project> searchProjectPhasesByQueryTool(String queryName, String paramName, String paramValue,
                                                               PhaseStatus[] phaseStatuses, PhaseType[] phaseTypes) {
 
         // Build the cache of phase statuses for faster lookup by ID
@@ -91,37 +99,36 @@ public class ProjectPhaseDataAccess extends BaseDataAccess {
         Map<Long, PhaseType> typesMap = buildPhaseTypesLookupMap(phaseTypes);
 
         // Get project details by status using Query Tool
-        Map<String, ResultSetContainer> results = runQuery(queryName, paramName, paramValue);
+        Map<String, List<Map<String, Object>>> results = runQuery(queryName, paramName, paramValue);
 
         // Convert returned data into Project objects
         Map<Long, Phase> cachedPhases = new HashMap<Long, Phase>();
         Map<Long, List<Object[]>> deferredDependencies = new HashMap<Long, List<Object[]>>();
-        Workdays workdays = new DefaultWorkdaysFactory().createWorkdaysInstance();
-        Map<Long, com.topcoder.project.phases.Project> phProjects
-            = new HashMap<Long, com.topcoder.project.phases.Project>();
-        com.topcoder.project.phases.Project currentPhProject = null;
+        Workdays workdays = workdaysFactory.createWorkdaysInstance();
+        Map<Long, com.topcoder.onlinereview.component.project.phase.Project> phProjects = new HashMap<>();
+        com.topcoder.onlinereview.component.project.phase.Project currentPhProject = null;
         Phase currentPhase = null;
-        ResultSetContainer phasesData = results.get(queryName);
+        List<Map<String, Object>> phasesData = results.get(queryName);
         int recordNum = phasesData.size();
         for (int i = 0; i < recordNum; i++) {
-            long projectId = phasesData.getLongItem(i, "project_id");
+            long projectId = getLong(phasesData.get(i), "project_id");
             if ((currentPhProject == null) || (currentPhProject.getId() != projectId)) {
-                currentPhProject = new com.topcoder.project.phases.Project(new Date(Long.MAX_VALUE), workdays);
+                currentPhProject = new com.topcoder.onlinereview.component.project.phase.Project(new Date(Long.MAX_VALUE), workdays);
                 currentPhProject.setId(projectId);
                 phProjects.put(projectId, currentPhProject);
             }
 
-            long phaseId = phasesData.getLongItem(i, "project_phase_id");
+            long phaseId = getLong(phasesData.get(i), "project_phase_id");
             if ((currentPhase == null) || (currentPhase.getId() != phaseId)) {
-                currentPhase = new Phase(currentPhProject, phasesData.getLongItem(i, "duration"));
+                currentPhase = new Phase(currentPhProject, getLong(phasesData.get(i), "duration"));
                 currentPhase.setId(phaseId);
-                currentPhase.setActualEndDate(phasesData.getTimestampItem(i, "actual_end_time"));
-                currentPhase.setActualStartDate(phasesData.getTimestampItem(i, "actual_start_time"));
-                currentPhase.setFixedStartDate(phasesData.getTimestampItem(i, "fixed_start_time"));
-                currentPhase.setScheduledEndDate(phasesData.getTimestampItem(i, "scheduled_end_time"));
-                currentPhase.setScheduledStartDate(phasesData.getTimestampItem(i, "scheduled_start_time"));
-                currentPhase.setPhaseStatus(statusesMap.get(phasesData.getLongItem(i, "phase_status_id")));
-                currentPhase.setPhaseType(typesMap.get(phasesData.getLongItem(i, "phase_type_id")));
+                currentPhase.setActualEndDate(getDate(phasesData.get(i), "actual_end_time"));
+                currentPhase.setActualStartDate(getDate(phasesData.get(i), "actual_start_time"));
+                currentPhase.setFixedStartDate(getDate(phasesData.get(i), "fixed_start_time"));
+                currentPhase.setScheduledEndDate(getDate(phasesData.get(i), "scheduled_end_time"));
+                currentPhase.setScheduledStartDate(getDate(phasesData.get(i), "scheduled_start_time"));
+                currentPhase.setPhaseStatus(statusesMap.get(getLong(phasesData.get(i), "phase_status_id")));
+                currentPhase.setPhaseType(typesMap.get(getLong(phasesData.get(i), "phase_type_id")));
                 cachedPhases.put(phaseId, currentPhase);
                 Date currentPhaseStartDate = currentPhase.getScheduledStartDate();
                 Date currentProjectStartDate = currentPhProject.getStartDate();
@@ -130,12 +137,12 @@ public class ProjectPhaseDataAccess extends BaseDataAccess {
                 }
             }
 
-            if (phasesData.getItem(i, "dependent_phase_id").getResultData() != null) {
-                long dependencyId = phasesData.getLongItem(i, "dependency_phase_id");
-                long dependentId = phasesData.getLongItem(i, "dependent_phase_id");
-                long lagTime = phasesData.getLongItem(i, "lag_time");
-                boolean dependencyStart = (phasesData.getIntItem(i, "dependency_start") == 1);
-                boolean dependentStart = (phasesData.getIntItem(i, "dependent_start") == 1);
+            if (phasesData.get(i).get("dependent_phase_id") != null) {
+                long dependencyId = getLong(phasesData.get(i), "dependency_phase_id");
+                long dependentId = getLong(phasesData.get(i), "dependent_phase_id");
+                long lagTime = getLong(phasesData.get(i), "lag_time");
+                boolean dependencyStart = (getInt(phasesData.get(i), "dependency_start") == 1);
+                boolean dependentStart = (getInt(phasesData.get(i), "dependent_start") == 1);
                 if (cachedPhases.containsKey(dependencyId)) {
                     Dependency dependency = new Dependency(cachedPhases.get(dependencyId), currentPhase,
                                                            dependencyStart, dependentStart, lagTime);

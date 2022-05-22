@@ -12,13 +12,13 @@ import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.Comparators;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectFilterUtility;
-import com.topcoder.management.project.ProjectManager;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.management.ProjectFilterUtility;
+import com.topcoder.onlinereview.component.project.management.ProjectManager;
 import com.topcoder.management.project.link.ProjectLink;
 import com.topcoder.management.project.link.ProjectLinkManager;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class is the struts action class which is used for displaying editing project links page.

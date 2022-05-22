@@ -3,39 +3,49 @@
  */
 package com.cronos.onlinereview.phases;
 
+import com.cronos.onlinereview.phases.logging.LoggerMessage;
+import com.topcoder.onlinereview.component.deliverable.Submission;
+import com.topcoder.onlinereview.component.deliverable.SubmissionFilterBuilder;
+import com.topcoder.onlinereview.component.deliverable.UploadManager;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.project.management.PersistenceException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.management.ProjectManager;
+import com.topcoder.onlinereview.component.project.management.ProjectStatus;
+import com.topcoder.onlinereview.component.project.management.ValidationException;
+import com.topcoder.onlinereview.component.project.phase.ManagerHelper;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseHandlingException;
+import com.topcoder.onlinereview.component.project.phase.handler.Constants;
+import com.topcoder.onlinereview.component.project.phase.handler.LookupHelper;
+import com.topcoder.onlinereview.component.project.phase.handler.PhasesHelper;
+import com.topcoder.onlinereview.component.review.Review;
+import com.topcoder.onlinereview.component.search.SearchBuilderException;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+import com.topcoder.onlinereview.component.search.filter.NotFilter;
+import com.topcoder.onlinereview.component.search.filter.OrFilter;
+import com.topcoder.util.log.Level;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
-import com.cronos.onlinereview.phases.logging.LoggerMessage;
-import com.topcoder.db.connectionfactory.DBConnectionException;
-import com.topcoder.db.connectionfactory.DBConnectionFactory;
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.UploadManager;
-import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
-import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
-import com.topcoder.management.phase.PhaseHandlingException;
-import com.topcoder.management.project.PersistenceException;
-import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectStatus;
-import com.topcoder.management.project.ValidationException;
-import com.topcoder.management.review.ReviewManagementException;
-import com.topcoder.management.review.data.Review;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.search.builder.SearchBuilderException;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.EqualToFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.search.builder.filter.NotFilter;
-import com.topcoder.search.builder.filter.OrFilter;
-import com.topcoder.util.errorhandling.BaseException;
-import com.topcoder.util.log.Level;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.topcoder.onlinereview.util.CommonUtils.executeSqlWithParam;
+import static com.topcoder.onlinereview.util.CommonUtils.executeUpdateSql;
+import static com.topcoder.onlinereview.util.CommonUtils.getDouble;
+import static com.topcoder.onlinereview.util.CommonUtils.getInt;
+import static com.topcoder.onlinereview.util.CommonUtils.getLong;
+import static com.topcoder.onlinereview.util.SpringUtils.getTcsJdbcTemplate;
 
 /**
  * The PRHelper which is used to provide helper method for Phase Handler.
@@ -117,67 +127,6 @@ public class PRHelper {
      */
     private static final String dateFormat = "MM.dd.yyyy HH:mm z";
 
-    /** Property name constant for connection factory namespace. */
-    private static final String PROP_CONNECTION_FACTORY_NS = "ConnectionFactoryNS";
-
-    /** Property name constant for connection name. */
-    private static final String PROP_CONNECTION_NAME = "ConnectionName";
-
-    /**
-     * The default configuration namespace of this class. It is used in the default constructor.
-     */
-    private static final String DEFAULT_NAMESPACE = "com.cronos.onlinereview.phases.PRHelper";
-
-    /**
-     * The factory instance used to create connection to the database. It is initialized in the constructor using
-     * DBConnectionFactory component and never changed after that. It will be used in various persistence methods of
-     * this project. This field is never null.
-     */
-    private final DBConnectionFactory factory;
-
-    /**
-     * Represents the connection name used to create connection to the database using DBConnectionFactory. This
-     * variable can be null. When it is null, default connection is be created. This variable can be initialized in
-     * the constructor and never change after that.
-     */
-    private final String connectionName;
-
-    PRHelper() throws ConfigurationException {
-        // initialize DBConnectionFactory from default namespace, throw exception if property is missing.
-        this.factory = PhasesHelper.createDBConnectionFactory(DEFAULT_NAMESPACE, PROP_CONNECTION_FACTORY_NS);
-
-        // initialize connectionName with property value if provided.
-        String connName = PhasesHelper.getPropertyValue(DEFAULT_NAMESPACE, PROP_CONNECTION_NAME, false);
-
-        if (!PhasesHelper.isStringNullOrEmpty(connName)) {
-            this.connectionName = connName;
-        } else {
-            this.connectionName = null;
-        }
-    }
-
-    /**
-     * <p>
-     * This method is used by the subclass to create the connection to access database. The connection needs to be
-     * closed after use.
-     * </p>
-     *
-     * @return The database connection.
-     *
-     * @throws PhaseHandlingException if connection could not be created.
-     */
-    private Connection createConnection() throws PhaseHandlingException {
-        try {
-            if (connectionName == null) {
-                return factory.createConnection();
-            } else {
-                return factory.createConnection(connectionName);
-            }
-        } catch (DBConnectionException ex) {
-            throw new PhaseHandlingException("Could not create connection", ex);
-        }
-    }
-
     /**
      * Pull data to project_result.
      */
@@ -197,23 +146,10 @@ public class PRHelper {
      *             if error occurs
      */
     void processSubmissionPR(long projectId, boolean toStart) throws PhaseHandlingException {
-        Connection conn = createConnection();
-        PreparedStatement pstmt = null;
-        try {
-            if (!toStart) {
-                logger.log(Level.INFO,
-                    new LoggerMessage("project", projectId, null, "process submission phase."));
-
-                // Update all users who submit submission
-                pstmt = conn.prepareStatement(UPDATE_PROJECT_RESULT_STMT);
-                pstmt.setLong(1, projectId);
-                pstmt.execute();
-            }
-        } catch(SQLException e) {
-            throw new PhaseHandlingException("Failed to push data to project_result", e);
-        } finally {
-            close(pstmt);
-            close(conn);
+        if (!toStart) {
+            logger.log(Level.INFO,
+                new LoggerMessage("project", projectId, null, "process submission phase."));
+            executeUpdateSql(getTcsJdbcTemplate(), UPDATE_PROJECT_RESULT_STMT, newArrayList(projectId));
         }
     }
 
@@ -230,30 +166,16 @@ public class PRHelper {
      *             if error occurs
      */
     void processScreeningPR(long projectId, boolean toStart, String operator) throws PhaseHandlingException {
-        Connection conn = createConnection();
-        PreparedStatement pstmt = null;
-        try {
-            if (!toStart) {
-                logger.log(Level.INFO,
-                    new LoggerMessage("project", projectId, null, "process screening phase."));
-                // Update all users who failed to pass screen, set valid_submission_ind = 0
-                pstmt = conn.prepareStatement(FAILED_PASS_SCREENING_STMT);
-                pstmt.setLong(1, projectId);
-                pstmt.execute();
-                close(pstmt);
+        if (!toStart) {
+            logger.log(Level.INFO,
+                new LoggerMessage("project", projectId, null, "process screening phase."));
+            // Update all users who failed to pass screen, set valid_submission_ind = 0
+            executeUpdateSql(getTcsJdbcTemplate(), FAILED_PASS_SCREENING_STMT, newArrayList(projectId));
 
-                // Update all users who pass screen, set valid_submission_ind = 1
-                pstmt = conn.prepareStatement(PASS_SCREENING_STMT);
-                pstmt.setLong(1, projectId);
-                pstmt.execute();
+            // Update all users who pass screen, set valid_submission_ind = 1
+            executeUpdateSql(getTcsJdbcTemplate(), PASS_SCREENING_STMT, newArrayList(projectId));
 
-                PaymentsHelper.processAutomaticPayments(projectId, operator);
-            }
-        } catch(SQLException e) {
-            throw new PhaseHandlingException("Failed to push data to project_result", e);
-        } finally {
-            close(pstmt);
-            close(conn);
+            PaymentsHelper.processAutomaticPayments(projectId, operator);
         }
     }
 
@@ -273,10 +195,6 @@ public class PRHelper {
      *             if error occurs
      */
     void processReviewPR(ManagerHelper managerHelper, Phase phase, String operator, boolean toStart) throws PhaseHandlingException {
-        PreparedStatement pstmt = null;
-        PreparedStatement updateStmt = null;
-        Connection conn = createConnection();
-        ResultSet rs = null;
         long projectId = phase.getProject().getId();
         boolean paymentsProcessed = false;
         try {
@@ -286,7 +204,7 @@ public class PRHelper {
 
                 // if review phase is last one and there is at least one active submission complete the project.
                 if (isLastPhase(phase)) {
-                    Submission [] activeSubs = PhasesHelper.getActiveProjectSubmissions(managerHelper.getUploadManager(),
+                    Submission[] activeSubs = PhasesHelper.getActiveProjectSubmissions(managerHelper.getUploadManager(),
                         projectId, Constants.SUBMISSION_TYPE_CONTEST_SUBMISSION);
                     if (activeSubs.length > 0) {
                         completeProject(managerHelper, phase, operator);
@@ -295,25 +213,19 @@ public class PRHelper {
 
                 if (!isStudioProject(managerHelper.getProjectManager(), projectId)) {
                     // Retrieve all
-                    pstmt = conn.prepareStatement(REVIEW_SELECT_STMT);
-                    pstmt.setLong(1, projectId);
-                    rs = pstmt.executeQuery();
+                    List<Map<String, Object>> rs = executeSqlWithParam(getTcsJdbcTemplate(), REVIEW_SELECT_STMT, newArrayList(projectId));
 
-                    updateStmt = conn.prepareStatement(REVIEW_UPDATE_PROJECT_RESULT_STMT);
-                    while (rs.next()) {
+                    for (Map<String, Object> r: rs) {
                         // Update all raw score
-                        double rawScore = rs.getDouble("raw_score");
-                        long userId = rs.getLong("user_id");
-                        updateStmt.setDouble(1, rawScore);
-                        updateStmt.setLong(2, projectId);
-                        updateStmt.setLong(3, userId);
-                        updateStmt.execute();
+                        double rawScore = getDouble(r, "raw_score");
+                        long userId = getLong(r, "user_id");
+                        executeUpdateSql(getTcsJdbcTemplate(), REVIEW_UPDATE_PROJECT_RESULT_STMT, newArrayList(rawScore, projectId, userId));
                     }
 
                     Phase appealsResponsePhase = PhasesHelper.locatePhase(phase, "Appeals Response", true, false);
                     if (appealsResponsePhase == null) {
                         // populate project result
-                        populateProjectResult(projectId, conn, operator);
+                        populateProjectResult(projectId, operator);
                         paymentsProcessed = true;
                     }
                 }
@@ -324,11 +236,6 @@ public class PRHelper {
             }
         } catch(SQLException e) {
             throw new PhaseHandlingException("Failed to push data to project_result", e);
-        } finally {
-            close(rs);
-            close(pstmt);
-            close(updateStmt);
-            close(conn);
         }
     }
 
@@ -347,7 +254,6 @@ public class PRHelper {
      *             if error occurs
      */
     void processAppealResponsePR(ManagerHelper managerHelper, Phase phase, boolean toStart, String operator) throws PhaseHandlingException {
-        Connection conn = createConnection();
         long projectId = phase.getProject().getId();
 
         try {
@@ -364,12 +270,10 @@ public class PRHelper {
                     }
                 }
 
-                populateProjectResult(projectId, conn, operator);
+                populateProjectResult(projectId, operator);
             }
         } catch(SQLException e) {
             throw new PhaseHandlingException("Failed to push data to project_result", e);
-        } finally {
-            close(conn);
         }
     }
 
@@ -386,17 +290,14 @@ public class PRHelper {
      *             if error occurs
      */
     void processAggregationPR(long projectId,  boolean toStart, String operator) throws PhaseHandlingException {
-        Connection conn = createConnection();
         try {
             if (!toStart) {
                 logger.log(Level.INFO,
                         new LoggerMessage("project", projectId, null, "process Aggregation phase."));
-                populateProjectResult(projectId, conn, operator);
+                populateProjectResult(projectId, operator);
             }
         } catch(SQLException e) {
             throw new PhaseHandlingException("Failed to push data to project_result", e);
-        } finally {
-            close(conn);
         }
     }
 
@@ -413,17 +314,14 @@ public class PRHelper {
      *             if error occurs
      */
     void processFinalFixPR(long projectId, boolean toStart, String operator) throws PhaseHandlingException {
-        Connection conn = createConnection();
         try {
             if (!toStart) {
                 logger.log(Level.INFO,
                         new LoggerMessage("project", projectId, null, "Process final fix phase."));
-                populateProjectResult(projectId, conn, operator);
+                populateProjectResult(projectId, operator);
             }
         } catch(SQLException e) {
             throw new PhaseHandlingException("Failed to push data to project_result", e);
-        } finally {
-            close(conn);
         }
     }
 
@@ -440,20 +338,17 @@ public class PRHelper {
      *             if error occurs
      */
     void processFinalReviewPR(long projectId, boolean toStart, String operator) throws PhaseHandlingException {
-        Connection conn = createConnection();
         try {
             if (!toStart) {
                 logger.log(Level.INFO,
                         new LoggerMessage("project", projectId, null, "Process final review phase."));
-                populateProjectResult(projectId, conn, operator);
+                populateProjectResult(projectId, operator);
             } else {
                 logger.log(Level.INFO,
                         new LoggerMessage("project", projectId, null, "start final review phase."));
             }
         } catch(SQLException e) {
             throw new PhaseHandlingException("Failed to push data to project_result", e);
-        } finally {
-            close(conn);
         }
     }
 
@@ -470,20 +365,17 @@ public class PRHelper {
      *             if error occurs
      */
     void processPostMortemPR(long projectId, boolean toStart, String operator) throws PhaseHandlingException {
-        Connection conn = createConnection();
         try {
             if (!toStart) {
                 logger.log(Level.INFO,
                         new LoggerMessage("project", projectId, null, "Process post mortem phase."));
-                populateProjectResult(projectId, conn, operator);
+                populateProjectResult(projectId, operator);
             } else {
                 logger.log(Level.INFO,
                         new LoggerMessage("project", projectId, null, "start post mortem phase."));
             }
         } catch(SQLException e) {
             throw new PhaseHandlingException("Failed to push data to project_result", e);
-        } finally {
-            close(conn);
         }
     }
 
@@ -492,65 +384,35 @@ public class PRHelper {
      *
      * @param projectId
      *            project id
-     * @param conn
-     *            connection
      * @param operator
      *            the operator.
      * @throws SQLException
      *             if error occurs
      */
-    public static void populateProjectResult(long projectId, Connection conn, String operator)
+    public static void populateProjectResult(long projectId, String operator)
             throws SQLException, PhaseHandlingException {
         // Payment should be set before populate to project_result table
         PaymentsHelper.processAutomaticPayments(projectId, operator);
         PaymentsHelper.updateProjectResultPayments(projectId);
 
-        PreparedStatement pstmt = null;
-        PreparedStatement updateStmt = null;
-        ResultSet rs = null;
-        try {
             // Retrieve all
-            pstmt = conn.prepareStatement(APPEAL_RESPONSE_SELECT_STMT);
-            pstmt.setLong(1, projectId);
-            rs = pstmt.executeQuery();
+            List<Map<String, Object>> rs = executeSqlWithParam(getTcsJdbcTemplate(), APPEAL_RESPONSE_SELECT_STMT, newArrayList(projectId));
+
 
             logger.log(Level.DEBUG, new LoggerMessage("Project", projectId, null,
                     "update project_result with final scores, placed and passed_review_ind."));
-            updateStmt = conn.prepareStatement(APPEAL_RESPONSE_UPDATE_PROJECT_RESULT_STMT);
-            while (rs.next()) {
-                double finalScore = rs.getDouble("final_score");
-                long userId = rs.getLong("user_id");
-                int status = rs.getInt("submission_status_id");
-                String p;
-
-                int placed = 0;
-                p = rs.getString("placed");
-                if (p != null) {
-                    try {
-                        placed = Integer.parseInt(p);
-                    } catch (Exception e) {
-                        // Ignore
-                    }
-                }
-
+            for (Map<String, Object> r: rs) {
+                List<Object> params = new ArrayList<>();
+                int status = getInt(r, "submission_status_id");
                 // Update final score, placed and passed_review_ind
-                updateStmt.setDouble(1, finalScore);
-                if (placed == 0) {
-                    updateStmt.setNull(2, Types.INTEGER);
-                } else {
-                    updateStmt.setInt(2, placed);
-                }
+                params.add(getDouble(r, "final_score"));
+                params.add(getInt(r, "placed"));
                 // 1 is active, 4 is Completed Without Win
-                updateStmt.setInt(3, status == 1 || status == 4 ? 1 : 0);
-                updateStmt.setLong(4, projectId);
-                updateStmt.setLong(5, userId);
-                updateStmt.execute();
+                params.add(status == 1 || status == 4 ? 1 : 0);
+                params.add(projectId);
+                params.add(getLong(r, "user_id"));
+                executeUpdateSql(getTcsJdbcTemplate(), APPEAL_RESPONSE_UPDATE_PROJECT_RESULT_STMT, params);
             }
-        } finally {
-            close(rs);
-            close(pstmt);
-            close(updateStmt);
-        }
 
     }
 
@@ -680,7 +542,7 @@ public class PRHelper {
         throws PhaseHandlingException {
         try {
             ProjectManager projectManager = managerHelper.getProjectManager();
-            com.topcoder.management.project.Project project = projectManager.getProject(phase.getProject().getId());
+            Project project = projectManager.getProject(phase.getProject().getId());
 
             Format format = new SimpleDateFormat(dateFormat);
             project.setProperty("Completion Timestamp", format.format(new Date()));
@@ -708,12 +570,8 @@ public class PRHelper {
      */
     static Review[] searchReviewsForProject(ManagerHelper managerHelper, long projectId, boolean complete)
             throws PhaseHandlingException {
-        try {
-            Filter filter = new EqualToFilter("project", projectId);
-            return managerHelper.getReviewManager().searchReviews(filter, complete);
-        } catch (ReviewManagementException e) {
-            throw new PhaseHandlingException("Problem with review retrieval", e);
-        }
+        Filter filter = new EqualToFilter("project", projectId);
+        return managerHelper.getReviewManager().searchReviews(filter, complete);
     }
 
     /**
@@ -740,8 +598,6 @@ public class PRHelper {
             );
             Filter fullFilter = new AndFilter(Arrays.asList(projectIdFilter, nonDeletedFilter, typeFilter));
             return uploadManager.searchSubmissions(fullFilter);
-        } catch (UploadPersistenceException e) {
-            throw new PhaseHandlingException("There was a submission retrieval error", e);
         } catch (SearchBuilderException e) {
             throw new PhaseHandlingException("There was a search builder error", e);
         }

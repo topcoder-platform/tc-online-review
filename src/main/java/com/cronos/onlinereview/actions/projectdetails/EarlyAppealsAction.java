@@ -9,11 +9,11 @@ import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.Comparators;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.phase.PhaseManager;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.project.phase.PhaseManager;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class is the struts action class which is used to allow the user to complete the appeals early.

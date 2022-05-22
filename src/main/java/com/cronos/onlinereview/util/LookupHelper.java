@@ -3,19 +3,24 @@
  */
 package com.cronos.onlinereview.util;
 
-import com.topcoder.management.deliverable.SubmissionStatus;
-import com.topcoder.management.deliverable.SubmissionType;
-import com.topcoder.management.deliverable.UploadStatus;
-import com.topcoder.management.deliverable.UploadType;
-import com.topcoder.management.project.PrizeType;
-import com.topcoder.management.project.ProjectCategory;
-import com.topcoder.management.project.ProjectStatus;
-import com.topcoder.management.resource.NotificationType;
-import com.topcoder.management.resource.ResourceRole;
-import com.topcoder.management.review.data.CommentType;
-import com.topcoder.management.scorecard.data.ScorecardType;
-import com.topcoder.project.phases.PhaseStatus;
-import com.topcoder.project.phases.PhaseType;
+import com.topcoder.onlinereview.component.deliverable.SubmissionStatus;
+import com.topcoder.onlinereview.component.deliverable.SubmissionType;
+import com.topcoder.onlinereview.component.deliverable.UploadPersistenceException;
+import com.topcoder.onlinereview.component.deliverable.UploadStatus;
+import com.topcoder.onlinereview.component.deliverable.UploadType;
+import com.topcoder.onlinereview.component.project.management.PrizeType;
+import com.topcoder.onlinereview.component.project.management.ProjectCategory;
+import com.topcoder.onlinereview.component.project.management.ProjectStatus;
+import com.topcoder.onlinereview.component.project.phase.PhaseManagementException;
+import com.topcoder.onlinereview.component.project.phase.PhaseStatus;
+import com.topcoder.onlinereview.component.project.phase.PhaseType;
+import com.topcoder.onlinereview.component.resource.NotificationType;
+import com.topcoder.onlinereview.component.resource.ResourcePersistenceException;
+import com.topcoder.onlinereview.component.resource.ResourceRole;
+import com.topcoder.onlinereview.component.review.CommentType;
+import com.topcoder.onlinereview.component.review.ReviewManagementException;
+import com.topcoder.onlinereview.component.scorecard.PersistenceException;
+import com.topcoder.onlinereview.component.scorecard.ScorecardType;
 
 /**
  * <p>
@@ -44,7 +49,7 @@ public class LookupHelper {
         ScorecardType[] entities;
         try {
             entities = ActionsHelper.createScorecardManager().getAllScorecardTypes();
-        } catch (com.topcoder.management.scorecard.PersistenceException e) {
+        } catch (PersistenceException e) {
             throw new LookupException("Error finding entity with name: " + entityName, e);
         }
 
@@ -73,7 +78,7 @@ public class LookupHelper {
         ScorecardType[] entities;
         try {
             entities = ActionsHelper.createScorecardManager().getAllScorecardTypes();
-        } catch (com.topcoder.management.scorecard.PersistenceException e) {
+        } catch (PersistenceException e) {
             throw new LookupException("Error finding entity with ID: " + entityID, e);
         }
 
@@ -102,7 +107,7 @@ public class LookupHelper {
         CommentType[] entities;
         try {
             entities = ActionsHelper.createReviewManager().getAllCommentTypes();
-        } catch (com.topcoder.management.review.ReviewManagementException e) {
+        } catch (ReviewManagementException e) {
             throw new LookupException("Error finding entity with name: " + entityName, e);
         }
 
@@ -131,7 +136,7 @@ public class LookupHelper {
         CommentType[] entities;
         try {
             entities = ActionsHelper.createReviewManager().getAllCommentTypes();
-        } catch (com.topcoder.management.review.ReviewManagementException e) {
+        } catch (ReviewManagementException e) {
             throw new LookupException("Error finding entity with ID: " + entityID, e);
         }
 
@@ -160,7 +165,7 @@ public class LookupHelper {
         ProjectCategory[] entities;
         try {
             entities = ActionsHelper.createProjectManager().getAllProjectCategories();
-        } catch (com.topcoder.management.project.PersistenceException e) {
+        } catch (Exception e) {
             throw new LookupException("Error finding entity with name: " + entityName, e);
         }
 
@@ -189,7 +194,7 @@ public class LookupHelper {
         ProjectCategory[] entities;
         try {
             entities = ActionsHelper.createProjectManager().getAllProjectCategories();
-        } catch (com.topcoder.management.project.PersistenceException e) {
+        } catch (Exception e) {
             throw new LookupException("Error finding entity with ID: " + entityID, e);
         }
 
@@ -218,7 +223,7 @@ public class LookupHelper {
         ProjectStatus[] entities;
         try {
             entities = ActionsHelper.createProjectManager().getAllProjectStatuses();
-        } catch (com.topcoder.management.project.PersistenceException e) {
+        } catch (Exception e) {
             throw new LookupException("Error finding entity with name: " + entityName, e);
         }
 
@@ -247,7 +252,7 @@ public class LookupHelper {
         ProjectStatus[] entities;
         try {
             entities = ActionsHelper.createProjectManager().getAllProjectStatuses();
-        } catch (com.topcoder.management.project.PersistenceException e) {
+        } catch (Exception e) {
             throw new LookupException("Error finding entity with ID: " + entityID, e);
         }
 
@@ -276,7 +281,7 @@ public class LookupHelper {
         ResourceRole[] entities;
         try {
             entities = ActionsHelper.createResourceManager().getAllResourceRoles();
-        } catch (com.topcoder.management.resource.persistence.ResourcePersistenceException e) {
+        } catch (ResourcePersistenceException e) {
             throw new LookupException("Error finding entity with name: " + entityName, e);
         }
 
@@ -305,7 +310,7 @@ public class LookupHelper {
         ResourceRole[] entities;
         try {
             entities = ActionsHelper.createResourceManager().getAllResourceRoles();
-        } catch (com.topcoder.management.resource.persistence.ResourcePersistenceException e) {
+        } catch (ResourcePersistenceException e) {
             throw new LookupException("Error finding entity with ID: " + entityID, e);
         }
 
@@ -334,7 +339,7 @@ public class LookupHelper {
         PhaseType[] entities;
         try {
             entities = ActionsHelper.createPhaseManager(false).getAllPhaseTypes();
-        } catch (com.topcoder.management.phase.PhaseManagementException e) {
+        } catch (PhaseManagementException e) {
             throw new LookupException("Error finding entity with name: " + entityName, e);
         }
 
@@ -363,7 +368,7 @@ public class LookupHelper {
         PhaseType[] entities;
         try {
             entities = ActionsHelper.createPhaseManager(false).getAllPhaseTypes();
-        } catch (com.topcoder.management.phase.PhaseManagementException e) {
+        } catch (PhaseManagementException e) {
             throw new LookupException("Error finding entity with ID: " + entityID, e);
         }
 
@@ -392,7 +397,7 @@ public class LookupHelper {
         PhaseStatus[] entities;
         try {
             entities = ActionsHelper.createPhaseManager(false).getAllPhaseStatuses();
-        } catch (com.topcoder.management.phase.PhaseManagementException e) {
+        } catch (PhaseManagementException e) {
             throw new LookupException("Error finding entity with name: " + entityName, e);
         }
 
@@ -421,7 +426,7 @@ public class LookupHelper {
         PhaseStatus[] entities;
         try {
             entities = ActionsHelper.createPhaseManager(false).getAllPhaseStatuses();
-        } catch (com.topcoder.management.phase.PhaseManagementException e) {
+        } catch (PhaseManagementException e) {
             throw new LookupException("Error finding entity with ID: " + entityID, e);
         }
 
@@ -450,7 +455,7 @@ public class LookupHelper {
         SubmissionStatus[] entities;
         try {
             entities = ActionsHelper.createUploadManager().getAllSubmissionStatuses();
-        } catch (com.topcoder.management.deliverable.persistence.UploadPersistenceException e) {
+        } catch (UploadPersistenceException e) {
             throw new LookupException("Error finding entity with name: " + entityName, e);
         }
 
@@ -479,7 +484,7 @@ public class LookupHelper {
         SubmissionStatus[] entities;
         try {
             entities = ActionsHelper.createUploadManager().getAllSubmissionStatuses();
-        } catch (com.topcoder.management.deliverable.persistence.UploadPersistenceException e) {
+        } catch (UploadPersistenceException e) {
             throw new LookupException("Error finding entity with ID: " + entityID, e);
         }
 
@@ -508,7 +513,7 @@ public class LookupHelper {
         SubmissionType[] entities;
         try {
             entities = ActionsHelper.createUploadManager().getAllSubmissionTypes();
-        } catch (com.topcoder.management.deliverable.persistence.UploadPersistenceException e) {
+        } catch (UploadPersistenceException e) {
             throw new LookupException("Error finding entity with name: " + entityName, e);
         }
 
@@ -537,7 +542,7 @@ public class LookupHelper {
         SubmissionType[] entities;
         try {
             entities = ActionsHelper.createUploadManager().getAllSubmissionTypes();
-        } catch (com.topcoder.management.deliverable.persistence.UploadPersistenceException e) {
+        } catch (UploadPersistenceException e) {
             throw new LookupException("Error finding entity with ID: " + entityID, e);
         }
 
@@ -566,7 +571,7 @@ public class LookupHelper {
         UploadStatus[] entities;
         try {
             entities = ActionsHelper.createUploadManager().getAllUploadStatuses();
-        } catch (com.topcoder.management.deliverable.persistence.UploadPersistenceException e) {
+        } catch (UploadPersistenceException e) {
             throw new LookupException("Error finding entity with name: " + entityName, e);
         }
 
@@ -595,7 +600,7 @@ public class LookupHelper {
         UploadStatus[] entities;
         try {
             entities = ActionsHelper.createUploadManager().getAllUploadStatuses();
-        } catch (com.topcoder.management.deliverable.persistence.UploadPersistenceException e) {
+        } catch (UploadPersistenceException e) {
             throw new LookupException("Error finding entity with ID: " + entityID, e);
         }
 
@@ -624,7 +629,7 @@ public class LookupHelper {
         UploadType[] entities;
         try {
             entities = ActionsHelper.createUploadManager().getAllUploadTypes();
-        } catch (com.topcoder.management.deliverable.persistence.UploadPersistenceException e) {
+        } catch (UploadPersistenceException e) {
             throw new LookupException("Error finding entity with name: " + entityName, e);
         }
 
@@ -653,7 +658,7 @@ public class LookupHelper {
         UploadType[] entities;
         try {
             entities = ActionsHelper.createUploadManager().getAllUploadTypes();
-        } catch (com.topcoder.management.deliverable.persistence.UploadPersistenceException e) {
+        } catch (UploadPersistenceException e) {
             throw new LookupException("Error finding entity with ID: " + entityID, e);
         }
 
@@ -682,7 +687,7 @@ public class LookupHelper {
         PrizeType[] entities;
         try {
             entities = ActionsHelper.createProjectManager().getPrizeTypes();
-        } catch (com.topcoder.management.project.PersistenceException e) {
+        } catch (Exception e) {
             throw new LookupException("Error finding entity with name: " + entityName, e);
         }
 
@@ -711,7 +716,7 @@ public class LookupHelper {
         PrizeType[] entities;
         try {
             entities = ActionsHelper.createProjectManager().getPrizeTypes();
-        } catch (com.topcoder.management.project.PersistenceException e) {
+        } catch (Exception e) {
             throw new LookupException("Error finding entity with ID: " + entityID, e);
         }
 
@@ -740,7 +745,7 @@ public class LookupHelper {
         NotificationType[] entities;
         try {
             entities = ActionsHelper.createResourceManager().getAllNotificationTypes();
-        } catch (com.topcoder.management.resource.persistence.ResourcePersistenceException e) {
+        } catch (ResourcePersistenceException e) {
             throw new LookupException("Error finding entity with name: " + entityName, e);
         }
 
@@ -769,7 +774,7 @@ public class LookupHelper {
         NotificationType[] entities;
         try {
             entities = ActionsHelper.createResourceManager().getAllNotificationTypes();
-        } catch (com.topcoder.management.resource.persistence.ResourcePersistenceException e) {
+        } catch (ResourcePersistenceException e) {
             throw new LookupException("Error finding entity with ID: " + entityID, e);
         }
 

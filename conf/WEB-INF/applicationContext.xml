@@ -14,7 +14,7 @@
   http://www.springframework.org/schema/security/spring-security-2.0.xsd">
 
     <context:annotation-config/>
-    <context:property-placeholder/>
+    <context:property-placeholder location="classpath:applicationConfig.properties"/>
     <context:component-scan base-package="com.cronos.onlinereview.component,com.topcoder.onlinereview.component" />
     <bean id="springContextProvider" class="com.cronos.onlinereview.ejblibrary.SpringContextProvider" 
           scope="singleton"/>
@@ -104,7 +104,10 @@
         <property name="logger" ref="logger" />
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
+    <bean id="statusProjectValidator" class="com.cronos.onlinereview.util.StatusProjectValidator" />
     <bean id="managerCreationHelper" class="com.cronos.onlinereview.util.ManagerCreationHelper" />
+    <bean id="phaseManagerWithoutHandlers" class="com.topcoder.onlinereview.component.project.phase.PhaseManager" />
+    <bean id="PhaseManager" class="com.topcoder.onlinereview.component.project.phase.PhaseManager" />
     <bean id="actionsHelper" class="com.cronos.onlinereview.util.ActionsHelper">
         <property name="managerCreationHelper" ref="managerCreationHelper"/>
     </bean>

@@ -3,9 +3,16 @@
  */
 package com.cronos.onlinereview.phases;
 
-import com.topcoder.management.phase.OperationCheckResult;
-import com.topcoder.management.phase.PhaseHandlingException;
-import com.topcoder.project.phases.Phase;
+import com.topcoder.onlinereview.component.project.phase.ManagerHelper;
+import com.topcoder.onlinereview.component.project.phase.OperationCheckResult;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseHandlingException;
+import com.topcoder.onlinereview.component.project.phase.handler.EmailOptions;
+import com.topcoder.onlinereview.component.project.phase.handler.EmailScheme;
+import com.topcoder.onlinereview.component.project.phase.handler.FinalFixPhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.PhasesHelper;
+
+import java.util.List;
 
 /**
  * The extend from FinalFixPhaseHandler to add on the logic to push data to project_result.
@@ -35,24 +42,16 @@ public class PRFinalFixPhaseHandler extends FinalFixPhaseHandler {
     private final String MULTIPLE_UPLOAD_MESSAGE = "There cannot be multiple final fix uploads";
 
     /**
-     * Create a new instance of FinalFixPhaseHandler using the default namespace for loading configuration settings.
-     *
-     * @throws ConfigurationException if errors occurred while loading configuration settings.
-     */
-    public PRFinalFixPhaseHandler() throws ConfigurationException {
-        super();
-    }
-
-    /**
      * Create a new instance of FinalFixPhaseHandler using the given namespace for loading configuration settings.
      *
-     * @param namespace the namespace to load configuration settings from.
-     * @throws ConfigurationException if errors occurred while loading configuration settings or required properties
-     * missing.
      * @throws IllegalArgumentException if the input is null or empty string.
      */
-    public PRFinalFixPhaseHandler(String namespace) throws ConfigurationException {
-        super(namespace);
+    public PRFinalFixPhaseHandler(ManagerHelper managerHelper,
+                                  List<EmailScheme> emailSchemes,
+                                  EmailScheme reviewFeedbackEmailScheme,
+                                  EmailOptions defaultStartEmailOption,
+                                  EmailOptions defaultEndEmailOption) {
+        super(managerHelper, emailSchemes, reviewFeedbackEmailScheme, defaultStartEmailOption, defaultEndEmailOption);
     }
 
     /**
@@ -63,7 +62,6 @@ public class PRFinalFixPhaseHandler extends FinalFixPhaseHandler {
      *
      * @return True if the input phase can be executed, false otherwise.
      *
-     * @throws PhaseNotSupportedException if the input phase type is not "Final Fix" type.
      * @throws PhaseHandlingException if there is any error occurred while processing the phase.
      * @throws IllegalArgumentException if the input is null.
      */
@@ -85,7 +83,6 @@ public class PRFinalFixPhaseHandler extends FinalFixPhaseHandler {
      * @param phase The input phase to check.
      * @param operator The operator that execute the phase.
      *
-     * @throws PhaseNotSupportedException if the input phase type is not "Submission" type.
      * @throws PhaseHandlingException if there is any error occurred while processing the phase.
      * @throws IllegalArgumentException if the input parameters is null or empty string.
      */

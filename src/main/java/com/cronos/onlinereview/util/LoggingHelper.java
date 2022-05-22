@@ -3,8 +3,8 @@
  */
 package com.cronos.onlinereview.util;
 
-import com.cronos.onlinereview.external.ExternalUser;
-import com.cronos.onlinereview.external.UserRetrieval;
+import com.topcoder.onlinereview.component.external.ExternalUser;
+import com.topcoder.onlinereview.component.external.UserRetrieval;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.topcoder.util.log.Level;

@@ -3,10 +3,11 @@
  */
 package com.cronos.onlinereview.dataaccess;
 
-import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
-
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static com.topcoder.onlinereview.util.CommonUtils.getLong;
 
 /**
  * <p>A simple DAO for deliverables backed up by Query Tool.</p>
@@ -29,19 +30,19 @@ public class DeliverableDataAccess extends BaseDataAccess {
      *         deliverables.
      */
     public Map<Long, Map<Long, Long>> getDeliverablesList() {
-        Map<String,ResultSetContainer> results = runQuery("tcs_deliverables", (String) null, null);
+        Map<String, List<Map<String, Object>>> results = runQuery("tcs_deliverables", (String) null, null);
 
         Map<Long, Map<Long, Long>> deliverables = new HashMap<Long, Map<Long, Long>>();
 
-        ResultSetContainer resourcesData = results.get("tcs_deliverables");
+        List<Map<String, Object>> resourcesData = results.get("tcs_deliverables");
         int recordNum = resourcesData.size();
         for (int i = 0; i < recordNum; i++) {
-            long roleId = resourcesData.getLongItem(i, "resource_role_id");
-            long phaseTypeId = resourcesData.getLongItem(i, "phase_type_id");
-            long deliverableId = resourcesData.getLongItem(i, "deliverable_id");
+            long roleId = getLong(resourcesData.get(i), "resource_role_id");
+            long phaseTypeId = getLong(resourcesData.get(i), "phase_type_id");
+            long deliverableId = getLong(resourcesData.get(i), "deliverable_id");
 
             if (!deliverables.containsKey(roleId)) {
-                deliverables.put(roleId, new HashMap<Long, Long>());
+                deliverables.put(roleId, new HashMap<>());
             }
             deliverables.get(roleId).put(phaseTypeId, deliverableId);
         }

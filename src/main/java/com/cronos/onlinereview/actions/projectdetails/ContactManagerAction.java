@@ -6,26 +6,26 @@ package com.cronos.onlinereview.actions.projectdetails;
 import java.util.List;
 
 import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.external.ExternalUser;
-import com.cronos.onlinereview.external.UserRetrieval;
+import com.topcoder.onlinereview.component.external.ExternalUser;
+import com.topcoder.onlinereview.component.external.UserRetrieval;
 import com.cronos.onlinereview.functions.Functions;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.ConfigHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.message.email.EmailEngine;
-import com.topcoder.message.email.TCSEmailMessage;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.email.EmailEngine;
+import com.topcoder.onlinereview.component.email.TCSEmailMessage;
 import com.topcoder.util.config.ConfigManagerException;
-import com.topcoder.util.errorhandling.BaseException;
-import com.topcoder.util.file.DocumentGenerator;
-import com.topcoder.util.file.Template;
-import com.topcoder.util.file.fieldconfig.Field;
-import com.topcoder.util.file.fieldconfig.Node;
-import com.topcoder.util.file.fieldconfig.TemplateFields;
-import com.topcoder.util.file.templatesource.FileTemplateSource;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.document.DocumentGenerator;
+import com.topcoder.onlinereview.component.document.Template;
+import com.topcoder.onlinereview.component.document.fieldconfig.Field;
+import com.topcoder.onlinereview.component.document.fieldconfig.Node;
+import com.topcoder.onlinereview.component.document.fieldconfig.TemplateFields;
+import com.topcoder.onlinereview.component.document.templatesource.FileTemplateSource;
 
 /**
  * This class is the struts action class which is used for contacting manager page.

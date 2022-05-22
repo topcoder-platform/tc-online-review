@@ -4,7 +4,7 @@
 package com.cronos.onlinereview.actions.projectreview;
 
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class is the struts action class which is used to save the iterative review.
@@ -37,7 +37,11 @@ public class SaveIterativeReviewAction extends BaseProjectReviewAction {
      */
     public String execute() throws BaseException {
         LoggingHelper.logAction(request);
-        return saveGenericReview(getModel(), request, "Iterative Review");
+        try {
+            return saveGenericReview(getModel(), request, "Iterative Review");
+        }  catch (Exception e) {
+            throw new BaseException(e);
+        }
     }
 }
 

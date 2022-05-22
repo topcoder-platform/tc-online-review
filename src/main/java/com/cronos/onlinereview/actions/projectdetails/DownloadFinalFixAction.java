@@ -11,13 +11,13 @@ import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.ConfigHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.Upload;
-import com.topcoder.management.deliverable.UploadManager;
-import com.topcoder.management.resource.Resource;
+import com.topcoder.onlinereview.component.deliverable.Submission;
+import com.topcoder.onlinereview.component.deliverable.Upload;
+import com.topcoder.onlinereview.component.deliverable.UploadManager;
+import com.topcoder.onlinereview.component.resource.Resource;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.UploadedFile;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class is the struts action class which is used for downloading final fix.

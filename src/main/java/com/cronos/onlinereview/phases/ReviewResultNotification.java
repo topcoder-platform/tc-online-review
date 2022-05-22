@@ -5,26 +5,27 @@ package com.cronos.onlinereview.phases;
 
 import java.text.MessageFormat;
 
-import com.cronos.onlinereview.external.ExternalUser;
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.UploadManager;
-import com.topcoder.management.phase.PhaseHandlingException;
-import com.topcoder.management.phase.PhaseManagementException;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceRole;
-import com.topcoder.management.resource.search.ResourceFilterBuilder;
-import com.topcoder.message.email.EmailEngine;
-import com.topcoder.message.email.TCSEmailMessage;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.util.errorhandling.BaseException;
-import com.topcoder.util.file.DocumentGenerator;
-import com.topcoder.util.file.Template;
-import com.topcoder.util.file.fieldconfig.Field;
-import com.topcoder.util.file.fieldconfig.Node;
-import com.topcoder.util.file.fieldconfig.TemplateFields;
-import com.topcoder.util.file.templatesource.FileTemplateSource;
+import com.topcoder.onlinereview.component.external.ExternalUser;
+import com.topcoder.onlinereview.component.deliverable.Submission;
+import com.topcoder.onlinereview.component.deliverable.UploadManager;
+import com.topcoder.onlinereview.component.project.phase.ManagerHelper;
+import com.topcoder.onlinereview.component.project.phase.PhaseHandlingException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.phase.PhaseManagementException;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceRole;
+import com.topcoder.onlinereview.component.resource.ResourceFilterBuilder;
+import com.topcoder.onlinereview.component.email.EmailEngine;
+import com.topcoder.onlinereview.component.email.TCSEmailMessage;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.document.DocumentGenerator;
+import com.topcoder.onlinereview.component.document.Template;
+import com.topcoder.onlinereview.component.document.fieldconfig.Field;
+import com.topcoder.onlinereview.component.document.fieldconfig.Node;
+import com.topcoder.onlinereview.component.document.fieldconfig.TemplateFields;
+import com.topcoder.onlinereview.component.document.templatesource.FileTemplateSource;
 import com.topcoder.util.log.Level;
 
 /**
@@ -59,21 +60,15 @@ public class ReviewResultNotification {
      */
     private ManagerHelper managerHelper;
 
-    /**
-     * Constructor. It reads the configurations from the namespace.
-     *
-     * @param namespace the configuration namespace.
-     * @throws ConfigurationException if any error occurs when reading configurations
-     */
-    public ReviewResultNotification(String namespace) throws ConfigurationException {
-        PhasesHelper.checkString(namespace, "namespace");
-
-        this.winnersEmailTemplateName = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailTemplateName",  true);
-        this.winnersEmailSubject = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailSubject", true);
-        this.winnersEmailFromAddress = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailFromAddress", true);
-
-        this.managerHelper = new ManagerHelper();
-    }
+//    public ReviewResultNotification(String namespace) throws ConfigurationException {
+//        PhasesHelper.checkString(namespace, "namespace");
+//
+//        this.winnersEmailTemplateName = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailTemplateName",  true);
+//        this.winnersEmailSubject = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailSubject", true);
+//        this.winnersEmailFromAddress = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailFromAddress", true);
+//
+//        this.managerHelper = new ManagerHelper();
+//    }
 
     public void sendMailForWinners(Project project) throws Exception {
         log.log(Level.DEBUG, "we're in the send email method");
@@ -183,5 +178,21 @@ public class ReviewResultNotification {
         DocumentGenerator generator = new DocumentGenerator();
         generator.setDefaultTemplateSource(new FileTemplateSource());
         return generator.getTemplate(winnersEmailTemplateName);
+    }
+
+    public void setWinnersEmailTemplateName(String winnersEmailTemplateName) {
+        this.winnersEmailTemplateName = winnersEmailTemplateName;
+    }
+
+    public void setWinnersEmailSubject(String winnersEmailSubject) {
+        this.winnersEmailSubject = winnersEmailSubject;
+    }
+
+    public void setWinnersEmailFromAddress(String winnersEmailFromAddress) {
+        this.winnersEmailFromAddress = winnersEmailFromAddress;
+    }
+
+    public void setManagerHelper(ManagerHelper managerHelper) {
+        this.managerHelper = managerHelper;
     }
 }

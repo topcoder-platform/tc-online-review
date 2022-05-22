@@ -3,8 +3,15 @@
  */
 package com.cronos.onlinereview.phases;
 
-import com.topcoder.management.phase.PhaseHandlingException;
-import com.topcoder.project.phases.Phase;
+import com.topcoder.onlinereview.component.project.phase.ManagerHelper;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseHandlingException;
+import com.topcoder.onlinereview.component.project.phase.handler.AppealsResponsePhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.EmailOptions;
+import com.topcoder.onlinereview.component.project.phase.handler.EmailScheme;
+import com.topcoder.onlinereview.component.project.phase.handler.PhasesHelper;
+
+import java.util.List;
 
 /**
  * The extend from AppealsResponsePhaseHandler to add on the logic to push data to project_result.
@@ -29,25 +36,18 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
     private final ReviewResultNotification notification;
 
     /**
-     * Create a new instance of AppealsResponsePhaseHandler using the default namespace for loading configuration settings.
-     *
-     * @throws ConfigurationException if errors occurred while loading configuration settings.
-     */
-    public PRAppealResponsePhaseHandler() throws ConfigurationException {
-        this(DEFAULT_NAMESPACE);
-    }
-
-    /**
      * Create a new instance of AppealsResponsePhaseHandler using the given namespace for loading configuration settings.
      *
-     * @param namespace the namespace to load configuration settings from.
-     * @throws ConfigurationException if errors occurred while loading configuration settings or required properties
-     * missing.
      * @throws IllegalArgumentException if the input is null or empty string.
      */
-    public PRAppealResponsePhaseHandler(String namespace) throws ConfigurationException {
-        super(namespace);
-        notification = new ReviewResultNotification(namespace);
+    public PRAppealResponsePhaseHandler(ManagerHelper managerHelper,
+                                        List<EmailScheme> emailSchemes,
+                                        EmailScheme reviewFeedbackEmailScheme,
+                                        EmailOptions defaultStartEmailOption,
+                                        EmailOptions defaultEndEmailOption,
+                                        ReviewResultNotification notification) {
+        super(managerHelper, emailSchemes, reviewFeedbackEmailScheme, defaultStartEmailOption, defaultEndEmailOption);
+        this.notification = notification;
     }
 
     /**
@@ -57,7 +57,6 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
      * @param phase The input phase to check.
      * @param operator The operator that execute the phase.
      *
-     * @throws PhaseNotSupportedException if the input phase type is not "Submission" type.
      * @throws PhaseHandlingException if there is any error occurred while processing the phase.
      * @throws IllegalArgumentException if the input parameters is null or empty string.
      */

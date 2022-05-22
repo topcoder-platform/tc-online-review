@@ -3,48 +3,36 @@
  */
 package com.cronos.onlinereview.phases;
 
+import com.topcoder.onlinereview.component.project.management.PersistenceException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.management.ProjectManager;
+import com.topcoder.onlinereview.component.project.phase.ManagerHelper;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseHandlingException;
+import com.topcoder.onlinereview.component.project.phase.handler.Constants;
+import com.topcoder.onlinereview.component.project.phase.handler.EmailOptions;
+import com.topcoder.onlinereview.component.project.phase.handler.EmailScheme;
+import com.topcoder.onlinereview.component.project.phase.handler.FinalReviewPhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.PhasesHelper;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceFilterBuilder;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+import com.topcoder.onlinereview.component.resource.ResourcePersistenceException;
+import com.topcoder.onlinereview.component.review.Comment;
+import com.topcoder.onlinereview.component.review.Review;
+import com.topcoder.onlinereview.component.search.SearchBuilderException;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+import com.topcoder.onlinereview.component.search.filter.OrFilter;
+import org.tmatesoft.svn.core.SVNException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.tmatesoft.svn.core.SVNException;
-
-import com.topcoder.db.connectionfactory.DBConnectionFactory;
-import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
-import com.topcoder.management.phase.PhaseHandlingException;
-import com.topcoder.management.phase.PhaseManagementException;
-import com.topcoder.management.project.PersistenceException;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectManagerImpl;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.resource.persistence.PersistenceResourceManager;
-import com.topcoder.management.resource.persistence.ResourcePersistence;
-import com.topcoder.management.resource.persistence.ResourcePersistenceException;
-import com.topcoder.management.resource.persistence.sql.SqlResourcePersistence;
-import com.topcoder.management.resource.search.NotificationFilterBuilder;
-import com.topcoder.management.resource.search.NotificationTypeFilterBuilder;
-import com.topcoder.management.resource.search.ResourceFilterBuilder;
-import com.topcoder.management.resource.search.ResourceRoleFilterBuilder;
-import com.topcoder.management.review.data.Comment;
-import com.topcoder.management.review.data.Review;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.search.builder.SearchBuilderException;
-import com.topcoder.search.builder.SearchBundle;
-import com.topcoder.search.builder.SearchBundleManager;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.search.builder.filter.OrFilter;
-import com.topcoder.util.config.ConfigManager;
-import com.topcoder.util.config.Property;
-import com.topcoder.util.datavalidator.LongValidator;
-import com.topcoder.util.datavalidator.ObjectValidator;
-import com.topcoder.util.datavalidator.StringValidator;
-import com.topcoder.util.idgenerator.IDGenerator;
-import com.topcoder.util.idgenerator.IDGeneratorFactory;
+import static com.cronos.onlinereview.util.ConfigHelper.getPropertyValue;
 
 /**
  * The extend from FinalReviewPhaseHandler to add on the logic to push data to project_result.
@@ -70,24 +58,22 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
     private static final String SVN_PERMISSION_ADDED_RESOURCE_INFO = "SVN Permission Added";
 
     /**
-     * Create a new instance of FinalReviewPhaseHandler using the default namespace for loading configuration settings.
-     *
-     * @throws ConfigurationException if errors occurred while loading configuration settings.
-     */
-    public PRFinalReviewPhaseHandler() throws ConfigurationException {
-        super();
-    }
-
-    /**
      * Create a new instance of FinalReviewPhaseHandler using the given namespace for loading configuration settings.
      *
-     * @param namespace the namespace to load configuration settings from.
-     * @throws ConfigurationException if errors occurred while loading configuration settings or required properties
-     * missing.
      * @throws IllegalArgumentException if the input is null or empty string.
      */
-    public PRFinalReviewPhaseHandler(String namespace) throws ConfigurationException {
-        super(namespace);
+    public PRFinalReviewPhaseHandler(ManagerHelper managerHelper,
+                                     List<EmailScheme> emailSchemes,
+                                     EmailScheme reviewFeedbackEmailScheme,
+                                     EmailOptions defaultStartEmailOption,
+                                     EmailOptions defaultEndEmailOption,
+                                     Long finalFixDuration,
+                                     Long studioFinalFixDuration,
+                                     String approvalPhaseDuration,
+                                     String approvalPhaseDefaultReviewerNumber,
+                                     String approvalPhaseDefaultScorecardID) {
+        super(managerHelper, emailSchemes, reviewFeedbackEmailScheme, defaultStartEmailOption, defaultEndEmailOption,
+                finalFixDuration, studioFinalFixDuration, approvalPhaseDuration, approvalPhaseDefaultReviewerNumber, approvalPhaseDefaultScorecardID);
     }
 
     /**
@@ -96,7 +82,6 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
      *
      * @param phase    The input phase to check.
      * @param operator The operator that execute the phase.
-     * @throws PhaseNotSupportedException if the input phase type is not "Submission" type.
      * @throws PhaseHandlingException if there is any error occurred while processing the phase.
      * @throws IllegalArgumentException if the input parameters is null or empty string.
      */
@@ -121,7 +106,7 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
                 try {
                     // check "Approval Required" project property
                     ProjectManager projectManager = getManagerHelper().getProjectManager();
-                    com.topcoder.management.project.Project project = projectManager.getProject(phase.getProject()
+                    Project project = projectManager.getProject(phase.getProject()
                             .getId());
 
                     if (!"true".equalsIgnoreCase((String) project.getProperty("Approval Required"))) {
@@ -147,7 +132,7 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
     private void prepareSVNModule(Phase phase, String operator) throws PhaseHandlingException {
         try {
             long projectId = phase.getProject().getId();
-            ProjectManager projectManager = new ProjectManagerImpl();
+            ProjectManager projectManager = getManagerHelper().getProjectManager();
             Project project = projectManager.getProject(projectId);
             String svnModule = (String) project.getProperty("SVN Module");
             if ((svnModule != null) && (svnModule.trim().length() > 0)) {
@@ -155,10 +140,7 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
                 SVNHelper.createSVNDirectory(svnModule);
 
                 // Find the resources which are to be granted permission for accessing SVN module
-                ConfigManager cfgMgr = ConfigManager.getInstance();
-                Property svnPermissionGrantResourceRolesConfig
-                    = cfgMgr.getPropertyObject("com.cronos.OnlineReview", "SVNPermissionGrantResourceRoles");
-                String[] allowedRoles = svnPermissionGrantResourceRolesConfig.getValues();
+                String[] allowedRoles = getPropertyValue("SVNPermissionGrantResourceRoles", "").split(",");
 
                 List<Filter> resourceRoleFilters = new ArrayList<Filter>();
                 for (String roleId : allowedRoles) {
@@ -222,8 +204,6 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
             throw new PhaseHandlingException("Failed to access SVN repository", e);
         } catch (IOException e) {
             throw new PhaseHandlingException("Failed to access SVN repository", e);
-        } catch (com.topcoder.management.project.ConfigurationException e) {
-            throw new PhaseHandlingException("Failed to create ProjectManager", e);
         }
     }
 
@@ -238,33 +218,29 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
      *         data.
      */
     private boolean checkFinalReview(Phase phase) throws PhaseHandlingException {
-        try {
-            ManagerHelper managerHelper = getManagerHelper();
-            Review finalWorksheet = PhasesHelper.getWorksheet(managerHelper, phase.getId());
+        ManagerHelper managerHelper = getManagerHelper();
+        Review finalWorksheet = PhasesHelper.getWorksheet(managerHelper, phase.getId());
 
-            // check for approved/rejected comments.
-            Comment[] comments = finalWorksheet.getAllComments();
-            boolean rejected = false;
+        // check for approved/rejected comments.
+        Comment[] comments = finalWorksheet.getAllComments();
+        boolean rejected = false;
 
-            for (Comment comment : comments) {
-                String value = (String) comment.getExtraInfo();
+        for (Comment comment : comments) {
+            String value = (String) comment.getExtraInfo();
 
-                if (comment.getCommentType().getName().equals("Final Review Comment")) {
-                    if (Constants.COMMENT_VALUE_APPROVED.equalsIgnoreCase(value) || Constants.COMMENT_VALUE_ACCEPTED.equalsIgnoreCase(value)) {
-                        continue;
-                    } else if (Constants.COMMENT_VALUE_REJECTED.equalsIgnoreCase(value)) {
-                        rejected = true;
+            if (comment.getCommentType().getName().equals("Final Review Comment")) {
+                if (Constants.COMMENT_VALUE_APPROVED.equalsIgnoreCase(value) || Constants.COMMENT_VALUE_ACCEPTED.equalsIgnoreCase(value)) {
+                    continue;
+                } else if (Constants.COMMENT_VALUE_REJECTED.equalsIgnoreCase(value)) {
+                    rejected = true;
 
-                        break;
-                    } else {
-                        throw new PhaseHandlingException("Comment can either be Approved or Rejected.");
-                    }
+                    break;
+                } else {
+                    throw new PhaseHandlingException("Comment can either be Approved or Rejected.");
                 }
             }
-
-            return rejected;
-        } catch (PhaseManagementException e) {
-            throw new PhaseHandlingException("Problem when persisting phases", e);
         }
+
+        return rejected;
     }
 }

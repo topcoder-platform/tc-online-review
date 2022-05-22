@@ -22,11 +22,11 @@ import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.ConfigHelper;
 import com.opensymphony.xwork2.ActionContext;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.resource.persistence.ResourcePersistenceException;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+import com.topcoder.onlinereview.component.project.management.PersistenceException;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class implements several helper-functions that can be used from JSP pages.

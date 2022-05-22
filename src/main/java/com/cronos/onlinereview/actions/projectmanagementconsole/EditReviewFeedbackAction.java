@@ -4,21 +4,21 @@
 package com.cronos.onlinereview.actions.projectmanagementconsole;
 
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.reviewfeedback.ReviewFeedback;
-import com.topcoder.management.reviewfeedback.ReviewFeedbackDetail;
-import com.topcoder.management.reviewfeedback.ReviewFeedbackManager;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.reviewfeedback.ReviewFeedback;
+import com.topcoder.onlinereview.component.reviewfeedback.ReviewFeedbackDetail;
+import com.topcoder.onlinereview.component.reviewfeedback.ReviewFeedbackManager;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class is the struts action class which is used for displaying editing review feedback page.

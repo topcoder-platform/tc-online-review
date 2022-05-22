@@ -23,7 +23,7 @@ import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.ConfigHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.project.Project;
+import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.util.distribution.DistributionTool;
 import com.topcoder.util.distribution.DistributionToolException;
 

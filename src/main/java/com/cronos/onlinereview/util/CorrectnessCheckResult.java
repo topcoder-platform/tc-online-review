@@ -3,10 +3,10 @@
  */
 package com.cronos.onlinereview.util;
 
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.Upload;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.review.data.Review;
+import com.topcoder.onlinereview.component.deliverable.Submission;
+import com.topcoder.onlinereview.component.deliverable.Upload;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.review.Review;
 
 
 /**
