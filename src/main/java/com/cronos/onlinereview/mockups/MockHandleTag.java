@@ -3,19 +3,18 @@
  */
 package com.cronos.onlinereview.mockups;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import com.cronos.onlinereview.external.ExternalUser;
+import com.cronos.onlinereview.external.UserRetrieval;
+import com.cronos.onlinereview.external.impl.DBUserRetrieval;
+import com.topcoder.util.errorhandling.BaseException;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
-
-import com.topcoder.onlinereview.component.external.ExternalUser;
-import com.topcoder.onlinereview.component.external.UserRetrieval;
-import com.cronos.onlinereview.external.impl.DBUserRetrieval;
-import com.topcoder.onlinereview.component.exception.BaseException;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class defines a mock up for real TopCoder's <tc-webtag:handle> tag, which displays members'

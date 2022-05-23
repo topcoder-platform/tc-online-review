@@ -3,9 +3,8 @@
  */
 package com.cronos.onlinereview.mockups;
 
-import com.cronos.onlinereview.external.ConfigException;
-import com.topcoder.onlinereview.component.external.ExternalUser;
-import com.topcoder.onlinereview.component.external.UserRetrieval;
+import com.cronos.onlinereview.external.ExternalUser;
+import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.external.impl.DBUserRetrieval;
 
 import com.topcoder.security.TCSubject;
@@ -14,7 +13,7 @@ import com.topcoder.security.authenticationfactory.AuthenticateException;
 import com.topcoder.security.authenticationfactory.ConfigurationException;
 import com.topcoder.security.authenticationfactory.Principal;
 import com.topcoder.security.authenticationfactory.Response;
-import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.util.errorhandling.BaseException;
 
 /**
  * A mock implementation of <code>AbstractAuthenticator</code>.
@@ -66,7 +65,7 @@ public class MockAuthenticator extends AbstractAuthenticator {
             } else {
                 return new Response(false, "Failed");
             }
-        } catch (BaseException | ConfigException e) {
+        } catch (BaseException e) {
             throw new AuthenticateException("Unable to connect to user store", e);
         }
     }

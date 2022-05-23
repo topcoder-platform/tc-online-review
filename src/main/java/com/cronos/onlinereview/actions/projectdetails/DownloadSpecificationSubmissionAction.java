@@ -14,6 +14,10 @@ import com.topcoder.onlinereview.component.deliverable.Upload;
 import com.topcoder.onlinereview.component.resource.Resource;
 import com.topcoder.onlinereview.component.project.phase.Phase;
 import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.servlet.request.ConfigurationException;
+import com.topcoder.servlet.request.DisallowedDirectoryException;
+import com.topcoder.servlet.request.FileDoesNotExistException;
+import com.topcoder.servlet.request.PersistenceException;
 
 /**
  * This class is the struts action class which is used for downloading specification submission.
@@ -46,7 +50,7 @@ public class DownloadSpecificationSubmissionAction extends BaseProjectDetailsAct
      * @throws BaseException if any error occurs.
      * @throws IOException if some error occurs during disk input/output operation.
      */
-    public String execute() throws BaseException, IOException {
+    public String execute() throws BaseException, IOException, FileDoesNotExistException, ConfigurationException, PersistenceException, DisallowedDirectoryException {
         LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before processing with the Action

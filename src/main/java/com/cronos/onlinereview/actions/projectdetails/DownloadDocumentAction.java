@@ -11,7 +11,11 @@ import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
 import com.topcoder.onlinereview.component.deliverable.Upload;
+import com.topcoder.servlet.request.ConfigurationException;
+import com.topcoder.servlet.request.DisallowedDirectoryException;
+import com.topcoder.servlet.request.FileDoesNotExistException;
 import com.topcoder.servlet.request.FileUpload;
+import com.topcoder.servlet.request.PersistenceException;
 import com.topcoder.servlet.request.UploadedFile;
 import com.topcoder.onlinereview.component.exception.BaseException;
 
@@ -49,7 +53,7 @@ public class DownloadDocumentAction extends BaseProjectDetailsAction {
      * @throws IOException
      *             if some error occurs during disk input/output operation.
      */
-    public String execute() throws BaseException, IOException {
+    public String execute() throws BaseException, IOException, ConfigurationException, DisallowedDirectoryException, FileDoesNotExistException, PersistenceException {
         LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before processing with the Action

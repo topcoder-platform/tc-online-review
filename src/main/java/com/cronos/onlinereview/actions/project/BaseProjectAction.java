@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.actions.DynamicModelDrivenAction;
+import com.cronos.onlinereview.external.ConfigException;
+import com.cronos.onlinereview.external.RetrievalException;
 import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.cronos.onlinereview.model.PhasesDetails;
 import com.cronos.onlinereview.util.ActionsHelper;
@@ -361,7 +363,7 @@ public abstract class BaseProjectAction extends DynamicModelDrivenAction {
      */
     protected void setEditProjectRequestAttributes(HttpServletRequest request,
         Project project, Resource[] resources, ExternalUser[] externalUsers,
-        Phase[] phases) throws BaseException {
+        Phase[] phases) throws BaseException, RetrievalException, ConfigException {
         PhasesDetails phasesDetails = PhasesDetailsServices.getPhasesDetails(request,
                 this, project, phases, resources, externalUsers);
 

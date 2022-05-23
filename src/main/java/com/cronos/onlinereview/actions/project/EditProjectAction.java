@@ -9,6 +9,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.Constants;
+import com.cronos.onlinereview.external.ConfigException;
+import com.cronos.onlinereview.external.RetrievalException;
 import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.cronos.onlinereview.model.ClientProject;
 import com.cronos.onlinereview.model.CockpitProject;
@@ -58,7 +60,7 @@ public class EditProjectAction extends BaseProjectAction {
      * @throws BaseException
      *             when any error happens while processing in TCS components.
      */
-    public String execute() throws BaseException {
+    public String execute() throws BaseException, RetrievalException, ConfigException {
         LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before processing with the Action
@@ -89,7 +91,7 @@ public class EditProjectAction extends BaseProjectAction {
      * @throws BaseException if any error
      */
     @SuppressWarnings("unchecked")
-    protected void populateProjectForm(HttpServletRequest request, Project project) throws BaseException {
+    protected void populateProjectForm(HttpServletRequest request, Project project) throws BaseException, RetrievalException, ConfigException {
         // Populate project id
         getModel().set("pid", project.getId());
 

@@ -12,11 +12,15 @@ import com.cronos.onlinereview.util.LoggingHelper;
 
 import com.opensymphony.xwork2.TextProvider;
 
-import com.topcoder.management.deliverable.Deliverable;
-import com.topcoder.management.deliverable.DeliverableManager;
+//import com.topcoder.management.deliverable.Deliverable;
+//import com.topcoder.management.deliverable.DeliverableManager;
+import com.topcoder.onlinereview.component.deliverable.Deliverable;
+import com.topcoder.onlinereview.component.deliverable.DeliverableCheckingException;
+import com.topcoder.onlinereview.component.deliverable.DeliverableManager;
+import com.topcoder.onlinereview.component.deliverable.DeliverablePersistenceException;
 import com.topcoder.onlinereview.component.deliverable.Submission;
-import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
-import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
+//import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
+//import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
 import com.topcoder.onlinereview.component.project.phase.PhaseManager;
 import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.project.management.ProjectManager;
@@ -31,8 +35,6 @@ import com.topcoder.onlinereview.component.search.filter.AndFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
 import com.topcoder.onlinereview.component.search.filter.InFilter;
 import com.topcoder.onlinereview.component.exception.BaseException;
-
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -256,16 +258,16 @@ public class ListProjectsAction extends BaseProjectAction {
         Resource[] allMyResources = null;
         if (projects.length != 0 && isUserLoggedIn) {
             if (activeTab == 1) { // My projects
-                allMyResources = ActionsHelper.createResourceManager().getResourcesByProjects(projectIds);
+                allMyResources = ActionsHelper.createResourceManager().getResourcesByProjects(projectIds, userId);
             }
         }
 
         // Obtain an instance of Phase Manager
         PhaseManager phMgr = ActionsHelper.createPhaseManager(false);
-        com.topcoder.project.phases.Project[] phaseProjects = phMgr.getPhases(ArrayUtils.toPrimitive(projectIds));
-        Map<Long, com.topcoder.project.phases.Project> phProjects = new HashMap<Long, com.topcoder.project.phases.Project>(
+        com.topcoder.onlinereview.component.project.phase.Project[] phaseProjects = phMgr.getPhases(projectIds);
+        Map<Long, com.topcoder.onlinereview.component.project.phase.Project> phProjects = new HashMap<>(
                 phaseProjects.length);
-        for (com.topcoder.project.phases.Project phPr : phaseProjects) {
+        for (com.topcoder.onlinereview.component.project.phase.Project phPr : phaseProjects) {
             phProjects.put(phPr.getId(), phPr);
         }
 
@@ -284,7 +286,7 @@ public class ListProjectsAction extends BaseProjectAction {
 
             // Calculate end date of the project and get all active phases (if any)
             if (phProjects.containsKey(project.getId())) {
-                com.topcoder.project.phases.Project phProject = phProjects.get(project.getId());
+                com.topcoder.onlinereview.component.project.phase.Project phProject = phProjects.get(project.getId());
                 projectEndDates[counter] = phProject.calcEndDate();
                 activePhases = ActionsHelper.getActivePhases(phProject.getAllPhases());
                 phaseEndDates[counter] = null;
@@ -376,7 +378,7 @@ public class ListProjectsAction extends BaseProjectAction {
      *             not.
      */
     private static Deliverable[] getDeliverables(DeliverableManager manager, Project[] projects, Phase[][] phases,
-            Resource[][] resources)
+                                                 Resource[][] resources)
             throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
         DeliverableDataAccess deliverableDataAccess = new DeliverableDataAccess();
         Map<Long, Map<Long, Long>> deliverableTypes = deliverableDataAccess.getDeliverablesList();

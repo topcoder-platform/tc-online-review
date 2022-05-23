@@ -13,7 +13,6 @@ import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LookupHelper;
 import com.cronos.onlinereview.util.StrutsRequestParser;
-import com.topcoder.management.review.scorecalculator.CalculationManager;
 import com.topcoder.onlinereview.component.deliverable.Submission;
 import com.topcoder.onlinereview.component.deliverable.Upload;
 import com.topcoder.onlinereview.component.deliverable.UploadManager;
@@ -30,6 +29,7 @@ import com.topcoder.onlinereview.component.review.Review;
 import com.topcoder.onlinereview.component.review.ReviewEditor;
 import com.topcoder.onlinereview.component.review.ReviewEntityNotFoundException;
 import com.topcoder.onlinereview.component.review.ReviewManager;
+import com.topcoder.onlinereview.component.review.scorecalculator.CalculationManager;
 import com.topcoder.onlinereview.component.scorecard.Group;
 import com.topcoder.onlinereview.component.scorecard.Question;
 import com.topcoder.onlinereview.component.scorecard.Scorecard;
@@ -46,6 +46,7 @@ import com.topcoder.servlet.request.FileUploadResult;
 import com.topcoder.servlet.request.PersistenceException;
 import com.topcoder.servlet.request.RequestParsingException;
 import com.topcoder.servlet.request.UploadedFile;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -108,6 +109,9 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
      * Represents the review id.
      */
     private long rid;
+
+    @Autowired
+    private CalculationManager scoreCalculator;
 
     // Initialize static fields
     static {
@@ -1395,8 +1399,6 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         // At this point going forward we assume the validation succeeded
         // If the user has requested to complete the review
         if (commitRequested || managerEdit) {
-            // Obtain an instance of CalculationManager
-            CalculationManager scoreCalculator = new CalculationManager();
             // Compute scorecard's score
             double newScore = scoreCalculator.getScore(scorecardTemplate, review);
             // If score has been updated during Manager Edit, additional actions may need to be taken

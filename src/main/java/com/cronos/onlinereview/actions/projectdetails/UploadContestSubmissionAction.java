@@ -5,6 +5,10 @@ package com.cronos.onlinereview.actions.projectdetails;
 
 import com.cronos.onlinereview.Constants;
 import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.servlet.request.ConfigurationException;
+import com.topcoder.servlet.request.DisallowedDirectoryException;
+import com.topcoder.servlet.request.PersistenceException;
+import com.topcoder.servlet.request.RequestParsingException;
 
 /**
  * This class is the struts action class which is used for uploading contest submission.
@@ -44,7 +48,7 @@ public class UploadContestSubmissionAction extends BaseProjectDetailsAction {
      * @throws BaseException
      *             if any error occurs.
      */
-    public String execute() throws BaseException {
+    public String execute() throws BaseException, ConfigurationException, PersistenceException, RequestParsingException, DisallowedDirectoryException {
         return handleUploadSubmission(getModel(), request, Constants.CONTEST_SUBMISSION_TYPE_NAME,
                                           Constants.PERFORM_SUBM_PERM_NAME, Constants.SUBMISSION_PHASE_NAME);
     }

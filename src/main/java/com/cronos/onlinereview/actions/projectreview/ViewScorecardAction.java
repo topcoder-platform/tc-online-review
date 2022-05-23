@@ -73,12 +73,8 @@ public class ViewScorecardAction extends BaseViewOrExportGenericReviewAction {
             // Obtain an instance of Scorecard Manager
             ScorecardManager scrMgr = ActionsHelper.createScorecardManager();
             Scorecard scorecardTemplate = null;
-            try {
-                // Get Scorecard by its id
-                scorecardTemplate = scrMgr.getScorecard(scid);
-            } catch (PersistenceException e) {
-                // Eat the exception
-            }
+            // Get Scorecard by its id
+            scorecardTemplate = scrMgr.getScorecard(scid);
 
             // Verify that scorecard with specified ID exists
             if (scorecardTemplate == null) {

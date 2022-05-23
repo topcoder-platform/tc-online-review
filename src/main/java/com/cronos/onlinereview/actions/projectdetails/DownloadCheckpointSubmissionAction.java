@@ -7,6 +7,10 @@ import java.io.IOException;
 
 import com.cronos.onlinereview.Constants;
 import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.servlet.request.ConfigurationException;
+import com.topcoder.servlet.request.DisallowedDirectoryException;
+import com.topcoder.servlet.request.FileDoesNotExistException;
+import com.topcoder.servlet.request.PersistenceException;
 
 /**
  * This class is the struts action class which is used for downloading checkpoint submission.
@@ -39,7 +43,7 @@ public class DownloadCheckpointSubmissionAction extends BaseProjectDetailsAction
      * @throws BaseException if any error occurs.
      * @throws IOException if some error occurs during disk input/output operation.
      */
-    public String execute() throws BaseException, IOException {
+    public String execute() throws BaseException, IOException, FileDoesNotExistException, ConfigurationException, PersistenceException, DisallowedDirectoryException {
         return handleDownloadSubmission(request, response, "ViewCheckpointSubmission",
                 Constants.VIEW_ALL_CHECKPOINT_SUBMISSIONS_PERM_NAME,
                 Constants.VIEW_MY_CHECKPOINT_SUBMISSIONS_PERM_NAME,
