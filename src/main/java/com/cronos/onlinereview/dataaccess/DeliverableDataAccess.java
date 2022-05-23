@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.topcoder.onlinereview.util.CommonUtils.getLong;
+import static com.topcoder.onlinereview.component.util.CommonUtils.getLong;
 
 /**
  * <p>A simple DAO for deliverables backed up by Query Tool.</p>

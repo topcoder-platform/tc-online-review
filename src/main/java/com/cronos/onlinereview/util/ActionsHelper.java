@@ -116,14 +116,15 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.topcoder.onlinereview.util.CommonUtils.executeSql;
-import static com.topcoder.onlinereview.util.CommonUtils.executeSqlWithParam;
-import static com.topcoder.onlinereview.util.CommonUtils.executeUpdateSql;
-import static com.topcoder.onlinereview.util.CommonUtils.getInt;
-import static com.topcoder.onlinereview.util.CommonUtils.getLong;
-import static com.topcoder.onlinereview.util.CommonUtils.getString;
-import static com.topcoder.onlinereview.util.SpringUtils.getBean;
-import static com.topcoder.onlinereview.util.SpringUtils.getTcsJdbcTemplate;
+import static com.topcoder.onlinereview.component.util.CommonUtils.executeSql;
+import static com.topcoder.onlinereview.component.util.CommonUtils.executeSqlWithParam;
+import static com.topcoder.onlinereview.component.util.CommonUtils.executeUpdateSql;
+import static com.topcoder.onlinereview.component.util.CommonUtils.getInt;
+import static com.topcoder.onlinereview.component.util.CommonUtils.getLong;
+import static com.topcoder.onlinereview.component.util.CommonUtils.getString;
+import static com.topcoder.onlinereview.component.util.SpringUtils.getBean;
+import static com.topcoder.onlinereview.component.util.SpringUtils.getPropertyValue;
+import static com.topcoder.onlinereview.component.util.SpringUtils.getTcsJdbcTemplate;
 
 /**
  * <p>
@@ -2731,9 +2732,9 @@ public class ActionsHelper {
      * @throws BaseException if any error
      */
     private static long getNextComponentInquiryId(JdbcTemplate jdbcTemplate, int count) throws BaseException {
-        String tableName = ConfigHelper.getPropertyValue("component_inquiry.tablename", "sequence_object");
-        String nameField = ConfigHelper.getPropertyValue("component_inquiry.name", "name");
-        String currentValueField = ConfigHelper.getPropertyValue("component_inquiry.current_value", "current_value");
+        String tableName = getPropertyValue("component_inquiry.tablename");
+        String nameField = getPropertyValue("component_inquiry.name");
+        String currentValueField = getPropertyValue("component_inquiry.current_value");
         String getNextID = "SELECT max(" + currentValueField + ") as seq_id FROM " + tableName + " WHERE " + nameField
                 + " = 'main_sequence'";
         String updateNextID = "UPDATE " + tableName + " SET " + currentValueField + " = ? " + " WHERE " + nameField

@@ -60,16 +60,6 @@ public class ReviewResultNotification {
      */
     private ManagerHelper managerHelper;
 
-//    public ReviewResultNotification(String namespace) throws ConfigurationException {
-//        PhasesHelper.checkString(namespace, "namespace");
-//
-//        this.winnersEmailTemplateName = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailTemplateName",  true);
-//        this.winnersEmailSubject = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailSubject", true);
-//        this.winnersEmailFromAddress = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailFromAddress", true);
-//
-//        this.managerHelper = new ManagerHelper();
-//    }
-
     public void sendMailForWinners(Project project) throws Exception {
         log.log(Level.DEBUG, "we're in the send email method");
 

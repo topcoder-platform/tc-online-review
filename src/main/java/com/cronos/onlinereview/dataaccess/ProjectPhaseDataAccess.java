@@ -10,6 +10,7 @@ import com.topcoder.onlinereview.component.project.phase.PhaseType;
 import com.topcoder.onlinereview.component.project.phase.Project;
 import com.topcoder.onlinereview.component.workday.Workdays;
 import com.topcoder.onlinereview.component.workday.WorkdaysFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,9 +18,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.topcoder.onlinereview.util.CommonUtils.getDate;
-import static com.topcoder.onlinereview.util.CommonUtils.getInt;
-import static com.topcoder.onlinereview.util.CommonUtils.getLong;
+import static com.topcoder.onlinereview.component.util.CommonUtils.getDate;
+import static com.topcoder.onlinereview.component.util.CommonUtils.getInt;
+import static com.topcoder.onlinereview.component.util.CommonUtils.getLong;
 
 /**
  * <p>A simple DAO for project phases backed up by Query Tool.</p>
@@ -29,6 +30,7 @@ import static com.topcoder.onlinereview.util.CommonUtils.getLong;
  */
 public class ProjectPhaseDataAccess extends BaseDataAccess {
 
+    @Autowired
     private WorkdaysFactory workdaysFactory;
     /**
      * <p>Constructs new <code>ProjectPhaseDataAccess</code> instance. This implementation does nothing.</p>

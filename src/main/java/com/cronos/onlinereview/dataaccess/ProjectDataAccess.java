@@ -9,6 +9,8 @@ package com.cronos.onlinereview.dataaccess;
  import com.topcoder.onlinereview.component.project.management.Project;
  import com.topcoder.onlinereview.component.project.management.ProjectCategory;
  import com.topcoder.onlinereview.component.project.management.ProjectStatus;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.beans.factory.annotation.Qualifier;
  import org.springframework.jdbc.core.JdbcTemplate;
 
  import java.util.ArrayList;
@@ -17,9 +19,9 @@ package com.cronos.onlinereview.dataaccess;
  import java.util.List;
  import java.util.Map;
 
- import static com.topcoder.onlinereview.util.CommonUtils.getDate;
- import static com.topcoder.onlinereview.util.CommonUtils.getLong;
- import static com.topcoder.onlinereview.util.CommonUtils.getString;
+ import static com.topcoder.onlinereview.component.util.CommonUtils.getDate;
+ import static com.topcoder.onlinereview.component.util.CommonUtils.getLong;
+ import static com.topcoder.onlinereview.component.util.CommonUtils.getString;
 
  /**
  * <p>A simple DAO for projects backed up by Query Tool.</p>
@@ -32,8 +34,12 @@ package com.cronos.onlinereview.dataaccess;
  */
 public class ProjectDataAccess extends BaseDataAccess {
 
+     @Autowired
+     @Qualifier("oltpJdbcTemplate")
     private JdbcTemplate oltpJdbcTemplate;
 
+     @Autowired
+     @Qualifier("tcsDwJdbcTemplate")
     private JdbcTemplate tcsDwJdbcTemplate;
     /**
      * <p>Constructs new <code>ProjectDataAccess</code> instance. This implementation does nothing.</p>

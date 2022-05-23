@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import static com.topcoder.onlinereview.util.SpringUtils.getPropertyValue;
+import static com.topcoder.onlinereview.component.util.SpringUtils.getPropertyValue;
 
 /**
  * <p>

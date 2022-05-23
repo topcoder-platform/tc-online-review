@@ -25,9 +25,9 @@ import com.topcoder.util.idgenerator.IdGenerator;
 import com.topcoder.util.idgenerator.sql.DB;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.topcoder.onlinereview.util.CommonUtils.executeUpdateSql;
-import static com.topcoder.onlinereview.util.CommonUtils.getLong;
-import static com.topcoder.onlinereview.util.CommonUtils.getString;
+import static com.topcoder.onlinereview.component.util.CommonUtils.executeUpdateSql;
+import static com.topcoder.onlinereview.component.util.CommonUtils.getLong;
+import static com.topcoder.onlinereview.component.util.CommonUtils.getString;
 
 /**
  * <p>A simple DAO for component catalog backed up by Query Tool.</p>

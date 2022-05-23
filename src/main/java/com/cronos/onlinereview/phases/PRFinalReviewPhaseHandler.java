@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.cronos.onlinereview.util.ConfigHelper.getPropertyValue;
+import static com.topcoder.onlinereview.component.util.SpringUtils.getPropertyValue;
 
 /**
  * The extend from FinalReviewPhaseHandler to add on the logic to push data to project_result.
@@ -140,7 +140,7 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
                 SVNHelper.createSVNDirectory(svnModule);
 
                 // Find the resources which are to be granted permission for accessing SVN module
-                String[] allowedRoles = getPropertyValue("SVNPermissionGrantResourceRoles", "").split(",");
+                String[] allowedRoles = getPropertyValue("SVNPermissionGrantResourceRoles").split(",");
 
                 List<Filter> resourceRoleFilters = new ArrayList<Filter>();
                 for (String roleId : allowedRoles) {

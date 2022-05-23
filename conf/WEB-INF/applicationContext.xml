@@ -15,7 +15,7 @@
 
     <context:annotation-config/>
     <context:property-placeholder location="classpath:applicationConfig.properties"/>
-    <context:component-scan base-package="com.cronos.onlinereview.component,com.topcoder.onlinereview.component" />
+    <context:component-scan base-package="com.topcoder.onlinereview.component" />
     <bean id="springContextProvider" class="com.cronos.onlinereview.ejblibrary.SpringContextProvider" 
           scope="singleton"/>
 
@@ -55,12 +55,26 @@
         <property name="jndiName" value="java:jboss/datasources/OLTP" />
     </bean>
 
+    <bean id="tcsDwDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:jboss/datasources/TCS_DW" />
+    </bean>
+
+    <bean id="commonDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:jboss/datasources/DS" />
+    </bean>
+
     <bean id="tcsJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
         <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="tcsDwJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="tcsDwDataSource"/>
     </bean>
 
     <bean id="oltpJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
         <property name="dataSource" ref="oltpDataSource"/>
+    </bean>
+    <bean id="commonJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="commonDataSource"/>
     </bean>
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
@@ -105,9 +119,13 @@
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
     <bean id="statusProjectValidator" class="com.cronos.onlinereview.util.StatusProjectValidator" />
-    <bean id="managerCreationHelper" class="com.cronos.onlinereview.util.ManagerCreationHelper" />
-    <bean id="phaseManagerWithoutHandlers" class="com.topcoder.onlinereview.component.project.phase.PhaseManager" />
+    <bean id="deliverableDataAccess" class="com.cronos.onlinereview.dataaccess.DeliverableDataAccess" />
+    <bean id="projectDataAccess" class="com.cronos.onlinereview.dataaccess.ProjectDataAccess" />
+    <bean id="projectPhaseDataAccess" class="com.cronos.onlinereview.dataaccess.ProjectPhaseDataAccess" />
+    <bean id="ResourceDataAccess" class="com.cronos.onlinereview.dataaccess.ResourceDataAccess" />
     <bean id="PhaseManager" class="com.topcoder.onlinereview.component.project.phase.PhaseManager" />
+    <bean id="phaseManagerWithoutHandlers" class="com.topcoder.onlinereview.component.project.phase.PhaseManager" />
+    <bean id="managerCreationHelper" class="com.cronos.onlinereview.util.ManagerCreationHelper" />
     <bean id="actionsHelper" class="com.cronos.onlinereview.util.ActionsHelper">
         <property name="managerCreationHelper" ref="managerCreationHelper"/>
     </bean>

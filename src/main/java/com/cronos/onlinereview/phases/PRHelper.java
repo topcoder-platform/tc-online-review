@@ -40,12 +40,12 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.topcoder.onlinereview.util.CommonUtils.executeSqlWithParam;
-import static com.topcoder.onlinereview.util.CommonUtils.executeUpdateSql;
-import static com.topcoder.onlinereview.util.CommonUtils.getDouble;
-import static com.topcoder.onlinereview.util.CommonUtils.getInt;
-import static com.topcoder.onlinereview.util.CommonUtils.getLong;
-import static com.topcoder.onlinereview.util.SpringUtils.getTcsJdbcTemplate;
+import static com.topcoder.onlinereview.component.util.CommonUtils.executeSqlWithParam;
+import static com.topcoder.onlinereview.component.util.CommonUtils.executeUpdateSql;
+import static com.topcoder.onlinereview.component.util.CommonUtils.getDouble;
+import static com.topcoder.onlinereview.component.util.CommonUtils.getInt;
+import static com.topcoder.onlinereview.component.util.CommonUtils.getLong;
+import static com.topcoder.onlinereview.component.util.SpringUtils.getTcsJdbcTemplate;
 
 /**
  * The PRHelper which is used to provide helper method for Phase Handler.

@@ -45,6 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -208,40 +209,41 @@ public class ManagerCreationHelper implements ManagersProvider {
     @PostConstruct
     public void postRun() {
         // Register all the handles.
+        PhaseType[] entities = phaseManager.getAllPhaseTypes();
         registerPhaseHandlerForOperation(phaseManager, pRRegistrationPhaseHandler,
-                Constants.REGISTRATION_PHASE_NAME);
+                entities, Constants.REGISTRATION_PHASE_NAME);
         registerPhaseHandlerForOperation(phaseManager, pRSubmissionPhaseHandler,
-                Constants.SUBMISSION_PHASE_NAME);
+                entities, Constants.SUBMISSION_PHASE_NAME);
         registerPhaseHandlerForOperation(phaseManager, prScreeningPhaseHandler,
-                Constants.SCREENING_PHASE_NAME);
+                entities, Constants.SCREENING_PHASE_NAME);
         registerPhaseHandlerForOperation(phaseManager, prReviewPhaseHandler,
-                Constants.REVIEW_PHASE_NAME);
+                entities, Constants.REVIEW_PHASE_NAME);
         registerPhaseHandlerForOperation(phaseManager, appealsPhaseHandler,
-                Constants.APPEALS_PHASE_NAME);
+                entities, Constants.APPEALS_PHASE_NAME);
         registerPhaseHandlerForOperation(phaseManager, prAppealResponsePhaseHandler,
-                Constants.APPEALS_RESPONSE_PHASE_NAME);
+                entities, Constants.APPEALS_RESPONSE_PHASE_NAME);
         registerPhaseHandlerForOperation(phaseManager, prAggregationPhaseHandler,
-                Constants.AGGREGATION_PHASE_NAME);
+                entities, Constants.AGGREGATION_PHASE_NAME);
         registerPhaseHandlerForOperation(phaseManager, prFinalFixPhaseHandler,
-                Constants.FINAL_FIX_PHASE_NAME);
+                entities, Constants.FINAL_FIX_PHASE_NAME);
         registerPhaseHandlerForOperation(phaseManager, prFinalReviewPhaseHandler,
-                Constants.FINAL_REVIEW_PHASE_NAME);
+                entities, Constants.FINAL_REVIEW_PHASE_NAME);
         registerPhaseHandlerForOperation(phaseManager, prApprovalPhaseHandler,
-                Constants.APPROVAL_PHASE_NAME);
+                entities, Constants.APPROVAL_PHASE_NAME);
         registerPhaseHandlerForOperation(phaseManager, prPostMortemPhaseHandler,
-                Constants.POST_MORTEM_PHASE_NAME);
+                entities, Constants.POST_MORTEM_PHASE_NAME);
         registerPhaseHandlerForOperation(phaseManager, specificationSubmissionPhaseHandler,
-                Constants.SPECIFICATION_SUBMISSION_PHASE_NAME);
+                entities, Constants.SPECIFICATION_SUBMISSION_PHASE_NAME);
         registerPhaseHandlerForOperation(phaseManager, specificationReviewPhaseHandler,
-                Constants.SPECIFICATION_REVIEW_PHASE_NAME);
+                entities, Constants.SPECIFICATION_REVIEW_PHASE_NAME);
         registerPhaseHandlerForOperation(phaseManager, checkpointSubmissionPhaseHandler,
-                Constants.CHECKPOINT_SUBMISSION_PHASE_NAME);
+                entities, Constants.CHECKPOINT_SUBMISSION_PHASE_NAME);
         registerPhaseHandlerForOperation(phaseManager, prCheckpointScreeningPhaseHandler,
-                Constants.CHECKPOINT_SCREENING_PHASE_NAME);
+                entities, Constants.CHECKPOINT_SCREENING_PHASE_NAME);
         registerPhaseHandlerForOperation(phaseManager, prCheckpointReviewPhaseHandler,
-                Constants.CHECKPOINT_REVIEW_PHASE_NAME);
+                entities, Constants.CHECKPOINT_REVIEW_PHASE_NAME);
         registerPhaseHandlerForOperation(phaseManager, prIterativeReviewPhaseHandler,
-                Constants.ITERATIVE_REVIEW_PHASE_NAME);
+                entities, Constants.ITERATIVE_REVIEW_PHASE_NAME);
     }
 
     public UserRetrieval getUserRetrieval() {
@@ -439,9 +441,15 @@ public class ManagerCreationHelper implements ManagersProvider {
      * @throws LookupException if phase type entity can not be found
      */
     private static void registerPhaseHandlerForOperation(PhaseManager manager,
-                                                         PhaseHandler handler, String phaseName) throws LookupException {
-        PhaseType phaseType = LookupHelper.getPhaseType(phaseName);
-        manager.registerHandler(handler, phaseType, PhaseOperationEnum.START);
-        manager.registerHandler(handler, phaseType, PhaseOperationEnum.END);
+                                                         PhaseHandler handler,
+                                                         PhaseType[] entities,
+                                                         String phaseName) throws LookupException {
+        for (PhaseType entity : entities) {
+            if (phaseName.equals(entity.getName())) {
+                manager.registerHandler(handler, entity, PhaseOperationEnum.START);
+                manager.registerHandler(handler, entity, PhaseOperationEnum.END);
+                return;
+            }
+        }
     }
 }

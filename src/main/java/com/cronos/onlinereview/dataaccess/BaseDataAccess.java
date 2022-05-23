@@ -11,6 +11,8 @@ import com.topcoder.onlinereview.component.project.phase.PhaseType;
 import com.topcoder.onlinereview.component.resource.ResourceRole;
 import com.topcoder.onlinereview.component.shared.dataaccess.DataAccess;
 import com.topcoder.onlinereview.component.shared.dataaccess.Request;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.HashMap;
@@ -35,6 +37,8 @@ public abstract class BaseDataAccess {
      */
     protected static final long PROJECT_STATUS_DRAFT_ID = 2;
 
+    @Autowired
+    @Qualifier("tcsJdbcTemplate")
     protected JdbcTemplate tcsJdbcTemplate;
 
     /**

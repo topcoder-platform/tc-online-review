@@ -57,7 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.topcoder.onlinereview.util.SpringUtils.getBean;
+import static com.topcoder.onlinereview.component.util.SpringUtils.getBean;
 
 /**
  * This is the base class for project review actions classes.

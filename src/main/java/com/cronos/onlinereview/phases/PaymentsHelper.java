@@ -40,8 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.topcoder.onlinereview.util.CommonUtils.executeUpdateSql;
-import static com.topcoder.onlinereview.util.SpringUtils.getTcsJdbcTemplate;
+import static com.topcoder.onlinereview.component.util.CommonUtils.executeUpdateSql;
+import static com.topcoder.onlinereview.component.util.SpringUtils.getTcsJdbcTemplate;
 
 /**
  * <p>
