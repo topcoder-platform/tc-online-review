@@ -3,17 +3,16 @@
  */
 package com.cronos.onlinereview.mockups;
 
-import com.cronos.onlinereview.external.ExternalUser;
-import com.cronos.onlinereview.external.UserRetrieval;
-import com.cronos.onlinereview.external.impl.DBUserRetrieval;
-
+import com.topcoder.onlinereview.component.external.ExternalUser;
+import com.topcoder.onlinereview.component.external.UserRetrieval;
 import com.topcoder.security.TCSubject;
 import com.topcoder.security.authenticationfactory.AbstractAuthenticator;
 import com.topcoder.security.authenticationfactory.AuthenticateException;
 import com.topcoder.security.authenticationfactory.ConfigurationException;
 import com.topcoder.security.authenticationfactory.Principal;
 import com.topcoder.security.authenticationfactory.Response;
-import com.topcoder.util.errorhandling.BaseException;
+
+import static com.topcoder.onlinereview.component.util.SpringUtils.getBean;
 
 /**
  * A mock implementation of <code>AbstractAuthenticator</code>.
@@ -56,17 +55,13 @@ public class MockAuthenticator extends AbstractAuthenticator {
             return new Response(false, "Failed");
         }
 
-        try {
-            UserRetrieval ur = new DBUserRetrieval("com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
+        UserRetrieval ur = getBean(UserRetrieval.class);
 
-            ExternalUser user = ur.retrieveUser(userName);
-            if (user != null) {
-                return new Response(true, "Succeeded", new TCSubject(user.getId()));
-            } else {
-                return new Response(false, "Failed");
-            }
-        } catch (BaseException e) {
-            throw new AuthenticateException("Unable to connect to user store", e);
+        ExternalUser user = ur.retrieveUser(userName);
+        if (user != null) {
+            return new Response(true, "Succeeded", new TCSubject(user.getId()));
+        } else {
+            return new Response(false, "Failed");
         }
     }
 }

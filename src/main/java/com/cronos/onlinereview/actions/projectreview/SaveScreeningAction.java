@@ -5,10 +5,6 @@ package com.cronos.onlinereview.actions.projectreview;
 
 import com.cronos.onlinereview.util.LoggingHelper;
 import com.topcoder.onlinereview.component.exception.BaseException;
-import com.topcoder.servlet.request.ConfigurationException;
-import com.topcoder.servlet.request.DisallowedDirectoryException;
-import com.topcoder.servlet.request.PersistenceException;
-import com.topcoder.servlet.request.RequestParsingException;
 
 /**
  * This class is the struts action class which is used to save the screening.
@@ -39,7 +35,7 @@ public class SaveScreeningAction extends BaseProjectReviewAction {
      * @throws BaseException
      *         if any error occurs.
      */
-    public String execute() throws BaseException, ConfigurationException, PersistenceException, RequestParsingException, DisallowedDirectoryException {
+    public String execute() throws BaseException {
         LoggingHelper.logAction(request);
         return saveGenericReview(getModel(), request, "Screening");
     }

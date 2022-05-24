@@ -10,13 +10,9 @@ import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
 import com.topcoder.onlinereview.component.deliverable.Upload;
 import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.fileupload.FileUpload;
+import com.topcoder.onlinereview.component.fileupload.UploadedFile;
 import com.topcoder.onlinereview.component.project.phase.Phase;
-import com.topcoder.servlet.request.ConfigurationException;
-import com.topcoder.servlet.request.DisallowedDirectoryException;
-import com.topcoder.servlet.request.FileDoesNotExistException;
-import com.topcoder.servlet.request.FileUpload;
-import com.topcoder.servlet.request.PersistenceException;
-import com.topcoder.servlet.request.UploadedFile;
 
 import java.io.IOException;
 
@@ -53,7 +49,7 @@ public class DownloadTestCaseAction extends BaseProjectDetailsAction {
      * @throws IOException
      *             if some error occurs during disk input/output operation.
      */
-    public String execute() throws BaseException, IOException, ConfigurationException, DisallowedDirectoryException, FileDoesNotExistException, PersistenceException {
+    public String execute() throws BaseException, IOException {
         LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before processing with the Action

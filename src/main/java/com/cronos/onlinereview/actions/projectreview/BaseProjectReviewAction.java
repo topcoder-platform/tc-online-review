@@ -17,6 +17,9 @@ import com.topcoder.onlinereview.component.deliverable.Submission;
 import com.topcoder.onlinereview.component.deliverable.Upload;
 import com.topcoder.onlinereview.component.deliverable.UploadManager;
 import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.fileupload.FileUpload;
+import com.topcoder.onlinereview.component.fileupload.FileUploadResult;
+import com.topcoder.onlinereview.component.fileupload.UploadedFile;
 import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.project.phase.OnlineReviewServices;
 import com.topcoder.onlinereview.component.project.phase.Phase;
@@ -39,13 +42,6 @@ import com.topcoder.onlinereview.component.search.filter.AndFilter;
 import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
 import com.topcoder.onlinereview.component.search.filter.InFilter;
-import com.topcoder.servlet.request.ConfigurationException;
-import com.topcoder.servlet.request.DisallowedDirectoryException;
-import com.topcoder.servlet.request.FileUpload;
-import com.topcoder.servlet.request.FileUploadResult;
-import com.topcoder.servlet.request.PersistenceException;
-import com.topcoder.servlet.request.RequestParsingException;
-import com.topcoder.servlet.request.UploadedFile;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
@@ -938,7 +934,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
      * @return the string result
      * @throws BaseException if any error.
      */
-    protected String saveGenericReview(DynamicModel reviewForm, HttpServletRequest request, String reviewType) throws BaseException, ConfigurationException, DisallowedDirectoryException, PersistenceException, RequestParsingException {
+    protected String saveGenericReview(DynamicModel reviewForm, HttpServletRequest request, String reviewType) throws BaseException {
 
         String permName;
         String phaseName;

@@ -18,9 +18,7 @@ import com.topcoder.onlinereview.component.deliverable.UploadFilterBuilder;
 import com.topcoder.onlinereview.component.resource.ResourceManager;
 
 import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.external.ConfigException;
 import com.topcoder.onlinereview.component.external.ExternalUser;
-import com.cronos.onlinereview.external.RetrievalException;
 import com.cronos.onlinereview.model.PhaseGroup;
 import com.cronos.onlinereview.model.PhasesDetails;
 import com.cronos.onlinereview.util.Comparators.SubmissionComparer;
@@ -72,7 +70,7 @@ public final class PhasesDetailsServices {
      */
     public static PhasesDetails getPhasesDetails(HttpServletRequest request, TextProvider textProvider, Project project,
             Phase[] phases, Resource[] allProjectResources, ExternalUser[] allProjectExternalUsers)
-            throws BaseException, RetrievalException, ConfigException {
+            throws BaseException {
 
         // Validate parameters first
         ActionsHelper.validateParameterNotNull(request, "request");
@@ -417,11 +415,9 @@ public final class PhasesDetailsServices {
      * @param phaseGroup              the phase group
      * @param submitters              the submitters
      * @param allProjectExternalUsers the all project external users
-     * @throws RetrievalException the retrieval exception
-     * @throws ConfigException    the config exception
      */
     private static void serviceRegistrantsAppFunc(HttpServletRequest request, PhaseGroup phaseGroup,
-            Resource[] submitters, ExternalUser[] allProjectExternalUsers) throws RetrievalException, ConfigException {
+            Resource[] submitters, ExternalUser[] allProjectExternalUsers) {
         if (submitters == null || submitters.length == 0) {
             return;
         }

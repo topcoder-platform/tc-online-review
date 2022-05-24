@@ -38,6 +38,9 @@ import com.topcoder.onlinereview.component.email.TCSEmailMessage;
 import com.topcoder.onlinereview.component.exception.BaseException;
 import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.topcoder.onlinereview.component.external.UserRetrieval;
+import com.topcoder.onlinereview.component.fileupload.FileUpload;
+import com.topcoder.onlinereview.component.fileupload.FileUploadResult;
+import com.topcoder.onlinereview.component.fileupload.UploadedFile;
 import com.topcoder.onlinereview.component.project.management.PersistenceException;
 import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.project.management.ProjectManager;
@@ -50,13 +53,6 @@ import com.topcoder.onlinereview.component.search.SearchBuilderException;
 import com.topcoder.onlinereview.component.search.filter.AndFilter;
 import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
-import com.topcoder.servlet.request.ConfigurationException;
-import com.topcoder.servlet.request.DisallowedDirectoryException;
-import com.topcoder.servlet.request.FileDoesNotExistException;
-import com.topcoder.servlet.request.FileUpload;
-import com.topcoder.servlet.request.FileUploadResult;
-import com.topcoder.servlet.request.RequestParsingException;
-import com.topcoder.servlet.request.UploadedFile;
 import com.topcoder.util.config.ConfigManagerException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -200,16 +196,12 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
      *                 response.
      * @throws UploadPersistenceException   if an unexpected error occurs.
      * @throws SearchBuilderException       if an unexpected error occurs.
-     * @throws DisallowedDirectoryException if an unexpected error occurs.
-     * @throws ConfigurationException       if an unexpected error occurs.
      * @throws PersistenceException         if an unexpected error occurs.
-     * @throws FileDoesNotExistException    if an unexpected error occurs.
      * @throws IOException                  if an unexpected error occurs.
      */
     protected void processSubmissionDownload(Upload upload, HttpServletRequest request, HttpServletResponse response)
-            throws UploadPersistenceException, SearchBuilderException, DisallowedDirectoryException,
-            ConfigurationException, PersistenceException, FileDoesNotExistException, IOException,
-            com.topcoder.servlet.request.PersistenceException {
+            throws UploadPersistenceException, SearchBuilderException,
+            PersistenceException,  IOException {
 
         // At this point, redirect-after-login attribute should be removed (if it
         // exists)
@@ -280,11 +272,10 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
      * @param response           an <code>HttpServletResponse</code> representing
      *                           the outgoing response.
      * @throws PersistenceException      if an unexpected error occurs.
-     * @throws FileDoesNotExistException if an unexpected error occurs.
      * @throws IOException               if an unexpected error occurs.
      */
     protected void outputDownloadedFile(UploadedFile uploadedFile, String contentDisposition,
-            HttpServletResponse response) throws FileDoesNotExistException, IOException, com.topcoder.servlet.request.PersistenceException {
+            HttpServletResponse response) throws IOException {
 
         InputStream in = uploadedFile.getInputStream();
 
@@ -384,7 +375,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             String viewSubmissionByScreenerPermissionName, String viewMostRecentSubmissionsPermissionName,
             String downloadCustomSubmissionPermissionName, String viewWinningSubmissionPermissionName,
             String screeningPhaseName, String reviewPhaseName, String[] screenerRoleNames, String[] reviewerRoleNames,
-            long submissionType) throws BaseException, IOException, FileDoesNotExistException, ConfigurationException, com.topcoder.servlet.request.PersistenceException, DisallowedDirectoryException {
+            long submissionType) throws BaseException, IOException {
         LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before processing with the Action
@@ -617,7 +608,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
      * @throws BaseException if an unexpected error occurs.
      */
     protected String handleUploadSubmission(DynamicModel uploadSubmissionForm, HttpServletRequest request,
-            String submissionTypeName, String submitPermissionName, String phaseName) throws BaseException, ConfigurationException, DisallowedDirectoryException, com.topcoder.servlet.request.PersistenceException, RequestParsingException {
+            String submissionTypeName, String submitPermissionName, String phaseName) throws BaseException {
         LoggingHelper.logAction(request);
 
         // Determine if this request is a post back

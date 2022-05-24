@@ -3,14 +3,10 @@
  */
 package com.cronos.onlinereview.actions.projectdetails;
 
-import java.io.IOException;
-
 import com.cronos.onlinereview.Constants;
 import com.topcoder.onlinereview.component.exception.BaseException;
-import com.topcoder.servlet.request.ConfigurationException;
-import com.topcoder.servlet.request.DisallowedDirectoryException;
-import com.topcoder.servlet.request.FileDoesNotExistException;
-import com.topcoder.servlet.request.PersistenceException;
+
+import java.io.IOException;
 
 /**
  * This class is the struts action class which is used for downloading contest submission.
@@ -45,7 +41,7 @@ public class DownloadContestSubmissionAction extends BaseProjectDetailsAction {
      * @throws IOException
      *             if some error occurs during disk input/output operation.
      */
-    public String execute() throws BaseException, IOException, FileDoesNotExistException, ConfigurationException, PersistenceException, DisallowedDirectoryException {
+    public String execute() throws BaseException, IOException {
         return handleDownloadSubmission(request, response, "ViewSubmission",
                 Constants.VIEW_ALL_SUBM_PERM_NAME, Constants.VIEW_MY_SUBM_PERM_NAME,
                 Constants.VIEW_SCREENER_SUBM_PERM_NAME, Constants.VIEW_RECENT_SUBM_PERM_NAME,

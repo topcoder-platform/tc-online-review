@@ -5,10 +5,6 @@ package com.cronos.onlinereview.actions.projectdetails;
 
 import com.cronos.onlinereview.Constants;
 import com.topcoder.onlinereview.component.exception.BaseException;
-import com.topcoder.servlet.request.ConfigurationException;
-import com.topcoder.servlet.request.DisallowedDirectoryException;
-import com.topcoder.servlet.request.PersistenceException;
-import com.topcoder.servlet.request.RequestParsingException;
 
 /**
  * This class is the struts action class which is used for uploading checkpoint submission.
@@ -40,7 +36,7 @@ public class UploadCheckpointSubmissionAction extends BaseProjectDetailsAction {
      * @return a string result of this action
      * @throws BaseException if an unexpected error occurs.
      */
-    public String execute() throws BaseException, ConfigurationException, PersistenceException, RequestParsingException, DisallowedDirectoryException {
+    public String execute() throws BaseException {
         return handleUploadSubmission(getModel(), request, Constants.CHECKPOINT_SUBMISSION_TYPE_NAME,
                 Constants.PERFORM_CHECKPOINT_SUBMISSION_PERM_NAME,
                 Constants.CHECKPOINT_SUBMISSION_PHASE_NAME);

@@ -3,8 +3,6 @@
  */
 package com.cronos.onlinereview.actions.projectdetails;
 
-import java.io.IOException;
-
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
@@ -14,14 +12,10 @@ import com.cronos.onlinereview.util.LoggingHelper;
 import com.topcoder.onlinereview.component.deliverable.Submission;
 import com.topcoder.onlinereview.component.deliverable.Upload;
 import com.topcoder.onlinereview.component.deliverable.UploadManager;
-import com.topcoder.onlinereview.component.resource.Resource;
-import com.topcoder.servlet.request.ConfigurationException;
-import com.topcoder.servlet.request.DisallowedDirectoryException;
-import com.topcoder.servlet.request.FileDoesNotExistException;
-import com.topcoder.servlet.request.FileUpload;
-import com.topcoder.servlet.request.PersistenceException;
-import com.topcoder.servlet.request.UploadedFile;
 import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.resource.Resource;
+
+import java.io.IOException;
 
 /**
  * This class is the struts action class which is used for downloading final fix.
@@ -56,7 +50,7 @@ public class DownloadFinalFixAction extends BaseProjectDetailsAction {
      * @throws IOException
      *             if some error occurs during disk input/output operation.
      */
-    public String execute() throws BaseException, IOException, FileDoesNotExistException, ConfigurationException, PersistenceException, DisallowedDirectoryException {
+    public String execute() throws BaseException, IOException {
         LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before processing with the Action

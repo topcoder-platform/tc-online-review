@@ -5,8 +5,6 @@ package com.cronos.onlinereview.actions.projectdetails;
 
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
-import com.cronos.onlinereview.external.ConfigException;
-import com.cronos.onlinereview.external.RetrievalException;
 import com.cronos.onlinereview.model.ClientProject;
 import com.cronos.onlinereview.model.CockpitProject;
 import com.cronos.onlinereview.model.PhasesDetails;
@@ -103,7 +101,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
      *         the forward will be to viewProjectDetails.jsp page.
      * @throws BaseException if any error occurs.
      */
-    public String execute() throws BaseException, RetrievalException, ConfigException {
+    public String execute() throws BaseException {
         LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before processing with the Action

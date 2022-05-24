@@ -4,7 +4,6 @@
 package com.cronos.onlinereview.actions.projectmanagementconsole;
 
 import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.external.ConfigException;
 import com.cronos.onlinereview.model.DynamicModel;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
@@ -278,7 +277,6 @@ public class ManageProjectAction extends BaseProjectManagementConsoleAction {
      * @return an <code>Object</code> array of two elements. The first element provides mapping from role IDs to
      *         <code>ResourceRole</code> objects. The second element provides the mapping from user handles to
      *         <code>ExternalUser</code> objects.
-     * @throws ConfigException if a configuration error is encountered while initializing user project data store.
      * @throws BaseException if an unexpected error occurs
      */
     private Object[] validateAddResourcesRequest(HttpServletRequest request, DynamicModel model)

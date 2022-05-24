@@ -3,15 +3,7 @@
  */
 package com.cronos.onlinereview.actions.project;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.external.ConfigException;
-import com.cronos.onlinereview.external.RetrievalException;
-import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.cronos.onlinereview.model.ClientProject;
 import com.cronos.onlinereview.model.CockpitProject;
 import com.cronos.onlinereview.util.ActionsHelper;
@@ -20,15 +12,20 @@ import com.cronos.onlinereview.util.Comparators;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
 import com.cronos.onlinereview.util.LookupHelper;
-import com.topcoder.onlinereview.component.project.phase.PhaseManager;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.topcoder.onlinereview.component.project.management.Prize;
 import com.topcoder.onlinereview.component.project.management.PrizeType;
 import com.topcoder.onlinereview.component.project.management.Project;
-import com.topcoder.onlinereview.component.resource.Resource;
-import com.topcoder.onlinereview.component.resource.ResourceManager;
-import com.topcoder.onlinereview.component.resource.ResourceFilterBuilder;
 import com.topcoder.onlinereview.component.project.phase.Phase;
-import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.project.phase.PhaseManager;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceFilterBuilder;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -60,7 +57,7 @@ public class EditProjectAction extends BaseProjectAction {
      * @throws BaseException
      *             when any error happens while processing in TCS components.
      */
-    public String execute() throws BaseException, RetrievalException, ConfigException {
+    public String execute() throws BaseException {
         LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before processing with the Action
@@ -91,7 +88,7 @@ public class EditProjectAction extends BaseProjectAction {
      * @throws BaseException if any error
      */
     @SuppressWarnings("unchecked")
-    protected void populateProjectForm(HttpServletRequest request, Project project) throws BaseException, RetrievalException, ConfigException {
+    protected void populateProjectForm(HttpServletRequest request, Project project) throws BaseException {
         // Populate project id
         getModel().set("pid", project.getId());
 

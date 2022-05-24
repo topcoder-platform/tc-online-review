@@ -35,6 +35,7 @@ import com.topcoder.onlinereview.component.exception.BaseException;
 import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.topcoder.onlinereview.component.external.RetrievalException;
 import com.topcoder.onlinereview.component.external.UserRetrieval;
+import com.topcoder.onlinereview.component.fileupload.LocalFileUpload;
 import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.project.management.ProjectLinkManager;
 import com.topcoder.onlinereview.component.project.management.ProjectManager;
@@ -72,9 +73,7 @@ import com.topcoder.onlinereview.component.search.filter.OrFilter;
 import com.topcoder.onlinereview.component.termsofuse.ProjectTermsOfUseDao;
 import com.topcoder.onlinereview.component.termsofuse.TermsOfUseDao;
 import com.topcoder.onlinereview.component.termsofuse.UserTermsOfUseDao;
-import com.topcoder.servlet.request.DisallowedDirectoryException;
-import com.topcoder.servlet.request.FileUpload;
-import com.topcoder.servlet.request.LocalFileUpload;
+import com.topcoder.onlinereview.component.fileupload.FileUpload;
 import com.topcoder.shared.util.ApplicationServer;
 import com.topcoder.shared.util.TCContext;
 import com.topcoder.util.log.Level;
@@ -2134,14 +2133,6 @@ public class ActionsHelper {
      *                                                          <code>request</code>
      *                                                          parameter is
      *                                                          <code>null</code>.
-     * @throws com.cronos.onlinereview.external.ConfigException if error occurs
-     *                                                          while loading
-     *                                                          configuration
-     *                                                          settings, or any of
-     *                                                          the required
-     *                                                          configuration
-     *                                                          parameters are
-     *                                                          missing.
      */
     public static UserRetrieval createUserRetrieval(HttpServletRequest request) {
         // Validate parameter
@@ -2169,44 +2160,13 @@ public class ActionsHelper {
      * @param request an <code>HttpServletRequest</code> object, where created
      *                <code>UserRetrieval</code> object can be stored to let reusing
      *                it later for the same request.
-     * @throws com.topcoder.servlet.request.ConfigurationException if any error
-     *                                                             occurs while
-     *                                                             reading
-     *                                                             parameters from
-     *                                                             the configuration
-     *                                                             file.
-     * @throws DisallowedDirectoryException                        if the directory
-     *                                                             is not one of the
-     *                                                             allowed
-     *                                                             directories.
      */
-    public static FileUpload createFileUploadManager(HttpServletRequest request)
-            throws DisallowedDirectoryException, com.topcoder.servlet.request.ConfigurationException {
+    public static FileUpload createFileUploadManager(HttpServletRequest request) {
         return createFileUploadManager(request, LOCAL_STORAGE_NAMESPACE);
     }
 
-    /**
-     * This static method helps to create an object of the <code>FileUpload</code>
-     * class.
-     *
-     * @return a newly created instance of the class.
-     * @param request   an <code>HttpServletRequest</code> object, where created
-     *                  <code>UserRetrieval</code> object can be stored to let
-     *                  reusing it later for the same request.
-     * @param namespace namespace
-     * @throws com.topcoder.servlet.request.ConfigurationException if any error
-     *                                                             occurs while
-     *                                                             reading
-     *                                                             parameters from
-     *                                                             the configuration
-     *                                                             file.
-     * @throws DisallowedDirectoryException                        if the directory
-     *                                                             is not one of the
-     *                                                             allowed
-     *                                                             directories.
-     */
-    public static FileUpload createFileUploadManager(HttpServletRequest request, String namespace)
-            throws DisallowedDirectoryException, com.topcoder.servlet.request.ConfigurationException {
+    
+    public static FileUpload createFileUploadManager(HttpServletRequest request, String namespace) {
         // Validate parameter
         validateParameterNotNull(request, "request");
 
@@ -2215,7 +2175,7 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (fileUpload == null) {
-            fileUpload = new LocalFileUpload(namespace);
+            fileUpload = getBean(LocalFileUpload.class);
             // Place newly-created object into the request as attribute
             request.setAttribute(namespace, fileUpload);
         }

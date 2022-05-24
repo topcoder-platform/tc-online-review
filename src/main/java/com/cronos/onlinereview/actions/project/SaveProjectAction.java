@@ -6,8 +6,6 @@ package com.cronos.onlinereview.actions.project;
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.actions.event.EventBusServiceClient;
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
-import com.cronos.onlinereview.external.ConfigException;
-import com.cronos.onlinereview.external.RetrievalException;
 import com.cronos.onlinereview.phases.AmazonSNSHelper;
 import com.cronos.onlinereview.phases.PaymentsHelper;
 import com.cronos.onlinereview.util.ActionsHelper;
@@ -216,7 +214,7 @@ public class SaveProjectAction extends BaseProjectAction {
      * @throws BaseException if any error occurs.
      */
     @SuppressWarnings("unchecked")
-    public String execute() throws BaseException, RetrievalException, ConfigException {
+    public String execute() throws BaseException {
         LoggingHelper.logAction(request);
 
         // Check whether user is creating new project or editing existing one
