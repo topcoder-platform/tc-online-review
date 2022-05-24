@@ -26,6 +26,7 @@ import com.topcoder.onlinereview.component.project.management.ProjectStatus;
 import com.topcoder.onlinereview.component.search.filter.AndFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
 import com.topcoder.onlinereview.component.search.filter.OrFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -135,6 +136,8 @@ public class ViewLateDeliverablesAction extends BaseLateDeliverableAction {
     private static final String[] ADVANCED_SEARCH_PARAM_DEFAULT_VALUES = new String[] {"", "", "", "MM.DD.YYYY",
                                                                                        "MM.DD.YYYY", ""};
 
+    @Autowired
+    private ProjectDataAccess projectDataAccess;
     /**
      * Creates a new instance of the <code>ViewLateDeliverablesAction</code> class.
      */
@@ -544,7 +547,7 @@ public class ViewLateDeliverablesAction extends BaseLateDeliverableAction {
      */
     private static Map<Long, Project> getProjects(Set<Long> projectIdSet)
         throws BaseException {
-        long[] projectIds = new long[projectIdSet.size()];
+        Long[] projectIds = new Long[projectIdSet.size()];
         int i = 0;
         for (Long projectId : projectIdSet) {
             projectIds[i++] = projectId;
@@ -572,7 +575,7 @@ public class ViewLateDeliverablesAction extends BaseLateDeliverableAction {
      * @throws BaseException
      *             if any error occurs while loading the lookup data
      */
-    private static void loadLookups(HttpServletRequest request) throws BaseException {
+    private void loadLookups(HttpServletRequest request) throws BaseException {
         // Obtain an instance of Project Manager
         ProjectManager projectManager = ActionsHelper.createProjectManager();
 
@@ -600,7 +603,6 @@ public class ViewLateDeliverablesAction extends BaseLateDeliverableAction {
         request.setAttribute("deliverableTypes", ConfigHelper.getDeliverableTypes());
 
         // Retrieve available Cockpit projects and store in request
-        ProjectDataAccess projectDataAccess = new ProjectDataAccess();
         List<CockpitProject> cockpitProjects;
         if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
             cockpitProjects = projectDataAccess.getAllCockpitProjects();

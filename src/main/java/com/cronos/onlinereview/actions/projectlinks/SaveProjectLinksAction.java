@@ -85,8 +85,8 @@ public class SaveProjectLinksAction extends DynamicModelDrivenAction {
 
         ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager();
 
-        long[] paramDestProjectIds = new long[destList.size()];
-        long[] paramTypeIds = new long[typeList.size()];
+        Long[] paramDestProjectIds = new Long[destList.size()];
+        Long[] paramTypeIds = new Long[typeList.size()];
         for (int i = 0; i < paramDestProjectIds.length; i++) {
             paramDestProjectIds[i] = destList.get(i);
             paramTypeIds[i] = typeList.get(i);

@@ -2244,9 +2244,9 @@ public class ActionsHelper {
         cockpitProjects.add(project);
 
         if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
-            cockpitProjects.addAll(new ProjectDataAccess().getAllCockpitProjects());
+            cockpitProjects.addAll(getBean(ProjectDataAccess.class).getAllCockpitProjects());
         } else {
-            cockpitProjects.addAll(new ProjectDataAccess().getCockpitProjectsForUser(userId));
+            cockpitProjects.addAll(getBean(ProjectDataAccess.class).getCockpitProjectsForUser(userId));
         }
         return cockpitProjects;
     }

@@ -15,7 +15,7 @@ import com.topcoder.onlinereview.component.resource.Resource;
 import com.topcoder.onlinereview.component.review.Review;
 
 import com.topcoder.onlinereview.component.project.phase.Phase;
-import com.topcoder.project.phases.PhaseDateComparator;
+import com.topcoder.onlinereview.component.project.phase.PhaseDateComparator;
 import com.topcoder.onlinereview.component.project.phase.PhaseStatus;
 
 import java.util.Comparator;

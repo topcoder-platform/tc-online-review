@@ -54,6 +54,7 @@ import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
 import com.topcoder.onlinereview.component.search.filter.InFilter;
 import com.topcoder.shared.util.ApplicationServer;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -83,6 +84,9 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
      * Represents the serial version id.
      */
     private static final long serialVersionUID = -3704837880945145746L;
+
+    @Autowired
+    private ProjectDataAccess projectDataAccess;
 
     /**
      * Creates a new instance of the <code>ViewProjectDetailsAction</code> class.
@@ -159,8 +163,6 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
             }
             request.setAttribute("projectDRP", drpoint);
         }
-
-        ProjectDataAccess projectDataAccess = new ProjectDataAccess();
 
         // since Online Review Update - Add Project Dropdown v1.0
         // Retrieve the billing project id from property.

@@ -9,32 +9,26 @@ import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.ConfigHelper;
 import com.cronos.onlinereview.util.LoggingHelper;
-
 import com.opensymphony.xwork2.TextProvider;
-
-//import com.topcoder.management.deliverable.Deliverable;
-//import com.topcoder.management.deliverable.DeliverableManager;
 import com.topcoder.onlinereview.component.deliverable.Deliverable;
 import com.topcoder.onlinereview.component.deliverable.DeliverableCheckingException;
 import com.topcoder.onlinereview.component.deliverable.DeliverableManager;
 import com.topcoder.onlinereview.component.deliverable.DeliverablePersistenceException;
 import com.topcoder.onlinereview.component.deliverable.Submission;
-//import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
-//import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
-import com.topcoder.onlinereview.component.project.phase.PhaseManager;
+import com.topcoder.onlinereview.component.exception.BaseException;
 import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.project.management.ProjectManager;
 import com.topcoder.onlinereview.component.project.management.ProjectStatus;
 import com.topcoder.onlinereview.component.project.management.UserProjectCategory;
 import com.topcoder.onlinereview.component.project.management.UserProjectType;
-import com.topcoder.onlinereview.component.resource.Resource;
-import com.topcoder.onlinereview.component.project.management.ProjectType;
 import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseManager;
+import com.topcoder.onlinereview.component.resource.Resource;
 import com.topcoder.onlinereview.component.search.SearchBuilderException;
 import com.topcoder.onlinereview.component.search.filter.AndFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
 import com.topcoder.onlinereview.component.search.filter.InFilter;
-import com.topcoder.onlinereview.component.exception.BaseException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,6 +60,9 @@ public class ListProjectsAction extends BaseProjectAction {
      * Represents the amount of projects to be showed per page
      */
     private int projectPerpage = 100;
+
+    @Autowired
+    private DeliverableDataAccess deliverableDataAccess;
 
     /**
      * Default constructor.
@@ -377,10 +374,9 @@ public class ListProjectsAction extends BaseProjectAction {
      *             if there is an error determining whether some Deliverable has been completed or
      *             not.
      */
-    private static Deliverable[] getDeliverables(DeliverableManager manager, Project[] projects, Phase[][] phases,
+    private Deliverable[] getDeliverables(DeliverableManager manager, Project[] projects, Phase[][] phases,
                                                  Resource[][] resources)
             throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
-        DeliverableDataAccess deliverableDataAccess = new DeliverableDataAccess();
         Map<Long, Map<Long, Long>> deliverableTypes = deliverableDataAccess.getDeliverablesList();
 
         // Validate parameters

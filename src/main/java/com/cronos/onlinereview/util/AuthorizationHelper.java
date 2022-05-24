@@ -27,6 +27,8 @@ import com.topcoder.security.groups.model.ResourceType;
 import com.topcoder.security.groups.services.AuthorizationService;
 import com.topcoder.web.common.security.SSOCookieService;
 
+import static com.topcoder.onlinereview.component.util.SpringUtils.getBean;
+
 /**
  * This class provides helper methods that can be used to determine if the user
  * has particular role, or to check if user is authorized to perform particular
@@ -272,7 +274,7 @@ public class AuthorizationHelper {
         Set roles = (Set) request.getAttribute("roles");
 
         // Check if user is Cockpit Project User for selected project
-        ProjectDataAccess projectDataAccess = new ProjectDataAccess();
+        ProjectDataAccess projectDataAccess = getBean(ProjectDataAccess.class);
         if (projectDataAccess.isCockpitProjectUser(projectId, getLoggedInUserId(request))) {
             roles.add(Constants.COCKPIT_PROJECT_USER_ROLE_NAME);
         }

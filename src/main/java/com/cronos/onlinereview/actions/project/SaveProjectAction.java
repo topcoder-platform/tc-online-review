@@ -201,6 +201,8 @@ public class SaveProjectAction extends BaseProjectAction {
     
     @Autowired
     private WorkdaysFactory workdaysFactory;
+    @Autowired
+    private ProjectDataAccess projectDataAccess;
 
 
     /**
@@ -1454,7 +1456,7 @@ public class SaveProjectAction extends BaseProjectAction {
         try {
         	if (!ConfigHelper.getAdminUsers().contains(userId)) {
         		// check user group before save the resource
-    	        Map<String, Long> groups = new ProjectDataAccess().checkUserChallengeEligibility(
+    	        Map<String, Long> groups = projectDataAccess.checkUserChallengeEligibility(
     	        		userId, projectId);
 
     	        // If there's no corresponding record in group_contest_eligibility
@@ -1839,7 +1841,7 @@ public class SaveProjectAction extends BaseProjectAction {
                         (Long) getModel().get("resources_role", i));
                 resourceManager.removeResource(resource,
                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                resourceManager.removeNotifications(new long[] {user.getId()}, project.getId(),
+                resourceManager.removeNotifications(new Long[] {user.getId()}, project.getId(),
                         timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 continue;
             }
@@ -1981,7 +1983,7 @@ public class SaveProjectAction extends BaseProjectAction {
         ActionsHelper.populateProjectResult(project, newSubmitters);
 
         // delete timeline notifications
-        long[] idsToDeletedForNotification = new long[deletedUsersForNotification.size()];
+        Long[] idsToDeletedForNotification = new Long[deletedUsersForNotification.size()];
         int k = 0;
         for (long id : deletedUsersForNotification) {
             idsToDeletedForNotification[k++] = id;
@@ -1992,7 +1994,7 @@ public class SaveProjectAction extends BaseProjectAction {
         // Update all the timeline notifications
         if (project.getProperty("Timeline Notification").equals("On") && !newUsersForNotification.isEmpty()) {
             // Remove duplicated user ids
-            long[] existUserIds = resourceManager.getNotifications(project.getId(), timelineNotificationId);
+            Long[] existUserIds = resourceManager.getNotifications(project.getId(), timelineNotificationId);
             Set<Long> finalUsers = new HashSet<Long>(newUsersForNotification);
 
             for (long existUserId : existUserIds) {
@@ -2003,7 +2005,7 @@ public class SaveProjectAction extends BaseProjectAction {
             finalUsers.remove((long) 22719217); // Components user
             finalUsers.remove((long) 22873364); // LCSUPPORT user
 
-            long[] userIds = new long[finalUsers.size()];
+            Long[] userIds = new Long[finalUsers.size()];
             int i = 0;
             for (Long id : finalUsers) {
                 userIds[i++] = id;
