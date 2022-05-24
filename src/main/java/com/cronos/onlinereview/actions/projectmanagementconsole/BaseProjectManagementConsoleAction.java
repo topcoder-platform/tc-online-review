@@ -40,10 +40,9 @@ import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
 import com.topcoder.onlinereview.component.search.filter.InFilter;
 import com.topcoder.onlinereview.component.search.filter.OrFilter;
-import com.topcoder.util.config.ConfigManager;
-import com.topcoder.util.config.Property;
 import com.topcoder.util.distribution.DistributionTool;
-import com.topcoder.util.errorhandling.BaseRuntimeException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -177,7 +176,9 @@ public abstract class BaseProjectManagementConsoleAction extends DynamicModelDri
     /**
      * The instance of default project payment calculator.
      */
-    protected static final ProjectPaymentCalculator defaultProjectPaymentCalculator = createDefaultProjectPaymentCalculator();
+    @Autowired
+    @Qualifier("defaultProjectPaymentCalculator")
+    protected ProjectPaymentCalculator defaultProjectPaymentCalculator;
 
     /**
      * This member variable is a constant array that holds names of different reviewer roles.
@@ -253,7 +254,7 @@ public abstract class BaseProjectManagementConsoleAction extends DynamicModelDri
      * @param project the project.
      * @throws BaseException if any error occurs.
      */
-    private static void setReviewPaymentsRequestAttribute(HttpServletRequest request, Project project) throws BaseException {
+    private void setReviewPaymentsRequestAttribute(HttpServletRequest request, Project project) throws BaseException {
         List<Long> resourceRoleIds = getAvailableReviewerRoles(project);
         ResourceRole[] allRoles = ActionsHelper.createResourceManager().getAllResourceRoles();
 
@@ -950,28 +951,6 @@ public abstract class BaseProjectManagementConsoleAction extends DynamicModelDri
       */
     public void setPid(long pid) {
         this.pid = pid;
-    }
-
-
-
-    /**
-     * This static method helps to create the default project payment calculator.
-     *
-     * @return the instance of default project payment calculator.
-     * @throws com.topcoder.util.errorhandling.BaseRuntimeException if any error occurs
-     */
-    private static ProjectPaymentCalculator createDefaultProjectPaymentCalculator() throws BaseRuntimeException {
-        String className = null;
-        try {
-            ConfigManager cfgMgr = ConfigManager.getInstance();
-            Property config = cfgMgr.getPropertyObject("com.cronos.OnlineReview", "DefaultProjectPaymentConfig");
-            className = config.getValue("CalculatorClass");
-            Class clazz = Class.forName(className);
-            return (ProjectPaymentCalculator) clazz.newInstance();
-        } catch (Exception e) {
-            throw new BaseRuntimeException("Failed to instantiate the project payment calculator of type: "
-                    + className, e);
-        }
     }
 
     /**

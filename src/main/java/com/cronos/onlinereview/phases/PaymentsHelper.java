@@ -318,7 +318,7 @@ public final class PaymentsHelper {
             return;
         }
         Map<Long, BigDecimal> resourceRolePayments = managerHelper.getProjectPaymentAdjustmentCalculator().getDefaultPayments(
-                projectId, new ArrayList<Long>(paymentsByResourceRole.keySet()));
+                projectId, new ArrayList<>(paymentsByResourceRole.keySet()));
         for (Map.Entry<Long, List<ProjectPayment>> entry : paymentsByResourceRole.entrySet()) {
             BigDecimal amount = resourceRolePayments.get(entry.getKey());
             if (amount == null) {

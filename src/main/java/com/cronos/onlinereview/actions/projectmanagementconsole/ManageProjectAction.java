@@ -13,6 +13,7 @@ import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.EJBLibraryServicesLocator;
 import com.cronos.onlinereview.util.LoggingHelper;
 import com.cronos.onlinereview.util.LookupHelper;
+import com.topcoder.onlinereview.component.contest.ContestEligibilityValidatorException;
 import com.topcoder.onlinereview.component.exception.BaseException;
 import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.topcoder.onlinereview.component.external.UserRetrieval;
@@ -30,7 +31,6 @@ import com.topcoder.onlinereview.component.termsofuse.TermsOfUse;
 import com.topcoder.onlinereview.component.termsofuse.TermsOfUseDao;
 import com.topcoder.onlinereview.component.termsofuse.TermsOfUsePersistenceException;
 import com.topcoder.onlinereview.component.termsofuse.UserTermsOfUseDao;
-import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.rmi.RemoteException;

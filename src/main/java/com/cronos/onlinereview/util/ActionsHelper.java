@@ -2562,12 +2562,12 @@ public class ActionsHelper {
             }
         }
         for (List<Object> param: psParams) {
-            executeSqlWithParam(jdbcTemplate, "INSERT INTO project_result "
+            executeUpdateSql(jdbcTemplate, "INSERT INTO project_result "
                     + "(project_id, user_id, rating_ind, valid_submission_ind, old_rating) "
                     + "values (?, ?, ?, ?, ?)", param);
         }
         for (List<Object> param: comParams) {
-            executeSqlWithParam(jdbcTemplate, "INSERT INTO component_inquiry "
+            executeUpdateSql(jdbcTemplate, "INSERT INTO component_inquiry "
                     + "(component_inquiry_id, component_id, user_id, project_id, phase, tc_user_id, agreed_to_terms, rating, version, create_time) "
                     + "values (?, ?, ?, ?, ?, ?, 1, ?, ?, current)", param);
         }
@@ -2655,8 +2655,6 @@ public class ActionsHelper {
      * @throws BaseException if error occurs
      */
     public static void deleteProjectResult(Project project, long userId, long roleId) throws BaseException {
-        Connection conn = null;
-        PreparedStatement ps = null;
         long categoryId = project.getProjectCategory().getId();
 
         if (!isProjectResultCategory(categoryId)) {
