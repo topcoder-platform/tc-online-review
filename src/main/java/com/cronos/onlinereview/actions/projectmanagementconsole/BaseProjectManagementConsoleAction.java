@@ -17,6 +17,7 @@ import com.cronos.onlinereview.util.LookupException;
 import com.cronos.onlinereview.util.LookupHelper;
 import com.topcoder.dde.catalog.ComponentVersionInfo;
 import com.topcoder.dde.catalog.Document;
+import com.topcoder.onlinereview.component.distribution.DistributionTool;
 import com.topcoder.onlinereview.component.exception.BaseException;
 import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.project.payment.ProjectPaymentAdjustment;
@@ -40,10 +41,11 @@ import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
 import com.topcoder.onlinereview.component.search.filter.InFilter;
 import com.topcoder.onlinereview.component.search.filter.OrFilter;
-import com.topcoder.util.distribution.DistributionTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -66,6 +68,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This is the base class for project management console actions classes.
@@ -161,7 +164,7 @@ public abstract class BaseProjectManagementConsoleAction extends DynamicModelDri
     /**
      * DistributionTool is thread-safe, so we can keep it as an instance variable.
      */
-    protected static final DistributionTool DISTRIBUTION_TOOL = new DistributionTool();
+    protected DistributionTool distributionTool;
 
     /**
      * Default date format.
@@ -179,6 +182,15 @@ public abstract class BaseProjectManagementConsoleAction extends DynamicModelDri
     @Autowired
     @Qualifier("defaultProjectPaymentCalculator")
     protected ProjectPaymentCalculator defaultProjectPaymentCalculator;
+
+    @Value("#{'${distributionTool.scripts}'.split(',')}")
+    private List<String> distributionConfig;
+
+    @PostConstruct
+    public void postRun() {
+        distributionTool = new DistributionTool(distributionConfig.stream().map(s -> s.split(":"))
+                .collect(Collectors.toMap(kv -> kv[0], kv -> kv[1])));
+    }
 
     /**
      * This member variable is a constant array that holds names of different reviewer roles.
