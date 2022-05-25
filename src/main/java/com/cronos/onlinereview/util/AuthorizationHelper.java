@@ -3,29 +3,27 @@
  */
 package com.cronos.onlinereview.util;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.cronos.onlinereview.Constants;
+import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.topcoder.onlinereview.component.exception.BaseException;
 import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.topcoder.onlinereview.component.external.UserRetrieval;
+import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.project.management.ProjectManager;
 import com.topcoder.onlinereview.component.resource.Resource;
 import com.topcoder.onlinereview.component.resource.ResourceFilterBuilder;
+import com.topcoder.onlinereview.component.resource.ResourceRole;
 import com.topcoder.onlinereview.component.search.filter.AndFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
+import com.topcoder.onlinereview.component.security.groups.model.GroupPermissionType;
+import com.topcoder.onlinereview.component.security.groups.model.ResourceType;
+import com.topcoder.onlinereview.component.security.groups.services.AuthorizationService;
+import com.topcoder.web.common.security.SSOCookieService;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
-import com.topcoder.onlinereview.component.project.management.Project;
-import com.topcoder.onlinereview.component.resource.ResourceRole;
-import com.topcoder.security.groups.model.GroupPermissionType;
-import com.topcoder.security.groups.model.ResourceType;
-import com.topcoder.security.groups.services.AuthorizationService;
-import com.topcoder.web.common.security.SSOCookieService;
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.topcoder.onlinereview.component.util.SpringUtils.getBean;
 

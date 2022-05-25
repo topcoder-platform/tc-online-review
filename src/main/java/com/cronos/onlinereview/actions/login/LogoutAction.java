@@ -3,8 +3,8 @@
  */
 package com.cronos.onlinereview.actions.login;
 
-import com.cronos.onlinereview.login.AuthCookieManagementException;
-import com.cronos.onlinereview.login.AuthResponseParsingException;
+import com.topcoder.onlinereview.component.login.AuthCookieManagementException;
+import com.topcoder.onlinereview.component.login.AuthResponseParsingException;
 
 
 /**

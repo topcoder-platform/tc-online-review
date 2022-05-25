@@ -44,9 +44,9 @@
            <result name="success" type="redirect">/actions/ListProjects</result>
            <result name="failure">/jsp/login.jsp</result>
            <result name="dynamic" type="redirect">${url}</result>
-           <exception-mapping result="notAuthorized" exception="com.topcoder.security.authenticationfactory.AuthenticateException" />
-           <exception-mapping result="notAuthorized" exception="com.topcoder.security.authenticationfactory.MissingPrincipalKeyException" />
-           <exception-mapping result="notAuthorized" exception="com.topcoder.security.authenticationfactory.InvalidPrincipalException" />
+           <exception-mapping result="notAuthorized" exception="com.topcoder.onlinereview.component.authenticationfactory.AuthenticateException" />
+           <exception-mapping result="notAuthorized" exception="com.topcoder.onlinereview.component.authenticationfactory.MissingPrincipalKeyException" />
+           <exception-mapping result="notAuthorized" exception="com.topcoder.onlinereview.component.authenticationfactory.InvalidPrincipalException" />
            <exception-mapping result="notAuthorized" exception="com.cronos.onlinereview.login.LoginActions.AuthResponseParserException" />
         </action>
 

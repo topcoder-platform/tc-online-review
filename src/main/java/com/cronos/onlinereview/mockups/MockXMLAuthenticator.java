@@ -3,29 +3,25 @@
  */
 package com.cronos.onlinereview.mockups;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import com.topcoder.onlinereview.component.authenticationfactory.AbstractAuthenticator;
+import com.topcoder.onlinereview.component.authenticationfactory.AuthenticateException;
+import com.topcoder.onlinereview.component.authenticationfactory.ConfigurationException;
+import com.topcoder.onlinereview.component.authenticationfactory.Principal;
+import com.topcoder.onlinereview.component.authenticationfactory.Response;
+import com.topcoder.onlinereview.component.security.TCSubject;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.topcoder.security.TCSubject;
-import com.topcoder.security.authenticationfactory.AbstractAuthenticator;
-import com.topcoder.security.authenticationfactory.AuthenticateException;
-import com.topcoder.security.authenticationfactory.ConfigurationException;
-import com.topcoder.security.authenticationfactory.Principal;
-import com.topcoder.security.authenticationfactory.Response;
-import com.topcoder.util.config.ConfigManager;
-import com.topcoder.util.config.UnknownNamespaceException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A mock implementation of <code>AbstractAuthenticator</code>.
@@ -51,18 +47,12 @@ public class MockXMLAuthenticator extends AbstractAuthenticator {
     /**
      * Creates <code>AbstractAuthenticator</code> concrete instance for test.
      * 
-     * @param namespace passed to super class.
      * @throws ConfigurationException from super class.
      */
-    public MockXMLAuthenticator(String namespace) throws ConfigurationException {
-        super(namespace);
+    public MockXMLAuthenticator(String xmlfile) throws ConfigurationException {
 
         InputStream input;
         try {
-            ConfigManager cm = ConfigManager.getInstance();
-
-            String xmlfile = cm.getString(namespace, "xmlfile");
-            
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             input = getClass().getResourceAsStream(xmlfile);
@@ -71,17 +61,13 @@ public class MockXMLAuthenticator extends AbstractAuthenticator {
             for (int i = 0; i < mappings.getLength(); i++) {
                 Node node = mappings.item(i);
                 NamedNodeMap attributes = node.getAttributes();
-                
                 String userName = attributes.getNamedItem("name").getNodeValue();
                 String password = attributes.getNamedItem("password").getNodeValue();
                 String id = attributes.getNamedItem("id").getNodeValue();
-                
                 usersMap.put(userName, new TCSubject(Long.parseLong(id)));
                 passwordsMap.put(userName, password);
             }
 
-        } catch (UnknownNamespaceException ex) {
-            throw new ConfigurationException("namespace " + namespace + " is unknown", ex);
         } catch (NumberFormatException ex) {
             throw new ConfigurationException("Invalid id", ex);
         } catch (ParserConfigurationException ex) {

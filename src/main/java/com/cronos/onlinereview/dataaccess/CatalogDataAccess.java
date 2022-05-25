@@ -3,26 +3,18 @@
  */
 package com.cronos.onlinereview.dataaccess;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
+import com.topcoder.dde.catalog.ComponentVersionInfo;
+import com.topcoder.dde.catalog.Document;
+import com.topcoder.util.idgenerator.IdGenerator;
+import com.topcoder.util.idgenerator.sql.DB;
+
+import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-
-import com.topcoder.dde.catalog.ComponentVersionInfo;
-import com.topcoder.dde.catalog.Document;
-import com.topcoder.naming.jndiutility.JNDIUtils;
-import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
-import com.topcoder.util.config.ConfigManagerException;
-import com.topcoder.util.idgenerator.IdGenerator;
-import com.topcoder.util.idgenerator.sql.DB;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.topcoder.onlinereview.component.util.CommonUtils.executeUpdateSql;
@@ -76,9 +68,9 @@ public class CatalogDataAccess extends BaseDataAccess {
     private boolean idGeneratorAutoInit;
 
     /**
-     * <p>A <code>String</code> providing the name in JNDI context for data source for ID generator.</p>
+     * <p>A <code>String</code> providing the data source for ID generator.</p>
      */
-    private String idGeneratorDataSourceName;
+    private DataSource idGeneratorDataSource;
 
     /**
      * <p>Constructs new <code>CatalogDataAccess</code> instance. This implementation does nothing.</p>
@@ -86,14 +78,8 @@ public class CatalogDataAccess extends BaseDataAccess {
     public CatalogDataAccess() {
     }
 
-    /**
-     * <p>Sets the name in JNDI context for data source for ID generator.</p>
-     *
-     * @param idGeneratorDataSourceName a <code>String</code> providing the name in JNDI context for data source for ID
-     *                                  generator.
-     */
-    public void setIdGeneratorDataSourceName(String idGeneratorDataSourceName) {
-        this.idGeneratorDataSourceName = idGeneratorDataSourceName;
+    public void setIdGeneratorDataSource(DataSource idGeneratorDataSource) {
+        this.idGeneratorDataSource = idGeneratorDataSource;
     }
 
     /**
@@ -256,21 +242,13 @@ public class CatalogDataAccess extends BaseDataAccess {
     protected long generateNextCatalogScopedId() {
         try {
             if (!IdGenerator.isInitialized()) {
-                Context context = JNDIUtils.getContext("default");
-                DataSource dataSource = (DataSource) context.lookup(this.idGeneratorDataSourceName);
-                IdGenerator.init(this.idGeneratorDB, dataSource, this.idGeneratorTableName,
+                IdGenerator.init(this.idGeneratorDB, idGeneratorDataSource, this.idGeneratorTableName,
                                  this.idGeneratorUserDefColumnName, this.idGeneratorHighValueColumnName,
                                  this.idGeneratorMaxHighValue, this.idGeneratorMaxLowValue, this.idGeneratorAutoInit);
             }
             return IdGenerator.nextId();
         } catch (SQLException e) {
             throw new DataAccessException("Failed to generate next catalog scoped ID", e);
-        } catch (NamingException e) {
-            throw new DataAccessException("Failed to locate datasource " + this.idGeneratorDataSourceName
-                                          + "for ID generator", e);
-        } catch (ConfigManagerException e) {
-            throw new DataAccessException("Failed to locate datasource " + this.idGeneratorDataSourceName
-                                          + "for ID generator", e);
         }
     }
 }
