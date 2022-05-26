@@ -26,7 +26,8 @@ import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
 import com.topcoder.onlinereview.component.search.filter.NotFilter;
 import com.topcoder.onlinereview.component.search.filter.OrFilter;
-import com.topcoder.util.log.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -59,8 +60,7 @@ import static com.topcoder.onlinereview.component.util.SpringUtils.getTcsJdbcTem
  */
 public class PRHelper {
 
-    private static final com.topcoder.util.log.Log logger = com.topcoder.util.log.LogManager.getLog(PRHelper.class
-            .getName());
+    private static final Logger logger = LoggerFactory.getLogger(PRHelper.class.getName());
     // OrChange : Modified the statement to take the placed and final score from submission table
     /**
      * The SQL query to populate submissions data to be inserted to project_result table.
@@ -132,8 +132,8 @@ public class PRHelper {
      */
     void processRegistrationPR(long projectId, boolean toStart) {
         if (toStart) {
-            logger.log(Level.INFO,
-                new LoggerMessage("project", projectId, null, "start registration process."));
+            logger.info(
+                new LoggerMessage("project", projectId, null, "start registration process.").toString());
         }
     }
 
@@ -147,8 +147,8 @@ public class PRHelper {
      */
     void processSubmissionPR(long projectId, boolean toStart) throws PhaseHandlingException {
         if (!toStart) {
-            logger.log(Level.INFO,
-                new LoggerMessage("project", projectId, null, "process submission phase."));
+            logger.info(
+                new LoggerMessage("project", projectId, null, "process submission phase.").toString());
             executeUpdateSql(getTcsJdbcTemplate(), UPDATE_PROJECT_RESULT_STMT, newArrayList(projectId));
         }
     }
@@ -167,8 +167,8 @@ public class PRHelper {
      */
     void processScreeningPR(long projectId, boolean toStart, String operator) throws PhaseHandlingException {
         if (!toStart) {
-            logger.log(Level.INFO,
-                new LoggerMessage("project", projectId, null, "process screening phase."));
+            logger.info(
+                new LoggerMessage("project", projectId, null, "process screening phase.").toString());
             // Update all users who failed to pass screen, set valid_submission_ind = 0
             executeUpdateSql(getTcsJdbcTemplate(), FAILED_PASS_SCREENING_STMT, newArrayList(projectId));
 
@@ -199,8 +199,8 @@ public class PRHelper {
         boolean paymentsProcessed = false;
         try {
             if (!toStart) {
-                logger.log(Level.INFO,
-                        new LoggerMessage("project", projectId, null, "process review phase."));
+                logger.info(
+                        new LoggerMessage("project", projectId, null, "process review phase.").toString());
 
                 // if review phase is last one and there is at least one active submission complete the project.
                 if (isLastPhase(phase)) {
@@ -258,8 +258,8 @@ public class PRHelper {
 
         try {
             if (!toStart) {
-                logger.log(Level.INFO,
-                    new LoggerMessage("project", projectId, null, "process Appeal Response phase."));
+                logger.info(
+                    new LoggerMessage("project", projectId, null, "process Appeal Response phase.").toString());
 
                 // if appeals response phase is last one and there is at least one active submission complete the project.
                 if (isLastPhase(phase)) {
@@ -292,8 +292,8 @@ public class PRHelper {
     void processAggregationPR(long projectId,  boolean toStart, String operator) throws PhaseHandlingException {
         try {
             if (!toStart) {
-                logger.log(Level.INFO,
-                        new LoggerMessage("project", projectId, null, "process Aggregation phase."));
+                logger.info(
+                        new LoggerMessage("project", projectId, null, "process Aggregation phase.").toString());
                 populateProjectResult(projectId, operator);
             }
         } catch(SQLException e) {
@@ -316,8 +316,8 @@ public class PRHelper {
     void processFinalFixPR(long projectId, boolean toStart, String operator) throws PhaseHandlingException {
         try {
             if (!toStart) {
-                logger.log(Level.INFO,
-                        new LoggerMessage("project", projectId, null, "Process final fix phase."));
+                logger.info(
+                        new LoggerMessage("project", projectId, null, "Process final fix phase.").toString());
                 populateProjectResult(projectId, operator);
             }
         } catch(SQLException e) {
@@ -340,12 +340,12 @@ public class PRHelper {
     void processFinalReviewPR(long projectId, boolean toStart, String operator) throws PhaseHandlingException {
         try {
             if (!toStart) {
-                logger.log(Level.INFO,
-                        new LoggerMessage("project", projectId, null, "Process final review phase."));
+                logger.info(
+                        new LoggerMessage("project", projectId, null, "Process final review phase.").toString());
                 populateProjectResult(projectId, operator);
             } else {
-                logger.log(Level.INFO,
-                        new LoggerMessage("project", projectId, null, "start final review phase."));
+                logger.info(
+                        new LoggerMessage("project", projectId, null, "start final review phase.").toString());
             }
         } catch(SQLException e) {
             throw new PhaseHandlingException("Failed to push data to project_result", e);
@@ -367,12 +367,12 @@ public class PRHelper {
     void processPostMortemPR(long projectId, boolean toStart, String operator) throws PhaseHandlingException {
         try {
             if (!toStart) {
-                logger.log(Level.INFO,
-                        new LoggerMessage("project", projectId, null, "Process post mortem phase."));
+                logger.info(
+                        new LoggerMessage("project", projectId, null, "Process post mortem phase.").toString());
                 populateProjectResult(projectId, operator);
             } else {
-                logger.log(Level.INFO,
-                        new LoggerMessage("project", projectId, null, "start post mortem phase."));
+                logger.info(
+                        new LoggerMessage("project", projectId, null, "start post mortem phase.").toString());
             }
         } catch(SQLException e) {
             throw new PhaseHandlingException("Failed to push data to project_result", e);
@@ -399,8 +399,8 @@ public class PRHelper {
             List<Map<String, Object>> rs = executeSqlWithParam(getTcsJdbcTemplate(), APPEAL_RESPONSE_SELECT_STMT, newArrayList(projectId));
 
 
-            logger.log(Level.DEBUG, new LoggerMessage("Project", projectId, null,
-                    "update project_result with final scores, placed and passed_review_ind."));
+            logger.debug(new LoggerMessage("Project", projectId, null,
+                    "update project_result with final scores, placed and passed_review_ind.").toString());
             for (Map<String, Object> r: rs) {
                 List<Object> params = new ArrayList<>();
                 int status = getInt(r, "submission_status_id");
@@ -426,7 +426,7 @@ public class PRHelper {
         if (obj instanceof Connection) {
             try {
                 ((Connection) obj).close();
-                logger.log(Level.DEBUG, "close the connection");
+                logger.debug("close the connection");
             } catch (Exception e) {
                 // Just ignore
             }

@@ -3,9 +3,9 @@
  */
 package com.cronos.onlinereview.mockups;
 
+import com.topcoder.onlinereview.component.exception.BaseException;
 import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.topcoder.onlinereview.component.external.UserRetrieval;
-import com.topcoder.util.errorhandling.BaseException;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;

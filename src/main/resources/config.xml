@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Config name="com.cronos.OnlineReview">
+<Config>
     <Property name="ProjectDetailsURL">
         <Value>https://software.topcoder.com/review/actions/ViewProjectDetails?pid=</Value>
     </Property>

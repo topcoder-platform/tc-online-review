@@ -3,9 +3,8 @@
  */
 package com.cronos.onlinereview.phases;
 
-import com.topcoder.util.log.Level;
-import com.topcoder.util.log.Log;
-import com.topcoder.util.log.LogManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNErrorCode;
@@ -45,7 +44,7 @@ public final class SVNHelper {
     /**
      * <p>A <code>Log</code> to be used for logging the events encountered while helper performs it's job.</p>
      */
-    private static final Log log = LogManager.getLog(SVNHelper.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(SVNHelper.class.getName());
 
     /**
      * <p>A <code>String</code> array providing the SVN configuration.</p>
@@ -87,7 +86,7 @@ public final class SVNHelper {
             throw new IllegalArgumentException("The parameter [path] is not valid. [" + path + "]");
         }
         
-        log.log(Level.DEBUG, "Attempting to create SVN directory " + path);
+        log.debug( "Attempting to create SVN directory " + path);
         SVNClientManager svnClientManager = getSVNClientManager();
 
         // Create directory in SVN repository
@@ -95,7 +94,7 @@ public final class SVNHelper {
         SVNCommitClient commitClient = svnClientManager.getCommitClient();
         try {
             commitClient.doMkDir(new SVNURL[]{dirURL}, getSVNCommitMessage(), null, true);
-            log.log(Level.INFO, "SVN directory " + path + " has been created successfully");
+            log.info( "SVN directory " + path + " has been created successfully");
             return true;
         } catch (SVNException e) {
             SVNErrorMessage svnErrorMessage = e.getErrorMessage();
@@ -104,10 +103,10 @@ public final class SVNHelper {
                 boolean dirAlreadyExists = SVNErrorCode.RA_DAV_ALREADY_EXISTS.equals(errorCode)
                                            || SVNErrorCode.FS_ALREADY_EXISTS.equals(errorCode);
                 if (dirAlreadyExists) {
-                    log.log(Level.DEBUG, "SVN directory " + path + " already exists");
+                    log.debug( "SVN directory " + path + " already exists");
                     return false;
                 } else {
-                    log.log(Level.ERROR, "SVN directory " + path + " has not been created. Reason: "
+                    log.error( "SVN directory " + path + " has not been created. Reason: "
                                          + svnErrorMessage.getFullMessage());
                 }
             }
@@ -148,7 +147,7 @@ public final class SVNHelper {
             return;
         }
 
-        log.log(Level.DEBUG, "Attempting to grant '" + permission + "' permission for SVN module " + svnModule
+        log.debug( "Attempting to grant '" + permission + "' permission for SVN module " + svnModule
                              + " to users " + Arrays.toString(handles));
 
         Random random = new Random();
@@ -199,12 +198,12 @@ public final class SVNHelper {
                           false, false, SVNDepth.EMPTY);
             SVNErrorMessage svnErrorMessage = commitInfo.getErrorMessage();
             if (svnErrorMessage != null) {
-                log.log(Level.WARN, "Failed to grant '" + permission + "' permission for SVN module " + svnModule
+                log.warn( "Failed to grant '" + permission + "' permission for SVN module " + svnModule
                                     + " to users " + Arrays.toString(handles) + ". Reason: "
                                     + svnErrorMessage.getMessage());
                 throw new SVNException(svnErrorMessage);
             } else {
-                log.log(Level.INFO, "Granted '" + permission + "' permission for SVN module " + svnModule
+                log.info( "Granted '" + permission + "' permission for SVN module " + svnModule
                                     + " to users " + Arrays.toString(handles));
             }
         } finally {
@@ -213,9 +212,8 @@ public final class SVNHelper {
                 try {
                     raf.close();
                 } catch (IOException e) {
-                    log.log(Level.ERROR, "Failed to close path-based permissions file "
-                                         + authzFileLocalCopy.getAbsolutePath());
-                    log.log(Level.ERROR, e);
+                    log.error( "Failed to close path-based permissions file "
+                                         + authzFileLocalCopy.getAbsolutePath(), e);
                 }
             }
 
@@ -224,7 +222,7 @@ public final class SVNHelper {
                 emptyDirectory(tempDir);
                 boolean tempDirDeleted = tempDir.delete();
                 if (!tempDirDeleted) {
-                    log.log(Level.WARN, "Could not delete temporary directory: " + tempDir.getAbsolutePath());
+                    log.warn( "Could not delete temporary directory: " + tempDir.getAbsolutePath());
                 }
             }
         }
@@ -244,7 +242,7 @@ public final class SVNHelper {
             }
             deleted = item.delete();
             if (!deleted) {
-                log.log(Level.WARN, "Could not delete file/directory: " + item.getAbsolutePath());
+                log.warn( "Could not delete file/directory: " + item.getAbsolutePath());
             }
         }
     }

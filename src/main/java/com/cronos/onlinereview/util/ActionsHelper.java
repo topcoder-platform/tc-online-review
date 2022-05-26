@@ -35,6 +35,7 @@ import com.topcoder.onlinereview.component.exception.BaseException;
 import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.topcoder.onlinereview.component.external.RetrievalException;
 import com.topcoder.onlinereview.component.external.UserRetrieval;
+import com.topcoder.onlinereview.component.fileupload.FileUpload;
 import com.topcoder.onlinereview.component.fileupload.LocalFileUpload;
 import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.project.management.ProjectLinkManager;
@@ -73,14 +74,12 @@ import com.topcoder.onlinereview.component.search.filter.OrFilter;
 import com.topcoder.onlinereview.component.termsofuse.ProjectTermsOfUseDao;
 import com.topcoder.onlinereview.component.termsofuse.TermsOfUseDao;
 import com.topcoder.onlinereview.component.termsofuse.UserTermsOfUseDao;
-import com.topcoder.onlinereview.component.fileupload.FileUpload;
 import com.topcoder.shared.util.ApplicationServer;
 import com.topcoder.shared.util.TCContext;
-import com.topcoder.util.log.Level;
-import com.topcoder.util.log.Log;
-import com.topcoder.util.log.LogManager;
 import com.topcoder.web.ejb.forums.Forums;
 import com.topcoder.web.ejb.forums.ForumsHome;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.ejb.CreateException;
@@ -142,7 +141,7 @@ public class ActionsHelper {
     /**
      * The logger instance.
      */
-    private static final Log log = LogManager.getLog(ActionsHelper.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ActionsHelper.class.getName());
 
     /**
      * This member variable is a string constant that defines the name of the
@@ -549,7 +548,7 @@ public class ActionsHelper {
             request.setAttribute("errorTitle", textProvider.getText("Error.Title.General"));
         } else {
             if ("Error.NoPermission".equalsIgnoreCase(reasonKey)) {
-                log.log(Level.WARN, "Authorization failures. User tried to perform " + permission
+                log.warn("Authorization failures. User tried to perform " + permission
                         + " which he/she doesn't have permission.");
             }
             request.setAttribute("errorTitle", textProvider.getText("Error.Title." + permission.replaceAll(" ", "")));
@@ -1795,10 +1794,6 @@ public class ActionsHelper {
      * @throws IllegalArgumentException                             if any of the
      *                                                              parameters are
      *                                                              <code>null</code>.
-     * @throws com.topcoder.management.project.PersistenceException if an error
-     *                                                              occurred while
-     *                                                              accessing the
-     *                                                              database.
      */
     public static Project getProjectForSubmission(Submission submission) {
         // Validate parameters
@@ -2456,7 +2451,7 @@ public class ActionsHelper {
         long componentInquiryId = getNextComponentInquiryId(jdbcTemplate, newSubmitters.size());
         long componentId = getProjectLongValue(project, "Component ID");
         long phaseId = 111 + project.getProjectCategory().getId();
-        log.log(Level.DEBUG, "calculated phaseId for Project: " + projectId + " phaseId: " + phaseId);
+        log.debug("calculated phaseId for Project: " + projectId + " phaseId: " + phaseId);
         long version = getProjectLongValue(project, "Version ID");
         List<List<Object>> psParams = new ArrayList<>();
         List<List<Object>> comParams = new ArrayList<>();
@@ -2502,7 +2497,7 @@ public class ActionsHelper {
 
             // add component_inquiry
             if (!existCI && componentId > 0) {
-                log.log(Level.DEBUG, "adding component_inquiry for projectId: " + projectId + " userId: " + userId);
+                log.debug("adding component_inquiry for projectId: " + projectId + " userId: " + userId);
                 List<Object> comParam = new ArrayList<>();
                 comParam.add(componentInquiryId++);
                 comParam.add(componentId);
@@ -2735,7 +2730,7 @@ public class ActionsHelper {
             try {
                 connection.close();
             } catch (SQLException e) {
-                log.log(Level.ERROR, "Error closing JDBC Connection: " + e.getMessage());
+                log.debug("Error closing JDBC Connection: " + e.getMessage());
             }
         }
     }
@@ -2750,7 +2745,7 @@ public class ActionsHelper {
             try {
                 statement.close();
             } catch (SQLException e) {
-                log.log(Level.ERROR, "Error closing JDBC Statement: " + e.getMessage());
+                log.error("Error closing JDBC Statement: " + e.getMessage());
             }
         }
     }
@@ -2765,7 +2760,7 @@ public class ActionsHelper {
             try {
                 resultSet.close();
             } catch (SQLException e) {
-                log.log(Level.ERROR, "Error closing JDBC ResultSet: " + e.getMessage());
+                log.debug("Error closing JDBC ResultSet: " + e.getMessage());
             }
         }
     }
@@ -3464,7 +3459,7 @@ public class ActionsHelper {
     public static void outputDownloadS3File(String url, String key, String contentDisposition,
             HttpServletResponse response) throws IOException {
         try {
-            log.log(Level.INFO, "Will download from S3 with key " + key + " for url " + url);
+            log.info("Will download from S3 with key " + key + " for url " + url);
 
             S3Object s3Object = s3Client.getObject(new GetObjectRequest(s3Bucket, key));
             InputStream in = (InputStream) s3Object.getObjectContent();
@@ -3496,7 +3491,7 @@ public class ActionsHelper {
                 }
             }
         } catch (Exception e) {
-            log.log(Level.ERROR, "ex: " + e.getMessage());
+            log.error("ex: " + e.getMessage());
             throw new IOException("Error S3 download", e);
         }
     }
@@ -3512,7 +3507,7 @@ public class ActionsHelper {
         if (s3Uri == null) {
             return false;
         }
-        log.log(Level.INFO, "S3 Bucket from url: " + s3Uri.getBucket());
+        log.info("S3 Bucket from url: " + s3Uri.getBucket());
         return s3BucketDmz.equals(s3Uri.getBucket());
     }
 

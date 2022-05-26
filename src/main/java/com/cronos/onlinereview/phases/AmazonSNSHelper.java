@@ -8,9 +8,8 @@ import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.PublishRequest;
 import com.amazonaws.services.sns.model.PublishResult;
 import com.topcoder.onlinereview.component.project.management.Project;
-import com.topcoder.util.log.Level;
-import com.topcoder.util.log.Log;
-import com.topcoder.util.log.LogManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +55,7 @@ public class AmazonSNSHelper {
     /**
      * The logger instance.
      */
-    private static final Log log = LogManager.getLog(AmazonSNSHelper.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(AmazonSNSHelper.class.getName());
 
     /**
      * Empty private constructor.
@@ -123,13 +122,11 @@ public class AmazonSNSHelper {
 
         try {
             PublishResult snsResult = getAmazonSNSClient().publish(request);
-            log.log(Level.DEBUG,
-                    "Published project change event to Amazon SNS , project ID : " + project.getId() + ", result : " +
+            log.debug("Published project change event to Amazon SNS , project ID : " + project.getId() + ", result : " +
                             (snsResult == null ? "null" : snsResult.getMessageId()));
         } catch (Throwable e) {
             // Just log the error, do not rethrow any exception.
-            log.log(Level.ERROR, e,
-                    "Failed to publish project change event to Amazon SNS, project ID : " + project.getId());
+            log.error("Failed to publish project change event to Amazon SNS, project ID : " + project.getId());
         }
     } 
 

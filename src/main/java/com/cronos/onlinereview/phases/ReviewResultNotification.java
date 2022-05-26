@@ -3,30 +3,31 @@
  */
 package com.cronos.onlinereview.phases;
 
-import java.text.MessageFormat;
-
-import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.topcoder.onlinereview.component.deliverable.Submission;
 import com.topcoder.onlinereview.component.deliverable.UploadManager;
-import com.topcoder.onlinereview.component.project.phase.ManagerHelper;
-import com.topcoder.onlinereview.component.project.phase.PhaseHandlingException;
-import com.topcoder.onlinereview.component.project.management.Project;
-import com.topcoder.onlinereview.component.project.phase.PhaseManagementException;
-import com.topcoder.onlinereview.component.resource.Resource;
-import com.topcoder.onlinereview.component.resource.ResourceRole;
-import com.topcoder.onlinereview.component.resource.ResourceFilterBuilder;
-import com.topcoder.onlinereview.component.email.EmailEngine;
-import com.topcoder.onlinereview.component.email.TCSEmailMessage;
-import com.topcoder.onlinereview.component.search.filter.AndFilter;
-import com.topcoder.onlinereview.component.search.filter.Filter;
-import com.topcoder.onlinereview.component.exception.BaseException;
 import com.topcoder.onlinereview.component.document.DocumentGenerator;
 import com.topcoder.onlinereview.component.document.Template;
 import com.topcoder.onlinereview.component.document.fieldconfig.Field;
 import com.topcoder.onlinereview.component.document.fieldconfig.Node;
 import com.topcoder.onlinereview.component.document.fieldconfig.TemplateFields;
 import com.topcoder.onlinereview.component.document.templatesource.FileTemplateSource;
-import com.topcoder.util.log.Level;
+import com.topcoder.onlinereview.component.email.EmailEngine;
+import com.topcoder.onlinereview.component.email.TCSEmailMessage;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.external.ExternalUser;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.phase.ManagerHelper;
+import com.topcoder.onlinereview.component.project.phase.PhaseHandlingException;
+import com.topcoder.onlinereview.component.project.phase.PhaseManagementException;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceFilterBuilder;
+import com.topcoder.onlinereview.component.resource.ResourceRole;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.text.MessageFormat;
 
 /**
  * This class is used to send email notification for winners.
@@ -40,8 +41,7 @@ import com.topcoder.util.log.Level;
  */
 public class ReviewResultNotification {
 
-    private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogManager
-            .getLog(ReviewResultNotification.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ReviewResultNotification.class.getName());
 
     /** constant for "Project Name" project info. */
     private static final String PROJECT_NAME = "Project Name";
@@ -61,7 +61,7 @@ public class ReviewResultNotification {
     private ManagerHelper managerHelper;
 
     public void sendMailForWinners(Project project) throws Exception {
-        log.log(Level.DEBUG, "we're in the send email method");
+        log.debug( "we're in the send email method");
 
         String winnerId = (String) project.getProperty("Winner External Reference ID");
         String runnerUpId = (String) project.getProperty("Runner-up External Reference ID");
@@ -85,7 +85,7 @@ public class ReviewResultNotification {
     private void sendWinnersEmailForUser(Project project, ExternalUser user, String position) throws Exception {
         DocumentGenerator docGenerator = new DocumentGenerator();
         Template template = getEmailTemplate();
-        log.log(Level.DEBUG, "sending winner email for projectId: " + project.getId() + " handle: " + user.getHandle() + " position: " + position);
+        log.debug( "sending winner email for projectId: " + project.getId() + " handle: " + user.getHandle() + " position: " + position);
         TemplateFields root = setTemplateFieldValues(docGenerator.getFields(template), project, user, position);
 
         String emailContent = docGenerator.applyTemplate(root);
@@ -101,9 +101,9 @@ public class ReviewResultNotification {
         try {
             ResourceRole submitterRole = null;
             ResourceRole[] roles = managerHelper.getResourceManager().getAllResourceRoles();
-            log.log(Level.DEBUG, "roles size: " + roles.length);
+            log.debug( "roles size: " + roles.length);
             for (ResourceRole role : roles) {
-                log.log(Level.DEBUG, "roles id: " + role.getId() + ", name: " + role.getName());
+                log.debug( "roles id: " + role.getId() + ", name: " + role.getName());
                 if ("Submitter".equals(role.getName())) {
                     submitterRole = role;
                     break;

@@ -3,17 +3,14 @@
  */
 package com.cronos.onlinereview.util;
 
+import com.opensymphony.xwork2.ActionContext;
 import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.topcoder.onlinereview.component.external.UserRetrieval;
-
-import com.opensymphony.xwork2.ActionContext;
-import com.topcoder.util.log.Level;
-import com.topcoder.util.log.Log;
-import com.topcoder.util.log.LogManager;
-
-import java.util.Date;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 
 /**
@@ -29,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class LoggingHelper {
     /** Represents the logger. */
-    private static final Log logger = LogManager.getLog("OnlineReview");
+    private static final Logger logger = LoggerFactory.getLogger("OnlineReview");
     private static final java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     // Hidden constructor
@@ -65,7 +62,7 @@ public class LoggingHelper {
             ExternalUser extUser = usrMgr.retrieveUser(AuthorizationHelper.getLoggedInUserId(request));
             handle = extUser.getHandle();
         } catch (Exception e) {
-            logger.log(Level.ERROR, "Unable to retrieve current user handle.");
+            logger.error( "Unable to retrieve current user handle.");
         }
        
         String servletPath = request.getContextPath() + request.getServletPath();
@@ -96,7 +93,7 @@ public class LoggingHelper {
         loginfo.append(" ");
         loginfo.append(requestString);
         loginfo.append(" *]");
-        logger.log(Level.INFO, loginfo.toString());
+        logger.info( loginfo.toString());
 
         StringBuilder sb = new StringBuilder();
         sb.append(dateFormat.format(new Date())).append(" - ");
@@ -116,7 +113,7 @@ public class LoggingHelper {
         if (sid != null) {
             sb.append("  Submission ID : ").append(sid);
         }
-        logger.log(Level.INFO, sb.toString());
+        logger.info( sb.toString());
     }
 
     /**
@@ -128,7 +125,7 @@ public class LoggingHelper {
      *            exception containing the information to be logged
      */
     public static void logException(String message, Exception e) {
-        logger.log(Level.ERROR, e, message);
+        logger.error(message, e);
     }
     
     /**
@@ -137,7 +134,7 @@ public class LoggingHelper {
      * @param error the error message to be logged
      */
     public static void logError(String error) {
-        logger.log(Level.ERROR, error);
+        logger.error( error);
     }
 
     /**
@@ -146,7 +143,7 @@ public class LoggingHelper {
      * @param msg the debug message to be logged
      */
     public static void logDebugMsg(String msg) {
-        logger.log(Level.DEBUG, msg);
+        logger.debug(msg);
     }
 
     /**
@@ -155,6 +152,6 @@ public class LoggingHelper {
      * @param msg the warning message to be logged
      */
     public static void logWarning(String msg) {
-        logger.log(Level.WARN, msg);
+        logger.warn(msg);
     }
 }

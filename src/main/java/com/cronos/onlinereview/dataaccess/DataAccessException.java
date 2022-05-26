@@ -3,7 +3,7 @@
  */
 package com.cronos.onlinereview.dataaccess;
 
-import com.topcoder.util.errorhandling.BaseRuntimeException;
+import com.topcoder.onlinereview.component.exception.BaseRuntimeException;
 
 /**
  * <p>A runtime unchecked exception to be thrown in case there is an unexpected error encountered while running the
