@@ -3,10 +3,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="paymentHelper" class="com.cronos.onlinereview.phases.PaymentsHelper">
+    <bean id="paymentHelper" class="com.topcoder.onlinereview.component.project.phase.handler.or.PaymentsHelper">
         <property name="managerHelper" ref="managerHelper"/>
     </bean>
-    <bean id="checkpointScreeningResultNotification" class="com.cronos.onlinereview.phases.ScreeningResultNotification">
+    <bean id="checkpointScreeningResultNotification" class="com.topcoder.onlinereview.component.project.phase.handler.or.ScreeningResultNotification">
         <property name="emailTemplateName" value="@exttemplatesdir@/checkpoint_screening_results_email_template.txt"/>
         <property name="emailSubject" value="[{0}] {1} Checkpoint Screening Results"/>
         <property name="emailFromAddress" value="@notificationEmailFromAddress@"/>
@@ -17,7 +17,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <property name="scorecardTypeName" value="Checkpoint Screening"/>
         <property name="failedScreeningStatusName" value="Failed Checkpoint Screening"/>
     </bean>
-    <bean id="screeningResultNotification" class="com.cronos.onlinereview.phases.ScreeningResultNotification">
+    <bean id="screeningResultNotification" class="com.topcoder.onlinereview.component.project.phase.handler.or.ScreeningResultNotification">
         <property name="emailTemplateName" value="@exttemplatesdir@/screening_results_email_template.txt"/>
         <property name="emailSubject" value="[{0}] {1} Screening Results"/>
         <property name="emailFromAddress" value="@notificationEmailFromAddress@"/>
@@ -28,7 +28,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <property name="scorecardTypeName" value="Screening"/>
         <property name="failedScreeningStatusName" value="Failed Screening"/>
     </bean>
-    <bean id="reviewResultNotification" class="com.cronos.onlinereview.phases.ReviewResultNotification">
+    <bean id="reviewResultNotification" class="com.topcoder.onlinereview.component.project.phase.handler.or.ReviewResultNotification">
         <property name="winnersEmailTemplateName" value="@exttemplatesdir@/winners_email_template.txt"/>
         <property name="winnersEmailSubject" value="[{0}] {1} place "/>
         <property name="winnersEmailFromAddress" value="@notificationEmailFromAddress@"/>
@@ -47,7 +47,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <property name="subject" value="%PHASE_TYPE% End\\: %PROJECT_NAME%" />
         <property name="fromAddress" value="@notificationEmailFromAddress@" />
     </bean>
-    <bean id="pRRegistrationPhaseHandler" class="com.cronos.onlinereview.phases.PRRegistrationPhaseHandler">
+    <bean id="pRRegistrationPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRRegistrationPhaseHandler">
         <constructor-arg index="0" ref="managerHelper" />
         <constructor-arg index="1" >
             <list>
@@ -127,7 +127,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <constructor-arg index="3" ref="defaultStartEmailOption" />
         <constructor-arg index="4" ref="defaultEndEmailOption" />
     </bean>
-    <bean id="pRSubmissionPhaseHandler" class="com.cronos.onlinereview.phases.PRSubmissionPhaseHandler">
+    <bean id="pRSubmissionPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRSubmissionPhaseHandler">
         <constructor-arg index="0" ref="managerHelper" />
         <constructor-arg index="1" >
             <list>
@@ -233,7 +233,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <constructor-arg index="3" ref="defaultStartEmailOption" />
         <constructor-arg index="4" ref="defaultEndEmailOption" />
     </bean>
-    <bean id="prScreeningPhaseHandler" class="com.cronos.onlinereview.phases.PRScreeningPhaseHandler">
+    <bean id="prScreeningPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRScreeningPhaseHandler">
         <constructor-arg index="0" ref="managerHelper" />
         <constructor-arg index="1" >
             <list>
@@ -340,7 +340,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <constructor-arg index="4" ref="defaultEndEmailOption" />
         <constructor-arg index="5" ref="screeningResultNotification" />
     </bean>
-    <bean id="prReviewPhaseHandler" class="com.cronos.onlinereview.phases.PRReviewPhaseHandler">
+    <bean id="prReviewPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRReviewPhaseHandler">
         <constructor-arg index="0" ref="managerHelper" />
         <constructor-arg index="1" >
             <list>
@@ -532,7 +532,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <constructor-arg index="3" ref="defaultStartEmailOption" />
         <constructor-arg index="4" ref="defaultEndEmailOption" />
     </bean>
-    <bean id="prAppealResponsePhaseHandler" class="com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler">
+    <bean id="prAppealResponsePhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRAppealResponsePhaseHandler">
         <constructor-arg index="0" ref="managerHelper" />
         <constructor-arg index="1" >
             <list>
@@ -590,7 +590,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <constructor-arg index="4" ref="defaultEndEmailOption" />
         <constructor-arg index="5" ref="reviewResultNotification" />
     </bean>
-    <bean id="prAggregationPhaseHandler" class="com.cronos.onlinereview.phases.PRAggregationPhaseHandler">
+    <bean id="prAggregationPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRAggregationPhaseHandler">
         <constructor-arg index="0" ref="managerHelper" />
         <constructor-arg index="1" >
             <list>
@@ -647,7 +647,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <constructor-arg index="3" ref="defaultStartEmailOption" />
         <constructor-arg index="4" ref="defaultEndEmailOption" />
     </bean>
-    <bean id="prFinalFixPhaseHandler" class="com.cronos.onlinereview.phases.PRFinalFixPhaseHandler">
+    <bean id="prFinalFixPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRFinalFixPhaseHandler">
         <constructor-arg index="0" ref="managerHelper" />
         <constructor-arg index="1" >
             <list>
@@ -753,7 +753,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <constructor-arg index="3" ref="defaultStartEmailOption" />
         <constructor-arg index="4" ref="defaultEndEmailOption" />
     </bean>
-    <bean id="prFinalReviewPhaseHandler" class="com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler">
+    <bean id="prFinalReviewPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRFinalReviewPhaseHandler">
         <constructor-arg index="0" ref="managerHelper" />
         <constructor-arg index="1" >
             <list>
@@ -887,7 +887,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <constructor-arg index="8" value="1" />
         <constructor-arg index="9" value="30000720" />
     </bean>
-    <bean id="prApprovalPhaseHandler" class="com.cronos.onlinereview.phases.PRApprovalPhaseHandler">
+    <bean id="prApprovalPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRApprovalPhaseHandler">
         <constructor-arg index="0" ref="managerHelper" />
         <constructor-arg index="1" >
             <list>
@@ -1043,7 +1043,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <constructor-arg index="5" value="24" />
         <constructor-arg index="6" value="72" />
     </bean>
-    <bean id="prPostMortemPhaseHandler" class="com.cronos.onlinereview.phases.PRPostMortemPhaseHandler">
+    <bean id="prPostMortemPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRPostMortemPhaseHandler">
         <constructor-arg index="0" ref="managerHelper" />
         <constructor-arg index="1" >
             <list>
@@ -1446,7 +1446,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <constructor-arg index="3" ref="defaultStartEmailOption" />
         <constructor-arg index="4" ref="defaultEndEmailOption" />
     </bean>
-    <bean id="prCheckpointScreeningPhaseHandler" class="com.cronos.onlinereview.phases.PRCheckpointScreeningPhaseHandler">
+    <bean id="prCheckpointScreeningPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRCheckpointScreeningPhaseHandler">
         <constructor-arg index="0" ref="managerHelper" />
         <constructor-arg index="1" >
             <list>
@@ -1553,7 +1553,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <constructor-arg index="4" ref="defaultEndEmailOption" />
         <constructor-arg index="5" ref="checkpointScreeningResultNotification" />
     </bean>
-    <bean id="prCheckpointReviewPhaseHandler" class="com.cronos.onlinereview.phases.PRCheckpointReviewPhaseHandler">
+    <bean id="prCheckpointReviewPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRCheckpointReviewPhaseHandler">
         <constructor-arg index="0" ref="managerHelper" />
         <constructor-arg index="1" >
             <list>
@@ -1661,7 +1661,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <constructor-arg index="5" value="5" />
         <constructor-arg index="6" value="http://localhost:8090/v3/challenges/{challengeId}/aggregateScores" />
     </bean>
-    <bean id="prIterativeReviewPhaseHandler" class="com.cronos.onlinereview.phases.PRIterativeReviewPhaseHandler">
+    <bean id="prIterativeReviewPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRIterativeReviewPhaseHandler">
         <constructor-arg index="0" ref="managerHelper" />
         <constructor-arg index="1" >
             <list>

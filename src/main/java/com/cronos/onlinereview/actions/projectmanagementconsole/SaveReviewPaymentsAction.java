@@ -4,25 +4,25 @@
 package com.cronos.onlinereview.actions.projectmanagementconsole;
 
 
+import com.cronos.onlinereview.Constants;
+import com.cronos.onlinereview.util.ActionsHelper;
+import com.cronos.onlinereview.util.AuthorizationHelper;
+import com.cronos.onlinereview.util.CorrectnessCheckResult;
+import com.cronos.onlinereview.util.LoggingHelper;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentAdjustment;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentAdjustmentManager;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseManager;
+import com.topcoder.onlinereview.component.project.phase.handler.or.PaymentsHelper;
+import com.topcoder.onlinereview.component.resource.ResourceRole;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.phases.PaymentsHelper;
-import com.cronos.onlinereview.util.ActionsHelper;
-import com.cronos.onlinereview.util.AuthorizationHelper;
-import com.cronos.onlinereview.util.CorrectnessCheckResult;
-import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.onlinereview.component.project.payment.ProjectPaymentAdjustment;
-import com.topcoder.onlinereview.component.project.payment.ProjectPaymentAdjustmentManager;
-import com.topcoder.onlinereview.component.project.phase.PhaseManager;
-import com.topcoder.onlinereview.component.project.management.Project;
-import com.topcoder.onlinereview.component.resource.ResourceRole;
-import com.topcoder.onlinereview.component.project.phase.Phase;
-import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class is the struts action class which is used for saving the review payments.

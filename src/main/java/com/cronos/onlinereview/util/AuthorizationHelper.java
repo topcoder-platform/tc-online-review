@@ -18,7 +18,6 @@ import com.topcoder.onlinereview.component.search.filter.Filter;
 import com.topcoder.onlinereview.component.security.groups.model.GroupPermissionType;
 import com.topcoder.onlinereview.component.security.groups.model.ResourceType;
 import com.topcoder.onlinereview.component.security.groups.services.AuthorizationService;
-//import com.topcoder.web.common.security.SSOCookieService;
 import com.topcoder.onlinereview.component.webcommon.SSOCookieService;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 

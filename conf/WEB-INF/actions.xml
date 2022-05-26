@@ -12,7 +12,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
   <bean id="MockXMLAuthenticator" class="com.cronos.onlinereview.mockups.MockXMLAuthenticator">
       <constructor-arg type="java.lang.String" value="/MockXmlAuthenticator.xml" />
   </bean>
-  <bean id="ssoCookieService" class="com.topcoder.web.common.security.SSOCookieServiceImpl">
+  <bean id="ssoCookieService" class="com.topcoder.onlinereview.component.webcommon.SSOCookieService">
   </bean>
 
   <bean id="projectForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">

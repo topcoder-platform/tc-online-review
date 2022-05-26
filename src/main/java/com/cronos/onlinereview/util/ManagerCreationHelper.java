@@ -4,19 +4,6 @@
 package com.cronos.onlinereview.util;
 
 import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
-import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
-import com.cronos.onlinereview.phases.PRApprovalPhaseHandler;
-import com.cronos.onlinereview.phases.PRCheckpointReviewPhaseHandler;
-import com.cronos.onlinereview.phases.PRCheckpointScreeningPhaseHandler;
-import com.cronos.onlinereview.phases.PRFinalFixPhaseHandler;
-import com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler;
-import com.cronos.onlinereview.phases.PRIterativeReviewPhaseHandler;
-import com.cronos.onlinereview.phases.PRPostMortemPhaseHandler;
-import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
-import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
-import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
-import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
 import com.topcoder.onlinereview.component.deliverable.DeliverableManager;
 import com.topcoder.onlinereview.component.deliverable.UploadManager;
 import com.topcoder.onlinereview.component.deliverable.late.LateDeliverableManager;
@@ -33,6 +20,19 @@ import com.topcoder.onlinereview.component.project.phase.handler.AppealsPhaseHan
 import com.topcoder.onlinereview.component.project.phase.handler.CheckpointSubmissionPhaseHandler;
 import com.topcoder.onlinereview.component.project.phase.handler.SpecificationReviewPhaseHandler;
 import com.topcoder.onlinereview.component.project.phase.handler.SpecificationSubmissionPhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.or.PRAggregationPhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.or.PRAppealResponsePhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.or.PRApprovalPhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.or.PRCheckpointReviewPhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.or.PRCheckpointScreeningPhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.or.PRFinalFixPhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.or.PRFinalReviewPhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.or.PRIterativeReviewPhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.or.PRPostMortemPhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.or.PRRegistrationPhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.or.PRReviewPhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.or.PRScreeningPhaseHandler;
+import com.topcoder.onlinereview.component.project.phase.handler.or.PRSubmissionPhaseHandler;
 import com.topcoder.onlinereview.component.resource.ResourceManager;
 import com.topcoder.onlinereview.component.review.ReviewManager;
 import com.topcoder.onlinereview.component.reviewfeedback.ReviewFeedbackManager;
@@ -45,7 +45,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 
 /**
  * <p>
