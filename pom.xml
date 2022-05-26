@@ -400,21 +400,6 @@
         </dependency>
         <dependency>
             <groupId>com.topcoder.thirdpart</groupId>
-            <artifactId>catalog</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.topcoder.thirdpart</groupId>
-            <artifactId>tc_id_generator</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.topcoder.thirdpart</groupId>
-            <artifactId>job_scheduler</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.topcoder.thirdpart</groupId>
             <artifactId>User</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
