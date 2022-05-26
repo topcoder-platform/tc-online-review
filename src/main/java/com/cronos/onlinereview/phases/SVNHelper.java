@@ -3,12 +3,9 @@
  */
 package com.cronos.onlinereview.phases;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.Arrays;
-import java.util.Random;
-
+import com.topcoder.util.log.Level;
+import com.topcoder.util.log.Log;
+import com.topcoder.util.log.LogManager;
 import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNErrorCode;
@@ -24,12 +21,13 @@ import org.tmatesoft.svn.core.wc.SVNCommitClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 
-import com.topcoder.util.config.ConfigManager;
-import com.topcoder.util.config.Property;
-import com.topcoder.util.config.UnknownNamespaceException;
-import com.topcoder.util.log.Level;
-import com.topcoder.util.log.Log;
-import com.topcoder.util.log.LogManager;
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.Arrays;
+import java.util.Random;
+
+import static com.topcoder.onlinereview.component.util.SpringUtils.getPropertyValue;
 
 /**
  * <p>A helper utility class providing various method useful for accessing and managing the SVN repository for project.
@@ -61,19 +59,12 @@ public final class SVNHelper {
     static {
         SVNRepositoryFactoryImpl.setup();
         DAVRepositoryFactory.setup();
-        try {
-            ConfigManager cfgMgr = ConfigManager.getInstance();
-            Property svnRepoConfig = cfgMgr.getPropertyObject("com.cronos.OnlineReview", "SVNConfig");
-            svnConfig = new String[] {svnRepoConfig.getValue("Root"),
-                                      svnRepoConfig.getValue("AuthUsername"),
-                                      svnRepoConfig.getValue("AuthPassword"),
-                                      svnRepoConfig.getValue("MkDirCommitMessage"),
-                                      svnRepoConfig.getValue("TempFilesBaseDir"),
-                                      svnRepoConfig.getValue("PathBasedPermissionsFileURL")};
-        } catch (UnknownNamespaceException e) {
-            e.printStackTrace(System.out);
-            throw new ExceptionInInitializerError(e);
-        }
+        svnConfig = new String[] {getPropertyValue("SVNConfig.Root"),
+                getPropertyValue("SVNConfig.AuthUsername"),
+                getPropertyValue("SVNConfig.AuthPassword"),
+                getPropertyValue("SVNConfig.MkDirCommitMessage"),
+                getPropertyValue("SVNConfig.TempFilesBaseDir"),
+                getPropertyValue("SVNConfig.PathBasedPermissionsFileURL")};
     }
 
     /**

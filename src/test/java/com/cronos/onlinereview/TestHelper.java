@@ -3,6 +3,10 @@
  */
 package com.cronos.onlinereview;
 
+import com.cronos.onlinereview.util.ConfigManager;
+import com.thoughtworks.selenium.DefaultSelenium;
+import com.thoughtworks.selenium.Selenium;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -11,14 +15,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.thoughtworks.selenium.DefaultSelenium;
-import com.thoughtworks.selenium.Selenium;
-import com.topcoder.db.connectionfactory.DBConnectionFactory;
-import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
-import com.topcoder.util.config.ConfigManager;
-import com.topcoder.util.idgenerator.IDGenerator;
-import com.topcoder.util.idgenerator.IDGeneratorFactory;
+//import com.topcoder.db.connectionfactory.DBConnectionFactory;
+//import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
+//import com.topcoder.util.config.ConfigManager;
+//import com.topcoder.util.idgenerator.IDGenerator;
+//import com.topcoder.util.idgenerator.IDGeneratorFactory;
 
 /**
  * The Helper class for test.
@@ -361,10 +362,11 @@ public class TestHelper {
      * @throws Exception if any error occurred.
      */
     static Connection getConnection() throws Exception {
-        DBConnectionFactory factory = new DBConnectionFactoryImpl(
-        "com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
-    
-        return factory.createConnection();
+//        DBConnectionFactory factory = new DBConnectionFactoryImpl(
+//        "com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
+//
+//        return factory.createConnection();
+        return null;
     }
 
     /**
@@ -1134,9 +1136,10 @@ public class TestHelper {
      * @throws Exception if any error
      */
     static long getNextProjectId() throws Exception {
-        IDGenerator generator = IDGeneratorFactory.getIDGenerator("project_id_seq");
-
-        return generator.getNextID();
+//        IDGenerator generator = IDGeneratorFactory.getIDGenerator("project_id_seq");
+//
+//        return generator.getNextID();
+        return 0;
     }
 
     /**
@@ -1147,9 +1150,10 @@ public class TestHelper {
      * @throws Exception if any error
      */
     static long getNextProjectPhaseId() throws Exception {
-        IDGenerator generator = IDGeneratorFactory.getIDGenerator("project_phase_id_seq");
-
-        return generator.getNextID();
+//        IDGenerator generator = IDGeneratorFactory.getIDGenerator("project_phase_id_seq");
+//
+//        return generator.getNextID();
+        return 0;
     }
 
     /**
@@ -1160,9 +1164,10 @@ public class TestHelper {
      * @throws Exception if any error
      */
     static long getNextComponentId() throws Exception {
-        IDGenerator generator = IDGeneratorFactory.getIDGenerator("COMPONENT_SEQ");
-
-        return generator.getNextID();
+//        IDGenerator generator = IDGeneratorFactory.getIDGenerator("COMPONENT_SEQ");
+//
+//        return generator.getNextID();
+        return 0;
     }
 
     /**
@@ -1173,9 +1178,10 @@ public class TestHelper {
      * @throws Exception if any error
      */
     static long getNextComponentVersionsId() throws Exception {
-        IDGenerator generator = IDGeneratorFactory.getIDGenerator("COMPVERSION_SEQ");
-
-        return generator.getNextID();
+//        IDGenerator generator = IDGeneratorFactory.getIDGenerator("COMPVERSION_SEQ");
+//
+//        return generator.getNextID();
+        return 0;
     }
 
     /**
@@ -1186,9 +1192,10 @@ public class TestHelper {
      * @throws Exception if any error
      */
     static long getNextComponentCategoryId() throws Exception {
-        IDGenerator generator = IDGeneratorFactory.getIDGenerator("COMPCATEGORY_SEQ");
-
-        return generator.getNextID();
+//        IDGenerator generator = IDGeneratorFactory.getIDGenerator("COMPCATEGORY_SEQ");
+//
+//        return generator.getNextID();
+        return 0;
     }
 
     /**
@@ -1199,9 +1206,10 @@ public class TestHelper {
      * @throws Exception if any error
      */
     static long getNextComponentTechId() throws Exception {
-        IDGenerator generator = IDGeneratorFactory.getIDGenerator("COMPTECH_SEQ");
-
-        return generator.getNextID();
+//        IDGenerator generator = IDGeneratorFactory.getIDGenerator("COMPTECH_SEQ");
+//
+//        return generator.getNextID();
+        return 0;
     }
     
     /**
@@ -1212,9 +1220,10 @@ public class TestHelper {
      * @throws Exception if any error
      */
     static long getNextSubmissionId() throws Exception {
-        IDGenerator generator = IDGeneratorFactory.getIDGenerator("submission_id_seq");
-
-        return generator.getNextID();
+//        IDGenerator generator = IDGeneratorFactory.getIDGenerator("submission_id_seq");
+//
+//        return generator.getNextID();
+        return 0;
     }
     
     /**
@@ -1225,9 +1234,10 @@ public class TestHelper {
      * @throws Exception if any error
      */
     static long getNextResourceId() throws Exception {
-        IDGenerator generator = IDGeneratorFactory.getIDGenerator("resource_id_seq");
-
-        return generator.getNextID();
+//        IDGenerator generator = IDGeneratorFactory.getIDGenerator("resource_id_seq");
+//
+//        return generator.getNextID();
+        return 0;
     }
     
     /**
@@ -1238,9 +1248,10 @@ public class TestHelper {
      * @throws Exception if any error
      */
     static long getNextUploadId() throws Exception {
-        IDGenerator generator = IDGeneratorFactory.getIDGenerator("upload_id_seq");
-
-        return generator.getNextID();
+//        IDGenerator generator = IDGeneratorFactory.getIDGenerator("upload_id_seq");
+//
+//        return generator.getNextID();
+        return 0;
     }
 
     /**
@@ -1251,9 +1262,10 @@ public class TestHelper {
      * @throws Exception if any error
      */
     static long getNextId(String type) throws Exception {
-        IDGenerator generator = IDGeneratorFactory.getIDGenerator(type);
-
-        return generator.getNextID();
+//        IDGenerator generator = IDGeneratorFactory.getIDGenerator(type);
+//
+//        return generator.getNextID();
+        return 0;
     }
     
     /**
@@ -1264,7 +1276,7 @@ public class TestHelper {
      * @throws Exception if any error occurred.
      */
     static String getBrowserSpeed() throws Exception {
-        return ConfigManager.getInstance().getProperty( 
+        return ConfigManager.getInstance().getProperty(
                 TEST_NAMESPACE, TEST_BROWSER_SPEED).toString();
     }
     

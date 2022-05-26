@@ -3,8 +3,8 @@
  */
 package com.cronos.onlinereview.dataaccess;
 
-import com.topcoder.management.project.ProjectPropertyType;
 import com.topcoder.onlinereview.component.project.management.ProjectCategory;
+import com.topcoder.onlinereview.component.project.management.ProjectPropertyType;
 import com.topcoder.onlinereview.component.project.management.ProjectStatus;
 import com.topcoder.onlinereview.component.project.phase.PhaseStatus;
 import com.topcoder.onlinereview.component.project.phase.PhaseType;

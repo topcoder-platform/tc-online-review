@@ -3,18 +3,16 @@
  */
 package com.cronos.onlinereview.actions.projectreview;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
-import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.scorecard.PersistenceException;
-import com.topcoder.onlinereview.component.scorecard.ScorecardManager;
-import com.topcoder.onlinereview.component.scorecard.Scorecard;
 import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.scorecard.Scorecard;
+import com.topcoder.onlinereview.component.scorecard.ScorecardManager;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * This class is the struts action class which is used to view the scorecard.

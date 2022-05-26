@@ -26,8 +26,6 @@ import com.topcoder.onlinereview.component.review.Review;
 import com.topcoder.onlinereview.component.search.SearchBuilderException;
 import com.topcoder.onlinereview.component.search.filter.AndFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
-import com.topcoder.util.config.ConfigManager;
-import com.topcoder.util.config.Property;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -41,6 +39,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.topcoder.onlinereview.component.util.CommonUtils.executeUpdateSql;
+import static com.topcoder.onlinereview.component.util.SpringUtils.getBean;
 import static com.topcoder.onlinereview.component.util.SpringUtils.getTcsJdbcTemplate;
 
 /**
@@ -459,17 +458,8 @@ public final class PaymentsHelper {
      *         desired projects.
      */
     private static ProjectPaymentCalculator createProjectPaymentCalculator() {
-        String className = null;
-        try {
-            ConfigManager cfgMgr = ConfigManager.getInstance();
-            Property config = cfgMgr.getPropertyObject("com.cronos.OnlineReview", "ProjectPaymentConfig");
-            className = config.getValue("CalculatorClass");
-            Class clazz = Class.forName(className);
-            return (ProjectPaymentCalculator) clazz.newInstance();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to instantiate the project payment calculator of type: "
-                    + className, e);
-        }
+        return getBean("projectPaymentAdjustmentCalculator", ProjectPaymentCalculator.class);
+
     }
 
     /**

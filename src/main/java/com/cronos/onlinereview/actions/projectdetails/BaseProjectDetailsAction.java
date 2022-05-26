@@ -53,7 +53,6 @@ import com.topcoder.onlinereview.component.search.SearchBuilderException;
 import com.topcoder.onlinereview.component.search.filter.AndFilter;
 import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
-import com.topcoder.util.config.ConfigManagerException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -783,10 +782,9 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
      *                               the member who re-uploaded his submission.
      * @param nextEarliestSubmission next active earliest submission in the queue.
      * @throws BaseException          if an unexpected error occurs.
-     * @throws ConfigManagerException if there is a problem with configuration.
      */
     private void notifyIterativeReviewers(Project project, long submissionId, String handle,
-            Submission nextEarliestSubmission) throws BaseException, ConfigManagerException {
+            Submission nextEarliestSubmission) throws BaseException {
         List<Long> reviewerUserIds = ActionsHelper
                 .getUserIDsByRoleNames(new String[] { Constants.ITERATIVE_REVIEWER_ROLE_NAME }, project.getId());
 
