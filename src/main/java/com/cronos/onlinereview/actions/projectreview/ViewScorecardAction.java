@@ -3,18 +3,16 @@
  */
 package com.cronos.onlinereview.actions.projectreview;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
-import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.scorecard.PersistenceException;
-import com.topcoder.management.scorecard.ScorecardManager;
-import com.topcoder.management.scorecard.data.Scorecard;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.scorecard.Scorecard;
+import com.topcoder.onlinereview.component.scorecard.ScorecardManager;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * This class is the struts action class which is used to view the scorecard.
@@ -73,12 +71,8 @@ public class ViewScorecardAction extends BaseViewOrExportGenericReviewAction {
             // Obtain an instance of Scorecard Manager
             ScorecardManager scrMgr = ActionsHelper.createScorecardManager();
             Scorecard scorecardTemplate = null;
-            try {
-                // Get Scorecard by its id
-                scorecardTemplate = scrMgr.getScorecard(scid);
-            } catch (PersistenceException e) {
-                // Eat the exception
-            }
+            // Get Scorecard by its id
+            scorecardTemplate = scrMgr.getScorecard(scid);
 
             // Verify that scorecard with specified ID exists
             if (scorecardTemplate == null) {

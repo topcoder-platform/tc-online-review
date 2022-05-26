@@ -3,16 +3,16 @@
  */
 package com.cronos.onlinereview.actions.login;
 
-import com.cronos.onlinereview.login.AuthCookieManagementException;
-import com.cronos.onlinereview.login.AuthResponseParsingException;
-import com.cronos.onlinereview.login.Util;
+import com.topcoder.onlinereview.component.login.AuthCookieManagementException;
+import com.topcoder.onlinereview.component.login.AuthResponseParsingException;
+import com.topcoder.onlinereview.component.login.Util;
 
-import com.topcoder.security.authenticationfactory.AuthenticateException;
-import com.topcoder.security.authenticationfactory.InvalidPrincipalException;
-import com.topcoder.security.authenticationfactory.MissingPrincipalKeyException;
-import com.topcoder.security.authenticationfactory.Principal;
-import com.topcoder.security.authenticationfactory.Response;
-import com.topcoder.security.TCSubject;
+import com.topcoder.onlinereview.component.authenticationfactory.AuthenticateException;
+import com.topcoder.onlinereview.component.authenticationfactory.InvalidPrincipalException;
+import com.topcoder.onlinereview.component.authenticationfactory.MissingPrincipalKeyException;
+import com.topcoder.onlinereview.component.authenticationfactory.Principal;
+import com.topcoder.onlinereview.component.authenticationfactory.Response;
+import com.topcoder.onlinereview.component.security.TCSubject;
 
 
 /**

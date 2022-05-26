@@ -3,9 +3,6 @@
  */
 package com.cronos.onlinereview.servlet;
 
-import com.topcoder.util.log.LogManager;
-import com.topcoder.util.log.log4j.Log4jLogFactory;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -28,9 +25,6 @@ public class OnlineReviewInitServlet extends HttpServlet {
      * @param config the servlet config
      */
     public void init(ServletConfig config) throws ServletException {
-        // Init LogManager with the Log4j log factory
-        LogManager.setLogFactory(new Log4jLogFactory(true));
-
         super.init(config);
     }
 }

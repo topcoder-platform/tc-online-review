@@ -3,6 +3,90 @@
  */
 package com.cronos.onlinereview.util;
 
+import com.amazonaws.auth.PropertiesCredentials;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3URI;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.cronos.onlinereview.Constants;
+import com.topcoder.onlinereview.component.dataaccess.ProjectDataAccess;
+import com.topcoder.onlinereview.component.dataaccess.ResourceDataAccess;
+import com.topcoder.onlinereview.component.dataaccess.ClientProject;
+import com.topcoder.onlinereview.component.dataaccess.CockpitProject;
+import com.cronos.onlinereview.model.DefaultScorecard;
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.TextProvider;
+import com.topcoder.onlinereview.component.deliverable.Deliverable;
+import com.topcoder.onlinereview.component.deliverable.DeliverableCheckingException;
+import com.topcoder.onlinereview.component.deliverable.DeliverableFilterBuilder;
+import com.topcoder.onlinereview.component.deliverable.DeliverableManager;
+import com.topcoder.onlinereview.component.deliverable.DeliverablePersistenceException;
+import com.topcoder.onlinereview.component.deliverable.Submission;
+import com.topcoder.onlinereview.component.deliverable.SubmissionFilterBuilder;
+import com.topcoder.onlinereview.component.deliverable.Upload;
+import com.topcoder.onlinereview.component.deliverable.UploadFilterBuilder;
+import com.topcoder.onlinereview.component.deliverable.UploadManager;
+import com.topcoder.onlinereview.component.deliverable.late.LateDeliverable;
+import com.topcoder.onlinereview.component.deliverable.late.LateDeliverableManager;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.external.ExternalUser;
+import com.topcoder.onlinereview.component.external.RetrievalException;
+import com.topcoder.onlinereview.component.external.UserRetrieval;
+import com.topcoder.onlinereview.component.fileupload.FileUpload;
+import com.topcoder.onlinereview.component.fileupload.LocalFileUpload;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.management.ProjectLinkManager;
+import com.topcoder.onlinereview.component.project.management.ProjectManager;
+import com.topcoder.onlinereview.component.project.management.ProjectStatus;
+import com.topcoder.onlinereview.component.project.payment.ProjectPayment;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentAdjustmentManager;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentManager;
+import com.topcoder.onlinereview.component.project.phase.Dependency;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseManagementException;
+import com.topcoder.onlinereview.component.project.phase.PhaseManager;
+import com.topcoder.onlinereview.component.project.phase.PhaseStatus;
+import com.topcoder.onlinereview.component.project.phase.handler.or.PRHelper;
+import com.topcoder.onlinereview.component.project.phase.handler.or.PaymentsHelper;
+import com.topcoder.onlinereview.component.project.phase.template.PhaseTemplate;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceFilterBuilder;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+import com.topcoder.onlinereview.component.resource.ResourcePersistenceException;
+import com.topcoder.onlinereview.component.resource.ResourceRole;
+import com.topcoder.onlinereview.component.review.Comment;
+import com.topcoder.onlinereview.component.review.Review;
+import com.topcoder.onlinereview.component.review.ReviewManagementException;
+import com.topcoder.onlinereview.component.review.ReviewManager;
+import com.topcoder.onlinereview.component.reviewfeedback.ReviewFeedbackManager;
+import com.topcoder.onlinereview.component.scorecard.Group;
+import com.topcoder.onlinereview.component.scorecard.PersistenceException;
+import com.topcoder.onlinereview.component.scorecard.Scorecard;
+import com.topcoder.onlinereview.component.scorecard.ScorecardManager;
+import com.topcoder.onlinereview.component.scorecard.Section;
+import com.topcoder.onlinereview.component.search.SearchBuilderException;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+import com.topcoder.onlinereview.component.search.filter.NotFilter;
+import com.topcoder.onlinereview.component.search.filter.OrFilter;
+import com.topcoder.onlinereview.component.termsofuse.ProjectTermsOfUseDao;
+import com.topcoder.onlinereview.component.termsofuse.TermsOfUseDao;
+import com.topcoder.onlinereview.component.termsofuse.UserTermsOfUseDao;
+import com.topcoder.shared.util.ApplicationServer;
+import com.topcoder.shared.util.TCContext;
+import com.topcoder.web.ejb.forums.Forums;
+import com.topcoder.web.ejb.forums.ForumsHome;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import javax.ejb.CreateException;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +100,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,106 +113,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.amazonaws.auth.PropertiesCredentials;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.AmazonS3URI;
-
-import javax.ejb.CreateException;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
-import com.cronos.onlinereview.dataaccess.ResourceDataAccess;
-import com.cronos.onlinereview.external.ExternalUser;
-import com.cronos.onlinereview.external.RetrievalException;
-import com.cronos.onlinereview.external.UserRetrieval;
-import com.cronos.onlinereview.external.impl.DBUserRetrieval;
-import com.cronos.onlinereview.model.ClientProject;
-import com.cronos.onlinereview.model.CockpitProject;
-import com.cronos.onlinereview.model.DefaultScorecard;
-import com.cronos.onlinereview.phases.PRHelper;
-import com.cronos.onlinereview.phases.PaymentsHelper;
-import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
-import com.cronos.termsofuse.dao.TermsOfUseDao;
-import com.cronos.termsofuse.dao.UserTermsOfUseDao;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.TextProvider;
-import com.topcoder.date.workdays.DefaultWorkdaysFactory;
-import com.topcoder.date.workdays.Workdays;
-import com.topcoder.db.connectionfactory.ConfigurationException;
-import com.topcoder.db.connectionfactory.DBConnectionException;
-import com.topcoder.db.connectionfactory.DBConnectionFactory;
-import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
-import com.topcoder.db.connectionfactory.UnknownConnectionException;
-import com.topcoder.management.deliverable.Deliverable;
-import com.topcoder.management.deliverable.DeliverableManager;
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.Upload;
-import com.topcoder.management.deliverable.UploadManager;
-import com.topcoder.management.deliverable.late.LateDeliverable;
-import com.topcoder.management.deliverable.late.LateDeliverableManager;
-import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
-import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
-import com.topcoder.management.deliverable.search.DeliverableFilterBuilder;
-import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
-import com.topcoder.management.deliverable.search.UploadFilterBuilder;
-import com.topcoder.management.payment.ProjectPayment;
-import com.topcoder.management.payment.ProjectPaymentAdjustmentManager;
-import com.topcoder.management.payment.ProjectPaymentManager;
-import com.topcoder.management.phase.PhaseManagementException;
-import com.topcoder.management.phase.PhaseManager;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectStatus;
-import com.topcoder.management.project.link.ProjectLinkManager;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.resource.ResourceRole;
-import com.topcoder.management.resource.persistence.ResourcePersistenceException;
-import com.topcoder.management.resource.search.ResourceFilterBuilder;
-import com.topcoder.management.review.ReviewManagementException;
-import com.topcoder.management.review.ReviewManager;
-import com.topcoder.management.review.data.Comment;
-import com.topcoder.management.review.data.Review;
-import com.topcoder.management.reviewfeedback.ReviewFeedbackManager;
-import com.topcoder.management.scorecard.PersistenceException;
-import com.topcoder.management.scorecard.ScorecardManager;
-import com.topcoder.management.scorecard.data.Group;
-import com.topcoder.management.scorecard.data.Scorecard;
-import com.topcoder.management.scorecard.data.Section;
-import com.topcoder.project.phases.Dependency;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.project.phases.PhaseStatus;
-import com.topcoder.project.phases.template.DefaultPhaseTemplate;
-import com.topcoder.project.phases.template.PhaseTemplate;
-import com.topcoder.project.phases.template.PhaseTemplatePersistence;
-import com.topcoder.project.phases.template.StartDateGenerator;
-import com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence;
-import com.topcoder.search.builder.SearchBuilderException;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.EqualToFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.search.builder.filter.NotFilter;
-import com.topcoder.search.builder.filter.OrFilter;
-import com.topcoder.servlet.request.DisallowedDirectoryException;
-import com.topcoder.servlet.request.FileUpload;
-import com.topcoder.servlet.request.LocalFileUpload;
-import com.topcoder.shared.util.ApplicationServer;
-import com.topcoder.shared.util.TCContext;
-import com.topcoder.util.errorhandling.BaseException;
-import com.topcoder.util.errorhandling.BaseRuntimeException;
-import com.topcoder.util.log.Level;
-import com.topcoder.util.log.Log;
-import com.topcoder.util.log.LogManager;
-import com.topcoder.web.ejb.forums.Forums;
-import com.topcoder.web.ejb.forums.ForumsHome;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.topcoder.onlinereview.component.util.CommonUtils.executeSql;
+import static com.topcoder.onlinereview.component.util.CommonUtils.executeSqlWithParam;
+import static com.topcoder.onlinereview.component.util.CommonUtils.executeUpdateSql;
+import static com.topcoder.onlinereview.component.util.CommonUtils.getInt;
+import static com.topcoder.onlinereview.component.util.CommonUtils.getLong;
+import static com.topcoder.onlinereview.component.util.CommonUtils.getString;
+import static com.topcoder.onlinereview.component.util.SpringUtils.getBean;
+import static com.topcoder.onlinereview.component.util.SpringUtils.getPropertyValue;
+import static com.topcoder.onlinereview.component.util.SpringUtils.getTcsJdbcTemplate;
 
 /**
  * <p>
@@ -148,7 +141,7 @@ public class ActionsHelper {
     /**
      * The logger instance.
      */
-    private static final Log log = LogManager.getLog(ActionsHelper.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ActionsHelper.class.getName());
 
     /**
      * This member variable is a string constant that defines the name of the
@@ -167,7 +160,7 @@ public class ActionsHelper {
     /**
      * This helper class is used for creating the managers.
      */
-    private static final ManagerCreationHelper managerCreationHelper = new ManagerCreationHelper();
+    private static ManagerCreationHelper managerCreationHelper;
 
     /**
      * Used for caching loaded scorecards.
@@ -239,10 +232,9 @@ public class ActionsHelper {
     }
 
     /**
-     * This constructor is declared private to prohibit instantiation of the
      * <code>ActionsHelper</code> class.
      */
-    private ActionsHelper() {
+    public ActionsHelper() {
     }
 
     // ------------------------------------------------------------ Hardcoded
@@ -537,7 +529,7 @@ public class ActionsHelper {
      * @throws BaseException if any error occurs.
      */
     public static String produceErrorReport(TextProvider textProvider, HttpServletRequest request, String permission,
-            String reasonKey, Boolean getRedirectUrlFromReferer) throws BaseException {
+                                            String reasonKey, Boolean getRedirectUrlFromReferer) throws BaseException {
         // If the user is not logged in, this is the reason
         // why they don't have permissions to do the job. Let the user login first
         if (getRedirectUrlFromReferer != null && !AuthorizationHelper.isUserLoggedIn(request)) {
@@ -556,7 +548,7 @@ public class ActionsHelper {
             request.setAttribute("errorTitle", textProvider.getText("Error.Title.General"));
         } else {
             if ("Error.NoPermission".equalsIgnoreCase(reasonKey)) {
-                log.log(Level.WARN, "Authorization failures. User tried to perform " + permission
+                log.warn("Authorization failures. User tried to perform " + permission
                         + " which he/she doesn't have permission.");
             }
             request.setAttribute("errorTitle", textProvider.getText("Error.Title." + permission.replaceAll(" ", "")));
@@ -888,7 +880,7 @@ public class ActionsHelper {
      * @throws BaseException if error occurs
      */
     public static void populateEmailProperty(HttpServletRequest request, Resource[] resources) throws BaseException {
-        long[] userIDs = new long[resources.length];
+        Long[] userIDs = new Long[resources.length];
         for (int i = 0; i < resources.length; i++) {
             Long userID = resources[i].getUserId();
             if (userID == null) {
@@ -1033,7 +1025,7 @@ public class ActionsHelper {
         validateParameterNotNull(project, "project");
 
         // Get all phases for the project
-        com.topcoder.project.phases.Project phProj = manager.getPhases(project.getId());
+        com.topcoder.onlinereview.component.project.phase.Project phProj = manager.getPhases(project.getId());
         return (phProj != null) ? phProj.getAllPhases() : new Phase[0];
     }
 
@@ -1650,7 +1642,7 @@ public class ActionsHelper {
         }
 
         // Prepare an array to store External User IDs
-        long[] extUserIds = new long[resources.length];
+        Long[] extUserIds = new Long[resources.length];
         // Fill the array with user IDs retrieved from resource properties
         for (int i = 0; i < resources.length; ++i) {
             extUserIds[i] = resources[i].getUserId();
@@ -1697,7 +1689,7 @@ public class ActionsHelper {
      * @throws BaseException if an unexpected error occurs.
      */
     public static Submission[] getProjectSubmissions(long projectId, String submissionTypeName,
-            String submissionStatusName, boolean includeDeleted) throws BaseException {
+                                                     String submissionStatusName, boolean includeDeleted) throws BaseException {
 
         List<Filter> filters = new ArrayList<Filter>();
         filters.add(SubmissionFilterBuilder.createProjectIdFilter(projectId));
@@ -1802,13 +1794,8 @@ public class ActionsHelper {
      * @throws IllegalArgumentException                             if any of the
      *                                                              parameters are
      *                                                              <code>null</code>.
-     * @throws com.topcoder.management.project.PersistenceException if an error
-     *                                                              occurred while
-     *                                                              accessing the
-     *                                                              database.
      */
-    public static Project getProjectForSubmission(Submission submission)
-            throws com.topcoder.management.project.PersistenceException {
+    public static Project getProjectForSubmission(Submission submission) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(submission, "submission");
 
@@ -2027,7 +2014,6 @@ public class ActionsHelper {
      * <code>ResourceManager</code> class.
      *
      * @return a newly created instance of the class.
-     * @throws BaseRuntimeException if any error occurs.
      */
     public static ResourceManager createResourceManager() {
         return managerCreationHelper.getResourceManager();
@@ -2078,7 +2064,6 @@ public class ActionsHelper {
      * <code>UploadManager</code> class.
      *
      * @return a newly created instance of the class.
-     * @throws BaseRuntimeException if any error occurs.
      */
     public static UploadManager createUploadManager() {
         return managerCreationHelper.getUploadManager();
@@ -2089,7 +2074,6 @@ public class ActionsHelper {
      * <code>ProjectLinkManager</code> class.
      *
      * @return a newly created instance of the class.
-     * @throws BaseRuntimeException if any error occurs.
      */
     public static ProjectLinkManager createProjectLinkManager() {
         return managerCreationHelper.getProjectLinkManager();
@@ -2127,7 +2111,6 @@ public class ActionsHelper {
      * <code>ReviewFeedbackManager</code> class.
      *
      * @return a newly created instance of the class.
-     * @throws BaseRuntimeException if any error occurs.
      */
     public static ReviewFeedbackManager createReviewFeedbackManager() {
         return managerCreationHelper.getReviewFeedbackManager();
@@ -2145,17 +2128,8 @@ public class ActionsHelper {
      *                                                          <code>request</code>
      *                                                          parameter is
      *                                                          <code>null</code>.
-     * @throws com.cronos.onlinereview.external.ConfigException if error occurs
-     *                                                          while loading
-     *                                                          configuration
-     *                                                          settings, or any of
-     *                                                          the required
-     *                                                          configuration
-     *                                                          parameters are
-     *                                                          missing.
      */
-    public static UserRetrieval createUserRetrieval(HttpServletRequest request)
-            throws com.cronos.onlinereview.external.ConfigException {
+    public static UserRetrieval createUserRetrieval(HttpServletRequest request) {
         // Validate parameter
         validateParameterNotNull(request, "request");
 
@@ -2164,7 +2138,7 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            manager = new DBUserRetrieval(DB_CONNECTION_NAMESPACE);
+            manager = managerCreationHelper.getUserRetrieval();
             // Place newly-created object into the request as attribute
             request.setAttribute("userRetrieval", manager);
         }
@@ -2181,44 +2155,13 @@ public class ActionsHelper {
      * @param request an <code>HttpServletRequest</code> object, where created
      *                <code>UserRetrieval</code> object can be stored to let reusing
      *                it later for the same request.
-     * @throws com.topcoder.servlet.request.ConfigurationException if any error
-     *                                                             occurs while
-     *                                                             reading
-     *                                                             parameters from
-     *                                                             the configuration
-     *                                                             file.
-     * @throws DisallowedDirectoryException                        if the directory
-     *                                                             is not one of the
-     *                                                             allowed
-     *                                                             directories.
      */
-    public static FileUpload createFileUploadManager(HttpServletRequest request)
-            throws DisallowedDirectoryException, com.topcoder.servlet.request.ConfigurationException {
+    public static FileUpload createFileUploadManager(HttpServletRequest request) {
         return createFileUploadManager(request, LOCAL_STORAGE_NAMESPACE);
     }
 
-    /**
-     * This static method helps to create an object of the <code>FileUpload</code>
-     * class.
-     *
-     * @return a newly created instance of the class.
-     * @param request   an <code>HttpServletRequest</code> object, where created
-     *                  <code>UserRetrieval</code> object can be stored to let
-     *                  reusing it later for the same request.
-     * @param namespace namespace
-     * @throws com.topcoder.servlet.request.ConfigurationException if any error
-     *                                                             occurs while
-     *                                                             reading
-     *                                                             parameters from
-     *                                                             the configuration
-     *                                                             file.
-     * @throws DisallowedDirectoryException                        if the directory
-     *                                                             is not one of the
-     *                                                             allowed
-     *                                                             directories.
-     */
-    public static FileUpload createFileUploadManager(HttpServletRequest request, String namespace)
-            throws DisallowedDirectoryException, com.topcoder.servlet.request.ConfigurationException {
+    
+    public static FileUpload createFileUploadManager(HttpServletRequest request, String namespace) {
         // Validate parameter
         validateParameterNotNull(request, "request");
 
@@ -2227,7 +2170,7 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (fileUpload == null) {
-            fileUpload = new LocalFileUpload(namespace);
+            fileUpload = getBean(LocalFileUpload.class);
             // Place newly-created object into the request as attribute
             request.setAttribute(namespace, fileUpload);
         }
@@ -2256,9 +2199,9 @@ public class ActionsHelper {
         cockpitProjects.add(project);
 
         if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
-            cockpitProjects.addAll(new ProjectDataAccess().getAllCockpitProjects());
+            cockpitProjects.addAll(getBean(ProjectDataAccess.class).getAllCockpitProjects());
         } else {
-            cockpitProjects.addAll(new ProjectDataAccess().getCockpitProjectsForUser(userId));
+            cockpitProjects.addAll(getBean(ProjectDataAccess.class).getCockpitProjectsForUser(userId));
         }
         return cockpitProjects;
     }
@@ -2287,9 +2230,9 @@ public class ActionsHelper {
         clientProjects.add(project);
 
         if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
-            clientProjects.addAll(new ProjectDataAccess().getAllClientProjects());
+            clientProjects.addAll(getBean(ProjectDataAccess.class).getAllClientProjects());
         } else {
-            clientProjects.addAll(new ProjectDataAccess().getClientProjectsForUser(userId));
+            clientProjects.addAll(getBean(ProjectDataAccess.class).getClientProjectsForUser(userId));
         }
         return clientProjects;
     }
@@ -2303,19 +2246,7 @@ public class ActionsHelper {
      * @throws BaseException if any error happens during object creation.
      */
     public static PhaseTemplate createPhaseTemplate() throws BaseException {
-        // Create phase template persistence
-        PhaseTemplatePersistence persistence = new XmlPhaseTemplatePersistence(PHASES_TEMPLATE_PERSISTENCE_NAMESPACE);
-        // Create start date generator
-        StartDateGenerator generator = new StartDateGenerator() {
-            public Date generateStartDate() {
-                return new Date();
-            }
-        };
-
-        // Create workdays instance
-        Workdays workdays = (new DefaultWorkdaysFactory()).createWorkdaysInstance();
-
-        return new DefaultPhaseTemplate(persistence, generator, workdays);
+        return getBean(PhaseTemplate.class);
     }
 
     /**
@@ -2509,138 +2440,91 @@ public class ActionsHelper {
      * @throws BaseException if error occurs
      */
     public static void populateProjectResult(Project project, Collection<Long> newSubmitters) throws BaseException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        PreparedStatement existStmt = null;
-        PreparedStatement existCIStmt = null;
-        PreparedStatement ratingStmt = null;
-        PreparedStatement componentInquiryStmt = null;
         long categoryId = project.getProjectCategory().getId();
 
         if (!isProjectResultCategory(categoryId)) {
             return;
         }
+        JdbcTemplate jdbcTemplate = getTcsJdbcTemplate();
+        long projectId = project.getId();
+        // retrieve and update component_inquiry_id
+        long componentInquiryId = getNextComponentInquiryId(jdbcTemplate, newSubmitters.size());
+        long componentId = getProjectLongValue(project, "Component ID");
+        long phaseId = 111 + project.getProjectCategory().getId();
+        log.debug("calculated phaseId for Project: " + projectId + " phaseId: " + phaseId);
+        long version = getProjectLongValue(project, "Version ID");
+        List<List<Object>> psParams = new ArrayList<>();
+        List<List<Object>> comParams = new ArrayList<>();
+        for (Long userId : newSubmitters) {
+            // Check if projectResult exist
+            boolean existPR = !executeSqlWithParam(jdbcTemplate, "SELECT 1 FROM PROJECT_RESULT WHERE user_id = ? and project_id = ?", newArrayList(userId, projectId)).isEmpty();
 
-        try {
-            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-            conn = dbconn.createConnection();
-            log.log(Level.DEBUG,
-                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-                            + DB_CONNECTION_NAMESPACE);
-            long projectId = project.getId();
-            // retrieve and update component_inquiry_id
-            long componentInquiryId = getNextComponentInquiryId(conn, newSubmitters.size());
-            long componentId = getProjectLongValue(project, "Component ID");
-            long phaseId = 111 + project.getProjectCategory().getId();
-            log.log(Level.DEBUG, "calculated phaseId for Project: " + projectId + " phaseId: " + phaseId);
-            long version = getProjectLongValue(project, "Version ID");
+            // Check if component_inquiry exist
+            boolean existCI = !executeSqlWithParam(jdbcTemplate, "SELECT 1 FROM component_inquiry WHERE user_id = ? and project_id = ?", newArrayList(userId, projectId)).isEmpty();
 
-            // old_reliability has been removed, because introduction of new reliability
-            // calculator
-            ps = conn.prepareStatement("INSERT INTO project_result "
-                    + "(project_id, user_id, rating_ind, valid_submission_ind, old_rating) "
-                    + "values (?, ?, ?, ?, ?)");
-
-            componentInquiryStmt = conn.prepareStatement("INSERT INTO component_inquiry "
-                    + "(component_inquiry_id, component_id, user_id, project_id, phase, tc_user_id, agreed_to_terms, rating, version, create_time) "
-                    + "values (?, ?, ?, ?, ?, ?, 1, ?, ?, current)");
-
-            existStmt = conn.prepareStatement("SELECT 1 FROM PROJECT_RESULT WHERE user_id = ? and project_id = ?");
-
-            existCIStmt = conn.prepareStatement("SELECT 1 FROM component_inquiry WHERE user_id = ? and project_id = ?");
-
-            ratingStmt = conn.prepareStatement(
-                    "SELECT rating, phase_id, (select project_category_id from project where project_id = ?) as project_category_id from user_rating where user_id = ? ");
-
-            for (Long userId : newSubmitters) {
-                // Check if projectResult exist
-                existStmt.clearParameters();
-                existStmt.setLong(1, userId);
-                existStmt.setLong(2, projectId);
-                boolean existPR = existStmt.executeQuery().next();
-
-                // Check if component_inquiry exist
-                existCIStmt.clearParameters();
-                existCIStmt.setLong(1, userId);
-                existCIStmt.setLong(2, projectId);
-                boolean existCI = existCIStmt.executeQuery().next();
-
-                // Retrieve oldRating
-                double oldRating = 0;
-                ResultSet rs;
-                if (!existPR || !existCI) {
-                    ratingStmt.clearParameters();
-                    ratingStmt.setLong(1, projectId);
-                    ratingStmt.setLong(2, userId);
-                    rs = ratingStmt.executeQuery();
-
-                    // If the project belongs to a rated category, the user gets the rating that
-                    // belongs to the
-                    // category. Otherwise, the highest available rating is used.
-                    while (rs.next()) {
-                        if (!isRatedCategory(rs.getLong(3))) {
-                            if (oldRating < rs.getLong(1)) {
-                                oldRating = rs.getLong(1);
-                            }
-                        } else if (rs.getLong(3) + 111 == rs.getLong(2)) {
-                            oldRating = rs.getLong(1);
+            // Retrieve oldRating
+            double oldRating = 0;
+            if (!existPR || !existCI) {
+                List<Map<String, Object>> rs = executeSqlWithParam(jdbcTemplate, "SELECT rating, phase_id, (select project_category_id from project where project_id = ?) as project_category_id from user_rating where user_id = ? ", newArrayList(projectId, userId));
+                // If the project belongs to a rated category, the user gets the rating that
+                // belongs to the
+                // category. Otherwise, the highest available rating is used.
+                for (Map<String, Object> row: rs) {
+                    if (!isRatedCategory(getLong(row, "project_category_id"))) {
+                        if (oldRating < getLong(row, "rating")) {
+                            oldRating = getLong(row, "rating");
                         }
+                    } else if (getLong(row, "project_category_id") + 111 == getLong(row, "phase_id")) {
+                        oldRating = getLong(row, "rating");
                     }
-                    close(rs);
-                }
-
-                if (!existPR) {
-                    // add project_result
-                    ps.setLong(1, projectId);
-                    ps.setLong(2, userId);
-                    ps.setLong(3, 0);
-                    ps.setLong(4, 0);
-
-                    if (oldRating == 0) {
-                        ps.setNull(5, Types.DOUBLE);
-                    } else {
-                        ps.setDouble(5, oldRating);
-                    }
-                    ps.addBatch();
-                }
-
-                // add component_inquiry
-                if (!existCI && componentId > 0) {
-                    log.log(Level.DEBUG, "adding component_inquiry for projectId: " + projectId + " userId: " + userId);
-                    componentInquiryStmt.setLong(1, componentInquiryId++);
-                    componentInquiryStmt.setLong(2, componentId);
-                    componentInquiryStmt.setLong(3, userId);
-                    componentInquiryStmt.setLong(4, projectId);
-                    // All competition types except for design and development should have null
-                    // phase id.
-                    if (categoryId == 1 || categoryId == 2) {
-                        componentInquiryStmt.setLong(5, phaseId);
-                    } else {
-                        componentInquiryStmt.setNull(5, Types.INTEGER);
-                    }
-                    componentInquiryStmt.setLong(6, userId);
-                    componentInquiryStmt.setDouble(7, oldRating);
-                    componentInquiryStmt.setLong(8, version);
-                    componentInquiryStmt.addBatch();
                 }
             }
-            ps.executeBatch();
-            componentInquiryStmt.executeBatch();
-        } catch (UnknownConnectionException e) {
-            throw new BaseException("Failed to create connection", e);
-        } catch (ConfigurationException e) {
-            throw new BaseException("Failed to config for DBNamespace", e);
-        } catch (SQLException e) {
-            throw new BaseException("Failed to populate project_result", e);
-        } catch (DBConnectionException e) {
-            throw new BaseException("Failed to return DBConnection", e);
-        } finally {
-            close(componentInquiryStmt);
-            close(ps);
-            close(existStmt);
-            close(existCIStmt);
-            close(ratingStmt);
-            close(conn);
+
+            if (!existPR) {
+                // add project_result
+                List<Object> param = new ArrayList<>();
+                param.add(projectId);
+                param.add(userId);
+                param.add(0L);
+                param.add(0L);
+                if (oldRating == 0) {
+                    param.add(null);
+                } else {
+                    param.add(oldRating);
+                }
+                psParams.add(param);
+            }
+
+            // add component_inquiry
+            if (!existCI && componentId > 0) {
+                log.debug("adding component_inquiry for projectId: " + projectId + " userId: " + userId);
+                List<Object> comParam = new ArrayList<>();
+                comParam.add(componentInquiryId++);
+                comParam.add(componentId);
+                comParam.add(userId);
+                comParam.add(projectId);
+                // All competition types except for design and development should have null
+                // phase id.
+                if (categoryId == 1 || categoryId == 2) {
+                    comParam.add(phaseId);
+                } else {
+                    comParam.add(null);
+                }
+                comParam.add(userId);
+                comParam.add(oldRating);
+                comParam.add(version);
+                comParams.add(comParam);
+            }
+        }
+        for (List<Object> param: psParams) {
+            executeUpdateSql(jdbcTemplate, "INSERT INTO project_result "
+                    + "(project_id, user_id, rating_ind, valid_submission_ind, old_rating) "
+                    + "values (?, ?, ?, ?, ?)", param);
+        }
+        for (List<Object> param: comParams) {
+            executeUpdateSql(jdbcTemplate, "INSERT INTO component_inquiry "
+                    + "(component_inquiry_id, component_id, user_id, project_id, phase, tc_user_id, agreed_to_terms, rating, version, create_time) "
+                    + "values (?, ?, ?, ?, ?, ?, 1, ?, ?, current)", param);
         }
     }
 
@@ -2651,30 +2535,18 @@ public class ActionsHelper {
      * @return the root category id
      */
     public static String getRootCategoryIdByComponentId(Object componentId) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+
         try {
-            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-            conn = dbconn.createConnection();
-            log.log(Level.DEBUG,
-                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-                            + DB_CONNECTION_NAMESPACE);
             String sqlStr = "select root_category_id " + "    from comp_catalog cc," + "         categories pcat "
                     + "    where cc.component_id = ? " + "    and cc.status_id = 102 "
                     + "    and pcat.category_id = cc.root_category_id";
-            ps = conn.prepareStatement(sqlStr);
-            ps.setString(1, componentId.toString());
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getString("root_category_id");
+
+            List<Map<String, Object>> rs = executeSqlWithParam(getTcsJdbcTemplate(), sqlStr, newArrayList(componentId.toString()));
+            if (!rs.isEmpty()) {
+                return getString(rs.get(0), "root_category_id");
             }
         } catch (Exception e) {
             // Ignore if no corresponding root_category_id exist
-        } finally {
-            close(rs);
-            close(ps);
-            close(conn);
         }
 
         return "9926572"; // If we can't find a catalog, assume it's an Application
@@ -2687,39 +2559,19 @@ public class ActionsHelper {
      * @throws BaseException if error occurs
      */
     public static List<DefaultScorecard> getDefaultScorecards() throws BaseException {
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-        try {
-            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-            conn = dbconn.createConnection();
-            log.log(Level.DEBUG,
-                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-                            + DB_CONNECTION_NAMESPACE);
-            String sqlString = "select ds.*, st.name from default_scorecard ds, scorecard_type_lu st "
-                    + "where ds.scorecard_type_id = st.scorecard_type_id";
-
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(sqlString);
-            List<DefaultScorecard> list = new ArrayList<DefaultScorecard>();
-            while (rs.next()) {
-                DefaultScorecard scorecard = new DefaultScorecard();
-                scorecard.setCategory(rs.getInt("project_category_id"));
-                scorecard.setScorecardType(rs.getInt("scorecard_type_id"));
-                scorecard.setScorecardId(rs.getLong("scorecard_id"));
-                scorecard.setName(rs.getString("name"));
-                list.add(scorecard);
-            }
-            return list;
-        } catch (DBConnectionException e) {
-            throw new BaseException("Failed to return DBConnection", e);
-        } catch (SQLException e) {
-            throw new BaseException("Failed to retrieve default scorecard", e);
-        } finally {
-            close(rs);
-            close(stmt);
-            close(conn);
+        String sqlString = "select ds.*, st.name from default_scorecard ds, scorecard_type_lu st "
+                + "where ds.scorecard_type_id = st.scorecard_type_id";
+        List<Map<String, Object>> rs = executeSql(getTcsJdbcTemplate(), sqlString);
+        List<DefaultScorecard> list = new ArrayList<DefaultScorecard>();
+        for (Map<String, Object> row: rs) {
+            DefaultScorecard scorecard = new DefaultScorecard();
+            scorecard.setCategory(getInt(row, "project_category_id"));
+            scorecard.setScorecardType(getInt(row,"scorecard_type_id"));
+            scorecard.setScorecardId(getLong(row,"scorecard_id"));
+            scorecard.setName(getString(row,"name"));
+            list.add(scorecard);
         }
+        return list;
     }
 
     /**
@@ -2758,8 +2610,6 @@ public class ActionsHelper {
      * @throws BaseException if error occurs
      */
     public static void deleteProjectResult(Project project, long userId, long roleId) throws BaseException {
-        Connection conn = null;
-        PreparedStatement ps = null;
         long categoryId = project.getProjectCategory().getId();
 
         if (!isProjectResultCategory(categoryId)) {
@@ -2771,38 +2621,11 @@ public class ActionsHelper {
             return;
         }
 
-        try {
-            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-            conn = dbconn.createConnection();
-
-            log.log(Level.DEBUG,
-                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-                            + DB_CONNECTION_NAMESPACE);
-
-            // delete from project_result
-            ps = conn.prepareStatement("delete from project_result where project_id = ? and user_id = ?");
-            ps.setLong(1, project.getId());
-            ps.setLong(2, userId);
-            ps.executeUpdate();
-            close(ps);
-
-            // delete from component_inquiry
-            ps = conn.prepareStatement("delete from component_inquiry where project_id = ? and user_id = ?");
-            ps.setLong(1, project.getId());
-            ps.setLong(2, userId);
-            ps.executeUpdate();
-        } catch (UnknownConnectionException e) {
-            throw new BaseException("Failed to create connection", e);
-        } catch (ConfigurationException e) {
-            throw new BaseException("Failed to config for DBNamespace", e);
-        } catch (SQLException e) {
-            throw new BaseException("Failed to delete from project_result or component_inquiry", e);
-        } catch (DBConnectionException e) {
-            throw new BaseException("Failed to return DBConnection", e);
-        } finally {
-            close(ps);
-            close(conn);
-        }
+        JdbcTemplate jdbcTemplate = getTcsJdbcTemplate();
+        // delete from project_result
+        executeUpdateSql(jdbcTemplate, "delete from project_result where project_id = ? and user_id = ?", newArrayList(project.getId(), userId));
+        // delete from component_inquiry
+        executeUpdateSql(jdbcTemplate, "delete from component_inquiry where project_id = ? and user_id = ?", newArrayList(project.getId(), userId));
     }
 
     /**
@@ -2814,25 +2637,14 @@ public class ActionsHelper {
      * @throws BaseException if any error occurs
      */
     public static void resetProjectResultWithChangedScores(Project project, String operator) throws BaseException {
-        Connection conn = null;
         try {
-            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-            conn = dbconn.createConnection();
-            log.log(Level.DEBUG,
-                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-                            + DB_CONNECTION_NAMESPACE);
-
             if (isStudioProject(project)) {
                 PaymentsHelper.processAutomaticPayments(project.getId(), operator);
             } else {
-                PRHelper.populateProjectResult(project.getId(), conn, operator);
+                PRHelper.populateProjectResult(project.getId(), operator);
             }
-        } catch (DBConnectionException e) {
-            throw new BaseException("Failed to return DBConnection", e);
         } catch (SQLException e) {
             throw new BaseException("Failed to resetProjectResultWithChangedScores for project " + project.getId(), e);
-        } finally {
-            close(conn);
         }
     }
 
@@ -2845,28 +2657,7 @@ public class ActionsHelper {
      * @throws BaseException if any error occurs
      */
     public static void updateProjectResultForAdvanceScreening(long projectId, long userId) throws BaseException {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        try {
-            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-            conn = dbconn.createConnection();
-            log.log(Level.DEBUG,
-                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-                            + DB_CONNECTION_NAMESPACE);
-
-            pstmt = conn.prepareStatement(
-                    "update project_result set rating_ind=1, valid_submission_ind=1 where project_id=? and user_id=?");
-            pstmt.setLong(1, projectId);
-            pstmt.setLong(2, userId);
-            pstmt.execute();
-        } catch (DBConnectionException e) {
-            throw new BaseException("Failed to return DBConnection", e);
-        } catch (SQLException e) {
-            throw new BaseException("Failed to updateProjectResultForScreening for project " + projectId, e);
-        } finally {
-            close(pstmt);
-            close(conn);
-        }
+        executeUpdateSql(getTcsJdbcTemplate(), "update project_result set rating_ind=1, valid_submission_ind=1 where project_id=? and user_id=?", newArrayList(projectId, userId));
     }
 
     /**
@@ -2878,79 +2669,38 @@ public class ActionsHelper {
      * @throws BaseException if error occurs
      */
     public static int getVersionUsingComponentVersionId(long componentVersionId) throws BaseException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-            conn = dbconn.createConnection();
-            log.log(Level.DEBUG,
-                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-                            + DB_CONNECTION_NAMESPACE);
-
-            ps = conn.prepareStatement("select version from comp_versions where comp_vers_id = ?");
-            ps.setLong(1, componentVersionId);
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt("version");
-            }
-
-            return 0;
-        } catch (DBConnectionException e) {
-            throw new BaseException("Failed to return DBConnection", e);
-        } catch (SQLException e) {
-            throw new BaseException("Failed to retrieve version for " + componentVersionId, e);
-        } finally {
-            close(rs);
-            close(ps);
-            close(conn);
+        List<Map<String, Object>> rs = executeSqlWithParam(getTcsJdbcTemplate(), "select version from comp_versions where comp_vers_id = ?", newArrayList(componentVersionId));
+        if (!rs.isEmpty()) {
+            return getInt(rs.get(0), "version");
         }
+        return 0;
     }
 
     /**
      * Retrieve and update next ComponentInquiryId.
      *
-     * @param conn  the connection
+     * @param jdbcTemplate  the jdbcTemplate
      * @param count the count of new submitters
      * @return next component_inquiry_id
      * @throws BaseException if any error
      */
-    private static long getNextComponentInquiryId(Connection conn, int count) throws BaseException {
-        String tableName = ConfigHelper.getPropertyValue("component_inquiry.tablename", "sequence_object");
-        String nameField = ConfigHelper.getPropertyValue("component_inquiry.name", "name");
-        String currentValueField = ConfigHelper.getPropertyValue("component_inquiry.current_value", "current_value");
-        String getNextID = "SELECT max(" + currentValueField + ") FROM " + tableName + " WHERE " + nameField
+    private static long getNextComponentInquiryId(JdbcTemplate jdbcTemplate, int count) throws BaseException {
+        String tableName = getPropertyValue("component_inquiry.tablename");
+        String nameField = getPropertyValue("component_inquiry.name");
+        String currentValueField = getPropertyValue("component_inquiry.current_value");
+        String getNextID = "SELECT max(" + currentValueField + ") as seq_id FROM " + tableName + " WHERE " + nameField
                 + " = 'main_sequence'";
         String updateNextID = "UPDATE " + tableName + " SET " + currentValueField + " = ? " + " WHERE " + nameField
                 + " = 'main_sequence'" + " AND " + currentValueField + " = ? ";
-        PreparedStatement getNextIDStmt = null;
-        PreparedStatement updateNextIDStmt = null;
-        ResultSet rs = null;
+        while (true) {
+            List<Map<String, Object>> rs = executeSql(jdbcTemplate, getNextID);
+            long currentValue = getLong(rs.get(0), "seq_id");
 
-        try {
-            getNextIDStmt = conn.prepareStatement(getNextID);
-            updateNextIDStmt = conn.prepareStatement(updateNextID);
-            while (true) {
-                rs = getNextIDStmt.executeQuery();
-                rs.next();
-                long currentValue = rs.getLong(1);
-
-                // Update the next value
-                updateNextIDStmt.clearParameters();
-                updateNextIDStmt.setLong(1, currentValue + count);
-                updateNextIDStmt.setLong(2, currentValue);
-                int ret = updateNextIDStmt.executeUpdate();
-                if (ret > 0) {
-                    return currentValue;
-                }
+            // Update the next value
+            int ret = executeUpdateSql(jdbcTemplate, updateNextID, newArrayList(currentValue + count, currentValue));
+            if (ret > 0) {
+                return currentValue;
             }
-        } catch (SQLException e) {
-            throw new BaseException("Failed to retrieve next component_inquiry_id", e);
-        } finally {
-            close(rs);
-            close(getNextIDStmt);
-            close(updateNextIDStmt);
         }
     }
 
@@ -2980,7 +2730,7 @@ public class ActionsHelper {
             try {
                 connection.close();
             } catch (SQLException e) {
-                log.log(Level.ERROR, "Error closing JDBC Connection: " + e.getMessage());
+                log.debug("Error closing JDBC Connection: " + e.getMessage());
             }
         }
     }
@@ -2995,7 +2745,7 @@ public class ActionsHelper {
             try {
                 statement.close();
             } catch (SQLException e) {
-                log.log(Level.ERROR, "Error closing JDBC Statement: " + e.getMessage());
+                log.error("Error closing JDBC Statement: " + e.getMessage());
             }
         }
     }
@@ -3010,7 +2760,7 @@ public class ActionsHelper {
             try {
                 resultSet.close();
             } catch (SQLException e) {
-                log.log(Level.ERROR, "Error closing JDBC ResultSet: " + e.getMessage());
+                log.debug("Error closing JDBC ResultSet: " + e.getMessage());
             }
         }
     }
@@ -3352,8 +3102,7 @@ public class ActionsHelper {
      */
     public static Resource[] searchUserResources(long userId, ProjectStatus status)
             throws ResourcePersistenceException {
-        ResourceDataAccess resourceDataAccess = new ResourceDataAccess();
-        return resourceDataAccess.searchUserResources(userId, status, createResourceManager());
+        return getBean(ResourceDataAccess.class).searchUserResources(userId, status, createResourceManager());
     }
 
     /**
@@ -3492,30 +3241,14 @@ public class ActionsHelper {
         Map<Long, String> idToNameMap = (Map<Long, String>) request.getAttribute("deliverableIdToNameMap");
 
         if (idToNameMap == null) {
-            Connection conn = null;
-            Statement stmt = null;
-            ResultSet rs = null;
-            try {
-                idToNameMap = new HashMap<Long, String>();
+            idToNameMap = new HashMap<>();
+            List<Map<String, Object>> rs = executeSql(getTcsJdbcTemplate(), "SELECT deliverable_id, name FROM deliverable_lu");
 
-                DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-                conn = dbconn.createConnection();
-
-                stmt = conn.createStatement();
-                rs = stmt.executeQuery("SELECT deliverable_id, name FROM deliverable_lu");
-
-                while (rs.next()) {
-                    idToNameMap.put(rs.getLong("deliverable_id"), rs.getString("name"));
-                }
-
-                request.setAttribute("deliverableIdToNameMap", idToNameMap);
-            } catch (SQLException e) {
-                throw new BaseException("Failed to retrieve map for deliverable id to deliverable name", e);
-            } finally {
-                close(rs);
-                close(stmt);
-                close(conn);
+            for (Map<String, Object> row: rs) {
+                idToNameMap.put(getLong(row, "deliverable_id"), getString(row, "name"));
             }
+
+            request.setAttribute("deliverableIdToNameMap", idToNameMap);
 
         }
 
@@ -3613,33 +3346,16 @@ public class ActionsHelper {
             throws BaseException {
         Connection conn = null;
         PreparedStatement insertStmt = null;
-        try {
-            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-            conn = dbconn.createConnection();
-
-            insertStmt = conn.prepareStatement("INSERT INTO project_download_audit VALUES (?,?,?,?,current)");
-            insertStmt.setLong(1, upload.getId());
-            if (AuthorizationHelper.isUserLoggedIn(request)) {
-                insertStmt.setLong(2, AuthorizationHelper.getLoggedInUserId(request));
-            } else {
-                insertStmt.setNull(2, Types.INTEGER);
-            }
-            insertStmt.setString(3, request.getRemoteAddr());
-            insertStmt.setBoolean(4, successful);
-            insertStmt.executeUpdate();
-
-        } catch (UnknownConnectionException e) {
-            throw new BaseException("Failed to create connection", e);
-        } catch (ConfigurationException e) {
-            throw new BaseException("Failed to config for DBNamespace", e);
-        } catch (DBConnectionException e) {
-            throw new BaseException("Failed to return DBConnection", e);
-        } catch (SQLException e) {
-            log.log(Level.ERROR, "Failed to save download attempt to project_download_audit table." + e);
-        } finally {
-            close(insertStmt);
-            close(conn);
+        List<Object> params = new ArrayList<>();
+        params.add(upload.getId());
+        if (AuthorizationHelper.isUserLoggedIn(request)) {
+            params.add(AuthorizationHelper.getLoggedInUserId(request));
+        } else {
+            params.add(null);
         }
+        params.add(request.getRemoteAddr());
+        params.add(successful);
+        executeUpdateSql(getTcsJdbcTemplate(), "INSERT INTO project_download_audit VALUES (?,?,?,?,current)", params);
     }
 
     /**
@@ -3677,7 +3393,7 @@ public class ActionsHelper {
         }
 
         // Delete the Post Mortem Phase
-        com.topcoder.project.phases.Project phProject = postMortemPhase.getProject();
+        com.topcoder.onlinereview.component.project.phase.Project phProject = postMortemPhase.getProject();
         phProject.removePhase(postMortemPhase);
         phaseManager.updatePhases(phProject, operator);
     }
@@ -3743,7 +3459,7 @@ public class ActionsHelper {
     public static void outputDownloadS3File(String url, String key, String contentDisposition,
             HttpServletResponse response) throws IOException {
         try {
-            log.log(Level.INFO, "Will download from S3 with key " + key + " for url " + url);
+            log.info("Will download from S3 with key " + key + " for url " + url);
 
             S3Object s3Object = s3Client.getObject(new GetObjectRequest(s3Bucket, key));
             InputStream in = (InputStream) s3Object.getObjectContent();
@@ -3775,7 +3491,7 @@ public class ActionsHelper {
                 }
             }
         } catch (Exception e) {
-            log.log(Level.ERROR, "ex: " + e.getMessage());
+            log.error("ex: " + e.getMessage());
             throw new IOException("Error S3 download", e);
         }
     }
@@ -3791,7 +3507,7 @@ public class ActionsHelper {
         if (s3Uri == null) {
             return false;
         }
-        log.log(Level.INFO, "S3 Bucket from url: " + s3Uri.getBucket());
+        log.info("S3 Bucket from url: " + s3Uri.getBucket());
         return s3BucketDmz.equals(s3Uri.getBucket());
     }
 
@@ -3829,5 +3545,9 @@ public class ActionsHelper {
         buf.append(System.getProperty("file.separator"));
         buf.append(parameter);
         return buf.toString();
+    }
+
+    public void setManagerCreationHelper(ManagerCreationHelper managerCreationHelper) {
+        ActionsHelper.managerCreationHelper = managerCreationHelper;
     }
 }

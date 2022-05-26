@@ -10,9 +10,9 @@ import java.util.Map;
 
 import javax.servlet.ServletRequest;
 
-import com.topcoder.servlet.request.FileSizeLimitExceededException;
-import com.topcoder.servlet.request.RequestParser;
-import com.topcoder.servlet.request.RequestParsingException;
+import com.topcoder.onlinereview.component.fileupload.FileSizeLimitExceededException;
+import com.topcoder.onlinereview.component.fileupload.RequestParser;
+import com.topcoder.onlinereview.component.fileupload.RequestParsingException;
 
 /**
  * <p>A {@link RequestParser} to be passed to <code>File Upload</code> for uploading the files represented by simple

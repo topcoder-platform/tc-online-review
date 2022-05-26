@@ -3,6 +3,59 @@
  */
 package com.cronos.onlinereview.actions.projectdetails;
 
+import com.amazonaws.services.s3.AmazonS3URI;
+import com.cronos.onlinereview.Constants;
+import com.cronos.onlinereview.actions.DynamicModelDrivenAction;
+import com.cronos.onlinereview.actions.event.EventBusServiceClient;
+import com.cronos.onlinereview.model.DynamicModel;
+import com.cronos.onlinereview.model.FormFile;
+import com.cronos.onlinereview.util.ActionsHelper;
+import com.cronos.onlinereview.util.AuthorizationHelper;
+import com.cronos.onlinereview.util.ConfigHelper;
+import com.cronos.onlinereview.util.CorrectnessCheckResult;
+import com.cronos.onlinereview.util.LoggingHelper;
+import com.cronos.onlinereview.util.LookupHelper;
+import com.cronos.onlinereview.util.StrutsRequestParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.topcoder.onlinereview.component.deliverable.Submission;
+import com.topcoder.onlinereview.component.deliverable.SubmissionFilterBuilder;
+import com.topcoder.onlinereview.component.deliverable.SubmissionStatus;
+import com.topcoder.onlinereview.component.deliverable.Upload;
+import com.topcoder.onlinereview.component.deliverable.UploadManager;
+import com.topcoder.onlinereview.component.deliverable.UploadPersistenceException;
+import com.topcoder.onlinereview.component.deliverable.UploadStatus;
+import com.topcoder.onlinereview.component.document.DocumentGenerator;
+import com.topcoder.onlinereview.component.document.Template;
+import com.topcoder.onlinereview.component.document.fieldconfig.Field;
+import com.topcoder.onlinereview.component.document.fieldconfig.Node;
+import com.topcoder.onlinereview.component.document.fieldconfig.TemplateFields;
+import com.topcoder.onlinereview.component.document.templatesource.FileTemplateSource;
+import com.topcoder.onlinereview.component.email.EmailEngine;
+import com.topcoder.onlinereview.component.email.TCSEmailMessage;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.external.ExternalUser;
+import com.topcoder.onlinereview.component.external.UserRetrieval;
+import com.topcoder.onlinereview.component.fileupload.FileUpload;
+import com.topcoder.onlinereview.component.fileupload.FileUploadResult;
+import com.topcoder.onlinereview.component.fileupload.UploadedFile;
+import com.topcoder.onlinereview.component.project.management.PersistenceException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.management.ProjectManager;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.handler.or.AmazonSNSHelper;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+import com.topcoder.onlinereview.component.review.Review;
+import com.topcoder.onlinereview.component.review.ReviewManager;
+import com.topcoder.onlinereview.component.search.SearchBuilderException;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.DataOutputStream;
@@ -18,61 +71,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.amazonaws.services.s3.AmazonS3URI;
-
-import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.actions.DynamicModelDrivenAction;
-import com.cronos.onlinereview.actions.event.EventBusServiceClient;
-import com.cronos.onlinereview.external.ExternalUser;
-import com.cronos.onlinereview.external.UserRetrieval;
-import com.cronos.onlinereview.model.DynamicModel;
-import com.cronos.onlinereview.model.FormFile;
-import com.cronos.onlinereview.phases.AmazonSNSHelper;
-import com.cronos.onlinereview.util.*;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.SubmissionStatus;
-import com.topcoder.management.deliverable.Upload;
-import com.topcoder.management.deliverable.UploadManager;
-import com.topcoder.management.deliverable.UploadStatus;
-import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
-import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.resource.persistence.ResourcePersistenceException;
-import com.topcoder.management.review.ReviewManager;
-import com.topcoder.management.review.data.Review;
-import com.topcoder.message.email.EmailEngine;
-import com.topcoder.message.email.TCSEmailMessage;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.search.builder.SearchBuilderException;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.EqualToFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.servlet.request.ConfigurationException;
-import com.topcoder.servlet.request.DisallowedDirectoryException;
-import com.topcoder.servlet.request.FileDoesNotExistException;
-import com.topcoder.servlet.request.FileUpload;
-import com.topcoder.servlet.request.FileUploadResult;
-import com.topcoder.servlet.request.PersistenceException;
-import com.topcoder.servlet.request.UploadedFile;
-import com.topcoder.util.config.ConfigManagerException;
-import com.topcoder.util.errorhandling.BaseException;
-import com.topcoder.util.file.DocumentGenerator;
-import com.topcoder.util.file.Template;
-import com.topcoder.util.file.fieldconfig.Condition;
-import com.topcoder.util.file.fieldconfig.Field;
-import com.topcoder.util.file.fieldconfig.Node;
-import com.topcoder.util.file.fieldconfig.TemplateFields;
-import com.topcoder.util.file.templatesource.FileTemplateSource;
 
 /**
  * This is the base class for project details actions classes. It provides the
@@ -197,17 +195,12 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
      *                 response.
      * @throws UploadPersistenceException   if an unexpected error occurs.
      * @throws SearchBuilderException       if an unexpected error occurs.
-     * @throws DisallowedDirectoryException if an unexpected error occurs.
-     * @throws ConfigurationException       if an unexpected error occurs.
      * @throws PersistenceException         if an unexpected error occurs.
-     * @throws FileDoesNotExistException    if an unexpected error occurs.
      * @throws IOException                  if an unexpected error occurs.
-     * @throws ResourcePersistenceException if an unexpected error occurs.
      */
     protected void processSubmissionDownload(Upload upload, HttpServletRequest request, HttpServletResponse response)
-            throws UploadPersistenceException, SearchBuilderException, DisallowedDirectoryException,
-            ConfigurationException, PersistenceException, FileDoesNotExistException, IOException,
-            ResourcePersistenceException {
+            throws UploadPersistenceException, SearchBuilderException,
+            PersistenceException,  IOException {
 
         // At this point, redirect-after-login attribute should be removed (if it
         // exists)
@@ -278,11 +271,10 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
      * @param response           an <code>HttpServletResponse</code> representing
      *                           the outgoing response.
      * @throws PersistenceException      if an unexpected error occurs.
-     * @throws FileDoesNotExistException if an unexpected error occurs.
      * @throws IOException               if an unexpected error occurs.
      */
     protected void outputDownloadedFile(UploadedFile uploadedFile, String contentDisposition,
-            HttpServletResponse response) throws PersistenceException, FileDoesNotExistException, IOException {
+            HttpServletResponse response) throws IOException {
 
         InputStream in = uploadedFile.getInputStream();
 
@@ -790,10 +782,9 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
      *                               the member who re-uploaded his submission.
      * @param nextEarliestSubmission next active earliest submission in the queue.
      * @throws BaseException          if an unexpected error occurs.
-     * @throws ConfigManagerException if there is a problem with configuration.
      */
     private void notifyIterativeReviewers(Project project, long submissionId, String handle,
-            Submission nextEarliestSubmission) throws BaseException, ConfigManagerException {
+            Submission nextEarliestSubmission) throws BaseException {
         List<Long> reviewerUserIds = ActionsHelper
                 .getUserIDsByRoleNames(new String[] { Constants.ITERATIVE_REVIEWER_ROLE_NAME }, project.getId());
 

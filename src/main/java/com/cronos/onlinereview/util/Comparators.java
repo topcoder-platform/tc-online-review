@@ -5,18 +5,18 @@ package com.cronos.onlinereview.util;
 
 import com.cronos.onlinereview.Constants;
 
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.late.LateDeliverable;
-import com.topcoder.management.payment.ProjectPayment;
-import com.topcoder.management.project.Prize;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectType;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.review.data.Review;
+import com.topcoder.onlinereview.component.deliverable.Submission;
+import com.topcoder.onlinereview.component.deliverable.late.LateDeliverable;
+import com.topcoder.onlinereview.component.project.payment.ProjectPayment;
+import com.topcoder.onlinereview.component.project.management.Prize;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.management.ProjectType;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.review.Review;
 
-import com.topcoder.project.phases.Phase;
-import com.topcoder.project.phases.PhaseDateComparator;
-import com.topcoder.project.phases.PhaseStatus;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseDateComparator;
+import com.topcoder.onlinereview.component.project.phase.PhaseStatus;
 
 import java.util.Comparator;
 import java.util.HashMap;

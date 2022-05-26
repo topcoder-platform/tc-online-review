@@ -5,7 +5,7 @@ package com.cronos.onlinereview.actions.event;
 
 import com.cronos.onlinereview.actions.BaseServletAwareAction;
 import com.cronos.onlinereview.util.AuthorizationHelper;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * EventBusHandleAppealAction is used to fire the appeal submit event to

@@ -1,5 +1,6 @@
-FROM maven:3.6.1-jdk-8
+FROM openjdk:8u332-jdk-slim
 
+RUN apt-get update && apt-get install wget -y
 RUN cd /root/ \
        && wget https://github.com/wildfly/wildfly/releases/download/26.0.1.Final/wildfly-26.0.1.Final.tar.gz \
        && tar xzf wildfly-26.0.1.Final.tar.gz \

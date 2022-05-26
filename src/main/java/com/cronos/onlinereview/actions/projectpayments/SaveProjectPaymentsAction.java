@@ -3,6 +3,24 @@
  */
 package com.cronos.onlinereview.actions.projectpayments;
 
+import com.cronos.onlinereview.Constants;
+import com.cronos.onlinereview.actions.event.EventBusServiceClient;
+import com.cronos.onlinereview.model.ProjectPaymentsForm;
+import com.cronos.onlinereview.model.ProjectPaymentsForm.ResourcePayments;
+import com.cronos.onlinereview.util.ActionsHelper;
+import com.cronos.onlinereview.util.AuthorizationHelper;
+import com.cronos.onlinereview.util.CorrectnessCheckResult;
+import com.cronos.onlinereview.util.LoggingHelper;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.project.payment.ProjectPayment;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentFilterBuilder;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentManager;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentType;
+import com.topcoder.onlinereview.component.project.phase.handler.or.PaymentsHelper;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,25 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.actions.event.EventBusServiceClient;
-import com.cronos.onlinereview.model.ProjectPaymentsForm;
-import com.cronos.onlinereview.model.ProjectPaymentsForm.ResourcePayments;
-import com.cronos.onlinereview.phases.PaymentsHelper;
-import com.cronos.onlinereview.util.ActionsHelper;
-import com.cronos.onlinereview.util.AuthorizationHelper;
-import com.cronos.onlinereview.util.CorrectnessCheckResult;
-import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.payment.ProjectPayment;
-import com.topcoder.management.payment.ProjectPaymentManager;
-import com.topcoder.management.payment.ProjectPaymentType;
-import com.topcoder.management.payment.search.ProjectPaymentFilterBuilder;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.util.errorhandling.BaseException;
 
 /**
  * This class is the struts action class which is used for saving project payments page.

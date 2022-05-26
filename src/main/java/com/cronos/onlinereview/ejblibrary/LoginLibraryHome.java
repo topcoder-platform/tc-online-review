@@ -3,21 +3,19 @@
  */
 package com.cronos.onlinereview.ejblibrary;
 
-import java.io.Serializable;
+import com.cronos.onlinereview.util.EJBLibraryServicesLocator;
+import com.topcoder.onlinereview.component.security.login.LoginRemote;
+import com.topcoder.onlinereview.component.security.login.LoginRemoteHome;
 
 import javax.ejb.EJBMetaData;
 import javax.ejb.Handle;
 import javax.ejb.HomeHandle;
-
-import com.cronos.onlinereview.util.EJBLibraryServicesLocator;
-import com.topcoder.security.login.LoginRemote;
-import com.topcoder.security.login.LoginRemoteHome;
+import java.io.Serializable;
 
 /**
  * <p>An implementation of {@link LoginRemoteHome} interface to be used for injecting {@link LoginLibrary} class into
  * <code>Authentication Factory</code> and <code>Online Review Login</code> components used by
  * <code>Online Review</code> application. The instance of this class is expected to be bound to JNDI context under name
- * which {@link com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator} expects the remote home
  * interface for <code>Login EJB</code> to be bound to.</p>
  *
  * <p><b>Thread safety:</b> This class is thread-safe.</p>

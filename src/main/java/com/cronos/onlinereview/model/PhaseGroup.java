@@ -5,12 +5,12 @@ package com.cronos.onlinereview.model;
 
 import com.cronos.onlinereview.util.ActionsHelper;
 
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.Upload;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.review.data.Review;
+import com.topcoder.onlinereview.component.deliverable.Submission;
+import com.topcoder.onlinereview.component.deliverable.Upload;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.review.Review;
 
-import com.topcoder.project.phases.Phase;
+import com.topcoder.onlinereview.component.project.phase.Phase;
 
 import java.util.Date;
 import java.util.HashSet;

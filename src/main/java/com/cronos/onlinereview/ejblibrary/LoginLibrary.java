@@ -3,11 +3,13 @@
  */
 package com.cronos.onlinereview.ejblibrary;
 
-import com.topcoder.security.GeneralSecurityException;
-import com.topcoder.security.TCSubject;
-import com.topcoder.security.login.AuthenticationException;
-import com.topcoder.security.login.LoginBean;
-import com.topcoder.security.login.LoginRemote;
+import com.topcoder.onlinereview.component.security.GeneralSecurityException;
+import com.topcoder.onlinereview.component.security.TCSubject;
+import com.topcoder.onlinereview.component.security.login.AuthenticationException;
+import com.topcoder.onlinereview.component.security.login.LoginBean;
+import com.topcoder.onlinereview.component.security.login.LoginRemote;
+
+import java.rmi.RemoteException;
 
 /**
  * <p>An implementation of {@link LoginRemote} interface which provides the library-call style for API of <code>Login
@@ -61,6 +63,11 @@ public class LoginLibrary extends BaseEJBLibrary implements LoginRemote {
      */
     public TCSubject login(String username, String password, String dataSource) throws GeneralSecurityException {
         return this.bean.login(username, password, dataSource);
+    }
+
+    @Override
+    public boolean isCloudSpokesUser(String s) throws RemoteException, GeneralSecurityException {
+        return this.bean.isCloudSpokesUser(s);
     }
 
     /**

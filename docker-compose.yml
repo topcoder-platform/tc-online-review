@@ -25,7 +25,6 @@ services:
       - "27883:27883"
     tty: true
   tc-online-review:
-    platform: linux/amd64
     image: tc-online-review:latest
     depends_on:
       - tc-informix

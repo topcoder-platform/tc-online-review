@@ -11,6 +11,8 @@
 		<param-value>
 			/WEB-INF/actions.xml
 			/WEB-INF/applicationContext.xml
+            /WEB-INF/searchBundle.xml
+            /WEB-INF/phaseHandlers.xml
 		</param-value>
 	</context-param>
     
@@ -56,7 +58,7 @@
     <!-- Online Review Ajax Support Servlet Configuration -->
     <servlet>
         <servlet-name>AjaxServlet</servlet-name>
-        <servlet-class>com.cronos.onlinereview.ajax.AjaxSupportServlet</servlet-class>
+        <servlet-class>com.topcoder.onlinereview.component.ajax.AjaxSupportServlet</servlet-class>
     </servlet>
 
     <!-- Initialization Servlet -->

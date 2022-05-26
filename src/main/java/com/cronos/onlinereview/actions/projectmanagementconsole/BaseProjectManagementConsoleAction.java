@@ -4,6 +4,49 @@
 package com.cronos.onlinereview.actions.projectmanagementconsole;
 
 
+import com.cronos.onlinereview.Constants;
+import com.cronos.onlinereview.actions.DynamicModelDrivenAction;
+import com.topcoder.onlinereview.component.dataaccess.CatalogDataAccess;
+import com.cronos.onlinereview.ejblibrary.SpringContextProvider;
+import com.cronos.onlinereview.model.DynamicModel;
+import com.cronos.onlinereview.model.FormFile;
+import com.cronos.onlinereview.util.ActionsHelper;
+import com.cronos.onlinereview.util.AuthorizationHelper;
+import com.cronos.onlinereview.util.ConfigHelper;
+import com.cronos.onlinereview.util.LookupException;
+import com.cronos.onlinereview.util.LookupHelper;
+import com.topcoder.onlinereview.component.dataaccess.ComponentVersionInfo;
+import com.topcoder.onlinereview.component.dataaccess.Document;
+import com.topcoder.onlinereview.component.distribution.DistributionTool;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentAdjustment;
+import com.topcoder.onlinereview.component.project.payment.calculator.ProjectPaymentCalculator;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseManager;
+import com.topcoder.onlinereview.component.project.phase.PhaseStatusEnum;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceFilterBuilder;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+import com.topcoder.onlinereview.component.resource.ResourcePersistenceException;
+import com.topcoder.onlinereview.component.resource.ResourceRole;
+import com.topcoder.onlinereview.component.review.Review;
+import com.topcoder.onlinereview.component.review.ReviewManagementException;
+import com.topcoder.onlinereview.component.review.ReviewManager;
+import com.topcoder.onlinereview.component.reviewfeedback.ReviewFeedback;
+import com.topcoder.onlinereview.component.reviewfeedback.ReviewFeedbackManager;
+import com.topcoder.onlinereview.component.search.SearchBuilderException;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+import com.topcoder.onlinereview.component.search.filter.InFilter;
+import com.topcoder.onlinereview.component.search.filter.OrFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,50 +68,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
-
-
-import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.actions.DynamicModelDrivenAction;
-import com.cronos.onlinereview.dataaccess.CatalogDataAccess;
-import com.cronos.onlinereview.ejblibrary.SpringContextProvider;
-import com.cronos.onlinereview.model.DynamicModel;
-import com.cronos.onlinereview.model.FormFile;
-import com.cronos.onlinereview.util.ActionsHelper;
-import com.cronos.onlinereview.util.AuthorizationHelper;
-import com.cronos.onlinereview.util.ConfigHelper;
-import com.cronos.onlinereview.util.LookupException;
-import com.cronos.onlinereview.util.LookupHelper;
-import com.topcoder.dde.catalog.ComponentVersionInfo;
-import com.topcoder.dde.catalog.Document;
-import com.topcoder.management.payment.ProjectPaymentAdjustment;
-import com.topcoder.management.payment.calculator.ProjectPaymentCalculator;
-import com.topcoder.management.phase.PhaseManager;
-import com.topcoder.management.phase.PhaseStatusEnum;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.resource.ResourceRole;
-import com.topcoder.management.resource.persistence.ResourcePersistenceException;
-import com.topcoder.management.resource.search.ResourceFilterBuilder;
-import com.topcoder.management.review.ReviewManagementException;
-import com.topcoder.management.review.ReviewManager;
-import com.topcoder.management.review.data.Review;
-import com.topcoder.management.reviewfeedback.ReviewFeedback;
-import com.topcoder.management.reviewfeedback.ReviewFeedbackManager;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.search.builder.SearchBuilderException;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.EqualToFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.search.builder.filter.InFilter;
-import com.topcoder.search.builder.filter.OrFilter;
-import com.topcoder.util.config.ConfigManager;
-import com.topcoder.util.config.Property;
-import com.topcoder.util.distribution.DistributionTool;
-import com.topcoder.util.errorhandling.BaseException;
-import com.topcoder.util.errorhandling.BaseRuntimeException;
+import java.util.stream.Collectors;
 
 /**
  * This is the base class for project management console actions classes.
@@ -164,7 +164,7 @@ public abstract class BaseProjectManagementConsoleAction extends DynamicModelDri
     /**
      * DistributionTool is thread-safe, so we can keep it as an instance variable.
      */
-    protected static final DistributionTool DISTRIBUTION_TOOL = new DistributionTool();
+    protected DistributionTool distributionTool;
 
     /**
      * Default date format.
@@ -179,7 +179,18 @@ public abstract class BaseProjectManagementConsoleAction extends DynamicModelDri
     /**
      * The instance of default project payment calculator.
      */
-    protected static final ProjectPaymentCalculator defaultProjectPaymentCalculator = createDefaultProjectPaymentCalculator();
+    @Autowired
+    @Qualifier("defaultProjectPaymentCalculator")
+    protected ProjectPaymentCalculator defaultProjectPaymentCalculator;
+
+    @Value("#{'${distributionTool.scripts}'.split(',')}")
+    private List<String> distributionConfig;
+
+    @PostConstruct
+    public void postRun() {
+        distributionTool = new DistributionTool(distributionConfig.stream().map(s -> s.split(":"))
+                .collect(Collectors.toMap(kv -> kv[0], kv -> kv[1])));
+    }
 
     /**
      * This member variable is a constant array that holds names of different reviewer roles.
@@ -255,7 +266,7 @@ public abstract class BaseProjectManagementConsoleAction extends DynamicModelDri
      * @param project the project.
      * @throws BaseException if any error occurs.
      */
-    private static void setReviewPaymentsRequestAttribute(HttpServletRequest request, Project project) throws BaseException {
+    private void setReviewPaymentsRequestAttribute(HttpServletRequest request, Project project) throws BaseException {
         List<Long> resourceRoleIds = getAvailableReviewerRoles(project);
         ResourceRole[] allRoles = ActionsHelper.createResourceManager().getAllResourceRoles();
 
@@ -660,7 +671,7 @@ public abstract class BaseProjectManagementConsoleAction extends DynamicModelDri
     protected Phase[] getProjectPhases(Project project) throws BaseException {
         // Get details for requested project
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
-        com.topcoder.project.phases.Project phasesProject = phaseManager.getPhases(project.getId());
+        com.topcoder.onlinereview.component.project.phase.Project phasesProject = phaseManager.getPhases(project.getId());
         return phasesProject.getAllPhases();
     }
 
@@ -952,28 +963,6 @@ public abstract class BaseProjectManagementConsoleAction extends DynamicModelDri
       */
     public void setPid(long pid) {
         this.pid = pid;
-    }
-
-
-
-    /**
-     * This static method helps to create the default project payment calculator.
-     *
-     * @return the instance of default project payment calculator.
-     * @throws com.topcoder.util.errorhandling.BaseRuntimeException if any error occurs
-     */
-    private static ProjectPaymentCalculator createDefaultProjectPaymentCalculator() throws BaseRuntimeException {
-        String className = null;
-        try {
-            ConfigManager cfgMgr = ConfigManager.getInstance();
-            Property config = cfgMgr.getPropertyObject("com.cronos.OnlineReview", "DefaultProjectPaymentConfig");
-            className = config.getValue("CalculatorClass");
-            Class clazz = Class.forName(className);
-            return (ProjectPaymentCalculator) clazz.newInstance();
-        } catch (Exception e) {
-            throw new BaseRuntimeException("Failed to instantiate the project payment calculator of type: "
-                    + className, e);
-        }
     }
 
     /**

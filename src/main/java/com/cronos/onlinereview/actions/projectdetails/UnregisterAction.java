@@ -9,10 +9,10 @@ import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.Comparators;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.phase.PhaseManager;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.project.phase.PhaseManager;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class is the struts action class which is used for unregistering from a project.
@@ -72,7 +72,7 @@ public class UnregisterAction extends BaseProjectDetailsAction {
         }
 
         PhaseManager phaseMgr = ActionsHelper.createPhaseManager(false);
-        com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(verification.getProject().getId());
+        com.topcoder.onlinereview.component.project.phase.Project phProj = phaseMgr.getPhases(verification.getProject().getId());
         Phase[] phases = phProj.getAllPhases(new Comparators.ProjectPhaseComparer());
 
         // Obtain an array of all active phases of the project

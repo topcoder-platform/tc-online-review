@@ -3,8 +3,6 @@
  */
 package com.cronos.onlinereview;
 
-import com.topcoder.util.config.ConfigManager;
-
 /**
  * Online review functional tests 1, login related features.
  *

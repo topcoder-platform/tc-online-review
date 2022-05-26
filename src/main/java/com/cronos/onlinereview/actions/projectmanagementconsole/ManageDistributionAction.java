@@ -4,17 +4,6 @@
 package com.cronos.onlinereview.actions.projectmanagementconsole;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.model.DynamicModel;
 import com.cronos.onlinereview.model.FormFile;
@@ -23,9 +12,19 @@ import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.ConfigHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.project.Project;
-import com.topcoder.util.distribution.DistributionTool;
-import com.topcoder.util.distribution.DistributionToolException;
+import com.topcoder.onlinereview.component.distribution.DistributionTool;
+import com.topcoder.onlinereview.component.distribution.DistributionToolException;
+import com.topcoder.onlinereview.component.project.management.Project;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class is the struts action class which is used to manage distributions for the project.
@@ -246,7 +245,7 @@ public class ManageDistributionAction extends BaseProjectManagementConsoleAction
         // Determines the script that will be used
         String rootCatalogID = (String) project.getProperty("Root Catalog ID");
         try {
-            DISTRIBUTION_TOOL.createDistribution(ConfigHelper.getDistributionScript(rootCatalogID), parameters);
+            distributionTool.createDistribution(ConfigHelper.getDistributionScript(rootCatalogID), parameters);
         } catch (DistributionToolException ex) {
             ActionsHelper.addErrorToRequest(request, ActionsHelper.GLOBAL_MESSAGE,
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.DistTool.Failure", ex.getMessage());
