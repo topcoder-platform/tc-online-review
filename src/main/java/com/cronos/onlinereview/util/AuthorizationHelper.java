@@ -4,7 +4,7 @@
 package com.cronos.onlinereview.util;
 
 import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
+import com.topcoder.onlinereview.component.dataaccess.ProjectDataAccess;
 import com.topcoder.onlinereview.component.exception.BaseException;
 import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.topcoder.onlinereview.component.external.UserRetrieval;

@@ -5,7 +5,7 @@ package com.cronos.onlinereview.actions.project;
 
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.actions.event.EventBusServiceClient;
-import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
+import com.topcoder.onlinereview.component.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.Comparators;

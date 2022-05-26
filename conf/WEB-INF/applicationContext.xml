@@ -26,20 +26,6 @@
         <constructor-arg type="java.lang.Long" value="28"/>
     </bean>
 
-    <!-- Component catalog ID generator settings -->
-    <bean id="catalogIdGeneratorDB" class="com.topcoder.util.idgenerator.sql.SimpleDB"/>
-
-    <bean id="catalogDataAccess" class="com.cronos.onlinereview.dataaccess.CatalogDataAccess">
-        <property name="idGeneratorDB" ref="catalogIdGeneratorDB"/>
-        <property name="idGeneratorDataSource" ref="dataSource"/>
-        <property name="idGeneratorTableName" value="sequence_object"/>
-        <property name="idGeneratorUserDefColumnName" value="name"/>
-        <property name="idGeneratorHighValueColumnName" value="current_value"/>
-        <property name="idGeneratorMaxHighValue" value="9999999999"/>
-        <property name="idGeneratorMaxLowValue" value="1"/>
-        <property name="idGeneratorAutoInit" value="false"/>
-    </bean>
-    
     <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
         <property name="jndiName" value="java:jboss/datasources/TCS_CATALOG" />
     </bean>
@@ -104,10 +90,6 @@
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
     <bean id="statusProjectValidator" class="com.cronos.onlinereview.util.StatusProjectValidator" />
-    <bean id="deliverableDataAccess" class="com.cronos.onlinereview.dataaccess.DeliverableDataAccess" />
-    <bean id="projectDataAccess" class="com.cronos.onlinereview.dataaccess.ProjectDataAccess" />
-    <bean id="projectPhaseDataAccess" class="com.cronos.onlinereview.dataaccess.ProjectPhaseDataAccess" />
-    <bean id="resourceDataAccess" class="com.cronos.onlinereview.dataaccess.ResourceDataAccess" />
     <bean id="phaseManager" class="com.topcoder.onlinereview.component.project.phase.PhaseManager" />
     <bean id="phaseManagerWithoutHandlers" class="com.topcoder.onlinereview.component.project.phase.PhaseManager" />
     <bean id="managerCreationHelper" class="com.cronos.onlinereview.util.ManagerCreationHelper" />

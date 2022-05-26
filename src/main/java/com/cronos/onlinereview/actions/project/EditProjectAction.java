@@ -4,8 +4,8 @@
 package com.cronos.onlinereview.actions.project;
 
 import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.model.ClientProject;
-import com.cronos.onlinereview.model.CockpitProject;
+import com.topcoder.onlinereview.component.dataaccess.ClientProject;
+import com.topcoder.onlinereview.component.dataaccess.CockpitProject;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.Comparators;

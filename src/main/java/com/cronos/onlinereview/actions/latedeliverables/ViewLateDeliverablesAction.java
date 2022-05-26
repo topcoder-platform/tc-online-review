@@ -4,14 +4,14 @@
 package com.cronos.onlinereview.actions.latedeliverables;
 
 import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
-import com.cronos.onlinereview.model.CockpitProject;
 import com.cronos.onlinereview.model.DynamicModel;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.Comparators;
 import com.cronos.onlinereview.util.ConfigHelper;
 import com.cronos.onlinereview.util.LoggingHelper;
+import com.topcoder.onlinereview.component.dataaccess.CockpitProject;
+import com.topcoder.onlinereview.component.dataaccess.ProjectDataAccess;
 import com.topcoder.onlinereview.component.deliverable.late.LateDeliverable;
 import com.topcoder.onlinereview.component.deliverable.late.LateDeliverableFilterBuilder;
 import com.topcoder.onlinereview.component.deliverable.late.LateDeliverableManager;

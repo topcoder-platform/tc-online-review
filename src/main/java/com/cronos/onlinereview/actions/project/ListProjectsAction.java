@@ -4,7 +4,7 @@
 package com.cronos.onlinereview.actions.project;
 
 import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.dataaccess.DeliverableDataAccess;
+import com.topcoder.onlinereview.component.dataaccess.DeliverableDataAccess;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.ConfigHelper;
