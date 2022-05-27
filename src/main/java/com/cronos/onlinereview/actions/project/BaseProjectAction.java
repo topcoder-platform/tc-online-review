@@ -5,6 +5,7 @@ package com.cronos.onlinereview.actions.project;
 
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.actions.DynamicModelDrivenAction;
+import com.cronos.onlinereview.ejblibrary.UserPreference;
 import com.cronos.onlinereview.model.PhasesDetails;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
@@ -38,7 +39,7 @@ import com.topcoder.onlinereview.component.scorecard.ScorecardManager;
 import com.topcoder.onlinereview.component.scorecard.ScorecardSearchBundle;
 import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
-import com.topcoder.web.ejb.user.UserPreference;
+//import com.topcoder.web.ejb.user.UserPreference;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;

@@ -19,7 +19,7 @@
     <bean id="springContextProvider" class="com.cronos.onlinereview.ejblibrary.SpringContextProvider" 
           scope="singleton"/>
 
-    <bean id="userPreferencelibrary" class="com.cronos.onlinereview.ejblibrary.UserPreferencelibrary"
+    <bean id="userPreferencelibrary" class="com.cronos.onlinereview.ejblibrary.UserPreference"
           scope="singleton"/>          
 
     <bean id="loginLibrary" class="com.cronos.onlinereview.ejblibrary.LoginLibrary">

@@ -7,20 +7,18 @@ import com.topcoder.onlinereview.component.security.GeneralSecurityException;
 import com.topcoder.onlinereview.component.security.TCSubject;
 import com.topcoder.onlinereview.component.security.login.AuthenticationException;
 import com.topcoder.onlinereview.component.security.login.LoginBean;
-import com.topcoder.onlinereview.component.security.login.LoginRemote;
+import com.topcoder.onlinereview.component.security.login.LoginInterface;
 
 import java.rmi.RemoteException;
 
 /**
- * <p>An implementation of {@link LoginRemote} interface which provides the library-call style for API of <code>Login
- * EJB</code>.</p>
  *
  * <p><b>Thread safety:</b> This class is thread-safe.</p>
  *
  * @author TCSASSEMBLER
  * @version 2.0
  */
-public class LoginLibrary extends BaseEJBLibrary implements LoginRemote {
+public class LoginLibrary implements LoginInterface {
 
     /**
      * <p>A <code>LoginBean</code> which is delegated the processing of the calls to methods of this class.</p>

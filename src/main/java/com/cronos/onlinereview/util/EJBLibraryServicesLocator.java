@@ -4,12 +4,10 @@
 package com.cronos.onlinereview.util;
 
 import com.cronos.onlinereview.ejblibrary.SpringContextProvider;
+import com.cronos.onlinereview.ejblibrary.UserPreference;
 import com.topcoder.onlinereview.component.contest.ContestEligibilityManager;
 import com.topcoder.onlinereview.component.contest.ContestEligibilityService;
 import com.topcoder.onlinereview.component.contest.ContestEligibilityValidationManager;
-import com.topcoder.onlinereview.component.security.login.LoginRemote;
-import com.topcoder.web.ejb.forums.Forums;
-import com.topcoder.web.ejb.user.UserPreference;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -24,16 +22,6 @@ public class EJBLibraryServicesLocator {
      * <p>Constructs new <code>EJBLibraryServicesLocator</code> instance. This implementation does nothing.</p>
      */
     private EJBLibraryServicesLocator() {
-    }
-
-    /**
-     * <p>Gets the library interface to <code>Login</code> service.</p>
-     *
-     * @return a <code>LoginRemote</code> implementation providing library-style calls to <code>Login EJB</code>.
-     */
-    public static LoginRemote getLoginService() {
-        ApplicationContext appContext = SpringContextProvider.getApplicationContext();
-        return (LoginRemote) appContext.getBean("loginLibrary");
     }
 
     /**
@@ -79,6 +67,6 @@ public class EJBLibraryServicesLocator {
      */
     public static UserPreference getUserPreference() {
         ApplicationContext appContext = SpringContextProvider.getApplicationContext();
-        return (UserPreference) appContext.getBean("userPreferencelibrary");
+        return appContext.getBean(UserPreference.class);
     }
 }
