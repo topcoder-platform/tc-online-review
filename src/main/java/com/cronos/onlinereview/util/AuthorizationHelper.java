@@ -141,14 +141,13 @@ public class AuthorizationHelper {
      *                information about the user possibly logged in.
      */
     public static long getLoggedInUserId(HttpServletRequest request) {
-//        Long userId = null;
-//        try {
-//            userId = getSsoCookieService().getUserIdFromSSOCookie(request);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return (userId != null) ? (userId) : NO_USER_LOGGED_IN_ID;
-        return 132456L;
+        Long userId = null;
+        try {
+            userId = getSsoCookieService().getUserIdFromSSOCookie(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return (userId != null) ? (userId) : NO_USER_LOGGED_IN_ID;
     }
 
     /**
