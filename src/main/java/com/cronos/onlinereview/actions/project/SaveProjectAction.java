@@ -47,7 +47,6 @@ import com.topcoder.onlinereview.component.termsofuse.UserTermsOfUseDao;
 import com.topcoder.onlinereview.component.workday.Workdays;
 import com.topcoder.onlinereview.component.workday.WorkdaysFactory;
 import com.topcoder.onlinereview.component.workday.WorkdaysUnitOfTime;
-import com.topcoder.web.common.RowNotFoundException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -2163,17 +2162,7 @@ public class SaveProjectAction extends BaseProjectAction {
      * @throws BaseException if any error
      */
     private String retrieveUserPreference(long userId, int preferenceId) throws BaseException {
-        String value;
-
-        try {
-            value = getUserPreference().getValue(userId, preferenceId, getCommonJdbcTemplate());
-
-        } catch (RowNotFoundException e) {
-            value = "false";
-        } catch (RemoteException e) {
-            throw new BaseException("Fail to retrieve user preference data", e);
-        }
-        return value;
+        return getUserPreference().getValue(userId, preferenceId, getCommonJdbcTemplate());
     }
 
     /**

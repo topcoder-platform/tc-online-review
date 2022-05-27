@@ -356,21 +356,6 @@
             <version>1.2</version>
         </dependency>
         <dependency>
-            <groupId>com.topcoder</groupId>
-            <artifactId>shared</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.topcoder.thirdpart</groupId>
-            <artifactId>tcwebcommon</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.topcoder.thirdpart</groupId>
-            <artifactId>User</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>com.topcoder.thirdpart</groupId>
             <artifactId>strutstest-2.1.3</artifactId>
             <version>1.0-SNAPSHOT</version>

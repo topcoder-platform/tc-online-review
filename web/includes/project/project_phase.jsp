@@ -5,7 +5,7 @@
   -
   - Description: This page fragment displays the content of tab for single project phase on Project Details screen.
 --%>
-<%@page import="com.topcoder.shared.util.ApplicationServer"%>
+<%@page import="com.topcoder.onlinereview.component.webcommon.ApplicationServer"%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>

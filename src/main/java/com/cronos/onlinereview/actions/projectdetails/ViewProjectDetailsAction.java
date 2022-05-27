@@ -4,9 +4,6 @@
 package com.cronos.onlinereview.actions.projectdetails;
 
 import com.cronos.onlinereview.Constants;
-import com.topcoder.onlinereview.component.dataaccess.ClientProject;
-import com.topcoder.onlinereview.component.dataaccess.ProjectDataAccess;
-import com.topcoder.onlinereview.component.dataaccess.CockpitProject;
 import com.cronos.onlinereview.model.PhasesDetails;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
@@ -17,6 +14,9 @@ import com.cronos.onlinereview.util.LoggingHelper;
 import com.cronos.onlinereview.util.LookupHelper;
 import com.cronos.onlinereview.util.PhasesDetailsServices;
 import com.opensymphony.xwork2.TextProvider;
+import com.topcoder.onlinereview.component.dataaccess.ClientProject;
+import com.topcoder.onlinereview.component.dataaccess.CockpitProject;
+import com.topcoder.onlinereview.component.dataaccess.ProjectDataAccess;
 import com.topcoder.onlinereview.component.deliverable.Deliverable;
 import com.topcoder.onlinereview.component.deliverable.Submission;
 import com.topcoder.onlinereview.component.deliverable.Upload;
@@ -51,7 +51,7 @@ import com.topcoder.onlinereview.component.search.filter.AndFilter;
 import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
 import com.topcoder.onlinereview.component.search.filter.InFilter;
-import com.topcoder.shared.util.ApplicationServer;
+import com.topcoder.onlinereview.component.webcommon.ApplicationServer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;

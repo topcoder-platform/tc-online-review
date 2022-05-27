@@ -1,17 +1,21 @@
 package com.cronos.onlinereview.cache;
 
 import com.cronos.onlinereview.ConfigurationException;
-import com.topcoder.shared.util.TCResourceBundle;
-import com.topcoder.web.common.cache.CacheClient;
-import com.topcoder.web.common.cache.MaxAge;
-import com.topcoder.web.common.cache.TCCacheException;
-import com.topcoder.web.common.cache.address.CacheAddress;
+import com.topcoder.onlinereview.component.cache.CacheAddress;
+import com.topcoder.onlinereview.component.cache.CacheClient;
+import com.topcoder.onlinereview.component.cache.MaxAge;
+import com.topcoder.onlinereview.component.cache.TCCacheException;
+import com.topcoder.onlinereview.component.webcommon.TCResourceBundle;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.exceptions.JedisException;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Set;

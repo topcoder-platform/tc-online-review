@@ -6,7 +6,7 @@
   - Description: This page fragment renders the tabs for all pages from Online Review application.
 --%>
 <%@ page language="java" isELIgnored="false" %>
-<%@ page import="java.text.DecimalFormat,com.topcoder.shared.util.ApplicationServer" %>
+<%@ page import="java.text.DecimalFormat,com.topcoder.onlinereview.component.webcommon.ApplicationServer" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="or" uri="/or-tags" %>

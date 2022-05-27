@@ -3,11 +3,8 @@
  */
 package com.cronos.onlinereview.ejblibrary;
 
-import com.topcoder.web.common.RowNotFoundException;
-import com.topcoder.web.ejb.user.UserPreferenceBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 
@@ -25,23 +22,6 @@ import static com.topcoder.onlinereview.component.util.CommonUtils.getString;
  */
 public class UserPreference {
     /**
-     * <p>
-     * A <code>UserPreferenceBean</code> which is delegated the processing of
-     * the calls to methods of this class.
-     * </p>
-     */
-    private final UserPreferenceBean bean;
-
-    /**
-     * <p>
-     * Constructs new <code>UserPreferenceBean</code> instance.
-     * </p>
-     */
-    public UserPreference() {
-        this.bean = new UserPreferenceBean();
-    }
-
-    /**
      * Get user preference value.
      * 
      * @param userId
@@ -52,12 +32,11 @@ public class UserPreference {
      *            the data source
      * @return the value
      */
-    public String getValue(long userId, int preferenceId, JdbcTemplate jdbcTemplate)
-            throws RowNotFoundException, RemoteException {
+    public String getValue(long userId, int preferenceId, JdbcTemplate jdbcTemplate) {
         String query = "select value from  user_preference where user_id = ? and preference_id = ? ";
         List<Map<String, Object>> rs = executeSqlWithParam(jdbcTemplate, query, newArrayList(userId, preferenceId));
         if (rs.isEmpty()) {
-            throw new RowNotFoundException("no row found for " + query);
+            return "false";
         }
         return getString(rs.get(0), "value");
     }

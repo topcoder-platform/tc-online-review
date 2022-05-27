@@ -8,7 +8,7 @@ import com.topcoder.onlinereview.component.authenticationfactory.AuthenticationF
 import com.topcoder.onlinereview.component.authenticationfactory.Authenticator;
 import com.topcoder.onlinereview.component.login.AuthResponseParser;
 import com.topcoder.onlinereview.component.login.ConfigurationException;
-import com.topcoder.web.common.security.SSOCookieService;
+import com.topcoder.onlinereview.component.webcommon.SSOCookieService;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.slf4j.Logger;
