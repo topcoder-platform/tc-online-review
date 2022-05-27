@@ -37,7 +37,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
     <bean id="phaseManager" class="com.topcoder.onlinereview.component.project.phase.PhaseManager">
     </bean>
-    <bean id="phaseManagerWithoutHandlers" class="com.topcoder.onlinereview.component.project.phase.PhaseManager">
+    <bean id="phaseManagerWithoutHandlers" class="com.topcoder.onlinereview.component.project.phase.PhaseManager" primary="true">
     </bean>
     <bean id="defaultStartEmailOption" class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
         <property name="subject" value="%PHASE_TYPE% Start\\: %PROJECT_NAME%" />

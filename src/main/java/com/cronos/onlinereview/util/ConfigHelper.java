@@ -3,7 +3,7 @@
  */
 package com.cronos.onlinereview.util;
 
-import com.appirio.tech.core.api.v3.util.jwt.JWTTokenGenerator;
+import com.topcoder.onlinereview.component.jwt.JWTTokenGenerator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
