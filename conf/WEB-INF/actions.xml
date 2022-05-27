@@ -4,9 +4,9 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
   <bean id="authResponseParser" class="com.topcoder.onlinereview.component.login.authenticator.SSOCookieAuthResponseParser" />
-  <bean id="loginRemoteHome" class="com.cronos.onlinereview.ejblibrary.LoginLibraryHome" />
+  <bean id="loginLibrary" class="com.cronos.onlinereview.ejblibrary.LoginLibrary" />
   <bean id="ORAuthenticator" class="com.topcoder.onlinereview.component.login.authenticator.SecurityManagerAuthenticator">
-      <property name="loginRemoteHome" ref="loginRemoteHome" />
+      <property name="loginInterface" ref="loginLibrary" />
   </bean>
   <bean id="MockAuthenticator" class="com.cronos.onlinereview.mockups.MockAuthenticator" />
   <bean id="MockXMLAuthenticator" class="com.cronos.onlinereview.mockups.MockXMLAuthenticator">

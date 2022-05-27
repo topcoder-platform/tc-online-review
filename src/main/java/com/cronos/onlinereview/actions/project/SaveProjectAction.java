@@ -47,7 +47,6 @@ import com.topcoder.onlinereview.component.termsofuse.UserTermsOfUseDao;
 import com.topcoder.onlinereview.component.workday.Workdays;
 import com.topcoder.onlinereview.component.workday.WorkdaysFactory;
 import com.topcoder.onlinereview.component.workday.WorkdaysUnitOfTime;
-import com.topcoder.shared.util.DBMS;
 import com.topcoder.web.common.RowNotFoundException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -57,7 +56,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.ejb.EJBException;
 import javax.servlet.http.HttpServletRequest;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
@@ -94,6 +92,7 @@ import static com.cronos.onlinereview.Constants.SCREENING_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.SPECIFICATION_REVIEW_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.SPECIFICATION_SUBMISSION_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.SUBMISSION_PHASE_NAME;
+import static com.topcoder.onlinereview.component.util.SpringUtils.getCommonJdbcTemplate;
 
 /**
  * This class is the struts action class which is used for saving the project, including both creating
@@ -1548,8 +1547,6 @@ public class SaveProjectAction extends BaseProjectAction {
         try {
             allResourcesValid = allResourcesValid && validateResourceTermsOfUse(request, project, userRetrieval, resourceNames);
             allResourcesValid = allResourcesValid && validateResourceEligibility(request, project, userRetrieval, resourceNames);
-        } catch (EJBException e) {
-            throw new BaseException(e);
         } catch (ContestEligibilityValidatorException e) {
             throw new BaseException(e);
         }
@@ -2023,14 +2020,13 @@ public class SaveProjectAction extends BaseProjectAction {
      * @param resourceNames a <code>String[]</code> containing edited resource names.
      *
      * @throws RemoteException if any errors occur during EJB remote invocation
-     * @throws EJBException if any other errors occur while invoking EJB services
      * @throws BaseException if any other errors occur while retrieving user
      *
      * @return true if all resources are valid
      */
     private boolean validateResourceTermsOfUse(HttpServletRequest request,
             Project project, UserRetrieval userRetrieval, String[] resourceNames)
-            throws EJBException, BaseException {
+            throws BaseException {
 
         boolean allResourcesValid = true;
 
@@ -2102,7 +2098,6 @@ public class SaveProjectAction extends BaseProjectAction {
      * @param userRetrieval a <code>UserRetrieval</code> instance to obtain the user id.
      * @param resourceNames a <code>String[]</code> containing edited resource names.
      *
-     * @throws EJBException if any other errors occur while invoking EJB services
      * @throws BaseException if any other errors occur while retrieving user
      * @throws ContestEligibilityValidatorException if any validator error
      *
@@ -2110,7 +2105,7 @@ public class SaveProjectAction extends BaseProjectAction {
      */
     private boolean validateResourceEligibility(HttpServletRequest request,
             Project project, UserRetrieval userRetrieval, String[] resourceNames)
-            throws EJBException, BaseException, ContestEligibilityValidatorException {
+            throws BaseException, ContestEligibilityValidatorException {
 
         boolean allResourcesValid = true;
 
@@ -2171,7 +2166,7 @@ public class SaveProjectAction extends BaseProjectAction {
         String value;
 
         try {
-            value = getUserPreference().getValue(userId, preferenceId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+            value = getUserPreference().getValue(userId, preferenceId, getCommonJdbcTemplate());
 
         } catch (RowNotFoundException e) {
             value = "false";
