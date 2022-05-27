@@ -405,22 +405,7 @@
         </dependency>
         <dependency>
             <groupId>com.topcoder.thirdpart</groupId>
-            <artifactId>forums</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.topcoder.thirdpart</groupId>
             <artifactId>strutstest-2.1.3</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.topcoder.thirdpart</groupId>
-            <artifactId>jivebase</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.topcoder.thirdpart</groupId>
-            <artifactId>jiveforums</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>

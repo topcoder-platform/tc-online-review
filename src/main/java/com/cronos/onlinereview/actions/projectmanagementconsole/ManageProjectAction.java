@@ -458,16 +458,6 @@ public class ManageProjectAction extends BaseProjectManagementConsoleAction {
             }
         }
 
-        // Add all assigned resources as watchers for forum associated with project and grant then a permission
-        // to access the forum
-        ActionsHelper.addForumPermissions(project, newUsersForumRoles, false);
-        ActionsHelper.addForumPermissions(project, newModeratorsForumRoles, true);
-        String forumId = (String) project.getProperty("Developer Forum ID");
-        if (forumId == null) {
-            forumId = "0";
-        }
-        ActionsHelper.addForumWatch(project, newUsersForumWatch, Long.parseLong(forumId));
-
         // If there were any duplicates in resources then bind appropriate messages to request
         // to be shown to user
         for (int i = 0; i < resourceRoleIds.length; i++) {

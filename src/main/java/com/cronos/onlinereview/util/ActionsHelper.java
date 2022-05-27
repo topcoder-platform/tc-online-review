@@ -9,14 +9,14 @@ import com.amazonaws.services.s3.AmazonS3URI;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.cronos.onlinereview.Constants;
-import com.topcoder.onlinereview.component.dataaccess.ProjectDataAccess;
-import com.topcoder.onlinereview.component.dataaccess.ResourceDataAccess;
-import com.topcoder.onlinereview.component.dataaccess.ClientProject;
-import com.topcoder.onlinereview.component.dataaccess.CockpitProject;
 import com.cronos.onlinereview.model.DefaultScorecard;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.TextProvider;
+import com.topcoder.onlinereview.component.dataaccess.ClientProject;
+import com.topcoder.onlinereview.component.dataaccess.CockpitProject;
+import com.topcoder.onlinereview.component.dataaccess.ProjectDataAccess;
+import com.topcoder.onlinereview.component.dataaccess.ResourceDataAccess;
 import com.topcoder.onlinereview.component.deliverable.Deliverable;
 import com.topcoder.onlinereview.component.deliverable.DeliverableCheckingException;
 import com.topcoder.onlinereview.component.deliverable.DeliverableFilterBuilder;
@@ -74,17 +74,10 @@ import com.topcoder.onlinereview.component.search.filter.OrFilter;
 import com.topcoder.onlinereview.component.termsofuse.ProjectTermsOfUseDao;
 import com.topcoder.onlinereview.component.termsofuse.TermsOfUseDao;
 import com.topcoder.onlinereview.component.termsofuse.UserTermsOfUseDao;
-import com.topcoder.shared.util.ApplicationServer;
-import com.topcoder.shared.util.TCContext;
-import com.topcoder.web.ejb.forums.Forums;
-import com.topcoder.web.ejb.forums.ForumsHome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.ejb.CreateException;
-import javax.naming.Context;
-import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -94,7 +87,6 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -2776,190 +2768,6 @@ public class ActionsHelper {
     }
 
     /**
-     * Get the forums.
-     * 
-     * @return the forums bean.
-     * @throws RemoteException if any remote ejb error
-     * @throws CreateException if failed to create
-     * @throws NamingException if any naming error
-     */
-    private static Forums getForumBean() throws RemoteException, CreateException, NamingException {
-        Context context = TCContext.getInitial(ApplicationServer.FORUMS_HOST_URL);
-        ForumsHome forumsHome = (ForumsHome) context.lookup(ForumsHome.EJB_REF_NAME);
-        return forumsHome.create();
-        // return EJBLibraryServicesLocator.getForumsService();
-    }
-
-    /**
-     * Add forum permissions.
-     * 
-     * @param project the project
-     * @param users   the users
-     * @throws BaseException if any error
-     */
-    private static void addForumPermissions(Project project, Collection<Long> users) throws BaseException {
-        addForumPermissions(project, users, false);
-    }
-
-    /**
-     * Add forum permissions.
-     * 
-     * @param project   the project
-     * @param users     the users
-     * @param moderator if this is moderator
-     * @throws BaseException if any error
-     */
-    public static void addForumPermissions(Project project, Collection<Long> users, boolean moderator)
-            throws BaseException {
-        try {
-            long forumId = getProjectLongValue(project, "Developer Forum ID");
-            if (forumId == 0) {
-                // Don't try to create the forum bean if the forum ID is not set (as in the VM).
-                return;
-            }
-
-            Forums forumBean = getForumBean();
-            String roleId = SOFTWARE_USER_FORUM_ROLE_PREFIX + forumId;
-
-            if (moderator) {
-                roleId = SOFTWARE_MODERATOR_FORUM_ROLE_PREFIX + forumId;
-            }
-
-            for (Long userId : users) {
-                forumBean.assignRole(userId, roleId);
-            }
-        } catch (Exception e) {
-            throw new BaseException("Error adding forum permissions for project id " + project.getId(), e);
-        }
-    }
-
-    /**
-     * Add forum permissions.
-     * 
-     * @param project the project
-     * @param user    the user
-     * @throws BaseException if any error
-     */
-    public static void addForumPermissions(Project project, Long user) throws BaseException {
-        addForumPermissions(project, userToUsers(user));
-    }
-
-    /**
-     * Remove forum permissions.
-     * 
-     * @param project the project
-     * @param users   the users
-     * @throws BaseException if any error
-     */
-    public static void removeForumPermissions(Project project, Collection<Long> users) throws BaseException {
-        try {
-            long forumId = getProjectLongValue(project, "Developer Forum ID");
-            if (forumId == 0) {
-                // Don't try to create the forum bean if the forum ID is not set (as in the VM).
-                return;
-            }
-
-            Forums forumBean = getForumBean();
-
-            // just be safe, remove both roles, since we start assigning two roles.
-            String userRoleId = SOFTWARE_USER_FORUM_ROLE_PREFIX + forumId;
-            String moderatorRoleId = SOFTWARE_MODERATOR_FORUM_ROLE_PREFIX + forumId;
-
-            for (Long userId : users) {
-                forumBean.removeRole(userId, userRoleId);
-                forumBean.removeRole(userId, moderatorRoleId);
-                forumBean.removeUserPermission(userId, forumId);
-            }
-
-        } catch (Exception e) {
-            throw new BaseException("Error removing forum permissions for project id " + project.getId(), e);
-        }
-    }
-
-    /**
-     * Remove forum permissions.
-     * 
-     * @param project the project
-     * @param user    the user
-     * @throws BaseException if any error
-     */
-    public static void removeForumPermissions(Project project, Long user) throws BaseException {
-        removeForumPermissions(project, userToUsers(user));
-    }
-
-    /**
-     * Add forum watch.
-     * 
-     * @param project the project
-     * @param users   the users
-     * @param forumId the forum id
-     * @throws BaseException if any error
-     */
-    public static void addForumWatch(Project project, Collection<Long> users, long forumId) throws BaseException {
-        try {
-            if (forumId == 0) {
-                // Don't try to create the forum bean if the forum ID is not set (as in the VM).
-                return;
-            }
-
-            Forums forumBean = getForumBean();
-            for (Long userId : users) {
-                forumBean.createCategoryWatch(userId, forumId);
-            }
-        } catch (Exception e) {
-            throw new BaseException("Error adding forum permissions for project id " + project.getId(), e);
-        }
-    }
-
-    /**
-     * Add forum watch.
-     * 
-     * @param project the project
-     * @param user    the user
-     * @param forumId the forum id
-     * @throws BaseException if any error
-     */
-    public static void addForumWatch(Project project, Long user, long forumId) throws BaseException {
-        addForumWatch(project, userToUsers(user), forumId);
-    }
-
-    /**
-     * Remove forum watch.
-     * 
-     * @param project the project
-     * @param users   the users
-     * @param forumId the forum id
-     * @throws BaseException if any error
-     */
-    public static void removeForumWatch(Project project, Collection<Long> users, long forumId) throws BaseException {
-        try {
-            if (forumId == 0) {
-                // Don't try to create the forum bean if the forum ID is not set (as in the VM).
-                return;
-            }
-
-            Forums forumBean = getForumBean();
-            for (Long userId : users) {
-                forumBean.deleteCategoryWatch(userId, forumId);
-            }
-        } catch (Exception e) {
-            throw new BaseException("Error removing forum permissions for project id " + project.getId(), e);
-        }
-    }
-
-    /**
-     * Remove forum watch.
-     * 
-     * @param project the project
-     * @param user    the user
-     * @param forumId the forum id
-     * @throws BaseException if any error
-     */
-    public static void removeForumWatch(Project project, Long user, long forumId) throws BaseException {
-        removeForumWatch(project, userToUsers(user), forumId);
-    }
-
-    /**
      * <p>
      * Gets all uploads of the specified type associated with the specified project
      * phase.
@@ -3096,8 +2904,6 @@ public class ActionsHelper {
      *                                                                retrieving
      *                                                                resource
      *                                                                roles.
-     * @throws com.cronos.onlinereview.dataaccess.DataAccessException if an
-     *                                                                unexpected
      *                                                                error occurs.
      */
     public static Resource[] searchUserResources(long userId, ProjectStatus status)

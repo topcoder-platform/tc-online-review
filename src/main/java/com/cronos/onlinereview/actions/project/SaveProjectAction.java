@@ -5,7 +5,6 @@ package com.cronos.onlinereview.actions.project;
 
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.actions.event.EventBusServiceClient;
-import com.topcoder.onlinereview.component.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.Comparators;
@@ -16,6 +15,7 @@ import com.cronos.onlinereview.util.LookupHelper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.topcoder.onlinereview.component.contest.ContestEligibilityValidatorException;
+import com.topcoder.onlinereview.component.dataaccess.ProjectDataAccess;
 import com.topcoder.onlinereview.component.exception.BaseException;
 import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.topcoder.onlinereview.component.external.UserRetrieval;
@@ -2012,20 +2012,6 @@ public class SaveProjectAction extends BaseProjectAction {
             resourceManager.addNotifications(userIds, project.getId(),
                     timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
-
-        // Add forum permissions for all new users and remove permissions for removed resources.
-        ActionsHelper.removeForumPermissions(project, deletedUsers);
-        ActionsHelper.addForumPermissions(project, newUsers, false);
-        ActionsHelper.addForumPermissions(project, newModerators, true);
-
-        long forumId = 0;
-        if (project.getProperty("Developer Forum ID") != null && (Long) project.getProperty("Developer Forum ID") != 0) {
-            forumId = ((Long) project.getProperty("Developer Forum ID"));
-        }
-
-        ActionsHelper.removeForumWatch(project, deletedUsers, forumId);
-        ActionsHelper.removeForumWatch(project, deletedUsersForForumWatch, forumId);
-        ActionsHelper.addForumWatch(project, newUsersForumWatch, forumId);
     }
 
     /**

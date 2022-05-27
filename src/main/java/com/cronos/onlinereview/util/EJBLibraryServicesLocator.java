@@ -8,7 +8,6 @@ import com.topcoder.onlinereview.component.contest.ContestEligibilityManager;
 import com.topcoder.onlinereview.component.contest.ContestEligibilityService;
 import com.topcoder.onlinereview.component.contest.ContestEligibilityValidationManager;
 import com.topcoder.onlinereview.component.security.login.LoginRemote;
-import com.topcoder.web.ejb.forums.Forums;
 import com.topcoder.web.ejb.user.UserPreference;
 import org.springframework.context.ApplicationContext;
 
