@@ -43,6 +43,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.Cookie;
+
 /**
  * This class is the struts action class which is used for listing all projects.
  * <p>
@@ -151,7 +153,20 @@ public class ListProjectsAction extends BaseProjectAction {
 
         request.setAttribute("userProjectTypes", userProjectTypes);
 
+        // read cookies to remember user's selected category
+        String categoryCookie = "";
+        for(Cookie c : request.getCookies()) {
+            if (c.getName().equals(scope + "-categoryId")) {
+                categoryCookie = c.getValue();
+                break;
+            }
+        }
+
         String selectedCategoryParam = request.getParameter("category");
+        // if a specific category is not requested explicitly, use category value from cookie.
+        if (selectedCategoryParam == null || selectedCategoryParam.isEmpty()) {
+            selectedCategoryParam = categoryCookie;
+        }
         Long selectedCategoryId = null;
         String categoryName = "";
         int totalProjectCount = 0;
@@ -185,6 +200,8 @@ public class ListProjectsAction extends BaseProjectAction {
             return SUCCESS;
         }
         request.setAttribute("selectedCategoryId", selectedCategoryId);
+        // set selected category as cookie
+        response.addCookie(new Cookie(scope + "-categoryId", String.valueOf(selectedCategoryId)));
         // pagination parameter
         String pageParameter = request.getParameter("page");
         Integer currentPage = null;
