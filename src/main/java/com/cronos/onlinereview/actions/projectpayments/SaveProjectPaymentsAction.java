@@ -157,6 +157,13 @@ public class SaveProjectPaymentsAction extends BaseProjectPaymentAction {
         PaymentsHelper.updateProjectResultPayments(projectId);
 
         EventBusServiceClient.fireProjectPaymentUpdateEvent(projectId, AuthorizationHelper.getLoggedInUserId(request), this.getModel());
+
+        // publish payment updated event
+        Map<String, Object> updateValues = new HashMap<>();
+        List<ProjectPayment> newPayments = ActionsHelper.createProjectPaymentManager().search(ProjectPaymentFilterBuilder.createProjectIdFilter(projectId));
+        updateValues.put("payments", newPayments);
+        EventBusServiceClient.fireChallengeUpdateEvent(projectId, AuthorizationHelper.getLoggedInUserId(request), updateValues);
+
         setPid(projectId);
         // Return success forward
         return Constants.SUCCESS_FORWARD_NAME;

@@ -471,7 +471,7 @@ public class SaveProjectAction extends BaseProjectAction {
             switchProjectPhase(request, phasesJsMap);
             Object newWinnerId = ActionsHelper.createProjectManager().getProject(project.getId()).getProperty("Winner External Reference ID");
             if (newWinnerId != null && !newWinnerId.equals(winnerId)) {
-                updateValues.put("winners", newWinnerId);
+                updateValues.put("winner", newWinnerId);
             }
         }
 
@@ -479,19 +479,28 @@ public class SaveProjectAction extends BaseProjectAction {
         if (!ActionsHelper.isErrorsPresent(request)) {
             ProjectManager projectManager = ActionsHelper.createProjectManager();
             String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
-            Map<String, Prize> updatedPrizeMap = new HashMap<>();
+            Map<String, List<Prize>> updatedPrizeMap = new HashMap<>();
             for (Prize prize : createdPrize) {
                 prize.setProjectId(project.getId());
                 projectManager.createPrize(prize, operator);
-                updatedPrizeMap.put("created", prize);
+                if (!updatedPrizeMap.containsKey("created")) {
+                    updatedPrizeMap.put("created", new ArrayList<>());
+                }
+                updatedPrizeMap.get("created").add(prize);
             }
             for (Prize prize : updatedPrize) {
                 projectManager.updatePrize(prize, operator);
-                updatedPrizeMap.put("updated", prize);
+                if (!updatedPrizeMap.containsKey("updated")) {
+                    updatedPrizeMap.put("updated", new ArrayList<>());
+                }
+                updatedPrizeMap.get("updated").add(prize);
             }
             for (Prize prize : removedPrize) {
                 projectManager.removePrize(prize, operator);
-                updatedPrizeMap.put("deleted", prize);
+                if (!updatedPrizeMap.containsKey("deleted")) {
+                    updatedPrizeMap.put("deleted", new ArrayList<>());
+                }
+                updatedPrizeMap.get("deleted").add(prize);
             }
             PaymentsHelper.processAutomaticPayments(project.getId(), operator);
 
