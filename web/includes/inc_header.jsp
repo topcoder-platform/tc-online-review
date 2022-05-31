@@ -6,13 +6,13 @@
   - Description: This page displays header for all pages used in online review application.
 --%>
 <%@ page language="java" isELIgnored="false" %>
-<%@ page import="java.text.DecimalFormat,com.topcoder.shared.util.ApplicationServer" %>
+<%@ page import="java.text.DecimalFormat,com.topcoder.onlinereview.component.webcommon.ApplicationServer" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
-<jsp:useBean id="sessionInfo" class="com.topcoder.web.common.SessionInfo" scope="request" />
+<jsp:useBean id="sessionInfo" class="com.topcoder.onlinereview.component.webcommon.SessionInfo" scope="request" />
 <script language="JavaScript" type="text/javascript" src="/js/tcscript.js"><!-- @ --></script>
 
 <div style="margin: 10px 0px 40px 0px;">

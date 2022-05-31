@@ -4,7 +4,7 @@
 package com.cronos.onlinereview.actions.projectdetails;
 
 import com.cronos.onlinereview.Constants;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class is the struts action class which is used for uploading checkpoint submission.

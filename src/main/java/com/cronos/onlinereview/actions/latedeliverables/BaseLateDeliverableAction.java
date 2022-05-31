@@ -3,21 +3,20 @@
  */
 package com.cronos.onlinereview.actions.latedeliverables;
 
-import java.util.Date;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.actions.DynamicModelDrivenAction;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
-import com.topcoder.management.deliverable.late.LateDeliverable;
-import com.topcoder.management.deliverable.late.LateDeliverableManagementException;
-import com.topcoder.management.deliverable.late.LateDeliverableManager;
-import com.topcoder.management.project.PersistenceException;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.resource.persistence.ResourcePersistenceException;
+import com.topcoder.onlinereview.component.deliverable.late.LateDeliverable;
+import com.topcoder.onlinereview.component.deliverable.late.LateDeliverableManagementException;
+import com.topcoder.onlinereview.component.deliverable.late.LateDeliverableManager;
+import com.topcoder.onlinereview.component.project.management.PersistenceException;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+import com.topcoder.onlinereview.component.resource.ResourcePersistenceException;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 /**
  * This is the base class for project late deliverables actions classes.

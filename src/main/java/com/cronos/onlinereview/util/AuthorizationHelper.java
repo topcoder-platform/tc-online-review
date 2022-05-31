@@ -3,30 +3,29 @@
  */
 package com.cronos.onlinereview.util;
 
+import com.cronos.onlinereview.Constants;
+import com.topcoder.onlinereview.component.dataaccess.ProjectDataAccess;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.external.ExternalUser;
+import com.topcoder.onlinereview.component.external.UserRetrieval;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.management.ProjectManager;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceFilterBuilder;
+import com.topcoder.onlinereview.component.resource.ResourceRole;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+import com.topcoder.onlinereview.component.security.groups.model.GroupPermissionType;
+import com.topcoder.onlinereview.component.security.groups.model.ResourceType;
+import com.topcoder.onlinereview.component.security.groups.services.AuthorizationService;
+import com.topcoder.onlinereview.component.webcommon.SSOCookieService;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
-import com.cronos.onlinereview.external.ExternalUser;
-import com.cronos.onlinereview.external.UserRetrieval;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.resource.ResourceRole;
-import com.topcoder.management.resource.search.ResourceFilterBuilder;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.security.groups.model.GroupPermissionType;
-import com.topcoder.security.groups.model.ResourceType;
-import com.topcoder.security.groups.services.AuthorizationService;
-import com.topcoder.util.errorhandling.BaseException;
-import com.topcoder.web.common.security.SSOCookieService;
+import static com.topcoder.onlinereview.component.util.SpringUtils.getBean;
 
 /**
  * This class provides helper methods that can be used to determine if the user
@@ -272,7 +271,7 @@ public class AuthorizationHelper {
         Set roles = (Set) request.getAttribute("roles");
 
         // Check if user is Cockpit Project User for selected project
-        ProjectDataAccess projectDataAccess = new ProjectDataAccess();
+        ProjectDataAccess projectDataAccess = getBean(ProjectDataAccess.class);
         if (projectDataAccess.isCockpitProjectUser(projectId, getLoggedInUserId(request))) {
             roles.add(Constants.COCKPIT_PROJECT_USER_ROLE_NAME);
         }
@@ -329,15 +328,20 @@ public class AuthorizationHelper {
 
         // check whether user has cockpit project user role
         AuthorizationService authorizationService = retrieveAuthorizationService(request);
-        if (authorizationService.isCustomerAdministrator(userId, clientId)) {
-            roles.add(Constants.COCKPIT_PROJECT_USER_ROLE_NAME);
-        } else {
-            GroupPermissionType permission = authorizationService.checkAuthorization(userId,
-                    project.getTcDirectProjectId(), ResourceType.PROJECT);
-            if (null != permission) {
+        try {
+            if (authorizationService.isCustomerAdministrator(userId, clientId)) {
                 roles.add(Constants.COCKPIT_PROJECT_USER_ROLE_NAME);
+            } else {
+                GroupPermissionType permission = authorizationService.checkAuthorization(userId,
+                        project.getTcDirectProjectId(), ResourceType.PROJECT);
+                if (null != permission) {
+                    roles.add(Constants.COCKPIT_PROJECT_USER_ROLE_NAME);
+                }
             }
+        } catch (Exception e) {
+            throw new BaseException(e);
         }
+
     }
 
     /**

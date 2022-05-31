@@ -13,11 +13,11 @@ import com.cronos.onlinereview.util.Comparators;
 import com.cronos.onlinereview.util.ConfigHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.payment.ProjectPayment;
-import com.topcoder.management.payment.ProjectPaymentManager;
-import com.topcoder.management.payment.search.ProjectPaymentFilterBuilder;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.project.payment.ProjectPayment;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentManager;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentFilterBuilder;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class is the struts action class which is used for viewing the project payments page.

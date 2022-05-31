@@ -3,23 +3,7 @@
  */
 package com.cronos.onlinereview.actions.projectdetails;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
-import com.cronos.onlinereview.external.ExternalUser;
-import com.cronos.onlinereview.model.ClientProject;
-import com.cronos.onlinereview.model.CockpitProject;
 import com.cronos.onlinereview.model.PhasesDetails;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
@@ -30,40 +14,56 @@ import com.cronos.onlinereview.util.LoggingHelper;
 import com.cronos.onlinereview.util.LookupHelper;
 import com.cronos.onlinereview.util.PhasesDetailsServices;
 import com.opensymphony.xwork2.TextProvider;
-import com.topcoder.management.deliverable.Deliverable;
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.Upload;
-import com.topcoder.management.deliverable.UploadManager;
-import com.topcoder.management.deliverable.late.LateDeliverable;
-import com.topcoder.management.deliverable.late.LateDeliverableManager;
-import com.topcoder.management.deliverable.late.search.LateDeliverableFilterBuilder;
-import com.topcoder.management.payment.ProjectPayment;
-import com.topcoder.management.payment.search.ProjectPaymentFilterBuilder;
-import com.topcoder.management.phase.OperationCheckResult;
-import com.topcoder.management.phase.PhaseManagementException;
-import com.topcoder.management.phase.PhaseManager;
-import com.topcoder.management.project.Prize;
-import com.topcoder.management.project.PrizeType;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.project.link.ProjectLinkManager;
-import com.topcoder.management.resource.Notification;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.resource.ResourceRole;
-import com.topcoder.management.resource.search.NotificationFilterBuilder;
-import com.topcoder.management.review.ReviewManagementException;
-import com.topcoder.management.review.ReviewManager;
-import com.topcoder.management.review.data.Comment;
-import com.topcoder.management.review.data.Review;
-import com.topcoder.management.scorecard.data.Scorecard;
-import com.topcoder.management.scorecard.data.ScorecardType;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.EqualToFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.search.builder.filter.InFilter;
-import com.topcoder.shared.util.ApplicationServer;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.dataaccess.ClientProject;
+import com.topcoder.onlinereview.component.dataaccess.CockpitProject;
+import com.topcoder.onlinereview.component.dataaccess.ProjectDataAccess;
+import com.topcoder.onlinereview.component.deliverable.Deliverable;
+import com.topcoder.onlinereview.component.deliverable.Submission;
+import com.topcoder.onlinereview.component.deliverable.Upload;
+import com.topcoder.onlinereview.component.deliverable.UploadManager;
+import com.topcoder.onlinereview.component.deliverable.late.LateDeliverable;
+import com.topcoder.onlinereview.component.deliverable.late.LateDeliverableFilterBuilder;
+import com.topcoder.onlinereview.component.deliverable.late.LateDeliverableManager;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.external.ExternalUser;
+import com.topcoder.onlinereview.component.project.management.Prize;
+import com.topcoder.onlinereview.component.project.management.PrizeType;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.management.ProjectLinkManager;
+import com.topcoder.onlinereview.component.project.payment.ProjectPayment;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentFilterBuilder;
+import com.topcoder.onlinereview.component.project.phase.OperationCheckResult;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseManagementException;
+import com.topcoder.onlinereview.component.project.phase.PhaseManager;
+import com.topcoder.onlinereview.component.resource.Notification;
+import com.topcoder.onlinereview.component.resource.NotificationFilterBuilder;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+import com.topcoder.onlinereview.component.resource.ResourceRole;
+import com.topcoder.onlinereview.component.review.Comment;
+import com.topcoder.onlinereview.component.review.Review;
+import com.topcoder.onlinereview.component.review.ReviewManagementException;
+import com.topcoder.onlinereview.component.review.ReviewManager;
+import com.topcoder.onlinereview.component.scorecard.Scorecard;
+import com.topcoder.onlinereview.component.scorecard.ScorecardType;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+import com.topcoder.onlinereview.component.search.filter.InFilter;
+import com.topcoder.onlinereview.component.webcommon.ApplicationServer;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class is the struts action class which is used for rendering the project
@@ -82,6 +82,9 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
      * Represents the serial version id.
      */
     private static final long serialVersionUID = -3704837880945145746L;
+
+    @Autowired
+    private ProjectDataAccess projectDataAccess;
 
     /**
      * Creates a new instance of the <code>ViewProjectDetailsAction</code> class.
@@ -158,8 +161,6 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
             }
             request.setAttribute("projectDRP", drpoint);
         }
-
-        ProjectDataAccess projectDataAccess = new ProjectDataAccess();
 
         // since Online Review Update - Add Project Dropdown v1.0
         // Retrieve the billing project id from property.
@@ -269,7 +270,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
 
         // Obtain an instance of Phase Manager
         PhaseManager phaseMgr = ActionsHelper.createPhaseManager(true);
-        com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(project.getId());
+        com.topcoder.onlinereview.component.project.phase.Project phProj = phaseMgr.getPhases(project.getId());
         Phase[] phases;
 
         if (phProj != null) {

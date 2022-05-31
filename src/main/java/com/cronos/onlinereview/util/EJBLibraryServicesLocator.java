@@ -3,15 +3,12 @@
  */
 package com.cronos.onlinereview.util;
 
-import org.springframework.context.ApplicationContext;
-
 import com.cronos.onlinereview.ejblibrary.SpringContextProvider;
-import com.topcoder.security.login.LoginRemote;
-import com.topcoder.service.contest.eligibility.dao.ContestEligibilityManager;
-import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityService;
-import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidationManager;
-import com.topcoder.web.ejb.forums.Forums;
-import com.topcoder.web.ejb.user.UserPreference;
+import com.cronos.onlinereview.ejblibrary.UserPreference;
+import com.topcoder.onlinereview.component.contest.ContestEligibilityManager;
+import com.topcoder.onlinereview.component.contest.ContestEligibilityService;
+import com.topcoder.onlinereview.component.contest.ContestEligibilityValidationManager;
+import org.springframework.context.ApplicationContext;
 
 /**
  * <p>A service locator for classes implementing library-style calls to various EJBs.</p>
@@ -28,26 +25,6 @@ public class EJBLibraryServicesLocator {
     }
 
     /**
-     * <p>Gets the library interface to <code>Forums</code> service.</p>
-     *
-     * @return a <code>Forums</code> implementation providing library-style calls to <code>Forums EJB</code>.
-     */
-    public static Forums getForumsService() {
-        ApplicationContext appContext = SpringContextProvider.getApplicationContext();
-        return (Forums) appContext.getBean("forumsLibrary");
-    }
-
-    /**
-     * <p>Gets the library interface to <code>Login</code> service.</p>
-     *
-     * @return a <code>LoginRemote</code> implementation providing library-style calls to <code>Login EJB</code>.
-     */
-    public static LoginRemote getLoginService() {
-        ApplicationContext appContext = SpringContextProvider.getApplicationContext();
-        return (LoginRemote) appContext.getBean("loginLibrary");
-    }
-
-    /**
      * <p>Gets the library interface to <code>Contest Eligibility</code> service.</p>
      *
      * @return a <code>ContestEligibilityService</code> implementation providing library-style calls to
@@ -55,7 +32,7 @@ public class EJBLibraryServicesLocator {
      */
     public static ContestEligibilityService getContestEligibilityService() {
         ApplicationContext appContext = SpringContextProvider.getApplicationContext();
-        return (ContestEligibilityService) appContext.getBean("contestEligibilityServiceLibrary");
+        return  appContext.getBean(ContestEligibilityService.class);
     }
 
     /**
@@ -66,7 +43,7 @@ public class EJBLibraryServicesLocator {
      */
     public static ContestEligibilityManager getContestEligibilityManager() {
         ApplicationContext appContext = SpringContextProvider.getApplicationContext();
-        return (ContestEligibilityManager) appContext.getBean("contestEligibilityManagerLibrary");
+        return appContext.getBean(ContestEligibilityManager.class);
     }
 
     /**
@@ -77,7 +54,7 @@ public class EJBLibraryServicesLocator {
      */
     public static ContestEligibilityValidationManager getContestEligibilityValidationManager() {
         ApplicationContext appContext = SpringContextProvider.getApplicationContext();
-        return (ContestEligibilityValidationManager) appContext.getBean("contestEligibilityValidationManagerLibrary");
+        return appContext.getBean(ContestEligibilityValidationManager.class);
     }
 
     /**
@@ -90,6 +67,6 @@ public class EJBLibraryServicesLocator {
      */
     public static UserPreference getUserPreference() {
         ApplicationContext appContext = SpringContextProvider.getApplicationContext();
-        return (UserPreference) appContext.getBean("userPreferencelibrary");
+        return appContext.getBean(UserPreference.class);
     }
 }

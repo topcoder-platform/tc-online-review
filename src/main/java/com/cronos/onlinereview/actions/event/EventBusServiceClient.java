@@ -6,10 +6,10 @@ package com.cronos.onlinereview.actions.event;
 import com.cronos.onlinereview.model.ProjectPaymentsForm;
 import com.cronos.onlinereview.util.ConfigHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.review.data.Review;
-import com.topcoder.project.phases.Dependency;
-import com.topcoder.project.phases.Phase;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.review.Review;
+import com.topcoder.onlinereview.component.project.phase.Dependency;
+import com.topcoder.onlinereview.component.project.phase.Phase;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;

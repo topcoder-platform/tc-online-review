@@ -3,47 +3,45 @@
  */
 package com.cronos.onlinereview.actions.latedeliverables;
 
+import com.cronos.onlinereview.Constants;
+import com.cronos.onlinereview.model.DynamicModel;
+import com.cronos.onlinereview.util.ActionsHelper;
+import com.cronos.onlinereview.util.AuthorizationHelper;
+import com.cronos.onlinereview.util.Comparators;
+import com.cronos.onlinereview.util.ConfigHelper;
+import com.cronos.onlinereview.util.LoggingHelper;
+import com.topcoder.onlinereview.component.dataaccess.CockpitProject;
+import com.topcoder.onlinereview.component.dataaccess.ProjectDataAccess;
+import com.topcoder.onlinereview.component.deliverable.late.LateDeliverable;
+import com.topcoder.onlinereview.component.deliverable.late.LateDeliverableFilterBuilder;
+import com.topcoder.onlinereview.component.deliverable.late.LateDeliverableManager;
+import com.topcoder.onlinereview.component.deliverable.late.LateDeliverableType;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.external.ExternalUser;
+import com.topcoder.onlinereview.component.external.UserRetrieval;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.management.ProjectCategory;
+import com.topcoder.onlinereview.component.project.management.ProjectManager;
+import com.topcoder.onlinereview.component.project.management.ProjectStatus;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+import com.topcoder.onlinereview.component.search.filter.OrFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Collections;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
-import com.cronos.onlinereview.external.ExternalUser;
-import com.cronos.onlinereview.external.UserRetrieval;
-import com.cronos.onlinereview.model.CockpitProject;
-import com.cronos.onlinereview.model.DynamicModel;
-import com.cronos.onlinereview.util.ActionsHelper;
-import com.cronos.onlinereview.util.AuthorizationHelper;
-import com.cronos.onlinereview.util.Comparators;
-import com.cronos.onlinereview.util.ConfigHelper;
-import com.cronos.onlinereview.util.CorrectnessCheckResult;
-import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.deliverable.late.LateDeliverable;
-import com.topcoder.management.deliverable.late.LateDeliverableManagementException;
-import com.topcoder.management.deliverable.late.LateDeliverableManager;
-import com.topcoder.management.deliverable.late.LateDeliverableType;
-import com.topcoder.management.deliverable.late.search.LateDeliverableFilterBuilder;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectCategory;
-import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectStatus;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.search.builder.filter.OrFilter;
-import com.topcoder.util.errorhandling.BaseException;
 
 /**
  * This class is the struts action class which is used for viewing the late deliverables.
@@ -138,6 +136,8 @@ public class ViewLateDeliverablesAction extends BaseLateDeliverableAction {
     private static final String[] ADVANCED_SEARCH_PARAM_DEFAULT_VALUES = new String[] {"", "", "", "MM.DD.YYYY",
                                                                                        "MM.DD.YYYY", ""};
 
+    @Autowired
+    private ProjectDataAccess projectDataAccess;
     /**
      * Creates a new instance of the <code>ViewLateDeliverablesAction</code> class.
      */
@@ -547,7 +547,7 @@ public class ViewLateDeliverablesAction extends BaseLateDeliverableAction {
      */
     private static Map<Long, Project> getProjects(Set<Long> projectIdSet)
         throws BaseException {
-        long[] projectIds = new long[projectIdSet.size()];
+        Long[] projectIds = new Long[projectIdSet.size()];
         int i = 0;
         for (Long projectId : projectIdSet) {
             projectIds[i++] = projectId;
@@ -575,7 +575,7 @@ public class ViewLateDeliverablesAction extends BaseLateDeliverableAction {
      * @throws BaseException
      *             if any error occurs while loading the lookup data
      */
-    private static void loadLookups(HttpServletRequest request) throws BaseException {
+    private void loadLookups(HttpServletRequest request) throws BaseException {
         // Obtain an instance of Project Manager
         ProjectManager projectManager = ActionsHelper.createProjectManager();
 
@@ -603,7 +603,6 @@ public class ViewLateDeliverablesAction extends BaseLateDeliverableAction {
         request.setAttribute("deliverableTypes", ConfigHelper.getDeliverableTypes());
 
         // Retrieve available Cockpit projects and store in request
-        ProjectDataAccess projectDataAccess = new ProjectDataAccess();
         List<CockpitProject> cockpitProjects;
         if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
             cockpitProjects = projectDataAccess.getAllCockpitProjects();
@@ -628,11 +627,8 @@ public class ViewLateDeliverablesAction extends BaseLateDeliverableAction {
      * @param filter
      *            the filter, can be null.
      * @return the list of matched late deliverables.
-     * @throws LateDeliverableManagementException
-     *             if any error occurs.
      */
-    private static List<LateDeliverable> searchLateDeliverables(HttpServletRequest request, Filter filter)
-        throws LateDeliverableManagementException {
+    private static List<LateDeliverable> searchLateDeliverables(HttpServletRequest request, Filter filter) {
         LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager();
 
         List<LateDeliverable> lateDeliverables;

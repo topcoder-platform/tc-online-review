@@ -3,30 +3,29 @@
  */
 package com.cronos.onlinereview.actions.project;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.external.ExternalUser;
-import com.cronos.onlinereview.model.ClientProject;
-import com.cronos.onlinereview.model.CockpitProject;
+import com.topcoder.onlinereview.component.dataaccess.ClientProject;
+import com.topcoder.onlinereview.component.dataaccess.CockpitProject;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.Comparators;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
 import com.cronos.onlinereview.util.LookupHelper;
-import com.topcoder.management.phase.PhaseManager;
-import com.topcoder.management.project.Prize;
-import com.topcoder.management.project.PrizeType;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.resource.search.ResourceFilterBuilder;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.external.ExternalUser;
+import com.topcoder.onlinereview.component.project.management.Prize;
+import com.topcoder.onlinereview.component.project.management.PrizeType;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseManager;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceFilterBuilder;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**

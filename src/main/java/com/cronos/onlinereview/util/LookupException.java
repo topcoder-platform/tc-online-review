@@ -3,7 +3,8 @@
  */
 package com.cronos.onlinereview.util;
 
-import com.topcoder.util.errorhandling.BaseException;
+
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class extends BaseException and is used to signal about any error

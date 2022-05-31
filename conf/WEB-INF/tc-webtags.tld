@@ -16,7 +16,7 @@
     <uri>/tags/tc-webtags</uri>
     <tag>
         <name>textInput</name>
-        <tag-class>com.topcoder.web.common.tag.TextInputTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.TextInputTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -77,7 +77,7 @@
     </tag>
     <tag>
         <name>textArea</name>
-        <tag-class>com.topcoder.web.common.tag.TextAreaTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.TextAreaTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -137,7 +137,7 @@
     </tag>
     <tag>
         <name>chkBox</name>
-        <tag-class>com.topcoder.web.common.tag.ChkBoxTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.ChkBoxTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -153,7 +153,7 @@
     </tag>
     <tag>
         <name>radioButton</name>
-        <tag-class>com.topcoder.web.common.tag.RadioButtonTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.RadioButtonTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -179,8 +179,8 @@
 
     <tag>
         <name>errorIterator</name>
-        <tag-class>com.topcoder.web.common.tag.ErrorIteratorTag</tag-class>
-        <tei-class>com.topcoder.web.common.tag.IteratorTagInfo</tei-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.ErrorIteratorTag</tag-class>
+        <tei-class>com.topcoder.onlinereview.component.webcommon.tag.IteratorTagInfo</tei-class>
         <body-content>JSP</body-content>
         <attribute>
             <name>name</name>
@@ -195,8 +195,8 @@
     </tag>
     <tag>
         <name>queryIterator</name>
-        <tag-class>com.topcoder.web.common.tag.QueryIteratorTag</tag-class>
-        <tei-class>com.topcoder.web.common.tag.ResultSetRowIteratorTagInfo</tei-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.QueryIteratorTag</tag-class>
+        <tei-class>com.topcoder.onlinereview.component.webcommon.tag.ResultSetRowIteratorTagInfo</tei-class>
         <body-content>JSP</body-content>
         <attribute>
             <name>id</name>
@@ -216,7 +216,7 @@
     </tag>
     <tag>
         <name>item</name>
-        <tag-class>com.topcoder.web.common.tag.ResultSetItemTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.ResultSetItemTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>row</name>
@@ -231,7 +231,7 @@
     </tag>
     <tag>
         <name>rscSelect</name>
-        <tag-class>com.topcoder.web.common.tag.RSCSelectTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.RSCSelectTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -307,7 +307,7 @@
     </tag>
     <tag>
         <name>listSelect</name>
-        <tag-class>com.topcoder.web.common.tag.ListSelectTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.ListSelectTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -364,7 +364,7 @@
 
     <tag>
         <name>multiRSCSelect</name>
-        <tag-class>com.topcoder.web.common.tag.MultiRSCSelectTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.MultiRSCSelectTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -436,7 +436,7 @@
 
     <tag>
         <name>handle</name>
-        <tag-class>com.topcoder.web.common.tag.HandleTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.HandleTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>coderId</name>
@@ -469,7 +469,7 @@
 
     <tag>
         <name>ratingColor</name>
-        <tag-class>com.topcoder.web.common.tag.RatingColorTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.RatingColorTag</tag-class>
         <body-content>JSP</body-content>
         <attribute>
             <name>rating</name>
@@ -490,7 +490,7 @@
 
     <tag>
         <name>hiddenInput</name>
-        <tag-class>com.topcoder.web.common.tag.HiddenInputTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.HiddenInputTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -507,8 +507,8 @@
 
     <tag>
         <name>listIterator</name>
-        <tag-class>com.topcoder.web.common.tag.ListIteratorTag</tag-class>
-        <tei-class>com.topcoder.web.common.tag.ListIteratorTagInfo</tei-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.ListIteratorTag</tag-class>
+        <tei-class>com.topcoder.onlinereview.component.webcommon.tag.ListIteratorTagInfo</tei-class>
         <body-content>JSP</body-content>
         <attribute>
             <name>id</name>
@@ -534,8 +534,8 @@
 
     <tag>
         <name>useBean</name>
-        <tag-class>com.topcoder.web.common.tag.UseBeanTag</tag-class>
-        <tei-class>com.topcoder.web.common.tag.UseBeanTagInfo</tei-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.UseBeanTag</tag-class>
+        <tei-class>com.topcoder.onlinereview.component.webcommon.tag.UseBeanTagInfo</tei-class>
         <body-content>JSP</body-content>
         <attribute>
             <name>id</name>
@@ -573,7 +573,7 @@
 
     <tag>
         <name>problemStatement</name>
-        <tag-class>com.topcoder.web.common.tag.ProblemStatementTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.ProblemStatementTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>text</name>
@@ -599,7 +599,7 @@
 
     <tag>
         <name>format</name>
-        <tag-class>com.topcoder.web.common.tag.FormatTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.FormatTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>object</name>
@@ -625,7 +625,7 @@
 
     <tag>
         <name>beanWrite</name>
-        <tag-class>com.topcoder.web.common.tag.BeanWriteTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.BeanWriteTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -646,8 +646,8 @@
 
     <tag>
         <name>iterator</name>
-        <tag-class>com.topcoder.web.common.tag.IteratorTag</tag-class>
-        <tei-class>com.topcoder.web.common.tag.IteratorTagInfo</tei-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.IteratorTag</tag-class>
+        <tei-class>com.topcoder.onlinereview.component.webcommon.tag.IteratorTagInfo</tei-class>
         <body-content>JSP</body-content>
         <attribute>
             <name>id</name>
@@ -668,7 +668,7 @@
 
     <tag>
         <name>sort</name>
-        <tag-class>com.topcoder.web.common.tag.SortTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.SortTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>column</name>
@@ -699,7 +699,7 @@
 
     <tag>
         <name>forumLink</name>
-        <tag-class>com.topcoder.web.common.tag.ForumLinkTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.ForumLinkTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>forumID</name>
@@ -720,7 +720,7 @@
 
     <tag>
         <name>sponsorImage</name>
-        <tag-class>com.topcoder.web.common.tag.SponsorImage</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.SponsorImage</tag-class>
         <body-content>JSP</body-content>
         <attribute>
             <name>image</name>
@@ -762,8 +762,8 @@
 
     <tag>
         <name>questionIterator</name>
-        <tag-class>com.topcoder.web.common.tag.ListIteratorTag</tag-class>
-        <tei-class>com.topcoder.web.common.tag.QuestionIteratorTagInfo</tei-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.ListIteratorTag</tag-class>
+        <tei-class>com.topcoder.onlinereview.component.webcommon.tag.QuestionIteratorTagInfo</tei-class>
         <body-content>JSP</body-content>
         <attribute>
             <name>id</name>
@@ -779,8 +779,8 @@
 
     <tag>
         <name>answerInput</name>
-        <tag-class>com.topcoder.web.common.tag.AnswerInput</tag-class>
-        <tei-class>com.topcoder.web.common.tag.AnswerInputTagInfo</tei-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.AnswerInput</tag-class>
+        <tei-class>com.topcoder.onlinereview.component.webcommon.tag.AnswerInputTagInfo</tei-class>
         <body-content>JSP</body-content>
         <attribute>
             <name>question</name>
@@ -801,7 +801,7 @@
 
     <tag>
         <name>objectSelect</name>
-        <tag-class>com.topcoder.web.common.tag.ObjectSelectTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.ObjectSelectTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -878,7 +878,7 @@
 
     <tag>
         <name>stringSelect</name>
-        <tag-class>com.topcoder.web.common.tag.StringSelectTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.StringSelectTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -945,7 +945,7 @@
 
     <tag>
         <name>linkTracking</name>
-        <tag-class>com.topcoder.web.common.tag.LinkTrackingTag</tag-class>
+        <tag-class>com.topcoder.onlinereview.component.webcommon.tag.LinkTrackingTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>link</name>

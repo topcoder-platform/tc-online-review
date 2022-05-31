@@ -4,7 +4,7 @@
 package com.cronos.onlinereview.actions.projectreview;
 
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class is the struts action class which is used to save the approval.
@@ -36,7 +36,7 @@ public class SaveApprovalAction extends BaseProjectReviewAction {
      *         if any error occurs.
      */
     public String execute()
-        throws BaseException {
+            throws BaseException {
         LoggingHelper.logAction(request);
         return saveGenericReview(getModel(), request, "Approval");
     }

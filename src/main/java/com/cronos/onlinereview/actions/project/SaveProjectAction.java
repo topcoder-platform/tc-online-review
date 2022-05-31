@@ -3,24 +3,59 @@
  */
 package com.cronos.onlinereview.actions.project;
 
-import static com.cronos.onlinereview.Constants.AGGREGATION_PHASE_NAME;
-import static com.cronos.onlinereview.Constants.AGGREGATION_REVIEW_PHASE_NAME;
-import static com.cronos.onlinereview.Constants.APPEALS_PHASE_NAME;
-import static com.cronos.onlinereview.Constants.APPEALS_RESPONSE_PHASE_NAME;
-import static com.cronos.onlinereview.Constants.APPROVAL_PHASE_NAME;
-import static com.cronos.onlinereview.Constants.CHECKPOINT_REVIEW_PHASE_NAME;
-import static com.cronos.onlinereview.Constants.CHECKPOINT_SCREENING_PHASE_NAME;
-import static com.cronos.onlinereview.Constants.CHECKPOINT_SUBMISSION_PHASE_NAME;
-import static com.cronos.onlinereview.Constants.FINAL_FIX_PHASE_NAME;
-import static com.cronos.onlinereview.Constants.FINAL_REVIEW_PHASE_NAME;
-import static com.cronos.onlinereview.Constants.POST_MORTEM_PHASE_NAME;
-import static com.cronos.onlinereview.Constants.REGISTRATION_PHASE_NAME;
-import static com.cronos.onlinereview.Constants.REVIEW_PHASE_NAME;
-import static com.cronos.onlinereview.Constants.SCREENING_PHASE_NAME;
-import static com.cronos.onlinereview.Constants.SPECIFICATION_REVIEW_PHASE_NAME;
-import static com.cronos.onlinereview.Constants.SPECIFICATION_SUBMISSION_PHASE_NAME;
-import static com.cronos.onlinereview.Constants.SUBMISSION_PHASE_NAME;
+import com.cronos.onlinereview.Constants;
+import com.cronos.onlinereview.actions.event.EventBusServiceClient;
+import com.cronos.onlinereview.util.ActionsHelper;
+import com.cronos.onlinereview.util.AuthorizationHelper;
+import com.cronos.onlinereview.util.Comparators;
+import com.cronos.onlinereview.util.ConfigHelper;
+import com.cronos.onlinereview.util.CorrectnessCheckResult;
+import com.cronos.onlinereview.util.LoggingHelper;
+import com.cronos.onlinereview.util.LookupHelper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.topcoder.onlinereview.component.contest.ContestEligibilityValidatorException;
+import com.topcoder.onlinereview.component.dataaccess.ProjectDataAccess;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.external.ExternalUser;
+import com.topcoder.onlinereview.component.external.UserRetrieval;
+import com.topcoder.onlinereview.component.project.management.Prize;
+import com.topcoder.onlinereview.component.project.management.PrizeType;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.management.ProjectCategory;
+import com.topcoder.onlinereview.component.project.management.ProjectManager;
+import com.topcoder.onlinereview.component.project.management.ProjectStatus;
+import com.topcoder.onlinereview.component.project.payment.ProjectPayment;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentManager;
+import com.topcoder.onlinereview.component.project.phase.CyclicDependencyException;
+import com.topcoder.onlinereview.component.project.phase.Dependency;
+import com.topcoder.onlinereview.component.project.phase.OperationCheckResult;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseManager;
+import com.topcoder.onlinereview.component.project.phase.PhaseStatus;
+import com.topcoder.onlinereview.component.project.phase.PhaseType;
+import com.topcoder.onlinereview.component.project.phase.handler.or.AmazonSNSHelper;
+import com.topcoder.onlinereview.component.project.phase.handler.or.PaymentsHelper;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceFilterBuilder;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+import com.topcoder.onlinereview.component.resource.ResourceRole;
+import com.topcoder.onlinereview.component.review.ReviewManager;
+import com.topcoder.onlinereview.component.termsofuse.ProjectTermsOfUseDao;
+import com.topcoder.onlinereview.component.termsofuse.TermsOfUse;
+import com.topcoder.onlinereview.component.termsofuse.UserTermsOfUseDao;
+import com.topcoder.onlinereview.component.workday.Workdays;
+import com.topcoder.onlinereview.component.workday.WorkdaysFactory;
+import com.topcoder.onlinereview.component.workday.WorkdaysUnitOfTime;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.servlet.http.HttpServletRequest;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.Format;
@@ -39,60 +74,24 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import javax.ejb.EJBException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-
-import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.actions.event.EventBusServiceClient;
-import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
-import com.cronos.onlinereview.external.ExternalUser;
-import com.cronos.onlinereview.external.UserRetrieval;
-import com.cronos.onlinereview.phases.AmazonSNSHelper;
-import com.cronos.onlinereview.phases.PaymentsHelper;
-import com.cronos.onlinereview.util.*;
-import com.cronos.termsofuse.dao.ProjectTermsOfUseDao;
-import com.cronos.termsofuse.dao.UserTermsOfUseDao;
-import com.cronos.termsofuse.model.TermsOfUse;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.topcoder.date.workdays.DefaultWorkdaysFactory;
-import com.topcoder.date.workdays.Workdays;
-import com.topcoder.date.workdays.WorkdaysUnitOfTime;
-import com.topcoder.management.payment.ProjectPayment;
-import com.topcoder.management.payment.ProjectPaymentManager;
-import com.topcoder.management.phase.OperationCheckResult;
-import com.topcoder.management.phase.PhaseManager;
-import com.topcoder.management.project.Prize;
-import com.topcoder.management.project.PrizeType;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectCategory;
-import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectStatus;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.resource.ResourceRole;
-import com.topcoder.management.resource.search.ResourceFilterBuilder;
-import com.topcoder.management.review.ReviewManager;
-import com.topcoder.project.phases.CyclicDependencyException;
-import com.topcoder.project.phases.Dependency;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.project.phases.PhaseStatus;
-import com.topcoder.project.phases.PhaseType;
-import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
-import com.topcoder.shared.util.DBMS;
-import com.topcoder.util.errorhandling.BaseException;
-import com.topcoder.web.common.RowNotFoundException;
+import static com.cronos.onlinereview.Constants.AGGREGATION_PHASE_NAME;
+import static com.cronos.onlinereview.Constants.AGGREGATION_REVIEW_PHASE_NAME;
+import static com.cronos.onlinereview.Constants.APPEALS_PHASE_NAME;
+import static com.cronos.onlinereview.Constants.APPEALS_RESPONSE_PHASE_NAME;
+import static com.cronos.onlinereview.Constants.APPROVAL_PHASE_NAME;
+import static com.cronos.onlinereview.Constants.CHECKPOINT_REVIEW_PHASE_NAME;
+import static com.cronos.onlinereview.Constants.CHECKPOINT_SCREENING_PHASE_NAME;
+import static com.cronos.onlinereview.Constants.CHECKPOINT_SUBMISSION_PHASE_NAME;
+import static com.cronos.onlinereview.Constants.FINAL_FIX_PHASE_NAME;
+import static com.cronos.onlinereview.Constants.FINAL_REVIEW_PHASE_NAME;
+import static com.cronos.onlinereview.Constants.POST_MORTEM_PHASE_NAME;
+import static com.cronos.onlinereview.Constants.REGISTRATION_PHASE_NAME;
+import static com.cronos.onlinereview.Constants.REVIEW_PHASE_NAME;
+import static com.cronos.onlinereview.Constants.SCREENING_PHASE_NAME;
+import static com.cronos.onlinereview.Constants.SPECIFICATION_REVIEW_PHASE_NAME;
+import static com.cronos.onlinereview.Constants.SPECIFICATION_SUBMISSION_PHASE_NAME;
+import static com.cronos.onlinereview.Constants.SUBMISSION_PHASE_NAME;
+import static com.topcoder.onlinereview.component.util.SpringUtils.getCommonJdbcTemplate;
 
 /**
  * This class is the struts action class which is used for saving the project, including both creating
@@ -195,6 +194,11 @@ public class SaveProjectAction extends BaseProjectAction {
      * Represents the project id which is used for viewing project details.
      */
     private long pid;
+    
+    @Autowired
+    private WorkdaysFactory workdaysFactory;
+    @Autowired
+    private ProjectDataAccess projectDataAccess;
 
 
     /**
@@ -388,7 +392,7 @@ public class SaveProjectAction extends BaseProjectAction {
                 project.setProperty("Billing Project", getModel().get("billing_project"));
                 String cockpitProjectId = (String) getModel().get("cockpit_project");
                 if (cockpitProjectId.trim().length() > 0) {
-                    project.setTcDirectProjectId(Integer.parseInt(cockpitProjectId));
+                    project.setTcDirectProjectId(Long.parseLong(cockpitProjectId));
                 }
         }
 
@@ -498,7 +502,7 @@ public class SaveProjectAction extends BaseProjectAction {
             return;
         }
 
-        com.topcoder.project.phases.Project phProject = phasesToDelete.get(0).getProject();
+        com.topcoder.onlinereview.component.project.phase.Project phProject = phasesToDelete.get(0).getProject();
 
         for (Phase phase : phasesToDelete) {
             phProject.removePhase(phase);
@@ -680,18 +684,18 @@ public class SaveProjectAction extends BaseProjectAction {
         // Obtain an instance of Phase Manager
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
 
-        com.topcoder.project.phases.Project phProject;
+        com.topcoder.onlinereview.component.project.phase.Project phProject;
         if (newProject) {
             // Create new Phases Project
-            phProject = new com.topcoder.project.phases.Project(
-                    new Date(), (new DefaultWorkdaysFactory()).createWorkdaysInstance());
+            phProject = new com.topcoder.onlinereview.component.project.phase.Project(
+                    new Date(), workdaysFactory.createWorkdaysInstance());
         } else {
             // Retrieve the Phases Project with the id equal to the id of specified Project
             phProject = phaseManager.getPhases(project.getId());
             // Sometimes the call to the above method returns null. Guard against this situation
             if (phProject == null) {
-                phProject = new com.topcoder.project.phases.Project(
-                        new Date(), (new DefaultWorkdaysFactory()).createWorkdaysInstance());
+                phProject = new com.topcoder.onlinereview.component.project.phase.Project(
+                        new Date(), workdaysFactory.createWorkdaysInstance());
             }
         }
 
@@ -1094,13 +1098,8 @@ public class SaveProjectAction extends BaseProjectAction {
             // Set the id of Phases Project to be equal to the id of appropriate Project
             phProject.setId(project.getId());
         } else {
-            try {
-                projectManager.updateProject(project, (String) getModel().get("explanation"),
-                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-            } catch (StatusValidationException statusValidationException) {
-                ActionsHelper.addErrorToRequest(request, "status", statusValidationException.getStatusViolationKey());
-                return oldPhases;
-            }
+            projectManager.updateProject(project, (String) getModel().get("explanation"),
+                    Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
 
         // Save the phases at the persistence level
@@ -1453,7 +1452,7 @@ public class SaveProjectAction extends BaseProjectAction {
         try {
         	if (!ConfigHelper.getAdminUsers().contains(userId)) {
         		// check user group before save the resource
-    	        Map<String, Long> groups = new ProjectDataAccess().checkUserChallengeEligibility(
+    	        Map<String, Long> groups = projectDataAccess.checkUserChallengeEligibility(
     	        		userId, projectId);
 
     	        // If there's no corresponding record in group_contest_eligibility
@@ -1547,8 +1546,6 @@ public class SaveProjectAction extends BaseProjectAction {
         try {
             allResourcesValid = allResourcesValid && validateResourceTermsOfUse(request, project, userRetrieval, resourceNames);
             allResourcesValid = allResourcesValid && validateResourceEligibility(request, project, userRetrieval, resourceNames);
-        } catch (EJBException e) {
-            throw new BaseException(e);
         } catch (ContestEligibilityValidatorException e) {
             throw new BaseException(e);
         }
@@ -1838,7 +1835,7 @@ public class SaveProjectAction extends BaseProjectAction {
                         (Long) getModel().get("resources_role", i));
                 resourceManager.removeResource(resource,
                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                resourceManager.removeNotifications(new long[] {user.getId()}, project.getId(),
+                resourceManager.removeNotifications(new Long[] {user.getId()}, project.getId(),
                         timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 continue;
             }
@@ -1980,7 +1977,7 @@ public class SaveProjectAction extends BaseProjectAction {
         ActionsHelper.populateProjectResult(project, newSubmitters);
 
         // delete timeline notifications
-        long[] idsToDeletedForNotification = new long[deletedUsersForNotification.size()];
+        Long[] idsToDeletedForNotification = new Long[deletedUsersForNotification.size()];
         int k = 0;
         for (long id : deletedUsersForNotification) {
             idsToDeletedForNotification[k++] = id;
@@ -1991,7 +1988,7 @@ public class SaveProjectAction extends BaseProjectAction {
         // Update all the timeline notifications
         if (project.getProperty("Timeline Notification").equals("On") && !newUsersForNotification.isEmpty()) {
             // Remove duplicated user ids
-            long[] existUserIds = resourceManager.getNotifications(project.getId(), timelineNotificationId);
+            Long[] existUserIds = resourceManager.getNotifications(project.getId(), timelineNotificationId);
             Set<Long> finalUsers = new HashSet<Long>(newUsersForNotification);
 
             for (long existUserId : existUserIds) {
@@ -2002,7 +1999,7 @@ public class SaveProjectAction extends BaseProjectAction {
             finalUsers.remove((long) 22719217); // Components user
             finalUsers.remove((long) 22873364); // LCSUPPORT user
 
-            long[] userIds = new long[finalUsers.size()];
+            Long[] userIds = new Long[finalUsers.size()];
             int i = 0;
             for (Long id : finalUsers) {
                 userIds[i++] = id;
@@ -2022,14 +2019,13 @@ public class SaveProjectAction extends BaseProjectAction {
      * @param resourceNames a <code>String[]</code> containing edited resource names.
      *
      * @throws RemoteException if any errors occur during EJB remote invocation
-     * @throws EJBException if any other errors occur while invoking EJB services
      * @throws BaseException if any other errors occur while retrieving user
      *
      * @return true if all resources are valid
      */
     private boolean validateResourceTermsOfUse(HttpServletRequest request,
             Project project, UserRetrieval userRetrieval, String[] resourceNames)
-            throws EJBException, BaseException {
+            throws BaseException {
 
         boolean allResourcesValid = true;
 
@@ -2101,7 +2097,6 @@ public class SaveProjectAction extends BaseProjectAction {
      * @param userRetrieval a <code>UserRetrieval</code> instance to obtain the user id.
      * @param resourceNames a <code>String[]</code> containing edited resource names.
      *
-     * @throws EJBException if any other errors occur while invoking EJB services
      * @throws BaseException if any other errors occur while retrieving user
      * @throws ContestEligibilityValidatorException if any validator error
      *
@@ -2109,7 +2104,7 @@ public class SaveProjectAction extends BaseProjectAction {
      */
     private boolean validateResourceEligibility(HttpServletRequest request,
             Project project, UserRetrieval userRetrieval, String[] resourceNames)
-            throws EJBException, BaseException, ContestEligibilityValidatorException {
+            throws BaseException, ContestEligibilityValidatorException {
 
         boolean allResourcesValid = true;
 
@@ -2167,17 +2162,7 @@ public class SaveProjectAction extends BaseProjectAction {
      * @throws BaseException if any error
      */
     private String retrieveUserPreference(long userId, int preferenceId) throws BaseException {
-        String value;
-
-        try {
-            value = getUserPreference().getValue(userId, preferenceId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
-
-        } catch (RowNotFoundException e) {
-            value = "false";
-        } catch (RemoteException e) {
-            throw new BaseException("Fail to retrieve user preference data", e);
-        }
-        return value;
+        return getUserPreference().getValue(userId, preferenceId, getCommonJdbcTemplate());
     }
 
     /**

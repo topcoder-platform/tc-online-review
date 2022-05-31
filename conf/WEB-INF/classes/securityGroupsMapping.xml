@@ -3,7 +3,7 @@
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping package="com.topcoder.security.groups.model">
+<hibernate-mapping package="com.topcoder.onlinereview.component.security.groups.model">
 
     <!-- mapped from time_oltp -->
     <class name="Client" table="client">
@@ -65,7 +65,7 @@
 
         <property name="name" column="name" type="string" length="45"/>
         <property name="defaultPermission" column="default_permission"
-                  type="com.topcoder.security.groups.model.GroupPermissionTypeUserType"/>
+                  type="com.topcoder.onlinereview.component.security.groups.model.GroupPermissionTypeUserType"/>
         <many-to-one name="client" column="client_id" class="Client" lazy="false" fetch="select"/>
         <property name="archived" column="archived" type="boolean"/>
         <property name="archivedOn" column="archived_on" type="timestamp"/>
@@ -92,7 +92,7 @@
             <!--
             <many-to-many column="resource_type" type="ResourceTypeUserType" />
             -->
-            <element column="resource_type" type="com.topcoder.security.groups.model.ResourceTypeUserType"/>
+            <element column="resource_type" type="com.topcoder.onlinereview.component.security.groups.model.ResourceTypeUserType"/>
         </bag>
     </class>
 
@@ -104,7 +104,7 @@
         <many-to-one name="group" column="group_id" class="Group" lazy="false"/>
         <property name="useGroupDefault" column="use_group_default" type="boolean"/>
         <property name="specificPermission" column="specific_permission"
-                  type="com.topcoder.security.groups.model.GroupPermissionTypeUserType"/>
+                  type="com.topcoder.onlinereview.component.security.groups.model.GroupPermissionTypeUserType"/>
         <property name="active" column="active" type="boolean"/>
         <property name="activatedOn" column="activated_on" type="timestamp"/>
         <property name="unassignedOn" column="unassigned_on" type="timestamp"/>
@@ -116,7 +116,7 @@
             <generator class="increment"/>
         </id>
         <many-to-one name="groupMember" column="group_member_id" class="GroupMember" lazy="false"/>
-        <property name="status" column="status" type="com.topcoder.security.groups.model.InvitationStatusUserType"/>
+        <property name="status" column="status" type="com.topcoder.onlinereview.component.security.groups.model.InvitationStatusUserType"/>
         <property name="sentOn" column="sent_on" type="timestamp"/>
         <property name="acceptedOrRejectedOn" column="accepted_or_rejected_on" type="timestamp"/>
         <property name="approvalProcessedOn" column="approval_processed_on" type="timestamp"/>

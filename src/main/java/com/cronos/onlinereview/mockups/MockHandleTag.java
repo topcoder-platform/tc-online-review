@@ -3,19 +3,19 @@
  */
 package com.cronos.onlinereview.mockups;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.external.ExternalUser;
+import com.topcoder.onlinereview.component.external.UserRetrieval;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.cronos.onlinereview.external.ExternalUser;
-import com.cronos.onlinereview.external.UserRetrieval;
-import com.cronos.onlinereview.external.impl.DBUserRetrieval;
-import com.topcoder.util.errorhandling.BaseException;
+import static com.topcoder.onlinereview.component.util.SpringUtils.getBean;
 
 /**
  * This class defines a mock up for real TopCoder's <tc-webtag:handle> tag, which displays members'
@@ -128,7 +128,7 @@ public final class MockHandleTag extends TagSupport {
             // If the object for this user has not been cached yet, ...
             if (user == null) {
                 // ... obtain an information from database
-                UserRetrieval ur = new DBUserRetrieval("com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
+                UserRetrieval ur = getBean(UserRetrieval.class);
                 user = ur.retrieveUser(Long.parseLong(coderId));
                 // If the user does not exist exit from current try block
                 if (user == null) {

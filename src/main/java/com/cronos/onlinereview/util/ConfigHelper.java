@@ -3,6 +3,8 @@
  */
 package com.cronos.onlinereview.util;
 
+import com.topcoder.onlinereview.component.jwt.JWTTokenGenerator;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,11 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.appirio.tech.core.api.v3.util.jwt.JWTTokenGenerator;
-import com.topcoder.util.config.ConfigManager;
-import com.topcoder.util.config.Property;
-import com.topcoder.util.config.UnknownNamespaceException;
 
 /**
  * This class is a helper class that loads application's configuration parameters on application
@@ -1067,7 +1064,7 @@ public class ConfigHelper {
 
     static {
         // Obtaining the instance of Configuration Manager
-        ConfigManager cfgMgr = ConfigManager.getInstance();
+        ConfigManager cfgMgr = new ConfigManager();
 
         try {
             // Retrieve the value of the property that contains the submitter_role_id
@@ -1197,7 +1194,7 @@ public class ConfigHelper {
             }
 
             // Retrieve property that contains definitions of ID/filename pairs
-            Property propRootCatIcons = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, ROOT_CATALOGS_PROP);
+            ConfigManager.Property propRootCatIcons = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, ROOT_CATALOGS_PROP);
             // Prepare to enumerate all the nested properties
             Enumeration propsIcons = propRootCatIcons.propertyNames();
 
@@ -1247,7 +1244,7 @@ public class ConfigHelper {
             }
 
             // Retrieve property that contains definitions of Project Category name/icon filename pairs
-            Property propProjCatIcons = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PROJECT_CATEGORY_ICONS_PROP);
+            ConfigManager.Property propProjCatIcons = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PROJECT_CATEGORY_ICONS_PROP);
             // Prepare to enumerate all the nested properties
             propsIcons = propProjCatIcons.propertyNames();
 
@@ -1273,7 +1270,7 @@ public class ConfigHelper {
             }
 
             // Retrieve property that contains definitions of Project Type view contest links
-            Property propProjTypeDesc = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PROJECT_TYPE_VIEW_CONTEST_LINKS_PROP);
+            ConfigManager.Property propProjTypeDesc = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PROJECT_TYPE_VIEW_CONTEST_LINKS_PROP);
             // Prepare to enumerate all the nested properties
             Enumeration propsLinks = propProjTypeDesc.propertyNames();
 
@@ -1292,7 +1289,7 @@ public class ConfigHelper {
             }
 
             // Retrieve property that contains definitions of Project Type forum links
-            Property propProjTypeForum = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PROJECT_TYPE_FORUM_LINKS_PROP);
+            ConfigManager.Property propProjTypeForum = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PROJECT_TYPE_FORUM_LINKS_PROP);
             // Prepare to enumerate all the nested properties
             propsLinks = propProjTypeForum.propertyNames();
 
@@ -1311,7 +1308,7 @@ public class ConfigHelper {
             }
 
             // Retrieve property that contains deliverable types definitions
-            Property propDeliverableType = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DELIVERABLE_TYPES_PROP);
+            ConfigManager.Property propDeliverableType = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DELIVERABLE_TYPES_PROP);
             // Prepare to enumerate all the nested properties
             Enumeration propDeliverableTypes = propDeliverableType.propertyNames();
 
@@ -1324,7 +1321,7 @@ public class ConfigHelper {
             }
 
             // Retrieve property that contains definitions of some default values
-            Property propDefaults = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DEFAULT_VALUES_PROP);
+            ConfigManager.Property propDefaults = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DEFAULT_VALUES_PROP);
             // Get the amount of pixels to display for every hour
             String pixelsStr = propDefaults.getValue(PIXELS_PER_HOUR_PROP);
             // Get the default phase duration
@@ -1404,7 +1401,7 @@ public class ConfigHelper {
             }
 
             // Retrieve property that contains definitions of formatting strings
-            Property propFormats = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, FORMATS_PROP);
+            ConfigManager.Property propFormats = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, FORMATS_PROP);
             // Get a formatting string for scorecard scores
             String formattingString = propFormats.getValue(SCORECARD_SCORE_FORMAT_PROP);
             if (formattingString != null && formattingString.trim().length() != 0) {
@@ -1437,7 +1434,7 @@ public class ConfigHelper {
             }
 
             // Retrieve property that contains definition of Permissions Matrix
-            Property propPermissionsMatrix = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PERMISSIONS_MATRIX_PROP);
+            ConfigManager.Property propPermissionsMatrix = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PERMISSIONS_MATRIX_PROP);
             // Prepare to enumerate all permission name properties that are nested inside the Permissions Matrix one
             Enumeration permissionNames = propPermissionsMatrix.propertyNames();
 
@@ -1456,7 +1453,7 @@ public class ConfigHelper {
             }
 
             // Retrieve property that contains definitions of phase groups
-            Property propPhaseGrouping = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PHASE_GROUPING_PROP);
+            ConfigManager.Property propPhaseGrouping = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PHASE_GROUPING_PROP);
             // Prepare to enumerate all group definition properties
             Enumeration phaseGroups = propPhaseGrouping.propertyNames();
 
@@ -1493,7 +1490,7 @@ public class ConfigHelper {
                 }
             }
 
-            Property propContactManagerEmail =
+            ConfigManager.Property propContactManagerEmail =
                     cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, CONTACT_MANAGER_EMAIL_PROP);
 
             if (propContactManagerEmail != null) {
@@ -1558,15 +1555,15 @@ public class ConfigHelper {
                 catalogOutputDir = DEFAULT_CATALOG_OUTPUT_DIR;
             }
 
-            Property disabledResourceRolesConfig
+            ConfigManager.Property disabledResourceRolesConfig
                     = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DISABLED_RESOURCE_ROLES_PROP);
             disabledResourceRoles = disabledResourceRolesConfig.getValues();
 
-            Property svnPermissionGrantResourceRolesConfig
+            ConfigManager.Property svnPermissionGrantResourceRolesConfig
                     = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, SVN_PERM_GRANT_RESOURCE_ROLES_PROP);
             svnPermissionGrantResourceRoles = svnPermissionGrantResourceRolesConfig.getValues();
 
-            Property svnRepoConfig = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, SVN_CONFIG_PROP);
+            ConfigManager.Property svnRepoConfig = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, SVN_CONFIG_PROP);
             svnConfig = new String[]{svnRepoConfig.getValue("Root"),
                     svnRepoConfig.getValue("AuthUsername"),
                     svnRepoConfig.getValue("AuthPassword"),
@@ -1574,7 +1571,7 @@ public class ConfigHelper {
                     svnRepoConfig.getValue("TempFilesBaseDir"),
                     svnRepoConfig.getValue("PathBasedPermissionsFileURL")};
 
-            Property lateDeliverableEmailConfig
+            ConfigManager.Property lateDeliverableEmailConfig
                     = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "LateDeliverableUpdateNotificationEmail");
 
             lateDeliverablesUpdatedByManagerNotificationConfig = new String[]{
@@ -1591,7 +1588,7 @@ public class ConfigHelper {
 
             lateDeliverableBaseURL = lateDeliverableEmailConfig.getValue("EditLateDeliverablePageBaseURL");
 
-            Property f2fSubmissionReuploadedConfig
+            ConfigManager.Property f2fSubmissionReuploadedConfig
                     = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "F2FSubmissionReuploadNotificationEmail");
 
             f2fSubmissionReuploadedNotificationConfig = new String[]{
@@ -1600,7 +1597,7 @@ public class ConfigHelper {
                     f2fSubmissionReuploadedConfig.getValue("EmailSubject")};
 
             // Retrieve the property that contains the definitions of resource tabs to be displayed in Resource section
-            Property propResourceTabs = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, RESOURCE_TABS_PROP_STRING);
+            ConfigManager.Property propResourceTabs = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, RESOURCE_TABS_PROP_STRING);
             // Prepare to enumerate all the nested properties
             Enumeration<String> propsResourceTab = propResourceTabs.propertyNames();
             while (propsResourceTab.hasMoreElements()) {
@@ -1666,7 +1663,7 @@ public class ConfigHelper {
             ssoDomainForV3jwtCookie = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, SSO_DOMAIN_FOR_V3_JWT_COOKIE);
             v3jwtAuthorizationUrl = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, V3_JWT_AUTHORIZATION_URL);
 
-            Property eventBus = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "event_bus");
+            ConfigManager.Property eventBus = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "event_bus");
             contestSubmissionDownloadUrl = eventBus.getValue("contestSubmissionDownloadUrl");
             checkpointSubmissionDownloadUrl = eventBus.getValue("checkpointSubmissionDownloadUrl");
             eventBusEndpoint = eventBus.getValue("endpoint");
@@ -1683,7 +1680,7 @@ public class ConfigHelper {
             } catch (NumberFormatException e) {
                 expirationTime = DEFAULT_EXPIRATION_TIME;
             }
-            Property awsS3 = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "aws_s3");
+            ConfigManager.Property awsS3 = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "aws_s3");
             s3Bucket = awsS3.getValue("bucket");
             s3BucketDmz = awsS3.getValue("bucket_dmz");
             try {
@@ -1692,10 +1689,10 @@ public class ConfigHelper {
                 preSignedExpTimeMilis = 60 * 60 * 1000;
             }
 	    
-            Property newAuth = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "new_auth");
+            ConfigManager.Property newAuth = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "new_auth");
             newAuthUrl = newAuth.getValue("new_auth_url");
 
-        } catch (UnknownNamespaceException une) {
+        } catch (Exception une) {
             System.out.println(une.getMessage());
             une.printStackTrace();
         }
@@ -2159,25 +2156,6 @@ public class ConfigHelper {
      */
     public static String getContactManagerEmailFromAddress() {
         return contactManagerEmailFromAddress;
-    }
-
-    /**
-     * Return the property value of online_review namespace.
-     *
-     * @param name the property name
-     * @param defaultValue the default value
-     * @return property value
-     */
-    public static String getPropertyValue(String name, String defaultValue) {
-        try {
-            String value = ConfigManager.getInstance().getString(ONLINE_REVIEW_CFG_NS, name);
-            if (value != null && value.trim().length() > 0) {
-                return value;
-            }
-        } catch (UnknownNamespaceException e) {
-            // Ignore
-        }
-        return defaultValue;
     }
 
     /**
