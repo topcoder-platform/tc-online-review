@@ -5,12 +5,12 @@ package com.cronos.onlinereview.actions.event;
 
 import com.cronos.onlinereview.model.ProjectPaymentsForm;
 import com.cronos.onlinereview.util.ConfigHelper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.topcoder.onlinereview.component.project.management.Project;
-import com.topcoder.onlinereview.component.review.Review;
 import com.topcoder.onlinereview.component.project.phase.Dependency;
 import com.topcoder.onlinereview.component.project.phase.Phase;
-
+import com.topcoder.onlinereview.component.review.Review;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -273,13 +273,36 @@ public class EventBusServiceClient {
         EventBusServiceClient.fireEvent(msg);
     }
 
+    public static void fireChallengeUpdateEvent(long challengeId, long userId, Map<String, Object> newValues) {
+        for (Map.Entry<String, Object> update: newValues.entrySet()) {
+            EventMessage msg = EventMessage.getDefaultChallengeEvent();
+            msg.setPayload("challengeId", challengeId);
+            msg.setPayload("userId", userId);
+            msg.setPayload("type", update.getKey());
+            msg.setPayload("data", update.getValue());
+            logs(msg);
+            EventBusServiceClient.fireEvent(msg);
+        }
+    }
+
+    private static void logs(EventMessage msg) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setDateFormat(dateFormat);
+        try {
+            LOGGER.info("trigger event: {}", mapper.writeValueAsString(msg.getData()));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     /**
      * Fire project update event
      *
      * @param challengeId the challengeId to use
      * @param userId the userId to use
-     * @param project the project to use
-     * @param phases the phases to use
      */
     public static void fireProjectPaymentUpdateEvent(long challengeId, long userId, ProjectPaymentsForm projectPaymentsForm) {
         EventMessage msg = EventMessage.getDefaultReviewEvent();
