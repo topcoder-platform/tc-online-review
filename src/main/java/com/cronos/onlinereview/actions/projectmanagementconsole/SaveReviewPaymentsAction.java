@@ -5,14 +5,17 @@ package com.cronos.onlinereview.actions.projectmanagementconsole;
 
 
 import com.cronos.onlinereview.Constants;
+import com.cronos.onlinereview.actions.event.EventBusServiceClient;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
 import com.topcoder.onlinereview.component.exception.BaseException;
 import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.payment.ProjectPayment;
 import com.topcoder.onlinereview.component.project.payment.ProjectPaymentAdjustment;
 import com.topcoder.onlinereview.component.project.payment.ProjectPaymentAdjustmentManager;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentFilterBuilder;
 import com.topcoder.onlinereview.component.project.phase.Phase;
 import com.topcoder.onlinereview.component.project.phase.PhaseManager;
 import com.topcoder.onlinereview.component.project.phase.handler.or.PaymentsHelper;
@@ -190,6 +193,12 @@ public class SaveReviewPaymentsAction extends BaseProjectManagementConsoleAction
                 }
                 String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
                 PaymentsHelper.processAutomaticPayments(project.getId(), operator);
+                // publish payment updated event
+                Map<String, Object> updateValues = new HashMap<>();
+                List<ProjectPayment> newPayments = ActionsHelper.createProjectPaymentManager().search(ProjectPaymentFilterBuilder.createProjectIdFilter(project.getId()));
+                updateValues.put("payments", newPayments);
+                EventBusServiceClient.fireChallengeUpdateEvent(project.getId(), AuthorizationHelper.getLoggedInUserId(request), updateValues);
+
                 this.setPid(project.getId());
                 return Constants.SUCCESS_FORWARD_NAME;
             }
