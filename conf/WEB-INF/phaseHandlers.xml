@@ -40,11 +40,11 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
     <bean id="phaseManagerWithoutHandlers" class="com.topcoder.onlinereview.component.project.phase.PhaseManager" primary="true">
     </bean>
     <bean id="defaultStartEmailOption" class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
-        <property name="subject" value="%PHASE_TYPE% Start\\: %PROJECT_NAME%" />
+        <property name="subject" value="%PHASE_TYPE% Start\: %PROJECT_NAME%" />
         <property name="fromAddress" value="@notificationEmailFromAddress@" />
     </bean>
     <bean id="defaultEndEmailOption" class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
-        <property name="subject" value="%PHASE_TYPE% End\\: %PROJECT_NAME%" />
+        <property name="subject" value="%PHASE_TYPE% End\: %PROJECT_NAME%" />
         <property name="fromAddress" value="@notificationEmailFromAddress@" />
     </bean>
     <bean id="pRRegistrationPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRRegistrationPhaseHandler">

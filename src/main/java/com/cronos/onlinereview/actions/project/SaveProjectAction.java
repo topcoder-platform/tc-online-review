@@ -26,6 +26,7 @@ import com.topcoder.onlinereview.component.project.management.ProjectCategory;
 import com.topcoder.onlinereview.component.project.management.ProjectManager;
 import com.topcoder.onlinereview.component.project.management.ProjectStatus;
 import com.topcoder.onlinereview.component.project.payment.ProjectPayment;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentFilterBuilder;
 import com.topcoder.onlinereview.component.project.payment.ProjectPaymentManager;
 import com.topcoder.onlinereview.component.project.phase.CyclicDependencyException;
 import com.topcoder.onlinereview.component.project.phase.Dependency;
@@ -71,8 +72,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
+import java.util.function.BiFunction;
 
 import static com.cronos.onlinereview.Constants.AGGREGATION_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.AGGREGATION_REVIEW_PHASE_NAME;
@@ -91,6 +94,7 @@ import static com.cronos.onlinereview.Constants.SCREENING_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.SPECIFICATION_REVIEW_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.SPECIFICATION_SUBMISSION_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.SUBMISSION_PHASE_NAME;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.topcoder.onlinereview.component.util.SpringUtils.getCommonJdbcTemplate;
 
 /**
@@ -254,6 +258,15 @@ public class SaveProjectAction extends BaseProjectAction {
             }
         }
 
+        // This variable contains all updated values that should publish message.
+        Map<String, Object> updateValues = new HashMap<>();
+        List<Resource> oldResource = new ArrayList<>();
+        Map<String, Object> oldProperties = project.getAllProperties();
+        ResourceManager resourceManager = ActionsHelper.createResourceManager();
+        if (!newProject) {
+            oldResource = newArrayList(resourceManager.searchResources(
+                    ResourceFilterBuilder.createProjectIdFilter(project.getId())));
+        }
         // This variable determines whether status of the project has been changed by this save operation.
         boolean statusHasChanged = false;
         if (newProject) {
@@ -265,6 +278,7 @@ public class SaveProjectAction extends BaseProjectAction {
                 return ActionsHelper.produceErrorReport(this, request,
                         Constants.CREATE_PROJECT_PERM_NAME, "Error.GenericProjectType", Boolean.TRUE);
             }
+            updateValues.put("category", category);
             // Create Project instance
             project = new Project(category, activeStatus);
 
@@ -282,6 +296,9 @@ public class SaveProjectAction extends BaseProjectAction {
             if (projectCategory.getProjectType().isGeneric()) {
                 return ActionsHelper.produceErrorReport(this, request,
                         Constants.CREATE_PROJECT_PERM_NAME, "Error.GenericProjectType", Boolean.TRUE);
+            }
+            if (project.getProjectCategory() == null || project.getProjectCategory().getId() != newCategoryId) {
+                updateValues.put("category", projectCategory);
             }
             project.setProjectCategory(projectCategory);
 
@@ -323,6 +340,8 @@ public class SaveProjectAction extends BaseProjectAction {
             if (statusHasChanged && !ActionsHelper.isErrorsPresent(request)) {
                 // Populate project status
                 project.setProjectStatus(newProjectStatus);
+                // add newStatus to publish message
+                updateValues.put("status", newProjectStatus);
 
                 if (oldStatusName.equals("Active") && !newStatusName.equals("Draft")) {
                     // Set Completion Timestamp once the status is changed from Active to Completed, Cancelled - *, or Deleted
@@ -395,6 +414,18 @@ public class SaveProjectAction extends BaseProjectAction {
                     project.setTcDirectProjectId(Long.parseLong(cockpitProjectId));
                 }
         }
+        // add updated properties to publish message
+        Map<String, Object> newProperties = project.getAllProperties();
+        if (newProperties.size() != oldProperties.size()) {
+            updateValues.put("properties", newProperties);
+        } else {
+            for (String key: oldProperties.keySet()) {
+                if (!safeEqual(oldProperties.get(key), newProperties.get(key), (k1, k2) -> k1.equals(k2))) {
+                    updateValues.put("properties", newProperties);
+                    break;
+                }
+            }
+        }
 
         // Create the map to store the mapping from phase JS ids to phases
         Map<Object, Phase> phasesJsMap = new HashMap<Object, Phase>();
@@ -410,7 +441,7 @@ public class SaveProjectAction extends BaseProjectAction {
         Phase[] projectPhases;
         if (!ActionsHelper.isErrorsPresent(request)) {
             // Save the project phases
-            projectPhases = saveProjectPhases(newProject, request, project, phasesJsMap, phasesToDelete);
+            projectPhases = saveProjectPhases(newProject, request, project, phasesJsMap, phasesToDelete, updateValues);
         } else {
             // Retrieve and sort project phases
             projectPhases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
@@ -436,24 +467,48 @@ public class SaveProjectAction extends BaseProjectAction {
 
         // If needed switch project current phase
         if (!newProject && !ActionsHelper.isErrorsPresent(request)) {
+            Object winnerId = project.getProperty("Winner External Reference ID");
             switchProjectPhase(request, phasesJsMap);
+            Object newWinnerId = ActionsHelper.createProjectManager().getProject(project.getId()).getProperty("Winner External Reference ID");
+            if (newWinnerId != null && !newWinnerId.equals(winnerId)) {
+                updateValues.put("winner", newWinnerId);
+            }
         }
 
         // Update the project prizes
         if (!ActionsHelper.isErrorsPresent(request)) {
             ProjectManager projectManager = ActionsHelper.createProjectManager();
             String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
+            Map<String, List<Prize>> updatedPrizeMap = new HashMap<>();
             for (Prize prize : createdPrize) {
                 prize.setProjectId(project.getId());
                 projectManager.createPrize(prize, operator);
+                if (!updatedPrizeMap.containsKey("created")) {
+                    updatedPrizeMap.put("created", new ArrayList<>());
+                }
+                updatedPrizeMap.get("created").add(prize);
             }
             for (Prize prize : updatedPrize) {
                 projectManager.updatePrize(prize, operator);
+                if (!updatedPrizeMap.containsKey("updated")) {
+                    updatedPrizeMap.put("updated", new ArrayList<>());
+                }
+                updatedPrizeMap.get("updated").add(prize);
             }
             for (Prize prize : removedPrize) {
                 projectManager.removePrize(prize, operator);
+                if (!updatedPrizeMap.containsKey("deleted")) {
+                    updatedPrizeMap.put("deleted", new ArrayList<>());
+                }
+                updatedPrizeMap.get("deleted").add(prize);
             }
             PaymentsHelper.processAutomaticPayments(project.getId(), operator);
+
+            if (!updatedPrizeMap.isEmpty()) {
+                updateValues.put("prize", updatedPrizeMap);
+                List<ProjectPayment> newPayments = ActionsHelper.createProjectPaymentManager().search(ProjectPaymentFilterBuilder.createProjectIdFilter(project.getId()));
+                updateValues.put("payments", newPayments);
+            }
         }
 
         // Check if there are any validation errors and return appropriate forward
@@ -466,7 +521,6 @@ public class SaveProjectAction extends BaseProjectAction {
             setEditProjectFormData(request, verification);
             setEditProjectPhasesData(projectPhases, true);
             if (project.getId() > 0) {
-                ResourceManager resourceManager = ActionsHelper.createResourceManager();
                 Resource[] resources = resourceManager.searchResources(
                         ResourceFilterBuilder.createProjectIdFilter(project.getId()));
                 ExternalUser[] externalUsers = ActionsHelper.getExternalUsersForResources(
@@ -482,10 +536,41 @@ public class SaveProjectAction extends BaseProjectAction {
         AmazonSNSHelper.publishProjectUpdateEvent(project);
         EventBusServiceClient.fireProjectUpdateEvent(project.getId(), AuthorizationHelper.getLoggedInUserId(request),
                 project, Arrays.asList(projectPhases));
+        List<Resource> newResources = newArrayList(resourceManager.searchResources(
+                ResourceFilterBuilder.createProjectIdFilter(project.getId())));
+        if (diffResource(oldResource, newResources)) {
+            updateValues.put("resources", newResources);
+        }
+        // publish challenge property updated
+        EventBusServiceClient.fireChallengeUpdateEvent(project.getId(), AuthorizationHelper.getLoggedInUserId(request), updateValues);
 
         this.pid = project.getId();
         // Return success forward
         return Constants.SUCCESS_FORWARD_NAME;
+    }
+
+    private boolean diffResource(List<Resource> rl1, List<Resource> rl2) {
+        for (Resource r1: rl1) {
+            Optional<Resource> r2 = rl2.stream().filter(r -> r1.getId() == r.getId()
+                    && safeEqual(r1.getModificationTimestamp(), r.getModificationTimestamp(), (i1, i2) -> i1.equals(i2)))
+                    .findFirst();
+            if (r2.isPresent()) {
+                rl2.remove(r2.get());
+            } else {
+                return true;
+            }
+        }
+        return !rl2.isEmpty();
+    }
+
+    private <T> boolean safeEqual(T t1, T t2, BiFunction<T, T, Boolean> notNullEqual) {
+        if (t1 == null && t2 == null) {
+            return true;
+        } else if (t1 != null && t2 != null) {
+            return notNullEqual.apply(t1, t2);
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -679,7 +764,8 @@ public class SaveProjectAction extends BaseProjectAction {
      * @throws BaseException if an unexpected error occurs.
      */
     private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request,
-            Project project, Map<Object, Phase> phasesJsMap, List<Phase> phasesToDelete)
+            Project project, Map<Object, Phase> phasesJsMap, List<Phase> phasesToDelete,
+                                      Map<String, Object> updateValues)
         throws BaseException {
         // Obtain an instance of Phase Manager
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
@@ -1108,6 +1194,31 @@ public class SaveProjectAction extends BaseProjectAction {
         projectPhases = phProject.getAllPhases();
         // Sort project phases
         Arrays.sort(projectPhases, new Comparators.ProjectPhaseComparer());
+        // add updateTimeline to updateValues
+        boolean updateTimeline = newProject || projectPhases.length != oldPhases.length;
+        if (!updateTimeline) {
+            for (int i = 0; i < projectPhases.length; i++) {
+                Phase old = oldPhases[i];
+                Phase nPhase = projectPhases[i];
+                if (!old.getPhaseType().getName().equals(nPhase.getPhaseType().getName())
+                        || !old.getScheduledStartDate().equals(nPhase.getScheduledStartDate())
+                || !old.getScheduledEndDate().equals(nPhase.getScheduledEndDate())) {
+                    updateTimeline = true;
+                    break;
+                }
+            }
+        }
+        if (updateTimeline) {
+            List<Map<String, Object>> timeline = new ArrayList<>();
+            for (Phase phase: projectPhases) {
+                Map<String, Object> p = new HashMap<>();
+                p.put("name", phase.getPhaseType().getName());
+                p.put("scheduledStartDate", phase.getScheduledStartDate());
+                p.put("scheduledEndDate", phase.getScheduledEndDate());
+                timeline.add(p);
+            }
+            updateValues.put("timeline", timeline);
+        }
 
         return projectPhases;
     }

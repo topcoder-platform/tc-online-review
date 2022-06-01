@@ -3,14 +3,14 @@
  */
 package com.cronos.onlinereview.actions.event;
 
+import com.cronos.onlinereview.util.ConfigHelper;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TimeZone;
-
-import com.cronos.onlinereview.util.ConfigHelper;
 
 /**
  * Represents the EventMessage model.
@@ -124,6 +124,13 @@ public class EventMessage {
      * @return the EventMessage result
      */
     public static EventMessage getDefaultReviewEvent() {
+        final String topic = ConfigHelper.getKafkaTopic();
+        final String originator = ConfigHelper.getKafkaOriginator();
+        return new EventMessage().setTopic(topic).setOriginator(originator)
+                .setMimeType("application/json").setTimestamp(new Date());
+    }
+
+    public static EventMessage getDefaultChallengeEvent() {
         final String topic = ConfigHelper.getKafkaTopic();
         final String originator = ConfigHelper.getKafkaOriginator();
         return new EventMessage().setTopic(topic).setOriginator(originator)
