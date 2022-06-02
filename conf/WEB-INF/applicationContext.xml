@@ -26,8 +26,6 @@
         <constructor-arg type="java.lang.Long" value="28"/>
     </bean>
 
-    <bean id="togglzConfiguration" class="com.cronos.onlinereview.config.TogglzConfiguration" />
-
     <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
         <property name="jndiName" value="java:jboss/datasources/TCS_CATALOG" />
     </bean>

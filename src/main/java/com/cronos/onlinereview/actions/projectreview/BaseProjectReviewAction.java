@@ -1441,16 +1441,13 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         }
 
         // Determine which action should be performed - creation or updating
-        Map<String, Object> updateValues = new HashMap<>();
         if (verification.getReview() == null) {
             revMgr.createReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
             EventBusServiceClient.fireReviewCreate(review, AuthorizationHelper.getLoggedInUserId(request), reviewType);
-            updateValues.put("review", review);
         } else {
             revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
             EventBusServiceClient.fireReviewUpdate(review, Long.parseLong(review.getCreationUser()), AuthorizationHelper.getLoggedInUserId(request), reviewType);
             if (diffReview(verification.getReview(), review)) {
-                updateValues.put("review", review);
             }
         }
 
@@ -1460,11 +1457,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
             updateFinalAggregatedScore(request, project, phase, verification.getSubmission());
             Object newWinnerId = ActionsHelper.createProjectManager().getProject(verification.getProject().getId()).getProperty("Winner External Reference ID");
             if (newWinnerId != null && !newWinnerId.equals(winnerId)) {
-                updateValues.put("winners", newWinnerId);
             }
-        }
-        if (!updateValues.isEmpty()) {
-            EventBusServiceClient.fireChallengeUpdateEvent(verification.getProject().getId(), AuthorizationHelper.getLoggedInUserId(request), updateValues);
         }
 
         if (commitRequested) {
