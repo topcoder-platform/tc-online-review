@@ -3,6 +3,7 @@
  */
 package com.cronos.onlinereview.actions.event;
 
+import com.cronos.onlinereview.config.TogglzFeatures;
 import com.cronos.onlinereview.model.ProjectPaymentsForm;
 import com.cronos.onlinereview.util.ConfigHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -274,14 +275,18 @@ public class EventBusServiceClient {
     }
 
     public static void fireChallengeUpdateEvent(long challengeId, long userId, Map<String, Object> newValues) {
-        for (Map.Entry<String, Object> update: newValues.entrySet()) {
-            EventMessage msg = EventMessage.getDefaultChallengeEvent();
-            msg.setPayload("challengeId", challengeId);
-            msg.setPayload("userId", userId);
-            msg.setPayload("type", update.getKey());
-            msg.setPayload("data", update.getValue());
-            logs(msg);
-            EventBusServiceClient.fireEvent(msg);
+        if (TogglzFeatures.SEND_KAFKA_MESSAGE.isActive()) {
+            for (Map.Entry<String, Object> update: newValues.entrySet()) {
+                EventMessage msg = EventMessage.getDefaultChallengeEvent();
+                msg.setPayload("challengeId", challengeId);
+                msg.setPayload("userId", userId);
+                msg.setPayload("type", update.getKey());
+                msg.setPayload("data", update.getValue());
+                logs(msg);
+                EventBusServiceClient.fireEvent(msg);
+            }
+        } else {
+            LOGGER.info("SEND_KAFKA_MESSAGE inactive");
         }
     }
 
@@ -295,7 +300,6 @@ public class EventBusServiceClient {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
