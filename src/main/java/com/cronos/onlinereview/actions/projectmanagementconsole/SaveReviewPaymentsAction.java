@@ -193,11 +193,6 @@ public class SaveReviewPaymentsAction extends BaseProjectManagementConsoleAction
                 }
                 String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
                 PaymentsHelper.processAutomaticPayments(project.getId(), operator);
-                // publish payment updated event
-                Map<String, Object> updateValues = new HashMap<>();
-                List<ProjectPayment> newPayments = ActionsHelper.createProjectPaymentManager().search(ProjectPaymentFilterBuilder.createProjectIdFilter(project.getId()));
-                updateValues.put("payments", newPayments);
-                EventBusServiceClient.fireChallengeUpdateEvent(project.getId(), AuthorizationHelper.getLoggedInUserId(request), updateValues);
 
                 this.setPid(project.getId());
                 return Constants.SUCCESS_FORWARD_NAME;
