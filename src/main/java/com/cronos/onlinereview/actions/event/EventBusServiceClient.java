@@ -3,8 +3,10 @@
  */
 package com.cronos.onlinereview.actions.event;
 
+import com.cronos.onlinereview.config.TogglzFeatures;
 import com.cronos.onlinereview.model.ProjectPaymentsForm;
 import com.cronos.onlinereview.util.ConfigHelper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.project.phase.Dependency;
@@ -270,6 +272,34 @@ public class EventBusServiceClient {
         data.put("phases", convertedPhases);
         msg.setPayload("data", data);
         EventBusServiceClient.fireEvent(msg);
+    }
+
+    public static void fireChallengeUpdateEvent(long challengeId, long userId, Map<String, Object> newValues) {
+        if (TogglzFeatures.SEND_KAFKA_MESSAGE.isActive()) {
+            for (Map.Entry<String, Object> update: newValues.entrySet()) {
+                EventMessage msg = EventMessage.getDefaultChallengeEvent();
+                msg.setPayload("challengeId", challengeId);
+                msg.setPayload("userId", userId);
+                msg.setPayload("type", update.getKey());
+                msg.setPayload("data", update.getValue());
+                logs(msg);
+                EventBusServiceClient.fireEvent(msg);
+            }
+        } else {
+            LOGGER.info("SEND_KAFKA_MESSAGE inactive");
+        }
+    }
+
+    private static void logs(EventMessage msg) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setDateFormat(dateFormat);
+        try {
+            LOGGER.info("trigger event: {}", mapper.writeValueAsString(msg.getData()));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
