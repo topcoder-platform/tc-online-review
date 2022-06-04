@@ -54,6 +54,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
@@ -76,6 +78,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import static com.cronos.onlinereview.Constants.AGGREGATION_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.AGGREGATION_REVIEW_PHASE_NAME;
@@ -420,7 +423,7 @@ public class SaveProjectAction extends BaseProjectAction {
             updateValues.put("properties", newProperties);
         } else {
             for (String key: oldProperties.keySet()) {
-                if (!safeEqual(oldProperties.get(key), newProperties.get(key), (k1, k2) -> k1.equals(k2))) {
+                if (!safeEqual(oldProperties.get(key), newProperties.get(key), (k1, k2) -> k1.toString().equals(k2.toString()))) {
                     updateValues.put("properties", newProperties);
                     break;
                 }
@@ -441,7 +444,7 @@ public class SaveProjectAction extends BaseProjectAction {
         Phase[] projectPhases;
         if (!ActionsHelper.isErrorsPresent(request)) {
             // Save the project phases
-            projectPhases = saveProjectPhases(newProject, request, project, phasesJsMap, phasesToDelete, updateValues);
+            projectPhases = saveProjectPhases(newProject, request, project, phasesJsMap, phasesToDelete);
         } else {
             // Retrieve and sort project phases
             projectPhases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
@@ -468,7 +471,7 @@ public class SaveProjectAction extends BaseProjectAction {
         // If needed switch project current phase
         if (!newProject && !ActionsHelper.isErrorsPresent(request)) {
             Object winnerId = project.getProperty("Winner External Reference ID");
-            switchProjectPhase(request, phasesJsMap);
+            switchProjectPhase(request, phasesJsMap, updateValues);
             Object newWinnerId = ActionsHelper.createProjectManager().getProject(project.getId()).getProperty("Winner External Reference ID");
             if (newWinnerId != null && !newWinnerId.equals(winnerId)) {
                 updateValues.put("winner", newWinnerId);
@@ -506,8 +509,6 @@ public class SaveProjectAction extends BaseProjectAction {
 
             if (!updatedPrizeMap.isEmpty()) {
                 updateValues.put("prize", updatedPrizeMap);
-                List<ProjectPayment> newPayments = ActionsHelper.createProjectPaymentManager().search(ProjectPaymentFilterBuilder.createProjectIdFilter(project.getId()));
-                updateValues.put("payments", newPayments);
             }
         }
 
@@ -552,7 +553,8 @@ public class SaveProjectAction extends BaseProjectAction {
     private boolean diffResource(List<Resource> rl1, List<Resource> rl2) {
         for (Resource r1: rl1) {
             Optional<Resource> r2 = rl2.stream().filter(r -> r1.getId() == r.getId()
-                    && safeEqual(r1.getModificationTimestamp(), r.getModificationTimestamp(), (i1, i2) -> i1.equals(i2)))
+                    && safeEqual(r1.getUserId(), r.getUserId(), (i1, i2) -> i1.equals(i2))
+                    && safeEqual(r1.getResourceRole().getId(), r.getResourceRole().getId(), (i1, i2) -> i1.equals(i2)))
                     .findFirst();
             if (r2.isPresent()) {
                 rl2.remove(r2.get());
@@ -764,8 +766,7 @@ public class SaveProjectAction extends BaseProjectAction {
      * @throws BaseException if an unexpected error occurs.
      */
     private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request,
-            Project project, Map<Object, Phase> phasesJsMap, List<Phase> phasesToDelete,
-                                      Map<String, Object> updateValues)
+            Project project, Map<Object, Phase> phasesJsMap, List<Phase> phasesToDelete)
         throws BaseException {
         // Obtain an instance of Phase Manager
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
@@ -1194,32 +1195,6 @@ public class SaveProjectAction extends BaseProjectAction {
         projectPhases = phProject.getAllPhases();
         // Sort project phases
         Arrays.sort(projectPhases, new Comparators.ProjectPhaseComparer());
-        // add updateTimeline to updateValues
-        boolean updateTimeline = newProject || projectPhases.length != oldPhases.length;
-        if (!updateTimeline) {
-            for (int i = 0; i < projectPhases.length; i++) {
-                Phase old = oldPhases[i];
-                Phase nPhase = projectPhases[i];
-                if (!old.getPhaseType().getName().equals(nPhase.getPhaseType().getName())
-                        || !old.getScheduledStartDate().equals(nPhase.getScheduledStartDate())
-                || !old.getScheduledEndDate().equals(nPhase.getScheduledEndDate())) {
-                    updateTimeline = true;
-                    break;
-                }
-            }
-        }
-        if (updateTimeline) {
-            List<Map<String, Object>> timeline = new ArrayList<>();
-            for (Phase phase: projectPhases) {
-                Map<String, Object> p = new HashMap<>();
-                p.put("name", phase.getPhaseType().getName());
-                p.put("scheduledStartDate", phase.getScheduledStartDate());
-                p.put("scheduledEndDate", phase.getScheduledEndDate());
-                timeline.add(p);
-            }
-            updateValues.put("timeline", timeline);
-        }
-
         return projectPhases;
     }
 
@@ -1232,7 +1207,8 @@ public class SaveProjectAction extends BaseProjectAction {
      * @throws BaseException if any error.
      */
     private void switchProjectPhase(HttpServletRequest request,
-                                    Map<Object, Phase> phasesJsMap) throws BaseException {
+                                    Map<Object, Phase> phasesJsMap,
+                                    Map<String, Object> updateValues) throws BaseException {
 
         // Get name of action to be performed
         String action = (String) getModel().get("action");
@@ -1241,6 +1217,13 @@ public class SaveProjectAction extends BaseProjectAction {
         String phaseJsId = (String) getModel().get("action_phase");
 
         if (phaseJsId != null && phasesJsMap.containsKey(phaseJsId)) {
+            Map<Long, Map<String, Object>> oldTimeline = phasesJsMap.values().stream().collect(Collectors.toMap(p -> p.getId(), p -> {
+                Map<String, Object> timeline = new HashMap<>();
+                timeline.put("name", p.getPhaseType().getName());
+                timeline.put("scheduledStartDate", p.getScheduledStartDate());
+                timeline.put("scheduledEndDate", p.getScheduledEndDate());
+                return timeline;
+            }));
             // Get the phase to be operated on
             Phase phase = phasesJsMap.get(phaseJsId);
 
@@ -1258,6 +1241,7 @@ public class SaveProjectAction extends BaseProjectAction {
                 if (phaseStatus.getName().equals(PhaseStatus.OPEN.getName()) && result.isSuccess()) {
                     // Close the phase
                     phaseManager.end(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                    addTimelineUpdated(oldTimeline, phase.getProject().getAllPhases(), updateValues);
                 } else {
                     ActionsHelper.addErrorToRequest(request, ActionsHelper.GLOBAL_MESSAGE,
                             "error.com.cronos.onlinereview.actions.editProject.CannotClosePhase",
@@ -1268,12 +1252,41 @@ public class SaveProjectAction extends BaseProjectAction {
                 if (phaseStatus.getName().equals(PhaseStatus.SCHEDULED.getName()) && result.isSuccess()) {
                     // Open the phase
                     phaseManager.start(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                    addTimelineUpdated(oldTimeline, phase.getProject().getAllPhases(), updateValues);
                 } else {
                     ActionsHelper.addErrorToRequest(request, ActionsHelper.GLOBAL_MESSAGE,
                             "error.com.cronos.onlinereview.actions.editProject.CannotOpenPhase",
                             phaseType.getName(), result.getMessage());
                 }
             }
+        }
+    }
+
+    private void addTimelineUpdated(Map<Long, Map<String, Object>> oldTimeline,
+                                    Phase[] newPhases,
+                                    Map<String, Object> updateValues) {
+        boolean updateTimeline = newPhases.length != oldTimeline.size();
+        if (!updateTimeline) {
+            for (Phase nPhase : newPhases) {
+                Map<String, Object> old = oldTimeline.get(nPhase.getId());
+                if (old == null || !old.get("name").equals(nPhase.getPhaseType().getName())
+                        || !old.get("scheduledStartDate").equals(nPhase.getScheduledStartDate())
+                        || !old.get("scheduledEndDate").equals(nPhase.getScheduledEndDate())) {
+                    updateTimeline = true;
+                    break;
+                }
+            }
+        }
+        if (updateTimeline) {
+            List<Map<String, Object>> timeline = new ArrayList<>();
+            for (Phase phase: newPhases) {
+                Map<String, Object> p = new HashMap<>();
+                p.put("name", phase.getPhaseType().getName());
+                p.put("scheduledStartDate", phase.getScheduledStartDate());
+                p.put("scheduledEndDate", phase.getScheduledEndDate());
+                timeline.add(p);
+            }
+            updateValues.put("timeline", timeline);
         }
     }
 
