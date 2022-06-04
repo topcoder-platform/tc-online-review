@@ -155,10 +155,13 @@ public class ListProjectsAction extends BaseProjectAction {
 
         // read cookies to remember user's selected category
         String categoryCookie = "";
-        for(Cookie c : request.getCookies()) {
-            if (c.getName().equals(scope + "-categoryId")) {
-                categoryCookie = c.getValue();
-                break;
+        if (request.getCookies() != null)
+        {
+            for(Cookie c : request.getCookies()) {
+                if (c.getName().equals(scope + "-categoryId")) {
+                    categoryCookie = c.getValue();
+                    break;
+                }
             }
         }
 
