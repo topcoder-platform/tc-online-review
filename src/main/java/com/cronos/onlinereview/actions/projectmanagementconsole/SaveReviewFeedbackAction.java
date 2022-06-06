@@ -186,6 +186,10 @@ public class SaveReviewFeedbackAction extends BaseProjectManagementConsoleAction
                     } else {
                         reviewFeedbackManager.create(feedback, currentUserIdString);
                     }
+                    // publish feedback updated event
+                    Map<String, Object> updateValues = new HashMap<>();
+                    updateValues.put("feedback", feedback);
+                    EventBusServiceClient.fireChallengeUpdateEvent(project.getId(), AuthorizationHelper.getLoggedInUserId(request), updateValues);
                 }
             } else {
                 return ActionsHelper.produceErrorReport(this, request,

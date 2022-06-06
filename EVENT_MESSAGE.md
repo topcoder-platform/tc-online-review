@@ -71,52 +71,28 @@ Every payload has the same format, the difference just in `type` and `data` fiel
   "topic": "or.notification.create",
   "originator": "tc-online-review",
   "mime-type": "application/json",
-  "timestamp": "2022-05-31T06:15:05.584Z",
+  "timestamp": "2022-06-06T01:57:28.854Z",
   "payload": {
-    "challengeId": 721,
+    "challengeId": 181,
     "userId": 132456,
     "type": "prize",
-    "data": {
-      "created": [
-        {
-          "place": 1,
-          "projectId": 721,
-          "prizeAmount": 100.00,
-          "numberOfSubmissions": 1,
-          "id": 101,
-          "prizeType": {
-            "id": 1,
-            "description": ""
-          }
-        }
-      ],
-      "updated": [
-        {
-          "place": 2,
-          "projectId": 721,
-          "prizeAmount": 50.00,
-          "numberOfSubmissions": 1,
-          "id": 102,
-          "prizeType": {
-            "id": 2,
-            "description": ""
-          }
-        }
-      ],
-      "deleted": [
-        {
-          "place": 1,
-          "projectId": 721,
-          "prizeAmount": 150.00,
-          "numberOfSubmissions": 1,
-          "id": 100,
-          "prizeType": {
-            "id": 1,
-            "description": ""
-          }
-        }
-      ]
-    }
+    "data": [
+      {
+        "creationUser": "132456",
+        "modificationUser": "132456",
+        "creationTimestamp": "2022-06-06T01:57:26.915Z",
+        "modificationTimestamp": "2022-06-06T01:57:26.915Z",
+        "place": 1,
+        "projectId": 181,
+        "prizeAmount": 100,
+        "prizeType": {
+          "id": 15,
+          "description": "Contest Prize"
+        },
+        "numberOfSubmissions": 1,
+        "id": 21
+      }
+    ]
   }
 }
 ```
@@ -180,16 +156,127 @@ Every payload has the same format, the difference just in `type` and `data` fiel
   "topic": "or.notification.create",
   "originator": "tc-online-review",
   "mime-type": "application/json",
-  "timestamp": "2022-05-31T06:15:05.584Z",
+  "timestamp": "2022-06-06T05:51:06.373Z",
   "payload": {
-    "challengeId": 721,
+    "challengeId": 171,
     "userId": 132456,
     "type": "timeline",
     "data": [
       {
+        "scheduledEndDate": "2010-05-30T13:00:00.000Z",
+        "actualEndDate": null,
         "name": "Registration",
-        "scheduledStartDate": "2022-05-31T06:15:05.584Z",
-        "scheduledEndDate": "2022-06-01T06:15:05.584Z"
+        "actualStartDate": null,
+        "attributes": {
+          "Registration Number": "4",
+          "Manual Screening": "No"
+        },
+        "phaseStatus": "Scheduled",
+        "scheduledStartDate": "2010-05-27T13:00:00.000Z"
+      },
+      {
+        "scheduledEndDate": "2010-06-03T13:00:00.000Z",
+        "actualEndDate": null,
+        "name": "Submission",
+        "actualStartDate": null,
+        "attributes": {
+          "Submission Number": "0",
+          "Manual Screening": "No"
+        },
+        "phaseStatus": "Scheduled",
+        "scheduledStartDate": "2010-05-27T13:00:00.000Z"
+      },
+      {
+        "scheduledEndDate": "2010-06-08T13:00:00.000Z",
+        "actualEndDate": null,
+        "name": "Screening",
+        "actualStartDate": null,
+        "attributes": {
+          "Scorecard ID": "30000412",
+          "Manual Screening": "No"
+        },
+        "phaseStatus": "Scheduled",
+        "scheduledStartDate": "2010-06-07T13:00:00.000Z"
+      },
+      {
+        "scheduledEndDate": "2010-06-12T13:00:00.000Z",
+        "actualEndDate": null,
+        "name": "Review",
+        "actualStartDate": null,
+        "attributes": {
+          "Reviewer Number": "3",
+          "Scorecard ID": "30000413",
+          "Manual Screening": "No"
+        },
+        "phaseStatus": "Scheduled",
+        "scheduledStartDate": "2010-06-08T13:00:00.000Z"
+      },
+      {
+        "scheduledEndDate": "2010-06-15T13:00:00.000Z",
+        "actualEndDate": null,
+        "name": "Appeals",
+        "actualStartDate": null,
+        "attributes": {
+          "View Response During Appeals": "No",
+          "Manual Screening": "No"
+        },
+        "phaseStatus": "Scheduled",
+        "scheduledStartDate": "2010-06-14T13:00:00.000Z"
+      },
+      {
+        "scheduledEndDate": "2010-06-16T13:00:00.000Z",
+        "actualEndDate": null,
+        "name": "Appeals Response",
+        "actualStartDate": null,
+        "attributes": {
+          "Manual Screening": "No"
+        },
+        "phaseStatus": "Scheduled",
+        "scheduledStartDate": "2010-06-15T13:00:00.000Z"
+      },
+      {
+        "scheduledEndDate": "2010-06-17T01:00:00.000Z",
+        "actualEndDate": null,
+        "name": "Aggregation",
+        "actualStartDate": null,
+        "attributes": {
+          "Manual Screening": "No"
+        },
+        "phaseStatus": "Scheduled",
+        "scheduledStartDate": "2010-06-16T13:00:00.000Z"
+      },
+      {
+        "scheduledEndDate": "2010-06-17T13:00:00.000Z",
+        "actualEndDate": null,
+        "name": "Aggregation Review",
+        "actualStartDate": null,
+        "attributes": {
+          "Manual Screening": "No"
+        },
+        "phaseStatus": "Scheduled",
+        "scheduledStartDate": "2010-06-17T01:00:00.000Z"
+      },
+      {
+        "scheduledEndDate": "2010-06-20T13:00:00.000Z",
+        "actualEndDate": null,
+        "name": "Final Fix",
+        "actualStartDate": null,
+        "attributes": {
+          "Manual Screening": "No"
+        },
+        "phaseStatus": "Scheduled",
+        "scheduledStartDate": "2010-06-17T13:00:00.000Z"
+      },
+      {
+        "scheduledEndDate": "2010-06-23T13:00:00.000Z",
+        "actualEndDate": null,
+        "name": "Final Review",
+        "actualStartDate": null,
+        "attributes": {
+          "Manual Screening": "No"
+        },
+        "phaseStatus": "Scheduled",
+        "scheduledStartDate": "2010-06-22T13:00:00.000Z"
       }
     ]
   }
