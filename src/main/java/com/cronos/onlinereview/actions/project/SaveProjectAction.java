@@ -26,7 +26,6 @@ import com.topcoder.onlinereview.component.project.management.ProjectCategory;
 import com.topcoder.onlinereview.component.project.management.ProjectManager;
 import com.topcoder.onlinereview.component.project.management.ProjectStatus;
 import com.topcoder.onlinereview.component.project.payment.ProjectPayment;
-import com.topcoder.onlinereview.component.project.payment.ProjectPaymentFilterBuilder;
 import com.topcoder.onlinereview.component.project.payment.ProjectPaymentManager;
 import com.topcoder.onlinereview.component.project.phase.CyclicDependencyException;
 import com.topcoder.onlinereview.component.project.phase.Dependency;
@@ -54,8 +53,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
@@ -79,6 +76,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.cronos.onlinereview.Constants.AGGREGATION_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.AGGREGATION_REVIEW_PHASE_NAME;
@@ -444,7 +442,7 @@ public class SaveProjectAction extends BaseProjectAction {
         Phase[] projectPhases;
         if (!ActionsHelper.isErrorsPresent(request)) {
             // Save the project phases
-            projectPhases = saveProjectPhases(newProject, request, project, phasesJsMap, phasesToDelete);
+            projectPhases = saveProjectPhases(newProject, request, project, phasesJsMap, phasesToDelete, updateValues);
         } else {
             // Retrieve and sort project phases
             projectPhases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
@@ -482,33 +480,23 @@ public class SaveProjectAction extends BaseProjectAction {
         if (!ActionsHelper.isErrorsPresent(request)) {
             ProjectManager projectManager = ActionsHelper.createProjectManager();
             String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
-            Map<String, List<Prize>> updatedPrizeMap = new HashMap<>();
+            List<Prize> newPrize = new ArrayList<>();
             for (Prize prize : createdPrize) {
                 prize.setProjectId(project.getId());
                 projectManager.createPrize(prize, operator);
-                if (!updatedPrizeMap.containsKey("created")) {
-                    updatedPrizeMap.put("created", new ArrayList<>());
-                }
-                updatedPrizeMap.get("created").add(prize);
+                newPrize.add(prize);
             }
             for (Prize prize : updatedPrize) {
                 projectManager.updatePrize(prize, operator);
-                if (!updatedPrizeMap.containsKey("updated")) {
-                    updatedPrizeMap.put("updated", new ArrayList<>());
-                }
-                updatedPrizeMap.get("updated").add(prize);
+                newPrize.add(prize);
             }
             for (Prize prize : removedPrize) {
                 projectManager.removePrize(prize, operator);
-                if (!updatedPrizeMap.containsKey("deleted")) {
-                    updatedPrizeMap.put("deleted", new ArrayList<>());
-                }
-                updatedPrizeMap.get("deleted").add(prize);
             }
             PaymentsHelper.processAutomaticPayments(project.getId(), operator);
 
-            if (!updatedPrizeMap.isEmpty()) {
-                updateValues.put("prize", updatedPrizeMap);
+            if (!newPrize.isEmpty()) {
+                updateValues.put("prize", newPrize);
             }
         }
 
@@ -766,7 +754,8 @@ public class SaveProjectAction extends BaseProjectAction {
      * @throws BaseException if an unexpected error occurs.
      */
     private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request,
-            Project project, Map<Object, Phase> phasesJsMap, List<Phase> phasesToDelete)
+            Project project, Map<Object, Phase> phasesJsMap, List<Phase> phasesToDelete,
+                                      Map<String, Object> updateValues)
         throws BaseException {
         // Obtain an instance of Phase Manager
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
@@ -788,6 +777,14 @@ public class SaveProjectAction extends BaseProjectAction {
 
         // Get the list of all previously existing phases
         Phase[] oldPhases = phProject.getAllPhases();
+
+        Map<Long, Map<String, Object>> oldTimeline = Stream.of(oldPhases).collect(Collectors.toMap(p -> p.getId(), p -> {
+            Map<String, Object> timeline = new HashMap<>();
+            timeline.put("name", p.getPhaseType().getName());
+            timeline.put("scheduledStartDate", p.getScheduledStartDate());
+            timeline.put("scheduledEndDate", p.getScheduledEndDate());
+            return timeline;
+        }));
 
         // Get the array of phase types specified for each phase
         Long[] phaseTypes = (Long[]) getModel().get("phase_type");
@@ -1195,6 +1192,9 @@ public class SaveProjectAction extends BaseProjectAction {
         projectPhases = phProject.getAllPhases();
         // Sort project phases
         Arrays.sort(projectPhases, new Comparators.ProjectPhaseComparer());
+
+        // add updateTimeline to updateValues
+        addTimelineUpdated(oldTimeline, projectPhases, updateValues);
         return projectPhases;
     }
 
