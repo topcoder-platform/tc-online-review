@@ -162,6 +162,9 @@ public class ManageProjectAction extends BaseProjectManagementConsoleAction {
                             p.put("name", phase.getPhaseType().getName());
                             p.put("scheduledStartDate", phase.getScheduledStartDate());
                             p.put("scheduledEndDate", phase.getScheduledEndDate());
+                            p.put("actualStartDate", phase.getActualStartDate());
+                            p.put("actualEndDate", phase.getActualEndDate());
+                            p.put("phaseStatus", phase.getPhaseStatus().getName());
                             timeline.add(p);
                         }
                         updateValues.put("timeline", timeline);

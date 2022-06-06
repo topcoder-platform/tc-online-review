@@ -97,6 +97,7 @@ import static com.cronos.onlinereview.Constants.SPECIFICATION_SUBMISSION_PHASE_N
 import static com.cronos.onlinereview.Constants.SUBMISSION_PHASE_NAME;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.topcoder.onlinereview.component.util.SpringUtils.getCommonJdbcTemplate;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * This class is the struts action class which is used for saving the project, including both creating
@@ -778,11 +779,12 @@ public class SaveProjectAction extends BaseProjectAction {
         // Get the list of all previously existing phases
         Phase[] oldPhases = phProject.getAllPhases();
 
-        Map<Long, Map<String, Object>> oldTimeline = Stream.of(oldPhases).collect(Collectors.toMap(p -> p.getId(), p -> {
+        Map<Long, Map<String, Object>> oldTimeline = Stream.of(oldPhases).collect(toMap(p -> p.getId(), p -> {
             Map<String, Object> timeline = new HashMap<>();
             timeline.put("name", p.getPhaseType().getName());
             timeline.put("scheduledStartDate", p.getScheduledStartDate());
             timeline.put("scheduledEndDate", p.getScheduledEndDate());
+            timeline.put("attributes", ((Map<String, Object>)p.getAttributes()).entrySet().stream().collect(toMap(e -> e.getKey(), e -> e.getValue())));
             return timeline;
         }));
 
@@ -1217,11 +1219,12 @@ public class SaveProjectAction extends BaseProjectAction {
         String phaseJsId = (String) getModel().get("action_phase");
 
         if (phaseJsId != null && phasesJsMap.containsKey(phaseJsId)) {
-            Map<Long, Map<String, Object>> oldTimeline = phasesJsMap.values().stream().collect(Collectors.toMap(p -> p.getId(), p -> {
+            Map<Long, Map<String, Object>> oldTimeline = phasesJsMap.values().stream().collect(toMap(p -> p.getId(), p -> {
                 Map<String, Object> timeline = new HashMap<>();
                 timeline.put("name", p.getPhaseType().getName());
                 timeline.put("scheduledStartDate", p.getScheduledStartDate());
                 timeline.put("scheduledEndDate", p.getScheduledEndDate());
+                timeline.put("attributes", ((Map<String, Object>)p.getAttributes()).entrySet().stream().collect(toMap(e -> e.getKey(), e -> e.getValue())));
                 return timeline;
             }));
             // Get the phase to be operated on
@@ -1275,6 +1278,17 @@ public class SaveProjectAction extends BaseProjectAction {
                     updateTimeline = true;
                     break;
                 }
+                Map<String, Object> attributes = nPhase.getAttributes();
+                Map<String, Object> oldAttributes = (Map<String, Object>) old.getOrDefault("attributes", new HashMap<>());
+                if ((attributes == null && !oldAttributes.isEmpty()) || (attributes.size() != oldAttributes.size())) {
+                    updateTimeline = true;
+                    break;
+                }
+                if (attributes.entrySet().stream()
+                        .anyMatch(e -> !safeEqual(e.getValue(), oldAttributes.get(e.getKey()), (o1, o2) -> o1.equals(o2)))) {
+                    updateTimeline = true;
+                    break;
+                }
             }
         }
         if (updateTimeline) {
@@ -1284,6 +1298,10 @@ public class SaveProjectAction extends BaseProjectAction {
                 p.put("name", phase.getPhaseType().getName());
                 p.put("scheduledStartDate", phase.getScheduledStartDate());
                 p.put("scheduledEndDate", phase.getScheduledEndDate());
+                p.put("actualStartDate", phase.getActualStartDate());
+                p.put("actualEndDate", phase.getActualEndDate());
+                p.put("phaseStatus", phase.getPhaseStatus().getName());
+                p.put("attributes", phase.getAttributes());
                 timeline.add(p);
             }
             updateValues.put("timeline", timeline);
