@@ -3,11 +3,25 @@
  */
 package com.cronos.onlinereview.util;
 
+import com.auth0.jwk.GuavaCachedJwkProvider;
+import com.auth0.jwk.Jwk;
+import com.auth0.jwk.JwkProvider;
+import com.auth0.jwk.UrlJwkProvider;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.Verification;
 import com.cronos.onlinereview.Constants;
 import com.topcoder.onlinereview.component.dataaccess.ProjectDataAccess;
 import com.topcoder.onlinereview.component.exception.BaseException;
 import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.topcoder.onlinereview.component.external.UserRetrieval;
+import com.topcoder.onlinereview.component.jwt.InvalidTokenException;
+import com.topcoder.onlinereview.component.jwt.JWTException;
 import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.project.management.ProjectManager;
 import com.topcoder.onlinereview.component.resource.Resource;
@@ -22,7 +36,10 @@ import com.topcoder.onlinereview.component.webcommon.SSOCookieService;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.security.interfaces.RSAPublicKey;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.topcoder.onlinereview.component.util.SpringUtils.getBean;
@@ -466,6 +483,69 @@ public class AuthorizationHelper {
      */
     public void setSsoCookieService(SSOCookieService ssoCookieService) {
         AuthorizationHelper.ssoCookieService = ssoCookieService;
+    }
+
+    /**
+     * <p>
+     * Validate jwt token
+     * </p>
+     * 
+     * @param token the jwt token
+     * @throws JWTException if any error occurs
+     * @return the DecodedJWT result
+     */
+    public static DecodedJWT validateJWTToken(String token) throws JWTException {
+        if (token == null) {
+            throw new IllegalArgumentException("token must be specified.");
+        }
+        DecodedJWT decodedJWT = null;
+        // Decode only first to get the algorithm
+        try {
+            decodedJWT = JWT.decode(token);
+        } catch (JWTDecodeException e) {
+            throw new InvalidTokenException(token, "Error occurred in decoding token. " + e.getLocalizedMessage(), e);
+        }
+        String algorithm = decodedJWT.getAlgorithm();
+        Algorithm alg = null;
+        // Create the algorithm
+        if ("RS256".equals(algorithm)) {
+            List<String> validIssuers = ConfigHelper.getValidIssuers();
+            // Validate the issuer
+            if (decodedJWT.getIssuer() == null || !validIssuers.contains(decodedJWT.getIssuer())) {
+                throw new InvalidTokenException(token, "Invalid issuer: " + decodedJWT.getIssuer());
+            }
+
+            // Create the JWK provider with caching
+            JwkProvider urlJwkProvider = new UrlJwkProvider(decodedJWT.getIssuer());
+            JwkProvider jwkProvider = new GuavaCachedJwkProvider(urlJwkProvider);
+
+            // Get the public key and create the algorithm
+            try {
+                Jwk jwk = jwkProvider.get(decodedJWT.getKeyId());
+                RSAPublicKey publicKey = (RSAPublicKey) jwk.getPublicKey();
+
+                alg = Algorithm.RSA256(publicKey, null);
+            } catch (Exception e) {
+                throw new JWTException(token, "Error occurred in creating algorithm. " + e.getLocalizedMessage(), e);
+            }
+        } else {
+            throw new JWTException(token, "Algorithm not supported: " + algorithm);
+        }
+
+        // Verify
+        try {
+            Verification verification = JWT.require(alg);
+
+            JWTVerifier verifier = verification.build();
+            decodedJWT = verifier.verify(token);
+        } catch (TokenExpiredException e) {
+            throw new TokenExpiredException(token);
+        } catch (SignatureVerificationException | IllegalStateException e) {
+            throw new InvalidTokenException(token, "Token is invalid. " + e.getLocalizedMessage(), e);
+        } catch (Exception e) {
+            throw new JWTException(token, "Error occurred in verifying token. " + e.getLocalizedMessage(), e);
+        }
+        return decodedJWT;
     }
 
 }

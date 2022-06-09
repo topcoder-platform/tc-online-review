@@ -1,8 +1,8 @@
 package com.cronos.onlinereview.config;
 
-import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.ConfigHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,10 +43,15 @@ public class TogglzConfiguration implements TogglzConfig {
             if (cookies != null) {
                 for (Cookie c : cookies) {
                     if (c.getName().equals(ConfigHelper.getV2jwtCookieName())) {
-                        DecodedJWT jwt = JWT.decode(c.getValue());
+                        DecodedJWT jwt;
+                        try {
+                            jwt = AuthorizationHelper.validateJWTToken(c.getValue());
+                        } catch (Exception e) {
+                            return new SimpleFeatureUser("user", false);
+                        }
                         Claim claim = jwt.getClaim(roleKey);
                         if (claim != null) {
-                            for (String role: claim.asArray(String.class)) {
+                            for (String role : claim.asArray(String.class)) {
                                 if (roles.contains(role)) {
                                     return new SimpleFeatureUser("admin", true);
                                 }

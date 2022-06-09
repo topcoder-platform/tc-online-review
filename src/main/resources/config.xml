@@ -2074,6 +2074,9 @@
     <Property name="sso_domain_for_v3jwt_cookie">
         <Value>.topcoder.com</Value>
     </Property>
+    <Property name="valid_issuers">
+        <Value>@valid_issuers@</Value>
+    </Property>
 
     <Property name="event_bus">
         <Property name="topic">
