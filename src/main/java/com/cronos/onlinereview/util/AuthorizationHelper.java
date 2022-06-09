@@ -148,6 +148,7 @@ public class AuthorizationHelper {
             e.printStackTrace();
         }
         return (userId != null) ? (userId) : NO_USER_LOGGED_IN_ID;
+//        return 132456L;
     }
 
     /**

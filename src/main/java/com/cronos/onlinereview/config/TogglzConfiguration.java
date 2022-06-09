@@ -36,9 +36,10 @@ public class TogglzConfiguration implements TogglzConfig {
     public UserProvider getUserProvider() {
         return () -> {
             HttpServletRequest request = HttpServletRequestHolder.get();
-            Set<RolePrincipal> roleSet = LoginBean.getUserRoles(AuthorizationHelper.getLoggedInUserId(request));
-            for (RolePrincipal role : roleSet) {
-                if (roles.contains(role.getName())) {
+            AuthorizationHelper.gatherUserRoles(request);
+            Set<String> roles = (Set<String>)request.getAttribute("roles");
+            for (String role : roles) {
+                if (roles.contains(role)) {
                     return new SimpleFeatureUser("admin", true);
                 }
             }
