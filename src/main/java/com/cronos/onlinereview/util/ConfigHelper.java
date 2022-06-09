@@ -597,6 +597,11 @@ public class ConfigHelper {
     private static final String V3_JWT_AUTHORIZATION_URL = "v3jwt_authorization_url";
 
     /**
+     * <p>A <code>String</code> providing the list of valid issuers</p>
+     */
+    private static final String VALID_ISSUERS = "valid_issuers";
+
+    /**
      * This member variable holds the submitter role id.
      */
     private static int submitterRoleId = 1;
@@ -971,6 +976,11 @@ public class ConfigHelper {
      * <p>Represents the v3jwtAuthorizationUrl.</p>
      */
     private static String v3jwtAuthorizationUrl;
+
+    /**
+     * <p>A <code>List</code> for the valid issuers</p>
+     */
+    private static final List<String> validIssuers = new ArrayList<String>();
 
     /**
      * <p>Represents the ssoDomainForV3jwtCookie.</p>
@@ -1662,6 +1672,14 @@ public class ConfigHelper {
             v2jwtCookieName = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, V2_JWT_COOKIE_NAME);
             ssoDomainForV3jwtCookie = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, SSO_DOMAIN_FOR_V3_JWT_COOKIE);
             v3jwtAuthorizationUrl = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, V3_JWT_AUTHORIZATION_URL);
+            // Read the valid issuers property
+            String validIssuersProperty = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, VALID_ISSUERS);
+            if (validIssuersProperty != null && validIssuersProperty.trim().length() != 0) {
+                String[] validIssuerStrings = validIssuersProperty.split(",");
+                for (String validIssuer : validIssuerStrings) {
+                    validIssuers.add(validIssuer.trim());
+                }
+            }
 
             ConfigManager.Property eventBus = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "event_bus");
             contestSubmissionDownloadUrl = eventBus.getValue("contestSubmissionDownloadUrl");
@@ -2533,6 +2551,14 @@ public class ConfigHelper {
      */
     public static String getV3jwtAuthorizationUrl() {
         return v3jwtAuthorizationUrl;
+    }
+
+    /**
+     * Get valid issuers.
+     * @return the valid issuers list.
+     */
+    public static List<String> getValidIssuers() {
+        return validIssuers;
     }
 
     /**
