@@ -25,8 +25,6 @@ public class TogglzConfiguration implements TogglzConfig {
 
     @Value("#{'${togglz.roles}'.split(',')}")
     private List<String> roles;
-    @Value("${togglz.role_key}")
-    private String roleKey;
 
     public Class<? extends Feature> getFeatureClass() {
         return TogglzFeatures.class;
@@ -47,13 +45,16 @@ public class TogglzConfiguration implements TogglzConfig {
                         try {
                             jwt = AuthorizationHelper.validateJWTToken(c.getValue());
                         } catch (Exception e) {
+                            logger.error(e.getMessage());
                             return new SimpleFeatureUser("user", false);
                         }
-                        Claim claim = jwt.getClaim(roleKey);
-                        if (claim != null) {
-                            for (String role : claim.asArray(String.class)) {
-                                if (roles.contains(role)) {
-                                    return new SimpleFeatureUser("admin", true);
+                        for (String claimName : jwt.getClaims().keySet()) {
+                            if (claimName.endsWith("/roles")) {
+                                Claim claim = jwt.getClaim(claimName);
+                                for (String role : claim.asArray(String.class)) {
+                                    if (roles.contains(role)) {
+                                        return new SimpleFeatureUser("admin", true);
+                                    }
                                 }
                             }
                         }
