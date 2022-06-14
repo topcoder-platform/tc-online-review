@@ -44,7 +44,6 @@ import com.topcoder.onlinereview.component.project.management.PersistenceExcepti
 import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.project.management.ProjectManager;
 import com.topcoder.onlinereview.component.project.phase.Phase;
-import com.topcoder.onlinereview.component.project.phase.handler.or.AmazonSNSHelper;
 import com.topcoder.onlinereview.component.resource.Resource;
 import com.topcoder.onlinereview.component.resource.ResourceManager;
 import com.topcoder.onlinereview.component.review.Review;
@@ -746,8 +745,6 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
                 }
             }
         }
-
-        AmazonSNSHelper.publishProjectUpdateEvent(project);
 
         // fire the submission creation event
         Long devTypeId = EventBusServiceClient.F2F_ASSEMBLY_CODE_ID_MAP.get(project.getProjectCategory().getId());

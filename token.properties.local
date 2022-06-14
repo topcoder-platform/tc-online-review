@@ -158,12 +158,8 @@ adminUsers=132456
 thurgood.api.key=12345678901234567890
 thurgood.username=Thurgood
 thurgood.password=password
-topcoder_api_base_url=http://api.topcoder-dev.com/v2/develop/challenges
 topcoder_api_base_url_v3=http://api.topcoder-dev.com/v3/challenges
 topcoder_api_base_url_v5=https://api.topcoder-dev.com/v5
-amazon_sns_arn=arn:aws:sns:us-east-1:766830814403:community-challenge-create
-amazonSNSAccessKey=AKIAIZNXS3HERHTLVQKA
-amazonSNSSecretKey=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
 contactPMEmailFromAddress = applicationstopcoder.com
 
 # typical VM configuration
@@ -207,19 +203,6 @@ tests.competitoruserpassword=password
 tests.competitoruserid=132458
 tests.timeout=5000
 
-#####################################
-# Parameters specific to Auto Pilot #
-#####################################
-# typical Windows configuration
-# A path to file to signal to Auto Pilot to stop the job
-auto_pilot_guard_file=stopAutoPilot.txt
-# A path to file to signal to Auto Pilot that there is another tool instance already running
-auto_pilot_running_file=autoPilotIsRunning.txt
-# A path to log file for Auto Pilot
-auto_pilot_log_file=auto_pilot.log
-# An interval (in seconds) between Auto Pilot job executions
-auto_pilot_poll_interval=20
-
 ####################################################
 # Parameters specific to Late Deliverables Tracker #
 ####################################################
@@ -247,22 +230,6 @@ review_assignment_interval=review_assignment.log
 review_assignment_log_file=60
 # An ID for user account to represent the Review Assignment tool
 review_assignment_operator=132456
-
-#####################
-# SVN configuration #
-#####################
-# An URL for SVN repository root
-svn.root=https://coder.topcoder.com/tcs
-# A username for authenticating to SVN repository
-svn.username=OnlineReview
-# A password for authenticating to SVN repository
-svn.password=password
-# A message for committing the updates to path-based permission file and for creating SVN directories
-svn.mkdir.commit.message=Online Review auto-commit
-# A base directory for temporary files and directories
-svn.temp.files.basedir=/root/temp_files/temp_svn
-# An URL for path-based permissions file in SVN repository
-svn.authz.file.url=https://coder.topcoder.com/tcs/configuration/trunk/svn-permissions.txt
 
 # AWS S3 Credentials for download submission
 aws_s3_bucket=topcoder-dev-submissions

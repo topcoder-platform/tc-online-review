@@ -513,19 +513,6 @@ public class ConfigHelper {
     private static final String DISABLED_RESOURCE_ROLES_PROP = "DisabledResourceRoles";
 
     /**
-     * <p>A <code>String</code> providing the name for configuration property listing the resource roles which are to be
-     * granted permission for accessing SVN module for project once the project enters <code>Final Review</code> phase.
-     * </p>
-     */
-    private static final String SVN_PERM_GRANT_RESOURCE_ROLES_PROP = "SVNPermissionGrantResourceRoles";
-
-    /**
-     * <p>A <code>String</code> providing the name for configuration property listing the parameters for SVN repository.
-     * </p>
-     */
-    private static final String SVN_CONFIG_PROP = "SVNConfig";
-
-    /**
      * <p>A <code>String</code> providing the name for configuration property listing the parameters of the Resources tabs
      * to be displayed in the Resource section in project detail page.</p>
      */
@@ -1569,18 +1556,6 @@ public class ConfigHelper {
                     = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DISABLED_RESOURCE_ROLES_PROP);
             disabledResourceRoles = disabledResourceRolesConfig.getValues();
 
-            ConfigManager.Property svnPermissionGrantResourceRolesConfig
-                    = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, SVN_PERM_GRANT_RESOURCE_ROLES_PROP);
-            svnPermissionGrantResourceRoles = svnPermissionGrantResourceRolesConfig.getValues();
-
-            ConfigManager.Property svnRepoConfig = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, SVN_CONFIG_PROP);
-            svnConfig = new String[]{svnRepoConfig.getValue("Root"),
-                    svnRepoConfig.getValue("AuthUsername"),
-                    svnRepoConfig.getValue("AuthPassword"),
-                    svnRepoConfig.getValue("MkDirCommitMessage"),
-                    svnRepoConfig.getValue("TempFilesBaseDir"),
-                    svnRepoConfig.getValue("PathBasedPermissionsFileURL")};
-
             ConfigManager.Property lateDeliverableEmailConfig
                     = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "LateDeliverableUpdateNotificationEmail");
 
@@ -2240,71 +2215,6 @@ public class ConfigHelper {
      */
     public static String[] getDisabledResourceRoles() {
         return disabledResourceRoles;
-    }
-
-    /**
-     * <p>Gets the list of resource role IDs which are to be granted permission for accessing SVN module for project
-     * once the project enters the <code>Final Review</code> phase.</p>
-     *
-     * @return a <code>String</code> array listing the IDs for resource roles which are to be granted SVN permission.
-     */
-    public static String[] getSvnPermissionGrantResourceRoles() {
-        return svnPermissionGrantResourceRoles;
-    }
-
-    /**
-     * <p>Gets the URL for SVN repository.</p>
-     *
-     * @return a <code>String</code> providing the URL for SVN repository.
-     */
-    public static String getSVNRoot() {
-        return svnConfig[0];
-    }
-
-    /**
-     * <p>Gets the username for authentication to SVN repository.</p>
-     *
-     * @return a <code>String</code> providing the username to be used for authenticating to SVN repository.
-     */
-    public static String getSVNAuthnUsername() {
-        return svnConfig[1];
-    }
-
-    /**
-     * <p>Gets the password for authentication to SVN repository.</p>
-     *
-     * @return a <code>String</code> providing the password to be used for authenticating to SVN repository.
-     */
-    public static String getSVNAuthnPassword() {
-        return svnConfig[2];
-    }
-
-    /**
-     * <p>Gets the message for committing the new directories to SVN repository.</p>
-     *
-     * @return a <code>String</code> providing message for committing the new directories to SVN repository.
-     */
-    public static String getSVNCommitMessage() {
-        return svnConfig[3];
-    }
-
-    /**
-     * <p>Gets the path to local directory where the SVN files can be temporarily checked to.</p>
-     *
-     * @return a <code>String</code> providing the path to local directory where the SVN files can be temporarily
-     *         checked to.
-     */
-    public static String getSVNTemporaryFilesBaseDir() {
-        return svnConfig[4];
-    }
-
-    /**
-     * <p>Gets the URL for path-based permissions file in SVN repository.</p>
-     *
-     * @return a <code>String</code> providing the URL for path-based permissions file in SVN repository.
-     */
-    public static String getSVNPathBasedPermissionsFileURL() {
-        return svnConfig[5];
     }
 
     /**

@@ -888,36 +888,6 @@
         <Value>1001</Value><!-- Team Captain -->
     </Property>
 
-    <Property name="SVNPermissionGrantResourceRoles">
-        <Value>1</Value><!-- Submitter -->
-        <Value>4</Value><!-- Reviewer -->
-        <Value>5</Value><!-- Accuracy Reviewer -->
-        <Value>6</Value><!-- Failure Reviewer -->
-        <Value>7</Value><!-- Stress Reviewer -->
-        <Value>9</Value><!-- Final Reviewer -->
-    </Property>
-
-    <Property name="SVNConfig">
-        <Property name="Root">
-            <Value>@svn.root@</Value>
-        </Property>
-        <Property name="AuthUsername">
-            <Value>@svn.username@</Value>
-        </Property>
-        <Property name="AuthPassword">
-            <Value>@svn.password@</Value>
-        </Property>
-        <Property name="MkDirCommitMessage">
-            <Value>@svn.mkdir.commit.message@</Value>
-        </Property>
-        <Property name="TempFilesBaseDir">
-            <Value>@svn.temp.files.basedir@</Value>
-        </Property>
-        <Property name="PathBasedPermissionsFileURL">
-            <Value>@svn.authz.file.url@</Value>
-        </Property>
-    </Property>
-
     <Property name="ProjectPaymentConfig">
         <Property name="CalculatorClass">
             <Value>com.topcoder.management.payment.calculator.impl.ProjectPaymentAdjustmentCalculator</Value>
@@ -2045,19 +2015,6 @@
     </Property>
     <Property name="thurgood_password">
         <Value>@thurgood.password@</Value>
-    </Property>
-
-    <Property name="amazon_sns_arn">
-        <Value>@amazon_sns_arn@</Value>
-    </Property>
-    <Property name="amazon_sns_message_subject">
-        <Value>cmc challenge contest change</Value>
-    </Property>
-    <Property name="amazon_sns_message_template">
-        <Value>{"challengeId": "%CHALLENGE_ID%","cmcTaskId": "%CMC_TASK_ID%", "apiUrl": "%API_URL%"}</Value>
-    </Property>
-    <Property name="topcoder_api_base_url">
-        <Value>@topcoder_api_base_url@</Value>
     </Property>
     <Property name="user_group_membership_url_v5">
         <Value>@topcoder_api_base_url_v5@/groups/memberGroups/%s</Value>
