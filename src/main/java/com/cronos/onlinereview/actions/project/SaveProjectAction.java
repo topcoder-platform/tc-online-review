@@ -34,7 +34,6 @@ import com.topcoder.onlinereview.component.project.phase.Phase;
 import com.topcoder.onlinereview.component.project.phase.PhaseManager;
 import com.topcoder.onlinereview.component.project.phase.PhaseStatus;
 import com.topcoder.onlinereview.component.project.phase.PhaseType;
-import com.topcoder.onlinereview.component.project.phase.handler.or.AmazonSNSHelper;
 import com.topcoder.onlinereview.component.project.phase.handler.or.PaymentsHelper;
 import com.topcoder.onlinereview.component.resource.Resource;
 import com.topcoder.onlinereview.component.resource.ResourceFilterBuilder;
@@ -75,7 +74,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.cronos.onlinereview.Constants.AGGREGATION_PHASE_NAME;
@@ -523,7 +521,6 @@ public class SaveProjectAction extends BaseProjectAction {
             return INPUT;
         }
 
-        AmazonSNSHelper.publishProjectUpdateEvent(project);
         EventBusServiceClient.fireProjectUpdateEvent(project.getId(), AuthorizationHelper.getLoggedInUserId(request),
                 project, Arrays.asList(projectPhases));
         List<Resource> newResources = newArrayList(resourceManager.searchResources(
