@@ -137,6 +137,10 @@ public class EventBusServiceClient {
      * @param reviewType the reviewType to use
      */
     public static void fireReviewCreate(Review review, long reviewerId, String reviewType) {
+        if (!TogglzFeatures.SEND_KAFKA_MESSAGE.isActive()) {
+            LOGGER.info("SEND_KAFKA_MESSAGE inactive");
+            return;
+        }
         if (review!= null && reviewType != null && REVIEW_TYPES_MAP.keySet().contains(reviewType.trim())) {
             EventMessage msg = EventMessage.getDefaultReviewEvent();
             msg.setPayload("score", review.getScore());
@@ -158,6 +162,10 @@ public class EventBusServiceClient {
      * @param reviewType the reviewType to use
      */
     public static void fireReviewUpdate(Review review, long reviewerId, long userId, String reviewType) {
+        if (!TogglzFeatures.SEND_KAFKA_MESSAGE.isActive()) {
+            LOGGER.info("SEND_KAFKA_MESSAGE inactive");
+            return;
+        }
         if (review!= null && reviewType != null && REVIEW_TYPES_MAP.keySet().contains(reviewType.trim())) {
             EventMessage msg = EventMessage.getDefaultReviewEvent();
             msg.setPayload("score", review.getScore());
@@ -182,6 +190,10 @@ public class EventBusServiceClient {
      * @param submissionTypeId the submissionTypeId to use
      */
     public static void fireSubmissionCreateEvent(long challengeId, long userId, String fileName, String fileUrl, long legacyId, int submissionTypeId) {
+        if (!TogglzFeatures.SEND_KAFKA_MESSAGE.isActive()) {
+            LOGGER.info("SEND_KAFKA_MESSAGE inactive");
+            return;
+        }
         EventMessage msg = EventMessage.getDefaultReviewEvent();
         msg.setPayload("challengeId", challengeId);
         msg.setPayload("userId", userId);
@@ -209,6 +221,10 @@ public class EventBusServiceClient {
      */
     public static void fireLateDeliverableUpdateEvent(long challengeId, long userId, long lateDeliverableId, Date deadline, String explanation,
             long managerId,  boolean justified, String response) {
+        if (!TogglzFeatures.SEND_KAFKA_MESSAGE.isActive()) {
+            LOGGER.info("SEND_KAFKA_MESSAGE inactive");
+            return;
+        }
         EventMessage msg = EventMessage.getDefaultReviewEvent();
         msg.setPayload("challengeId", challengeId);
         msg.setPayload("userId", userId);
@@ -238,6 +254,10 @@ public class EventBusServiceClient {
      * @param phases the phases to use
      */
     public static void fireProjectUpdateEvent(long challengeId, long userId, Project project, List<Phase> phases) {
+        if (!TogglzFeatures.SEND_KAFKA_MESSAGE.isActive()) {
+            LOGGER.info("SEND_KAFKA_MESSAGE inactive");
+            return;
+        }
         List<Map<String, Object>> convertedPhases = null;
         if (phases != null) {
             convertedPhases = new ArrayList<Map<String, Object>>();
@@ -309,6 +329,10 @@ public class EventBusServiceClient {
      * @param userId the userId to use
      */
     public static void fireProjectPaymentUpdateEvent(long challengeId, long userId, ProjectPaymentsForm projectPaymentsForm) {
+        if (!TogglzFeatures.SEND_KAFKA_MESSAGE.isActive()) {
+            LOGGER.info("SEND_KAFKA_MESSAGE inactive");
+            return;
+        }
         EventMessage msg = EventMessage.getDefaultReviewEvent();
         msg.setPayload("challengeId", challengeId);
         msg.setPayload("userId", userId);
