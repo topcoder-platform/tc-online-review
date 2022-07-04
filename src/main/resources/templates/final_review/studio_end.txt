@@ -3,7 +3,9 @@ Hello %USER_HANDLE{User handle}%,
 %PHASE_TIMESTAMP{Phase timestamp}%<br/>
 Handle\: %USER_HANDLE{User handle}%<br/>
 Category\: %PROJECT_CATEGORY{Name of the track}%<br/>
-Contest\: <a href\="%STUDIO_LINK%">%PROJECT_NAME{Project name}%</a><br/>
+Direct Contest\: <a href\="%STUDIO_LINK%">%PROJECT_NAME{Project name}%</a><br/>
+Work Manager Contest\: <a href\="@challenge_base_url@/%PROJECT_ID_V5%/challenges/%CHALLENGE_ID%/view">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
+Work Manager Project\: <a href\="@challenge_base_url@/%PROJECT_ID_V5%/challenges">%TC_DIRECT_PROJECT_NAME%</a><br/>
 This is the notification about %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.<br/>
 </p>
 
