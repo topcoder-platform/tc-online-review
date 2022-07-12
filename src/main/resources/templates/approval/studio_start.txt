@@ -6,9 +6,9 @@ This is the notification about the %PHASE_OPERATION{The phase operation - start/
 
 <p>
 Time\: %PHASE_TIMESTAMP{Phase timestamp}%<br/>
-Direct Contest Type\: %PROJECT_CATEGORY{Name of the track}%<br/>
+Contest Type\: %PROJECT_CATEGORY{Name of the track}%<br/>
 Direct Contest\: <a href\="%DIRECT_CONTEST_LINK%">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
-Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
+Direct Project\: <a href\="%DIRECT_PROJECT_LINK%">%TC_DIRECT_PROJECT_NAME%</a><br/>
 Work Manager Contest\: <a href\="@challenge_base_url@/%PROJECT_ID_V5%/challenges/%CHALLENGE_ID%/view">%PROJECT_NAME{Project name}% %PROJECT_VERSION{Project version}%</a><br/>
 Work Manager Project\: <a href\="@challenge_base_url@/%PROJECT_ID_V5%/challenges">%TC_DIRECT_PROJECT_NAME%</a><br/>
 </p>
