@@ -1,12 +1,12 @@
 %if:SCREENING_STATUS='1'%
-Congratulations! Your checkpoint submission %SUBMISSION_ID% for the contest <a href\="%STUDIO_LINK%">%PROJECT_NAME{Project name}%</a>
+Congratulations! Your checkpoint submission %SUBMISSION_ID% for the contest <a href\="%DIRECT_CONTEST_LINK%">%PROJECT_NAME{Project name}%</a>
 has PASSED Checkpoint Screening.
 
 You can view your Checkpoint Screening scorecard results here <a href\="%SCORECARD_LINK%">Checkpoint Screen Scorecard</a>.
 %endif%
 
 %if:SCREENING_STATUS='2'%
-Your Checkpoint Submission %SUBMISSION_ID% for the contest <a href\="%STUDIO_LINK%">%PROJECT_NAME{Project name}%</a>
+Your Checkpoint Submission %SUBMISSION_ID% for the contest <a href\="%DIRECT_CONTEST_LINK%">%PROJECT_NAME{Project name}%</a>
 has been screened and the results are detailed below.
 
 Passed Checkpoint Screening with score\: <b>%SCREENING_SCORE%</b>
@@ -15,7 +15,7 @@ You are still eligible to submit in subsequent rounds.
 %endif%
 
 %if:SCREENING_STATUS='3'%
-Your checkpoint submission %SUBMISSION_ID% for the contest <a href\="%STUDIO_LINK%">%PROJECT_NAME{Project name}%</a>
+Your checkpoint submission %SUBMISSION_ID% for the contest <a href\="%DIRECT_CONTEST_LINK%">%PROJECT_NAME{Project name}%</a>
 has been screened and the results are detailed below.
 
 Submission Status\: <b>Failed</b>
