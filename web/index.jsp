@@ -9,7 +9,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
-<c:redirect url="${(not orfn:isUserLoggedIn(pageContext.request))?'actions/Login':'actions/ListProjects'}" />
+<c:redirect url="https://${pageContext.request.getServerName()}${(not orfn:isUserLoggedIn(pageContext.request))?'/review/actions/Login':'/review/actions/ListProjects'}" />
 
 <%--
 
