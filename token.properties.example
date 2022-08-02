@@ -152,12 +152,8 @@ adminUsers=<<comma separated list of user IDs, that have the ADMIN role>>
 thurgood.api.key=12345678901234567890
 thurgood.username=Thurgood
 thurgood.password=password
-topcoder_api_base_url=http://api.topcoder.com/v2/develop/challenges
 topcoder_api_base_url_v3=http://api.topcoder.com/v3/challenges
 topcoder_api_base_url_v5=https://api.topcoder.com/v5
-amazon_sns_arn=
-amazonSNSAccessKey=
-amazonSNSSecretKey=
 contactPMEmailFromAddress = applicationstopcoder.com
 
 # typical VM configuration
@@ -242,25 +238,12 @@ review_assignment_log_file=<<path_to_log_file>>
 # An ID for user account to represent the Review Assignment tool
 review_assignment_operator=<<user_id>>
 
-#####################
-# SVN configuration #
-#####################
-# An URL for SVN repository root
-svn.root=<<URL_for_SVN_repository>>
-# A username for authenticating to SVN repository
-svn.username=<<username>>
-# A password for authenticating to SVN repository
-svn.password=<<password>>
-# A message for committing the updates to path-based permission file and for creating SVN directories
-svn.mkdir.commit.message=<<commit_message>>
-# A base directory for temporary files and directories
-svn.temp.files.basedir=<<path_to_directory>>
-# An URL for path-based permissions file in SVN repository
-svn.authz.file.url=<<URL_for_permissions_file>>
-
 # AWS S3 Credentials for download submission
 aws_s3_bucket=topcoder-dev-submissions
 aws_s3_bucket_dmz=topcoder-dev-submissions-dmz
 aws_s3_expire=3600000
 aws_s3_access_key=
 aws_s3_secret_key=
+
+challenge_base_url=https\\://challenges.topcoder-dev.com/projects
+challenge_v5_base_url=https://api.topcoder-dev.com/v5

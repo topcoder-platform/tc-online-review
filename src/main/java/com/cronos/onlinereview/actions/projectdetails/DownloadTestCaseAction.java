@@ -3,18 +3,18 @@
  */
 package com.cronos.onlinereview.actions.projectdetails;
 
-import java.io.IOException;
-
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.deliverable.Upload;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.servlet.request.FileUpload;
-import com.topcoder.servlet.request.UploadedFile;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.deliverable.Upload;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.fileupload.FileUpload;
+import com.topcoder.onlinereview.component.fileupload.UploadedFile;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+
+import java.io.IOException;
 
 
 /**

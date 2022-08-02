@@ -3,7 +3,7 @@
  */
 package com.cronos.onlinereview.util;
 
-import com.topcoder.util.errorhandling.BaseRuntimeException;
+import com.topcoder.onlinereview.component.exception.BaseRuntimeException;
 
 
 /**

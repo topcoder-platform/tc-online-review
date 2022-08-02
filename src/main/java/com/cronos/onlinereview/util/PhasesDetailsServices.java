@@ -13,33 +13,31 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.opensymphony.xwork2.TextProvider;
-import com.topcoder.management.deliverable.SubmissionType;
-import com.topcoder.management.resource.ResourceManager;
+import com.topcoder.onlinereview.component.deliverable.SubmissionType;
+import com.topcoder.onlinereview.component.deliverable.UploadFilterBuilder;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
 
 import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.external.ConfigException;
-import com.cronos.onlinereview.external.ExternalUser;
-import com.cronos.onlinereview.external.RetrievalException;
+import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.cronos.onlinereview.model.PhaseGroup;
 import com.cronos.onlinereview.model.PhasesDetails;
 import com.cronos.onlinereview.util.Comparators.SubmissionComparer;
 import com.cronos.onlinereview.util.Comparators.CheckpointSubmissionComparator;
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.Upload;
-import com.topcoder.management.deliverable.UploadManager;
-import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
-import com.topcoder.management.deliverable.search.UploadFilterBuilder;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.review.ReviewManager;
-import com.topcoder.management.review.data.Item;
-import com.topcoder.management.review.data.Review;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.EqualToFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.search.builder.filter.InFilter;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.deliverable.Submission;
+import com.topcoder.onlinereview.component.deliverable.Upload;
+import com.topcoder.onlinereview.component.deliverable.UploadManager;
+import com.topcoder.onlinereview.component.deliverable.SubmissionFilterBuilder;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.review.ReviewManager;
+import com.topcoder.onlinereview.component.review.Item;
+import com.topcoder.onlinereview.component.review.Review;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+import com.topcoder.onlinereview.component.search.filter.InFilter;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * <p>
@@ -417,11 +415,9 @@ public final class PhasesDetailsServices {
      * @param phaseGroup              the phase group
      * @param submitters              the submitters
      * @param allProjectExternalUsers the all project external users
-     * @throws RetrievalException the retrieval exception
-     * @throws ConfigException    the config exception
      */
     private static void serviceRegistrantsAppFunc(HttpServletRequest request, PhaseGroup phaseGroup,
-            Resource[] submitters, ExternalUser[] allProjectExternalUsers) throws RetrievalException, ConfigException {
+            Resource[] submitters, ExternalUser[] allProjectExternalUsers) {
         if (submitters == null || submitters.length == 0) {
             return;
         }

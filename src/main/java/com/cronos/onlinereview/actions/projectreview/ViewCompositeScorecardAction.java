@@ -3,36 +3,37 @@
  */
 package com.cronos.onlinereview.actions.projectreview;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.resource.search.ResourceFilterBuilder;
-import com.topcoder.management.review.ReviewManager;
-import com.topcoder.management.review.data.Review;
-import com.topcoder.management.review.scorecalculator.CalculationManager;
-import com.topcoder.management.review.scorecalculator.ScoreCalculator;
-import com.topcoder.management.review.scorecalculator.ScorecardMatrix;
-import com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder;
-import com.topcoder.management.scorecard.data.Group;
-import com.topcoder.management.scorecard.data.Question;
-import com.topcoder.management.scorecard.data.Scorecard;
-import com.topcoder.management.scorecard.data.Section;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.EqualToFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.search.builder.filter.InFilter;
-import com.topcoder.util.errorhandling.BaseException;
-import com.topcoder.util.weightedcalculator.LineItem;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceFilterBuilder;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+import com.topcoder.onlinereview.component.review.Review;
+import com.topcoder.onlinereview.component.review.ReviewManager;
+import com.topcoder.onlinereview.component.review.scorecalculator.CalculationManager;
+import com.topcoder.onlinereview.component.review.scorecalculator.LineItem;
+import com.topcoder.onlinereview.component.review.scorecalculator.ScoreCalculator;
+import com.topcoder.onlinereview.component.review.scorecalculator.ScorecardMatrix;
+import com.topcoder.onlinereview.component.review.scorecalculator.ScorecardMatrixBuilder;
+import com.topcoder.onlinereview.component.scorecard.Group;
+import com.topcoder.onlinereview.component.scorecard.Question;
+import com.topcoder.onlinereview.component.scorecard.Scorecard;
+import com.topcoder.onlinereview.component.scorecard.Section;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+import com.topcoder.onlinereview.component.search.filter.InFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class is the struts action class which is used to view the composite scorecard.
@@ -49,6 +50,9 @@ public class ViewCompositeScorecardAction extends BaseViewOrExportGenericReviewA
      * Represents the serial version id.
      */
     private static final long serialVersionUID = -4591318881265297795L;
+
+    @Autowired
+    private CalculationManager calculationManager;
 
     /**
      * This method is an implementation of &quot;View Composite Scorecard&quot; Struts Action
@@ -180,10 +184,7 @@ public class ViewCompositeScorecardAction extends BaseViewOrExportGenericReviewA
         }
 
         // Obtain ScorecardMatrix for scorecard
-        ScorecardMatrix matrix = (new DefaultScorecardMatrixBuilder()).buildScorecardMatrix(scorecardTemplate);
-        // Create CalculationManager instance
-        CalculationManager calculationManager = new CalculationManager();
-
+        ScorecardMatrix matrix = (new ScorecardMatrixBuilder()).buildScorecardMatrix(scorecardTemplate);
 
         // Retrieve the user ids for the review authors
         // and additionally the individual item scores and average total score

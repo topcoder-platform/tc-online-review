@@ -3,6 +3,8 @@
  */
 package com.cronos.onlinereview.util;
 
+import com.topcoder.onlinereview.component.jwt.JWTTokenGenerator;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,11 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.appirio.tech.core.api.v3.util.jwt.JWTTokenGenerator;
-import com.topcoder.util.config.ConfigManager;
-import com.topcoder.util.config.Property;
-import com.topcoder.util.config.UnknownNamespaceException;
 
 /**
  * This class is a helper class that loads application's configuration parameters on application
@@ -516,19 +513,6 @@ public class ConfigHelper {
     private static final String DISABLED_RESOURCE_ROLES_PROP = "DisabledResourceRoles";
 
     /**
-     * <p>A <code>String</code> providing the name for configuration property listing the resource roles which are to be
-     * granted permission for accessing SVN module for project once the project enters <code>Final Review</code> phase.
-     * </p>
-     */
-    private static final String SVN_PERM_GRANT_RESOURCE_ROLES_PROP = "SVNPermissionGrantResourceRoles";
-
-    /**
-     * <p>A <code>String</code> providing the name for configuration property listing the parameters for SVN repository.
-     * </p>
-     */
-    private static final String SVN_CONFIG_PROP = "SVNConfig";
-
-    /**
      * <p>A <code>String</code> providing the name for configuration property listing the parameters of the Resources tabs
      * to be displayed in the Resource section in project detail page.</p>
      */
@@ -598,6 +582,11 @@ public class ConfigHelper {
      * <p>A <code>String</code> providing the name for v3 jwt authorization url property.</p>
      */
     private static final String V3_JWT_AUTHORIZATION_URL = "v3jwt_authorization_url";
+
+    /**
+     * <p>A <code>String</code> providing the list of valid issuers</p>
+     */
+    private static final String VALID_ISSUERS = "valid_issuers";
 
     /**
      * This member variable holds the submitter role id.
@@ -976,6 +965,11 @@ public class ConfigHelper {
     private static String v3jwtAuthorizationUrl;
 
     /**
+     * <p>A <code>List</code> for the valid issuers</p>
+     */
+    private static final List<String> validIssuers = new ArrayList<String>();
+
+    /**
      * <p>Represents the ssoDomainForV3jwtCookie.</p>
      */
     private static String ssoDomainForV3jwtCookie;
@@ -1067,7 +1061,7 @@ public class ConfigHelper {
 
     static {
         // Obtaining the instance of Configuration Manager
-        ConfigManager cfgMgr = ConfigManager.getInstance();
+        ConfigManager cfgMgr = new ConfigManager();
 
         try {
             // Retrieve the value of the property that contains the submitter_role_id
@@ -1197,7 +1191,7 @@ public class ConfigHelper {
             }
 
             // Retrieve property that contains definitions of ID/filename pairs
-            Property propRootCatIcons = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, ROOT_CATALOGS_PROP);
+            ConfigManager.Property propRootCatIcons = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, ROOT_CATALOGS_PROP);
             // Prepare to enumerate all the nested properties
             Enumeration propsIcons = propRootCatIcons.propertyNames();
 
@@ -1247,7 +1241,7 @@ public class ConfigHelper {
             }
 
             // Retrieve property that contains definitions of Project Category name/icon filename pairs
-            Property propProjCatIcons = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PROJECT_CATEGORY_ICONS_PROP);
+            ConfigManager.Property propProjCatIcons = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PROJECT_CATEGORY_ICONS_PROP);
             // Prepare to enumerate all the nested properties
             propsIcons = propProjCatIcons.propertyNames();
 
@@ -1273,7 +1267,7 @@ public class ConfigHelper {
             }
 
             // Retrieve property that contains definitions of Project Type view contest links
-            Property propProjTypeDesc = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PROJECT_TYPE_VIEW_CONTEST_LINKS_PROP);
+            ConfigManager.Property propProjTypeDesc = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PROJECT_TYPE_VIEW_CONTEST_LINKS_PROP);
             // Prepare to enumerate all the nested properties
             Enumeration propsLinks = propProjTypeDesc.propertyNames();
 
@@ -1292,7 +1286,7 @@ public class ConfigHelper {
             }
 
             // Retrieve property that contains definitions of Project Type forum links
-            Property propProjTypeForum = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PROJECT_TYPE_FORUM_LINKS_PROP);
+            ConfigManager.Property propProjTypeForum = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PROJECT_TYPE_FORUM_LINKS_PROP);
             // Prepare to enumerate all the nested properties
             propsLinks = propProjTypeForum.propertyNames();
 
@@ -1311,7 +1305,7 @@ public class ConfigHelper {
             }
 
             // Retrieve property that contains deliverable types definitions
-            Property propDeliverableType = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DELIVERABLE_TYPES_PROP);
+            ConfigManager.Property propDeliverableType = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DELIVERABLE_TYPES_PROP);
             // Prepare to enumerate all the nested properties
             Enumeration propDeliverableTypes = propDeliverableType.propertyNames();
 
@@ -1324,7 +1318,7 @@ public class ConfigHelper {
             }
 
             // Retrieve property that contains definitions of some default values
-            Property propDefaults = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DEFAULT_VALUES_PROP);
+            ConfigManager.Property propDefaults = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DEFAULT_VALUES_PROP);
             // Get the amount of pixels to display for every hour
             String pixelsStr = propDefaults.getValue(PIXELS_PER_HOUR_PROP);
             // Get the default phase duration
@@ -1404,7 +1398,7 @@ public class ConfigHelper {
             }
 
             // Retrieve property that contains definitions of formatting strings
-            Property propFormats = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, FORMATS_PROP);
+            ConfigManager.Property propFormats = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, FORMATS_PROP);
             // Get a formatting string for scorecard scores
             String formattingString = propFormats.getValue(SCORECARD_SCORE_FORMAT_PROP);
             if (formattingString != null && formattingString.trim().length() != 0) {
@@ -1437,7 +1431,7 @@ public class ConfigHelper {
             }
 
             // Retrieve property that contains definition of Permissions Matrix
-            Property propPermissionsMatrix = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PERMISSIONS_MATRIX_PROP);
+            ConfigManager.Property propPermissionsMatrix = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PERMISSIONS_MATRIX_PROP);
             // Prepare to enumerate all permission name properties that are nested inside the Permissions Matrix one
             Enumeration permissionNames = propPermissionsMatrix.propertyNames();
 
@@ -1456,7 +1450,7 @@ public class ConfigHelper {
             }
 
             // Retrieve property that contains definitions of phase groups
-            Property propPhaseGrouping = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PHASE_GROUPING_PROP);
+            ConfigManager.Property propPhaseGrouping = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PHASE_GROUPING_PROP);
             // Prepare to enumerate all group definition properties
             Enumeration phaseGroups = propPhaseGrouping.propertyNames();
 
@@ -1493,7 +1487,7 @@ public class ConfigHelper {
                 }
             }
 
-            Property propContactManagerEmail =
+            ConfigManager.Property propContactManagerEmail =
                     cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, CONTACT_MANAGER_EMAIL_PROP);
 
             if (propContactManagerEmail != null) {
@@ -1558,23 +1552,11 @@ public class ConfigHelper {
                 catalogOutputDir = DEFAULT_CATALOG_OUTPUT_DIR;
             }
 
-            Property disabledResourceRolesConfig
+            ConfigManager.Property disabledResourceRolesConfig
                     = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DISABLED_RESOURCE_ROLES_PROP);
             disabledResourceRoles = disabledResourceRolesConfig.getValues();
 
-            Property svnPermissionGrantResourceRolesConfig
-                    = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, SVN_PERM_GRANT_RESOURCE_ROLES_PROP);
-            svnPermissionGrantResourceRoles = svnPermissionGrantResourceRolesConfig.getValues();
-
-            Property svnRepoConfig = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, SVN_CONFIG_PROP);
-            svnConfig = new String[]{svnRepoConfig.getValue("Root"),
-                    svnRepoConfig.getValue("AuthUsername"),
-                    svnRepoConfig.getValue("AuthPassword"),
-                    svnRepoConfig.getValue("MkDirCommitMessage"),
-                    svnRepoConfig.getValue("TempFilesBaseDir"),
-                    svnRepoConfig.getValue("PathBasedPermissionsFileURL")};
-
-            Property lateDeliverableEmailConfig
+            ConfigManager.Property lateDeliverableEmailConfig
                     = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "LateDeliverableUpdateNotificationEmail");
 
             lateDeliverablesUpdatedByManagerNotificationConfig = new String[]{
@@ -1591,7 +1573,7 @@ public class ConfigHelper {
 
             lateDeliverableBaseURL = lateDeliverableEmailConfig.getValue("EditLateDeliverablePageBaseURL");
 
-            Property f2fSubmissionReuploadedConfig
+            ConfigManager.Property f2fSubmissionReuploadedConfig
                     = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "F2FSubmissionReuploadNotificationEmail");
 
             f2fSubmissionReuploadedNotificationConfig = new String[]{
@@ -1600,7 +1582,7 @@ public class ConfigHelper {
                     f2fSubmissionReuploadedConfig.getValue("EmailSubject")};
 
             // Retrieve the property that contains the definitions of resource tabs to be displayed in Resource section
-            Property propResourceTabs = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, RESOURCE_TABS_PROP_STRING);
+            ConfigManager.Property propResourceTabs = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, RESOURCE_TABS_PROP_STRING);
             // Prepare to enumerate all the nested properties
             Enumeration<String> propsResourceTab = propResourceTabs.propertyNames();
             while (propsResourceTab.hasMoreElements()) {
@@ -1665,8 +1647,16 @@ public class ConfigHelper {
             v2jwtCookieName = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, V2_JWT_COOKIE_NAME);
             ssoDomainForV3jwtCookie = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, SSO_DOMAIN_FOR_V3_JWT_COOKIE);
             v3jwtAuthorizationUrl = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, V3_JWT_AUTHORIZATION_URL);
+            // Read the valid issuers property
+            String validIssuersProperty = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, VALID_ISSUERS);
+            if (validIssuersProperty != null && validIssuersProperty.trim().length() != 0) {
+                String[] validIssuerStrings = validIssuersProperty.split(",");
+                for (String validIssuer : validIssuerStrings) {
+                    validIssuers.add(validIssuer.trim());
+                }
+            }
 
-            Property eventBus = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "event_bus");
+            ConfigManager.Property eventBus = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "event_bus");
             contestSubmissionDownloadUrl = eventBus.getValue("contestSubmissionDownloadUrl");
             checkpointSubmissionDownloadUrl = eventBus.getValue("checkpointSubmissionDownloadUrl");
             eventBusEndpoint = eventBus.getValue("endpoint");
@@ -1683,7 +1673,7 @@ public class ConfigHelper {
             } catch (NumberFormatException e) {
                 expirationTime = DEFAULT_EXPIRATION_TIME;
             }
-            Property awsS3 = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "aws_s3");
+            ConfigManager.Property awsS3 = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "aws_s3");
             s3Bucket = awsS3.getValue("bucket");
             s3BucketDmz = awsS3.getValue("bucket_dmz");
             try {
@@ -1692,10 +1682,10 @@ public class ConfigHelper {
                 preSignedExpTimeMilis = 60 * 60 * 1000;
             }
 	    
-            Property newAuth = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "new_auth");
+            ConfigManager.Property newAuth = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "new_auth");
             newAuthUrl = newAuth.getValue("new_auth_url");
 
-        } catch (UnknownNamespaceException une) {
+        } catch (Exception une) {
             System.out.println(une.getMessage());
             une.printStackTrace();
         }
@@ -2162,25 +2152,6 @@ public class ConfigHelper {
     }
 
     /**
-     * Return the property value of online_review namespace.
-     *
-     * @param name the property name
-     * @param defaultValue the default value
-     * @return property value
-     */
-    public static String getPropertyValue(String name, String defaultValue) {
-        try {
-            String value = ConfigManager.getInstance().getString(ONLINE_REVIEW_CFG_NS, name);
-            if (value != null && value.trim().length() > 0) {
-                return value;
-            }
-        } catch (UnknownNamespaceException e) {
-            // Ignore
-        }
-        return defaultValue;
-    }
-
-    /**
      * <p>Gets the maximum allowed number of days to extend <code>Registration</code> phase for.</p>
      *
      * @return an <code>Integer</code> providing the maximum allowed number of days to extend <code>Registration</code>
@@ -2244,71 +2215,6 @@ public class ConfigHelper {
      */
     public static String[] getDisabledResourceRoles() {
         return disabledResourceRoles;
-    }
-
-    /**
-     * <p>Gets the list of resource role IDs which are to be granted permission for accessing SVN module for project
-     * once the project enters the <code>Final Review</code> phase.</p>
-     *
-     * @return a <code>String</code> array listing the IDs for resource roles which are to be granted SVN permission.
-     */
-    public static String[] getSvnPermissionGrantResourceRoles() {
-        return svnPermissionGrantResourceRoles;
-    }
-
-    /**
-     * <p>Gets the URL for SVN repository.</p>
-     *
-     * @return a <code>String</code> providing the URL for SVN repository.
-     */
-    public static String getSVNRoot() {
-        return svnConfig[0];
-    }
-
-    /**
-     * <p>Gets the username for authentication to SVN repository.</p>
-     *
-     * @return a <code>String</code> providing the username to be used for authenticating to SVN repository.
-     */
-    public static String getSVNAuthnUsername() {
-        return svnConfig[1];
-    }
-
-    /**
-     * <p>Gets the password for authentication to SVN repository.</p>
-     *
-     * @return a <code>String</code> providing the password to be used for authenticating to SVN repository.
-     */
-    public static String getSVNAuthnPassword() {
-        return svnConfig[2];
-    }
-
-    /**
-     * <p>Gets the message for committing the new directories to SVN repository.</p>
-     *
-     * @return a <code>String</code> providing message for committing the new directories to SVN repository.
-     */
-    public static String getSVNCommitMessage() {
-        return svnConfig[3];
-    }
-
-    /**
-     * <p>Gets the path to local directory where the SVN files can be temporarily checked to.</p>
-     *
-     * @return a <code>String</code> providing the path to local directory where the SVN files can be temporarily
-     *         checked to.
-     */
-    public static String getSVNTemporaryFilesBaseDir() {
-        return svnConfig[4];
-    }
-
-    /**
-     * <p>Gets the URL for path-based permissions file in SVN repository.</p>
-     *
-     * @return a <code>String</code> providing the URL for path-based permissions file in SVN repository.
-     */
-    public static String getSVNPathBasedPermissionsFileURL() {
-        return svnConfig[5];
     }
 
     /**
@@ -2555,6 +2461,14 @@ public class ConfigHelper {
      */
     public static String getV3jwtAuthorizationUrl() {
         return v3jwtAuthorizationUrl;
+    }
+
+    /**
+     * Get valid issuers.
+     * @return the valid issuers list.
+     */
+    public static List<String> getValidIssuers() {
+        return validIssuers;
     }
 
     /**

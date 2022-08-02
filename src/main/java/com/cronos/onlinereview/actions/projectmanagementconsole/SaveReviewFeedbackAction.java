@@ -5,21 +5,26 @@ package com.cronos.onlinereview.actions.projectmanagementconsole;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.cronos.onlinereview.Constants;
+import com.cronos.onlinereview.actions.event.EventBusServiceClient;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.reviewfeedback.ReviewFeedback;
-import com.topcoder.management.reviewfeedback.ReviewFeedbackDetail;
-import com.topcoder.management.reviewfeedback.ReviewFeedbackManager;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.payment.ProjectPayment;
+import com.topcoder.onlinereview.component.project.payment.ProjectPaymentFilterBuilder;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.reviewfeedback.ReviewFeedback;
+import com.topcoder.onlinereview.component.reviewfeedback.ReviewFeedbackDetail;
+import com.topcoder.onlinereview.component.reviewfeedback.ReviewFeedbackManager;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class is the struts action class which is used for saving review feedback.
@@ -181,6 +186,10 @@ public class SaveReviewFeedbackAction extends BaseProjectManagementConsoleAction
                     } else {
                         reviewFeedbackManager.create(feedback, currentUserIdString);
                     }
+                    // publish feedback updated event
+                    Map<String, Object> updateValues = new HashMap<>();
+                    updateValues.put("feedback", feedback);
+                    EventBusServiceClient.fireChallengeUpdateEvent(project.getId(), AuthorizationHelper.getLoggedInUserId(request), updateValues);
                 }
             } else {
                 return ActionsHelper.produceErrorReport(this, request,

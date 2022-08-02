@@ -11,9 +11,9 @@ import com.cronos.onlinereview.actions.DynamicModelDrivenAction;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.project.link.ProjectLinkManager;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.management.ProjectLinkManager;
+import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
  * This class is the struts action class which is used for saving project links page.
@@ -85,8 +85,8 @@ public class SaveProjectLinksAction extends DynamicModelDrivenAction {
 
         ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager();
 
-        long[] paramDestProjectIds = new long[destList.size()];
-        long[] paramTypeIds = new long[typeList.size()];
+        Long[] paramDestProjectIds = new Long[destList.size()];
+        Long[] paramTypeIds = new Long[typeList.size()];
         for (int i = 0; i < paramDestProjectIds.length; i++) {
             paramDestProjectIds[i] = destList.get(i);
             paramTypeIds[i] = typeList.get(i);

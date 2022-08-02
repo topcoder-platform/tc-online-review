@@ -3,6 +3,12 @@
  */
 package com.cronos.onlinereview.util;
 
+import com.cronos.onlinereview.model.FormFile;
+import com.topcoder.onlinereview.component.fileupload.FileSizeLimitExceededException;
+import com.topcoder.onlinereview.component.fileupload.RequestParser;
+import com.topcoder.onlinereview.component.fileupload.RequestParsingException;
+
+import javax.servlet.ServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,13 +17,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.ServletRequest;
-
-import com.cronos.onlinereview.model.FormFile;
-import com.topcoder.servlet.request.FileSizeLimitExceededException;
-import com.topcoder.servlet.request.RequestParser;
-import com.topcoder.servlet.request.RequestParsingException;
 
 /**
  * This class implements the <code>RequestParser</code> interface and provides a way to use the

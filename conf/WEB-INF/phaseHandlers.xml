@@ -1,0 +1,1721 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="paymentHelper" class="com.topcoder.onlinereview.component.project.phase.handler.or.PaymentsHelper">
+        <property name="managerHelper" ref="managerHelper"/>
+    </bean>
+    <bean id="checkpointScreeningResultNotification" class="com.topcoder.onlinereview.component.project.phase.handler.or.ScreeningResultNotification">
+        <property name="emailTemplateName" value="@exttemplatesdir@/checkpoint_screening_results_email_template.txt"/>
+        <property name="emailSubject" value="[{0}] {1} Checkpoint Screening Results"/>
+        <property name="emailFromAddress" value="@notificationEmailFromAddress@"/>
+        <property name="projectLinkTemplate" value="https://www.topcoder.com/challenges/{0,number,#}"/>
+        <property name="scorecardLinkTemplate" value="https://software.topcoder.com/review/actions/ViewReview?rid={0,number,#}"/>
+        <property name="managerHelper" ref="managerHelper"/>
+        <property name="submissionTypeName" value="Checkpoint Submission"/>
+        <property name="scorecardTypeName" value="Checkpoint Screening"/>
+        <property name="failedScreeningStatusName" value="Failed Checkpoint Screening"/>
+    </bean>
+    <bean id="screeningResultNotification" class="com.topcoder.onlinereview.component.project.phase.handler.or.ScreeningResultNotification">
+        <property name="emailTemplateName" value="@exttemplatesdir@/screening_results_email_template.txt"/>
+        <property name="emailSubject" value="[{0}] {1} Screening Results"/>
+        <property name="emailFromAddress" value="@notificationEmailFromAddress@"/>
+        <property name="projectLinkTemplate" value="https://www.topcoder.com/challenges/{0,number,#}"/>
+        <property name="scorecardLinkTemplate" value="https://software.topcoder.com/review/actions/ViewScreening?rid={0,number,#}"/>
+        <property name="managerHelper" ref="managerHelper"/>
+        <property name="submissionTypeName" value="Contest Submission"/>
+        <property name="scorecardTypeName" value="Screening"/>
+        <property name="failedScreeningStatusName" value="Failed Screening"/>
+    </bean>
+    <bean id="reviewResultNotification" class="com.topcoder.onlinereview.component.project.phase.handler.or.ReviewResultNotification">
+        <property name="winnersEmailTemplateName" value="@exttemplatesdir@/winners_email_template.txt"/>
+        <property name="winnersEmailSubject" value="[{0}] {1} place "/>
+        <property name="winnersEmailFromAddress" value="@notificationEmailFromAddress@"/>
+        <property name="managerHelper" ref="managerHelper"/>
+    </bean>
+
+    <bean id="phaseManager" class="com.topcoder.onlinereview.component.project.phase.PhaseManager">
+    </bean>
+    <bean id="phaseManagerWithoutHandlers" class="com.topcoder.onlinereview.component.project.phase.PhaseManager" primary="true">
+    </bean>
+    <bean id="defaultStartEmailOption" class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+        <property name="subject" value="%PHASE_TYPE% Start\: %PROJECT_NAME%" />
+        <property name="fromAddress" value="@notificationEmailFromAddress@" />
+    </bean>
+    <bean id="defaultEndEmailOption" class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+        <property name="subject" value="%PHASE_TYPE% End\: %PROJECT_NAME%" />
+        <property name="fromAddress" value="@notificationEmailFromAddress@" />
+    </bean>
+    <bean id="pRRegistrationPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRRegistrationPhaseHandler">
+        <constructor-arg index="0" ref="managerHelper" />
+        <constructor-arg index="1" >
+            <list>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="0" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="1" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="send" value="false" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="send" value="false" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="2" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/registration/start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/registration/end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>1</value>
+                            <value>2</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2" >
+            <null />
+        </constructor-arg>
+        <constructor-arg index="3" ref="defaultStartEmailOption" />
+        <constructor-arg index="4" ref="defaultEndEmailOption" />
+    </bean>
+    <bean id="pRSubmissionPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRSubmissionPhaseHandler">
+        <constructor-arg index="0" ref="managerHelper" />
+        <constructor-arg index="1" >
+            <list>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="0" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="1" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="2" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/submission/start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/submission/end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>1</value>
+                            <value>2</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="3" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/submission/studio_start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/submission/studio_end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2" >
+            <null />
+        </constructor-arg>
+        <constructor-arg index="3" ref="defaultStartEmailOption" />
+        <constructor-arg index="4" ref="defaultEndEmailOption" />
+    </bean>
+    <bean id="prScreeningPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRScreeningPhaseHandler">
+        <constructor-arg index="0" ref="managerHelper" />
+        <constructor-arg index="1" >
+            <list>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="0" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="1" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="2" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/screening/start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/screening/end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>1</value>
+                            <value>2</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="3" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/screening/studio_start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/screening/studio_end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2" >
+            <null />
+        </constructor-arg>
+        <constructor-arg index="3" ref="defaultStartEmailOption" />
+        <constructor-arg index="4" ref="defaultEndEmailOption" />
+        <constructor-arg index="5" ref="screeningResultNotification" />
+    </bean>
+    <bean id="prReviewPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRReviewPhaseHandler">
+        <constructor-arg index="0" ref="managerHelper" />
+        <constructor-arg index="1" >
+            <list>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="0" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="1" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="2" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/review/start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/review/end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>1</value>
+                            <value>2</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="3" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/review/copilot_start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/review/copilot_end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectCategories">
+                        <list>
+                            <value>29</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="4" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/review/studio_start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/review/studio_end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2" >
+            <null />
+        </constructor-arg>
+        <constructor-arg index="3" ref="defaultStartEmailOption" />
+        <constructor-arg index="4" ref="defaultEndEmailOption" />
+        <constructor-arg index="5" value="5" />
+        <constructor-arg index="6" value="http://localhost:8090/v3/challenges/{challengeId}/aggregateScores" />
+        <constructor-arg index="7" ref="reviewResultNotification" />
+    </bean>
+    <bean id="appealsPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.AppealsPhaseHandler">
+        <constructor-arg index="0" ref="managerHelper" />
+        <constructor-arg index="1" >
+            <list>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="0" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="1" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/appeals/start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/appeals/end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>1</value>
+                            <value>2</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2" >
+            <null />
+        </constructor-arg>
+        <constructor-arg index="3" ref="defaultStartEmailOption" />
+        <constructor-arg index="4" ref="defaultEndEmailOption" />
+    </bean>
+    <bean id="prAppealResponsePhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRAppealResponsePhaseHandler">
+        <constructor-arg index="0" ref="managerHelper" />
+        <constructor-arg index="1" >
+            <list>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="0" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="1" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/appeals_response/start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/appeals_response/end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>1</value>
+                            <value>2</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2" >
+            <null />
+        </constructor-arg>
+        <constructor-arg index="3" ref="defaultStartEmailOption" />
+        <constructor-arg index="4" ref="defaultEndEmailOption" />
+        <constructor-arg index="5" ref="reviewResultNotification" />
+    </bean>
+    <bean id="prAggregationPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRAggregationPhaseHandler">
+        <constructor-arg index="0" ref="managerHelper" />
+        <constructor-arg index="1" >
+            <list>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="0" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="1" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/aggregation/start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/aggregation/end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>1</value>
+                            <value>2</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2" >
+            <null />
+        </constructor-arg>
+        <constructor-arg index="3" ref="defaultStartEmailOption" />
+        <constructor-arg index="4" ref="defaultEndEmailOption" />
+    </bean>
+    <bean id="prFinalFixPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRFinalFixPhaseHandler">
+        <constructor-arg index="0" ref="managerHelper" />
+        <constructor-arg index="1" >
+            <list>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="0" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="1" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="2" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/final_fix/start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/final_fix/end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>1</value>
+                            <value>2</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="3" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/final_fix/studio_start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/final_fix/studio_end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2" >
+            <null />
+        </constructor-arg>
+        <constructor-arg index="3" ref="defaultStartEmailOption" />
+        <constructor-arg index="4" ref="defaultEndEmailOption" />
+    </bean>
+    <bean id="prFinalReviewPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRFinalReviewPhaseHandler">
+        <constructor-arg index="0" ref="managerHelper" />
+        <constructor-arg index="1" >
+            <list>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="0" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="1" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="2" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/final_review/start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/final_review/end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>1</value>
+                            <value>2</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Submitter</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="3" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/final_review/studio_winner_end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="4" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/final_review/studio_start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/final_review/studio_end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2" >
+            <null />
+        </constructor-arg>
+        <constructor-arg index="3" ref="defaultStartEmailOption" />
+        <constructor-arg index="4" ref="defaultEndEmailOption" />
+        <constructor-arg index="5" value="24" />
+        <constructor-arg index="6" value="72" />
+        <constructor-arg index="7" value="120" />
+        <constructor-arg index="8" value="1" />
+        <constructor-arg index="9" value="30000720" />
+    </bean>
+    <bean id="prApprovalPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRApprovalPhaseHandler">
+        <constructor-arg index="0" ref="managerHelper" />
+        <constructor-arg index="1" >
+            <list>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="0" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="1" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="2" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/approval/start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/approval/end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>1</value>
+                            <value>2</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Submitter</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="3" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/approval/studio_winner_end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="4" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/approval/studio_start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/approval/studio_end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2" >
+            <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                <property name="roles">
+                    <list>
+                        <value>Manager</value>
+                        <value>Observer</value>
+                        <value>Copilot</value>
+                        <value>Client Manager</value>
+                    </list>
+                </property>
+                <property name="priority" value="4" />
+                <property name="startEmailOptions">
+                    <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                        <property name="templateName" value="@exttemplatesdir@/approval/studio_start.txt" />
+                    </bean>
+                </property>
+                <property name="endEmailOptions">
+                    <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                        <property name="templateName" value="@exttemplatesdir@/approval/studio_end.txt" />
+                    </bean>
+                </property>
+                <property name="projectTypes">
+                    <list>
+                        <value>3</value>
+                    </list>
+                </property>
+            </bean>
+        </constructor-arg>
+        <constructor-arg index="3" ref="defaultStartEmailOption" />
+        <constructor-arg index="4" ref="defaultEndEmailOption" />
+        <constructor-arg index="5" value="24" />
+        <constructor-arg index="6" value="72" />
+    </bean>
+    <bean id="prPostMortemPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRPostMortemPhaseHandler">
+        <constructor-arg index="0" ref="managerHelper" />
+        <constructor-arg index="1" >
+            <list>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="0" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="1" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/post_mortem/start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/post_mortem/end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>1</value>
+                            <value>2</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2" >
+            <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                <property name="roles">
+                    <list>
+                        <value>Manager</value>
+                        <value>Observer</value>
+                        <value>Copilot</value>
+                        <value>Client Manager</value>
+                    </list>
+                </property>
+                <property name="priority" value="1" />
+                <property name="startEmailOptions">
+                    <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                        <property name="templateName" value="@exttemplatesdir@/post_mortem/start.txt" />
+                    </bean>
+                </property>
+                <property name="endEmailOptions">
+                    <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                        <property name="templateName" value="@exttemplatesdir@/post_mortem/end.txt" />
+                    </bean>
+                </property>
+                <property name="projectTypes">
+                    <list>
+                        <value>1</value>
+                        <value>2</value>
+                    </list>
+                </property>
+            </bean>
+        </constructor-arg>
+        <constructor-arg index="3" ref="defaultStartEmailOption" />
+        <constructor-arg index="4" ref="defaultEndEmailOption" />
+    </bean>
+    <bean id="specificationSubmissionPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.SpecificationSubmissionPhaseHandler">
+        <constructor-arg index="0" ref="managerHelper" />
+        <constructor-arg index="1" >
+            <list>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="0" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="1" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="2" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/specification_submission/start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/specification_submission/end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>1</value>
+                            <value>2</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                            <value>Specification Submitter</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="3" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/specification_submission/studio_start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/specification_submission/studio_end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2" >
+            <null />
+        </constructor-arg>
+        <constructor-arg index="3" ref="defaultStartEmailOption" />
+        <constructor-arg index="4" ref="defaultEndEmailOption" />
+    </bean>
+    <bean id="specificationReviewPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.SpecificationReviewPhaseHandler">
+        <constructor-arg index="0" ref="managerHelper" />
+        <constructor-arg index="1" >
+            <list>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="0" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="1" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="2" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/specification_review/start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/specification_review/end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>1</value>
+                            <value>2</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                            <value>Specification Submitter</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="3" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/specification_review/studio_start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/specification_review/studio_end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2" >
+            <null />
+        </constructor-arg>
+        <constructor-arg index="3" ref="defaultStartEmailOption" />
+        <constructor-arg index="4" ref="defaultEndEmailOption" />
+    </bean>
+    <bean id="checkpointSubmissionPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.CheckpointSubmissionPhaseHandler">
+        <constructor-arg index="0" ref="managerHelper" />
+        <constructor-arg index="1" >
+            <list>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="0" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="1" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="2" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/checkpoint_submission/start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/checkpoint_submission/end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>1</value>
+                            <value>2</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="3" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/checkpoint_submission/studio_start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/checkpoint_submission/studio_end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2" >
+            <null />
+        </constructor-arg>
+        <constructor-arg index="3" ref="defaultStartEmailOption" />
+        <constructor-arg index="4" ref="defaultEndEmailOption" />
+    </bean>
+    <bean id="prCheckpointScreeningPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRCheckpointScreeningPhaseHandler">
+        <constructor-arg index="0" ref="managerHelper" />
+        <constructor-arg index="1" >
+            <list>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="0" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="1" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="2" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/checkpoint_screening/start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/checkpoint_screening/end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>1</value>
+                            <value>2</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="3" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/checkpoint_screening/studio_start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/checkpoint_screening/studio_end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2" >
+            <null />
+        </constructor-arg>
+        <constructor-arg index="3" ref="defaultStartEmailOption" />
+        <constructor-arg index="4" ref="defaultEndEmailOption" />
+        <constructor-arg index="5" ref="checkpointScreeningResultNotification" />
+    </bean>
+    <bean id="prCheckpointReviewPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRCheckpointReviewPhaseHandler">
+        <constructor-arg index="0" ref="managerHelper" />
+        <constructor-arg index="1" >
+            <list>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="0" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="1" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/studio_email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="2" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/checkpoint_review/start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/checkpoint_review/end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>1</value>
+                            <value>2</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="3" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/checkpoint_review/studio_start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/checkpoint_review/studio_end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>3</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2" >
+            <null />
+        </constructor-arg>
+        <constructor-arg index="3" ref="defaultStartEmailOption" />
+        <constructor-arg index="4" ref="defaultEndEmailOption" />
+        <constructor-arg index="5" value="5" />
+        <constructor-arg index="6" value="http://localhost:8090/v3/challenges/{challengeId}/aggregateScores" />
+    </bean>
+    <bean id="prIterativeReviewPhaseHandler" class="com.topcoder.onlinereview.component.project.phase.handler.or.PRIterativeReviewPhaseHandler">
+        <constructor-arg index="0" ref="managerHelper" />
+        <constructor-arg index="1" >
+            <list>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>*</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="0" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/email_template.txt" />
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailScheme">
+                    <property name="roles">
+                        <list>
+                            <value>Manager</value>
+                            <value>Observer</value>
+                            <value>Copilot</value>
+                            <value>Client Manager</value>
+                        </list>
+                    </property>
+                    <property name="priority" value="1" />
+                    <property name="startEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/iterative_review/start.txt" />
+                        </bean>
+                    </property>
+                    <property name="endEmailOptions">
+                        <bean class="com.topcoder.onlinereview.component.project.phase.handler.EmailOptions">
+                            <property name="templateName" value="@exttemplatesdir@/iterative_review/end.txt" />
+                        </bean>
+                    </property>
+                    <property name="projectTypes">
+                        <list>
+                            <value>1</value>
+                            <value>2</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2" >
+            <null />
+        </constructor-arg>
+        <constructor-arg index="3" ref="defaultStartEmailOption" />
+        <constructor-arg index="4" ref="defaultEndEmailOption" />
+    </bean>
+</beans>

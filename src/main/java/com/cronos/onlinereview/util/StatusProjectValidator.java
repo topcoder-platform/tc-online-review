@@ -3,19 +3,20 @@
  */
 package com.cronos.onlinereview.util;
 
+import com.cronos.onlinereview.Constants;
+import com.topcoder.onlinereview.component.deliverable.Submission;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.management.ProjectValidator;
+import com.topcoder.onlinereview.component.project.management.ValidationException;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseManager;
+import com.topcoder.onlinereview.component.project.phase.PhaseStatus;
+import com.topcoder.onlinereview.component.resource.Resource;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.cronos.onlinereview.Constants;
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.phase.PhaseManager;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ValidationException;
-import com.topcoder.management.project.validation.DefaultProjectValidator;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.project.phases.PhaseStatus;
-import com.topcoder.util.errorhandling.BaseException;
+import java.util.Map;
 
 
 /**
@@ -25,11 +26,27 @@ import com.topcoder.util.errorhandling.BaseException;
  * @author TCSASSEMBLER
  * @version 2.0
  */
-public class StatusProjectValidator implements com.topcoder.management.project.ProjectValidator{
+public class StatusProjectValidator implements ProjectValidator {
 
-    /** The default validator - performs basic validation, if there's no violation,
-     * then StatusProjectValidator performs status validation. */
-    private final DefaultProjectValidator defaultValidator;
+    /**
+     * represents the max length of name.
+     */
+    private static final int MAX_LENGTH_OF_NAME = 64;
+
+    /**
+     * represents the max length of property key.
+     */
+    private static final int MAX_LENGTH_OF_PROPERTY_KEY = 64;
+
+    /**
+     * represents the max length of description.
+     */
+    private static final int MAX_LENGTH_OF_DESCRIPTION = 256;
+
+    /**
+     * represents the max length of property value.
+     */
+    private static final int MAX_LENGTH_OF_PROPERTY_VALUE = 4096;
 
     /** Message for exception related to invalid draft status.*/
     private final String ExcMsgDraftViol = "Can't set status: 'Draft'";
@@ -66,22 +83,29 @@ public class StatusProjectValidator implements com.topcoder.management.project.P
     /** key for unexpected BaseException thrown during validation.*/
     private final String KeyUnexpectedException  = "StatusValidation.UnexpectedException";
 
-
-
-    /**
-     * Instantiates a new status project validator.
-     *
-     * @param namespace the namespace
-     */
-    public StatusProjectValidator(String namespace) {
-        defaultValidator = new DefaultProjectValidator(namespace);
-    }
-
     /*
      * @see com.topcoder.management.project.ProjectValidator#validateProject(com.topcoder.management.project.Project)
      */
     public void validateProject(Project project) throws ValidationException {
-        defaultValidator.validateProject(project);
+        if (project == null) {
+            throw new IllegalArgumentException("project can not be null.");
+        }
+        validateStringLength(project.getProjectStatus().getName(), "project status's name", MAX_LENGTH_OF_NAME);
+        validateStringLength(project.getProjectCategory().getName(), "project category's name", MAX_LENGTH_OF_NAME);
+        validateStringLength(project.getProjectCategory().getProjectType().getName(), "project type's name",
+                MAX_LENGTH_OF_NAME);
+        validateStringLength(project.getProjectStatus().getDescription(), "project status's description",
+                MAX_LENGTH_OF_DESCRIPTION);
+        validateStringLength(project.getProjectCategory().getDescription(), "project category's description",
+                MAX_LENGTH_OF_DESCRIPTION);
+        validateStringLength(project.getProjectCategory().getProjectType().getDescription(),
+                "project type's description", MAX_LENGTH_OF_DESCRIPTION);
+        // validate each property.
+        for (Object item : project.getAllProperties().entrySet()) {
+            Map.Entry entry = (Map.Entry) item;
+            validateStringLength((String) entry.getKey(), "property key", MAX_LENGTH_OF_PROPERTY_KEY);
+            validateStringLength(entry.getValue().toString(), "property value", MAX_LENGTH_OF_PROPERTY_VALUE);
+        }
 
         //don't validate new projects
         if(project.getId() == 0) {
@@ -233,6 +257,25 @@ public class StatusProjectValidator implements com.topcoder.management.project.P
             }
         }
         return filteredResources;
+    }
+
+    /**
+     * This private method is used to validate the given string.<br>
+     * check if given string length is less than or equal to given length.
+     *
+     * @param str
+     *            the string to validate
+     * @param name
+     *            the name of given string
+     * @param length
+     *            the max length of given string
+     * @throws ValidationException
+     *             if name or key length greater than given length
+     */
+    private void validateStringLength(String str, String name, int length) throws ValidationException {
+        if (str.length() > length) {
+            throw new ValidationException(name + "length must be less than or equal to " + length);
+        }
     }
 
 }

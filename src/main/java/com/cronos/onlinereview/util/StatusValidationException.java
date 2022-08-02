@@ -3,7 +3,7 @@
  */
 package com.cronos.onlinereview.util;
 
-import com.topcoder.management.project.ValidationException;
+import com.topcoder.onlinereview.component.project.management.ValidationException;
 
 /**
  * The Class StatusValidationException.

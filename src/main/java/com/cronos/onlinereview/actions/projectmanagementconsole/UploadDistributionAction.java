@@ -13,7 +13,7 @@ import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.topcoder.management.project.Project;
+import com.topcoder.onlinereview.component.project.management.Project;
 
 /**
  * This class is the struts action class which is used for uploading distribution page.

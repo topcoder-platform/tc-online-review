@@ -3,49 +3,57 @@
  */
 package com.cronos.onlinereview.actions.projectreview;
 
-import java.util.*;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.actions.DynamicModelDrivenAction;
 import com.cronos.onlinereview.actions.event.EventBusServiceClient;
 import com.cronos.onlinereview.model.DynamicModel;
 import com.cronos.onlinereview.model.FormFile;
-import com.cronos.onlinereview.phases.OnlineReviewServices;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LookupHelper;
 import com.cronos.onlinereview.util.StrutsRequestParser;
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.Upload;
-import com.topcoder.management.deliverable.UploadManager;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.review.ReviewEntityNotFoundException;
-import com.topcoder.management.review.ReviewManager;
-import com.topcoder.management.review.data.Comment;
-import com.topcoder.management.review.data.CommentType;
-import com.topcoder.management.review.data.Item;
-import com.topcoder.management.review.data.Review;
-import com.topcoder.management.review.data.ReviewEditor;
-import com.topcoder.management.review.scorecalculator.CalculationManager;
-import com.topcoder.management.scorecard.ScorecardManager;
-import com.topcoder.management.scorecard.data.Group;
-import com.topcoder.management.scorecard.data.Question;
-import com.topcoder.management.scorecard.data.Scorecard;
-import com.topcoder.management.scorecard.data.Section;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.EqualToFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.search.builder.filter.InFilter;
-import com.topcoder.servlet.request.FileUpload;
-import com.topcoder.servlet.request.FileUploadResult;
-import com.topcoder.servlet.request.UploadedFile;
-import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.onlinereview.component.deliverable.Submission;
+import com.topcoder.onlinereview.component.deliverable.Upload;
+import com.topcoder.onlinereview.component.deliverable.UploadManager;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.fileupload.FileUpload;
+import com.topcoder.onlinereview.component.fileupload.FileUploadResult;
+import com.topcoder.onlinereview.component.fileupload.UploadedFile;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.phase.OnlineReviewServices;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.resource.ResourceManager;
+import com.topcoder.onlinereview.component.review.Comment;
+import com.topcoder.onlinereview.component.review.CommentType;
+import com.topcoder.onlinereview.component.review.Item;
+import com.topcoder.onlinereview.component.review.Review;
+import com.topcoder.onlinereview.component.review.ReviewEditor;
+import com.topcoder.onlinereview.component.review.ReviewEntityNotFoundException;
+import com.topcoder.onlinereview.component.review.ReviewManager;
+import com.topcoder.onlinereview.component.review.scorecalculator.CalculationManager;
+import com.topcoder.onlinereview.component.scorecard.Group;
+import com.topcoder.onlinereview.component.scorecard.Question;
+import com.topcoder.onlinereview.component.scorecard.Scorecard;
+import com.topcoder.onlinereview.component.scorecard.ScorecardManager;
+import com.topcoder.onlinereview.component.scorecard.Section;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+import com.topcoder.onlinereview.component.search.filter.InFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.topcoder.onlinereview.component.util.SpringUtils.getBean;
 
 /**
  * This is the base class for project review actions classes.
@@ -97,6 +105,9 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
      * Represents the review id.
      */
     private long rid;
+
+    @Autowired
+    private CalculationManager scoreCalculator;
 
     // Initialize static fields
     static {
@@ -1384,8 +1395,6 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         // At this point going forward we assume the validation succeeded
         // If the user has requested to complete the review
         if (commitRequested || managerEdit) {
-            // Obtain an instance of CalculationManager
-            CalculationManager scoreCalculator = new CalculationManager();
             // Compute scorecard's score
             double newScore = scoreCalculator.getScore(scorecardTemplate, review);
             // If score has been updated during Manager Edit, additional actions may need to be taken
@@ -1439,10 +1448,20 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
             revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
             EventBusServiceClient.fireReviewUpdate(review, Long.parseLong(review.getCreationUser()), AuthorizationHelper.getLoggedInUserId(request), reviewType);
         }
+        Map<String, Object> updateValues = new HashMap<>();
+        updateValues.put("review", review);
 
         // This operation will possibly update final aggregated score for the submitter
         if (possibleFinalScoreUpdate) {
+            Object winnerId = project.getProperty("Winner External Reference ID");
             updateFinalAggregatedScore(request, project, phase, verification.getSubmission());
+            Object newWinnerId = ActionsHelper.createProjectManager().getProject(verification.getProject().getId()).getProperty("Winner External Reference ID");
+            if (newWinnerId != null && !newWinnerId.equals(winnerId)) {
+                updateValues.put("winners", newWinnerId);
+            }
+        }
+        if (!updateValues.isEmpty()) {
+            EventBusServiceClient.fireChallengeUpdateEvent(verification.getProject().getId(), AuthorizationHelper.getLoggedInUserId(request), updateValues);
         }
 
         if (commitRequested) {
@@ -1503,7 +1522,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
             return;
         }
 
-        OnlineReviewServices orServices = new OnlineReviewServices();
+        OnlineReviewServices orServices = getBean(OnlineReviewServices.class);
         orServices.updateSubmissionsResults(reviewPhase,
             String.valueOf(AuthorizationHelper.getLoggedInUserId(request)), false, true);
         String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));

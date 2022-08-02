@@ -3,29 +3,21 @@
  */
 package com.cronos.onlinereview.actions.login;
 
-import com.cronos.onlinereview.login.AuthResponseParser;
-import com.cronos.onlinereview.login.ConfigurationException;
-
 import com.opensymphony.xwork2.ActionSupport;
-
-import com.topcoder.security.authenticationfactory.AuthenticationFactory;
-import com.topcoder.security.authenticationfactory.Authenticator;
-import com.topcoder.security.TCSubject;
-
-import com.topcoder.web.common.security.SSOCookieService;
-
-import com.topcoder.util.log.Level;
-import com.topcoder.util.log.Log;
-import com.topcoder.util.log.LogManager;
-
+import com.topcoder.onlinereview.component.authenticationfactory.AuthenticationFactory;
+import com.topcoder.onlinereview.component.authenticationfactory.Authenticator;
+import com.topcoder.onlinereview.component.login.AuthResponseParser;
+import com.topcoder.onlinereview.component.login.ConfigurationException;
+import com.topcoder.onlinereview.component.webcommon.SSOCookieService;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 
 /**
@@ -65,7 +57,7 @@ public abstract class BaseLoginAction extends ActionSupport
     protected Authenticator authenticator;
 
     /** Represents the logger. */
-    protected Log logger;
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Used for dynamic result.
@@ -97,12 +89,6 @@ public abstract class BaseLoginAction extends ActionSupport
         checkNull(authenticatorName, "authenticatorName is not configured");
         authenticator = authenticationFactory.getAuthenticator(authenticatorName);
         checkNull(authenticator, "Cannot create authenticator: " + authenticatorName);
-
-        if ((loggerName != null) && (loggerName.trim().length() != 0)) {
-            logger = LogManager.getLog(loggerName);
-        } else {
-            logger = null;
-        }
     }
 
     /**
@@ -130,7 +116,7 @@ public abstract class BaseLoginAction extends ActionSupport
             StringWriter sw = new StringWriter();
             PrintWriter out = new PrintWriter(sw);
             e.printStackTrace(out);
-            logger.log(Level.ERROR, sw.getBuffer());
+            logger.error(sw.getBuffer().toString());
         }
     }
 

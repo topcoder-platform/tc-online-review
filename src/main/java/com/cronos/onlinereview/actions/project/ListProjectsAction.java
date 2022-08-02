@@ -4,34 +4,31 @@
 package com.cronos.onlinereview.actions.project;
 
 import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.dataaccess.DeliverableDataAccess;
+import com.topcoder.onlinereview.component.dataaccess.DeliverableDataAccess;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.ConfigHelper;
 import com.cronos.onlinereview.util.LoggingHelper;
-
 import com.opensymphony.xwork2.TextProvider;
-
-import com.topcoder.management.deliverable.Deliverable;
-import com.topcoder.management.deliverable.DeliverableManager;
-import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
-import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
-import com.topcoder.management.phase.PhaseManager;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectStatus;
-import com.topcoder.management.project.UserProjectCategory;
-import com.topcoder.management.project.UserProjectType;
-import com.topcoder.management.resource.Resource;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.search.builder.SearchBuilderException;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.search.builder.filter.InFilter;
-import com.topcoder.util.errorhandling.BaseException;
-
-import org.apache.commons.lang3.ArrayUtils;
+import com.topcoder.onlinereview.component.deliverable.Deliverable;
+import com.topcoder.onlinereview.component.deliverable.DeliverableCheckingException;
+import com.topcoder.onlinereview.component.deliverable.DeliverableManager;
+import com.topcoder.onlinereview.component.deliverable.DeliverablePersistenceException;
+import com.topcoder.onlinereview.component.deliverable.Submission;
+import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.project.management.Project;
+import com.topcoder.onlinereview.component.project.management.ProjectManager;
+import com.topcoder.onlinereview.component.project.management.ProjectStatus;
+import com.topcoder.onlinereview.component.project.management.UserProjectCategory;
+import com.topcoder.onlinereview.component.project.management.UserProjectType;
+import com.topcoder.onlinereview.component.project.phase.Phase;
+import com.topcoder.onlinereview.component.project.phase.PhaseManager;
+import com.topcoder.onlinereview.component.resource.Resource;
+import com.topcoder.onlinereview.component.search.SearchBuilderException;
+import com.topcoder.onlinereview.component.search.filter.AndFilter;
+import com.topcoder.onlinereview.component.search.filter.Filter;
+import com.topcoder.onlinereview.component.search.filter.InFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +39,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.servlet.http.Cookie;
 
 /**
  * This class is the struts action class which is used for listing all projects.
@@ -63,6 +62,9 @@ public class ListProjectsAction extends BaseProjectAction {
      * Represents the amount of projects to be showed per page
      */
     private int projectPerpage = 100;
+
+    @Autowired
+    private DeliverableDataAccess deliverableDataAccess;
 
     /**
      * Default constructor.
@@ -151,7 +153,23 @@ public class ListProjectsAction extends BaseProjectAction {
 
         request.setAttribute("userProjectTypes", userProjectTypes);
 
+        // read cookies to remember user's selected category
+        String categoryCookie = "";
+        if (request.getCookies() != null)
+        {
+            for(Cookie c : request.getCookies()) {
+                if (c.getName().equals(scope + "-categoryId")) {
+                    categoryCookie = c.getValue();
+                    break;
+                }
+            }
+        }
+
         String selectedCategoryParam = request.getParameter("category");
+        // if a specific category is not requested explicitly, use category value from cookie.
+        if (selectedCategoryParam == null || selectedCategoryParam.isEmpty()) {
+            selectedCategoryParam = categoryCookie;
+        }
         Long selectedCategoryId = null;
         String categoryName = "";
         int totalProjectCount = 0;
@@ -185,6 +203,8 @@ public class ListProjectsAction extends BaseProjectAction {
             return SUCCESS;
         }
         request.setAttribute("selectedCategoryId", selectedCategoryId);
+        // set selected category as cookie
+        response.addCookie(new Cookie(scope + "-categoryId", String.valueOf(selectedCategoryId)));
         // pagination parameter
         String pageParameter = request.getParameter("page");
         Integer currentPage = null;
@@ -261,10 +281,10 @@ public class ListProjectsAction extends BaseProjectAction {
 
         // Obtain an instance of Phase Manager
         PhaseManager phMgr = ActionsHelper.createPhaseManager(false);
-        com.topcoder.project.phases.Project[] phaseProjects = phMgr.getPhases(ArrayUtils.toPrimitive(projectIds));
-        Map<Long, com.topcoder.project.phases.Project> phProjects = new HashMap<Long, com.topcoder.project.phases.Project>(
+        com.topcoder.onlinereview.component.project.phase.Project[] phaseProjects = phMgr.getPhases(projectIds);
+        Map<Long, com.topcoder.onlinereview.component.project.phase.Project> phProjects = new HashMap<>(
                 phaseProjects.length);
-        for (com.topcoder.project.phases.Project phPr : phaseProjects) {
+        for (com.topcoder.onlinereview.component.project.phase.Project phPr : phaseProjects) {
             phProjects.put(phPr.getId(), phPr);
         }
 
@@ -283,7 +303,7 @@ public class ListProjectsAction extends BaseProjectAction {
 
             // Calculate end date of the project and get all active phases (if any)
             if (phProjects.containsKey(project.getId())) {
-                com.topcoder.project.phases.Project phProject = phProjects.get(project.getId());
+                com.topcoder.onlinereview.component.project.phase.Project phProject = phProjects.get(project.getId());
                 projectEndDates[counter] = phProject.calcEndDate();
                 activePhases = ActionsHelper.getActivePhases(phProject.getAllPhases());
                 phaseEndDates[counter] = null;
@@ -374,10 +394,9 @@ public class ListProjectsAction extends BaseProjectAction {
      *             if there is an error determining whether some Deliverable has been completed or
      *             not.
      */
-    private static Deliverable[] getDeliverables(DeliverableManager manager, Project[] projects, Phase[][] phases,
-            Resource[][] resources)
+    private Deliverable[] getDeliverables(DeliverableManager manager, Project[] projects, Phase[][] phases,
+                                                 Resource[][] resources)
             throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
-        DeliverableDataAccess deliverableDataAccess = new DeliverableDataAccess();
         Map<Long, Map<Long, Long>> deliverableTypes = deliverableDataAccess.getDeliverablesList();
 
         // Validate parameters

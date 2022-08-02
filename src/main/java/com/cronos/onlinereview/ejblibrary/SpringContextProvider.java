@@ -3,7 +3,7 @@
  */
 package com.cronos.onlinereview.ejblibrary;
 
-import com.cronos.onlinereview.dataaccess.CatalogDataAccess;
+import com.topcoder.onlinereview.component.dataaccess.CatalogDataAccess;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationContextException;

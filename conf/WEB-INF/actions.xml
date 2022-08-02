@@ -3,15 +3,16 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-  <bean id="authenticationFactory" class="com.topcoder.security.authenticationfactory.AuthenticationFactory" factory-method="getInstance">
+  <bean id="authResponseParser" class="com.topcoder.onlinereview.component.login.authenticator.SSOCookieAuthResponseParser" />
+  <bean id="loginLibrary" class="com.cronos.onlinereview.ejblibrary.LoginLibrary" />
+  <bean id="ORAuthenticator" class="com.topcoder.onlinereview.component.login.authenticator.SecurityManagerAuthenticator">
+      <property name="loginInterface" ref="loginLibrary" />
   </bean>
-
-  <bean id="authResponseParser" class="com.cronos.onlinereview.login.authenticator.SSOCookieAuthResponseParser">
-      <constructor-arg index="0" value="com.cronos.OnlineReview">
-      </constructor-arg>
+  <bean id="MockAuthenticator" class="com.cronos.onlinereview.mockups.MockAuthenticator" />
+  <bean id="MockXMLAuthenticator" class="com.cronos.onlinereview.mockups.MockXMLAuthenticator">
+      <constructor-arg type="java.lang.String" value="/MockXmlAuthenticator.xml" />
   </bean>
-
-  <bean id="ssoCookieService" class="com.topcoder.web.common.security.SSOCookieServiceImpl">
+  <bean id="ssoCookieService" class="com.topcoder.onlinereview.component.webcommon.SSOCookieService">
   </bean>
 
   <bean id="projectForm" class="com.cronos.onlinereview.model.DynamicModel" scope="request" init-method="init">

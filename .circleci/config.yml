@@ -134,7 +134,7 @@ jobs:
     environment:
       BUILD_ENV: "DEV"
       LOGICAL_ENV: "dev"
-      COMPONENT_BRANCH: "master"
+      COMPONENT_BRANCH: "dev"
       DEPLOY_ENV: "DEV"
       APPNAME: "tc-online-review"
     steps: *build_steps

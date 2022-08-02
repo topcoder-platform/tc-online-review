@@ -13,39 +13,49 @@
   http://www.springframework.org/schema/security
   http://www.springframework.org/schema/security/spring-security-2.0.xsd">
 
+    <context:annotation-config/>
+    <context:property-placeholder location="classpath:applicationConfig.properties"/>
+    <context:component-scan base-package="com.topcoder.onlinereview.component" />
     <bean id="springContextProvider" class="com.cronos.onlinereview.ejblibrary.SpringContextProvider" 
           scope="singleton"/>
 
-    <bean id="userPreferencelibrary" class="com.cronos.onlinereview.ejblibrary.UserPreferencelibrary"
+    <bean id="userPreferencelibrary" class="com.cronos.onlinereview.ejblibrary.UserPreference"
           scope="singleton"/>          
 
     <bean id="loginLibrary" class="com.cronos.onlinereview.ejblibrary.LoginLibrary">
         <constructor-arg type="java.lang.Long" value="28"/>
     </bean>
 
-    <bean id="contestEligibilityServiceLibrary"
-          class="com.cronos.onlinereview.ejblibrary.ContestEligibilityServiceLibrary"/>
-    <bean id="contestEligibilityManagerLibrary"
-          class="com.cronos.onlinereview.ejblibrary.ContestEligibilityManagerLibrary"/>
-    <bean id="contestEligibilityValidationManagerLibrary"
-          class="com.cronos.onlinereview.ejblibrary.ContestEligibilityValidationManagerLibrary"/>
+    <bean id="togglzConfiguration" class="com.cronos.onlinereview.config.TogglzConfiguration" />
 
-    <!-- Component catalog ID generator settings -->
-    <bean id="catalogIdGeneratorDB" class="com.topcoder.util.idgenerator.sql.SimpleDB"/>
-
-    <bean id="catalogDataAccess" class="com.cronos.onlinereview.dataaccess.CatalogDataAccess">
-        <property name="idGeneratorDB" ref="catalogIdGeneratorDB"/>
-        <property name="idGeneratorDataSourceName" value="java:jboss/datasources/TCS_CATALOG"/>
-        <property name="idGeneratorTableName" value="sequence_object"/>
-        <property name="idGeneratorUserDefColumnName" value="name"/>
-        <property name="idGeneratorHighValueColumnName" value="current_value"/>
-        <property name="idGeneratorMaxHighValue" value="9999999999"/>
-        <property name="idGeneratorMaxLowValue" value="1"/>
-        <property name="idGeneratorAutoInit" value="false"/>
-    </bean>
-    
     <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
         <property name="jndiName" value="java:jboss/datasources/TCS_CATALOG" />
+    </bean>
+
+    <bean id="oltpDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:jboss/datasources/OLTP" />
+    </bean>
+
+    <bean id="tcsDwDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:jboss/datasources/TCS_DW" />
+    </bean>
+
+    <bean id="commonDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:jboss/datasources/DS" />
+    </bean>
+
+    <bean id="tcsJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="tcsDwJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="tcsDwDataSource"/>
+    </bean>
+
+    <bean id="oltpJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="oltpDataSource"/>
+    </bean>
+    <bean id="commonJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="commonDataSource"/>
     </bean>
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
@@ -72,22 +82,21 @@
     </tx:advice>
 
     <aop:config>
-        <aop:pointcut id="serviceOperation" expression="execution(* com.topcoder.security.groups.services.hibernate.*.*(..))"/>
+        <aop:pointcut id="serviceOperation" expression="execution(* com.topcoder.onlinereview.component.security.groups.services.hibernate.*.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation"/>
     </aop:config>
 
-    <bean id="logFactory" class="com.topcoder.util.log.log4j.Log4jLogFactory"/>
-    
-    <bean id="logger" class="com.topcoder.util.log.log4j.Log4jLog" factory-bean="logFactory" factory-method="createLog">
-        <constructor-arg type="java.lang.String" value="Authorization Service Logger" />
-    </bean>
-
     <bean id="authorizationService"
-          class="com.topcoder.security.groups.services.hibernate.HibernateAuthorizationService"
+          class="com.topcoder.onlinereview.component.security.groups.services.hibernate.HibernateAuthorizationService"
           init-method="afterPropertiesSet">
-
-        <property name="logger" ref="logger" />
         <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    <bean id="statusProjectValidator" class="com.cronos.onlinereview.util.StatusProjectValidator" />
+    <bean id="phaseManager" class="com.topcoder.onlinereview.component.project.phase.PhaseManager" />
+    <bean id="phaseManagerWithoutHandlers" class="com.topcoder.onlinereview.component.project.phase.PhaseManager" />
+    <bean id="managerCreationHelper" class="com.cronos.onlinereview.util.ManagerCreationHelper" />
+    <bean id="actionsHelper" class="com.cronos.onlinereview.util.ActionsHelper">
+        <property name="managerCreationHelper" ref="managerCreationHelper"/>
     </bean>
 </beans>
         
