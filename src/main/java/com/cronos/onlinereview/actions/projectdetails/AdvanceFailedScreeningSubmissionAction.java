@@ -75,10 +75,6 @@ public class AdvanceFailedScreeningSubmissionAction extends BaseProjectDetailsAc
 
         // Check that user has permissions to delete submission.
         boolean hasPermission = AuthorizationHelper.hasUserPermission(request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME);
-        // For Studio projects only Admins are authorized to advance submissions.
-        if (ActionsHelper.isStudioProject(project)) {
-            hasPermission = hasPermission && AuthorizationHelper.hasUserRole(request, Constants.ADMIN_ROLE_NAME);
-        }
 
         if (!hasPermission) {
             return ActionsHelper.produceErrorReport(this,
