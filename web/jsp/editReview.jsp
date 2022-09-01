@@ -260,12 +260,12 @@
                         <div align="right">
                             <input type="hidden" name="save" value="" />
                             <c:if test="${not managerEdit}">
-                                <input type="image"  onclick="javascript:this.disabled = true; this.form.save.value='submit'; this.parentNode.parentNode.target='_self';" src="<or:text key='editReview.Button.SaveAndCommit.img' />" alt="<or:text key='editReview.Button.SaveAndCommit.alt' />" border="0"/>&#160;
-                                <input type="image"  onclick="javascript:this.disabled = true; this.form.save.value='save'; this.parentNode.parentNode.target='_self';" src="<or:text key='editReview.Button.SaveForLater.img' />" alt="<or:text key='editReview.Button.SaveForLater.alt' />" border="0"/>&#160;
-                                <input type="image"  onclick="javascript:this.disabled = true; this.form.save.value='preview'; this.parentNode.parentNode.target='_blank';" src="<or:text key='editReview.Button.Preview.img' />" alt="<or:text key='editReview.Button.Preview.alt' />" border="0"/>
+                                <input type="image"  onclick="javascript:this.style.display = 'none'; this.form.save.value='submit'; this.parentNode.parentNode.target='_self';" src="<or:text key='editReview.Button.SaveAndCommit.img' />" alt="<or:text key='editReview.Button.SaveAndCommit.alt' />" border="0"/>&#160;
+                                <input type="image"  onclick="javascript:this.style.display = 'none'; this.form.save.value='save'; this.parentNode.parentNode.target='_self';" src="<or:text key='editReview.Button.SaveForLater.img' />" alt="<or:text key='editReview.Button.SaveForLater.alt' />" border="0"/>&#160;
+                                <input type="image"  onclick="this.form.save.value='preview'; this.parentNode.parentNode.target='_blank';" src="<or:text key='editReview.Button.Preview.img' />" alt="<or:text key='editReview.Button.Preview.alt' />" border="0"/>
                             </c:if>
                             <c:if test="${managerEdit}">
-                                <input type="image"  onclick="javascript:this.disabled = true; this.form.save.value='save'; this.parentNode.parentNode.target='_self';" src="<or:text key='btnSaveChanges.img' />" alt="<or:text key='btnSaveChanges.alt' />" border="0"/>&#160;
+                                <input type="image"  onclick="javascript:this.style.display = 'none'; this.form.save.value='save'; this.parentNode.parentNode.target='_self';" src="<or:text key='btnSaveChanges.img' />" alt="<or:text key='btnSaveChanges.alt' />" border="0"/>&#160;
                             </c:if>
                         </div>
                     </s:form>
