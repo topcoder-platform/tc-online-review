@@ -113,6 +113,7 @@
                                 </tr>
                                 <c:set var="prevSubm" value="${group.pastSubmissions}" />
                                 <c:set var="prevSubmissions" value="" />
+                                <c:set var="submissionIdx" value="0" />
                                 <c:forEach items="${group.submissions}" var="submission" varStatus="submissionStatus">
                                     <c:set var="underIterativeReview" value="false"/>
                                     <c:forEach items="${phaseGroups}" var="grp">
@@ -130,73 +131,74 @@
                                     <c:if test="${not empty prevSubm}">
                                         <c:set var="prevSubmissions" value="${prevSubm[submissionStatus.index]}" />
                                     </c:if>
-                                    <tr class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}'>
+                                    <c:if test='${(submissionStatusName != "Deleted")}'>
+                                        <tr class='${(submissionIdx % 2 == 0) ? "light" : "dark"}'>
                                         <td class="value" width="10%" nowrap="nowrap">
-                                            <c:if test="${not empty prevSubmissions}">
-                                                <a id="PrevSubm${submBoxIdx}_${submissionStatus.index}_plus" href="javascript:void(0)" onClick='return expandSubmissions(${submBoxIdx}, ${submissionStatus.index}, this)'><img
-                                                        class="Outline" border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowMore.img' />" alt="<or:text key='viewProjectDetails.box.Submission.icoShowMore.alt' />" /></a><a
-                                                    id="PrevSubm${submBoxIdx}_${submissionStatus.index}_minus" href="javascript:void(0)" onClick='return collapseSubmissions(${submBoxIdx}, ${submissionStatus.index}, this)' style="display:none;"><img
-                                                        class="Outline" border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowLess.img' />" alt="<or:text key='viewProjectDetails.box.Submission.icoShowLess.alt' />" /></a>
+                                        <c:if test="${not empty prevSubmissions}">
+                                            <a id="PrevSubm${submBoxIdx}_${submissionStatus.index}_plus" href="javascript:void(0)" onClick='return expandSubmissions(${submBoxIdx}, ${submissionStatus.index}, this)'><img
+                                            class="Outline" border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowMore.img' />" alt="<or:text key='viewProjectDetails.box.Submission.icoShowMore.alt' />" /></a><a
+                                            id="PrevSubm${submBoxIdx}_${submissionStatus.index}_minus" href="javascript:void(0)" onClick='return collapseSubmissions(${submBoxIdx}, ${submissionStatus.index}, this)' style="display:none;"><img
+                                            class="Outline" border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowLess.img' />" alt="<or:text key='viewProjectDetails.box.Submission.icoShowLess.alt' />" /></a>
+                                        </c:if>
+                                        <c:if test="${(empty prevSubmissions) and (not empty prevSubm)}">
+                                            <img class="Outline" border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowMore.img' />" style="visibility:hidden;" />
+                                        </c:if>
+                                        <c:set var="placement" value="" />
+                                        <c:if test="${not empty submission}">
+                                            <c:set var="placement" value='${submission.placement}' />
+                                        </c:if>
+                                        <c:set var="failedReview" value="${(submissionStatusName == 'Failed Screening') or (submissionStatusName == 'Failed Review')}" />
+                                        <c:if test="${(not empty placement) and (not failedReview)}">
+                                            <c:choose>
+                                                <c:when test="${placement == 1}">
+                                                    <img src="<or:text key='viewProjectDetails.Submitter.icoWinner.img' />" alt="<or:text key='viewProjectDetails.Submitter.icoWinner.alt' />" class="Outline" border="0" />
+                                                </c:when>
+                                                <c:when test="${placement == 2}">
+                                                    <img src="<or:text key='viewProjectDetails.Submitter.icoRunnerUp.img' />" alt="<or:text key='viewProjectDetails.Submitter.icoRunnerUp.alt' />" class="Outline" border="0" />
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <img src="<or:text key='viewProjectDetails.Submitter.icoOther.img' />" alt="${placement} Place" class="Outline" border="0" />
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:if>
+                                        <c:if test="${failedReview}">
+                                            <c:set var="failureKeyName" value='SubmissionStatus.${fn:replace(submissionStatusName, " ", "")}' />
+                                            <c:if test="${empty placement}">
+                                                <img src="<or:text key='viewProjectDetails.box.Submission.icoFailed.img' />" alt="<or:text key='${failureKeyName}' />" border="0" />
                                             </c:if>
-                                            <c:if test="${(empty prevSubmissions) and (not empty prevSubm)}">
-                                                <img class="Outline" border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowMore.img' />" style="visibility:hidden;" />
+                                            <c:if test="${not empty placement}">
+                                                <c:set var="placeStr" value="${orfn:getMessage(pageContext, failureKeyName)} (Place ${placement})" />
+                                                <img src="<or:text key='viewProjectDetails.box.Submission.icoFailed.img' />" alt="${placeStr}" border="0" />
                                             </c:if>
-                                            <c:set var="placement" value="" />
-                                            <c:if test="${not empty submission}">
-                                                <c:set var="placement" value='${submission.placement}' />
-                                            </c:if>
-                                            <c:set var="failedReview" value="${(submissionStatusName == 'Failed Screening') or (submissionStatusName == 'Failed Review')}" />
-                                            <c:if test="${(not empty placement) and (not failedReview)}">
-                                                <c:choose>
-                                                    <c:when test="${placement == 1}">
-                                                        <img src="<or:text key='viewProjectDetails.Submitter.icoWinner.img' />" alt="<or:text key='viewProjectDetails.Submitter.icoWinner.alt' />" class="Outline" border="0" />
-                                                    </c:when>
-                                                    <c:when test="${placement == 2}">
-                                                        <img src="<or:text key='viewProjectDetails.Submitter.icoRunnerUp.img' />" alt="<or:text key='viewProjectDetails.Submitter.icoRunnerUp.alt' />" class="Outline" border="0" />
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <img src="<or:text key='viewProjectDetails.Submitter.icoOther.img' />" alt="${placement} Place" class="Outline" border="0" />
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </c:if>
-                                            <c:if test="${failedReview}">
-                                                <c:set var="failureKeyName" value='SubmissionStatus.${fn:replace(submissionStatusName, " ", "")}' />
-                                                <c:if test="${empty placement}">
-                                                    <img src="<or:text key='viewProjectDetails.box.Submission.icoFailed.img' />" alt="<or:text key='${failureKeyName}' />" border="0" />
-                                                </c:if>
-                                                <c:if test="${not empty placement}">
-                                                    <c:set var="placeStr" value="${orfn:getMessage(pageContext, failureKeyName)} (Place ${placement})" />
-                                                    <img src="<or:text key='viewProjectDetails.box.Submission.icoFailed.img' />" alt="${placeStr}" border="0" />
-                                                </c:if>
-                                            </c:if>
-                                            <c:if test="${not downloadCurrentIterativeReview || underIterativeReview}">
-                                                <c:if test="${project.projectCategory.projectType.id ne 3}">
-                                                    <c:if test="${group.readyToDownload[submissionStatus.index]}">
-                                                        <a href="<or:url value='/actions/DownloadContestSubmission?sid=${submission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
-                                                    </c:if>
-                                                    <c:if test="${not group.readyToDownload[submissionStatus.index]}">
-                                                        <a style="pointer-events:none" href="<or:url value='/actions/DownloadContestSubmission?sid=${submission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
-                                                    </c:if>
-                                                </c:if>
-                                                <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                    <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a> -->
-                                                    <c:if test="${group.readyToDownload[submissionStatus.index]}">
+                                        </c:if>
+                                        <c:if test="${not downloadCurrentIterativeReview || underIterativeReview}">
+                                            <c:if test="${project.projectCategory.projectType.id ne 3}">
+                                                <c:if test="${group.readyToDownload[submissionStatus.index]}">
                                                     <a href="<or:url value='/actions/DownloadContestSubmission?sid=${submission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
-                                                    </c:if>
-                                                    <c:if test="${not group.readyToDownload[submissionStatus.index]}">
+                                                </c:if>
+                                                <c:if test="${not group.readyToDownload[submissionStatus.index]}">
                                                     <a style="pointer-events:none" href="<or:url value='/actions/DownloadContestSubmission?sid=${submission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
-                                                    </c:if>
-                                                </c:if>
-                                                <c:if test="${not empty submitter}">
-                                                    (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
                                                 </c:if>
                                             </c:if>
-                                            <c:if test="${downloadCurrentIterativeReview && not underIterativeReview}">
-                                                ${submission.id}
-                                                <c:if test="${not empty submitter}">
-                                                    (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
+                                            <c:if test="${project.projectCategory.projectType.id eq 3}">
+                                                <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${submission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a> -->
+                                                <c:if test="${group.readyToDownload[submissionStatus.index]}">
+                                                    <a href="<or:url value='/actions/DownloadContestSubmission?sid=${submission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
+                                                </c:if>
+                                                <c:if test="${not group.readyToDownload[submissionStatus.index]}">
+                                                    <a style="pointer-events:none" href="<or:url value='/actions/DownloadContestSubmission?sid=${submission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Download' />">${submission.id}</a>
                                                 </c:if>
                                             </c:if>
+                                            <c:if test="${not empty submitter}">
+                                                (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
+                                            </c:if>
+                                        </c:if>
+                                        <c:if test="${downloadCurrentIterativeReview && not underIterativeReview}">
+                                            ${submission.id}
+                                            <c:if test="${not empty submitter}">
+                                                (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
+                                            </c:if>
+                                        </c:if>
                                         </td>
                                         <%--
                                         <c:if test="${isManager}">
@@ -204,19 +206,19 @@
                                         </c:if>
                                         <c:if test="${not isManager}">
                                         --%>
-                                            <td class="value"><!-- @ --></td>
+                                        <td class="value"><!-- @ --></td>
                                         <%--
                                         </c:if>
                                         --%>
                                         <td class="value" width="22%">${orfn:displayDate(pageContext.request, submission.upload.creationTimestamp)}</td>
                                         <c:if test="${isThurgood}">
                                             <td class="valueC" width="15%">
-                                                <c:if test="${not empty submission.thurgoodJobId}">
-                                                    <a href="${fn:replace(thurgoodBaseUIURL, '{job_id}', submission.thurgoodJobId)}"><or:text key="viewProjectDetails.box.Submission.ThurgoodLink" /></a>
-                                                </c:if>
-                                                <c:if test="${empty submission.thurgoodJobId}">
-                                                    <or:text key="viewProjectDetails.box.Submission.ThurgoodNotAvailable" />
-                                                </c:if>
+                                            <c:if test="${not empty submission.thurgoodJobId}">
+                                                <a href="${fn:replace(thurgoodBaseUIURL, '{job_id}', submission.thurgoodJobId)}"><or:text key="viewProjectDetails.box.Submission.ThurgoodLink" /></a>
+                                            </c:if>
+                                            <c:if test="${empty submission.thurgoodJobId}">
+                                                <or:text key="viewProjectDetails.box.Submission.ThurgoodNotAvailable" />
+                                            </c:if>
                                             </td>
                                         </c:if>
                                         <c:set var="screener" value="" />
@@ -243,8 +245,8 @@
                                         <c:if test="${empty review}">
                                             <c:if test="${isAllowedToPerformScreening}">
                                                 <td class="valueC" width="14%" nowrap="nowrap">
-                                                    <b><a href="<or:url value='/actions/CreateScreening?sid=${submission.id}' />"><or:text
-                                                        key="viewProjectDetails.box.Screening.Submit" /></a></b></td>
+                                                <b><a href="<or:url value='/actions/CreateScreening?sid=${submission.id}' />"><or:text
+                                                    key="viewProjectDetails.box.Screening.Submit" /></a></b></td>
                                             </c:if>
                                             <c:if test="${not isAllowedToPerformScreening}">
                                                 <td class="valueC" width="14%"><or:text key="Pending" /></td>
@@ -255,33 +257,33 @@
                                             <c:if test="${review.committed}">
                                                 <c:if test="${isAllowedToViewScreening}">
                                                     <td class="valueC" width="14%">
-                                                        <a href="<or:url value='/actions/ViewScreening?rid=${review.id}' />">${orfn:displayScore(pageContext.request, review.score)}</a></td>
+                                                    <a href="<or:url value='/actions/ViewScreening?rid=${review.id}' />">${orfn:displayScore(pageContext.request, review.score)}</a></td>
                                                 </c:if>
                                                 <c:if test="${not isAllowedToViewScreening}">
                                                     <td class="valueC" width="14%">${orfn:displayScore(pageContext.request, review.score)}</td>
                                                 </c:if>
                                                 <td class="valueC" width="15%">
-                                                    <c:if test="${group.screeningPhaseStatus == 3}">
-                                                        <c:if test="${submission.submissionStatus.name ne 'Failed Screening'}">
-                                                            <or:text key="viewProjectDetails.box.Screening.Passed" />
-                                                        </c:if>
-                                                        <c:if test="${submission.submissionStatus.name eq 'Failed Screening'}">
-                                                            <or:text key="viewProjectDetails.box.Screening.Failed" />
-                                                        </c:if>
-                                                        <c:if test="${isAllowedToAdvanceSubmissionWithFailedScreening and submission.submissionStatus.name eq 'Failed Screening'}">
-                                                            (<a href="<or:url value='/actions/AdvanceFailedScreeningSubmission?uid=${submission.upload.id}' />"><or:text key="viewProjectDetails.box.Screening.Advance" /></a>)
-                                                        </c:if>
+                                                <c:if test="${group.screeningPhaseStatus == 3}">
+                                                    <c:if test="${submission.submissionStatus.name ne 'Failed Screening'}">
+                                                        <or:text key="viewProjectDetails.box.Screening.Passed" />
                                                     </c:if>
-                                                    <c:if test="${group.screeningPhaseStatus != 3}">
-                                                        <or:text key="NotAvailable" />
+                                                    <c:if test="${submission.submissionStatus.name eq 'Failed Screening'}">
+                                                        <or:text key="viewProjectDetails.box.Screening.Failed" />
                                                     </c:if>
+                                                    <c:if test="${isAllowedToAdvanceSubmissionWithFailedScreening and submission.submissionStatus.name eq 'Failed Screening'}">
+                                                        (<a href="<or:url value='/actions/AdvanceFailedScreeningSubmission?uid=${submission.upload.id}' />"><or:text key="viewProjectDetails.box.Screening.Advance" /></a>)
+                                                    </c:if>
+                                                </c:if>
+                                                <c:if test="${group.screeningPhaseStatus != 3}">
+                                                    <or:text key="NotAvailable" />
+                                                </c:if>
                                                 </td>
                                             </c:if>
                                             <c:if test="${not review.committed}">
                                                 <c:if test="${isAllowedToPerformScreening}">
                                                     <td class="valueC" width="14%" nowrap="nowrap">
-                                                        <b><a href="<or:url value='/actions/EditScreening?rid=${review.id}' />"><or:text
-                                                            key="viewProjectDetails.box.Screening.Submit" /></a></b></td>
+                                                    <b><a href="<or:url value='/actions/EditScreening?rid=${review.id}' />"><or:text
+                                                        key="viewProjectDetails.box.Screening.Submit" /></a></b></td>
                                                 </c:if>
                                                 <c:if test="${not isAllowedToPerformScreening}">
                                                     <td class="valueC" width="14%"><or:text key="Pending" /></td>
@@ -289,7 +291,9 @@
                                                 <td class="valueC" width="15%"><or:text key="NotAvailable" /></td>
                                             </c:if>
                                         </c:if>
-                                    </tr>
+                                        </tr>
+                                        <c:set var="submissionIdx" value="${submissionIdx + 1}" />
+                                    </c:if>
                                     <c:forEach items="${prevSubmissions}" var="pastSubmission" varStatus="pastSubmissionStatus">
                                         <tr id="PrevSubm${submBoxIdx}_${submissionStatus.index}" class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}' style="display:none;">
                                             <td class="value" colspan="2" nowrap="nowrap">
