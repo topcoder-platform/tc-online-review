@@ -260,8 +260,8 @@
                         <div align="right">
                             <input type="hidden" name="save" value="" />
                             <c:if test="${not managerEdit}">
-                                <input type="image"  onclick="javascript:this.style.display = 'none'; this.form.save.value='submit'; this.parentNode.parentNode.target='_self';" src="<or:text key='editReview.Button.SaveAndCommit.img' />" alt="<or:text key='editReview.Button.SaveAndCommit.alt' />" border="0"/>&#160;
-                                <input type="image"  onclick="javascript:this.style.display = 'none'; this.form.save.value='save'; this.parentNode.parentNode.target='_self';" src="<or:text key='editReview.Button.SaveForLater.img' />" alt="<or:text key='editReview.Button.SaveForLater.alt' />" border="0"/>&#160;
+                                <input type="image"  onclick="javascript:this.style.display = 'none'; this.nextElementSibling.style.display = 'none'; this.form.save.value='submit'; this.parentNode.parentNode.target='_self';" src="<or:text key='editReview.Button.SaveAndCommit.img' />" alt="<or:text key='editReview.Button.SaveAndCommit.alt' />" border="0"/>&#160;
+                                <input type="image"  onclick="javascript:this.style.display = 'none'; this.previousElementSibling.style.display = 'none'; this.form.save.value='save'; this.parentNode.parentNode.target='_self';" src="<or:text key='editReview.Button.SaveForLater.img' />" alt="<or:text key='editReview.Button.SaveForLater.alt' />" border="0"/>&#160;
                                 <input type="image"  onclick="javascript:this.form.save.value='preview'; this.parentNode.parentNode.target='_blank';" src="<or:text key='editReview.Button.Preview.img' />" alt="<or:text key='editReview.Button.Preview.alt' />" border="0"/>
                             </c:if>
                             <c:if test="${managerEdit}">
