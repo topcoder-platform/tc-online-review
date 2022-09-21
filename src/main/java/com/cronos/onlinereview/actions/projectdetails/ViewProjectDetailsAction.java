@@ -126,9 +126,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         long projectId = project.getId();
         long forumId = -1;
         String tempStr;
-        if(projectId == 30301920) {
-            LoggingHelper.logError("1");
-        }
+
         tempStr = (String) project.getProperty("Developer Forum ID");
         if (tempStr != null && tempStr.trim().length() != 0) {
             forumId = Long.parseLong(tempStr, 10);
@@ -163,9 +161,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
             }
             request.setAttribute("projectDRP", drpoint);
         }
-        if(projectId == 30301920) {
-            LoggingHelper.logError("2");
-        }
+
         // since Online Review Update - Add Project Dropdown v1.0
         // Retrieve the billing project id from property.
         // And retrieve the list of all client projects, find billing project name by
@@ -197,9 +193,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
             request.setAttribute("cockpitProjectLink",
                     ConfigHelper.getDirectProjectBaseURL() + project.getTcDirectProjectId());
         }
-        if(projectId == 30301920) {
-            LoggingHelper.logError("3");
-        }
+
         // Place a string that represents "my" current role(s) into the request
         ActionsHelper.retrieveAndStoreMyRole(request, this);
         // Obtain an array of "my" resources
@@ -232,9 +226,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
             resourcePaymentsAmount.put(payment.getResourceId(), oldPayment + payment.getAmount().doubleValue());
         }
         request.setAttribute("resourcePaymentsAmount", resourcePaymentsAmount);
-        if(projectId == 30301920) {
-            LoggingHelper.logError("4");
-        }
+
         // Retrieve late records for the current user.
         LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager();
         if (myResources.length > 0) {
@@ -271,9 +263,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
             }
             request.setAttribute("paymentPenaltyPercentage", paymentPenaltyPercentage);
         }
-        if(projectId == 30301920) {
-            LoggingHelper.logError("5");
-        }
+
         // Get an array of all resources for the project
         Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(project);
         ActionsHelper.populateEmailProperty(request, allProjectResources);
@@ -299,9 +289,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         request.setAttribute("phases", phases);
 
         Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForPhases(activePhases, allProjectResources);
-        if(projectId == 30301920) {
-            LoggingHelper.logError("6");
-        }
+
         // removing upload link by implementing Submission API endpoint
         Deliverable[] myDeliverables = ActionsHelper.getMyDeliverables(deliverables, myResources);
         Deliverable[] outstandingDeliverables = ActionsHelper.getOutstandingDeliverables(deliverables);
@@ -329,9 +317,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         }
 
         long currentTime = (new Date()).getTime();
-        if(projectId == 30301920) {
-            LoggingHelper.logError("7");
-        }
+
         // These two arrays will contain Deadline near / Late / Completed codes for
         // deliverables
         int[] myDeliverableStatuses = getDeliverableStatusCodes(myDeliverables, activePhases, currentTime);
@@ -350,9 +336,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
                 myDeliverableDates[i] = phase.getScheduledEndDate();
             }
         }
-        if(projectId == 30301920) {
-            LoggingHelper.logError("8");
-        }
+
         for (int i = 0; i < outstandingDeliverables.length; ++i) {
             Deliverable deliverable = outstandingDeliverables[i];
             if (deliverable.isComplete()) {
@@ -366,9 +350,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         String[] myDeliverableLinks = generateDeliverableLinks(request, myDeliverables, phases);
         Long[] outstandingDeliverableUserIds = getDeliverableUserIds(outstandingDeliverables, allProjectResources);
         Long[] outstandingDeliverableSubmissionUserIds = getDeliverableSubmissionUserIds(outstandingDeliverables);
-        if(projectId == 30301920) {
-            LoggingHelper.logError("9");
-        }
+
         request.setAttribute("myDeliverableDates", myDeliverableDates);
         request.setAttribute("outstandingDeliverableDates", outstandingDeliverableDates);
         request.setAttribute("myDeliverableStatuses", myDeliverableStatuses);
@@ -385,9 +367,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         // The following two arrays are used to display Gantt chart
         long[] ganttOffsets = new long[phases.length];
         long[] ganttLengths = new long[phases.length];
-        if(projectId == 30301920) {
-            LoggingHelper.logError("10");
-        }
+
         // List of scorecard templates used for this project
         Map<String, Scorecard> phaseScorecardTemplates = new LinkedHashMap<String, Scorecard>();
         Map<String, String> phaseScorecardLinks = new LinkedHashMap<String, String>();
@@ -426,9 +406,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
                 phaseScorecardLinks.put(phaseTypeName, "ViewScorecard?scid=" + scorecardTemplate.getId());
             }
         }
-        if(projectId == 30301920) {
-            LoggingHelper.logError("11");
-        }
+
         long currentTimeInMinutes = (new Date()).getTime() / (60 * 1000);
         if (currentTimeInMinutes >= projectStartTime && currentTimeInMinutes <= projectEndTime) {
             request.setAttribute("ganttCurrentTime", currentTimeInMinutes - projectStartTime);
@@ -443,9 +421,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
          */
 
         // Place phases' start/end dates
-        if(projectId == 30301920) {
-            LoggingHelper.logError("12");
-        }
+
         request.setAttribute("originalStart", originalStart);
         request.setAttribute("originalEnd", originalEnd);
         request.setAttribute("phaseStatuseCodes", phaseStatuseCodes);
@@ -470,9 +446,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
             request.setAttribute("resources", allProjectResources);
             request.setAttribute("users", allProjectExtUsers);
         }
-        if(projectId == 30301920) {
-            LoggingHelper.logError("13");
-        }
+
         // Project Prizes
         List<Prize> contestPrizes = new ArrayList<Prize>();
         List<Prize> checkpointPrizes = new ArrayList<Prize>();
@@ -501,9 +475,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         request.setAttribute("activeTabIdx", phasesDetails.getActiveTabIndex());
 
         boolean sendTLNotifications = false;
-        if(projectId == 30301920) {
-            LoggingHelper.logError("14");
-        }
+
         if (AuthorizationHelper.isUserLoggedIn(request)) {
             Filter filterTNproject = NotificationFilterBuilder.createProjectIdFilter(project.getId());
             Filter filterTNuser = NotificationFilterBuilder
@@ -520,9 +492,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         // Check resource roles
         request.setAttribute("isManager", AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES));
         request.setAttribute("isSubmitter", AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME));
-        if(projectId == 30301920) {
-            LoggingHelper.logError("15");
-        }
+
         // check if registration phase is open
         boolean registrationOpen = false;
         for (int i = 0; i < activePhases.length && !registrationOpen; i++) {
@@ -555,9 +525,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
                 appealsCompletedFlag = true;
             }
         }
-        if(projectId == 30301920) {
-            LoggingHelper.logError("16");
-        }
+
         long winnerExtUserId = Long.MIN_VALUE;
         String winnerExtRefId = (String) project.getProperty("Winner External Reference ID");
 
@@ -605,9 +573,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
                 AuthorizationHelper.hasUserPermission(request, Constants.ADVANCE_SUBMISSION_FAILED_SCREENING_PERM_NAME)
                         && project.getProjectStatus().getName().equals("Active") && reviewPhase != null
                         && !ActionsHelper.isPhaseClosed(reviewPhase.getPhaseStatus()));
-                        if(projectId == 30301920) {
-                            LoggingHelper.logError("17");
-                        }
+
         request.setAttribute("isAllowedToPerformCheckpointScreening",
                 AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_CHECKPOINT_SCREENING_PERM_NAME)
                         && ActionsHelper.getPhase(phases, true, Constants.CHECKPOINT_SCREENING_PHASE_NAME) != null);
@@ -663,9 +629,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
                 && !AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)) {
             allowedToReviewAggregation = true;
         }
-        if(projectId == 30301920) {
-            LoggingHelper.logError("18");
-        }
+
         if (allowedToReviewAggregation && AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) {
             Long winnerId;
             try {
@@ -707,9 +671,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager();
         request.setAttribute("destProjectLinks", linkManager.getDestProjectLinks(project.getId()));
         request.setAttribute("srcProjectLinks", linkManager.getSourceProjectLinks(project.getId()));
-        if(projectId == 30301920) {
-            LoggingHelper.logError("19");
-        }
+
         return Constants.SUCCESS_FORWARD_NAME;
     }
 
