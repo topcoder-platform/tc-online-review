@@ -1376,6 +1376,9 @@ public class PhaseGroup {
      * @param iterativeReviewSubmission a <code>Submission</code> providing the details on iterative review submission.
      */
     public void setIterativeReviewSubmission(Submission iterativeReviewSubmission) {
+        if (iterativeReviewSubmission == null) {
+            return;
+        }
         this.iterativeReviewSubmission = iterativeReviewSubmission;
         Upload upload = iterativeReviewSubmission.getUpload();
         this.iterativeReadyToDownload = upload == null || upload.getUrl() == null || !ActionsHelper.isDmzBucket(upload.getUrl());

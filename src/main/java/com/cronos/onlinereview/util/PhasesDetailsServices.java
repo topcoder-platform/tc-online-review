@@ -1139,22 +1139,24 @@ public final class PhasesDetailsServices {
                     throw new BaseException("Unable to find the Submitter resource "
                             + "associated with the current user for project " + project.getId());
                 }
-
-                Submission[] mySubmissions = ActionsHelper.getResourceSubmissions(myResource.getId(),
-                        Constants.CONTEST_SUBMISSION_TYPE_NAME, null, false);
-                if (mySubmissions != null) {
-                    for (Submission submission : mySubmissions) {
-                        if (submission.getId() == associatedSubmission.getId()) {
-                            phaseGroup.setIterativeReviewSubmission(associatedSubmission);
+                if (associatedSubmission != null) {
+                    Submission[] mySubmissions = ActionsHelper.getResourceSubmissions(myResource.getId(),
+                            Constants.CONTEST_SUBMISSION_TYPE_NAME, null, false);
+                    if (mySubmissions != null) {
+                        for (Submission submission : mySubmissions) {
+                            if (submission.getId() == associatedSubmission.getId()) {
+                                phaseGroup.setIterativeReviewSubmission(associatedSubmission);
+                            }
                         }
                     }
                 }
             }
-
-            for (Resource resource : allProjectResources) {
-                if (resource.getId() == associatedSubmission.getUpload().getOwner()) {
-                    phaseGroup.setIterativeReviewSubmitter(resource);
-                    break;
+            if (associatedSubmission != null) {
+                for (Resource resource : allProjectResources) {
+                    if (resource.getId() == associatedSubmission.getUpload().getOwner()) {
+                        phaseGroup.setIterativeReviewSubmitter(resource);
+                        break;
+                    }
                 }
             }
 
