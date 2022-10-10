@@ -190,7 +190,7 @@ workflows:
           filters: 
             branches:
               only:
-                - dev-maven
+                - [ dev-maven, reskin-or ]
 
       - deployProd:
           context : org-global
