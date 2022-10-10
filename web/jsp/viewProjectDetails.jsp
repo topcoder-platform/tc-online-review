@@ -29,6 +29,7 @@
     <!-- CSS and JS by Petar -->
     <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
     <link type="text/css" rel="stylesheet" href="/css/or/phasetabs.css" />
+
     <script language="JavaScript" type="text/javascript"
         src="/js/or/rollovers2.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript"
@@ -77,50 +78,96 @@
         );
     }
 </script>
+    
+    <!-- Reskin -->
+    <link type="text/css" rel="stylesheet" href="/css/reskin.css">
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function(){
+            let accordion = document.getElementsByClassName("projectDetails__accordion");
+            for (let i = 0; i < accordion.length; i++) {
+                accordion[i].addEventListener("click", function() {
+                    this.classList.toggle("projectDetails__accordion--collapse");
+                    let section = document.getElementsByClassName("projectDetails__sectionBody")[i];
+                    if (section.style.display === "none") {
+                        section.style.display = "block";
+                    } else {
+                        section.style.display = "none";
+                    }
+                });
+            }
+
+            let expand = document.querySelector(".accordionAction__expandAll");
+            expand.addEventListener("click", function() {
+                for (let i = 0; i < accordion.length; i++) {
+                    accordion[i].classList.remove("projectDetails__accordion--collapse");
+                    let section = document.getElementsByClassName("projectDetails__sectionBody")[i];
+                    section.style.display = "block"; 
+                }   
+            });
+
+            let collapse = document.querySelector(".accordionAction__collapseAll");
+            collapse.addEventListener("click", function() {
+                for (let i = 0; i < accordion.length; i++) {
+                    accordion[i].classList.add("projectDetails__accordion--collapse");
+                    let section = document.getElementsByClassName("projectDetails__sectionBody")[i];
+                    section.style.display = "none"; 
+                }   
+            });
+
+            let avatar = document.querySelector('.webHeader__avatar a');
+            let avatarImage = document.createElement('div');
+            avatarImage.className = "webHeader__avatarImage";
+            let twoChar = avatar.text.substring(0, 2);
+            avatarImage.innerText = twoChar;
+            avatar.innerHTML = avatarImage.outerHTML;
+        });
+    </script>
+
 </head>
 
 <body>
-<div align="center">
-    
-    <div class="maxWidthBody" align="left">
 
-        <jsp:include page="/includes/inc_header.jsp" />
-        
-        <jsp:include page="/includes/project/project_tabs.jsp" />
-        
-            <div id="mainMiddleContent">
-                <div style="position: relative; width: 100%;">
-                    <jsp:include page="/includes/project/project_info.jsp" /><br />
-                    <jsp:include page="/includes/project/project_myrole.jsp" />
-                    <jsp:include page="/includes/project/project_timeline.jsp" />
-                    <jsp:include page="/includes/project/project_phase.jsp" />
-                    <jsp:include page="/includes/project/project_detail.jsp" />
-                    <jsp:include page="/includes/project/project_prizes.jsp" />
-                    <jsp:include page="/includes/project/project_resource.jsp" />
-                    <!-- OR Project Linking Assembly -->
-                    <jsp:include page="/includes/project/project_link.jsp" />
-                    <div align="right">
-                        <c:if test="${isAllowedToViewPayments}">
-                            <a href="ViewProjectPayments?pid=${project.id}"><img src="<or:text key='viewProjectDetails.btnPayments.img' />" border="0" alt="<or:text key='viewProjectDetails.btnPayments.alt' />" /></a>&#160;
-                        </c:if>
-                        <c:if test="${requestScope.isAllowedToManageProjects}">
-                            <a href="ViewManagementConsole?pid=${project.id}"><img src="<or:text key='viewProjectDetails.btnManagementConsoleLink.img' />" border="0" alt="<or:text key='viewProjectDetails.btnManagementConsoleLink.alt' />" /></a>&#160;
-                        </c:if>
-                        <c:if test="${isAllowedToEditProjects}">
-                            <a href="EditProjectLinks?pid=${project.id}"><img src="<or:text key='viewProjectDetails.btnEditLink.img' />" border="0" alt="<or:text key='viewProjectDetails.btnEditLink.alt' />" /></a>&#160;
-                        </c:if>
-                        <c:if test="${isAllowedToEditProjects}">
-                            <a href="EditProject?pid=${project.id}"><img src="<or:text key='viewProjectDetails.btnEdit.img' />" border="0" alt="<or:text key='viewProjectDetails.btnEdit.alt' />" /></a>&#160;
-                        </c:if>
-                    </div>
-                </div>
-            </div>
-        
-        <jsp:include page="/includes/inc_footer.jsp" />
+<jsp:include page="/includes/inc_header_reskin.jsp" />
 
+<jsp:include page="/includes/project/project_tabs_reskin.jsp" />
+
+<div class="content">
+    <div class="content__inner">
+        <jsp:include page="/includes/project/project_info_reskin.jsp" />
+        <div class="divider"></div>
+        <div class="accordionAction">
+            <div class="accordionAction__expandAll">Expand All</div>
+            <div class="accordionAction__collapseAll">Collapse All</div>
+        </div>
+        <jsp:include page="/includes/project/project_myrole_reskin.jsp" />
+        <jsp:include page="/includes/project/project_timeline_reskin.jsp" />
+        <jsp:include page="/includes/project/project_phase_reskin.jsp" />
+        <jsp:include page="/includes/project/project_detail_reskin.jsp" />
+        <jsp:include page="/includes/project/project_prizes_reskin.jsp" />
+        <jsp:include page="/includes/project/project_resource_reskin.jsp" />
+        <!-- OR Project Linking Assembly -->
+        <jsp:include page="/includes/project/project_link.jsp" />
     </div>
-
 </div>
+
+<div class="cta">
+    <div class="cta__inner">
+        <c:if test="${isAllowedToViewPayments}">
+            <a href="ViewProjectPayments?pid=${project.id}"><or:text key='viewProjectDetails.btnPayments.alt' /></a>
+        </c:if>
+        <c:if test="${requestScope.isAllowedToManageProjects}">
+            <a href="ViewManagementConsole?pid=${project.id}"><or:text key='viewProjectDetails.btnManagementConsoleLink.alt' /></a>
+        </c:if>
+        <c:if test="${isAllowedToEditProjects}">
+            <a href="EditProjectLinks?pid=${project.id}"><or:text key='viewProjectDetails.btnEditLink.alt' /></a>
+        </c:if>
+        <c:if test="${isAllowedToEditProjects}">
+            <a href="EditProject?pid=${project.id}"><or:text key='viewProjectDetails.btnEdit.alt' /></a>
+        </c:if>
+    </div>
+</div>
+
+<jsp:include page="/includes/inc_footer_reskin.jsp" />
 
 </body>
 </html>
