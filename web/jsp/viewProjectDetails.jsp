@@ -80,7 +80,7 @@
 </script>
     
     <!-- Reskin -->
-    <link type="text/css" rel="stylesheet" href="/css/reskin.css">
+    <link type="text/css" rel="stylesheet" href="/css/reskin-or/reskin.css">
     <script type="text/javascript">
         function updateForumLink(projectId) {
             return fetch("https://api.topcoder.com/v5/challenges?legacyId=" + projectId)
