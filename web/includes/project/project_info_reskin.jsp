@@ -27,7 +27,7 @@
             <!-- <a class="projectInfo__link" href="<or:url value='/actions/ViewLateDeliverables?project_id=${project.id}' />"><or:text key="viewProjectDetails.LateDeliverables" /></a> -->
             <a class="projectInfo__link"
                 href="${viewContestLink}"><or:text key="viewProjectDetails.ViewContest" /></a>
-            <a class="projectInfo__link"
+            <a class="projectInfo__link projectInfo__forumLink"
                 href="${forumLink}"><or:text key="viewProjectDetails.DevelopmentForum" /></a>
             <c:if test="${isAllowedToContactPM}">
                 <a class="projectInfo__link" href="<or:url value='/actions/ContactManager?pid=${project.id}' />"><or:text key="viewProjectDetails.ContactPM" /></a>

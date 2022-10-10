@@ -82,7 +82,22 @@
     <!-- Reskin -->
     <link type="text/css" rel="stylesheet" href="/css/reskin.css">
     <script type="text/javascript">
+        function updateForumLink(projectId) {
+            return fetch("https://api.topcoder.com/v5/challenges?legacyId=" + projectId)
+                .then((response) => response.json())
+                .then((data) => data?.[0]?.discussions?.[0]?.url)
+                .then((forumLink) => {
+                    if (forumLink !== undefined) {
+                        let forumLinkEl = document.querySelector('.projectInfo__forumLink');
+                        return forumLinkEl.href = forumLink;
+                    }
+                });
+        }
+
         document.addEventListener("DOMContentLoaded", function(){
+            let projectId = ${project.id};
+            updateForumLink(projectId);
+
             let accordion = document.getElementsByClassName("projectDetails__accordion");
             for (let i = 0; i < accordion.length; i++) {
                 accordion[i].addEventListener("click", function() {
