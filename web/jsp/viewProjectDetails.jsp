@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
+<%@ page import="java.text.DecimalFormat,com.topcoder.onlinereview.component.webcommon.ApplicationServer" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
@@ -83,13 +84,14 @@
     <link type="text/css" rel="stylesheet" href="/css/reskin-or/reskin.css">
     <script type="text/javascript">
         function updateForumLink(projectId) {
-            return fetch("https://api.topcoder.com/v5/challenges?legacyId=" + projectId)
+            return fetch("<%=com.cronos.onlinereview.util.ConfigHelper.getChallengeByLegacyIdUrlV5()%>" + projectId)
                 .then((response) => response.json())
-                .then((data) => data?.[0]?.discussions?.[0]?.url)
-                .then((forumLink) => {
-                    if (forumLink !== undefined) {
+                .then((data) => {
+                    let with_forum = data.filter(item => 'discussions' in item);
+                    let id = with_forum?.[0]?.id;
+                    if (id !== undefined) {
                         let forumLinkEl = document.querySelector('.projectInfo__forumLink');
-                        return forumLinkEl.href = forumLink;
+                        return forumLinkEl.href = "https://<%=ApplicationServer.FORUMS_SERVER_NAME%>/categories/" + id;
                     }
                 });
         }

@@ -589,6 +589,11 @@ public class ConfigHelper {
     private static final String VALID_ISSUERS = "valid_issuers";
 
     /**
+     * <p>A <code>String</code> providing the name for challenge by legacy id v5 url property.</p>
+     */
+    private static final String CHALLENGE_BY_LEGACY_ID_URL_V5 = "challenge_by_legacy_id_url_v5";
+
+    /**
      * This member variable holds the submitter role id.
      */
     private static int submitterRoleId = 1;
@@ -1058,6 +1063,11 @@ public class ConfigHelper {
      * New Auth URL for Iframe to refresh the RS256 token
      */
     private static String newAuthUrl;
+
+    /**
+     * Challenge by Legacy Id URL
+     */
+    private static String challengeByLegacyIdUrlV5;
 
     static {
         // Obtaining the instance of Configuration Manager
@@ -1685,6 +1695,7 @@ public class ConfigHelper {
             ConfigManager.Property newAuth = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "new_auth");
             newAuthUrl = newAuth.getValue("new_auth_url");
 
+            challengeByLegacyIdUrlV5 = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, CHALLENGE_BY_LEGACY_ID_URL_V5);
         } catch (Exception une) {
             System.out.println(une.getMessage());
             une.printStackTrace();
@@ -2566,5 +2577,13 @@ public class ConfigHelper {
      */
     public static String getNewAuthUrl() {
         return newAuthUrl;
+    }
+
+    /**
+     * Get challenge by legacy id url
+     * @return url 
+     */
+    public static String getChallengeByLegacyIdUrlV5() {
+        return challengeByLegacyIdUrlV5;
     }
 }
