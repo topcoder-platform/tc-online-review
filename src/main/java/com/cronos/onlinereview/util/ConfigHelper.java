@@ -1058,7 +1058,7 @@ public class ConfigHelper {
      * JWT default expiration time (1 day)
      */
     private static final int DEFAULT_EXPIRATION_TIME = 60 * 24;
-
+    
     /**
      * New Auth URL for Iframe to refresh the RS256 token
      */
@@ -1691,7 +1691,7 @@ public class ConfigHelper {
             } catch (Exception e) {
                 preSignedExpTimeMilis = 60 * 60 * 1000;
             }
-
+	    
             ConfigManager.Property newAuth = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "new_auth");
             newAuthUrl = newAuth.getValue("new_auth_url");
 
@@ -2570,10 +2570,10 @@ public class ConfigHelper {
     public static long getPreSignedExpTimeMilis() {
         return preSignedExpTimeMilis;
     }
-
+    
     /**
-     * Get new auth url
-     * @return url
+     * Get new auth url 
+     * @return url 
      */
     public static String getNewAuthUrl() {
         return newAuthUrl;
@@ -2581,7 +2581,7 @@ public class ConfigHelper {
 
     /**
      * Get challenge by legacy id url
-     * @return url
+     * @return url 
      */
     public static String getChallengeByLegacyIdUrlV5() {
         return challengeByLegacyIdUrlV5;
