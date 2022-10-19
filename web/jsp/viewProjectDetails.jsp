@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
+<%@ page import="java.text.DecimalFormat,com.topcoder.onlinereview.component.webcommon.ApplicationServer" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
@@ -77,17 +78,36 @@
         );
     }
 </script>
+    <script type="text/javascript">
+        function updateForumLink(projectId) {
+            return fetch("<%=com.cronos.onlinereview.util.ConfigHelper.getChallengeByLegacyIdUrlV5()%>" + projectId)
+                .then((response) => response.json())
+                .then((data) => {
+                    let with_forum = data.filter(item => 'discussions' in item);
+                    let id = with_forum?.[0]?.id;
+                    if (id !== undefined) {
+                        let forumLinkEl = document.querySelector('.projectInfo__forumLink');
+                        return forumLinkEl.href = "https://<%=ApplicationServer.FORUMS_SERVER_NAME%>/categories/" + id;
+                    }
+                });
+        }
+
+        document.addEventListener("DOMContentLoaded", function(){
+            let projectId = ${project.id};
+            updateForumLink(projectId);
+        });
+    </script>
 </head>
 
 <body>
 <div align="center">
-    
+
     <div class="maxWidthBody" align="left">
 
         <jsp:include page="/includes/inc_header.jsp" />
-        
+
         <jsp:include page="/includes/project/project_tabs.jsp" />
-        
+
             <div id="mainMiddleContent">
                 <div style="position: relative; width: 100%;">
                     <jsp:include page="/includes/project/project_info.jsp" /><br />
@@ -115,7 +135,7 @@
                     </div>
                 </div>
             </div>
-        
+
         <jsp:include page="/includes/inc_footer.jsp" />
 
     </div>
