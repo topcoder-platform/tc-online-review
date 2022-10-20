@@ -918,7 +918,7 @@
             <Value>20</Value> <!-- Checkpoint Reviewer -->
             <Value>21</Value> <!-- Iterative Reviewer -->
         </Property>
-        <Property name="Managers/Copilots/Observers">
+        <Property name="Managers, Copilots &amp; Observers">
             <Value>13</Value> <!-- Manager -->
             <Value>1003</Value> <!-- Payment Manager -->
             <Value>15</Value> <!-- Client Manager -->

@@ -17,7 +17,7 @@
 <div class="projectDetails">
     <div class="projectDetails__sectionHeader">
         <div class="projectDetails__title">
-            <or:text key="editProject.ProjectDetails.ContestPrizes" />
+            Prizes
         </div>
         <div class="projectDetails__accordion">
         </div>
@@ -31,52 +31,48 @@
             <div class="projectDetails__tab"><a onclick="return showPrizeTab('checkpoint-prizes-table', this);" href="javascript:void(0)"><or:text key="editProject.ProjectDetails.CheckpointPrizes" /></a></div>
         </div>
   
-        <table id="contest-prizes-table" class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
-            <tr>
-                <td class="title" colspan="3"><or:text key="editProject.ProjectDetails.ContestPrizes" /></td>
-            </tr>
-            <tr>
-                <td class="header"><or:text key="editProject.ProjectDetails.Prize.Place" /></td>
-                <td class="header"><or:text key="editProject.ProjectDetails.Prize.Amount" /></td>
-                <td class="header"><or:text key="editProject.ProjectDetails.Prize.NoOfPrizes" /></td>
-            </tr>
+        <table id="contest-prizes-table" class="prizesTable" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+            <thead class="prizesTable__header">
+                <tr>
+                    <th><or:text key="editProject.ProjectDetails.Prize.Place" /></th>
+                    <th><or:text key="editProject.ProjectDetails.Prize.Amount" /></th>
+                    <th><or:text key="editProject.ProjectDetails.Prize.NoOfPrizes" /></th>
+                </tr>
+            </thead>
+            <tbody class="prizesTable__body">
             <c:forEach items="${contestPrizes}" var="prize" varStatus="vs">
-                <tr <c:if test="${vs.index % 2 eq 0}">class="light"</c:if> <c:if test="${vs.index % 2 eq 1}">class="dark"</c:if> >
-                    <td class="value">${vs.count}</td>
-                    <td class="value" nowrap="nowrap">${"$"}${orfn:displayPaymentAmt(pageContext.request, prize.prizeAmount)}</td>
-                    <td class="value" nowrap="nowrap">${prize.numberOfSubmissions}</td>
+                <tr>
+                    <td>${vs.count}</td>
+                    <td nowrap="nowrap">${"$"}${orfn:displayPaymentAmt(pageContext.request, prize.prizeAmount)}</td>
+                    <td nowrap="nowrap">${prize.numberOfSubmissions}</td>
                 </tr>
             </c:forEach>
             <c:if test="${fn:length(contestPrizes) eq 0}">
-                <tr class="light"><td class="value" nowrap="nowrap" colspan="3">There are no prizes.</td></tr>
+                <tr><td nowrap="nowrap" colspan="3">There are no prizes.</td></tr>
             </c:if>
-            <tr>
-                <td class="lastRowTD" colspan="3"><!-- @ --></td>
-            </tr>
+            </tbody>
         </table>
 
-        <table id="checkpoint-prizes-table" class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;display: none">
-            <tr>
-                <td class="title" colspan="3"><or:text key="editProject.ProjectDetails.CheckpointPrizes" /></td>
-            </tr>
-            <tr>
-                <td class="header"><or:text key="editProject.ProjectDetails.Prize.Place" /></td>
-                <td class="header"><or:text key="editProject.ProjectDetails.Prize.Amount" /></td>
-                <td class="header"><or:text key="editProject.ProjectDetails.Prize.NoOfPrizes" /></td>
-            </tr>
+        <table id="checkpoint-prizes-table" class="prizesTable" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;display: none">
+            <thead class="prizesTable__header">
+                <tr>
+                    <th><or:text key="editProject.ProjectDetails.Prize.Place" /></th>
+                    <th><or:text key="editProject.ProjectDetails.Prize.Amount" /></th>
+                    <th><or:text key="editProject.ProjectDetails.Prize.NoOfPrizes" /></th>
+                </tr>
+            </thead>
+            <tbody class="prizesTable__body">
             <c:forEach items="${checkpointPrizes}" var="prize" varStatus="vs">
-                <tr <c:if test="${vs.index % 2 eq 0}">class="light"</c:if> <c:if test="${vs.index % 2 eq 1}">class="dark"</c:if> >
-                    <td class="value">${vs.count}</td>
-                    <td class="value" nowrap="nowrap">${"$"}${orfn:displayPaymentAmt(pageContext.request, prize.prizeAmount)}</td>
-                    <td class="value" nowrap="nowrap">${prize.numberOfSubmissions}</td>
+                <tr>
+                    <td>${vs.count}</td>
+                    <td nowrap="nowrap">${"$"}${orfn:displayPaymentAmt(pageContext.request, prize.prizeAmount)}</td>
+                    <td nowrap="nowrap">${prize.numberOfSubmissions}</td>
                 </tr>
             </c:forEach>
             <c:if test="${fn:length(checkpointPrizes) eq 0}">
-                <tr class="light"><td class="value" nowrap="nowrap" colspan="3">There are no prizes.</td></tr>
+                <tr><td nowrap="nowrap" colspan="3">There are no prizes.</td></tr>
             </c:if>
-            <tr>
-                <td class="lastRowTD" colspan="3"><!-- @ --></td>
-            </tr>
+            </tbody>
         </table>
     </div>
 
