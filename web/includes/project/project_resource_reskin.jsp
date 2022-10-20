@@ -26,46 +26,44 @@
                 </c:forEach>
             </div>
 
-            <table id="resources" class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
-                <tr>
-                    <td class="title" colspan='${(isAllowedToViewAllPayment) ? "5" : "4"}'><or:text key="viewProjectDetails.box.Resources" /></td>
-                </tr>
-                <tr>
-                    <td class="header"><or:text key="viewProjectDetails.Resource.Role" /></td>
-                    <td class="header"><or:text key="viewProjectDetails.Resource.Handle" /></td>
-                    <td class="header"><or:text key="viewProjectDetails.Resource.Email" /></td>
-                    <c:if test="${isAllowedToViewAllPayment}">
-                        <td class="header" nowrap="nowrap"><or:text key="viewProjectDetails.Resource.Payment" /></td>
-                    </c:if>
-                    <td class="headerC" nowrap="nowrap"><or:text key="viewProjectDetails.Resource.RegistrationDate" /></td>
-                </tr>
+            <table class="resourcesTable" id="resources" width="100%" cellpadding="0" cellspacing="0">
+                <thead class="resourcesTable__header">
+                    <tr>
+                        <th><or:text key="viewProjectDetails.Resource.Role" /></th>
+                        <th><or:text key="viewProjectDetails.Resource.Handle" /></th>
+                        <th><or:text key="viewProjectDetails.Resource.Email" /></th>
+                        <c:if test="${isAllowedToViewAllPayment}">
+                            <th><or:text key="viewProjectDetails.Resource.Payment" /></th>
+                        </c:if>
+                        <th><or:text key="viewProjectDetails.Resource.RegistrationDate" /></th>
+                    </tr>
+                </thead>
+                <tbody class="resourcesTable__body">
                 <c:forEach items="${resources}" var="resource" varStatus="idxrResource">
-                    <tr class='${(idxrResource.index % 2 == 0) ? "light" : "dark"}' rel="${resource.resourceRole.id}">
-                        <td class="value" nowrap="nowrap"><or:text key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}.bold' /></td>
-                        <td class="value" nowrap="nowrap">
+                    <tr rel="${resource.resourceRole.id}">
+                        <td nowrap="nowrap"><or:text key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}' /></td>
+                        <td nowrap="nowrap">
                             <tc-webtag:handle coderId="${users[idxrResource.index].id}" context="${orfn:getHandlerContext(pageContext.request)}" />
                         </td>
-                                        <td class="value" nowrap="nowrap"> <a href="mailto:${users[idxrResource.index].email}">${users[idxrResource.index].email}</a> </td>
+                                        <td nowrap="nowrap"> <a href="mailto:${users[idxrResource.index].email}">${users[idxrResource.index].email}</a> </td>
                         <c:if test="${isAllowedToViewAllPayment}">
                             <c:choose>
                                 <c:when test='${not empty resourcePaymentsAmount[resource.id]}'>
-                                    <td class="value" nowrap="nowrap">${"$"}${orfn:displayPaymentAmt(pageContext.request, resourcePaymentsAmount[resource.id])}</td>
+                                    <td nowrap="nowrap">${"$"}${orfn:displayPaymentAmt(pageContext.request, resourcePaymentsAmount[resource.id])}</td>
                                 </c:when>
                                 <c:otherwise>
-                                    <td class="value" nowrap="nowrap"><or:text key="NotAvailable" /></td>
+                                    <td nowrap="nowrap"><or:text key="NotAvailable" /></td>
                                 </c:otherwise>
                             </c:choose>
                         </c:if>
-                        <td class="valueC" nowrap="nowrap">
+                        <td nowrap="nowrap">
                             <fmt:parseDate pattern="MM.dd.yyyy hh:mm a" parseLocale="en_US" value="${resource.allProperties['Registration Date']}"
                             var="registrationDate"/>
                             <fmt:formatDate pattern="MM.dd.yyyy HH:mm z" value="${registrationDate}"/>
                         </td>
                     </tr>
                 </c:forEach>
-                <tr>
-                    <td class="lastRowTD" colspan='${(isAllowedToViewAllPayment) ? "5" : "4"}'><!-- @ --></td>
-                </tr>
+                </tbody>
             </table>
         </div>
     </div>
@@ -107,7 +105,6 @@
                         trs[i].style.display = "none";
                     } else {
                         trs[i].style.display = "";
-                        trs[i].className = (tot % 2 == 0) ? "light" : "dark";
                         tot++;
                     }
                 }
