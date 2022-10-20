@@ -2092,4 +2092,7 @@
     <Property name="ApprovalPhaseDefaultReviewersNumber">
         <Value>1</Value>
     </Property>
+    <Property name="challenge_by_legacy_id_url_v5">
+        <Value>@topcoder_api_base_url_v5@/challenges?legacyId=</Value>
+    </Property>
 </Config>
