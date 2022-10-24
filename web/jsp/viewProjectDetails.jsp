@@ -150,18 +150,18 @@
 
 <div class="content">
     <div class="content__inner">
-        <jsp:include page="/includes/project/project_info_reskin.jsp" />
+        <jsp:include page="/includes/project/project_info.jsp" />
         <div class="divider"></div>
         <div class="accordionAction">
             <div class="accordionAction__expandAll">Expand All</div>
             <div class="accordionAction__collapseAll">Collapse All</div>
         </div>
-        <jsp:include page="/includes/project/project_myrole_reskin.jsp" />
-        <jsp:include page="/includes/project/project_timeline_reskin.jsp" />
-        <jsp:include page="/includes/project/project_phase_reskin.jsp" />
-        <jsp:include page="/includes/project/project_detail_reskin.jsp" />
-        <jsp:include page="/includes/project/project_prizes_reskin.jsp" />
-        <jsp:include page="/includes/project/project_resource_reskin.jsp" />
+        <jsp:include page="/includes/project/project_myrole.jsp" />
+        <jsp:include page="/includes/project/project_timeline.jsp" />
+        <jsp:include page="/includes/project/project_phase.jsp" />
+        <jsp:include page="/includes/project/project_detail.jsp" />
+        <jsp:include page="/includes/project/project_prizes.jsp" />
+        <jsp:include page="/includes/project/project_resource.jsp" />
         <!-- OR Project Linking Assembly -->
         <jsp:include page="/includes/project/project_link.jsp" />
     </div>
