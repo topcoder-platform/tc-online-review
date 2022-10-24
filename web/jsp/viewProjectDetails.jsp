@@ -79,7 +79,7 @@
         );
     }
 </script>
-    
+
     <!-- Reskin -->
     <link type="text/css" rel="stylesheet" href="/css/reskin-or/reskin.css">
     <script type="text/javascript">
@@ -118,8 +118,8 @@
                 for (let i = 0; i < accordion.length; i++) {
                     accordion[i].classList.remove("projectDetails__accordion--collapse");
                     let section = document.getElementsByClassName("projectDetails__sectionBody")[i];
-                    section.style.display = "block"; 
-                }   
+                    section.style.display = "block";
+                }
             });
 
             let collapse = document.querySelector(".accordionAction__collapseAll");
@@ -127,8 +127,8 @@
                 for (let i = 0; i < accordion.length; i++) {
                     accordion[i].classList.add("projectDetails__accordion--collapse");
                     let section = document.getElementsByClassName("projectDetails__sectionBody")[i];
-                    section.style.display = "none"; 
-                }   
+                    section.style.display = "none";
+                }
             });
 
             let avatar = document.querySelector('.webHeader__avatar a');
@@ -143,8 +143,9 @@
 </head>
 
 <body>
+<div align="center">
 
-<jsp:include page="/includes/inc_header_reskin.jsp" />
+    <div class="maxWidthBody" align="left">
 
 <jsp:include page="/includes/project/project_tabs_reskin.jsp" />
 

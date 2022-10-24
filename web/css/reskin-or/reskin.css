@@ -551,7 +551,7 @@ body {
 .phasesTable__header th:first-child,
 .prizesTable__header th:first-child,
 .resourcesTable__header th:first-child {
-    border-top-left-radius: 8px; 
+    border-top-left-radius: 8px;
 }
 
 .myInfoTable__header th:last-child,
