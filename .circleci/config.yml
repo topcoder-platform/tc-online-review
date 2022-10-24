@@ -190,7 +190,7 @@ workflows:
           filters: 
             branches:
               only:
-                - reskin-or
+                - temp-part-2
 
       - deployProd:
           context : org-global
