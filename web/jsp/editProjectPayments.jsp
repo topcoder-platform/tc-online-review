@@ -134,7 +134,7 @@
 
                     <br/>
                     <div align="right">
-                        <input type="image" src="<or:text key='btnSaveChanges.img' />" border="0" alt="<or:text key='btnSaveChanges.alt' />" />&#160;
+                        <input type="image" id="saveChanges" src="<or:text key='btnSaveChanges.img' />" border="0" alt="<or:text key='btnSaveChanges.alt' />" />&#160;
                         <a href="ViewProjectPayments?pid=${project.id}"><img src="<or:text key='btnCancel.img' />" border="0" alt="<or:text key='btnCancel.alt' />" /></a>
                     </div>
                 </s:form>
@@ -146,4 +146,10 @@
     </div>
 
     </body>
+    <script type="text/javascript">
+    var form = document.querySelector('form');
+    form.addEventListener('submit', function() {
+        document.getElementById("saveChanges").disabled = true;
+    }, false);
+</script>
 </html>
