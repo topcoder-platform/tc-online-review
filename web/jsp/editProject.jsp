@@ -1464,11 +1464,11 @@
 
                         <div align="right">
                             <c:if test="${newProject}">
-                                <input type="image"  src="<or:text key='btnSave.img' />" alt="<or:text key='btnSave.alt' />" border="0" />&#160;
+                                <input type="image" id="saveChanges" src="<or:text key='btnSave.img' />" alt="<or:text key='btnSave.alt' />" border="0" />&#160;
                                 <a href="<or:url value='/actions/ListProjects?scope=my' />"><img src="<or:text key='btnCancel.img' />" alt="<or:text key='btnCancel.alt' />" border="0" /></a>
                             </c:if>
                             <c:if test="${not newProject}">
-                                <input type="image"  src="<or:text key='btnSaveChanges.img' />" alt="<or:text key='btnSaveChanges.alt' />" border="0"/>&#160;
+                                <input type="image" id="saveChanges" src="<or:text key='btnSaveChanges.img' />" alt="<or:text key='btnSaveChanges.alt' />" border="0"/>&#160;
                                 <a href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />"><img src="<or:text key='btnCancel.img' />" alt="<or:text key='btnCancel.alt' />" border="0"/></a>
                             </c:if>
                         </div>
@@ -1487,5 +1487,9 @@
     disableSelect("contest_prizes_num_dump[", !studio, canEditContestPrize);
     disableSelect("checkpoint_prizes_num[", false, canEditCheckpointPrize);
     disableSelect("checkpoint_prizes_num_dump[", false, canEditCheckpointPrize);
+    var form = document.querySelector('form');
+    form.addEventListener('submit', function() {
+        document.getElementById("saveChanges").disabled = true;
+    }, false);
 </script>
 </html>

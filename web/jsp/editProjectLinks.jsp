@@ -39,9 +39,9 @@
         function initParameters() {
              // Initiates the lastLinkIndex
            lastLinkIndex = ${fn:length(projectLinkForm.map['link_dest_id']) - 1};
-           
+
            // Initiates all possible options
-           projectOptions = new Array();        
+           projectOptions = new Array();
            // Initiates option values
            projectOptions.push(new Option('${orfn:getMessage(pageContext, "editProjectLinks.projectTypes.SelectProject")}','-1'));
          <c:forEach items="${allProjects}" var="projectElement">
@@ -52,7 +52,7 @@
             </c:if>
          </c:forEach>
 
-      }        
+      }
 
       /**
        * Callback function. It is called after page loading.
@@ -61,7 +61,7 @@
                initParameters();
 
              // reset drop downs
-             resetDropDowns();        
+             resetDropDowns();
         }
     </script>
 
@@ -75,10 +75,10 @@
 
         <div id="mainMiddleContent">
            <div class="clearfix"></div>
-           <div id="tabcontentcontainer">     
+           <div id="tabcontentcontainer">
                 <s:form action="SaveProjectLinks" onsubmit="return validate_form(this, true);" namespace="/actions">
                  <input type="hidden" name="pid"  value="<or:fieldvalue field='pid' />" />
-                         
+
               <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
                   <table cellpadding="0" cellspacing="0" border="0">
                       <tr><td width="16"><!-- @ --></td><td><!-- @ --></td></tr>
@@ -88,7 +88,7 @@
                       <s:actionerror escape="false" />
                   </table><br />
               </c:if>
-                         
+
               <div id="contentTitle">
                     <h3>${project.allProperties["Project Name"]} version ${project.allProperties["Project Version"]} - Manage Project Links</h3>
               </div>
@@ -102,16 +102,16 @@
                             <tr>
                                 <td class="header"><or:text key="editProjectLinks.editLink.LinkType" /></td>
                                 <td class="header"><or:text key="editProjectLinks.editLink.SelectProject" /></td>
-                                
+
                                 <td class="header"><or:text key="editProjectLinks.editLink.Operation" /></td>
                             </tr>
                             <c:forEach var="linkIdx" varStatus="linkStatus" begin="0" end="${fn:length(projectLinkForm.map['link_dest_id']) - 1}">
                             <tr class='${(linkStatus.index % 2 == 0) ? "light" : "dark"}'>
                                 <td nowrap="nowrap" class="value">
-                                <select class="inputBox" name="link_type_id[${linkIdx}]" 
+                                <select class="inputBox" name="link_type_id[${linkIdx}]"
                                                onchange="onLinkTypeDropDownChange(this);"><c:set var="OR_FIELD_TO_SELECT" value="link_type_id[${linkIdx}]"/>
                                      <option  value="-1"  <or:selected value="-1"/>><or:text key="editProjectLinks.projectTypes.SelectType" /></option>
-                                  <c:forEach items="${projectLinkTypes}" var="projectLinkType">                                                                    
+                                  <c:forEach items="${projectLinkTypes}" var="projectLinkType">
                                          <option value="${projectLinkType.id}" <or:selected value="${projectLinkType.id}"/>>${projectLinkType.name}</option>
                                   </c:forEach>
                                 </select>
@@ -127,9 +127,9 @@
                                 </c:if>
                           </c:forEach>
                                </select>
-                               <div name="project_link_validation_msg" class="error" style="display:none"></div>                                        
+                               <div name="project_link_validation_msg" class="error" style="display:none"></div>
                                 </td>
-                                
+
                                 <td nowrap="nowrap" class="value" align="center">
                                     <c:if test="${linkIdx eq 0}">
                                     <img src="<or:text key='editProjectLinks.btnAdd.img' />" border="0"
@@ -153,17 +153,25 @@
                     </div>
 
              <div class="bottomButtonBar">
-                  <input type="image"  src="<or:text key='btnSaveChanges.img' />" alt="<or:text key='btnSaveChanges.alt' />" border="0"/>&#160;
+                  <input type="image" id="saveChanges" src="<or:text key='btnSaveChanges.img' />" alt="<or:text key='btnSaveChanges.alt' />" border="0"/>&#160;
                   <a href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />"><img src="<or:text key='btnCancel.img' />" alt="<or:text key='btnCancel.alt' />" border="0"/></a>
              </div>
-                 </s:form>    
+                 </s:form>
            </div> <!-- //tabconentcontainer -->
         </div><!-- //mainMiddleContent -->
-            
-        <jsp:include page="/includes/inc_footer.jsp" />  
-              
+
+
+        <jsp:include page="/includes/inc_footer.jsp" />
+
+
      </div><!-- //maxWidthBody -->
-</div>      
-</body>     
-            
-</html> 
+</div>
+
+</body>
+<script type="text/javascript">
+    var form = document.querySelector('form');
+    form.addEventListener('submit', function() {
+        document.getElementById("saveChanges").disabled = true;
+    }, false);
+</script>
+</html>

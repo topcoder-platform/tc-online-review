@@ -52,14 +52,14 @@
 
             <div id="mainMiddleContent">
                 <div class="clearfix"></div>
-                
+
                 <div id="titlecontainer">
                     <div id="contentTitle">
                         <h3>${project.allProperties["Project Name"]}
                             version ${project.allProperties["Project Version"]} - Manage Project</h3>
                     </div>
                 </div>
-                                
+
                 <div id="tabcontentcontainer">
                     <div id="sc1" style='display:${((empty param.activeTabIdx) || (param.activeTabIdx == 1)) ? "block" : "none"};'>
                         <ul id="tablist">
@@ -96,10 +96,10 @@
                                     <br/>
                                 </c:if>
                             </c:if>
-                                
+
                             <s:form action="ManageProject" namespace="/actions">
                                 <input type="hidden" name="pid" value="${project.id}" />
-        
+
                                 <div id="tabNewLinks">
                                     <%-- Extend Registration Phase area --%>
                                     <table class="scorecard" id="reg_phase_tbl" cellpadding="0" width="100%"
@@ -190,7 +190,7 @@
                                                 <td class="lastRowTD" colspan="2"><!-- @ --></td>
                                             </tr>
                                         </table>
-        
+
                                     <%-- Add Resources area --%>
                                     <table class="scorecard" id="resources_tbl" cellpadding="0" width="100%"
                                            style="border-collapse: collapse;">
@@ -201,7 +201,7 @@
                                             <td class="header"><or:text key="manageProject.Resources.Role"/></td>
                                             <td class="header"><or:text key="manageProject.Resources.Handles"/></td>
                                         </tr>
-        
+
                                         <c:forEach items="${requestScope.availableRoles}" var="role" varStatus="index">
                                             <tr class="${(index.index % 2 == 0) ? 'light' : 'dark'}">
                                                 <td class="value">
@@ -220,15 +220,15 @@
                                                 </td>
                                             </tr>
                                         </c:forEach>
-        
+
                                         <tr>
                                             <td class="lastRowTD" colspan="2"><!-- @ --></td>
                                         </tr>
                                     </table><br />
                                 </div>
-        
+
                                 <div align="right">
-                                    <input type="image"  src="<or:text key='btnSaveChanges.img' />" alt="<or:text key='btnSaveChanges.alt' />" border="0"/>&#160;
+                                    <input type="image" id="saveChanges" src="<or:text key='btnSaveChanges.img' />" alt="<or:text key='btnSaveChanges.alt' />" border="0"/>&#160;
                                     <a href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />"><img
                                             src="<or:text key='btnCancel.img' />" alt="<or:text key='btnCancel.alt' />" border="0"/></a>
                                             &nbsp;
@@ -241,7 +241,7 @@
                         </tr>
                         </table>
                     </div>
-                    <%-- Design or Development only --%> 
+                    <%-- Design or Development only --%>
                     <c:if test="${((project.projectCategory.id == 1) || (project.projectCategory.id == 2))}">
                         <div id="sc2" style='display:${(param.activeTabIdx == 2) ? "block" : "none"};'>
                             <ul id="tablist">
@@ -281,13 +281,13 @@
                                         <br/>
                                     </c:if>
                                 </c:if>
-                            
+
                                 <%-- Create Design Distribution --%>
                                 <s:form action="ManageDistribution?activeTabIdx=2" method="POST" enctype="multipart/form-data" namespace="/actions">
-                                
+
                                 <input type="hidden" name="postBack" value="y" />
                                 <input type="hidden" name="pid" value="${project.id}" />
-                                
+
                                 <table class="scorecard" id="distribution_tbl" cellpadding="0" width="100%"
                                        style="border-collapse: collapse;">
                                     <tr>
@@ -300,7 +300,7 @@
                                             <or:text key="manageProject.Distributions.packagename"/>&nbsp;
                                                <c:if test="${needsPackageName == true}">
                                                 <or:text key="global.required.paren"/>
-                                            </c:if>   
+                                            </c:if>
                                         </td>
                                         <td class="value" width="75%">
                                             <input type="text" class="inputBox" name="distribution_package_name" value="<or:fieldvalue field='distribution_package_name' />" />
@@ -334,7 +334,7 @@
                                                     <s:fielderror escape="false"><s:param>distribution_additional1</s:param></s:fielderror>
                                                 </div>
                                             </td>
-                                            <td>  
+                                            <td>
                                                    <img src="<or:text key='btnClear.img' />" alt="<or:text key='btnClear.alt' />" onclick="javascript:clearFileInputField('additionalFile1')" />
                                                </td>
                                                </tr>
@@ -354,7 +354,7 @@
                                                        <s:fielderror escape="false"><s:param>distribution_additional2</s:param></s:fielderror>
                                                    </div>
                                                </td>
-                                               <td>  
+                                               <td>
                                                    <img src="<or:text key='btnClear.img' />" alt="<or:text key='btnClear.alt' />" onclick="javascript:clearFileInputField('additionalFile2')" />
                                                </td>
                                                </tr>
@@ -374,13 +374,13 @@
                                                        <s:fielderror escape="false"><s:param>distribution_additional3</s:param></s:fielderror>
                                                    </div>
                                                </td>
-                                               <td>  
+                                               <td>
                                                    <img src="<or:text key='btnClear.img' />" alt="<or:text key='btnClear.alt' />" onclick="javascript:clearFileInputField('additionalFile3')" />
                                                </td>
                                                </tr>
                                                </table>
                                         </td>
-                                    </tr>                                                                                                
+                                    </tr>
                                     <tr class="dark">
                                         <td class="value" colspan="2">
                                             <c:choose>
@@ -400,7 +400,7 @@
                                     </tr>
                                     <tr class="light">
                                         <td class="value" colspan="2">
-                                            <input type="checkbox" name="return_distribution" id="returnDistribution" <or:checked name='return_distribution' value='on|yes|true' def="false"/> /> 
+                                            <input type="checkbox" name="return_distribution" id="returnDistribution" <or:checked name='return_distribution' value='on|yes|true' def="false"/> />
                                             <input type="hidden" name="return_distribution" value="false" />
                                             <label for="returnDistribution"><or:text key="manageProject.Distributions.Return_distribution" /></label>
                                             <div class="error">
@@ -418,7 +418,7 @@
                                     </tr>
                                 </table>
                                 </s:form>
-                                
+
                                 <%-- Upload Distribution --%>
                                 <s:form action="UploadDistribution?activeTabIdx=2" method="POST" enctype="multipart/form-data" namespace="/actions">
                                 <input type="hidden" name="postBack" value="y" />
@@ -433,7 +433,7 @@
                                                 </c:when>
                                                 <c:otherwise>
                                                     <or:text key="manageProject.Distributions.Upload.Development.title"/>
-                                                </c:otherwise>                                                
+                                                </c:otherwise>
                                             </c:choose>
                                         </td>
                                     </tr>
@@ -474,7 +474,7 @@
                         <li><a href="javascript:void(0)"
                                onClick="return activateTab('sc1', this)"><or:text
                                 key="manageProject.TimelineResources.title"/></a></li>
-                        <c:if test="${((project.projectCategory.id == 1) || (project.projectCategory.id == 2))}"> 
+                        <c:if test="${((project.projectCategory.id == 1) || (project.projectCategory.id == 2))}">
                         <%-- Only show the tab for design and development --%>
                             <li><a href="javascript:void(0)"
                                    onClick="return activateTab('sc2', this)"><or:text
@@ -490,7 +490,7 @@
                     <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
                     <tr class="light">
                     <td>
-                    
+
                         <c:choose>
                             <c:when test="${not toEdit and not empty feedback}">
                                 <%-- If any feedback already exist then just display the existing feedback --%>
@@ -564,7 +564,7 @@
                                 </div>
                             </c:when>
                             <c:otherwise>
-                                <%-- Otherwise since there are no feedbacks yet then display the form for submitting 
+                                <%-- Otherwise since there are no feedbacks yet then display the form for submitting
                                 feedbacks --%>
                                 <c:if test="${param.activeTabIdx == 3}">
                                     <%-- Validation errors area --%>
@@ -629,7 +629,7 @@
                                                     <input type="radio" name="reviewerScore[${resourceIdx}]" value="2" <c:if test="${unavailable}">disabled="disabled" </c:if>  <or:checked name='reviewerScore[${resourceIdx}]' value='2' />/>
                                                 </td>
                                                 <td class="value ffednack-text-wrapper">
-                                                    <textarea name="reviewerFeedback[${resourceIdx}]" rows="3" 
+                                                    <textarea name="reviewerFeedback[${resourceIdx}]" rows="3"
                                                                    class="feedback-text" <c:if test="${unavailable}">disabled="disabled" </c:if> ><or:fieldvalue field="reviewerFeedback[${resourceIdx}]" /></textarea>
                                                     <div class="error">
                                                         <s:fielderror escape="false"><s:param>reviewerFeedback[${resourceIdx}]</s:param></s:fielderror>
@@ -652,7 +652,7 @@
                                     </table>
                                     <br/>
                                     <div align="right">
-                                        <input type="image" 
+                                        <input type="image"
                                                     src="<or:text key='btnSaveChanges.img' />" alt="<or:text key='btnSaveChanges.alt' />" border="0"/>
                                         &nbsp;
                                         <c:if test="${not toEdit}">
@@ -790,7 +790,7 @@
                                         <br/>
                                         <div><or:text key="manageProject.ReviewPayments.desc"/></div>
                                         <div align="right">
-                                            <input type="image"  src="<or:text key='btnSaveChanges.img' />" alt="<or:text key='btnSaveChanges.alt' />" border="0"/>&#160;
+                                            <input type="image" id="reviewSaveBtn" src="<or:text key='btnSaveChanges.img' />" alt="<or:text key='btnSaveChanges.alt' />" border="0"/>&#160;
                                             <a href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />"><img
                                                     src="<or:text key='btnCancel.img' />" alt="<or:text key='btnCancel.alt' />" border="0"/></a>
                                             &nbsp;
@@ -812,15 +812,25 @@
         <!-- //maxWidthBody -->
     </div>
     </body>
-    
+
 <c:if test="${sessionScope.success_upload != null}">
 <script language="JavaScript" type="text/javascript">
     alert('<%=session.getAttribute("success_upload")%>');
 </script>
 <%session.removeAttribute("success_upload");%>
 </c:if>
-    
+
 <script language="JavaScript" type="text/javascript">
+
+    var resourceForm = document.getElementById("ManageProject");
+    resourceForm.addEventListener('submit', function() {
+        document.getElementById("saveChanges").disabled = true;
+    }, false);
+
+    var ReviewForm = document.getElementById("SaveReviewPayments");
+    ReviewForm.addEventListener('submit', function() {
+        document.getElementById("reviewSaveBtn").disabled = true;
+    }, false);
 <!--
     // A reference to the previously active tab
     <c:choose>
@@ -831,7 +841,7 @@
         var previousActiveTab = document.getElementById("sc1");
         </c:otherwise>
     </c:choose>
-    
+
     /*
      * This function will deactivate the previously active tab (if there was any),
      * and activate the new one.
@@ -858,8 +868,8 @@
     /**
      * Function used to clear a file input field.
      */
-    function clearFileInputField(tagId) { 
-        document.getElementById(tagId).innerHTML = document.getElementById(tagId).innerHTML; 
+    function clearFileInputField(tagId) {
+        document.getElementById(tagId).innerHTML = document.getElementById(tagId).innerHTML;
     }
 
     /**
