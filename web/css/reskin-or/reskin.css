@@ -125,7 +125,7 @@ body {
 }
 
 .webHeader a {
-	color: #fff !important; 
+	color: #fff !important;
 	text-decoration: none !important;
 }
 
@@ -153,12 +153,12 @@ body {
 }
 
 .mainTabs a {
-	color: #555555 !important; 
+	color: #555555 !important;
 	text-decoration: none !important;
 }
 
 .mainTabs strong {
-	color: #2a2a2a !important; 
+	color: #2a2a2a !important;
 	text-decoration: none !important;
 	font-weight: 700;
 }
@@ -172,17 +172,19 @@ body {
 }
 
 .content {
-	margin: 0 32px;
+	margin: 0;
+  padding-bottom: 48px;
 }
 
 .content__inner {
     display: block;
     margin: 0 auto;
     max-width: var(--screen-max);
+    padding: 0 32px;
 }
 
 .projectInfo {
-    margin-bottom: -12px;   
+    margin-bottom: -12px;
 }
 
 .projectInfo__projectName {
@@ -243,7 +245,7 @@ body {
     text-transform: uppercase;
 
     color: var(--turq-160);
-    
+
     display: flex;
     column-gap: 24px;
     align-items: center;
@@ -443,7 +445,8 @@ body {
 .webFooter {
 	border-top: 1px solid #e9e9e9;
 	height: var(--footer-height);
-	position: sticky;
+  width: 100%;
+	position: fixed;
 	bottom: 0;
 	z-index: 999;
 	background-color: #fff;
@@ -480,7 +483,7 @@ body {
 }
 
 .webFooter a {
-	color: #2a2a2a !important; 
+	color: #2a2a2a !important;
 	text-decoration: none !important;
 }
 
@@ -531,7 +534,8 @@ body {
 .timelineTable__header th,
 .phasesTable__header th,
 .prizesTable__header th,
-.resourcesTable__header th {
+.resourcesTable__header th,
+.projectListTable__header th {
     height: 30px;
     background: var(--black-5);
     font-family: 'Barlow';
@@ -545,19 +549,25 @@ body {
     padding: 0 16px;
 }
 
+.projectListTable__header th {
+    color: var(--black-80);
+}
+
 .myInfoTable__header th:first-child,
 .timelineTable__header--left th:first-child,
 .phasesTable__header th:first-child,
 .prizesTable__header th:first-child,
-.resourcesTable__header th:first-child {
-    border-top-left-radius: 8px; 
+.resourcesTable__header th:first-child,
+.projectListTable__header th:first-child {
+    border-top-left-radius: 8px;
 }
 
 .myInfoTable__header th:last-child,
 .timelineTable__header--right th:last-child,
 .phasesTable__header th:last-child,
 .prizesTable__header th:last-child,
-.resourcesTable__header th:last-child {
+.resourcesTable__header th:last-child,
+.projectListTable__header th:last-child {
     border-top-right-radius: 8px;
 }
 
@@ -565,7 +575,8 @@ body {
 .timelineTable__body td,
 .phasesTable__body td,
 .resourcesTable__body td,
-.prizesTable__body td {
+.prizesTable__body td,
+.projectListTable__body td {
     height: 56px;
     font-family: 'Roboto';
     font-style: normal;
@@ -575,6 +586,79 @@ body {
     color: var(--black-100);
     padding: 0 16px;
     border-top: 2px solid var(--black-10);
+}
+
+.projectList__inner {
+    margin-bottom: 32px;
+}
+
+.projectListTable__body {
+    vertical-align: top;
+}
+
+.projectListTable__body td {
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.projectListTable__body td.challengeName {
+    min-width: calc(0.395 * var(--screen-max));
+    max-width: calc(0.395 * var(--screen-max));
+    padding-top: 26px;
+}
+
+.projectListTable__body td.challengeName.my {
+    min-width: calc(0.28 * var(--screen-max));
+    max-width: calc(0.28 * var(--screen-max));
+}
+
+.projectListTable__body td.challengeName div {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    white-space: normal !important;
+}
+
+.projectListTable__body td.challengeName span {
+    font-family: 'Roboto', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 22px;
+    text-transform: uppercase;
+    color: var(--black-60);
+    text-align: left;
+    letter-spacing: 1px;
+}
+
+.projectListTable__body td.noChallenges {
+    height: 550px;
+    font-size: 24px;
+    font-weight: 400;
+    color: #000000;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.projectListTable__body tr:last-child td {
+    border-bottom: 2px solid var(--black-10);
+}
+
+.projectListPagination {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+    margin-bottom: 0px
+}
+
+.projectListPagination div {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--black-100);
+    padding: 0;
 }
 
 .myInfoTable th {
@@ -607,7 +691,9 @@ body {
 .timelineTable a:hover,
 .phasesTable a,
 .projectDetailsGrid a,
-.resourcesTable a {
+.resourcesTable a,
+.projectListTable a,
+.projectListTable a:hover {
     color: var(--link-blue-dark);
     text-decoration: none !important;
 }
@@ -722,4 +808,154 @@ body {
 
 .projectDetailsGrid {
     border-top: 2px solid var(--black-10);
+}
+
+.custom-select-container {
+    font-family:'Roboto';
+    max-width: 326px;
+    max-height: 62px;
+    margin-bottom: 24px;
+}
+
+.custom-select-container *:after,
+.custom-select-container *:before {
+    box-sizing: border-box;
+}
+
+.custom-select-wrapper {
+    position: relative;
+    user-select: none;
+    width: 100%;
+}
+
+.custom-select {
+    display: flex;
+    flex-direction: column;
+    border: solid 1px var(--black-40);
+    border-radius: 4px;
+    padding-top: 8px;
+}
+
+.custom-select:hover {
+    border-color: var(--turq-160);
+    cursor: pointer;
+}
+
+.custom-select.open {
+    border-color: var(--turq-160);
+}
+
+.custom-select__label {
+    font-weight: 500;
+    font-size: 11px;
+    line-height: 10px;
+    color: var(--turq-160);
+    margin-left: 10px;
+}
+
+.custom-select__trigger {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1px;
+    padding: 0 10px;
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--black-100);
+    height: 27px;
+    line-height: 22px;
+    background: none;
+    cursor: pointer;
+    width: 100%;
+    border: none;
+}
+
+.custom-options {
+    position: absolute;
+    display: block;
+    top: 104%;
+    left: 0;
+    right: 0;
+    border: 1px solid var(--black-40);
+    background: var(--tc-white);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 2;
+    border-radius: 4px;
+    max-height: 250px;
+    overflow: auto;
+}
+
+.custom-select.open .custom-options {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+    z-index:9999;
+}
+
+.custom-option {
+    position: relative;
+    display: block;
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--black-100);
+    line-height: 24px;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+
+.custom-option:not(.group):hover {
+    cursor: pointer;
+    color: var(--tc-white);
+    background-color: var(--turq-160);
+}
+
+.custom-option.group {
+    cursor: default;
+    font-weight: 500;
+}
+
+.custom-option.group:hover {
+    background: none;
+}
+
+.custom-option.selected {
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--black-100);
+}
+
+.custom-option.selected:not(.group):hover {
+    color: var(--tc-white);
+}
+
+.arrow {
+    position: relative;
+    height: 7px;
+    width: 7px;
+}
+
+.arrow::before,
+.arrow::after {
+    content: "";
+    position: absolute;
+    bottom: 0px;
+    width: 0.09rem;
+    height: 100%;
+}
+
+.arrow::before {
+    left: -2px;
+    transform: rotate(-45deg);
+    background-color: var(--turq-160);
+}
+
+.arrow::after {
+    left: 2px;
+    transform: rotate(45deg);
+    background-color: var(--turq-160);
 }

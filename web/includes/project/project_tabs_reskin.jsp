@@ -7,22 +7,22 @@
 
 <div class="mainTabs">
     <div class="mainTabs__inner">
-        <div class="mainTabs__item">
         <c:if test="${orfn:isUserLoggedIn(pageContext.request)}">
-            <c:if test="${(not empty projectTabIndex) and (projectTabIndex == 1)}">
-                <strong>My Open Projects</strong>
-            </c:if>
-            <c:if test="${(empty projectTabIndex) or (projectTabIndex != 1)}">
-                <a href="<or:url value='/actions/ListProjects?scope=my' />">
-                    My Open Projects
-                </a>
-            </c:if>
+            <div class="mainTabs__item">
+                <c:if test="${(not empty projectTabIndex) and (projectTabIndex == 1)}">
+                    <strong id="activeTab">My Open Projects</strong>
+                </c:if>
+                <c:if test="${(empty projectTabIndex) or (projectTabIndex != 1)}">
+                    <a href="<or:url value='/actions/ListProjects?scope=my' />">
+                        My Open Projects
+                    </a>
+                </c:if>
+             </div>
         </c:if>
-        </div>
 
         <div class="mainTabs__item">
         <c:if test="${(not empty projectTabIndex) and (projectTabIndex == 2)}">
-            <strong>All Open Projects</strong>
+            <strong id="activeTab">All Open Projects</strong>
         </c:if>
         <c:if test="${(empty projectTabIndex) or (projectTabIndex != 2)}">
             <a href="<or:url value='/actions/ListProjects?scope=all' />">
@@ -31,17 +31,17 @@
         </c:if>
         </div>
 
-        <div class="mainTabs__item">
         <c:if test="${orfn:isUserLoggedIn(pageContext.request)}">
-            <c:if test="${(not empty projectTabIndex) and (projectTabIndex == 5)}">
-                <strong>Late Deliverables</strong>
-            </c:if>
-            <c:if test="${(empty projectTabIndex) or (projectTabIndex != 5)}">
-                <a href="<or:url value='/actions/ViewLateDeliverables' />">
-                    Late Deliverables
-                </a>
-            </c:if>
+            <div class="mainTabs__item">
+                <c:if test="${(not empty projectTabIndex) and (projectTabIndex == 5)}">
+                    <strong id="activeTab">Late Deliverables</strong>
+                </c:if>
+                <c:if test="${(empty projectTabIndex) or (projectTabIndex != 5)}">
+                    <a href="<or:url value='/actions/ViewLateDeliverables' />">
+                        Late Deliverables
+                    </a>
+                </c:if>
+            </div>
         </c:if>
-        </div>
     </div>
 </div>
