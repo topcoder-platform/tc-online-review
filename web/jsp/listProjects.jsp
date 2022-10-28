@@ -44,27 +44,26 @@
     <!-- CSS and JS by Petar -->
     <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
     <script language="JavaScript" type="text/javascript" src="/js/or/rollovers2.js"><!-- @ --></script>
+
+    <!-- Reskin -->
+    <link type="text/css" rel="stylesheet" href="/css/reskin-or/reskin.css">
 </head>
 
 <body>
 
-<div align="center">
-    
-    <div class="maxWidthBody" align="left">
+<jsp:include page="/includes/inc_header_reskin.jsp" />
 
-        <jsp:include page="/includes/inc_header.jsp" />
-        
-        <jsp:include page="/includes/project/project_tabs.jsp" />
-        
-            <div id="mainMiddleContent">
-                <jsp:include page="/includes/project/project_list.jsp" />
-            </div>
-        
-        <jsp:include page="/includes/inc_footer.jsp" />
+<jsp:include page="/includes/project/project_tabs_reskin.jsp" />
 
+<div class="content">
+    <div class="content__inner">
+        <jsp:include page="/includes/project/project_tab_info_reskin.jsp" />
+        <div class="divider"></div>
+        <jsp:include page="/includes/project/project_list_reskin.jsp" />
     </div>
-
 </div>
+
+<jsp:include page="/includes/inc_footer_reskin.jsp" />
 
 </body>
 </html>
