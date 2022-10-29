@@ -36,7 +36,7 @@
                 </c:if>
                 <a class="breadcrumbLinks"
                     href="${viewContestLink}"><or:text key="viewProjectDetails.ViewContest" /></a> |
-                <a class="breadcrumbLinks"
+                <a class="breadcrumbLinks projectInfo__forumLink"
                     href="${forumLink}"><or:text key="viewProjectDetails.DevelopmentForum" /></a></td>
         </tr>
     </table>
