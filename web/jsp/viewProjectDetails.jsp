@@ -148,7 +148,7 @@
 
 <jsp:include page="/includes/project/project_tabs_reskin.jsp" />
 
-<div class="content">
+<div class="content content--projectDetails">
     <div class="content__inner">
         <jsp:include page="/includes/project/project_info_reskin.jsp" />
         <div class="divider"></div>
