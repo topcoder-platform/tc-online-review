@@ -54,6 +54,11 @@
                                     </tr>
                                 </thead>
                                 <tbody  class="phasesTable__body">
+                                    <c:if test="${empty group.submitters}">
+                                        <tr>
+                                            <td class="phasesTable__empty" colspan="5"></td>
+                                        </tr>
+                                    </c:if>
                                     <c:forEach items="${group.submitters}" var="resource" varStatus="resourceStatus">
                                         <c:set var="registrantEmail" value="${group.registrantsEmails[resourceStatus.index]}" />
                                         <tr>
@@ -108,6 +113,11 @@
                                     </tr>
                                 </thead>
                                 <tbody class="phasesTable__body">
+                                    <c:if test="${empty group.submissions}">
+                                        <tr>
+                                            <td class="phasesTable__empty" colspan="<c:out value="${isThurgood ? 7: 6}"/>"></td>
+                                        </tr>
+                                    </c:if>
                                     <c:set var="prevSubm" value="${group.pastSubmissions}" />
                                     <c:set var="prevSubmissions" value="" />
                                     <c:set var="submissionIdx" value="0" />
@@ -397,6 +407,11 @@
                                     </tr>
                                 </thead>
                                 <tbody class="phasesTable__body">
+                                    <c:if test="${empty group.submissions}">
+                                        <tr>
+                                            <td class="phasesTable__empty" colspan="${colSpan}"></td>
+                                        </tr>
+                                    </c:if>
                                     <c:set var="submissionIdx" value="0" />
                                     <c:forEach items="${group.submissions}" var="submission" varStatus="submissionStatus">
                                         <c:set var="submissionStatusName" value="${submission.submissionStatus.name}" />
@@ -543,6 +558,11 @@
                                             <c:set var="winningSubmission" value="${submission}" />
                                         </c:if>
                                     </c:forEach>
+                                    <c:if test="${empty winningSubmission}">
+                                        <tr>
+                                            <td class="phasesTable__empty" colspan="3"></td>
+                                        </tr>
+                                    </c:if>
                                     <c:if test="${not empty winningSubmission}">
                                         <tr>
                                             <td nowrap="nowrap">
@@ -595,6 +615,11 @@
                                             <c:set var="winningSubmission" value="${submission}" />
                                         </c:if>
                                     </c:forEach>
+                                    <c:if test="${empty winningSubmission}">
+                                        <tr>
+                                            <td class="phasesTable__empty" colspan="6"></td>
+                                        </tr>
+                                    </c:if>
                                     <c:if test="${not empty winningSubmission}">
                                         <tr>
                                             <td nowrap="nowrap">
@@ -668,6 +693,11 @@
                                             <c:set var="winningSubmission" value="${submission}" />
                                         </c:if>
                                     </c:forEach>
+                                    <c:if test="${empty winningSubmission}">
+                                        <tr>
+                                            <td class="phasesTable__empty" colspan="6"></td>
+                                        </tr>
+                                    </c:if>
                                     <c:if test="${not empty winningSubmission}">
                                         <c:forEach items="${group.approvalReviewers}" var="reviewer">
                                             <c:set var="isReviewerCurrentUser"
@@ -763,6 +793,11 @@
                                     </tr>
                                 </thead>
                                 <tbody class="phasesTable__body">
+                                    <c:if test="${empty group.postMortemReviews}">
+                                        <tr>
+                                            <td class="phasesTable__empty" colspan="3"></td>
+                                        </tr>
+                                    </c:if>
                                     <c:forEach items="${group.postMortemReviewers}" var="reviewer" varStatus="index">
                                     <c:set var="isReviewerCurrentUser"
                                            value="${reviewer.allProperties['External Reference ID'] eq orfn:getLoggedInUserId(pageContext.request)}"/>
@@ -843,6 +878,11 @@
                                     </tr>
                                 </thead>
                                 <tbody class="phasesTable__body">
+                                    <c:if test="${empty group.specificationSubmission}">
+                                        <tr>
+                                            <td class="phasesTable__empty" colspan="4"></td>
+                                        </tr>
+                                    </c:if>
                                     <c:if test="${not empty group.specificationSubmission}">
                                         <tr>
                                             <td nowrap="nowrap">
@@ -911,7 +951,7 @@
                             <table id="Submissions${submBoxIdx}" class="phasesTable phasesTable__checkpoint" cellpadding="0" cellspacing="0" border="0">
                                 <thead class="phasesTable__header">
                                     <tr>
-                                        <th colspan="2" nowrap="nowrap"><or:text key="viewProjectDetails.box.Submission.ID" /></th>
+                                        <th nowrap="nowrap"><or:text key="viewProjectDetails.box.Submission.ID" /></th>
                                         <th nowrap="nowrap"><or:text key="viewProjectDetails.box.Submission.Date" arg0="${group.groupIndex}" /></th>
                                         <th nowrap="nowrap"><or:text key="viewProjectDetails.box.Submission.Screener" /></th>
                                         <th nowrap="nowrap"><or:text key="viewProjectDetails.box.Submission.ScreeningScore" arg0="${group.groupIndex}" /></th>
@@ -922,6 +962,11 @@
                                     </tr>
                                 </thead>
                                 <tbody class="phasesTable__body">
+                                    <c:if test="${empty group.checkpointSubmissions}">
+                                        <tr>
+                                            <td class="phasesTable__empty" colspan="11"></td>
+                                        </tr>
+                                    </c:if>
                                     <c:set var="prevCheckpointSubm" value="${group.pastCheckpointSubmissions}" />
                                     <c:set var="prevCheckpointSubmissions" value="" />
                                     <c:forEach items="${group.checkpointSubmissions}" var="submission" varStatus="submissionStatus">
@@ -1009,10 +1054,8 @@
                                                     (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}'
                                                                        context="${orfn:getHandlerContext(pageContext.request)}" />)
                                                 </c:if>
-                                            </td>
 
-                                            <%-- Delete Checkpoint Submission --%>
-                                            <td <c:if test="${isManager and not group.checkpointReviewFinished}">width="5%"</c:if>>
+                                                <%-- Delete Checkpoint Submission --%>
                                                 <c:choose>
                                                    <c:when test="${isManager and not group.checkpointReviewFinished}">
                                                        <a href="<or:url value='/actions/DeleteSubmission?uid=${submission.upload.id}' />">
@@ -1309,6 +1352,13 @@
                                         </c:forEach>
                                     </tr>
                                 </thead>
+                                <c:if test="${empty group.iterativeReviewSubmission}">
+                                <tbody class="phasesTable__body">
+                                    <tr>
+                                        <td class="phasesTable__empty" colspan="${colSpan}"></td>
+                                    </tr>
+                                </tbody>
+                                </c:if>
                                 <c:if test="${group.iterativeReviewSubmission ne null}">
                                 <tbody class="phasesTable__body">
                                     <c:set var="submission" value="${group.iterativeReviewSubmission}"/>

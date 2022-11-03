@@ -39,6 +39,9 @@
                     </tr>
                 </thead>
                 <tbody class="resourcesTable__body">
+                    <tr>
+                        <td class="resourcesTable__empty" colspan="5" style="display:none;"></td>
+                    </tr>
                 <c:forEach items="${resources}" var="resource" varStatus="idxrResource">
                     <tr rel="${resource.resourceRole.id}">
                         <td nowrap="nowrap"><or:text key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}' /></td>
@@ -109,6 +112,14 @@
                     }
                 }
             }
+
+            let empty = document.getElementById("resources").querySelector('.resourcesTable__empty');
+            if (tot) {
+                empty.style.display = "none";
+            } else {
+                empty.style.display = "";
+            }
+
             return false;
         }
     //-->
