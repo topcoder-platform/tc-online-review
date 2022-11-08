@@ -13,7 +13,7 @@
         <div class="projectDetails__accordion">
         </div>
     </div>
-    
+
     <div class="projectDetails__sectionBody">
         <div class="projectDetailsGrid">
             <c:if test="${isAllowedToViewSVNLink}">

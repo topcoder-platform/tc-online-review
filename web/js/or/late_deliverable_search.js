@@ -68,7 +68,7 @@ function validate_project_id(thisForm, msgList) {
 
 /**
  * Validates the minimum/maximum deadline.
- * 
+ *
  * @param thisForm the late deliverable search form
  * @param msgList the list of error messages
  * @param errorDivID ID for span element to display validation error
@@ -86,7 +86,7 @@ function validate_deadline(thisForm, msgList, errorDivID, fieldName) {
     if (value == 'MM.DD.YYYY') {
         value = '';
     }
-    
+
     // empty is allowed
     if (!emptyString.test(value)) {
         var parsedDate = getDateString(value);
@@ -103,9 +103,9 @@ function validate_deadline(thisForm, msgList, errorDivID, fieldName) {
 
 /**
  * Validates the minimum/maximum deadline.
- * 
+ *
  * @param input the input field providing the date value
- * @return a value to be set for input field on focus 
+ * @return a value to be set for input field on focus
  */
 function getDateValueOnFocus(input, isOnFocus) {
     var val = input.value;
@@ -128,9 +128,9 @@ function getDateValueOnFocus(input, isOnFocus) {
 
 /**
  * Validates the minimum/maximum deadline.
- * 
+ *
  * @param input the input field providing the date value
- * @return a value to be set for input field on focus 
+ * @return a value to be set for input field on focus
  */
 function getTextValueOnFocus(input, isOnFocus) {
     var val = input.value;
@@ -274,7 +274,7 @@ function validate_form(thisForm, popup) {
 /**
  * Sets the value of specified input element to empty string if current value of that element is equal to specified
  * default value.
- * 
+ *
  * @param input a form input element.
  * @param defaultValue a default value for the input value.
  */
@@ -340,7 +340,7 @@ function reset_form(thisForm) {
     msgDiv.style.display = "none";
 
     clearServerSideMessages();
-    
+
     colorFormFields();
 }
 
@@ -351,11 +351,11 @@ function clearServerSideMessages() {
     var msgDiv = document.getElementById("handle_serverside_validation");
     msgDiv.innerHTML = "";
     msgDiv.style.display = "none";
-    
+
     msgDiv = document.getElementById("project_id_serverside_validation");
     msgDiv.innerHTML = "";
     msgDiv.style.display = "none";
-    
+
     msgDiv = document.getElementById("deadline_serverside_validation");
     msgDiv.innerHTML = "";
     msgDiv.style.display = "none";
@@ -442,7 +442,7 @@ function expandAll() {
 
 /**
  * Handles the event on clicking the collapse/expand button.
- * 
+ *
  * @param srcElement a source element of the event.
  */
 function expcollHandler(srcElement) {
@@ -465,7 +465,7 @@ function expcollHandler(srcElement) {
 /**
  * Submits the Edit Late Deliverable form having it's input fileds validated first. If validation fails teh form
  * is not submitted.
- *  
+ *
  * @param thisForm the form to validate
  */
 function submitEditLateDeliverableForm(thisForm) {
@@ -485,7 +485,7 @@ function submitEditLateDeliverableForm(thisForm) {
 
 /**
  * Validates the form when saving the changes to the late deliverable.
- * 
+ *
  * @param thisForm the form to validate
  * @return true if no validation failures
  */
@@ -501,7 +501,7 @@ function validateEditLateDeliverableForm(thisForm) {
 
 /**
  * Validates the minimum/maximum deadline.
- * 
+ *
  * @param thisForm the late deliverable search form
  * @param msgList the list of error messages
  * @param errorDivID ID for span element to display validation error
@@ -529,8 +529,8 @@ function validateText(thisForm, msgList, errorDivID, fieldName) {
 }
 
 /**
- * Submits the Search Late Deliverables Form if Enter key is pressed on specified input element. 
- * 
+ * Submits the Search Late Deliverables Form if Enter key is pressed on specified input element.
+ *
  * @param e an event for key pressing.
  */
 function submitOnEnter(input, e) {

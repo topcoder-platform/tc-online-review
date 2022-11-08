@@ -18,11 +18,11 @@
     </jsp:include>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
+    <!-- Reskin -->
+    <link type="text/css" rel="stylesheet" href="/css/reskin-or/reskin.css">
     <!-- TopCoder CSS -->
     <link type="text/css" rel="stylesheet" href="/css/style.css" />
     <link type="text/css" rel="stylesheet" href="/css/coders.css" />
-    <link type="text/css" rel="stylesheet" href="/css/stats.css" />
-    <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
 
     <!-- JS from wireframes -->
     <script language="javascript" type="text/javascript" src="/js/or/popup.js"></script>
@@ -31,38 +31,50 @@
     <!-- CSS and JS by Petar -->
     <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css">
     <script language="JavaScript" type="text/javascript" src="/js/or/rollovers2.js"></script>
+    <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function(){
+        let avatar = document.querySelector('.webHeader__avatar a');
+        let avatarImage = document.createElement('div');
+        avatarImage.className = "webHeader__avatarImage";
+        let twoChar = avatar.text.substring(0, 2);
+        avatarImage.innerText = twoChar;
+        avatar.innerHTML = avatarImage.outerHTML;
+    });
+    </script>
 </head>
 
 <body>
-<div align="center">
-    
-    <div class="maxWidthBody" align="left">
+    <jsp:include page="/includes/inc_header_reskin.jsp" />
+    <jsp:include page="/includes/project/project_tabs_reskin.jsp" />
 
-        <jsp:include page="/includes/inc_header.jsp" />
-        
-        <jsp:include page="/includes/project/project_tabs.jsp" />
-        
-            <div id="mainMiddleContent">
-                <div style="position: relative; width: 100%;">
-
-                    <div style="margin: 11px 6px 9px 0px; ">
-                        <span class="bodyTitle"><or:text key="userError.Attention" /></span><br />
-                        <b><or:text key="userError.ErrorPrefix" />
-                        <span style="color: red; font-weight: bold;">${errorTitle}</span></b>
-                    </div>
-                    <div style="margin-top: 12px; margin-bottom: 32px;">
-                        <b><or:text key="userError.Reason" /></b>
-                        ${errorMessage}
-                    </div>
-
-                </div>
+    <div class="content content">
+        <div class="content__inner">
+            <div class="error__projectName">
+                <button type="button" class="back-btn" onclick="history.back()">
+                    <i class="arrow-prev-icon"></i>
+                </button>
+                <h1 class="projectInfo__projectName">
+                    ${project.allProperties['Project Name']}
+                </h1>
             </div>
-        
-        <jsp:include page="/includes/inc_footer.jsp" />
-
+            <h2 class="attention">
+                <or:text key="userError.Attention" />
+            </h2>
+            <div class="errorBanner">
+             <p class="errorPrefix"><or:text key="userError.ErrorPrefix" />
+                <span class="errorRed">${errorTitle}</span>
+                <p class="errorReason"><or:text key="userError.Reason" />
+                <span>${errorMessage}</span></p>
+            </div>
+             <div align="right">
+                <a class="backToHome" href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />">
+                    <or:text key="btnBack.home"/>
+                </a>
+            </div>
+        </div>
     </div>
+<jsp:include page="/includes/inc_footer_reskin.jsp" />
 
-</div>
 
 </body>
 </html>
