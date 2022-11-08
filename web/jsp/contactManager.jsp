@@ -117,7 +117,7 @@
     <div class="content__inner">
         <div class="projectInfo">
             <h1 class="projectInfo__projectName">${project.allProperties["Project Name"]}</h1>
-            <div class="projectInfo__info">
+            <div class="">
                 <c:if test='${!(empty project.allProperties["Project Version"])}'>
                     <p class="projectInfo__projectVersion"><or:text key="global.version" /> ${project.allProperties["Project Version"]}</p>
                 </c:if>

@@ -9,6 +9,7 @@
     --black-40: #aaaaaa;
     --black-20: #d4d4d4;
     --black-10: #e9e9e9;
+    --yellow-25: #FDFCD1;
     --black-5: #f4f4f4;
     --black-2: #fbfbfb;
     --green: #137d60;
@@ -30,8 +31,9 @@
     --handle-green: #2d7e2d;
     --handle-blue: #616bd5;
     --handle-yellow: #f2c900;
+    --turq-140: #219174;
     --legacy-100: #fd7d01;
-
+    --turq-180: #0d664e;
     --screen-max: 1376px;
     --header-height: 80px;
     --footer-height: 51px;
@@ -176,7 +178,7 @@ body {
 .content {
     margin: 0;
     padding-top: 136px;
-    padding-bottom: 48px;
+    padding-bottom: 90px;
 }
 
 .content--projectDetails {
@@ -194,6 +196,59 @@ body {
     margin-bottom: -12px;
 }
 
+.error__projectName,
+.scoreInfo__title {
+    display: flex;
+    align-items: flex-end;
+}
+
+.error__projectName {
+    border-bottom: 2px solid var(--black-10);
+    border-radius: 1px;
+}
+
+.scoreBoard__title,
+.attention {
+    font-family: 'Barlow';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 24px;
+    margin-bottom: 17px;
+    line-height: 28px;
+    text-transform: uppercase;
+}
+
+.attention {
+    margin: 32px 0 32px;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 24px;
+    background: var(--tc-white);
+    cursor: pointer;
+    margin-right: 16px;
+    margin-bottom: 25px;
+    border: 1.5px solid var(--green);
+    border-radius: 24px;
+    box-sizing: border-box;
+}
+
+.back-btn:hover {
+    color: var(--turq-140);
+    border-color: var(--turq-140);
+}
+.back-btn:active {
+    color: var(--turq-180);
+    border-color: var(--turq-180);
+}
+.back-btn .arrow-prev-icon {
+    content: url('/i/reskin/arrow-prev.svg');
+}
+
 .lateDeliverables__header,
 .projectInfo__projectName {
     font-family: 'Barlow Condensed', sans-serif;
@@ -207,14 +262,19 @@ body {
     margin-top: 32px;
 }
 
-.projectInfo__info {
+.projectInfo__info,
+.scoreInfo__info {
     display: flex;
     align-items: center;
     column-gap: 24px;
 }
 
 .projectInfo__projectVersion,
-.projectInfo__projectStatus {
+.projectInfo__projectStatus,
+.scoreInfo__reviewer,
+.scoreInfo__submission,
+.scoreInfo__date,
+.scoreInfo__role {
     font-family: 'Roboto', sans-serif;
     font-style: normal;
     font-weight: 700;
@@ -223,16 +283,19 @@ body {
     text-transform: uppercase;
     color: var(--black-60);
     text-align: left;
+    margin-top: 0;
     letter-spacing: 1px;
 }
 
-.projectInfo__links {
+.projectInfo__links,
+.scoreInfo__links {
     display: flex;
     column-gap: 16px;
     margin-left: auto;
 }
 
-.projectInfo__link {
+.projectInfo__link,
+.scoreInfo__link {
     font-family: 'Roboto', sans-serif;
     font-style: normal;
     font-weight: 700;
@@ -262,6 +325,24 @@ body {
 
 .accordionAction > * {
     cursor: pointer;
+}
+
+.collapse__all,
+.expand__all {
+    font-family: 'Roboto', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 16px;
+    text-transform: uppercase;
+    color: var(--turq-160) !important;
+    align-items: center;
+    justify-content: flex-end;
+    text-decoration: none !important;
+}
+
+.expand__all {
+    margin-right: 16px;
 }
 
 .projectDetails {
@@ -367,7 +448,7 @@ body {
     border-radius: 4px 4px 0 0;
     align-items: stretch;
     text-transform: uppercase;
-    box-shadow: 0 1px 0 #D4D4D4;
+    box-shadow: 0 1px 0 var(--black-20);
     margin-bottom: 25px;
 }
 
@@ -377,7 +458,7 @@ body {
 
 .projectDetails__tab a {
     text-decoration: none !important;
-    color: var(--black-80); !important;
+    color: var(--black-80) !important;
 }
 
 .projectDetails__tab--active a {
@@ -414,6 +495,187 @@ body {
     display: block;
     position: absolute;
     top: 100%;
+}
+
+table.scorecard {
+    background: var(--tc-white);
+    margin-bottom: 32px;
+}
+
+table.scorecard tr.highlighted {
+    background: var(--yellow-25);
+    border-bottom: 2px solid var(--black-10);
+}
+
+table.scorecard td.title {
+    padding: 8px 16px;
+    font-family: 'Barlow';
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 20px;
+    text-transform: uppercase;
+    background: var(--black-10);
+    border-bottom: 2px solid var(--black-20);
+    border-radius: 8px 8px 0px 0px;
+}
+
+.subheader,
+.subheader__weight,
+.subheader__response {
+    font-family: 'Barlow';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    text-transform: uppercase;
+    color: var(--black-60);
+    padding: 8px 16px;
+    background: var(--black-5);
+}
+
+.subheader__weight,
+.subheader__response {
+    font-size: 11px;
+    line-height: 14px;
+}
+
+.subheader__response {
+    padding-left: 0;
+}
+
+.hideText {
+    display: none;
+}
+
+.showText {
+    display: block;
+}
+
+table.scorecard tr.light {
+    background-color: var(--tc-white)
+}
+
+table.scorecard td.value, table.scorecard td.approvalText, table.scorecard td.valueC, td.valueR, td.valueB,
+table.scorecard td.totalValue, table.scorecard td.totalValueC, td.totalValueR, td.totalValueB,
+table.scorecard td.response {
+    border-top: 2px solid var(--black-10);
+    padding: 16px;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    vertical-align: top;
+    color: var(--black-100);
+    line-height: 22px;
+}
+
+table.scorecard td.totalValue,
+table.scorecard td.totalValueC, td.totalValueR,
+table.scorecard td.approvalText {
+    padding: 8px 16px;
+}
+
+b {
+ font-weight: 500;
+}
+
+table.scorecard td.response {
+    padding: 10px 16px 10px 50px;
+}
+
+table.scorecard td.totalValueC,
+.responseNum {
+    font-weight: 500;
+}
+
+table.scorecard td.totalValue, table.scorecard td.totalValueC, td.totalValueR, td.totalValueB {
+    border-top: 0;
+    border-bottom: 2px solid var(--black-10);
+}
+
+table.scorecard tr.finalResponse,
+table.scorecard tr.approval,
+table.scorecard tr.review {
+    background: var(--black-20);
+}
+
+table.scorecard td.header, table.scorecard td.reviewerResp,
+table.scorecard td.headerC, table.scorecard td.headerT,
+table.scorecard td.headerF, table.scorecard td.headerN,
+table.scorecard td.headerR {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--black-100);
+    padding: 8px 16px;
+}
+
+table.scorecard td.reviewerResp {
+    font-weight: 400;
+}
+
+table.scorecard tr.finalComment {
+    background-color: var(--tc-white);
+    border-bottom: 2px solid var(--black-10);
+}
+
+table.scorecard td.header {
+    background-color: var(--black-20);
+}
+
+table.scorecard td.headerN,
+table.scorecard td.valueR {
+    padding-left: 0;
+}
+
+table.scorecard td.headerT {
+    padding-right: 0;
+}
+
+.statLink {
+    margin-left: 4px;
+    margin-right: 14px;
+}
+
+.question {
+    margin-right: 22px;
+    font-weight: 500;
+}
+
+.guideline {
+    margin-left: 34px;
+    margin-top: 16px;
+}
+
+.backToHome {
+    font-family: 'Roboto';
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: 0.008em;
+    text-transform: uppercase;
+    padding: 10px 24px;
+    background: var(--tc-white);
+    border: 2px solid var(--turq-160);
+    border-radius: 24px;
+    color: var(--turq-160);
+    text-decoration: none !important;
+}
+
+.backToHome:hover {
+    color: var(--turq-140);
+    border-color: var(--turq-140) !important;
+}
+.backToHome:active {
+    color: var(--turq-180);
+    border-color: var(--turq-180) !important;
+}
+
+table.scorecard td.reviewerResp input {
+    width: 18px;
+    height: 18px;
 }
 
 .cta {
@@ -454,7 +716,7 @@ body {
 }
 
 .webFooter {
-    border-top: 1px solid #e9e9e9;
+    border-top: 1px solid var(--black-10);
     height: var(--footer-height);
     width: 100%;
     position: fixed;
@@ -511,6 +773,22 @@ body {
     font-size: 14px;
     line-height: 22px;
     text-decoration: none !important;
+}
+
+.scoreInfo__info .coderTextGray,
+.scoreInfo__info .coderTextRed,
+.scoreInfo__info .coderTextYellow,
+.scoreInfo__info .coderTextGreen,
+.scoreInfo__info .coderTextBlue,
+.scoreInfo__info .coderTextGray,
+.scoreInfo__info .coderTextBlack {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 1px;
+    text-transform: none
 }
 
 .coderTextBlack {
@@ -1161,4 +1439,36 @@ td.resourcesTable__empty {
     border-radius: 4px;
     margin: 16px 0 40px;
     padding: 8px 10px;
+}
+
+.errorBanner {
+    padding: 16px;
+    border-width: 2px 0px;
+    border-style: solid;
+    border-color: var(--black-10);
+    margin-bottom: 56px;
+}
+
+.errorBanner .errorPrefix, .errorReason {
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 14px;
+    margin-bottom: 16px;
+    margin-top: 0;
+    color: var(--black-100);
+    line-height: 22px;
+}
+
+.errorRed {
+    color: var(--red-100);
+    font-weight: 500;
+}
+
+.errorReason {
+    margin: 0;
+    font-weight: 500;
+}
+
+.errorReason span {
+    font-weight: 400;
 }
