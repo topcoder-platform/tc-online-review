@@ -2095,4 +2095,7 @@
     <Property name="challenge_by_legacy_id_url_v5">
         <Value>@topcoder_api_base_url_v5@/challenges?legacyId=</Value>
     </Property>
+    <Property name="support_request_url_v5">
+        <Value>@topcoder_api_base_url_v5@/challenges/support-requests</Value>
+    </Property>
 </Config>

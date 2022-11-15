@@ -594,6 +594,11 @@ public class ConfigHelper {
     private static final String CHALLENGE_BY_LEGACY_ID_URL_V5 = "challenge_by_legacy_id_url_v5";
 
     /**
+     * <p>A <code>String</code> providing support requests v5 url property.</p>
+     */
+    private static final String SUPPORT_REQUEST_URL_V5 = "support_request_url_v5";
+
+    /**
      * This member variable holds the submitter role id.
      */
     private static int submitterRoleId = 1;
@@ -1058,7 +1063,7 @@ public class ConfigHelper {
      * JWT default expiration time (1 day)
      */
     private static final int DEFAULT_EXPIRATION_TIME = 60 * 24;
-    
+
     /**
      * New Auth URL for Iframe to refresh the RS256 token
      */
@@ -1068,6 +1073,11 @@ public class ConfigHelper {
      * Challenge by Legacy Id URL
      */
     private static String challengeByLegacyIdUrlV5;
+
+    /**
+     * Support Request URL
+     */
+    private static String supportRequestUrlV5;
 
     static {
         // Obtaining the instance of Configuration Manager
@@ -1691,11 +1701,13 @@ public class ConfigHelper {
             } catch (Exception e) {
                 preSignedExpTimeMilis = 60 * 60 * 1000;
             }
-	    
+
             ConfigManager.Property newAuth = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "new_auth");
             newAuthUrl = newAuth.getValue("new_auth_url");
 
             challengeByLegacyIdUrlV5 = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, CHALLENGE_BY_LEGACY_ID_URL_V5);
+
+            supportRequestUrlV5 = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, SUPPORT_REQUEST_URL_V5);
         } catch (Exception une) {
             System.out.println(une.getMessage());
             une.printStackTrace();
@@ -2570,10 +2582,10 @@ public class ConfigHelper {
     public static long getPreSignedExpTimeMilis() {
         return preSignedExpTimeMilis;
     }
-    
+
     /**
-     * Get new auth url 
-     * @return url 
+     * Get new auth url
+     * @return url
      */
     public static String getNewAuthUrl() {
         return newAuthUrl;
@@ -2581,9 +2593,17 @@ public class ConfigHelper {
 
     /**
      * Get challenge by legacy id url
-     * @return url 
+     * @return url
      */
     public static String getChallengeByLegacyIdUrlV5() {
         return challengeByLegacyIdUrlV5;
+    }
+
+    /**
+     * Get support request url
+     * @return url
+     */
+    public static String getSupportRequestUrlV5() {
+        return supportRequestUrlV5;
     }
 }

@@ -45,8 +45,7 @@
                                 </c:if>
                                 <c:if test="${phaseGroupIndexes[phaseStatus.index] != -1}">
                                     <td nowrap="nowrap">
-                                        <a onClick='return activateTab("sc${phaseGroupIndexes[phaseStatus.index] + 1}", this)'
-                                            href="javascript:void(0)"><or:text
+                                        <a onClick='return activateTab("sc${phaseGroupIndexes[phaseStatus.index] + 1}", this)'><or:text
                                                 key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></a></td>
                                 </c:if>
                                 <c:choose>
@@ -76,7 +75,7 @@
                                         <td nowrap="nowrap"><!-- @ --></td>
                                     </c:otherwise>
                                 </c:choose>
-                                
+
                                 <td nowrap="nowrap" >${orfn:displayDate(pageContext.request, originalStart[phaseStatus.index])}</td>
                                 <td nowrap="nowrap" >${orfn:displayDate(pageContext.request, originalEnd[phaseStatus.index])}</td>
                             </tr>
@@ -85,7 +84,7 @@
                     </table>
                 </td>
                 <td valign="top">
-                    <div style="width: 100%; overflow-x: scroll; overflow-y: visible; position:relative; height:100%">
+                    <div class="timelineProgressBar" style="width: 100%; overflow-x: scroll; overflow-y: visible; position:relative; height:100%">
                         <c:if test="${ganttCurrentTime ne null}">
                             <div class="currentTime" style="left: ${orfn:getGanttLen(ganttCurrentTime)}px;"></div>
                         </c:if>

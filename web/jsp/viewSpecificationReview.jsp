@@ -26,6 +26,7 @@
     <link type="text/css" rel="stylesheet" href="/css/style.css" />
     <!-- Reskin -->
     <link type="text/css" rel="stylesheet" href="/css/reskin-or/reskin.css">
+    <link type="text/css" rel="stylesheet" href="/css/reskin-or/toasts.css">
 
     <!-- CSS and JS by Petar -->
     <script language="JavaScript" type="text/javascript" src="/js/or/rollovers2.js"><!-- @ --></script>

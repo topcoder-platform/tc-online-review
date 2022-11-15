@@ -24,6 +24,7 @@
 
     <!-- Reskin -->
     <link type="text/css" rel="stylesheet" href="/css/reskin-or/reskin.css">
+    <link type="text/css" rel="stylesheet" href="/css/reskin-or/toasts.css">
 
     <!-- TopCoder CSS -->
     <link type="text/css" rel="stylesheet" href="/css/style.css" />

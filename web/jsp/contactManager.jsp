@@ -31,6 +31,7 @@
 
     <!-- Reskin -->
     <link type="text/css" rel="stylesheet" href="/css/reskin-or/reskin.css">
+    <link type="text/css" rel="stylesheet" href="/css/reskin-or/toasts.css">
     <script type="text/javascript">
         function checkMessage() {
             let message = document.querySelector('.inputTextBox');
@@ -117,7 +118,7 @@
     <div class="content__inner">
         <div class="projectInfo">
             <h1 class="projectInfo__projectName">${project.allProperties["Project Name"]}</h1>
-            <div class="">
+            <div class="projectInfo__info">
                 <c:if test='${!(empty project.allProperties["Project Version"])}'>
                     <p class="projectInfo__projectVersion"><or:text key="global.version" /> ${project.allProperties["Project Version"]}</p>
                 </c:if>

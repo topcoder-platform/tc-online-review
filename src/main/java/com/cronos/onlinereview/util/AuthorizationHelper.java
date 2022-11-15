@@ -219,6 +219,9 @@ public class AuthorizationHelper {
             ExternalUser extUser = usrMgr.retrieveUser(getLoggedInUserId(request));
             // Place handle of the user into session as attribute
             request.getSession().setAttribute("userHandle", extUser.getHandle());
+            request.getSession().setAttribute("userFirstName", extUser.getFirstName());
+            request.getSession().setAttribute("userLastName", extUser.getLastName());
+            request.getSession().setAttribute("userEmail", extUser.getEmail());
         }
 
         // Perform search for resources
@@ -478,7 +481,7 @@ public class AuthorizationHelper {
      * Sets the sso cookie service to be used for authenticating users based on
      * cookie.
      * </p>
-     * 
+     *
      * @param ssoCookieService the ssoCookieService to set
      */
     public void setSsoCookieService(SSOCookieService ssoCookieService) {
@@ -489,7 +492,7 @@ public class AuthorizationHelper {
      * <p>
      * Validate jwt token
      * </p>
-     * 
+     *
      * @param token the jwt token
      * @throws JWTException if any error occurs
      * @return the DecodedJWT result
