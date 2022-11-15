@@ -2,15 +2,39 @@
 <%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ page import="com.topcoder.onlinereview.component.webcommon.ApplicationServer" %>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        const modals = document.querySelectorAll("[data-modal]");
+
+        modals.forEach(function (trigger) {
+            trigger.addEventListener("click", function (event) {
+                event.preventDefault();
+                const modal = document.getElementById(trigger.dataset.modal);
+                modal.classList.add("show");
+                const exits = modal.querySelectorAll(".modal__exit");
+                exits.forEach(function (exit) {
+                    exit.addEventListener("click", function (event) {
+                        event.preventDefault();
+                        document.getElementById("contactSupport").reset();
+                        clearAllError(fields);
+                        modal.classList.remove("show");
+                    });
+                });
+            });
+        });
+    });
+</script>
+
+<script language="JavaScript" type="text/javascript" src="/js/or/validation.js"><!-- @ --></script>
+<script language="JavaScript" type="text/javascript" src="/js/toasts.js"><!-- @ --></script>
 
 <footer class="webFooter">
     <div class="webFooter__inner">
         <div class="webFooter__links">
             <span>&copy; 2022 Topcoder</span>
-            <a href="http://<%=ApplicationServer.SERVER_NAME%>/">Support</a>
-            <a href="http://<%=ApplicationServer.SERVER_NAME%>/">See a Bug?</a>
-            <a href="http://<%=ApplicationServer.SERVER_NAME%>/community/how-it-works/privacy-policy/">Terms</a>
-            <a href="http://<%=ApplicationServer.SERVER_NAME%>/community/how-it-works/terms/">Privacy Policy</a>
+            <a data-modal="supportModal">Support</a>
+            <a data-modal="termsModal">Terms</a>
+            <a data-modal="privacyPolicyModal">Privacy Policy</a>
         </div>
 
         <div class="webFooter__socials">
@@ -32,7 +56,15 @@
         </div>
     </div>
 </footer>
+<div class="loading-spinner hide">
+    <div class="spinner"></div>
+</div>
 
+<div id="toast"></div>
+
+<jsp:include page="/includes/privacyPolicyModal.jsp" />
+<jsp:include page="/includes/termsModal.jsp" />
+<jsp:include page="/includes/supportModal.jsp" />
 
 <%-- Analytics --%>
 

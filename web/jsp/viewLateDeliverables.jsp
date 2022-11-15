@@ -40,6 +40,7 @@
 
     <!-- Reskin -->
     <link type="text/css" rel="stylesheet" href="/css/reskin-or/reskin.css">
+    <link type="text/css" rel="stylesheet" href="/css/reskin-or/toasts.css">
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function(){
             let avatar = document.querySelector('.webHeader__avatar a');
