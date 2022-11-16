@@ -1,7 +1,7 @@
 #toast {
   position: fixed;
-  top: 32px;
-  right: 32px;
+  top: 22px;
+  right: 22px;
   z-index: 999999;
 }
 
@@ -16,12 +16,27 @@
   font-family: sans-serif;
   box-shadow: 0 5px 8px rgba(0, 0, 0, 0.08);
   transition: all linear 0.3s;
+  min-height: 64px;
+  max-height: 800px;
+}
+
+.t-progress-bar {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 6px;
+  width: 100%;
+  border-radius: 0 0 0 0.5rem;
+  background-color: #07bc0c;
+  animation: progress-bar-animation linear forwards var(--toast-duration, 4000ms);
+  transform-origin: left;
 }
 
 @keyframes slideInLeft {
   from {
     opacity: 0;
-    transform: translateX(calc(100% + 32px));
+    transform: translateX(calc(100% + 22px));
   }
   to {
     opacity: 1;
@@ -29,9 +44,18 @@
   }
 }
 
-@keyframes fadeOut {
+@keyframes slideOut {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(calc(100% + 22px));
+  }
+}
+
+@keyframes progress-bar-animation {
   to {
-    opacity: 0;
+    transform: scaleX(0);
   }
 }
 
@@ -80,6 +104,8 @@
   flex: 1 1 auto;
   margin: auto 0;
   padding: 6px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .toast__title {
@@ -91,6 +117,7 @@
 .toast__msg {
   font-size: 16px;
   font-weight: 500;
+  margin: 0;
 }
 
 .toast__close {

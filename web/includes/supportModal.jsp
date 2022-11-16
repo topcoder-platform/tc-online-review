@@ -16,9 +16,13 @@
             <hr class="modal__divider" />
             <div class="modal__body">
                 <div class="support__info">
-                    <p> Hi ${not empty userFirstName ? userFirstName : 'there'} , we're here to help.</p>
-                    <p>Please describe what you'd like to discuss, and a Topcoder Solutions Expert will email you back&nbsp;at
-                    <strong>${not empty userEmail ? userEmail : null}</strong>&nbsp;within one business day.</p>
+                    <p> Hi ${not empty userFirstName ? userFirstName : 'there'}, we're here to help.</p>
+                    <p>Please describe what you'd like to discuss, and a Topcoder Solutions Expert will email you back
+                        <c:if test="${not empty userEmail}">
+                            at <strong>${userEmail}</strong>
+                        </c:if>
+                        within one business day.
+                    </p>
                 </div>
                 <form id="contactSupport">
                     <div class="support__contact">
@@ -147,44 +151,48 @@
         }
     }
 
-    var inputs = document.querySelectorAll('.support__input');
-    let submitBtn = document.getElementById('submit');
+    function initValidate() {
+        const inputs = document.querySelectorAll('.support__input');
+        const submitBtn = document.getElementById('submit');
 
-    let inputValidator = {
-        "firstName": false,
-        "lastName": false,
-        "email": false,
-        "question": false,
-    }
+        submitBtn.disabled = true;
 
-    fields.forEach(function(field) {
-        let inputElem = document.getElementById(field);
-        if (!validationRules[field](inputElem.value)) {
-            inputValidator[field] = true;
+        let inputValidator = {
+            "firstName": false,
+            "lastName": false,
+            "email": false,
+            "question": false,
         };
-    });
 
-    inputs.forEach(function(input) {
-        input.addEventListener('input', function() {
-            let name = event.target.getAttribute('name');
-            clearError(name);
-            if (!validationRules[name](event.target.value)) {
-                inputValidator[name] = true;
-            } else {
-                inputValidator[name] = false;
+        fields.forEach(function(field) {
+            let inputElem = document.getElementById(field);
+            if (!validationRules[field](inputElem.value)) {
+                inputValidator[field] = true;
             };
-
-            let allValid = Object.keys(inputValidator).every((item) => {
-                return inputValidator[item] === true
-            });
-
-            if (allValid) {
-                submitBtn.disabled = false;
-            } else {
-                submitBtn.disabled = true;
-            }
         });
-    });
+
+        inputs.forEach(function(input) {
+            input.addEventListener("input", function() {
+                let name = event.target.getAttribute('name');
+                clearError(name);
+                if (!validationRules[name](event.target.value)) {
+                    inputValidator[name] = true;
+                } else {
+                    inputValidator[name] = false;
+                };
+
+                let allValid = Object.keys(inputValidator).every((item) => {
+                    return inputValidator[item] === true
+                });
+
+                if (allValid) {
+                    submitBtn.disabled = false;
+                } else {
+                    submitBtn.disabled = true;
+                }
+            });
+        });
+    }
 
     function isFormValid() {
         let fields = ['firstName', 'lastName', 'email', 'question'];
@@ -200,15 +208,19 @@
     }
 
     function showSpinner() {
-        loaderContainer.classList.remove('hide');
+        loaderContainer.classList.add('isLoading');
     }
 
     function removeSpinner() {
-        loaderContainer.classList.add('hide');
+        loaderContainer.classList.remove('isLoading');
     }
 
     function resetForm(form) {
+        let errElem = document.getElementById('submitFormErr')
         form.reset();
+        if (!errElem.classList.contains("hide")) {
+            errElem.classList.add("hide");
+        }
         document.getElementById('supportModal').classList.remove("show");
     }
 
@@ -225,7 +237,7 @@
         const submitFormErr = document.getElementById('submitFormErr');
         submitFormErr.classList.remove('hide');
         const formErr = submitFormErr.querySelector('span');
-        formErr.innerText = err;
+        formErr.innerText = 'Network Error';
     }
 
     function openSupportModal() {
@@ -252,7 +264,7 @@
                 .then((data) => {
                     removeSpinner();
                     resetForm(form);
-                    showToast('Your request has been submitted');
+                    showToast('Your request has been submitted.');
                 })
                 .catch(err => supportReqError(err));
         }
