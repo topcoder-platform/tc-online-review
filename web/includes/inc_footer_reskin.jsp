@@ -10,6 +10,7 @@
             trigger.addEventListener("click", function (event) {
                 event.preventDefault();
                 const modal = document.getElementById(trigger.dataset.modal);
+                initValidate();
                 modal.classList.add("show");
                 const exits = modal.querySelectorAll(".modal__exit");
                 exits.forEach(function (exit) {
@@ -56,7 +57,7 @@
         </div>
     </div>
 </footer>
-<div class="loading-spinner hide">
+<div class="loading-spinner">
     <div class="spinner"></div>
 </div>
 

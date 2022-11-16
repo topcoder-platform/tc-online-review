@@ -24,7 +24,7 @@ function toast({ title = "", message = "", type = "success", duration = 4000 }) 
     const delay = (duration / 1000).toFixed(2);
 
     toast.classList.add("toast", `toast--${type}`);
-    toast.style.animation = `slideInLeft ease .3s, fadeOut linear 1s ${delay}s forwards`;
+    toast.style.animation = `slideInLeft ease .3s, slideOut linear 0.2s ${delay}s forwards`;
 
     toast.innerHTML = `
                     <div class="toast__body">
@@ -36,6 +36,7 @@ function toast({ title = "", message = "", type = "success", duration = 4000 }) 
                     <div class="toast__close">
                       <svg aria-hidden="true" viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7.71 8.23l3.75 3.75-1.48 1.48-3.75-3.75-3.75 3.75L1 11.98l3.75-3.75L1 4.48 2.48 3l3.75 3.75L9.98 3l1.48 1.48-3.75 3.75z"></path></svg>
                     </div>
+                    <div class="t-progress-bar"></div>
                   `;
     main.appendChild(toast);
   }

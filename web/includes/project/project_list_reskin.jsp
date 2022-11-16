@@ -112,10 +112,10 @@
                         <c:set var="phase" value="${phases[idxrProject.index]}" />
                         <c:if test="${!(empty phase)}">
                             <td nowrap="nowrap"><or:text key="ProjectPhase.${fn:replace(phase[0].phaseType.name, ' ', '')}" /></td>
-                            <td nowrap="nowrap">${orfn:displayDateBr(pageContext.request, phaseEndDates[idxrProject.index])}</td>
-                            <td nowrap="nowrap">${orfn:displayDateBr(pageContext.request, projectEndDates[idxrProject.index])}</td>
+                            <td nowrap="nowrap">${orfn:displayDate(pageContext.request, phaseEndDates[idxrProject.index])}</td>
+                            <td nowrap="nowrap">${orfn:displayDate(pageContext.request, projectEndDates[idxrProject.index])}</td>
                             <c:if test="${isMyProjects}">
-                                <td nowrap="nowrap">${myDeliverables[idxrProject.index]}</td>
+                                <td nowrap="nowrap">${not empty myDeliverables[idxrProject.index] ? myDeliverables[idxrProject.index] : '-'}</td>
                             </c:if>
                         </c:if>
                         <c:if test="${empty phase}">

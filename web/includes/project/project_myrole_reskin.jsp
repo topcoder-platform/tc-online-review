@@ -25,11 +25,19 @@
             </thead>
             <tbody class="myInfoTable__body">
                 <tr>
-                    <td>
-                        <c:forEach items="${requestScope.myPayment}" var="rolePayment">
-                            <c:set var="roleName" value="${rolePayment.key.name}"/>
-                            <c:out value="${roleName}"/>
-                        </c:forEach>
+                    <td align="left">
+                        <table cellpadding="0" cellspacing="0" border="0">
+                            <tbody class="roles__info">
+                                <c:forEach items="${requestScope.myPayment}" var="rolePayment">
+                                    <c:set var="roleName" value="${rolePayment.key.name}"/>
+                                    <tr>
+                                        <td nowrap="nowrap">
+                                            <c:out value="${roleName}"/>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
                     </td>
 
                     <td nowrap="nowrap">

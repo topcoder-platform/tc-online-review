@@ -362,10 +362,11 @@
                                 <c:if test="${not isAllowedToEditHisReviews}">
                                     <c:set var="colSpan" value="${colSpan + 1}" />
                                 </c:if>
-                                <tr>
+                                <tr class="reviewers__section">
+                                    <td class="value" colspan="${(isAllowedToEditHisReviews) ? 2 : 3}"><!-- @ --></td>
                                     <c:forEach items="${group.reviewers}" var="reviewer">
-                                        <td colspan="2" nowrap="nowrap">
-                                            <b><or:text key='ResourceRole.${fn:replace(reviewer.resourceRole.name, " ", "")}' />:</b>
+                                        <td class="reviewer" colspan="2" nowrap="nowrap">
+                                            <or:text key='ResourceRole.${fn:replace(reviewer.resourceRole.name, " ", "")}' />:
                                             <tc-webtag:handle coderId='${reviewer.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />
                                             <c:set var="testCase" value="" />
                                             <c:forEach items="${group.testCases}" var="curTestCase">
@@ -393,19 +394,17 @@
                                         </td>
                                     </c:forEach>
                                 </tr>
-                                <thead class="phasesTable__header">
-                                    <tr>
-                                        <th nowrap="nowrap"><or:text key="viewProjectDetails.box.Submission.ID" /></th>
-                                        <th><or:text key="viewProjectDetails.box.Review.Date" arg0="${group.groupIndex}" /></th>
-                                        <c:if test="${isAllowedToEditHisReviews != true}">
-                                            <th><or:text key="viewProjectDetails.box.Review.Score" arg0="${group.groupIndex}" /></th>
-                                        </c:if>
-                                        <c:forEach items="${group.reviewers}" var="reviewer">
-                                            <th><or:text key="viewProjectDetails.box.Review.Score.short" /></th>
-                                            <th><or:text key="viewProjectDetails.box.Review.Appeals" /></th>
-                                        </c:forEach>
-                                    </tr>
-                                </thead>
+                                <tr class="phasesTable__header">
+                                    <th nowrap="nowrap"><or:text key="viewProjectDetails.box.Submission.ID" /></th>
+                                    <th><or:text key="viewProjectDetails.box.Review.Date" arg0="${group.groupIndex}" /></th>
+                                    <c:if test="${isAllowedToEditHisReviews != true}">
+                                        <th><or:text key="viewProjectDetails.box.Review.Score" arg0="${group.groupIndex}" /></th>
+                                    </c:if>
+                                    <c:forEach items="${group.reviewers}" var="reviewer">
+                                        <th><or:text key="viewProjectDetails.box.Review.Score.short" /></th>
+                                        <th><or:text key="viewProjectDetails.box.Review.Appeals" /></th>
+                                    </c:forEach>
+                                </tr>
                                 <tbody class="phasesTable__body">
                                     <c:if test="${empty group.submissions}">
                                         <tr>
@@ -475,7 +474,7 @@
                                                         (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
                                                     </c:if>
                                                 </td>
-                                                <td>${orfn:displayDateBr(pageContext.request, group.reviewDates[submissionStatus.index])}</td>
+                                                <td>${orfn:displayDate(pageContext.request, group.reviewDates[submissionStatus.index])}</td>
                                                 <c:if test="${not isAllowedToEditHisReviews}">
                                                     <c:if test="${not empty submission}">
                                                         <c:set var="finalScore" value='${submission.finalScore}' />

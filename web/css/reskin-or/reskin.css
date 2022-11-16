@@ -874,7 +874,6 @@ table.scorecard td.reviewerResp input {
     border-top-right-radius: 8px;
 }
 
-.myInfoTable__body td,
 .timelineTable__body td,
 .phasesTable__body td,
 .resourcesTable__body td,
@@ -889,6 +888,23 @@ table.scorecard td.reviewerResp input {
     color: var(--black-100);
     padding: 0 8px 0 16px;
     border-top: 2px solid var(--black-10);
+}
+
+.myInfoTable__body td {
+    padding: 18px 16px 16px 16px ;
+    vertical-align: top;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 22px;
+    border-top: 2px solid var(--black-10);
+    color: var(--black-100);
+}
+
+.myInfoTable__body .roles__info td {
+    padding: 0 16px 12px 0;
+    border: none;
 }
 
 .projectList__inner {
@@ -919,6 +935,7 @@ table.scorecard td.reviewerResp input {
     display: flex;
     flex-direction: column;
     width: 100%;
+    gap: 8px;
     white-space: normal !important;
 }
 
@@ -927,7 +944,7 @@ table.scorecard td.reviewerResp input {
     font-style: normal;
     font-weight: 700;
     font-size: 12px;
-    line-height: 22px;
+    line-height: 16px;
     text-transform: uppercase;
     color: var(--black-60);
     text-align: left;
@@ -987,6 +1004,28 @@ table.scorecard td.reviewerResp input {
 
 .phasesTable__review th:first-child {
     width: unset;
+}
+
+.reviewers__section .value,
+.reviewers__section .reviewer {
+    padding: 0 16px 16px 16px;
+    font-family: 'Roboto';
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--black-100);
+    line-height: 22px;
+}
+
+.reviewer p {
+    font-family: 'Roboto';
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 22px;
+    margin: 0;
+}
+
+.reviewer span {
+    margin-right: 2px;
 }
 
 .myInfoTable a,
@@ -1378,7 +1417,7 @@ td.resourcesTable__empty {
     line-height: 22px;
     padding: 0;
     margin-bottom: 4px;
-    color: var(--black-100);
+    color: #7f7f7f;
     border: none;
     resize: none;
     width: 100%;
@@ -1399,11 +1438,16 @@ td.resourcesTable__empty {
     border-color: var(--turq-160);
 }
 
-.support__contact .support__inputText:focus-within ,
+.support__contact .support__inputText:focus-within,
 .support__message:focus-within {
     border-width: 2px;
     padding: 7px 9px 0;
     border-color: var(--turq-160);
+}
+
+.support__contact .support__inputText:focus-within input,
+.support__message:focus-within textarea {
+    color: var(--black-100);
 }
 
 .lateDeliverables__inputText input:focus,
@@ -1442,15 +1486,12 @@ td.resourcesTable__empty {
     letter-spacing: 0.008em;
     text-transform: uppercase;
     cursor: pointer;
-
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 12px 24px;
-
     width: 110px;
     height: 48px;
-
     border-radius: 50px;
     text-decoration: none !important;
 }
@@ -1866,13 +1907,14 @@ td.resourcesTable__empty {
     align-items: center;
     transition: opacity 1s ease;
     opacity: 1;
+    visibility: hidden;
     z-index: 99999;
 }
 
 .spinner {
     position: absolute;
-    width: 60px;
-    height: 60px;
+    width: 100px;
+    height: 100px;
     margin: auto;
     border: 4px solid #2196f3;
     border-radius: 100%;
@@ -1897,13 +1939,9 @@ td.resourcesTable__empty {
     }
 }
 
-.loading-spinner.hide {
-    opacity: 0;
+.loading-spinner.isLoading {
+    visibility: visible;
     pointer-events: none;
-  }
-
-.loading-spinner.show {
-    opacity: 1;
 }
 
 
