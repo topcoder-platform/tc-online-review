@@ -36,5 +36,6 @@ RUN rm /root/tcs_informix-ds.xml
 ## add admin account
 RUN /root/wildfly-26.0.1.Final/bin/add-user.sh -u 'admin' -p 'password1!'
 RUN sed -i 's/<cached-connection-manager\/>/<cached-connection-manager debug="true" error="false"\/>/' /root/wildfly-26.0.1.Final/standalone/configuration/standalone.xml
+RUN sed -i 's/<http-listener name="default" socket-binding="http" redirect-socket="https" enable-http2="true"\/>/<http-listener name="default" socket-binding="http" redirect-socket="https" enable-http2="true" max-parameters="5000"\/>/' /root/wildfly-26.0.1.Final/standalone/configuration/standalone.xml
 
 CMD ["/root/wildfly-26.0.1.Final/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0","-DFOREGROUND"]
