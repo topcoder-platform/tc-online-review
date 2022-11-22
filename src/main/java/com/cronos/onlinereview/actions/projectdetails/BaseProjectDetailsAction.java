@@ -499,7 +499,7 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             }
 
             // Allow only submitter to download the submission if it is MM type of challenge
-            if (project.getProjectCategory().getId() == 37) {
+            if (project.getProjectCategory().getId() == 37 || project.getProjectCategory().getProjectType().getId() == 3) {
                 if (!Boolean.parseBoolean((String) project.getProperty("Viewable Submissions Flag"))) {
                     long submitter =  upload.getOwner();
                     long loggedInUserId = AuthorizationHelper.getLoggedInUserId(request);
