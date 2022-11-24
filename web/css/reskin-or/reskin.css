@@ -321,8 +321,8 @@ body {
     font-family: 'Roboto', sans-serif;
     font-style: normal;
     font-weight: 700;
-    font-size: 16px;
-    line-height: 16px;
+    font-size: 14px;
+    line-height: 14px;
     text-transform: uppercase;
 
     color: var(--turq-160);
@@ -342,8 +342,8 @@ body {
     font-family: 'Roboto', sans-serif;
     font-style: normal;
     font-weight: 700;
-    font-size: 16px;
-    line-height: 16px;
+    font-size: 14px;
+    line-height: 14px;
     text-transform: uppercase;
     color: var(--turq-160) !important;
     align-items: center;
@@ -926,6 +926,7 @@ table.scorecard td.reviewerResp input {
     padding-top: 26px;
 }
 
+.projectListTable__header th:first-child,
 .projectListTable__body td.challengeName.my {
     min-width: calc(0.28 * var(--screen-max));
     max-width: calc(0.28 * var(--screen-max));
