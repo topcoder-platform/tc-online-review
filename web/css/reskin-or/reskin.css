@@ -270,6 +270,7 @@ body {
     color: var(--black-100);
     text-align: left;
     margin-top: 32px;
+    min-height: 32px;
 }
 
 .projectInfo__info,

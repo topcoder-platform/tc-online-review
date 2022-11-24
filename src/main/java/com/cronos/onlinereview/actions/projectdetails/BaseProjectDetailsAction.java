@@ -182,6 +182,76 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
     }
 
     /**
+     * This method verifies the request for certain conditions to be met. This includes verifying
+     * if the user has specified an ID of project he wants to perform an operation on, if the
+     * ID of the project specified by user denotes an existing project, and whether the user
+     * has enough rights to perform the operation specified by <code>permission</code> parameter.
+     *
+     * @return an instance of the {@link CorrectnessCheckResult} class, which specifies whether the
+     *         check was successful and, in the case the check was successful, contains additional
+     *         information retrieved during the check operation, which might be of some use for the
+     *         calling method.
+     * @param request
+     *            the http request.
+     * @param permission
+     *            permission to check against, or <code>null</code> if no check is required.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    protected CorrectnessCheckResult checkForCorrectProjectId(HttpServletRequest request,
+                                                            String permission) throws BaseException {
+        // Prepare bean that will be returned as the result
+        CorrectnessCheckResult result = new CorrectnessCheckResult();
+
+        if (permission == null || permission.trim().length() == 0) {
+            permission = null;
+        }
+
+        // Verify that Project ID was specified and denotes correct project
+        String pidParam = request.getParameter("pid");
+        if (pidParam == null || pidParam.trim().length() == 0) {
+            result.setResult(ActionsHelper.produceErrorReport(
+                    this, request, permission, "Error.ProjectIdNotSpecified", null));
+            // Return the result of the check
+            return result;
+        }
+
+        long pid;
+
+        try {
+            // Try to convert specified pid parameter to its integer representation
+            pid = Long.parseLong(pidParam, 10);
+        } catch (NumberFormatException e) {
+            result.setResult(ActionsHelper.produceErrorReport(
+                    this, request, permission, "Error.ProjectNotFound", null));
+            // Return the result of the check
+            return result;
+        }
+
+        // Retrieve the project following submission's information chain
+        Project project = ActionsHelper.createProjectManager().getProject(pid);
+        if (project == null) {
+            result.setResult(ActionsHelper.produceErrorReport(
+                    this, request, permission, "Error.ProjectNotFound", null));
+            // Return the result of the check
+            return result;
+        }
+
+        request.setAttribute("pid", pid);
+
+        // Store Project object in the result bean
+        result.setProject(project);
+        // Place project as attribute in the request
+        request.setAttribute("project", project);
+
+        // Gather the roles the user has for current request
+        AuthorizationHelper.gatherUserRoles(request, project.getId());
+
+        // Return the result of the check
+        return result;
+    }
+
+    /**
      * <p>
      * Sends the content of specified file for downloading by client.
      * </p>
