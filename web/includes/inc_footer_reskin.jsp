@@ -11,6 +11,7 @@
                 event.preventDefault();
                 const modal = document.getElementById(trigger.dataset.modal);
                 initValidate();
+                modal.querySelector(".modal__body").scrollTop = 0;
                 modal.classList.add("show");
                 const exits = modal.querySelectorAll(".modal__exit");
                 exits.forEach(function (exit) {

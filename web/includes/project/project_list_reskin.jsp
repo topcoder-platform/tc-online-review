@@ -83,13 +83,13 @@
         <thead class="projectListTable__header projectListTable__header--left">
             <tr>
                 <th><or:text key="listProjects.tblHeader.Project" /></th>
-                <c:if test="${isMyProjects}">
+                <c:if test="${isMyProjects || scope == 'my'}">
                     <th><or:text key="listProjects.tblHeader.MyRole" /></th>
                 </c:if>
                 <th><or:text key="listProjects.tblHeader.Phase" /></th>
                 <th><or:text key="listProjects.tblHeader.PhaseEndDate" /></th>
                 <th><or:text key="listProjects.tblHeader.ProjectEndDate" /></th>
-                <c:if test="${isMyProjects}">
+                <c:if test="${isMyProjects || scope == 'my'}">
                     <th><or:text key="listProjects.tblHeader.Deliverable" /></th>
                 </c:if>
             </tr>
@@ -130,7 +130,7 @@
                 </c:forEach>
                 <c:if test="${fn:length(projects) == 0}">
                     <tr>
-                        <td class="noChallenges" colspan="${(isMyProjects) ? '7' : '5'}">
+                        <td class="noChallenges" colspan="${(isMyProjects || scope == 'my') ? '7' : '5'}">
                             <or:text key="listProjects.NoProjects.Category" />
                         </td>
                     </tr>
@@ -138,7 +138,7 @@
             </c:if>
             <c:if test="${projectCount == 0}">
                 <tr>
-                    <td class="noChallenges" colspan="${(isMyProjects) ? '7' : '5'}">
+                    <td class="noChallenges" colspan="${(isMyProjects || scope == 'my') ? '7' : '5'}">
                         <c:choose>
                             <c:when test="${projectTabIndex == 4}">
                                 <or:text key="listProjects.NoProjects.draft" />

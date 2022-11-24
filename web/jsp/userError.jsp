@@ -9,6 +9,8 @@
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="or" uri="/or-tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 
@@ -68,9 +70,18 @@
                 <span>${errorMessage}</span></p>
             </div>
              <div align="right">
-                <a class="backToHome" href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />">
-                    <or:text key="btnBack.home"/>
-                </a>
+                <c:choose>
+                    <c:when test = "${not empty project}">
+                        <a class="backToHome" href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />">
+                            <or:text key="btnBack.home"/>
+                        </a>
+                    </c:when>
+                    <c:otherwise>
+                        <a class="backToHome" href="javascript:history.back()">
+                            <or:text key="btnBack.home"/>
+                        </a>
+                    </c:otherwise>
+                </c:choose>
             </div>
         </div>
     </div>

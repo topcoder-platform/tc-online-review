@@ -565,7 +565,7 @@
                                     <c:if test="${not empty winningSubmission}">
                                         <tr>
                                             <td nowrap="nowrap">
-                                                <img src="<or:text key='viewProjectDetails.Submitter.icoWinner.img' />" alt="<or:text key='viewProjectDetails.Submitter.icoWinner.alt' />" border="0" class="Outline" />
+                                                <span class="phasesTable__placements phasesTable__placements--first">1st</span>
                                                 <a href="<or:url value='/actions/DownloadContestSubmission?sid=${winningSubmission.id}' />"
                                                     title="<or:text key='viewProjectDetails.box.Submission.Download' />">${winningSubmission.id}</a>
                                                 (<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
@@ -622,7 +622,7 @@
                                     <c:if test="${not empty winningSubmission}">
                                         <tr>
                                             <td nowrap="nowrap">
-                                                <img src="<or:text key='viewProjectDetails.Submitter.icoWinner.img' />" alt="<or:text key='viewProjectDetails.Submitter.icoWinner.alt' />" border="0" class="Outline" />
+                                                <span class="phasesTable__placements phasesTable__placements--first">1st</span>
                                                 <a href="<or:url value='/actions/DownloadContestSubmission?sid=${winningSubmission.id}' />"
                                                     title="<or:text key='viewProjectDetails.box.Submission.Download' />">${winningSubmission.id}</a>
                                                 (<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
@@ -709,9 +709,7 @@
                                             </c:forEach>
                                             <tr>
                                                 <td nowrap="nowrap">
-                                                    <img src="<or:text key='viewProjectDetails.Submitter.icoWinner.img' />"
-                                                              alt="<or:text key='viewProjectDetails.Submitter.icoWinner.alt' />" border="0"
-                                                              class="Outline"/>
+                                                    <span class="phasesTable__placements phasesTable__placements--first">1st</span>
                                                     <a href="<or:url value='/actions/DownloadContestSubmission?sid=${winningSubmission.id}' />"
                                                             title="<or:text key='viewProjectDetails.box.Submission.Download' />">${winningSubmission.id}</a>
                                                     (<tc-webtag:handle
