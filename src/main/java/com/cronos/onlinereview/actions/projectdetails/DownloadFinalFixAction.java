@@ -54,10 +54,16 @@ public class DownloadFinalFixAction extends BaseProjectDetailsAction {
         LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification = checkForCorrectUploadId(request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME);
+        CorrectnessCheckResult verification_pid = checkForCorrectProjectId(request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME);
         // If any error has occurred, return action forward contained in the result bean
-        if (!verification.isSuccessful()) {
-            return verification.getResult();
+        if (!verification_pid.isSuccessful()) {
+            return verification_pid.getResult();
+        }
+        
+        CorrectnessCheckResult verification_uid = checkForCorrectUploadId(request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME);
+        // If any error has occurred, return action forward contained in the result bean
+        if (!verification_uid.isSuccessful()) {
+            return verification_uid.getResult();
         }
 
         boolean hasPermission = false, hasSubmitterRole = false;
@@ -94,7 +100,7 @@ public class DownloadFinalFixAction extends BaseProjectDetailsAction {
         }
 
         // Get the upload the user wants to download
-        Upload upload = verification.getUpload();
+        Upload upload = verification_uid.getUpload();
 
         if (!hasPermission) {
             ActionsHelper.logDownloadAttempt(request, upload, false);
