@@ -5,9 +5,11 @@ package com.cronos.onlinereview.actions.projectlinks;
 
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.actions.DynamicModelDrivenAction;
+import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.model.DynamicModel;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.Comparators;
+import com.cronos.onlinereview.util.ConfigHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
 import com.topcoder.onlinereview.component.exception.BaseException;
@@ -69,6 +71,25 @@ public class EditProjectLinksAction extends DynamicModelDrivenAction {
         }
 
         Project project = verification.getProject();
+        request.setAttribute("projectStatus", project.getProjectStatus().getName());
+
+        final String projectTypeName = project.getProjectCategory().getProjectType().getName();
+
+        boolean hasForumType = project.getAllProperties().containsKey("Forum Type");
+
+        long projectId = project.getId();
+        long forumId = -1;
+        String tempStr;
+
+        tempStr = (String) project.getProperty("Developer Forum ID");
+        if (tempStr != null && tempStr.trim().length() != 0) {
+            forumId = Long.parseLong(tempStr, 10);
+        }
+
+        request.setAttribute("viewContestLink", ConfigHelper.getProjectTypeViewContestLink(projectTypeName, projectId));
+
+        request.setAttribute("forumLink", ConfigHelper.getProjectTypeForumLink(
+                (projectTypeName.equalsIgnoreCase("studio") && hasForumType) ? "NewStudio" : projectTypeName, forumId));
 
         // obtains the project link manager
         ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager();
@@ -92,6 +113,8 @@ public class EditProjectLinksAction extends DynamicModelDrivenAction {
 
         // set up projects except for deleted ones
         request.setAttribute("allProjects", allProjects);
+        request.setAttribute("isAllowedToContactPM",
+        AuthorizationHelper.hasUserPermission(request, Constants.CONTACT_PM_PERM_NAME));
 
         // Populate the form with project and project link properties
         populateProjectLinkForm(getModel(), verification.getProject());
