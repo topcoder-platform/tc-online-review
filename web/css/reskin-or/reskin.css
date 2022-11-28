@@ -195,9 +195,11 @@ body {
 }
 
 .projectInfo {
+    flex-grow: 1;
     margin-bottom: -12px;
 }
 
+.editProjectLink__header,
 .error__projectName,
 .scoreInfo__title {
     display: flex;
@@ -249,6 +251,10 @@ body {
 }
 .back-btn .arrow-prev-icon {
     content: url('/i/reskin/arrow-prev.svg');
+}
+
+.edit-back-btn {
+    margin-bottom: 43px;
 }
 
 .toast__icon .success-icon {
@@ -356,6 +362,7 @@ body {
     margin-right: 16px;
 }
 
+.editProjectLink,
 .projectDetails {
     border: 2px solid var(--black-10);
     border-radius: 8px;
@@ -363,6 +370,7 @@ body {
     margin: 32px auto;
 }
 
+.editProjectLink__title,
 .projectDetails__title {
     font-family: 'Barlow', sans-serif;
     font-style: normal;
@@ -374,6 +382,7 @@ body {
     flex-grow: 1;
 }
 
+.editProjectLink__sectionHeader,
 .projectDetails__sectionHeader {
     display: flex;
     align-items: center;
@@ -835,6 +844,7 @@ table.scorecard td.reviewerResp input {
     color: var(--legacy-100) !important;
 }
 
+.projectLinkTable__header th,
 .myInfoTable__header th,
 .timelineTable__header th,
 .phasesTable__header th,
@@ -855,6 +865,11 @@ table.scorecard td.reviewerResp input {
     padding: 0 16px;
 }
 
+.projectLinkTable__header th {
+    padding-right: 8px;
+}
+
+.projectLinkTable__header th:first-child,
 .myInfoTable__header th:first-child,
 .timelineTable__header--left th:first-child,
 .phasesTable__header th:first-child,
@@ -871,7 +886,8 @@ table.scorecard td.reviewerResp input {
 .prizesTable__header th:last-child,
 .resourcesTable__header th:last-child,
 .projectListTable__header th:last-child,
-.lateDeliverablesTable__header th:last-child {
+.lateDeliverablesTable__header th:last-child,
+.projectLinkTable__header th:last-child {
     border-top-right-radius: 8px;
 }
 
@@ -891,6 +907,7 @@ table.scorecard td.reviewerResp input {
     border-top: 2px solid var(--black-10);
 }
 
+.projectLinkTable__body td,
 .myInfoTable__body td {
     padding: 18px 16px 16px 16px ;
     vertical-align: top;
@@ -902,6 +919,12 @@ table.scorecard td.reviewerResp input {
     border-top: 2px solid var(--black-10);
     color: var(--black-100);
 }
+
+.projectLinkTable__body td {
+    vertical-align: middle;
+    padding: 18px 8px 16px 16px;
+}
+
 
 .myInfoTable__body .roles__info td {
     padding: 0 16px 12px 0;
@@ -1216,6 +1239,18 @@ td.resourcesTable__empty {
     padding-top: 8px;
 }
 
+.grey {
+    height: 40px;
+    padding: 8px 0;
+    background: var(--tc-white);
+    border: 1px solid var(--black-40);
+}
+
+.greyText {
+    font-weight: 400 !important;
+    color: var(--black-60) !important;
+}
+
 .custom-select:hover {
     border-color: var(--turq-160);
     cursor: pointer;
@@ -1233,6 +1268,7 @@ td.resourcesTable__empty {
     margin-left: 10px;
 }
 
+.greyText,
 .custom-select__trigger {
     position: relative;
     display: flex;
@@ -1289,6 +1325,10 @@ td.resourcesTable__empty {
     line-height: 24px;
     cursor: pointer;
     transition: all 0.5s;
+}
+
+.custom-option-grey {
+    padding: 6px 10px;
 }
 
 .custom-option:not(.group):hover {
@@ -1468,6 +1508,7 @@ td.resourcesTable__empty {
     margin-left: auto;
 }
 
+.saveChanges__button,
 .lateDeliverables__button,
 .contactManager__button {
     display: flex;
@@ -1476,6 +1517,13 @@ td.resourcesTable__empty {
     margin-bottom: 32px;
 }
 
+.saveChanges__button {
+    margin-top: 56px;
+}
+
+.editProjectLink__add,
+.saveChanges__cancel,
+.saveChanges__save,
 .lateDeliverables__search,
 .lateDeliverables__cancel,
 .contactManager__submit,
@@ -1498,12 +1546,49 @@ td.resourcesTable__empty {
     text-decoration: none !important;
 }
 
+.editProjectLink__add,
+.saveChanges__cancel,
+.saveChanges__save,
 .lateDeliverables__cancel,
 .contactManager__cancel {
     background: var(--tc-white);
     border: 2px solid var(--turq-160);
-    color: var(--turq-160) !important;
+    color: var(--turq-160);
 }
+
+.saveChanges__save {
+    width: auto;
+}
+
+.saveChanges__save:disabled {
+    border-color: var(--black-5) !important;
+    color: var(--black-60) !important;
+    cursor: not-allowed;
+}
+
+.editProjectLink__add {
+    width: 66px;
+    height: 32px;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 24px;
+    letter-spacing: 0.008em;
+}
+
+.saveChanges__cancel:hover,
+.saveChanges__save:hover,
+.editProjectLink__add:hover {
+    color: var(--turq-140);
+    border-color: var(--turq-140);
+}
+
+.saveChanges__cancel:active,
+.saveChanges__save:active,
+.editProjectLink__add:active {
+    color: var(--turq-180);
+    border-color: var(--turq-180);
+}
+
 
 .lateDeliverables__search,
 .contactManager__submit {
@@ -1946,4 +2031,9 @@ td.resourcesTable__empty {
     pointer-events: none;
 }
 
-
+.edit__projectLink {
+    padding: 16px 16px 0px;
+    border: 2px solid var(--black-10);
+    border-radius: 8px;
+    width: 100%;
+}

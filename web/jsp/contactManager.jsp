@@ -16,7 +16,6 @@
     <link type="text/css" rel="stylesheet" href="/css/style.css" />
     <link type="text/css" rel="stylesheet" href="/css/coders.css" />
     <link type="text/css" rel="stylesheet" href="/css/stats.css" />
-    <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
 
     <!-- JS from wireframes -->
     <script language="javascript" type="text/javascript"
