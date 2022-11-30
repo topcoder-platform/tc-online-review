@@ -199,6 +199,8 @@ body {
     margin-bottom: -12px;
 }
 
+.paymentTable__paid,
+.viewProjectPayment__header,
 .editProjectLink__header,
 .error__projectName,
 .scoreInfo__title {
@@ -362,6 +364,7 @@ body {
     margin-right: 16px;
 }
 
+.viewProjectPayment,
 .editProjectLink,
 .projectDetails {
     border: 2px solid var(--black-10);
@@ -370,6 +373,7 @@ body {
     margin: 32px auto;
 }
 
+.viewProjectPayment__title,
 .editProjectLink__title,
 .projectDetails__title {
     font-family: 'Barlow', sans-serif;
@@ -382,6 +386,7 @@ body {
     flex-grow: 1;
 }
 
+.viewProjectPayment__sectionHeader,
 .editProjectLink__sectionHeader,
 .projectDetails__sectionHeader {
     display: flex;
@@ -670,7 +675,9 @@ table.scorecard td.headerT {
     margin-top: 16px;
 }
 
-.backToHome {
+.backToHome,
+.editPaymentBtn,
+.returnBtn {
     font-family: 'Roboto';
     font-weight: 700;
     font-size: 14px;
@@ -685,14 +692,22 @@ table.scorecard td.headerT {
     text-decoration: none !important;
 }
 
+.editPaymentBtn {
+    margin-right: 12px;
+}
+
 .submit__btn:hover,
-.backToHome:hover {
+.backToHome:hover,
+.editPaymentBtn:hover,
+.returnBtn:hover {
     color: var(--turq-140);
     border-color: var(--turq-140) !important;
 }
 
 .submit__btn:active,
-.backToHome:active {
+.backToHome:active,
+.editPaymentBtn:active,
+.returnBtn:active {
     color: var(--turq-180);
     border-color: var(--turq-180) !important;
 }
@@ -851,7 +866,8 @@ table.scorecard td.reviewerResp input {
 .prizesTable__header th,
 .resourcesTable__header th,
 .projectListTable__header th,
-.lateDeliverablesTable__header th {
+.lateDeliverablesTable__header th,
+.projectPaymentTable__header th {
     height: 30px;
     background: var(--black-5);
     font-family: 'Barlow';
@@ -876,7 +892,8 @@ table.scorecard td.reviewerResp input {
 .prizesTable__header th:first-child,
 .resourcesTable__header th:first-child,
 .projectListTable__header th:first-child,
-.lateDeliverablesTable__header th:first-child {
+.lateDeliverablesTable__header th:first-child,
+.projectPaymentTable__header th:first-child {
     border-top-left-radius: 8px;
 }
 
@@ -887,6 +904,7 @@ table.scorecard td.reviewerResp input {
 .resourcesTable__header th:last-child,
 .projectListTable__header th:last-child,
 .lateDeliverablesTable__header th:last-child,
+.projectPaymentTable__header th:last-child,
 .projectLinkTable__header th:last-child {
     border-top-right-radius: 8px;
 }
@@ -895,7 +913,8 @@ table.scorecard td.reviewerResp input {
 .phasesTable__body td,
 .resourcesTable__body td,
 .prizesTable__body td,
-.projectListTable__body td {
+.projectListTable__body td,
+.projectPaymentTable__body td {
     height: 56px;
     font-family: 'Roboto';
     font-style: normal;
@@ -1061,6 +1080,7 @@ table.scorecard td.reviewerResp input {
 .resourcesTable a,
 .projectListTable a,
 .projectListTable a:hover,
+.projectPaymentTable a,
 .lateDeliverables__expand a {
     color: var(--link-blue-dark);
     text-decoration: none !important;
@@ -2029,6 +2049,13 @@ td.resourcesTable__empty {
 .loading-spinner.isLoading {
     visibility: visible;
     pointer-events: none;
+}
+
+.paid__divider {
+    width: 1px;
+    height: 22px;
+    margin: 0 8px 0;
+    background: var(--black-40);
 }
 
 .edit__projectLink {
