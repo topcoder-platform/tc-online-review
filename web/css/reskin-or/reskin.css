@@ -208,6 +208,17 @@ body {
     align-items: flex-end;
 }
 
+.editPayment__submission {
+    display: flex;
+    align-items: center;
+}
+
+.editPayment__submission .selectCustom,
+.editPayment__submission .selectCustom-add {
+    margin-left: 8px;
+    width: 28%;
+}
+
 .error__projectName {
     border-bottom: 2px solid var(--black-10);
     border-radius: 1px;
@@ -675,6 +686,8 @@ table.scorecard td.headerT {
     margin-top: 16px;
 }
 
+.addPayment,
+.deletePayment,
 .backToHome,
 .editPaymentBtn,
 .returnBtn {
@@ -696,6 +709,8 @@ table.scorecard td.headerT {
     margin-right: 12px;
 }
 
+.addPayment:hover,
+.deletePayment:hover,
 .submit__btn:hover,
 .backToHome:hover,
 .editPaymentBtn:hover,
@@ -704,12 +719,20 @@ table.scorecard td.headerT {
     border-color: var(--turq-140) !important;
 }
 
+.addPayment:active,
+.deletePayment:active,
 .submit__btn:active,
 .backToHome:active,
 .editPaymentBtn:active,
 .returnBtn:active {
     color: var(--turq-180);
     border-color: var(--turq-180) !important;
+}
+
+.deletePayment,
+.addPayment {
+    padding: 3px 16px;
+    font-size: 12px;
 }
 
 table.scorecard td.reviewerResp input {
@@ -859,6 +882,7 @@ table.scorecard td.reviewerResp input {
     color: var(--legacy-100) !important;
 }
 
+.editProjectPaymentTable__header th,
 .projectLinkTable__header th,
 .myInfoTable__header th,
 .timelineTable__header th,
@@ -885,6 +909,7 @@ table.scorecard td.reviewerResp input {
     padding-right: 8px;
 }
 
+.editProjectPaymentTable__header th:first-child,
 .projectLinkTable__header th:first-child,
 .myInfoTable__header th:first-child,
 .timelineTable__header--left th:first-child,
@@ -897,6 +922,7 @@ table.scorecard td.reviewerResp input {
     border-top-left-radius: 8px;
 }
 
+.editProjectPaymentTable__header th:last-child,
 .myInfoTable__header th:last-child,
 .timelineTable__header--right th:last-child,
 .phasesTable__header th:last-child,
@@ -909,6 +935,7 @@ table.scorecard td.reviewerResp input {
     border-top-right-radius: 8px;
 }
 
+.editProjectPaymentTable__body td,
 .timelineTable__body td,
 .phasesTable__body td,
 .resourcesTable__body td,
@@ -1271,6 +1298,7 @@ td.resourcesTable__empty {
     color: var(--black-60) !important;
 }
 
+.select-selected:hover:not(.disabled),
 .custom-select:hover {
     border-color: var(--turq-160);
     cursor: pointer;
@@ -1493,6 +1521,7 @@ td.resourcesTable__empty {
     height: 48px;
 }
 
+.edit__inputBoxDuration:hover:not([disabled]),
 .lateDeliverables__input:hover,
 .contactManager__message:hover,
 .support__input:hover,
@@ -1512,6 +1541,7 @@ td.resourcesTable__empty {
     color: var(--black-100);
 }
 
+.edit__inputBoxDuration:focus,
 .lateDeliverables__inputText input:focus,
 .support__inputText input:focus,
 .support__message textarea:focus,
@@ -2063,4 +2093,161 @@ td.resourcesTable__empty {
     border: 2px solid var(--black-10);
     border-radius: 8px;
     width: 100%;
+}
+
+.editProjectPaymentTable__body td {
+    width: 31%;
+}
+
+.custom-radio {
+    display: inline-block;
+    position: relative;
+  }
+
+  .custom-radio input[type='radio'] {
+    display: none;
+  }
+
+  .custom-radio label {
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 16px;
+    margin-right: 12px;
+    line-height: 24px;
+    cursor: pointer;
+    color: var(--black-100);
+  }
+
+  .custom-radio label:before {
+    content: " ";
+    display: inline-block;
+    position: relative;
+    top: 4px;
+    margin: 0 8px 0 0;
+    width: 20px;
+    height: 20px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    border: 1.5px solid var(--black-60);
+    background-color: transparent;
+  }
+
+  .custom-radio input[type=radio]:checked + label:before {
+    border-color: var(--green);
+  }
+
+  .custom-radio input[type=radio]:checked + label:after {
+    border-radius: 11px;
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    top: 9px;
+    left: 5px;
+    content: " ";
+    display: block;
+    background: var(--green);
+  }
+
+.editProjectLink__error td {
+    font-family: 'Roboto';
+    font-size: 14px;
+    padding-bottom: 18px;
+    padding-top: 6px;
+}
+
+.selectCustom-add,
+.selectCustom {
+  position: relative;
+  font-family: 'Roboto';
+  width: 65%;
+}
+
+.selectCustom-add select,
+.selectCustom select {
+  display: none;
+}
+
+.select-selected {
+  background-color: var(--tc-white);
+}
+
+.edit__inputBoxDuration:disabled,
+.select-selected.disabled {
+    color: var(--black-60);
+    background: var(--black-10);
+    cursor: default;
+}
+
+.select-selected:after {
+    position: absolute;
+    content: url('/i/reskin/arrow-down-sm.svg');
+    top: 13px;
+    right: 16px;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+}
+
+.select-items div,.select-selected {
+    padding: 9px 10px;
+    height: 40px;
+    font-weight: 400;
+    border: 1px solid var(--black-40);
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.select-items div {
+    border: none;
+    border-radius: 0;
+    width: 100%;
+}
+
+.select-items {
+  position: absolute;
+  background: var(--tc-white);
+  border: 1px solid var(--black-40);
+  border-radius: 4px;
+  max-height: 250px;
+  overflow: auto;
+  top: 42px;
+  left: 0;
+  right: 0;
+  z-index: 99;
+}
+
+.select-hide {
+  display: none;
+}
+
+.select-items div:hover {
+    cursor: pointer;
+    color: var(--tc-white);
+    background-color: var(--turq-160);
+}
+
+.same-as-selected {
+    font-weight: 700 !important;
+    color: var(--black-100);
+}
+
+.newTr {
+    height: 74px;
+}
+
+.edit__inputBoxDuration {
+    padding: 12px 10px;
+    width: 80px;
+    height: 40px;
+    background: var(--tc-white);
+    border: 1px solid var(--black-40);
+    border-radius: 4px;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    font-family: 'Roboto';
+    text-align: right;
+    margin-left: 4px;
+    color: var(--black-100);
 }
