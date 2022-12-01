@@ -1414,25 +1414,11 @@ td.resourcesTable__empty {
     width: 7px;
 }
 
-.arrow::before,
 .arrow::after {
-    content: "";
+    content: url('/i/reskin/arrow-down-sm.svg');
     position: absolute;
-    bottom: 0px;
-    width: 0.09rem;
+    right: 1px;
     height: 100%;
-}
-
-.arrow::before {
-    left: -2px;
-    transform: rotate(-45deg);
-    background-color: var(--turq-160);
-}
-
-.arrow::after {
-    left: 2px;
-    transform: rotate(45deg);
-    background-color: var(--turq-160);
 }
 
 .lateDeliverables__basic,
@@ -1510,10 +1496,14 @@ td.resourcesTable__empty {
     line-height: 22px;
     padding: 0;
     margin-bottom: 4px;
-    color: #7f7f7f;
+    color: var(--black-100);
     border: none;
     resize: none;
     width: 100%;
+}
+
+.contactManager textarea {
+    margin-top: 7px;
 }
 
 .support__message {
