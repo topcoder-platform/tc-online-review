@@ -7,7 +7,7 @@
 
 
 <div class="projectInfo">
-    <h1 class="projectInfo__projectName">${project.allProperties["Project Name"]}</h1>
+    <h1 class="projectInfo__projectName">${project.allProperties["Project Name"]} ${param.titleAction}</h1>
     <div class="projectInfo__info">
         <c:if test='${!(empty project.allProperties["Project Version"])}'>
             <p class="projectInfo__projectVersion"><or:text key="global.version" /> ${project.allProperties["Project Version"]}</p>

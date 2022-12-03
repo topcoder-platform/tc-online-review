@@ -187,6 +187,10 @@ body {
     padding-bottom: 132px;
 }
 
+.content--manageProject {
+    padding-bottom: 148px;
+}
+
 .content__inner {
     display: block;
     margin: 0 auto;
@@ -375,6 +379,7 @@ body {
     margin-right: 16px;
 }
 
+.manageProject,
 .viewProjectPayment,
 .editProjectLink,
 .projectDetails {
@@ -384,6 +389,11 @@ body {
     margin: 32px auto;
 }
 
+.manageProject {
+    position: relative;
+}
+
+.manageProject__title,
 .viewProjectPayment__title,
 .editProjectLink__title,
 .projectDetails__title {
@@ -397,6 +407,7 @@ body {
     flex-grow: 1;
 }
 
+.manageProject__sectionHeader,
 .viewProjectPayment__sectionHeader,
 .editProjectLink__sectionHeader,
 .projectDetails__sectionHeader {
@@ -736,6 +747,7 @@ table.scorecard td.headerT {
 .addPayment {
     padding: 3px 16px;
     font-size: 12px;
+    height: 24px;
 }
 
 table.scorecard td.reviewerResp input {
@@ -892,7 +904,9 @@ table.scorecard td.reviewerResp input {
 .phasesTable__header th,
 .prizesTable__header th,
 .resourcesTable__header th,
+.reviewPaymentTable__header th,
 .projectListTable__header th,
+.addResourcesTable__header td.title,
 .lateDeliverablesTable__header th,
 .projectPaymentTable__header th {
     height: 30px;
@@ -915,9 +929,11 @@ table.scorecard td.reviewerResp input {
 .editProjectPaymentTable__header th:first-child,
 .projectLinkTable__header th:first-child,
 .myInfoTable__header th:first-child,
+.addResourcesTable__header td.title:first-child,
 .timelineTable__header--left th:first-child,
 .phasesTable__header th:first-child,
 .prizesTable__header th:first-child,
+.reviewPaymentTable__header th:first-child,
 .resourcesTable__header th:first-child,
 .projectListTable__header th:first-child,
 .lateDeliverablesTable__header th:first-child,
@@ -927,6 +943,8 @@ table.scorecard td.reviewerResp input {
 
 .editProjectPaymentTable__header th:last-child,
 .myInfoTable__header th:last-child,
+.addResourcesTable__header td.title:last-child,
+.reviewPaymentTable__header th:last-child,
 .timelineTable__header--right th:last-child,
 .phasesTable__header th:last-child,
 .prizesTable__header th:last-child,
@@ -944,6 +962,10 @@ table.scorecard td.reviewerResp input {
 .resourcesTable__body td,
 .prizesTable__body td,
 .projectListTable__body td,
+.extendRegistration__body td,
+.extendSubTable__body td,
+.addResourcesTable__body td,
+.reviewPaymentTable__body td,
 .projectPaymentTable__body td {
     height: 56px;
     font-family: 'Roboto';
@@ -2141,11 +2163,27 @@ td.resourcesTable__empty {
     background: var(--green);
   }
 
+  .custom-radio label.fixedAmt {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 22px;
+    margin-right: 2px;
+  }
+
+  .custom-radio label.percentage {
+    margin-right: 0;
+  }
+
+.table__error,
 .editProjectLink__error td {
     font-family: 'Roboto';
     font-size: 14px;
     padding-bottom: 18px;
     padding-top: 6px;
+}
+
+.table__error {
+    padding-bottom: 0;
 }
 
 .selectCustom-add,
@@ -2243,4 +2281,52 @@ td.resourcesTable__empty {
     text-align: right;
     margin-left: 4px;
     color: var(--black-100);
+}
+
+.addResourcesTable__title th,
+.extendSubTable__header th,
+.extendRegistration__header th {
+    font-family: 'Barlow';
+    font-weight: 600;
+    font-size: 18px;
+    padding: 16px 0;
+    line-height: 22px;
+    text-align: left;
+    text-transform: uppercase;
+    color: var(--black-100);
+}
+
+.addResourcesTable__body td.label,
+.extendSubTable__body td.label,
+.extendRegistration__body td.label {
+    width: 52%;
+}
+
+.addResourcesTable__body td.input,
+.extendRegistration__body td.input,
+.extendSubTable__body td.input {
+    height: 74px;
+    border-bottom: 2px solid var(--black-10);
+}
+
+.addResInput {
+    width: 98%;
+    text-align: left;
+}
+
+.addResourcesTable__body td.input:last-child {
+    border-bottom: none
+}
+
+.manageProjectForm {
+    margin-bottom: 0;
+}
+
+.reviewPaymentTable__body td {
+    height: 74px;
+}
+
+.viewManageButtom {
+    position: absolute;
+    right: 0;
 }
