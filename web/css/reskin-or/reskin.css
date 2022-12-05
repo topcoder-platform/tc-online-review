@@ -212,6 +212,10 @@ body {
     align-items: flex-end;
 }
 
+.editProject__header {
+    margin: 36px 0 16px;
+}
+
 .editPayment__submission {
     display: flex;
     align-items: center;
@@ -381,6 +385,7 @@ body {
 
 .manageProject,
 .viewProjectPayment,
+.editProject,
 .editProjectLink,
 .projectDetails {
     border: 2px solid var(--black-10);
@@ -408,6 +413,7 @@ body {
 }
 
 .manageProject__sectionHeader,
+.editProject__sectionHeader,
 .viewProjectPayment__sectionHeader,
 .editProjectLink__sectionHeader,
 .projectDetails__sectionHeader {
@@ -416,6 +422,7 @@ body {
     padding-bottom: 16px;
 }
 
+.editProject__checkbox,
 .projectDetails__notificationCheckbox {
     /* TC-Type/Desktop/Body/Body-Main */
     font-family: 'Roboto', sans-serif;
@@ -428,6 +435,7 @@ body {
     align-items: center;
 }
 
+.editProject__checkbox input[type="checkbox"],
 .projectDetails__notificationCheckbox input[type="checkbox"] {
     position: absolute;
     top: 0;
@@ -438,10 +446,21 @@ body {
     cursor: pointer;
 }
 
+
 .projectDetails__notificationCheckbox input[type="checkbox"] ~ .checkbox-label {
     margin: 8px;
 }
 
+.projectDetails__notificationCheckbox input[type="checkbox"] ~ .preferences__email {
+    margin-left: 0;
+    margin-right: 8px;
+}
+
+.editPhaseTable__body td input[type="checkbox"] ~ .checkbox-label {
+    margin: 0;
+}
+
+.editPhaseTable__body td input[type="checkbox"] ~ .checkbox-label::before,
 .projectDetails__notificationCheckbox input[type="checkbox"] ~ .checkbox-label::before {
     content: '';
     display: block;
@@ -453,18 +472,26 @@ body {
     box-sizing: border-box;
 }
 
+.editPhaseTable__body td input[type="checkbox"] ~ .checkbox-label::after,
 .projectDetails__notificationCheckbox input[type="checkbox"] ~ .checkbox-label::after {
     content: url('/i/reskin/checkbox.svg');
     display: none;
     box-sizing: border-box;
 }
 
+.editPhaseTable__body td input[type="checkbox"]:checked ~ .checkbox-label::before,
 .projectDetails__notificationCheckbox input[type="checkbox"]:checked ~ .checkbox-label::before {
     display: none;
 }
 
+.editPhaseTable__body td input[type="checkbox"]:checked ~ .checkbox-label::after,
 .projectDetails__notificationCheckbox input[type="checkbox"]:checked ~ .checkbox-label::after {
     display: block;
+}
+
+.editPhaseTable__body td input[type="checkbox"]:disabled:checked ~ .checkbox-label::after {
+    content: url('/i/reskin/checkbox-disabled.svg');
+    box-sizing: border-box;
 }
 
 .lateDeliverables__accordion,
@@ -698,6 +725,7 @@ table.scorecard td.headerT {
 }
 
 .addPayment,
+.phaseButton,
 .deletePayment,
 .backToHome,
 .editPaymentBtn,
@@ -724,6 +752,7 @@ table.scorecard td.headerT {
 }
 
 .addPayment:hover,
+.phaseButton:hover,
 .deletePayment:hover,
 .submit__btn:hover,
 .backToHome:hover,
@@ -734,6 +763,7 @@ table.scorecard td.headerT {
 }
 
 .addPayment:active,
+.phaseButton:active,
 .deletePayment:active,
 .submit__btn:active,
 .backToHome:active,
@@ -743,6 +773,7 @@ table.scorecard td.headerT {
     border-color: var(--turq-180) !important;
 }
 
+.phaseButton,
 .deletePayment,
 .addPayment {
     padding: 3px 16px;
@@ -898,6 +929,7 @@ table.scorecard td.reviewerResp input {
 }
 
 .editProjectPaymentTable__header th,
+.editPhaseTable__header th,
 .projectLinkTable__header th,
 .myInfoTable__header th,
 .timelineTable__header th,
@@ -928,6 +960,7 @@ table.scorecard td.reviewerResp input {
 
 .editProjectPaymentTable__header th:first-child,
 .projectLinkTable__header th:first-child,
+.editPhaseTable__header th:first-child,
 .myInfoTable__header th:first-child,
 .addResourcesTable__header td.title:first-child,
 .timelineTable__header--left th:first-child,
@@ -943,6 +976,7 @@ table.scorecard td.reviewerResp input {
 
 .editProjectPaymentTable__header th:last-child,
 .myInfoTable__header th:last-child,
+.editPhaseTable__header th:last-child,
 .addResourcesTable__header td.title:last-child,
 .reviewPaymentTable__header th:last-child,
 .timelineTable__header--right th:last-child,
@@ -961,6 +995,8 @@ table.scorecard td.reviewerResp input {
 .phasesTable__body td,
 .resourcesTable__body td,
 .prizesTable__body td,
+.preferencesTable__body td,
+.editPhaseTable__body td,
 .projectListTable__body td,
 .extendRegistration__body td,
 .extendSubTable__body td,
@@ -978,6 +1014,11 @@ table.scorecard td.reviewerResp input {
     border-top: 2px solid var(--black-10);
 }
 
+.editPhaseTable__body td {
+    padding: 18px 8px 16px 16px;
+    vertical-align: top;
+}
+
 .projectLinkTable__body td,
 .myInfoTable__body td {
     padding: 18px 16px 16px 16px ;
@@ -989,6 +1030,10 @@ table.scorecard td.reviewerResp input {
     line-height: 22px;
     border-top: 2px solid var(--black-10);
     color: var(--black-100);
+}
+
+.preferencesTable__body td {
+    padding: 16px 8px 16px 16px;
 }
 
 .projectLinkTable__body td {
@@ -1311,6 +1356,13 @@ td.resourcesTable__empty {
     padding-top: 8px;
 }
 
+.custom-select.disabled {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    color: #767676 !important;
+}
+
 .grey {
     height: 40px;
     padding: 8px 0;
@@ -1324,7 +1376,7 @@ td.resourcesTable__empty {
 }
 
 .select-selected:hover:not(.disabled),
-.custom-select:hover {
+.custom-select:hover:not(.disabled) {
     border-color: var(--turq-160);
     cursor: pointer;
 }
@@ -1536,7 +1588,10 @@ td.resourcesTable__empty {
     height: 48px;
 }
 
+.inputDate:hover:not([disabled]),
+.inputTime:hover:not([disabled]),
 .edit__inputBoxDuration:hover:not([disabled]),
+.editInputBox:hover:not([disabled]),
 .lateDeliverables__input:hover,
 .contactManager__message:hover,
 .support__input:hover,
@@ -1556,7 +1611,10 @@ td.resourcesTable__empty {
     color: var(--black-100);
 }
 
+.inputDate:focus,
+.inputTime:focus,
 .edit__inputBoxDuration:focus,
+.editInputBox:focus,
 .lateDeliverables__inputText input:focus,
 .support__inputText input:focus,
 .support__message textarea:focus,
@@ -2147,8 +2205,17 @@ td.resourcesTable__empty {
     background-color: transparent;
   }
 
+  .custom-radio .phaseUseDuration,
+  .custom-radio .phaseUseDuration:before {
+    margin: 0;
+  }
+
   .custom-radio input[type=radio]:checked + label:before {
     border-color: var(--green);
+  }
+
+  .custom-radio input[type=radio]:disabled + label:before {
+    border-color: var(--black-20);
   }
 
   .custom-radio input[type=radio]:checked + label:after {
@@ -2161,6 +2228,10 @@ td.resourcesTable__empty {
     content: " ";
     display: block;
     background: var(--green);
+  }
+
+  .custom-radio input[type=radio]:disabled + label:after {
+    background: var(--black-20);
   }
 
   .custom-radio label.fixedAmt {
@@ -2202,7 +2273,11 @@ td.resourcesTable__empty {
   background-color: var(--tc-white);
 }
 
+.inputDate:disabled,
+.inputTime:disabled,
+.custom-select.disabled,
 .edit__inputBoxDuration:disabled,
+.editInputBox:disabled,
 .select-selected.disabled {
     color: var(--black-60);
     background: var(--black-10);
@@ -2267,6 +2342,9 @@ td.resourcesTable__empty {
     height: 74px;
 }
 
+.inputDate,
+.inputTime,
+.editInputBox,
 .edit__inputBoxDuration {
     padding: 12px 10px;
     width: 80px;
@@ -2281,6 +2359,21 @@ td.resourcesTable__empty {
     text-align: right;
     margin-left: 4px;
     color: var(--black-100);
+}
+
+.editInputBox {
+    margin: 0 0 8px;
+}
+
+.inputTime {
+    width: 58px;
+    text-align: left;
+    margin-right: 4px;
+}
+
+.inputDate {
+    text-align: left;
+    margin-left: 6px;
 }
 
 .addResourcesTable__title th,
@@ -2329,4 +2422,64 @@ td.resourcesTable__empty {
 .viewManageButtom {
     position: absolute;
     right: 0;
+}
+
+.editProject__checkbox .when {
+    margin-left: 8px;
+    order: 1;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--black-60);
+}
+
+.whenCheck {
+    margin: 8px 0 8px;
+}
+
+.editProject__selection {
+    margin-bottom: 8px;
+    flex-grow: 1;
+}
+
+.starts {
+    width: 33%;
+}
+
+.plusminus {
+    width: 56px;
+}
+
+.dayshrs {
+    width: 96px;
+}
+
+.customRadio__top {
+    top: -8px;
+}
+
+.highlighted {
+    background-color: var(--turq-15);
+}
+
+.scorecard__label {
+    display: flex;
+    align-items: center;
+}
+
+.scorecard__label .label{
+    margin-right: 6px;
+}
+
+.preferences__label {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    color: #767676;
+    margin-left: 29px;
+}
+
+.preferences__checkboxWrap {
+    display: flex;
+    gap: 60px;
 }

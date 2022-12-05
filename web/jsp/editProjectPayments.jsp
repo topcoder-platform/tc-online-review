@@ -117,7 +117,6 @@
                        <or:text key="editProjectPayments.box.title"/>
                     </div>
                 </div>
-
                 <div class="projectDetails__sectionBody">
                     <div>
                         <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
