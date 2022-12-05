@@ -141,7 +141,7 @@
 
                     <div class="lateDeliverables__row">
                         <div class="lateDeliverables__input">
-                            <input type="hidden" name="project_categories">
+                            <input type="hidden" name="project_categories" data-reset="0">
                             <div class="lateDeliverables__selection">
                                 <div class="custom-select-wrapper">
                                     <div class="custom-select">
@@ -163,7 +163,7 @@
                         </div>
 
                         <div class="lateDeliverables__input">
-                            <input type="hidden" name="project_statuses">
+                            <input type="hidden" name="project_statuses" data-reset="0">
                             <div class="lateDeliverables__selection">
                                 <div class="custom-select-wrapper">
                                     <div class="custom-select">
@@ -185,7 +185,7 @@
                         </div>
 
                         <div class="lateDeliverables__input">
-                            <input type="hidden" name="deliverable_types">
+                            <input type="hidden" name="deliverable_types" data-reset="0">
                             <div class="lateDeliverables__selection">
                                 <div class="custom-select-wrapper">
                                     <div class="custom-select">
@@ -211,7 +211,7 @@
                             <label for="project_id"><or:text key="viewLateDeliverables.ProjectID.Label" /></label>
                             <input type="text" name="project_id" id="project_id" class="inputBox"
                                        onfocus="this.value = getTextValueOnFocus(this, true);"
-                                       onblur="this.value = getTextValueOnFocus(this, false);" value="<or:fieldvalue field='project_id' />" />
+                                       onblur="this.value = getTextValueOnFocus(this, false);" value="<or:fieldvalue field='project_id' />" data-reset="" />
                             <div id="project_id_serverside_validation" class="error"><s:fielderror escape="false"><s:param>project_id</s:param></s:fielderror></div>
                         </div>
 
@@ -219,12 +219,12 @@
                             <label for="handle"><or:text key="viewLateDeliverables.LateMemberHandle.Label" /></label>
                             <input type="text" name="handle" id="handle" class="inputBox"
                                        onfocus="this.value = getTextValueOnFocus(this, true);"
-                                       onblur="this.value = getTextValueOnFocus(this, false);" value="<or:fieldvalue field='handle' />" />
+                                       onblur="this.value = getTextValueOnFocus(this, false);" value="<or:fieldvalue field='handle' />" data-reset="" />
                             <div id="handle_serverside_validation" class="error"><s:fielderror escape="false"><s:param>handle</s:param></s:fielderror></div>
                         </div>
 
                         <div class="lateDeliverables__input">
-                            <input type="hidden" name="justified">
+                            <input type="hidden" name="justified" data-reset="Any">
                             <div class="lateDeliverables__selection">
                                 <div class="custom-select-wrapper">
                                     <div class="custom-select">
@@ -253,7 +253,7 @@
                     <div class="lateDeliverables__advancedBody" <c:if test="${not requestScope.hasAnyAdvancedSearchParameter}">style="display:none"</c:if>>
                         <div class="lateDeliverables__row">
                             <div class="lateDeliverables__input">
-                                <input type="hidden" name="tcd_project_id">
+                                <input type="hidden" name="tcd_project_id" data-reset="">
                                 <div class="lateDeliverables__selection">
                                     <div class="custom-select-wrapper">
                                         <div class="custom-select">
@@ -275,7 +275,7 @@
                             </div>
 
                             <div class="lateDeliverables__input">
-                                <input type="hidden" name="explanation_status">
+                                <input type="hidden" name="explanation_status" data-reset="">
                                 <div class="lateDeliverables__selection">
                                     <div class="custom-select-wrapper">
                                         <div class="custom-select">
@@ -295,7 +295,7 @@
                             </div>
 
                             <div class="lateDeliverables__input">
-                                <input type="hidden" name="response_status">
+                                <input type="hidden" name="response_status" data-reset="">
                                 <div class="lateDeliverables__selection">
                                     <div class="custom-select-wrapper">
                                         <div class="custom-select">
@@ -321,7 +321,7 @@
                                 <input type="text" name="min_deadline"
                                            class="inputBoxDate" id="min_deadline"
                                            onfocus="this.value = getDateValueOnFocus(this, true);"
-                                           onblur="this.value = getDateValueOnFocus(this, false);" value="<or:fieldvalue field='min_deadline' />" />
+                                           onblur="this.value = getDateValueOnFocus(this, false);" value="<or:fieldvalue field='min_deadline' />" data-reset="" />
                                 <div id="min_deadline_validation_msg" style="display:none;" class="error"></div>
                             </div>
 
@@ -330,14 +330,14 @@
                                 <input type="text" name="max_deadline"
                                            class="inputBoxDate" id="max_deadline"
                                            onfocus="this.value = getDateValueOnFocus(this, true);"
-                                           onblur="this.value = getDateValueOnFocus(this, false);" value="<or:fieldvalue field='max_deadline' />" />
+                                           onblur="this.value = getDateValueOnFocus(this, false);" value="<or:fieldvalue field='max_deadline' />" data-reset="" />
                                 <div id="max_deadline_validation_msg" style="display:none;" class="error"></div>
                                 <div id="deadline_serverside_validation" class="error">
                                     <s:fielderror escape="false"><s:param>max_deadline</s:param></s:fielderror></div>
                             </div>
 
                             <div class="lateDeliverables__input">
-                                <input type="hidden" name="late_deliverable_type">
+                                <input type="hidden" name="late_deliverable_type" data-reset="">
                                 <div class="lateDeliverables__selection">
                                     <div class="custom-select-wrapper">
                                         <div class="custom-select">
@@ -364,7 +364,7 @@
                 <div class="divider"></div>
 
                 <div class="lateDeliverables__button">
-                    <button class="lateDeliverables__cancel" onclick="submitForm=false;"><or:text key='btnCancel.alt' /></button>
+                    <button class="lateDeliverables__clear" onclick="submitForm=false;"><or:text key='btnClear.alt' /></button>
                     <button class="lateDeliverables__search" onclick="submitForm=true;"><or:text key='btnSearch.alt' /></button>
                 </div>
 
