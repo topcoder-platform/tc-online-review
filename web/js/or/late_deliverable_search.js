@@ -374,6 +374,11 @@ function clearForm(thisForm) {
     var elements = thisForm.elements;
 
     for (i = 0; i < elements.length; i++) {
+        var reset_value = elements[i].getAttribute("data-reset");
+        if(reset_value != null) {
+            elements[i].value = reset_value;
+            continue;
+        }
         var field_type = elements[i].type.toLowerCase();
 
         switch (field_type) {

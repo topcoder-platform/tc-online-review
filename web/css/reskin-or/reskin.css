@@ -1590,7 +1590,7 @@ td.resourcesTable__empty {
 .saveChanges__cancel,
 .saveChanges__save,
 .lateDeliverables__search,
-.lateDeliverables__cancel,
+.lateDeliverables__clear,
 .contactManager__submit,
 .contactManager__cancel {
     font-family: 'Roboto';
@@ -1614,7 +1614,7 @@ td.resourcesTable__empty {
 .editProjectLink__add,
 .saveChanges__cancel,
 .saveChanges__save,
-.lateDeliverables__cancel,
+.lateDeliverables__clear,
 .contactManager__cancel {
     background: var(--tc-white);
     border: 2px solid var(--turq-160);
