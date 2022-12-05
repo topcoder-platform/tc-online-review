@@ -10,14 +10,15 @@
 <c:set var="submBoxIdx" value="0" />
 
 <div class="projectDetails">
-    <div class="projectDetails__sectionHeader">
-        <div class="projectDetails__title">
-            Phases
+    <c:if test="${!param.showTitle}">
+        <div class="projectDetails__sectionHeader">
+                <div class="projectDetails__title">
+                    Phases
+                </div>
+                <div class="projectDetails__accordion">
+                </div>
         </div>
-        <div class="projectDetails__accordion">
-        </div>
-    </div>
-
+    </c:if>
     <div class="projectDetails__sectionBody">
     <a name="tabs"></a>
     <div id="tabcontentcontainer">
@@ -678,10 +679,8 @@
                                 <thead class="phasesTable__header">
                                     <tr>
                                         <th nowrap="nowrap"><or:text key="viewProjectDetails.box.Submission.ID" /></th>
-                                        <c:if test="${not empty group.finalFix}">
-                                            <th nowrap="nowrap"><or:text key="viewProjectDetails.box.FinalFix.Date" arg0="${group.groupIndex}" /></th>
-                                            <th nowrap="nowrap"><or:text key="viewProjectDetails.box.FinalFix.Fix" arg0="${group.groupIndex}" /></th>
-                                        </c:if>
+                                        <th nowrap="nowrap"><or:text key="viewProjectDetails.box.FinalFix.Date" arg0="${group.groupIndex}" /></th>
+                                        <th nowrap="nowrap"><or:text key="viewProjectDetails.box.FinalFix.Fix" arg0="${group.groupIndex}" /></th>
                                         <th nowrap="nowrap"><or:text key="viewProjectDetails.box.Approval.Reviewer" arg0="${group.groupIndex}" /></th>
                                         <th nowrap="nowrap"><or:text key="viewProjectDetails.box.Approval.Date" arg0="${group.groupIndex}" /></th>
                                         <th nowrap="nowrap"><or:text key="viewProjectDetails.box.Approval.Approval" arg0="${group.groupIndex}" /></th>
@@ -718,15 +717,12 @@
                                                         coderId='${group.winner.allProperties["External Reference ID"]}'
                                                         context="${orfn:getHandlerContext(pageContext.request)}"/>)
                                                 </td>
-                                                
-                                                <c:if test="${not empty group.finalFix}">
-                                                    <td nowrap="nowrap">${orfn:displayDate(pageContext.request, group.finalFix.modificationTimestamp)}</td>
-                                                    <td nowrap="nowrap">
-                                                        <a href="<or:url value='/actions/DownloadFinalFix?uid=${group.finalFix.id}&pid=${project.id}' />"
-                                                                title="<or:text key='viewProjectDetails.box.FinalFix.Download.alt' />"><or:text
-                                                                key="viewProjectDetails.box.FinalFix.Download"/></a>
-                                                    </td>
-                                                </c:if>
+                                                <td nowrap="nowrap">${orfn:displayDate(pageContext.request, group.finalFix.modificationTimestamp)}</td>
+                                                <td nowrap="nowrap">
+                                                    <a href="<or:url value='/actions/DownloadFinalFix?uid=${group.finalFix.id}&pid=${project.id}' />"
+                                                            title="<or:text key='viewProjectDetails.box.FinalFix.Download.alt' />"><or:text
+                                                            key="viewProjectDetails.box.FinalFix.Download"/></a>
+                                                </td>
                                                 <td nowrap="nowrap">
                                                     <tc-webtag:handle
                                                         coderId='${reviewer.allProperties["External Reference ID"]}'
