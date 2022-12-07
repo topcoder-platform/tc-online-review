@@ -15,14 +15,6 @@
 function changeDisableStatus(eles, disabled) {
     for (var i = 0; i < eles.length; i++) {
         eles[i].disabled = disabled;
-        // if (disabled == "disabled") {
-        //     if (!selectWrap.classList.contains("disabled")) {
-        //        selectWrap.classList.add("disabled");
-        //     }
-        // } else {
-        //     selectWrap.classList.remove("disabled");
-        // }
-        // disabled ? selectWrap.classList.add("disabled") : selectWrap.classList.remove("disabled");
     }
 }
 
@@ -160,30 +152,58 @@ function addPayment(btn, tablePrefix, resourceIdx, resourceId) {
 function customSelect(selectWrapper) {
     for (let i = 0; i < selectWrapper.length; i++) {
         const selectElem = selectWrapper[i].getElementsByTagName("select")[0];
+        const wrapperNode = selectWrapper[i].getElementsByClassName("select-custom-wrapper")[0];
+        const fieldLabel = selectWrapper[i].getElementsByTagName("label")[0];
         const a = document.createElement("div");
+        const customSelectWrap = document.createElement("div");
+        customSelectWrap.setAttribute("class", "select-custom-wrapper");
         a.setAttribute("class", "select-selected");
+        const selectedText = document.createElement("div")
+        selectedText.setAttribute("class", "selectedText");
+
+        if (wrapperNode) {
+            wrapperNode.remove();
+        }
         if (selectElem.disabled) {
             a.classList.add("disabled");
         }
-        a.innerHTML = selectElem.options[selectElem.selectedIndex].innerHTML;
-        selectWrapper[i].appendChild(a);
+        if (fieldLabel) {
+            a.classList.add('select-label')
+            customSelectWrap.classList.add("with-label");
+            const labelElmt = document.createElement("span");
+            selectedText.classList.add("selectedText--label");
+            labelElmt.setAttribute("class", "selectCustom__label");
+            labelElmt.innerHTML = fieldLabel.innerHTML;
+            a.appendChild(labelElmt)
+        }
+        a.appendChild(selectedText);
+        if (selectElem.options.length > 0) {
+            a.querySelector('.selectedText').innerHTML = selectElem.options[selectElem.selectedIndex].innerHTML;
+        }
+        customSelectWrap.appendChild(a)
+        selectWrapper[i].appendChild(customSelectWrap);
+
 
         const b = document.createElement("div");
-
         b.setAttribute("class", "select-items select-hide");
         for (let j = 0; j < selectElem.length; j++) {
             const c = document.createElement("div");
             c.innerHTML = selectElem.options[j].innerHTML;
+            c.setAttribute("data-value", selectElem.options[j].getAttribute('value'))
             c.addEventListener("click", function(e) {
-                const s = this.parentNode.parentNode.getElementsByTagName("select")[0];
-                const h = this.parentNode.previousSibling;
+                const s = this.parentNode.parentNode.parentNode.getElementsByTagName("select")[0];
+                const h = this.parentNode.previousSibling.querySelector(".selectedText");
+                s.value = c.getAttribute("data-value")
+                if (s.getAttribute("onchange")) {
+                    s.onchange();
+                }
                 for (let i = 0; i < s.length; i++) {
                     if (s.options[i].innerHTML == this.innerHTML) {
                         s.selectedIndex = i;
                         h.innerHTML = this.innerHTML;
                         y = this.parentNode.getElementsByClassName("same-as-selected");
                         for (let k = 0; k < y.length; k++) {
-                        y[k].removeAttribute("class");
+                            y[k].removeAttribute("class");
                         }
                         this.setAttribute("class", "same-as-selected");
                         break;
@@ -193,7 +213,8 @@ function customSelect(selectWrapper) {
             });
             b.appendChild(c);
         }
-        selectWrapper[i].appendChild(b);
+        customSelectWrap.appendChild(b)
+        selectWrapper[i].appendChild(customSelectWrap);
         a.addEventListener("click", function(e) {
             e.stopPropagation();
             closeAllSelect(this);
@@ -272,6 +293,8 @@ function paymentTypeChange(selectObj) {
     }
     for (var i = 0; i < subs.length; i++) options[subs[i]] = subs[i];
     setSelectOptions(tr.cells[1].getElementsByTagName("select")[0], options);
+    customSelect(tr.cells[1].getElementsByClassName("selectCustom-add"))
+    customSelect(tr.cells[1].getElementsByClassName("selectCustom"))
 }
 /**
  * The handler when a tab is clicked.
