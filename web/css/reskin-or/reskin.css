@@ -728,6 +728,8 @@ table.scorecard td.headerT {
 .phaseButton,
 .deletePayment,
 .backToHome,
+.addResource,
+.deleteResource,
 .editPaymentBtn,
 .returnBtn {
     display: inline-flex;
@@ -744,6 +746,7 @@ table.scorecard td.headerT {
     border: 2px solid var(--turq-160);
     border-radius: 24px;
     color: var(--turq-160);
+    cursor: pointer;
     text-decoration: none !important;
 }
 
@@ -751,6 +754,16 @@ table.scorecard td.headerT {
     margin-right: 12px;
 }
 
+.deleteResource,
+.addResource {
+    padding: 4px 18px;
+    font-size: 13px;
+    line-height: 24px;
+    height: 32px;
+}
+
+.addResource:hover,
+.deleteResource:hover,
 .addPayment:hover,
 .phaseButton:hover,
 .deletePayment:hover,
@@ -762,7 +775,9 @@ table.scorecard td.headerT {
     border-color: var(--turq-140) !important;
 }
 
+.addResource:active,
 .addPayment:active,
+.deleteResource:active,
 .phaseButton:active,
 .deletePayment:active,
 .submit__btn:active,
@@ -938,6 +953,7 @@ table.scorecard td.reviewerResp input {
 .resourcesTable__header th,
 .reviewPaymentTable__header th,
 .projectListTable__header th,
+.editPrizeTable__header td.header,
 .addResourcesTable__header td.title,
 .lateDeliverablesTable__header th,
 .projectPaymentTable__header th {
@@ -954,6 +970,12 @@ table.scorecard td.reviewerResp input {
     padding: 0 16px;
 }
 
+.editPrizeTable__header td.header {
+    border-top: none;
+    vertical-align: middle;
+}
+
+
 .projectLinkTable__header th {
     padding-right: 8px;
 }
@@ -969,6 +991,7 @@ table.scorecard td.reviewerResp input {
 .reviewPaymentTable__header th:first-child,
 .resourcesTable__header th:first-child,
 .projectListTable__header th:first-child,
+.editPrizeTable__header td.header:first-child,
 .lateDeliverablesTable__header th:first-child,
 .projectPaymentTable__header th:first-child {
     border-top-left-radius: 8px;
@@ -981,6 +1004,7 @@ table.scorecard td.reviewerResp input {
 .reviewPaymentTable__header th:last-child,
 .timelineTable__header--right th:last-child,
 .phasesTable__header th:last-child,
+.editPrizeTable__header td.header:last-child,
 .prizesTable__header th:last-child,
 .resourcesTable__header th:last-child,
 .projectListTable__header th:last-child,
@@ -993,10 +1017,13 @@ table.scorecard td.reviewerResp input {
 .editProjectPaymentTable__body td,
 .timelineTable__body td,
 .phasesTable__body td,
+.editProjectDetailsTable__body td,
+.editPrizeTable__body td,
 .resourcesTable__body td,
 .prizesTable__body td,
 .preferencesTable__body td,
 .editPhaseTable__body td,
+.editResourceTable__body td,
 .projectListTable__body td,
 .extendRegistration__body td,
 .extendSubTable__body td,
@@ -1012,6 +1039,19 @@ table.scorecard td.reviewerResp input {
     color: var(--black-100);
     padding: 0 8px 0 16px;
     border-top: 2px solid var(--black-10);
+}
+
+.editProjectDetailsTable__body td {
+    padding: 16px;
+    width: 50%;
+}
+
+.editProjectDetailsTable__body td .selectCustom {
+    width: 100%;
+}
+
+.editProjectDetailsTable__body tr td:first-child {
+    border-right: 2px solid var(--black-10);
 }
 
 .editPhaseTable__body td {
@@ -1342,6 +1382,7 @@ td.resourcesTable__empty {
     box-sizing: border-box;
 }
 
+.select-custom-wrapper,
 .custom-select-wrapper {
     position: relative;
     user-select: none;
@@ -1385,12 +1426,22 @@ td.resourcesTable__empty {
     border-color: var(--turq-160);
 }
 
+.selectCustom__label,
 .custom-select__label {
     font-weight: 500;
     font-size: 11px;
     line-height: 10px;
     color: var(--turq-160);
     margin-left: 10px;
+}
+
+.selectCustom__label {
+    position: relative;
+    top: 7px;
+}
+
+.selectedText--label {
+    padding: 10px 10px 0 10px;
 }
 
 .greyText,
@@ -1531,6 +1582,7 @@ td.resourcesTable__empty {
     font-family: 'Roboto';
 }
 
+.projectDetails__inputText,
 .lateDeliverables__inputText,
 .support__inputText {
     display: flex;
@@ -1547,9 +1599,11 @@ td.resourcesTable__empty {
     margin-bottom: 18px;
 }
 
+.projectDetails__inputText label,
 .lateDeliverables__inputText label,
 .support__inputText label,
 .support__message label,
+.explanation label,
 .contactManager label {
     font-family: 'Roboto';
     font-style: normal;
@@ -1559,9 +1613,11 @@ td.resourcesTable__empty {
     color: var(--turq-160);
 }
 
+.projectDetails__inputText input,
 .lateDeliverables__inputText input,
 .support__inputText input,
 .support__message textarea,
+.explanation textarea,
 .contactManager textarea {
     font-family: 'Roboto';
     font-style: normal;
@@ -1590,9 +1646,11 @@ td.resourcesTable__empty {
 
 .inputDate:hover:not([disabled]),
 .inputTime:hover:not([disabled]),
+.resourceHandle:hover:not([disabled]),
 .edit__inputBoxDuration:hover:not([disabled]),
 .editInputBox:hover:not([disabled]),
 .lateDeliverables__input:hover,
+.explanation__message:hover,
 .contactManager__message:hover,
 .support__input:hover,
 .support__message:hover {
@@ -1615,9 +1673,12 @@ td.resourcesTable__empty {
 .inputTime:focus,
 .edit__inputBoxDuration:focus,
 .editInputBox:focus,
+.resourceHandle:focus,
+.projectDetails__inputText input:focus,
 .lateDeliverables__inputText input:focus,
 .support__inputText input:focus,
 .support__message textarea:focus,
+.explanation textarea:focus,
 .contactManager textarea:focus {
     outline: none;
 }
@@ -1750,6 +1811,10 @@ td.resourcesTable__empty {
     align-items: center;
 }
 
+.explanation {
+    width: 100%;
+}
+
 .contactManager__category {
     font-family: 'Roboto';
     width: 440px;
@@ -1757,6 +1822,7 @@ td.resourcesTable__empty {
 }
 
 .contactManager__message,
+.explanation__message,
 .support__message {
     display: flex;
     flex-direction: column;
@@ -1768,6 +1834,12 @@ td.resourcesTable__empty {
 
 .support__message {
     padding: 8px 10px 1px;
+}
+
+.explanation__message {
+    margin: 16px 0 16px;
+    height: 120px;
+    width: 100%;
 }
 
 .contactManager__message {
@@ -2269,8 +2341,21 @@ td.resourcesTable__empty {
   display: none;
 }
 
+.selectCustom label {
+    display: none;
+}
+
 .select-selected {
   background-color: var(--tc-white);
+}
+
+.select-label {
+    height: 48px !important;
+    padding: 0 !important;
+}
+
+.with-label .select-selected:after {
+    top: 24px !important;
 }
 
 .inputDate:disabled,
@@ -2278,6 +2363,7 @@ td.resourcesTable__empty {
 .custom-select.disabled,
 .edit__inputBoxDuration:disabled,
 .editInputBox:disabled,
+.resourceHandle:disabled,
 .select-selected.disabled {
     color: var(--black-60);
     background: var(--black-10);
@@ -2323,6 +2409,10 @@ td.resourcesTable__empty {
   z-index: 99;
 }
 
+.with-label .select-items {
+    top: 50px;
+}
+
 .select-hide {
   display: none;
 }
@@ -2345,6 +2435,7 @@ td.resourcesTable__empty {
 .inputDate,
 .inputTime,
 .editInputBox,
+.resourceHandle,
 .edit__inputBoxDuration {
     padding: 12px 10px;
     width: 80px;
@@ -2363,6 +2454,11 @@ td.resourcesTable__empty {
 
 .editInputBox {
     margin: 0 0 8px;
+}
+
+.resourceHandle {
+    width: 52%;
+    text-align: left;
 }
 
 .inputTime {
@@ -2415,6 +2511,12 @@ td.resourcesTable__empty {
     margin-bottom: 0;
 }
 
+.editPrizeTable__body td.center {
+    text-align: center;
+}
+
+.editResourceTable__body td,
+.editPrizeTable__body td,
 .reviewPaymentTable__body td {
     height: 74px;
 }
@@ -2482,4 +2584,15 @@ td.resourcesTable__empty {
 .preferences__checkboxWrap {
     display: flex;
     gap: 60px;
+}
+
+.scorecard__label .selectCustom {
+    width: 82%;
+}
+
+.resource__select {
+    display: flex;
+    gap: 8px;
+    width: 75%;
+    align-items: center;
 }

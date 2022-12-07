@@ -343,31 +343,22 @@
                 </c:if>
                     <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
                     <td class="value" colspan="4">
-                        <div class="editProject__input scorecard__label">
-                            <span class="label">
-                                <or:text key="editProject.Phases.Criteria.Scorecard" />
-                            </span>
-                            <input type="hidden" name="phase_scorecard[${phaseIdx}]">
-                            <div class="editProject__selection">
-                                <div class="custom-select-wrapper">
-                                    <div class="custom-select grey ${(isPhaseClosed) ? 'disabled' : null}">
-                                        <div class="custom-select__trigger greyText"><span></span>
-                                            <div class="arrow"></div>
-                                        </div>
-                                        <div class="custom-options">
-                                            <c:set var="OR_FIELD_TO_SELECT" value="phase_scorecard[${phaseIdx}]"/>
-                                            <c:forEach items="${screeningScorecards}" var="scorecard">
-                                                <c:if test="${(newProject && scorecard.category == 1)
-                                                || (not newProject && project.projectCategory.id == scorecard.category)
-                                                || projectCategoriesMap[scorecard.category].projectType.generic}">
-                                                    <span class="custom-option" data-value="${scorecard.id}" <or:selected value="${scorecard.id}"/>>${scorecard.name} ${scorecard.version}</span>
-                                                </c:if>
-                                            </c:forEach>
-                                        </div>
-                                    </div>
+                            <div class=" scorecard__label">
+                                <span class="label">
+                                    <or:text key="editProject.Phases.Criteria.Scorecard" />
+                                </span>
+                                <div class="selectCustom">
+                                    <select class="inputBox" name="phase_scorecard[${phaseIdx}]" <c:if test="${isPhaseClosed}">disabled</c:if>><c:set var="OR_FIELD_TO_SELECT" value="phase_scorecard[${phaseIdx}]"/>
+                                        <c:forEach items="${screeningScorecards}" var="scorecard">
+                                            <c:if test="${(newProject && scorecard.category == 1)
+                                                        || (not newProject && project.projectCategory.id == scorecard.category)
+                                                        || projectCategoriesMap[scorecard.category].projectType.generic}">
+                                                <option value="${scorecard.id}" <or:selected value="${scorecard.id}"/>>${scorecard.name} ${scorecard.version}</option>
+                                            </c:if>
+                                        </c:forEach>
+                                    </select>
                                 </div>
                             </div>
-                        </div>
                         <script type="text/javascript">
                             <!--
                             screeningScorecardNodes[screeningScorecardNodes.length]
@@ -389,25 +380,17 @@
                             <span class="label">
                                 <or:text key="editProject.Phases.Criteria.Scorecard" />
                             </span>
-                            <input type="hidden" name="phase_scorecard[${phaseIdx}]">
-                            <div class="editProject__selection">
-                                <div class="custom-select-wrapper">
-                                    <div class="custom-select grey ${(isPhaseClosed) ? 'disabled' : null}">
-                                        <div class="custom-select__trigger greyText"><span></span>
-                                            <div class="arrow"></div>
-                                        </div>
-                                        <div class="custom-options">
-                                            <c:set var="OR_FIELD_TO_SELECT" value="phase_scorecard[${phaseIdx}]"/>
-                                            <c:forEach items="${reviewScorecards}" var="scorecard">
-                                                <c:if test="${(newProject && scorecard.category == 1)
-                                                            or (not newProject && project.projectCategory.id == scorecard.category)
-                                                            or projectCategoriesMap[scorecard.category].projectType.generic}">
-                                                    <span class="custom-option" data-value="${scorecard.id}" <or:selected value="${scorecard.id}"/>>${scorecard.name} ${scorecard.version}</span>
-                                                </c:if>
-                                            </c:forEach>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="selectCustom">
+                                <select class="inputBox" name="phase_scorecard[${phaseIdx}]" <c:if test="${isPhaseClosed}">disabled</c:if>><c:set var="OR_FIELD_TO_SELECT" value="phase_scorecard[${phaseIdx}]"/>
+
+                                    <c:forEach items="${reviewScorecards}" var="scorecard">
+                                        <c:if test="${(newProject && scorecard.category == 1)
+                                                    or (not newProject && project.projectCategory.id == scorecard.category)
+                                                    or projectCategoriesMap[scorecard.category].projectType.generic}">
+                                        <option value="${scorecard.id}" <or:selected value="${scorecard.id}"/>>${scorecard.name} ${scorecard.version}</option>
+                                        </c:if>
+                                    </c:forEach>
+                                </select>
                             </div>
                         </div>
                         <script type="text/javascript">
@@ -443,25 +426,16 @@
                             <span class="label">
                                 <or:text key="editProject.Phases.Criteria.Scorecard" />
                             </span>
-                            <input type="hidden" name="phase_scorecard[${phaseIdx}]">
-                            <div class="editProject__selection">
-                                <div class="custom-select-wrapper">
-                                    <div class="custom-select grey ${(isPhaseClosed) ? 'disabled' : null}">
-                                        <div class="custom-select__trigger greyText"><span></span>
-                                            <div class="arrow"></div>
-                                        </div>
-                                        <div class="custom-options">
-                                            <c:set var="OR_FIELD_TO_SELECT" value="phase_scorecard[${phaseIdx}]"/>
-                                            <c:forEach items="${approvalScorecards}" var="scorecard">
-                                                <c:if test="${(newProject && scorecard.category == 1)
-                                                            || (not newProject && project.projectCategory.id == scorecard.category)
-                                                            || projectCategoriesMap[scorecard.category].projectType.generic}">
-                                                    <span class="custom-option" data-value="${scorecard.id}" <or:selected value="${scorecard.id}"/>>${scorecard.name} ${scorecard.version}</span>
-                                                </c:if>
-                                            </c:forEach>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="selectCustom">
+                                <select class="inputBox" name="phase_scorecard[${phaseIdx}]" <c:if test="${isPhaseClosed}">disabled</c:if>><c:set var="OR_FIELD_TO_SELECT" value="phase_scorecard[${phaseIdx}]"/>
+                                    <c:forEach items="${approvalScorecards}" var="scorecard">
+                                        <c:if test="${(newProject && scorecard.category == 1)
+                                                    || (not newProject && project.projectCategory.id == scorecard.category)
+                                                    || projectCategoriesMap[scorecard.category].projectType.generic}">
+                                        <option value="${scorecard.id}" <or:selected value="${scorecard.id}"/>>${scorecard.name} ${scorecard.version}</option>
+                                        </c:if>
+                                    </c:forEach>
+                                </select>
                             </div>
                         </div>
                         <script type="text/javascript">
@@ -499,25 +473,16 @@
                             <span class="label">
                                 <or:text key="editProject.Phases.Criteria.Scorecard" />
                             </span>
-                            <input type="hidden" name="phase_scorecard[${phaseIdx}]">
-                            <div class="editProject__selection">
-                                <div class="custom-select-wrapper">
-                                    <div class="custom-select grey ${(isPhaseClosed) ? 'disabled' : null}">
-                                        <div class="custom-select__trigger greyText"><span></span>
-                                            <div class="arrow"></div>
-                                        </div>
-                                        <div class="custom-options">
-                                            <c:set var="OR_FIELD_TO_SELECT" value="phase_scorecard[${phaseIdx}]"/>
-                                            <c:forEach items="${postMortemScorecards}" var="scorecard">
-                                                <c:if test="${(newProject && scorecard.category == 1)
-                                                            || (not newProject && project.projectCategory.id == scorecard.category)
-                                                            || projectCategoriesMap[scorecard.category].projectType.generic}">
-                                                    <span class="custom-option" data-value="${scorecard.id}" <or:selected value="${scorecard.id}"/>>${scorecard.name} ${scorecard.version}</span>
-                                                </c:if>
-                                            </c:forEach>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="selectCustom">
+                            <select class="inputBox" name="phase_scorecard[${phaseIdx}]" <c:if test="${isPhaseClosed}">disabled</c:if> ><c:set var="OR_FIELD_TO_SELECT" value="phase_scorecard[${phaseIdx}]"/>
+                                <c:forEach items="${postMortemScorecards}" var="scorecard">
+                                    <c:if test="${(newProject && scorecard.category == 1)
+                                                || (not newProject && project.projectCategory.id == scorecard.category)
+                                                || projectCategoriesMap[scorecard.category].projectType.generic}">
+                                    <option value="${scorecard.id}" <or:selected value="${scorecard.id}"/>>${scorecard.name} ${scorecard.version}</option>
+                                    </c:if>
+                                </c:forEach>
+                            </select>
                             </div>
                         </div>
                         <script type="text/javascript">
@@ -542,24 +507,16 @@
                             <span class="label">
                                 <or:text key="editProject.Phases.Criteria.Scorecard" />
                             </span>
-                            <input type="hidden" name="phase_scorecard[${phaseIdx}]">
-                            <div class="editProject__selection">
-                                <div class="custom-select-wrapper">
-                                    <div class="custom-select grey ${(isPhaseClosed) ? 'disabled' : null}">
-                                        <div class="custom-select__trigger greyText"><span></span>
-                                            <div class="arrow"></div>
-                                        </div>
-                                        <div class="custom-options">
-                                            <c:set var="OR_FIELD_TO_SELECT" value="phase_scorecard[${phaseIdx}]"/>
-                                            <c:forEach items="${specificationReviewScorecards}" var="scorecard">
-                                                <c:if test="${(newProject && scorecard.category == 1)
-                                                            || (not newProject && project.projectCategory.id == scorecard.category)
-                                                            || projectCategoriesMap[scorecard.category].projectType.generic}">
-                                                    <span class="custom-option" data-value="${scorecard.id}" <or:selected value="${scorecard.id}"/>>${scorecard.name} ${scorecard.version}</span>
-                                                </c:if>
-                                            </c:forEach>
-                                        </div>
-                                    </div>
+                                <div class="selectCustom">
+                                    <select class="inputBox" name="phase_scorecard[${phaseIdx}]" <c:if test="${isPhaseClosed}">disabled</c:if>><c:set var="OR_FIELD_TO_SELECT" value="phase_scorecard[${phaseIdx}]"/>
+                                        <c:forEach items="${specificationReviewScorecards}" var="scorecard">
+                                            <c:if test="${(newProject && scorecard.category == 1)
+                                                        || (not newProject && project.projectCategory.id == scorecard.category)
+                                                        || projectCategoriesMap[scorecard.category].projectType.generic}">
+                                                <option value="${scorecard.id}" <or:selected value="${scorecard.id}"/>>${scorecard.name} ${scorecard.version}</option>
+                                            </c:if>
+                                        </c:forEach>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -585,25 +542,16 @@
                             <span class="label">
                                 <or:text key="editProject.Phases.Criteria.Scorecard" />
                             </span>
-                            <input type="hidden" name="phase_scorecard[${phaseIdx}]">
-                            <div class="editProject__selection">
-                                <div class="custom-select-wrapper">
-                                    <div class="custom-select grey ${(isPhaseClosed) ? 'disabled' : null}">
-                                        <div class="custom-select__trigger greyText"><span></span>
-                                            <div class="arrow"></div>
-                                        </div>
-                                        <div class="custom-options">
-                                            <c:set var="OR_FIELD_TO_SELECT" value="phase_scorecard[${phaseIdx}]"/>
-                                            <c:forEach items="${checkpointScreeningScorecards}" var="scorecard">
-                                                <c:if test="${(newProject && scorecard.category == 1)
-                                                            || (not newProject && project.projectCategory.id == scorecard.category)
-                                                            || projectCategoriesMap[scorecard.category].projectType.generic}">
-                                                    <span class="custom-option" data-value="${scorecard.id}" <or:selected value="${scorecard.id}"/>>${scorecard.name} ${scorecard.version}</span>
-                                                </c:if>
-                                            </c:forEach>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="selectCustom">
+                                <select class="inputBox" name="phase_scorecard[${phaseIdx}]" <c:if test="${isPhaseClosed}">disabled</c:if>><c:set var="OR_FIELD_TO_SELECT" value="phase_scorecard[${phaseIdx}]"/>
+                                    <c:forEach items="${checkpointScreeningScorecards}" var="scorecard">
+                                        <c:if test="${(newProject && scorecard.category == 1)
+                                                    || (not newProject && project.projectCategory.id == scorecard.category)
+                                                    || projectCategoriesMap[scorecard.category].projectType.generic}">
+                                            <option value="${scorecard.id}" <or:selected value="${scorecard.id}"/>>${scorecard.name} ${scorecard.version}</option>
+                                        </c:if>
+                                    </c:forEach>
+                                </select>
                             </div>
                         </div>
                         <script type="text/javascript">
@@ -628,25 +576,16 @@
                             <span class="label">
                                 <or:text key="editProject.Phases.Criteria.Scorecard" />
                             </span>
-                            <input type="hidden" name="phase_scorecard[${phaseIdx}]">
-                            <div class="editProject__selection">
-                                <div class="custom-select-wrapper">
-                                    <div class="custom-select grey ${(isPhaseClosed) ? 'disabled' : null}">
-                                        <div class="custom-select__trigger greyText"><span></span>
-                                            <div class="arrow"></div>
-                                        </div>
-                                        <div class="custom-options">
-                                            <c:set var="OR_FIELD_TO_SELECT" value="phase_scorecard[${phaseIdx}]"/>
-                                            <c:forEach items="${checkpointReviewScorecards}" var="scorecard">
-                                                <c:if test="${(newProject && scorecard.category == 1)
-                                                            || (not newProject && project.projectCategory.id == scorecard.category)
-                                                            || projectCategoriesMap[scorecard.category].projectType.generic}">
-                                                    <span class="custom-option" data-value="${scorecard.id}" <or:selected value="${scorecard.id}"/>>${scorecard.name} ${scorecard.version}</span>
-                                                </c:if>
-                                            </c:forEach>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="selectCustom">
+                                <select class="inputBox" name="phase_scorecard[${phaseIdx}]" <c:if test="${isPhaseClosed}">disabled</c:if>><c:set var="OR_FIELD_TO_SELECT" value="phase_scorecard[${phaseIdx}]"/>
+                                    <c:forEach items="${checkpointReviewScorecards}" var="scorecard">
+                                        <c:if test="${(newProject && scorecard.category == 1)
+                                                    || (not newProject && project.projectCategory.id == scorecard.category)
+                                                    || projectCategoriesMap[scorecard.category].projectType.generic}">
+                                            <option value="${scorecard.id}" <or:selected value="${scorecard.id}"/>>${scorecard.name} ${scorecard.version}</option>
+                                        </c:if>
+                                    </c:forEach>
+                                </select>
                             </div>
                         </div>
                         <script type="text/javascript">
