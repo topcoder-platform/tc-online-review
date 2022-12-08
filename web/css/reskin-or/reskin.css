@@ -37,7 +37,7 @@
     --legacy-100: #fd7d01;
     --turq-180: #0d664e;
     --screen-max: 1376px;
-    --header-height: 80px;
+    --header-height: 60px;
     --footer-height: 51px;
 }
 
@@ -108,6 +108,10 @@ body {
     width: 24px;
 }
 
+.webHeader__avatar {
+    display: none;
+}
+
 .webHeader__avatar a {
     font-family: 'Barlow Condensed', sans-serif;
     font-style: normal;
@@ -139,7 +143,7 @@ body {
     width: 100%;
     top: var(--header-height);
     background-color: var(--black-10);
-    z-index: 999;
+    z-index: 1;
 
     font-family: Barlow, sans-serif;
     text-transform: uppercase;
