@@ -5,3 +5,4 @@ token.properties
 *.iml
 target
 .idea
+.vscode
