@@ -38,9 +38,15 @@
     tcUniNav('init', 'headerNav', {
         type: 'tool',
         toolName: 'Online Review',
-        user,
+        user: handle ? user : null,
         signOut() {
             window.location.replace("http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Logout")
+        },
+        signIn() {
+            window.location.replace("http://<%=ApplicationServer.SERVER_NAME%>/login")
+        },
+        signUp() {
+            window.location.replace("http://<%=ApplicationServer.SERVER_NAME%>/register")
         }
     });
 </script>

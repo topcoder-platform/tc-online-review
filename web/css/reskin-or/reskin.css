@@ -139,11 +139,8 @@ body {
 }
 
 .mainTabs {
-    position: fixed;
     width: 100%;
-    top: var(--header-height);
     background-color: var(--black-10);
-    z-index: 1;
 
     font-family: Barlow, sans-serif;
     text-transform: uppercase;
