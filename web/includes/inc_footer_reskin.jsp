@@ -7,9 +7,11 @@
 <script language="JavaScript" type="text/javascript" src="/js/toasts.js"><!-- @ --></script>
 
 <script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function() {
     tcUniNav('init', 'footerNav', {
         type: 'footer',
     });
+  });
 </script>
 
 <div id="footerNav"></div>
