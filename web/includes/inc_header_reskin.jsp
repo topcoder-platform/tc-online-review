@@ -37,7 +37,8 @@
 
     tcUniNav('init', 'headerNav', {
         type: 'tool',
-        toolName: 'Online Review',
+        toolName: 'Review',
+        toolRoot: '/',
         user: handle ? user : null,
         signOut() {
             window.location.replace("http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Logout")
