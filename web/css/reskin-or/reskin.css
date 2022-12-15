@@ -38,7 +38,7 @@
     --turq-180: #0d664e;
     --screen-max: 1376px;
     --header-height: 60px;
-    --footer-height: 51px;
+    --footer-height: 48px;
 }
 
 * {
@@ -141,7 +141,9 @@ body {
 .mainTabs {
     width: 100%;
     background-color: var(--black-10);
-
+    position: fixed;
+    top: var(--header-height);
+    z-index: 999;
     font-family: Barlow, sans-serif;
     text-transform: uppercase;
     font-weight: 600;
@@ -180,18 +182,17 @@ body {
 
 .content {
     margin: 0;
-    padding-top: 32px;
     padding-bottom: 90px;
+    padding-top: 116px;
     min-height: 100vh;
 }
 
 .content--projectDetails {
-    padding-bottom: 132px;
+    padding-bottom: 144px;
 }
 
 .content--manageProject {
     padding-bottom: 148px;
-    padding-top: 32px;
 }
 
 .content__inner {
@@ -805,7 +806,9 @@ table.scorecard td.reviewerResp input {
 }
 
 .cta {
+    position: fixed;
     width: 100%;
+    bottom: var(--footer-height);
     background-color: #fff;
     z-index: 999;
     box-shadow: 0 0 16px 16px rgb(42 42 42 / 10%);
@@ -2596,4 +2599,18 @@ td.resourcesTable__empty {
     gap: 8px;
     width: 75%;
     align-items: center;
+}
+
+#headerNav {
+    position: fixed;
+    width: 100%;
+    z-index: 999;
+    top: 0;
+}
+
+#footerNav {
+    position: fixed;
+    width: 100%;
+    z-index: 999;
+    bottom: 0;
 }
