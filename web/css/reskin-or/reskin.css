@@ -180,7 +180,7 @@ body {
 
 .content {
     margin: 0;
-    padding-top: 136px;
+    padding-top: 32px;
     padding-bottom: 90px;
 }
 
@@ -190,6 +190,7 @@ body {
 
 .content--manageProject {
     padding-bottom: 148px;
+    padding-top: 32px;
 }
 
 .content__inner {
