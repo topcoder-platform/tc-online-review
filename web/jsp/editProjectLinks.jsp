@@ -149,7 +149,7 @@
     <jsp:include page="/includes/inc_header_reskin.jsp" />
     <jsp:include page="/includes/project/project_tabs_reskin.jsp" />
 
-    <div class="content content">
+    <div class="content">
         <div class="content__inner">
             <div class="editProjectLink__header">
                 <button type="button" class="back-btn edit-back-btn" onclick="history.back()">
