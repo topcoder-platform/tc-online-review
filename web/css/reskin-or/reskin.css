@@ -37,8 +37,8 @@
     --legacy-100: #fd7d01;
     --turq-180: #0d664e;
     --screen-max: 1376px;
-    --header-height: 80px;
-    --footer-height: 51px;
+    --header-height: 60px;
+    --footer-height: 48px;
 }
 
 * {
@@ -108,6 +108,10 @@ body {
     width: 24px;
 }
 
+.webHeader__avatar {
+    display: none;
+}
+
 .webHeader__avatar a {
     font-family: 'Barlow Condensed', sans-serif;
     font-style: normal;
@@ -135,12 +139,11 @@ body {
 }
 
 .mainTabs {
-    position: fixed;
     width: 100%;
-    top: var(--header-height);
     background-color: var(--black-10);
+    position: fixed;
+    top: var(--header-height);
     z-index: 999;
-
     font-family: Barlow, sans-serif;
     text-transform: uppercase;
     font-weight: 600;
@@ -179,12 +182,13 @@ body {
 
 .content {
     margin: 0;
-    padding-top: 136px;
     padding-bottom: 90px;
+    padding-top: 116px;
+    min-height: 100vh;
 }
 
 .content--projectDetails {
-    padding-bottom: 132px;
+    padding-bottom: 144px;
 }
 
 .content--manageProject {
@@ -2595,4 +2599,18 @@ td.resourcesTable__empty {
     gap: 8px;
     width: 75%;
     align-items: center;
+}
+
+#headerNav {
+    position: fixed;
+    width: 100%;
+    z-index: 999;
+    top: 0;
+}
+
+#footerNav {
+    position: fixed;
+    width: 100%;
+    z-index: 999;
+    bottom: 0;
 }
