@@ -981,15 +981,6 @@
                                         <tr>
                                             <%-- Checkpoint Submission ID --%>
                                             <td nowrap="nowrap">
-                                                <c:if test="${not empty prevCheckpointSubmissions}">
-                                                    <a id="PrevSubm${submBoxIdx}_${submissionStatus.index}_plus" href="javascript:void(0)" onClick='return expandSubmissions(${submBoxIdx}, ${submissionStatus.index}, this)'><img
-                                                            class="Outline" border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowMore.img' />" alt="<or:text key='viewProjectDetails.box.Submission.icoShowMore.alt' />" /></a><a
-                                                        id="PrevSubm${submBoxIdx}_${submissionStatus.index}_minus" href="javascript:void(0)" onClick='return collapseSubmissions(${submBoxIdx}, ${submissionStatus.index}, this)' style="display:none;"><img
-                                                            class="Outline" border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowLess.img' />" alt="<or:text key='viewProjectDetails.box.Submission.icoShowLess.alt' />" /></a>
-                                                </c:if>
-                                                <c:if test="${(empty prevCheckpointSubmissions) and (not empty prevCheckpointSubm)}">
-                                                    <img class="Outline" border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowMore.img' />" style="display:none;" />
-                                                </c:if>
                                                 <c:set var="placement" value="" />
                                                 <c:if test="${not empty submission}">
                                                     <c:set var="placement" value='${submission.placement}' />
@@ -1229,23 +1220,31 @@
                                                 <%-- Checkpoint Review Results --%>
                                                 <td>
                                                     <c:if test="${not failedScreening}">
-
-                                                    <c:choose>
-                                                        <c:when test="${not empty review and review.committed}">
-                                                            <c:choose>
-                                                                <c:when test="${isSubmitter and not group.checkpointReviewFinished}">
-                                                                    <!--@-->
-                                                                </c:when>
-                                                                <c:when test="${not failedReview}">
-                                                                    <or:text key="viewProjectDetails.box.CheckpointReview.Passed"/>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <or:text key="viewProjectDetails.box.CheckpointReview.Failed"/>
-                                                                </c:otherwise>
-                                                            </c:choose>
-                                                        </c:when>
-                                                        <c:otherwise><!--@--></c:otherwise>
-                                                    </c:choose>
+                                                        <c:choose>
+                                                            <c:when test="${not empty review and review.committed}">
+                                                                <c:choose>
+                                                                    <c:when test="${isSubmitter and not group.checkpointReviewFinished}">
+                                                                        <!--@-->
+                                                                    </c:when>
+                                                                    <c:when test="${not failedReview}">
+                                                                        <or:text key="viewProjectDetails.box.CheckpointReview.Passed"/>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <or:text key="viewProjectDetails.box.CheckpointReview.Failed"/>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </c:when>
+                                                            <c:otherwise><!--@--></c:otherwise>
+                                                        </c:choose>
+                                                    </c:if>
+                                                    <c:if test="${not empty prevCheckpointSubmissions}">
+                                                        <a id="PrevSubm${submBoxIdx}_${submissionStatus.index}_plus" href="javascript:void(0)" onClick='return expandSubmissions(${submBoxIdx}, ${submissionStatus.index}, this)'><img
+                                                                class="Outline checkPoint__chevron" border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowMore.img' />" alt="<or:text key='viewProjectDetails.box.Submission.icoShowMore.alt' />" /></a><a
+                                                            id="PrevSubm${submBoxIdx}_${submissionStatus.index}_minus" href="javascript:void(0)" onClick='return collapseSubmissions(${submBoxIdx}, ${submissionStatus.index}, this)' style="display:none;"><img
+                                                                class="Outline checkPoint__chevron" border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowLess.img' />" alt="<or:text key='viewProjectDetails.box.Submission.icoShowLess.alt' />" /></a>
+                                                    </c:if>
+                                                    <c:if test="${(empty prevCheckpointSubmissions) and (not empty prevCheckpointSubm)}">
+                                                        <img class="Outline" border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowMore.img' />" style="display:none;" />
                                                     </c:if>
                                                 </td>
                                         </tr>
@@ -1253,16 +1252,19 @@
 
                                         <c:forEach items="${prevCheckpointSubmissions}" var="pastSubmission" varStatus="pastSubmissionStatus">
                                             <tr id="PrevSubm${submBoxIdx}_${submissionStatus.index}" style="display:none;">
-                                                <td colspan="2" nowrap="nowrap">
+                                                <td colspan="1" nowrap="nowrap">
                                                     <img border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowMore.img' />" class="Outline" style="display:none;" />
+                                                    <c:if test="${(not empty placement) and (not failedReview)}">
+                                                        <span class="phasesTable__placements">&nbsp;</span>
+                                                    </c:if>
                                                     <c:if test="${project.projectCategory.projectType.id ne 3}">
                                                             <a href="<or:url value='/actions/DownloadContestSubmission?uid=${pastSubmission.id}' />"
-                                                                   title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
+                                                                title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
                                                     </c:if>
                                                     <c:if test="${project.projectCategory.projectType.id eq 3}">
                                                             <!-- <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/?module=DownloadSubmission&sbmid=${pastSubmission.id}&sbt=original" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a> -->
                                                             <a href="<or:url value='/actions/DownloadContestSubmission?uid=${pastSubmission.id}' />"
-                                                                   title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
+                                                                title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
                                                     </c:if>
                                                 </td>
                                                 <td>${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
