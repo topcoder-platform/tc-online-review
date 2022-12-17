@@ -371,24 +371,17 @@
             </s:form>
 
             <c:if test="${not empty showSearchResultsSection}">
-            <c:choose>
-                <c:when test="${ projectMap}">
-                    <div class="lateDeliverables__noMatch">
-                        <or:text key="viewLateDeliverables.SearchResults.NoMatch" />
-                    </div>
-                </c:when>
-                <c:otherwise>
-                    <div class="lateDeliverables__results">
-                        <div class="lateDeliverables__resultHeader">
-                            <div class="lateDeliverables__title">
-                                <or:text key="viewLateDeliverables.SearchResults.title" />
-                            </div>
-
-                            <div class="lateDeliverables__expand">
-                                <a href="javascript:void(0)" onclick="return expandAll()"><or:text key="global.expandAll" /></a>
-                                <a href="javascript:void(0)" onclick="return collapseAll()"><or:text key="global.collapseAll" /></a>
-                            </div>
+                <div class="lateDeliverables__results">
+                    <div class="lateDeliverables__resultHeader">
+                        <div class="lateDeliverables__title">
+                            <or:text key="viewLateDeliverables.SearchResults.title" />
                         </div>
+
+                        <div class="lateDeliverables__expand">
+                            <a href="javascript:void(0)" onclick="return expandAll()"><or:text key="global.expandAll" /></a>
+                            <a href="javascript:void(0)" onclick="return collapseAll()"><or:text key="global.collapseAll" /></a>
+                        </div>
+                    </div>
 
                     <table class="projectListTable" style="border-collapse: collapse;" cellpadding="0" cellspacing="0" width="100%">
                         <thead class="projectListTable__header">
@@ -482,8 +475,7 @@
                         </c:forEach>
                         </tbody>
                     </table>
-                </c:otherwise>
-            </c:choose>
+                </div>
             </c:if>
         </div>
     </div>

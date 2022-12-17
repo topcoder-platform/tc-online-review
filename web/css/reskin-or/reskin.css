@@ -2618,3 +2618,7 @@ td.resourcesTable__empty {
 .checkPoint__chevron {
     margin-left: 29px
 }
+
+.submissionTab_chevron {
+    padding: 0 !important;
+}

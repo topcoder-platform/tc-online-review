@@ -110,7 +110,8 @@
                                         </c:if>
                                         <th nowrap="nowrap"><or:text key="viewProjectDetails.box.Submission.Screener" /></th>
                                         <th nowrap="nowrap"><or:text key="viewProjectDetails.box.Submission.ScreeningScore" arg0="${group.groupIndex}" /></th>
-                                        <th nowrap="nowrap"><or:text key="viewProjectDetails.box.Submission.ScreeningResult" arg0="${group.groupIndex}" /></th>
+                                        <th width="15%" nowrap="nowrap"><or:text key="viewProjectDetails.box.Submission.ScreeningResult" arg0="${group.groupIndex}" /></th>
+                                        <th width="4%" style="padding: 0"></th>
                                     </tr>
                                 </thead>
                                 <tbody class="phasesTable__body">
@@ -261,20 +262,20 @@
                                                         <td>${orfn:displayScore(pageContext.request, review.score)}</td>
                                                     </c:if>
                                                     <td>
-                                                    <c:if test="${group.screeningPhaseStatus == 3}">
-                                                        <c:if test="${submission.submissionStatus.name ne 'Failed Screening'}">
-                                                            <or:text key="viewProjectDetails.box.Screening.Passed" />
+                                                        <c:if test="${group.screeningPhaseStatus == 3}">
+                                                            <c:if test="${submission.submissionStatus.name ne 'Failed Screening'}">
+                                                                <or:text key="viewProjectDetails.box.Screening.Passed" />
+                                                            </c:if>
+                                                            <c:if test="${submission.submissionStatus.name eq 'Failed Screening'}">
+                                                                <or:text key="viewProjectDetails.box.Screening.Failed" />
+                                                            </c:if>
+                                                            <c:if test="${isAllowedToAdvanceSubmissionWithFailedScreening and submission.submissionStatus.name eq 'Failed Screening'}">
+                                                                (<a href="<or:url value='/actions/AdvanceFailedScreeningSubmission?uid=${submission.upload.id}' />"><or:text key="viewProjectDetails.box.Screening.Advance" /></a>)
+                                                            </c:if>
                                                         </c:if>
-                                                        <c:if test="${submission.submissionStatus.name eq 'Failed Screening'}">
-                                                            <or:text key="viewProjectDetails.box.Screening.Failed" />
+                                                        <c:if test="${group.screeningPhaseStatus != 3}">
+                                                            <or:text key="NotAvailable" />
                                                         </c:if>
-                                                        <c:if test="${isAllowedToAdvanceSubmissionWithFailedScreening and submission.submissionStatus.name eq 'Failed Screening'}">
-                                                            (<a href="<or:url value='/actions/AdvanceFailedScreeningSubmission?uid=${submission.upload.id}' />"><or:text key="viewProjectDetails.box.Screening.Advance" /></a>)
-                                                        </c:if>
-                                                    </c:if>
-                                                    <c:if test="${group.screeningPhaseStatus != 3}">
-                                                        <or:text key="NotAvailable" />
-                                                    </c:if>
                                                     </td>
                                                 </c:if>
                                                 <c:if test="${not review.committed}">
@@ -289,25 +290,41 @@
                                                     <td><or:text key="NotAvailable" /></td>
                                                 </c:if>
                                             </c:if>
+                                            <td class="submissionTab_chevron">
+                                                <c:if test="${not empty prevSubmissions}">
+                                                    <a id="PrevSubm${submBoxIdx}_${submissionStatus.index}_plus" href="javascript:void(0)" onClick='return expandSubmissions(${submBoxIdx}, ${submissionStatus.index}, this)'><img
+                                                    class="Outline" border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowMore.img' />" alt="<or:text key='viewProjectDetails.box.Submission.icoShowMore.alt' />" /></a><a
+                                                    id="PrevSubm${submBoxIdx}_${submissionStatus.index}_minus" href="javascript:void(0)" onClick='return collapseSubmissions(${submBoxIdx}, ${submissionStatus.index}, this)' style="display:none;"><img
+                                                    class="Outline" border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowLess.img' />" alt="<or:text key='viewProjectDetails.box.Submission.icoShowLess.alt' />" /></a>
+                                                </c:if>
+                                                <c:if test="${(empty prevSubmissions) and (not empty prevSubm)}">
+                                                    <img class="Outline" border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowMore.img' />" style="visibility:hidden;" />
+                                                </c:if>
+                                            </td>
                                             </tr>
                                             <c:set var="submissionIdx" value="${submissionIdx + 1}" />
                                         </c:if>
+
                                         <c:forEach items="${prevSubmissions}" var="pastSubmission" varStatus="pastSubmissionStatus">
                                             <tr id="PrevSubm${submBoxIdx}_${submissionStatus.index}" style="display:none;">
                                                 <td colspan="2" nowrap="nowrap">
-                                                        <img border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowMore.img' />" class="Outline" style="display:none;" />
-                                                        <c:if test="${project.projectCategory.projectType.id ne 3}">
-                                                            <a href="<or:url value='/actions/DownloadContestSubmission?uid=${pastSubmission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
-                                                        </c:if>
-                                                        <c:if test="${project.projectCategory.projectType.id eq 3}">
-                                                            <a href="<or:url value='/actions/DownloadContestSubmission?uid=${pastSubmission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
-                                                        </c:if>
+                                                    <c:if test="${(not empty placement) and (not failedReview)}">
+                                                        <span class="phasesTable__placements">&nbsp;</span>
+                                                    </c:if>
+                                                    <img border="0" src="<or:text key='viewProjectDetails.box.Submission.icoShowMore.img' />" class="Outline" style="display:none;" />
+                                                    <c:if test="${project.projectCategory.projectType.id ne 3}">
+                                                        <a href="<or:url value='/actions/DownloadContestSubmission?uid=${pastSubmission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
+                                                    </c:if>
+                                                    <c:if test="${project.projectCategory.projectType.id eq 3}">
+                                                        <a href="<or:url value='/actions/DownloadContestSubmission?uid=${pastSubmission.id}' />" title="<or:text key='viewProjectDetails.box.Submission.Previous.UploadID' />">${pastSubmission.id}</a>
+                                                    </c:if>
                                                 </td>
                                                 <td>${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
                                                 <c:if test="${isThurgood}">
                                                     <td><!-- @ -->
                                                     </td>
                                                 </c:if>
+                                                <td><!-- @ --></td>
                                                 <td><!-- @ --></td>
                                                 <td><!-- @ --></td>
                                                 <td><!-- @ --></td>
