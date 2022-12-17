@@ -1504,7 +1504,7 @@
                                                                                 <div class="custom-options">
                                                                                     <c:set var="OR_FIELD_TO_SELECT" value="cockpit_project"/>
                                                                                     <c:forEach var="cockpitProject" items="${cockpitProjects}">
-                                                                                        <span class="custom-option" data-value="${cockpitProject.id}" <or:selected value="${cockpitProject.id}"/>>${cockpitProject.name}</span>
+                                                                                        <span class="custom-option" data-value="${cockpitProject.id}" <or:selected value="${cockpitProject.id}"/>>${orfn:htmlEncode(cockpitProject.name)}</span>
                                                                                     </c:forEach>
                                                                                 </div>
                                                                             </div>
