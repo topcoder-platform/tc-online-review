@@ -719,9 +719,12 @@
                                                 </td>
                                                 <td nowrap="nowrap">${orfn:displayDate(pageContext.request, group.finalFix.modificationTimestamp)}</td>
                                                 <td nowrap="nowrap">
-                                                    <a href="<or:url value='/actions/DownloadFinalFix?uid=${group.finalFix.id}&pid=${project.id}' />"
-                                                            title="<or:text key='viewProjectDetails.box.FinalFix.Download.alt' />"><or:text
-                                                            key="viewProjectDetails.box.FinalFix.Download"/></a>
+                                                    <c:if test="${not empty group.finalFix}">
+                                                        <a href="<or:url value='/actions/DownloadFinalFix?uid=${group.finalFix.id}' />"
+                                                            title="<or:text key='viewProjectDetails.box.FinalFix.Download.alt' />">
+                                                                <or:text key="viewProjectDetails.box.FinalFix.Download"/>
+                                                        </a>
+                                                    </c:if>
                                                 </td>
                                                 <td nowrap="nowrap">
                                                     <tc-webtag:handle
