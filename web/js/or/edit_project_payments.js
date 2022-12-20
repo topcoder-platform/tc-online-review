@@ -17,6 +17,19 @@ function changeDisableStatus(eles, disabled) {
         eles[i].disabled = disabled;
     }
 }
+
+function changeSelectState(eles, disabled) {
+    for (var i = 0; i < eles.length; i++) {
+        let selectWrap = eles[i].parentNode.getElementsByClassName("select-selected")[0];
+        if (disabled == "disabled") {
+            if (!selectWrap.classList.contains("disabled")) {
+               selectWrap.classList.add("disabled");
+            }
+        } else {
+            selectWrap.classList.remove("disabled");
+        }
+    }
+}
 /**
  * The handler when "Automatic/Manual" radio button is clicked.
  * @param resourceId the resource id
@@ -36,6 +49,7 @@ function changeAutomatic(resourceId, automatic) {
         var paid = trs[i].getAttribute("rel");
         if (paid != "true") {
             changeDisableStatus(trs[i].getElementsByTagName("select"), automatic ? "disabled" : "");
+            changeSelectState(trs[i].getElementsByTagName("select"), automatic ? "disabled" : "");
             changeDisableStatus(trs[i].getElementsByTagName("input"), automatic ? "disabled" : "");
         }
     }
@@ -109,11 +123,11 @@ function addPayment(btn, tablePrefix, resourceIdx, resourceId) {
     var table = document.getElementById(tablePrefix + "-table");
     var newTr = cloneInputRow(table.rows[2]);
     newTr.style.display = "table-row";
-    newTr.className = "tr_payment_" + resourceId;
+    newTr.className = "tr_payment_" + resourceId + " newTr";
     assignRelToName(newTr.getElementsByTagName("input"));
     assignRelToName(newTr.getElementsByTagName("select"));
     var aobj = newTr.cells[3].getElementsByTagName("a")[0];
-    aobj.className = "delete_payment_" + resourceId;
+    aobj.className = "delete_payment_" + resourceId + " deletePayment";
     aobj.setAttribute("resourceId", resourceId);
     aobj.setAttribute("resourceIdx", resourceIdx);
     if (tablePrefix == "submitters") {
@@ -131,7 +145,105 @@ function addPayment(btn, tablePrefix, resourceIdx, resourceId) {
     }
     patchChildrenIndex(dojo.html.getElementsByClass("tr_payment_" + resourceId), resourceIdx);
     if (tablePrefix == "submitters") paymentTypeChange(newTr.cells[0].getElementsByTagName("select")[0]);
+    customSelect(newTr.getElementsByClassName("selectCustom-add"));
     return false;
+}
+
+function customSelect(selectWrapper) {
+    for (let i = 0; i < selectWrapper.length; i++) {
+        const selectElem = selectWrapper[i].getElementsByTagName("select")[0];
+        const wrapperNode = selectWrapper[i].getElementsByClassName("select-custom-wrapper")[0];
+        const fieldLabel = selectWrapper[i].getElementsByTagName("label")[0];
+        const a = document.createElement("div");
+        const customSelectWrap = document.createElement("div");
+        customSelectWrap.setAttribute("class", "select-custom-wrapper");
+        a.setAttribute("class", "select-selected");
+        const selectedText = document.createElement("div")
+        selectedText.setAttribute("class", "selectedText");
+
+        if (wrapperNode) {
+            wrapperNode.remove();
+        }
+        if (selectElem.disabled) {
+            a.classList.add("disabled");
+        }
+        if (fieldLabel) {
+            a.classList.add('select-label')
+            customSelectWrap.classList.add("with-label");
+            const labelElmt = document.createElement("span");
+            selectedText.classList.add("selectedText--label");
+            labelElmt.setAttribute("class", "selectCustom__label");
+            labelElmt.innerHTML = fieldLabel.innerHTML;
+            a.appendChild(labelElmt)
+        }
+        a.appendChild(selectedText);
+        if (selectElem.options.length > 0) {
+            a.querySelector('.selectedText').innerHTML = selectElem.options[selectElem.selectedIndex].innerHTML;
+        }
+        customSelectWrap.appendChild(a)
+        selectWrapper[i].appendChild(customSelectWrap);
+
+
+        const b = document.createElement("div");
+        b.setAttribute("class", "select-items select-hide");
+        for (let j = 0; j < selectElem.length; j++) {
+            const c = document.createElement("div");
+            c.innerHTML = selectElem.options[j].innerHTML;
+            c.setAttribute("data-value", selectElem.options[j].getAttribute('value'))
+            c.addEventListener("click", function(e) {
+                const s = this.parentNode.parentNode.parentNode.getElementsByTagName("select")[0];
+                const h = this.parentNode.previousSibling.querySelector(".selectedText");
+                s.value = c.getAttribute("data-value")
+                if (s.getAttribute("onchange")) {
+                    s.onchange();
+                }
+                for (let i = 0; i < s.length; i++) {
+                    if (s.options[i].innerHTML == this.innerHTML) {
+                        s.selectedIndex = i;
+                        h.innerHTML = this.innerHTML;
+                        y = this.parentNode.getElementsByClassName("same-as-selected");
+                        for (let k = 0; k < y.length; k++) {
+                            y[k].removeAttribute("class");
+                        }
+                        this.setAttribute("class", "same-as-selected");
+                        break;
+                    }
+                }
+                h.click();
+            });
+            b.appendChild(c);
+        }
+        customSelectWrap.appendChild(b)
+        selectWrapper[i].appendChild(customSelectWrap);
+        a.addEventListener("click", function(e) {
+            e.stopPropagation();
+            closeAllSelect(this);
+            if (!selectElem.disabled) {
+                this.nextSibling.classList.toggle("select-hide");
+                this.classList.toggle("select-arrow-active");
+            }
+        });
+        document.addEventListener("click", closeAllSelect);
+    }
+}
+
+function closeAllSelect(elmnt) {
+  const arrNo = [];
+  const x = document.getElementsByClassName("select-items");
+  const y = document.getElementsByClassName("select-selected");
+
+  for (let i = 0; i < y.length; i++) {
+    if (elmnt == y[i]) {
+      arrNo.push(i)
+    } else {
+      y[i].classList.remove("select-arrow-active");
+    }
+  }
+  for (i = 0; i < x.length; i++) {
+    if (arrNo.indexOf(i)) {
+      x[i].classList.add("select-hide");
+    }
+  }
 }
 /**
  * Enable all elements in a specific form.
@@ -170,7 +282,7 @@ function setSelectOptions(selectObj, options) {
  * @param selectObj the DOM element of the payment type widget
  */
 function paymentTypeChange(selectObj) {
-    var tr = selectObj.parentNode.parentNode;
+    var tr = selectObj.parentNode.parentNode.parentNode;
     var resourceId = tr.cells[3].getElementsByTagName("a")[0].getAttribute("resourceid");
     var options = [];
     var subs = [];
@@ -181,6 +293,8 @@ function paymentTypeChange(selectObj) {
     }
     for (var i = 0; i < subs.length; i++) options[subs[i]] = subs[i];
     setSelectOptions(tr.cells[1].getElementsByTagName("select")[0], options);
+    customSelect(tr.cells[1].getElementsByClassName("selectCustom-add"))
+    customSelect(tr.cells[1].getElementsByClassName("selectCustom"))
 }
 /**
  * The handler when a tab is clicked.
@@ -192,9 +306,9 @@ function showTab(tableId, aobj) {
     document.getElementById("reviewers-table").style.display = "none";
     document.getElementById("copilots-table").style.display = "none";
     document.getElementById(tableId).style.display = "table";
-    var lis = aobj.parentNode.parentNode.getElementsByTagName("li");
-    for (var i = 0; i < lis.length; i++) lis[i].className = "";
-    aobj.parentNode.className = "current";
+    var lis = document.getElementsByClassName("projectDetails__tab");
+    for (var i = 0; i < lis.length; i++) lis[i].className = "projectDetails__tab";
+    aobj.parentNode.className = "projectDetails__tab projectDetails__tab--active";
 }
 /**
  * The handler when the document body loaded. It will make the disable/visible state consistent with

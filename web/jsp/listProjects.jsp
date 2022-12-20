@@ -44,27 +44,37 @@
     <!-- CSS and JS by Petar -->
     <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
     <script language="JavaScript" type="text/javascript" src="/js/or/rollovers2.js"><!-- @ --></script>
+
+    <!-- Reskin -->
+    <link type="text/css" rel="stylesheet" href="/css/reskin-or/reskin.css">
+    <link type="text/css" rel="stylesheet" href="/css/reskin-or/toasts.css">
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function(){
+            let avatar = document.querySelector('.webHeader__avatar a');
+            let avatarImage = document.createElement('div');
+            avatarImage.className = "webHeader__avatarImage";
+            let twoChar = avatar.text.substring(0, 2);
+            avatarImage.innerText = twoChar;
+            avatar.innerHTML = avatarImage.outerHTML;
+        });
+    </script>
 </head>
 
 <body>
 
-<div align="center">
-    
-    <div class="maxWidthBody" align="left">
+<jsp:include page="/includes/inc_header_reskin.jsp" />
 
-        <jsp:include page="/includes/inc_header.jsp" />
-        
-        <jsp:include page="/includes/project/project_tabs.jsp" />
-        
-            <div id="mainMiddleContent">
-                <jsp:include page="/includes/project/project_list.jsp" />
-            </div>
-        
-        <jsp:include page="/includes/inc_footer.jsp" />
+<jsp:include page="/includes/project/project_tabs_reskin.jsp" />
 
+<div class="content">
+    <div class="content__inner">
+        <jsp:include page="/includes/project/project_tab_info_reskin.jsp" />
+        <div class="divider"></div>
+        <jsp:include page="/includes/project/project_list_reskin.jsp" />
     </div>
-
 </div>
+
+<jsp:include page="/includes/inc_footer_reskin.jsp" />
 
 </body>
 </html>

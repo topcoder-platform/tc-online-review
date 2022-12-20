@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
-    <td class="valueC" nowrap="nowrap">
+    <td class="valueR" nowrap="nowrap">
         <c:choose>
             <c:when test="${empty item.answer}"><!-- @ --></c:when>
             <c:when test="${question.questionType.name == 'Yes/No'}">
@@ -18,7 +18,7 @@
                 <c:if test="${!(empty fn:replace(item.answer, '/4', ''))}">
                     <or:text key="Answer.Score4.ans${fn:replace(item.answer, '/4', '')}"/>
                 </c:if>
-            </c:when>            
+            </c:when>
             <c:when test="${question.questionType.name == 'Scale (1-10)'}">
                 <or:text key="Answer.Score10.Rating.title" /> ${fn:replace(item.answer, '/10', '')}
             </c:when>

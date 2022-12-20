@@ -22,7 +22,7 @@
     <c:forEach items="${item.allComments}" var="comment" varStatus="commentStatus">
         <c:if test="${(not managerEdit) || (comment.commentType.name != 'Manager Comment')}">
             <tr class="dark">
-                <td class="value" width="100%">
+                <td class="response" width="100%">
                     <c:choose>
                         <c:when test="${comment.commentType.name eq 'Manager Comment'}">
                             <span class="coderTextBlue">
@@ -49,19 +49,19 @@
                                     </select><b name="cmtTypeStatic_${itemIdx}" style="display:none;"></b>
                                 </c:when>
                                 <c:otherwise>
-                                    <b><or:text key="CommentType.${fn:replace(comment.commentType.name, ' ', '')}" /></b>
+                                    <b><or:text key="CommentType.${fn:replace(comment.commentType.name, ' ', '')}" />-</b>
                                 </c:otherwise>
-                            </c:choose>        
+                            </c:choose>
                             <c:set var="responseNum" value="${responseNum + 1}" />
                         </c:otherwise>
                     </c:choose>
-                    &#160;${orfn:htmlEncode(comment.comment)}
+                        ${orfn:htmlEncode(comment.comment)}
                     <c:if test="${comment.commentType.name eq 'Appeal Response' || comment.commentType.name eq 'Manager Comment'}">
                         </span>
                     </c:if>
-                    <c:if test="${lastComment == commentStatus.index}">
+                    <%-- <c:if test="${lastComment == commentStatus.index}">
                         <br /><a href="<or:url value='/actions/DownloadDocument?uid=${item.document}' />"><or:text key="editReview.Document.Download" /></a>
-                    </c:if>
+                    </c:if> --%>
                 </td>
                 <td class="value" colspan="${canPlaceAppeal ? 4 : (canPlaceAppealResponse ? 3 : 2)}"><!-- @ --></td>
             </tr>

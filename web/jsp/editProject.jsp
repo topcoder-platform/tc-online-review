@@ -14,6 +14,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="or" uri="/or-tags" %>
+<%@ page import="java.text.DecimalFormat,com.topcoder.onlinereview.component.webcommon.ApplicationServer" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -32,7 +33,10 @@
     <!-- TopCoder CSS -->
     <link type="text/css" rel="stylesheet" href="/css/style.css" />
     <link type="text/css" rel="stylesheet" href="/css/coders.css" />
-    <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
+
+    <!-- Reskin -->
+    <link type="text/css" rel="stylesheet" href="/css/reskin-or/reskin.css">
+    <link type="text/css" rel="stylesheet" href="/css/reskin-or/toasts.css">
 
     <!-- CSS and JS by Petar -->
     <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
@@ -43,6 +47,7 @@
     <script language="JavaScript" type="text/javascript" src="/js/or/validation_util.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="/js/or/validation_edit_project.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="/js/or/parseDate.js"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="/js/or/edit_project_payments.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript">
         var ajaxSupportUrl = "<or:url value='/ajaxSupport' />";
     </script>
@@ -226,9 +231,41 @@
             if (!canEdit) return;
             var eles = getChildrenByNamePrefix(document.body, prefix);
             for (var i = 0; i < eles.length; i++) {
+                var selectElmt = eles[i].parentNode.querySelector(".select-selected")
                 var ori = eles[i].disabled;
                 eles[i].disabled = disabled ? "disabled" : "";
                 if (ori != "disabled" && disabled) eles[i].value = "1";
+                if (selectElmt) {
+                    if (disabled) {
+                        if (!selectElmt.classList.contains("disabled")) {
+                            selectElmt.classList.add("disabled");
+                        }
+                    } else {
+                        selectElmt.classList.remove("disabled");
+                    }
+                }
+            }
+        }
+
+        /**
+        * Disable or enable the new select.
+        *
+        * @param prefix the prefix of select widget name.
+        * @param disabled true if to disable, false to enable.
+        * @param canEdit whether we can edit the select widget.
+         */
+        function disableNewSelect(prefix, disabled, canEdit) {
+            if (!canEdit) return;
+            var eles = getChildrenByNamePrefix(document.body, prefix);
+            for (var i = 0; i < eles.length; i++) {
+                var elem = eles[i].parentNode.querySelector(".custom-select");
+                if (disabled) {
+                    if (!elem.classList.contains("disabled")) {
+                        elem.classList.add("disabled");
+                    }
+                } else {
+                    elem.classList.remove("disabled");
+                }
             }
         }
 
@@ -248,6 +285,7 @@
                         projectCategories[i]["name"], projectCategories[i]["id"]);
                 }
             }
+            customSelect(projectCategoryNode.parentNode.parentNode.getElementsByClassName("selectCustom"))
             onProjectCategoryChange(projectCategoryNode);
             disableSelect("contest_prizes_num[", projectTypeNode.value != 3, canEditContestPrize);
             disableSelect("contest_prizes_num_dump[", projectTypeNode.value != 3, canEditContestPrize);
@@ -352,6 +390,7 @@
                         scorecardNode.value = defaultScorecards[i]["id"];
                     }
                 }
+                customSelect(scorecardNode.parentNode.parentNode.getElementsByClassName("selectCustom"));
             }
         }
 
@@ -401,7 +440,7 @@
             var buttonsCell = allNewCells[2];
 
             // Make delete button visible and hide add button
-            var images = buttonsCell.getElementsByTagName("img");
+            var images = buttonsCell.getElementsByTagName("a");
             images[0].style["display"] = "none";
             images[1].style["display"] = "inline";
             // Retrieve hidden inputs
@@ -451,7 +490,7 @@
             for (var i = 0; i < rows.length; i++) {
                 // Skip hidden rows as they shouldn't affect row coloring
                 if (rows[i].style["display"] == "none") continue;
-                rows[i].className = (initial++ % 2 == 0) ? "light" : "dark";
+                rows[i].className = (initial++ % 2 == 0) ? "editPrizeTable__header" : "dark";
             }
         }
 
@@ -472,6 +511,7 @@
             // Update resource phase combo
             fillResourcePhaseCombo(resourceNode, phaseIdNodes, phaseActionNodes,
                 phaseTypeNodes, phaseNumberNodes);
+            customSelect(resourceNode.getElementsByClassName("selectCustom phaseSelect"))
         }
 
 
@@ -1048,11 +1088,11 @@
          * @param aObject the DOM object of the link which have been clicked.
          */
         function showPrizeTab(id, aObject) {
-            var liEles = aObject.parentNode.parentNode.getElementsByTagName("li");
+            var liEles = aObject.parentNode.parentNode.getElementsByTagName("div");
             for (var i = 0; i < liEles.length; i++) {
-                liEles[i].className = "";
+                liEles[i].className = "projectDetails__tab";
             }
-            aObject.parentNode.className = "current";
+            aObject.parentNode.className = "projectDetails__tab projectDetails__tab--active";
 
             // Remove focus from the link that triggered the activation
             if (aObject.blur) {
@@ -1092,6 +1132,7 @@
             for (var idx = 3; idx < rows.length - 1; idx++) {
                 rows[idx].className = (idx - 3) % 2 == 0 ? "light" : "dark";
             }
+            customSelect(rows[rows.length - 3].getElementsByClassName("selectCustom"))
         }
 
         /**
@@ -1110,374 +1151,484 @@
                 rows[idx].className = (idx - 3) % 2 == 0 ? "light" : "dark";
             }
             if (rows.length - 5 > 0) {
-                rows[rows.length - 3].cells[3].innerHTML = '<img src="/i/or/bttn_delete.gif" style="cursor: pointer; display: inline; " alt="Delete" onclick="removePrize(this);">';
+                rows[rows.length - 3].cells[3].innerHTML = '<a class="deletePayment" href="#" onclick="removePrize(this);return false;">Delete Prize</a>';
             }
         }
     //--></script>
+        <script type="text/javascript">
+        function updateForumLink(projectId) {
+            return fetch("<%=com.cronos.onlinereview.util.ConfigHelper.getChallengeByLegacyIdUrlV5()%>" + projectId)
+                .then((response) => response.json())
+                .then((data) => {
+                    let with_forum = data.filter(item => 'discussions' in item);
+                    let id = with_forum?.[0]?.id;
+                    if (id !== undefined) {
+                        let forumLinkEl = document.querySelector('.projectInfo__forumLink');
+                        return forumLinkEl.href = "https://<%=ApplicationServer.FORUMS_SERVER_NAME%>/categories/" + id;
+                    }
+                });
+        }
+
+        document.addEventListener("DOMContentLoaded", function(){
+            let projectId = ${project.id};
+            updateForumLink(projectId);
+
+            let selects = document.getElementsByClassName("selectCustom");
+            customSelect(selects);
+
+            let avatar = document.querySelector('.webHeader__avatar a');
+            let avatarImage = document.createElement('div');
+            avatarImage.className = "webHeader__avatarImage";
+            let twoChar = avatar.text.substring(0, 2);
+            avatarImage.innerText = twoChar;
+            avatar.innerHTML = avatarImage.outerHTML;
+        });
+    </script>
 </head>
 
 <body onload="onLoad();">
 <%-- <body> --%>
 
-<div align="center">
-    <div class="maxWidthBody" align="left">
+    <jsp:include page="/includes/inc_header_reskin.jsp" />
 
-        <jsp:include page="/includes/inc_header.jsp" />
-        <jsp:include page="/includes/project/project_tabs.jsp" />
+    <jsp:include page="/includes/project/project_tabs_reskin.jsp" />
 
-            <div id="mainMiddleContent">
+    <div class="content content">
+        <div class="content__inner">
+            <div class="editProject__header">
+                <button type="button" class="back-btn" onclick="history.back()">
+                    <i class="arrow-prev-icon"></i>
+                </button>
+            </div>
+            <div id="mainContent">
                 <div style="position: relative; width: 100%;">
-                    <s:form action="SaveProject" onsubmit="return validate_form(this, true);" namespace="/actions">
-
-                        <%-- TODO: Validation errors display should be much more than is here --%>
-                        <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
-                            <table cellpadding="0" cellspacing="0" border="0">
-                                <tr><td><!-- @ --></td><td width="400"><!-- @ --></td></tr>
-                                <tr>
-                                    <td colspan="2"><span style="color:red;"><or:text key="Error.saveReview.ValidationFailed" /></span></td>
-                                </tr>
-                                <tr><td><!-- @ --></td><td class="errorText"><s:actionerror escape="false"/></td></tr>
-                            </table><br />
-                        </c:if>
-
-                        <%-- If editing the existing project, render its pid --%>
-                        <c:if test="${not newProject}">
-                            <input type="hidden" name="pid"  value="<or:fieldvalue field='pid' />" />
-                        </c:if>
-
-                        <input type="hidden" name="js_current_id"  value="<or:fieldvalue field='js_current_id' />" />
-                        <input type="hidden" name="action"  value="<or:fieldvalue field='action' />" />
-                        <input type="hidden" name="action_phase"  value="<or:fieldvalue field='action_phase' />" />
-                        <input type="hidden" name="last_modification_time"  value="<or:fieldvalue field='last_modification_time' />" />
-
-                        <%-- If creating a new project, show project details table --%>
-                        <c:if test="${newProject}">
-                            <table class="scorecard" cellpadding="0" width="100%" style="border-collapse:collapse;">
-                                    <tr>
-                                    <td class="title" colspan="2"><or:text key="editProject.ProjectDetails.title" /></td>
-                                </tr>
-                                <tr>
-                                    <td class="valueB"><or:text key="editProject.ProjectDetails.Name" /></td>
-                                    <td class="value" nowrap="nowrap">
-                                        <input type="text" class="inputBox" name="project_name" style="width:350px;"  value="<or:fieldvalue field='project_name' />" />
-                                        <span id="project_name_validation_msg" style="display:none;" class="error"></span>
-                                    </td>
-                                </tr>
-                                <tr class="dark">
-                                    <td width="9%" class="valueB"><or:text key="editProject.ProjectDetails.Type" /></td>
-                                    <td width="91%" class="value" nowrap="nowrap">
-                                        <select class="inputBox" name="project_type" style="width:150px;"
-                                                onchange="onProjectTypeChange(this);"><c:set var="OR_FIELD_TO_SELECT" value="project_type"/>
-                                            <c:forEach items="${projectTypes}" var="type">
-                                                <c:if test="${not type.generic}">
-                                                    <option  value="${type.id}"  <or:selected value="${type.id}"/>><or:text key='ProjectType.${fn:replace(type.name, " ", "")}.plural' def="${type.name}" /></option>
-                                                </c:if>
-                                            </c:forEach>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr class="light">
-                                    <td class="valueB"><or:text key="editProject.ProjectDetails.Category" /></td>
-                                    <td class="value" nowrap="nowrap">
-                                        <select class="inputBox" name="project_category" style="width:150px;"
-                                                onchange="onProjectCategoryChange(this);"><c:set var="OR_FIELD_TO_SELECT" value="project_category"/>
-                                            <c:forEach items="${projectCategories}" var="category">
-                                                <c:if test="${category.projectType.id eq projectForm.map['project_type']}">
-                                                    <option  value="${category.id}"  <or:selected value="${category.id}"/>><or:text key="ProjectCategory.${fn:replace(category.name, ' ', '')}" def="${category.name}" /></option>
-                                                </c:if>
-                                            </c:forEach>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr class="light" style="display:none">
-                                    <td class="value" nowrap="nowrap">
-                                        <b><or:text key="editProject.ProjectDetails.DRPoints" /></b><br />
-                                    </td>
-                                    <td class="value" nowrap="nowrap">
-                                        <input type="text" class="inputBox" name="dr_points" style="width: 350px;"  value="<or:fieldvalue field='dr_points' />" />
-                                        <!-- <b><or:text key="editProject.ProjectDetails.DRPointsMessage" /></b> -->
-                                        <span id="dr_points_validation_msg" style="display:none;" class="error"></span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="lastRowTD" colspan="2"><!-- @ --></td>
-                                </tr>
-                            </table><br />
-                        </c:if>
-
-                        <%-- If creating a new project, show the edit prizes section here --%>
-                        <c:if test="${newProject}">
-                            <jsp:include page="/includes/project/project_edit_prizes.jsp" />
-                        </c:if>
-
-                        <%-- If editing the existing project, include timeline editor here --%>
-                        <c:if test="${not newProject}">
-                            <jsp:include page="/includes/project/project_edit_timeline.jsp" />
-                        </c:if>
-
-                        <%-- If editing the existing project, include phases details tabs here --%>
-                        <c:if test="${not newProject}">
-                            <jsp:include page="/includes/project/project_phase.jsp" />
-                        </c:if>
-
-                        <table class="scorecard" id="preferences">
-                            <tr>
-                                <td class="title" colspan="2"><or:text key="editProject.Preferences.title" /></td>
-                            </tr>
-                            <tr class="light">
-                                <td class="valueB" width="1%"><or:text key="editProject.Preferences.Autopilot" /></td>
-                                <td class="value">
-                                    <input type="radio" id="autopilotOnRadioBox" name="autopilot" value="true"  <or:checked name='autopilot' value='true' />/><label
-                                        for="autopilotOnRadioBox"><b><or:text key="editProject.Preferences.Autopilot.Completion" /></b></label>
-                                    <or:text key="editProject.Preferences.Autopilot.Completion.Desc" /><br/>
-                                    <input type="radio" id="autopilotOffRadioBox" name="autopilot" value="false"  <or:checked name='autopilot' value='false' />/><label
-                                        for="autopilotOffRadioBox"><b><or:text key="editProject.Preferences.Autopilot.TurnOff" /></b></label></td>
-                            </tr>
-                            <tr class="dark">
-                                <td class="value" colspan="2">
-                                    <input type="checkbox" id="emailNotificationsCheckBox" name="email_notifications"  <or:checked name='email_notifications' value='on|yes|true' /> /><label
-                                        for="emailNotificationsCheckBox"><b><or:text key="editProject.Preferences.SendEmails" /></b></label>
-                                    <or:text key="editProject.Preferences.SendEmails.Desc" /><br />
-                                    <input type="checkbox" id="noRateProjectCheckBox" name="no_rate_project"  <or:checked name='no_rate_project' value='on|yes|true' /> /><label
-                                        for="noRateProjectCheckBox"><b><or:text key="editProject.Preferences.DoNotRate" /></b></label><br />
-                                    <input type="checkbox" id="timelineNotificationsCheckBox" name="timeline_notifications"  <or:checked name='timeline_notifications' value='on|yes|true' /> /><label
-                                        for="timelineNotificationsCheckBox"><b><or:text key="editProject.Preferences.ReceiveTimeline" /></b></label><br />
-                                    <input type="checkbox" id="digitalRunCheckBox" style="display:none" name="digital_run_flag"  <or:checked name='digital_run_flag' value='on|yes|true' /> /><label style="display:none"
-                                        for="digitalRunCheckBox"><b><or:text key="editProject.Preferences.DigitalRun" /></b></label></td>
-                            </tr>
-                            <tr>
-                                <td class="lastRowTD" colspan="2"><!-- @ --></td>
-                            </tr>
-                        </table><br />
-
-                        <c:set var="projDetRowCount" value="0" />
-                        <table class="scorecard" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
-                            <tr>
-                                <%-- If creating a new project, name this table as "References" --%>
-                                <c:if test="${newProject}">
-                                    <td class="title" colspan="2"><or:text key="editProject.References.title" /></td>
-                                </c:if>
-                                <%-- If editing the existing project, name this table as "Project Details" --%>
-                                <c:if test="${not newProject}">
-                                    <td class="title" colspan="2"><or:text key="editProject.ProjectDetails.title" /></td>
-                                </c:if>
-                            </tr>
-                            <%-- If editing the existing project, should have project name edited here --%>
-                            <c:if test="${not newProject}">
-                                <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
-                                    <td class="valueB"><or:text key="editProject.ProjectDetails.Name" /></td>
-                                    <td class="value" nowrap="nowrap">
-                                        <input type="text" class="inputBox" name="project_name" style="width: 350px;"  value="<or:fieldvalue field='project_name' />" />
-                                        <span id="project_name_validation_msg" style="display:none;" class="error"></span>
-                                    </td>
-                                </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
-                                <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
-                                    <td width="9%" class="valueB"><or:text key="editProject.ProjectDetails.Type" /></td>
-                                    <td width="91%" class="value" nowrap="nowrap">
-                                        <select class="inputBox" name="project_type" style="width:150px;"
-                                                onchange="onProjectTypeChange(this);"><c:set var="OR_FIELD_TO_SELECT" value="project_type"/>
-                                            <c:forEach items="${projectTypes}" var="type">
-                                                <c:if test="${not type.generic}">
-                                                    <option  value="${type.id}"  <or:selected value="${type.id}"/>><or:text key="ProjectType.${fn:replace(type.name, ' ', '')}.plural" def="${type.name}" /></option>
-                                                </c:if>
-                                            </c:forEach>
-                                        </select>
-                                    </td>
-                                </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
-                                <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
-                                    <td class="valueB"><or:text key="editProject.ProjectDetails.Category" /></td>
-                                    <td class="value" nowrap="nowrap">
-                                        <select class="inputBox" name="project_category" style="width:150px;"
-                                                onchange="onProjectCategoryChange(this);"><c:set var="OR_FIELD_TO_SELECT" value="project_category"/>
-                                            <c:forEach items="${projectCategories}" var="category">
-                                                <c:if test="${category.projectType.id eq projectForm.map['project_type']}">
-                                                    <option  value="${category.id}"  <or:selected value="${category.id}"/>><or:text key="ProjectCategory.${fn:replace(category.name, ' ', '')}" def="${category.name}" /></option>
-                                                </c:if>
-                                            </c:forEach>
-                                        </select>
-                                    </td>
-                                </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
-                                <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}" style="display:none">
-                                    <td class="value" nowrap="nowrap">
-                                        <b><or:text key="editProject.ProjectDetails.DRPoints" /></b><br />
-                                    </td>
-                                    <td class="value" nowrap="nowrap">
-                                        <input type="text" class="inputBox" name="dr_points" style="width: 350px;"  value="<or:fieldvalue field='dr_points' />" />
-                                        <span id="dr_points_validation_msg" style="display:none;" class="error"></span>
-                                    </td>
-                                </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
-                            </c:if>
-
-                            <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
-                                <td class="value" nowrap="nowrap">
-                                    <b><or:text key="editProject.References.ForumId" /></b><br />
-                                </td>
-                                <td class="value" nowrap="nowrap">
-                                    <input type="text" class="inputBox" name="forum_id" style="width: 350px;"  value="<or:fieldvalue field='forum_id' />" />
-                                    <span id="forum_id_validation_msg" style="display:none;" class="error"></span>
-                                </td>
-                            </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
-                            <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
-                                <td class="value" nowrap="nowrap">
-                                    <b><or:text key="editProject.References.ComponentId" /></b><br />
-                                </td>
-                                <td class="value" nowrap="nowrap">
-                                    <input type="text" class="inputBox" name="component_id" style="width: 350px;"  value="<or:fieldvalue field='component_id' />" />
-                                    <span id="component_id_validation_msg" style="display:none;" class="error"></span>
-                                </td>
-                            </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
-                            <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
-                                <td class="value" nowrap="nowrap">
-                                    <b><or:text key="editProject.References.ExternalReferenceId" /></b><br />
-                                </td>
-                                <td class="value" nowrap="nowrap">
-                                    <input type="text" class="inputBox" name="external_reference_id" style="width: 350px;"  value="<or:fieldvalue field='external_reference_id' />" />
-                                    <span id="external_reference_id_validation_msg" style="display:none;" class="error"></span>
-                                </td>
-                            </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
-                            <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
-                                <td class="value" nowrap="nowrap">
-                                    <b><or:text key="editProject.References.SVNModule" /></b><br />
-                                </td>
-                                <td class="value" nowrap="nowrap">
-                                    <c:out value="${projectForm.map['SVN_module']}"/>
-                                </td>
-                            </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
-                            <!-- since: Online Review Update - Add Project Dropdown v1.0 -->
-
-                            <c:choose>
-                                <c:when test="${allowBillingEdit}">
-                                    <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
-                                        <td class="value" nowrap="nowrap">
-                                            <b><or:text key="editProject.ProjectDetails.BillingProject" /></b><br />
-                                        </td>
-                                        <td class="value" nowrap="nowrap">
-                                            <select class="inputBox" name="billing_project" style="width:150px;"><c:set var="OR_FIELD_TO_SELECT" value="billing_project"/>
-                                                <c:forEach var="billingProject" items="${billingProjects}">
-                                                    <option value="${billingProject.id}" <or:selected value="${billingProject.id}"/>>${billingProject.name}</option>
-                                                </c:forEach>
-                                            </select>
-                                            <span id="billing_project_validation_msg" style="display:none;" class="error"></span>
-                                        </td>
-                                    </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
-                                </c:when>
-                                <c:otherwise>
-                                    <input type="hidden" name="billing_project" value="<or:fieldvalue field='billing_project' />" />
-                                </c:otherwise>
-                            </c:choose><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
-
-                            <c:choose>
-                                <c:when test="${allowCockpitProjectEdit}">
-                                    <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
-                                        <td class="value" nowrap="nowrap">
-                                            <b><or:text key="editProject.ProjectDetails.CockpitProject" /></b><br />
-                                        </td>
-                                        <td class="value" nowrap="nowrap">
-                                            <select class="inputBox" name="cockpit_project" style="width:150px;"><c:set var="OR_FIELD_TO_SELECT" value="cockpit_project"/>
-                                                <c:forEach var="cockpitProject" items="${cockpitProjects}">
-                                                    <option value="${cockpitProject.id}" <or:selected value="${cockpitProject.id}"/>>${cockpitProject.name}</option>
-                                                </c:forEach>
-                                            </select>
-                                            <span id="cockpit_project_validation_msg" style="display:none;" class="error"></span>
-                                        </td>
-                                    </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
-                                </c:when>
-                                <c:otherwise>
-                                    <input type="hidden" name="cockpit_project" value="<or:fieldvalue field='cockpit_project' />" />
-                                </c:otherwise>
-                            </c:choose><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
-
-                            <tr>
-                                <td class="lastRowTD" colspan="2"><!-- @ --></td>
-                            </tr>
-                        </table><br />
-
-                        <%-- If edit an existing project, show the edit prizes section here --%>
-                        <c:if test="${not newProject}">
-                            <jsp:include page="/includes/project/project_edit_prizes.jsp" />
-                        </c:if>
-
-                        <table class="scorecard" cellpadding="0" cellspacing="0" width="100%"style="border-collapse: collapse;">
-                            <tr>
-                                <td class="title"><or:text key="editProject.Notes.title" /></td>
-                            </tr>
-                            <tr class="light">
-                                <td class="value">
-                                    <span class="error"><s:fielderror escape="false"><s:param>notes</s:param></s:fielderror></span><br />
-                                    <textarea class="inputTextBox" name="notes" ><or:fieldvalue field="notes" /></textarea>
-                                    <div id="notes_validation_msg" style="display:none;" class="error"></div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="lastRowTD"><!-- @ --></td>
-                            </tr>
-                        </table><br />
-
-                        <%-- If creating a new project, include timeline editor here --%>
-                        <c:if test="${newProject}">
-                            <jsp:include page="/includes/project/project_edit_timeline.jsp" />
-                        </c:if>
-
-                        <%-- Include resources editor --%>
-                        <jsp:include page="/includes/project/project_edit_resources.jsp" />
-
-                        <c:if test="${not newProject}">
-                            <table class="scorecard" id="status">
-                                <tr>
-                                    <td class="title"><or:text key="editProject.Status.title" /></td>
-                                </tr>
-                                <tr class="light">
-                                    <td class="value">
-                                        <p align="left"><b>&#160;<or:text key="editProject.Status.CurrentStatus" />&#160; </b>
-                                          <select class="inputBox" name="status"><c:set var="OR_FIELD_TO_SELECT" value="status"/>
-                                            <c:forEach var="status" items="${projectStatuses}">
-                                                <option  value="${status.id}"  <or:selected value="${status.id}"/>><or:text key="ProjectStatus.${fn:replace(status.name, ' ', '')}" def="${status.name}" /></option>
-                                            </c:forEach>
-                                          </select><br />
-                                          <span class="errorText"><s:fielderror escape="false"><s:param>status</s:param></s:fielderror></span>
-                                        </p>
-                                        <or:text key="editProject.Status.Explanation.description" /><br />
-                                        <textarea class="inputTextBox" name="status_explanation" ><or:fieldvalue field="status_explanation" /></textarea>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="lastRowTD"><!-- @ --></td>
-                                </tr>
-                            </table><br />
-
-                            <table class="scorecard" id="Explanation">
-                                <tr>
-                                    <td class="title"><or:text key="editProject.Explanation.title" /></td>
-                                </tr>
-                                <tr class="light">
-                                    <td class="Value">
-                                        <or:text key="editProject.Explanation.description" /> &#160;
-                                        <span id="explanation_validation_msg" class="error"><s:fielderror escape="false"><s:param>explanation</s:param></s:fielderror></span><br />
-                                        <textarea class="inputTextBox" name="explanation" ><or:fieldvalue field="explanation" /></textarea>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="lastRowTD"><!-- @ --></td>
-                                </tr>
-                            </table><br />
-                        </c:if>
-
-                        <div align="right">
-                            <c:if test="${newProject}">
-                                <input type="image"  src="<or:text key='btnSave.img' />" alt="<or:text key='btnSave.alt' />" border="0" />&#160;
-                                <a href="<or:url value='/actions/ListProjects?scope=my' />"><img src="<or:text key='btnCancel.img' />" alt="<or:text key='btnCancel.alt' />" border="0" /></a>
-                            </c:if>
-                            <c:if test="${not newProject}">
-                                <input type="image"  src="<or:text key='btnSaveChanges.img' />" alt="<or:text key='btnSaveChanges.alt' />" border="0"/>&#160;
-                                <a href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />"><img src="<or:text key='btnCancel.img' />" alt="<or:text key='btnCancel.alt' />" border="0"/></a>
-                            </c:if>
+                    <div class="editProject">
+                        <div class="editProject__sectionHeader">
+                            <div class="projectDetails__title">
+                                Phases
+                            </div>
                         </div>
-                    </s:form>
+                        <div class="editProject__sectionBody">
+                            <s:form action="SaveProject" onsubmit="return validate_form(this, true);" namespace="/actions">
+
+                                <%-- TODO: Validation errors display should be much more than is here --%>
+                                <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
+                                    <table cellpadding="0" cellspacing="0" border="0">
+                                        <tr><td><!-- @ --></td><td width="400"><!-- @ --></td></tr>
+                                        <tr>
+                                            <td colspan="2"><span style="color:red;"><or:text key="Error.saveReview.ValidationFailed" /></span></td>
+                                        </tr>
+                                        <tr><td><!-- @ --></td><td class="errorText"><s:actionerror escape="false"/></td></tr>
+                                    </table><br />
+                                </c:if>
+
+                                <%-- If editing the existing project, render its pid --%>
+                                <c:if test="${not newProject}">
+                                    <input type="hidden" name="pid"  value="<or:fieldvalue field='pid' />" />
+                                </c:if>
+
+                                <input type="hidden" name="js_current_id"  value="<or:fieldvalue field='js_current_id' />" />
+                                <input type="hidden" name="action"  value="<or:fieldvalue field='action' />" />
+                                <input type="hidden" name="action_phase"  value="<or:fieldvalue field='action_phase' />" />
+                                <input type="hidden" name="last_modification_time"  value="<or:fieldvalue field='last_modification_time' />" />
+
+                                <%-- If creating a new project, show project details table --%>
+                                <c:if test="${newProject}">
+                                    <table class="scorecard" cellpadding="0" width="100%" style="border-collapse:collapse;">
+                                            <tr>
+                                            <td class="title" colspan="2"><or:text key="editProject.ProjectDetails.title" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="valueB"><or:text key="editProject.ProjectDetails.Name" /></td>
+                                            <td class="value" nowrap="nowrap">
+                                                <input type="text" class="inputBox" name="project_name" style="width:350px;"  value="<or:fieldvalue field='project_name' />" />
+                                                <span id="project_name_validation_msg" style="display:none;" class="error"></span>
+                                            </td>
+                                        </tr>
+                                        <tr class="dark">
+                                            <td width="9%" class="valueB"><or:text key="editProject.ProjectDetails.Type" /></td>
+                                            <td width="91%" class="value" nowrap="nowrap">
+                                                <select class="inputBox" name="project_type" style="width:150px;"
+                                                        onchange="onProjectTypeChange(this);"><c:set var="OR_FIELD_TO_SELECT" value="project_type"/>
+                                                    <c:forEach items="${projectTypes}" var="type">
+                                                        <c:if test="${not type.generic}">
+                                                            <option  value="${type.id}"  <or:selected value="${type.id}"/>><or:text key='ProjectType.${fn:replace(type.name, " ", "")}.plural' def="${type.name}" /></option>
+                                                        </c:if>
+                                                    </c:forEach>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr class="light">
+                                            <td class="valueB"><or:text key="editProject.ProjectDetails.Category" /></td>
+                                            <td class="value" nowrap="nowrap">
+                                                <select class="inputBox" name="project_category" style="width:150px;"
+                                                        onchange="onProjectCategoryChange(this);"><c:set var="OR_FIELD_TO_SELECT" value="project_category"/>
+                                                    <c:forEach items="${projectCategories}" var="category">
+                                                        <c:if test="${category.projectType.id eq projectForm.map['project_type']}">
+                                                            <option  value="${category.id}"  <or:selected value="${category.id}"/>><or:text key="ProjectCategory.${fn:replace(category.name, ' ', '')}" def="${category.name}" /></option>
+                                                        </c:if>
+                                                    </c:forEach>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr class="light" style="display:none">
+                                            <td class="value" nowrap="nowrap">
+                                                <b><or:text key="editProject.ProjectDetails.DRPoints" /></b><br />
+                                            </td>
+                                            <td class="value" nowrap="nowrap">
+                                                <input type="text" class="inputBox" name="dr_points" style="width: 350px;"  value="<or:fieldvalue field='dr_points' />" />
+                                                <!-- <b><or:text key="editProject.ProjectDetails.DRPointsMessage" /></b> -->
+                                                <span id="dr_points_validation_msg" style="display:none;" class="error"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="lastRowTD" colspan="2"><!-- @ --></td>
+                                        </tr>
+                                    </table><br />
+                                </c:if>
+
+                                <%-- If creating a new project, show the edit prizes section here --%>
+                                <c:if test="${newProject}">
+                                    <jsp:include page="/includes/project/project_edit_prizes.jsp" />
+                                </c:if>
+
+                                <%-- If editing the existing project, include timeline editor here --%>
+                                <c:if test="${not newProject}">
+                                    <jsp:include page="/includes/project/project_edit_timeline.jsp" />
+                                </c:if>
+
+                                <%-- If editing the existing project, include phases details tabs here --%>
+                                <c:if test="${not newProject}">
+                                    <jsp:include page="/includes/project/project_phase_reskin.jsp">
+                                        <jsp:param name="showTitle" value="true"/>
+                                    </jsp:include>
+                                </c:if>
+
+                                <div class="projectDetails">
+                                    <div class="projectDetails__sectionHeader">
+                                        <div class="projectDetails__title">
+                                            <or:text key="editProject.Preferences.title" />
+                                        </div>
+                                    </div>
+
+                                    <div class="projectDetails__sectionBody">
+                                        <table class="preferencesTable" id="preferences" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+                                            <tbody class="preferencesTable__body">
+                                                <tr class="light">
+                                                    <td class="value" width='52%''>
+                                                        <div><or:text key="editProject.Preferences.Autopilot" /></div>
+                                                        <div class="custom-radio">
+                                                            <input type="radio" id="autopilotOnRadioBox" name="autopilot" value="true"  <or:checked name='autopilot' value='true' />/>
+                                                            <label for="autopilotOnRadioBox"><or:text key="editProject.Preferences.Autopilot.Completion" /></label>
+                                                        </div>
+                                                        <div class="preferences__label">
+                                                            <or:text key="editProject.Preferences.Autopilot.Completion.Desc" />
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="custom-radio">
+                                                            <input type="radio" id="autopilotOffRadioBox" name="autopilot" value="false"  <or:checked name='autopilot' value='false' />/><label
+                                                                for="autopilotOffRadioBox"><or:text key="editProject.Preferences.Autopilot.TurnOff" /></label>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr class="dark">
+                                                    <td class="value" colspan="2">
+                                                        <div class="preferences__checkboxWrap">
+                                                            <div>
+                                                                <div class="projectDetails__notificationCheckbox" style="height: 24px;">
+                                                                    <input type="checkbox" id="emailNotificationsCheckBox" name="email_notifications" <or:checked name='email_notifications' value='on|yes|true' /> />
+                                                                    <span class="checkbox-label preferences__email"></span>
+                                                                    <label for="emailNotificationsCheckBox"><or:text key="editProject.Preferences.SendEmails" /></label>
+                                                                </div>
+                                                                <div class="preferences__label"><or:text key="editProject.Preferences.SendEmails.Desc" /><br /></div>
+                                                            </div>
+                                                            <div class="projectDetails__notificationCheckbox" style="height: 24px; margin-right: 100px;">
+                                                                <input type="checkbox" id="noRateProjectCheckBox" name="no_rate_project" <or:checked name='no_rate_project' value='on|yes|true' /> />
+                                                                <span class="checkbox-label"></span>
+                                                                <label for="noRateProjectCheckBox"><or:text key="editProject.Preferences.DoNotRate" /></label>
+                                                            </div>
+                                                            <div class="projectDetails__notificationCheckbox" style="height: 24px;">
+                                                                <input type="checkbox" id="timelineNotificationsCheckBox" name="timeline_notifications" <or:checked name='timeline_notifications' value='on|yes|true' /> />
+                                                                <span class="checkbox-label"></span>
+                                                                <label for="timelineNotificationsCheckBox"><or:text key="editProject.Preferences.ReceiveTimeline" /></label>
+                                                            <input type="checkbox" id="digitalRunCheckBox" style="display:none" name="digital_run_flag"  <or:checked name='digital_run_flag' value='on|yes|true' /> /><label style="display:none"
+                                                                for="digitalRunCheckBox"><b><or:text key="editProject.Preferences.DigitalRun" /></b></label>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <c:set var="projDetRowCount" value="0" />
+                                <div class="projectDetails">
+                                    <div class="projectDetails__sectionHeader">
+                                        <div class="projectDetails__title">
+                                                <%-- If creating a new project, name this table as "References" --%>
+                                                <c:if test="${newProject}">
+                                                    <or:text key="editProject.References.title" />
+                                                </c:if>
+                                                <%-- If editing the existing project, name this table as "Project Details" --%>
+                                                <c:if test="${not newProject}">
+                                                    <or:text key="editProject.ProjectDetails.title" />
+                                                </c:if>
+                                        </div>
+                                    </div>
+                                    <div class="projectDetails__sectionBody">
+                                        <table class="editProjectDetailsTable" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+                                            <tbody class="editProjectDetailsTable__body">
+                                                <%-- If editing the existing project, should have project name edited here --%>
+                                                <c:if test="${not newProject}">
+                                                    <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
+                                                        <td class="value" nowrap="nowrap">
+                                                            <div class="projectDetails__input projectDetails__inputText">
+                                                                <label for="project_id"><or:text key="editProject.ProjectDetails.Name" /></label>
+                                                                <input type="text" class="inputBox" name="project_name" value="<or:fieldvalue field='project_name' />" />
+                                                                <span id="project_name_validation_msg" style="display:none;" class="error"></span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="projectDetails__input projectDetails__inputText">
+                                                                <label for="project_id"><or:text key="editProject.References.ComponentId" /></label>
+                                                                <input type="text" class="inputBox" name="component_id" value="<or:fieldvalue field='component_id' />" />
+                                                                <span id="component_id_validation_msg" style="display:none;" class="error"></span>
+                                                            </div>
+                                                        </td>
+                                                    </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+                                                    <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
+                                                        <td nowrap="nowrap">
+                                                            <div class="selectCustom">
+                                                                <label><or:text key="editProject.ProjectDetails.Type" /></label>
+                                                                <select class="inputBox" name="project_type" style="width:150px;"
+                                                                        onchange="onProjectTypeChange(this);"><c:set var="OR_FIELD_TO_SELECT" value="project_type"/>
+                                                                    <c:forEach items="${projectTypes}" var="type">
+                                                                        <c:if test="${not type.generic}">
+                                                                            <option  value="${type.id}"  <or:selected value="${type.id}"/>><or:text key="ProjectType.${fn:replace(type.name, ' ', '')}.plural" def="${type.name}" /></option>
+                                                                        </c:if>
+                                                                    </c:forEach>
+                                                                </select>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="projectDetails__input projectDetails__inputText">
+                                                                <label for="project_id"><or:text key="editProject.References.ExternalReferenceId" /></label>
+                                                                <input type="text" class="inputBox" name="external_reference_id" value="<or:fieldvalue field='external_reference_id' />" />
+                                                                <span id="external_reference_id_validation_msg" style="display:none;" class="error"></span>
+                                                            </div>
+                                                        </td>
+                                                    </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+                                                    <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
+                                                        <td nowrap="nowrap">
+                                                            <div class="selectCustom">
+                                                                <label><or:text key="editProject.ProjectDetails.Category" /></label>
+                                                                <select class="inputBox" name="project_category" style="width:150px;"
+                                                                        onchange="onProjectCategoryChange(this);"><c:set var="OR_FIELD_TO_SELECT" value="project_category"/>
+                                                                    <c:forEach items="${projectCategories}" var="category">
+                                                                        <c:if test="${category.projectType.id eq projectForm.map['project_type']}">
+                                                                            <option  value="${category.id}"  <or:selected value="${category.id}"/>><or:text key="ProjectCategory.${fn:replace(category.name, ' ', '')}" def="${category.name}" /></option>
+                                                                        </c:if>
+                                                                    </c:forEach>
+                                                                </select>
+                                                            </div>
+                                                        </td>
+                                                        <td nowrap="nowrap">
+                                                            <or:text key="editProject.References.SVNModule" />
+                                                            <c:out value="${projectForm.map['SVN_module']}"/>
+                                                        </td>
+                                                    </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+                                                    <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}" style="display:none">
+                                                        <td class="value" nowrap="nowrap">
+                                                            <b><or:text key="editProject.ProjectDetails.DRPoints" /></b><br />
+                                                        </td>
+                                                        <td class="value" nowrap="nowrap">
+                                                            <input type="text" class="inputBox" name="dr_points" style="width: 350px;"  value="<or:fieldvalue field='dr_points' />" />
+                                                            <span id="dr_points_validation_msg" style="display:none;" class="error"></span>
+                                                        </td>
+                                                    </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+                                                </c:if>
+
+                                                <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
+                                                    <td nowrap="nowrap">
+                                                        <div class="projectDetails__input projectDetails__inputText">
+                                                            <label for="project_id"><or:text key="editProject.References.ForumId" /></label>
+                                                            <input type="text" class="inputBox" name="forum_id" value="<or:fieldvalue field='forum_id' />" />
+                                                            <span id="forum_id_validation_msg" style="display:none;" class="error"></span>
+                                                        </div>
+                                                    </td>
+                                                    <c:choose>
+                                                    <c:when test="${allowBillingEdit}">
+                                                            <td class="value" nowrap="nowrap">
+                                                                <div class="editProject__input">
+                                                                    <input type="hidden" name="billing_project">
+                                                                    <div class="lateDeliverables__selection">
+                                                                        <div class="custom-select-wrapper">
+                                                                            <div class="custom-select">
+                                                                                <span class="custom-select__label"><or:text key="editProject.ProjectDetails.BillingProject" /></span>
+                                                                                <div class="custom-select__trigger"><span></span>
+                                                                                    <div class="arrow"></div>
+                                                                                </div>
+                                                                                <div class="custom-options">
+                                                                                    <c:set var="OR_FIELD_TO_SELECT" value="billing_project"/>
+                                                                                    <c:forEach var="billingProject" items="${billingProjects}">
+                                                                                        <span class="custom-option" data-value="${billingProject.id}" <or:selected value="${billingProject.id}"/>>${billingProject.name}</span>
+                                                                                    </c:forEach>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <span id="billing_project_validation_msg" style="display:none;" class="error"></span>
+                                                                </div>
+                                                            </td>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <td></td>
+                                                        <input type="hidden" name="billing_project" value="<or:fieldvalue field='billing_project' />" />
+                                                    </c:otherwise>
+                                                </c:choose><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+                                                </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+                                                <!-- since: Online Review Update - Add Project Dropdown v1.0 -->
+                                                <c:choose>
+                                                    <c:when test="${allowCockpitProjectEdit}">
+                                                        <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
+                                                            <td class="value" nowrap="nowrap">
+                                                                <div class="editProject__input">
+                                                                    <input type="hidden" name="cockpit_project">
+                                                                    <div class="lateDeliverables__selection">
+                                                                        <div class="custom-select-wrapper">
+                                                                            <div class="custom-select">
+                                                                                <span class="custom-select__label"><or:text key="editProject.ProjectDetails.CockpitProject" /></span>
+                                                                                <div class="custom-select__trigger"><span></span>
+                                                                                    <div class="arrow"></div>
+                                                                                </div>
+                                                                                <div class="custom-options">
+                                                                                    <c:set var="OR_FIELD_TO_SELECT" value="cockpit_project"/>
+                                                                                    <c:forEach var="cockpitProject" items="${cockpitProjects}">
+                                                                                        <span class="custom-option" data-value="${cockpitProject.id}" <or:selected value="${cockpitProject.id}"/>>${cockpitProject.name}</span>
+                                                                                    </c:forEach>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <span id="cockpit_project_validation_msg" style="display:none;" class="error"></span>
+                                                                </div>
+                                                            </td>
+                                                            <td></td>
+                                                        </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <input type="hidden" name="cockpit_project" value="<or:fieldvalue field='cockpit_project' />" />
+                                                    </c:otherwise>
+                                                </c:choose><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <%-- If edit an existing project, show the edit prizes section here --%>
+                                <c:if test="${not newProject}">
+                                    <jsp:include page="/includes/project/project_edit_prizes.jsp" />
+                                </c:if>
+
+                                <table class="scorecard" cellpadding="0" cellspacing="0" width="100%"style="display: none;border-collapse: collapse;">
+                                    <tr>
+                                        <td class="title"><or:text key="editProject.Notes.title" /></td>
+                                    </tr>
+                                    <tr class="light">
+                                        <td class="value">
+                                            <span class="error"><s:fielderror escape="false"><s:param>notes</s:param></s:fielderror></span><br />
+                                            <textarea class="inputTextBox" name="notes" ><or:fieldvalue field="notes" /></textarea>
+                                            <div id="notes_validation_msg" style="display:none;" class="error"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="lastRowTD"><!-- @ --></td>
+                                    </tr>
+                                </table>
+
+                                <%-- If creating a new project, include timeline editor here --%>
+                                <c:if test="${newProject}">
+                                    <jsp:include page="/includes/project/project_edit_timeline.jsp" />
+                                </c:if>
+
+                                <%-- Include resources editor --%>
+                                <jsp:include page="/includes/project/project_edit_resources.jsp" />
+
+                                <c:if test="${not newProject}">
+                                    <div class="projectDetails">
+                                        <div class="projectDetails__sectionHeader">
+                                            <div class="projectDetails__title">
+                                                <or:text key="editProject.Status.title" />
+                                            </div>
+                                        </div>
+                                        <div class="projectDetails__sectionBody">
+                                            <div class="statusTable" id="status">
+                                                <div class="editProject__input" style="width: 24%">
+                                                    <input type="hidden" name="status">
+                                                    <div class="lateDeliverables__selection">
+                                                        <div class="custom-select-wrapper">
+                                                            <div class="custom-select">
+                                                                <span class="custom-select__label"><or:text key="editProject.Status.CurrentStatus" /></span>
+                                                                <div class="custom-select__trigger"><span></span>
+                                                                    <div class="arrow"></div>
+                                                                </div>
+                                                                <div class="custom-options">
+                                                                    <c:set var="OR_FIELD_TO_SELECT" value="status"/>
+                                                                    <c:forEach var="status" items="${projectStatuses}">
+                                                                        <span class="custom-option" data-value="${status.id}" <or:selected value="${status.id}"/>><or:text key="ProjectStatus.${fn:replace(status.name, ' ', '')}" def="${status.name}" /></span>
+                                                                    </c:forEach>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <span class="errorText"><s:fielderror escape="false"><s:param>status</s:param></s:fielderror></span>
+                                                <div class="explanation">
+                                                    <div class="explanation__message">
+                                                        <label for="message"><or:text key="editProject.Status.Explanation.description" /></label>
+                                                        <textarea name="status_explanation" cols="20" rows="5" class="inputTextBox" onkeyup="checkMessage()"><or:fieldvalue field="status_explanation" /></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </c:if>
+                                <c:if test="${not newProject}">
+                                    <div class="projectDetails">
+                                        <div class="projectDetails__sectionHeader">
+                                            <div class="projectDetails__title">
+                                                <or:text key="editProject.Explanation.title" />
+                                            </div>
+                                        </div>
+                                        <div class="projectDetails__sectionBody">
+                                            <div class="explanation" id="Explanation">
+                                                <div class="explanation__message" style="margin-top: 0;">
+                                                    <label for="message"><or:text key="editProject.Explanation.description" /> &#160;</label>
+                                                    <textarea class="inputTextBox" name="explanation" ><or:fieldvalue field="explanation" /></textarea>
+                                                    <span id="explanation_validation_msg" class="error"><s:fielderror escape="false"><s:param>explanation</s:param></s:fielderror></span><br />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </c:if>
+                            </s:form>
+                        </div>
+                    </div>
+                </div>
+                <div class="saveChanges__button">
+                    <c:if test="${newProject}">
+                        <button id="saveChanges" form="SaveProject" value="Submit" class="saveChanges__save"><or:text key='btnSaveChanges.alt' /></button>
+                        <a href="<or:url value='/actions/ListProjects?scope=my' />" class="saveChanges__cancel"><or:text key='btnCancel.alt' /></a>
+                    </c:if>
+                    <c:if test="${not newProject}">
+                        <button id="saveChanges" form="SaveProject" value="Submit" class="saveChanges__save"><or:text key='btnSaveChanges.alt' /></button>
+                        <a href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />" class="saveChanges__cancel"><or:text key='btnCancel.alt' /></a>
+                    </c:if>
                 </div>
             </div>
-        <jsp:include page="/includes/inc_footer.jsp" />
     </div>
 </div>
+<jsp:include page="/includes/inc_footer_reskin.jsp" />
 </body>
 <script type="text/javascript">
     var canEditContestPrize = ${canEditContestPrize};
@@ -1487,5 +1638,9 @@
     disableSelect("contest_prizes_num_dump[", !studio, canEditContestPrize);
     disableSelect("checkpoint_prizes_num[", false, canEditCheckpointPrize);
     disableSelect("checkpoint_prizes_num_dump[", false, canEditCheckpointPrize);
+    // var saveProject = document.getElementById('SaveProject');
+    // saveProject.addEventListener('submit', function() {
+    //     document.getElementById("saveChanges").disabled = true;
+    // }, false);
 </script>
 </html>

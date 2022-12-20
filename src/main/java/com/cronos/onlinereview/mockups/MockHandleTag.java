@@ -185,8 +185,9 @@ public final class MockHandleTag extends TagSupport {
             textColor = "coderTextOrange";
         }
 
+
         // Start preparing resulting output
-        StringBuilder results = new StringBuilder("<a href=\"http://www.topcoder.com/tc?module=MemberProfile&cr=");
+        StringBuilder results = new StringBuilder("<a href=\"http://<%=ApplicationServer.SERVER_NAME%>/tc?module=MemberProfile&cr=");
         // appending coder's id to the generated link
         results.append(coderId);
         // tab will be specified only if tab local variable is not empty

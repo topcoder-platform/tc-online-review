@@ -190,7 +190,8 @@ workflows:
           filters: 
             branches:
               only:
-                - dev-maven
+                - reskin-or
+                - ci-fix-test
 
       - deployProd:
           context : org-global

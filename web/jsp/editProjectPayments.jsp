@@ -8,6 +8,7 @@
 <%@ page import="com.cronos.onlinereview.Constants" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
+<%@ page import="java.text.DecimalFormat,com.topcoder.onlinereview.component.webcommon.ApplicationServer" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -32,7 +33,10 @@
         <link type="text/css" rel="stylesheet" href="/css/style.css" />
         <link type="text/css" rel="stylesheet" href="/css/coders.css" />
         <link type="text/css" rel="stylesheet" href="/css/stats.css" />
-        <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
+
+        <!-- Reskin -->
+        <link type="text/css" rel="stylesheet" href="/css/reskin-or/reskin.css">
+        <link type="text/css" rel="stylesheet" href="/css/reskin-or/toasts.css">
 
         <!-- CSS and JS by Petar -->
         <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
@@ -63,87 +67,130 @@
             var contestPaymentTypeText = '<or:text key="editProjectPayments.box.ContestPayment" />';
             var checkpointPaymentTypeText = '<or:text key="editProjectPayments.box.CheckpointPayment" />';
         //--></script>
+        <script type="text/javascript">
+            function updateForumLink(projectId) {
+                return fetch("<%=com.cronos.onlinereview.util.ConfigHelper.getChallengeByLegacyIdUrlV5()%>" + projectId)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        let with_forum = data.filter(item => 'discussions' in item);
+                        let id = with_forum?.[0]?.id;
+                        if (id !== undefined) {
+                            let forumLinkEl = document.querySelector('.projectInfo__forumLink');
+                            return forumLinkEl.href = "https://<%=ApplicationServer.FORUMS_SERVER_NAME%>/categories/" + id;
+                        }
+                    });
+            }
+
+            document.addEventListener("DOMContentLoaded", function(){
+                let projectId = ${project.id};
+                updateForumLink(projectId);
+
+                let selects = document.getElementsByClassName("selectCustom");
+                customSelect(selects);
+
+                let avatar = document.querySelector('.webHeader__avatar a');
+                let avatarImage = document.createElement('div');
+                avatarImage.className = "webHeader__avatarImage";
+                let twoChar = avatar.text.substring(0, 2);
+                avatarImage.innerText = twoChar;
+                avatar.innerHTML = avatarImage.outerHTML;
+            });
+        </script>
     </head>
 
     <body onload="bodyLoad()">
-    <div align="center">
+    <jsp:include page="/includes/inc_header_reskin.jsp" />
 
-        <div class="maxWidthBody" align="left">
+    <jsp:include page="/includes/project/project_tabs_reskin.jsp" />
 
-            <jsp:include page="/includes/inc_header.jsp" />
-
-            <jsp:include page="/includes/project/project_tabs.jsp" />
-
-            <div id="mainMiddleContent">
-                <div class="clearfix"></div>
-
-                <div id="titlecontainer">
-                    <div id="contentTitle">
-                        <h3>${project.allProperties["Project Name"]}
-                            version ${project.allProperties["Project Version"]} - Edit Payments</h3>
-                    </div>
-                </div>
-
-                <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
-                    <table cellpadding="0" cellspacing="0" border="0">
-                        <tr><td><!-- @ --></td><td width="400"><!-- @ --></td></tr>
-                        <tr>
-                            <td colspan="2"><span style="color:red;"><or:text key="editProjectPayments.ValidationFailed" /></span></td>
-                        </tr>
-                        <s:actionerror escape="false" />
-                    </table>
-                </c:if>
-
-                <c:if test="${empty tabName}">
-                    <c:set var="tabName" value="submitters" scope="request" />
-                </c:if>
-
-                <!-- The tabs -->
-                <div>
-                    <ul id="tablist">
-                        <li <c:if test="${tabName eq 'submitters'}">class="current"</c:if> ><a id="submitters-link" onclick="return showTab('submitters-table', this);" href="javascript:void(0)"><or:text key="editProjectPayments.Submitters"/></a></li>
-                        <li <c:if test="${tabName eq 'reviewers'}">class="current"</c:if>><a id="reviewers-link" onclick="return showTab('reviewers-table', this);" href="javascript:void(0)"><or:text key="editProjectPayments.Reviewers"/></a></li>
-                        <li <c:if test="${tabName eq 'copilots'}">class="current"</c:if>><a id="copilots-link" onclick="return showTab('copilots-table', this);" href="javascript:void(0)"><or:text key="editProjectPayments.Copilots"/></a></li>
-                    </ul>
-                    <div style="clear:both;"></div>
-                </div>
-
-                <s:form action="SaveProjectPayments" onsubmit="return enableFormElements(this);" namespace="/actions">
-                    <input type="hidden" name="pid" value="<or:fieldvalue field='pid' />" />
-
-                    <!-- The Submitters table -->
-                    <c:set var="resources" value="${submitters}" scope="request" />
-                    <c:set var="resourcePayments" value="${submitterPayments}" scope="request" />
-                    <jsp:include page="/includes/project/project_edit_resource_payments.jsp">
-                        <jsp:param name="prefix" value="submitter" />
-                    </jsp:include>
-
-                    <!-- The Reviewers table -->
-                    <c:set var="resources" value="${reviewers}" scope="request" />
-                    <c:set var="resourcePayments" value="${reviewerPayments}" scope="request" />
-                    <jsp:include page="/includes/project/project_edit_resource_payments.jsp">
-                        <jsp:param name="prefix" value="reviewer" />
-                    </jsp:include>
-
-                    <!-- The Copilots table -->
-                    <c:set var="resources" value="${copilots}" scope="request" />
-                    <c:set var="resourcePayments" value="${copilotPayments}" scope="request" />
-                    <jsp:include page="/includes/project/project_edit_resource_payments.jsp">
-                        <jsp:param name="prefix" value="copilot" />
-                    </jsp:include>
-
-                    <br/>
-                    <div align="right">
-                        <input type="image" src="<or:text key='btnSaveChanges.img' />" border="0" alt="<or:text key='btnSaveChanges.alt' />" />&#160;
-                        <a href="ViewProjectPayments?pid=${project.id}"><img src="<or:text key='btnCancel.img' />" border="0" alt="<or:text key='btnCancel.alt' />" /></a>
-                    </div>
-                </s:form>
+    <div class="content content">
+        <div class="content__inner">
+            <div class="editProjectLink__header">
+                <button type="button" class="back-btn edit-back-btn" onclick="history.back()">
+                    <i class="arrow-prev-icon"></i>
+                </button>
+                <jsp:include page="/includes/project/project_info_reskin.jsp" />
             </div>
+            <div class="projectDetails">
+                <div class="projectDetails__sectionHeader">
+                    <div class="projectDetails__title">
+                       <or:text key="editProjectPayments.box.title"/>
+                    </div>
+                </div>
+                <div class="projectDetails__sectionBody">
+                    <div>
+                        <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
+                            <table class="editProjectLink__error" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td colspan="2"><span style="color:red;"><or:text key="editProjectPayments.ValidationFailed" /></span></td>
+                                </tr>
+                                <s:actionerror escape="false" />
+                            </table>
+                        </c:if>
 
-            <jsp:include page="/includes/inc_footer.jsp" />
+                        <c:if test="${empty tabName}">
+                            <c:set var="tabName" value="submitters" scope="request" />
+                        </c:if>
+
+                        <!-- The tabs -->
+                        <div class="projectDetails__tabs">
+                            <div ${tabName eq 'submitters' ? "class='projectDetails__tab projectDetails__tab--active'" : "class='projectDetails__tab'"}>
+                                <a href="javascript:void(0)" onclick="return showTab('submitters-table', this);">
+                                    <or:text key="editProjectPayments.Submitters"/>
+                                </a>
+                            </div>
+                            <div ${tabName eq 'reviewers' ? "class='projectDetails__tab projectDetails__tab--active'" : "class='projectDetails__tab'"}>
+                                <a href="javascript:void(0)" onclick="return showTab('reviewers-table', this);">
+                                    <or:text key="editProjectPayments.Reviewers"/>
+                                </a>
+                            </div>
+                            <div ${tabName eq 'copilots' ? "class='projectDetails__tab projectDetails__tab--active'" : "class='projectDetails__tab'"}>
+                                <a href="javascript:void(0)" onclick="return showTab('copilots-table', this);">
+                                    <or:text key="editProjectPayments.Copilots"/>
+                                </a>
+                            </div>
+                        </div>
+
+                        <s:form action="SaveProjectPayments" onsubmit="return enableFormElements(this);" namespace="/actions">
+                            <input type="hidden" name="pid" value="<or:fieldvalue field='pid' />" />
+
+                            <!-- The Submitters table -->
+                            <c:set var="resources" value="${submitters}" scope="request" />
+                            <c:set var="resourcePayments" value="${submitterPayments}" scope="request" />
+                            <jsp:include page="/includes/project/project_edit_resource_payments.jsp">
+                                <jsp:param name="prefix" value="submitter" />
+                            </jsp:include>
+
+                            <!-- The Reviewers table -->
+                            <c:set var="resources" value="${reviewers}" scope="request" />
+                            <c:set var="resourcePayments" value="${reviewerPayments}" scope="request" />
+                            <jsp:include page="/includes/project/project_edit_resource_payments.jsp">
+                                <jsp:param name="prefix" value="reviewer" />
+                            </jsp:include>
+
+                            <!-- The Copilots table -->
+                            <c:set var="resources" value="${copilots}" scope="request" />
+                            <c:set var="resourcePayments" value="${copilotPayments}" scope="request" />
+                            <jsp:include page="/includes/project/project_edit_resource_payments.jsp">
+                                <jsp:param name="prefix" value="copilot" />
+                            </jsp:include>
+                        </s:form>
+                    </div>
+                </div>
+            </div>
+            <div class="saveChanges__button">
+                <button id="saveChanges" form="SaveProjectPayments" value="Submit" class="saveChanges__save"><or:text key='btnSaveChanges.alt' /></button>
+                <a href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />" class="saveChanges__cancel"><or:text key='btnCancel.alt' /></a>
+            </div>
         </div>
-
     </div>
+    <jsp:include page="/includes/inc_footer_reskin.jsp" />
 
     </body>
+    <script type="text/javascript">
+        const paymentsForm = document.getElementById('SaveProjectPayments');
+        paymentsForm.addEventListener('submit', function() {
+            document.getElementById("saveChanges").disabled = true;
+        }, false);
+    </script>
 </html>
