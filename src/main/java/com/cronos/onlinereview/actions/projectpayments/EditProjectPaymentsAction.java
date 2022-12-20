@@ -8,8 +8,10 @@ import java.util.List;
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
+import com.cronos.onlinereview.util.ConfigHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
+import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.project.payment.ProjectPayment;
 import com.topcoder.onlinereview.component.project.payment.ProjectPaymentManager;
 import com.topcoder.onlinereview.component.project.payment.ProjectPaymentFilterBuilder;
@@ -64,7 +66,30 @@ public class EditProjectPaymentsAction extends BaseProjectPaymentAction {
         // At this point, redirect-after-login attribute should be removed (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
 
-        long projectId = verification.getProject().getId();
+        Project project = verification.getProject();
+
+        request.setAttribute("projectStatus", project.getProjectStatus().getName());
+
+        final String projectTypeName = project.getProjectCategory().getProjectType().getName();
+
+        boolean hasForumType = project.getAllProperties().containsKey("Forum Type");
+
+        long projectId = project.getId();
+        long forumId = -1;
+        String tempStr;
+
+        tempStr = (String) project.getProperty("Developer Forum ID");
+        if (tempStr != null && tempStr.trim().length() != 0) {
+            forumId = Long.parseLong(tempStr, 10);
+        }
+
+        request.setAttribute("viewContestLink", ConfigHelper.getProjectTypeViewContestLink(projectTypeName, projectId));
+
+        request.setAttribute("forumLink", ConfigHelper.getProjectTypeForumLink(
+                (projectTypeName.equalsIgnoreCase("studio") && hasForumType) ? "NewStudio" : projectTypeName, forumId));
+        request.setAttribute("isAllowedToContactPM",
+                AuthorizationHelper.hasUserPermission(request, Constants.CONTACT_PM_PERM_NAME));
+
         ProjectPaymentManager projectPaymentManager = ActionsHelper.createProjectPaymentManager();
         List<ProjectPayment> payments = projectPaymentManager.search(
                 ProjectPaymentFilterBuilder.createProjectIdFilter(projectId));
