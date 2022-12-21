@@ -949,6 +949,7 @@ table.scorecard td.reviewerResp input {
 
 .editProjectPaymentTable__header th,
 .editPhaseTable__header th,
+.lateDeliverableTable__header th,
 .projectLinkTable__header th,
 .myInfoTable__header th,
 .timelineTable__header th,
@@ -1028,6 +1029,7 @@ table.scorecard td.reviewerResp input {
 .preferencesTable__body td,
 .editPhaseTable__body td,
 .editResourceTable__body td,
+.lateDeliverableTable__body td,
 .projectListTable__body td,
 .extendRegistration__body td,
 .extendSubTable__body td,
@@ -1099,9 +1101,11 @@ table.scorecard td.reviewerResp input {
     vertical-align: top;
 }
 
+.lateDeliverableTable td,
 .projectListTable__body td {
     padding: 16px;
-    margin-bottom: 16px;
+    padding-bottom: 24px;
+    margin-bottom: 24px;
 }
 
 .projectListTable__body td.challengeName {
@@ -1149,6 +1153,7 @@ table.scorecard td.reviewerResp input {
     border-bottom: 2px solid var(--black-10);
 }
 
+.lateDeliverablePagination,
 .projectListPagination {
     display: flex;
     justify-content: space-between;
@@ -1156,6 +1161,13 @@ table.scorecard td.reviewerResp input {
     margin-bottom: 0px
 }
 
+.lateDeliverablePagination {
+    padding-top: 16px;
+    margin-top: 0;
+    border-top: 2px solid var(--black-10);
+}
+
+.lateDeliverablePagination .info,
 .projectListPagination div {
     font-family: 'Roboto';
     font-style: normal;
@@ -2617,4 +2629,35 @@ td.resourcesTable__empty {
 
 .checkPoint__chevron {
     margin-left: 29px
+}
+
+.submissionTab_chevron {
+    padding: 0 !important;
+}
+
+.projectStatus {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.projectListTable__body .lateDeliverableTable__wrapper {
+    padding: 0;
+    margin-bottom: 0;
+    border: 0;
+}
+
+.lateDeliverableTable .lateDeliverableTable__body tr td {
+    border-bottom: 1px solid var(--black-5);
+    border-top: none;
+    height: 38px;
+    padding: 8px 64px 8px 16px;
+}
+
+.lateDeliverableTable__body tr:last-child td {
+    border-bottom: none;
+}
+
+.searchResult__header th {
+    background-color: var(--black-10);
 }
