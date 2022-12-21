@@ -212,6 +212,7 @@
                             <input type="text" name="project_id" id="project_id" class="inputBox"
                                        onfocus="this.value = getTextValueOnFocus(this, true);"
                                        onblur="this.value = getTextValueOnFocus(this, false);" value="<or:fieldvalue field='project_id' />" data-reset="" />
+                            <div id="project_id_validation_msg" style="display:none;" class="error"></div>
                             <div id="project_id_serverside_validation" class="error"><s:fielderror escape="false"><s:param>project_id</s:param></s:fielderror></div>
                         </div>
 
@@ -384,7 +385,7 @@
                     </div>
 
                     <table class="projectListTable" style="border-collapse: collapse;" cellpadding="0" cellspacing="0" width="100%">
-                        <thead class="projectListTable__header">
+                        <thead class="projectListTable__header searchResult__header">
                             <tr>
                                 <th width="55%"><or:text key="viewLateDeliverables.SearchResults.column.ProjectName" /></th>
                                 <th nowrap="nowrap"><or:text key="viewLateDeliverables.SearchResults.column.ProjectCategory" /></th>
@@ -402,10 +403,6 @@
                         <c:set var="project" value="${entry.value}" />
                         <tr>
                             <td class="challengeName">
-                                <a onclick="return expcollHandler(this)" href="javascript:void(0)" id="Out${idxProj.index}" class="Outline">
-                                <img id="Out${idxProj.index}i" class="Outline" border="0" src="/i/or/plus.gif" width="9" height="9" style="margin-right:5px;" />
-                                </a>
-
                                 <div>
                                     <a href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />">
                                         ${project.allProperties['Project Name']}
@@ -416,23 +413,32 @@
                             </td>
 
                             <td>${project.projectCategory.name}</td>
-                            <td>${project.projectStatus.name}</td>
+                            <td>
+                                <div class="projectStatus">
+                                    <div class="projectStatus__status">
+                                        ${project.projectStatus.name}
+                                    </div>
+                                    <a onclick="return expcollHandler(this)" href="javascript:void(0)" id="Out${idxProj.index}" class="Outline">
+                                        <img id="Out${idxProj.index}i" class="Outline" border="0" src="/i/reskin/latedeliverable-chevron.svg" width="9" height="9" style="margin-right:5px;" />
+                                    </a>
+                                </div>
+                            </td>
                         </tr>
 
                         <tr id="Out${idxProj.index}r" style="display:none">
-                            <td colspan="3" class="value">
-                                <table border="1" cellpadding="0" cellspacing="0" width="100%">
-                                    <thead>
+                            <td colspan="3" class="lateDeliverableTable__wrapper" style="border-bottom: none;">
+                                <table class="lateDeliverableTable" cellpadding="0" cellspacing="0" width="100%">
+                                    <thead class="lateDeliverableTable__header">
                                         <tr>
-                                            <th nowrap="nowrap" width="20%"><or:text key="viewLateDeliverables.SearchResults.innerTable.column.Handle" /></th>
-                                            <td nowrap="nowrap" width="20%"><or:text key="viewLateDeliverables.SearchResults.innerTable.column.Deliverable" /></th>
-                                            <td nowrap="nowrap" width="20%"><or:text key="viewLateDeliverables.SearchResults.innerTable.column.Deadline" /></th>
-                                            <td nowrap="nowrap" width="20%"><or:text key="viewLateDeliverables.SearchResults.innerTable.column.Delay" /></th>
-                                            <td nowrap="nowrap" width="15%"><or:text key="viewLateDeliverables.SearchResults.innerTable.column.Justified" /></th>
-                                            <td nowrap="nowrap" width="5%"><or:text key="viewLateDeliverables.SearchResults.innerTable.column.Edit"/></th>
+                                            <th nowrap="nowrap" width="10%"><or:text key="viewLateDeliverables.SearchResults.innerTable.column.Handle" /></th>
+                                            <th nowrap="nowrap" width="30%"><or:text key="viewLateDeliverables.SearchResults.innerTable.column.Deliverable" /></th>
+                                            <th nowrap="nowrap" width="20%"><or:text key="viewLateDeliverables.SearchResults.innerTable.column.Deadline" /></th>
+                                            <th nowrap="nowrap" width="20%"><or:text key="viewLateDeliverables.SearchResults.innerTable.column.Delay" /></th>
+                                            <th nowrap="nowrap" width="15%"><or:text key="viewLateDeliverables.SearchResults.innerTable.column.Justified" /></th>
+                                            <th nowrap="nowrap" width="5%"><or:text key="viewLateDeliverables.SearchResults.innerTable.column.Edit"/></th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody class="lateDeliverableTable__body">
                                         <c:set var="lateDeliverables" value="${groupedLateDeliverables[projectId]}" />
                                         <c:forEach items="${lateDeliverables}" var="lateDeliverable" varStatus="status">
                                         <tr>
@@ -475,6 +481,13 @@
                         </c:forEach>
                         </tbody>
                     </table>
+                    <c:if test="${totalProjectCount > 0}">
+                        <div class="lateDeliverablePagination">
+                            <div class="info">
+                                Showing 1 to ${totalProjectCount} of ${totalProjectCount} projects
+                            </div>
+                        </div>
+                    </c:if>
                 </div>
             </c:if>
         </div>
