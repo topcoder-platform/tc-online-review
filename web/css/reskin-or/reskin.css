@@ -109,7 +109,7 @@ body {
 }
 
 .webHeader__avatar {
-    display: none;
+    display: block;
 }
 
 .webHeader__avatar a {
