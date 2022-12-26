@@ -409,7 +409,9 @@
 
             <div align="right">
                 <c:if test="${isPreview}">
-                    <a href="javascript:window.close();"><img src="<or:text key='btnClose.img' />" alt="<or:text key='btnClose.alt' />" border="0" /></a>
+                    <a class="backToHome" href="javascript:window.close();">
+                        Close
+                    </a>
                 </c:if>
                 <c:if test="${not isPreview}">
                     <a class="backToHome" href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />">
@@ -417,7 +419,6 @@
                     </a>
                 </c:if>
           </div>
-
         </div>
     </div>
     <jsp:include page="/includes/inc_footer_reskin.jsp" />
