@@ -1209,7 +1209,7 @@
                             </div>
                         </div>
                         <div class="editProject__sectionBody">
-                            <s:form action="SaveProject" onsubmit="return validate_form(this, true);" namespace="/actions">
+                            <s:form action="SaveProject" namespace="/actions">
 
                                 <%-- TODO: Validation errors display should be much more than is here --%>
                                 <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
@@ -1638,9 +1638,14 @@
     disableSelect("contest_prizes_num_dump[", !studio, canEditContestPrize);
     disableSelect("checkpoint_prizes_num[", false, canEditCheckpointPrize);
     disableSelect("checkpoint_prizes_num_dump[", false, canEditCheckpointPrize);
-    // var saveProject = document.getElementById('SaveProject');
-    // saveProject.addEventListener('submit', function() {
-    //     document.getElementById("saveChanges").disabled = true;
-    // }, false);
+    var saveProject = document.getElementById('SaveProject');
+    saveProject.addEventListener('submit', function(e) {
+        var isProjectFormValid = validate_form(saveProject, true);
+        if (!isProjectFormValid) {
+            e.preventDefault();
+            return false;
+        }
+        document.getElementById("saveChanges").disabled = true;
+    });
 </script>
 </html>
