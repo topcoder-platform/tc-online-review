@@ -1065,7 +1065,7 @@
                                                 </c:if>
 
                                                 <%-- Delete Checkpoint Submission --%>
-                                                <c:choose>
+                                                <%-- <c:choose>
                                                    <c:when test="${isManager and not group.checkpointReviewFinished}">
                                                        <a href="<or:url value='/actions/DeleteSubmission?uid=${submission.upload.id}' />">
                                                            <img src="<or:text key='viewProjectDetails.box.Submission.icoTrash.img' />"
@@ -1074,7 +1074,7 @@
                                                        </a>
                                                    </c:when>
                                                    <c:otherwise><!-- @ --></c:otherwise>
-                                                </c:choose>
+                                                </c:choose> --%>
                                             </td>
 
                                             <%-- Checkpoint Submission Date --%>
