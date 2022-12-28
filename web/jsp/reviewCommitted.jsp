@@ -20,41 +20,50 @@
     </jsp:include>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
+    <!-- Reskin -->
+    <link type="text/css" rel="stylesheet" href="/css/reskin-or/reskin.css">
+    <link type="text/css" rel="stylesheet" href="/css/reskin-or/toasts.css">
+
     <!-- TopCoder CSS -->
     <link type="text/css" rel="stylesheet" href="/css/style.css">
     <link type="text/css" rel="stylesheet" href="/css/coders.css">
-    <link type="text/css" rel="stylesheet" href="/css/stats.css">
-    <link type="text/css" rel="stylesheet" href="/css/tcStyles.css">
 
     <!-- JS from wireframes -->
     <script language="javascript" type="text/javascript" src="/js/or/popup.js"></script>
     <script language="javascript" type="text/javascript" src="/js/or/expand_collapse.js"></script>
 
     <!-- CSS and JS by Petar -->
-    <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css">
     <script language="JavaScript" type="text/javascript" src="/js/or/rollovers2.js"></script>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function(){
+            let avatar = document.querySelector('.webHeader__avatar a');
+            let avatarImage = document.createElement('div');
+            avatarImage.className = "webHeader__avatarImage";
+            let twoChar = avatar.text.substring(0, 2);
+            avatarImage.innerText = twoChar;
+            avatar.innerHTML = avatarImage.outerHTML;
+        });
+    </script>
 </head>
 
 <body>
-<div align="center">
-    
-    <div class="maxWidthBody" align="left">
+    <jsp:include page="/includes/inc_header_reskin.jsp" />
+    <jsp:include page="/includes/project/project_tabs_reskin.jsp" />
 
-        <jsp:include page="/includes/inc_header.jsp" />
-        
-        <jsp:include page="/includes/project/project_tabs.jsp" />
-        
-            <div id="mainMiddleContent">
+    <div class="content">
+        <div class="content__inner">
+            <jsp:include page="/includes/review/review_project.jsp" />
+            <div class="divider"></div>
+            <div id="mainContent">
                 <div style="position: relative; width: 100%;">
-                    <jsp:include page="/includes/review/review_project.jsp" />
-                    <h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
+                    <h3 class="scoreBoard__title" style="margin-bottom: 32px;">${orfn:htmlEncode(scorecardTemplate.name)}</h3>
 
                     <table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
                         <tr>
                             <td class="title"><or:text key="reviewCommitted.Committed" /></td>
                         </tr>
                         <tr class="light">
-                            <td class="valueC">
+                            <td class="finalScore">
                                 <br />
                                 <or:text key="reviewCommitted.Score" />
                                 <b>${orfn:displayScore(null, reviewScore)}</b><br /><br />
@@ -63,21 +72,15 @@
                         <tr>
                             <td class="lastRowTD"><!-- @ --></td>
                         </tr>
-                    </table><br />
-
-                    <div align="right">
-                        <a href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />"><img src="<or:text key='reviewCommitted.ReturnToProjDet.img' />" alt="<or:text key='reviewCommitted.ReturnToProjDet.alt' />" border="0" /></a>&#160;
-                        <a href="<or:url value="/actions/View${fn:replace(reviewType, ' ', '')}?rid=${rid}" />"><img src="<or:text key='reviewCommitted.ViewScorecard.img' />" alt="<or:text key='reviewCommitted.ViewScorecard.alt' />" border="0" /></a>
-                    </div><br />
-
+                    </table>
+                    <div class="saveChanges__button">
+                        <a href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />" class="saveChanges__save"><or:text key='reviewCommitted.ReturnToProjDet.alt' /></a>
+                        <a href="<or:url value="/actions/View${fn:replace(reviewType, ' ', '')}?rid=${rid}" />" class="saveChanges__save"><or:text key='reviewCommitted.ViewScorecard.alt' /></a>
+                    </div>
                 </div>
             </div>
-        
-        <jsp:include page="/includes/inc_footer.jsp" />
-
+        </div>
     </div>
-
-</div>
-
+    <jsp:include page="/includes/inc_footer_reskin.jsp" />
 </body>
 </html>

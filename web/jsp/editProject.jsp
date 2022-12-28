@@ -1155,7 +1155,7 @@
             }
         }
     //--></script>
-        <script type="text/javascript">
+    <script type="text/javascript">
         function updateForumLink(projectId) {
             return fetch("<%=com.cronos.onlinereview.util.ConfigHelper.getChallengeByLegacyIdUrlV5()%>" + projectId)
                 .then((response) => response.json())
@@ -1193,7 +1193,7 @@
 
     <jsp:include page="/includes/project/project_tabs_reskin.jsp" />
 
-    <div class="content content">
+    <div class="content">
         <div class="content__inner">
             <div class="editProject__header">
                 <button type="button" class="back-btn" onclick="history.back()">

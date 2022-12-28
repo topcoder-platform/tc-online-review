@@ -47,6 +47,7 @@
         ${orfn:htmlEncode(project.allProperties['Project Name'])}
     </h1>
 </div>
+<c:if test="${!param.hideScoreInfo}">
 <div class="scoreInfo__info">
     <div class="scoreInfo__reviewer">
         <c:if test="${reviewType ne 'AutoScreening' and reviewType ne 'CompositeReview'}">
@@ -118,6 +119,7 @@
         </c:if>
     </div>
 </div>
+</c:if>
 
 
 
