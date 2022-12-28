@@ -635,7 +635,7 @@ table.scorecard tr.light {
 }
 
 table.scorecard td.value, table.scorecard td.approvalText, table.scorecard td.valueC, td.valueR, td.valueB,
-table.scorecard td.totalValue, table.scorecard td.totalValueC, td.totalValueR, td.totalValueB,
+table.scorecard td.totalValue, table.scorecard td.totalValueC, td.totalValueR, td.totalValueB, table.scorecard td.finalScore,
 table.scorecard td.response {
     border-top: 2px solid var(--black-10);
     padding: 16px;
@@ -646,6 +646,14 @@ table.scorecard td.response {
     vertical-align: middle;
     color: var(--black-100);
     line-height: 22px;
+}
+
+table.scorecard td.finalScore {
+    text-align: center;
+    vertical-align: top;
+    font-size: 16px;
+    height: 30vh;
+    border-bottom: 2px solid var(--black-10);;
 }
 
 table.scorecard td.valueR {
