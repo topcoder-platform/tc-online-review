@@ -109,7 +109,7 @@ body {
 }
 
 .webHeader__avatar {
-    display: none;
+    display: block;
 }
 
 .webHeader__avatar a {
@@ -635,7 +635,7 @@ table.scorecard tr.light {
 }
 
 table.scorecard td.value, table.scorecard td.approvalText, table.scorecard td.valueC, td.valueR, td.valueB,
-table.scorecard td.totalValue, table.scorecard td.totalValueC, td.totalValueR, td.totalValueB,
+table.scorecard td.totalValue, table.scorecard td.totalValueC, td.totalValueR, td.totalValueB, table.scorecard td.finalScore,
 table.scorecard td.response {
     border-top: 2px solid var(--black-10);
     padding: 16px;
@@ -643,9 +643,21 @@ table.scorecard td.response {
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
-    vertical-align: top;
+    vertical-align: middle;
     color: var(--black-100);
     line-height: 22px;
+}
+
+table.scorecard td.finalScore {
+    text-align: center;
+    vertical-align: top;
+    font-size: 16px;
+    height: 30vh;
+    border-bottom: 2px solid var(--black-10);;
+}
+
+table.scorecard td.valueR {
+    text-align: center;
 }
 
 table.scorecard td.totalValue,
@@ -729,6 +741,7 @@ table.scorecard td.headerT {
 }
 
 .addPayment,
+.addResponse,
 .phaseButton,
 .deletePayment,
 .backToHome,
@@ -769,6 +782,7 @@ table.scorecard td.headerT {
 .addResource:hover,
 .deleteResource:hover,
 .addPayment:hover,
+.addResponse:hover,
 .phaseButton:hover,
 .deletePayment:hover,
 .submit__btn:hover,
@@ -781,6 +795,7 @@ table.scorecard td.headerT {
 
 .addResource:active,
 .addPayment:active,
+.addResponse:active,
 .deleteResource:active,
 .phaseButton:active,
 .deletePayment:active,
@@ -794,7 +809,8 @@ table.scorecard td.headerT {
 
 .phaseButton,
 .deletePayment,
-.addPayment {
+.addPayment,
+.addResponse {
     padding: 3px 16px;
     font-size: 12px;
     height: 24px;
@@ -949,6 +965,7 @@ table.scorecard td.reviewerResp input {
 
 .editProjectPaymentTable__header th,
 .editPhaseTable__header th,
+.lateDeliverableTable__header th,
 .projectLinkTable__header th,
 .myInfoTable__header th,
 .timelineTable__header th,
@@ -1028,6 +1045,7 @@ table.scorecard td.reviewerResp input {
 .preferencesTable__body td,
 .editPhaseTable__body td,
 .editResourceTable__body td,
+.lateDeliverableTable__body td,
 .projectListTable__body td,
 .extendRegistration__body td,
 .extendSubTable__body td,
@@ -1099,9 +1117,11 @@ table.scorecard td.reviewerResp input {
     vertical-align: top;
 }
 
+.lateDeliverableTable td,
 .projectListTable__body td {
     padding: 16px;
-    margin-bottom: 16px;
+    padding-bottom: 24px;
+    margin-bottom: 24px;
 }
 
 .projectListTable__body td.challengeName {
@@ -1149,6 +1169,7 @@ table.scorecard td.reviewerResp input {
     border-bottom: 2px solid var(--black-10);
 }
 
+.lateDeliverablePagination,
 .projectListPagination {
     display: flex;
     justify-content: space-between;
@@ -1156,6 +1177,13 @@ table.scorecard td.reviewerResp input {
     margin-bottom: 0px
 }
 
+.lateDeliverablePagination {
+    padding-top: 16px;
+    margin-top: 0;
+    border-top: 2px solid var(--black-10);
+}
+
+.lateDeliverablePagination .info,
 .projectListPagination div {
     font-family: 'Roboto';
     font-style: normal;
@@ -1617,6 +1645,7 @@ td.resourcesTable__empty {
     color: var(--turq-160);
 }
 
+.review__comment textarea,
 .projectDetails__inputText input,
 .lateDeliverables__inputText input,
 .support__inputText input,
@@ -1655,6 +1684,7 @@ td.resourcesTable__empty {
 .editInputBox:hover:not([disabled]),
 .lateDeliverables__input:hover,
 .explanation__message:hover,
+.review__comment:hover,
 .contactManager__message:hover,
 .support__input:hover,
 .support__message:hover {
@@ -1683,6 +1713,7 @@ td.resourcesTable__empty {
 .support__inputText input:focus,
 .support__message textarea:focus,
 .explanation textarea:focus,
+.review__comment textarea:focus,
 .contactManager textarea:focus {
     outline: none;
 }
@@ -1748,6 +1779,7 @@ td.resourcesTable__empty {
     width: auto;
 }
 
+.saveChanges__save.disabled,
 .saveChanges__save:disabled {
     border-color: var(--black-5) !important;
     color: var(--black-60) !important;
@@ -1827,6 +1859,7 @@ td.resourcesTable__empty {
 
 .contactManager__message,
 .explanation__message,
+.review__comment,
 .support__message {
     display: flex;
     flex-direction: column;
@@ -1840,6 +1873,11 @@ td.resourcesTable__empty {
     padding: 8px 10px 1px;
 }
 
+.review__comment {
+    height: 90px !important;
+}
+
+.review__comment,
 .explanation__message {
     margin: 16px 0 16px;
     height: 120px;
@@ -2617,4 +2655,90 @@ td.resourcesTable__empty {
 
 .checkPoint__chevron {
     margin-left: 29px
+}
+
+.submissionTab_chevron {
+    padding: 0 !important;
+}
+
+.projectStatus {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.projectListTable__body .lateDeliverableTable__wrapper {
+    padding: 0;
+    margin-bottom: 0;
+    border: 0;
+}
+
+.lateDeliverableTable .lateDeliverableTable__body tr td {
+    border-bottom: 1px solid var(--black-5);
+    border-top: none;
+    height: 38px;
+    padding: 8px 64px 8px 16px;
+}
+
+.lateDeliverableTable__body tr:last-child td {
+    border-bottom: none;
+}
+
+.searchResult__header th {
+    background-color: var(--black-10);
+}
+
+.score3,
+.score4 {
+    min-width: 180px;
+}
+
+.score9,
+.score10 {
+    min-width: 140px;
+}
+
+.scoreResponse {
+    width: 160px;
+    margin-top: 5px;
+}
+
+.reviewResponse {
+    display: flex;
+    align-items: center;
+    gap: 10px
+}
+
+.error {
+    color: #CC0000;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.fileUpload input[type="file"]::-webkit-file-upload-button {
+    font-family: 'Roboto';
+    font-weight: 700;
+    padding: 3px 16px;
+    font-size: 12px;
+    height: 24px;
+    letter-spacing: 0.008em;
+    text-transform: uppercase;
+    background: var(--tc-white);
+    border: 2px solid var(--turq-160);
+    border-radius: 24px;
+    color: var(--turq-160);
+    cursor: pointer;
+    text-decoration: none !important;
+  }
+
+  .fileUpload [type="file"]::-webkit-file-upload-button:hover {
+    color: var(--turq-140);
+    border-color: var(--turq-140) !important;
+  }
+
+.viewScorecard p {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
 }

@@ -31,13 +31,16 @@ function add_error_message(msg, msgPrefix, msgDiv, msgList) {
  * @return true if the given select box has some selection, otherwise false
  */
 function selectAny(selObj) {
-  for (i = 0; i < selObj.options.length; i++) {
-    if (selObj.options[i].selected) {
-      return true;
-    }
-  }
+    var latedeliverableInput = selObj.parentNode;
+    var latedeliverableOptions = latedeliverableInput.querySelector(".custom-options").children
 
-  return false;
+    for (i = 0; i < latedeliverableOptions.length; i++) {
+        if (latedeliverableOptions[i].getAttribute("selected") == "selected") {
+            return true
+        }
+    }
+
+    return false;
 }
 
 
@@ -414,7 +417,7 @@ function expandAll() {
         }
 
         rowElement.style.display = "";
-        document.getElementById(iconId).src = "/i/or/minus.gif";
+        document.getElementById(iconId).src = "/i/reskin/latedeliverable-chevron-up.svg";
 
         i++;
     }
@@ -437,7 +440,7 @@ function expandAll() {
         }
 
         rowElement.style.display = "none";
-        document.getElementById(iconId).src = "/i/or/plus.gif";
+        document.getElementById(iconId).src = "/i/reskin/latedeliverable-chevron.svg";
 
         i++;
     }
@@ -456,10 +459,10 @@ function expcollHandler(srcElement) {
     var rowElement = document.getElementById(rowId);
     if (rowElement.style.display == "none") {
         rowElement.style.display = "";
-        document.getElementById(iconId).src = "/i/or/minus.gif";
+        document.getElementById(iconId).src = "/i/reskin/latedeliverable-chevron-up.svg";
     } else {
         rowElement.style.display = "none";
-        document.getElementById(iconId).src = "/i/or/plus.gif";
+        document.getElementById(iconId).src = "/i/reskin/latedeliverable-chevron.svg";
     }
     if (srcElement.blur) {
         srcElement.blur();

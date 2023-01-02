@@ -201,6 +201,7 @@ public class ViewLateDeliverablesAction extends BaseLateDeliverableAction {
 
                     request.setAttribute("projectMap", projectMap);
                     request.setAttribute("groupedLateDeliverables", groupedLateDeliverables);
+                    request.setAttribute("totalProjectCount", projectMap.size());
                 }
 
                 // Return the success forward
