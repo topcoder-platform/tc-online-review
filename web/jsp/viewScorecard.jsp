@@ -24,10 +24,12 @@
     <link type="text/css" rel="stylesheet" href="/css/style.css" />
     <link type="text/css" rel="stylesheet" href="/css/coders.css" />
     <link type="text/css" rel="stylesheet" href="/css/stats.css" />
-    <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
+
+    <!-- Reskin -->
+    <link type="text/css" rel="stylesheet" href="/css/reskin-or/reskin.css">
+    <link type="text/css" rel="stylesheet" href="/css/reskin-or/toasts.css">
 
     <!-- CSS and JS by Petar -->
-    <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
     <script language="JavaScript" type="text/javascript" src="/js/or/rollovers2.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="/js/or/dojo.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript">
@@ -35,24 +37,35 @@
     </script>
     <script language="JavaScript" type="text/javascript" src="/js/or/ajax1.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="/js/or/util.js"><!-- @ --></script>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function(){
+            let avatar = document.querySelector('.webHeader__avatar a');
+            let avatarImage = document.createElement('div');
+            avatarImage.className = "webHeader__avatarImage";
+            let twoChar = avatar.text.substring(0, 2);
+            avatarImage.innerText = twoChar;
+            avatar.innerHTML = avatarImage.outerHTML;
+        });
+    </script>
 </head>
 
 <body onload="showAll()">
-<div align="center">
-    
-    <div class="maxWidthBody" align="left">
+    <jsp:include page="/includes/inc_header_reskin.jsp" />
+    <jsp:include page="/includes/project/project_tabs_reskin.jsp" />
 
-        <jsp:include page="/includes/inc_header.jsp" />
+    <div class="content">
+        <div class="content__inner">
+            <jsp:include page="/includes/review/review_project.jsp">
+                <jsp:param name="hideScoreInfo" value="true" />
+                <jsp:param name="showScorecard" value="true" />
+            </jsp:include>
+            <div class="divider" style="margin-top: 4px;"></div>
+            <jsp:include page="/includes/review/review_table_title.jsp" />
         
-        <jsp:include page="/includes/project/project_tabs.jsp" />
-        
-            <div id="mainMiddleContent">
-                <div style="position: relative; width: 100%;">
-
-                    <h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
-
-                    <p><or:text key="viewScorecard.MinimumPassingScore" />${orfn:htmlEncode(scorecardTemplate.minScore)}</p>
-
+            <div id="mainContent">
+                <div class="viewScorecard" style="position: relative; width: 100%;">
+                    <p><or:text key="viewScorecard.MinimumPassingScore" />&nbsp;${orfn:htmlEncode(scorecardTemplate.minScore)}</p>
                     <c:set var="itemIdx" value="0" />
                     <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;" id="table2">
                         <c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
@@ -88,15 +101,10 @@
                             </c:if>
                         </c:forEach>
                     </table><br />
-
                 </div>
             </div>
-        
-        <jsp:include page="/includes/inc_footer.jsp" />
-
     </div>
-
 </div>
-
+<jsp:include page="/includes/inc_footer_reskin.jsp" />
 </body>
 </html>

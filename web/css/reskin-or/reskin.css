@@ -109,7 +109,7 @@ body {
 }
 
 .webHeader__avatar {
-    display: none;
+    display: block;
 }
 
 .webHeader__avatar a {
@@ -643,7 +643,7 @@ table.scorecard td.response {
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
-    vertical-align: top;
+    vertical-align: middle;
     color: var(--black-100);
     line-height: 22px;
 }
@@ -741,6 +741,7 @@ table.scorecard td.headerT {
 }
 
 .addPayment,
+.addResponse,
 .phaseButton,
 .deletePayment,
 .backToHome,
@@ -781,6 +782,7 @@ table.scorecard td.headerT {
 .addResource:hover,
 .deleteResource:hover,
 .addPayment:hover,
+.addResponse:hover,
 .phaseButton:hover,
 .deletePayment:hover,
 .submit__btn:hover,
@@ -793,6 +795,7 @@ table.scorecard td.headerT {
 
 .addResource:active,
 .addPayment:active,
+.addResponse:active,
 .deleteResource:active,
 .phaseButton:active,
 .deletePayment:active,
@@ -806,7 +809,8 @@ table.scorecard td.headerT {
 
 .phaseButton,
 .deletePayment,
-.addPayment {
+.addPayment,
+.addResponse {
     padding: 3px 16px;
     font-size: 12px;
     height: 24px;
@@ -1641,6 +1645,7 @@ td.resourcesTable__empty {
     color: var(--turq-160);
 }
 
+.review__comment textarea,
 .projectDetails__inputText input,
 .lateDeliverables__inputText input,
 .support__inputText input,
@@ -1679,6 +1684,7 @@ td.resourcesTable__empty {
 .editInputBox:hover:not([disabled]),
 .lateDeliverables__input:hover,
 .explanation__message:hover,
+.review__comment:hover,
 .contactManager__message:hover,
 .support__input:hover,
 .support__message:hover {
@@ -1707,6 +1713,7 @@ td.resourcesTable__empty {
 .support__inputText input:focus,
 .support__message textarea:focus,
 .explanation textarea:focus,
+.review__comment textarea:focus,
 .contactManager textarea:focus {
     outline: none;
 }
@@ -1772,6 +1779,7 @@ td.resourcesTable__empty {
     width: auto;
 }
 
+.saveChanges__save.disabled,
 .saveChanges__save:disabled {
     border-color: var(--black-5) !important;
     color: var(--black-60) !important;
@@ -1851,6 +1859,7 @@ td.resourcesTable__empty {
 
 .contactManager__message,
 .explanation__message,
+.review__comment,
 .support__message {
     display: flex;
     flex-direction: column;
@@ -1864,6 +1873,11 @@ td.resourcesTable__empty {
     padding: 8px 10px 1px;
 }
 
+.review__comment {
+    height: 90px !important;
+}
+
+.review__comment,
 .explanation__message {
     margin: 16px 0 16px;
     height: 120px;
@@ -2672,4 +2686,59 @@ td.resourcesTable__empty {
 
 .searchResult__header th {
     background-color: var(--black-10);
+}
+
+.score3,
+.score4 {
+    min-width: 180px;
+}
+
+.score9,
+.score10 {
+    min-width: 140px;
+}
+
+.scoreResponse {
+    width: 160px;
+    margin-top: 5px;
+}
+
+.reviewResponse {
+    display: flex;
+    align-items: center;
+    gap: 10px
+}
+
+.error {
+    color: #CC0000;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.fileUpload input[type="file"]::-webkit-file-upload-button {
+    font-family: 'Roboto';
+    font-weight: 700;
+    padding: 3px 16px;
+    font-size: 12px;
+    height: 24px;
+    letter-spacing: 0.008em;
+    text-transform: uppercase;
+    background: var(--tc-white);
+    border: 2px solid var(--turq-160);
+    border-radius: 24px;
+    color: var(--turq-160);
+    cursor: pointer;
+    text-decoration: none !important;
+  }
+
+  .fileUpload [type="file"]::-webkit-file-upload-button:hover {
+    color: var(--turq-140);
+    border-color: var(--turq-140) !important;
+  }
+
+.viewScorecard p {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
 }

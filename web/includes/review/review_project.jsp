@@ -44,7 +44,7 @@
         <i class="arrow-prev-icon"></i>
     </button>
     <h1 class="projectInfo__projectName">
-        ${orfn:htmlEncode(project.allProperties['Project Name'])}
+        ${param.showScorecard ? orfn:htmlEncode(scorecardTemplate.name) : orfn:htmlEncode(project.allProperties['Project Name'])}
     </h1>
 </div>
 <c:if test="${!param.hideScoreInfo}">
