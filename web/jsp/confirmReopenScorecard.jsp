@@ -12,59 +12,53 @@
 <%@ taglib prefix="or" uri="/or-tags" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-
     <head>
         <jsp:include page="/includes/project/project_title.jsp">
             <jsp:param name="thirdLevelPageKey" value="confirmReopenScorecard.title" />
         </jsp:include>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
+        <!-- Reskin -->
+        <link type="text/css" rel="stylesheet" href="/css/reskin-or/reskin.css">
+        <link type="text/css" rel="stylesheet" href="/css/reskin-or/toasts.css">
+
         <!-- TopCoder CSS -->
         <link type="text/css" rel="stylesheet" href="/css/style.css" />
         <link type="text/css" rel="stylesheet" href="/css/coders.css" />
-        <link type="text/css" rel="stylesheet" href="/css/stats.css" />
-        <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
 
         <!-- CSS and JS by Petar -->
-        <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
         <script language="JavaScript" type="text/javascript"
                 src="/js/or/rollovers2.js"><!-- @ --></script>
+        <script type="text/javascript">
+            document.addEventListener("DOMContentLoaded", function(){
+                let avatar = document.querySelector('.webHeader__avatar a');
+                let avatarImage = document.createElement('div');
+                avatarImage.className = "webHeader__avatarImage";
+                let twoChar = avatar.text.substring(0, 2);
+                avatarImage.innerText = twoChar;
+                avatar.innerHTML = avatarImage.outerHTML;
+            });
+        </script>
     </head>
 
     <body>
-    <div align="center">
+    <jsp:include page="/includes/inc_header_reskin.jsp" />
+    <jsp:include page="/includes/project/project_tabs_reskin.jsp" />
 
-        <div class="maxWidthBody" align="left">
-
-            <jsp:include page="/includes/inc_header.jsp" />
-
-            <jsp:include page="/includes/project/project_tabs.jsp" />
-
-            <div id="mainMiddleContent">
+    <div class="content">
+        <div class="content__inner">
+            <jsp:include page="/includes/review/review_project.jsp">
+                <jsp:param name="hideScoreInfo" value="true" />
+            </jsp:include>
+            <div class="divider"></div>
+            <div id="mainContent">
                 <div style="position: relative; width: 100%;">
-
-                    <div style="padding: 11px 6px 9px 0px;">
-                        <table cellspacing="0" cellpadding="0" border="0">
-                            <tr valign="middle">
-                                <td><img src="/i/${categoryIconName}" alt="" border="0" /></td>
-                                <td><img src="/i/${rootCatalogIcon}" alt="${rootCatalogName}" border="0" /></td>
-                                <td>
-                                    <span class="bodyTitle">${project.allProperties["Project Name"]}</span>
-                                    <c:if test='${!(empty project.allProperties["Project Version"])}'>
-                                        <font size="4"><or:text key="global.version" />
-                                                ${project.allProperties["Project Version"]}</font>
-                                    </c:if>
-                                </td>
-                            </tr>
-                        </table>
-                    </div><br />
-
                     <table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
                         <tr>
                             <td class="title"><or:text key="confirmReopenScorecard.box.title" /></td>
                         </tr>
                         <tr class="light">
-                            <td class="valueC">
+                            <td class="finalScore">
                                 <br />
                                 <or:text key="confirmReopenScorecard.question" /><br /><br />
                             </td>
@@ -72,23 +66,17 @@
                         <tr>
                             <td class="lastRowTD"><!-- @ --></td>
                         </tr>
-                    </table><br />
-
-                    <div align="right">
-                        <a href="<or:url value='/actions/ReopenScorecard?rid=${review.id}&reopen=y' />"><img src="<or:text key='confirmReopenScorecard.btnConfirm.img' />" alt="<or:text key='confirmReopenScorecard.btnConfirm.alt' />" border="0" /></a>&#160;
-                        <a href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />">
-                            <img src="<or:text key='btnCancel.img' />" alt="<or:text key='btnCancel.alt' />" border="0" />
+                    </table>
+                    <div class="saveChanges__button">
+                        <a href="<or:url value='/actions/ReopenScorecard?rid=${review.id}&reopen=y' />" class="saveChanges__save"><or:text key='confirmReopenScorecard.btnConfirm.alt' /></a>
+                        <a href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />" class="saveChanges__save">
+                            <or:text key='btnCancel.alt' />
                         </a>
-                    </div><br />
-
+                    </div>
                 </div>
             </div>
-
-            <jsp:include page="/includes/inc_footer.jsp" />
-
         </div>
-
     </div>
-
+    <jsp:include page="/includes/inc_footer_reskin.jsp" />
     </body>
 </html>

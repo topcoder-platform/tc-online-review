@@ -1155,7 +1155,7 @@
             }
         }
     //--></script>
-        <script type="text/javascript">
+    <script type="text/javascript">
         function updateForumLink(projectId) {
             return fetch("<%=com.cronos.onlinereview.util.ConfigHelper.getChallengeByLegacyIdUrlV5()%>" + projectId)
                 .then((response) => response.json())
@@ -1193,7 +1193,7 @@
 
     <jsp:include page="/includes/project/project_tabs_reskin.jsp" />
 
-    <div class="content content">
+    <div class="content">
         <div class="content__inner">
             <div class="editProject__header">
                 <button type="button" class="back-btn" onclick="history.back()">
@@ -1209,7 +1209,7 @@
                             </div>
                         </div>
                         <div class="editProject__sectionBody">
-                            <s:form action="SaveProject" onsubmit="return validate_form(this, true);" namespace="/actions">
+                            <s:form action="SaveProject" namespace="/actions">
 
                                 <%-- TODO: Validation errors display should be much more than is here --%>
                                 <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
@@ -1504,7 +1504,7 @@
                                                                                 <div class="custom-options">
                                                                                     <c:set var="OR_FIELD_TO_SELECT" value="cockpit_project"/>
                                                                                     <c:forEach var="cockpitProject" items="${cockpitProjects}">
-                                                                                        <span class="custom-option" data-value="${cockpitProject.id}" <or:selected value="${cockpitProject.id}"/>>${cockpitProject.name}</span>
+                                                                                        <span class="custom-option" data-value="${cockpitProject.id}" <or:selected value="${cockpitProject.id}"/>>${orfn:htmlEncode(cockpitProject.name)}</span>
                                                                                     </c:forEach>
                                                                                 </div>
                                                                             </div>
@@ -1638,9 +1638,14 @@
     disableSelect("contest_prizes_num_dump[", !studio, canEditContestPrize);
     disableSelect("checkpoint_prizes_num[", false, canEditCheckpointPrize);
     disableSelect("checkpoint_prizes_num_dump[", false, canEditCheckpointPrize);
-    // var saveProject = document.getElementById('SaveProject');
-    // saveProject.addEventListener('submit', function() {
-    //     document.getElementById("saveChanges").disabled = true;
-    // }, false);
+    var saveProject = document.getElementById('SaveProject');
+    saveProject.addEventListener('submit', function(e) {
+        var isProjectFormValid = validate_form(saveProject, true);
+        if (!isProjectFormValid) {
+            e.preventDefault();
+            return false;
+        }
+        document.getElementById("saveChanges").disabled = true;
+    });
 </script>
 </html>
