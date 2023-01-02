@@ -2735,3 +2735,10 @@ td.resourcesTable__empty {
     color: var(--turq-140);
     border-color: var(--turq-140) !important;
   }
+
+.viewScorecard p {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+}
