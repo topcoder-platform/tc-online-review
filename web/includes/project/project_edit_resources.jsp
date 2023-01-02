@@ -37,7 +37,7 @@
                         <td class="value" nowrap="nowrap">
                                 <div class="resource__select">
                                     <div class="selectCustom">
-                                        <select class="resourceHandle" name="resources_role[${resourceIdx}]"
+                                        <select name="resources_role[${resourceIdx}]"
                                                     <c:if test="${requestScope.trueSubmitters[resourceIdx] or requestScope.trueReviewers[resourceIdx] or paid}">
                                                     disabled</c:if>
                                                 style="width:150px;" onchange="onResourceRoleChange(this.parentNode.parentNode.parentNode.parentNode);"><c:set var="OR_FIELD_TO_SELECT" value="resources_role[${resourceIdx}]"/>
@@ -48,9 +48,14 @@
                                                 </c:if>
                                             </c:forEach>
                                         </select>
+                                        <div class="select-custom-wrapper">
+                                            <div class="select-selected">
+                                                <div class="selectedText"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="selectCustom phaseSelect" style="width: 56px">
-                                        <select class="resourceHandle" name="resources_phase[${resourceIdx}]"
+                                        <select name="resources_phase[${resourceIdx}]"
                                                     <c:if test="${requestScope.trueSubmitters[resourceIdx] or requestScope.trueReviewers[resourceIdx] or paid}">disabled</c:if>>
                                                     <c:set var="OR_FIELD_TO_SELECT" value="resources_phase[${resourceIdx}]"/>
                                             <c:forEach items="${requestScope.resourceRoles}" var="role">
@@ -63,6 +68,11 @@
                                                 </c:if>
                                             </c:forEach>
                                         </select>
+                                        <div class="select-custom-wrapper">
+                                            <div class="select-selected">
+                                                <div class="selectedText"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             <c:if test="${requestScope.trueSubmitters[resourceIdx] or requestScope.trueReviewers[resourceIdx] or paid}">
