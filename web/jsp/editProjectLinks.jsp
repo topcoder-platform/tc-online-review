@@ -155,6 +155,12 @@
                 <button type="button" class="back-btn edit-back-btn" onclick="history.back()">
                     <i class="arrow-prev-icon"></i>
                 </button>
+    <div class="content content">
+        <div class="content__inner">
+            <div class="editProjectLink__header">
+                <button type="button" class="back-btn edit-back-btn" onclick="history.back()">
+                    <i class="arrow-prev-icon"></i>
+                </button>
 
                 <jsp:include page="/includes/project/project_info_reskin.jsp" />
             </div>

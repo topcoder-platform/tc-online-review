@@ -488,6 +488,8 @@
                             </div>
                         </div>
                     </c:if>
+                </c:otherwise>
+            </c:choose>
                 </div>
             </c:if>
         </div>

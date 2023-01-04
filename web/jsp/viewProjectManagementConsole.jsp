@@ -884,7 +884,6 @@
                         </div>
                     </div><!-- //tabconentcontainer -->
                 </div>
-                </div>
             </div>
     </div>
     <jsp:include page="/includes/inc_footer_reskin.jsp" />

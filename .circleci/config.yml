@@ -173,9 +173,8 @@ workflows:
           context : org-global      
           filters:
             branches:
-              ignore:
-                - master
-                - master-maven
+              only:
+                - dev-maven
 
       - build-prod:
           context : org-global      

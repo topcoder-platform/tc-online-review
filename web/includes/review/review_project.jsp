@@ -13,20 +13,29 @@
 <c:set var="toPDF" value="${param.pdf eq 'true'}"/>
 <c:if test="${param.showFillScorecardLink}">
 <script language="javascript" type="text/javascript">
+    function selectScore(maxScore, scoreInput) {
+        var scoreSpan = maxScore.closest('.custom-select').querySelector('.custom-select__trigger span');
+        if (!maxScore.classList.contains("selected")) {
+            maxScore.classList.add('selected');
+        }
+        scoreSpan.textContent = maxScore.textContent;
+        scoreInput.parentNode.querySelector('.custom-option.selected').classList.remove('selected');
+        scoreInput.value = maxScore.getAttribute("data-value");
+    }
     <!--
     function fillScorecard() {
         if (confirm("<or:text key="global.fillScorecardConfirmation" />")) {
-            var scores = document.getElementsByTagName("select");
+            var scores = document.getElementsByClassName("scoreInput");
             for (var i = 0; i < scores.length; i++) {
                 if (scores[i].getAttribute("name").indexOf("answer[") == 0) {
-                    if (scores[i].selectedIndex == 0) {
-                        var options = scores[i].options;
-                        for (var j = 1; j < options.length ; j++) {
-                            if (options[j].value.indexOf("/") >= 0) {
-                                scores[i].selectedIndex = scores[i].options.length - 1;
+                    var scoreOptions = scores[i].parentNode.querySelectorAll(".custom-options span");
+                    if (scoreOptions[0].classList.contains("selected")) {
+                        for (var j = 1; j < scoreOptions.length ; j++) {
+                            if (scoreOptions[j].getAttribute("data-value").indexOf("/") >= 0) {
+                                selectScore(scoreOptions[scoreOptions.length - 1], scores[i]);
                                 break;
-                            } else if (options[j].value == "1") {
-                                scores[i].selectedIndex = j;
+                            } else if (scoreOptions[j].getAttribute("data-value") == "1") {
+                                selectScore(scoreOptions[j], scores[i]);
                                 break;
                             }
                         }
