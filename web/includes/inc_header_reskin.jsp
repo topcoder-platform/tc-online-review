@@ -35,19 +35,31 @@
         handle
     };
 
+    var signInUrl = "https://accounts-auth0.topcoder-dev.com/?retUrl=https://software.topcoder-dev.com/review"
+
+    var registerUrl = "https://accounts-auth0.topcoder-dev.com/?retUrl=https://software.topcoder-dev.com/review&mode=signUp&regSource=onlinereview";
+
+    var signOutUrl = "https://topcoder-dev.com/logout";
+
+    if (currEnv === prodEnv) {
+        registerUrl = "https://accounts-auth0.topcoder.com/?retUrl=https://software.topcoder.com/review&mode=signUp&regSource=onlinereview";
+        signInUrl = "https://accounts-auth0.topcoder.com/?retUrl=https://software.topcoder.com/review";
+        signOutUrl = "https://topcoder.com/logout";
+    }
+
     tcUniNav('init', 'headerNav', {
         type: 'tool',
         toolName: 'Review',
         toolRoot: '/',
         user: handle ? user : null,
         signOut() {
-            window.location.replace("http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Logout")
+            window.location.replace(signOutUrl)
         },
         signIn() {
-            window.location.replace("http://<%=ApplicationServer.SERVER_NAME%>/login")
+            window.location.replace(signInUrl)
         },
         signUp() {
-            window.location.replace("http://<%=ApplicationServer.SERVER_NAME%>/register")
+            window.location.replace(registerUrl)
         }
     });
 </script>
