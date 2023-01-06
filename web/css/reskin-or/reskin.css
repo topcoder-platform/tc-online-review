@@ -1359,6 +1359,7 @@ td.resourcesTable__empty {
     background: var(--bronze-1);
 }
 
+.phasesTable__placements--other,
 .phasesTable__placements--forth,
 .phasesTable__placements--fifth {
     background: var(--turq-15);
