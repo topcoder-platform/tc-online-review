@@ -154,6 +154,7 @@ function customSelect(selectWrapper) {
         const selectElem = selectWrapper[i].getElementsByTagName("select")[0];
         const wrapperNode = selectWrapper[i].getElementsByClassName("select-custom-wrapper")[0];
         const fieldLabel = selectWrapper[i].getElementsByTagName("label")[0];
+        const loadingSelect = selectWrapper[i].parentNode.parentNode.querySelector(".loadingSelect");
         const a = document.createElement("div");
         const customSelectWrap = document.createElement("div");
         customSelectWrap.setAttribute("class", "select-custom-wrapper");
@@ -223,6 +224,9 @@ function customSelect(selectWrapper) {
                 this.classList.toggle("select-arrow-active");
             }
         });
+        if (loadingSelect) {
+            loadingSelect.remove();
+        }
         document.addEventListener("click", closeAllSelect);
     }
 }
