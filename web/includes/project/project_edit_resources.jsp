@@ -35,6 +35,9 @@
                     <c:set var="paid" value="${not empty resourcePaid[resourceId] and resourcePaid[resourceId]}"/>
                     <tr class="${(resourceStatus.index % 2 == 0) ? 'light' : 'dark'}" style="${projectForm.map['resources_action'][resourceIdx] eq 'delete' ? 'display:none' : ''}">
                         <td class="value" nowrap="nowrap">
+                                <div class="resource__select loadingSelect" style="justify-content: center;">
+                                    <img src="/i/reskin/loading.svg" />
+                                </div>
                                 <div class="resource__select">
                                     <div class="selectCustom">
                                         <select name="resources_role[${resourceIdx}]"
@@ -48,11 +51,6 @@
                                                 </c:if>
                                             </c:forEach>
                                         </select>
-                                        <div class="select-custom-wrapper">
-                                            <div class="select-selected">
-                                                <div class="selectedText"></div>
-                                            </div>
-                                        </div>
                                     </div>
                                     <div class="selectCustom phaseSelect" style="width: 56px">
                                         <select name="resources_phase[${resourceIdx}]"
@@ -68,11 +66,6 @@
                                                 </c:if>
                                             </c:forEach>
                                         </select>
-                                        <div class="select-custom-wrapper">
-                                            <div class="select-selected">
-                                                <div class="selectedText"></div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             <c:if test="${requestScope.trueSubmitters[resourceIdx] or requestScope.trueReviewers[resourceIdx] or paid}">
