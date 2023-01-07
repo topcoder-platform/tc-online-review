@@ -26,7 +26,9 @@
     }(window,document,"script",scriptURL,"tcUniNav");
 
     var userId = `${userId}`;
-    var handle = "${userHandle}";
+    if (userId !== '-1') {
+        var handle = "${userHandle}";
+    }
     var initials = handle ? handle.substr(0, 2).toUpperCase() : '';
 
     var user = {
