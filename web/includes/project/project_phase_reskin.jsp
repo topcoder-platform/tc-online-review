@@ -148,6 +148,38 @@
                                                 <c:set var="placement" value='${submission.placement}' />
                                             </c:if>
                                             <c:set var="failedReview" value="${(submissionStatusName == 'Failed Screening') or (submissionStatusName == 'Failed Review')}" />
+                                            <c:if test="${(not empty placement) and (not failedReview)}">
+                                                <c:choose>
+                                                    <c:when test="${placement == 1}">
+                                                        <span class="phasesTable__placements phasesTable__placements--first">1st</span>
+                                                    </c:when>
+                                                    <c:when test="${placement == 2}">
+                                                        <span class="phasesTable__placements phasesTable__placements--second">2nd</span>
+                                                    </c:when>
+                                                    <c:when test="${placement == 3}">
+                                                        <span class="phasesTable__placements phasesTable__placements--third">3rd</span>
+                                                    </c:when>
+                                                    <c:when test="${placement == 4}">
+                                                        <span class="phasesTable__placements phasesTable__placements--forth">4th</span>
+                                                    </c:when>
+                                                    <c:when test="${placement == 5}">
+                                                        <span class="phasesTable__placements phasesTable__placements--fifth">5th</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="phasesTable__placements">&nbsp;</span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:if>
+                                            <c:if test="${failedReview}">
+                                                <c:set var="failureKeyName" value='SubmissionStatus.${fn:replace(submissionStatusName, " ", "")}' />
+                                                <c:if test="${empty placement}">
+                                                    <span class="phasesTable__placements phasesTable__placements--failed"><img src="/i/reskin/cross.svg" alt="<or:text key='${failureKeyName}' />"></span>
+                                                </c:if>
+                                                <c:if test="${not empty placement}">
+                                                    <c:set var="placeStr" value="${orfn:getMessage(pageContext, failureKeyName)} (Place ${placement})" />
+                                                    <span class="phasesTable__placements phasesTable__placements--failed"><img src="/i/reskin/cross.svg" alt="${placeStr}"></span>
+                                                </c:if>
+                                            </c:if>
                                             <c:if test="${not downloadCurrentIterativeReview || underIterativeReview}">
                                                 <c:if test="${project.projectCategory.projectType.id ne 3}">
                                                     <c:if test="${group.readyToDownload[submissionStatus.index]}">
@@ -424,9 +456,6 @@
                                                             </c:when>
                                                             <c:when test="${placement == 3}">
                                                                 <span class="phasesTable__placements phasesTable__placements--third">3rd</span>
-                                                            </c:when>
-                                                            <c:when test="${placement > 3}">
-                                                                <span class="phasesTable__placements phasesTable__placements--other">${placement}th</span>
                                                             </c:when>
                                                             <c:otherwise>
                                                                 <span class="phasesTable__placements">&nbsp;</span>
