@@ -109,7 +109,7 @@ body {
 }
 
 .webHeader__avatar {
-    display: block;
+    display: none;
 }
 
 .webHeader__avatar a {
@@ -826,7 +826,7 @@ table.scorecard td.reviewerResp input {
     width: 100%;
     bottom: var(--footer-height);
     background-color: #fff;
-    z-index: 999;
+    z-index: 99;
     box-shadow: 0 0 16px 16px rgb(42 42 42 / 10%);
 }
 
@@ -1520,7 +1520,7 @@ td.resourcesTable__empty {
     opacity: 1;
     visibility: visible;
     pointer-events: all;
-    z-index:9999;
+    z-index:99;
 }
 
 .custom-option {
@@ -2649,7 +2649,7 @@ td.resourcesTable__empty {
 #footerNav {
     position: fixed;
     width: 100%;
-    z-index: 999;
+    z-index: 99;
     bottom: 0;
 }
 
