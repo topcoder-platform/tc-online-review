@@ -37,17 +37,19 @@
         handle
     };
 
-    var signInUrl = "https://accounts-auth0.topcoder-dev.com/?retUrl=https://software.topcoder-dev.com/review"
+    var signInUrl = "https://accounts-auth0.topcoder.com/?retUrl=https://software.topcoder.com/review";
 
-    var registerUrl = "https://accounts-auth0.topcoder-dev.com/?retUrl=https://software.topcoder-dev.com/review&mode=signUp&regSource=onlinereview";
 
-    var signOutUrl = "https://topcoder-dev.com/logout";
+    var registerUrl = "https://accounts-auth0.topcoder.com/?retUrl=https://software.topcoder.com/review&mode=signUp&regSource=onlinereview";
 
-    if (currEnv === prodEnv) {
-        registerUrl = "https://accounts-auth0.topcoder.com/?retUrl=https://software.topcoder.com/review&mode=signUp&regSource=onlinereview";
-        signInUrl = "https://accounts-auth0.topcoder.com/?retUrl=https://software.topcoder.com/review";
-        signOutUrl = "https://topcoder.com/logout";
-    }
+    var signOutUrl = "https://topcoder.com/logout";
+
+    /*if (currEnv != prodEnv) {
+        registerUrl = "https://accounts-auth0.topcoder-dev.com/?retUrl=https://software.topcoder-dev.com/review&mode=signUp&regSource=onlinereview";
+
+        signInUrl = "https://accounts-auth0.topcoder-dev.com/?retUrl=https://software.topcoder-dev.com/review";
+        signOutUrl = "https://topcoder-dev.com/logout";
+    }*/
 
     tcUniNav('init', 'headerNav', {
         type: 'tool',
