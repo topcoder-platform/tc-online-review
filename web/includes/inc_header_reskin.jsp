@@ -16,9 +16,9 @@
     var prodEnv = '<%=ApplicationServer.PROD%>';
     var scriptURL = '//uni-nav.topcoder.com/v1/tc-universal-nav.js';
 
-    if (currEnv != prodEnv) {
+    /*if (currEnv != prodEnv) {
         scriptURL = '//uni-nav.topcoder-dev.com/v1/tc-universal-nav-1.js';
-    }
+    }*/
 
     !function(n,t,e,a,c,i,o){n['TcUnivNavConfig']=c,n[c]=n[c]||function(){
     (n[c].q=n[c].q??[]).push(arguments)},n[c].l=1*new Date();i=t.createElement(e),
