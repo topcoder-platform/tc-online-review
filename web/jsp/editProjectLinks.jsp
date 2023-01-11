@@ -148,7 +148,6 @@
 <body onload="onLoad();">
     <jsp:include page="/includes/inc_header_reskin.jsp" />
     <jsp:include page="/includes/project/project_tabs_reskin.jsp" />
-
     <div class="content content">
         <div class="content__inner">
             <div class="editProjectLink__header">
