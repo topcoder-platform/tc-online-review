@@ -363,7 +363,7 @@
                                 <button onclick="submitReview(this, 'preview', '_blank')" class="saveChanges__save"><or:text key='editReview.Button.Preview.alt' /></button>
                             </c:if>
                             <c:if test="${managerEdit}">
-                                <button onclick="submitReview(this)" class="saveChanges__save"><or:text key='btnSaveChanges.alt' /></button>
+                                <button onclick="submitReview(this, 'submit', '_self')" class="saveChanges__save"><or:text key='btnSaveChanges.alt' /></button>
                             </c:if>
                         </div>
                     </s:form>
