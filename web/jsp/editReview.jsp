@@ -359,7 +359,7 @@
                             <input type="hidden" name="save" value="" />
                             <c:if test="${not managerEdit}">
                                 <button onclick="submitReview(this, 'submit', '_self')" class="saveChanges__save"><or:text key='editReview.Button.SaveAndCommit.alt' /></button>
-                                <button onclick="submitReview(this, 'submit', '_self')" class="saveChanges__save"><or:text key='editReview.Button.SaveForLater.alt' /></button>
+                                <button onclick="submitReview(this, 'save', '_self')" class="saveChanges__save"><or:text key='editReview.Button.SaveForLater.alt' /></button>
                                 <button onclick="submitReview(this, 'preview', '_blank')" class="saveChanges__save"><or:text key='editReview.Button.Preview.alt' /></button>
                             </c:if>
                             <c:if test="${managerEdit}">
