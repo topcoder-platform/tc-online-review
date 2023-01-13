@@ -125,10 +125,7 @@
                                                 <c:choose>
                                                     <c:when test="${empty payment.pactsPaymentId}"><or:text key="projectPayments.box.Paid.No"/></c:when>
                                                     <c:otherwise>
-                                                        <div class="paymentTable__paid">
-                                                            <or:text key="projectPayments.box.Paid.Yes"/> <div class="paid__divider"></div>
-                                                            <a href="${pactsPaymentDetailBaseURL}${payment.pactsPaymentId}"><or:text key="projectPayments.box.Paid.View"/></a>
-                                                        </div>
+                                                        <or:text key="projectPayments.box.Paid.Yes"/>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
