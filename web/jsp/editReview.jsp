@@ -329,7 +329,7 @@
                                                             </c:if></b>
                                                         </c:if>
                                                         <c:if test="${not empty uploadedFileIds[fileIdx]}">
-                                                            <a href="<or:url value='/actions/DownloadDocument?uid=${uploadedFileIds[fileIdx]}' />"><or:text key="editReview.Document.Download"/></a>
+                                                            <a href="<or:url value='/actions/DownloadDocument?uid=${uploadedFileIds[fileIdx]}' />" style="color: #0d61bf;text-decoration: none;"><or:text key="editReview.Document.Download"/></a>
                                                             <b>&#160; <or:text key="editReview.Document.Update"/>
                                                             <span style="font-weight:normal;"><or:text key="global.optional.paren"/></span>:</b>
                                                         </c:if>
