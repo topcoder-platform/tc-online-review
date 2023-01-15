@@ -284,6 +284,54 @@
             avatar.innerHTML = avatarImage.outerHTML;
         });
     </script>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function(){
+            for (const dropdown of document.querySelectorAll(".custom-select-wrapper")) {
+                dropdown.addEventListener('click', function () {
+                    this.querySelector('.custom-select').classList.toggle('open');
+                });
+            }
+
+            for (const options of document.querySelectorAll('.custom-options')) {
+                let selected = options.querySelector('.custom-option[selected]');
+                if (!selected) {
+                    let option = options.querySelector('.custom-option');
+                    option.selected = true;
+                    option.classList.add('selected');
+                } else {
+                    selected.classList.add('selected');
+                }
+            }
+
+            for (const option of document.querySelectorAll(".custom-option")) {
+                const input = option.closest('.editReview__input').querySelector('input');
+                const selectedSpan = option.closest('.custom-select').querySelector('.custom-select__trigger span');
+                if (option.classList.contains('selected')) {
+                    const currentSelected = option.textContent;
+                    if (selectedSpan.textContent == '') {
+                        selectedSpan.textContent = currentSelected;
+                    }
+                    input.value = option.getAttribute('data-value');
+                }
+                option.addEventListener('click', function (e) {
+                    if (!this.classList.contains('selected')) {
+                        this.parentNode.querySelector('.custom-option.selected').classList.remove('selected');
+                        this.classList.add('selected');
+                        selectedSpan.textContent = this.textContent;
+                        input.value = this.getAttribute('data-value');
+                    }
+                });
+            }
+
+            window.addEventListener('click', function (e) {
+                for (const select of document.querySelectorAll('.custom-select')) {
+                    if (!select.contains(e.target)) {
+                        select.classList.remove('open');
+                    }
+                }
+            });
+        });
+    </script>
 </head>
 
 <body>
@@ -317,10 +365,10 @@
                             <td class="subheader__weight" align="center" width="49%"><or:text key="editReview.SectionHeader.Weight" /></td>
                             <td class="subheader__response" align="center" width="1%"><or:text key="editReview.SectionHeader.Response" /></td>
                             <c:if test="${canPlaceAppeal or canPlaceAppealResponse}">
-                                <td class="subheader" align="center" width="1%"><or:text key="editReview.SectionHeader.AppealStatus" /></td>
+                                <td class="subheader__weight" align="center" width="1%"><or:text key="editReview.SectionHeader.AppealStatus" /></td>
                             </c:if>
                             <c:if test="${canPlaceAppeal}">
-                                <td class="subheader" align="center" width="1%"><or:text key="editReview.SectionHeader.Appeal" /></td>
+                                <td class="subheader__weight" align="center" width="1%"><or:text key="editReview.SectionHeader.Appeal" /></td>
                             </c:if>
                         </tr>
                         <c:forEach items="${section.allQuestions}" var="question" varStatus="questionStatus">
@@ -330,7 +378,7 @@
                                 <%@ include file="../includes/review/review_question.jsp" %>
                                 <%@ include file="../includes/review/review_static_answer.jsp" %>
                                 <c:if test="${canPlaceAppeal or canPlaceAppealResponse}">
-                                    <td class="valueC">${appealStatuses[itemIdx]}<!-- @ --></td>
+                                    <td class="valueC" align="center">${appealStatuses[itemIdx]}<!-- @ --></td>
                                 </c:if>
                                 <c:if test="${canPlaceAppeal}">
                                     <c:if test="${not empty appealStatuses[itemIdx]}">
@@ -351,7 +399,9 @@
                                     <td class="value" colspan="6">
                                         <div id="appealText_${itemIdx}" class="hideText">
                                             <b><or:text key="editReview.Question.AppealText.title"/>:</b><br />
-                                            <textarea id="appealArea_${itemIdx}" name="appeal_text[${itemIdx}]" rows="2" cols="20" style="font-size:10px;font-family:sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea><br />
+                                            <div class="review__comment">
+                                                <textarea id="appealArea_${itemIdx}" name="appeal_text[${itemIdx}]" rows="2" cols="20"></textarea><br />
+                                            </div>
                                             <a href="javascript:placeAppeal(${itemIdx}, ${item.id}, ${review.id});"><img
                                                 src="<or:text key='editReview.Button.SubmitAppeal.img' />" alt="<or:text key='editReview.Button.SubmitAppeal.alt' />"
                                                 border="0" hspace="5" vspace="9" /></a><br />
@@ -363,16 +413,17 @@
                                 <tr id="placeAppealResponse_${itemIdx}" class="highlighted">
                                     <td class="value" colspan="3">
                                         <b><or:text key="editReview.Question.AppealResponseText.title"/>:</b><br />
-                                        <textarea rows="2" name="appeal_response_text[${itemIdx}]" cols="20" style="font-size:10px;font-family:sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea><br />
+                                        <div class="review__comment">
+                                            <textarea rows="2" name="appeal_response_text[${itemIdx}]" cols="20"></textarea><br />
+                                        </div>
                                         <input type="checkbox" name="appeal_response_success[${itemIdx}]" />
                                         <or:text key="editReview.Question.AppealSucceeded.title" />
                                     </td>
                                     <td class="value">
                                         <or:text key="editReview.Question.ModifiedResponse.title"/>:<br />
                                         <%@ include file="../includes/review/review_answer.jsp" %><br /><br />
-                                        <a href="javascript:placeAppealResponse(${itemIdx}, ${item.id}, ${review.id});"><img
-                                            src="<or:text key='editReview.Button.SubmitAppealResponse.img' />"
-                                            alt="<or:text key='editReview.Button.SubmitAppealResponse.alt' />" border="0"/></a>
+                                        <a class="addResponse" href="javascript:placeAppealResponse(${itemIdx}, ${item.id}, ${review.id});">
+                                            <or:text key='editReview.Button.SubmitAppealResponse.alt' /></a>
                                     </td>
                                 </tr>
                             </c:if>
@@ -392,10 +443,10 @@
                                 <td class="totalValueC" nowrap="nowrap"><p id="scoreHere">${orfn:displayScore(pageContext.request, review.score)}</p></td>
                                 <td class="totalValueC"><!-- @ --></td>
                                 <c:if test="${canPlaceAppeal or canPlaceAppealResponse}">
-                                    <td class="value"><!-- @ --></td>
+                                    <td class="totalValueC"><!-- @ --></td>
                                 </c:if>
                                 <c:if test="${canPlaceAppeal}">
-                                    <td class="value"><!-- @ --></td>
+                                    <td class="totalValueC"><!-- @ --></td>
                                 </c:if>
                             </tr>
                         </c:if>
