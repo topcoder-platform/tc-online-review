@@ -2317,7 +2317,7 @@ td.resourcesTable__empty {
     box-sizing: border-box;
     border-radius: 50%;
     border: 1.5px solid var(--black-60);
-    background-color: transparent;
+    background-color: var(--tc-white);
   }
 
   .custom-radio .phaseUseDuration,
@@ -2747,4 +2747,11 @@ td.resourcesTable__empty {
 .loadingSelect img {
     width: 35px;
     height: 35px;
+}
+
+.approvalRadioBtn {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
 }

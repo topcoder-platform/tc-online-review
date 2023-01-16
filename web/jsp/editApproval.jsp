@@ -22,14 +22,14 @@
     </jsp:include>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
+    <!-- Reskin -->
+    <link type="text/css" rel="stylesheet" href="/css/reskin-or/reskin.css">
+
     <!-- TopCoder CSS -->
     <link type="text/css" rel="stylesheet" href="/css/style.css" />
     <link type="text/css" rel="stylesheet" href="/css/coders.css" />
-    <link type="text/css" rel="stylesheet" href="/css/stats.css" />
-    <link type="text/css" rel="stylesheet" href="/css/tcStyles.css" />
 
     <!-- CSS and JS by Petar -->
-    <link type="text/css" rel="stylesheet" href="/css/or/new_styles.css" />
     <script language="JavaScript" type="text/javascript" src="/js/or/rollovers2.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="/js/or/dojo.js"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="/js/or/util.js"><!-- @ --></script>
@@ -83,6 +83,11 @@
         }
     }
 
+    function submitReview(btn, value, target) {
+        btn.form.save.value = value;
+        btn.parentNode.parentNode.target = target;
+    }
+
     /*
      * TODO: Delete this function
      */
@@ -117,6 +122,65 @@
     }
     // -->
     </script>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function(){
+            let avatar = document.querySelector('.webHeader__avatar a');
+            let avatarImage = document.createElement('div');
+            avatarImage.className = "webHeader__avatarImage";
+            let twoChar = avatar.text.substring(0, 2);
+            avatarImage.innerText = twoChar;
+            avatar.innerHTML = avatarImage.outerHTML;
+        });
+    </script>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function(){
+            for (const dropdown of document.querySelectorAll(".custom-select-wrapper")) {
+                dropdown.addEventListener('click', function () {
+                    this.querySelector('.custom-select').classList.toggle('open');
+                });
+            }
+
+            for (const options of document.querySelectorAll('.custom-options')) {
+                let selected = options.querySelector('.custom-option[selected]');
+                if (!selected) {
+                    let option = options.querySelector('.custom-option');
+                    option.selected = true;
+                    option.classList.add('selected');
+                } else {
+                    selected.classList.add('selected');
+                }
+            }
+
+            for (const option of document.querySelectorAll(".custom-option")) {
+                const input = option.closest('.editReview__input').querySelector('input');
+                const selectedSpan = option.closest('.custom-select').querySelector('.custom-select__trigger span');
+                if (option.classList.contains('selected')) {
+                    const currentSelected = option.textContent;
+                    if (selectedSpan.textContent == '') {
+                        selectedSpan.textContent = currentSelected;
+                    }
+                    input.value = option.getAttribute('data-value');
+                }
+                option.addEventListener('click', function (e) {
+                    if (!this.classList.contains('selected')) {
+                        this.parentNode.querySelector('.custom-option.selected').classList.remove('selected');
+                        this.classList.add('selected');
+                        selectedSpan.textContent = this.textContent;
+                        input.value = this.getAttribute('data-value');
+                    }
+                });
+            }
+
+            window.addEventListener('click', function (e) {
+                for (const select of document.querySelectorAll('.custom-select')) {
+                    if (!select.contains(e.target)) {
+                        select.classList.remove('open');
+                    }
+                }
+            });
+        });
+    </script>
 
     <script language="JavaScript" type="text/javascript">
         function OnCompleteScorecardClick() {
@@ -141,22 +205,19 @@
 </head>
 
 <body>
-<div align="center">
+    <jsp:include page="/includes/inc_header_reskin.jsp" />
+    <jsp:include page="/includes/project/project_tabs_reskin.jsp" />
 
-    <div class="maxWidthBody" align="left">
+    <div class="content">
+        <div class="content__inner">
+            <jsp:include page="/includes/review/review_project.jsp">
+                <jsp:param name="showFillScorecardLink" value="true" />
+            </jsp:include>
+            <div class="divider"></div>
+            <jsp:include page="/includes/review/review_table_title.jsp" />
 
-        <jsp:include page="/includes/inc_header.jsp" />
-
-        <jsp:include page="/includes/project/project_tabs.jsp" />
-
-            <div id="mainMiddleContent">
+            <div id="mainContent">
                 <div style="position: relative; width: 100%;">
-
-                    <jsp:include page="/includes/review/review_project.jsp">
-                        <jsp:param name="showFillScorecardLink" value="true" />
-                    </jsp:include>
-                    <jsp:include page="/includes/review/review_table_title.jsp" />
-
                     <s:set var="actionName">Save${reviewType}</s:set>
                     <s:form action="%{#actionName}" method="POST" enctype="multipart/form-data" namespace="/actions">
                         <c:choose>
@@ -201,7 +262,7 @@
                                             <%@ include file="../includes/review/review_question.jsp" %>
                                             <c:if test="${not managerEdit}">
                                                 <td class="valueC" nowrap="nowrap">
-                                                    <%@ include file="../includes/review/review_answer.jsp" %>
+                                                    <%@ include file="../includes/review/review_answer_reskin.jsp" %>
                                                     <div class="error"><s:fielderror escape="false"><s:param>answer[${itemIdx}]</s:param></s:fielderror></div>
                                                 </td>
                                             </c:if>
@@ -219,25 +280,43 @@
                                                 <c:forEach var="commentIdx" begin="0" end="${approvalForm.map['comment_count'][itemIdx]}">
                                                     <div name="response" style="${commentIdx eq 0 ? 'display: none;' : ''}">
                                                         <c:if test="${not managerEdit}">
-                                                            <b><or:text key="editReview.Question.Response.title"/>
-                                                                <span name="comment_number">${commentIdx}</span>:
-                                                            </b>
-                                                            <select name="comment_type(${itemIdx}.${commentIdx})" class="inputBox"><c:set var="OR_FIELD_TO_SELECT" value="comment_type(${itemIdx}.${commentIdx})"/>
-                                                                <c:forEach items="${allCommentTypes}" var="commentType" >
-                                                                    <option  value="${commentType.id}" <or:selected value="${commentType.id}"/>><or:text key="CommentType.${fn:replace(commentType.name, ' ', '')}" def="${commentType.id}" /></option>
-                                                                </c:forEach>
-                                                            </select>
+                                                            <div class="reviewResponse">
+                                                                <b><or:text key="editReview.Question.Response.title"/>
+                                                                    <span name="comment_number">${commentIdx}</span>:
+                                                                </b>
+                                                                <div class="editReview__input scoreResponse">
+                                                                    <input type="hidden" name="comment_type(${itemIdx}.${commentIdx})">
+                                                                    <div class="custom-select-wrapper">
+                                                                        <div class="custom-select grey">
+                                                                            <div class="custom-select__trigger"><span></span>
+                                                                                <div class="arrow"></div>
+                                                                            </div>
+                                                                            <div class="custom-options">
+                                                                                <c:set var="OR_FIELD_TO_SELECT" value="comment_type(${itemIdx}.${commentIdx})"/>
+                                                                                <c:forEach items="${allCommentTypes}" var="commentType" >
+                                                                                    <span class="custom-option custom-option-grey" data-value="${commentType.id}" <or:selected value="${commentType.id}"/>><or:text key="CommentType.${fn:replace(commentType.name, ' ', '')}" def="${commentType.id}"/></span>
+                                                                                </c:forEach>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </c:if>
                                                         <c:if test="${managerEdit}">
                                                             <b><or:text key="editReview.Question.ManagerComment.title"/>:</b>
                                                         </c:if>
                                                         <span class="error"><s:fielderror escape="false"><s:param>comment(${itemIdx}.${commentIdx})</s:param></s:fielderror></span>
-                                                        <textarea rows="2" name="comment(${itemIdx}.${commentIdx})" cols="20" class="inputTextBox" ><or:fieldvalue field="comment(${itemIdx}.${commentIdx})" /></textarea>
+                                                        <div class="review__comment">
+                                                            <textarea rows="2" name="comment(${itemIdx}.${commentIdx})" cols="20" class="inputTextBox" ><or:fieldvalue field="comment(${itemIdx}.${commentIdx})" /></textarea>
+                                                        </div>
                                                     </div>
                                                 </c:forEach>
-                                                <img src="<or:text key='editReview.Button.AddResponse.img' />" alt="<or:text key='editReview.Button.AddResponse.alt' />"
-                                                    onclick="addReviewResponse(${itemIdx}, this.parentNode);" style="cursor:hand;" /><br />
+                                                <a class="addResponse"
+                                                    onclick="addReviewResponse(${itemIdx}, this.parentNode);" style="cursor:hand;" />
+                                                    <or:text key='editReview.Button.AddResponse.alt' />
+                                                </a><br/><br/>
                                                 <c:if test="${(not managerEdit) and question.uploadDocument}">
+                                                <div class="fileUpload">
                                                     <c:if test="${empty uploadedFileIds[fileIdx]}">
                                                         <b><or:text key="editReview.Document.Upload"/>
                                                         <c:if test="${question.uploadRequired}">
@@ -255,7 +334,8 @@
                                                     &#160;<input type="file" name="file[${fileIdx}]" size="20" class="inputBox" style="width:350px;vertical-align:middle;" value="<or:fieldvalue field='file[${fileIdx}]' />" />
                                                     &#160; <span class="error"><s:fielderror escape="false"><s:param>file[${fileIdx}]</s:param></s:fielderror></span>
                                                     <c:set var="fileIdx" value="${fileIdx + 1}" />
-                                                </c:if><br/>
+                                                </c:if>
+                                                </div>
                                             </td>
                                             <c:if test="${managerEdit}">
                                                 <td class="valueC" nowrap="nowrap">
@@ -283,44 +363,59 @@
                             </tr>
                             <tr class="highlighted">
                                 <td class="value">
-                                    <input type="radio" id="approveFixes" name="approve_fixes" value="true" <or:checked name='approve_fixes' value='true' />/>
-                                    <b><or:text key="editApproval.ApproveFinalFixes" /></b><br/>
-                                    <input type="radio" id="approveFixes" name="approve_fixes" value="false" <or:checked name='approve_fixes' value='false' />/>
-                                    <b><or:text key="editApproval.RejectFinalFixes" /></b><br/>
-                    </td>
+                                    <div class="approvalRadioBtn">
+                                        <div class="custom-radio">  
+                                            <input type="radio" id="approveFixes" name="approve_fixes" value="true" <or:checked name='approve_fixes' value='true' />/>
+                                            <label for="approveFixes" style="font-size: 14px;"><or:text key="editApproval.ApproveFinalFixes" /></label>
+                                        </div>
+                                        <div class="custom-radio">
+                                            <input type="radio" id="approveFixes2" name="approve_fixes" value="false" <or:checked name='approve_fixes' value='false' />/>
+                                            <label for="approveFixes2" style="font-size: 14px;"><or:text key="editApproval.RejectFinalFixes" /></label>
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                             <tr class="highlighted">
                                 <td class="value">
+                                <div class="projectDetails__notificationCheckbox">
                                     <input type="checkbox" id="approveButRequireFixes" name="accept_but_require_fixes"  <or:checked name='accept_but_require_fixes' value='on|yes|true' /> />
-                                    <b><or:text key="editApproval.AcceptButRequireFixes" /></b></td>
+                                    <span class="checkbox-label preferences__email"></span>
+                                    <label for="approveButRequireFixes" style="font-size: 14px;"><or:text key="editApproval.AcceptButRequireFixes" /></label>
+                                    </td>
+                                </div>
                             </tr>
                             <tr>
                                 <td class="lastRowTD"><!-- @ --></td>
                             </tr>
                         </table>
-                        <br/>
-
-                        <div align="right">
+                        <div class="saveChanges__button">
                             <input type="hidden" name="save" value="" />
                             <c:if test="${not managerEdit}">
-                                <input type="image"  onclick="javascript:this.form.save.value='submit'; this.parentNode.parentNode.target='_self';return OnCompleteScorecardClick();" src="<or:text key='editReview.Button.SaveAndCommit.img' />" alt="<or:text key='editReview.Button.SaveAndCommit.alt' />" border="0"/>&#160;
-                                <input type="image"  onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" src="<or:text key='editReview.Button.SaveForLater.img' />" alt="<or:text key='editReview.Button.SaveForLater.alt' />" border="0"/>&#160;
-                                <input type="image"  onclick="javascript:this.form.save.value='preview'; this.parentNode.parentNode.target='_blank';" src="<or:text key='editReview.Button.Preview.img' />" alt="<or:text key='editReview.Button.Preview.alt' />" border="0"/>
+                                <button onclick="submitReview(this, 'submit', '_self')" class="saveChanges__save"><or:text key='editReview.Button.SaveAndCommit.alt' /></button>
+                                <button onclick="submitReview(this, 'save', '_self')" class="saveChanges__save"><or:text key='editReview.Button.SaveForLater.alt' /></button>
+                                <button onclick="submitReview(this, 'preview', '_blank')" class="saveChanges__save"><or:text key='editReview.Button.Preview.alt' /></button>
                             </c:if>
                             <c:if test="${managerEdit}">
-                                <input type="image"  onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" src="<or:text key='btnSaveChanges.img' />" alt="<or:text key='btnSaveChanges.alt' />" border="0"/>&#160;
+                                <button onclick="submitReview(this, 'submit', '_self')" class="saveChanges__save"><or:text key='btnSaveChanges.alt' /></button>
                             </c:if>
                         </div>
                     </s:form>
-
                 </div>
             </div>
-
-        <jsp:include page="/includes/inc_footer.jsp" />
-
     </div>
-
+    <jsp:include page="/includes/inc_footer_reskin.jsp" />
 </div>
+<script type="text/javascript">
+    var saveReview = document.getElementById('SaveApproval');
+    saveReview.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (saveReview.save.value !== 'preview') {
+        document.querySelectorAll('.saveChanges__save')
+        .forEach(btn => btn.disabled = true);
+        }
+        saveReview.submit();
+    });
+</script>
 
 </body>
 </html>
