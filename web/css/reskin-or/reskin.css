@@ -1339,8 +1339,7 @@ table.scorecard td.reviewerResp input {
 
 td.phasesTable__empty,
 td.resourcesTable__empty {
-    height: 20px;
-    background: var(--bronze-1);
+    height: 30px;
 }
 
 .phasesTable__body--center td {

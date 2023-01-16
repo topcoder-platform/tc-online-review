@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="8.000018px" height="6.000018px" viewBox="0 0 8.000018 6.000018" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <path d="M0 0L8 0L8 6L0 6L0 0Z" id="path_1" />
+    <clipPath id="mask_1">
+      <use xlink:href="#path_1" />
+    </clipPath>
+  </defs>
+  <g id="showMore" transform="matrix(-1 -2.2967631E-06 2.2967631E-06 -1 8.000005 6.000018)">
+    <path d="M0 0L8 0L8 6L0 6L0 0Z" id="arrow2" fill="#FFFFFF" fill-opacity="0" fill-rule="evenodd" stroke="none" />
+    <path d="M0.234315 0.834412C0.546734 0.521993 1.05327 0.521993 1.36569 0.834412L4 3.46873L6.63431 0.834412C6.94673 0.521993 7.45327 0.521993 7.76569 0.834412C8.07811 1.14683 8.07811 1.65336 7.76569 1.96578L4.56569 5.16578C4.25327 5.4782 3.74673 5.4782 3.43431 5.16578L0.234315 1.96578C-0.0781049 1.65336 -0.0781049 1.14683 0.234315 0.834412L0.234315 0.834412Z" id="形状" fill="#137D60" fill-rule="evenodd" stroke="none" />
+  </g>
+</svg>
