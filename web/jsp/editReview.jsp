@@ -263,7 +263,7 @@
                                             <%@ include file="../includes/review/review_question.jsp" %>
                                             <c:if test="${not managerEdit}">
                                                 <td class="valueC" nowrap="nowrap">
-                                                    <%@ include file="../includes/review/review_answer.jsp" %>
+                                                    <%@ include file="../includes/review/review_answer_reskin.jsp" %>
                                                     <div class="error"><s:fielderror escape="false"><s:param>answer[${itemIdx}]</s:param></s:fielderror></div>
                                                 </td>
                                             </c:if>
@@ -341,7 +341,7 @@
                                             </td>
                                             <c:if test="${managerEdit}">
                                                 <td class="valueC" nowrap="nowrap">
-                                                    <%@ include file="../includes/review/review_answer.jsp" %>
+                                                    <%@ include file="../includes/review/review_answer_reskin.jsp" %>
                                                     <div class="error"><s:fielderror escape="false"><s:param>answer[${itemIdx}]</s:param></s:fielderror></div>
                                                 </td>
                                             </c:if>

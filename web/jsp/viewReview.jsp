@@ -421,7 +421,7 @@
                                     </td>
                                     <td class="value">
                                         <or:text key="editReview.Question.ModifiedResponse.title"/>:<br />
-                                        <%@ include file="../includes/review/review_answer.jsp" %><br /><br />
+                                        <%@ include file="../includes/review/review_answer_reskin.jsp" %><br /><br />
                                         <a class="addResponse" href="javascript:placeAppealResponse(${itemIdx}, ${item.id}, ${review.id});">
                                             <or:text key='editReview.Button.SubmitAppealResponse.alt' /></a>
                                     </td>
