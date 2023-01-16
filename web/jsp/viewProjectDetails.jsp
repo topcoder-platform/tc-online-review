@@ -187,6 +187,16 @@
 </div>
 
 <jsp:include page="/includes/inc_footer_reskin.jsp" />
-
+<script type="text/javascript">
+  window.onload = () => {
+  var footerDetails = document.getElementById("footerNav").childNodes[0];
+  var cta = document.querySelector(".cta")
+  footerDetails.children[0].addEventListener("click", function(){
+    if (cta) {
+        cta.classList.toggle("ctaOpen")
+    }
+  })
+}
+</script>
 </body>
 </html>

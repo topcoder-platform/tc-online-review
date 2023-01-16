@@ -38,7 +38,7 @@
     --turq-180: #0d664e;
     --screen-max: 1376px;
     --header-height: 60px;
-    --footer-height: 48px;
+    --footer-height: 96px;
 }
 
 * {
@@ -188,7 +188,7 @@ body {
 }
 
 .content--projectDetails {
-    padding-bottom: 144px;
+    padding-bottom: 200px;
 }
 
 .content--manageProject {
@@ -2750,6 +2750,9 @@ td.resourcesTable__empty {
     height: 35px;
 }
 
+.ctaOpen {
+    bottom: 386px;
+}
 .approvalRadioBtn {
     display: flex;
     align-items: flex-start;
