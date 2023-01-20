@@ -117,7 +117,7 @@
                                 <span class="custom-option custom-option-grey" data-value="" <or:selected value=""/>><or:text key="Answer.Select" def=""/></span>
                                 <span class="custom-option custom-option-grey" data-value="0/4" <or:selected value="0/4"/>><or:text key="Answer.Score0_4.ans0" def="0/4"/></span>
                                 <span class="custom-option custom-option-grey" data-value="1/4" <or:selected value="1/4"/>><or:text key="Answer.Score0_4.ans1" def="1/4"/></span>
-                                <span class="custom-option custom-option-grey" data-value="2/4" <or:selected value="2/4"/>><or:text key="AAnswer.Score0_4.ans2" def="2/4"/></span>
+                                <span class="custom-option custom-option-grey" data-value="2/4" <or:selected value="2/4"/>><or:text key="Answer.Score0_4.ans2" def="2/4"/></span>
                                 <span class="custom-option custom-option-grey" data-value="3/4" <or:selected value="3/4"/>><or:text key="Answer.Score0_4.ans3" def="3/4"/></span>
                                 <span class="custom-option custom-option-grey" data-value="4/4" <or:selected value="4/4"/>><or:text key="Answer.Score0_4.ans4" def="4/4"/></span>
                             </div>
