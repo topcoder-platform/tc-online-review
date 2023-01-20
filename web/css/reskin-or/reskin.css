@@ -187,12 +187,13 @@ body {
     min-height: 100vh;
 }
 
+.content--manageProject,
 .content--projectDetails {
     padding-bottom: 200px;
 }
 
-.content--manageProject {
-    padding-bottom: 148px;
+.content--projectPayment {
+    padding-bottom: 135px;
 }
 
 .content__inner {

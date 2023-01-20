@@ -66,7 +66,7 @@
         <jsp:include page="/includes/inc_header_reskin.jsp" />
         <jsp:include page="/includes/project/project_tabs_reskin.jsp" />
 
-        <div class="content content">
+        <div class="content content--projectPayment">
             <div class="content__inner">
                 <div class="viewProjectPayment__header">
                     <a type="button" class="back-btn edit-back-btn" href="ViewProjectDetails?pid=${project.id}">
