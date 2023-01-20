@@ -2757,3 +2757,17 @@ td.resourcesTable__empty {
     flex-direction: column;
     gap: 8px;
 }
+
+.lateDeliverableValue {
+    margin-top: 8px;
+    font-weight: 400;
+}
+
+.lateDeliverableProjectLink {
+    color: var(--link-blue-dark);
+    text-decoration: none !important;
+}
+
+.lateness {
+    width: 110px;
+}
