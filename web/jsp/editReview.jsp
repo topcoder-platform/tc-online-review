@@ -263,7 +263,7 @@
                                             <%@ include file="../includes/review/review_question.jsp" %>
                                             <c:if test="${not managerEdit}">
                                                 <td class="valueC" nowrap="nowrap">
-                                                    <%@ include file="../includes/review/review_answer.jsp" %>
+                                                    <%@ include file="../includes/review/review_answer_reskin.jsp" %>
                                                     <div class="error"><s:fielderror escape="false"><s:param>answer[${itemIdx}]</s:param></s:fielderror></div>
                                                 </td>
                                             </c:if>
@@ -329,7 +329,7 @@
                                                             </c:if></b>
                                                         </c:if>
                                                         <c:if test="${not empty uploadedFileIds[fileIdx]}">
-                                                            <a href="<or:url value='/actions/DownloadDocument?uid=${uploadedFileIds[fileIdx]}' />"><or:text key="editReview.Document.Download"/></a>
+                                                            <a href="<or:url value='/actions/DownloadDocument?uid=${uploadedFileIds[fileIdx]}' />" style="color: #0d61bf;text-decoration: none;"><or:text key="editReview.Document.Download"/></a>
                                                             <b>&#160; <or:text key="editReview.Document.Update"/>
                                                             <span style="font-weight:normal;"><or:text key="global.optional.paren"/></span>:</b>
                                                         </c:if>
@@ -341,7 +341,7 @@
                                             </td>
                                             <c:if test="${managerEdit}">
                                                 <td class="valueC" nowrap="nowrap">
-                                                    <%@ include file="../includes/review/review_answer.jsp" %>
+                                                    <%@ include file="../includes/review/review_answer_reskin.jsp" %>
                                                     <div class="error"><s:fielderror escape="false"><s:param>answer[${itemIdx}]</s:param></s:fielderror></div>
                                                 </td>
                                             </c:if>
@@ -359,11 +359,11 @@
                             <input type="hidden" name="save" value="" />
                             <c:if test="${not managerEdit}">
                                 <button onclick="submitReview(this, 'submit', '_self')" class="saveChanges__save"><or:text key='editReview.Button.SaveAndCommit.alt' /></button>
-                                <button onclick="submitReview(this, 'submit', '_self')" class="saveChanges__save"><or:text key='editReview.Button.SaveForLater.alt' /></button>
+                                <button onclick="submitReview(this, 'save', '_self')" class="saveChanges__save"><or:text key='editReview.Button.SaveForLater.alt' /></button>
                                 <button onclick="submitReview(this, 'preview', '_blank')" class="saveChanges__save"><or:text key='editReview.Button.Preview.alt' /></button>
                             </c:if>
                             <c:if test="${managerEdit}">
-                                <button onclick="submitReview(this)" class="saveChanges__save"><or:text key='btnSaveChanges.alt' /></button>
+                                <button onclick="submitReview(this, 'submit', '_self')" class="saveChanges__save"><or:text key='btnSaveChanges.alt' /></button>
                             </c:if>
                         </div>
                     </s:form>

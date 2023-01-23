@@ -484,7 +484,8 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             for (Long id : subIds) {
                 Submission submission = upMgr.getSubmission(id);
                 if (submission != null
-                        && submission.getSubmissionType().getName().equals(Constants.CONTEST_SUBMISSION_TYPE_NAME)
+                        && (submission.getSubmissionType().getName().equals(Constants.CONTEST_SUBMISSION_TYPE_NAME)
+                        		|| submission.getSubmissionType().getName().equals(Constants.CHECKPOINT_SUBMISSION_TYPE_NAME))
                         && !submission.getSubmissionStatus().getName()
                                 .equals(Constants.FAILED_SCREENING_SUBMISSION_STATUS_NAME)) {
                     passedScreening = true;
@@ -499,16 +500,16 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             }
 
             // Allow only submitter to download the submission if it is MM type of challenge
-            if (project.getProjectCategory().getId() == 37 || project.getProjectCategory().getProjectType().getId() == 3) {
-                if (!Boolean.parseBoolean((String) project.getProperty("Viewable Submissions Flag"))) {
-                    long submitter =  upload.getOwner();
-                    long loggedInUserId = AuthorizationHelper.getLoggedInUserId(request);
-                    if (submitter != loggedInUserId) {
-                        return ActionsHelper.produceErrorReport(this, request, errorMessageKey, "Error.NoPermission",
-                            Boolean.FALSE);
-                    }
-                }  
-            }
+            // if (project.getProjectCategory().getId() == 37 || project.getProjectCategory().getProjectType().getId() == 3) {
+                // if (!Boolean.parseBoolean((String) project.getProperty("Viewable Submissions Flag"))) {
+                    // long submitter =  upload.getOwner();
+                    // long loggedInUserId = AuthorizationHelper.getLoggedInUserId(request);
+                    // if (submitter != loggedInUserId) {
+                        // return ActionsHelper.produceErrorReport(this, request, errorMessageKey, "Error.NoPermission",
+                            //  Boolean.FALSE);
+                        // }
+                // }
+            // }
 
             // Submitters can download others' contest submissions and checkpoint
             // submissions only
@@ -519,15 +520,17 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             // submitters
             // can't download others' submissions at all.
             if (submissionType == 1 || submissionType == 3) {
-                Phase reviewPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.APPEALS_RESPONSE_PHASE_NAME);
-                if (reviewPhase == null) {
-                    reviewPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.REVIEW_PHASE_NAME);
-                }
-                boolean isReviewFinished = (reviewPhase != null) && (reviewPhase.getPhaseStatus().getId() == 3);
+            	Phase reviewPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.APPEALS_RESPONSE_PHASE_NAME);
+            	// APPEALS_RESPONSE_PHASE!=null, must be closed.
+            	boolean isReviewFinished = (reviewPhase != null) ? (reviewPhase.getPhaseStatus().getId() == 3) : true;
+            	// At the same time, different review phases must be closed.
+            	reviewPhase = submissionType == 1 ? ActionsHelper.findPhaseByTypeName(phases, Constants.REVIEW_PHASE_NAME) : ActionsHelper.findPhaseByTypeName(phases, Constants.CHECKPOINT_REVIEW_PHASE_NAME);
+                isReviewFinished = isReviewFinished && (reviewPhase != null) && (reviewPhase.getPhaseStatus().getId() == 3);
                 if (isReviewFinished) {
-                    // Check that at least one submission passed review
-                    Submission[] activeSubmissions = ActionsHelper.getProjectSubmissions(project.getId(),
-                            Constants.CONTEST_SUBMISSION_TYPE_NAME, Constants.ACTIVE_SUBMISSION_STATUS_NAME, false);
+                    // Check that at least one submission passed review for two submission types.
+                    Submission[] activeSubmissions = submissionType == 1 
+                    		? ActionsHelper.getProjectSubmissions(project.getId(), Constants.CONTEST_SUBMISSION_TYPE_NAME, Constants.ACTIVE_SUBMISSION_STATUS_NAME, false)
+                    		: ActionsHelper.getProjectSubmissions(project.getId(), Constants.CHECKPOINT_SUBMISSION_TYPE_NAME, Constants.ACTIVE_SUBMISSION_STATUS_NAME, false);
                     noRights = (activeSubmissions.length == 0);
                 }
             }

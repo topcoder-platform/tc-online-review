@@ -59,9 +59,9 @@
                     <c:if test="${comment.commentType.name eq 'Appeal Response' || comment.commentType.name eq 'Manager Comment'}">
                         </span>
                     </c:if>
-                    <%-- <c:if test="${lastComment == commentStatus.index}">
-                        <br /><a href="<or:url value='/actions/DownloadDocument?uid=${item.document}' />"><or:text key="editReview.Document.Download" /></a>
-                    </c:if> --%>
+                    <c:if test="${lastComment == commentStatus.index}">
+                        <br /><a href="<or:url value='/actions/DownloadDocument?uid=${item.document}' />" style="color: #0d61bf;text-decoration: none;"><or:text key="editReview.Document.Download" /></a>
+                    </c:if>
                 </td>
                 <td class="value" colspan="${canPlaceAppeal ? 4 : (canPlaceAppealResponse ? 3 : 2)}"><!-- @ --></td>
             </tr>
