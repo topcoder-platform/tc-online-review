@@ -38,7 +38,7 @@
     --turq-180: #0d664e;
     --screen-max: 1376px;
     --header-height: 60px;
-    --footer-height: 48px;
+    --footer-height: 96px;
 }
 
 * {
@@ -187,12 +187,13 @@ body {
     min-height: 100vh;
 }
 
+.content--manageProject,
 .content--projectDetails {
-    padding-bottom: 144px;
+    padding-bottom: 200px;
 }
 
-.content--manageProject {
-    padding-bottom: 148px;
+.content--projectPayment {
+    padding-bottom: 135px;
 }
 
 .content__inner {
@@ -1339,7 +1340,7 @@ table.scorecard td.reviewerResp input {
 
 td.phasesTable__empty,
 td.resourcesTable__empty {
-    height: 20px;
+    height: 30px;
 }
 
 .phasesTable__body--center td {
@@ -1359,6 +1360,7 @@ td.resourcesTable__empty {
     background: var(--bronze-1);
 }
 
+.phasesTable__placements--other,
 .phasesTable__placements--forth,
 .phasesTable__placements--fifth {
     background: var(--turq-15);
@@ -1663,6 +1665,7 @@ td.resourcesTable__empty {
     border: none;
     resize: none;
     width: 100%;
+    height: 100%;
 }
 
 .contactManager textarea {
@@ -2316,7 +2319,7 @@ td.resourcesTable__empty {
     box-sizing: border-box;
     border-radius: 50%;
     border: 1.5px solid var(--black-60);
-    background-color: transparent;
+    background-color: var(--tc-white);
   }
 
   .custom-radio .phaseUseDuration,
@@ -2741,4 +2744,33 @@ td.resourcesTable__empty {
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
+}
+
+.loadingSelect img {
+    width: 35px;
+    height: 35px;
+}
+
+.ctaOpen {
+    bottom: 386px;
+}
+.approvalRadioBtn {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.lateDeliverableValue {
+    margin-top: 8px;
+    font-weight: 400;
+}
+
+.lateDeliverableProjectLink {
+    color: var(--link-blue-dark);
+    text-decoration: none !important;
+}
+
+.lateness {
+    width: 110px;
 }
