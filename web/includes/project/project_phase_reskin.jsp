@@ -1133,7 +1133,7 @@
 			                                                    (<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}'
 			                                                                       context="${orfn:getHandlerContext(pageContext.request)}" />)
 			                                                </c:if>
-			
+
 			                                                <%-- Delete Checkpoint Submission --%>
 			                                                <%-- <c:choose>
 			                                                   <c:when test="${isManager and not group.checkpointReviewFinished}">
@@ -1146,12 +1146,12 @@
 			                                                   <c:otherwise><!-- @ --></c:otherwise>
 			                                                </c:choose> --%>
 			                                            </td>
-			
+
 			                                            <%-- Checkpoint Submission Date --%>
 			                                            <td>
 			                                                ${orfn:displayDate(pageContext.request, submission.upload.creationTimestamp)}
 			                                            </td>
-			
+
 			                                            <%-- Checkpoint Screener --%>
 			                                                <td>
 			                                                    <c:choose>
@@ -1166,7 +1166,7 @@
 			                                                        </c:otherwise>
 			                                                    </c:choose>
 			                                                </td>
-			
+
 			                                            <%-- Checkpoint Screening Score --%>
 			                                            <c:set var="review" value="" />
 			                                            <c:forEach items="${group.checkpointScreeningReviews}" var="screening">
@@ -1174,7 +1174,7 @@
 			                                                    <c:set var="review" value="${screening}" />
 			                                                </c:if>
 			                                            </c:forEach>
-			
+
 			                                            <td nowrap="nowrap">
 			                                                <c:choose>
 			                                                    <c:when test="${empty review}">
@@ -1214,7 +1214,7 @@
 			                                                    </c:otherwise>
 			                                                </c:choose>
 			                                            </td>
-			
+
 			                                            <c:set var="failedScreening" value="${(submissionStatusName == 'Failed Checkpoint Screening')}" />
 			                                            <%-- Checkpoint Screening Results --%>
 			                                            <td>
@@ -1235,8 +1235,8 @@
 			                                                    <c:otherwise><or:text key="NotAvailable" /></c:otherwise>
 			                                                </c:choose>
 			                                            </td>
-			
-			
+
+
 			                                                <%-- Checkpoint Reviewer --%>
 			                                                <td>
 			                                                    <c:if test="${not failedScreening}">
@@ -1253,7 +1253,7 @@
 			                                                        </c:choose>
 			                                                    </c:if>
 			                                                </td>
-			
+
 			                                                <%-- Checkpoint Review Score --%>
 			                                                <c:set var="review" value="" />
 			                                                <c:forEach items="${group.checkpointReviews}" var="item">
@@ -1261,7 +1261,7 @@
 			                                                        <c:set var="review" value="${item}" />
 			                                                    </c:if>
 			                                                </c:forEach>
-			
+
 			                                                <td nowrap="nowrap">
 			                                                    <c:if test="${not failedScreening}">
 			                                                    <c:choose>
@@ -1306,7 +1306,7 @@
 			                                                    </c:choose>
 			                                                    </c:if>
 			                                                </td>
-			
+
 			                                                <%-- Checkpoint Review Results --%>
 			                                                <td>
 			                                                    <c:if test="${not failedScreening}">
