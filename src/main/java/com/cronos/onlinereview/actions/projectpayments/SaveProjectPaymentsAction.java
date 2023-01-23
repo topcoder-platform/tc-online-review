@@ -12,6 +12,7 @@ import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
 import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.grpcclient.GrpcHelper;
 import com.topcoder.onlinereview.component.project.payment.ProjectPayment;
 import com.topcoder.onlinereview.component.project.payment.ProjectPaymentFilterBuilder;
 import com.topcoder.onlinereview.component.project.payment.ProjectPaymentManager;
@@ -154,7 +155,7 @@ public class SaveProjectPaymentsAction extends BaseProjectPaymentAction {
         updateResourceProperties(resourceManager, operator, getModel().getCopilotPayments(), allResources);
 
         PaymentsHelper.processAutomaticPayments(projectId, operator);
-        PaymentsHelper.updateProjectResultPayments(projectId);
+        PaymentsHelper.updateProjectResultPayments(GrpcHelper.getPhaseHandlerServiceRpc(), projectId);
 
         EventBusServiceClient.fireProjectPaymentUpdateEvent(projectId, AuthorizationHelper.getLoggedInUserId(request), this.getModel());
 

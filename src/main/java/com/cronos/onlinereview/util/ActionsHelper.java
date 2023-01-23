@@ -35,6 +35,7 @@ import com.topcoder.onlinereview.component.external.RetrievalException;
 import com.topcoder.onlinereview.component.external.UserRetrieval;
 import com.topcoder.onlinereview.component.fileupload.FileUpload;
 import com.topcoder.onlinereview.component.fileupload.LocalFileUpload;
+import com.topcoder.onlinereview.component.grpcclient.GrpcHelper;
 import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.project.management.ProjectLinkManager;
 import com.topcoder.onlinereview.component.project.management.ProjectManager;
@@ -2633,7 +2634,7 @@ public class ActionsHelper {
             if (isStudioProject(project)) {
                 PaymentsHelper.processAutomaticPayments(project.getId(), operator);
             } else {
-                PRHelper.populateProjectResult(project.getId(), operator);
+                PRHelper.populateProjectResult(GrpcHelper.getPhaseHandlerServiceRpc(), project.getId(), operator);
             }
         } catch (SQLException e) {
             throw new BaseException("Failed to resetProjectResultWithChangedScores for project " + project.getId(), e);
