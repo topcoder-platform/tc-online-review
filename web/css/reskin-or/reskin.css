@@ -825,7 +825,6 @@ table.scorecard td.reviewerResp input {
 .cta {
     position: fixed;
     width: 100%;
-    bottom: var(--footer-height);
     background-color: #fff;
     z-index: 99;
     box-shadow: 0 0 16px 16px rgb(42 42 42 / 10%);
@@ -2752,7 +2751,7 @@ td.resourcesTable__empty {
 }
 
 .ctaOpen {
-    bottom: 386px;
+    bottom: 386px !important;
 }
 .approvalRadioBtn {
     display: flex;
