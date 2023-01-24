@@ -192,6 +192,8 @@ body {
     padding-bottom: 200px;
 }
 
+.content--viewSpec,
+.content--viewApproval,
 .content--projectPayment {
     padding-bottom: 135px;
 }
@@ -826,6 +828,7 @@ table.scorecard td.reviewerResp input {
     position: fixed;
     width: 100%;
     background-color: #fff;
+    bottom: var(--footer-height);
     z-index: 99;
     box-shadow: 0 0 16px 16px rgb(42 42 42 / 10%);
 }

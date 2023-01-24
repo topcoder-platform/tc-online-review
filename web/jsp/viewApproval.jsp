@@ -70,7 +70,7 @@
     <jsp:include page="/includes/inc_header_reskin.jsp" />
     <jsp:include page="/includes/project/project_tabs_reskin.jsp" />
 
-    <div class="content content">
+    <div class="content content--viewApproval">
         <div class="content__inner">
             <jsp:include page="/includes/review/review_project.jsp" />
             <div class="divider"></div>

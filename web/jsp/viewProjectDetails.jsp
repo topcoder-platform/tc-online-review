@@ -190,15 +190,12 @@
 <script type="text/javascript">
   window.onload = () => {
   var footerDetails = document.getElementById("footerNav").childNodes[0];
-  footerDetails.children[0].remove();
   if (document.getElementById("footerNav")) {
     var footerHeight = document.getElementById("footerNav").clientHeight;
   }
   var cta = document.querySelector(".cta")
   if (footerHeight) {
     cta.style.bottom = (footerHeight) + 'px';
-  } else {
-    cta.style.bottom = '0';
   }
   footerDetails.children[0].addEventListener("click", function(){
     if (cta) {
