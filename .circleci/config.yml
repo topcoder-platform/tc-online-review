@@ -134,7 +134,7 @@ jobs:
     environment:
       BUILD_ENV: "DEV"
       LOGICAL_ENV: "dev"
-      COMPONENT_BRANCH: "dev"
+      COMPONENT_BRANCH: "PLAT-2032"
       DEPLOY_ENV: "DEV"
       APPNAME: "tc-online-review"
     steps: *build_steps
@@ -175,6 +175,7 @@ workflows:
             branches:
               only:
                 - dev-maven
+                - PLAT-2032
 
       - build-prod:
           context : org-global      
@@ -190,6 +191,7 @@ workflows:
             branches:
               only:
                 - dev-maven
+                - PLAT-2032
 
       - deployProd:
           context : org-global
