@@ -419,7 +419,7 @@
                                         <input type="checkbox" name="appeal_response_success[${itemIdx}]" />
                                         <or:text key="editReview.Question.AppealSucceeded.title" />
                                     </td>
-                                    <td class="value">
+                                    <td class="value" nowrap="nowrap">
                                         <or:text key="editReview.Question.ModifiedResponse.title"/>:<br />
                                         <%@ include file="../includes/review/review_answer_reskin.jsp" %><br /><br />
                                         <a class="addResponse" href="javascript:placeAppealResponse(${itemIdx}, ${item.id}, ${review.id});">
