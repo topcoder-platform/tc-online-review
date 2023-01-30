@@ -9,6 +9,7 @@ import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
+import com.cronos.onlinereview.util.ConfigHelper;
 import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.exception.BaseException;
 
@@ -63,6 +64,28 @@ public class ViewManagementConsoleAction extends BaseProjectManagementConsoleAct
             // affecting the Extend Registration/Submission Phase functionality
             Project project = verification.getProject();
             initProjectManagementConsole(request, project);
+
+            request.setAttribute("projectStatus", project.getProjectStatus().getName());
+
+            final String projectTypeName = project.getProjectCategory().getProjectType().getName();
+
+            boolean hasForumType = project.getAllProperties().containsKey("Forum Type");
+
+            long projectId = project.getId();
+            long forumId = -1;
+            String tempStr;
+
+            tempStr = (String) project.getProperty("Developer Forum ID");
+            if (tempStr != null && tempStr.trim().length() != 0) {
+                forumId = Long.parseLong(tempStr, 10);
+            }
+
+            request.setAttribute("viewContestLink", ConfigHelper.getProjectTypeViewContestLink(projectTypeName, projectId));
+
+            request.setAttribute("forumLink", ConfigHelper.getProjectTypeForumLink(
+                (projectTypeName.equalsIgnoreCase("studio") && hasForumType) ? "NewStudio" : projectTypeName, forumId));
+            request.setAttribute("isAllowedToContactPM",
+                AuthorizationHelper.hasUserPermission(request, Constants.CONTACT_PM_PERM_NAME));
 
             return Constants.SUCCESS_FORWARD_NAME;
         }

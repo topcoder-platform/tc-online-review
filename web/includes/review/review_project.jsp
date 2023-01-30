@@ -13,20 +13,29 @@
 <c:set var="toPDF" value="${param.pdf eq 'true'}"/>
 <c:if test="${param.showFillScorecardLink}">
 <script language="javascript" type="text/javascript">
+    function selectScore(maxScore, scoreInput) {
+        var scoreSpan = maxScore.closest('.custom-select').querySelector('.custom-select__trigger span');
+        if (!maxScore.classList.contains("selected")) {
+            maxScore.classList.add('selected');
+        }
+        scoreSpan.textContent = maxScore.textContent;
+        scoreInput.parentNode.querySelector('.custom-option.selected').classList.remove('selected');
+        scoreInput.value = maxScore.getAttribute("data-value");
+    }
     <!--
     function fillScorecard() {
         if (confirm("<or:text key="global.fillScorecardConfirmation" />")) {
-            var scores = document.getElementsByTagName("select");
+            var scores = document.getElementsByClassName("scoreInput");
             for (var i = 0; i < scores.length; i++) {
                 if (scores[i].getAttribute("name").indexOf("answer[") == 0) {
-                    if (scores[i].selectedIndex == 0) {
-                        var options = scores[i].options;
-                        for (var j = 1; j < options.length ; j++) {
-                            if (options[j].value.indexOf("/") >= 0) {
-                                scores[i].selectedIndex = scores[i].options.length - 1;
+                    var scoreOptions = scores[i].parentNode.querySelectorAll(".custom-options span");
+                    if (scoreOptions[0].classList.contains("selected")) {
+                        for (var j = 1; j < scoreOptions.length ; j++) {
+                            if (scoreOptions[j].getAttribute("data-value").indexOf("/") >= 0) {
+                                selectScore(scoreOptions[scoreOptions.length - 1], scores[i]);
                                 break;
-                            } else if (options[j].value == "1") {
-                                scores[i].selectedIndex = j;
+                            } else if (scoreOptions[j].getAttribute("data-value") == "1") {
+                                selectScore(scoreOptions[j], scores[i]);
                                 break;
                             }
                         }
@@ -39,98 +48,90 @@
     </script>
 </c:if>
 
-<div style="padding: 11px 0px 9px 0px;">
-    <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-            <td>
-                <table cellspacing="0" cellpadding="0" border="0">
-                    <tr valign="middle">
-                        <td><img src="/i/${categoryIconName}" border="0" /></td>
-                        <td><img src="/i/${rootCatalogIcon}" alt="${rootCatalogName}" border="0" /></td>
-                        <td>
-                            <span class="bodyTitle">${orfn:htmlEncode(project.allProperties['Project Name'])}</span>
-                            <c:if test="${!(empty project.allProperties['Project Version'])}">
-                                <font size="4"><or:text key="global.version" />
-                                    ${orfn:htmlEncode(project.allProperties['Project Version'])}</font>
-                            </c:if>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-            <td align="right" valign="top">
-                <c:if test="${canExport}">
-                    <a href="<or:url value='/actions/ExportReview?reviewType=${reviewType}&rid=${param.rid}' />"><or:text key="exportReview.ExportToExcel" /></a>
-                </c:if>
-                <c:if test="${canReopenScorecard}">
-                    <c:if test="${canExport}">
-                        |
-                    </c:if>
-                    <a href="<or:url value='/actions/ReopenScorecard?rid=${review.id}' />"><or:text key="editReview.ReopenScorecard" /></a>
-                </c:if>
-                <c:if test="${canEditScorecard}">
-                    <c:if test="${canExport or canReopenScorecard}">
-                        |
-                    </c:if>
-                    <a href="<or:url value='/actions/Edit${reviewType}?rid=${review.id}' />"><or:text key="editReview.EditScorecard" /></a>
-                </c:if>
-                <c:if test="${param.showFillScorecardLink}">
-                    <c:if test="${canExport or canReopenScorecard or canEditScorecard}">
-                        |
-                    </c:if>
-                    <a href="javascript:fillScorecard();"><or:text key="global.fillScorecard" /></a>
-                </c:if>
-            </td>
-        </tr>
-    </table>
+<div class="scoreInfo__title">
+    <button type="button" class="back-btn" onclick="history.back()">
+        <i class="arrow-prev-icon"></i>
+    </button>
+    <h1 class="projectInfo__projectName">
+        ${param.showScorecard ? orfn:htmlEncode(scorecardTemplate.name) : orfn:htmlEncode(project.allProperties['Project Name'])}
+    </h1>
 </div>
-<c:if test="${reviewType ne 'AutoScreening' and reviewType ne 'CompositeReview'}">
-    <c:if test="${reviewType eq 'SpecificationReview'}">
-        &#160;<b><or:text key="editReview.SpecificationReviewer" /></b>
-    </c:if>
-    <c:if test="${reviewType eq 'CheckpointScreening'}">
-        &#160;<b><or:text key="editReview.CheckpointScreener" /></b>
-    </c:if>
-    <c:if test="${reviewType eq 'CheckpointReview'}">
-        &#160;<b><or:text key="editReview.CheckpointReviewer" /></b>
-    </c:if>
-    <c:if test="${reviewType eq 'Screening'}">
-        &#160;<b><or:text key="editReview.Screener" /></b>
-    </c:if>
-    <c:if test="${reviewType eq 'Review'}">
-        &#160;<b><or:text key="editReview.Reviewer" /></b>
-    </c:if>
-    <c:if test="${reviewType eq 'Approval'}">
-        &#160;<b><or:text key="editReview.Approver" /></b>
-    </c:if>
-    <c:if test="${reviewType eq 'Aggregation' or reviewType eq 'AggregationReview'}">
-        &#160;<b><or:text key="editReview.Aggregator" /></b>
-    </c:if>
-    <c:if test="${reviewType eq 'FinalReview'}">
-        &#160;<b><or:text key="editReview.FinalReviewer" /></b>
-    </c:if>
-    <c:if test="${reviewType eq 'PostMortem'}">
-        &#160;<b><or:text key="editReview.Post-MortemReviewer" /></b>
-    </c:if>
-    <c:if test="${reviewType eq 'IterativeReview'}">
-        &#160;<b><or:text key="editReview.IterativeReviewer" /></b>
-    </c:if>
-    <c:if test="${not empty authorId}">
-        <tc-webtag:handle coderId="${authorId}" context="${orfn:getHandlerContext(pageContext.request)}" />
-    </c:if>
-    <br />
+<c:if test="${!param.hideScoreInfo}">
+<div class="scoreInfo__info">
+    <div class="scoreInfo__reviewer">
+        <c:if test="${reviewType ne 'AutoScreening' and reviewType ne 'CompositeReview'}">
+            <c:if test="${reviewType eq 'SpecificationReview'}">
+            <or:text key="editReview.SpecificationReviewer" />
+            </c:if>
+            <c:if test="${reviewType eq 'CheckpointScreening'}">
+                <or:text key="editReview.CheckpointScreener" />
+            </c:if>
+            <c:if test="${reviewType eq 'CheckpointReview'}">
+                <or:text key="editReview.CheckpointReviewer" />
+            </c:if>
+            <c:if test="${reviewType eq 'Screening'}">
+                <or:text key="editReview.Screener" />
+            </c:if>
+            <c:if test="${reviewType eq 'Review'}">
+                <or:text key="editReview.Reviewer" />
+            </c:if>
+            <c:if test="${reviewType eq 'Approval'}">
+                <or:text key="editReview.Approver" />
+            </c:if>
+            <c:if test="${reviewType eq 'Aggregation' or reviewType eq 'AggregationReview'}">
+                <or:text key="editReview.Aggregator" />
+            </c:if>
+            <c:if test="${reviewType eq 'FinalReview'}">
+                <or:text key="editReview.FinalReviewer" />
+            </c:if>
+            <c:if test="${reviewType eq 'PostMortem'}">
+                <or:text key="editReview.Post-MortemReviewer" />
+            </c:if>
+            <c:if test="${reviewType eq 'IterativeReview'}">
+                <or:text key="editReview.IterativeReviewer" />
+            </c:if>
+            <c:if test="${not empty authorId}">
+                <tc-webtag:handle coderId="${authorId}" context="${orfn:getHandlerContext(pageContext.request)}" />
+            </c:if>
+        </c:if>
+    </div>
+    <div class="scoreInfo__submission">
+        <c:if test="${not empty sid}">
+        <or:text key="editReview.Submission" /> ${sid}
+        <c:if test="${not empty submitterId and reviewType ne 'IterativeReview' and not toPDF}">
+            (<tc-webtag:handle coderId="${submitterId}" context="${orfn:getHandlerContext(pageContext.request)}" />)
+        </c:if>
+        <br />
+        </c:if>
+    </div>
+    <div class="scoreInfo__date">
+        <c:if test="${not empty modificationDate}">
+        <or:text key="editReview.ModificationDate" />
+        <c:out value="${orfn:displayDate(pageContext.request, modificationDate)}"/><br />
+        </c:if>
+    </div>
+    <div class="scoreInfo__date">
+        <or:text key="editReview.MyRole" /> ${myRole}<br />
+    </div>
+    <div class="scoreInfo__links">
+        <c:if test="${canExport}">
+            <a class="scoreInfo__link" href="<or:url value='/actions/ExportReview?reviewType=${reviewType}&rid=${param.rid}' />"><or:text key="exportReview.ExportToExcel" /></a>
+        </c:if>
+        <c:if test="${canReopenScorecard}">
+            <a class="scoreInfo__link" href="<or:url value='/actions/ReopenScorecard?rid=${review.id}' />"><or:text key="editReview.ReopenScorecard" /></a>
+        </c:if>
+        <c:if test="${canEditScorecard}">
+            <a class="scoreInfo__link" href="<or:url value='/actions/Edit${reviewType}?rid=${review.id}' />"><or:text key="editReview.EditScorecard" /></a>
+        </c:if>
+        <c:if test="${param.showFillScorecardLink}">
+            <a class="scoreInfo__link" href="javascript:fillScorecard();"><or:text key="global.fillScorecard" /></a>
+        </c:if>
+    </div>
+</div>
 </c:if>
 
-<c:if test="${not empty sid}">
-    &#160;<b><or:text key="editReview.Submission" /></b> ${sid}
-    <c:if test="${not empty submitterId and reviewType ne 'Screening' and reviewType ne 'Review' and reviewType ne 'CheckpointScreening' and reviewType ne 'CheckpointReview' and reviewType ne 'IterativeReview' and not toPDF}">
-        (<tc-webtag:handle coderId="${submitterId}" context="${orfn:getHandlerContext(pageContext.request)}" />)
-    </c:if>
-    <br />
-</c:if>
 
-<c:if test="${not empty modificationDate}">
-    &#160;<b><or:text key="editReview.ModificationDate" /></b>
-    <c:out value="${orfn:displayDate(pageContext.request, modificationDate)}"/><br />
-</c:if>
 
-&#160;<b><or:text key="editReview.MyRole" /></b> ${myRole}<br />
+
+
+
