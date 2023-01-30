@@ -39,11 +39,14 @@ install_deploysuite: &install_deploysuite
 fetch_component_src: &fetch_component_src
     name: Installation of fetch_component_src.
     command: |
+      git clone --branch ${GRPC_BRANCH} https://github.com/topcoder-platform/online-review-interface-definition ../online-review-interface-definition
       git clone --branch ${COMPONENT_BRANCH} https://github.com/topcoder-platform/tc-online-review-backend ../tc-online-review-backend
 
 build_components: &build_components    
     name: Building  of components
     command: |
+      cd ../online-review-interface-definition
+      mvn clean install
       cd ../tc-online-review-backend
       ./install-third-dep.sh      
       # mvn clean install -DskipTests
@@ -134,7 +137,8 @@ jobs:
     environment:
       BUILD_ENV: "DEV"
       LOGICAL_ENV: "dev"
-      COMPONENT_BRANCH: "dev"
+      COMPONENT_BRANCH: "grpc"
+      GRPC_BRANCH: "develop"
       DEPLOY_ENV: "DEV"
       APPNAME: "tc-online-review"
     steps: *build_steps
@@ -175,6 +179,7 @@ workflows:
             branches:
               only:
                 - dev-maven
+                - grpc
 
       - build-prod:
           context : org-global      
@@ -190,6 +195,7 @@ workflows:
             branches:
               only:
                 - dev-maven
+                - grpc
 
       - deployProd:
           context : org-global
