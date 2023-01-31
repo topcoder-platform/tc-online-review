@@ -770,6 +770,10 @@ table.scorecard td.headerT {
     text-decoration: none !important;
 }
 
+.backToHome {
+    margin-bottom: 32px;
+}
+
 .editPaymentBtn {
     margin-right: 12px;
 }
