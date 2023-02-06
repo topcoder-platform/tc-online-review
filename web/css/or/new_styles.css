@@ -551,3 +551,12 @@ table.tabLinks .input {
 .feedback-text {
     width:100%;
 }
+
+.projectInfo__forumLink{
+    pointer-events: none;
+    cursor: pointer;
+}
+
+.projectInfo__forumLink.enabled{
+    pointer-events: all;
+}

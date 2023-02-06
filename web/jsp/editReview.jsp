@@ -48,14 +48,17 @@
                     let id = with_forum?.[0]?.id;
                     if (id !== undefined) {
                         let forumLinkEl = document.querySelector('.projectInfo__forumLink');
-                        return forumLinkEl.href = "https://<%=ApplicationServer.FORUMS_SERVER_NAME%>/categories/" + id;
+                        if(forumLinkEl){
+                            forumLinkEl.classList.add("enabled");
+                            forumLinkEl.href = "https://<%=ApplicationServer.FORUMS_SERVER_NAME%>/categories/" + id;
+                        }
                     }
                 });
         }
-        document.addEventListener("DOMContentLoaded", function(){
-            let projectId = ${project.id};
-            updateForumLink(projectId);
+        let projectId = ${project.id};
+        updateForumLink(projectId);
 
+        document.addEventListener("DOMContentLoaded", function(){
             for (const dropdown of document.querySelectorAll(".custom-select-wrapper")) {
                 dropdown.addEventListener('click', function () {
                     this.querySelector('.custom-select').classList.toggle('open');

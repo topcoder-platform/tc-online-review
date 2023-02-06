@@ -12,6 +12,7 @@ import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.resource.Resource;
 import com.topcoder.onlinereview.component.resource.ResourceManager;
 import com.topcoder.onlinereview.component.resource.ResourcePersistenceException;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.struts2.util.TextProviderHelper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,6 +62,9 @@ public final class Functions {
      *            a text to encode.
      */
     public static String htmlEncode(String text) {
+        // unescape string (convert strings like \\n to \n character),
+        // so we can find and replace it with corresponding string like <br />
+        text = StringEscapeUtils.unescapeJava(text);
         if (text == null || text.length() == 0) {
             return "";
         }
@@ -100,8 +104,8 @@ public final class Functions {
                 stringBuffer.append(ch);
             }
         }
-
-        return stringBuffer.toString();
+        // make sure we escape the unescaped string before returning it
+        return StringEscapeUtils.escapeJava(stringBuffer.toString());
     }
 
     /**
