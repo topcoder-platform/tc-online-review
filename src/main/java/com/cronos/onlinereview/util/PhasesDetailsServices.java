@@ -465,9 +465,9 @@ public final class PhasesDetailsServices {
         Upload[][] pastSubmissions = null;
         if (submissions.length > 0 && AuthorizationHelper.hasUserPermission(request, viewAllSubmissionsPermission)) {
 
-            // Find all deleted submissions for specified project
-            Submission[] allDeletedSubmissions = ActionsHelper.getProjectSubmissions(project.getId(), null, "Deleted",
-                    true);
+            // Find all undeleted submissions for specified project
+            Submission[] allUnDeletedSubmissions = ActionsHelper.getProjectSubmissions(project.getId(), null, null,
+                    false);
 
             pastSubmissions = new Upload[submissions.length][];
 
@@ -475,11 +475,12 @@ public final class PhasesDetailsServices {
                 List<Upload> temp = new ArrayList<Upload>();
                 long currentUploadOwnerId = submissions[j].getUpload().getOwner();
 
-                for (Submission deletedSubmission : allDeletedSubmissions) {
-                    Upload deletedSubmissionUpload = deletedSubmission.getUpload();
-                    if (deletedSubmission.getSubmissionType().getId() == submissions[j].getSubmissionType().getId()
-                            && deletedSubmissionUpload.getOwner() == currentUploadOwnerId) {
-                        temp.add(deletedSubmissionUpload);
+                for (Submission unDeletedSubmission : allUnDeletedSubmissions) {
+                    Upload unDeletedSubmissionUpload = unDeletedSubmission.getUpload();
+                    if (unDeletedSubmission.getSubmissionType().getId() == submissions[j].getSubmissionType().getId()
+                    		&& unDeletedSubmission.getId() != submissions[j].getId()
+                            && unDeletedSubmissionUpload.getOwner() == currentUploadOwnerId) {
+                        temp.add(unDeletedSubmissionUpload);
                     }
                 }
 
