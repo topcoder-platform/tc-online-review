@@ -139,6 +139,16 @@ jobs:
       APPNAME: "tc-online-review"
     steps: *build_steps
 
+  "build-qa":
+    <<: *defaults
+    environment:
+      BUILD_ENV: "QA"
+      LOGICAL_ENV: "qa"
+      COMPONENT_BRANCH: "qa"
+      DEPLOY_ENV: "QA"
+      APPNAME: "tc-online-review"
+    steps: *build_steps
+
   "build-prod":
     <<: *defaults
     environment:
@@ -154,6 +164,14 @@ jobs:
     environment:
       DEPLOY_ENV: "DEV"
       LOGICAL_ENV: "dev"
+      APPNAME: "tc-online-review"
+    steps: *deploy_steps
+
+  deployQa:
+    <<: *deploy_defaults
+    environment:
+      DEPLOY_ENV: "QA"
+      LOGICAL_ENV: "qa"
       APPNAME: "tc-online-review"
     steps: *deploy_steps
 
@@ -177,6 +195,13 @@ workflows:
                 - dev-maven
                 - reskin-or
 
+      - build-qa:
+          context : org-global      
+          filters:
+            branches:
+              only:
+                - qa-maven
+                
       - build-prod:
           context : org-global      
           filters:
@@ -192,6 +217,15 @@ workflows:
               only:
                 - dev-maven
                 - reskin-or
+
+      - deployQa:
+          context : org-global
+          requires:
+            - build-qa
+          filters: 
+            branches:
+              only:
+                - qa-maven
 
       - deployProd:
           context : org-global
