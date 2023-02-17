@@ -204,11 +204,12 @@ public class ActionsHelper {
     static {
         try {
             ClassLoader loader = ActionsHelper.class.getClassLoader();
-            URL credentialURL = loader.getResource(AWS_CREDENTIALS_FILE);
+            //URL credentialURL = loader.getResource(AWS_CREDENTIALS_FILE);
             s3Bucket = ConfigHelper.getS3Bucket();
             s3BucketDmz = ConfigHelper.getS3BucketDmz();
             presignedExpireMillis = ConfigHelper.getPreSignedExpTimeMilis();
-            s3Client = new AmazonS3Client(new PropertiesCredentials(new File(credentialURL.getFile())));
+            //s3Client = new AmazonS3Client(new PropertiesCredentials(new File(credentialURL.getFile())));
+            s3Client = new AmazonS3Client();
         } catch (Throwable e) {
             throw new RuntimeException("Failed load to Amazon S3 CLient", e);
         }
