@@ -125,44 +125,56 @@
         </action>
 
         <!-- "Upload Specification Submission" action -->
+        <!--
         <action name="UploadSpecificationSubmission" class="uploadSpecificationSubmissionAction">
            <result name="displayPage">/jsp/uploadSpecification.jsp</result>
            <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}</result>
         </action>
+         -->
 
         <!-- "Upload Checkpoint Submission" action -->
+        <!--
         <action name="UploadCheckpointSubmission" class="uploadCheckpointSubmissionAction">
            <result name="displayPage">/jsp/uploadCheckpointSubmission.jsp</result>
            <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}
            </result>
         </action>
+         -->
 
         <!-- "Upload Contest Submission" action -->
+        <!--
         <action name="UploadContestSubmission" class="uploadContestSubmissionAction">
            <result name="displayPage">/jsp/uploadSubmission.jsp</result>
            <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}
            </result>
         </action>
+         -->
 
         <!-- "Upload Test Case" action -->
+        <!--
         <action name="UploadTestCase" class="uploadTestCaseAction">
            <result name="displayPage">/jsp/uploadTestCase.jsp</result>
            <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}
            </result>
         </action>
+         -->
 
         <!-- "Upload Final Fix" action -->
+        <!--
         <action name="UploadFinalFix" class="uploadFinalFixAction">
            <result name="displayPage">/jsp/uploadFinalFix.jsp</result>
            <result name="success" type="redirect">/actions/ViewProjectDetails?pid=${pid}
            </result>
         </action>
+         -->
 
         <!-- "Unregister" action -->
+        <!--
         <action name="Unregister" class="unregisterAction">
            <result name="displayPage">/jsp/confirmUnregistration.jsp</result>
            <result name="success" type="redirect">/actions/ListProjects</result>
         </action>
+         -->
 
         <!-- "Advance Failed Screening Submission" action -->
         <action name="AdvanceFailedScreeningSubmission" class="advanceFailedScreeningSubmissionAction">
