@@ -192,6 +192,8 @@ body {
     padding-bottom: 200px;
 }
 
+.content--viewSpec,
+.content--viewApproval,
 .content--projectPayment {
     padding-bottom: 135px;
 }
@@ -768,6 +770,10 @@ table.scorecard td.headerT {
     text-decoration: none !important;
 }
 
+.backToHome {
+    margin-bottom: 32px;
+}
+
 .editPaymentBtn {
     margin-right: 12px;
 }
@@ -825,8 +831,8 @@ table.scorecard td.reviewerResp input {
 .cta {
     position: fixed;
     width: 100%;
-    bottom: var(--footer-height);
     background-color: #fff;
+    bottom: var(--footer-height);
     z-index: 99;
     box-shadow: 0 0 16px 16px rgb(42 42 42 / 10%);
 }
@@ -2654,6 +2660,7 @@ td.resourcesTable__empty {
     width: 100%;
     z-index: 99;
     bottom: 0;
+    left: 0;
 }
 
 .checkPoint__chevron {
@@ -2752,7 +2759,7 @@ td.resourcesTable__empty {
 }
 
 .ctaOpen {
-    bottom: 386px;
+    bottom: 386px !important;
 }
 .approvalRadioBtn {
     display: flex;
@@ -2764,6 +2771,7 @@ td.resourcesTable__empty {
 .lateDeliverableValue {
     margin-top: 8px;
     font-weight: 400;
+    white-space: normal;
 }
 
 .lateDeliverableProjectLink {

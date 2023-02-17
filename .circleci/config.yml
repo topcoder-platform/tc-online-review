@@ -1,134 +1,133 @@
 version: 2
 defaults: &defaults
-    docker:
-      - image: maven:3.6.1-jdk-8
+  docker:
+    - image: maven:3.6.1-jdk-8
 
 deploy_defaults: &deploy_defaults
-    docker:
-      - image: cimg/python:3.10.2
+  docker:
+    - image: cimg/python:3.10.2
 
 install_deploy_dependency: &install_deploy_dependency
-    name: Installation of build and deployment dependencies.
-    command: |
-      pip3 install awscli --upgrade
+  name: Installation of build and deployment dependencies.
+  command: |
+    pip3 install awscli --upgrade
 
 install_dependency: &install_dependency
-    name: Installation of build dependencies.
-    command: |
-      # sed -i '/jessie-updates/d' /etc/apt/sources.list
-      apt update
-      apt install -y  openssl git zip jq
-      mkdir ~/awscli
-      cd  ~/awscli
-      curl "https://s3.amazonaws.com/aws-cli/awscli-bundle-1.18.212.zip" -o "awscli-bundle.zip"
-      unzip awscli-bundle.zip
-      ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
-      # cd ~
-      # wget http://downloads.sourceforge.net/project/jboss/JBoss/JBoss-4.2.3.GA/jboss-4.2.3.GA-jdk6.zip
-      # unzip jboss-4.2.3.GA-jdk6.zip
-      cd ~/project
+  name: Installation of build dependencies.
+  command: |
+    # sed -i '/jessie-updates/d' /etc/apt/sources.list
+    apt update
+    apt install -y  openssl git zip jq
+    mkdir ~/awscli
+    cd  ~/awscli
+    curl "https://s3.amazonaws.com/aws-cli/awscli-bundle-1.18.212.zip" -o "awscli-bundle.zip"
+    unzip awscli-bundle.zip
+    ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+    # cd ~
+    # wget http://downloads.sourceforge.net/project/jboss/JBoss/JBoss-4.2.3.GA/jboss-4.2.3.GA-jdk6.zip
+    # unzip jboss-4.2.3.GA-jdk6.zip
+    cd ~/project
 
 install_deploysuite: &install_deploysuite
-    name: Installation of install_deploysuite.
-    command: |
-      git clone --branch v1.4.14 https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
-      cp ./../buildscript/master_deploy.sh .
-      cp ./../buildscript/buildenv.sh .
-      cp ./../buildscript/awsconfiguration.sh .
+  name: Installation of install_deploysuite.
+  command: |
+    git clone --branch v1.4.14 https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
+    cp ./../buildscript/master_deploy.sh .
+    cp ./../buildscript/buildenv.sh .
+    cp ./../buildscript/awsconfiguration.sh .
 
 fetch_component_src: &fetch_component_src
-    name: Installation of fetch_component_src.
-    command: |
-      git clone --branch ${GRPC_BRANCH} https://github.com/topcoder-platform/online-review-interface-definition ../online-review-interface-definition
-      git clone --branch ${COMPONENT_BRANCH} https://github.com/topcoder-platform/tc-online-review-backend ../tc-online-review-backend
+  name: Installation of fetch_component_src.
+  command: |
+    git clone --branch ${GRPC_BRANCH} https://github.com/topcoder-platform/online-review-interface-definition ../online-review-interface-definition
+    git clone --branch ${COMPONENT_BRANCH} https://github.com/topcoder-platform/tc-online-review-backend ../tc-online-review-backend
 
-build_components: &build_components    
-    name: Building  of components
-    command: |
-      cd ../online-review-interface-definition
-      mvn clean install
-      cd ../tc-online-review-backend
-      ./install-third-dep.sh      
-      # mvn clean install -DskipTests
-      # mvn dependency:go-offline
-      mvn -Dhttps.protocols=TLSv1.2 -DskipTests=true clean install
-      cd ~/project
+build_components: &build_components
+  name: Building  of components
+  command: |
+    cd ../online-review-interface-definition
+    mvn clean install
+    cd ../tc-online-review-backend
+    ./install-third-dep.sh      
+    # mvn clean install -DskipTests
+    # mvn dependency:go-offline
+    mvn -Dhttps.protocols=TLSv1.2 -DskipTests=true clean install
+    cd ~/project
 
 workspace_persist: &workspace_persist
-    root: ~/
-    paths:
-      - project
+  root: ~/
+  paths:
+    - project
 
 workspace_attach: &workspace_attach
-    at: ./   
+  at: ./
 
 restore_cache_settings_for_build: &restore_cache_settings_for_build
-    key: tc-online-review-{{ checksum "~/project/pom.xml" }}
+  key: tc-online-review-{{ checksum "~/project/pom.xml" }}
 
 save_cache_settings: &save_cache_settings
-    paths:
-      - ~/.m2
-    key: tc-online-review-{{ checksum "~/project/pom.xml" }}
+  paths:
+    - ~/.m2
+  key: tc-online-review-{{ checksum "~/project/pom.xml" }}
 
-build_steps: &build_steps
-    # Initialization.
-    - run: *install_dependency
-    - checkout
-    - run: *install_deploysuite
-    - run: *fetch_component_src
-    - restore_cache: *restore_cache_settings_for_build
-    - run: *build_components
-    #- run:
-    #    name: Fetching Libraries
-    #    command: |
-    #      sed -i "s/master/$SUBMODULE_BRANCH/g" .gitmodules 
-    #      git submodule init
-    #      git submodule update --remote
-    - run:
-        name: "AWS Configuration"
-        command: |
-          ./awsconfiguration.sh $BUILD_ENV
-          source awsenvconf               
-    - run:
-        name: "Buidling OR file"
-        command: |
-          source awsenvconf
-          ./buildproperties.sh -e $BUILD_ENV -k onlinereviewappv1
-          # mvn dependency:go-offline
-          mvn clean package
-    - save_cache: *save_cache_settings         
-    #- run:
-    #    name: Build Pacakge
-    #    command: ./build-package.sh $APPNAME            
-    #- run:
-    #    name: "Deployment OR app and direct web"
-    #    command: |
-    #      source awsenvconf
-    #      ./buildenv.sh -e $DEPLOY_ENV -b ${APPNAME}-deployvar
-    #      source buildenvvar
-    #      source apppackagever          
-    #      echo "executing deploy"
-    #      ./deploy.sh $BUILD_ENV $ORAPPVER $APPNAME
-    - persist_to_workspace: *workspace_persist
+build_steps: &build_steps # Initialization.
+  - run: *install_dependency
+  - checkout
+  - run: *install_deploysuite
+  - run: *fetch_component_src
+  - restore_cache: *restore_cache_settings_for_build
+  - run: *build_components
+  #- run:
+  #    name: Fetching Libraries
+  #    command: |
+  #      sed -i "s/master/$SUBMODULE_BRANCH/g" .gitmodules
+  #      git submodule init
+  #      git submodule update --remote
+  - run:
+      name: "AWS Configuration"
+      command: |
+        ./awsconfiguration.sh $BUILD_ENV
+        source awsenvconf
+  - run:
+      name: "Buidling OR file"
+      command: |
+        source awsenvconf
+        ./buildproperties.sh -e $BUILD_ENV -k onlinereviewappv1
+        # mvn dependency:go-offline
+        mvn clean package
+  - save_cache: *save_cache_settings
+  #- run:
+  #    name: Build Pacakge
+  #    command: ./build-package.sh $APPNAME
+  #- run:
+  #    name: "Deployment OR app and direct web"
+  #    command: |
+  #      source awsenvconf
+  #      ./buildenv.sh -e $DEPLOY_ENV -b ${APPNAME}-deployvar
+  #      source buildenvvar
+  #      source apppackagever
+  #      echo "executing deploy"
+  #      ./deploy.sh $BUILD_ENV $ORAPPVER $APPNAME
+  - persist_to_workspace: *workspace_persist
 
 deploy_steps: &deploy_steps
-    - attach_workspace: *workspace_attach
-    - setup_remote_docker
-    - run: *install_deploy_dependency
-    - run: *install_deploysuite
-    - run: 
-       name: Build image
-       command: |  
-         mv project/* .  
-         ./buildimage.sh ${APPNAME}
-    - deploy:
-        name: Running MasterScript.
-        command: |
-          ./awsconfiguration.sh $DEPLOY_ENV
-          source awsenvconf
-          ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-deployvar
-          source buildenvvar
-          ./master_deploy.sh -d ECS -e $DEPLOY_ENV -t latest -s ${LOGICAL_ENV}-${APPNAME}-appvar -i ${APPNAME}
+  - attach_workspace: *workspace_attach
+  - setup_remote_docker
+  - run: *install_deploy_dependency
+  - run: *install_deploysuite
+  - run:
+      name: Build image
+      command: |
+        mv project/* .  
+        ./buildimage.sh ${APPNAME}
+  - deploy:
+      name: Running MasterScript.
+      command: |
+        ./awsconfiguration.sh $DEPLOY_ENV
+        source awsenvconf
+        ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-deployvar
+        source buildenvvar
+        ./master_deploy.sh -d ECS -e $DEPLOY_ENV -t latest -s ${LOGICAL_ENV}-${APPNAME}-appvar -i ${APPNAME}
 
 jobs:
   # Build & Deploy against development backend
@@ -147,11 +146,11 @@ jobs:
     <<: *defaults
     environment:
       BUILD_ENV: "PROD"
-      LOGICAL_ENV: "prod" 
-      DEPLOY_ENV: "PROD"      
-      COMPONENT_BRANCH: "master"      
-      APPNAME: "tc-online-review"                 
-    steps: *build_steps 
+      LOGICAL_ENV: "prod"
+      DEPLOY_ENV: "PROD"
+      COMPONENT_BRANCH: "master"
+      APPNAME: "tc-online-review"
+    steps: *build_steps
 
   deployDev:
     <<: *deploy_defaults
@@ -174,7 +173,7 @@ workflows:
   build:
     jobs:
       - build-dev:
-          context : org-global      
+          context: org-global
           filters:
             branches:
               only:
@@ -182,23 +181,23 @@ workflows:
                 - grpc
 
       - build-prod:
-          context : org-global      
+          context: org-global
           filters:
             branches:
-              only: [ master-maven ]
+              only: [master-maven]
 
       - deployDev:
-          context : org-global
+          context: org-global
           requires:
             - build-dev
-          filters: 
+          filters:
             branches:
               only:
                 - dev-maven
                 - grpc
 
       - deployProd:
-          context : org-global
+          context: org-global
           requires:
             - build-prod
           filters: &filters-prod

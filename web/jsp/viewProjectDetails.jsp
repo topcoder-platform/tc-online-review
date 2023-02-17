@@ -93,15 +93,17 @@
                     let id = with_forum?.[0]?.id;
                     if (id !== undefined) {
                         let forumLinkEl = document.querySelector('.projectInfo__forumLink');
-                        return forumLinkEl.href = "https://<%=ApplicationServer.FORUMS_SERVER_NAME%>/categories/" + id;
+                        if(forumLinkEl){
+                            forumLinkEl.classList.add("enabled");
+                            forumLinkEl.href = "https://<%=ApplicationServer.FORUMS_SERVER_NAME%>/categories/" + id;
+                        }
                     }
                 });
         }
+        let projectId = ${project.id};
+        updateForumLink(projectId);
 
         document.addEventListener("DOMContentLoaded", function(){
-            let projectId = ${project.id};
-            updateForumLink(projectId);
-
             let accordion = document.getElementsByClassName("projectDetails__accordion");
             for (let i = 0; i < accordion.length; i++) {
                 accordion[i].addEventListener("click", function() {
@@ -190,13 +192,20 @@
 <script type="text/javascript">
   window.onload = () => {
   var footerDetails = document.getElementById("footerNav").childNodes[0];
+  if (document.getElementById("footerNav")) {
+    var footerHeight = document.getElementById("footerNav").clientHeight;
+  }
   var cta = document.querySelector(".cta")
+  if (footerHeight) {
+    cta.style.bottom = (footerHeight) + 'px';
+  }
   footerDetails.children[0].addEventListener("click", function(){
     if (cta) {
         cta.classList.toggle("ctaOpen")
     }
   })
 }
+
 </script>
 </body>
 </html>

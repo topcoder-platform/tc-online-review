@@ -44,14 +44,17 @@
                         let id = with_forum?.[0]?.id;
                         if (id !== undefined) {
                             let forumLinkEl = document.querySelector('.projectInfo__forumLink');
-                            return forumLinkEl.href = "https://<%=ApplicationServer.FORUMS_SERVER_NAME%>/categories/" + id;
+                            if(forumLinkEl){
+                                forumLinkEl.classList.add("enabled");
+                                forumLinkEl.href = "https://<%=ApplicationServer.FORUMS_SERVER_NAME%>/categories/" + id;
+                            }
                         }
                     });
             }
-            document.addEventListener("DOMContentLoaded", function(){
-                let projectId = ${project.id};
-                updateForumLink(projectId);
+            let projectId = ${project.id};
+            updateForumLink(projectId);
 
+            document.addEventListener("DOMContentLoaded", function(){
                 let avatar = document.querySelector('.webHeader__avatar a');
                 let avatarImage = document.createElement('div');
                 avatarImage.className = "webHeader__avatarImage";
@@ -125,7 +128,10 @@
                                                 <c:choose>
                                                     <c:when test="${empty payment.pactsPaymentId}"><or:text key="projectPayments.box.Paid.No"/></c:when>
                                                     <c:otherwise>
-                                                        <or:text key="projectPayments.box.Paid.Yes"/>
+                                                        <div class="paymentTable__paid">
+                                                            <or:text key="projectPayments.box.Paid.Yes"/> <div class="paid__divider"></div>
+                                                            <a href="${pactsPaymentDetailBaseURL}${payment.pactsPaymentId}"><or:text key="projectPayments.box.Paid.View"/></a>
+                                                        </div>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>

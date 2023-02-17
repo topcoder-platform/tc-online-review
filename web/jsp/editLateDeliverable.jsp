@@ -311,8 +311,8 @@
                 <input type="hidden" property="saveLateDeliverableBtn" />
             </div>
         </c:if>
-        <jsp:include page="/includes/inc_footer_reskin.jsp" />
     </div>
+    <jsp:include page="/includes/inc_footer_reskin.jsp" />
 </div>
 </body>
 <script type="text/javascript">
