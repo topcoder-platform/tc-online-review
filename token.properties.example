@@ -250,3 +250,5 @@ challenge_v5_base_url=https://api.topcoder-dev.com/v5
 
 grpc_client_or_address=host.docker.internal
 grpc_client_or_port=9099
+grpc_client_orsync_address=host.docker.internal
+grpc_client_orsync_port=9098

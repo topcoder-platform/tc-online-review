@@ -150,20 +150,14 @@ public class SaveProjectPaymentsAction extends BaseProjectPaymentAction {
         for (Resource resource : resources) {
             allResources.put(resource.getId(), resource);
         }
-        updateResourceProperties(resourceManager, operator, getModel().getSubmitterPayments(), allResources);
-        updateResourceProperties(resourceManager, operator, getModel().getReviewerPayments(), allResources);
-        updateResourceProperties(resourceManager, operator, getModel().getCopilotPayments(), allResources);
+        List<Long> updatedResources = new ArrayList<>();
+        updateResourceProperties(resourceManager, operator, getModel().getSubmitterPayments(), allResources, updatedResources);
+        updateResourceProperties(resourceManager, operator, getModel().getReviewerPayments(), allResources, updatedResources);
+        updateResourceProperties(resourceManager, operator, getModel().getCopilotPayments(), allResources, updatedResources);
 
         PaymentsHelper.processAutomaticPayments(projectId, operator);
         PaymentsHelper.updateProjectResultPayments(GrpcHelper.getPhaseHandlerServiceRpc(), projectId);
-
-        EventBusServiceClient.fireProjectPaymentUpdateEvent(projectId, AuthorizationHelper.getLoggedInUserId(request), this.getModel());
-
-        // publish payment updated event
-        Map<String, Object> updateValues = new HashMap<>();
-        List<ProjectPayment> newPayments = ActionsHelper.createProjectPaymentManager().search(ProjectPaymentFilterBuilder.createProjectIdFilter(projectId));
-        updateValues.put("payments", newPayments);
-        EventBusServiceClient.fireChallengeUpdateEvent(projectId, AuthorizationHelper.getLoggedInUserId(request), updateValues);
+        GrpcHelper.getSyncServiceRpc().SaveProjectPaymentsSync(projectId, updatedResources);
 
         setPid(projectId);
         // Return success forward
@@ -182,7 +176,7 @@ public class SaveProjectPaymentsAction extends BaseProjectPaymentAction {
      */
     private static void updateResourceProperties(ResourceManager resourceManager, String operator,
                                                  List<ResourcePayments> resourcePayments,
-                                                 Map<Long, Resource> allResources)
+                                                 Map<Long, Resource> allResources, List<Long> updatedResources)
         throws BaseException {
         for (ResourcePayments payments : resourcePayments) {
             Resource resource = allResources.get(payments.getResourceId());
@@ -190,6 +184,7 @@ public class SaveProjectPaymentsAction extends BaseProjectPaymentAction {
             if (payments.getAutomatic() != isAutomatic) {
                 resource.setProperty("Manual Payments", payments.getAutomatic() ? "false" : "true");
                 resourceManager.updateResource(resource, operator);
+                updatedResources.add(resource.getId());
             }
         }
     }

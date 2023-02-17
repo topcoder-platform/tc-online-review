@@ -5,7 +5,6 @@ package com.cronos.onlinereview.actions.projectreview;
 
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.actions.DynamicModelDrivenAction;
-import com.cronos.onlinereview.actions.event.EventBusServiceClient;
 import com.cronos.onlinereview.model.DynamicModel;
 import com.cronos.onlinereview.model.FormFile;
 import com.cronos.onlinereview.util.ActionsHelper;
@@ -20,6 +19,7 @@ import com.topcoder.onlinereview.component.exception.BaseException;
 import com.topcoder.onlinereview.component.fileupload.FileUpload;
 import com.topcoder.onlinereview.component.fileupload.FileUploadResult;
 import com.topcoder.onlinereview.component.fileupload.UploadedFile;
+import com.topcoder.onlinereview.component.grpcclient.GrpcHelper;
 import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.project.phase.OnlineReviewServices;
 import com.topcoder.onlinereview.component.project.phase.Phase;
@@ -1443,25 +1443,17 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         // Determine which action should be performed - creation or updating
         if (verification.getReview() == null) {
             revMgr.createReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-            EventBusServiceClient.fireReviewCreate(review, AuthorizationHelper.getLoggedInUserId(request), reviewType);
         } else {
             revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-            EventBusServiceClient.fireReviewUpdate(review, Long.parseLong(review.getCreationUser()), AuthorizationHelper.getLoggedInUserId(request), reviewType);
         }
-        Map<String, Object> updateValues = new HashMap<>();
-        updateValues.put("review", review);
+
 
         // This operation will possibly update final aggregated score for the submitter
         if (possibleFinalScoreUpdate) {
-            Object winnerId = project.getProperty("Winner External Reference ID");
             updateFinalAggregatedScore(request, project, phase, verification.getSubmission());
-            Object newWinnerId = ActionsHelper.createProjectManager().getProject(verification.getProject().getId()).getProperty("Winner External Reference ID");
-            if (newWinnerId != null && !newWinnerId.equals(winnerId)) {
-                updateValues.put("winners", newWinnerId);
+            if (verification.getSubmission().getFinalScore() != null) {
+                GrpcHelper.getSyncServiceRpc().SaveReviewSync(project.getId());
             }
-        }
-        if (!updateValues.isEmpty()) {
-            EventBusServiceClient.fireChallengeUpdateEvent(verification.getProject().getId(), AuthorizationHelper.getLoggedInUserId(request), updateValues);
         }
 
         if (commitRequested) {
@@ -2030,4 +2022,3 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         this.rid = rid;
     }
 }
-

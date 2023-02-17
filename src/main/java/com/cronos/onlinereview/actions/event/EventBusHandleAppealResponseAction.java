@@ -4,11 +4,6 @@
 package com.cronos.onlinereview.actions.event;
 
 import com.cronos.onlinereview.actions.BaseServletAwareAction;
-import com.cronos.onlinereview.util.ActionsHelper;
-import com.cronos.onlinereview.util.AuthorizationHelper;
-import com.topcoder.onlinereview.component.review.ReviewManager;
-import com.topcoder.onlinereview.component.review.Review;
-import com.topcoder.onlinereview.component.scorecard.ScorecardType;
 import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
@@ -30,15 +25,6 @@ public class EventBusHandleAppealResponseAction extends BaseServletAwareAction {
      * @return the execution result
      */
     public String execute() throws BaseException {
-        String reviewId = request.getParameter("reviewId");
-        long userId = AuthorizationHelper.getLoggedInUserId(request);
-
-        ReviewManager revManager = ActionsHelper.createReviewManager();
-        Review rev = revManager.getReview(Long.parseLong(reviewId));
-        ScorecardType scType = ActionsHelper.createScorecardManager().getScorecard(rev.getScorecard()).getScorecardType();
-        
-        EventBusServiceClient.fireReviewUpdate(rev, Long.parseLong(rev.getCreationUser()), userId, scType.getName());
-
         return NONE;
     }
 }

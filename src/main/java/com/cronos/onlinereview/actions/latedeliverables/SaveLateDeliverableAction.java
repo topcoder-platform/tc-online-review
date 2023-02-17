@@ -11,7 +11,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.actions.event.EventBusServiceClient;
 import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.topcoder.onlinereview.component.external.UserRetrieval;
 import com.cronos.onlinereview.functions.Functions;
@@ -19,7 +18,6 @@ import com.cronos.onlinereview.model.DynamicModel;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.ConfigHelper;
-import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
 import com.topcoder.onlinereview.component.deliverable.late.LateDeliverable;
 import com.topcoder.onlinereview.component.deliverable.late.LateDeliverableManager;
@@ -191,13 +189,6 @@ public class SaveLateDeliverableAction extends BaseLateDeliverableAction {
                             sendEmailToLateMember(lateDeliverable, request);
                         }
                     }
-
-                    // fire the late deliverable update event
-                    EventBusServiceClient.fireLateDeliverableUpdateEvent(
-                            lateDeliverable.getProjectId(), lateDeliverableUserId, lateDeliverable.getId(),
-                            ActionsHelper.explanationDeadline(lateDeliverable), lateDeliverable.getExplanation(), 
-                            isLateDeliverableOwner ? 0 : currentUserId,
-                            lateDeliverable.isForgiven(), lateDeliverable.getResponse());
                    
                     this.setId(lateDeliverable.getId());
                     return Constants.SUCCESS_FORWARD_NAME;
@@ -430,4 +421,3 @@ public class SaveLateDeliverableAction extends BaseLateDeliverableAction {
         this.id = id;
     }
 }
-
