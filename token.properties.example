@@ -247,3 +247,6 @@ aws_s3_secret_key=
 
 challenge_base_url=https\\://challenges.topcoder-dev.com/projects
 challenge_v5_base_url=https://api.topcoder-dev.com/v5
+
+grpc_client_or_address=host.docker.internal
+grpc_client_or_port=9099

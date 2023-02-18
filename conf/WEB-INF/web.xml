@@ -11,7 +11,6 @@
 		<param-value>
 			/WEB-INF/actions.xml
 			/WEB-INF/applicationContext.xml
-            /WEB-INF/searchBundle.xml
             /WEB-INF/phaseHandlers.xml
 		</param-value>
 	</context-param>
@@ -112,11 +111,4 @@
         <welcome-file>index.html</welcome-file>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
-
-    <resource-ref>
-      <res-ref-name>jdbc/DefaultDS</res-ref-name>
-      <res-type>javax.sql.DataSource</res-type>
-      <res-auth>Container</res-auth>
-      <res-sharing-scope>Shareable</res-sharing-scope>
-    </resource-ref>
 </web-app>

@@ -94,7 +94,6 @@ import static com.cronos.onlinereview.Constants.SPECIFICATION_REVIEW_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.SPECIFICATION_SUBMISSION_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.SUBMISSION_PHASE_NAME;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.topcoder.onlinereview.component.util.SpringUtils.getCommonJdbcTemplate;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -2301,7 +2300,7 @@ public class SaveProjectAction extends BaseProjectAction {
      * @throws BaseException if any error
      */
     private String retrieveUserPreference(long userId, int preferenceId) throws BaseException {
-        return getUserPreference().getValue(userId, preferenceId, getCommonJdbcTemplate());
+        return getUserPreference().getValue(userId, preferenceId);
     }
 
     /**

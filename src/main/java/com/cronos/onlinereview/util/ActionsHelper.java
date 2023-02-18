@@ -35,6 +35,8 @@ import com.topcoder.onlinereview.component.external.RetrievalException;
 import com.topcoder.onlinereview.component.external.UserRetrieval;
 import com.topcoder.onlinereview.component.fileupload.FileUpload;
 import com.topcoder.onlinereview.component.fileupload.LocalFileUpload;
+import com.topcoder.onlinereview.component.grpcclient.GrpcHelper;
+import com.topcoder.onlinereview.component.grpcclient.actionshelper.ActionsHelperServiceRpc;
 import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.project.management.ProjectLinkManager;
 import com.topcoder.onlinereview.component.project.management.ProjectManager;
@@ -74,9 +76,12 @@ import com.topcoder.onlinereview.component.search.filter.OrFilter;
 import com.topcoder.onlinereview.component.termsofuse.ProjectTermsOfUseDao;
 import com.topcoder.onlinereview.component.termsofuse.TermsOfUseDao;
 import com.topcoder.onlinereview.component.termsofuse.UserTermsOfUseDao;
+import com.topcoder.onlinereview.grpc.actionshelper.proto.DefaultScorecardProto;
+import com.topcoder.onlinereview.grpc.actionshelper.proto.DeliverabIdNameProto;
+import com.topcoder.onlinereview.grpc.actionshelper.proto.RatingProto;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -87,11 +92,6 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -105,16 +105,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.topcoder.onlinereview.component.util.CommonUtils.executeSql;
-import static com.topcoder.onlinereview.component.util.CommonUtils.executeSqlWithParam;
-import static com.topcoder.onlinereview.component.util.CommonUtils.executeUpdateSql;
-import static com.topcoder.onlinereview.component.util.CommonUtils.getInt;
-import static com.topcoder.onlinereview.component.util.CommonUtils.getLong;
-import static com.topcoder.onlinereview.component.util.CommonUtils.getString;
 import static com.topcoder.onlinereview.component.util.SpringUtils.getBean;
-import static com.topcoder.onlinereview.component.util.SpringUtils.getPropertyValue;
-import static com.topcoder.onlinereview.component.util.SpringUtils.getTcsJdbcTemplate;
 
 /**
  * <p>
@@ -2438,86 +2429,51 @@ public class ActionsHelper {
         if (!isProjectResultCategory(categoryId)) {
             return;
         }
-        JdbcTemplate jdbcTemplate = getTcsJdbcTemplate();
+        ActionsHelperServiceRpc actionsHelperServiceRpc = GrpcHelper.getActionsHelperServiceRpc();
         long projectId = project.getId();
         // retrieve and update component_inquiry_id
-        long componentInquiryId = getNextComponentInquiryId(jdbcTemplate, newSubmitters.size());
+        long componentInquiryId = getNextComponentInquiryId(newSubmitters.size());
         long componentId = getProjectLongValue(project, "Component ID");
         long phaseId = 111 + project.getProjectCategory().getId();
         log.debug("calculated phaseId for Project: " + projectId + " phaseId: " + phaseId);
         long version = getProjectLongValue(project, "Version ID");
-        List<List<Object>> psParams = new ArrayList<>();
-        List<List<Object>> comParams = new ArrayList<>();
         for (Long userId : newSubmitters) {
+
             // Check if projectResult exist
-            boolean existPR = !executeSqlWithParam(jdbcTemplate, "SELECT 1 FROM PROJECT_RESULT WHERE user_id = ? and project_id = ?", newArrayList(userId, projectId)).isEmpty();
+            boolean existPR = actionsHelperServiceRpc.isProjectResultExists(userId, projectId);
 
             // Check if component_inquiry exist
-            boolean existCI = !executeSqlWithParam(jdbcTemplate, "SELECT 1 FROM component_inquiry WHERE user_id = ? and project_id = ?", newArrayList(userId, projectId)).isEmpty();
+            boolean existCI = actionsHelperServiceRpc.isComponentInquiryExists(userId, projectId);
 
             // Retrieve oldRating
             double oldRating = 0;
             if (!existPR || !existCI) {
-                List<Map<String, Object>> rs = executeSqlWithParam(jdbcTemplate, "SELECT rating, phase_id, (select project_category_id from project where project_id = ?) as project_category_id from user_rating where user_id = ? ", newArrayList(projectId, userId));
+                List<RatingProto> ratings =  actionsHelperServiceRpc.getRatings(userId, projectId);
                 // If the project belongs to a rated category, the user gets the rating that
                 // belongs to the
                 // category. Otherwise, the highest available rating is used.
-                for (Map<String, Object> row: rs) {
-                    if (!isRatedCategory(getLong(row, "project_category_id"))) {
-                        if (oldRating < getLong(row, "rating")) {
-                            oldRating = getLong(row, "rating");
+                for (RatingProto rating: ratings) {
+                    if (!isRatedCategory(rating.getProjectCategoryId())) {
+                        if (oldRating < rating.getRating()) {
+                            oldRating = rating.getRating();
                         }
-                    } else if (getLong(row, "project_category_id") + 111 == getLong(row, "phase_id")) {
-                        oldRating = getLong(row, "rating");
+                    } else if (rating.getProjectCategoryId() + 111 == rating.getPhaseId()) {
+                        oldRating = rating.getRating();
                     }
                 }
             }
 
             if (!existPR) {
                 // add project_result
-                List<Object> param = new ArrayList<>();
-                param.add(projectId);
-                param.add(userId);
-                param.add(0L);
-                param.add(0L);
-                if (oldRating == 0) {
-                    param.add(null);
-                } else {
-                    param.add(oldRating);
-                }
-                psParams.add(param);
+                actionsHelperServiceRpc.createProjectResult(userId, projectId, 0L, 0L, oldRating == 0 ? null : oldRating);
             }
 
             // add component_inquiry
             if (!existCI && componentId > 0) {
                 log.debug("adding component_inquiry for projectId: " + projectId + " userId: " + userId);
-                List<Object> comParam = new ArrayList<>();
-                comParam.add(componentInquiryId++);
-                comParam.add(componentId);
-                comParam.add(userId);
-                comParam.add(projectId);
-                // All competition types except for design and development should have null
-                // phase id.
-                if (categoryId == 1 || categoryId == 2) {
-                    comParam.add(phaseId);
-                } else {
-                    comParam.add(null);
-                }
-                comParam.add(userId);
-                comParam.add(oldRating);
-                comParam.add(version);
-                comParams.add(comParam);
+                actionsHelperServiceRpc.createComponentInquiry(componentInquiryId++, componentId, userId, projectId,
+                        categoryId == 1 || categoryId == 2 ? phaseId : null, userId, 1L, oldRating, version);
             }
-        }
-        for (List<Object> param: psParams) {
-            executeUpdateSql(jdbcTemplate, "INSERT INTO project_result "
-                    + "(project_id, user_id, rating_ind, valid_submission_ind, old_rating) "
-                    + "values (?, ?, ?, ?, ?)", param);
-        }
-        for (List<Object> param: comParams) {
-            executeUpdateSql(jdbcTemplate, "INSERT INTO component_inquiry "
-                    + "(component_inquiry_id, component_id, user_id, project_id, phase, tc_user_id, agreed_to_terms, rating, version, create_time) "
-                    + "values (?, ?, ?, ?, ?, ?, 1, ?, ?, current)", param);
         }
     }
 
@@ -2528,15 +2484,11 @@ public class ActionsHelper {
      * @return the root category id
      */
     public static String getRootCategoryIdByComponentId(Object componentId) {
-
+        ActionsHelperServiceRpc actionsHelperServiceRpc = GrpcHelper.getActionsHelperServiceRpc();
         try {
-            String sqlStr = "select root_category_id " + "    from comp_catalog cc," + "         categories pcat "
-                    + "    where cc.component_id = ? " + "    and cc.status_id = 102 "
-                    + "    and pcat.category_id = cc.root_category_id";
-
-            List<Map<String, Object>> rs = executeSqlWithParam(getTcsJdbcTemplate(), sqlStr, newArrayList(componentId.toString()));
-            if (!rs.isEmpty()) {
-                return getString(rs.get(0), "root_category_id");
+            String rootCategoryId = actionsHelperServiceRpc.getRootCategoryIdByComponentId(componentId.toString());
+            if (rootCategoryId != null) {
+                return rootCategoryId;
             }
         } catch (Exception e) {
             // Ignore if no corresponding root_category_id exist
@@ -2552,16 +2504,17 @@ public class ActionsHelper {
      * @throws BaseException if error occurs
      */
     public static List<DefaultScorecard> getDefaultScorecards() throws BaseException {
-        String sqlString = "select ds.*, st.name from default_scorecard ds, scorecard_type_lu st "
-                + "where ds.scorecard_type_id = st.scorecard_type_id";
-        List<Map<String, Object>> rs = executeSql(getTcsJdbcTemplate(), sqlString);
+        ActionsHelperServiceRpc actionsHelperServiceRpc = GrpcHelper.getActionsHelperServiceRpc();
+        List<DefaultScorecardProto> scorecards = actionsHelperServiceRpc.getDefaultScorecards();
         List<DefaultScorecard> list = new ArrayList<DefaultScorecard>();
-        for (Map<String, Object> row: rs) {
+        for (DefaultScorecardProto row : scorecards) {
             DefaultScorecard scorecard = new DefaultScorecard();
-            scorecard.setCategory(getInt(row, "project_category_id"));
-            scorecard.setScorecardType(getInt(row,"scorecard_type_id"));
-            scorecard.setScorecardId(getLong(row,"scorecard_id"));
-            scorecard.setName(getString(row,"name"));
+            scorecard.setCategory(row.getProjectCategoryId());
+            scorecard.setScorecardType(row.getScorecardTypeId());
+            scorecard.setScorecardId(row.getScorecardId());
+            if (row.hasName()) {
+                scorecard.setName(row.getName());
+            }
             list.add(scorecard);
         }
         return list;
@@ -2613,12 +2566,11 @@ public class ActionsHelper {
             // Only deal with submitters
             return;
         }
-
-        JdbcTemplate jdbcTemplate = getTcsJdbcTemplate();
+        ActionsHelperServiceRpc actionsHelperServiceRpc = GrpcHelper.getActionsHelperServiceRpc();
         // delete from project_result
-        executeUpdateSql(jdbcTemplate, "delete from project_result where project_id = ? and user_id = ?", newArrayList(project.getId(), userId));
+        actionsHelperServiceRpc.deleteProjectResult(project.getId(), userId);
         // delete from component_inquiry
-        executeUpdateSql(jdbcTemplate, "delete from component_inquiry where project_id = ? and user_id = ?", newArrayList(project.getId(), userId));
+        actionsHelperServiceRpc.deleteComponentInquiry(project.getId(), userId);
     }
 
     /**
@@ -2634,9 +2586,9 @@ public class ActionsHelper {
             if (isStudioProject(project)) {
                 PaymentsHelper.processAutomaticPayments(project.getId(), operator);
             } else {
-                PRHelper.populateProjectResult(project.getId(), operator);
+                PRHelper.populateProjectResult(GrpcHelper.getPhaseHandlerServiceRpc(), project.getId(), operator);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new BaseException("Failed to resetProjectResultWithChangedScores for project " + project.getId(), e);
         }
     }
@@ -2650,7 +2602,8 @@ public class ActionsHelper {
      * @throws BaseException if any error occurs
      */
     public static void updateProjectResultForAdvanceScreening(long projectId, long userId) throws BaseException {
-        executeUpdateSql(getTcsJdbcTemplate(), "update project_result set rating_ind=1, valid_submission_ind=1 where project_id=? and user_id=?", newArrayList(projectId, userId));
+        ActionsHelperServiceRpc actionsHelperServiceRpc = GrpcHelper.getActionsHelperServiceRpc();
+        actionsHelperServiceRpc.updateProjectResultForAdvanceScreening(projectId, userId);
     }
 
     /**
@@ -2662,11 +2615,12 @@ public class ActionsHelper {
      * @throws BaseException if error occurs
      */
     public static int getVersionUsingComponentVersionId(long componentVersionId) throws BaseException {
-        List<Map<String, Object>> rs = executeSqlWithParam(getTcsJdbcTemplate(), "select version from comp_versions where comp_vers_id = ?", newArrayList(componentVersionId));
-        if (!rs.isEmpty()) {
-            return getInt(rs.get(0), "version");
+        ActionsHelperServiceRpc actionsHelperServiceRpc = GrpcHelper.getActionsHelperServiceRpc();
+        Integer version = actionsHelperServiceRpc.getVersionUsingComponentVersionId(componentVersionId);
+        if (version == null) {
+            return 0;
         }
-        return 0;
+        return version;
     }
 
     /**
@@ -2677,20 +2631,13 @@ public class ActionsHelper {
      * @return next component_inquiry_id
      * @throws BaseException if any error
      */
-    private static long getNextComponentInquiryId(JdbcTemplate jdbcTemplate, int count) throws BaseException {
-        String tableName = getPropertyValue("component_inquiry.tablename");
-        String nameField = getPropertyValue("component_inquiry.name");
-        String currentValueField = getPropertyValue("component_inquiry.current_value");
-        String getNextID = "SELECT max(" + currentValueField + ") as seq_id FROM " + tableName + " WHERE " + nameField
-                + " = 'main_sequence'";
-        String updateNextID = "UPDATE " + tableName + " SET " + currentValueField + " = ? " + " WHERE " + nameField
-                + " = 'main_sequence'" + " AND " + currentValueField + " = ? ";
+    private static long getNextComponentInquiryId(int count) throws BaseException {
+        ActionsHelperServiceRpc actionsHelperServiceRpc = GrpcHelper.getActionsHelperServiceRpc();
         while (true) {
-            List<Map<String, Object>> rs = executeSql(jdbcTemplate, getNextID);
-            long currentValue = getLong(rs.get(0), "seq_id");
+            long currentValue = actionsHelperServiceRpc.getNextComponentInquiryId();
 
             // Update the next value
-            int ret = executeUpdateSql(jdbcTemplate, updateNextID, newArrayList(currentValue + count, currentValue));
+            int ret = actionsHelperServiceRpc.updateNextComponentInquiryId(currentValue + count, currentValue);
             if (ret > 0) {
                 return currentValue;
             }
@@ -2710,51 +2657,6 @@ public class ActionsHelper {
             return 0;
         } else {
             return Long.parseLong(obj.toString());
-        }
-    }
-
-    /**
-     * Close a JDBC Connection.
-     *
-     * @param connection JDBC Connection to close.
-     */
-    private static void close(Connection connection) {
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                log.debug("Error closing JDBC Connection: " + e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * Close a JDBC Statement.
-     *
-     * @param statement JDBC Statement to close.
-     */
-    private static void close(Statement statement) {
-        if (statement != null) {
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                log.error("Error closing JDBC Statement: " + e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * Close a JDBC ResultSet.
-     *
-     * @param resultSet JDBC ResultSet to close.
-     */
-    private static void close(ResultSet resultSet) {
-        if (resultSet != null) {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                log.debug("Error closing JDBC ResultSet: " + e.getMessage());
-            }
         }
     }
 
@@ -3049,10 +2951,10 @@ public class ActionsHelper {
 
         if (idToNameMap == null) {
             idToNameMap = new HashMap<>();
-            List<Map<String, Object>> rs = executeSql(getTcsJdbcTemplate(), "SELECT deliverable_id, name FROM deliverable_lu");
-
-            for (Map<String, Object> row: rs) {
-                idToNameMap.put(getLong(row, "deliverable_id"), getString(row, "name"));
+            ActionsHelperServiceRpc actionsHelperServiceRpc = GrpcHelper.getActionsHelperServiceRpc();
+            List<DeliverabIdNameProto> deliveribles = actionsHelperServiceRpc.getDeliverableIdToNameMap();
+            for (DeliverabIdNameProto row: deliveribles) {
+                idToNameMap.put(row.getDeliverableId(), row.getName());
             }
 
             request.setAttribute("deliverableIdToNameMap", idToNameMap);
@@ -3151,18 +3053,10 @@ public class ActionsHelper {
      */
     public static void logDownloadAttempt(HttpServletRequest request, Upload upload, boolean successful)
             throws BaseException {
-        Connection conn = null;
-        PreparedStatement insertStmt = null;
-        List<Object> params = new ArrayList<>();
-        params.add(upload.getId());
-        if (AuthorizationHelper.isUserLoggedIn(request)) {
-            params.add(AuthorizationHelper.getLoggedInUserId(request));
-        } else {
-            params.add(null);
-        }
-        params.add(request.getRemoteAddr());
-        params.add(successful);
-        executeUpdateSql(getTcsJdbcTemplate(), "INSERT INTO project_download_audit VALUES (?,?,?,?,current)", params);
+        ActionsHelperServiceRpc actionsHelperServiceRpc = GrpcHelper.getActionsHelperServiceRpc();
+        actionsHelperServiceRpc.logDownloadAttempt(upload.getId(),
+                AuthorizationHelper.isUserLoggedIn(request) ? AuthorizationHelper.getLoggedInUserId(request) : null,
+                request.getRemoteAddr(), successful);
     }
 
     /**
