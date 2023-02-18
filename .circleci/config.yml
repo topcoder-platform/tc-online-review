@@ -11,6 +11,7 @@ install_deploy_dependency: &install_deploy_dependency
   name: Installation of build and deployment dependencies.
   command: |
     pip3 install awscli --upgrade
+    pip3 install ecscli --upgrade
 
 install_dependency: &install_dependency
   name: Installation of build dependencies.
@@ -118,16 +119,22 @@ deploy_steps: &deploy_steps
   - run:
       name: Build image
       command: |
-        mv project/* .  
-        ./buildimage.sh ${APPNAME}
+        mv project/* .
+        ./awsconfiguration.sh $DEPLOY_ENV
+        source awsenvconf  
+        ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-buildvar
+        #./buildimage.sh ${APPNAME}
+        source buildenvvar
+        ./buildimagev1.sh ${APPNAME}
   - deploy:
       name: Running MasterScript.
       command: |
-        ./awsconfiguration.sh $DEPLOY_ENV
+        #./awsconfiguration.sh $DEPLOY_ENV
         source awsenvconf
         ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-deployvar
         source buildenvvar
-        ./master_deploy.sh -d ECS -e $DEPLOY_ENV -t latest -s ${LOGICAL_ENV}-${APPNAME}-appvar -i ${APPNAME}
+        #./master_deploy.sh -d ECS -e $DEPLOY_ENV -t latest -s ${LOGICAL_ENV}-${APPNAME}-appvar -i ${APPNAME}
+        ./master_deploy.sh -d ECS -e $DEPLOY_ENV -m CLI -t latest -i ${APPNAME}
 
 jobs:
   # Build & Deploy against development backend
@@ -148,6 +155,7 @@ jobs:
       BUILD_ENV: "QA"
       LOGICAL_ENV: "qa"
       COMPONENT_BRANCH: "qa"
+      GRPC_BRANCH: "develop"
       DEPLOY_ENV: "QA"
       APPNAME: "tc-online-review"
     steps: *build_steps

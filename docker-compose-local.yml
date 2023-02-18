@@ -1,0 +1,40 @@
+version: '3'
+services:
+  tc-cache:
+    image: "redis:3.2.10"
+    ports:
+      - "6379:6379"
+  tc-fakesmtp:
+    image: munkyboy/fakesmtp
+    ports:
+      - "1025:25"
+  tc-informix:
+    image: "tc-informix:latest"
+    platform: linux/amd64
+    hostname: informix.cloud.topcoder.com
+    container_name: tc-online-db
+    build:
+      context: local/db
+    environment:
+      LICENSE: accept
+    ports:
+      - "2021:2021"
+      - "2022:2022"
+      - "27017:27017"
+      - "27018:27018"
+      - "27883:27883"
+    tty: true
+  tc-online-review:
+    image: tc-online-review:latest
+    depends_on:
+      - tc-informix
+      - tc-cache
+      - tc-fakesmtp
+    build:
+      context: .
+    ports:
+      - 8080:8080
+      - 9990:9990
+    environment:
+      - JAVA_OPTS= -Xms1G -Xmx1G -XX:MaxPermSize=256M -server
+      - TZ=America/Indiana/Indianapolis

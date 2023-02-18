@@ -1,40 +1,43 @@
-version: '3'
+version: "3"
 services:
-  tc-cache:
-    image: "redis:3.2.10"
+  tc-or-grpc-server:
+    image: tc-or-grpc-server:latest
+    container_name: tc-or-grpc-server
+    hostname: tc-or-grpc-server
+    restart: always
     ports:
-      - "6379:6379"
-  tc-fakesmtp:
-    image: munkyboy/fakesmtp
-    ports:
-      - "1025:25"
-  tc-informix:
-    image: "tc-informix:latest"
-    platform: linux/amd64
-    hostname: informix.cloud.topcoder.com
-    container_name: tc-online-db
-    build:
-      context: local/db
-    environment:
-      LICENSE: accept
-    ports:
-      - "2021:2021"
-      - "2022:2022"
-      - "27017:27017"
-      - "27018:27018"
-      - "27883:27883"
-    tty: true
+      - "0:9099"    
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: /aws/ecs/tc-online-review
+        awslogs-region: us-east-1
+        awslogs-stream-prefix: tc-or-grpc-server
+    env_file:
+      - api.env        
   tc-online-review:
     image: tc-online-review:latest
-    depends_on:
-      - tc-informix
-      - tc-cache
-      - tc-fakesmtp
+    container_name: tc-online-review
     build:
       context: .
+      dockerfile: ECSDockerfile    
+    restart: always
     ports:
-      - 8080:8080
-      - 9990:9990
+      - "0:8080"
+    links:
+      - tc-or-grpc-server
     environment:
-      - JAVA_OPTS= -Xms1G -Xmx1G -XX:MaxPermSize=256M -server
-      - TZ=America/Indiana/Indianapolis
+      - grpc_client_or_address=tc-or-grpc-server
+      - grpc_client_or_port=9099      
+    depends_on:
+      - grpc-or-server
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: /aws/ecs/tc-online-review
+        awslogs-region: us-east-1
+        awslogs-stream-prefix: tc_online_review
+    volumes:
+      - /nfs_shares/studiofiles/submissions:/nfs_shares/studiofiles/submissions
+      - /nfs_shares/tcssubmissions:/nfs_shares/tcssubmissions
+      - /nfs_shares/tcs-downloads:/nfs_shares/tcs-downloads

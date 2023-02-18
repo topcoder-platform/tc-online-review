@@ -1,0 +1,11 @@
+version: 1
+task_definition:
+  task_role_arn: ${AWS_ECS_TASK_ROLE_FULL_ARN}
+  services:
+    tc-or-grpc-server:
+      cpu_shares: 100
+      mem_limit: 1G
+    tc-online-review:
+      cpu_shares: 300
+      mem_limit: 6GB
+
