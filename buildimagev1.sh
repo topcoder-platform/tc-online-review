@@ -5,12 +5,12 @@ UPDATE_CACHE=""
 docker build -f ECSDockerfile -t $APP_NAME:latest .
 
 echo "DB_SERVER=$DB_SERVER" >>api.env
-echo "DB_PORT=$DB_PORT" >>api.en
+echo "DB_PORT=$DB_PORT" >>api.env
 echo "DB_INFORMIXSERVER=$DB_INFORMIXSERVER" >>api.env
 echo "DB_USERNAME=$DB_USERNAME" >>api.env
 echo "DB_PASSWORD=$DB_PASSWORD" >>api.env
 echo "DW_SERVER=$DW_SERVER" >>api.env
-echo "DW_PORT=$DW_PORT" >>api.en
+echo "DW_PORT=$DW_PORT" >>api.env
 echo "DW_INFORMIXSERVER=$DW_INFORMIXSERVER" >>api.env
 echo "DW_USERNAME=$DW_USERNAME" >>api.env
 echo "DW_PASSWORD=$DW_PASSWORD" >>api.env
