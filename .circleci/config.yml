@@ -11,7 +11,9 @@ install_deploy_dependency: &install_deploy_dependency
   name: Installation of build and deployment dependencies.
   command: |
     pip3 install awscli --upgrade
-    pip3 install ecscli --upgrade
+    #pip3 install ecscli --upgrade
+    sudo curl -Lo /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest
+    sudo chmod +x /usr/local/bin/ecs-cli
 
 install_dependency: &install_dependency
   name: Installation of build dependencies.
