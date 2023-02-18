@@ -284,7 +284,7 @@
                                 </td>
                                 </tr>
                                 </table>
-                                <div class="saveChanges__button viewManageButtom">
+                                <div class="saveChanges__button">
                                     <button id="saveChanges" form="ManageProject" value="Submit" class="saveChanges__save"><or:text key='btnSaveChanges.alt' /></button>
                                     <a href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />" class="saveChanges__cancel"><or:text key='btnCancel.alt' /></a>
                                 </div>
@@ -874,7 +874,7 @@
                                                         </tbody>
                                                     </table>
                                                 </div>
-                                                <div class="saveChanges__button viewManageButtom">
+                                                <div class="saveChanges__button">
                                                     <button id="reviewSaveBtn" form="SaveReviewPayments" value="Submit" class="saveChanges__save"><or:text key='btnSaveChanges.alt' /></button>
                                                     <a href="<or:url value='/actions/ViewProjectDetails?pid=${project.id}' />" class="saveChanges__cancel"><or:text key='btnCancel.alt' /></a>
                                                 </div>
@@ -887,6 +887,7 @@
                     </div><!-- //tabconentcontainer -->
                 </div>
             </div>
+        </div>
     </div>
     <jsp:include page="/includes/inc_footer_reskin.jsp" />
     </body>

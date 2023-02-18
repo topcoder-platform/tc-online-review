@@ -143,7 +143,7 @@
                         </div>
                     </div>
                 </div>
-                <div align="right" style="margin-top: 56px;">
+                <div align="right" style="margin-top: 56px; margin-bottom: 32px;">
                     <c:if test="${isAllowedToEditPayments}">
                         <a class="editPaymentBtn" href="EditProjectPayments?pid=${project.id}"><or:text key='projectPayments.btnEditPayments.alt' /></a>
                     </c:if>
