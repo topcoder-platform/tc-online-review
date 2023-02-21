@@ -3,6 +3,7 @@
  */
 package com.cronos.onlinereview.util;
 
+import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3URI;
@@ -209,7 +210,7 @@ public class ActionsHelper {
             s3BucketDmz = ConfigHelper.getS3BucketDmz();
             presignedExpireMillis = ConfigHelper.getPreSignedExpTimeMilis();
             //s3Client = new AmazonS3Client(new PropertiesCredentials(new File(credentialURL.getFile())));
-            s3Client = new AmazonS3Client();
+            s3Client = new AmazonS3Client(new InstanceProfileCredentialsProvider());
         } catch (Throwable e) {
             throw new RuntimeException("Failed load to Amazon S3 CLient", e);
         }
