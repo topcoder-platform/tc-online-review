@@ -3,8 +3,6 @@
  */
 package com.cronos.onlinereview.util;
 
-import com.amazonaws.auth.InstanceProfileCredentialsProvider;
-import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3URI;
 import com.amazonaws.services.s3.model.GetObjectRequest;
