@@ -1,6 +1,5 @@
 version: 1
 task_definition:
-  task_role_arn: ${AWS_ECS_TASK_ROLE_FULL_ARN}
   services:
     tc-or-grpc-server:
       cpu_shares: 100
