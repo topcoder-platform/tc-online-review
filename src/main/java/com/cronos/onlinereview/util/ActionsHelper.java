@@ -210,7 +210,8 @@ public class ActionsHelper {
             s3BucketDmz = ConfigHelper.getS3BucketDmz();
             presignedExpireMillis = ConfigHelper.getPreSignedExpTimeMilis();
             //s3Client = new AmazonS3Client(new PropertiesCredentials(new File(credentialURL.getFile())));
-            s3Client = new AmazonS3Client(new InstanceProfileCredentialsProvider());
+            //s3Client = new AmazonS3Client(new InstanceProfileCredentialsProvider());
+            s3Client = new AmazonS3Client();
         } catch (Throwable e) {
             throw new RuntimeException("Failed load to Amazon S3 CLient", e);
         }

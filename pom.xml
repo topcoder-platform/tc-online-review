@@ -147,7 +147,7 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
-            <version>1.7.3</version>
+            <version>1.9.26</version>
         </dependency>
         <dependency>
             <groupId>commons-beanutils</groupId>
