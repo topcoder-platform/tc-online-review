@@ -168,7 +168,7 @@ public class ActionsHelper {
     /**
      * The AWS credentials file.
      */
-    private static final String AWS_CREDENTIALS_FILE = "AwsS3Credentials.properties";
+    //private static final String AWS_CREDENTIALS_FILE = "AwsS3Credentials.properties";
 
     /**
      * FileUpload namespace for develop challenge
