@@ -249,6 +249,9 @@ public class SaveProjectAction extends BaseProjectAction {
         ResourceManager resourceManager = ActionsHelper.createResourceManager();
         // This variable determines whether status of the project has been changed by this save operation.
         boolean statusHasChanged = false;
+        boolean categoryHasChanged = false;
+        boolean directProjectIdHasChanged = false;
+        boolean externalRefIdHasChanged = false;
         if (newProject) {
             // Find "Active" project status
             ProjectStatus activeStatus = LookupHelper.getProjectStatus("Active");
@@ -275,6 +278,9 @@ public class SaveProjectAction extends BaseProjectAction {
             if (projectCategory.getProjectType().isGeneric()) {
                 return ActionsHelper.produceErrorReport(this, request,
                         Constants.CREATE_PROJECT_PERM_NAME, "Error.GenericProjectType", Boolean.TRUE);
+            }
+            if (projectCategory.getId() != project.getProjectCategory().getId()) {
+                categoryHasChanged = true;
             }
             project.setProjectCategory(projectCategory);
 
@@ -331,6 +337,9 @@ public class SaveProjectAction extends BaseProjectAction {
         project.setProperty("Component ID", componentId.equals(0l) ? null : componentId);
         // Populate project External Reference ID
         Long refId = (Long) getModel().get("external_reference_id");
+        if (!refId.equals(0l) && !project.getProperty("External Reference ID").equals(refId)) {
+            externalRefIdHasChanged = true;
+        }
         project.setProperty("External Reference ID", refId.equals(0l) ? null : refId);
 
         // Populate project dr points
@@ -385,6 +394,9 @@ public class SaveProjectAction extends BaseProjectAction {
                 project.setProperty("Billing Project", getModel().get("billing_project"));
                 String cockpitProjectId = (String) getModel().get("cockpit_project");
                 if (cockpitProjectId.trim().length() > 0) {
+                    if (!project.getTcDirectProjectId().equals(Long.parseLong(cockpitProjectId))) {
+                        directProjectIdHasChanged = true;
+                    }
                     project.setTcDirectProjectId(Long.parseLong(cockpitProjectId));
                 }
         }
@@ -400,15 +412,20 @@ public class SaveProjectAction extends BaseProjectAction {
         getProjectPrizesToBeUpdated(request, project, createdPrize, updatedPrize, removedPrize);
 
         Phase[] projectPhases;
+        boolean updated = false;
+        boolean phaseUpdated = false;
+        boolean resourceUpdated = false;
+        boolean prizeUpdated = false;
+        boolean submissionUpdated = false;
         if (!ActionsHelper.isErrorsPresent(request)) {
             // Save the project phases
             projectPhases = saveProjectPhases(newProject, request, project, phasesJsMap, phasesToDelete);
+            phaseUpdated = true;
         } else {
             // Retrieve and sort project phases
             projectPhases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
             Arrays.sort(projectPhases, new Comparators.ProjectPhaseComparer());
         }
-        boolean updated = false;
         if (!ActionsHelper.isErrorsPresent(request)) {
             updated = true;
             // The project has been saved, so pre-populate last modification timestamp
@@ -420,6 +437,7 @@ public class SaveProjectAction extends BaseProjectAction {
         if (!ActionsHelper.isErrorsPresent(request)) {
             // Save the project resources
             saveResources(request, project, projectPhases, phasesJsMap);
+            resourceUpdated = true;
         }
 
         if (!ActionsHelper.isErrorsPresent(request)) {
@@ -429,30 +447,36 @@ public class SaveProjectAction extends BaseProjectAction {
 
         // If needed switch project current phase
         if (!newProject && !ActionsHelper.isErrorsPresent(request)) {
-            switchProjectPhase(request, phasesJsMap);
+            boolean phaseEnded = switchProjectPhase(request, phasesJsMap);
+            if (phaseEnded) {
+                statusHasChanged = true;
+                submissionUpdated = true;
+            }
         }
 
         // Update the project prizes
         if (!ActionsHelper.isErrorsPresent(request)) {
             ProjectManager projectManager = ActionsHelper.createProjectManager();
             String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
-            List<Prize> newPrize = new ArrayList<>();
             for (Prize prize : createdPrize) {
                 prize.setProjectId(project.getId());
                 projectManager.createPrize(prize, operator);
-                newPrize.add(prize);
             }
             for (Prize prize : updatedPrize) {
                 projectManager.updatePrize(prize, operator);
-                newPrize.add(prize);
             }
             for (Prize prize : removedPrize) {
                 projectManager.removePrize(prize, operator);
             }
             PaymentsHelper.processAutomaticPayments(project.getId(), operator);
+            if (!createdPrize.isEmpty() || !updatedPrize.isEmpty() || !removedPrize.isEmpty()) {
+                prizeUpdated = true;
+            }
         }
         if (updated) {
-            GrpcHelper.getSyncServiceRpc().saveProjectSync(project.getId());
+            GrpcHelper.getSyncServiceRpc().saveProjectSync(project.getId(), statusHasChanged, categoryHasChanged,
+                    externalRefIdHasChanged, directProjectIdHasChanged, phaseUpdated, resourceUpdated, prizeUpdated,
+                    submissionUpdated);
         }
         // Check if there are any validation errors and return appropriate forward
         if (ActionsHelper.isErrorsPresent(request)) {
@@ -1113,9 +1137,9 @@ public class SaveProjectAction extends BaseProjectAction {
      * @param phasesJsMap the phases js map
      * @throws BaseException if any error.
      */
-    private void switchProjectPhase(HttpServletRequest request,
+    private boolean switchProjectPhase(HttpServletRequest request,
                                     Map<Object, Phase> phasesJsMap) throws BaseException {
-
+        boolean phaseEnded = false;
         // Get name of action to be performed
         String action = (String) getModel().get("action");
 
@@ -1140,6 +1164,7 @@ public class SaveProjectAction extends BaseProjectAction {
                 if (phaseStatus.getName().equals(PhaseStatus.OPEN.getName()) && result.isSuccess()) {
                     // Close the phase
                     phaseManager.end(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                    phaseEnded = true;
                 } else {
                     ActionsHelper.addErrorToRequest(request, ActionsHelper.GLOBAL_MESSAGE,
                             "error.com.cronos.onlinereview.actions.editProject.CannotClosePhase",
@@ -1157,6 +1182,7 @@ public class SaveProjectAction extends BaseProjectAction {
                 }
             }
         }
+        return phaseEnded;
     }
 
     /**
