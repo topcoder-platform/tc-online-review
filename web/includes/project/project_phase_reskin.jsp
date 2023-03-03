@@ -1180,9 +1180,9 @@
                                                             <c:choose>
                                                                 <c:when test="${review.committed}">
                                                                     <c:choose>
-                                                                        <c:when test="${isSubmitter and not group.checkpointReviewFinished}">
+                                                                        <%-- <c:when test="${isSubmitter and not group.checkpointReviewFinished}">
                                                                             <or:text key="Pending"/>
-                                                                        </c:when>
+                                                                        </c:when> --%>
                                                                         <c:when test="${isAllowedToViewCheckpointReview}">
                                                                             <a href="<or:url value='/actions/ViewCheckpointReview?rid=${review.id}' />">
                                                                                 ${orfn:displayScore(pageContext.request, review.score)}</a>
