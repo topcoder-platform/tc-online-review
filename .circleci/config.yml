@@ -42,13 +42,16 @@ install_deploysuite: &install_deploysuite
 fetch_component_src: &fetch_component_src
   name: Installation of fetch_component_src.
   command: |
-    git clone --branch ${GRPC_BRANCH} https://github.com/topcoder-platform/online-review-interface-definition ../online-review-interface-definition
+    git clone --branch ${OR_INT_BRANCH} https://github.com/topcoder-platform/online-review-interface-definition ../online-review-interface-definition
+    git clone --branch ${PLAT_INT_BRANCH} https://github.com/topcoder-platform/plat-interface-definition.git ../plat-interface-definition
     git clone --branch ${COMPONENT_BRANCH} https://github.com/topcoder-platform/tc-online-review-backend ../tc-online-review-backend
 
 build_components: &build_components
   name: Building  of components
   command: |
     cd ../online-review-interface-definition
+    mvn clean install
+    cd ../plat-interface-definition
     mvn clean install
     cd ../tc-online-review-backend
     ./install-third-dep.sh      
@@ -145,9 +148,10 @@ jobs:
     environment:
       BUILD_ENV: "DEV"
       LOGICAL_ENV: "dev"
-      COMPONENT_BRANCH: "grpc"
-      GRPC_BRANCH: "develop"
       DEPLOY_ENV: "DEV"
+      COMPONENT_BRANCH: "dev"
+      OR_INT_BRANCH: "develop"
+      PLAT_INT_BRANCH: "main"
       APPNAME: "tc-online-review"
     steps: *build_steps
 
@@ -156,9 +160,10 @@ jobs:
     environment:
       BUILD_ENV: "QA"
       LOGICAL_ENV: "qa"
-      COMPONENT_BRANCH: "qa"
-      GRPC_BRANCH: "develop"
       DEPLOY_ENV: "QA"
+      COMPONENT_BRANCH: "qa"
+      OR_INT_BRANCH: "qa"
+      PLAT_INT_BRANCH: "main"
       APPNAME: "tc-online-review"
     steps: *build_steps
 
@@ -169,6 +174,8 @@ jobs:
       LOGICAL_ENV: "prod"
       DEPLOY_ENV: "PROD"
       COMPONENT_BRANCH: "master"
+      OR_INT_BRANCH: "main"
+      PLAT_INT_BRANCH: "main"
       APPNAME: "tc-online-review"
     steps: *build_steps
 
@@ -206,15 +213,14 @@ workflows:
             branches:
               only:
                 - dev-maven
-                - grpc
 
       - build-qa:
-          context : org-global      
+          context: org-global
           filters:
             branches:
               only:
                 - qa-maven
-                
+
       - build-prod:
           context: org-global
           filters:
@@ -229,13 +235,12 @@ workflows:
             branches:
               only:
                 - dev-maven
-                - grpc
 
       - deployQa:
-          context : org-global
+          context: org-global
           requires:
             - build-qa
-          filters: 
+          filters:
             branches:
               only:
                 - qa-maven
