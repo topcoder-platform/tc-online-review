@@ -3,14 +3,8 @@
  */
 package com.cronos.onlinereview.ejblibrary;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-
-import java.util.List;
-import java.util.Map;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.topcoder.onlinereview.component.util.CommonUtils.executeSqlWithParam;
-import static com.topcoder.onlinereview.component.util.CommonUtils.getString;
+import com.topcoder.onlinereview.component.grpcclient.GrpcHelper;
+import com.topcoder.onlinereview.component.grpcclient.actionshelper.ActionsHelperServiceRpc;
 
 /**
  * <code>User Preference EJB</code>.</p>
@@ -32,12 +26,12 @@ public class UserPreference {
      *            the data source
      * @return the value
      */
-    public String getValue(long userId, int preferenceId, JdbcTemplate jdbcTemplate) {
-        String query = "select value from  user_preference where user_id = ? and preference_id = ? ";
-        List<Map<String, Object>> rs = executeSqlWithParam(jdbcTemplate, query, newArrayList(userId, preferenceId));
-        if (rs.isEmpty()) {
+    public String getValue(long userId, int preferenceId) {
+        ActionsHelperServiceRpc actionsHelperServiceRpc = GrpcHelper.getActionsHelperServiceRpc();
+        String value = actionsHelperServiceRpc.getUserPreferenceValue(userId, preferenceId);
+        if (value == null) {
             return "false";
         }
-        return getString(rs.get(0), "value");
+        return value;
     }
 }

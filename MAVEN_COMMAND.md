@@ -5,10 +5,8 @@
 ## Deploy to JBoss
 
 1. build war dir `mvn clean package`
-2. copy `jboss_files/lib/ifxjdbc.jar` to `JBOSS_BASE/server/default/lib` this lib is for creating JNDI DataSources
-3. add `jboss_files/deploy/tcs_informix-ds.xml`(update the db host, user etc.) to `JBOSS_BASE/server/default/deploy` to create JNDI DataSources.
-4. copy `web/(css|i|js)` to `JBOSS_BASE/server/default/deploy/jbossweb-tomcat55.sar/ROOT.war` for static files
-5. copy `target/review` to `JBOSS_BASE/server/default/deploy/review.war`
+2. copy `web/(css|i|js)` to `JBOSS_BASE/server/default/deploy/jbossweb-tomcat55.sar/ROOT.war` for static files
+3. copy `target/review` to `JBOSS_BASE/server/default/deploy/review.war`
 
 ## Start JBoss
 

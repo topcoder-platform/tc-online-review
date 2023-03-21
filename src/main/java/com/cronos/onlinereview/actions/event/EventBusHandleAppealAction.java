@@ -4,7 +4,6 @@
 package com.cronos.onlinereview.actions.event;
 
 import com.cronos.onlinereview.actions.BaseServletAwareAction;
-import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.topcoder.onlinereview.component.exception.BaseException;
 
 /**
@@ -26,10 +25,6 @@ public class EventBusHandleAppealAction extends BaseServletAwareAction {
      * @return the execution result
      */
     public String execute() throws BaseException {
-        String challengeId = request.getParameter("challengeId");
-        long userId = AuthorizationHelper.getLoggedInUserId(request);
-        EventBusServiceClient.fireSubmissionCreateEvent(Long.parseLong(challengeId), userId, null, null, 0L, 
-                EventBusServiceClient.SUBMISSION_TYPE_ID_FOR_APPEAL);
         return NONE;
     }
 }

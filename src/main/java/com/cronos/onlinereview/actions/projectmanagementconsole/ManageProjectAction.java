@@ -4,7 +4,6 @@
 package com.cronos.onlinereview.actions.projectmanagementconsole;
 
 import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.actions.event.EventBusServiceClient;
 import com.cronos.onlinereview.model.DynamicModel;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
@@ -17,6 +16,8 @@ import com.topcoder.onlinereview.component.contest.ContestEligibilityValidatorEx
 import com.topcoder.onlinereview.component.exception.BaseException;
 import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.topcoder.onlinereview.component.external.UserRetrieval;
+import com.topcoder.onlinereview.component.grpcclient.GrpcHelper;
+import com.topcoder.onlinereview.component.grpcclient.sync.SyncServiceRpc;
 import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.project.phase.Phase;
 import com.topcoder.onlinereview.component.project.phase.PhaseManager;
@@ -28,7 +29,6 @@ import com.topcoder.onlinereview.component.resource.ResourceManager;
 import com.topcoder.onlinereview.component.resource.ResourceRole;
 import com.topcoder.onlinereview.component.termsofuse.ProjectTermsOfUseDao;
 import com.topcoder.onlinereview.component.termsofuse.TermsOfUse;
-import com.topcoder.onlinereview.component.termsofuse.TermsOfUseDao;
 import com.topcoder.onlinereview.component.termsofuse.TermsOfUsePersistenceException;
 import com.topcoder.onlinereview.component.termsofuse.UserTermsOfUseDao;
 
@@ -41,8 +41,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This class is the struts action class which is used to view the project management console.
@@ -95,13 +93,6 @@ public class ManageProjectAction extends BaseProjectManagementConsoleAction {
             // Validate the forms
             final Project project = verification.getProject();
             final Phase[] phases = getProjectPhases(project);
-            Map<Long, Map<String, Object>> oldTimeline = Stream.of(phases).collect(Collectors.toMap(p -> p.getId(), p -> {
-                Map<String, Object> timeline = new HashMap<>();
-                timeline.put("name", p.getPhaseType().getName());
-                timeline.put("scheduledStartDate", p.getScheduledStartDate());
-                timeline.put("scheduledEndDate", p.getScheduledEndDate());
-                return timeline;
-            }));
 
             // Validate that Registration phase indeed exists and can be extended based on current state of the project
             // and that valid positive amount of days to extend is provided
@@ -138,39 +129,30 @@ public class ManageProjectAction extends BaseProjectManagementConsoleAction {
             }
 
             // Validate the Add Resources form
-            Object[] caches = validateAddResourcesRequest(request, getModel());
+            Map<Long, ResourceRole> roleMapping = new HashMap<Long, ResourceRole>();
+            Map<String, ExternalUser> users = new HashMap<String, ExternalUser>();
+            validateAddResourcesRequest(request, getModel(), roleMapping, users);
 
             // Check if there were any validation errors identified and return appropriate forward
             if (ActionsHelper.isErrorsPresent(request)) {
                 initProjectManagementConsole(request, project);
                 return INPUT;
             } else {
-                Map<String, Object> updateValues = new HashMap<>();
+                List<Long> updatedResourceIds = new ArrayList<>();
                 handleRegistrationPhaseExtension(registrationPhase, registrationExtensionDays, request);
                 handleSubmissionPhaseExtension(submissionPhase, submissionExtensionDays, request);
-                handleResourceAddition(project, request, (Map<Long, ResourceRole>) caches[0],
-                                       (Map<String, ExternalUser>) caches[1], updateValues);
+                handleResourceAddition(project, request, (Map<Long, ResourceRole>) roleMapping,
+                                       (Map<String, ExternalUser>) users, updatedResourceIds);
+                boolean phaseUpdated = registrationExtensionDays > 0 || submissionExtensionDays > 0;
+                if (phaseUpdated || !updatedResourceIds.isEmpty()) {
+                    SyncServiceRpc syncServiceRpc = GrpcHelper.getSyncServiceRpc();
+                    syncServiceRpc.manageProjectSync(project.getId(), phaseUpdated, updatedResourceIds);
+                }
+                
                 if (ActionsHelper.isErrorsPresent(request)) {
                     initProjectManagementConsole(request, project);
                     return INPUT;
                 } else {
-                    // add timeline event
-                    if (registrationExtensionDays > 0 || submissionExtensionDays > 0) {
-                        List<Map<String, Object>> timeline = new ArrayList<>();
-                        for (Phase phase: phases) {
-                            Map<String, Object> p = new HashMap<>();
-                            p.put("name", phase.getPhaseType().getName());
-                            p.put("scheduledStartDate", phase.getScheduledStartDate());
-                            p.put("scheduledEndDate", phase.getScheduledEndDate());
-                            p.put("actualStartDate", phase.getActualStartDate());
-                            p.put("actualEndDate", phase.getActualEndDate());
-                            p.put("phaseStatus", phase.getPhaseStatus().getName());
-                            timeline.add(p);
-                        }
-                        updateValues.put("timeline", timeline);
-                    }
-                    // publish challenge property updated
-                    EventBusServiceClient.fireChallengeUpdateEvent(project.getId(), AuthorizationHelper.getLoggedInUserId(request), updateValues);
                     setPid(project.getId());
                     return SUCCESS;
                 }
@@ -307,8 +289,9 @@ public class ManageProjectAction extends BaseProjectManagementConsoleAction {
      *         <code>ExternalUser</code> objects.
      * @throws BaseException if an unexpected error occurs
      */
-    private Object[] validateAddResourcesRequest(HttpServletRequest request, DynamicModel model)
-        throws BaseException {
+    private void validateAddResourcesRequest(HttpServletRequest request, DynamicModel model,
+            Map<Long, ResourceRole> roleMapping, Map<String, ExternalUser> users)
+            throws BaseException {
 
         Long[] resourceRoleIds = (Long[]) model.get("resource_role_id");
         String[] resourceHandles = (String[]) model.get("resource_handles");
@@ -316,8 +299,6 @@ public class ManageProjectAction extends BaseProjectManagementConsoleAction {
         // Validate that current user is indeed granted permission to add resources of requested roles and that
         // requested roles exist and collect mapping from role IDs to ResourceRole objects to be used further if
         // validation succeeds
-        Map<Long, ResourceRole> roleMapping = new HashMap<Long, ResourceRole>();
-        Map<String, ExternalUser> users = new HashMap<String, ExternalUser>();
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
         for (int i = 0; i < resourceRoleIds.length; i++) {
             Long requestedRoleId = resourceRoleIds[i];
@@ -363,8 +344,6 @@ public class ManageProjectAction extends BaseProjectManagementConsoleAction {
                 }
             }
         }
-
-        return new Object[] {roleMapping, users};
     }
 
     /**
@@ -380,12 +359,11 @@ public class ManageProjectAction extends BaseProjectManagementConsoleAction {
      */
     private void handleResourceAddition(Project project, HttpServletRequest request,
                                         Map<Long, ResourceRole> roleMapping, Map<String, ExternalUser> users,
-                                        Map<String, Object> updatedValue)
+                                        List<Long> updatedResourceIds)
         throws BaseException, RemoteException {
 
         Long[] resourceRoleIds = (Long[]) getModel().get("resource_role_id");
         String[] resourceHandles = (String[]) getModel().get("resource_handles");
-        boolean resourceUpdated = false;
 
         ResourceManager resourceManager = ActionsHelper.createResourceManager();
 
@@ -482,15 +460,11 @@ public class ManageProjectAction extends BaseProjectManagementConsoleAction {
 
                             resourceManager.updateResource(resource,
                                     Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                            resourceUpdated = true;
+                            updatedResourceIds.add(resource.getId());
                         }
                     }
                 }
             }
-        }
-        if (resourceUpdated) {
-            updatedValue.put("resources", resourceManager.searchResources(
-                    ResourceFilterBuilder.createProjectIdFilter(project.getId())));
         }
 
         // If there were any duplicates in resources then bind appropriate messages to request
@@ -589,7 +563,6 @@ public class ManageProjectAction extends BaseProjectManagementConsoleAction {
         // get remote services
         ProjectTermsOfUseDao projectRoleTermsOfUse = ActionsHelper.getProjectTermsOfUseDao();
         UserTermsOfUseDao userTermsOfUse = ActionsHelper.getUserTermsOfUseDao();
-        TermsOfUseDao termsOfUse = ActionsHelper.getTermsOfUseDao();
 
         Map<Integer, List<TermsOfUse>> necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(
             (int) projectId, (int) roleId, null);

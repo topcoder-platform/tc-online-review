@@ -28,68 +28,9 @@
 
     <bean id="togglzConfiguration" class="com.cronos.onlinereview.config.TogglzConfiguration" />
 
-    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:jboss/datasources/TCS_CATALOG" />
-    </bean>
-
-    <bean id="oltpDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:jboss/datasources/OLTP" />
-    </bean>
-
-    <bean id="tcsDwDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:jboss/datasources/TCS_DW" />
-    </bean>
-
-    <bean id="commonDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:jboss/datasources/DS" />
-    </bean>
-
-    <bean id="tcsJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
-    <bean id="tcsDwJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-        <property name="dataSource" ref="tcsDwDataSource"/>
-    </bean>
-
-    <bean id="oltpJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-        <property name="dataSource" ref="oltpDataSource"/>
-    </bean>
-    <bean id="commonJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-        <property name="dataSource" ref="commonDataSource"/>
-    </bean>
-
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="dataSource" ref="dataSource"></property>
-        <property name="configLocation">
-            <value>classpath:securityGroupsHibernate.cfg.xml</value>
-        </property>
-        <property name="hibernateProperties">
-            <props>
-                <prop key="hibernate.max_fetch_depth">0</prop>
-            </props>
-        </property>
-    </bean>
-
-    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>
-
-    <tx:advice id="txAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="get*" read-only="true"/>
-            <tx:method name="*"/>
-        </tx:attributes>
-    </tx:advice>
-
-    <aop:config>
-        <aop:pointcut id="serviceOperation" expression="execution(* com.topcoder.onlinereview.component.security.groups.services.hibernate.*.*(..))"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation"/>
-    </aop:config>
-
     <bean id="authorizationService"
           class="com.topcoder.onlinereview.component.security.groups.services.hibernate.HibernateAuthorizationService"
           init-method="afterPropertiesSet">
-        <property name="sessionFactory" ref="sessionFactory" />
     </bean>
     <bean id="statusProjectValidator" class="com.cronos.onlinereview.util.StatusProjectValidator" />
     <bean id="phaseManager" class="com.topcoder.onlinereview.component.project.phase.PhaseManager" />
