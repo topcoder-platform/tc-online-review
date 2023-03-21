@@ -42,9 +42,9 @@ install_deploysuite: &install_deploysuite
 fetch_component_src: &fetch_component_src
   name: Installation of fetch_component_src.
   command: |
-    git clone --branch ${OR_INT_BRANCH} https://github.com/topcoder-platform/online-review-interface-definition ../online-review-interface-definition
-    git clone --branch ${PLAT_INT_BRANCH} https://github.com/topcoder-platform/plat-interface-definition.git ../plat-interface-definition
-    git clone --branch ${COMPONENT_BRANCH} https://github.com/topcoder-platform/tc-online-review-backend ../tc-online-review-backend
+    git clone --branch ${OR_INT_BRANCH} --depth 1 https://github.com/topcoder-platform/online-review-interface-definition ../online-review-interface-definition
+    git clone --branch ${PLAT_INT_BRANCH} --depth 1 https://github.com/topcoder-platform/plat-interface-definition.git ../plat-interface-definition
+    git clone --branch ${COMPONENT_BRANCH} --depth 1 https://github.com/topcoder-platform/tc-online-review-backend ../tc-online-review-backend
 
 build_components: &build_components
   name: Building  of components
@@ -150,8 +150,8 @@ jobs:
       LOGICAL_ENV: "dev"
       DEPLOY_ENV: "DEV"
       COMPONENT_BRANCH: "dev"
-      OR_INT_BRANCH: "develop"
-      PLAT_INT_BRANCH: "main"
+      OR_INT_BRANCH: "v0.0.2"
+      PLAT_INT_BRANCH: "v0.0.29"
       APPNAME: "tc-online-review"
     steps: *build_steps
 
@@ -162,8 +162,8 @@ jobs:
       LOGICAL_ENV: "qa"
       DEPLOY_ENV: "QA"
       COMPONENT_BRANCH: "qa"
-      OR_INT_BRANCH: "qa"
-      PLAT_INT_BRANCH: "main"
+      OR_INT_BRANCH: "v0.0.2"
+      PLAT_INT_BRANCH: "v0.0.29"
       APPNAME: "tc-online-review"
     steps: *build_steps
 
@@ -174,8 +174,8 @@ jobs:
       LOGICAL_ENV: "prod"
       DEPLOY_ENV: "PROD"
       COMPONENT_BRANCH: "master"
-      OR_INT_BRANCH: "main"
-      PLAT_INT_BRANCH: "main"
+      OR_INT_BRANCH: "v0.0.2"
+      PLAT_INT_BRANCH: "v0.0.29"
       APPNAME: "tc-online-review"
     steps: *build_steps
 

@@ -18,7 +18,7 @@ echo "DB_DS1=$DB_DS1" >>api.env
 echo "DB_DS2=$DB_DS2" >>api.env
 echo "DB_DS3=$DB_DS3" >>api.env
 echo "DB_DS4=$DB_DS4" >>api.env
-echo "GRPC_PORT=$GRPC_PORT" >>api.en
+echo "GRPC_PORT=$GRPC_PORT" >>api.env
 echo "GRPC_IMAGE=$GRPC_IMAGE" >>api.env
 
 TAG=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$AWS_REPOSITORY:$CIRCLE_BUILD_NUM
