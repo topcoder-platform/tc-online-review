@@ -272,6 +272,7 @@ public class SaveProjectAction extends BaseProjectAction {
             project.setProperty("Track Late Deliverables", "true");
             statusHasChanged = true; // Status is always considered to be changed for new projects
         } else {
+            /*
             long newCategoryId = (Long) getModel().get("project_category");
             // Sets Project category
             ProjectCategory projectCategory = LookupHelper.getProjectCategory(newCategoryId);
@@ -283,11 +284,11 @@ public class SaveProjectAction extends BaseProjectAction {
                 categoryHasChanged = true;
             }
             project.setProjectCategory(projectCategory);
-
+            */
         }
 
         // Populate project name
-        project.setProperty("Project Name", getModel().get("project_name"));
+        // project.setProperty("Project Name", getModel().get("project_name"));
         if (newProject) {
             // Populate project version (always set to 1.0)
             project.setProperty("Project Version", "1.0");
@@ -299,7 +300,7 @@ public class SaveProjectAction extends BaseProjectAction {
                 // As per Checkpoint Support assembly multiple submissions are not allowed for Studio projects for now
                 project.setProperty("Allow multiple submissions", false);
             } else {
-                project.setProperty("Root Catalog ID", ActionsHelper.getRootCategoryIdByComponentId(getModel().get("component_id")));
+                // project.setProperty("Root Catalog ID", ActionsHelper.getRootCategoryIdByComponentId(getModel().get("component_id")));
             }
             // Populate contest indicator flag
             project.setProperty("Contest Indicator", "On");
@@ -331,28 +332,28 @@ public class SaveProjectAction extends BaseProjectAction {
         }
 
         // Populate project forum id
-        project.setProperty("Developer Forum ID", getModel().get("forum_id"));
+        // project.setProperty("Developer Forum ID", getModel().get("forum_id"));
         // Populate project component id
-        Long componentId = (Long) getModel().get("component_id");
-        project.setProperty("Component ID", componentId.equals(0l) ? null : componentId);
+        // Long componentId = (Long) getModel().get("component_id");
+        // project.setProperty("Component ID", componentId.equals(0l) ? null : componentId);
         // Populate project External Reference ID
-        Long refId = (Long) getModel().get("external_reference_id");
-        if (!refId.equals(0l) && !project.getProperty("External Reference ID").equals(refId)) {
+        // Long refId = (Long) getModel().get("external_reference_id");
+        /* if (!refId.equals(0l) && !project.getProperty("External Reference ID").equals(refId)) {
             externalRefIdHasChanged = true;
-        }
-        project.setProperty("External Reference ID", refId.equals(0l) ? null : refId);
+        }*/
+        // project.setProperty("External Reference ID", refId.equals(0l) ? null : refId);
 
         // Populate project dr points
         Double drPoints = (Double) getModel().get("dr_points");
         project.setProperty("DR points", drPoints.equals(0d) ? null : drPoints);
-
+        /*
         if (newProject && getModel().get("external_reference_id") != null) {
             // Retrieve and populate version
             project.setProperty("Version ID",
                     ActionsHelper.getVersionUsingComponentVersionId(
                             (Long) getModel().get("external_reference_id")));
         }
-
+        */
         // Extract project's properties from the form
         Boolean autopilotOnObj = (Boolean) getModel().get("autopilot");
         Boolean sendEmailNotificationsObj = (Boolean) getModel().get("email_notifications");
@@ -391,6 +392,7 @@ public class SaveProjectAction extends BaseProjectAction {
         if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
                 || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
                  || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
+                /*
                 project.setProperty("Billing Project", getModel().get("billing_project"));
                 String cockpitProjectId = (String) getModel().get("cockpit_project");
                 if (cockpitProjectId.trim().length() > 0) {
@@ -399,6 +401,7 @@ public class SaveProjectAction extends BaseProjectAction {
                     }
                     project.setTcDirectProjectId(Long.parseLong(cockpitProjectId));
                 }
+                */
         }
         // Create the map to store the mapping from phase JS ids to phases
         Map<Object, Phase> phasesJsMap = new HashMap<Object, Phase>();
@@ -874,6 +877,7 @@ public class SaveProjectAction extends BaseProjectAction {
                         // Set phase fixed start date
                         Date phaseStartDate = parseDatetimeFormProperties(i, "phase_start_date", "phase_start_time");
                         phase.setFixedStartDate(phaseStartDate);
+                        phase.setScheduledStartDate(phaseStartDate);
                         // Check if the current date is minimal
                         if (minDate == null || phaseStartDate.getTime() < minDate.getTime()) {
                             minDate = phaseStartDate;
@@ -1096,7 +1100,7 @@ public class SaveProjectAction extends BaseProjectAction {
         Arrays.sort(projectPhases, new Comparators.ProjectPhaseComparer());
 
         // Validate the project phases
-        boolean validationSucceeded = validateProjectPhases(request, project, projectPhases);
+        boolean validationSucceeded = true; //validateProjectPhases(request, project, projectPhases);
 
         if (!validationSucceeded) {
             // If project validation has failed, return immediately
