@@ -415,7 +415,6 @@ public class SaveProjectAction extends BaseProjectAction {
         getProjectPrizesToBeUpdated(request, project, createdPrize, updatedPrize, removedPrize);
 
         Phase[] projectPhases;
-        boolean updated = false;
         boolean phaseUpdated = false;
         boolean resourceUpdated = false;
         boolean prizeUpdated = false;
@@ -423,14 +422,15 @@ public class SaveProjectAction extends BaseProjectAction {
         if (!ActionsHelper.isErrorsPresent(request)) {
             // Save the project phases
             projectPhases = saveProjectPhases(newProject, request, project, phasesJsMap, phasesToDelete);
-            phaseUpdated = true;
+            if (!ActionsHelper.isErrorsPresent(request)) {
+                phaseUpdated = true;
+            }
         } else {
             // Retrieve and sort project phases
             projectPhases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
             Arrays.sort(projectPhases, new Comparators.ProjectPhaseComparer());
         }
         if (!ActionsHelper.isErrorsPresent(request)) {
-            updated = true;
             // The project has been saved, so pre-populate last modification timestamp
             getModel().set("last_modification_time",
                 ActionsHelper.getLastModificationTime(project, projectPhases).getTime());
@@ -439,8 +439,7 @@ public class SaveProjectAction extends BaseProjectAction {
         // resources must be saved even if there are validation errors to validate resources
         if (!ActionsHelper.isErrorsPresent(request)) {
             // Save the project resources
-            saveResources(request, project, projectPhases, phasesJsMap);
-            resourceUpdated = true;
+            resourceUpdated = saveResources(request, project, projectPhases, phasesJsMap);
         }
 
         if (!ActionsHelper.isErrorsPresent(request)) {
@@ -476,11 +475,9 @@ public class SaveProjectAction extends BaseProjectAction {
                 prizeUpdated = true;
             }
         }
-        if (updated) {
-            GrpcHelper.getSyncServiceRpc().saveProjectSync(project.getId(), statusHasChanged, categoryHasChanged,
-                    externalRefIdHasChanged, directProjectIdHasChanged, phaseUpdated, resourceUpdated, prizeUpdated,
-                    submissionUpdated);
-        }
+        GrpcHelper.getSyncServiceRpc().saveProjectSync(project.getId(), statusHasChanged, categoryHasChanged,
+                externalRefIdHasChanged, directProjectIdHasChanged, phaseUpdated, resourceUpdated, prizeUpdated,
+                submissionUpdated);
         // Check if there are any validation errors and return appropriate forward
         if (ActionsHelper.isErrorsPresent(request)) {
             // Check if the form is really for new project
@@ -1521,7 +1518,7 @@ public class SaveProjectAction extends BaseProjectAction {
      * @param phasesJsMap the phasesJsMap
      * @throws BaseException if any error occurs
      */
-    private void saveResources(HttpServletRequest request,
+    private boolean saveResources(HttpServletRequest request,
                                Project project, Phase[] projectPhases, Map<Object, Phase> phasesJsMap) throws BaseException {
         // Obtain the instance of the User Retrieval
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
@@ -1532,19 +1529,21 @@ public class SaveProjectAction extends BaseProjectAction {
         String[] resourceNames = (String[]) getModel().get("resources_name");
 
         // HashSet used to identify resource of new user
-        Set<Long> newUsers = new HashSet<Long>();
-        Set<Long> newModerators = new HashSet<Long>();
-        Set<Long> oldUsers = new HashSet<Long>();
-        Set<Long> deletedUsers = new HashSet<Long>();
+        //Set<Long> newUsers = new HashSet<Long>();
+        //Set<Long> newModerators = new HashSet<Long>();
+        //Set<Long> oldUsers = new HashSet<Long>();
+        //Set<Long> deletedUsers = new HashSet<Long>();
         Set<Long> newSubmitters = new HashSet<Long>();
-        Set<Long> newUsersForumWatch = new HashSet<Long>();
+        //Set<Long> newUsersForumWatch = new HashSet<Long>();
 
         Set<Long> newUsersForNotification = new HashSet<Long>();
         Set<Long> deletedUsersForNotification = new HashSet<Long>();
-        Set<Long> deletedUsersForForumWatch = new HashSet<Long>();
+        //Set<Long> deletedUsersForForumWatch = new HashSet<Long>();
+        boolean resourcesUpdated = false;
 
         // 0-index resource is skipped as it is a "dummy" one
         boolean allResourcesValid = true;
+        ExternalUser[] externalUsers = new ExternalUser[resourceNames.length];
         for (int i = 1; i < resourceNames.length; i++) {
 
             if (resourceNames[i] == null || resourceNames[i].trim().length() == 0) {
@@ -1556,6 +1555,7 @@ public class SaveProjectAction extends BaseProjectAction {
 
             // Get info about user with the specified handle
             ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
+            externalUsers[i] = user;
 
             // If there is no user with such handle, indicate an error
             if (user == null) {
@@ -1568,7 +1568,7 @@ public class SaveProjectAction extends BaseProjectAction {
         // validate resources have correct terms of use
         try {
             allResourcesValid = allResourcesValid && validateResourceTermsOfUse(request, project, userRetrieval, resourceNames);
-            allResourcesValid = allResourcesValid && validateResourceEligibility(request, project, userRetrieval, resourceNames);
+            allResourcesValid = allResourcesValid && validateResourceEligibility(request, project, userRetrieval, resourceNames, externalUsers);
         } catch (ContestEligibilityValidatorException e) {
             throw new BaseException(e);
         }
@@ -1798,14 +1798,14 @@ public class SaveProjectAction extends BaseProjectAction {
 
         // No resources are updated if at least one of them is incorrect.
         if (!allResourcesValid) {
-            return;
+            return resourcesUpdated;
         }
 
         // 0-index resource is skipped as it is a "dummy" one
         for (int i = 1; i < resourceNames.length; i++) {
 
             // Get info about user with the specified handle
-            ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
+            ExternalUser user = externalUsers[i];
 
             Resource resource;
 
@@ -1818,7 +1818,8 @@ public class SaveProjectAction extends BaseProjectAction {
 
                 resource.setProperty("Registration Date", DATE_FORMAT.format(new Date()));
 
-                newUsers.add(user.getId());
+                //newUsers.add(user.getId());
+                resourcesUpdated = true;
 
                 ResourceRole role = LookupHelper.getResourceRole((Long) getModel().get("resources_role", i));
                 if (!role.getName().equals("Observer") || Boolean.parseBoolean(retrieveUserPreference(user.getId(), GLOBAL_TIMELINE_NOTIFICATION))) {
@@ -1832,12 +1833,12 @@ public class SaveProjectAction extends BaseProjectAction {
                 if (resourceId != -1) {
                     // Retrieve the resource with the specified id
                     resource = resourceManager.getResource(resourceId);
-                    oldUsers.add(user.getId());
+                    //oldUsers.add(user.getId());
                     //System.out.println("REMOVE:" + user.getId());
                 } else {
                     // -1 value as id marks the resources that were't persisted in DB yet
                     // and so should be skipped for actions other then "add"
-                    oldUsers.add(user.getId());
+                    //oldUsers.add(user.getId());
                     //System.out.println("REMOVE:" + user.getId());
                     continue;
                 }
@@ -1845,7 +1846,7 @@ public class SaveProjectAction extends BaseProjectAction {
 
             // If action is "delete", delete the resource and proceed to the next one
             if ("delete".equals(resourceAction)) {
-                deletedUsers.add(user.getId());
+                //deletedUsers.add(user.getId());
 
                 // delete project payments
                 for (ProjectPayment payment : allPayments) {
@@ -1884,13 +1885,13 @@ public class SaveProjectAction extends BaseProjectAction {
                     }
 
                     if (!Boolean.parseBoolean(retrieveUserPreference(user.getId(), GLOBAL_FORUM_WATCH))) {
-                        deletedUsersForForumWatch.add(user.getId());
+                        //deletedUsersForForumWatch.add(user.getId());
                     }
                 }
                 if (resource.getResourceRole().getName().equals("Observer")) {
                     // change from observer to other role
                     // add forum watch & notification anyway
-                    newUsersForumWatch.add(user.getId());
+                    //newUsersForumWatch.add(user.getId());
                     newUsersForNotification.add(user.getId());
                 }
             }
@@ -1933,7 +1934,7 @@ public class SaveProjectAction extends BaseProjectAction {
                 // add "Appeals Completed Early" flag.
                 resource.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY, Constants.NO_VALUE);
             }
-
+            /*
             if ("add".equals(resourceAction)) {
 
                 if (resourceRole.equals("Manager") || resourceRole.equals("Observer")
@@ -1947,22 +1948,23 @@ public class SaveProjectAction extends BaseProjectAction {
                         if (!resourceRole.equals("Observer")
                                 || Boolean.parseBoolean(retrieveUserPreference(
                                         user.getId(), GLOBAL_FORUM_WATCH))) {
-                            newUsersForumWatch.add(user.getId());
+                            //newUsersForumWatch.add(user.getId());
                         }
                     }
 
                 }
             }
-
+            */
             // client manager and copilot have moderator role
+            /*
             if (resourceRole.equals("Client Manager")  || resourceRole.equals("Copilot")
                     || resourceRole.equals("Observer") || resourceRole.equals("Designer"))
             {
-                newUsers.remove(user.getId());
-                newModerators.add(user.getId());
+                //newUsers.remove(user.getId());
+                //newModerators.add(user.getId());
 
             }
-
+            */
             // make sure "Appeals Completed Early" flag is not set if the role is not submitter.
             if (resourceRoleChanged && !resourceRole.equals(Constants.SUBMITTER_ROLE_NAME)) {
                 resource.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY, null);
@@ -1978,7 +1980,8 @@ public class SaveProjectAction extends BaseProjectAction {
 
         // check the list of users to delete and remove those still have other roles
         Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(project);
-        Set<Long> usersToKeep = new HashSet<Long>();
+        //Set<Long> usersToKeep = new HashSet<Long>();
+        /*
         for (Long id : deletedUsers) {
             for (Resource projectResource : allProjectResources) {
                 Long userId = projectResource.getUserId();
@@ -1989,12 +1992,14 @@ public class SaveProjectAction extends BaseProjectAction {
                 }
             }
         }
-        deletedUsers.removeAll(usersToKeep);
+        */
+        //deletedUsers.removeAll(usersToKeep);
 
-
+        /*
         for (Long id : oldUsers) {
             newUsers.remove(id);
         }
+        */
 
         // Populate project_result and component_inquiry for new submitters
         ActionsHelper.populateProjectResult(project, newSubmitters);
@@ -2031,6 +2036,7 @@ public class SaveProjectAction extends BaseProjectAction {
             resourceManager.addNotifications(userIds, project.getId(),
                     timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
+        return resourcesUpdated;
     }
 
     /**
@@ -2126,7 +2132,7 @@ public class SaveProjectAction extends BaseProjectAction {
      * @return true if all resources are valid
      */
     private boolean validateResourceEligibility(HttpServletRequest request,
-            Project project, UserRetrieval userRetrieval, String[] resourceNames)
+            Project project, UserRetrieval userRetrieval, String[] resourceNames, ExternalUser[] externalUsers)
             throws BaseException, ContestEligibilityValidatorException {
 
         boolean allResourcesValid = true;
@@ -2136,7 +2142,7 @@ public class SaveProjectAction extends BaseProjectAction {
         // 0-index resource is skipped as it is a "dummy" one
         for (int i = 1; i < resourceNames.length; i++) {
             if (resourceNames[i] != null && resourceNames[i].trim().length() > 0) {
-                ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
+                ExternalUser user = externalUsers[i];
                 String resourceAction = (String) getModel().get("resources_action", i);
                 // check for additions or modifications
                 if (!"delete".equals(resourceAction)) {
