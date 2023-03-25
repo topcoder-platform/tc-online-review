@@ -439,8 +439,8 @@ public class SaveProjectAction extends BaseProjectAction {
         // resources must be saved even if there are validation errors to validate resources
         if (!ActionsHelper.isErrorsPresent(request)) {
             // Save the project resources
-            // saveResources(request, project, projectPhases, phasesJsMap);
-            // resourceUpdated = true;
+            saveResources(request, project, projectPhases, phasesJsMap);
+            resourceUpdated = true;
         }
 
         if (!ActionsHelper.isErrorsPresent(request)) {

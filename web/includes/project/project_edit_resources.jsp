@@ -90,7 +90,6 @@
                             <div class="error"><s:fielderror escape="false"><s:param>resources_name[${resourceIdx}]</s:param></s:fielderror></div>
                         </td>
                         <td class="valueC" nowrap="nowrap">
-                            <!--
                             <c:if test="${resourceIdx eq 0}">
                                 <a class="addResource" onclick="addNewResource();" style="cursor:hand;"><or:text key='editProject.Resources.AddResource.alt' /></a>
                             </c:if>
@@ -100,7 +99,6 @@
                             </c:if>
                             <input type="hidden" name="resources_action[${resourceIdx}]"  value="<or:fieldvalue field='resources_action[${resourceIdx}]' />" />
                             <input type="hidden" name="resources_id[${resourceIdx}]"  value="<or:fieldvalue field='resources_id[${resourceIdx}]' />" />
-                            -->
                         </td>
 
                         <%-- TODO: Iterate through exisitng resources here (for edit page only) --%>
