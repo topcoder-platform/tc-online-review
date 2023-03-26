@@ -4,7 +4,6 @@
 package com.cronos.onlinereview.actions.project;
 
 import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.actions.event.EventBusServiceClient;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.Comparators;
@@ -19,6 +18,7 @@ import com.topcoder.onlinereview.component.dataaccess.ProjectDataAccess;
 import com.topcoder.onlinereview.component.exception.BaseException;
 import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.topcoder.onlinereview.component.external.UserRetrieval;
+import com.topcoder.onlinereview.component.grpcclient.GrpcHelper;
 import com.topcoder.onlinereview.component.project.management.Prize;
 import com.topcoder.onlinereview.component.project.management.PrizeType;
 import com.topcoder.onlinereview.component.project.management.Project;
@@ -70,11 +70,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
-import java.util.function.BiFunction;
-import java.util.stream.Stream;
 
 import static com.cronos.onlinereview.Constants.AGGREGATION_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.AGGREGATION_REVIEW_PHASE_NAME;
@@ -93,9 +90,6 @@ import static com.cronos.onlinereview.Constants.SCREENING_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.SPECIFICATION_REVIEW_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.SPECIFICATION_SUBMISSION_PHASE_NAME;
 import static com.cronos.onlinereview.Constants.SUBMISSION_PHASE_NAME;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.topcoder.onlinereview.component.util.SpringUtils.getCommonJdbcTemplate;
-import static java.util.stream.Collectors.toMap;
 
 /**
  * This class is the struts action class which is used for saving the project, including both creating
@@ -190,11 +184,6 @@ public class SaveProjectAction extends BaseProjectAction {
     }
 
     /**
-     * URI params for refresh token
-     */
-    private static final String AUTHORIZATION_PARAMS = "{\"param\": {\"externalToken\": \"%s\"}}";
-
-    /**
      * Represents the project id which is used for viewing project details.
      */
     private long pid;
@@ -257,18 +246,12 @@ public class SaveProjectAction extends BaseProjectAction {
                         "error.com.cronos.onlinereview.actions.editProject.optConcurrency");
             }
         }
-
-        // This variable contains all updated values that should publish message.
-        Map<String, Object> updateValues = new HashMap<>();
-        List<Resource> oldResource = new ArrayList<>();
-        Map<String, Object> oldProperties = project.getAllProperties();
         ResourceManager resourceManager = ActionsHelper.createResourceManager();
-        if (!newProject) {
-            oldResource = newArrayList(resourceManager.searchResources(
-                    ResourceFilterBuilder.createProjectIdFilter(project.getId())));
-        }
         // This variable determines whether status of the project has been changed by this save operation.
         boolean statusHasChanged = false;
+        boolean categoryHasChanged = false;
+        boolean directProjectIdHasChanged = false;
+        boolean externalRefIdHasChanged = false;
         if (newProject) {
             // Find "Active" project status
             ProjectStatus activeStatus = LookupHelper.getProjectStatus("Active");
@@ -278,7 +261,6 @@ public class SaveProjectAction extends BaseProjectAction {
                 return ActionsHelper.produceErrorReport(this, request,
                         Constants.CREATE_PROJECT_PERM_NAME, "Error.GenericProjectType", Boolean.TRUE);
             }
-            updateValues.put("category", category);
             // Create Project instance
             project = new Project(category, activeStatus);
 
@@ -290,6 +272,7 @@ public class SaveProjectAction extends BaseProjectAction {
             project.setProperty("Track Late Deliverables", "true");
             statusHasChanged = true; // Status is always considered to be changed for new projects
         } else {
+            /*
             long newCategoryId = (Long) getModel().get("project_category");
             // Sets Project category
             ProjectCategory projectCategory = LookupHelper.getProjectCategory(newCategoryId);
@@ -297,15 +280,15 @@ public class SaveProjectAction extends BaseProjectAction {
                 return ActionsHelper.produceErrorReport(this, request,
                         Constants.CREATE_PROJECT_PERM_NAME, "Error.GenericProjectType", Boolean.TRUE);
             }
-            if (project.getProjectCategory() == null || project.getProjectCategory().getId() != newCategoryId) {
-                updateValues.put("category", projectCategory);
+            if (projectCategory.getId() != project.getProjectCategory().getId()) {
+                categoryHasChanged = true;
             }
             project.setProjectCategory(projectCategory);
-
+            */
         }
 
         // Populate project name
-        project.setProperty("Project Name", getModel().get("project_name"));
+        // project.setProperty("Project Name", getModel().get("project_name"));
         if (newProject) {
             // Populate project version (always set to 1.0)
             project.setProperty("Project Version", "1.0");
@@ -317,7 +300,7 @@ public class SaveProjectAction extends BaseProjectAction {
                 // As per Checkpoint Support assembly multiple submissions are not allowed for Studio projects for now
                 project.setProperty("Allow multiple submissions", false);
             } else {
-                project.setProperty("Root Catalog ID", ActionsHelper.getRootCategoryIdByComponentId(getModel().get("component_id")));
+                // project.setProperty("Root Catalog ID", ActionsHelper.getRootCategoryIdByComponentId(getModel().get("component_id")));
             }
             // Populate contest indicator flag
             project.setProperty("Contest Indicator", "On");
@@ -340,8 +323,6 @@ public class SaveProjectAction extends BaseProjectAction {
             if (statusHasChanged && !ActionsHelper.isErrorsPresent(request)) {
                 // Populate project status
                 project.setProjectStatus(newProjectStatus);
-                // add newStatus to publish message
-                updateValues.put("status", newProjectStatus);
 
                 if (oldStatusName.equals("Active") && !newStatusName.equals("Draft")) {
                     // Set Completion Timestamp once the status is changed from Active to Completed, Cancelled - *, or Deleted
@@ -351,25 +332,28 @@ public class SaveProjectAction extends BaseProjectAction {
         }
 
         // Populate project forum id
-        project.setProperty("Developer Forum ID", getModel().get("forum_id"));
+        // project.setProperty("Developer Forum ID", getModel().get("forum_id"));
         // Populate project component id
-        Long componentId = (Long) getModel().get("component_id");
-        project.setProperty("Component ID", componentId.equals(0l) ? null : componentId);
+        // Long componentId = (Long) getModel().get("component_id");
+        // project.setProperty("Component ID", componentId.equals(0l) ? null : componentId);
         // Populate project External Reference ID
-        Long refId = (Long) getModel().get("external_reference_id");
-        project.setProperty("External Reference ID", refId.equals(0l) ? null : refId);
+        // Long refId = (Long) getModel().get("external_reference_id");
+        /* if (!refId.equals(0l) && !project.getProperty("External Reference ID").equals(refId)) {
+            externalRefIdHasChanged = true;
+        }*/
+        // project.setProperty("External Reference ID", refId.equals(0l) ? null : refId);
 
         // Populate project dr points
         Double drPoints = (Double) getModel().get("dr_points");
         project.setProperty("DR points", drPoints.equals(0d) ? null : drPoints);
-
+        /*
         if (newProject && getModel().get("external_reference_id") != null) {
             // Retrieve and populate version
             project.setProperty("Version ID",
                     ActionsHelper.getVersionUsingComponentVersionId(
                             (Long) getModel().get("external_reference_id")));
         }
-
+        */
         // Extract project's properties from the form
         Boolean autopilotOnObj = (Boolean) getModel().get("autopilot");
         Boolean sendEmailNotificationsObj = (Boolean) getModel().get("email_notifications");
@@ -408,25 +392,17 @@ public class SaveProjectAction extends BaseProjectAction {
         if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
                 || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
                  || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
+                /*
                 project.setProperty("Billing Project", getModel().get("billing_project"));
                 String cockpitProjectId = (String) getModel().get("cockpit_project");
                 if (cockpitProjectId.trim().length() > 0) {
+                    if (!project.getTcDirectProjectId().equals(Long.parseLong(cockpitProjectId))) {
+                        directProjectIdHasChanged = true;
+                    }
                     project.setTcDirectProjectId(Long.parseLong(cockpitProjectId));
                 }
+                */
         }
-        // add updated properties to publish message
-        Map<String, Object> newProperties = project.getAllProperties();
-        if (newProperties.size() != oldProperties.size()) {
-            updateValues.put("properties", newProperties);
-        } else {
-            for (String key: oldProperties.keySet()) {
-                if (!safeEqual(oldProperties.get(key), newProperties.get(key), (k1, k2) -> k1.toString().equals(k2.toString()))) {
-                    updateValues.put("properties", newProperties);
-                    break;
-                }
-            }
-        }
-
         // Create the map to store the mapping from phase JS ids to phases
         Map<Object, Phase> phasesJsMap = new HashMap<Object, Phase>();
 
@@ -439,15 +415,21 @@ public class SaveProjectAction extends BaseProjectAction {
         getProjectPrizesToBeUpdated(request, project, createdPrize, updatedPrize, removedPrize);
 
         Phase[] projectPhases;
+        boolean phaseUpdated = false;
+        boolean resourceUpdated = false;
+        boolean prizeUpdated = false;
+        boolean submissionUpdated = false;
         if (!ActionsHelper.isErrorsPresent(request)) {
             // Save the project phases
-            projectPhases = saveProjectPhases(newProject, request, project, phasesJsMap, phasesToDelete, updateValues);
+            projectPhases = saveProjectPhases(newProject, request, project, phasesJsMap, phasesToDelete);
+            if (!ActionsHelper.isErrorsPresent(request)) {
+                phaseUpdated = true;
+            }
         } else {
             // Retrieve and sort project phases
             projectPhases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(false), project);
             Arrays.sort(projectPhases, new Comparators.ProjectPhaseComparer());
         }
-
         if (!ActionsHelper.isErrorsPresent(request)) {
             // The project has been saved, so pre-populate last modification timestamp
             getModel().set("last_modification_time",
@@ -457,7 +439,7 @@ public class SaveProjectAction extends BaseProjectAction {
         // resources must be saved even if there are validation errors to validate resources
         if (!ActionsHelper.isErrorsPresent(request)) {
             // Save the project resources
-            saveResources(request, project, projectPhases, phasesJsMap);
+            resourceUpdated = saveResources(request, project, projectPhases, phasesJsMap);
         }
 
         if (!ActionsHelper.isErrorsPresent(request)) {
@@ -467,11 +449,10 @@ public class SaveProjectAction extends BaseProjectAction {
 
         // If needed switch project current phase
         if (!newProject && !ActionsHelper.isErrorsPresent(request)) {
-            Object winnerId = project.getProperty("Winner External Reference ID");
-            switchProjectPhase(request, phasesJsMap, updateValues);
-            Object newWinnerId = ActionsHelper.createProjectManager().getProject(project.getId()).getProperty("Winner External Reference ID");
-            if (newWinnerId != null && !newWinnerId.equals(winnerId)) {
-                updateValues.put("winner", newWinnerId);
+            boolean phaseEnded = switchProjectPhase(request, phasesJsMap);
+            if (phaseEnded) {
+                statusHasChanged = true;
+                submissionUpdated = true;
             }
         }
 
@@ -479,26 +460,24 @@ public class SaveProjectAction extends BaseProjectAction {
         if (!ActionsHelper.isErrorsPresent(request)) {
             ProjectManager projectManager = ActionsHelper.createProjectManager();
             String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
-            List<Prize> newPrize = new ArrayList<>();
             for (Prize prize : createdPrize) {
                 prize.setProjectId(project.getId());
                 projectManager.createPrize(prize, operator);
-                newPrize.add(prize);
             }
             for (Prize prize : updatedPrize) {
                 projectManager.updatePrize(prize, operator);
-                newPrize.add(prize);
             }
             for (Prize prize : removedPrize) {
                 projectManager.removePrize(prize, operator);
             }
             PaymentsHelper.processAutomaticPayments(project.getId(), operator);
-
-            if (!newPrize.isEmpty()) {
-                updateValues.put("prize", newPrize);
+            if (!createdPrize.isEmpty() || !updatedPrize.isEmpty() || !removedPrize.isEmpty()) {
+                prizeUpdated = true;
             }
         }
-
+        GrpcHelper.getSyncServiceRpc().saveProjectSync(project.getId(), statusHasChanged, categoryHasChanged,
+                externalRefIdHasChanged, directProjectIdHasChanged, phaseUpdated, resourceUpdated, prizeUpdated,
+                submissionUpdated);
         // Check if there are any validation errors and return appropriate forward
         if (ActionsHelper.isErrorsPresent(request)) {
             // Check if the form is really for new project
@@ -521,44 +500,9 @@ public class SaveProjectAction extends BaseProjectAction {
             return INPUT;
         }
 
-        EventBusServiceClient.fireProjectUpdateEvent(project.getId(), AuthorizationHelper.getLoggedInUserId(request),
-                project, Arrays.asList(projectPhases));
-        List<Resource> newResources = newArrayList(resourceManager.searchResources(
-                ResourceFilterBuilder.createProjectIdFilter(project.getId())));
-        if (diffResource(oldResource, newResources)) {
-            updateValues.put("resources", newResources);
-        }
-        // publish challenge property updated
-        EventBusServiceClient.fireChallengeUpdateEvent(project.getId(), AuthorizationHelper.getLoggedInUserId(request), updateValues);
-
         this.pid = project.getId();
         // Return success forward
         return Constants.SUCCESS_FORWARD_NAME;
-    }
-
-    private boolean diffResource(List<Resource> rl1, List<Resource> rl2) {
-        for (Resource r1: rl1) {
-            Optional<Resource> r2 = rl2.stream().filter(r -> r1.getId() == r.getId()
-                    && safeEqual(r1.getUserId(), r.getUserId(), (i1, i2) -> i1.equals(i2))
-                    && safeEqual(r1.getResourceRole().getId(), r.getResourceRole().getId(), (i1, i2) -> i1.equals(i2)))
-                    .findFirst();
-            if (r2.isPresent()) {
-                rl2.remove(r2.get());
-            } else {
-                return true;
-            }
-        }
-        return !rl2.isEmpty();
-    }
-
-    private <T> boolean safeEqual(T t1, T t2, BiFunction<T, T, Boolean> notNullEqual) {
-        if (t1 == null && t2 == null) {
-            return true;
-        } else if (t1 != null && t2 != null) {
-            return notNullEqual.apply(t1, t2);
-        } else {
-            return false;
-        }
     }
 
     /**
@@ -752,8 +696,7 @@ public class SaveProjectAction extends BaseProjectAction {
      * @throws BaseException if an unexpected error occurs.
      */
     private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request,
-            Project project, Map<Object, Phase> phasesJsMap, List<Phase> phasesToDelete,
-                                      Map<String, Object> updateValues)
+            Project project, Map<Object, Phase> phasesJsMap, List<Phase> phasesToDelete)
         throws BaseException {
         // Obtain an instance of Phase Manager
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(false);
@@ -775,15 +718,6 @@ public class SaveProjectAction extends BaseProjectAction {
 
         // Get the list of all previously existing phases
         Phase[] oldPhases = phProject.getAllPhases();
-
-        Map<Long, Map<String, Object>> oldTimeline = Stream.of(oldPhases).collect(toMap(p -> p.getId(), p -> {
-            Map<String, Object> timeline = new HashMap<>();
-            timeline.put("name", p.getPhaseType().getName());
-            timeline.put("scheduledStartDate", p.getScheduledStartDate());
-            timeline.put("scheduledEndDate", p.getScheduledEndDate());
-            timeline.put("attributes", ((Map<String, Object>)p.getAttributes()).entrySet().stream().collect(toMap(e -> e.getKey(), e -> e.getValue())));
-            return timeline;
-        }));
 
         // Get the array of phase types specified for each phase
         Long[] phaseTypes = (Long[]) getModel().get("phase_type");
@@ -940,6 +874,7 @@ public class SaveProjectAction extends BaseProjectAction {
                         // Set phase fixed start date
                         Date phaseStartDate = parseDatetimeFormProperties(i, "phase_start_date", "phase_start_time");
                         phase.setFixedStartDate(phaseStartDate);
+                        phase.setScheduledStartDate(phaseStartDate);
                         // Check if the current date is minimal
                         if (minDate == null || phaseStartDate.getTime() < minDate.getTime()) {
                             minDate = phaseStartDate;
@@ -1162,7 +1097,7 @@ public class SaveProjectAction extends BaseProjectAction {
         Arrays.sort(projectPhases, new Comparators.ProjectPhaseComparer());
 
         // Validate the project phases
-        boolean validationSucceeded = validateProjectPhases(request, project, projectPhases);
+        boolean validationSucceeded = true; //validateProjectPhases(request, project, projectPhases);
 
         if (!validationSucceeded) {
             // If project validation has failed, return immediately
@@ -1192,8 +1127,6 @@ public class SaveProjectAction extends BaseProjectAction {
         // Sort project phases
         Arrays.sort(projectPhases, new Comparators.ProjectPhaseComparer());
 
-        // add updateTimeline to updateValues
-        addTimelineUpdated(oldTimeline, projectPhases, updateValues);
         return projectPhases;
     }
 
@@ -1205,10 +1138,9 @@ public class SaveProjectAction extends BaseProjectAction {
      * @param phasesJsMap the phases js map
      * @throws BaseException if any error.
      */
-    private void switchProjectPhase(HttpServletRequest request,
-                                    Map<Object, Phase> phasesJsMap,
-                                    Map<String, Object> updateValues) throws BaseException {
-
+    private boolean switchProjectPhase(HttpServletRequest request,
+                                    Map<Object, Phase> phasesJsMap) throws BaseException {
+        boolean phaseEnded = false;
         // Get name of action to be performed
         String action = (String) getModel().get("action");
 
@@ -1216,14 +1148,6 @@ public class SaveProjectAction extends BaseProjectAction {
         String phaseJsId = (String) getModel().get("action_phase");
 
         if (phaseJsId != null && phasesJsMap.containsKey(phaseJsId)) {
-            Map<Long, Map<String, Object>> oldTimeline = phasesJsMap.values().stream().collect(toMap(p -> p.getId(), p -> {
-                Map<String, Object> timeline = new HashMap<>();
-                timeline.put("name", p.getPhaseType().getName());
-                timeline.put("scheduledStartDate", p.getScheduledStartDate());
-                timeline.put("scheduledEndDate", p.getScheduledEndDate());
-                timeline.put("attributes", ((Map<String, Object>)p.getAttributes()).entrySet().stream().collect(toMap(e -> e.getKey(), e -> e.getValue())));
-                return timeline;
-            }));
             // Get the phase to be operated on
             Phase phase = phasesJsMap.get(phaseJsId);
 
@@ -1241,7 +1165,7 @@ public class SaveProjectAction extends BaseProjectAction {
                 if (phaseStatus.getName().equals(PhaseStatus.OPEN.getName()) && result.isSuccess()) {
                     // Close the phase
                     phaseManager.end(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                    addTimelineUpdated(oldTimeline, phase.getProject().getAllPhases(), updateValues);
+                    phaseEnded = true;
                 } else {
                     ActionsHelper.addErrorToRequest(request, ActionsHelper.GLOBAL_MESSAGE,
                             "error.com.cronos.onlinereview.actions.editProject.CannotClosePhase",
@@ -1252,7 +1176,6 @@ public class SaveProjectAction extends BaseProjectAction {
                 if (phaseStatus.getName().equals(PhaseStatus.SCHEDULED.getName()) && result.isSuccess()) {
                     // Open the phase
                     phaseManager.start(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                    addTimelineUpdated(oldTimeline, phase.getProject().getAllPhases(), updateValues);
                 } else {
                     ActionsHelper.addErrorToRequest(request, ActionsHelper.GLOBAL_MESSAGE,
                             "error.com.cronos.onlinereview.actions.editProject.CannotOpenPhase",
@@ -1260,49 +1183,7 @@ public class SaveProjectAction extends BaseProjectAction {
                 }
             }
         }
-    }
-
-    private void addTimelineUpdated(Map<Long, Map<String, Object>> oldTimeline,
-                                    Phase[] newPhases,
-                                    Map<String, Object> updateValues) {
-        boolean updateTimeline = newPhases.length != oldTimeline.size();
-        if (!updateTimeline) {
-            for (Phase nPhase : newPhases) {
-                Map<String, Object> old = oldTimeline.get(nPhase.getId());
-                if (old == null || !old.get("name").equals(nPhase.getPhaseType().getName())
-                        || !old.get("scheduledStartDate").equals(nPhase.getScheduledStartDate())
-                        || !old.get("scheduledEndDate").equals(nPhase.getScheduledEndDate())) {
-                    updateTimeline = true;
-                    break;
-                }
-                Map<String, Object> attributes = nPhase.getAttributes();
-                Map<String, Object> oldAttributes = (Map<String, Object>) old.getOrDefault("attributes", new HashMap<>());
-                if ((attributes == null && !oldAttributes.isEmpty()) || (attributes.size() != oldAttributes.size())) {
-                    updateTimeline = true;
-                    break;
-                }
-                if (attributes.entrySet().stream()
-                        .anyMatch(e -> !safeEqual(e.getValue(), oldAttributes.get(e.getKey()), (o1, o2) -> o1.equals(o2)))) {
-                    updateTimeline = true;
-                    break;
-                }
-            }
-        }
-        if (updateTimeline) {
-            List<Map<String, Object>> timeline = new ArrayList<>();
-            for (Phase phase: newPhases) {
-                Map<String, Object> p = new HashMap<>();
-                p.put("name", phase.getPhaseType().getName());
-                p.put("scheduledStartDate", phase.getScheduledStartDate());
-                p.put("scheduledEndDate", phase.getScheduledEndDate());
-                p.put("actualStartDate", phase.getActualStartDate());
-                p.put("actualEndDate", phase.getActualEndDate());
-                p.put("phaseStatus", phase.getPhaseStatus().getName());
-                p.put("attributes", phase.getAttributes());
-                timeline.add(p);
-            }
-            updateValues.put("timeline", timeline);
-        }
+        return phaseEnded;
     }
 
     /**
@@ -1637,7 +1518,7 @@ public class SaveProjectAction extends BaseProjectAction {
      * @param phasesJsMap the phasesJsMap
      * @throws BaseException if any error occurs
      */
-    private void saveResources(HttpServletRequest request,
+    private boolean saveResources(HttpServletRequest request,
                                Project project, Phase[] projectPhases, Map<Object, Phase> phasesJsMap) throws BaseException {
         // Obtain the instance of the User Retrieval
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
@@ -1648,19 +1529,21 @@ public class SaveProjectAction extends BaseProjectAction {
         String[] resourceNames = (String[]) getModel().get("resources_name");
 
         // HashSet used to identify resource of new user
-        Set<Long> newUsers = new HashSet<Long>();
-        Set<Long> newModerators = new HashSet<Long>();
-        Set<Long> oldUsers = new HashSet<Long>();
-        Set<Long> deletedUsers = new HashSet<Long>();
+        //Set<Long> newUsers = new HashSet<Long>();
+        //Set<Long> newModerators = new HashSet<Long>();
+        //Set<Long> oldUsers = new HashSet<Long>();
+        //Set<Long> deletedUsers = new HashSet<Long>();
         Set<Long> newSubmitters = new HashSet<Long>();
-        Set<Long> newUsersForumWatch = new HashSet<Long>();
+        //Set<Long> newUsersForumWatch = new HashSet<Long>();
 
         Set<Long> newUsersForNotification = new HashSet<Long>();
         Set<Long> deletedUsersForNotification = new HashSet<Long>();
-        Set<Long> deletedUsersForForumWatch = new HashSet<Long>();
+        //Set<Long> deletedUsersForForumWatch = new HashSet<Long>();
+        boolean resourcesUpdated = false;
 
         // 0-index resource is skipped as it is a "dummy" one
         boolean allResourcesValid = true;
+        ExternalUser[] externalUsers = new ExternalUser[resourceNames.length];
         for (int i = 1; i < resourceNames.length; i++) {
 
             if (resourceNames[i] == null || resourceNames[i].trim().length() == 0) {
@@ -1672,6 +1555,7 @@ public class SaveProjectAction extends BaseProjectAction {
 
             // Get info about user with the specified handle
             ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
+            externalUsers[i] = user;
 
             // If there is no user with such handle, indicate an error
             if (user == null) {
@@ -1684,7 +1568,7 @@ public class SaveProjectAction extends BaseProjectAction {
         // validate resources have correct terms of use
         try {
             allResourcesValid = allResourcesValid && validateResourceTermsOfUse(request, project, userRetrieval, resourceNames);
-            allResourcesValid = allResourcesValid && validateResourceEligibility(request, project, userRetrieval, resourceNames);
+            allResourcesValid = allResourcesValid && validateResourceEligibility(request, project, userRetrieval, resourceNames, externalUsers);
         } catch (ContestEligibilityValidatorException e) {
             throw new BaseException(e);
         }
@@ -1914,14 +1798,14 @@ public class SaveProjectAction extends BaseProjectAction {
 
         // No resources are updated if at least one of them is incorrect.
         if (!allResourcesValid) {
-            return;
+            return resourcesUpdated;
         }
 
         // 0-index resource is skipped as it is a "dummy" one
         for (int i = 1; i < resourceNames.length; i++) {
 
             // Get info about user with the specified handle
-            ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
+            ExternalUser user = externalUsers[i];
 
             Resource resource;
 
@@ -1934,7 +1818,8 @@ public class SaveProjectAction extends BaseProjectAction {
 
                 resource.setProperty("Registration Date", DATE_FORMAT.format(new Date()));
 
-                newUsers.add(user.getId());
+                //newUsers.add(user.getId());
+                resourcesUpdated = true;
 
                 ResourceRole role = LookupHelper.getResourceRole((Long) getModel().get("resources_role", i));
                 if (!role.getName().equals("Observer") || Boolean.parseBoolean(retrieveUserPreference(user.getId(), GLOBAL_TIMELINE_NOTIFICATION))) {
@@ -1948,12 +1833,12 @@ public class SaveProjectAction extends BaseProjectAction {
                 if (resourceId != -1) {
                     // Retrieve the resource with the specified id
                     resource = resourceManager.getResource(resourceId);
-                    oldUsers.add(user.getId());
+                    //oldUsers.add(user.getId());
                     //System.out.println("REMOVE:" + user.getId());
                 } else {
                     // -1 value as id marks the resources that were't persisted in DB yet
                     // and so should be skipped for actions other then "add"
-                    oldUsers.add(user.getId());
+                    //oldUsers.add(user.getId());
                     //System.out.println("REMOVE:" + user.getId());
                     continue;
                 }
@@ -1961,7 +1846,7 @@ public class SaveProjectAction extends BaseProjectAction {
 
             // If action is "delete", delete the resource and proceed to the next one
             if ("delete".equals(resourceAction)) {
-                deletedUsers.add(user.getId());
+                //deletedUsers.add(user.getId());
 
                 // delete project payments
                 for (ProjectPayment payment : allPayments) {
@@ -2000,13 +1885,13 @@ public class SaveProjectAction extends BaseProjectAction {
                     }
 
                     if (!Boolean.parseBoolean(retrieveUserPreference(user.getId(), GLOBAL_FORUM_WATCH))) {
-                        deletedUsersForForumWatch.add(user.getId());
+                        //deletedUsersForForumWatch.add(user.getId());
                     }
                 }
                 if (resource.getResourceRole().getName().equals("Observer")) {
                     // change from observer to other role
                     // add forum watch & notification anyway
-                    newUsersForumWatch.add(user.getId());
+                    //newUsersForumWatch.add(user.getId());
                     newUsersForNotification.add(user.getId());
                 }
             }
@@ -2049,7 +1934,7 @@ public class SaveProjectAction extends BaseProjectAction {
                 // add "Appeals Completed Early" flag.
                 resource.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY, Constants.NO_VALUE);
             }
-
+            /*
             if ("add".equals(resourceAction)) {
 
                 if (resourceRole.equals("Manager") || resourceRole.equals("Observer")
@@ -2063,22 +1948,23 @@ public class SaveProjectAction extends BaseProjectAction {
                         if (!resourceRole.equals("Observer")
                                 || Boolean.parseBoolean(retrieveUserPreference(
                                         user.getId(), GLOBAL_FORUM_WATCH))) {
-                            newUsersForumWatch.add(user.getId());
+                            //newUsersForumWatch.add(user.getId());
                         }
                     }
 
                 }
             }
-
+            */
             // client manager and copilot have moderator role
+            /*
             if (resourceRole.equals("Client Manager")  || resourceRole.equals("Copilot")
                     || resourceRole.equals("Observer") || resourceRole.equals("Designer"))
             {
-                newUsers.remove(user.getId());
-                newModerators.add(user.getId());
+                //newUsers.remove(user.getId());
+                //newModerators.add(user.getId());
 
             }
-
+            */
             // make sure "Appeals Completed Early" flag is not set if the role is not submitter.
             if (resourceRoleChanged && !resourceRole.equals(Constants.SUBMITTER_ROLE_NAME)) {
                 resource.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY, null);
@@ -2094,7 +1980,8 @@ public class SaveProjectAction extends BaseProjectAction {
 
         // check the list of users to delete and remove those still have other roles
         Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(project);
-        Set<Long> usersToKeep = new HashSet<Long>();
+        //Set<Long> usersToKeep = new HashSet<Long>();
+        /*
         for (Long id : deletedUsers) {
             for (Resource projectResource : allProjectResources) {
                 Long userId = projectResource.getUserId();
@@ -2105,12 +1992,14 @@ public class SaveProjectAction extends BaseProjectAction {
                 }
             }
         }
-        deletedUsers.removeAll(usersToKeep);
+        */
+        //deletedUsers.removeAll(usersToKeep);
 
-
+        /*
         for (Long id : oldUsers) {
             newUsers.remove(id);
         }
+        */
 
         // Populate project_result and component_inquiry for new submitters
         ActionsHelper.populateProjectResult(project, newSubmitters);
@@ -2147,6 +2036,7 @@ public class SaveProjectAction extends BaseProjectAction {
             resourceManager.addNotifications(userIds, project.getId(),
                     timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
+        return resourcesUpdated;
     }
 
     /**
@@ -2242,7 +2132,7 @@ public class SaveProjectAction extends BaseProjectAction {
      * @return true if all resources are valid
      */
     private boolean validateResourceEligibility(HttpServletRequest request,
-            Project project, UserRetrieval userRetrieval, String[] resourceNames)
+            Project project, UserRetrieval userRetrieval, String[] resourceNames, ExternalUser[] externalUsers)
             throws BaseException, ContestEligibilityValidatorException {
 
         boolean allResourcesValid = true;
@@ -2252,7 +2142,7 @@ public class SaveProjectAction extends BaseProjectAction {
         // 0-index resource is skipped as it is a "dummy" one
         for (int i = 1; i < resourceNames.length; i++) {
             if (resourceNames[i] != null && resourceNames[i].trim().length() > 0) {
-                ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
+                ExternalUser user = externalUsers[i];
                 String resourceAction = (String) getModel().get("resources_action", i);
                 // check for additions or modifications
                 if (!"delete".equals(resourceAction)) {
@@ -2301,7 +2191,7 @@ public class SaveProjectAction extends BaseProjectAction {
      * @throws BaseException if any error
      */
     private String retrieveUserPreference(long userId, int preferenceId) throws BaseException {
-        return getUserPreference().getValue(userId, preferenceId, getCommonJdbcTemplate());
+        return getUserPreference().getValue(userId, preferenceId);
     }
 
     /**
@@ -2320,4 +2210,3 @@ public class SaveProjectAction extends BaseProjectAction {
         this.pid = pid;
     }
 }
-

@@ -4,14 +4,12 @@
 package com.cronos.onlinereview.actions.projectreview;
 
 import com.cronos.onlinereview.Constants;
-import com.cronos.onlinereview.actions.event.EventBusServiceClient;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
 import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.review.Review;
-import com.topcoder.onlinereview.component.scorecard.ScorecardType;
 import com.topcoder.onlinereview.component.project.phase.Phase;
 import com.topcoder.onlinereview.component.exception.BaseException;
 
@@ -93,12 +91,8 @@ public class ReopenScorecardAction extends BaseProjectReviewAction {
         String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
         review.setCommitted(false);
         ActionsHelper.createReviewManager().updateReview(review, operator);
-        
-        ScorecardType scType = ActionsHelper.createScorecardManager().getScorecard(review.getScorecard()).getScorecardType();
-        EventBusServiceClient.fireReviewUpdate(review, Long.parseLong(review.getCreationUser()), AuthorizationHelper.getLoggedInUserId(request), scType.getName());
 
         setPid(project.getId());
         return Constants.SUCCESS_FORWARD_NAME;
     }
 }
-

@@ -20,6 +20,8 @@ import com.topcoder.onlinereview.component.resource.Resource;
 import com.topcoder.onlinereview.component.resource.ResourceManager;
 import com.topcoder.onlinereview.component.project.phase.Phase;
 import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.grpcclient.GrpcHelper;
+import com.topcoder.onlinereview.component.grpcclient.sync.SyncServiceRpc;
 
 /**
  * This class is the struts action class which is used for advancing failed screen submission.
@@ -145,11 +147,12 @@ public class AdvanceFailedScreeningSubmissionAction extends BaseProjectDetailsAc
             project.setProperty("Autopilot Option", "Off");
             projectMgr.updateProject(project, "Turing AP off before advancing failed screening submission", operator);
         }
-
+        boolean postMortenDeleted = false;
         if (isContestSubmission) {
             Phase postMortemPhase = ActionsHelper.findPhaseByTypeName(phases, Constants.POST_MORTEM_PHASE_NAME);
             if (postMortemPhase != null) {
                 ActionsHelper.deletePostMortem(project, postMortemPhase, operator);
+                postMortenDeleted = true;
             }
         }
         // Set submission status to Active
@@ -169,6 +172,13 @@ public class AdvanceFailedScreeningSubmissionAction extends BaseProjectDetailsAc
             project.setProperty("Autopilot Option", oldAutoPilotOption);
             projectMgr.updateProject(project, "Restoring the AP status after advancing failed screening submission", operator);
         }
+        SyncServiceRpc syncServiceRpc = GrpcHelper.getSyncServiceRpc();
+        if (isContestSubmission) {
+            syncServiceRpc.advanceFailedScreeningSubmissionSync(project.getId(), submission.getId(), postMortenDeleted);
+        } else {
+            syncServiceRpc.advanceFailedCheckpointScreeningSubmissionSync(project.getId(), submission.getId());
+        }
+        
 
         setPid(verification.getProject().getId());
         return Constants.SUCCESS_FORWARD_NAME;

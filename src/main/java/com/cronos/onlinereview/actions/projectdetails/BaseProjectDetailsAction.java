@@ -756,15 +756,6 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
         submissionTypeId = isCheckPointSubmission ? EventBusServiceClient.SUBMISSION_TYPE_ID_FOR_CHECKPOINT_SUBMISSION
                 : submissionTypeId;
 
-        if (submissionTypeId > 0) {
-            String fileUrl = isCheckPointSubmission
-                    ? String.format(ConfigHelper.getCheckpointSubmissionDownloadUrl(), upload.getId())
-                    : String.format(ConfigHelper.getContestSubmissionDownloadUrl(), upload.getId());
-            EventBusServiceClient.fireSubmissionCreateEvent(project.getId(),
-                    AuthorizationHelper.getLoggedInUserId(request), upload.getParameter(), fileUrl, submission.getId(),
-                    submissionTypeId);
-        }
-
         this.pid = project.getId();
         return Constants.SUCCESS_FORWARD_NAME;
     }
