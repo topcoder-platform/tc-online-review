@@ -664,6 +664,9 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
   <bean id="viewScorecardAction" class="com.cronos.onlinereview.actions.projectreview.ViewScorecardAction" parent="baseViewOrExportGenericReviewAction" scope="request">
   </bean>
 
+  <bean id="syncProjectAction"  class="com.cronos.onlinereview.actions.project.SyncProjectAction" parent="baseProjectAction" scope="request">
+  </bean>
+
   <!-- Struts1MappingAction action -->
   <bean id="struts1MappingAction" class="com.cronos.onlinereview.actions.Struts1MappingAction" scope="request">
   </bean>
