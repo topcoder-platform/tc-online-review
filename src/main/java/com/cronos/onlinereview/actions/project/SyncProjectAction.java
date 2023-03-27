@@ -3,6 +3,15 @@
  */
 package com.cronos.onlinereview.actions.project;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.http.HttpHeaders;
+
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.topcoder.onlinereview.component.exception.BaseException;
 import com.topcoder.onlinereview.component.grpcclient.GrpcHelper;
 
@@ -26,11 +35,47 @@ public class SyncProjectAction extends BaseProjectAction {
 
     public String execute() throws BaseException {
         String projectId = request.getParameter("projectId");
+        String tables = request.getParameter("tables");
+        List<String> tableNames = new ArrayList<>();
+        if (tables != null && !tables.isEmpty()) {
+            tableNames = Arrays.asList(tables.split(","));
+        }
+        if (projectId.isEmpty() || tableNames.isEmpty()) {
+            return NONE;
+        }
 
-        GrpcHelper.getSyncServiceRpc().saveProjectSync(Long.valueOf(projectId), false, false,
-                false, false, true, false, false, false);
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (authHeader == null || authHeader.isEmpty()) {
+            return NONE;
+        }
+        String[] headerParts = authHeader.split(" ");
+        if (headerParts.length < 2) {
+            return NONE;
+        }
+        String token = headerParts[1];
 
-        // Signal about successful execution of the Action
-        return "syncResult";
+        DecodedJWT jwt;
+        try {
+            jwt = AuthorizationHelper.validateJWTToken(token);
+        } catch (Exception e) {
+            return NONE;
+        }
+        boolean hasAccess = false;
+        for (String claimName : jwt.getClaims().keySet()) {
+            if (claimName.endsWith("/roles")) {
+                Claim claim = jwt.getClaim(claimName);
+                for (String role : claim.asArray(String.class)) {
+                    if (role.equals("administrator")) {
+                        hasAccess = true;
+                    }
+                }
+            }
+        }
+        if (!hasAccess) {
+            return NONE;
+        }
+
+        GrpcHelper.getSyncServiceRpc().manualSync(Long.valueOf(projectId), tableNames);
+        return NONE;
     }
 }

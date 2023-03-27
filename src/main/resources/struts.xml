@@ -520,7 +520,6 @@
         </action>
 
         <action name="SyncProject" class="syncProjectAction">
-         <result name="success">/jsp/syncResult.jsp</result>
          </action>
 
         <!-- Redirect for old-style Struts1 requests -->
