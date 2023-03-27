@@ -519,6 +519,9 @@
         <action name="eventBusHandleAppealAction" class="eventBusHandleAppealAction">
         </action>
 
+        <action name="SyncProject" class="syncProjectAction">
+         </action>
+
         <!-- Redirect for old-style Struts1 requests -->
         <action name="*.do" class="struts1MappingAction">
            <result name="dynamic" type="redirect">${url}</result>
