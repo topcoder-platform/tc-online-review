@@ -1025,7 +1025,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
                 .getName()
                 .equals(com.topcoder.onlinereview.component.project.phase.handler.Constants.SUBMISSION_STATUS_ACTIVE)) {
             return ActionsHelper.produceErrorReport(
-                    this, request, permName, "Error.IncorrectPhase", null);
+                    this, request, permName, "Error.SubmissionNotActive", null);
         }
         // Get "My" resource for the appropriate phase
         Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
