@@ -25,17 +25,6 @@
     o=t.getElementsByTagName(e)[0];i.async=1;i.type="module";i.src=a;o.parentNode.insertBefore(i,o)
     }(window,document,"script",scriptURL,"tcUniNav");
 
-    var userId = `${userId}`;
-    if (userId !== '-1') {
-        var handle = "${userHandle}";
-    }
-    var initials = handle ? handle.substr(0, 2).toUpperCase() : '';
-
-    var user = {
-        userId,
-        initials,
-        handle
-    };
 
     var signInUrl = "https://accounts-auth0.topcoder.com/?retUrl=https://software.topcoder.com/review";
 
@@ -55,7 +44,7 @@
         type: 'tool',
         toolName: 'Review',
         toolRoot: '/',
-        user: handle ? user : null,
+        user: 'auto',
         signOut() {
             window.location.replace(signOutUrl)
         },
