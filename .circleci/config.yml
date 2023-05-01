@@ -234,7 +234,7 @@ workflows:
           filters:
             branches:
               only:
-                - [dev-maven, reskin-or-upgrade]
+                - dev-maven
 
       - deployQa:
           context: org-global
