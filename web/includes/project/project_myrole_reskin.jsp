@@ -44,7 +44,6 @@
                         <c:if test="${not empty outstandingDeliverables}">
                             <c:forEach items="${outstandingDeliverables}" var="deliverable" varStatus="deliverableStatus">
                                 <div class="myInfoTable__deliverableItem">
-                                <c:if test="${deliverable.id != 1}">
                                     <c:set var="devrStatus" value="${outstandingDeliverableStatuses[deliverableStatus.index]}" />
                                     <c:choose>
                                         <c:when test="${deliverable.complete}">
@@ -68,7 +67,6 @@
                                             (<tc-webtag:handle coderId="${outstandingDeliverableSubmissionUserIds[deliverableStatus.index]}" context="${orfn:getHandlerContext(pageContext.request)}" />)
                                     </c:if>
                                     </c:if>
-                                </c:if>
                             </div>
                             </c:forEach>
                         </c:if>
