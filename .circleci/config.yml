@@ -1,7 +1,7 @@
 version: 2
 defaults: &defaults
   docker:
-    - image: maven:3.6.1-jdk-8
+    - image: maven:3.6.3-jdk-8
 
 deploy_defaults: &deploy_defaults
   docker:
