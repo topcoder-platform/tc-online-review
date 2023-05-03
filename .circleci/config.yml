@@ -18,7 +18,7 @@ install_deploy_dependency: &install_deploy_dependency
 install_dependency: &install_dependency
   name: Installation of build dependencies.
   command: |
-    sed -i '/stretch-updates/d' /etc/apt/sources.list'
+    sed -i '/stretch-updates/d' /etc/apt/sources.list
     sed -i 's/security.debian/archive.debian/' /etc/apt/sources.list
     sed -i 's/deb.debian/archive.debian/' /etc/apt/sources.list
     apt update
