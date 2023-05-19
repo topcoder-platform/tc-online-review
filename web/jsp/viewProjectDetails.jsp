@@ -171,39 +171,69 @@
     </div>
 </div>
 
-<div class="cta">
-    <div class="cta__inner">
-        <c:if test="${isAllowedToViewPayments}">
-            <a href="ViewProjectPayments?pid=${project.id}"><or:text key='viewProjectDetails.btnPayments.alt' /></a>
-        </c:if>
-        <c:if test="${requestScope.isAllowedToManageProjects}">
-            <a href="ViewManagementConsole?pid=${project.id}"><or:text key='viewProjectDetails.btnManagementConsoleLink.alt' /></a>
-        </c:if>
-        <c:if test="${isAllowedToEditProjects}">
-            <a href="EditProjectLinks?pid=${project.id}"><or:text key='viewProjectDetails.btnEditLink.alt' /></a>
-        </c:if>
-        <c:if test="${isAllowedToEditProjects}">
-            <a href="EditProject?pid=${project.id}"><or:text key='viewProjectDetails.btnEdit.alt' /></a>
-        </c:if>
+<div class="mainFooter">
+    <div class="cta">
+        <div class="cta__inner">
+            <c:if test="${isAllowedToViewPayments}">
+                <a href="ViewProjectPayments?pid=${project.id}"><or:text key='viewProjectDetails.btnPayments.alt' /></a>
+            </c:if>
+            <c:if test="${requestScope.isAllowedToManageProjects}">
+                <a href="ViewManagementConsole?pid=${project.id}"><or:text key='viewProjectDetails.btnManagementConsoleLink.alt' /></a>
+            </c:if>
+            <c:if test="${isAllowedToEditProjects}">
+                <a href="EditProjectLinks?pid=${project.id}"><or:text key='viewProjectDetails.btnEditLink.alt' /></a>
+            </c:if>
+            <c:if test="${isAllowedToEditProjects}">
+                <a href="EditProject?pid=${project.id}"><or:text key='viewProjectDetails.btnEdit.alt' /></a>
+            </c:if>
+        </div>
     </div>
+    <jsp:include page="/includes/inc_footer_reskin.jsp" />
 </div>
 
-<jsp:include page="/includes/inc_footer_reskin.jsp" />
 <script type="text/javascript">
-  window.onload = () => {
-  var footerDetails = document.getElementById("footerNav").childNodes[0];
-  if (document.getElementById("footerNav")) {
-    var footerHeight = document.getElementById("footerNav").clientHeight;
-  }
-  var cta = document.querySelector(".cta")
-  if (footerHeight) {
-    cta.style.bottom = (footerHeight) + 'px';
-  }
-  footerDetails.children[0].addEventListener("click", function(){
-    if (cta) {
-        cta.classList.toggle("ctaOpen")
+window.onload = function () {
+  var root = document.querySelector(':root')
+
+  var footerMain = document.getElementsByClassName('mainFooter')[0];
+  var footerNav = document.querySelector("#footerNav");
+
+  var intervalId = setInterval(function () {
+    var footerDetails = footerNav.childNodes[0];
+    if (footerDetails) {
+        var toggleBar = footerDetails.childNodes[0];
+        toggleBar.addEventListener("click", function() {
+            root.style.setProperty('--footer-height', footerNav.clientHeight + 'px');
+        })
+        clearInterval(intervalId);
     }
-  })
+  }, 1000)
+}
+
+window.onresize = function () {
+  var root = document.querySelector(':root')
+
+  var footerMain = document.getElementsByClassName('mainFooter')[0];
+  var footerNav = document.getElementById("footerNav");
+  var footerDetails = footerNav.childNodes[0];
+
+  root.style.setProperty('--footer-height', footerNav.clientHeight + 'px');
+}
+
+window.onscroll = function () {
+  var html = document.querySelector('html')
+
+  var cta = document.querySelector('.cta')
+  var footer = document.querySelector('#footerNav');
+
+  var rect = footer.getBoundingClientRect();
+  var footerVisible = rect.top < (window.innerHeight || document.documentElement.clientHeight)
+
+  if (footerVisible) {
+    cta.style.boxShadow = 'none';
+  } else {
+    cta.style.boxShadow = '';
+  }
 }
 
 </script>
