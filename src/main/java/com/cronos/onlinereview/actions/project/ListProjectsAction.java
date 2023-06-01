@@ -344,6 +344,7 @@ public class ListProjectsAction extends BaseProjectAction {
                     winnerId = null;
                 }
                 log.info("project:"+String.valueOf(projects[i].getId()));
+                log.info(String.valueOf(winnerId));
                 myDeliverables[i] = getMyDeliverablesForPhases(
                         this, allMyDeliverables, phases[i], myResources[i], winnerId);
 
