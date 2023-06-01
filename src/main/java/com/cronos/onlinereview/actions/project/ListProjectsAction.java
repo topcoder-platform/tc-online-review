@@ -29,8 +29,6 @@ import com.topcoder.onlinereview.component.search.filter.AndFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
 import com.topcoder.onlinereview.component.search.filter.InFilter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -55,8 +53,6 @@ import javax.servlet.http.Cookie;
  * @version 2.0
  */
 public class ListProjectsAction extends BaseProjectAction {
-
-    private static final Logger log = LoggerFactory.getLogger(ListProjectsAction.class.getName());
     /**
      * Represents the serial version id.
      */
@@ -343,8 +339,6 @@ public class ListProjectsAction extends BaseProjectAction {
                 } catch (NumberFormatException nfe) {
                     winnerId = null;
                 }
-                log.info("project:"+String.valueOf(projects[i].getId()));
-                log.info(String.valueOf(winnerId));
                 myDeliverables[i] = getMyDeliverablesForPhases(
                         this, allMyDeliverables, phases[i], myResources[i], winnerId);
 
@@ -560,7 +554,6 @@ public class ListProjectsAction extends BaseProjectAction {
         if (deliverables == null || deliverables.length == 0 ||
                 phases == null || phases.length == 0 ||
                 resources == null || resources.length == 0) {
-                    log.info("no deliverables");
             return null; // No deliverables
         }
 
@@ -574,30 +567,25 @@ public class ListProjectsAction extends BaseProjectAction {
 
             for (; j < phases.length; ++j) {
                 if (deliverable.getPhase() == phases[j].getId()) {
-                    log.info(String.valueOf(deliverable.getPhase()));
                     break;
                 }
             }
 
             // If this deliverable is not for any of the phases, continue the search
             if (j == phases.length) {
-                log.info("phase not found");
                 continue;
             }
 
             for (j = 0; j < resources.length; ++j) {
                 if (deliverable.getResource() == resources[j].getId()) {
-                    log.info(String.valueOf(deliverable.getResource()));
                     break;
                 }
             }
 
             // If this deliverable is not for any of the resources, continue the search
             if (j == resources.length) {
-                log.info("resource not found");
                 continue;
             }
-            log.info(String.valueOf(deliverable.getName()));
             // Get a resource this deliverable is for
             final Resource forResource = resources[j];
 
@@ -608,7 +596,6 @@ public class ListProjectsAction extends BaseProjectAction {
                     Constants.ACTIVE_SUBMISSION_STATUS_NAME, false);
                 if (submissions != null && submissions.length > 0 &&
                         submissions[0].getUpload().getOwner() != deliverable.getResource()) {
-                            log.info("spec check");
                     continue;
                 }
             }
@@ -617,7 +604,6 @@ public class ListProjectsAction extends BaseProjectAction {
             if (winnerUserId != null) {
                 if (forResource.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME) &&
                         !winnerUserId.equals(resources[j].getUserId())) {
-                            log.info("winner check");
                     continue;
                 }
             }
@@ -626,7 +612,6 @@ public class ListProjectsAction extends BaseProjectAction {
             String deliverableName = deliverable.getName();
             // Do not add the same deliverable twice
             if (deliverablesSet.contains(deliverableName)) {
-                log.info("duplicate check");
                 continue;
             }
 
@@ -634,10 +619,7 @@ public class ListProjectsAction extends BaseProjectAction {
             if (buffer.length() != 0) {
                 buffer.append("<br />");
             }
-            log.info(deliverableName);
             buffer.append(textProvider.getText("Deliverable." + deliverableName.replaceAll(" ", "")));
-            log.info("Deliverable." + deliverableName.replaceAll(" ", ""));
-            log.info(buffer.toString());
             deliverablesSet.add(deliverableName);
         }
 
