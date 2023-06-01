@@ -28,6 +28,9 @@ import com.topcoder.onlinereview.component.search.SearchBuilderException;
 import com.topcoder.onlinereview.component.search.filter.AndFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
 import com.topcoder.onlinereview.component.search.filter.InFilter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -53,6 +56,7 @@ import javax.servlet.http.Cookie;
  */
 public class ListProjectsAction extends BaseProjectAction {
 
+    private static final Logger log = LoggerFactory.getLogger(ListProjectsAction.class.getName());
     /**
      * Represents the serial version id.
      */
@@ -329,6 +333,14 @@ public class ListProjectsAction extends BaseProjectAction {
         {
             Deliverable[] allMyDeliverables = getDeliverables(
                     ActionsHelper.createDeliverableManager(), projects, phases, myResources);
+            for (Deliverable d : allMyDeliverables) {
+                log.info(String.valueOf(d.getProject()));
+                log.info(String.valueOf(d.getPhase()));
+                log.info(String.valueOf(d.getResource()));
+                log.info(String.valueOf(d.getName()));
+                log.info(String.valueOf(d.getCompletionDate()));
+                log.info(String.valueOf(d.isComplete()));
+            }
 
             // Group the deliverables per projects in list
             for (int i = 0; i < projects.length; ++i) {
@@ -342,6 +354,8 @@ public class ListProjectsAction extends BaseProjectAction {
 
                 myDeliverables[i] = getMyDeliverablesForPhases(
                         this, allMyDeliverables, phases[i], myResources[i], winnerId);
+                log.info(String.valueOf(i));
+                log.info(myDeliverables[i]);
 
             }
         }
