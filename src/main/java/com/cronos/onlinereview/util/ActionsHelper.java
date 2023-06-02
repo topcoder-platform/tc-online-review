@@ -1478,7 +1478,7 @@ public class ActionsHelper {
         validateParameterNotNull(phases, "phases");
 
         // A filter to search for deliverables for specific phase(s) of the project
-        Filter filter;
+        Filter phaseFilter;
         switch (phases.length) {
         case 0:
             // No phases -- no deliverables
@@ -1487,7 +1487,7 @@ public class ActionsHelper {
         case 1:
             // If there is only one phase in the provided array,
             // create filter for it directly (no OR filters needed)
-            filter = DeliverableFilterBuilder.createPhaseIdFilter(phases[0].getId());
+            phaseFilter = DeliverableFilterBuilder.createPhaseIdFilter(phases[0].getId());
             break;
 
         default:
@@ -1497,8 +1497,11 @@ public class ActionsHelper {
                 phaseFilters.add(DeliverableFilterBuilder.createPhaseIdFilter(phase.getId()));
             }
             // Combine all filters using OR operator
-            filter = new OrFilter(phaseFilters);
+            phaseFilter = new OrFilter(phaseFilters);
         }
+
+        Filter resourceRoleFilter = new NotFilter(new EqualToFilter("resource_role_id", 1));
+        Filter filter = new AndFilter(Arrays.asList(phaseFilter, resourceRoleFilter));
 
         // Perform a search for the deliverables
         Deliverable[] allDeliverables = createDeliverableManager().searchDeliverables(filter, null);
