@@ -28,6 +28,7 @@ import com.topcoder.onlinereview.component.search.SearchBuilderException;
 import com.topcoder.onlinereview.component.search.filter.AndFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
 import com.topcoder.onlinereview.component.search.filter.InFilter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -52,7 +53,6 @@ import javax.servlet.http.Cookie;
  * @version 2.0
  */
 public class ListProjectsAction extends BaseProjectAction {
-
     /**
      * Represents the serial version id.
      */
@@ -339,7 +339,6 @@ public class ListProjectsAction extends BaseProjectAction {
                 } catch (NumberFormatException nfe) {
                     winnerId = null;
                 }
-
                 myDeliverables[i] = getMyDeliverablesForPhases(
                         this, allMyDeliverables, phases[i], myResources[i], winnerId);
 
@@ -587,7 +586,6 @@ public class ListProjectsAction extends BaseProjectAction {
             if (j == resources.length) {
                 continue;
             }
-
             // Get a resource this deliverable is for
             final Resource forResource = resources[j];
 

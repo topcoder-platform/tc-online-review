@@ -152,7 +152,7 @@ jobs:
       LOGICAL_ENV: "dev"
       DEPLOY_ENV: "DEV"
       COMPONENT_BRANCH: "dev"
-      OR_INT_BRANCH: "v0.0.3"
+      OR_INT_BRANCH: "v0.0.4"
       PLAT_INT_BRANCH: "v0.0.29"
       APPNAME: "tc-online-review"
     steps: *build_steps
@@ -164,7 +164,7 @@ jobs:
       LOGICAL_ENV: "qa"
       DEPLOY_ENV: "QA"
       COMPONENT_BRANCH: "qa"
-      OR_INT_BRANCH: "v0.0.3"
+      OR_INT_BRANCH: "v0.0.4"
       PLAT_INT_BRANCH: "v0.0.29"
       APPNAME: "tc-online-review"
     steps: *build_steps
@@ -176,7 +176,7 @@ jobs:
       LOGICAL_ENV: "prod"
       DEPLOY_ENV: "PROD"
       COMPONENT_BRANCH: "master"
-      OR_INT_BRANCH: "v0.0.3"
+      OR_INT_BRANCH: "v0.0.4"
       PLAT_INT_BRANCH: "v0.0.29"
       APPNAME: "tc-online-review"
     steps: *build_steps
