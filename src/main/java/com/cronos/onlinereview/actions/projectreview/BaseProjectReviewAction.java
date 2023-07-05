@@ -1458,7 +1458,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         if (possibleFinalScoreUpdate) {
             updateFinalAggregatedScore(request, project, phase, verification.getSubmission());
             if (verification.getSubmission().getFinalScore() != null) {
-                GrpcHelper.getSyncServiceRpc().SaveReviewSync(project.getId());
+                GrpcHelper.getSyncServiceRpc().SaveReviewManagerEditSync(project.getId());
             }
         }
 
@@ -1472,6 +1472,8 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
             request.setAttribute("reviewScore", review.getScore());
             // Place review ID into the request
             request.setAttribute("rid", review.getId());
+
+            GrpcHelper.getSyncServiceRpc().SaveReviewSync(project.getId(), reviewType);
 
             // Forward to the page that says that scorecard has been committed
             return Constants.REVIEW_COMMITTD_FORWARD_NAME;
