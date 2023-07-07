@@ -1566,12 +1566,14 @@ public class SaveProjectAction extends BaseProjectAction {
         }
 
         // validate resources have correct terms of use
+        /*
         try {
-            // allResourcesValid = allResourcesValid && validateResourceTermsOfUse(request, project, userRetrieval, resourceNames);
-            // allResourcesValid = allResourcesValid && validateResourceEligibility(request, project, userRetrieval, resourceNames, externalUsers);
+            allResourcesValid = allResourcesValid && validateResourceTermsOfUse(request, project, userRetrieval, resourceNames);
+            allResourcesValid = allResourcesValid && validateResourceEligibility(request, project, userRetrieval, resourceNames, externalUsers);
         } catch (ContestEligibilityValidatorException e) {
             throw new BaseException(e);
         }
+        */
 
         // Check for duplicate reviewers and disallowed resource roles
         Set<String> disabledResourceRoles = new HashSet<String>(Arrays.asList(ConfigHelper.getDisabledResourceRoles()));
