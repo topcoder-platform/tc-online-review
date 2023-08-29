@@ -2080,6 +2080,9 @@
         <Property name="bucket_dmz">
             <Value>@aws_s3_bucket_dmz@</Value>
         </Property>
+        <Property name="bucket_quarantine">
+            <Value>@aws_s3_bucket_quarantine@</Value>
+        </Property>
     </Property>
     <Property name="new_auth">
         <Property name="new_auth_url">

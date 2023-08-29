@@ -584,6 +584,11 @@ public abstract class BaseProjectDetailsAction extends DynamicModelDrivenAction 
             return ActionsHelper.produceErrorReport(this, request, null, "Error.SubmissionOnDmz", null);
         }
 
+        // url not null and url bucket is equal to S3 Quarantine bucket
+        if (upload.getUrl() != null && ActionsHelper.isQuarantineBucket(upload.getUrl())) {
+            return ActionsHelper.produceErrorReport(this, request, null, "Error.SubmissionOnQuarantine", null);
+        }
+
         processSubmissionDownload(upload, request, response);
 
         return null;
