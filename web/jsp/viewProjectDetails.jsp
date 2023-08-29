@@ -192,7 +192,8 @@
 </div>
 
 <script type="text/javascript">
-window.onload = function () {
+
+function footerToggleClick() {
   var root = document.querySelector(':root')
 
   var footerMain = document.getElementsByClassName('mainFooter')[0];
@@ -209,6 +210,8 @@ window.onload = function () {
     }
   }, 1000)
 }
+
+window.addEventListener("load", footerToggleClick, false);
 
 window.onresize = function () {
   var root = document.querySelector(':root')
