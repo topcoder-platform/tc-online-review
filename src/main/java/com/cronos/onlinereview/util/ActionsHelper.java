@@ -200,12 +200,18 @@ public class ActionsHelper {
      */
     private static final String s3BucketDmz;
 
+    /**
+     * AWS S3 bucket Quarantine name
+     */
+    private static final String s3BucketQuarantine;
+
     static {
         try {
             ClassLoader loader = ActionsHelper.class.getClassLoader();
             //URL credentialURL = loader.getResource(AWS_CREDENTIALS_FILE);
             s3Bucket = ConfigHelper.getS3Bucket();
             s3BucketDmz = ConfigHelper.getS3BucketDmz();
+            s3BucketQuarantine = ConfigHelper.getS3BucketQuarantine();
             presignedExpireMillis = ConfigHelper.getPreSignedExpTimeMilis();
             //s3Client = new AmazonS3Client(new PropertiesCredentials(new File(credentialURL.getFile())));
             //s3Client = new AmazonS3Client(new InstanceProfileCredentialsProvider());
@@ -3213,6 +3219,20 @@ public class ActionsHelper {
         }
         log.info("S3 Bucket from url: " + s3Uri.getBucket());
         return s3BucketDmz.equals(s3Uri.getBucket());
+    }
+
+    /**
+     * Check upload url is on quarantine
+     *
+     * @param url upload url
+     * @return true if uploadfile is on quarantine bucket
+     */
+    public static boolean isQuarantineBucket(String url) {
+        AmazonS3URI s3Uri = isS3Url(url);
+        if (s3Uri == null) {
+            return false;
+        }
+        return s3BucketQuarantine.equals(s3Uri.getBucket());
     }
 
     /**
