@@ -50,6 +50,6 @@ function prepareFrame() {
     ifrm.style.height = "0px";
     document.body.appendChild(ifrm);
 }
-window.onload = prepareFrame;
+window.addEventListener("load",prepareFrame, false);
 </script>
 
