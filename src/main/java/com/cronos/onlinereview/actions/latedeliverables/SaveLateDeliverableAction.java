@@ -79,6 +79,8 @@ public class SaveLateDeliverableAction extends BaseLateDeliverableAction {
         // check user login
         if (!AuthorizationHelper.isUserLoggedIn(request)) {
             AuthorizationHelper.setLoginRedirect(request, false);
+            request.setAttribute("redirectUrl",
+                    ConfigHelper.getNewAuthUrl() + "?retUrl=" + request.getSession().getAttribute("redirectBackUrl"));
             return Constants.NOT_AUTHORIZED_FORWARD_NAME;
         }
 

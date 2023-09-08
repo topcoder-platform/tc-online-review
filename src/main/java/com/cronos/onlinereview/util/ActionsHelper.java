@@ -525,7 +525,7 @@ public class ActionsHelper {
         if (getRedirectUrlFromReferer != null && !AuthorizationHelper.isUserLoggedIn(request)) {
             AuthorizationHelper.setLoginRedirect(request, getRedirectUrlFromReferer);
             request.setAttribute("redirectUrl",
-                    ConfigHelper.getNewAuthUrl() + "?retUrl=" + request.getAttribute("redirectBackUrl"));
+                    ConfigHelper.getNewAuthUrl() + "?retUrl=" + request.getSession().getAttribute("redirectBackUrl"));
 
             return Constants.NOT_AUTHORIZED_FORWARD_NAME;
         }
