@@ -6,6 +6,7 @@ package com.cronos.onlinereview.actions.latedeliverables;
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
+import com.cronos.onlinereview.util.ConfigHelper;
 import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
 import com.topcoder.onlinereview.component.deliverable.late.LateDeliverable;
@@ -48,6 +49,8 @@ public class EditLateDeliverableAction extends BaseLateDeliverableAction {
         // check user login
         if (!AuthorizationHelper.isUserLoggedIn(request)) {
             AuthorizationHelper.setLoginRedirect(request, false);
+            request.setAttribute("redirectUrl",
+                    ConfigHelper.getNewAuthUrl() + "?retUrl=" + request.getSession().getAttribute("redirectBackUrl"));
             return Constants.NOT_AUTHORIZED_FORWARD_NAME;
         }
 
