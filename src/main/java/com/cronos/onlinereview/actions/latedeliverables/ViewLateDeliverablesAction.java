@@ -161,7 +161,8 @@ public class ViewLateDeliverablesAction extends BaseLateDeliverableAction {
         if (!AuthorizationHelper.isUserLoggedIn(request)) {
             // set url for login redirect.
             AuthorizationHelper.setLoginRedirect(request, false);
-
+            request.setAttribute("redirectUrl",
+                    ConfigHelper.getNewAuthUrl() + "?retUrl=" + request.getSession().getAttribute("redirectBackUrl"));
             return Constants.NOT_AUTHORIZED_FORWARD_NAME;
         }
 

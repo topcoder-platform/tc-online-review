@@ -118,11 +118,9 @@ public class AuthorizationHelper {
 
         StringBuilder redirectBackUrl = new StringBuilder();
 
-        redirectBackUrl.append(request.getScheme());
+        redirectBackUrl.append("https");
         redirectBackUrl.append("://");
         redirectBackUrl.append(request.getServerName());
-        redirectBackUrl.append(':');
-        redirectBackUrl.append(request.getServerPort());
         redirectBackUrl.append(request.getRequestURI());
         if (request.getQueryString() != null && request.getQueryString().trim().length() != 0) {
             redirectBackUrl.append('?');

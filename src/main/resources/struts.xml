@@ -23,7 +23,7 @@
         <default-interceptor-ref name="orStack" />
 
         <global-results>
-           <result name="notAuthorized" type="redirect">/actions/Login</result>
+           <result name="notAuthorized" type="redirect">${#request.redirectUrl}</result>
            <result name="Login">/actions/Login</result>
            <result name="userError">/jsp/userError.jsp</result>
            <result name="reviewCommitted">/jsp/reviewCommitted.jsp</result>
