@@ -215,6 +215,7 @@ workflows:
             branches:
               only:
                 - dev-maven
+                - feat/redirect
 
       - build-qa:
           context: org-global
@@ -237,6 +238,7 @@ workflows:
             branches:
               only:
                 - dev-maven
+                - feat/redirect
 
       - deployQa:
           context: org-global

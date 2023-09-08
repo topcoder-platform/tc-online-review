@@ -524,6 +524,9 @@ public class ActionsHelper {
         // why they don't have permissions to do the job. Let the user login first
         if (getRedirectUrlFromReferer != null && !AuthorizationHelper.isUserLoggedIn(request)) {
             AuthorizationHelper.setLoginRedirect(request, getRedirectUrlFromReferer);
+            request.setAttribute("redirectUrl",
+                    ConfigHelper.getNewAuthUrl() + "?retUrl=" + request.getAttribute("redirectBackUrl"));
+
             return Constants.NOT_AUTHORIZED_FORWARD_NAME;
         }
 
