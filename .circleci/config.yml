@@ -214,20 +214,21 @@ workflows:
           filters:
             branches:
               only:
-                - dev-maven
+                - dev
 
       - build-qa:
           context: org-global
           filters:
             branches:
               only:
-                - qa-maven
+                - qa
 
       - build-prod:
           context: org-global
           filters:
             branches:
-              only: [master-maven]
+              only:
+                - master
 
       - deployDev:
           context: org-global
@@ -236,7 +237,7 @@ workflows:
           filters:
             branches:
               only:
-                - dev-maven
+                - dev
 
       - deployQa:
           context: org-global
@@ -245,7 +246,7 @@ workflows:
           filters:
             branches:
               only:
-                - qa-maven
+                - qa
 
       - deployProd:
           context: org-global
@@ -254,4 +255,4 @@ workflows:
           filters: &filters-prod
             branches:
               only:
-                - master-maven
+                - master
