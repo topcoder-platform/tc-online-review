@@ -1849,7 +1849,7 @@ public class SaveProjectAction extends BaseProjectAction {
             // If action is "delete", delete the resource and proceed to the next one
             if ("delete".equals(resourceAction)) {
                 //deletedUsers.add(user.getId());
-
+                resourcesUpdated = true;
                 // delete project payments
                 for (ProjectPayment payment : allPayments) {
                     if (resource.getId() == payment.getResourceId()) {
@@ -1879,6 +1879,7 @@ public class SaveProjectAction extends BaseProjectAction {
                     role.getId());
 
                 resourceRoleChanged = true;
+                resourcesUpdated = true;
 
                 if (role.getName().equals("Observer")) {
                     // change to observer
