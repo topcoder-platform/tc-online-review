@@ -896,8 +896,7 @@ public class ActionsHelper {
         for (int i = 0; i < resources.length; i++) {
             String email = emailsMap.get(userIDs[i]);
             if (email == null) {
-                // throw new BaseException("Can't retrieve email property for the resourceId: " + resources[i].getId());
-                email = "";
+                throw new BaseException("Can't retrieve email property for the resourceId: " + resources[i].getId());
             }
             resources[i].setProperty("Email", email);
         }
