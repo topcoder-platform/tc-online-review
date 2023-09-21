@@ -156,12 +156,7 @@ public class EditProjectAction extends BaseProjectAction {
 
             getModel().set("resources_role", i + 1, resources[i].getResourceRole().getId());
             getModel().set("resources_phase", i + 1, "loaded_" + resources[i].getPhase());
-            if (externalUsers[i] != null) {
-                getModel().set("resources_name", i + 1, externalUsers[i].getHandle());
-            } else {
-                getModel().set("resources_name", i + 1, resources[i].getProperty("Handle"));
-            }
-            
+            getModel().set("resources_name", i + 1, externalUsers[i].getHandle());
         }
 
         // Populate project prizes to form

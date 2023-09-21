@@ -431,7 +431,7 @@ public final class PhasesDetailsServices {
             // Get external ID for the current submitter's resource
             long extUserId = submitters[j].getUserId();
             for (ExternalUser extUser : extUsers) {
-                if (extUser != null && extUserId == extUser.getId()) {
+                if (extUserId == extUser.getId()) {
                     userEmails[j] = extUser.getEmail();
                     break;
                 }
