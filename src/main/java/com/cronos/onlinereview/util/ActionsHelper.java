@@ -3248,7 +3248,7 @@ public class ActionsHelper {
         try {
             AmazonS3URI s3Uri = new AmazonS3URI(url);
             return s3Uri;
-        } catch (IllegalArgumentException ex) {
+        } catch (Exception ex) {
             // url doesn't seem to be a valid
             return null;
         }
