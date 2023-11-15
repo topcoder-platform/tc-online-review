@@ -363,6 +363,8 @@ public class ConfigHelper {
      */
     private static final String PERMISSIONS_MATRIX_PROP = "Permissions Matrix";
 
+    private static final String PERMISSIONS_MATRIX_JWT_PROP = "Permissions Matrix JWT";
+
     /**
      * This member variable is a string constant that specifies the name of the property which
      * contains definitions of the phase groups. The phases that belong to the same group will be
@@ -790,6 +792,8 @@ public class ConfigHelper {
      * lists of roles that have every of the permissions (as values for the corresponding keys).
      */
     private static Map<String, String[]> permissionsMatrix = new HashMap<String, String[]>();
+
+    private static Map<String, String[]> permissionsMatrixJwt = new HashMap<String, String[]>();
 
     /**
      * This member variable holds the list of names of the phase groups. The names are represented
@@ -1474,6 +1478,18 @@ public class ConfigHelper {
                 }
             }
 
+            ConfigManager.Property propPermissionsMatrixJwt = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS,
+                    PERMISSIONS_MATRIX_JWT_PROP);
+            Enumeration permissionNamesJwt = propPermissionsMatrixJwt.propertyNames();
+
+            while (permissionNamesJwt.hasMoreElements()) {
+                String permissionName = (String) permissionNamesJwt.nextElement();
+                String[] roles = propPermissionsMatrixJwt.getValues(permissionName);
+                if (roles != null && roles.length != 0) {
+                    permissionsMatrixJwt.put(permissionName, roles);
+                }
+            }
+
             // Retrieve property that contains definitions of phase groups
             ConfigManager.Property propPhaseGrouping = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PHASE_GROUPING_PROP);
             // Prepare to enumerate all group definition properties
@@ -2081,6 +2097,11 @@ public class ConfigHelper {
      */
     public static String[] getRolesForPermission(String permissionName) {
         String[] roles = permissionsMatrix.get(permissionName);
+        return (roles != null) ? roles : new String[0];
+    }
+
+    public static String[] getJwtRolesForPermission(String permissionName) {
+        String[] roles = permissionsMatrixJwt.get(permissionName);
         return (roles != null) ? roles : new String[0];
     }
 

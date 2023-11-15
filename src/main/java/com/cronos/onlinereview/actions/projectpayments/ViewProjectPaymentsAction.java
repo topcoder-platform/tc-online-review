@@ -97,8 +97,17 @@ public class ViewProjectPaymentsAction extends BaseProjectPaymentAction {
         request.setAttribute("payments", payments);
         request.setAttribute("isAllowedToContactPM",
                 AuthorizationHelper.hasUserPermission(request, Constants.CONTACT_PM_PERM_NAME));
-        request.setAttribute("isAllowedToEditPayments",
-                AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PAYMENTS_PERM_NAME));
+        boolean isAllowedToEditPayments = false;
+        if (project.getProjectStatus().getName() == Constants.COMPLETED_PROJECT_STATUS_NAME) {
+            AuthorizationHelper.gatherUserJwtRoles(request);
+            isAllowedToEditPayments = AuthorizationHelper.hasUserJwtPermission(request,
+                    Constants.EDIT_PAYMENTS_COMPLETED_PROJECT_PERM_NAME);
+
+        } else {
+            isAllowedToEditPayments = AuthorizationHelper.hasUserPermission(request,
+                    Constants.EDIT_PAYMENTS_PERM_NAME);
+        }
+        request.setAttribute("isAllowedToEditPayments", isAllowedToEditPayments);
         request.setAttribute("pactsPaymentDetailBaseURL", ConfigHelper.getPactsPaymentDetailBaseURL());
 
         return Constants.SUCCESS_FORWARD_NAME;
