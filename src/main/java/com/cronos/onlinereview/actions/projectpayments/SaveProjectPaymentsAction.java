@@ -87,6 +87,15 @@ public class SaveProjectPaymentsAction extends BaseProjectPaymentAction {
         // At this point, redirect-after-login attribute should be removed (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
 
+        if (verification.getProject().getProjectStatus().getName().equals(Constants.COMPLETED_PROJECT_STATUS_NAME)) {
+            AuthorizationHelper.gatherUserJwtRoles(request);
+            if (!AuthorizationHelper.hasUserJwtPermission(request,
+                    Constants.EDIT_PAYMENTS_COMPLETED_PROJECT_PERM_NAME)) {
+                return ActionsHelper.produceErrorReport(this, request,
+                        Constants.EDIT_PAYMENTS_COMPLETED_PROJECT_PERM_NAME, "Error.NoPermission", null);
+            }
+        }
+
         long projectId = verification.getProject().getId();
         ProjectPaymentManager projectPaymentManager = ActionsHelper.createProjectPaymentManager();
         List<ProjectPayment> payments = projectPaymentManager.search(

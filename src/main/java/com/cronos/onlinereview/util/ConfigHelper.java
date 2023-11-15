@@ -363,6 +363,8 @@ public class ConfigHelper {
      */
     private static final String PERMISSIONS_MATRIX_PROP = "Permissions Matrix";
 
+    private static final String PERMISSIONS_MATRIX_JWT_PROP = "Permissions Matrix JWT";
+
     /**
      * This member variable is a string constant that specifies the name of the property which
      * contains definitions of the phase groups. The phases that belong to the same group will be
@@ -791,6 +793,8 @@ public class ConfigHelper {
      */
     private static Map<String, String[]> permissionsMatrix = new HashMap<String, String[]>();
 
+    private static Map<String, String[]> permissionsMatrixJwt = new HashMap<String, String[]>();
+
     /**
      * This member variable holds the list of names of the phase groups. The names are represented
      * as keys that should be used to retrieve localized group name from the message resources file.
@@ -1053,6 +1057,11 @@ public class ConfigHelper {
      * AWS S3 bucket for DMZ
      */
     private static String s3BucketDmz;
+
+    /**
+     * AWS S3 bucket for Quarantine
+     */
+    private static String s3BucketQuarantine;
 
     /**
      * AWS S3 presigned expire time in millisecond
@@ -1469,6 +1478,18 @@ public class ConfigHelper {
                 }
             }
 
+            ConfigManager.Property propPermissionsMatrixJwt = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS,
+                    PERMISSIONS_MATRIX_JWT_PROP);
+            Enumeration permissionNamesJwt = propPermissionsMatrixJwt.propertyNames();
+
+            while (permissionNamesJwt.hasMoreElements()) {
+                String permissionName = (String) permissionNamesJwt.nextElement();
+                String[] roles = propPermissionsMatrixJwt.getValues(permissionName);
+                if (roles != null && roles.length != 0) {
+                    permissionsMatrixJwt.put(permissionName, roles);
+                }
+            }
+
             // Retrieve property that contains definitions of phase groups
             ConfigManager.Property propPhaseGrouping = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PHASE_GROUPING_PROP);
             // Prepare to enumerate all group definition properties
@@ -1696,6 +1717,7 @@ public class ConfigHelper {
             ConfigManager.Property awsS3 = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, "aws_s3");
             s3Bucket = awsS3.getValue("bucket");
             s3BucketDmz = awsS3.getValue("bucket_dmz");
+            s3BucketQuarantine = awsS3.getValue("bucket_quarantine");
             try {
                 preSignedExpTimeMilis = Long.parseLong(awsS3.getValue("expire"));
             } catch (Exception e) {
@@ -2075,6 +2097,11 @@ public class ConfigHelper {
      */
     public static String[] getRolesForPermission(String permissionName) {
         String[] roles = permissionsMatrix.get(permissionName);
+        return (roles != null) ? roles : new String[0];
+    }
+
+    public static String[] getJwtRolesForPermission(String permissionName) {
+        String[] roles = permissionsMatrixJwt.get(permissionName);
         return (roles != null) ? roles : new String[0];
     }
 
@@ -2573,6 +2600,14 @@ public class ConfigHelper {
      */
     public static String getS3BucketDmz() {
         return s3BucketDmz;
+    }
+
+    /**
+     * Get S3 bucket Quarantine
+     * @return s3 bucket quarantine name
+     */
+    public static String getS3BucketQuarantine() {
+        return s3BucketQuarantine;
     }
 
     /**

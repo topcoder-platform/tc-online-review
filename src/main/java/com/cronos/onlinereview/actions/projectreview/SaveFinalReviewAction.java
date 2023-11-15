@@ -23,6 +23,7 @@ import com.topcoder.onlinereview.component.scorecard.Scorecard;
 import com.topcoder.onlinereview.component.scorecard.Section;
 import com.topcoder.onlinereview.component.project.phase.Phase;
 import com.topcoder.onlinereview.component.exception.BaseException;
+import com.topcoder.onlinereview.component.grpcclient.GrpcHelper;
 
 /**
  * This class is the struts action class which is used to save the final review.
@@ -226,6 +227,9 @@ public class SaveFinalReviewAction extends BaseProjectReviewAction {
             return INPUT;
         }
 
+        if (commitRequested) {
+            GrpcHelper.getSyncServiceRpc().SaveReviewSync(verification.getProject().getId(), "Final Review");
+        }
         // Forward to project details page
         setPid(verification.getProject().getId());
         return Constants.SUCCESS_FORWARD_NAME;

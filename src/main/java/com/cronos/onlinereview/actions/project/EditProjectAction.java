@@ -197,6 +197,7 @@ public class EditProjectAction extends BaseProjectAction {
         request.setAttribute("isAdmin", isAdmin);
 
         // start BUGR 4039 - Check whether the billing project id is in the user's allowed billing projects list
+        /*
         List<ClientProject> availableClientProjects = ActionsHelper.getClientProjects(request);
         Long currentClientProjectId = (Long) getModel().get("billing_project");
         boolean inList = false;
@@ -213,10 +214,11 @@ public class EditProjectAction extends BaseProjectAction {
                 }
             }
         }
-
-        request.setAttribute("allowBillingEdit", isAdmin && inList);
+        */
+        request.setAttribute("allowBillingEdit", isAdmin && false);
 
         // end BUG-4039
+        /*
         List<CockpitProject> availableCockpitProjects = ActionsHelper.getCockpitProjects(request);
         Long currentCockpitProjectId = (Long) getModel().get("cockpit_project");
         inList = false;
@@ -232,8 +234,8 @@ public class EditProjectAction extends BaseProjectAction {
                 }
             }
         }
-
-        request.setAttribute("allowCockpitProjectEdit", isAdmin && inList);
+        */
+        request.setAttribute("allowCockpitProjectEdit", isAdmin && false);
     }
 
     /**

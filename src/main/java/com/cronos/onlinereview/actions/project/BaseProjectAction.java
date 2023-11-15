@@ -209,12 +209,14 @@ public abstract class BaseProjectAction extends DynamicModelDrivenAction {
         // since Online Review Update - Add Project Dropdown v1.0
         // Retrieve the list of all client projects and store it in the request
         // this need to be retrieved only for admin user.
+        /*
         if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
                 || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)
                 || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
             request.setAttribute("billingProjects", ActionsHelper.getClientProjects(request));
             request.setAttribute("cockpitProjects", ActionsHelper.getCockpitProjects(request));
         }
+        */
     }
 
     /**

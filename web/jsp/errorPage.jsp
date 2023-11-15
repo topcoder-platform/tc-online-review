@@ -71,7 +71,7 @@ padding: 0px;
             <br /><br />
             You may click <a href="javascript:history.back();">here</a> to return to the last page you were viewing.
             <br /><br />
-            If you have a question or comment, please email <a href="mailto:service@topcoder.com" class="bodyText">service@topcoder.com</a>.
+            If you have a question or comment, please email <a href="mailto:support@topcoder.com" class="bodyText">support@topcoder.com</a>.
             <br /><br />
             <%= new Date().toString() %>
         </div>

@@ -200,12 +200,18 @@ public class ActionsHelper {
      */
     private static final String s3BucketDmz;
 
+    /**
+     * AWS S3 bucket Quarantine name
+     */
+    private static final String s3BucketQuarantine;
+
     static {
         try {
             ClassLoader loader = ActionsHelper.class.getClassLoader();
             //URL credentialURL = loader.getResource(AWS_CREDENTIALS_FILE);
             s3Bucket = ConfigHelper.getS3Bucket();
             s3BucketDmz = ConfigHelper.getS3BucketDmz();
+            s3BucketQuarantine = ConfigHelper.getS3BucketQuarantine();
             presignedExpireMillis = ConfigHelper.getPreSignedExpTimeMilis();
             //s3Client = new AmazonS3Client(new PropertiesCredentials(new File(credentialURL.getFile())));
             //s3Client = new AmazonS3Client(new InstanceProfileCredentialsProvider());
@@ -518,6 +524,9 @@ public class ActionsHelper {
         // why they don't have permissions to do the job. Let the user login first
         if (getRedirectUrlFromReferer != null && !AuthorizationHelper.isUserLoggedIn(request)) {
             AuthorizationHelper.setLoginRedirect(request, getRedirectUrlFromReferer);
+            request.setAttribute("redirectUrl",
+                    ConfigHelper.getNewAuthUrl() + "?retUrl=" + request.getSession().getAttribute("redirectBackUrl"));
+
             return Constants.NOT_AUTHORIZED_FORWARD_NAME;
         }
 
@@ -3216,6 +3225,20 @@ public class ActionsHelper {
     }
 
     /**
+     * Check upload url is on quarantine
+     *
+     * @param url upload url
+     * @return true if uploadfile is on quarantine bucket
+     */
+    public static boolean isQuarantineBucket(String url) {
+        AmazonS3URI s3Uri = isS3Url(url);
+        if (s3Uri == null) {
+            return false;
+        }
+        return s3BucketQuarantine.equals(s3Uri.getBucket());
+    }
+
+    /**
      * Check upload url is a valid S3 url.
      *
      * @param url upload url
@@ -3225,7 +3248,7 @@ public class ActionsHelper {
         try {
             AmazonS3URI s3Uri = new AmazonS3URI(url);
             return s3Uri;
-        } catch (IllegalArgumentException ex) {
+        } catch (Exception ex) {
             // url doesn't seem to be a valid
             return null;
         }

@@ -13,6 +13,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Verification;
 import com.cronos.onlinereview.Constants;
@@ -35,9 +36,11 @@ import com.topcoder.onlinereview.component.security.groups.services.Authorizatio
 import com.topcoder.onlinereview.component.webcommon.SSOCookieService;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import java.security.interfaces.RSAPublicKey;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -118,11 +121,9 @@ public class AuthorizationHelper {
 
         StringBuilder redirectBackUrl = new StringBuilder();
 
-        redirectBackUrl.append(request.getScheme());
+        redirectBackUrl.append("https");
         redirectBackUrl.append("://");
         redirectBackUrl.append(request.getServerName());
-        redirectBackUrl.append(':');
-        redirectBackUrl.append(request.getServerPort());
         redirectBackUrl.append(request.getRequestURI());
         if (request.getQueryString() != null && request.getQueryString().trim().length() != 0) {
             redirectBackUrl.append('?');
@@ -493,6 +494,45 @@ public class AuthorizationHelper {
         AuthorizationHelper.ssoCookieService = ssoCookieService;
     }
 
+    public static void gatherUserJwtRoles(HttpServletRequest request) {
+        List<String> roles = new ArrayList<>();
+        String jwt = getJWTToken(request);
+        if (jwt == null) {
+            return;
+        }
+        try {
+            DecodedJWT decoded = validateJWTToken(jwt);
+            roles = getRolesFromJwt(decoded);
+        } catch (Exception e) {
+        }
+        request.setAttribute("jwtroles", roles);
+    }
+
+    public static boolean hasUserJwtPermission(HttpServletRequest request, String permissionName) {
+        String[] roles = ConfigHelper.getJwtRolesForPermission(permissionName);
+        return hasUserJwtRole(request, roles);
+    }
+
+    /**
+     * <p>
+     * Get jwt token
+     * </p>
+     *
+     * @param request the http servlet request
+     * @return the jwt token
+     */
+    public static String getJWTToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if (c.getName().equals(ConfigHelper.getV3jwtCookieName())) {
+                    return c.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * <p>
      * Validate jwt token
@@ -556,4 +596,30 @@ public class AuthorizationHelper {
         return decodedJWT;
     }
 
+    public static List<String> getRolesFromJwt(DecodedJWT jwt) {
+        List<String> roles = new ArrayList<>();
+        for (String claimName : jwt.getClaims().keySet()) {
+            if (claimName.endsWith("/roles")) {
+                Claim claim = jwt.getClaim(claimName);
+                for (String role : claim.asArray(String.class)) {
+                    roles.add(role);
+                }
+                break;
+            }
+        }
+        return roles;
+    }
+
+    public static boolean hasUserJwtRole(HttpServletRequest request, String[] roles) {
+        if (request.getAttribute("jwtroles") == null) {
+            return false;
+        }
+        List<String> jwtroles = (List<String>) request.getAttribute("jwtroles");
+        for (String role : roles) {
+            if (jwtroles.contains(role)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -1566,12 +1566,14 @@ public class SaveProjectAction extends BaseProjectAction {
         }
 
         // validate resources have correct terms of use
+        /*
         try {
             allResourcesValid = allResourcesValid && validateResourceTermsOfUse(request, project, userRetrieval, resourceNames);
             allResourcesValid = allResourcesValid && validateResourceEligibility(request, project, userRetrieval, resourceNames, externalUsers);
         } catch (ContestEligibilityValidatorException e) {
             throw new BaseException(e);
         }
+        */
 
         // Check for duplicate reviewers and disallowed resource roles
         Set<String> disabledResourceRoles = new HashSet<String>(Arrays.asList(ConfigHelper.getDisabledResourceRoles()));
@@ -1847,7 +1849,7 @@ public class SaveProjectAction extends BaseProjectAction {
             // If action is "delete", delete the resource and proceed to the next one
             if ("delete".equals(resourceAction)) {
                 //deletedUsers.add(user.getId());
-
+                resourcesUpdated = true;
                 // delete project payments
                 for (ProjectPayment payment : allPayments) {
                     if (resource.getId() == payment.getResourceId()) {
@@ -1877,6 +1879,7 @@ public class SaveProjectAction extends BaseProjectAction {
                     role.getId());
 
                 resourceRoleChanged = true;
+                resourcesUpdated = true;
 
                 if (role.getName().equals("Observer")) {
                     // change to observer
