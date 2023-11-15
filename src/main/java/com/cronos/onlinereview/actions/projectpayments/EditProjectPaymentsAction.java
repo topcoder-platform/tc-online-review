@@ -70,7 +70,7 @@ public class EditProjectPaymentsAction extends BaseProjectPaymentAction {
 
         String projectStatus = project.getProjectStatus().getName();
 
-        if (projectStatus == Constants.COMPLETED_PROJECT_STATUS_NAME) {
+        if (projectStatus.equals(Constants.COMPLETED_PROJECT_STATUS_NAME)) {
             AuthorizationHelper.gatherUserJwtRoles(request);
             if (!AuthorizationHelper.hasUserJwtPermission(request,
                     Constants.EDIT_PAYMENTS_COMPLETED_PROJECT_PERM_NAME)) {
