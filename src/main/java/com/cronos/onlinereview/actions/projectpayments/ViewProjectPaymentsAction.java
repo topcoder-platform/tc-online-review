@@ -98,7 +98,7 @@ public class ViewProjectPaymentsAction extends BaseProjectPaymentAction {
         request.setAttribute("isAllowedToContactPM",
                 AuthorizationHelper.hasUserPermission(request, Constants.CONTACT_PM_PERM_NAME));
         boolean isAllowedToEditPayments = false;
-        if (project.getProjectStatus().getName() == Constants.COMPLETED_PROJECT_STATUS_NAME) {
+        if (project.getProjectStatus().getName().equals(Constants.COMPLETED_PROJECT_STATUS_NAME)) {
             AuthorizationHelper.gatherUserJwtRoles(request);
             isAllowedToEditPayments = AuthorizationHelper.hasUserJwtPermission(request,
                     Constants.EDIT_PAYMENTS_COMPLETED_PROJECT_PERM_NAME);
