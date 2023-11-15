@@ -68,7 +68,18 @@ public class EditProjectPaymentsAction extends BaseProjectPaymentAction {
 
         Project project = verification.getProject();
 
-        request.setAttribute("projectStatus", project.getProjectStatus().getName());
+        String projectStatus = project.getProjectStatus().getName();
+
+        if (projectStatus == Constants.COMPLETED_PROJECT_STATUS_NAME) {
+            AuthorizationHelper.gatherUserJwtRoles(request);
+            if (!AuthorizationHelper.hasUserJwtPermission(request,
+                    Constants.EDIT_PAYMENTS_COMPLETED_PROJECT_PERM_NAME)) {
+                return ActionsHelper.produceErrorReport(this, request,
+                        Constants.EDIT_PAYMENTS_COMPLETED_PROJECT_PERM_NAME, "Error.NoPermission", null);
+            }
+        }
+
+        request.setAttribute("projectStatus", projectStatus);
 
         final String projectTypeName = project.getProjectCategory().getProjectType().getName();
 
