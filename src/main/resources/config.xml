@@ -1779,6 +1779,12 @@
         </Property>
     </Property>
 
+    <Property name="Permissions Matrix JWT">
+        <Property name="Edit Payments Completed Project">
+            <Value>administrator</Value>
+        </Property>
+    </Property>
+
     <Property name="PhaseGrouping">
         <Property name="Specification_Review">
             <Property name="NameKey">

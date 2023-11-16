@@ -718,6 +718,8 @@ public class Constants {
      */
     public static final String EDIT_PAYMENTS_PERM_NAME = "Edit Payments";
 
+    public static final String EDIT_PAYMENTS_COMPLETED_PROJECT_PERM_NAME = "Edit Payments Completed Project";
+
     /**
      * <p>This member variable is a string constant that defines the name of the <code>View Project Management Console
      * </code>  permission. Such a permission grants access to <code>Project Management Console</code> view.</p>
@@ -1144,6 +1146,8 @@ public class Constants {
      * The constant for the name of the "Activate" project status.
      */
     public static final String ACTIVE_PROJECT_STATUS_NAME = "Active";
+
+    public static final String COMPLETED_PROJECT_STATUS_NAME = "Completed";
 
     /**
      * The constant for the name of the "Activate" submission status.
