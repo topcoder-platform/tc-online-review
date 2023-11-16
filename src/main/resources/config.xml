@@ -1783,6 +1783,9 @@
         <Property name="Edit Payments Completed Project">
             <Value>administrator</Value>
         </Property>
+        <Property name="Edit Prizes">
+            <Value>administrator</Value>
+        </Property>
     </Property>
 
     <Property name="PhaseGrouping">

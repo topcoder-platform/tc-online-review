@@ -159,20 +159,29 @@ public class EditProjectAction extends BaseProjectAction {
             getModel().set("resources_name", i + 1, externalUsers[i].getHandle());
         }
 
-        // Populate project prizes to form
-        List<Prize> prizes = project.getPrizes();
+        AuthorizationHelper.gatherUserJwtRoles(request);
+        boolean allowPrizesEdit = AuthorizationHelper.hasUserJwtPermission(request,
+                Constants.EDIT_PRIZES_PERM_NAME);
+        request.setAttribute("allowPrizesEdit", allowPrizesEdit);
 
-        if (prizes != null) {
-            PrizeType contestPrize = LookupHelper.getPrizeType(Constants.CONTEST_PRIZE_TYPE_NAME);
-            PrizeType checkpointPrize = LookupHelper.getPrizeType(Constants.CHECKPOINT_PRIZE_TYPE_NAME);
+        if (allowPrizesEdit) {
+            // Populate project prizes to form
+            List<Prize> prizes = project.getPrizes();
 
-            for (Prize prize : prizes) {
-                if (prize.getPrizeType().getId() == contestPrize.getId()) {
-                    getModel().set("contest_prizes_amount", prize.getPlace() - 1, String.valueOf(prize.getPrizeAmount()));
-                    getModel().set("contest_prizes_num", prize.getPlace() - 1, prize.getNumberOfSubmissions());
-                } else if (prize.getPrizeType().getId() == checkpointPrize.getId()) {
-                    getModel().set("checkpoint_prizes_amount", prize.getPlace() - 1, String.valueOf(prize.getPrizeAmount()));
-                    getModel().set("checkpoint_prizes_num", prize.getPlace() - 1, prize.getNumberOfSubmissions());
+            if (prizes != null) {
+                PrizeType contestPrize = LookupHelper.getPrizeType(Constants.CONTEST_PRIZE_TYPE_NAME);
+                PrizeType checkpointPrize = LookupHelper.getPrizeType(Constants.CHECKPOINT_PRIZE_TYPE_NAME);
+
+                for (Prize prize : prizes) {
+                    if (prize.getPrizeType().getId() == contestPrize.getId()) {
+                        getModel().set("contest_prizes_amount", prize.getPlace() - 1,
+                                String.valueOf(prize.getPrizeAmount()));
+                        getModel().set("contest_prizes_num", prize.getPlace() - 1, prize.getNumberOfSubmissions());
+                    } else if (prize.getPrizeType().getId() == checkpointPrize.getId()) {
+                        getModel().set("checkpoint_prizes_amount", prize.getPlace() - 1,
+                                String.valueOf(prize.getPrizeAmount()));
+                        getModel().set("checkpoint_prizes_num", prize.getPlace() - 1, prize.getNumberOfSubmissions());
+                    }
                 }
             }
         }
