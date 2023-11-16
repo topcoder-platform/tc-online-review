@@ -246,6 +246,11 @@ public class SaveProjectAction extends BaseProjectAction {
                         "error.com.cronos.onlinereview.actions.editProject.optConcurrency");
             }
         }
+
+        AuthorizationHelper.gatherUserJwtRoles(request);
+        boolean allowPrizesEdit = AuthorizationHelper.hasUserJwtPermission(request,
+                Constants.EDIT_PRIZES_PERM_NAME);
+
         ResourceManager resourceManager = ActionsHelper.createResourceManager();
         // This variable determines whether status of the project has been changed by this save operation.
         boolean statusHasChanged = false;
@@ -457,7 +462,7 @@ public class SaveProjectAction extends BaseProjectAction {
         }
 
         // Update the project prizes
-        if (!ActionsHelper.isErrorsPresent(request)) {
+        if (!ActionsHelper.isErrorsPresent(request) && allowPrizesEdit) {
             ProjectManager projectManager = ActionsHelper.createProjectManager();
             String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
             for (Prize prize : createdPrize) {

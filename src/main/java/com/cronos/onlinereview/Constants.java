@@ -720,6 +720,8 @@ public class Constants {
 
     public static final String EDIT_PAYMENTS_COMPLETED_PROJECT_PERM_NAME = "Edit Payments Completed Project";
 
+    public static final String EDIT_PRIZES_PERM_NAME = "Edit Prizes";
+
     /**
      * <p>This member variable is a string constant that defines the name of the <code>View Project Management Console
      * </code>  permission. Such a permission grants access to <code>Project Management Console</code> view.</p>
