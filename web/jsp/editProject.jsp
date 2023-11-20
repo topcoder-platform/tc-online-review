@@ -1528,7 +1528,7 @@
                                 </div>
 
                                 <%-- If edit an existing project, show the edit prizes section here --%>
-                                <c:if test="${not newProject}">
+                                <c:if test="${not newProject && allowPrizesEdit}">
                                     <jsp:include page="/includes/project/project_edit_prizes.jsp" />
                                 </c:if>
 
