@@ -139,7 +139,6 @@ body {
 }
 
 .mainFooter {
-    position: sticky;
     bottom: calc(-1 * var(--footer-height));
     z-index: 99;
 }
