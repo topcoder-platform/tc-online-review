@@ -5,7 +5,7 @@ RUN cd /root/ \
        && tar xzf wildfly-26.0.1.Final.tar.gz \
        && rm -rf wildfly-26.0.1.Final.tar.gz
 
-ENV JAVA_OPTS="-Xms4G -Xmx4G -XX:MaxPermSize=512M -server"
+ENV JAVA_OPTS="-Xms4G -Xmx8G -XX:MaxPermSize=512M -server"
 ENV JBOSS_HOME=/root/wildfly-26.0.1.Final
 ENV PATH=$PATH:/root/wildfly-26.0.1.Final/bin
 ENV TZ=America/Indiana/Indianapolis
