@@ -62,6 +62,7 @@ public class LoggingHelper {
             ExternalUser extUser = usrMgr.retrieveUser(AuthorizationHelper.getLoggedInUserId(request));
             handle = extUser.getHandle();
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error( "Unable to retrieve current user handle.");
         }
        
