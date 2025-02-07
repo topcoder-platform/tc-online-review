@@ -61,7 +61,7 @@ public class LoggingHelper {
             // Get External User object for the currently logged in user
             long userId=AuthorizationHelper.getLoggedInUserId(request);
             logger.info("User ID found: " + Long.toString(userId));
-            ExternalUser extUser = usrMgr.retrieveUser(AuthorizationHelper.getLoggedInUserId(request));
+            ExternalUser extUser = usrMgr.retrieveUser(userId);
             handle = extUser.getHandle();
         } catch (Exception e) {
             e.printStackTrace();
