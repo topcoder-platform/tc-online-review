@@ -23,7 +23,7 @@
 		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
 	</listener>
 
-    <filter>
+    <!-- <filter>
         <filter-name>set_character_encoding</filter-name>
         <filter-class>com.cronos.onlinereview.servlet.EncodeFilter</filter-class>
         <init-param>
@@ -34,7 +34,7 @@
             <param-name>ignore</param-name>
             <param-value>true</param-value>
         </init-param>
-    </filter>
+    </filter> -->
 
     <!-- Filter Mapping -->
 
