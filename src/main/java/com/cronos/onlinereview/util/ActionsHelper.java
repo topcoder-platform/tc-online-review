@@ -3,6 +3,8 @@
  */
 package com.cronos.onlinereview.util;
 
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3URI;
 import com.amazonaws.services.s3.model.GetObjectRequest;
@@ -183,7 +185,7 @@ public class ActionsHelper {
     /**
      * AWS S3 client
      */
-    private static final AmazonS3Client s3Client;
+    private static final AmazonS3 s3Client;
 
     /**
      * Expire time for presigned s3 url in millis
@@ -207,15 +209,11 @@ public class ActionsHelper {
 
     static {
         try {
-            ClassLoader loader = ActionsHelper.class.getClassLoader();
-            //URL credentialURL = loader.getResource(AWS_CREDENTIALS_FILE);
             s3Bucket = ConfigHelper.getS3Bucket();
             s3BucketDmz = ConfigHelper.getS3BucketDmz();
             s3BucketQuarantine = ConfigHelper.getS3BucketQuarantine();
             presignedExpireMillis = ConfigHelper.getPreSignedExpTimeMilis();
-            //s3Client = new AmazonS3Client(new PropertiesCredentials(new File(credentialURL.getFile())));
-            //s3Client = new AmazonS3Client(new InstanceProfileCredentialsProvider());
-            s3Client = new AmazonS3Client();
+            s3Client = AmazonS3ClientBuilder.defaultClient();
         } catch (Throwable e) {
             throw new RuntimeException("Failed load to Amazon S3 CLient", e);
         }
