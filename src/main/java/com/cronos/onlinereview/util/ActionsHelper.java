@@ -212,7 +212,7 @@ public class ActionsHelper {
             s3BucketDmz = ConfigHelper.getS3BucketDmz();
             s3BucketQuarantine = ConfigHelper.getS3BucketQuarantine();
             presignedExpireMillis = ConfigHelper.getPreSignedExpTimeMilis();
-            s3Client = AmazonS3ClientBuilder.defaultClient();
+            s3Client = AmazonS3ClientBuilder.standard().withRegion("us-east-1").build();
         } catch (Throwable e) {
             throw new RuntimeException("Failed load to Amazon S3 CLient", e);
         }
