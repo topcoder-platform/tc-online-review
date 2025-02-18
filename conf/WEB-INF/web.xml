@@ -36,8 +36,6 @@
         </init-param>
     </filter>
 
-    <!-- Filter Mapping -->
-
     <filter-mapping>
         <filter-name>set_character_encoding</filter-name>
         <url-pattern>/*</url-pattern>
