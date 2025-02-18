@@ -348,7 +348,10 @@ public class AuthorizationHelper {
         long clientId;
         try {
             clientId = projectDataAccess.getProjectClient(project.getTcDirectProjectId());
+            System.out.println("Retrieved client ID: " + clientId);
         } catch (Exception e) {
+            System.out.println("Error when retrieving client ID");
+            e.printStackTrace();
             throw new BaseException("error occurs while retrieving client id", e);
         }
 
