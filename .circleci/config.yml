@@ -83,7 +83,7 @@ build_steps: &build_steps # Initialization.
   - checkout
   - run: *install_deploysuite
   - run: *fetch_component_src
-  - restore_cache: *restore_cache_settings_for_build
+  #- restore_cache: *restore_cache_settings_for_build
   - run: *build_components
   #- run:
   #    name: Fetching Libraries
