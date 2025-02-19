@@ -517,6 +517,7 @@ public class ActionsHelper {
      */
     public static String produceErrorReport(TextProvider textProvider, HttpServletRequest request, String permission,
                                             String reasonKey, Boolean getRedirectUrlFromReferer) throws BaseException {
+        log.warn("Produce error report: " + permission + " " + reasonKey);
         // If the user is not logged in, this is the reason
         // why they don't have permissions to do the job. Let the user login first
         if (getRedirectUrlFromReferer != null && !AuthorizationHelper.isUserLoggedIn(request)) {

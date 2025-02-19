@@ -368,6 +368,8 @@ public class AuthorizationHelper {
                 }
             }
         } catch (Exception e) {
+            System.out.println("Error when retrieving user role");
+            e.printStackTrace();
             throw new BaseException(e);
         }
 

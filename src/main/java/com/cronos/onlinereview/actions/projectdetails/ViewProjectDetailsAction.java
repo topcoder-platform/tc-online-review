@@ -112,6 +112,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
             return verification.getResult();
         }
 
+        System.out.println("Getting project");
         // Retrieve a review to view
         Project project = verification.getProject();
 
@@ -132,6 +133,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
             forumId = Long.parseLong(tempStr, 10);
         }
 
+        System.out.println("Setting attributes");
         request.setAttribute("viewContestLink", ConfigHelper.getProjectTypeViewContestLink(projectTypeName, projectId));
 
         request.setAttribute("forumLink", ConfigHelper.getProjectTypeForumLink(
@@ -168,6 +170,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         // matching on id
         // set billing project name in request.
         // Retrieve Cockpit project also
+        System.out.println("Checking roles and adding billing info");
         if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
                 || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
                 || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
@@ -200,6 +203,9 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         Resource[] myResources = (Resource[]) request.getAttribute("myResources");
         List<ProjectPayment> allPayments = ActionsHelper.createProjectPaymentManager()
                 .search(ProjectPaymentFilterBuilder.createProjectIdFilter(projectId));
+
+
+        System.out.println("Payments");
         // Place an information about the amount of "my" payment into the request
         Map<ResourceRole, Double> myPayments = new LinkedHashMap<ResourceRole, Double>();
         Map<ResourceRole, Boolean> myPaymentsPaid = new LinkedHashMap<ResourceRole, Boolean>();
@@ -228,6 +234,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         request.setAttribute("resourcePaymentsAmount", resourcePaymentsAmount);
 
         // Retrieve late records for the current user.
+        System.out.println("Late deliverables");
         LateDeliverableManager lateDeliverableManager = ActionsHelper.createLateDeliverableManager();
         if (myResources.length > 0) {
             List<Filter> filters = new ArrayList<Filter>();
@@ -264,11 +271,13 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
             request.setAttribute("paymentPenaltyPercentage", paymentPenaltyPercentage);
         }
 
+        System.out.println("Project resources and emails");
         // Get an array of all resources for the project
         Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(project);
         ActionsHelper.populateEmailProperty(request, allProjectResources);
 
         // Obtain an instance of Phase Manager
+        System.out.println("Phases");
         PhaseManager phaseMgr = ActionsHelper.createPhaseManager(true);
         com.topcoder.onlinereview.component.project.phase.Project phProj = phaseMgr.getPhases(project.getId());
         Phase[] phases;
@@ -347,6 +356,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
             }
         }
 
+        System.out.println("Deliverable Dates");
         String[] myDeliverableLinks = generateDeliverableLinks(request, myDeliverables, phases);
         Long[] outstandingDeliverableUserIds = getDeliverableUserIds(outstandingDeliverables, allProjectResources);
         Long[] outstandingDeliverableSubmissionUserIds = getDeliverableSubmissionUserIds(outstandingDeliverables);
@@ -447,6 +457,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
             request.setAttribute("users", allProjectExtUsers);
         }
 
+        System.out.println("Prizes");
         // Project Prizes
         List<Prize> contestPrizes = new ArrayList<Prize>();
         List<Prize> checkpointPrizes = new ArrayList<Prize>();
@@ -476,6 +487,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
 
         boolean sendTLNotifications = false;
 
+        System.out.println("Notifications");
         if (AuthorizationHelper.isUserLoggedIn(request)) {
             Filter filterTNproject = NotificationFilterBuilder.createProjectIdFilter(project.getId());
             Filter filterTNuser = NotificationFilterBuilder
@@ -533,6 +545,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
             winnerExtUserId = Long.parseLong(winnerExtRefId, 10);
         }
 
+        System.out.println("Weird permissions");
         // check if the user can mark appeals as completed
         request.setAttribute("isAllowedToCompleteAppeals",
                 AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME) && appealsOpen
@@ -672,6 +685,7 @@ public class ViewProjectDetailsAction extends BaseProjectDetailsAction {
         request.setAttribute("destProjectLinks", linkManager.getDestProjectLinks(project.getId()));
         request.setAttribute("srcProjectLinks", linkManager.getSourceProjectLinks(project.getId()));
 
+        System.out.println("End");
         return Constants.SUCCESS_FORWARD_NAME;
     }
 
