@@ -10,7 +10,7 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="or" uri="/or-tags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 

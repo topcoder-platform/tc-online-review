@@ -9,7 +9,7 @@
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="or" uri="/or-tags" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>

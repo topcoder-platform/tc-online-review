@@ -6,7 +6,7 @@
   - This JSP file is used to generate the title and expand/collapse links above the review result table.
 --%>
 <%@ page language="java" isELIgnored="false" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="or" uri="/or-tags" %>
 
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:15px 0px">
