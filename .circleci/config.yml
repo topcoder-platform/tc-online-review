@@ -1,7 +1,8 @@
 version: 2
 defaults: &defaults
   docker:
-    - image: maven:3.9.9-amazoncorretto-23-alpine
+    - image: maven:3.6.3-openjdk-17
+
 deploy_defaults: &deploy_defaults
   docker:
     - image: cimg/python:3.10.2
