@@ -1,4 +1,4 @@
-FROM maven:3.6.1-jdk-8
+FROM maven:3.8.7-openjdk-18
 
 RUN cd /root/ \
        && wget https://github.com/wildfly/wildfly/releases/download/35.0.1.Final/wildfly-35.0.1.Final.tar.gz \
