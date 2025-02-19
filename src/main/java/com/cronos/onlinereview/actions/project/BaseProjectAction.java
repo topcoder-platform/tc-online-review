@@ -41,7 +41,7 @@ import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
 //import com.topcoder.web.ejb.user.UserPreference;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

@@ -4,8 +4,8 @@
 package com.cronos.onlinereview.actions;
 
 import com.cronos.onlinereview.model.DynamicModel;
-import com.opensymphony.xwork2.ModelDriven;
-import com.opensymphony.xwork2.interceptor.NoParameters;
+import org.apache.struts2.ModelDriven;
+import org.apache.struts2.action.NoParameters;
 
 
 /**

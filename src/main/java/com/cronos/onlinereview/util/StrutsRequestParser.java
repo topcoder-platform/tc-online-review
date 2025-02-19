@@ -8,7 +8,7 @@ import com.topcoder.onlinereview.component.fileupload.FileSizeLimitExceededExcep
 import com.topcoder.onlinereview.component.fileupload.RequestParser;
 import com.topcoder.onlinereview.component.fileupload.RequestParsingException;
 
-import javax.servlet.ServletRequest;
+import jakarta.servlet.ServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

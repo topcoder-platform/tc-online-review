@@ -7,17 +7,17 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.cronos.onlinereview.model.DynamicModel;
 import com.cronos.onlinereview.model.FormFile;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.ModelDriven;
-import com.opensymphony.xwork2.interceptor.Interceptor;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.ModelDriven;
+import org.apache.struts2.interceptor.Interceptor;
 import org.apache.struts2.dispatcher.HttpParameters;
 import org.apache.struts2.dispatcher.Parameter;
 import org.apache.struts2.dispatcher.multipart.StrutsUploadedFile;

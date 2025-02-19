@@ -13,7 +13,7 @@ import com.cronos.onlinereview.util.CorrectnessCheckResult;
 import com.cronos.onlinereview.util.LoggingHelper;
 import com.cronos.onlinereview.util.LookupHelper;
 import com.cronos.onlinereview.util.PhasesDetailsServices;
-import com.opensymphony.xwork2.TextProvider;
+import org.apache.struts2.text.TextProvider;
 import com.topcoder.onlinereview.component.dataaccess.ClientProject;
 import com.topcoder.onlinereview.component.dataaccess.CockpitProject;
 import com.topcoder.onlinereview.component.dataaccess.ProjectDataAccess;
@@ -54,7 +54,7 @@ import com.topcoder.onlinereview.component.search.filter.InFilter;
 import com.topcoder.onlinereview.component.webcommon.ApplicationServer;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

@@ -36,8 +36,8 @@ import com.topcoder.onlinereview.component.security.groups.services.Authorizatio
 import com.topcoder.onlinereview.component.webcommon.SSOCookieService;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;

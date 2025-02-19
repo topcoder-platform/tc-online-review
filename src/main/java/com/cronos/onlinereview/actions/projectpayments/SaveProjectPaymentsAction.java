@@ -21,7 +21,7 @@ import com.topcoder.onlinereview.component.project.phase.handler.or.PaymentsHelp
 import com.topcoder.onlinereview.component.resource.Resource;
 import com.topcoder.onlinereview.component.resource.ResourceManager;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;

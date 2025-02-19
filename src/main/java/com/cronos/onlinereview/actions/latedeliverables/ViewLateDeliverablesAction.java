@@ -28,7 +28,7 @@ import com.topcoder.onlinereview.component.search.filter.Filter;
 import com.topcoder.onlinereview.component.search.filter.OrFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;

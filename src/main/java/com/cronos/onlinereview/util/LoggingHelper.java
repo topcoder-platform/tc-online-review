@@ -3,13 +3,13 @@
  */
 package com.cronos.onlinereview.util;
 
-import com.opensymphony.xwork2.ActionContext;
+import org.apache.struts2.ActionContext;
 import com.topcoder.onlinereview.component.external.ExternalUser;
 import com.topcoder.onlinereview.component.external.UserRetrieval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 
@@ -47,7 +47,7 @@ public class LoggingHelper {
      * @param request the http request
      */
     public static void logAction(HttpServletRequest request) {
-        String action = ActionContext.getContext().getName();
+        String action = ActionContext.getContext().getActionName();
         String pid = request.getParameter("pid");
         String rid = request.getParameter("rid");
         String sid = request.getParameter("sid");

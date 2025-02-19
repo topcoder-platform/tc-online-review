@@ -3,9 +3,10 @@
  */
 package com.cronos.onlinereview.actions.project;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.cronos.onlinereview.Constants;
-import com.topcoder.onlinereview.component.dataaccess.ClientProject;
-import com.topcoder.onlinereview.component.dataaccess.CockpitProject;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.Comparators;
@@ -23,9 +24,7 @@ import com.topcoder.onlinereview.component.resource.Resource;
 import com.topcoder.onlinereview.component.resource.ResourceFilterBuilder;
 import com.topcoder.onlinereview.component.resource.ResourceManager;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.List;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 /**

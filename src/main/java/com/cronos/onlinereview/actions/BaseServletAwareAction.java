@@ -3,13 +3,13 @@
  */
 package com.cronos.onlinereview.actions;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.struts2.interceptor.ServletRequestAware;
-import org.apache.struts2.interceptor.ServletResponseAware;
+import org.apache.struts2.action.ServletRequestAware;
+import org.apache.struts2.action.ServletResponseAware;
 
-import com.opensymphony.xwork2.ActionSupport;
+import org.apache.struts2.ActionSupport;
 
 
 /**
@@ -43,7 +43,7 @@ public abstract class BaseServletAwareAction extends ActionSupport
      * Set the request field.
      * @param request the http servlet request to be set
      */
-    public void setServletRequest(HttpServletRequest request) {
+    public void withServletRequest(HttpServletRequest request) {
         this.request = request;
     }
 
@@ -51,7 +51,7 @@ public abstract class BaseServletAwareAction extends ActionSupport
      * Set the response field.
      * @param response the http servlet response to be set
      */
-    public void setServletResponse(HttpServletResponse response) {
+    public void withServletResponse(HttpServletResponse response) {
         this.response = response;
     }
 }

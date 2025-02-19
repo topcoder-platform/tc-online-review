@@ -13,7 +13,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 import java.net.URI;
 import java.util.Date;
 import java.util.Base64;

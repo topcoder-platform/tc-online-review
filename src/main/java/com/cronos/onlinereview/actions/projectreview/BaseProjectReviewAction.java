@@ -44,7 +44,7 @@ import com.topcoder.onlinereview.component.search.filter.Filter;
 import com.topcoder.onlinereview.component.search.filter.InFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

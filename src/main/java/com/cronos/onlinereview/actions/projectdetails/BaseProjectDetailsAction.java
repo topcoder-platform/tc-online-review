@@ -53,8 +53,8 @@ import com.topcoder.onlinereview.component.search.filter.AndFilter;
 import com.topcoder.onlinereview.component.search.filter.EqualToFilter;
 import com.topcoder.onlinereview.component.search.filter.Filter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.DataOutputStream;

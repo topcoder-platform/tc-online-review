@@ -17,17 +17,17 @@
     <function>
         <name>isUserLoggedIn</name>
         <function-class>com.cronos.onlinereview.functions.Functions</function-class>
-        <function-signature>java.lang.Boolean isUserLoggedIn(javax.servlet.http.HttpServletRequest)</function-signature>
+        <function-signature>java.lang.Boolean isUserLoggedIn(jakarta.servlet.http.HttpServletRequest)</function-signature>
     </function>
     <function>
         <name>getLoggedInUserId</name>
         <function-class>com.cronos.onlinereview.functions.Functions</function-class>
-        <function-signature>java.lang.String getLoggedInUserId(javax.servlet.http.HttpServletRequest)</function-signature>
+        <function-signature>java.lang.String getLoggedInUserId(jakarta.servlet.http.HttpServletRequest)</function-signature>
     </function>
     <function>
         <name>getHandlerContext</name>
         <function-class>com.cronos.onlinereview.functions.Functions</function-class>
-        <function-signature>java.lang.String getHandlerContext(javax.servlet.http.HttpServletRequest)</function-signature>
+        <function-signature>java.lang.String getHandlerContext(jakarta.servlet.http.HttpServletRequest)</function-signature>
     </function>
     <function>
         <name>getHandlerContextByCategoryId</name>
@@ -37,12 +37,12 @@
     <function>
         <name>isErrorsPresent</name>
         <function-class>com.cronos.onlinereview.functions.Functions</function-class>
-        <function-signature>java.lang.Boolean isErrorsPresent(javax.servlet.http.HttpServletRequest)</function-signature>
+        <function-signature>java.lang.Boolean isErrorsPresent(jakarta.servlet.http.HttpServletRequest)</function-signature>
     </function>
     <function>
         <name>getMessage</name>
         <function-class>com.cronos.onlinereview.functions.Functions</function-class>
-        <function-signature>java.lang.String getMessage(javax.servlet.jsp.PageContext, java.lang.String)</function-signature>
+        <function-signature>java.lang.String getMessage(jakarta.servlet.jsp.PageContext, java.lang.String)</function-signature>
     </function>
     <function>
         <name>getGanttLen</name>
@@ -52,32 +52,32 @@
     <function>
         <name>getGanttHours</name>
         <function-class>com.cronos.onlinereview.functions.Functions</function-class>
-        <function-signature>java.lang.String getGanttHours(javax.servlet.jsp.PageContext, java.lang.Integer)</function-signature>
+        <function-signature>java.lang.String getGanttHours(jakarta.servlet.jsp.PageContext, java.lang.Integer)</function-signature>
     </function>
     <function>
         <name>displayPaymentAmt</name>
         <function-class>com.cronos.onlinereview.functions.Functions</function-class>
-        <function-signature>java.lang.String displayPaymentAmt(javax.servlet.http.HttpServletRequest, java.lang.Double)</function-signature>
+        <function-signature>java.lang.String displayPaymentAmt(jakarta.servlet.http.HttpServletRequest, java.lang.Double)</function-signature>
     </function>
     <function>
         <name>displayScore</name>
         <function-class>com.cronos.onlinereview.functions.Functions</function-class>
-        <function-signature>java.lang.String displayScore(javax.servlet.http.HttpServletRequest, java.lang.Double)</function-signature>
+        <function-signature>java.lang.String displayScore(jakarta.servlet.http.HttpServletRequest, java.lang.Double)</function-signature>
     </function>
     <function>
         <name>displayDate</name>
         <function-class>com.cronos.onlinereview.functions.Functions</function-class>
-        <function-signature>java.lang.String displayDate(javax.servlet.http.HttpServletRequest, java.util.Date)</function-signature>
+        <function-signature>java.lang.String displayDate(jakarta.servlet.http.HttpServletRequest, java.util.Date)</function-signature>
     </function>
     <function>
         <name>displayDateBr</name>
         <function-class>com.cronos.onlinereview.functions.Functions</function-class>
-        <function-signature>java.lang.String displayDateBr(javax.servlet.http.HttpServletRequest, java.util.Date)</function-signature>
+        <function-signature>java.lang.String displayDateBr(jakarta.servlet.http.HttpServletRequest, java.util.Date)</function-signature>
     </function>
     <function>
         <name>getSafeRedirect</name>
         <function-class>com.cronos.onlinereview.functions.Functions</function-class>
-        <function-signature>java.lang.String getSafeRedirect(javax.servlet.http.HttpServletRequest)</function-signature>
+        <function-signature>java.lang.String getSafeRedirect(jakarta.servlet.http.HttpServletRequest)</function-signature>
     </function>
     <function>
         <name>contains</name>
@@ -87,7 +87,7 @@
     <function>
         <name>getDeliverableName</name>
         <function-class>com.cronos.onlinereview.functions.Functions</function-class>
-        <function-signature>java.lang.String getDeliverableName(javax.servlet.http.HttpServletRequest, long)</function-signature>
+        <function-signature>java.lang.String getDeliverableName(jakarta.servlet.http.HttpServletRequest, long)</function-signature>
     </function>
     <function>
         <name>getUserId</name>

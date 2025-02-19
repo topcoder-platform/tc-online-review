@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.BeanUtils;
 
@@ -19,7 +19,7 @@ import com.cronos.onlinereview.actions.BaseServletAwareAction;
 import com.cronos.onlinereview.model.ProjectPaymentsForm;
 import com.cronos.onlinereview.model.ProjectPaymentsForm.ResourcePayments;
 import com.cronos.onlinereview.util.ActionsHelper;
-import com.opensymphony.xwork2.ModelDriven;
+import org.apache.struts2.ModelDriven;
 import com.topcoder.onlinereview.component.deliverable.Submission;
 import com.topcoder.onlinereview.component.project.payment.ProjectPayment;
 import com.topcoder.onlinereview.component.project.management.Project;

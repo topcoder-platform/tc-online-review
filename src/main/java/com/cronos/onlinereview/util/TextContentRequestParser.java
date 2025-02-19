@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletRequest;
+import jakarta.servlet.ServletRequest;
 
 import com.topcoder.onlinereview.component.fileupload.FileSizeLimitExceededException;
 import com.topcoder.onlinereview.component.fileupload.RequestParser;
