@@ -56,7 +56,7 @@ build_components: &build_components
     cd ../plat-interface-definition
     mvn clean install
     cd ../tc-online-review-backend
-    ./install-third-dep.sh      
+    # ./install-third-dep.sh      
     # mvn clean install -DskipTests
     # mvn dependency:go-offline
     mvn -Dhttps.protocols=TLSv1.2 -DskipTests=true clean install
