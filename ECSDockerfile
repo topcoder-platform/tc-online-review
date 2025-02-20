@@ -1,9 +1,9 @@
 FROM maven:3.9.9-amazoncorretto-23-debian
 
 RUN apt-get update
-RUN apt-get install curl -y
+RUN apt-get install wget -y
 RUN cd /root/ \
-       && curl -O https://github.com/wildfly/wildfly/releases/download/35.0.1.Final/wildfly-35.0.1.Final.tar.gz \
+       && wget https://github.com/wildfly/wildfly/releases/download/35.0.1.Final/wildfly-35.0.1.Final.tar.gz \
        && tar xzf wildfly-35.0.1.Final.tar.gz \
        && rm -rf wildfly-35.0.1.Final.tar.gz
 
