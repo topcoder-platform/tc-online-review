@@ -1,5 +1,6 @@
 FROM maven:3.9.9-amazoncorretto-23-debian
 
+RUN apt install wget
 RUN cd /root/ \
        && wget https://github.com/wildfly/wildfly/releases/download/35.0.1.Final/wildfly-35.0.1.Final.tar.gz \
        && tar xzf wildfly-35.0.1.Final.tar.gz \
