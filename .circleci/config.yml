@@ -36,7 +36,6 @@ install_dependency: &install_dependency
 install_deploysuite: &install_deploysuite
   name: Installation of install_deploysuite.
   command: |
-    javac -version
     git clone --branch v1.4.14 https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
     cp ./../buildscript/master_deploy.sh .
     cp ./../buildscript/buildenv.sh .
@@ -98,7 +97,7 @@ build_steps: &build_steps # Initialization.
         ./awsconfiguration.sh $BUILD_ENV
         source awsenvconf
   - run:
-      name: "Buidling OR file"
+      name: "Building OR file"
       command: |
         source awsenvconf
         ./buildproperties.sh -e $BUILD_ENV -k onlinereviewappv1
