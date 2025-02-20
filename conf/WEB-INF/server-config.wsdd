@@ -5,7 +5,7 @@
     <typeMapping qname="OR:DataHandler" xmlns:OR="http://onlinereview.topcoder.com"
         serializer="org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory"
-        languageSpecificType="java:javax.activation.DataHandler"
+        languageSpecificType="java:jakarta.activation.DataHandler"
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
     />
 
