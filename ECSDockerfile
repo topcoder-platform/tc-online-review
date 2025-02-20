@@ -1,4 +1,4 @@
-FROM maven:3.9.9-amazoncorretto-23-alpine
+FROM maven:3.9.9-amazoncorretto-23-debian
 
 RUN cd /root/ \
        && wget https://github.com/wildfly/wildfly/releases/download/35.0.1.Final/wildfly-35.0.1.Final.tar.gz \
