@@ -65,6 +65,11 @@
             <version>7.0.0</version>
         </dependency>
         <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>5.7.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-spring-plugin</artifactId>
             <version>7.0.0</version>

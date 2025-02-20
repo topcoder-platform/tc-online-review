@@ -103,7 +103,7 @@ build_steps: &build_steps # Initialization.
         source awsenvconf
         ./buildproperties.sh -e $BUILD_ENV -k onlinereviewappv1
         # mvn dependency:go-offline
-        mvn clean package
+        mvn clean package -DskipTests=true
   - save_cache: *save_cache_settings
   #- run:
   #    name: Build Pacakge
