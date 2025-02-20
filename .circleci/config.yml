@@ -22,7 +22,7 @@ install_dependency: &install_dependency
     # sed -i 's/security.debian/archive.debian/' /etc/apt/sources.list
     # sed -i 's/deb.debian/archive.debian/' /etc/apt/sources.list
     apt update
-    apt install -y  openssl git zip jq curl
+    apt install -y  openssl git zip jq curl python
     mkdir ~/awscli
     cd  ~/awscli
     curl "https://s3.amazonaws.com/aws-cli/awscli-bundle-1.18.212.zip" -o "awscli-bundle.zip"
