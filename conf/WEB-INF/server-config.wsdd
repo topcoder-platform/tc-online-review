@@ -15,14 +15,6 @@
         <parameter name="allowedMethods" value="uploadSubmission, addSubmitter" />
         <parameter name="scope" value="Application" />
     </service>
-    <!--  service name="AdminService" provider="java:MSG">
-        <parameter name="allowedMethods" value="*" />
-        <parameter name="className" value="org.apache.axis.utils.Admin" />
-    </service>
-    <service name="Version" provider="java:RPC">
-        <parameter name="allowedMethods" value="getVersion" />
-        <parameter name="className" value="org.apache.axis.Version" />
-    </service -->
 
     <transport name="http">
         <requestFlow>

@@ -63,6 +63,11 @@
         <servlet-class>com.cronos.onlinereview.servlet.OnlineReviewInitServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>AjaxServlet</servlet-name>
+        <url-pattern>/ajaxSupport</url-pattern>
+    </servlet-mapping>
 
     <session-config>
         <session-timeout>1440</session-timeout>
