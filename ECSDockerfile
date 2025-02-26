@@ -33,6 +33,6 @@ RUN rm /root/token.properties
 
 ## add admin account
 RUN /root/wildfly-35.0.1.Final/bin/add-user.sh -u 'admin' -p 'password1!'
-RUN sed -i 's/<http-listener name="default" socket-binding="http" redirect-socket="https" enable-http2="true"\/>/<http-listener name="default" socket-binding="http" redirect-socket="https" enable-http2="true" max-parameters="5000"\/>/' /root/wildfly-35.0.1.Final/standalone/configuration/standalone.xml
+Add ./conf/wildfly/standalone.xml /root/wildfly-35.0.1.Final/standalone/configuration/standalone.xml
 
 CMD ["/root/wildfly-35.0.1.Final/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0","-DFOREGROUND"]
