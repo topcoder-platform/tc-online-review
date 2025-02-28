@@ -1128,6 +1128,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         // This variable determines if Preview button has been clicked
         boolean previewRequested = "preview".equalsIgnoreCase(request.getParameter("save"));
 
+        System.out.println("Review form file: " + reviewForm.get("file").toString());
         // Get form's fields
         String[] answers = (String[]) reviewForm.get("answer");
         Integer[] commentCounts = (Integer[]) reviewForm.get("comment_count");
@@ -1144,6 +1145,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
 
             // Collect uploaded files and add them to adapter
             for (FormFile file : files) {
+                System.out.println("Form file: " + file.toString());
                 if (file != null && file.getFileName() != null && file.getFileName().trim().length() != 0) {
                     parser.AddFile(file);
                 }
@@ -1199,10 +1201,10 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
                         System.out.println("Files: " + Arrays.toString(files));
                         // Handle uploads
                         if (!previewRequested && question.isUploadDocument()) {
-                            System.out.println("File:" + files[0].toString());
                             if (fileIdx < files.length && files[fileIdx] != null &&
                                     files[fileIdx].getFileName() != null &&
                                     files[fileIdx].getFileName().trim().length() != 0) {
+                                System.out.println("File:" + files[fileIdx].toString());
                                 Upload upload = new Upload();
 
                                 upload.setOwner(myResource.getId());
