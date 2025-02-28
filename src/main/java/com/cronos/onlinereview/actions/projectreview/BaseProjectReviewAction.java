@@ -1129,6 +1129,9 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         boolean previewRequested = "preview".equalsIgnoreCase(request.getParameter("save"));
 
         System.out.println("Review form file: " + reviewForm.get("file").toString());
+        System.out.println("commitRequested: " + commitRequested);
+        System.out.println("previewRequested: " + previewRequested);
+        
         // Get form's fields
         String[] answers = (String[]) reviewForm.get("answer");
         Integer[] commentCounts = (Integer[]) reviewForm.get("comment_count");
