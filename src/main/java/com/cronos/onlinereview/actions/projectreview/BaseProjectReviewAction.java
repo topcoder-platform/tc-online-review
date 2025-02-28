@@ -1257,6 +1257,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
 
                         // Handle uploads
                         if (!previewRequested && !managerEdit && section.getQuestion(questionIdx).isUploadDocument()) {
+                            System.out.println("File:" + files[0].toString());
                             if (fileIdx < files.length && files[fileIdx] != null &&
                                     files[fileIdx].getFileName() != null &&
                                     files[fileIdx].getFileName().trim().length() != 0) {
