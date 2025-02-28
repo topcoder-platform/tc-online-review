@@ -1254,7 +1254,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
 
                         // Update the answer
                         item.setAnswer(answers[itemIdx]);
-
+                        System.out.println("Files: " + Arrays.toString(files));
                         // Handle uploads
                         if (!previewRequested && !managerEdit && section.getQuestion(questionIdx).isUploadDocument()) {
                             System.out.println("File:" + files[0].toString());
