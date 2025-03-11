@@ -1146,8 +1146,6 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         System.out.println("Answers: " + answers + " " + answers.length);
         System.out.println("Comments: " + commentCounts+ " " + commentCounts.length);
         System.out.println("Review form file count: " + files.length);
-        FormFile test = (FormFile) reviewForm.get("file");
-        System.out.println("File name: " + test.getFileName() + " " + test.getFileSize());
         
         // Uploaded files will be held here
         UploadedFile[] uploadedFiles = null;

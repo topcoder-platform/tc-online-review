@@ -65,7 +65,7 @@ public class DynamicModel extends LazyDynaBean {
                     String keyName = (String) key;
                     System.out.println("Dynamic model keyname: " + keyName);
                     String value = config.getProperty((String) key);
-                    System.out.println("Dynamic model value: " + value);
+                    System.out.println("Dynamic model value: " + value.toString());
 
                     String[] split = value.split(",");
 
