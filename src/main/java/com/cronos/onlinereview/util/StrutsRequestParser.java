@@ -91,6 +91,7 @@ public class StrutsRequestParser implements RequestParser {
      *             if parameter <code>files</code> is <code>null</code>.
      */
     public void AddFiles(FormFile[] files) {
+        System.out.println("AddFiles: " + files.length);
         AddFiles(Arrays.asList(files));
     }
 
