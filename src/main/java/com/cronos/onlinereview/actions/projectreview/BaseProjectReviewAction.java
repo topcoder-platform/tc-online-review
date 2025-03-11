@@ -1143,6 +1143,8 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         Map<String, String> replies = (Map<String, String>) reviewForm.get("comment");
         Map<String, String> commentTypeIds = (Map<String, String>) reviewForm.get("comment_type");
         FormFile[] files = (FormFile[]) reviewForm.get("file");
+        System.out.println("Answers: " + answers + " " + answers.length);
+        System.out.println("Comments: " + commentCounts+ " " + commentCounts.length);
         System.out.println("Review form file count: " + files.length);
         // Uploaded files will be held here
         UploadedFile[] uploadedFiles = null;
