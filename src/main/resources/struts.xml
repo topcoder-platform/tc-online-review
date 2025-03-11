@@ -5,6 +5,7 @@
 
 <struts>
 
+  <constant name="struts.multipart.saveDir" value="/nfs_shares/tcssubmissions" />
   <constant name="struts.action.extension" value="" />
   <constant name="struts.enable.DynamicMethodInvocation" value="false" />
   <constant name="struts.devMode" value="false" />
