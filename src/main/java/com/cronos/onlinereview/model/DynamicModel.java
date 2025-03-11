@@ -101,6 +101,9 @@ public class DynamicModel extends LazyDynaBean {
                 throw new ConfigurationException("the class cast error occurs", e);
             }
         }
+        else{
+            System.out.println("Dynamic model, null config");
+        }
     }
 
     /**
