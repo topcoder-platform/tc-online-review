@@ -52,6 +52,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.topcoder.onlinereview.component.util.SpringUtils.getBean;
 
@@ -942,6 +944,9 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         boolean isApprovalPhase = false;
         boolean isSpecReviewPhase = false;
         boolean isSubmissionDependentPhase = true;
+
+        System.out.println("Saving review type: " + reviewType);
+        System.out.println("Request: " + request.toString());
         // Determine permission name and phase name from the review type
         if ("Screening".equals(reviewType)) {
             permName = Constants.PERFORM_SCREENING_PERM_NAME;
@@ -1762,6 +1767,8 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
             for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
                 Section section = group.getSection(sectionIdx);
                 for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx, ++itemIdx) {
+                    System.out.println("Item index: " + itemIdx + " Question index: " + questionIdx);
+                    System.out.println("Total items: " + review.getAllItems().length);
                     Question question = section.getQuestion(questionIdx);
                     Item item = review.getItem(itemIdx);
 
@@ -1987,7 +1994,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
      *             negative (less than zero).
      */
     private static boolean validateScorecardItemUpload(
-            HttpServletRequest request, Question question, Item item, int fileNum) {
+        HttpServletRequest request, Question question, Item item, int fileNum) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(request, "request");
         ActionsHelper.validateParameterNotNull(question, "question");
