@@ -45,6 +45,7 @@ public class FormFile {
      * Constructor with the fields.
      */
     public FormFile() {
+        System.out.println("Empty FormFile initialization");
         this.fileSize = 0;
         this.fileName = null;
         this.file = null;
@@ -58,6 +59,7 @@ public class FormFile {
      * @param contentType the content type.
      */
     public FormFile(String fileName, File file, String contentType) {
+        System.out.println("FormFile initialization: " + fileName + " " + contentType);
         this.fileSize = (int) file.length();
         this.fileName = fileName;
         this.file = file;
