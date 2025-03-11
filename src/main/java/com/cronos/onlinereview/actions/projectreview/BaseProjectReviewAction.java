@@ -1207,12 +1207,20 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
                         item.setQuestion(question.getId());
 
                         System.out.println("Files: " + Arrays.toString(files));
+                        System.out.println("Number of files: " + files.length);
                         // Handle uploads
                         if (!previewRequested && question.isUploadDocument()) {
                             if (fileIdx < files.length && files[fileIdx] != null &&
                                     files[fileIdx].getFileName() != null &&
                                     files[fileIdx].getFileName().trim().length() != 0) {
                                 System.out.println("File:" + files[fileIdx].toString());
+                                System.out.println("File name:" + files[fileIdx].getFileName());
+                                System.out.println("myResource ID: " + myResource.getId());
+                                System.out.println("project ID : " + project.getId());
+                                System.out.println("Phase ID: " + phase.getId());
+                                System.out.println("Uploaded file count: " + uploadedFiles.length);
+                                System.out.println("Uploaded file index: " + uploadedFileIdx);
+                                System.out.println("File ID: " + uploadedFiles[uploadedFileIdx++].getFileId());
                                 Upload upload = new Upload();
 
                                 upload.setOwner(myResource.getId());
@@ -1225,6 +1233,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
                                 upMgr.createUpload(upload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
                                 item.setDocument(upload.getId());
+                                System.out.println("Upload ID: " + upload.getId());
                             }
                             ++fileIdx;
                         }
