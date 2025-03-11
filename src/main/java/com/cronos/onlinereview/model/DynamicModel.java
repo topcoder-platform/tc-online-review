@@ -68,14 +68,16 @@ public class DynamicModel extends LazyDynaBean {
                     System.out.println("Dynamic model value: " + value.toString());
 
                     String[] split = value.split(",");
-
+                    
                     String type = split[0];
                     System.out.println("Dynamic model type: " + type);
 
                     if (type.contains("[]")) {
                         type = "[L" + type.replace("[]", "") + ";";
                     }
-
+                    
+                    System.out.println("Updated type: " + type);
+                    
                     Class<?> clz = Class.forName(type);
 
                     dynaClass.add(keyName, clz);
