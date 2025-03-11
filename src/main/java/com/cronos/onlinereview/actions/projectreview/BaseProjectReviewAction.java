@@ -1154,6 +1154,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
             // Collect uploaded files and add them to adapter
             for (FormFile file : files) {
                 System.out.println("Form file: " + file.toString());
+                System.out.println("Form file name: " + file.getFileName());
                 if (file != null && file.getFileName() != null && file.getFileName().trim().length() != 0) {
                     parser.AddFile(file);
                 }
@@ -1208,6 +1209,8 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
 
                         System.out.println("Files: " + Arrays.toString(files));
                         System.out.println("Number of files: " + files.length);
+                        System.out.println("Is upload document: " + question.isUploadDocument());
+                        System.out.println("File name: " + files[fileIdx].getFileName());
                         // Handle uploads
                         if (!previewRequested && question.isUploadDocument()) {
                             if (fileIdx < files.length && files[fileIdx] != null &&
