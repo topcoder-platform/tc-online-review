@@ -61,13 +61,16 @@ public class DynamicModel extends LazyDynaBean {
 
             try {
                 for (Object key : config.keySet()) {
-                    String keyName = (String) key;
 
+                    String keyName = (String) key;
+                    System.out.println("Dynamic model keyname: " + keyName);
                     String value = config.getProperty((String) key);
+                    System.out.println("Dynamic model value: " + value);
 
                     String[] split = value.split(",");
 
                     String type = split[0];
+                    System.out.println("Dynamic model type: " + type);
 
                     if (type.contains("[]")) {
                         type = "[L" + type.replace("[]", "") + ";";
