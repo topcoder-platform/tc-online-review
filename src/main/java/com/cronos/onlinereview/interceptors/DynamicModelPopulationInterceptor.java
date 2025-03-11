@@ -86,6 +86,7 @@ public class DynamicModelPopulationInterceptor implements Interceptor {
             Map<String, Object> filteredParams = new HashMap<String, Object>();
 
             for (String key : params.keySet()) {
+                System.out.println("Dynamic model key: " + key + " Value: " + params.get(key).getObject().toString());
                 if (!key.contains(".") || key.matches("^.*[(].+\\..+[)]*$")) {
                     Object value = params.get(key).getObject();
                     if (value != null && value.getClass().isArray()) {
