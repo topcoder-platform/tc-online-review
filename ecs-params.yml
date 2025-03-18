@@ -8,4 +8,13 @@ task_definition:
     tc-online-review:
       cpu_shares: 300
       mem_limit: 6GB
-
+  efs_volumes:
+    - name: submissions
+      filesystem_id: ${NFS_ID}
+      root_directory: /nfs_shares/studiofiles/submissions
+    - name: tcssubmissions
+      filesystem_id: ${NFS_ID}
+      root_directory: /nfs_shares/tcssubmissions
+    - name: tcs-downloads
+      filesystem_id: ${NFS_ID}
+      root_directory: /nfs_shares/tcs-downloads 

@@ -29,8 +29,6 @@ services:
     environment:
       - grpc_client_or_address=tc-or-grpc-server
       - grpc_client_or_port=9099      
-    depends_on:
-      - grpc-or-server
     logging:
       driver: awslogs
       options:
@@ -38,6 +36,10 @@ services:
         awslogs-region: us-east-1
         awslogs-stream-prefix: tc_online_review
     volumes:
-      - /nfs_shares/studiofiles/submissions:/nfs_shares/studiofiles/submissions
-      - /nfs_shares/tcssubmissions:/nfs_shares/tcssubmissions
-      - /nfs_shares/tcs-downloads:/nfs_shares/tcs-downloads
+      - submissions:/nfs_shares/studiofiles/submissions
+      - tcssubmissions:/nfs_shares/tcssubmissions
+      - tcs-downloads:/nfs_shares/tcs-downloads
+volumes:
+  submissions:
+  tcssubmissions:
+  tcs-downloads:
