@@ -12,6 +12,7 @@
   <constant name="struts.objectFactory" value="spring" />
   <constant name="struts.custom.i18n.resources" value="MessageResources" />
   <constant name="struts.multipart.maxSize" value="209715200"/>
+  <constant name="struts.multipart.parser" value="jakarta"/>
 
   <package name="default" extends="struts-default" namespace="/actions">
         <interceptors>

@@ -4,6 +4,10 @@
 package com.cronos.onlinereview.interceptors;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,8 +40,13 @@ import org.apache.struts2.dispatcher.multipart.StrutsUploadedFile;
  * - the uploaded file in intercept method is instance of StrutsUploadedFile now.
  * </p>
  *
+ * <p>
+ * v2.2 - Fixed in Migrate Struts 2.5 to 7.0.0 For Online Review
+ * - Fixed file upload functionality by creating a temporary file from StrutsUploadedFile content
+ * </p>
+ *
  * @author TCSASSEMBLER
- * @version 2.1
+ * @version 2.2
  */
 public class DynamicModelPopulationInterceptor implements Interceptor {
     /**
@@ -100,9 +109,7 @@ public class DynamicModelPopulationInterceptor implements Interceptor {
                         String fileName = params.get(key + "FileName").getValue();
                         String contentType = params.get(key + "ContentType").getValue();
 
-                        FormFile formFile = new FormFile(fileName,
-                                 ((StrutsUploadedFile) value).getContent(), contentType);
-
+                        FormFile formFile = new FormFile(fileName,((StrutsUploadedFile) value).getContent(), contentType);
                         filteredParams.put(key, formFile);
                     } else {
                         if (!key.contains("FileName") && !key.contains("ContentType")) {
