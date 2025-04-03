@@ -1228,7 +1228,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
                                 System.out.println("Phase ID: " + phase.getId());
                                 System.out.println("Uploaded file count: " + uploadedFiles.length);
                                 System.out.println("Uploaded file index: " + uploadedFileIdx);
-                                System.out.println("File ID: " + uploadedFiles[uploadedFileIdx++].getFileId());
+                                System.out.println("File ID: " + uploadedFiles[uploadedFileIdx + 1].getFileId());
                                 Upload upload = new Upload();
 
                                 upload.setOwner(myResource.getId());
