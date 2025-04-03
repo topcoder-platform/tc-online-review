@@ -1181,156 +1181,90 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         int fileIdx = 0;
         int uploadedFileIdx = 0;
 
-        // If the review hasn't been created yet        
         try {
-            // If the review hasn't been created yet
+        // If the review hasn't been created yet
             if (review == null) {
-                // Create a convenient review editor
-                ReviewEditor reviewEditor =
-                    new ReviewEditor(Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-    
-                // Iterate over the scorecard template's questions,
-                // so items will be created for every question
-                for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
-                    Group group = scorecardTemplate.getGroup(groupIdx);
-                    for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
-                        Section section = group.getSection(sectionIdx);
-                        for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx) {
-                            Question question = section.getQuestion(questionIdx);
-    
-                            // Create review item
-                            Item item = new Item();
-    
-                            // Populate the review item comments
-                            int newCommentCount = populateItemComments(item, itemIdx, replies, commentTypeIds,
-                                    commentCounts[itemIdx], myResource, managerEdit);
-    
-                            if (newCommentCount != commentCounts[itemIdx]) {
-                                commentCounts[itemIdx] = newCommentCount;
-                            }
-    
-                            // Set required fields of the item
-                            item.setAnswer(answers[itemIdx]);
-                            item.setQuestion(question.getId());
-    
-                            System.out.println("Files: " + Arrays.toString(files));
-                            System.out.println("Number of files: " + files.length);
-                            System.out.println("Is upload document: " + question.isUploadDocument());
-                            //System.out.println("File name: " + files[fileIdx].getFileName());
-                            // Handle uploads
-                            if (!previewRequested && question.isUploadDocument()) {
-                                if (fileIdx < files.length && files[fileIdx] != null &&
-                                        files[fileIdx].getFileName() != null &&
-                                        files[fileIdx].getFileName().trim().length() != 0) {
-                                    System.out.println("File:" + files[fileIdx].toString());
-                                    System.out.println("File name:" + files[fileIdx].getFileName());
-                                    System.out.println("myResource ID: " + myResource.getId());
-                                    System.out.println("project ID : " + project.getId());
-                                    System.out.println("Phase ID: " + phase.getId());
-                                    System.out.println("Uploaded file count: " + uploadedFiles.length);
-                                    System.out.println("Uploaded file index: " + uploadedFileIdx);
-                                    System.out.println("File ID: " + uploadedFiles[uploadedFileIdx++].getFileId());
-                                    Upload upload = new Upload();
-    
-                                    upload.setOwner(myResource.getId());
-                                    upload.setProject(project.getId());
-                                    upload.setProjectPhase(phase.getId());
-                                    upload.setParameter(uploadedFiles[uploadedFileIdx++].getFileId());
-                                    upload.setUploadStatus(LookupHelper.getUploadStatus("Active"));
-                                    upload.setUploadType(LookupHelper.getUploadType("Review Document"));
-    
-                                    upMgr.createUpload(upload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-    
-                                    item.setDocument(upload.getId());
-                                    System.out.println("Upload ID: " + upload.getId());
-                                }
-                                ++fileIdx;
-                            }
-    
-                            // Add item to the review
-                            reviewEditor.addItem(item);
-    
-                            ++itemIdx;
+            // Create a convenient review editor
+            ReviewEditor reviewEditor =
+                new ReviewEditor(Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+
+            // Iterate over the scorecard template's questions,
+            // so items will be created for every question
+            for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
+                Group group = scorecardTemplate.getGroup(groupIdx);
+                for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
+                    Section section = group.getSection(sectionIdx);
+                    for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx) {
+                        Question question = section.getQuestion(questionIdx);
+
+                        // Create review item
+                        Item item = new Item();
+
+                        // Populate the review item comments
+                        int newCommentCount = populateItemComments(item, itemIdx, replies, commentTypeIds,
+                                commentCounts[itemIdx], myResource, managerEdit);
+
+                        if (newCommentCount != commentCounts[itemIdx]) {
+                            commentCounts[itemIdx] = newCommentCount;
                         }
-                    }
-                }
-    
-                // Finally, set required fields of the review
-                reviewEditor.setAuthor(myResource.getId());
-                reviewEditor.setProjectPhase(phase.getId());
-                // Skip setting submission ID for Post-Mortem phase
-                if (isSubmissionDependentPhase) {
-                    reviewEditor.setSubmission(verification.getSubmission().getId());
-                }
-                reviewEditor.setScorecard(scorecardTemplate.getId());
-    
-                review = reviewEditor.getReview();
-                } else {
-                for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
-                    Group group = scorecardTemplate.getGroup(groupIdx);
-                    for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
-                        Section section = group.getSection(sectionIdx);
-                        for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx, ++itemIdx) {
-                            // Get an item
-                            Item item = review.getItem(itemIdx);
-    
-                            // Populate the review item comments
-                            int newCommentCount = populateItemComments(item, itemIdx, replies, commentTypeIds,
-                                    commentCounts[itemIdx], myResource, managerEdit);
-    
-                            if (newCommentCount != commentCounts[itemIdx]) {
-                                commentCounts[itemIdx] = newCommentCount;
+
+                        // Set required fields of the item
+                        item.setAnswer(answers[itemIdx]);
+                        item.setQuestion(question.getId());
+
+                        System.out.println("Files: " + Arrays.toString(files));
+                        System.out.println("Number of files: " + files.length);
+                        System.out.println("Is upload document: " + question.isUploadDocument());
+                        //System.out.println("File name: " + files[fileIdx].getFileName());
+                        // Handle uploads
+                        if (!previewRequested && question.isUploadDocument()) {
+                            if (fileIdx < files.length && files[fileIdx] != null &&
+                                    files[fileIdx].getFileName() != null &&
+                                    files[fileIdx].getFileName().trim().length() != 0) {
+                                System.out.println("File:" + files[fileIdx].toString());
+                                System.out.println("File name:" + files[fileIdx].getFileName());
+                                System.out.println("myResource ID: " + myResource.getId());
+                                System.out.println("project ID : " + project.getId());
+                                System.out.println("Phase ID: " + phase.getId());
+                                System.out.println("Uploaded file count: " + uploadedFiles.length);
+                                System.out.println("Uploaded file index: " + uploadedFileIdx);
+                                System.out.println("File ID: " + uploadedFiles[uploadedFileIdx++].getFileId());
+                                Upload upload = new Upload();
+
+                                upload.setOwner(myResource.getId());
+                                upload.setProject(project.getId());
+                                upload.setProjectPhase(phase.getId());
+                                upload.setParameter(uploadedFiles[uploadedFileIdx++].getFileId());
+                                upload.setUploadStatus(LookupHelper.getUploadStatus("Active"));
+                                upload.setUploadType(LookupHelper.getUploadType("Review Document"));
+
+                                upMgr.createUpload(upload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+
+                                item.setDocument(upload.getId());
+                                System.out.println("Upload ID: " + upload.getId());
                             }
-    
-                            // Update the answer
-                            item.setAnswer(answers[itemIdx]);
-                            System.out.println("Files: " + Arrays.toString(files));
-                            // Handle uploads
-                            if (!previewRequested && !managerEdit && section.getQuestion(questionIdx).isUploadDocument()) {
-                                System.out.println("File:" + files[0].toString());
-                                if (fileIdx < files.length && files[fileIdx] != null &&
-                                        files[fileIdx].getFileName() != null &&
-                                        files[fileIdx].getFileName().trim().length() != 0) {
-                                    Upload oldUpload = null;
-                                    // If this item has already had uploaded file,
-                                    // it is going to be updated
-                                    if (item.getDocument() != null) {
-                                        oldUpload = upMgr.getUpload(item.getDocument());
-                                    }
-    
-                                    Upload upload = new Upload();
-    
-                                    // Set fields of the new upload
-                                    upload.setOwner(myResource.getId());
-                                    upload.setParameter(uploadedFiles[uploadedFileIdx++].getFileId());
-                                    upload.setProject(project.getId());
-                                    upload.setProjectPhase(phase.getId());
-                                    upload.setUploadStatus(LookupHelper.getUploadStatus("Active"));
-                                    upload.setUploadType(LookupHelper.getUploadType("Review Document"));
-    
-                                    // Update and store old upload (if there was any)
-                                    if (oldUpload != null) {
-                                        oldUpload.setUploadStatus(LookupHelper.getUploadStatus("Deleted"));
-                                        upMgr.updateUpload(oldUpload,
-                                                Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                                    }
-    
-                                    // Save information about current upload
-                                    upMgr.createUpload(upload,
-                                            Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-    
-                                    item.setDocument(upload.getId());
-                                }
-                                ++fileIdx;
-                            }
+                            ++fileIdx;
                         }
+
+                        // Add item to the review
+                        reviewEditor.addItem(item);
+
+                        ++itemIdx;
                     }
                 }
             }
-            } catch (Exception ex){
-                ex.printStackTrace();
-                System.out.println(ex.toString());
+
+            // Finally, set required fields of the review
+            reviewEditor.setAuthor(myResource.getId());
+            reviewEditor.setProjectPhase(phase.getId());
+            // Skip setting submission ID for Post-Mortem phase
+            if (isSubmissionDependentPhase) {
+                reviewEditor.setSubmission(verification.getSubmission().getId());
             }
+            reviewEditor.setScorecard(scorecardTemplate.getId());
+
+            review = reviewEditor.getReview();
+            } else {
             for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
                 Group group = scorecardTemplate.getGroup(groupIdx);
                 for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
@@ -1392,7 +1326,10 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
                 }
             }
         }
-
+        } catch (Exception ex){
+            ex.printStackTrace();
+            System.out.println(ex.toString());
+        }
         // For Manager Edits this variable indicates whether recomputation of
         // final aggregated score for the submitter may be required
         boolean possibleFinalScoreUpdate = false;
