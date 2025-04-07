@@ -129,7 +129,7 @@ deploy_steps: &deploy_steps
         mv project/* .
         ./awsconfiguration.sh $DEPLOY_ENV
         source awsenvconf  
-        ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-buildvar,${LOGICAL_ENV}-${APPNAME}-deployvar-v1
+        ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-buildvar,${LOGICAL_ENV}-${APPNAME}-deployvar
         #./buildimage.sh ${APPNAME}
         source buildenvvar
         ./buildimagev1.sh ${APPNAME}
