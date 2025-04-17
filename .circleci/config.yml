@@ -141,7 +141,8 @@ deploy_steps: &deploy_steps
         #./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-deployvar
         source buildenvvar
         #./master_deploy.sh -d ECS -e $DEPLOY_ENV -t latest -s ${LOGICAL_ENV}-${APPNAME}-appvar -i ${APPNAME}
-        ./master_deploy.sh -d ECS -e $DEPLOY_ENV -m CLI -t latest -i ${APPNAME}
+        #./master_deploy.sh -d ECS -e $DEPLOY_ENV -m CLI -t latest -i ${APPNAME}
+        ./deployv1.sh
 
 jobs:
   # Build & Deploy against development backend
@@ -215,6 +216,7 @@ workflows:
             branches:
               only:
                 - dev
+                - CORE-1058
 
       - build-qa:
           context: org-global
@@ -238,6 +240,7 @@ workflows:
             branches:
               only:
                 - dev
+                - CORE-1058
 
       - deployQa:
           context: org-global
