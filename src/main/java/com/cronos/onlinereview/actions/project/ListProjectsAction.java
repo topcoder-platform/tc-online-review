@@ -9,7 +9,7 @@ import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.ConfigHelper;
 import com.cronos.onlinereview.util.LoggingHelper;
-import com.opensymphony.xwork2.TextProvider;
+import org.apache.struts2.text.TextProvider;
 import com.topcoder.onlinereview.component.deliverable.Deliverable;
 import com.topcoder.onlinereview.component.deliverable.DeliverableCheckingException;
 import com.topcoder.onlinereview.component.deliverable.DeliverableManager;
@@ -41,7 +41,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 /**
  * This class is the struts action class which is used for listing all projects.

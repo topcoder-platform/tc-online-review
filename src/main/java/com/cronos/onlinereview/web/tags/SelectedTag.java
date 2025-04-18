@@ -3,8 +3,8 @@
  */
 package com.cronos.onlinereview.web.tags;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ModelDriven;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ModelDriven;
 
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -12,9 +12,9 @@ import java.io.IOException;
 
 import java.lang.reflect.InvocationTargetException;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 
 /**

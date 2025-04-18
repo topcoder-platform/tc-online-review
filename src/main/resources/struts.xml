@@ -5,12 +5,14 @@
 
 <struts>
 
+  <constant name="struts.multipart.saveDir" value="/nfs_shares/tcssubmissions" />
   <constant name="struts.action.extension" value="" />
   <constant name="struts.enable.DynamicMethodInvocation" value="false" />
   <constant name="struts.devMode" value="false" />
   <constant name="struts.objectFactory" value="spring" />
   <constant name="struts.custom.i18n.resources" value="MessageResources" />
   <constant name="struts.multipart.maxSize" value="209715200"/>
+  <constant name="struts.multipart.parser" value="jakarta"/>
 
   <package name="default" extends="struts-default" namespace="/actions">
         <interceptors>

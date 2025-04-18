@@ -44,7 +44,7 @@ import com.topcoder.onlinereview.component.search.filter.Filter;
 import com.topcoder.onlinereview.component.search.filter.InFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -52,6 +52,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.topcoder.onlinereview.component.util.SpringUtils.getBean;
 
@@ -942,6 +944,9 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         boolean isApprovalPhase = false;
         boolean isSpecReviewPhase = false;
         boolean isSubmissionDependentPhase = true;
+
+        System.out.println("Saving review type: " + reviewType);
+        System.out.println("Request: " + request.toString());
         // Determine permission name and phase name from the review type
         if ("Screening".equals(reviewType)) {
             permName = Constants.PERFORM_SCREENING_PERM_NAME;
@@ -1128,13 +1133,21 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         // This variable determines if Preview button has been clicked
         boolean previewRequested = "preview".equalsIgnoreCase(request.getParameter("save"));
 
+        System.out.println("Review form file: " + reviewForm.get("file").toString());
+        System.out.println("commitRequested: " + commitRequested);
+        System.out.println("previewRequested: " + previewRequested);
+        
         // Get form's fields
         String[] answers = (String[]) reviewForm.get("answer");
         Integer[] commentCounts = (Integer[]) reviewForm.get("comment_count");
         Map<String, String> replies = (Map<String, String>) reviewForm.get("comment");
         Map<String, String> commentTypeIds = (Map<String, String>) reviewForm.get("comment_type");
         FormFile[] files = (FormFile[]) reviewForm.get("file");
-
+        System.out.println("Answers: " + answers + " " + answers.length);
+        System.out.println("Comments: " + commentCounts+ " " + commentCounts.length);
+        System.out.println("Comment types: " + commentTypeIds.toString() + " " + commentTypeIds.size());
+        System.out.println("Review form file count: " + files.length);
+        
         // Uploaded files will be held here
         UploadedFile[] uploadedFiles = null;
 
@@ -1144,6 +1157,8 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
 
             // Collect uploaded files and add them to adapter
             for (FormFile file : files) {
+                System.out.println("Form file: " + file.toString());
+                System.out.println("Form file name: " + file.getFileName());
                 if (file != null && file.getFileName() != null && file.getFileName().trim().length() != 0) {
                     parser.AddFile(file);
                 }
@@ -1166,8 +1181,9 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
         int fileIdx = 0;
         int uploadedFileIdx = 0;
 
+        try {
         // If the review hasn't been created yet
-        if (review == null) {
+            if (review == null) {
             // Create a convenient review editor
             ReviewEditor reviewEditor =
                 new ReviewEditor(Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
@@ -1196,11 +1212,23 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
                         item.setAnswer(answers[itemIdx]);
                         item.setQuestion(question.getId());
 
+                        System.out.println("Files: " + Arrays.toString(files));
+                        System.out.println("Number of files: " + files.length);
+                        System.out.println("Is upload document: " + question.isUploadDocument());
+                        //System.out.println("File name: " + files[fileIdx].getFileName());
                         // Handle uploads
                         if (!previewRequested && question.isUploadDocument()) {
                             if (fileIdx < files.length && files[fileIdx] != null &&
                                     files[fileIdx].getFileName() != null &&
                                     files[fileIdx].getFileName().trim().length() != 0) {
+                                System.out.println("File:" + files[fileIdx].toString());
+                                System.out.println("File name:" + files[fileIdx].getFileName());
+                                System.out.println("myResource ID: " + myResource.getId());
+                                System.out.println("project ID : " + project.getId());
+                                System.out.println("Phase ID: " + phase.getId());
+                                System.out.println("Uploaded file count: " + uploadedFiles.length);
+                                System.out.println("Uploaded file index: " + uploadedFileIdx);
+                                System.out.println("File ID: " + uploadedFiles[uploadedFileIdx].getFileId());
                                 Upload upload = new Upload();
 
                                 upload.setOwner(myResource.getId());
@@ -1213,6 +1241,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
                                 upMgr.createUpload(upload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
                                 item.setDocument(upload.getId());
+                                System.out.println("Upload ID: " + upload.getId());
                             }
                             ++fileIdx;
                         }
@@ -1235,7 +1264,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
             reviewEditor.setScorecard(scorecardTemplate.getId());
 
             review = reviewEditor.getReview();
-        } else {
+            } else {
             for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
                 Group group = scorecardTemplate.getGroup(groupIdx);
                 for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
@@ -1254,9 +1283,10 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
 
                         // Update the answer
                         item.setAnswer(answers[itemIdx]);
-
+                        System.out.println("Files: " + Arrays.toString(files));
                         // Handle uploads
                         if (!previewRequested && !managerEdit && section.getQuestion(questionIdx).isUploadDocument()) {
+                            System.out.println("File:" + files[0].toString());
                             if (fileIdx < files.length && files[fileIdx] != null &&
                                     files[fileIdx].getFileName() != null &&
                                     files[fileIdx].getFileName().trim().length() != 0) {
@@ -1296,7 +1326,10 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
                 }
             }
         }
-
+        } catch (Exception ex){
+            ex.printStackTrace();
+            System.out.println(ex.toString());
+        }
         // For Manager Edits this variable indicates whether recomputation of
         // final aggregated score for the submitter may be required
         boolean possibleFinalScoreUpdate = false;
@@ -1754,6 +1787,8 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
             for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
                 Section section = group.getSection(sectionIdx);
                 for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx, ++itemIdx) {
+                    System.out.println("Item index: " + itemIdx + " Question index: " + questionIdx);
+                    System.out.println("Total items: " + review.getAllItems().length);
                     Question question = section.getQuestion(questionIdx);
                     Item item = review.getItem(itemIdx);
 
@@ -1979,7 +2014,7 @@ public abstract class BaseProjectReviewAction extends DynamicModelDrivenAction {
      *             negative (less than zero).
      */
     private static boolean validateScorecardItemUpload(
-            HttpServletRequest request, Question question, Item item, int fileNum) {
+        HttpServletRequest request, Question question, Item item, int fileNum) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(request, "request");
         ActionsHelper.validateParameterNotNull(question, "question");

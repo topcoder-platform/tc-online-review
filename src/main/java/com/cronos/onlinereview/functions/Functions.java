@@ -6,7 +6,7 @@ package com.cronos.onlinereview.functions;
 import com.cronos.onlinereview.util.ActionsHelper;
 import com.cronos.onlinereview.util.AuthorizationHelper;
 import com.cronos.onlinereview.util.ConfigHelper;
-import com.opensymphony.xwork2.ActionContext;
+import org.apache.struts2.ActionContext;
 import com.topcoder.onlinereview.component.exception.BaseException;
 import com.topcoder.onlinereview.component.project.management.Project;
 import com.topcoder.onlinereview.component.resource.Resource;
@@ -15,8 +15,8 @@ import com.topcoder.onlinereview.component.resource.ResourcePersistenceException
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.struts2.util.TextProviderHelper;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.jsp.PageContext;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;

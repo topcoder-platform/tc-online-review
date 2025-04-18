@@ -3,15 +3,16 @@
  */
 package com.cronos.onlinereview.util;
 
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3URI;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.model.DefaultScorecard;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.TextProvider;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionSupport;
+import org.apache.struts2.text.TextProvider;
 import com.topcoder.onlinereview.component.dataaccess.ClientProject;
 import com.topcoder.onlinereview.component.dataaccess.CockpitProject;
 import com.topcoder.onlinereview.component.dataaccess.ProjectDataAccess;
@@ -82,8 +83,8 @@ import com.topcoder.onlinereview.grpc.actionshelper.proto.RatingProto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -183,7 +184,7 @@ public class ActionsHelper {
     /**
      * AWS S3 client
      */
-    private static final AmazonS3Client s3Client;
+    private static final AmazonS3 s3Client;
 
     /**
      * Expire time for presigned s3 url in millis
@@ -207,15 +208,11 @@ public class ActionsHelper {
 
     static {
         try {
-            ClassLoader loader = ActionsHelper.class.getClassLoader();
-            //URL credentialURL = loader.getResource(AWS_CREDENTIALS_FILE);
             s3Bucket = ConfigHelper.getS3Bucket();
             s3BucketDmz = ConfigHelper.getS3BucketDmz();
             s3BucketQuarantine = ConfigHelper.getS3BucketQuarantine();
             presignedExpireMillis = ConfigHelper.getPreSignedExpTimeMilis();
-            //s3Client = new AmazonS3Client(new PropertiesCredentials(new File(credentialURL.getFile())));
-            //s3Client = new AmazonS3Client(new InstanceProfileCredentialsProvider());
-            s3Client = new AmazonS3Client();
+            s3Client = AmazonS3ClientBuilder.standard().withRegion("us-east-1").build();
         } catch (Throwable e) {
             throw new RuntimeException("Failed load to Amazon S3 CLient", e);
         }
@@ -520,6 +517,7 @@ public class ActionsHelper {
      */
     public static String produceErrorReport(TextProvider textProvider, HttpServletRequest request, String permission,
                                             String reasonKey, Boolean getRedirectUrlFromReferer) throws BaseException {
+        log.warn("Produce error report: " + permission + " " + reasonKey);
         // If the user is not logged in, this is the reason
         // why they don't have permissions to do the job. Let the user login first
         if (getRedirectUrlFromReferer != null && !AuthorizationHelper.isUserLoggedIn(request)) {
@@ -895,6 +893,7 @@ public class ActionsHelper {
 
         for (int i = 0; i < resources.length; i++) {
             String email = emailsMap.get(userIDs[i]);
+            System.out.println("Email for " + resources[i].getId() + ":" + email);
             if (email == null) {
                 throw new BaseException("Can't retrieve email property for the resourceId: " + resources[i].getId());
             }

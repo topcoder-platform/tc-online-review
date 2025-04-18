@@ -3,7 +3,7 @@
  */
 package com.cronos.onlinereview.actions.projectreview;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.util.ActionsHelper;

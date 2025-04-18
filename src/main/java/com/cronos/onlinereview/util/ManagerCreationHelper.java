@@ -44,7 +44,7 @@ import com.topcoder.onlinereview.component.termsofuse.UserTermsOfUseDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * <p>

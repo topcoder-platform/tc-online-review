@@ -3,19 +3,19 @@
  */
 package com.cronos.onlinereview.actions.login;
 
-import com.opensymphony.xwork2.ActionSupport;
+import org.apache.struts2.ActionSupport;
 import com.topcoder.onlinereview.component.authenticationfactory.AuthenticationFactory;
 import com.topcoder.onlinereview.component.authenticationfactory.Authenticator;
 import com.topcoder.onlinereview.component.login.AuthResponseParser;
 import com.topcoder.onlinereview.component.login.ConfigurationException;
 import com.topcoder.onlinereview.component.webcommon.SSOCookieService;
-import org.apache.struts2.interceptor.ServletRequestAware;
-import org.apache.struts2.interceptor.ServletResponseAware;
+import org.apache.struts2.action.ServletRequestAware;
+import org.apache.struts2.action.ServletResponseAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -68,7 +68,7 @@ public abstract class BaseLoginAction extends ActionSupport
      * Set the request to the namesake field.
      * @param request the http request
      */
-    public void setServletRequest(HttpServletRequest request) {
+    public void withServletRequest(HttpServletRequest request) {
         this.request = request;
     }
 
@@ -76,7 +76,7 @@ public abstract class BaseLoginAction extends ActionSupport
      * Set the response to the namesake field.
      * @param response the http response
      */
-    public void setServletResponse(HttpServletResponse response) {
+    public void withServletResponse(HttpServletResponse response) {
         this.response = response;
     }
 

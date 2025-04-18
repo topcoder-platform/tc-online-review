@@ -3,6 +3,8 @@
  */
 package com.cronos.onlinereview.actions.latedeliverables;
 
+import java.util.Date;
+
 import com.cronos.onlinereview.Constants;
 import com.cronos.onlinereview.actions.DynamicModelDrivenAction;
 import com.cronos.onlinereview.util.ActionsHelper;
@@ -15,8 +17,7 @@ import com.topcoder.onlinereview.component.resource.Resource;
 import com.topcoder.onlinereview.component.resource.ResourceManager;
 import com.topcoder.onlinereview.component.resource.ResourcePersistenceException;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is the base class for project late deliverables actions classes.

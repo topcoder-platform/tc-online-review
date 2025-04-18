@@ -32,7 +32,7 @@ import com.topcoder.onlinereview.component.termsofuse.TermsOfUse;
 import com.topcoder.onlinereview.component.termsofuse.TermsOfUsePersistenceException;
 import com.topcoder.onlinereview.component.termsofuse.UserTermsOfUseDao;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;

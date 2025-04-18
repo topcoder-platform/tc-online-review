@@ -5,7 +5,7 @@
     <typeMapping qname="OR:DataHandler" xmlns:OR="http://onlinereview.topcoder.com"
         serializer="org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory"
-        languageSpecificType="java:javax.activation.DataHandler"
+        languageSpecificType="java:jakarta.activation.DataHandler"
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
     />
 
@@ -15,14 +15,6 @@
         <parameter name="allowedMethods" value="uploadSubmission, addSubmitter" />
         <parameter name="scope" value="Application" />
     </service>
-    <!--  service name="AdminService" provider="java:MSG">
-        <parameter name="allowedMethods" value="*" />
-        <parameter name="className" value="org.apache.axis.utils.Admin" />
-    </service>
-    <service name="Version" provider="java:RPC">
-        <parameter name="allowedMethods" value="getVersion" />
-        <parameter name="className" value="org.apache.axis.Version" />
-    </service -->
 
     <transport name="http">
         <requestFlow>

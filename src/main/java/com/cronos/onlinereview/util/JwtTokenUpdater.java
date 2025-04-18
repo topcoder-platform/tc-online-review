@@ -13,12 +13,12 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 import java.net.URI;
 import java.util.Date;
+import java.util.Base64;
 
 import org.apache.struts2.ServletActionContext;
-import org.apache.commons.codec.binary.Base64;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -109,7 +109,7 @@ public class JwtTokenUpdater {
                 String payload = new String(Base64.decode(payloadStr.toString().getBytes(StandardCharsets.UTF_8)));
                 */
 
-                String payload = new String(Base64.decodeBase64(tokenSplit[1]), "UTF-8");
+                String payload = new String(Base64.getDecoder().decode(tokenSplit[1]), "UTF-8");
                 JsonNode jsonNode = objectMapper.readValue(payload.toString(), JsonNode.class);
 
                 long exp = jsonNode.get("exp").asLong();

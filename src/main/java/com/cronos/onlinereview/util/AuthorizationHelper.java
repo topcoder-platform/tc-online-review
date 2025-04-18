@@ -36,8 +36,8 @@ import com.topcoder.onlinereview.component.security.groups.services.Authorizatio
 import com.topcoder.onlinereview.component.webcommon.SSOCookieService;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
@@ -348,7 +348,10 @@ public class AuthorizationHelper {
         long clientId;
         try {
             clientId = projectDataAccess.getProjectClient(project.getTcDirectProjectId());
+            System.out.println("Retrieved client ID: " + clientId);
         } catch (Exception e) {
+            System.out.println("Error when retrieving client ID");
+            e.printStackTrace();
             throw new BaseException("error occurs while retrieving client id", e);
         }
 
@@ -365,6 +368,8 @@ public class AuthorizationHelper {
                 }
             }
         } catch (Exception e) {
+            System.out.println("Error when retrieving user role");
+            e.printStackTrace();
             throw new BaseException(e);
         }
 

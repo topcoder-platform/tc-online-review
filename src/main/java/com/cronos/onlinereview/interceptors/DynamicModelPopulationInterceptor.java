@@ -3,24 +3,26 @@
  */
 package com.cronos.onlinereview.interceptors;
 
-import java.io.File;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.cronos.onlinereview.model.DynamicModel;
 import com.cronos.onlinereview.model.FormFile;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.ModelDriven;
-import com.opensymphony.xwork2.interceptor.Interceptor;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.ModelDriven;
+import org.apache.struts2.interceptor.Interceptor;
 import org.apache.struts2.dispatcher.HttpParameters;
-import org.apache.struts2.dispatcher.Parameter;
+import org.apache.struts2.dispatcher.multipart.MultiPartRequestWrapper;
 import org.apache.struts2.dispatcher.multipart.StrutsUploadedFile;
+import org.apache.struts2.dispatcher.multipart.UploadedFile;
 
 
 
@@ -36,8 +38,13 @@ import org.apache.struts2.dispatcher.multipart.StrutsUploadedFile;
  * - the uploaded file in intercept method is instance of StrutsUploadedFile now.
  * </p>
  *
+ * <p>
+ * v2.2 - Fixed in Migrate Struts 2.5 to 7.0.0 For Online Review
+ * - Fixed file upload functionality by creating a temporary file from StrutsUploadedFile content
+ * </p>
+ *
  * @author TCSASSEMBLER
- * @version 2.1
+ * @version 2.2
  */
 public class DynamicModelPopulationInterceptor implements Interceptor {
     /**
@@ -75,37 +82,52 @@ public class DynamicModelPopulationInterceptor implements Interceptor {
      */
     public String intercept(ActionInvocation invocation)
         throws Exception {
+        HttpServletRequest currentRequest = invocation.getInvocationContext().getServletRequest();
+        MultiPartRequestWrapper multiWrapper = currentRequest instanceof HttpServletRequestWrapper wrapper
+            ? findMultipartRequestWrapper(wrapper)
+            : null;
+
         // Check if model is Dynamic Model
         Object action = invocation.getAction();
 
         if (action instanceof ModelDriven
                 && ((ModelDriven<?>) action).getModel() instanceof DynamicModel) {
             // Populate the parameters:
-            HttpParameters params = ActionContext.getContext()
-                                                      .getParameters();
+            HttpParameters params = ActionContext.getContext().getParameters();
             Map<String, Object> filteredParams = new HashMap<String, Object>();
 
-            for (String key : params.keySet()) {
-                if (!key.contains(".") || key.matches("^.*[(].+\\..+[)]*$")) {
-                    Object value = params.get(key).getObject();
-                    if (value != null && value.getClass().isArray()) {
-                        Object[] values = (Object[]) value;
-                        if (values.length > 0) {
-                            value = values[0];
-                        }
+            if (multiWrapper == null) {
+                for (String key : params.keySet()) {
+                    System.out.println("Dynamic model key: " + key + " Value: " + params.get(key).getObject().toString());
+                    if (!key.contains(".") || key.matches("^.*[(].+\\..+[)]*$")) {
+                        filteredParams.put(key, params.get(key).getObject());
                     }
+                }
+            } else {
+                // normal fields
+                Enumeration<String> paramNames = multiWrapper.getParameterNames();
+                while (paramNames != null && paramNames.hasMoreElements()) {
+                    String key = paramNames.nextElement();
+                    if (!key.contains(".") || key.matches("^.*[(].+\\..+[)]*$")) {
+                        filteredParams.put(key, params.get(key).getObject());
+                    }
+                }
 
-                    if (value instanceof StrutsUploadedFile) {
-                        String fileName = params.get(key + "FileName").getValue();
-                        String contentType = params.get(key + "ContentType").getValue();
+                // file fields
+                Enumeration<String> fileParameterNames = multiWrapper.getFileParameterNames();
+                while (fileParameterNames != null && fileParameterNames.hasMoreElements()) {
+                    String key = fileParameterNames.nextElement();
+                    if (!key.contains(".") || key.matches("^.*[(].+\\..+[)]*$")) {
+                        UploadedFile[] uploadedFiles = multiWrapper.getFiles(key);
 
-                        FormFile formFile = new FormFile(fileName,
-                                 ((StrutsUploadedFile) value).getContent(), contentType);
+                        if (uploadedFiles != null && uploadedFiles.length > 0) {
+                            UploadedFile uploadedFile = uploadedFiles[0];
 
-                        filteredParams.put(key, formFile);
-                    } else {
-                        if (!key.contains("FileName") && !key.contains("ContentType")) {
-                            filteredParams.put(key, params.get(key).getObject());
+                            String fileName = uploadedFile.getOriginalName();
+                            String contentType = uploadedFile.getContentType();
+
+                            FormFile formFile = new FormFile(fileName, ((StrutsUploadedFile) uploadedFile).getContent(), contentType);
+                            filteredParams.put(key, formFile);
                         }
                     }
                 }
@@ -121,5 +143,19 @@ public class DynamicModelPopulationInterceptor implements Interceptor {
         }
 
         return invocation.invoke();
+    }
+
+    /**
+      * Find multipart request wrapper
+      * @param request current request
+      * @return the wrapper
+      */
+    private MultiPartRequestWrapper findMultipartRequestWrapper(HttpServletRequestWrapper request) {
+        if (request instanceof MultiPartRequestWrapper multiPartRequestWrapper) {
+            return multiPartRequestWrapper;
+        } else if (request.getRequest() instanceof HttpServletRequestWrapper wrappedRequest) {
+            return findMultipartRequestWrapper(wrappedRequest);
+        }
+        return null;
     }
 }

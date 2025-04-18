@@ -10,9 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
-import com.opensymphony.xwork2.TextProvider;
+import org.apache.struts2.text.TextProvider;
 import com.topcoder.onlinereview.component.deliverable.SubmissionType;
 import com.topcoder.onlinereview.component.deliverable.UploadFilterBuilder;
 import com.topcoder.onlinereview.component.resource.ResourceManager;

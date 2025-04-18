@@ -22,7 +22,6 @@
     <listener>
 		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
 	</listener>
-
     <filter>
         <filter-name>set_character_encoding</filter-name>
         <filter-class>com.cronos.onlinereview.servlet.EncodeFilter</filter-class>
@@ -35,8 +34,6 @@
             <param-value>true</param-value>
         </init-param>
     </filter>
-
-    <!-- Filter Mapping -->
 
     <filter-mapping>
         <filter-name>set_character_encoding</filter-name>
@@ -66,40 +63,10 @@
         <servlet-class>com.cronos.onlinereview.servlet.OnlineReviewInitServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
-
-    <!-- Axis HTTP transport Servlet -->
-    <servlet>
-        <display-name>Apache-Axis Servlet</display-name>
-        <servlet-name>AxisServlet</servlet-name>
-        <servlet-class>
-            org.apache.axis.transport.http.AxisServlet
-        </servlet-class>
-        <!--  init-param>
-            <param-name>use-servlet-security</param-name>
-            <param-value>true</param-value>
-            </init-param -->
-    </servlet>
-
-    <!-- Online Review Ajax Support Servlet Mapping -->
+    
     <servlet-mapping>
         <servlet-name>AjaxServlet</servlet-name>
         <url-pattern>/ajaxSupport</url-pattern>
-    </servlet-mapping>
-
-    <!-- Axis HTTP transport Servlet Mappings -->
-    <servlet-mapping>
-        <servlet-name>AxisServlet</servlet-name>
-        <url-pattern>/servlet/AxisServlet</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>AxisServlet</servlet-name>
-        <url-pattern>*.jws</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>AxisServlet</servlet-name>
-        <url-pattern>/services/*</url-pattern>
     </servlet-mapping>
 
     <session-config>
