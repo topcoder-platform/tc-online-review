@@ -83,7 +83,7 @@ build_steps: &build_steps # Initialization.
   - checkout
   - run: *install_deploysuite
   - run: *fetch_component_src
-  #- restore_cache: *restore_cache_settings_for_build
+  - restore_cache: *restore_cache_settings_for_build
   - run: *build_components
   #- run:
   #    name: Fetching Libraries
@@ -103,7 +103,7 @@ build_steps: &build_steps # Initialization.
         ./buildproperties.sh -e $BUILD_ENV -k onlinereviewappv1
         # mvn dependency:go-offline
         mvn clean package -DskipTests=true
-  #- save_cache: *save_cache_settings
+  - save_cache: *save_cache_settings
   #- run:
   #    name: Build Pacakge
   #    command: ./build-package.sh $APPNAME
