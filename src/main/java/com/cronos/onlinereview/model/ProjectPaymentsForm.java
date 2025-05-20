@@ -17,19 +17,19 @@ public class ProjectPaymentsForm {
     /**
      * The project id.
      */
-    private Long pid;
+    public Long pid;
     /**
      * The payments of submitter resources.
      */
-    private List<ResourcePayments> submitterPayments = new ArrayList<ResourcePayments>();
+    public List<ResourcePayments> submitterPayments = new ArrayList<ResourcePayments>();
     /**
      * The payments of reviewer resources.
      */
-    private List<ResourcePayments> reviewerPayments = new ArrayList<ResourcePayments>();
+    public List<ResourcePayments> reviewerPayments = new ArrayList<ResourcePayments>();
     /**
      * The payments of copilot resources.
      */
-    private List<ResourcePayments> copilotPayments = new ArrayList<ResourcePayments>();
+    public List<ResourcePayments> copilotPayments = new ArrayList<ResourcePayments>();
 
     /**
      * Empty constructor.
