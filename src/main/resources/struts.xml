@@ -13,7 +13,8 @@
   <constant name="struts.custom.i18n.resources" value="MessageResources" />
   <constant name="struts.multipart.maxSize" value="209715200"/>
   <constant name="struts.multipart.parser" value="jakarta"/>
-
+  <constant name="struts.allowlist.packages" value="com.cronos.onlinereview.model"/>  
+  
   <package name="default" extends="struts-default" namespace="/actions">
         <interceptors>
            <interceptor name="DynamicModelPopulationInterceptor" class="DynamicModelPopulationInterceptor"/>
@@ -51,7 +52,7 @@
            <exception-mapping result="notAuthorized" exception="com.topcoder.onlinereview.component.authenticationfactory.InvalidPrincipalException" />
            <exception-mapping result="notAuthorized" exception="com.cronos.onlinereview.login.LoginActions.AuthResponseParserException" />
         </action>
-        <constant name="struts.allowlist.packages" value="com.cronos.onlinereview.model"/>  
+      
         <action name="Logout" class="logoutAction">
            <result name="input">/jsp/login.jsp</result>
            <result name="logout" type="redirect">/actions/Login</result>
