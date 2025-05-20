@@ -75,7 +75,7 @@ public class SaveProjectPaymentsAction extends BaseProjectPaymentAction {
      */
     public String execute() throws BaseException {
         LoggingHelper.logAction(request);
-
+        try {
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(this, request,
                 Constants.EDIT_PAYMENTS_PERM_NAME, false);
@@ -170,7 +170,12 @@ public class SaveProjectPaymentsAction extends BaseProjectPaymentAction {
 
         setPid(projectId);
         // Return success forward
-        return Constants.SUCCESS_FORWARD_NAME;
+        } catch (Exception ex){
+            LoggingHelper.logError(ex.toString());
+            ex.printStackTrace();
+        } finally{
+            return Constants.SUCCESS_FORWARD_NAME;
+        }
     }
 
     /**
