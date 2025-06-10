@@ -13,7 +13,7 @@
   <constant name="struts.custom.i18n.resources" value="MessageResources" />
   <constant name="struts.multipart.maxSize" value="209715200"/>
   <constant name="struts.multipart.parser" value="jakarta"/>
-  <constant name="struts.allowlist.packages" value="com.cronos.onlinereview.model"/>  
+  <constant name="struts.allowlist.packageNames" value="com.cronos.onlinereview.model"/>  
   
   <package name="default" extends="struts-default" namespace="/actions">
         <interceptors>
